@@ -5937,8 +5937,8 @@ WHERE s1.property = 'CID'
     <internalDependency name="MassSpecTerms"/>
     <internalDependency name="DatasetPresenter"/>
     <externalDependency name="Dots.AALocation"/>
+    <externalDependency name="Dots.Miscellaneous"/>
     <externalDependency name="Dots.TranslatedAAFeature"/>
-    <externalDependency name="Dots.Transcript"/>
     <externalDependency name="Dots.TranslatedAASequence"/>
     <externalDependency name="Apidb.MassSpecSummary"/>
     <externalDependency name="Dots.MassSpecFeature"/>
@@ -5948,37 +5948,53 @@ WHERE s1.property = 'CID'
     <![CDATA[
     CREATE TABLE MASSSPECPEPTIDESUMMARY&1
     as
-    WITH spec_counts
-         AS (SELECT DISTINCT mss.mass_spec_summary_id AS mass_spec_summary_id,
+    WITH Source_Ids As (
+       SELECT DISTINCT 
+              Misc.Source_Id,
+              Misc.Na_Feature_Id, 
+              Mss.Aa_Sequence_Id, 'orf' As Source_Type 
+         FROM Apidb.Massspecsummary Mss, Dots.Massspecfeature Msf,
+              Dots.Translatedaafeature Taaf, Dots.Miscellaneous Misc, Sres.Sequenceontology O
+        WHERE Mss.Mass_Spec_Summary_Id =Msf.Source_Id
+          AND Msf.Parent_Id = Taaf.Aa_Feature_Id
+          AND Taaf.Na_Feature_Id =Misc.Na_Feature_Id
+          AND Misc.Sequence_Ontology_Id = O.Sequence_Ontology_Id
+          AND O.Term_Name = 'ORF'
+        UNION 
+        SELECT ga.Source_Id, ga.Na_Feature_Id, ga.Aa_Sequence_Id, 'gene' As Source_Type 
+          FROM Apidbtuning.Geneattributes Ga, Apidb.Massspecsummary Mss
+         WHERE mss.aa_sequence_id = ga.aa_sequence_id   ),  
+     Spec_Counts AS (
+        SELECT DISTINCT mss.mass_spec_summary_id AS mass_spec_summary_id,
                              mss.spectrum_count       AS spectrum_count,
-                             ga.source_id             AS source_id
-             FROM   apidb.massspecsummary mss,
-                    apidbtuning.geneattributes ga
+                             sid.source_id             AS source_id
+             From   Apidb.Massspecsummary Mss,
+                    source_ids sid
              WHERE  mss.spectrum_count IS NOT NULL
                 AND mss.spectrum_count > 0
-                AND mss.aa_sequence_id = ga.aa_sequence_id
+                AND mss.aa_sequence_id = sid.aa_sequence_id
              UNION
              SELECT DISTINCT mss.mass_spec_summary_id AS mass_spec_summary_id,
                              COUNT(msf.aa_feature_id) AS spectrum_count,
-                             ga.source_id             AS source_id
+                             sid.source_id             AS source_id
              FROM   apidb.massspecsummary mss,
-                    dots.massspecfeature msf,
-                    apidbtuning.geneattributes ga
+                    Dots.Massspecfeature Msf,
+                    source_ids sid
              WHERE  mss.mass_spec_summary_id = msf.source_id
                 AND ( mss.spectrum_count IS NULL
                        OR mss.spectrum_count <= 0 )
-                AND mss.aa_sequence_id = ga.aa_sequence_id(+)
-             GROUP  BY ga.source_id,
-                       mss.aa_sequence_id,
-                       mss.mass_spec_summary_id),
-         sequence
-         AS (SELECT source_id,
+                AND mss.aa_sequence_id = sid.aa_sequence_id(+)
+             GROUP  BY sid.source_id,
+                       Mss.Aa_Sequence_Id,
+                       Mss.Mass_Spec_Summary_Id),
+     Sequence As (
+            SELECT source_id,
                     mass_spec_summary_id,
                     sequence,
                     COUNT(sequence) AS spectrum_count,
                     protein_start,
                     protein_end
-             FROM   (SELECT ga.source_id             AS source_id,
+             FROM   (SELECT sid.source_id             AS source_id,
                             mss.mass_spec_summary_id AS mass_spec_summary_id,
                             dbms_lob.SUBSTR(taas.SEQUENCE,
                             aal.end_max - aal.start_min + 1,
@@ -5986,27 +6002,25 @@ WHERE s1.property = 'CID'
                                                      AS sequence,
                             aal.start_min            AS protein_start,
                             aal.end_max              AS protein_end
-                     FROM   apidb.massspecsummary mss,
-                            apidbtuning.geneattributes ga,
+                     From   Apidb.Massspecsummary Mss,
+                            source_ids sid,
                             dots.massspecfeature msf,
                             dots.aalocation aal,
                             dots.translatedaafeature taaf,
-                            dots.transcript t,
                             dots.translatedaasequence taas
-                     WHERE  mss.aa_sequence_id = ga.aa_sequence_id
+                     WHERE  mss.aa_sequence_id = sid.aa_sequence_id
                         AND msf.source_id = mss.mass_spec_summary_id
                         AND aal.aa_feature_id = msf.aa_feature_id
                         AND msf.parent_id = taaf.aa_feature_id
                         AND taaf.aa_sequence_id = taas.aa_sequence_id
-                        AND msf.aa_feature_id = aal.aa_feature_id
-                        AND t.parent_id = ga.na_feature_id)
+                        AND msf.aa_feature_id = aal.aa_feature_id)
              GROUP  BY source_id,
                        mass_spec_summary_id,
                        sequence,
-                       protein_start,
-                       protein_end),
-         consistent
-         AS (SELECT DISTINCT s.external_database_release_id,
+                       Protein_Start,
+                       protein_end ),
+      consistent AS (
+             SELECT DISTINCT s.external_database_release_id,
                              CASE
                                WHEN sc.spectrum_count = s.spectrum_count THEN 1
                                ELSE 0
@@ -6025,8 +6039,8 @@ WHERE s1.property = 'CID'
                      GROUP  BY mss.external_database_release_id) s
              WHERE  sc.external_database_release_id = s.external_database_release_id
             )
-    SELECT DISTINCT ga.source_id     AS source_id,
-                    ga.project_id    AS project_id,
+    Select Distinct sid.Source_Id     As Source_Id,
+                    sid.source_type,
                     mss.mass_spec_summary_id,
                     dsp.display_name AS experiment,
                     mst.sample       AS sample,
@@ -6040,7 +6054,7 @@ WHERE s1.property = 'CID'
            dots.massspecfeature msf,
            sres.externaldatabaserelease edr,
            sres.externaldatabase ed,
-           apidbtuning.geneattributes ga,
+           source_ids sid,
            apidbtuning.massspecterms mst,
            apidbtuning.datasetpresenter dsp,
            apidbtuning.datasetpublication dspub,
@@ -6049,7 +6063,7 @@ WHERE s1.property = 'CID'
     WHERE  mss.external_database_release_id = edr.external_database_release_id
        AND mss.mass_spec_summary_id = msf.source_id
        AND edr.external_database_id = ed.external_database_id
-       AND mss.aa_sequence_id = ga.aa_sequence_id
+       AND mss.aa_sequence_id = sid.aa_sequence_id
        AND mst.internal_id = ed.name
                              || '|'
                              || mss.sample_file
@@ -6059,8 +6073,8 @@ WHERE s1.property = 'CID'
        AND s.mass_spec_summary_id = mss.mass_spec_summary_id
        AND mss.external_database_release_id = csc.external_database_release_id
     UNION
-    SELECT DISTINCT ga.source_id     AS source_id,
-                    ga.project_id    AS project_id,
+    Select Distinct sid.Source_Id     As Source_Id,
+                    sid.Source_Type,
                     mss.mass_spec_summary_id,
                     '<b>'
                     ||mst.sample
@@ -6076,18 +6090,18 @@ WHERE s1.property = 'CID'
            dots.massspecfeature msf,
            sres.externaldatabaserelease edr,
            sres.externaldatabase ed,
-           apidbtuning.geneattributes ga,
+           source_ids sid,
            apidbtuning.massspecterms mst,
            SEQUENCE s,
            consistent csc
     WHERE  mss.external_database_release_id = edr.external_database_release_id
        AND mss.mass_spec_summary_id = msf.source_id
        AND edr.external_database_id = ed.external_database_id
-       AND mss.aa_sequence_id = ga.aa_sequence_id
+       AND mss.aa_sequence_id = sid.aa_sequence_id
        AND mst.internal_id = ed.name
-       AND s.mass_spec_summary_id = mss.mass_spec_summary_id
-       AND mss.external_database_release_id = csc.external_database_release_id    
-     ]]> 
+       And S.Mass_Spec_Summary_Id = Mss.Mass_Spec_Summary_Id
+       AND mss.external_database_release_id = csc.external_database_release_id     
+    ]]> 
     </sql>
   </tuningTable>
 
