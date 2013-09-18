@@ -5924,6 +5924,100 @@ WHERE s1.property = 'CID'
   </tuningTable>
 
 
+
+  <tuningTable name="RepresentativeMSSummary">
+    <externalDependency name="apidb.massspecsummary"/>
+    <sql>
+    <![CDATA[
+create table RepresentativeMSSummary&1 as
+with rep as (
+select mss.mass_spec_summary_id, 
+       row_number() over(partition by mss.aa_sequence_id, mss.sample_file, mss.external_database_release_id
+                         order by mss.number_of_spans desc) as rn
+from apidb.massspecsummary mss
+)
+select mss.*
+from rep, apidb.massspecsummary mss
+where rep.rn= 1
+and mss.mass_spec_summary_id = rep.mass_spec_summary_id
+      ]]>
+    </sql>
+  </tuningTable>
+  <tuningTable name="MSExptTrustedSpectrum">
+    <externalDependency name="apidb.massspecsummary"/>
+    <externalDependency name="dots.massspecfeature"/>
+    <sql>
+    <![CDATA[
+create table MSExptTrustedSpectrum&1 as       
+select distinct mss.external_database_release_id, mss.sample_file
+from apidb.massspecsummary mss, dots.massspecfeature msf
+where mss.mass_spec_summary_id = msf.source_id
+group by mss.mass_spec_summary_id, mss.external_database_release_id, mss.sample_file, mss.number_of_spans
+having count(*) > mss.number_of_spans
+      ]]>
+    </sql>
+  </tuningTable>
+  <tuningTable name="MSPeptideSummary">
+    <internalDependency name="RepresentativeMSSummary"/>
+    <internalDependency name="GeneAttributes"/>
+    <internalDependency name="MSExptTrustedSpectrum"/>
+    <internalDependency name="MassSpecTerms"/>
+    <internalDependency name="DatasetPresenter"/>
+    <externalDependency name="Dots.AAFeature"/>
+    <externalDependency name="Dots.AALocation"/>
+    <externalDependency name="Sres.ExternalDatabase"/>
+    <externalDependency name="Sres.ExternalDatabaseRelease"/>
+    <sql>
+    <![CDATA[
+create table MSPeptideSummary&1 as
+select dbms_lob.SUBSTR(seq.SEQUENCE,
+                            pep.aa_end_max - pep.aa_start_min + 1,
+                            pep.aa_start_min) as peptide_sequence,
+       pep.*
+from dots.aasequence seq, (
+select ga.source_id, 
+       mss.sample_file, 
+       nvl(dsp.display_name, sample) as experiment,
+       d.name as external_database_name,
+       case when good.external_database_release_id is null then null else count(*) end as spectrum_count,
+       mss.aa_sequence_id,
+       l.start_min as aa_start_min,
+       l.end_max as aa_end_max,
+       mst.html_color, mst.internal_id, mst.organism, mst.project_id, mst.sample, mst.sort_order
+from representativemssummary mss, DOTS.massspecfeature msf, DOTS.aalocation l, 
+     geneattributes ga, Msexpttrustedspectrum good, SRES.externaldatabase d,
+     SRES.externaldatabaserelease r, massspecterms mst, datasetnametaxon dsnt, datasetpresenter dsp
+where mss.mass_spec_summary_id = msf.source_id
+and msf.aa_feature_id = l.aa_feature_id
+and mss.aa_sequence_id = ga.aa_sequence_id
+and mss.external_database_release_id = r.external_database_release_id
+and r.external_database_id = d.external_database_id
+and d.name = dsnt.name (+)
+and dsnt.dataset_presenter_id = dsp.dataset_presenter_id (+)
+and (d.name || '|' || mss.sample_file = mst.internal_id OR d.name = mst.internal_id)
+and mss.external_database_release_id = good.external_database_release_id (+)
+and mss.sample_file = good.sample_file (+)
+group by d.name, ga.source_id, mss.sample_file, dsp.display_name, 
+         mss.aa_sequence_id, l.start_min, l.end_max, good.external_database_release_id, 
+         mst.html_color, mst.internal_id, mst.organism, mst.project_id, mst.sample, mst.sort_order
+) pep
+where pep.aa_sequence_id = seq.aa_sequence_id
+      ]]>
+    </sql>
+  </tuningTable>
+  <tuningTable name="MSGeneSummary">
+    <internalDependency name="MSPeptideSummary"/>
+    <sql>
+    <![CDATA[
+create table MSGeneSummary&1 as
+select msps.source_id, msps.external_database_name, msps.experiment, msps.sample, msps.sample_file, msps.internal_id, msps.organism, msps.project_id, sum(msps.spectrum_count) as spectrum_count, count(*) as sequence_count
+from mspeptidesummary msps
+group by msps.source_id, msps.external_database_name, msps.experiment, msps.sample, msps.sample_file, msps.internal_id, msps.organism, msps.project_id
+      ]]>
+    </sql>
+  </tuningTable>
+
+
 <!-- This Java program is throwing exceptions, possibly because of changes in Google's Fusion Tables API
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
@@ -5931,7 +6025,10 @@ WHERE s1.property = 'CID'
 
 -->
 
-  <tuningTable name="MassSpecPeptideSummary">
+
+
+<!-- TODO:  should remove -->
+  <tuningTable name="MassSpecPeptideSummary ">
 
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="MassSpecTerms"/>
