@@ -230,7 +230,7 @@ sub processRow {
   my $bioSample;
   my $sampleExtDbRlsId = '';
   if($sampleExtDbRlsSpec){
-    my $sampleExtDbRlsId = $self->getExtDbRlsId($sampleExtDbRlsSpec) or 
+    $sampleExtDbRlsId = $self->getExtDbRlsId($sampleExtDbRlsSpec) or 
       $self->error("Sample external database Release ID not found for $sampleName with External database release spec $sampleExtDbRlsSpec");
   }
   
