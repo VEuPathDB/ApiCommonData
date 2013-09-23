@@ -204,15 +204,15 @@ sub readKeggFiles {
 
 sub loadPathway {
   my ($self, $format) = @_;
-                    
 
-  my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => "Metabolic Pathways - $format",
-                                                                description => "Metabolic Pathways and Associations - $format" });
-  if (! $networkContext->retrieveFromDB()) {
-    $networkContext->submit();
-    print  "Loaded Network context...\n"
+
+  my $network = GUS::Model::ApiDB::Network->new({ name => "Metabolic Pathways - $format",
+						  description => "Metabolic Pathways and Associations - $format" });
+  if (! $network->retrieveFromDB()) {
+    $network->submit();
+    print  "Loaded Network...\n"
   };
-  my $networkContextId = $networkContext->getNetworkContextId();
+  my $networkId = $network->getNetworkId();
 
 
   my $pathwaysObj = $self->{"pathwaysCollection"};
@@ -223,17 +223,17 @@ sub loadPathway {
       my $pathwayObj = $pathwaysObj->{$pathwayName};
 
 
-      #create a network and pathway record for the pathway
-      my $network = GUS::Model::ApiDB::Network->new({ name => $pathwayObj->{source_id},
-                                                      description => $pathwayName });
-      if (! $network->retrieveFromDB()) {
-        $network->submit();
-        print "Loaded Network Record for..$pathwayName\n";
+      #create a network context and pathway record for the pathway
+      my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => $pathwayObj->{source_id},
+								    description => $pathwayName });
+      if (! $networkContext->retrieveFromDB()) {
+        $networkContext->submit();
+        print "Loaded Network Context Record for..$pathwayName\n";
       } else {
-        print "Network Record already exists for: $pathwayName\n";
+        print "Network Context Record already exists for: $pathwayName\n";
         next;
       }
-      my $networkId = $network->getNetworkId();
+      my $networkContextId = $networkContext->getNetworkContextId();
 
 
 
@@ -257,7 +257,7 @@ sub loadPathway {
 
         my $imgFile = "$imageFileDir/".$pathwayObj->{image_file};
 	$imgFile =~s/ec/map/;
-        if ($self->loadPathwayImage($pathwayObj->{source_id},$networkId, \$imgFile)) {
+        if ($self->loadPathwayImage($pathwayObj->{source_id},$networkContextId, \$imgFile)) {
           print "Loaded Image for: $pathwayName\n";
         }
       } 
