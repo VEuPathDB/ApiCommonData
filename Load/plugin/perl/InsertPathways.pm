@@ -364,7 +364,7 @@ sub loadNetworkNode {
 
 
 sub loadPathwayImage{
-  my($self,$pathwaySourceId,$networkId,$imgFile) = @_;
+  my($self,$pathwaySourceId,$networkContextId,$imgFile) = @_;
 
   open(IMGFILE, $$imgFile) or die "Cannot open file $$imgFile\n";
   binmode IMGFILE;
@@ -377,7 +377,7 @@ sub loadPathwayImage{
         }
   close IMGFILE;
 
-  my $sqlCheck = "Select pathway_id from ApiDB.PathwayImage where pathway_id = $networkId";
+  my $sqlCheck = "Select pathway_id from ApiDB.PathwayImage where pathway_id = $networkContextId";
   my $dbh        = $self->getQueryHandle();
   my $sth        = $dbh->prepare($sqlCheck);
   $sth->execute();
@@ -395,7 +395,7 @@ sub loadPathwayImage{
 
     my $sthInsert = $dbh->prepare($sql);
     $sthInsert->bind_param(3,$data,{ora_type=>SQLT_BIN});#BIND FOR BLOB DATA - IMAGE
-    $sthInsert->execute($networkId, $pathwaySourceId, $data, $userId, $groupId, $projectId, $algInvId);
+    $sthInsert->execute($networkContextId, $pathwaySourceId, $data, $userId, $groupId, $projectId, $algInvId);
 
     if ($self->getArg('commit')) {
       $dbh->commit();
