@@ -115,12 +115,21 @@ sub run {
     }
     close F;
   }
+
+
     ##now need to loop through records and assign to genes ..
     $self->addRecordsToGenes($recordSet);
     
     $self->pruneDuplicateAndEmptyRecords($recordSet);
     $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords}) if $self->{copiedRecords};
     
+
+  $self->unionPeptidesForRecords($recordSet);
+  $self->unionPeptidesForRecords($self->{copiedRecords}) if $self->{copiedRecords};
+
+  print Dumper $recordSet;
+  exit;
+
     warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
     $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
     if($self->{copiedRecords}){
@@ -134,6 +143,149 @@ Added $self->{featuresAdded} @{[ ($self->{featuresAdded} == 1) ? 'feature':'feat
 Skipped $self->{summariesSkipped} @{[ ($self->{summariesSkipped} == 1) ? 'summary':'summaries' ]}.
 EOF
 }
+
+
+sub unionPeptidesForRecords {
+  my ($self, $recordSet) = @_;
+
+  my %recordsById;
+
+  # fill in the hashmap so we can lookup records by aaSequenceId
+  for(my $i = 0; $i < scalar @$recordSet; $i++) {
+    my $record = $recordSet->[$i];
+    $record->{recordIndex} = $i;
+
+
+    my $aaSequenceId = $record->{aaSequenceId};
+    push @{$recordsById{$aaSequenceId}}, $record;
+  }
+
+  # loop through the records for each aaSequence;  push all peptides onto the first; mark rest as failed
+  foreach my $aaSequenceId (keys %recordsById) {
+    my $unionRecords = $recordsById{$aaSequenceId};
+    
+    for(my $i = 0; $i < scalar @$unionRecords; $i++) {
+      my $keepMe = $unionRecords->[0];
+
+      if($i == 0) {
+        # null these out; these don't make sense if we union peptides from different groups
+        $keepMe->{percentCoverage} = undef;
+        $keepMe->{score} = undef;
+        $keepMe->{description} = undef;
+        $keepMe->{seqMolWt} = undef;
+        $keepMe->{seqPI} = undef;
+
+        # sequence count and peptide count will be calculated after union peptides
+        $keepMe->{spectrumCount} = undef;
+        $keepMe->{sequenceCount} = undef;
+        next;
+      }
+      
+      my $deleteMe = $unionRecords->[$i];
+
+      # keepMe and deleteMe should be the same gene (same naFeature Id and aaFeatParentId 
+      unless($keepMe->{naFeatureId} == $deleteMe->{naFeatureId} && $keepMe->{aaFeatParentId} == $deleteMe->{aaFeatParentId}) {
+        die "Cannot union peptides from records which do not map to the same gene";
+      }
+      
+      my $keepIndex = $keepMe->{recordIndex};
+      my $deleteIndex = $deleteMe->{recordIndex};
+      
+      push @{$recordSet->[$keepIndex]->{peptides}}, @{$deleteMe->{peptides}};
+      $recordSet->[$deleteIndex]->{failed} = 1;
+    }
+  }
+  
+
+  # loop through a final time and mark duplicate peptides;  set spectrum and sequence count for aaSequenceId
+  foreach my $record (@$recordSet) {
+    next if($record->{failed});
+    
+    for(my $i = 0; $i < scalar @{$record->{peptides}}; $i++) {
+      my $peptideA = $record->{peptides}->[$i];
+      next if($peptideA->{failed});
+
+      for(my $j = 0; $j < scalar @{$record->{peptides}}; $j++) {
+        next if($i == $j); # don't need to test self
+        
+        my $peptideB = $record->{peptides}->[$j];
+        
+        if($peptideA->{sequence} eq $peptideB->{sequence} && $self->sameResidues($peptideA, $peptideB)) {
+          
+          
+          die "spectrum count not provided for " . $peptideA->{sequence} unless($peptideA->{spectrum} && $peptideA->{spectrum});
+          die "duplicate peptide sequence w/ unequal spectrum counts" unless($peptideA->{spectrum} == $peptideB->{spectrum});
+          
+          $peptideB->{failed} = 1;
+          
+          # keep the peptide attributes if they are equal;
+          foreach my $attr("observed", "mr_expect", "query", "hit",
+                           "ions_score", "description", "end", "start", 
+                           "miss", "delta", "mr_calc", "modification") {
+            $peptideA->{$attr} = $self->peptideAttribute($peptideA, $peptideB, $attr);
+          }
+          
+        }
+      }
+    }
+
+    # counts we care about for the aaSequence
+    my ($spectrumCount, $sequenceCount);
+
+    foreach my $pep (@{$record->{peptides}}) {
+      next if($pep->{failed});
+
+      $spectrumCount = $spectrumCount + $pep->{spectrum};
+      $sequenceCount++;
+    }
+
+    $record->{spectrumCount} = $spectrumCount;
+    $record->{sequenceCount} = $sequenceCount;
+  }
+}
+
+
+sub sameResidues {
+  my ($self, $peptideA, $peptideB) = @_;
+
+  if(($peptideA->{residues} && !$peptideB->{residues}) || ($peptideB->{residues} && !$peptideA->{residues})) {
+    return 0;
+  }
+
+  if(!$peptideA->{residues} && !$peptideA->{residues}) {
+    return 1;
+  }
+
+  die "same peptide sequence different number of residues" unless(scalar @{$peptideA->{residues}} == scalar @{$peptideA->{residues}});
+
+  for(my $i = 0; $i < scalar @{$peptideA->{residues}}; $i++) {
+    my $residueA = $peptideA->{residues}->[$i];
+    my $residueB = $peptideB->{residues}->[$i];
+
+    die "different attributes for peptide residue" unless(scalar keys %{$residueA} == scalar keys %{$residueB});    
+
+    foreach my $key (keys %{$residueA}) {
+      unless($residueA->{$key} eq $residueB->{$key}) {
+        die "values for residue are different";
+      }
+    }
+  }
+
+  return 1;
+}
+
+
+sub peptideAttribute {
+  my ($self, $peptideA, $peptideB, $attr) = @_;
+
+  if($peptideA->{$attr} eq $peptideB->{$attr}) {
+    return $attr;
+  }
+ 
+  return "";
+}
+
+
 
 sub initRecord {
   my ($self, $ln, $record) = @_;
@@ -660,7 +812,8 @@ sub addMassSpecFeatureToRecord {
     $pep->{modification},
     $pep->{query},
     $pep->{hit},
-    $pep->{ions_score}
+    $pep->{ions_score},
+    $pep->{spectrum}
   ) = split "\t", $ln;
 
   #    $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
@@ -750,9 +903,9 @@ sub insertMassSpecSummary {
                                                      'number_of_spans'               => scalar(keys%peps),
                                                      'prediction_algorithm_id'       => $self->getPredictionAlgId,
                                                      'spectrum_count'                => $record->{spectrumCount},
-                                                     'aa_seq_length'                 => $record->{seqLength},
-                                                     'aa_seq_molecular_weight'       => $record->{seqMolWt},
-                                                     'aa_seq_pi'                     => $record->{seqPI},
+                                                    # 'aa_seq_length'                 => $record->{seqLength},
+                                                    # 'aa_seq_molecular_weight'       => $record->{seqMolWt},
+                                                    # 'aa_seq_pi'                     => $record->{seqPI},
                                                      'aa_seq_percent_covered'        => $self->computeSequenceCoverage($record),
                                                      'external_database_release_id'  => $self->{extDbRlsId},
                                                      'sample_file'                   => $record->{file},
@@ -792,6 +945,7 @@ sub insertMassSpecFeatures {
                                                             'external_database_release_id' => $self->{extDbRlsId},
                                                             'developmental_stage'     => $record->{devStage},
                                                             'description'             => $pep->{description},
+                                                            'spectrum_count'          => $pep->{spectrum},
                                                             'source_id'               => $mss->getMassSpecSummaryId,
                                                             'is_predicted'            => 1,
                                                            });
@@ -1190,12 +1344,12 @@ BPB change:  the description contains additional identifiers delimited by '|'
 Sample tab-delimited input:
 # source_id	description	seqMolWt	seqPI	score	percentCoverage	sequenceCount	spectrumCount	sourcefile
 Liv008927	AAEL01000002-1-20221-21813	60509	4.82	117	3	2	2	CrypProt LTQ spot k2 Protein View.htm
-## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
+## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score	spectrum
 301	309	530.12	1058.23	1057.54	0.69	0	VNADLLEER		11	1	88
 311	320	588.39	1174.77	1175.59	-0.81	0	VLVGEMEIDR	Oxidation (M) 	14	1	29
 # source_id	description	seqMolWt	seqPI	score	percentCoverage	sequenceCount	spectrumCount	sourcefile
 Liv070540	AAEE01000003-3-1125870-1128359	92046	4.49	430	17	9	9	CrypProt LTQ spot L Protein View.htm
-## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
+## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score	spectrum
 79	85	422.79	843.57	842.44	1.13	0	LFGFFGR		8	1	30
 164	182	648.42	1942.22	1940.88	1.35	0	SAPAPVAEHFDGESSSEPK		39	8	7
 205	217	621.99	1241.96	1242.65	-0.68	0	GAIPGIVSEESGK		22	1	63
