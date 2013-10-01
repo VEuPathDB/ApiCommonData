@@ -32,7 +32,11 @@ die $usage unless -e $outputDir;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-foreach my $d (sort @ds) {
+# sort diretory name by the number in the string, e.g. hour2, hour10, hour20...
+#foreach my $d (sort @ds) {
+foreach my $d (map  { $_->[0] }
+               sort { $a->[1] <=> $b->[1] }
+               map  { [$_, $_=~/(\d+)/] } @ds) {
   next unless $d =~ /^analyze_(\S+)/;
   $inputDir =~ s/\/$//;
   my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
