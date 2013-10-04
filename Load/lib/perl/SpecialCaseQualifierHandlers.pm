@@ -189,6 +189,11 @@ sub sourceIdAndTranscriptSeq {
     $geneFeature->setIsPseudo(0);
   }
 
+  ## intialize isPartial
+  if (!defined($geneFeature->getIsPartial())) {
+    $geneFeature->setIsPartial(0);
+  }
+
   # now do the exons and transcript seq
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
@@ -683,6 +688,24 @@ sub rptUnit {
 
 # nothing special to do
 sub _undoRptUnit{
+  my ($self) = @_;
+
+}
+
+################ rpt_type ################################
+
+# create a comma delimited list of rpt_type
+sub rptType {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  my $rptType = join(", ", @tagValues);
+  $feature->setRptType($rptType);
+  return [];
+}
+
+# nothing special to do
+sub _undoRptType{
   my ($self) = @_;
 
 }
@@ -1270,6 +1293,9 @@ sub validateCodingSequenceLength {
 
 		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
 		    $warning = "***WARNING********* ";
+		    if ($feature->getIsPartial()){
+		      $warning .= "Partial ";
+		    }
 		    if($feature->getIsPseudo()){
 			$warning .= "Pseudogene ";
 		    }
@@ -1289,19 +1315,28 @@ sub validateCodingSequenceLength {
 			$self->{plugin}->log("$warning\n");
 		    }
 		}else{
-		if($feature->getIsPseudo()){
+		  $warning = "***WARNING********* Coding sequence for ";
+		  if ($feature->getIsPartial()){
+		    $warning .= "partial ";
+		  }
+		  if($feature->getIsPseudo()){
+		    $warning .= "pseudo";
+		  }
+		  $warning .= "gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
 
+		  # if($feature->getIsPseudo()){
+		  #   $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
+		  # }else{
+		  #   $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
+		  # }
 
-		    $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
-			
-		    if($self->{plugin}->{vlFh}){
-			$self->{plugin}->{vlFh}->print("$warning\n");
-		    }else{
-			$self->{plugin}->log("$warning\n");
+		    ## set is_partial=1 if gene does not have a stop codon
+		    if ($bioperlFeature->primary_tag() =~ /gene/) {
+		      $feature->setIsPartial(1);
+		      $transcript->setIsPartial(1);
+		    } else {
+		      $feature->setIsPartial(1);
 		    }
-		}else{
-		    $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
-		    
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1309,7 +1344,6 @@ sub validateCodingSequenceLength {
 			$self->{plugin}->log("$warning\n");
 		    }			
 #		    push(@{$self->{plugin}->{validationErrors}},$msg);
-		}
 	    }
 
 	    }
@@ -1415,7 +1449,12 @@ sub validateGene {
 #		last;
 	    }else{
 		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
-		    $msg = "***ERROR********* $proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
+		  $msg = "***ERROR********* ";
+
+		  $msg .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
+		  $msg .= "Pseudogene " if ($feature->getIsPseudo());
+
+		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
 	
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$msg\n");
@@ -1429,10 +1468,10 @@ sub validateGene {
 	    }
 		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
 		    $warning = "***WARNING********* ";
-		    if ($feature->getIsPseudo()){
-			$warning .= "Pseudogene ";
-		    }
-		    
+
+		    $warning .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
+		    $warning .= "Pseudogene " if ($feature->getIsPseudo());
+
 		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 		    if($self->{plugin}->{vlFh}){
