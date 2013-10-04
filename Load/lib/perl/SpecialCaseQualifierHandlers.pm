@@ -189,6 +189,11 @@ sub sourceIdAndTranscriptSeq {
     $geneFeature->setIsPseudo(0);
   }
 
+  ## intialize isPartial
+  if (!defined($geneFeature->getIsPartial())) {
+    $geneFeature->setIsPartial(0);
+  }
+
   # now do the exons and transcript seq
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
@@ -1288,6 +1293,9 @@ sub validateCodingSequenceLength {
 
 		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
 		    $warning = "***WARNING********* ";
+		    if ($feature->getIsPartial()){
+		      $warning .= "Partial ";
+		    }
 		    if($feature->getIsPseudo()){
 			$warning .= "Pseudogene ";
 		    }
@@ -1307,11 +1315,20 @@ sub validateCodingSequenceLength {
 			$self->{plugin}->log("$warning\n");
 		    }
 		}else{
-		  if($feature->getIsPseudo()){
-		    $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
-		  }else{
-		    $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
+		  $warning = "***WARNING********* Coding sequence for ";
+		  if ($feature->getIsPartial()){
+		    $warning .= "partial ";
 		  }
+		  if($feature->getIsPseudo()){
+		    $warning .= "pseudo";
+		  }
+		  $warning .= "gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
+
+		  # if($feature->getIsPseudo()){
+		  #   $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
+		  # }else{
+		  #   $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
+		  # }
 
 		    ## set is_partial=1 if gene does not have a stop codon
 		    if ($bioperlFeature->primary_tag() =~ /gene/) {

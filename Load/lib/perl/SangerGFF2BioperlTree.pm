@@ -287,12 +287,20 @@ sub traverseSeqFeatures {
 	    
 	    my $codonStart = 0;
 	    
-	    
 	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 
 	    if($gene->has_tag('selenocysteine')){
 		$gene->remove_tag('selenocysteine');
 		$gene->add_tag_value('selenocysteine','selenocysteine');
+	    }
+
+	    ## for some of them that have partial in the comment qualifier
+	    if ($gene->has_tag('comment')){
+	      my ($comment_val) = $gene->get_tag_values('comment');
+	      if ($comment_val =~ /partial/) {
+		#$gene->remove_tag('comment');
+		$gene->add_tag_value('Partial','');
+	      }
 	    }
 
 	    $codonStart -= 1 if $codonStart > 0;
