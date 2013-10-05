@@ -313,6 +313,35 @@ SQL
 }
 $stmt->finish();
 
+## MM. to fix Bug #14407, check if the length of the gene is shorter than the sum of the exons' length 
+my (%gSourceIds, %gLengths);
+my $sql = "select gf.na_feature_id, gf.source_id, nl.start_min, nl.end_max, nl.is_reversed 
+from dots.genefeature gf, dots.nalocation nl
+where nl.na_feature_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId";
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($gNaFeatureId, $gSourceId, $gStart, $gEnd, $ifReversed) = $stmt->fetchrow_array() ) {
+    $gSourceIds{$gNaFeatureId} = $gSourceId;
+    $gLengths{$gNaFeatureId} = abs($gStart-$gEnd) + 1;
+}
+$stmt->finish();
+
+foreach my $kk (sort keys %gSourceIds) {
+ 
+my $sql = "select start_min, end_max, is_reversed from dots.nalocation where na_feature_id in (
+select na_feature_id from dots.exonfeature where parent_id=?)"; 
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute($kk);
+    my $exonLength = 0;
+    while (my ($eStart, $eEnd, $eIfRev) = $stmt->fetchrow_array() ) {
+        $exonLength += abs($eStart-$eEnd)+1;
+    }
+    $stmt->finish();
+    print STDERR "checked $gSourceIds{$kk}, gene length $gLengths{$kk} < sum of exons length $exonLength\n" if ($gLengths{$kk} < $exonLength);
+    #print ".";
+}
+
 ## P. check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;
   select distinct name, count(*) from dots.Miscellaneous where external_database_release_id=$extDbRlsId group by name
