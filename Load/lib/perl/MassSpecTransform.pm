@@ -18,6 +18,21 @@ sub setPeptideIonScoreColumn            { $_[0]->{peptideIonScoreColumn} = $_[1]
 
 
 sub getInputFile                        { $_[0]->{inputFile} }
+sub getOutputFile                       { $_[0]->{outputFile} }
+
+sub getOutputFh                         { $_[0]->{output_fh} }
+sub setOutputFh {
+  my ($self) = @_;
+
+  my $outputFile = $self->getOutputFile();
+
+  open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing:$!";
+
+  $self->{output_fh} = \*OUT;
+}
+
+
+
 sub getSkipLinesCount                   { $_[0]->{skipLinesCount} }
 sub getDelimiter                        { $_[0]->{delimiter} }
 sub getTrimPeptideRegex                 { $_[0]->{trimPeptideRegex} }
@@ -37,6 +52,11 @@ sub new {
       $args->{$arg} = undef;
     }
   }
+
+  unless($args->{inputFile} && $args->{outputFile}) {
+    die "Could Not create class $class";
+  }
+
 
   return bless $args, $class;
 }
@@ -377,9 +397,152 @@ sub isPeptideModified {
 }
 
 
-# TODO:
-#  writeFile
-#  writeProtein
-#  writePeptide
-#  writeModification
+
+sub writeFile {
+  my ($self) = @_;
+
+  $self->setOutputFh();
+
+  foreach my $proteinId (keys %{$self->{data}}) {
+    my $gene = $self->{data}->{$proteinId}->{gene};
+
+    $self->writeProteinHeader();
+    $self->writeProtein($proteinId, $gene);
+
+    foreach my $peptide (@{$self->{data}->{$proteinId}->{peptides}}) {
+
+      $self->writePeptideHeader();
+      $self->writePeptide($peptide);
+
+      foreach my $mod (@{$peptide->{modified_residues}}) {
+
+        $self->writeModificationHeader();
+        $self->writeModification($mod);
+      }
+    }
+
+  }
+}
+
+sub writeProteinHeader {
+  my ($self) = @_;
+
+  my @header = ('# source_id',
+                'description',
+                'seqMolWt',
+                'seqPI',
+                'score',
+                'percentCoverage',
+                'sequenceCount',
+                'spectrumCount',
+                'sourcefile'
+      );
+
+  $self->printRow(\@header);
+}
+
+sub writePeptideHeader {
+  my ($self) = @_;
+
+  my @header = ('## start',
+                'end',
+                'observed',
+                'mr_expect',
+                'mr_calc',
+                'delta',
+                'miss',
+                'sequence',
+                'modification',
+                'query',
+                'hit',
+                'ions_score',
+                'spectrum_count'
+      );
+
+  $self->printRow(\@header);
+}
+
+sub writeModificationHeader {
+  my ($self) = @_;
+
+  my @header = ('## relative_position',
+                'order',
+                'description',
+                'modification_type'
+      );
+
+  $self->printRow(\@header);
+}
+
+
+sub writeProtein {
+  my ($self, $proteinId, $gene) = @_;
+
+  my $sourceId = $gene ? $gene : $proteinId;
+
+  my @row = ($sourceId,
+             $proteinId,
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             ''
+      );
+
+  $self->printRow(\@row);
+}
+
+
+sub writePeptide {
+  my ($self, $peptide) = @_;
+
+  my $sequence = $peptide->{sequence};
+  my $spectrum = $peptide->{spectrum};
+  my $ionScore = $peptide->{ion_score};
+
+  my @row = ('',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             $sequence,
+             '',
+             '',
+             '',
+             $ionScore,
+             $spectrum
+      );
+
+  $self->printRow(\@row);             
+}
+
+sub writeModification {
+  my ($self, $mod) = @_;
+
+  my $relativePosition = $mod->{relative_position};
+  my $modificationType = $mod->{modification_type};
+  my $orderNum = $mod->{order_num};
+
+  my @row = ($relativePosition,
+             $orderNum,
+             '',
+             $modificationType
+      );
+
+  $self->printRow(\@row);
+}
+
+sub printRow {
+  my ($self, $array) = @_;
+
+  my $fh = $self->getOutputFh();
+
+  print $fh join("\t", @$array) . "\n";
+}
+
 1;
