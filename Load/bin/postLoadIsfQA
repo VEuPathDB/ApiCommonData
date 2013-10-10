@@ -181,14 +181,17 @@ while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## I. check if the translatedaasequence does not have null sequence
+## I. check if the translatedaasequence does not have null sequence 
+##    and also check if the length of aa sequence < 10
 my $sql = <<SQL;
   select source_id, sequence from dots.translatedaasequence where external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array();
-print STDERR "ERROR: the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
+while (my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array() ) {
+  print STDERR "ERROR: the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
+  print STDERR "WARNING: the length of protein sequence is less than 10 aa.\n    $aaSourceId: $aaSeq\n" if (length($aaSeq) < 10);
+}
 $stmt->finish();
 
 ## J. check the seq # in translatedaaSequence table and translatedaaFeature table
