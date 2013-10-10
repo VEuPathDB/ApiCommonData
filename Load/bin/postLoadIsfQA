@@ -230,8 +230,9 @@ my $sql = <<SQL;
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute();
-    my ($sourceId) = $stmt->fetchrow_array();
-    print STDERR "ERROR: in the table dots.translatedaafeature, $column $exp . \n" if ($sourceId);
+    while (my ($sourceId) = $stmt->fetchrow_array() ) {
+      print STDERR "ERROR: in the table dots.translatedaafeature, $sourceId, $column $exp . \n" if ($sourceId);
+    }
     $stmt->finish();
   }
 }
@@ -390,14 +391,16 @@ $stmt->finish();
 sub usage {
   die
 "
-A script to do QA for ISF post loading, this should be done right after ISF
-Usage: postLoadIsfQA --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01 --reportFile report.txt
+A script to do QA for ISF post loading, this should be done right after ISF testing
+Usage: postLoadIsfQA --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
+
 NOTE: the GUS_HOME should point to the instance that the annotation has been loaded
 
 where
   --organismAbbrev: the organism Abbrev in the table apidb.organism
   --extDbName: the external database name for loading genome and annoation
   --extDbRlsVer: the external database release version for loading genome and annotation
+
 ";
 }
 
