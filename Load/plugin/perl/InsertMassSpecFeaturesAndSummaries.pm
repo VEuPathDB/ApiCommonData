@@ -213,8 +213,8 @@ sub unionPeptidesForRecords {
         if($peptideA->{sequence} eq $peptideB->{sequence} && $self->sameResidues($peptideA, $peptideB)) {
           
           
-          die "spectrum count not provided for " . $peptideA->{sequence} unless($peptideA->{spectrum} && $peptideA->{spectrum});
-          die "duplicate peptide sequence w/ unequal spectrum counts" unless($peptideA->{spectrum} == $peptideB->{spectrum});
+          die "spectrum count not provided for " . $peptideA->{sequence} unless($peptideA->{spectrum_count} && $peptideB->{spectrum_count});
+          die "duplicate peptide sequence w/ unequal spectrum counts" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
           
           $peptideB->{failed} = 1;
           
@@ -235,7 +235,7 @@ sub unionPeptidesForRecords {
     foreach my $pep (@{$record->{peptides}}) {
       next if($pep->{failed});
 
-      $spectrumCount = $spectrumCount + $pep->{spectrum};
+      $spectrumCount = $spectrumCount + $pep->{spectrum_count};
       $sequenceCount++;
     }
 
@@ -803,6 +803,7 @@ sub addMassSpecFeatureToRecord {
   my $pep = {};
   ( $pep->{start},
     $pep->{end},
+
     $pep->{observed},
     $pep->{mr_expect},
     $pep->{mr_calc},
@@ -812,9 +813,13 @@ sub addMassSpecFeatureToRecord {
     $pep->{modification},
     $pep->{query},
     $pep->{hit},
+
     $pep->{ions_score},
-    $pep->{spectrum}
+
+    $pep->{spectrum_count}
   ) = split "\t", $ln;
+
+  $self->userError("required peptide attribute spectrum_count not provided") unless($pep->{spectrum_count});
 
   #    $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
@@ -945,7 +950,7 @@ sub insertMassSpecFeatures {
                                                             'external_database_release_id' => $self->{extDbRlsId},
                                                             'developmental_stage'     => $record->{devStage},
                                                             'description'             => $pep->{description},
-                                                            'spectrum_count'          => $pep->{spectrum},
+                                                            'spectrum_count'          => $pep->{spectrum_count},
                                                             'source_id'               => $mss->getMassSpecSummaryId,
                                                             'is_predicted'            => 1,
                                                            });
