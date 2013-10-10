@@ -24,14 +24,18 @@ my @properties = (#["proteinIdColumn"],
                   #["peptideSpectrumColumn"],
                   #["peptideIonScoreColumn"],
                   ["class", "ApiCommonData::Load::MassSpecTransform"],
-                  ["skipLines"],
                   ["delimiter","\t"],
                   ["trimPeptideRegex", '^\w*\.(\w+)\.\w*$'],
+                  ["skipLines"],
                   ["headerRegex"],
     );
 
 
-#TODO:  print usage if required args not provided
+if($help) {
+  &usage();
+  exit;
+}
+
 
 my $prop = CBIL::Util::PropertySet->new($config, \@properties, 1);
 
@@ -67,6 +71,32 @@ die "Could not create class $class" if $@;
 $mst->readFile();
 
 $mst->writeFile();
+
+
+sub usage {
+  print "usage:  parseSimpleMassSpec.pl -data_file <INPUT> -output_file <OUTPUT> -config_file <CONFIG> [-debug]\n\n";
+
+  print "SAMPLE PROP FILE:
+
+# required 
+skipLines=2
+headerRegex=TriTrypDB accession number
+
+# required but prompted 
+proteinIdColumn=
+geneSourceIdColumn=
+peptideSequenceColumn=
+peptideSpectrumColumn=
+peptideIonScoreColumn=
+
+# override defaults only if needed
+class=
+delimiter=
+trimPeptideRegex=
+
+";
+  
+}
 
 1;
 

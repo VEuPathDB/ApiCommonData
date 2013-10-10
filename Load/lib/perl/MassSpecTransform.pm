@@ -99,8 +99,11 @@ sub hasMissingRequiredColumnInfo {
 sub hasMissingColumnInfo {
   my ($self) = @_;
 
-  unless(defined $self->getProteinIdColumn() && defined $self->getPeptideSequenceColumn() &&
-         defined $self->getGeneSourceIdColumn() && defined $self->getPeptideSpectrumColumn() &&
+  if($self->hasMissingRequiredColumnInfo()) {
+    return 1;
+  }
+
+  unless(defined $self->getGeneSourceIdColumn() && defined $self->getPeptideSpectrumColumn() &&
          defined $self->getPeptideIonScoreColumn()) {
     return 1;
   }
@@ -120,6 +123,8 @@ sub isHeaderLine {
 
 }
 
+
+# may need to override this 
 sub isProteinLine {
   my ($self, $lineString, $lineArray) = @_;
 
@@ -243,7 +248,7 @@ sub readFile {
     }
 
     unless(defined $self->getPeptideSpectrumColumn()) {
-      print "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
+      print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
     }
 
 
@@ -422,6 +427,9 @@ sub writeFile {
     }
 
   }
+
+  my $fh = $self->getOutputFh();  
+  close $fh;
 }
 
 sub writeProteinHeader {
@@ -544,5 +552,37 @@ sub printRow {
 
   print $fh join("\t", @$array) . "\n";
 }
+
+1;
+
+
+
+package ApiCommonData::Load::MassSpecTransform::Example;
+
+@ISA qw(ApiCommonData::Load::MassSpecTransform);
+use ApiCommonData::Load::MassSpecTransform;
+
+# Example case where meaning of * character is different
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'*' => 'modified_L_leucine',
+  };
+
+  return $rv;
+}
+
+# Example case for asking if the line I'm on is a protein line
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  # PUT Logic here specific to your data
+  if(scalar @$lineArray == 10) {
+    return 1;
+  }
+
+  return 0;
+}
+
 
 1;
