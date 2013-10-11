@@ -103,7 +103,7 @@ sub run {
 
   my $algInvocationId = $database->getDefaultAlgoInvoId();
 
-  my $tempTableCreateHSql = "CREATE TABLE apidb.SpliceSiteGeneCoordinates_$algInvocationId AS
+  my $tempTableCreateHSql = "CREATE TABLE apidb.SSGCoor_$algInvocationId AS
   SELECT na_sequence_id, source_id, alpha, beta, gamma, delta, strand FROM (
   --CASE A:  1st gene on forward strand
    SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
