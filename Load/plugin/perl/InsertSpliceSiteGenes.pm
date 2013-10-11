@@ -224,7 +224,7 @@ sub run {
   CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$algInvocationId ga
+  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='forward'
   and ssf.strand ='+' and ssf.type='Splice Site'
@@ -235,7 +235,7 @@ sub run {
   CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$algInvocationId ga
+  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='reverse'
   and ssf.sample_name='$sampleName'
@@ -267,7 +267,7 @@ sub run {
       $self->undefPointerCache();
     }
   }
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SpliceSiteGeneCoordinates_$algInvocationId");
+  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SSGCoor_$algInvocationId");
   $tempTableDropH->execute() or die $dbh->errstr;
   $tempTableDropH->finish();
 }
