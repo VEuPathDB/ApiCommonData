@@ -16,7 +16,7 @@ sub loopDir {
       my $filesize = (stat($f))[7];
       if (-d $f) {
          &loopDir($f);
-     }elsif ($filesize > 1073741824) {
+     }elsif ($filesize > 1073741824 && $f !~ /\.gz$/) {
 	 $filesize = getFileSize($f); 
 	 print "compressing $f\t$filesize\n";
 	 system ("gzip $f");
