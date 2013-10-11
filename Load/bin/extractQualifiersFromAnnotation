@@ -246,6 +246,7 @@ sub processFeature {
 							}
 						} else {
 							## get rid of some funny character after ; for product
+							$value =~ s/rank=1;// if ($outputHash{$qualifier} =~ /products/);  ## for pyoeyoelii17XNL
 							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /products/);
 							if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value}) {
 							  if (!$idsInDb{$sourceId} ) {
