@@ -119,20 +119,20 @@ foreach my $k (sort keys %oldSeqs) {
     if ($aliases{$k}) {
       $aliasCt++;
     } else {
-      print "WARNING: source Id not found in the new annotation -- $k\n";
+      print "WARNING: old source Id not found in the new annotation -- $k\n";
       $notAliasCt++;
     }
     $newIdCt++;
   }
   $ct++;
 }
-print STDERR "Total old source Id = $ct\n" if ($ct);
-print STDERR "    same as the new source Id = $sameCt\n" if ($sameCt);
-print STDERR "    possible reuse source Id = $reuseCt\n" if ($reuseCt);
-print STDERR "    but not in the new source Id = $newIdCt\n" if ($newIdCt);
-print STDERR "For those that not in the new source Id\n";
-print STDERR "    in the aliases file = $aliasCt\n" if ($aliasCt);
-print STDERR "    not in the aliases file = $notAliasCt\n" if ($notAliasCt);
+print "Total old source Id = $ct\n" if ($ct);
+print "    same as the new source Id = $sameCt\n" if ($sameCt);
+print "    possible reuse source Id = $reuseCt\n" if ($reuseCt);
+print "    but not in the new source Id = $newIdCt\n" if ($newIdCt);
+print "For those that not in the new source Id\n";
+print "    in the aliases file = $aliasCt\n" if ($aliasCt);
+print "    not in the aliases file = $notAliasCt\n" if ($notAliasCt);
 $sameCt=0;
 $reuseCt=0;
 $newIdCt=0;
@@ -149,7 +149,7 @@ based on the transcript sequence and length
 Usage: perl compareOldAnnotationWithNewAnnot --organismAbbrev pyoeyoelii17XNL 
 --extDbName pyoeyoelii17XNL_primary_genome_RSRC --extDbRlsVer 2013-10-01 
 --oldTranscriptFile PlasmoDB-9.3_Pyoelii17XNL_AnnotatedTranscripts.fasta 
---newAliasesFile pyoeyoelii17XNL_aliases.txt > error.log
+--newAliasesFile pyoeyoelii17XNL_aliases.txt > warning.log
 
 NOTE: the GUS_HOME should point to the instance that has the new annotation has been loaded
 
