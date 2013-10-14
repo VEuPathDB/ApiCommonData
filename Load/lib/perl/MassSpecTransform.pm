@@ -2,6 +2,8 @@ package ApiCommonData::Load::MassSpecTransform;
 
 use strict;
 
+use vars qw( @ISA );
+
 # these are required columns in the input file
 sub getProteinIdColumn                  { $_[0]->{proteinIdColumn} }
 sub setProteinIdColumn                  { $_[0]->{proteinIdColumn} = $_[1] eq "" ? undef : $_[1] }
@@ -558,9 +560,7 @@ sub printRow {
 
 
 package ApiCommonData::Load::MassSpecTransform::Example;
-
-@ISA qw(ApiCommonData::Load::MassSpecTransform);
-use ApiCommonData::Load::MassSpecTransform;
+use base qw(ApiCommonData::Load::MassSpecTransform);
 
 # Example case where meaning of * character is different
 sub getModificationSymbolMap {
@@ -584,10 +584,10 @@ sub isProteinLine {
   return 0;
 }
 
-package ApiCommonData::Load::MassSpecTransform::Kappe_Sprotozoite;
+1;
 
-@ISA qw(ApiCommonData::Load::MassSpecTransform);
-use ApiCommonData::Load::MassSpecTransform;
+package ApiCommonData::Load::MassSpecTransform::KappeSprotozoite;
+use base qw(ApiCommonData::Load::MassSpecTransform);
 
 #Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
 sub isPeptideLine {

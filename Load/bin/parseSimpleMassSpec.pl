@@ -6,6 +6,8 @@ use CBIL::Util::PropertySet;
 
 use Getopt::Long;
 
+use ApiCommonData::Load::MassSpecTransform;
+
 use Data::Dumper;
 
 my ($help, $file, $config, $debug, $out);
