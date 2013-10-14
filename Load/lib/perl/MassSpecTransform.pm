@@ -584,5 +584,19 @@ sub isProteinLine {
   return 0;
 }
 
+package ApiCommonData::Load::MassSpecTransform::Kappe_Sprotozoite;
+
+@ISA qw(ApiCommonData::Load::MassSpecTransform);
+use ApiCommonData::Load::MassSpecTransform;
+
+#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($self->isProteinLine($lineString, $lineArray)) {
+    return 1;
+  }
+  return 0;
+}
 
 1;
