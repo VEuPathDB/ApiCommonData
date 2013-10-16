@@ -312,6 +312,19 @@ sub loadPathway {
         $self->undefPointerCache();
       }# close relationships
 
+      #read and load maps
+      print "Loading pathways Nodes\n";
+      foreach my $n (keys %{$pathwayObj->{nodes}}) {
+        my $node = $pathwayObj->{nodes}->{$n};
+	if ( $node->{node_type} eq 'map' ) {
+	  my $mapNode = $node->{node_name};
+	  my $nodeGraphics = $pathwayObj->{graphics}->{$mapNode};
+	  $self->loadNetworkNode($pathwayId, $node, $nodeGraphics);
+	}
+
+      }
+
+
         #---------------
         #For Future TO DO
         #Cross Ref Enzymes and compounds. A new DBXref for pathway Enzymes and Compounds weill have to be created.
@@ -334,7 +347,7 @@ sub loadNetworkNode {
   my($self,$pathwayId, $node,$nodeGraphics) = @_;
 
   if ($node->{node_name}) {
-    my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : 3;
+    my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
 
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
                                                             node_type_id => $node_type });
@@ -343,7 +356,7 @@ sub loadNetworkNode {
     my $nodeId = $networkNode->getNetworkNodeId();
  
     my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
-                    ($nodeGraphics->{shape} eq 'rectangle') ? 2 : 3;
+                    ($nodeGraphics->{shape} eq 'rectangle') ? 2 : ($nodeGraphics->{shape} eq 'roundrectangle') ? 3 : 4;
 
     #if a parent Pathway Id is provided only then insert a new record.
     if ($pathwayId){
