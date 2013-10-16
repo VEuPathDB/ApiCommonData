@@ -301,8 +301,9 @@ sub addPeptide {
   }
 
   my $cleanedPeptideSequence = $peptideSequence;
-
-  if($peptideSequence =~ qr/$self->getPeptideRegex()/) {
+  
+  my $trimPeptideRegex=$self->getTrimPeptideRegex();
+  if($peptideSequence =~ /$trimPeptideRegex/) {
     $cleanedPeptideSequence = $1;
   }
 
