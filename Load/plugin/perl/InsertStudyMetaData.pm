@@ -166,6 +166,7 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
     my $rowAsHash = $self->parseRow($header, $_);
 
     if((!$sampleId) ||  ($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId))){
+        if($sampleExtDbRlsSpecTemplate){
         $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
       $count++;
 	  }
