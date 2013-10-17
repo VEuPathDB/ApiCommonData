@@ -600,4 +600,18 @@ sub isPeptideLine {
   return 0;
 }
 
+package ApiCommonData::Load::MassSpecTransform::BoothroydEliasMoritz;
+use base qw(ApiCommonData::Load::MassSpecTransform::KappeSprotozoite);
+
+# Override modification_type to "phosphorylation_site"
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'*' => 'phosphorylation_site',
+  };
+
+  return $rv;
+}
+
+
 1;
