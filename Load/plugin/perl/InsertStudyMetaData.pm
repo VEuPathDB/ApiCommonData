@@ -246,6 +246,7 @@ sub processRow {
   $studyBioMaterial->setParent($bioSample);
 
   $bioSample->submit();
+  $self->undefPointerCache();
 }
 
 sub makeBioSample {
