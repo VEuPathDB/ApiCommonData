@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+use strict;
+use Spreadsheet::ParseExcel;
+use Getopt::Long;
+
+my ($fileOrDir, $outputFile, $inputFileExt, $verbose, $help);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'file_or_dir=s' => \$fileOrDir,
+	    'inputFileExt=s' => \$inputFileExt,
+            'outputFile=s' => \$outputFile,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $fileOrDir);
+die "File or directory '$fileOrDir' does not exist\n" unless -e $fileOrDir;
+
+$inputFileExt = "xls" if (!$inputFileExt);
+
+my @files;
+if (-d $fileOrDir) {
+  opendir(DIR, $fileOrDir) || die "Can't open directory '$fileOrDir'";
+  my @noDotFiles = grep { $_ ne '.' && $_ ne '..' && $_ =~ /\.$inputFileExt/ } readdir(DIR);
+  @files = map { "$fileOrDir/$_" } @noDotFiles;
+} else {
+  $files[0] = $fileOrDir;
+}
+
+
+open (OUT, ">$outputFile") || die "can not open outputFile to write.\n";
+
+foreach my $file(@files) {
+  my $parser   = Spreadsheet::ParseExcel->new();
+  my $workbook = $parser->Parse($file);
+  die "can not parse $file, which is not in excel format\n" unless ($workbook);
+
+  for my $worksheet ( $workbook->worksheets() ) {
+
+
+    my ( $row_min, $row_max ) = $worksheet->row_range();
+    my ( $col_min, $col_max ) = $worksheet->col_range();
+
+    for my $row ( $row_min .. $row_max ) {
+        for my $col ( $col_min .. $col_max ) {
+
+            my $cell = $worksheet->get_cell( $row, $col );
+            next unless $cell;
+
+            print OUT $cell->unformatted();
+	    print OUT "\t" if ($col != $col_max);
+        }
+	print OUT "\n";
+    }
+  }
+}
+close OUT;
+
+
+sub usage {
+  die
+"
+A Script to transfer a file from Excel format to tab delimited txt format
+
+Usage: excel2tab --file_or_dir whole_proteome --inputFileExt xls --outputFile outTab.txt
+
+where
+  --file_or_dir:    an Excel format file, or a directory containing a set of them
+  --inputFileExt:   the input file extension, default: xls
+  --outputFile:     the output file name
+
+";
+}
