@@ -16,14 +16,13 @@ use CBIL::Util::PropertySet;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $oldTranscriptFile, $oldProteinFile, $newAliasesFile);
+my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $oldTranscriptFile, $newAliasesFile);
 
 &GetOptions('help|h' => \$help,
             'organismAbbrev=s' => \$organismAbbrev,
             'extDbName=s' => \$extDbName,
             'extDbRlsVer=s' => \$extDbRlsVer,
 	    'oldTranscriptFile=s' => \$oldTranscriptFile,
-	    'oldProteinFile=s' => \$oldProteinFile,
 	    'newAliasesFile=s' => \$newAliasesFile,
            );
 
@@ -50,43 +49,45 @@ select edr.external_database_release_id from sres.externaldatabase ed, sres.exte
 where ed.external_database_id=edr.external_database_id and ed.name like '$extDbName' and edr.version='$extDbRlsVer'
 ";
 
-($extDbRlsId) = readFromDatabase ($sql, $dbh);
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+($extDbRlsId) = $stmt->fetchrow_array();
 print STDERR "For $organismAbbrev, get extDbRlsId=$extDbRlsId\n";
+$stmt->finish();
 
-## get the gene ID and type
-my $sqls = "select na_feature_id, source_id, name from dots.genefeature where external_database_release_id=$extDbRlsId";
-my @items = readFromDatabase ($sqls, $dbh);
+## get the new transcript sequence
+my (%newSourceIds, %newSeqs, %newLengths);
+my $sql = "select source_id, length, sequence from DOTS.splicednasequence where na_sequence_id in 
+( select na_sequence_id from DOTS.transcript where parent_id in 
+( select na_feature_id from DOTS.genefeature where external_database_release_id=?) )";
 
-my (%newSourceIds, %newSeqs, %newLengths, %newProtSeqs, %newProtLengths);
-foreach my $i (0..$#items) {
-  my ($naFeatId, $sid, $gtype) = split (/\s/, $items[$i]);
-  print STDERR "$naFeatId, $sid, $gtype\n" if ($i < 10);
+my $stmt = $dbh->prepare($sql);
+$stmt->execute($extDbRlsId);
 
-  $newSourceIds{$sid} = $sid;
-  ## if protein coding gene, get the new translatedAASequence
-  if ($gtype =~ /coding_gene/) {
-    my $sqlp = "select length, sequence from DOTS.translatedaasequence where aa_sequence_id in 
-(select aa_sequence_id from DOTS.translatedaafeature where na_feature_id in 
-(select na_feature_id from DOTS.transcript where parent_id= $naFeatId ) )";
-    my @pItems = readFromDatabase($sqlp, $dbh);
-    ($newProtLengths{$sid}, $newProtSeqs{$sid}) = split (/\s/, $pItems[0] );
-    print STDERR "in translatedAASequence, $newProtLengths{$sid}, $newProtSeqs{$sid}\n" if ($i < 10);
-  }
-
-  ## get the new splicednasequence
-  my $sqlt = "select length, sequence from DOTS.splicednasequence where na_sequence_id in 
-(select na_sequence_id from DOTS.transcript where parent_id = $naFeatId )";
-  my @tItems = readFromDatabase($sqlt, $dbh);
-  ($newLengths{$sid}, $newSeqs{$sid}) = split (/\s/, $tItems[0] );
-  print STDERR "in splicednasequence, $newLengths{$sid}, $newSeqs{$sid}\n" if ($i < 10);
+while ( my ($tSourceId, $tLength, $tSeq) = $stmt->fetchrow_array()) {
+  $tSourceId =~ s/\-\d$//g;
+  $newSourceIds{$tSourceId} = $tSourceId;
+  $newSeqs{$tSourceId} = $tSeq;
+  $newLengths{$tSourceId} = $tLength;
 }
-
+$stmt->finish();
 
 ## get the old transcript info
-my (%oldSeqs, %oldLengths, %oldCodings) = getSeqsInfoFromFasta($oldTranscriptFile);
-
-## get the old protein info
-my (%oldProtSeqs, %oldProtLengths, %oldProtCodings) = getSeqsInfoFromFasta($oldProteinFile);
+my (%oldSeqs, %oldLengths, $sourceId);
+open (OLD, "$oldTranscriptFile") || die " can not open old transcript file to read.\n";
+while (<OLD>) {
+  if ($_ =~ /^>(\S+).*length=(\d+)/) {
+    $sourceId = $1;
+    $oldLengths{$sourceId} = $2;
+    print STDERR "duplicated sourceId $sourceId in the old transcipt file\n" if ($oldSeqs{$sourceId});
+  } else {
+    my $curr = $_;
+    $curr =~ s/\s+//g;
+    $curr =~ s/\n//g;
+    $oldSeqs{$sourceId} .= uc($curr);
+  }
+}
+close OLD;
 
 ## get the aliases info
 my (%aliases, %newIdToOld);
@@ -101,28 +102,17 @@ if ($newAliasesFile) {
   close ALI;
 }
 
-## compare if the old sourceId in the new annotation
-my ($ct, $sameCt, $reuseCt, $gmChangCt, $newIdCt, $aliasCt, $notAliasCt);
+## compare if the old sourceId in the new transcript
+my ($ct, $sameCt, $reuseCt, $newIdCt, $aliasCt, $notAliasCt);
 foreach my $k (sort keys %oldSeqs) {
   if ($newSourceIds{$k}) {
     if ($newSeqs{$k} eq $oldSeqs{$k}) {
       $sameCt++;
       print "old source Id same as the new source Id -- $k\n";
     } else {
-      ## possible gene model change
-      if ($newSeqs{$k} =~ /$oldSeqs{$k}/ || $oldSeqs{$k} =~ /$newSeqs{$k}/) {
-	print "possible gene model change, start or end -- $k\n";
-	$gmChangCt++;
-      } else {
-        if ($newProtSeqs{$k} && $oldProtSeqs{$k} && $newProtSeqs{$k} eq $oldProtSeqs{$k}) {
-          $gmChangCt++;
-          print "possible gene model change, UTR -- $k\n";
-        } else {
-	  ## possible sourceId reusing.
-	  print "WARNING: possible source Id reusing -- $k\n";
-	  $reuseCt++;
-        }
-      }
+      ## possible sourceId reusing.
+      print "WARNING: possible source Id reusing -- $k\n";
+      $reuseCt++;
     }
   } else {
     ## check if in the aliases file
@@ -138,7 +128,6 @@ foreach my $k (sort keys %oldSeqs) {
 }
 print "Total old source Id = $ct\n" if ($ct);
 print "    same as the new source Id = $sameCt\n" if ($sameCt);
-print "    possible gene model change = $gmChangCt\n" if ($gmChangCt);
 print "    possible reuse source Id = $reuseCt\n" if ($reuseCt);
 print "    but not in the new source Id = $newIdCt\n" if ($newIdCt);
 print "For those that not in the new source Id\n";
@@ -149,48 +138,6 @@ $reuseCt=0;
 $newIdCt=0;
 $aliasCt=0;
 $notAliasCt=0;
-
-
-
-sub getSeqsInfoFromFasta {
-  my ($inputFile) = @_;
-  my ($sId, %seqs, %lengths, %codings);
-
-  open (IN, "$inputFile") || die "can not open $inputFile to read.\n";
-  while (<IN>) {
-    chomp;
-    if ($_ =~ /^>(\S+) \|.*length=(\d+) \|.*\| SO=(\S+)/) {
-      $sId = $1;
-      $lengths{$sId} = $2;
-      $codings{$sId} = $3;
-      print STDERR "duplicated sourceId $sId in the file $inputFile\n" if ($seqs{$sId});
-    } else {
-      my $curr = $_;
-      $curr =~ s/\s+//g;
-      $curr =~ s/\n//g;
-      $seqs{$sId} .= uc($curr);
-    }
-  }
-  close IN;
-  return (%seqs, %lengths, %codings);
-}
-
-
-sub readFromDatabase {
-  my ($sql, $dbh) = @_;
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute;
-  my (@arrays);
-  while (my @fetchs = $stmt->fetchrow_array()) {
-    my $oneline;
-    foreach my $i (0..$#fetchs) {
-      $oneline .= "$fetchs[$i] ";
-    }
-    push @arrays, $oneline;
-  }
-  $stmt->finish();
-  return @arrays;
-}
 
 
 sub usage {
