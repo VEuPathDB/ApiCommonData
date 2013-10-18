@@ -2,6 +2,8 @@
 
 use strict;
 use Spreadsheet::ParseExcel;
+use Spreadsheet::XLSX;
+use Text::Iconv;
 use Getopt::Long;
 
 my ($fileOrDir, $outputFile, $inputFileExt, $verbose, $help);
@@ -31,28 +33,50 @@ if (-d $fileOrDir) {
 
 open (OUT, ">$outputFile") || die "can not open outputFile to write.\n";
 
-foreach my $file(@files) {
-  my $parser   = Spreadsheet::ParseExcel->new();
-  my $workbook = $parser->Parse($file);
-  die "can not parse $file, which is not in excel format\n" unless ($workbook);
+if ($inputFileExt eq 'xls') {
+  foreach my $file(@files) {
+    my $parser   = Spreadsheet::ParseExcel->new();
+    my $workbook = $parser->Parse($file);
+    die "can not parse $file, which is not in excel format\n" unless ($workbook);
 
-  for my $worksheet ( $workbook->worksheets() ) {
+    for my $worksheet ( $workbook->worksheets() ) {
 
 
-    my ( $row_min, $row_max ) = $worksheet->row_range();
-    my ( $col_min, $col_max ) = $worksheet->col_range();
+      my ( $row_min, $row_max ) = $worksheet->row_range();
+      my ( $col_min, $col_max ) = $worksheet->col_range();
 
-    for my $row ( $row_min .. $row_max ) {
+      for my $row ( $row_min .. $row_max ) {
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
             next unless $cell;
 
-            print OUT $cell->unformatted();
+            #print OUT $cell->unformatted();
+            print OUT $cell->value();
 	    print OUT "\t" if ($col != $col_max);
         }
 	print OUT "\n";
+      }
     }
+  }
+} elsif ($inputFileExt eq 'xlsx') {
+  my $converter = Text::Iconv -> new ("utf-8", "windows-1251");
+
+  foreach my $file(@files) {
+    my $excel = Spreadsheet::XLSX -> new ($file, $converter);
+    foreach my $sheet (@{$excel -> {Worksheet}}) {
+        $sheet -> {MaxRow} ||= $sheet -> {MinRow};
+        foreach my $row ($sheet -> {MinRow} .. $sheet -> {MaxRow}) {
+                $sheet -> {MaxCol} ||= $sheet -> {MinCol};
+                foreach my $col ($sheet -> {MinCol} ..  $sheet -> {MaxCol}) {
+                        my $cell = $sheet -> {Cells} [$row] [$col];
+			#print OUT $cell->{Val};
+			print OUT $cell->{_Value};
+			print OUT "\t" if ($col != $sheet -> {MaxCol});
+                }
+		print OUT "\n";
+        }
+      }
   }
 }
 close OUT;
