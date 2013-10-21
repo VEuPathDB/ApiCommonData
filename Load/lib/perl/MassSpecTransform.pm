@@ -220,9 +220,15 @@ sub readFile {
     }
   }
 
-  my ($proteinCount, $currentProteinId, %seenPeptides, %seenProteins);
+  my ($proteinCount, $currentProteinId);
 
   my $printOnly = $self->hasMissingRequiredColumnInfo();
+
+
+  unless(defined $self->getPeptideSpectrumColumn()) {
+    print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
+  }
+
 
   while(my $line = <FILE>) {
     chomp($line);
@@ -249,9 +255,6 @@ sub readFile {
       $self->printXmlConfig();
     }
 
-    unless(defined $self->getPeptideSpectrumColumn()) {
-      print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
-    }
 
 
     if($self->isProteinLine($line, \@a)) {
@@ -264,18 +267,13 @@ sub readFile {
       }
 
       $self->{data}->{$currentProteinId}->{gene} = $geneId;
-      if($seenProteins{$currentProteinId}) {
-        die "Seen protein_id twice:  $currentProteinId";
-      }
-
-      %seenPeptides = ();
 
       $proteinCount++
     }
 
     if($self->isPeptideLine($line, \@a)) {
       print STDERR "Found Peptide line: $line\n" if($self->debug());
-      $self->addPeptide($currentProteinId, \@a, \%seenPeptides);
+      $self->addPeptide($currentProteinId, \@a);
     }
 
     last if($self->debug && $proteinCount == 2);
@@ -286,7 +284,7 @@ sub readFile {
 
 
 sub addPeptide {
-  my ($self, $proteinId, $fields, $seenPeptides) = @_;
+  my ($self, $proteinId, $fields) = @_;
 
   my $peptideSequence = $fields->[$self->getPeptideSequenceColumn()];
 
@@ -309,17 +307,12 @@ sub addPeptide {
 
   my $trimmedPeptideSequence = $self->removeModifications($cleanedPeptideSequence);
 
-  if($seenPeptides->{$cleanedPeptideSequence}) {
+  if(my $peptideRecord = $self->findPeptideRecord($cleanedPeptideSequence, $proteinId)) {
     print STDERR "WARN:  Same Peptide seen twice:  $cleanedPeptideSequence" if($self->debug());
-
-    my $peptideRecord = $self->findPeptideRecord($cleanedPeptideSequence, $proteinId);
+    
     $peptideRecord->{spectrum} = $peptideRecord->{spectrum} + $peptideSpectrum;
-
-    $seenPeptides->{$cleanedPeptideSequence} = 1;
     return;
   }
-
-  $seenPeptides->{$cleanedPeptideSequence} = 1;
 
   my $peptideRecord = {sequence => $trimmedPeptideSequence,
                        spectrum => $peptideSpectrum,
@@ -345,7 +338,7 @@ sub findPeptideRecord {
       return $peptideRecord;
     }
   }
-  die "Could not find existing peptide record for: $cleanedPeptideSequence";
+  return undef;
 }
 
 sub removeModifications {
