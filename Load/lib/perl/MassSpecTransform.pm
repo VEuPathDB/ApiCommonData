@@ -608,6 +608,20 @@ sub getModificationSymbolMap {
   return $rv;
 }
 
+package ApiCommonData::Load::MassSpecTransform::FlorensPIESPs;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 8 column, e.g., pfal3D7/Florens_PIESPs
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  # PUT Logic here specific to your data
+  if(scalar @$lineArray == 8) {
+    return 1;
+  }
+
+  return 0;
+}
 
 1;
 
