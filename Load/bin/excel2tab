@@ -19,7 +19,7 @@ my ($fileOrDir, $outputFile, $inputFileExt, $verbose, $help);
 &usage("Missing a Required Argument") unless(defined $fileOrDir);
 die "File or directory '$fileOrDir' does not exist\n" unless -e $fileOrDir;
 
-$inputFileExt = "xls" if (!$inputFileExt);
+$inputFileExt = "xlsx" if (!$inputFileExt);
 
 my @files;
 if (-d $fileOrDir) {
@@ -49,10 +49,10 @@ if ($inputFileExt eq 'xls') {
         for my $col ( $col_min .. $col_max ) {
 
             my $cell = $worksheet->get_cell( $row, $col );
-            next unless $cell;
+            #next unless $cell;
 
             #print OUT $cell->unformatted();
-            print OUT $cell->value();
+            print OUT $cell->value() if ($cell);
 	    print OUT "\t" if ($col != $col_max);
         }
 	print OUT "\n";
