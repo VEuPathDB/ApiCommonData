@@ -2203,7 +2203,7 @@ tablespace indx
                substr(var.allele, 1, 1) as allele,
                substr(max(var.product), 1, 30) as product, substr(var.strain, 1, 30) as strain,
                min(t.taxon_id) as species_taxon_id,
-               substr(min(snp.source_id), 1, 40) as snp_source_id, min(snp.gene_source_id) as gene_source_id
+               substr(min(snp.source_id), 1, 50) as snp_source_id, min(snp.gene_source_id) as gene_source_id
         from dots.SeqVariation var, SnpAttributes snp, sres.Taxon t
         where var.parent_id = snp.na_feature_id
           and snp.ncbi_tax_id = t.ncbi_tax_id
