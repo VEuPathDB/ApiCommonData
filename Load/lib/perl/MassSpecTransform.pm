@@ -593,6 +593,8 @@ sub isPeptideLine {
   return 0;
 }
 
+1;
+
 package ApiCommonData::Load::MassSpecTransform::BoothroydEliasMoritz;
 use base qw(ApiCommonData::Load::MassSpecTransform::KappeSprotozoite);
 
@@ -606,5 +608,31 @@ sub getModificationSymbolMap {
   return $rv;
 }
 
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::dobbelaere;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# every line is the peptide line except the headLines,
+# as well as the protein lines also includes the peptide line
+# and override the symbol '+' to the 'Oxidation_site'
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($self->isHeaderLine($lineString, $lineArray)) {
+    return 0;
+  }
+  return 1;
+}
+
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'+' => 'Oxidation_site',
+  };
+
+  return $rv;
+}
 
 1;
