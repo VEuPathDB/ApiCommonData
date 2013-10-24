@@ -3107,12 +3107,12 @@ FROM (
                edb.name as external_db_name,
                CASE 
                  WHEN etn.source_id is null 
-                   THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
-                                         'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'CPHD.'||etn.na_sequence_id,
-                                         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
-                                         'pfal3D7_SNP_Broad3KGenotyping_RSRC', 'CP3.'||etn.na_sequence_id,
-                                         'pfal3D7_SNP_BroadIsolateBarcode_RSRC','BC.'||etn.na_sequence_id,etn.source_id,
-                                        'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
+                   THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||strain, 
+                                         'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'CPHD.'||strain,
+                                         'Broad 3K genotyping chip', 'CP3.'||strain,
+                                         'pfal3D7_SNP_Broad3KGenotyping_RSRC', 'CP3.'||strain,
+                                         'pfal3D7_SNP_BroadIsolateBarcode_RSRC','BC.'||strain,
+                                         'Isolate barcode data from Broad','BC.'||strain)
                 ELSE etn.source_id 
               END as source_id,
               tn.name as organism,
