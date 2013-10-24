@@ -221,7 +221,8 @@ sub readFile {
     }
   }
 
-  my ($proteinCount, $currentProteinId);
+  my $currentProteinId;
+  my $proteinCount = 0;
 
   my $printOnly = $self->hasMissingRequiredColumnInfo();
 
@@ -239,10 +240,9 @@ sub readFile {
 
     if($self->isHeaderLine($line, \@a)) {
 
-      if($self->hasMissingColumnInfo()) {
+      if($self->hasMissingColumnInfo() && $proteinCount < 1) {
         $self->askForColumns($line, \@a);
       }
-
       print STDERR "Skipping header line: $line\n" if($self->debug());
       next ;
     }
