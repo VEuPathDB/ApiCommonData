@@ -667,6 +667,7 @@ sub getModificationSymbolMap {
 	    '?' => 'GlyGly',
 	    '~' => 'maleimide',
 	    '+' => 'Oxidation',
+	    ':' => 'phosphorylation_site',
   };
 
   return $rv;
