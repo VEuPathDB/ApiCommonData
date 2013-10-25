@@ -142,7 +142,6 @@ sub isProteinLine {
 # Some input files will have the protein id and the peptides on the same line;  Will need to override this method in that case
 sub isPeptideLine {
   my ($self, $lineString, $lineArray) = @_;
-
   if($self->isProteinLine($lineString, $lineArray)) {
     return 0;
   }
@@ -596,6 +595,24 @@ sub isPeptideLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::Gillin_Proteomics;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., gassAWB/Gillin_Proteomics)
+# may need to override this 
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  my $proteinIdIndex = $self->getProteinIdColumn();
+
+  if($lineArray->[0]) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::BoothroydEliasMoritz;
 use base qw(ApiCommonData::Load::MassSpecTransform::KappeSprotozoite);
 
@@ -608,6 +625,7 @@ sub getModificationSymbolMap {
 
   return $rv;
 }
+1;
 
 package ApiCommonData::Load::MassSpecTransform::FlorensPIESPs;
 use base qw(ApiCommonData::Load::MassSpecTransform);
@@ -625,6 +643,22 @@ sub isProteinLine {
 }
 
 1;
+
+package ApiCommonData::Load::MassSpecTransform::Ratner_DTASelect_filter;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., gassAWB/Ratner_DTASelect-filter
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/\[MASS=.*\]/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
 
 package ApiCommonData::Load::MassSpecTransform::dobbelaere;
 use base qw(ApiCommonData::Load::MassSpecTransform);
