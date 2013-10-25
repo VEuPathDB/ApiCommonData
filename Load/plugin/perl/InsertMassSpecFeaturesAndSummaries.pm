@@ -127,9 +127,6 @@ sub run {
   $self->unionPeptidesForRecords($recordSet);
   $self->unionPeptidesForRecords($self->{copiedRecords}) if $self->{copiedRecords};
 
-  print Dumper $recordSet;
-  exit;
-
     warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
     $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
     if($self->{copiedRecords}){
