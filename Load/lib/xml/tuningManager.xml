@@ -1897,6 +1897,13 @@ and ga.orthomcl_name is null
         where gaup.gene_type = 'protein coding'
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+        update &prefixGeneAttributes&1
+        set gene_id = na_feature_id -- gene_id is NUMBER(10) and source_id is VARCHAR(80) 
+        where gene_id is null
+      ]]>
+    </sql>
 <!--
 This code will scale the context start and end so that ~ 10 genes appear in the genomic context;  it is breaking ... setting most to null;  This was added to help with the gbrwose popup/labels problems.... that is now a nonissue.   This code isn't as important
     <sql>
