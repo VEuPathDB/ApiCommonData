@@ -194,6 +194,40 @@ sub readKeggFiles {
         }
       }
     }
+
+    # add a row in NetworkRelationship for the compound (entity) and entry that is of type 'map'
+    foreach my $relationKey (keys %{$pathwayElements->{RELATIONS}}) {
+      my $relation = $pathwayElements->{RELATIONS}->{$relationKey};
+      foreach my $x (keys %{$relation} ) {
+	if ($relation->{$x}->{INTERACTION_TYPE} eq 'Maplink'){
+
+	  my $entity = $relation->{$x}->{INTERACTION_ENTITY_ENTRY}; # compound
+	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
+	      $entity = $pathwayElements->{NODES}->{$x}->{SOURCE_ID} if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entity);
+	    }
+	  # if relation is between compound and entry
+	  my $entry = $relation->{$x}->{ENTRY}; 
+	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
+	    if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$x}->{TYPE} eq 'map') {
+	      $entry = $pathwayElements->{NODES}->{$x}->{SOURCE_ID};
+	      $pathwayObj->{map}->{$entry} = $entity;
+	      print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
+	    }
+	  }
+	  # if relation is between compound and associated_entry instead
+	  $entry = $relation->{$x}->{ASSOCIATED_ENTRY}; 
+	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
+	    if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$x}->{TYPE} eq 'map') {
+	      $entry = $pathwayElements->{NODES}->{$x}->{SOURCE_ID};
+	      $pathwayObj->{map}->{$entry} = $entity;
+	      print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
+	    }
+	  }
+
+	}
+      }
+    }
+
     $pathwaysObj->setPathwayObj($pathwayObj);
     #print STDOUT Dumper $pathwaysObj;
   }
@@ -321,7 +355,24 @@ sub loadPathway {
 	  my $nodeGraphics = $pathwayObj->{graphics}->{$mapNode};
 	  $self->loadNetworkNode($pathwayId, $node, $nodeGraphics);
 	}
+      }
+      print "Loading initial relationship(s)\n";
+      # now load the pathway to first compound relationship	
+      foreach my $n (keys %{$pathwayObj->{map}}) {  #test3.log
+	print STDOUT "    RELATION SHIP : " . $n  ." AND " . $pathwayObj->{map}->{$n} . "\n";
+	my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $n,
+								node_type_id => 3 });
+	$networkNode->submit() unless $networkNode->retrieveFromDB();
+	my $nodeId = $networkNode->getNetworkNodeId();
 
+	$networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $pathwayObj->{map}->{$n},
+							     node_type_id => 2 });
+	$networkNode->submit() unless $networkNode->retrieveFromDB();
+	my $entityId = $networkNode->getNetworkNodeId();
+
+	my $relationship = GUS::Model::ApiDB::NetworkRelationship->new({ node_id => $nodeId,
+									 associated_node_id => $entityId });
+	$relationship->submit() unless $relationship->retrieveFromDB();
       }
 
 
