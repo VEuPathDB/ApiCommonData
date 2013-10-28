@@ -125,6 +125,9 @@ alter table dots.NaSequenceImp
 add constraint source_id_uniq
 unique (source_id);
 
+-- have Oracle create optimizer stats for the column pair (subclass_view, external_database_release_id)
+select dbms_stats.create_extended_stats('DOTS', 'NAFEATUREIMP', '(SUBCLASS_VIEW, EXTERNAL_DATABASE_RELEASE_ID)') from dual;
+
 --------------------------------------------------------------------------------
 -- constrain GeneFeature source_ids to be unique
 -- commented out April 2013 -- we can have duplicate source_ids as long as all but one have IS_PREDICTED set
