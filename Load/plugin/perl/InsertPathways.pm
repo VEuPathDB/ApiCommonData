@@ -382,13 +382,9 @@ sub loadPathway {
 
 
         #relationship context
-	my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => $n });
-	$networkContext->retrieveFromDB();
-	my $networkContextId = $networkContext->getNetworkContextId();
-
         my $relContext = GUS::Model::ApiDB::NetworkRelContext->new({ network_relationship_id => $relId, 
                                                                      network_relationship_type_id => $relTypeId,
-                                                                     network_context_id => $networkContextId }); ##bgbg
+                                                                     network_context_id => $networkContextId });
         $relContext->submit() unless $relContext->retrieveFromDB();
         my $relContextId= $relContext->getNetworkRelContextId();
 
