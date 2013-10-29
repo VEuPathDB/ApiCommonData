@@ -688,7 +688,17 @@ sub isProteinLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordCharPhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar);
 
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'phosphorylation_site',
+  };
+}
+
+1;
 package ApiCommonData::Load::MassSpecTransform::dobbelaere;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
