@@ -373,6 +373,29 @@ sub loadPathway {
 	my $relationship = GUS::Model::ApiDB::NetworkRelationship->new({ node_id => $nodeId,
 									 associated_node_id => $entityId });
 	$relationship->submit() unless $relationship->retrieveFromDB();
+
+        my $relId = $relationship->getNetworkRelationshipId();
+        my $relType = GUS::Model::ApiDB::NetworkRelationshipType->new({ relationship_type_id => 2,
+                                                                        display_name => 'Maplink'  });
+        $relType->submit() unless $relType->retrieveFromDB();
+        my $relTypeId = $relType->getNetworkRelationshipTypeId();
+
+
+        #relationship context
+	my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => $n });
+	$networkContext->retrieveFromDB();
+	my $networkContextId = $networkContext->getNetworkContextId();
+
+        my $relContext = GUS::Model::ApiDB::NetworkRelContext->new({ network_relationship_id => $relId, 
+                                                                     network_relationship_type_id => $relTypeId,
+                                                                     network_context_id => $networkContextId }); ##bgbg
+        $relContext->submit() unless $relContext->retrieveFromDB();
+        my $relContextId= $relContext->getNetworkRelContextId();
+
+        #Link relationship to the Network
+        my $relContextLink = GUS::Model::ApiDB::NetworkRelContextLink->new({ network_id => $networkId,
+									     network_rel_context_id => $relContextId });
+        $relContextLink->submit() unless $relContextLink->retrieveFromDB();
       }
 
 
