@@ -659,6 +659,35 @@ sub isProteinLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'#' => 'Carbamidomethyl',
+	    '*' => 'Oxidation',
+  };
+ return $rv;
+}
+
+1;
+
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/^\w/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
 
 package ApiCommonData::Load::MassSpecTransform::dobbelaere;
 use base qw(ApiCommonData::Load::MassSpecTransform);
@@ -706,3 +735,19 @@ sub getModificationSymbolMap {
 
   return $rv;
 }
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  return $self->isProteinLine($lineString, $lineArray);
+
+}
+
+1;
+
