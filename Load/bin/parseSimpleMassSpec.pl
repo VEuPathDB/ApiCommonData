@@ -27,7 +27,7 @@ my @properties = (#["proteinIdColumn"],
                   #["peptideIonScoreColumn"],
                   ["class", "ApiCommonData::Load::MassSpecTransform"],
                   ["delimiter","\t"],
-                  ["trimPeptideRegex", '^\w*\.(.+)\.\w*$'],
+                  ["trimPeptideRegex", '^[\w-]*\.(.+)\.[\w-]*$'],
                   ["skipLines"],
                   ["headerRegex"],
     );
