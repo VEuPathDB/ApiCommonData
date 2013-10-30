@@ -49,11 +49,9 @@ select edr.external_database_release_id from sres.externaldatabase ed, sres.exte
 where ed.external_database_id=edr.external_database_id and ed.name like '$extDbName' and edr.version='$extDbRlsVer'
 ";
 
-my $stmt = $dbh->prepare($sql);
-$stmt->execute();
-($extDbRlsId) = $stmt->fetchrow_array();
+my $extDbRlsIdRef = readFromDatabase ($sql, $dbh);
+($extDbRlsId) = @$extDbRlsIdRef;
 print STDERR "For $organismAbbrev, get extDbRlsId=$extDbRlsId\n";
-$stmt->finish();
 
 ## get the new transcript sequence
 my (%newSourceIds, %newSeqs, %newLengths);
@@ -71,6 +69,7 @@ while ( my ($tSourceId, $tLength, $tSeq) = $stmt->fetchrow_array()) {
   $newLengths{$tSourceId} = $tLength;
 }
 $stmt->finish();
+
 
 ## get the old transcript info
 my (%oldSeqs, %oldLengths, $sourceId);
@@ -103,23 +102,30 @@ if ($newAliasesFile) {
 }
 
 ## compare if the old sourceId in the new transcript
-my ($ct, $sameCt, $reuseCt, $newIdCt, $aliasCt, $notAliasCt);
+my ($ct, $sameCt, $reuseCt, $newIdCt, $aliasCt, $notAliasCt, $geneModelChangeCt);
 foreach my $k (sort keys %oldSeqs) {
   if ($newSourceIds{$k}) {
     if ($newSeqs{$k} eq $oldSeqs{$k}) {
       $sameCt++;
-      print "old source Id same as the new source Id -- $k\n";
+      #print "new source Id derived from old source Id -- $k\n";
     } else {
       ## possible sourceId reusing.
-      print "WARNING: possible source Id reusing -- $k\n";
-      $reuseCt++;
+
+      ## further development, decide if gene model changed or sourceId reused
+      if ( ($newSeqs{$k} =~ $oldSeqs{$k}) || ($oldSeqs{$k} =~ $newSeqs{$k}) ) {
+	print "gene model change -- $k\n";
+	$geneModelChangeCt++;
+      } else {
+	print "WARNING 1: possible source Id reused -- $k\n";
+	$reuseCt++;
+      }
     }
   } else {
     ## check if in the aliases file
     if ($aliases{$k}) {
       $aliasCt++;
     } else {
-      print "WARNING: old source Id not found in the new annotation -- $k\n";
+      print "WARNING 2: old source Id retired -- $k\n";
       $notAliasCt++;
     }
     $newIdCt++;
@@ -128,6 +134,7 @@ foreach my $k (sort keys %oldSeqs) {
 }
 print "Total old source Id = $ct\n" if ($ct);
 print "    same as the new source Id = $sameCt\n" if ($sameCt);
+print "    gene model change = $geneModelChangeCt\n" if ($geneModelChangeCt);
 print "    possible reuse source Id = $reuseCt\n" if ($reuseCt);
 print "    but not in the new source Id = $newIdCt\n" if ($newIdCt);
 print "For those that not in the new source Id\n";
@@ -139,6 +146,46 @@ $newIdCt=0;
 $aliasCt=0;
 $notAliasCt=0;
 
+
+sub getSeqsInfoFromFasta {
+  my ($inputFile) = @_;
+  my ($sId, %seqs, %lengths, %codings);
+
+  open (IN, "$inputFile") || die "can not open $inputFile to read.\n";
+  while (<IN>) {
+    chomp;
+    if ($_ =~ /^>(\S+) \|.*length=(\d+) \|.*\| SO=(\S+)/) {
+      $sId = $1;
+      $lengths{$sId} = $2;
+      $codings{$sId} = $3;
+      print STDERR "duplicated sourceId $sId in the file $inputFile\n" if ($seqs{$sId});
+    } else {
+      my $curr = $_;
+      $curr =~ s/\s+//g;
+      $curr =~ s/\n//g;
+      $seqs{$sId} .= uc($curr);
+    }
+  }
+  close IN;
+  return (\%seqs, \%lengths, \%codings);
+}
+
+
+sub readFromDatabase {
+  my ($sql, $dbh) = @_;
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute;
+  my (@arrays);
+  while (my @fetchs = $stmt->fetchrow_array()) {
+    my $oneline;
+    foreach my $i (0..$#fetchs) {
+      $oneline .= "$fetchs[$i] ";
+    }
+    push @arrays, $oneline;
+  }
+  $stmt->finish();
+  return \@arrays;
+}
 
 sub usage {
   die
@@ -164,3 +211,5 @@ where
 
 ";
 }
+
+
