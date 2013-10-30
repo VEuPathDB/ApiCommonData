@@ -761,3 +761,17 @@ sub isPeptideLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::ProteinLineWithNineColumns;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 9 column, e.g., tgonME49/Boothroyd_Bowyer_oocyst_sporozoite
+ sub isProteinLine {
+   my ($self, $lineString, $lineArray) = @_;
+   # PUT Logic here specific to your data
+   if(scalar @$lineArray == 9) {
+    return 1;
+   }
+   return 0;
+}
+
+1;
