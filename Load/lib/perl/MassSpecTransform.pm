@@ -813,3 +813,19 @@ sub isPeptideLine {
 }
 
 1;
+
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineNotContainSpecChar;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line not contain a specific char, e.g. tcruCLBrener/Reservosomes_SubCellular 
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString !~ /esn\d+/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
