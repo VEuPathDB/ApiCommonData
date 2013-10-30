@@ -285,12 +285,11 @@ sub readFile {
 
 sub addPeptide {
   my ($self, $proteinId, $fields) = @_;
-
+  
   my $peptideSequence = $fields->[$self->getPeptideSequenceColumn()];
-
   my $peptideSpectrum = 1; # default
   if(defined $self->getPeptideSpectrumColumn()) {
-    $peptideSpectrum = $fields->[$self->getPeptideSpectrumColumn()];
+    $peptideSpectrum = (defined $fields->[$self->getPeptideSpectrumColumn()] ? $fields->[$self->getPeptideSpectrumColumn()] : 1);
   }
 
   my $peptideIonScore;
@@ -699,6 +698,7 @@ sub getModificationSymbolMap {
 }
 
 1;
+
 package ApiCommonData::Load::MassSpecTransform::dobbelaere;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
@@ -772,6 +772,44 @@ use base qw(ApiCommonData::Load::MassSpecTransform);
     return 1;
    }
    return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'phosphorylation_site',
+  };
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePromastigote;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'modified_L_cysteine',
+           '+' => 'modified_L_tryptophan',
+           '#' => 'modified_L_methionine',
+  };
+}
+1;
+
+package ApiCommonData::Load::MassSpecTransform::EveryLineIsPeptideLine;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  return 1;
+
 }
 
 1;
