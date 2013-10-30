@@ -61,7 +61,7 @@ SQL
 
   logMessage ("renaming old table (if any)");
   $dbh->do(<<SQL);
-    alter table CustomHtvVariant rename to oldCHV
+    alter table CustomHtsVariant rename to oldCHV
 SQL
   $dbh->{PrintError} = 1;
   $dbh->{RaiseError} = 1;
@@ -70,17 +70,22 @@ SQL
   $dbh->do(<<SQL) or die "creating CustomHtsVariant";
 
     create table CustomHtsVariant nologging as
-    select min(t.taxon_id) as species_taxon_id,
+    select min(seq.taxon_id) as species_taxon_id,
            substr(var.strain, 1, 30) as strain,
            substr(min(snp.source_id), 1, 40) as snp_source_id,
            substr(var.allele, 1, 1) as allele,
            substr(max(var.product), 1, 3) as product,
            max(nvl(var.matches_reference, 0)) as matches_reference,
-           max(nvl(var.allele_percent, 100)) as max_cutoff
-    from dots.SeqVariation var, ApidbTuning.SnpAttributes snp, sres.Taxon t
+           max(nvl(var.allele_percent, 100)) as max_cutoff,
+           max(nvl(var.allele_percent, 100)) as allele_percent,
+           cast (0 as number(1)) as cutoff_corrected
+    from dots.SeqVariation var, dots.Snpfeature snp, dots.NaSequence seq,
+         sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
     where var.parent_id = snp.na_feature_id
-      and snp.ncbi_tax_id = t.ncbi_tax_id
-      and snp.type = 'HTS'
+      and snp.na_sequence_id = seq.na_sequence_id
+      and snp.external_database_release_id = edr.external_database_release_id
+      and edr.external_database_id = ed.external_database_id
+      and ed.name = 'InsertSnps.pm NGS SNPs INTERNAL'  -- snp.type = 'HTS'
       and var.name = 'SNP'
       and var.allele != 'undefined'
     group by snp.na_feature_id, var.allele, var.strain
@@ -90,29 +95,68 @@ SQL
   logMessage("creating index 1");
   $dbh->do(<<SQL) or die "creating index";
     -- for update statement immediately following
-    create index chv_polymorph on CustomHtsVariant (snp_source_id, allele, max_cutoff);
+    create index chv_polymorph$$ on CustomHtsVariant (snp_source_id, max_cutoff desc, allele)
+SQL
+
+  # logMessage("updating max_cutoff");
+  $dbh->do(<<SQL) if undef; # don't  # or die "creating stored procedure";
+create or replace procedure updateMaxCutoff
+is
+  max_differer number;
+  changeCount number;
+
+  cursor c1 is
+      select snp_source_id, allele, max_cutoff
+      from CustomHtsVariant
+      for update of max_cutoff;
+
+begin
+    for variant in c1
+    loop
+       select max(max_cutoff)
+       into max_differer
+       from CustomHtsVariant
+       where snp_source_id = variant.snp_source_id
+         and allele != variant.allele;
+
+      if max_differer is null
+      then
+        delete from CustomHtsVariant where current of c1;
+        changeCount := changeCount + 1;
+      else
+        if max_differer < variant.max_cutoff
+        then
+          update CustomHtsVariant
+          set max_cutoff = max_differer
+          where current of c1;
+          changeCount := changeCount + 1;
+        end if;
+      end if;
+
+      if mod(changeCount, 1000) = 0 then
+          commit;
+      end if;
+
+    end loop;
+    commit;
+
+end;
+/
 SQL
 
   logMessage("updating max_cutoff");
-  $dbh->do(<<SQL) or die "updating CustomHtsVariant";
-    update CustomHtsVariant
-    set max_cutoff = least(max_cutoff,
-                           nvl( (select max(max_cutoff)
-                                 from CustomHtsVariant chv
-                                 where chv.snp_source_id = CustomHtsVariant.snp_source_id
-                                   and chv.allele != CustomHtsVariant.allele), 0))
-SQL
+  $dbh->do(" begin updateMaxCutoff; end; ") or die "updating CustomHtsVariant";
 
   logMessage("creating index 2");
   $dbh->do(<<SQL) or die "creating index 2";
     -- for reference-genome query
-    create index chv_polymorph on CustomHtsVariant (species_taxon_id, matches_reference, max_cutoff, allele, product);
+    create index chv_ref$$ on CustomHtsVariant (species_taxon_id, matches_reference, max_cutoff, allele, product)
 SQL
 
   logMessage("creating index 3");
   $dbh->do(<<SQL) or die "creating index 3";
     -- for strain query and SNP-row query
-    create index chv_polymorph on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
+    create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
 SQL
 
   logMessage("finished creating table");
