@@ -411,12 +411,19 @@ begin
     -- check organism table
     begin
 
-      select distinct o.project_name
-      into project
-      from sres.TaxonName tn, apidb.Organism o
-      where ( SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism||' ',' ',1,1)-1))
-                 and o.taxon_id = tn.taxon_id )
-       or   o.family_ncbi_taxon_ids = tn.taxon_id;
+        select distinct project_name
+        into project
+        from (  select o.project_name
+                from  sres.TaxonName tn, apidb.Organism o
+                where SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism||' ',' ',1,1)-1))
+                  and o.taxon_id = tn.taxon_id
+              union
+                select o.project_name
+                from sres.TaxonName tn, sres.Taxon t, apidb.Organism o
+                where tn.name = organism
+                  and tn.taxon_id = t.taxon_id
+                  and t.rank = 'family'
+                  and ',' || o.family_ncbi_taxon_ids || ',' like '%,' || t.ncbi_tax_id || ',%');
 
     exception
 
