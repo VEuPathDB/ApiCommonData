@@ -152,19 +152,32 @@ sub unionPeptidesForRecords {
     my $record = $recordSet->[$i];
     $record->{recordIndex} = $i;
 
-
     my $aaSequenceId = $record->{aaSequenceId};
-    push @{$recordsById{$aaSequenceId}}, $record;
+    my $file = $record->{file};
+
+    my $key = $aaSequenceId . "_" . $file;
+
+    push @{$recordsById{$key}}, $record;
   }
+
+
 
   # loop through the records for each aaSequence;  push all peptides onto the first; mark rest as failed
   foreach my $aaSequenceId (keys %recordsById) {
     my $unionRecords = $recordsById{$aaSequenceId};
-    
-    for(my $i = 0; $i < scalar @$unionRecords; $i++) {
-      my $keepMe = $unionRecords->[0];
 
-      if($i == 0) {
+    my $firstPassed;
+    for(my $i = 0; $i < scalar @$unionRecords; $i++) {
+      next if($unionRecords->[$i]->{failed});
+      next unless(defined $unionRecords->[$i]->{peptides});
+
+      if(!$firstPassed) {
+        $firstPassed = $i;
+      }
+
+      my $keepMe = $unionRecords->[$firstPassed];
+
+      if($i == $firstPassed) {
         # null these out; these don't make sense if we union peptides from different groups
         $keepMe->{percentCoverage} = undef;
         $keepMe->{score} = undef;
@@ -187,8 +200,23 @@ sub unionPeptidesForRecords {
       
       my $keepIndex = $keepMe->{recordIndex};
       my $deleteIndex = $deleteMe->{recordIndex};
+
+      eval {
       
+#      push @{$recordSet->[$keepIndex]->{peptides}}, @{$deleteMe->[$deleteIndex]->{peptides}};
       push @{$recordSet->[$keepIndex]->{peptides}}, @{$deleteMe->{peptides}};
+      };
+
+      if($@) {
+        print Dumper "KEEPME\t";
+        print Dumper $keepMe;
+        print Dumper "DELETEME\t";
+        print Dumper $deleteMe;
+
+        print Dumper $recordsById{$aaSequenceId};
+
+        die $@;
+      }
       $recordSet->[$deleteIndex]->{failed} = 1;
     }
   }
@@ -197,6 +225,7 @@ sub unionPeptidesForRecords {
   # loop through a final time and mark duplicate peptides;  set spectrum and sequence count for aaSequenceId
   foreach my $record (@$recordSet) {
     next if($record->{failed});
+    next unless(defined $record->{peptides});
     
     for(my $i = 0; $i < scalar @{$record->{peptides}}; $i++) {
       my $peptideA = $record->{peptides}->[$i];
