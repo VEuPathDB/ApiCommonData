@@ -47,7 +47,7 @@ create index dots.ExonOrder_ix
   tablespace INDX; 
 
 create index dots.SeqvarStrain_ix
-  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
+  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
   tablespace INDX; 
 
 create index sres.RefIx
