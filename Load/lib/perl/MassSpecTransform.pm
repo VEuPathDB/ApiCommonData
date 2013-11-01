@@ -716,38 +716,6 @@ sub isPeptideLine {
 1;
 
 
-package ApiCommonData::Load::MassSpecTransform::Glycosylation;
-use base qw(ApiCommonData::Load::MassSpecTransform);
-
-## There are a large variety of modification, e.g. AmoebaDB/Glycosylation
-sub isPeptideLine {
-  my ($self, $lineString, $lineArray) = @_;
-
-  if($self->isHeaderLine($lineString, $lineArray)) {
-    return 0;
-  }
-  return 1;
-}
-
-sub getModificationSymbolMap {
-  my ($self) = @_;
-
-  my $rv = {'#' => 'Acetyl',
-	    '@' => 'Carbamidomethyl',
-	    '&' => 'Carboxy',
-	    '<' => 'Cation',
-	    '>' => 'Deamidated',
-	    '?' => 'GlyGly',
-	    '~' => 'maleimide',
-	    '+' => 'Oxidation',
-	    ':' => 'phosphorylation_site',
-  };
-
-  return $rv;
-}
-
-1;
-
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
