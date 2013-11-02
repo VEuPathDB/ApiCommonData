@@ -677,8 +677,11 @@ sub unionize {
   }
 
   unless(scalar @{$union->{source}} == scalar @unionMembers) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("The number of <source> does not equal the number of sql statments to be unioned for " . $self->{name});
-    die;
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("The number of <source> (" .
+							scalar @{$union->{source}} .
+							") does not equal the number of sql statments (" .
+							scalar @unionMembers .
+							") to be unioned in creating " . $self->{name});
   }
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
