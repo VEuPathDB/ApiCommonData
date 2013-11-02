@@ -41,7 +41,8 @@ my $dbh = DBI->connect($gusconfig->{props}->{dbiDsn},
   $dbh->{RaiseError} = 1;
 
 logMessage("starting SNP file unload");
-makeVariantTable($dbh);
+abbreviatedMakeVariantTable($dbh);
+# makeVariantTable($dbh);
 unloadSnpData($dbh, $frequencyCutoffs);
 # dropVariantTable($dbh);
 
@@ -70,7 +71,8 @@ SQL
   $dbh->do(<<SQL) or die "creating CustomHtsVariant";
 
     create table CustomHtsVariant nologging as
-    select min(seq.taxon_id) as species_taxon_id,
+    select --+ use_hash(snp var)
+           min(seq.taxon_id) as species_taxon_id,
            substr(var.strain, 1, 30) as strain,
            substr(min(snp.source_id), 1, 40) as snp_source_id,
            substr(var.allele, 1, 1) as allele,
@@ -79,7 +81,7 @@ SQL
            max(nvl(var.allele_percent, 100)) as max_cutoff,
            max(nvl(var.allele_percent, 100)) as allele_percent,
            cast (0 as number(1)) as cutoff_corrected
-    from dots.SeqVariation var, dots.Snpfeature snp, dots.NaSequence seq,
+    from dots.SeqVariation var, dots.SnpFeature snp, dots.NaSequence seq,
          sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
     where var.parent_id = snp.na_feature_id
       and snp.na_sequence_id = seq.na_sequence_id
@@ -98,54 +100,31 @@ SQL
     create index chv_polymorph$$ on CustomHtsVariant (snp_source_id, max_cutoff desc, allele)
 SQL
 
-  # logMessage("updating max_cutoff");
-  $dbh->do(<<SQL) if undef; # don't  # or die "creating stored procedure";
-create or replace procedure updateMaxCutoff
-is
-  max_differer number;
-  changeCount number;
-
-  cursor c1 is
-      select snp_source_id, allele, max_cutoff
-      from CustomHtsVariant
-      for update of max_cutoff;
-
-begin
-    for variant in c1
-    loop
-       select max(max_cutoff)
-       into max_differer
-       from CustomHtsVariant
-       where snp_source_id = variant.snp_source_id
-         and allele != variant.allele;
-
-      if max_differer is null
-      then
-        delete from CustomHtsVariant where current of c1;
-        changeCount := changeCount + 1;
-      else
-        if max_differer < variant.max_cutoff
-        then
-          update CustomHtsVariant
-          set max_cutoff = max_differer
-          where current of c1;
-          changeCount := changeCount + 1;
-        end if;
-      end if;
-
-      if mod(changeCount, 1000) = 0 then
-          commit;
-      end if;
-
-    end loop;
-    commit;
-
-end;
-/
+  logMessage("preparing max_cutoff update");
+  my $update = $dbh->prepare(<<SQL) or die "preparing update";
+    update CustomHtsVariant
+    set cutoff_corrected = 1,
+        max_cutoff = greatest(max_cutoff,
+                              (select nvl(max(max_cutoff), 0)
+                               from CustomHtsVariant chv
+                               where chv.snp_source_id = CustomHtsVariant.snp_source_id
+                                 and chv.allele != CustomHtsVariant.allele))
+    where cutoff_corrected = 0
+      and rownum <= 100000
 SQL
 
   logMessage("updating max_cutoff");
-  $dbh->do(" begin updateMaxCutoff; end; ") or die "updating CustomHtsVariant";
+  my $updateTotal;
+  while (1) {
+    my $recordsUpdated = $update->execute();
+    $dbh->commit() or die "committing";
+
+    # execute returns "0E0" if zero rows were updated
+    last if $recordsUpdated == 0;
+
+    $updateTotal += $recordsUpdated;
+    logMessage("$updateTotal records updated");
+  }
 
   logMessage("creating index 2");
   $dbh->do(<<SQL) or die "creating index 2";
@@ -349,4 +328,27 @@ print <<USAGE;
 USAGE
 
   die;
+}
+
+sub abbreviatedMakeVariantTable {
+  my ($dbh) = @_;
+
+  # the stuff we didn't get around to last time (creating indexes)
+
+  $dbh->{PrintError} = 0;
+  $dbh->{RaiseError} = 0;
+
+  logMessage("creating index 2");
+  $dbh->do(<<SQL) or die "creating index 2";
+    -- for reference-genome query
+    create index chv_ref$$ on CustomHtsVariant (species_taxon_id, matches_reference, max_cutoff, allele, product)
+SQL
+
+  logMessage("creating index 3");
+  $dbh->do(<<SQL) or die "creating index 3";
+    -- for strain query and SNP-row query
+    create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
+SQL
+
+  logMessage("finished creating table");
 }
