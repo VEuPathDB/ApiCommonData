@@ -430,85 +430,57 @@ begin
       when NO_DATA_FOUND then
          -- use hardwired genus->project mappings
          case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
-               when 'theileria'
-                 then project := 'PiroplasmaDB';
-               when 'babesia'
-                 then project := 'PiroplasmaDB';
-               when 'cryptosporidium'
-                 then project := 'CryptoDB';
-               when 'plasmodium'
-                 then project := 'PlasmoDB';
-               when 'toxoplasma'
-                 then project := 'ToxoDB';
-               when 'neospora'
-                 then project := 'ToxoDB';
-               when 'endotrypanum'
-                 then project := 'TriTrypDB';
-               when 'leishmania'
-                 then project := 'TriTrypDB';
-               when 'trypanosoma'
-                 then project := 'TriTrypDB';
-               when 'crithidia'
-                 then project := 'TriTrypDB';
-               when 'trichomonas'
-                 then project := 'TrichDB';
-               when 'phytomonas'
-                 then project := 'TrichDB';
-               when 'giardia'
-                 then project := 'GiardiaDB';
-               when 'entamoeba'
-                 then project := 'AmoebaDB';
-               when 'encephalitozoon'
-                 then project := 'MicrosporidiaDB';
-               when 'enterocytozoon'
-                 then project := 'MicrosporidiaDB';
-               when 'anncaliia'
-                 then project := 'MicrosporidiaDB';
-               when 'edhazardia'
-                 then project := 'MicrosporidiaDB';
-               when 'nosema'
-                 then project := 'MicrosporidiaDB';
-               when 'vittaforma'
-                 then project := 'MicrosporidiaDB';
-               when 'vavraia'
-                 then project := 'MicrosporidiaDB';
-               when 'nematocida'
-                 then project := 'MicrosporidiaDB';
-               when 'octosporea'
-                 then project := 'MicrosporidiaDB';
-               when 'gregarina'
-                 then project := 'ToxoDB';
-               when 'sarcocystis'
-                 then project := 'ToxoDB';
-               when 'eimeria'
-                 then project := 'ToxoDB';
-               when 'gibberella'
-                 then project := 'FungiDB';
-               when 'neurospora'
-                 then project := 'FungiDB';
-               when 'cryptococcus'
-                 then project := 'FungiDB';
-               when 'aspergillus'
-                 then project := 'FungiDB';
-               when 'coccidioides'
-                 then project := 'FungiDB';
-               when 'magnaporthe'
-                 then project := 'FungiDB';
-               when 'candida'
-                 then project := 'FungiDB';
-               when 'puccinia'
-                 then project := 'FungiDB';
-               when 'saccharomyces'
-                 then project := 'FungiDB';
-               when 'fusarium'
-                 then project := 'FungiDB';
-               when 'rhizopus'
-                 then project := 'FungiDB';
-               when 'tremella'
-                 then project := 'FungiDB';
-               when 'hypocrea'
-                 then project := 'FungiDB';
-               else raise_application_error(-20101,
+            when 'acanthamoeba' then project := 'AmoebaDB';
+            when 'acanthamoebidae' then project := 'AmoebaDB';
+            when 'anncaliia' then project := 'MicrosporidiaDB';
+            when 'babesia' then project := 'PiroplasmaDB';
+            when 'babesiidae' then project := 'PiroplasmaDB';
+            when 'crithidia' then project := 'TriTrypDB';
+            when 'cryptosporidiidae' then project := 'CryptoDB';
+            when 'cryptosporidium' then project := 'CryptoDB';
+            when 'culicosporidae' then project := 'MicrosporidiaDB';
+            when 'dubosqiidae' then project := 'MicrosporidiaDB';
+            when 'edhazardia' then project := 'MicrosporidiaDB';
+            when 'eimeria' then project := 'ToxoDB';
+            when 'eimeriidae' then project := 'ToxoDB';
+            when 'encephalitozoon' then project := 'MicrosporidiaDB';
+            when 'endotrypanum' then project := 'TriTrypDB';
+            when 'entamoeba' then project := 'AmoebaDB';
+            when 'entamoebidae' then project := 'AmoebaDB';
+            when 'enterocytozoonidae' then project := 'MicrosporidiaDB';
+            when 'enterocytozoon' then project := 'MicrosporidiaDB';
+            when 'giardia' then project := 'GiardiaDB';
+            when 'gregarina' then project := 'ToxoDB';
+            when 'gregarinidae' then project := 'ToxoDB';
+            when 'hamiltosporidium' then project := 'MicrosporidiaDB';
+            when 'hammondia' then project := 'ToxoDB';
+            when 'hexamitidae' then project := 'GiardiaDB';
+            when 'hominidae' then project := 'HostDB';
+            when 'homo' then project := 'HostDB';
+            when 'leishmania' then project := 'TriTrypDB';
+            when 'muridae' then project := 'HostDB';
+            when 'mus' then project := 'HostDB';
+            when 'naegleria' then project := 'AmoebaDB';
+            when 'nematocida' then project := 'MicrosporidiaDB';
+            when 'neospora' then project := 'ToxoDB';
+            when 'nosema' then project := 'MicrosporidiaDB';
+            when 'nosematidae' then project := 'MicrosporidiaDB';
+            when 'plasmodium' then project := 'PlasmoDB';
+            when 'pleistophoridae' then project := 'MicrosporidiaDB';
+            when 'sarcocystidae' then project := 'ToxoDB';
+            when 'sarcocystis' then project := 'ToxoDB';
+            when 'theileria' then project := 'PiroplasmaDB';
+            when 'theileriidae' then project := 'PiroplasmaDB';
+            when 'toxoplasma' then project := 'ToxoDB';
+            when 'trichomonas' then project := 'TrichDB';
+            when 'trypanosoma' then project := 'TriTrypDB';
+            when 'trypanosomatidae' then project := 'TriTrypDB';
+            when 'tubulinosematidae' then project := 'MicrosporidiaDB';
+            when 'unikaryonidae' then project := 'MicrosporidiaDB';
+            when 'vahlkampfiidae' then project := 'AmoebaDB';
+            when 'vavraia' then project := 'MicrosporidiaDB';
+            when 'vittaforma' then project := 'MicrosporidiaDB';
+            else raise_application_error(-20101,
                                             'project_id("'
                                             || organism || '"): unknown project assignment' );
       end case;
