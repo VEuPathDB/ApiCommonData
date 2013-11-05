@@ -711,6 +711,7 @@ sub getColumnInfo {
       $dblink = "@" . $dblink . $dblinkSuffix
 	if $dblink;
       my $table = $source->{name};
+      my $table = $union->{name} unless $table;
 
       my $tempTable;
 
