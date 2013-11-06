@@ -278,7 +278,7 @@ sub sameResidues {
     return 0;
   }
 
-  if(!$peptideA->{residues} && !$peptideA->{residues}) {
+  if(!$peptideA->{residues} && !$peptideB->{residues}) {
     return 1;
   }
 
