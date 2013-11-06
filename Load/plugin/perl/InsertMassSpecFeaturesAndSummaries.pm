@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries;
+ package ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -292,7 +292,7 @@ sub sameResidues {
 
     foreach my $key (keys %{$residueA}) {
       unless($residueA->{$key} eq $residueB->{$key}) {
-        die "values for residue are different";
+        return 0;
       }
     }
   }
