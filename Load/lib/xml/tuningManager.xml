@@ -6129,18 +6129,20 @@ group by msps.source_id, msps.external_database_name, msps.experiment, msps.samp
     <sql>
       <![CDATA[
         create table ProjectMapping&1 nologging as
-          -- Organism.taxon_id
-          select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
-          from apidb.Organism o, sres.TaxonName tn
-          where o.taxon_id = tn.taxon_id
-            and tn.name_class = 'scientific name'
-        union
-          -- Organism.family_ncbi_taxon_ids
-          select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
-          from apidb.Organism o, sres.TaxonName tn, sres.Taxon t
-          where o.family_ncbi_taxon_ids = t.ncbi_tax_id
-            and t.taxon_id = tn.taxon_id
-            and tn.name_class = 'scientific name'
+          select substr(organism, 1, 30) as organism, project_id
+          from (
+                -- Organism.taxon_id
+                select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
+                from apidb.Organism o, sres.TaxonName tn
+                where o.taxon_id = tn.taxon_id
+                  and tn.name_class = 'scientific name'
+              union
+                -- Organism.family_ncbi_taxon_ids
+                select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
+                from apidb.Organism o, sres.TaxonName tn, sres.Taxon t
+                where o.family_ncbi_taxon_ids = t.ncbi_tax_id
+                  and t.taxon_id = tn.taxon_id
+                  and tn.name_class = 'scientific name')
       ]]>
     </sql>
   </tuningTable>
