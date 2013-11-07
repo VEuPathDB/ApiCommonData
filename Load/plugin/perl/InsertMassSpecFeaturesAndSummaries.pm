@@ -125,7 +125,10 @@ sub run {
     
 
   $self->unionPeptidesForRecords($recordSet);
-  $self->unionPeptidesForRecords($self->{copiedRecords}) if $self->{copiedRecords};
+  if($self->{copiedRecords}){
+    warn "WARNING: unioning peptides for copied records ... check that not duplicated";
+    $self->unionPeptidesForRecords($self->{copiedRecords});
+  }
 
     warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
     $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
@@ -245,7 +248,7 @@ sub unionPeptidesForRecords {
           die "spectrum count not provided for " . $peptideB->{sequence} unless $peptideB->{spectrum_count};
           ##what to do if spectrum counts differ??
           ## possibly should sum the spectrum counts as could represent different spectra mapped to same peptide??
-          warn "duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+          warn "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
           $peptideA->{spectrum_count_diff} += $peptideB->{spectrum_count};
           
           $peptideB->{failed} = 1;
@@ -290,7 +293,7 @@ sub sameResidues {
 
 
   unless(scalar @{$peptideA->{residues}} == scalar @{$peptideA->{residues}}){
-    warn "same peptide sequence different number of residues for $peptideA->{sequence}";
+    warn "WARNING: same peptide sequence different number of residues for $peptideA->{sequence}";
     return 0;
   }
 
@@ -299,7 +302,7 @@ sub sameResidues {
     my $residueB = $peptideB->{residues}->[$i];
 
     unless(scalar keys %{$residueA} == scalar keys %{$residueB}){
-      warn "different attributes for peptide residue for $peptideA->{sequence}";
+      warn "WARNING: different attributes for peptide residue for $peptideA->{sequence}";
       return 0;
     }
 
@@ -389,7 +392,7 @@ EOSQL
   my $res = $sth->fetchall_arrayref();
     
   if (scalar @{$res} > 1) {
-    warn "$candidate_ids[0] returns more than one row. This protein will be skipped.\n"
+    warn "WARNING: $candidate_ids[0] returns more than one row. This protein will be skipped.\n"
   }
     
   return undef if (scalar @{$res} != 1);
@@ -915,6 +918,7 @@ sub insertRecordsIntoDb {
       next;
     }
     my $mss = $self->insertMassSpecSummary($record);
+    next unless $mss;
     $self->insertMassSpecFeatures($record, $mss);
     $self->undefPointerCache();
   }
@@ -927,7 +931,10 @@ sub insertMassSpecSummary {
   my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
                                                            aa_sequence_id => $record->{aaSequenceId}
                                                           });
-  die "Unable to retrieve $record->{aaSequenceId} from db" unless $aaSeq->retrieveFromDB;
+  unless($aaSeq->retrieveFromDB){
+    warn "WARNING: Unable to retrieve $record->{aaSequenceId} from db ... skipping "; 
+    return;
+  }
 
   $record->{seqLength}    = $aaSeq->getLength();
   $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
