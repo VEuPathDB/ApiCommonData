@@ -167,6 +167,7 @@ sub unionPeptidesForRecords {
     my $unionRecords = $recordsById{$aaSequenceId};
 
     my $firstPassed;
+    my $keepMe;
     for(my $i = 0; $i < scalar @$unionRecords; $i++) {
       next if($unionRecords->[$i]->{failed});
       next unless(defined $unionRecords->[$i]->{peptides});
@@ -175,15 +176,16 @@ sub unionPeptidesForRecords {
         $firstPassed = $i;
       }
 
-      my $keepMe = $unionRecords->[$firstPassed];
 
       if($i == $firstPassed) {
+        $keepMe = $unionRecords->[$firstPassed];
         # null these out; these don't make sense if we union peptides from different groups
         $keepMe->{percentCoverage} = undef;
         $keepMe->{score} = undef;
-        $keepMe->{description} = undef;
-        $keepMe->{seqMolWt} = undef;
-        $keepMe->{seqPI} = undef;
+        # the following are sequence attributes so we should keep
+        # $keepMe->{description} = undef;
+        # $keepMe->{seqMolWt} = undef;
+        # $keepMe->{seqPI} = undef;
 
         # sequence count and peptide count will be calculated after union peptides
         $keepMe->{spectrumCount} = undef;
@@ -230,17 +232,21 @@ sub unionPeptidesForRecords {
     for(my $i = 0; $i < scalar @{$record->{peptides}}; $i++) {
       my $peptideA = $record->{peptides}->[$i];
       next if($peptideA->{failed});
+      die "spectrum count not provided for " . $peptideA->{sequence} unless $peptideA->{spectrum_count};
 
-      for(my $j = 0; $j < scalar @{$record->{peptides}}; $j++) {
-        next if($i == $j); # don't need to test self
+      for(my $j = $i + 1; $j < scalar @{$record->{peptides}}; $j++) {  ##only need to compare remaining peptides as previous ones already done.
         
         my $peptideB = $record->{peptides}->[$j];
+        next if($peptideB->{failed});
         
         if($peptideA->{sequence} eq $peptideB->{sequence} && $self->sameResidues($peptideA, $peptideB)) {
           
           
-          die "spectrum count not provided for " . $peptideA->{sequence} unless($peptideA->{spectrum_count} && $peptideB->{spectrum_count});
-          die "duplicate peptide sequence w/ unequal spectrum counts" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+          die "spectrum count not provided for " . $peptideB->{sequence} unless $peptideB->{spectrum_count};
+          ##what to do if spectrum counts differ??
+          ## possibly should sum the spectrum counts as could represent different spectra mapped to same peptide??
+          warn "duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+          $peptideA->{spectrum_count_diff} += $peptideB->{spectrum_count};
           
           $peptideB->{failed} = 1;
           
@@ -261,7 +267,7 @@ sub unionPeptidesForRecords {
     foreach my $pep (@{$record->{peptides}}) {
       next if($pep->{failed});
 
-      $spectrumCount = $spectrumCount + $pep->{spectrum_count};
+      $spectrumCount = $spectrumCount + $pep->{spectrum_count}; # + $pep->{spectrum_count_diff};
       $sequenceCount++;
     }
 
@@ -274,21 +280,28 @@ sub unionPeptidesForRecords {
 sub sameResidues {
   my ($self, $peptideA, $peptideB) = @_;
 
-  if(($peptideA->{residues} && !$peptideB->{residues}) || ($peptideB->{residues} && !$peptideA->{residues})) {
-    return 0;
-  }
-
   if(!$peptideA->{residues} && !$peptideB->{residues}) {
     return 1;
   }
 
-  die "same peptide sequence different number of residues" unless(scalar @{$peptideA->{residues}} == scalar @{$peptideA->{residues}});
+  if(($peptideA->{residues} && !$peptideB->{residues}) || ($peptideB->{residues} && !$peptideA->{residues})) {
+    return 0;
+  }
+
+
+  unless(scalar @{$peptideA->{residues}} == scalar @{$peptideA->{residues}}){
+    warn "same peptide sequence different number of residues for $peptideA->{sequence}";
+    return 0;
+  }
 
   for(my $i = 0; $i < scalar @{$peptideA->{residues}}; $i++) {
     my $residueA = $peptideA->{residues}->[$i];
     my $residueB = $peptideB->{residues}->[$i];
 
-    die "different attributes for peptide residue" unless(scalar keys %{$residueA} == scalar keys %{$residueB});    
+    unless(scalar keys %{$residueA} == scalar keys %{$residueB}){
+      warn "different attributes for peptide residue for $peptideA->{sequence}";
+      return 0;
+    }
 
     foreach my $key (keys %{$residueA}) {
       unless($residueA->{$key} eq $residueB->{$key}) {
@@ -914,7 +927,7 @@ sub insertMassSpecSummary {
   my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
                                                            aa_sequence_id => $record->{aaSequenceId}
                                                           });
-  $aaSeq->retrieveFromDB;
+  die "Unable to retrieve $record->{aaSequenceId} from db" unless $aaSeq->retrieveFromDB;
 
   $record->{seqLength}    = $aaSeq->getLength();
   $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
@@ -958,7 +971,11 @@ sub computeSequenceCoverage {
     $cov += !$prev || $pep->{start} > $prev->{end} ? $pep->{end} - $pep->{start} + 1 : $pep->{end} - $prev->{end};
     $prev = $pep;
   }
-  return int($cov / $record->{seqLength} * 1000) / 10;
+  if($record->{seqLength}){
+    return int($cov / $record->{seqLength} * 1000) / 10;
+  }else{
+    warn "amino acid sequence $record->{aaSequenceId} has 0 length";
+  }
 }
 
 sub insertMassSpecFeatures {
