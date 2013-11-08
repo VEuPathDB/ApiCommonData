@@ -148,12 +148,20 @@ sub isPeptideLine {
   return 1;
 }
 
-# return a hashmap which mpas symbols to sequence_ontology_terms for residue modifications;  May need to modify or override in a subclass??
-sub getModificationSymbolMap {
+# return a hashmap which maps symbols to sequence_ontology_terms for residue modifications;  May need to modify or override in a subclass??
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {'*' => 'modified_L_methionine',
-	    '+' => 'Oxidation',
+  my $rv = { '*' => 'phosphorylation_site',
+  };
+
+  return $rv;
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'+' => 'Oxidation',
   };
 
   return $rv;
@@ -343,11 +351,16 @@ sub findPeptideRecord {
 sub removeModifications {
   my ($self, $peptideSequence) = @_;
 
-  my $modificationMap = $self->getModificationSymbolMap();
+  my $modificationToIgnoreMap = $self->getIgnoredModificationSymbolMap;
+  my $modificationToReportMap = $self->getReportedModificationSymbolMap;
+
+  for my $key (keys %$modificationToReportMap) {
+    die "the symbol $key is used for the reported modification $modificationToReportMap->{$key} and ignored $modificationToIgnoreMap->{key}" if  $modificationToIgnoreMap->{$key};
+  }
 
   my @a;
   foreach(split("", $peptideSequence)) {
-    push @a, $_ unless($modificationMap->{$_});
+    push @a, $_ unless($modificationToIgnoreMap->{$_} || $modificationToReportMap->{$_});
   }
 
   return join("", @a);
@@ -356,7 +369,8 @@ sub removeModifications {
 sub addModifications {
   my ($self, $peptideRecord, $fullSequence) = @_;
 
-  my $modificationMap = $self->getModificationSymbolMap();
+  my $modificationToReportMap = $self->getReportedModificationSymbolMap;
+  my $modificationToIgnoreMap = $self->getIgnoredModificationSymbolMap;
 
   my @trimmedResidues = split("", $peptideRecord->{sequence});
   my @residuesAndMods = split("", $fullSequence);
@@ -369,9 +383,9 @@ sub addModifications {
     my $rm = $residuesAndMods[$i];
     my $tr = $trimmedResidues[$i];
 
-    if(my $modificationType = $modificationMap->{$residuesAndMods[$i]}) {
+    if(my $modificationType = $modificationToReportMap->{$residuesAndMods[$i]}) {
       die "Peptide sequence cannot begin w/ a Modification:  $fullSequence" if($i ==0);
-
+      
       $countMods++;
 
       my $relativePosition = $i - $countMods;
@@ -381,6 +395,11 @@ sub addModifications {
       };
 
       push @{$peptideRecord->{modified_residues}}, $modificationRecord;
+    }
+    elsif(my $modificationType = $modificationToIgnoreMap->{$residuesAndMods[$i]}) {
+      die "Peptide sequence cannot begin w/ a Modification:  $fullSequence" if($i ==0);
+
+      $expectedModificationCount--;
     }
   }
   die "Found $countMods modifications but expected $expectedModificationCount" unless($countMods == $expectedModificationCount);
@@ -556,7 +575,7 @@ package ApiCommonData::Load::MassSpecTransform::Example;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
 # Example case where meaning of * character is different
-sub getModificationSymbolMap {
+sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   my $rv = {'*' => 'modified_L_leucine',
@@ -616,13 +635,19 @@ package ApiCommonData::Load::MassSpecTransform::BoothroydEliasMoritz;
 use base qw(ApiCommonData::Load::MassSpecTransform::KappeSprotozoite);
 
 # Override modification_type to "phosphorylation_site"
-sub getModificationSymbolMap {
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
   my $rv = {'*' => 'phosphorylation_site',
   };
 
   return $rv;
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
 }
 1;
 
@@ -660,7 +685,7 @@ sub isProteinLine {
 
 package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
 use base qw(ApiCommonData::Load::MassSpecTransform);
-sub getModificationSymbolMap {
+sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   my $rv = {'#' => 'Carbamidomethyl',
@@ -671,6 +696,16 @@ sub getModificationSymbolMap {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithNonDigit;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+  return ($lineString=~/^\D/ && !$lineString=~/\-/); 
+}
+
+1;
 
 package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar;
 use base qw(ApiCommonData::Load::MassSpecTransform);
@@ -687,14 +722,35 @@ sub isProteinLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithLetter;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/^[a-zA-Z]/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordCharPhospo;
 use base qw(ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar);
 
-sub getModificationSymbolMap {
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
   return { '*' => 'phosphorylation_site',
   };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
 }
 
 1;
@@ -747,11 +803,17 @@ use base qw(ApiCommonData::Load::MassSpecTransform);
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePhospo;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
-sub getModificationSymbolMap {
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
   return { '*' => 'phosphorylation_site',
   };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
 }
 
 1;
@@ -759,7 +821,7 @@ sub getModificationSymbolMap {
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePromastigote;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
-sub getModificationSymbolMap {
+sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   return { '*' => 'modified_L_cysteine',
