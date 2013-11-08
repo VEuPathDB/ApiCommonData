@@ -117,27 +117,18 @@ sub run {
   }
 
 
-    ##now need to loop through records and assign to genes ..
-    $self->addRecordsToGenes($recordSet);
-    
-    $self->pruneDuplicateAndEmptyRecords($recordSet);
-    $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords}) if $self->{copiedRecords};
+  ##now need to loop through records and assign to genes ..
+  $self->addRecordsToGenes($recordSet);
+  
+  $self->pruneDuplicateAndEmptyRecords($recordSet);
     
 
   $self->unionPeptidesForRecords($recordSet);
-  if($self->{copiedRecords}){
-    print STDERR "WARNING: unioning peptides for copied records ... check that not duplicated";
-    $self->unionPeptidesForRecords($self->{copiedRecords});
-  }
 
-    warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
-    $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
-    if($self->{copiedRecords}){
-      warn "inserting into db for ".scalar(@{$self->{copiedRecords}}). " copied records\n" if $self->getArg('mapOnly');
-      $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly'); 
-    }
-    
-    $self->setResultDescr(<<"EOF");
+  warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
+  $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
+  
+  $self->setResultDescr(<<"EOF");
     
 Added $self->{featuresAdded} @{[ ($self->{featuresAdded} == 1) ? 'feature':'features' ]} and $self->{summariesAdded} @{[ ($self->{summariesAdded} == 1) ? 'summary':'summaries' ]}.
 Skipped $self->{summariesSkipped} @{[ ($self->{summariesSkipped} == 1) ? 'summary':'summaries' ]}.
@@ -248,7 +239,7 @@ sub unionPeptidesForRecords {
           die "spectrum count not provided for " . $peptideB->{sequence} unless $peptideB->{spectrum_count};
           ##what to do if spectrum counts differ??
           ## possibly should sum the spectrum counts as could represent different spectra mapped to same peptide??
-          print STDERR "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+          print STDERR "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}\n" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
           $peptideA->{spectrum_count_diff} += $peptideB->{spectrum_count};
           
           $peptideB->{failed} = 1;
@@ -292,8 +283,8 @@ sub sameResidues {
   }
 
 
-  unless(scalar @{$peptideA->{residues}} == scalar @{$peptideA->{residues}}){
-    print STDERR "WARNING: same peptide sequence different number of residues for $peptideA->{sequence}";
+  unless(scalar @{$peptideA->{residues}} == scalar @{$peptideB->{residues}}){
+#    print STDERR "WARNING: same peptide sequence different number of residues for $peptideA->{sequence}\n";
     return 0;
   }
 
@@ -302,7 +293,7 @@ sub sameResidues {
     my $residueB = $peptideB->{residues}->[$i];
 
     unless(scalar keys %{$residueA} == scalar keys %{$residueB}){
-      print STDERR "WARNING: different attributes for peptide residue for $peptideA->{sequence}";
+      print STDERR "WARNING: different attributes for peptide residue for $peptideA->{sequence}\n";
       return 0;
     }
 
@@ -540,6 +531,9 @@ sub addRecordsToGenes {
     $self->mapPeptidesAndSetIdentifiers($record,$official);
     $self->undefPointerCache();
   } 
+  ##want copied records as part of the record set so append them here
+  push(@{$recordSet},@{$self->{copiedRecords}});
+
 }
 
 sub mapPeptidesAndSetIdentifiers {
@@ -901,10 +895,12 @@ sub setPepDescription {
 
 sub setPepStartEnd {
   my ($self, $pep, $proteinSeq) = @_;
-  $proteinSeq =~ /$pep->{sequence}/i;
-  $pep->{start} = $-[0]+1;
-  $pep->{end} = $+[0];
-  return $pep->{start};         ##will be 0 if failed ...
+  if($proteinSeq =~ /$pep->{sequence}/i){
+    $pep->{start} = $-[0]+1;
+    $pep->{end} = $+[0];
+    return 1;
+  }
+  return 0;
 }
 
 sub insertRecordsIntoDb {
@@ -932,7 +928,7 @@ sub insertMassSpecSummary {
                                                            aa_sequence_id => $record->{aaSequenceId}
                                                           });
   unless($aaSeq->retrieveFromDB){
-    print STDERR "WARNING: Unable to retrieve $record->{aaSequenceId} from db ... skipping "; 
+    print STDERR "WARNING: Unable to retrieve $record->{aaSequenceId} from db for $record->{proteinId} -> $record->{sourceId}... skipping\n"; 
     return;
   }
 
