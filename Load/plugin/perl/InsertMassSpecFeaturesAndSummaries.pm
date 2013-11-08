@@ -1,4 +1,4 @@
- package ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries;
+package ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -532,7 +532,7 @@ sub addRecordsToGenes {
     $self->undefPointerCache();
   } 
   ##want copied records as part of the record set so append them here
-  push(@{$recordSet},@{$self->{copiedRecords}});
+  push(@{$recordSet},@{$self->{copiedRecords}}) if $self->{copiedRecords};
 
 }
 
