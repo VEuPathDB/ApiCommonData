@@ -123,9 +123,28 @@ sub run {
   $self->pruneDuplicateAndEmptyRecords($recordSet);
     
 
-  $self->unionPeptidesForRecords($recordSet);
+  my $recordsById = $self->unionPeptidesForRecords($recordSet);
+  
+  foreach my $key (keys%{$recordsById}){
+    my $good = 0;
+    my $failed = 0;
+    foreach my $rec (@{$recordsById->{$key}}){
+      if($rec->{failed}){
+        $failed++;
+      }else{
+        $good++;
+      }
+    }
+    unless($good == 1){
+      print STDERR "CheckDups: '$key' ($recordsById->{$key}->[0]->{sourceId}) good=$good, failed=$failed\n";
+      foreach my $rec (@{$recordsById->{$key}}){
+        print STDERR "\t".$self->recordToString($rec)."\n";
+      }
+      print "\n";
+    }
+  }
 
-  warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
+  warn "inserting into db for ".scalar(@$recordSet). " records ($self->{countGoodRecords} unique)\n" if $self->getArg('mapOnly');
   $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
   
   $self->setResultDescr(<<"EOF");
@@ -147,6 +166,12 @@ sub unionPeptidesForRecords {
     $record->{recordIndex} = $i;
 
     my $aaSequenceId = $record->{aaSequenceId};
+    ##there seem to be some records without an aa_sequence_id so need to deal with it here
+    unless($aaSequenceId){
+#      print STDERR "WARNING: record has no aa_sequence_id\n\t".$self->recordToString($record)."\n" unless $record->{failed};
+      $record->{failed} = 1;
+      next;
+    }
     my $file = $record->{file};
 
     my $key = $aaSequenceId . "_" . $file;
@@ -162,17 +187,16 @@ sub unionPeptidesForRecords {
 
     my $firstPassed;
     my $keepMe;
-    for(my $i = 0; $i < scalar @$unionRecords; $i++) {
-      next if($unionRecords->[$i]->{failed});
-      next unless(defined $unionRecords->[$i]->{peptides});
-
-      if(!$firstPassed) {
-        $firstPassed = $i;
+    foreach my $rec (@$unionRecords) {
+      next if($rec->{failed});
+      unless(defined $rec->{peptides}){
+        $rec->{failed} = 1;
+        next;
       }
 
-
-      if($i == $firstPassed) {
-        $keepMe = $unionRecords->[$firstPassed];
+      if(!$firstPassed) {
+        $firstPassed = 1;
+        $keepMe = $rec;
         # null these out; these don't make sense if we union peptides from different groups
         $keepMe->{percentCoverage} = undef;
         $keepMe->{score} = undef;
@@ -187,56 +211,51 @@ sub unionPeptidesForRecords {
         next;
       }
       
-      my $deleteMe = $unionRecords->[$i];
 
       # keepMe and deleteMe should be the same gene (same naFeature Id and aaFeatParentId 
-      unless($keepMe->{naFeatureId} == $deleteMe->{naFeatureId} && $keepMe->{aaFeatParentId} == $deleteMe->{aaFeatParentId}) {
+      unless($keepMe->{naFeatureId} == $rec->{naFeatureId} && $keepMe->{aaFeatParentId} == $rec->{aaFeatParentId}) {
         die "Cannot union peptides from records which do not map to the same gene";
       }
       
-      my $keepIndex = $keepMe->{recordIndex};
-      my $deleteIndex = $deleteMe->{recordIndex};
-
       eval {
       
-#      push @{$recordSet->[$keepIndex]->{peptides}}, @{$deleteMe->[$deleteIndex]->{peptides}};
-      push @{$recordSet->[$keepIndex]->{peptides}}, @{$deleteMe->{peptides}};
+#      push @{$recordSet->[$keepIndex]->{peptides}}, @{$rec->[$deleteIndex]->{peptides}};
+      push(@{$keepMe->{peptides}}, @{$rec->{peptides}});
       };
 
       if($@) {
         print Dumper "KEEPME\t";
         print Dumper $keepMe;
         print Dumper "DELETEME\t";
-        print Dumper $deleteMe;
+        print Dumper $rec;
 
         print Dumper $recordsById{$aaSequenceId};
 
         die $@;
       }
-      $recordSet->[$deleteIndex]->{failed} = 1;
+      $rec->{failed} = 1;
     }
-  }
-  
-
-  # loop through a final time and mark duplicate peptides;  set spectrum and sequence count for aaSequenceId
-  foreach my $record (@$recordSet) {
-    next if($record->{failed});
-    next unless(defined $record->{peptides});
+    ##now have all peptides in $keepMe so can mark dups ...
+    unless($keepMe){
+      print STDERR "WARNING: unable to union peptides for '$aaSequenceId'\n";
+      next;
+    }
+    $self->{countGoodRecords}++;
     
-    for(my $i = 0; $i < scalar @{$record->{peptides}}; $i++) {
-      my $peptideA = $record->{peptides}->[$i];
+    for(my $i = 0; $i < scalar(@{$keepMe->{peptides}}); $i++) {
+      my $peptideA = $keepMe->{peptides}->[$i];
       next if($peptideA->{failed});
       die "spectrum count not provided for " . $peptideA->{sequence} unless $peptideA->{spectrum_count};
 
-      for(my $j = $i + 1; $j < scalar @{$record->{peptides}}; $j++) {  ##only need to compare remaining peptides as previous ones already done.
+      for(my $j = $i + 1; $j < scalar @{$keepMe->{peptides}}; $j++) {  ##only need to compare remaining peptides as previous ones already done.
         
-        my $peptideB = $record->{peptides}->[$j];
+        my $peptideB = $keepMe->{peptides}->[$j];
         next if($peptideB->{failed});
+        die "spectrum count not provided for " . $peptideB->{sequence} unless $peptideB->{spectrum_count};
         
         if($peptideA->{sequence} eq $peptideB->{sequence} && $self->sameResidues($peptideA, $peptideB)) {
           
           
-          die "spectrum count not provided for " . $peptideB->{sequence} unless $peptideB->{spectrum_count};
           ##what to do if spectrum counts differ??
           ## possibly should sum the spectrum counts as could represent different spectra mapped to same peptide??
           print STDERR "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}\n" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
@@ -258,16 +277,33 @@ sub unionPeptidesForRecords {
     # counts we care about for the aaSequence
     my ($spectrumCount, $sequenceCount);
 
-    foreach my $pep (@{$record->{peptides}}) {
+    foreach my $pep (@{$keepMe->{peptides}}) {
       next if($pep->{failed});
 
       $spectrumCount = $spectrumCount + $pep->{spectrum_count}; # + $pep->{spectrum_count_diff};
       $sequenceCount++;
     }
 
-    $record->{spectrumCount} = $spectrumCount;
-    $record->{sequenceCount} = $sequenceCount;
+    $keepMe->{spectrumCount} = $spectrumCount;
+    $keepMe->{sequenceCount} = $sequenceCount;
   }
+  return \%recordsById;
+}
+
+sub recordToString {
+  my($self,$record) = @_;
+  return "invalid record" unless $record;
+  my @ret;
+  foreach my $key (sort{$a <=> $b}keys%{$record}){
+    if(ref($record->{$key}) =~ /array/i){
+      push(@ret,"$key=".scalar(@{$record->{$key}}));
+    }elsif(ref($record->{$key}) =~ /hash/i){
+      push(@ret,"$key=".scalar(keys %{$record->{$key}}));
+    }else{
+      push(@ret,"$key=$record->{$key}");
+    }
+  }
+  return join(", ",@ret);
 }
 
 
@@ -439,7 +475,7 @@ sub addRecordsToGenes {
         if ($isOfficial) {
           ##this one is the official one ...
           $official = $naFeature;
-          warn "Found GeneFeature for $id\n";
+          warn "Found GeneFeature for $id -> ".$official->getSourceId()."\n";
           last;
         }
         push(@gf,$naFeature);
@@ -579,8 +615,13 @@ sub testPeptidesAgainstAllProteins {
     warn "Able to uniquely map all peptides from $record->{proteinId} to ".$gf->getSourceId()."\n";
     return $gf;
   }elsif(scalar(@matches) > 1 && scalar(@matches) <= 20){
-    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins ... adding to each\n";
-    return $self->getNafeatureObjsFromIds(\@matches);  
+    my $gfs = $self->getNafeatureObjsFromIds(\@matches);  
+    my @gftmp;
+    foreach my $g (@{$gfs}){
+      push(@gftmp,$g->getSourceId());
+    }
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins (".join(", ",@gftmp).")... adding to each\n";
+    return $gfs;
   }
   return undef;
 }
@@ -905,7 +946,7 @@ sub setPepStartEnd {
 
 sub insertRecordsIntoDb {
   my ($self, $recordSet) = @_;
-  warn "Inserting records into the db for ".scalar(@{$recordSet})." records\n";
+  warn "Inserting records into the db for ".scalar(@{$recordSet})." records ($self->{countGoodRecords} unique)\n";
   my $ct = 0;
   for my $record (@{$recordSet}) {
     warn "processing record $ct\n" if $ct++ % 50 == 0;
@@ -923,12 +964,13 @@ sub insertRecordsIntoDb {
 
 sub insertMassSpecSummary {
   my ($self, $record) = @_;
+  return unless $record->{aaSequenceId};
     
   my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
                                                            aa_sequence_id => $record->{aaSequenceId}
                                                           });
   unless($aaSeq->retrieveFromDB){
-    print STDERR "WARNING: Unable to retrieve $record->{aaSequenceId} from db for $record->{proteinId} -> $record->{sourceId}... skipping\n"; 
+    print STDERR "WARNING: Unable to retrieve $record->{aaSequenceId} from db for $record->{proteinId} -> $record->{sourceId}... skipping\n\t".$self->recordToString($record)."\n"; 
     return;
   }
 
