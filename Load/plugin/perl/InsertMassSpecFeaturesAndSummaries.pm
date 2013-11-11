@@ -57,6 +57,9 @@ sub run {
   my $inputFileDirectory = $self->getArg('inputDir');
   my $fileNameRegex = $self->getArg('fileNameRegex');
 
+
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
   while (my $file = readdir(INDIR)) {
     next unless($file=~m/$fileNameRegex/);
