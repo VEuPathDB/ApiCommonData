@@ -406,28 +406,64 @@ create or replace function apidb.project_id (organism varchar2)
 return varchar2
 is
    project varchar2(80);
+   isComponent number(1);
+   queryFailed boolean;
+
 begin
 
-    -- check organism table
-    begin
+    queryFailed := false;
 
-        select distinct project_name
-        into project
-        from (  select o.project_name
-                from  sres.TaxonName tn, apidb.Organism o
-                where SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism||' ',' ',1,1)-1))
-                  and o.taxon_id = tn.taxon_id
-              union
-                select o.project_name
-                from sres.TaxonName tn, sres.Taxon t, apidb.Organism o
-                where tn.name = organism
-                  and tn.taxon_id = t.taxon_id
-                  and t.rank = 'family'
-                  and ',' || o.family_ncbi_taxon_ids || ',' like '%,' || t.ncbi_tax_id || ',%');
+    -- figure out whether we're in a component or portal instance
+    select count(*)
+    into isComponent
+    from all_tables
+    where owner = 'SRES'
+      and table_name = 'TAXON';
 
-    exception
+    if isComponent = 1 then
+        -- component instance: check apidb.Organism
+        begin
 
-      when NO_DATA_FOUND then
+	    execute immediate
+                'select distinct project_name ' ||
+                'from (  select o.project_name ' ||
+                '   from  sres.TaxonName tn, apidb.Organism o ' ||
+                '   where SUBSTR(tn.name,1,(INSTR(tn.name, '' '',1,1)-1)) = SUBSTR(''' || organism || ''',1,(INSTR(''' || organism || ''' || '' '','' '',1,1)-1)) ' ||
+                '     and o.taxon_id = tn.taxon_id ' ||
+                ' union ' ||
+                '   select o.project_name ' ||
+                '   from sres.TaxonName tn, sres.Taxon t, apidb.Organism o ' ||
+                '   where tn.name = ''' || organism || ''' ' ||
+                '     and tn.taxon_id = t.taxon_id ' ||
+                '     and t.rank = ''family'' ' ||
+                '     and '','' || o.family_ncbi_taxon_ids || '','' like ''%,'' || t.ncbi_tax_id || '',%'')'
+            into project;
+
+            exception
+
+              when NO_DATA_FOUND then
+              queryFailed := true;
+
+        end;
+
+    else
+        -- portal instance: check ApidbTuning.ProjectMapping
+        begin
+
+	    execute immediate
+                'select project_id from ApidbTuning.ProjectMapping where organism = ''' || organism || ''''
+            into project;
+
+            exception
+
+              when NO_DATA_FOUND then
+              queryFailed := true;
+
+        end;
+
+    end if;
+
+    if queryFailed then
          -- use hardwired genus->project mappings
          case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
             when 'acanthamoeba' then project := 'AmoebaDB';
@@ -484,7 +520,7 @@ begin
                                             'project_id("'
                                             || organism || '"): unknown project assignment' );
       end case;
-    end;
+      end if;
 
     return project;
 
