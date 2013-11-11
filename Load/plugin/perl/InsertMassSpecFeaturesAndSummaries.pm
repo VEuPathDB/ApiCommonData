@@ -57,7 +57,7 @@ sub run {
   my $inputFileDirectory = $self->getArg('inputDir');
   my $fileNameRegex = $self->getArg('fileNameRegex');
 
-
+  my $dbiDb = $self->getDb();
   $dbiDb->setMaximumNumberOfObjects(100000);
 
   opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
