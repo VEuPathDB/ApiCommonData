@@ -783,6 +783,20 @@ sub isPeptideLine {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::Broadhead;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = { '*' => 'modified_L_cysteine',
+	   '%' => 'modified_L_methionine',
+	   '#' => 'iodoacetamide_derivatized_residue'
+  };
+  return $rv;
+}
+1;
+
 
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
 use base qw(ApiCommonData::Load::MassSpecTransform);
