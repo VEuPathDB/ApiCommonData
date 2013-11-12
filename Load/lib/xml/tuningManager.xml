@@ -5266,9 +5266,7 @@ WHERE s1.property = 'CID'
 
 
   <tuningTable name="MSPeptideSummary">
-    <internalDependency name="RepresentativeMSSummary"/>
     <internalDependency name="GeneAttributes"/>
-    <internalDependency name="MSExptTrustedSpectrum"/>
     <internalDependency name="MassSpecTerms"/>
     <internalDependency name="DatasetPresenter"/>
     <externalDependency name="Dots.AAFeature"/>
@@ -5278,7 +5276,7 @@ WHERE s1.property = 'CID'
     <intermediateTable name="MSExptTrustedSpectrum"/>
     <sql>
 <![CDATA[
-create table MSExptTrustedSpectrum  NOLOGGING AS        
+create table MSExptTrustedSpectrum&1  NOLOGGING AS        
 select distinct mss.external_database_release_id, mss.sample_file
 from apidb.massspecsummary mss, dots.massspecfeature msf
 where mss.mass_spec_summary_id = msf.source_id
