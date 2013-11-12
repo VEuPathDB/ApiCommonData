@@ -21,6 +21,8 @@ alter table sres.Reference modify (author varchar2(2000));
 
 alter table sres.dbref modify (secondary_identifier varchar2(200));
 
+alter table dots.Library modify (stage varchar2(150));
+
 -- indexes on GUS tables
 
 create index dots.AaSeq_source_ix
