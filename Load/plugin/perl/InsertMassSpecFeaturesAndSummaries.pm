@@ -467,18 +467,18 @@ sub addRecordsToGenes {
       my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $id, $self->{geneExtDbRlsId}, $self->getArg('organismAbbrev')) ;
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
       if ($naFeature->retrieveFromDB()) {
-  my $isOfficial=0;
-  my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
-  foreach (@geneExtDbRlsIdList){
-      if ($naFeature->getExternalDatabaseReleaseId()==$_){
-    $isOfficial=1;
-      }
-  }
-
+        my $isOfficial=0;
+        my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
+        foreach (@geneExtDbRlsIdList){
+          if ($naFeature->getExternalDatabaseReleaseId()==$_){
+            $isOfficial=1;
+          }
+        }
+        
         if ($isOfficial) {
           ##this one is the official one ...
           $official = $naFeature;
-          warn "Found GeneFeature for $id -> ".$official->getSourceId()."\n";
+          warn "Found GeneFeature for $id -> ".$official->getSourceId()." in file $record->{file}\n";
           last;
         }
         push(@gf,$naFeature);
