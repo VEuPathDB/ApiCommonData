@@ -263,12 +263,8 @@ sub readFile {
       $self->printXmlConfig();
     }
 
-
-
     if($self->isProteinLine($line, \@a)) {
-      print STDERR "Found Protein line: $line\n" if($self->debug());
       $currentProteinId = $a[$self->getProteinIdColumn()];
-
       my $geneId;
       if(defined $self->getGeneSourceIdColumn()) {
         $geneId = $a[$self->getGeneSourceIdColumn()];
@@ -584,6 +580,14 @@ sub getIgnoredModificationSymbolMap {
   return $rv;
 }
 
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
+}
+
 # Example case for asking if the line I'm on is a protein line
 sub isProteinLine {
   my ($self, $lineString, $lineArray) = @_;
@@ -694,6 +698,14 @@ sub getIgnoredModificationSymbolMap {
  return $rv;
 }
 
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
+}
+
 1;
 
 package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithNonDigit;
@@ -792,7 +804,22 @@ use base qw(ApiCommonData::Load::MassSpecTransform);
  sub isProteinLine {
    my ($self, $lineString, $lineArray) = @_;
    # PUT Logic here specific to your data
-   if(scalar @$lineArray == 9) {
+   if(scalar @$lineArray == 9 ) {
+    return 1;
+   }
+   return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineWithLessThanTenColumns;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 8 columns,
+ sub isProteinLine {
+   my ($self, $lineString, $lineArray) = @_;
+   # PUT Logic here specific to your data
+   if(scalar @$lineArray < 10 ) {
     return 1;
    }
    return 0;
@@ -829,6 +856,15 @@ sub getIgnoredModificationSymbolMap {
            '#' => 'modified_L_methionine',
   };
 }
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
+}
+
 1;
 
 package ApiCommonData::Load::MassSpecTransform::EveryLineIsPeptideLine;
