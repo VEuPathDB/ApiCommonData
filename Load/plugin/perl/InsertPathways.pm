@@ -141,7 +141,7 @@ sub readKeggFiles {
 
   my $pathwaysObj = $self->{pathwaysCollection};
   print "Reading KEGG files...\n";
-
+  my $reverseNodeLookup; # to get uniqId if one has the indexId in hand
   foreach my $kgml (@{$kgmlFiles}) {
 
     my $pathwayElements = $kgmlParser->parseKGML($kgml);
@@ -151,10 +151,17 @@ sub readKeggFiles {
     $pathwayObj->{image_file} = $pathwayElements->{IMAGE_FILE};    
 
     foreach my $node  (keys %{$pathwayElements->{NODES}}) {
-      $pathwayObj->setPathwayNode($node, { node_name => $node,
+
+      my $uniqId = $node;
+      my $id = $node;
+      $id =~s/\_X:\d+\_Y:\d+//;  # remove coordinates 
+
+      $reverseNodeLookup->{$pathwayElements->{NODES}->{$node}->{ENTRY_ID}} = $pathwayElements->{NODES}->{$node}->{UNIQ_ID};
+
+      $pathwayObj->setPathwayNode($node, { node_name => $uniqId,
+					   uniqId => $uniqId,
                                            node_type => $pathwayElements->{NODES}->{$node}->{TYPE}
                                          });
-
       $pathwayObj->setNodeGraphics($node, { x => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{X},
                                             y => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{Y},
                                             shape => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{TYPE},
@@ -174,19 +181,31 @@ sub readKeggFiles {
 
       foreach my $substrate (@{$reaction->{SUBSTRATES}}){
         foreach my $enzyme (@{$reaction->{ENZYMES}}){
-          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$substrate->{NAME}", { source_node => $substrate->{NAME},
-                                                                                            associated_node => $enzyme,
+
+
+
+	  my $uniqId = $reverseNodeLookup->{$substrate->{ENTRY}};
+	  my $enzId = $reverseNodeLookup->{$enzyme};
+
+          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$substrate->{NAME}", { 
+											   source_node => $uniqId ,
+                                                                                            associated_node => $enzId,
                                                                                             assoc_type => "Reaction ".$reactType,
                                                                                             direction => $direction,
                                                                                             reaction_name => $reactName
                                                                                           });
+
         }
       } 
 
       foreach my $enzyme (@{$reaction->{ENZYMES}}){
         foreach my $product (@{$reaction->{PRODUCTS}}){
-          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$product->{NAME}", { source_node => $enzyme, 
-                                                                                          associated_node => $product->{NAME},
+	  my $uniqId = $reverseNodeLookup->{$product->{ENTRY}};
+	  my $enzId = $reverseNodeLookup->{$enzyme};
+
+          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$product->{NAME}", { 
+											 source_node => $enzId,
+                                                                                          associated_node => $uniqId,
                                                                                           assoc_type => "Reaction ".$reactType,
                                                                                           reaction_name => $reactName,
                                                                                           direction => $direction
@@ -199,32 +218,33 @@ sub readKeggFiles {
     foreach my $relationKey (keys %{$pathwayElements->{RELATIONS}}) {
       my $relation = $pathwayElements->{RELATIONS}->{$relationKey};
       foreach my $x (keys %{$relation} ) {
-	if ($relation->{$x}->{INTERACTION_TYPE} eq 'Maplink'){
+    	if ($relation->{$x}->{INTERACTION_TYPE} eq 'Maplink'){
+    	  my $entity = $relation->{$x}->{INTERACTION_ENTITY_ENTRY}; # compound
+	  my $cpdId = $reverseNodeLookup->{$entity};
+	  if ( $pathwayElements->{NODES}->{$cpdId}->{ENTRY_ID} eq $entity) {
+    	      $entity = $pathwayElements->{NODES}->{$cpdId}->{SOURCE_ID} ;
+    	      $cpdId=~s/\_X:\d+\_Y:\d+//;
+    	    }
 
-	  my $entity = $relation->{$x}->{INTERACTION_ENTITY_ENTRY}; # compound
-	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
-	      $entity = $pathwayElements->{NODES}->{$x}->{SOURCE_ID} if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entity);
-	    }
-	  # if relation is between compound and entry
-	  my $entry = $relation->{$x}->{ENTRY}; 
-	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
-	    if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$x}->{TYPE} eq 'map') {
-	      $entry = $pathwayElements->{NODES}->{$x}->{SOURCE_ID};
-	      $pathwayObj->{map}->{$entry} = $entity;
-	      print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
-	    }
-	  }
-	  # if relation is between compound and associated_entry instead
-	  $entry = $relation->{$x}->{ASSOCIATED_ENTRY}; 
-	  foreach my $x  (keys %{$pathwayElements->{NODES}}) {
-	    if ( $pathwayElements->{NODES}->{$x}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$x}->{TYPE} eq 'map') {
-	      $entry = $pathwayElements->{NODES}->{$x}->{SOURCE_ID};
-	      $pathwayObj->{map}->{$entry} = $entity;
-	      print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
-	    }
+    	  # if relation is between compound and entry
+    	  my $entry = $relation->{$x}->{ENTRY};
+	  my $nodeId = $reverseNodeLookup->{$entry};
+	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
+	    $pathwayObj->{map}->{$entry} = $entity;
+	    print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
 	  }
 
-	}
+    	  # if relation is between compound and associated_entry instead
+    	  $entry = $relation->{$x}->{ASSOCIATED_ENTRY}; 
+	  $nodeId = $reverseNodeLookup->{$entry};
+	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
+	    $pathwayObj->{map}->{$entry} = $entity;
+	    print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
+	  }
+
+    	}
       }
     }
 
@@ -316,7 +336,7 @@ sub loadPathway {
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
         my $asscNodeId = $self->loadNetworkNode($pathwayId, $asscNode, $nodeGraphics);
 
-        next unless ($srcNodeId  && $asscNodeId );  
+        next unless ($srcNodeId  && $asscNodeId ); 
         #node relationship
         my $relationship = GUS::Model::ApiDB::NetworkRelationship->new({ node_id => $srcNodeId,
                                                                          associated_node_id => $asscNodeId });
@@ -418,7 +438,7 @@ sub loadNetworkNode {
 
   if ($node->{node_name}) {
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
-
+      $node->{node_name} =~s/\_X:\d+\_Y:\d+//;  # remove coordinates
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
                                                             node_type_id => $node_type });
 
