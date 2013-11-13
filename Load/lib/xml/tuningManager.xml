@@ -288,9 +288,12 @@ FROM   Apidb.Organism o,
         GROUP BY ga.taxon_id
        ) sageTagCount, 
        (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
-        FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps  
+        FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps,
+             sres.externaldatabaserelease edr, sres.externaldatabase ed
         WHERE ps.profile_set_id = p.profile_set_id and p.source_id = ga.source_id 
-          AND lower(ps.name) like '%rna%' 
+          AND edr.external_database_id = ed.external_database_id 
+          AND edr.external_database_release_id = ps.external_database_release_id  
+          AND lower(ed.name) like '%rna%' 
           AND ga.is_deprecated = 0 
         GROUP BY ga.taxon_id 
        ) rnaSeqCount, 
