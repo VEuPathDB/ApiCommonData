@@ -448,6 +448,8 @@ sub loadNetworkNode {
     my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
                     ($nodeGraphics->{shape} eq 'rectangle') ? 2 : ($nodeGraphics->{shape} eq 'roundrectangle') ? 3 : 4;
 
+  my ($networkNode_tableId) = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = 'NetworkNode'" );
+
     #if a parent Pathway Id is provided only then insert a new record.
     if ($pathwayId){
       my $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({ parent_id => $pathwayId,
@@ -457,7 +459,9 @@ sub loadNetworkNode {
                                                               x => $nodeGraphics->{x},
                                                               y => $nodeGraphics->{y},
                                                               height => $nodeGraphics->{height},
-                                                              width => $nodeGraphics->{width}
+                                                              width => $nodeGraphics->{width},
+							      table_id => $networkNode_tableId,
+							      row_id => $nodeId
                                                              });
       $pathwayNode->submit();
     }
