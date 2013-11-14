@@ -437,10 +437,13 @@ sub loadNetworkNode {
   my($self,$pathwayId, $node,$nodeGraphics) = @_;
 
   if ($node->{node_name}) {
+    my $identifier = $pathwayId ."_" . $node->{node_name}; # eg: 571_1.14.-.-_X:140_Y:333
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
       $node->{node_name} =~s/\_X:\d+\_Y:\d+//;  # remove coordinates
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
-                                                            node_type_id => $node_type });
+                                                            node_type_id => $node_type,
+							    identifier => $identifier
+							  });
 
     $networkNode->submit() unless $networkNode->retrieveFromDB();
     my $nodeId = $networkNode->getNetworkNodeId();
