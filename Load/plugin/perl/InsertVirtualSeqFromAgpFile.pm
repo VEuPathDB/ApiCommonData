@@ -660,7 +660,7 @@ sub validateFileFormat {
   foreach my $k (sort keys %testFragmentIds) {
     push (@checkItems, $k) if ($testFragmentIds{$k} > 1 && $k !~ /^\d+/);
   }
-  if ($#checkItems > 0) { 
+  if (scalar(@checkItems) > 0) { 
     die "Check agp file for ".join (", ", @checkItems).", one single fragment can only be assembled to one position\n";
   }
 
