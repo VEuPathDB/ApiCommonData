@@ -230,7 +230,7 @@ sub readKeggFiles {
 	  my $nodeId = $reverseNodeLookup->{$entry};
 	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$entry} = $cpdId;
+	    $pathwayObj->{map}->{$nodeId} = $cpdId;
 	    print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
 	  }
 
@@ -239,7 +239,7 @@ sub readKeggFiles {
 	  $nodeId = $reverseNodeLookup->{$entry};
 	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$entry} = $cpdId;
+	    $pathwayObj->{map}->{$nodeId} = $cpdId;
 	    print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
 	  }
 
@@ -390,7 +390,7 @@ sub loadPathway {
 
 	$networkNode = GUS::Model::ApiDB::NetworkNode->new({ #display_label => $pathwayObj->{map}->{$n},
 							     node_type_id => 2,
-							     identifier => $identifier
+							     identifier => $pathwayObj->{map}->{$n} #$identifier
 							   });
 	$networkNode->submit() unless $networkNode->retrieveFromDB();
 	my $entityId = $networkNode->getNetworkNodeId();
