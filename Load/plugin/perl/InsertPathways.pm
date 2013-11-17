@@ -380,7 +380,7 @@ sub loadPathway {
       foreach my $n (keys %{$pathwayObj->{map}}) {  #test3.log
 	my $identifier = $pathwayId ."_" . $n ; # eg: 571_1.14.-.-_X:140_Y:333
 
-	# print STDOUT "    RELATION SHIP : " . $n  ." AND " . $pathwayObj->{map}->{$n} . " and $identifier \n";
+	print STDOUT  " RELATIONSHIP :  $pathwayId _" . $pathwayObj->{map}->{$n} . "  and  $identifier \n";
 	my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ #display_label => $n,
 								node_type_id => 3,
 								identifier => $identifier
@@ -390,7 +390,7 @@ sub loadPathway {
 
 	$networkNode = GUS::Model::ApiDB::NetworkNode->new({ #display_label => $pathwayObj->{map}->{$n},
 							     node_type_id => 2,
-							     identifier => $pathwayObj->{map}->{$n} #$identifier
+							     identifier => $pathwayId . "_" . $pathwayObj->{map}->{$n}
 							   });
 	$networkNode->submit() unless $networkNode->retrieveFromDB();
 	my $entityId = $networkNode->getNetworkNodeId();
