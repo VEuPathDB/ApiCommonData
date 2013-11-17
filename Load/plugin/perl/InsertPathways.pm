@@ -223,7 +223,6 @@ sub readKeggFiles {
 	  my $cpdId = $reverseNodeLookup->{$entity};
 	  if ( $pathwayElements->{NODES}->{$cpdId}->{ENTRY_ID} eq $entity) {
     	      $entity = $pathwayElements->{NODES}->{$cpdId}->{SOURCE_ID} ;
-    	      $cpdId=~s/\_X:\d+\_Y:\d+//;
     	    }
 
     	  # if relation is between compound and entry
@@ -231,7 +230,7 @@ sub readKeggFiles {
 	  my $nodeId = $reverseNodeLookup->{$entry};
 	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$entry} = $entity;
+	    $pathwayObj->{map}->{$entry} = $cpdId;
 	    print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
 	  }
 
@@ -240,7 +239,7 @@ sub readKeggFiles {
 	  $nodeId = $reverseNodeLookup->{$entry};
 	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$entry} = $entity;
+	    $pathwayObj->{map}->{$entry} = $cpdId;
 	    print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
 	  }
 
@@ -379,14 +378,20 @@ sub loadPathway {
       print "Loading initial relationship(s)\n";
       # now load the pathway to first compound relationship	
       foreach my $n (keys %{$pathwayObj->{map}}) {  #test3.log
-	print STDOUT "    RELATION SHIP : " . $n  ." AND " . $pathwayObj->{map}->{$n} . "\n";
-	my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $n,
-								node_type_id => 3 });
+	my $identifier = $pathwayId ."_" . $n ; # eg: 571_1.14.-.-_X:140_Y:333
+
+	# print STDOUT "    RELATION SHIP : " . $n  ." AND " . $pathwayObj->{map}->{$n} . " and $identifier \n";
+	my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ #display_label => $n,
+								node_type_id => 3,
+								identifier => $identifier
+							      });
 	$networkNode->submit() unless $networkNode->retrieveFromDB();
 	my $nodeId = $networkNode->getNetworkNodeId();
 
-	$networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $pathwayObj->{map}->{$n},
-							     node_type_id => 2 });
+	$networkNode = GUS::Model::ApiDB::NetworkNode->new({ #display_label => $pathwayObj->{map}->{$n},
+							     node_type_id => 2,
+							     identifier => $identifier
+							   });
 	$networkNode->submit() unless $networkNode->retrieveFromDB();
 	my $entityId = $networkNode->getNetworkNodeId();
 
@@ -439,8 +444,10 @@ sub loadNetworkNode {
   if ($node->{node_name}) {
     my $identifier = $pathwayId ."_" . $node->{node_name}; # eg: 571_1.14.-.-_X:140_Y:333
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
-      $node->{node_name} =~s/\_X:\d+\_Y:\d+//;  # remove coordinates
-    my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
+    my $display_label = $node->{node_name};
+    $display_label =~s/\_X:\d+\_Y:\d+//;  # remove coordinates
+
+    my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $display_label,
                                                             node_type_id => $node_type,
 							    identifier => $identifier
 							  });
@@ -456,7 +463,7 @@ sub loadNetworkNode {
     #if a parent Pathway Id is provided only then insert a new record.
     if ($pathwayId){
       my $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({ parent_id => $pathwayId,
-                                                              display_label => $node->{node_name},
+                                                              display_label => $display_label,
                                                               pathway_node_type_id => $node_type,
                                                               glyph_type_id => $nodeShape,
                                                               x => $nodeGraphics->{x},
