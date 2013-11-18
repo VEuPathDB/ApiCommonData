@@ -602,21 +602,6 @@ sub isProteinLine {
 
 1;
 
-package ApiCommonData::Load::MassSpecTransform::KappeSprotozoite;
-use base qw(ApiCommonData::Load::MassSpecTransform);
-
-#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
-sub isPeptideLine {
-  my ($self, $lineString, $lineArray) = @_;
-
-  if($self->isProteinLine($lineString, $lineArray)) {
-    return 1;
-  }
-  return 0;
-}
-
-1;
-
 package ApiCommonData::Load::MassSpecTransform::Gillin_Proteomics;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
@@ -633,26 +618,6 @@ sub isProteinLine {
   return 0;
 }
 
-1;
-
-package ApiCommonData::Load::MassSpecTransform::BoothroydEliasMoritz;
-use base qw(ApiCommonData::Load::MassSpecTransform::KappeSprotozoite);
-
-# Override modification_type to "phosphorylation_site"
-sub getReportedModificationSymbolMap {
-  my ($self) = @_;
-
-  my $rv = {'*' => 'phosphorylation_site',
-  };
-
-  return $rv;
-}
-
-sub getIgnoredModificationSymbolMap {
-  my ($self) = @_;
-
-  return {};
-}
 1;
 
 package ApiCommonData::Load::MassSpecTransform::FlorensPIESPs;
@@ -855,6 +820,18 @@ sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   return {};
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnorePhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {'*' => 'phosphorylation_site',
+  };
 }
 
 1;
