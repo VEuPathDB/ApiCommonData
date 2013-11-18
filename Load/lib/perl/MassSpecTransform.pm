@@ -859,6 +859,24 @@ sub getIgnoredModificationSymbolMap {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineAcetylation;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'acetylation_site',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePromastigote;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
