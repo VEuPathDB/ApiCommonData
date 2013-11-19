@@ -827,6 +827,12 @@ sub getIgnoredModificationSymbolMap {
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnorePhospo;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
 sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
