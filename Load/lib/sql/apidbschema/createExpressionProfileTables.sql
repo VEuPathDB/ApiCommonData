@@ -94,9 +94,10 @@ create table ApiDB.Profile (
  PRIMARY KEY (profile_id)
 );
 
-CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id);
+CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id, profile_set_id, profile_id);
 CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id, profile_id);
 CREATE INDEX apiDB.p_mod_ix ON apiDB.Profile (modification_date, profile_id);
+CREATE INDEX apiDB.profile_info_ind ON apiDB.Profile(profile_id, source_id, profile_set_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Profile TO gus_w;
 GRANT SELECT ON ApiDB.Profile TO gus_r;
