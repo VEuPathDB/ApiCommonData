@@ -860,6 +860,24 @@ sub getIgnoredModificationSymbolMap {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineMethionine;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'modified_L_methionine',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePromastigote;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
