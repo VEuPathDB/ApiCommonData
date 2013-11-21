@@ -245,6 +245,11 @@ sub readFile {
 
     my @a = split($delimiter, $line);
 
+    foreach my $i (0..$#a) {
+      $a[$i] =~ s/^\s+//g;
+      $a[$i] =~ s/\s+$//g;
+    }
+
     if($self->isHeaderLine($line, \@a)) {
 
       if($self->hasMissingColumnInfo() && $proteinCount < 1) {
