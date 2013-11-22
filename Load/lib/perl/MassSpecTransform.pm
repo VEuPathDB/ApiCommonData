@@ -299,6 +299,7 @@ sub addPeptide {
   my $peptideSpectrum = 1; # default
   if(defined $self->getPeptideSpectrumColumn()) {
     $peptideSpectrum = (defined $fields->[$self->getPeptideSpectrumColumn()] ? $fields->[$self->getPeptideSpectrumColumn()] : 1);
+    $peptideSpectrum = 1 if ($peptideSpectrum < 1);
   }
 
   my $peptideIonScore;
