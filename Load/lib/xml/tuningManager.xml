@@ -5303,7 +5303,7 @@ select ga.source_id,
        l.end_max as aa_end_max,
        mst.html_color, mst.internal_id, mst.organism, mst.project_id, mst.sample, mst.sort_order
 from apidb.massspecsummary mss, DOTS.massspecfeature msf, DOTS.aalocation l, 
-     geneattributes ga, Msexpttrustedspectrum good, SRES.externaldatabase d,
+     geneattributes ga, Msexpttrustedspectrum&1 good, SRES.externaldatabase d,
      SRES.externaldatabaserelease r, massspecterms mst, datasetnametaxon dsnt, datasetpresenter dsp
 where mss.mass_spec_summary_id = msf.source_id
 and msf.aa_feature_id = l.aa_feature_id
