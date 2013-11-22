@@ -426,13 +426,13 @@ sub writeFile {
   foreach my $proteinId (keys %{$self->{data}}) {
     my $gene = $self->{data}->{$proteinId}->{gene};
 
-    $self->writeProteinHeader();
-    $self->writeProtein($proteinId, $gene);
+    $self->writeProteinHeader() if ($proteinId || $gene);
+    $self->writeProtein($proteinId, $gene) if ($proteinId || $gene);
 
     foreach my $peptide (@{$self->{data}->{$proteinId}->{peptides}}) {
 
-      $self->writePeptideHeader();
-      $self->writePeptide($peptide);
+      $self->writePeptideHeader() if ($peptide->{sequence});
+      $self->writePeptide($peptide) if ($peptide->{sequence});
 
       foreach my $mod (@{$peptide->{modified_residues}}) {
 
