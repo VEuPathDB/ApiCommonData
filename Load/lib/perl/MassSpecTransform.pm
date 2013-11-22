@@ -659,16 +659,16 @@ sub isProteinLine {
 
 package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
 use base qw(ApiCommonData::Load::MassSpecTransform);
-sub getIgnoredModificationSymbolMap {
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {'#' => 'Carbamidomethyl',
-	    '*' => 'Oxidation',
+  my $rv = {'#' => 'modified_L_methionine',
+	    '*' => 'modified_L_cysteine',
   };
  return $rv;
 }
 
-sub getReportedModificationSymbolMap {
+sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   my $rv = {
