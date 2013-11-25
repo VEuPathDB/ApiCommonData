@@ -405,6 +405,7 @@ grant execute on apidb.alphanumeric_str to public;
 create or replace function apidb.project_id (organism varchar2)
 return varchar2
 is
+   lowerOrg varchar2(50);
    project varchar2(80);
    isComponent number(1);
    queryFailed boolean;
@@ -420,6 +421,8 @@ begin
     where owner = 'SRES'
       and table_name = 'TAXON';
 
+    lowerOrg := substr(lower(organism), 1, instr(organism||' ', ' ') - 1);
+
     if isComponent = 1 then
         -- component instance: check apidb.Organism
         begin
@@ -428,7 +431,7 @@ begin
                 'select distinct project_name ' ||
                 'from (  select o.project_name ' ||
                 '   from  sres.TaxonName tn, apidb.Organism o ' ||
-                '   where SUBSTR(tn.name,1,(INSTR(tn.name, '' '',1,1)-1)) = SUBSTR(''' || organism || ''',1,(INSTR(''' || organism || ''' || '' '','' '',1,1)-1)) ' ||
+                '   where SUBSTR(tn.name,1,(INSTR(tn.name, '' '',1,1)-1)) = ''' || lowerOrg || ''' ' ||
                 '     and o.taxon_id = tn.taxon_id ' ||
                 ' union ' ||
                 '   select o.project_name ' ||
@@ -451,7 +454,7 @@ begin
         begin
 
 	    execute immediate
-                'select project_id from ApidbTuning.ProjectMapping where organism = ''' || organism || ''''
+                'select project_id from ApidbTuning.ProjectMapping where organism = ''' || lowerOrg || ''''
             into project;
 
             exception
@@ -465,7 +468,12 @@ begin
 
     if queryFailed then
          -- use hardwired genus->project mappings
-         case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
+         case lowerOrg
+            when 'apicomplexa' then project := 'EuPathDB';
+            when 'diplomonadida' then project := 'GiardiaDB';
+            when 'kinetoplastida' then project := 'TriTrypDB';
+            when 'microsporidia' then project := 'MicrosporidiaDB';
+            when 'trichomonadida' then project := 'TrichDB';
             when 'acanthamoeba' then project := 'AmoebaDB';
             when 'acanthamoebidae' then project := 'AmoebaDB';
             when 'anncaliia' then project := 'MicrosporidiaDB';
