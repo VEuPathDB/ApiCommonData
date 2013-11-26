@@ -5336,6 +5336,70 @@ group by msps.source_id, msps.external_database_name, msps.experiment, msps.samp
     </sql>
   </tuningTable>
 
+  <tuningTable name="MSModifiedPeptideSummary">
+    <internalDependency name="GeneAttributes"/>
+    <internalDependency name="MassSpecTerms"/>
+    <internalDependency name="DatasetPresenter"/>
+    <externalDependency name="Dots.AAFeature"/>
+    <externalDependency name="Dots.AALocation"/>
+    <externalDependency name="Sres.ExternalDatabase"/>
+    <externalDependency name="Sres.ExternalDatabaseRelease"/>
+    <externalDependency name="Sres.SequenceOntology"/>
+    <externalDependency name="Apidb.massSpecSummary"/>
+    <externalDependency name="Apidb.massSpecSummary"/>
+    <sql>
+    <![CDATA[
+create table MSModifiedPeptideSummary&1 as
+select dbms_lob.substr(seq.sequence, pep.aa_end_max - pep.aa_start_min + 1,
+              pep.aa_start_min)                                   as
+       peptide_sequence,
+       dbms_lob.substr(seq.sequence, 1, pep.residue_location + 1) as residue,
+       pep.*
+from   dots.aasequence seq,
+       (select ga.source_id                     as source_id,
+               so.term_name                     as modification_type,
+               nvl(dsp.display_name, sample)    as experiment,
+               ed.name                          as external_database_name,
+               mss.external_database_release_id as external_database_release_id,
+               mst.sample                       as Sample,
+               mss.sample_file                  as sample_file,
+               mss.aa_sequence_id               as aa_sequence_id,
+               msf.aa_feature_id                as peptide_aa_feature_id,
+               msf.spectrum_count               as spectrum_count,
+               aal.start_min                    as residue_location,
+               aalp.start_min                   as aa_start_min,
+               aalp.end_max                     as aa_end_max,
+               pot.description                  as description
+        from   dots.posttranslationalmodfeature pot,
+               dots.massspecfeature msf,
+               apidb.massspecsummary mss,
+               dots.aalocation aal,
+               dots.aalocation aalp,
+               apidbtuning.massspecterms mst,
+               sres.sequenceontology so,
+               apidbtuning.geneattributes ga,
+               sres.externaldatabase ed,
+               sres.externaldatabaserelease edr,
+               datasetnametaxon dsnt,
+               datasetpresenter dsp
+        where  pot.parent_id = msf.aa_feature_id
+           and pot.aa_feature_id = aal.aa_feature_id
+           and msf.aa_feature_id = aalp.aa_feature_id
+           and msf.source_id = mss.mass_spec_summary_id
+           and mss.aa_sequence_id = ga.aa_sequence_id
+           and mss.external_database_release_id =
+               edr.external_database_release_id
+           and ed.name = dsnt.name (+)
+           and dsnt.dataset_presenter_id = dsp.dataset_presenter_id (+)
+           and ( ed.name || '|' || mss.sample_file = mst.internal_id
+                 or ed.name = mst.internal_id )
+           and edr.external_database_id = ed.external_database_id
+           and pot.sequence_ontology_id = so.sequence_ontology_id) pep
+where  pep.aa_sequence_id = seq.aa_sequence_id 
+      ]]>
+    </sql>
+  </tuningTable>
+
 
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
