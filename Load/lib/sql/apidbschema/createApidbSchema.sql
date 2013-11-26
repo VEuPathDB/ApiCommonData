@@ -31,6 +31,7 @@ GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
 -- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;
 GRANT SELECT ON sres.TaxonName to ApiDB;
+GRANT SELECT ON sres.Taxon to ApiDB;
 GRANT SELECT, UPDATE ON dots.SeqVariation to ApiDB;
 
 INSERT INTO core.DatabaseInfo
