@@ -38,7 +38,8 @@ my $dbh = DBI->connect($gusconfig->{props}->{dbiDsn},
 		       $gusconfig->{props}->{databaseLogin},
 		       $gusconfig->{props}->{databasePassword})
   ||  die "Couldn't connect to database: " . DBI->errstr;
-  $dbh->{RaiseError} = 1;
+$dbh->{RaiseError} = 1;
+$dbh->{AutoCommit} = 0;
 
 logMessage("starting SNP file unload");
 abbreviatedMakeVariantTable($dbh);
