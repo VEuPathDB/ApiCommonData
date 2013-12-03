@@ -80,7 +80,8 @@ SQL
            max(nvl(var.matches_reference, 0)) as matches_reference,
            max(nvl(var.allele_percent, 100)) as max_cutoff,
            max(nvl(var.allele_percent, 100)) as allele_percent,
-           cast (0 as number(1)) as cutoff_corrected
+           cast (0 as number(1)) as cutoff_corrected,
+           cast (null as number(3)) as max_explicit
     from dots.SeqVariation var, dots.SnpFeature snp, dots.NaSequence seq,
          sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
     where var.parent_id = snp.na_feature_id
@@ -104,13 +105,13 @@ SQL
   my $update = $dbh->prepare(<<SQL) or die "preparing update";
     update CustomHtsVariant
     set cutoff_corrected = 1,
-        max_cutoff = greatest(max_cutoff,
-                              (select nvl(max(max_cutoff), 0)
-                               from CustomHtsVariant chv
-                               where chv.snp_source_id = CustomHtsVariant.snp_source_id
-                                 and chv.allele != CustomHtsVariant.allele))
+        max_cutoff = least(max_cutoff,
+                           (select max(max_cutoff)
+                            from CustomHtsVariant chv
+                            where chv.snp_source_id = CustomHtsVariant.snp_source_id
+                              and chv.allele != CustomHtsVariant.allele))
     where cutoff_corrected = 0
-      and rownum <= 100000
+      and rownum <= 1000000
 SQL
 
   logMessage("updating max_cutoff");
@@ -127,13 +128,47 @@ SQL
   }
 
   logMessage("creating index 2");
-  $dbh->do(<<SQL) or die "creating index 2";
+  $dbh->do(<<SQL) or die "creating index";
+    -- for update statement immediately following
+    create index maxe_ix on CustomHtsVariant (matches_reference, max_explicit, strain, snp_source_id)
+SQL
+
+  logMessage("preparing max_explicit update");
+  my $update = $dbh->prepare(<<SQL) or die "preparing update";
+    update CustomHtsVariant
+    set max_explicit = nvl( (select max(allele_percent)
+                             from CustomHtsVariant chv
+                                 where chv.snp_source_id = CustomHtsVariant.snp_source_id
+                                   and chv.strain = CustomHtsVariant.strain
+                                   and chv.matches_reference = 0
+                                   and chv.max_explicit is null
+                                   and chv.matches_reference = 0), 0)
+    where matches_reference = 1
+      and max_explicit is null
+      and rownum <= 1000000
+SQL
+
+  logMessage("updating max_explicit");
+  my $updateTotal;
+  while (1) {
+    my $recordsUpdated = $update->execute();
+    $dbh->commit() or die "committing";
+
+    # execute returns "0E0" if zero rows were updated
+    last if $recordsUpdated == 0;
+
+    $updateTotal += $recordsUpdated;
+    logMessage("$updateTotal records updated");
+  }
+
+  logMessage("creating index 3");
+  $dbh->do(<<SQL) or die "creating index 3";
     -- for reference-genome query
     create index chv_ref$$ on CustomHtsVariant (species_taxon_id, matches_reference, max_cutoff, allele, product)
 SQL
 
-  logMessage("creating index 3");
-  $dbh->do(<<SQL) or die "creating index 3";
+  logMessage("creating index 4");
+  $dbh->do(<<SQL) or die "creating index 4";
     -- for strain query and SNP-row query
     create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
 SQL
@@ -255,7 +290,7 @@ SQL
                   from CustomHtsVariant
                   where strain = '$strain'
                     and species_taxon_id = '$taxonId'
-                    and matches_reference != 1
+                    and (matches_reference != 1 or max_explicit >= $cutoff)
                     and max_cutoff >= $cutoff
                  union all
                   -- no data for this location
@@ -333,19 +368,50 @@ USAGE
 sub abbreviatedMakeVariantTable {
   my ($dbh) = @_;
 
-  # the stuff we didn't get around to last time (creating indexes)
-
-  $dbh->{PrintError} = 0;
-  $dbh->{RaiseError} = 0;
+  # the stuff we didn't get around to last time
 
   logMessage("creating index 2");
-  $dbh->do(<<SQL) or die "creating index 2";
+  $dbh->do(<<SQL) or die "creating index";
+    -- for update statement immediately following
+    create index maxe_ix on CustomHtsVariant (matches_reference, max_explicit, strain, snp_source_id)
+SQL
+
+  logMessage("preparing max_explicit update");
+  my $update = $dbh->prepare(<<SQL) or die "preparing update";
+    update CustomHtsVariant
+    set max_explicit = nvl( (select max(allele_percent)
+                             from CustomHtsVariant chv
+                                 where chv.snp_source_id = CustomHtsVariant.snp_source_id
+                                   and chv.strain = CustomHtsVariant.strain
+                                   and chv.matches_reference = 0
+                                   and chv.max_explicit is null
+                                   and chv.matches_reference = 0), 0)
+    where matches_reference = 1
+      and max_explicit is null
+      and rownum <= 100000
+SQL
+
+  logMessage("updating max_explicit");
+  my $updateTotal;
+  while (1) {
+    my $recordsUpdated = $update->execute();
+    $dbh->commit() or die "committing";
+
+    # execute returns "0E0" if zero rows were updated
+    last if $recordsUpdated == 0;
+
+    $updateTotal += $recordsUpdated;
+    logMessage("$updateTotal records updated");
+  }
+
+  logMessage("creating index 3");
+  $dbh->do(<<SQL) or die "creating index 3";
     -- for reference-genome query
     create index chv_ref$$ on CustomHtsVariant (species_taxon_id, matches_reference, max_cutoff, allele, product)
 SQL
 
-  logMessage("creating index 3");
-  $dbh->do(<<SQL) or die "creating index 3";
+  logMessage("creating index 4");
+  $dbh->do(<<SQL) or die "creating index 4";
     -- for strain query and SNP-row query
     create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
 SQL
