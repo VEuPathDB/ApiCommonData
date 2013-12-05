@@ -138,6 +138,7 @@ where p.rn = 1
 CREATE TABLE OrganismAttributes&1 NOLOGGING AS
 SELECT o.project_name as project_id,
        o.public_abbrev as source_id,
+       o.family_name_for_files,
        tn.name as organism_name,
        o.genome_source,
        o.strain_abbrev, 
