@@ -171,7 +171,7 @@ SQL
   logMessage("creating index 4");
   $dbh->do(<<SQL) or die "creating index 4";
     -- for strain query and SNP-row query
-    create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, snp_source_id, allele, product)
+    create index chv_rows$$ on CustomHtsVariant (species_taxon_id, strain, matches_reference, max_cutoff, max_explicit, snp_source_id, allele, product)
 SQL
 
   logMessage("finished creating table");
