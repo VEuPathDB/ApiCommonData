@@ -317,6 +317,33 @@ SQL
 }
 $stmt->finish();
 
+## OO. check if duplicated genes happen in the same sequence at the same position, Bug #14787
+my $sqloo = "select na_sequence_id, source_id from DOTS.externalnasequence where external_database_release_id=$extDbRlsId";
+my $stmt = $dbh->prepare($sqloo);
+$stmt->execute();
+
+my $c = 0;
+while (my ($naSeqId, $naSourceId) = $stmt->fetchrow_array()) {
+
+  my %exonLocations;
+  my $sqloo2 = "select gf.source_id, nl.start_min, nl.end_max from dots.genefeature gf, DOTS.nalocation nl 
+where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by nl.start_min";
+
+  my $stmtt = $dbh->prepare($sqloo2);
+  $stmtt->execute();
+
+  my ($preSourceId, $preStart, $preEnd);
+  while (my ($gfSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
+    print STDERR "In sequence $naSourceId, gene $gfSourceId and $preSourceId are duplicated at position $nlStartMin \.\. $nlEndMax\n" if ($preStart == $nlStartMin && $preEnd == $nlEndMax);
+    $preSourceId = $gfSourceId;
+    $preStart = $nlStartMin;
+    $preEnd = $nlEndMax;
+  }
+  $stmtt->finish();
+  $c++;
+}
+$stmt->finish();
+
 ## MM. to fix Bug #14407, check if the length of the gene is shorter than the sum of the exons' length 
 my (%gSourceIds, %gLengths);
 my $sql = "select gf.na_feature_id, gf.source_id, nl.start_min, nl.end_max, nl.is_reversed 
