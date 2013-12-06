@@ -143,7 +143,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($geneCount) = $stmt->fetchrow_array();
-print STDERR "total gene has been load = $geneCount\n";
+print STDERR "Total gene has been load = $geneCount\n";
 $stmt->finish();
 
 ## F. check the gene number that has been loaded in different charactory
@@ -163,7 +163,7 @@ my $sql = <<SQL;
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "checking if is Pseudogene...\n";
+print STDERR "For coding_gene, check if it is pseudogene...\n";
 while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
   ($if == 1 )? print STDERR "  is pseudogene = $psdCount\n" : print STDERR "  not pseudogene = $psdCount\n";
 }
@@ -175,7 +175,7 @@ my $sql = <<SQL;
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "check if is partial gene...\n";
+print STDERR "For coding_gene, check if it is partial gene...\n";
 while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
   ($if == 1 )? print STDERR "  is partial gene = $ptlCount\n" : print STDERR "  not partial gene = $ptlCount\n";
 }
