@@ -87,7 +87,7 @@ SQL
   $stmt->execute();
   my ($vldtr) = $stmt->fetchrow_array();
   if ($vldtr) {
-    die "In table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n";
+    die "ERROR... die in the table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n";
   }
   #print STDERR "checked table $table for source_id is not null\n";
   $stmt->finish();
@@ -109,7 +109,7 @@ SQL
   $stmt->execute();
   my ($vldtr, $cnt) = $stmt->fetchrow_array();
   if ($vldtr) {
-    die "In table: $table, source_id: $vldtr is duplicated found.\nDouble check the annotation file\n";
+    die "ERROR... die in table: $table, source_id: $vldtr is duplicated found.\nDouble check the annotation file\n";
   }
   #print STDERR "checked table $table for source_id is not duplicated\n";
   $stmt->finish();
@@ -123,7 +123,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeq) = $stmt->fetchrow_array();
-print STDERR "Total number of sequence = $totalSeq\n";
+print STDERR "The total number of sequence that have been loaded = $totalSeq\n";
 $stmt->finish();
 
 ## D. check the total sequence length
@@ -133,7 +133,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeqLength) = $stmt->fetchrow_array();
-print STDERR "Total sequence length = $totalSeqLength\n";
+print STDERR "The total sequence length = $totalSeqLength\n";
 $stmt->finish();
 
 ## E. check the gene number that has been loaded
@@ -143,10 +143,10 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($geneCount) = $stmt->fetchrow_array();
-print STDERR "Total gene has been load = $geneCount\n";
+print STDERR "The total gene number that have been loaded = $geneCount\n";
 $stmt->finish();
 
-## F. check the gene number that has been loaded in different charactory
+## F. check the gene number that has been loaded in different categories 
 my $sql = <<SQL;
   select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name
 SQL
@@ -189,8 +189,8 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array() ) {
-  print STDERR "ERROR: the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
-  print STDERR "WARNING: the length of protein sequence is less than 10 aa.\n    $aaSourceId: $aaSeq\n" if (length($aaSeq) < 10);
+  print STDERR "ERROR... the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
+  print STDERR "WARNING... the length of protein sequence is less than 10 aa.\n    $aaSourceId: $aaSeq\n" if (length($aaSeq) < 10);
 }
 $stmt->finish();
 
@@ -219,10 +219,10 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaFeat) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
+print STDERR "ERROR... the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
 
 
-## K. check the translatedAaFeature table if translation_start or translation_stop is null or < 0
+## K. check the translatedAaFeature table, translation_start or translation_stop can not be null or < 0
 foreach my $column ("translation_start", "translation_stop") {
   foreach my $exp ("is null", "< 0") {
 my $sql = <<SQL;
@@ -244,7 +244,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($gfName, $gfNaId, $gfSourceId, $efCodingStart, $efCodingEnd) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: found $gfName with $gfNaId with $gfSourceId has coding_start and coding_end at $efCodingStart $efCodingEnd" if ($gfName);
+  print STDERR "ERROR: found $gfName with na_feature_id = $gfNaId and source_id = $gfSourceId has coding_start and coding_end at $efCodingStart $efCodingEnd, which should be NULL\n" if ($gfName);
 }
 $stmt->finish();
 
@@ -255,7 +255,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($gfSourceId, $nlStartMin, $nlEndMax, $seqSourceId, $seqLength) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: gene $gfSourceId with $nlStartMin .. $nlEndMax, which is outside the sequence $seqSourceId 's length: $seqLength.\n";
+  print STDERR "ERROR: gene $gfSourceId with $nlStartMin .. $nlEndMax, which is outside the sequence $seqSourceId 's length: $seqLength. Need to check the annotation file\n";
 }
 $stmt->finish();
 
@@ -266,7 +266,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: duplicated exons.\n  $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
+  print STDERR "ERROR: duplicated exons found.\n  $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
 }
 $stmt->finish();
 
@@ -307,7 +307,7 @@ SQL
         $preStartMin = $start;
         $preEndMax = $end;
       } else {
-        print STDERR "ERROR: overlapped exons.\n  double check $gid for $k with start..end at $start..$end\n";
+        print STDERR "ERROR: overlapped exons found.\n  double check the gene $gid for $k with start..end at $start..$end\n";
       }
     } else {
       $preStartMin = $start;
@@ -322,10 +322,8 @@ my $sqloo = "select na_sequence_id, source_id from DOTS.externalnasequence where
 my $stmt = $dbh->prepare($sqloo);
 $stmt->execute();
 
-my $c = 0;
 while (my ($naSeqId, $naSourceId) = $stmt->fetchrow_array()) {
 
-  my %exonLocations;
   my $sqloo2 = "select gf.source_id, nl.start_min, nl.end_max from dots.genefeature gf, DOTS.nalocation nl 
 where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by nl.start_min";
 
@@ -340,11 +338,10 @@ where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by 
     $preEnd = $nlEndMax;
   }
   $stmtt->finish();
-  $c++;
 }
 $stmt->finish();
 
-## MM. to fix Bug #14407, check if the length of the gene is shorter than the sum of the exons' length 
+## MM. check if the length of the gene is shorter than the sum of the exons' length, Bug #14407 
 my (%gSourceIds, %gLengths);
 my $sql = "select gf.na_feature_id, gf.source_id, nl.start_min, nl.end_max, nl.is_reversed 
 from dots.genefeature gf, dots.nalocation nl
@@ -369,7 +366,7 @@ select na_feature_id from dots.exonfeature where parent_id=?)";
         $exonLength += abs($eStart-$eEnd)+1;
     }
     $stmt->finish();
-    print STDERR "checked $gSourceIds{$kk}, gene length $gLengths{$kk} < sum of exons length $exonLength\n" if ($gLengths{$kk} < $exonLength);
+    print STDERR "ERROR... the gene $gSourceIds{$kk} found with the gene length $gLengths{$kk} < sum of exons length $exonLength, need to contact the data provider to make sure the gene coordinates are correct\n" if ($gLengths{$kk} < $exonLength);
     #print ".";
 }
 
