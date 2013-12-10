@@ -267,9 +267,7 @@ sub unionPeptidesForRecords {
           $peptideB->{failed} = 1;
           
           # keep the peptide attributes if they are equal;
-          foreach my $attr("observed", "mr_expect", "query", "hit",
-                           "ions_score", "description", "end", "start", 
-                           "miss", "delta", "mr_calc", "modification") {
+          foreach my $attr("observed", "mr_expect", "ions_score", "miss", "delta", "mr_calc") {
             $peptideA->{$attr} = $self->peptideAttribute($peptideA, $peptideB, $attr);
           }
           
@@ -351,9 +349,17 @@ sub peptideAttribute {
   my ($self, $peptideA, $peptideB, $attr) = @_;
 
   if($peptideA->{$attr} eq $peptideB->{$attr}) {
-    return $attr;
+    return $peptideA->{$attr};
   }
- 
+  if($peptideA->{$attr} && !$peptideB-{$attr}){
+    return $peptideA->{$attr};
+  }elsif ($peptideB->{$attr} && !$peptideA->{$attr}){
+    return $peptideB->{$attr};
+  }
+  my $peptideA_attr = $peptideA->{$attr};
+  my $peptideB_attr = $peptideB->{$attr};
+  print STDERR "WARNING: $attr value mismatch: peptideA $attr = $peptideA_attr, peptideB $attr = $peptideB_attr. The greater value will be kept\n";
+  return $peptideA->{$attr} > $peptideB->{$attr} ?  $peptideA->{$attr} : $peptideB->{$attr};
   return "";
 }
 
