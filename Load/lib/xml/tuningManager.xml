@@ -2675,6 +2675,14 @@ SQL
       $insertHandle->finish();
       $queryHandle->finish();
 
+      # create index
+      $dbh->do(<<SQL) or die $dbh->errstr;
+        create index bpal&1
+          on ApidbTuning.BlatProtAlignLocation&1
+          (target_na_sequence_id, target_start, target_end, blat_protein_alignment_id,
+           score, is_reversed, query_aa_sequence_id, percent_identity)
+SQL
+
 sub getReversedTstarts {
   my($dfl,$len,$tstart,$blocksizes) = @_;
   my @ts = split(',',$tstart);
