@@ -351,7 +351,7 @@ sub peptideAttribute {
   my ($self, $peptideA, $peptideB, $attr) = @_;
 
   if($peptideA->{$attr} eq $peptideB->{$attr}) {
-    return $attr;
+    return $peptideA->{$attr};
   }
  
   return "";
