@@ -1,0 +1,105 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use Data::Dumper;
+
+my ($verbose, $help, $inputFileOrDir, $outputEmbl, $inputFileExt);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'input_dir=s' => \$inputFileOrDir,
+	    'output_file=s' => \$outputEmbl,
+	    'inputFileExt=s' => \$inputFileExt,
+    );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputFileOrDir && $outputEmbl);
+
+
+
+if(!($inputFileExt)){
+    $inputFileExt = "embl";
+}
+
+
+if(-d $inputFileOrDir) {
+    opendir(DIR, $inputFileOrDir) || die "can't opendir $inputFileOrDir: $!";
+}else{
+    open(IN,$inputFileOrDir) || die "can't open file $inputFileOrDir: $!";
+}
+
+
+open(OUTEMBL,">$outputEmbl");
+my $linesRead = 0;
+if(-d $inputFileOrDir){
+
+    foreach my $file (readdir(DIR)){
+	if($file =~ /\.$inputFileExt$/){
+	    open(FILE,"$inputFileOrDir/$file");
+
+	    foreach my $line (<FILE>){
+		$linesRead++;
+		if($line =~ /^ID/){
+		    $line =~ s/^(ID\s+\S+);/$1  standard;/;
+		    #$line =~ s/SV/SV 1/;   ## comment this line out when process files for tevaSTIB805 in TriTryp
+                    $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump
+                    print OUTEMBL "$line";
+		}elsif($line =~ /^[XDORAK]/){
+                  next;
+		}else{
+		    print OUTEMBL "$line";
+		}
+	    }
+	    close(FILE);
+	}
+    }
+    closedir(DIR);
+}else{
+    foreach my $line (<IN>){
+		$linesRead++;
+		if($line =~ /^ID/){
+		    $line =~ s/^(ID\s+\S+);/$1  standard;/;
+                    $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump
+                    print OUTEMBL "$line";
+		}elsif($line =~ /^[XDORAK]/){
+                  next;
+		}else{
+		    print OUTEMBL "$line";
+		}
+    }
+
+    close(IN);
+
+}
+
+die "Did not read any input lines.  Is input empty?\n" unless $linesRead;
+
+close(OUTEMBL);
+
+
+sub usage{
+    my ($m) = @_;
+
+    print STDERR "$m\n" if($m);
+    my $usage = "
+For preprocess EMBL file, make the ID line as
+ID  SequenceId  standard; SV 1; 
+and delete lines that starting wih [X|D|O|R|A|K]
+
+usage:  perl preprocessEMBL
+           --input_dir:     required, input file or dir containing embl files
+           --inputFileExt:  input file extension, default embl
+           --output_file:   required,  output embl file name
+           --verbose:       boolean-a little extra STDERR out
+           --help|h
+";
+    print STDERR $usage;
+    exit(0);
+}
+
+
+1;

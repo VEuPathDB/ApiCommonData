@@ -47,6 +47,7 @@ CREATE TABLE ApiDB.NetworkNode (
   TABLE_ID                       NUMBER(5),
   ROW_ID                         NUMBER(12),
   DISPLAY_LABEL                  VARCHAR(25),
+  IDENTIFIER                           VARCHAR(50),
   MODIFICATION_DATE              DATE,
   USER_READ                      NUMBER(1),
   USER_WRITE                     NUMBER(1),

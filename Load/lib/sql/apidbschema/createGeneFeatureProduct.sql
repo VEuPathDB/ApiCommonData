@@ -2,7 +2,7 @@ CREATE TABLE apidb.GeneFeatureProduct (
  gene_feature_product_id      NUMBER(12) NOT NULL,
  na_feature_id                NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(12) NOT NULL,
- product                      VARCHAR(400) NOT NULL,
+ product                      VARCHAR(500) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,

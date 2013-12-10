@@ -19,6 +19,10 @@ WHERE table_name IN (SELECT table_name
       LIKE '%fournumbers'
   AND table_name NOT LIKE 'QUERY_RESULT_%'
   AND owner != 'SYS'
+  AND owner != 'APEX_030200'
+  AND owner != 'CTXSYS'
+  AND owner != 'EXFSYS'
+  AND owner != 'SYSMAN'
 ORDER BY owner, table_name;
 
 exit

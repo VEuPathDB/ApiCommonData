@@ -630,6 +630,7 @@ sub validateFileFormat {
 
   my $acc = "";
   my $num;
+  my (%testFragmentIds, @checkItems);
 
   while(<FILE>){
     next if ($_ =~ /#/);
@@ -643,6 +644,8 @@ sub validateFileFormat {
     $num++;
     my $arrSize = @arr;
 
+    $testFragmentIds{$arr[5]} += 1;
+
     if ($arr[4] =~ /[NU]/ && $self->getArg('spacerNum')) {die "You have asked for insertion of gaps when there are already gaps in the file which is not allowed\n"};
     if ($num != $arr[3]){die "Check agp file, $arr[0], pieces should be in order and start with 1 for each virtual sequence\n";}
     if ($arr[1] !~ /\d+/ || $arr[1] <= 0 || $arr[2] !~ /\d+/  || $arr[2] <= 0  || $arr[3] !~ /\d+/  || $arr[3] <= 0 ){ die "Check agp file format, columns 2,3 and 4 must be positive number";}
@@ -651,7 +654,16 @@ sub validateFileFormat {
     if ($arr[4] !~ /[NUWPOGDF]/) {die "Check file format, the fifth column must be N,U,W,P,O,G,F controlled designations of component types";}
     if ($arr[4] !~ /[NU]/ && ($arr[8] !~ /[+-0na]/)){die "Check agp file format lines with sequence pieces, not gaps, must have a 9th column that is +,-,0, or na for orientation/n";}
     if ($arr[4] !~ /[NU]/ && ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6]))) { die "Check data,col 3 - col 2 should equal to col 8 - col 7";}
+
   }
+
+  foreach my $k (sort keys %testFragmentIds) {
+    push (@checkItems, $k) if ($testFragmentIds{$k} > 1 && $k !~ /^\d+/);
+  }
+  if (scalar(@checkItems) > 0) { 
+    die "Check agp file for ".join (", ", @checkItems).", one single fragment can only be assembled to one position\n";
+  }
+
   $self->log("File format validated\n");
 }
 

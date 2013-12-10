@@ -26,6 +26,7 @@ CREATE TABLE apidb.PhenotypeFeature (
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
  FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
+ FOREIGN KEY (na_feature_id) REFERENCES Dots.NAFeatureImp,
  PRIMARY KEY (phenotype_feature_id)
 );
 

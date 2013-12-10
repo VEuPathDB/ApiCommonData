@@ -6,6 +6,8 @@ use CBIL::Util::PropertySet;
 
 use Getopt::Long;
 
+use ApiCommonData::Load::MassSpecTransform;
+
 use Data::Dumper;
 
 my ($help, $file, $config, $debug, $out);
@@ -25,7 +27,7 @@ my @properties = (#["proteinIdColumn"],
                   #["peptideIonScoreColumn"],
                   ["class", "ApiCommonData::Load::MassSpecTransform"],
                   ["delimiter","\t"],
-                  ["trimPeptideRegex", '^\w*\.(\w+)\.\w*$'],
+                  ["trimPeptideRegex", '^[\w-]*\.(.+)\.[\w-]*$'],
                   ["skipLines"],
                   ["headerRegex"],
     );

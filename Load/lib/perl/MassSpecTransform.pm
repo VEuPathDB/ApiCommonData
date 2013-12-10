@@ -2,6 +2,8 @@ package ApiCommonData::Load::MassSpecTransform;
 
 use strict;
 
+use vars qw( @ISA );
+
 # these are required columns in the input file
 sub getProteinIdColumn                  { $_[0]->{proteinIdColumn} }
 sub setProteinIdColumn                  { $_[0]->{proteinIdColumn} = $_[1] eq "" ? undef : $_[1] }
@@ -140,18 +142,26 @@ sub isProteinLine {
 # Some input files will have the protein id and the peptides on the same line;  Will need to override this method in that case
 sub isPeptideLine {
   my ($self, $lineString, $lineArray) = @_;
-
   if($self->isProteinLine($lineString, $lineArray)) {
     return 0;
   }
   return 1;
 }
 
-# return a hashmap which mpas symbols to sequence_ontology_terms for residue modifications;  May need to modify or override in a subclass??
-sub getModificationSymbolMap {
+# return a hashmap which maps symbols to sequence_ontology_terms for residue modifications;  May need to modify or override in a subclass??
+sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {'*' => 'modified_L_methionine',
+  my $rv = { '*' => 'phosphorylation_site',
+  };
+
+  return $rv;
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'+' => 'Oxidation',
   };
 
   return $rv;
@@ -218,9 +228,16 @@ sub readFile {
     }
   }
 
-  my ($proteinCount, $currentProteinId, %seenPeptides, %seenProteins);
+  my $currentProteinId;
+  my $proteinCount = 0;
 
   my $printOnly = $self->hasMissingRequiredColumnInfo();
+
+
+  unless(defined $self->getPeptideSpectrumColumn()) {
+    print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
+  }
+
 
   while(my $line = <FILE>) {
     chomp($line);
@@ -228,12 +245,16 @@ sub readFile {
 
     my @a = split($delimiter, $line);
 
+    foreach my $i (0..$#a) {
+      $a[$i] =~ s/^\s+//g;
+      $a[$i] =~ s/\s+$//g;
+    }
+
     if($self->isHeaderLine($line, \@a)) {
 
-      if($self->hasMissingColumnInfo()) {
+      if($self->hasMissingColumnInfo() && $proteinCount < 1) {
         $self->askForColumns($line, \@a);
       }
-
       print STDERR "Skipping header line: $line\n" if($self->debug());
       next ;
     }
@@ -247,33 +268,21 @@ sub readFile {
       $self->printXmlConfig();
     }
 
-    unless(defined $self->getPeptideSpectrumColumn()) {
-      print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
-    }
-
-
     if($self->isProteinLine($line, \@a)) {
-      print STDERR "Found Protein line: $line\n" if($self->debug());
       $currentProteinId = $a[$self->getProteinIdColumn()];
-
       my $geneId;
       if(defined $self->getGeneSourceIdColumn()) {
         $geneId = $a[$self->getGeneSourceIdColumn()];
       }
 
       $self->{data}->{$currentProteinId}->{gene} = $geneId;
-      if($seenProteins{$currentProteinId}) {
-        die "Seen protein_id twice:  $currentProteinId";
-      }
-
-      %seenPeptides = ();
 
       $proteinCount++
     }
 
     if($self->isPeptideLine($line, \@a)) {
       print STDERR "Found Peptide line: $line\n" if($self->debug());
-      $self->addPeptide($currentProteinId, \@a, \%seenPeptides);
+      $self->addPeptide($currentProteinId, \@a);
     }
 
     last if($self->debug && $proteinCount == 2);
@@ -284,13 +293,13 @@ sub readFile {
 
 
 sub addPeptide {
-  my ($self, $proteinId, $fields, $seenPeptides) = @_;
-
+  my ($self, $proteinId, $fields) = @_;
+  
   my $peptideSequence = $fields->[$self->getPeptideSequenceColumn()];
-
   my $peptideSpectrum = 1; # default
   if(defined $self->getPeptideSpectrumColumn()) {
-    $peptideSpectrum = $fields->[$self->getPeptideSpectrumColumn()];
+    $peptideSpectrum = (defined $fields->[$self->getPeptideSpectrumColumn()] ? $fields->[$self->getPeptideSpectrumColumn()] : 1);
+    $peptideSpectrum = 1 if ($peptideSpectrum < 1);
   }
 
   my $peptideIonScore;
@@ -299,24 +308,20 @@ sub addPeptide {
   }
 
   my $cleanedPeptideSequence = $peptideSequence;
-
-  if($peptideSequence =~ qr/$self->getPeptideRegex()/) {
+  
+  my $trimPeptideRegex=$self->getTrimPeptideRegex();
+  if($peptideSequence =~ /$trimPeptideRegex/) {
     $cleanedPeptideSequence = $1;
   }
 
   my $trimmedPeptideSequence = $self->removeModifications($cleanedPeptideSequence);
 
-  if($seenPeptides->{$cleanedPeptideSequence}) {
+  if(my $peptideRecord = $self->findPeptideRecord($cleanedPeptideSequence, $proteinId)) {
     print STDERR "WARN:  Same Peptide seen twice:  $cleanedPeptideSequence" if($self->debug());
-
-    my $peptideRecord = $self->findPeptideRecord($cleanedPeptideSequence, $proteinId);
+    
     $peptideRecord->{spectrum} = $peptideRecord->{spectrum} + $peptideSpectrum;
-
-    $seenPeptides->{$cleanedPeptideSequence} = 1;
     return;
   }
-
-  $seenPeptides->{$cleanedPeptideSequence} = 1;
 
   my $peptideRecord = {sequence => $trimmedPeptideSequence,
                        spectrum => $peptideSpectrum,
@@ -342,17 +347,22 @@ sub findPeptideRecord {
       return $peptideRecord;
     }
   }
-  die "Could not find existing peptide record for: $cleanedPeptideSequence";
+  return undef;
 }
 
 sub removeModifications {
   my ($self, $peptideSequence) = @_;
 
-  my $modificationMap = $self->getModificationSymbolMap();
+  my $modificationToIgnoreMap = $self->getIgnoredModificationSymbolMap;
+  my $modificationToReportMap = $self->getReportedModificationSymbolMap;
+
+  for my $key (keys %$modificationToReportMap) {
+    die "the symbol $key is used for the reported modification $modificationToReportMap->{$key} and ignored $modificationToIgnoreMap->{key}" if  $modificationToIgnoreMap->{$key};
+  }
 
   my @a;
   foreach(split("", $peptideSequence)) {
-    push @a, $_ unless($modificationMap->{$_});
+    push @a, $_ unless($modificationToIgnoreMap->{$_} || $modificationToReportMap->{$_});
   }
 
   return join("", @a);
@@ -361,7 +371,8 @@ sub removeModifications {
 sub addModifications {
   my ($self, $peptideRecord, $fullSequence) = @_;
 
-  my $modificationMap = $self->getModificationSymbolMap();
+  my $modificationToReportMap = $self->getReportedModificationSymbolMap;
+  my $modificationToIgnoreMap = $self->getIgnoredModificationSymbolMap;
 
   my @trimmedResidues = split("", $peptideRecord->{sequence});
   my @residuesAndMods = split("", $fullSequence);
@@ -374,9 +385,9 @@ sub addModifications {
     my $rm = $residuesAndMods[$i];
     my $tr = $trimmedResidues[$i];
 
-    if(my $modificationType = $modificationMap->{$residuesAndMods[$i]}) {
+    if(my $modificationType = $modificationToReportMap->{$residuesAndMods[$i]}) {
       die "Peptide sequence cannot begin w/ a Modification:  $fullSequence" if($i ==0);
-
+      
       $countMods++;
 
       my $relativePosition = $i - $countMods;
@@ -386,6 +397,11 @@ sub addModifications {
       };
 
       push @{$peptideRecord->{modified_residues}}, $modificationRecord;
+    }
+    elsif(my $modificationType = $modificationToIgnoreMap->{$residuesAndMods[$i]}) {
+      die "Peptide sequence cannot begin w/ a Modification:  $fullSequence" if($i ==0);
+
+      $expectedModificationCount--;
     }
   }
   die "Found $countMods modifications but expected $expectedModificationCount" unless($countMods == $expectedModificationCount);
@@ -411,13 +427,13 @@ sub writeFile {
   foreach my $proteinId (keys %{$self->{data}}) {
     my $gene = $self->{data}->{$proteinId}->{gene};
 
-    $self->writeProteinHeader();
-    $self->writeProtein($proteinId, $gene);
+    $self->writeProteinHeader() if ($proteinId || $gene);
+    $self->writeProtein($proteinId, $gene) if ($proteinId || $gene);
 
     foreach my $peptide (@{$self->{data}->{$proteinId}->{peptides}}) {
 
-      $self->writePeptideHeader();
-      $self->writePeptide($peptide);
+      $self->writePeptideHeader() if ($peptide->{sequence});
+      $self->writePeptide($peptide) if ($peptide->{sequence});
 
       foreach my $mod (@{$peptide->{modified_residues}}) {
 
@@ -558,18 +574,24 @@ sub printRow {
 
 
 package ApiCommonData::Load::MassSpecTransform::Example;
-
-@ISA qw(ApiCommonData::Load::MassSpecTransform);
-use ApiCommonData::Load::MassSpecTransform;
+use base qw(ApiCommonData::Load::MassSpecTransform);
 
 # Example case where meaning of * character is different
-sub getModificationSymbolMap {
+sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
   my $rv = {'*' => 'modified_L_leucine',
   };
 
   return $rv;
+}
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
 }
 
 # Example case for asking if the line I'm on is a protein line
@@ -584,5 +606,331 @@ sub isProteinLine {
   return 0;
 }
 
+1;
+
+package ApiCommonData::Load::MassSpecTransform::Gillin_Proteomics;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., gassAWB/Gillin_Proteomics)
+# may need to override this 
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  my $proteinIdIndex = $self->getProteinIdColumn();
+
+  if($lineArray->[0]) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::FlorensPIESPs;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 8 column, e.g., pfal3D7/Florens_PIESPs
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  # PUT Logic here specific to your data
+  if(scalar @$lineArray == 8) {
+    return 1;
+  }
+
+  return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::Ratner_DTASelect_filter;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., gassAWB/Ratner_DTASelect-filter
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/\[MASS=.*\]/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {'#' => 'modified_L_methionine',
+	    '*' => 'modified_L_cysteine',
+  };
+ return $rv;
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithNonDigit;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+  return ($lineString=~/^\D/ && !$lineString=~/\-/); 
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/^\w/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithLetter;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line starts with an alphanumeric character, e.g., tbruTREU927/Hill_Flagellum_Surface_And_Matrix_Proteomes
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString=~/^[a-zA-Z]/) {
+    return 1;
+  }
+  return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordCharPhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::ProteinLineStartsWithWordChar);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'phosphorylation_site',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::dobbelaere;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# every line is the peptide line except the headLines,
+# as well as the protein lines also includes the peptide line
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($self->isHeaderLine($lineString, $lineArray)) {
+    return 0;
+  }
+  return 1;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::Broadhead;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = { '*' => 'modified_L_cysteine',
+	   '%' => 'modified_L_methionine',
+	   '#' => 'iodoacetamide_derivatized_residue'
+  };
+  return $rv;
+}
+1;
+
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  return $self->isProteinLine($lineString, $lineArray);
+
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineWithNineColumns;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 9 column, e.g., tgonME49/Boothroyd_Bowyer_oocyst_sporozoite
+ sub isProteinLine {
+   my ($self, $lineString, $lineArray) = @_;
+   # PUT Logic here specific to your data
+   if(scalar @$lineArray == 9 ) {
+    return 1;
+   }
+   return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineWithLessThanTenColumns;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line has 8 columns,
+ sub isProteinLine {
+   my ($self, $lineString, $lineArray) = @_;
+   # PUT Logic here specific to your data
+   if(scalar @$lineArray < 10 ) {
+    return 1;
+   }
+   return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'phosphorylation_site',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnorePhospo;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {'*' => 'phosphorylation_site',
+  };
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineAcetylation;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'acetylation_site',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineMethionine;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'modified_L_methionine',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePromastigote;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'modified_L_cysteine',
+           '+' => 'modified_L_tryptophan',
+           '#' => 'modified_L_methionine',
+  };
+}
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  my $rv = {
+  };
+ return $rv;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::EveryLineIsPeptideLine;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+#Input files have the protein id and the peptides on the same line (e.g., pberANKA/Kappe_Sprotozoite)
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  return 1;
+
+}
+
+1;
+
+
+package ApiCommonData::Load::MassSpecTransform::ProteinLineNotContainSpecChar;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# Protein line not contain a specific char, e.g. tcruCLBrener/Reservosomes_SubCellular 
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString !~ /esn\d+/) {
+    return 1;
+  }
+  return 0;
+}
 
 1;

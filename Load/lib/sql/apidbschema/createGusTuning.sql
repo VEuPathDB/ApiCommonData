@@ -21,6 +21,8 @@ alter table sres.Reference modify (author varchar2(2000));
 
 alter table sres.dbref modify (secondary_identifier varchar2(200));
 
+alter table dots.Library modify (stage varchar2(150));
+
 -- indexes on GUS tables
 
 create index dots.AaSeq_source_ix
@@ -47,7 +49,7 @@ create index dots.ExonOrder_ix
   tablespace INDX; 
 
 create index dots.SeqvarStrain_ix
-  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
+  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
   tablespace INDX; 
 
 create index sres.RefIx
@@ -124,6 +126,9 @@ tablespace indx;
 alter table dots.NaSequenceImp
 add constraint source_id_uniq
 unique (source_id);
+
+-- have Oracle create optimizer stats for the column pair (subclass_view, external_database_release_id)
+select dbms_stats.create_extended_stats('DOTS', 'NAFEATUREIMP', '(SUBCLASS_VIEW, EXTERNAL_DATABASE_RELEASE_ID)') from dual;
 
 --------------------------------------------------------------------------------
 -- constrain GeneFeature source_ids to be unique

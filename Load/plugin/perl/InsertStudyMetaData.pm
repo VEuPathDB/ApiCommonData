@@ -107,9 +107,8 @@ sub run {
   $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec) if $studyExtDbRlsSpec;
   my $sampleExtDbRlsSpecTemplate = $self->getArg('sampleExtDbRlsSpecTemplate');
   
-  my $useTemplate = 0;
+  my $useTemplate = $sampleExtDbRlsSpecTemplate ? 1 : 0;
   
-  $useTemplate = 1 if $sampleExtDbRlsSpecTemplate;
  
   if($sampleExtDbRlsSpecTemplate && $sampleExtDbRlsSpec) {
 	$self->error("sampleExtDbRlsSpec cannot be used with sampleExtDbRlsSpecTemplate please provided one or the other");
@@ -167,7 +166,7 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
     my $rowAsHash = $self->parseRow($header, $_);
 
     if((!$sampleId) ||  ($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId))){
-	  if($sampleExtDbRlsSpecTemplate){
+        if($sampleExtDbRlsSpecTemplate){
         $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
       $count++;
 	  }
@@ -227,7 +226,7 @@ sub processRow {
 	}
   }
   if($useTemplate){
-	$sampleExtDbRlsSpec=~s/\@SNP_SAMPLE_NAME\@/$sampleName/;
+	$sampleExtDbRlsSpec=~s/\@SAMPLE_NAME\@/$sampleName/;
   }
   my $bioSample;
   my $sampleExtDbRlsId = '';
@@ -247,6 +246,7 @@ sub processRow {
   $studyBioMaterial->setParent($bioSample);
 
   $bioSample->submit();
+  $self->undefPointerCache();
 }
 
 sub makeBioSample {

@@ -1938,6 +1938,31 @@ tablespace indx
     <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
 
+  <tuningTable name="ApidbTuning.ProjectMapping">
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="host.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="piro.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.ProjectMapping" dblink="tritryp.tuning"/>
 
+    <unionization>
+      <source dblink="amoeba.tuning"/>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="host.tuning"/>
+      <source dblink="micro.tuning"/>
+      <source dblink="piro.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="trich.tuning"/>
+      <source dblink="tritryp.tuning"/>
+    </unionization>
+
+  </tuningTable>
 
 </tuningConfig>
