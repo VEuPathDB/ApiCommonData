@@ -356,6 +356,9 @@ sub peptideAttribute {
   }elsif ($peptideB->{$attr} && !$peptideA->{$attr}){
     return $peptideB->{$attr};
   }
+  my $peptideA_attr = $peptideA->{$attr};
+  my $peptideB_attr = $peptideB->{$attr};
+  print STDERR "WARNING: $attr value mismatch: peptideA $attr = $peptideA_attr, peptideB $attr = $peptideB_attr. The greater value will be kept\n";
   return $peptideA->{$attr} > $peptideB->{$attr} ?  $peptideA->{$attr} : $peptideB->{$attr};
   return "";
 }
