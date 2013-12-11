@@ -148,6 +148,7 @@ sub traverseSeqFeatures {
              'miRNA',
 	     'pseudogenic_transcript',
              'scRNA',
+             'srpRNA',
              )
         ) {
 
@@ -159,6 +160,10 @@ sub traverseSeqFeatures {
 	    # 	    $RNA->remove_tag('ncRNA_class');
 	    # 	}
 	    # }
+
+        if ($type eq 'srpRNA') {
+          $type = "SRP_RNA";
+        }
 
         if($type eq 'pseudogenic_transcript'){
             $RNA->add_tag_value("pseudo","");
