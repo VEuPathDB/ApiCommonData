@@ -661,7 +661,7 @@ sub isProteinLine {
 
 
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnoreArtifacts;
-use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+use base qw(ApiCommonData::Load::MassSpecTransform);
 
 sub getReportedModificationSymbolMap {
   my ($self) = @_;
