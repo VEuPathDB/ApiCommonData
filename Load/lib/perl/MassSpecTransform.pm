@@ -658,23 +658,24 @@ sub isProteinLine {
 
 1;
 
-package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
-use base qw(ApiCommonData::Load::MassSpecTransform);
+
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnoreArtifacts;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
 sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {'#' => 'modified_L_methionine',
-	    '*' => 'modified_L_cysteine',
-  };
- return $rv;
+  return {};
 }
 
 sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {
+  return {'*' => 'modified_L_cysteine',
+          '#' => 'modified_L_methionine',
+          '%' => 'modified_L_methionine',
   };
- return $rv;
 }
 
 1;
@@ -754,19 +755,7 @@ sub isPeptideLine {
 
 1;
 
-package ApiCommonData::Load::MassSpecTransform::Broadhead;
-use base qw(ApiCommonData::Load::MassSpecTransform);
 
-sub getReportedModificationSymbolMap {
-  my ($self) = @_;
-
-  my $rv = { '*' => 'modified_L_cysteine',
-	   '%' => 'modified_L_methionine',
-	   '#' => 'iodoacetamide_derivatized_residue'
-  };
-  return $rv;
-}
-1;
 
 
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
