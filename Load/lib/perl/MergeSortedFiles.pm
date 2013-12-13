@@ -224,7 +224,7 @@ package ApiCommonData::Load::MergeSortedFiles::SeqVarCache;
 use base qw(ApiCommonData::Load::MergeSortedFiles);
 
 sub getSequenceIndex { return 0 }
-sub getLocationIndex { return 3 }
+sub getLocationIndex { return 1 }
 
 
 sub wantFirstLine {
@@ -259,30 +259,39 @@ sub skipLine {
   return 0;
 }
 
-# TODO:  debug below 
-sub nextLocation {
+sub nextSNP {
   my ($self) = @_;
+
+  my @rv;
 
   my $sequenceIndex = $self->getSequenceIndex();
   my $locationIndex = $self->getLocationIndex();
 
- # do {
-  #  if(!$self->hasNext()) {
-  #    last;
-  #  }
-  #  my $line = $self->nextLine();
-  #  my $peekLine = $self->getPeek();
+  my $isSameGroup = 1;
 
-   # my @a = split(/\t/, $line);
-   # my @b = split(/\t/, $peekLine);
+  while($isSameGroup) {
+    last unless($self->hasNext());
 
-   # my $sequenceId = $a[$sequenceIndex];
-   # my $peekSequenceId = $b[$sequenceIndex];
+    my $line = $self->nextLine();
+    my $peekLine = $self->getPeek();
 
-   # my $location = $a[$locationIndex];
-   # my $peekLocation = $b[$locationIndex];
-  #} while($peekSequenceId eq $sequenceId && $peekLocation == $location);
+    my @a = split(/\t/, $line);
+    my @b = split(/\t/, $peekLine);
+
+    my $sequenceId = $a[$sequenceIndex];
+    my $peekSequenceId = $b[$sequenceIndex];
+
+    my $location = $a[$locationIndex];
+    my $peekLocation = $b[$locationIndex];
+
+    unless($sequenceId eq $peekSequenceId && $peekLocation == $location) {
+      $isSameGroup = 0;
+    }
+    push @rv, $line;
+  }
+  return \@rv;
 }
+
 
 
 1;
