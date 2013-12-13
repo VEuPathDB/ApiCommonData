@@ -225,6 +225,7 @@ use base qw(ApiCommonData::Load::MergeSortedFiles);
 
 sub getSequenceIndex { return 0 }
 sub getLocationIndex { return 1 }
+sub getStrainIndex { return 2 }
 
 
 sub wantFirstLine {
@@ -248,11 +249,13 @@ sub skipLine {
   return 1 unless($line);
   return 0 if($self->readingFile1Fh($fh));
 
+  my $strainIndex = $self->getStrainIndex();
+
   my $filters = $self->getFilters();
   my @a = split(/\t/, $line);
 
   foreach(@$filters) {
-    if($a[1] eq $_) {
+    if($a[$strainIndex] eq $_) {
       return 1;
     }
   }
