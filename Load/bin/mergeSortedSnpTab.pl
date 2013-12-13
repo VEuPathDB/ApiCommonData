@@ -3,13 +3,16 @@
 use strict;
 use Getopt::Long;
 
-my ($file1, $file2);
+use ApiCommonData::Load::MergeSortedFiles;
+
+my ($file1, $file2, $outputFile);
 
 my $sequenceIndex = 0;
 my $locationIndex = 1;
 
 &GetOptions("file_1=s"=> \$file1,
             "file_2=s" => \$file2,
+            "output_file=s" => \$outputFile,
     );
 
 unless(-e $file1 && -e $file2) {
@@ -17,57 +20,15 @@ unless(-e $file1 && -e $file2) {
   exit;
 }
 
-my ($file1Fh, $file2Fh);
+open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing: $!";
 
-open($file1Fh, $file1) or die "Cannot open file $file1 for reading: $!";
-open($file2Fh, $file2) or die "Cannot open file $file2 for reading: $!";
+my $filters = [];
 
-my $file1Line = readline($file1Fh);
-my $file2Line = readline($file2Fh);
+my $merger = ApiCommonData::Load::MergeSortedFiles::SeqVarCache->new($file1, $file2, $filters);
 
-my ($firstLine, $firstFh, $secondLine, $secondFh) = &compareLines($file1Line, $file1Fh, $file2Line, $file2Fh);
-
-while(1) {
-  print $firstLine;  
-
-  # If the second file is empty, simply print all of the first file
-  if(!$secondLine) {
-    &printRest($firstFh);
-    last;
-  }
-
-  if(my $nextLine = readline($firstFh)) {
-    ($firstLine, $firstFh, $secondLine, $secondFh) = &compareLines($nextLine, $firstFh, $secondLine, $secondFh);
-  }
-  else {
-    print $secondLine;
-    &printRest($secondFh);
-
-    last;
-  }
+while($merger->hasNext()) {
+  print OUT $merger->nextLine() . "\n";
 }
 
-close $file1Fh;
-close $file2Fh;
-
-
-sub printRest {
-  my ($fh) = @_;
-
-  while(readline($fh)) {
-      print;
-    }
-}
-
-sub compareLines {
-  my ($line, $fh, $otherLine, $otherFh) = @_;
-
-  my @a = split(/\t/, $line);
-  my @b = split(/\t/, $otherLine);
-
-  if($a[$sequenceIndex] lt $b[$sequenceIndex] || ($a[$sequenceIndex] eq $b[$sequenceIndex] && $a[$locationIndex] <= $b[$locationIndex])) {
-    return($line, $fh, $otherLine, $otherFh);
-  }
-  return($otherLine, $otherFh, $line, $fh);
-}
+close OUT;
 
