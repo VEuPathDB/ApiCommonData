@@ -22,6 +22,9 @@ use Carp;
 use GUS::Supported::Util;
 use GUS::Model::SRes::DbRef;
 use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::DbRefNAFeature;
+use GUS::Model::SRes::ExternalDatabase;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature, DoTS.DbRefAAFeature, DoTS.DbRefNASequence, or DoTS.AASequenceDbRef to represent new DBxRef associations with NAFeature, AAFeature, NASequence, or AASequence.
@@ -210,6 +213,43 @@ sub getMapping {
       $vals[$i+1] =~ s/^\s+//;
       $vals[$i+1] =~ s/\s+$//;
       $dbRef{$cols->[$i]} = $vals[$i+1];
+
+      ## check if duplicated aliases
+      if ($cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/ ) {
+	my $organismAbbrevCheckTable = $self->getArg('extDbName');
+	($organismAbbrevCheckTable) = split (/\_/, $organismAbbrevCheckTable);
+	## check the source_id in the dots.genefeature view
+	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});
+	if ($geneFeatureTableCheck->retrieveFromDB()) {
+	  my $dupGeneExtRls = $geneFeatureTableCheck->getExternalDatabaseReleaseId;
+	  my $dupExtRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupGeneExtRls});
+	  my $dupExtDbId = $dupExtRlsTable->getExternalDatabaseId if ($dupExtRlsTable->retrieveFromDB() );
+	  my $dupExtDbTable = GUS::Model::SRes::ExternalDatabase->new({external_database_id=>$dupExtDbId});
+	  my $dupName = $dupExtDbTable->getName if ($dupExtDbTable->retrieveFromDB());
+	  my $dupOrganism = split (/\_/, $dupName);
+
+	  die "Check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId is a genefeature source_id belongs to $dupOrganism\n";
+	}
+
+	## check the primary_identifier in the sres.dbref table
+	my $dbrefTableCheck = GUS::Model::SRes::DbRef->new({primary_identifier => $vals[$i+1]});
+	if ($dbrefTableCheck->retrieveFromDB()) {
+	  my $DupDbRefId = $dbrefTableCheck->getDbRefId;
+	  my $dupDbrefNaFeatTable = GUS::Model::DoTS::DbRefNAFeature->new({db_ref_id=>$DupDbRefId});
+	  my $dupNaFeatureId = $dupDbrefNaFeatTable->getNaFeatureId if($dupDbrefNaFeatTable->retrieveFromDB());
+	  my $dupGeneFeatTable = GUS::Model::DoTS::GeneFeature->new({na_feature_id=>$dupNaFeatureId});
+	  my $dupGene = $dupGeneFeatTable->getSourceId if ($dupGeneFeatTable->retrieveFromDB() );
+	  my $dupExtDbRlsId = $dupGeneFeatTable->getExternalDatabaseReleaseId if ($dupGeneFeatTable->retrieveFromDB());
+	  my $dupExtDbRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupExtDbRlsId});
+	  my $dupExtDbId = $dupExtDbRlsTable->getExternalDatabaseId if ($dupExtDbRlsTable->retrieveFromDB());
+	  my $dupExtDbTable = GUS::Model::SRes::ExternalDatabase->new({external_database_id=>$dupExtDbId});
+	  my $dupName = $dupExtDbTable->getName if ($dupExtDbTable->retrieveFromDB() );
+	  my ($dupOrganism) = split(/\_/, $dupName);
+
+	  die "Check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId already exits in the sres.dbref with db_ref_id $DupDbRefId for the gene $dupGene belongs to $dupOrganism\n";
+	}
+      }
+
     }
 
     if($lineCt%100 == 0){
