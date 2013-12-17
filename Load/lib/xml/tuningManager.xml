@@ -5237,9 +5237,9 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
              CASE  WHEN (nrc.source_node = 0 and nn1.node_type_id = 1) THEN  'product' -- reaction from enzyme to compound
                       ELSE 'substrate' END AS type,
               nrt.display_name AS reaction,
-              n.description ||' ('||n.name||')' AS pathway, n.name AS name, n.network_id
+              nc.description ||' ('||nc.name||')' AS pathway, nc.name AS name, nc.network_context_id
      FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
-              ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
+              ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
               ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
            -- source_node = 1 means irreversible (this is an adjustment as network schema cant store reversibility)
@@ -5248,15 +5248,15 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
 	    AND nr.node_id = nn1.network_node_id
       	    AND nr.associated_node_id = nn2.network_node_id
       	    AND  nrl.network_rel_context_id = nrc.network_rel_context_id
-      	    AND  nrl.network_id = n.network_id
+      	    AND  nc.network_context_id = nrc.network_context_id
      UNION
       -- CASE  B :   reversible
      SELECT  nn2.display_label as compound, nn1.display_label AS enzyme, 
                   'substrate/product' AS type,
                   nrt.display_name AS reaction, 
-                  n.description ||' ('||n.name||')' as pathway, n.name AS name, n.network_id
+                  nc.description ||' ('||nc.name||')' as pathway, nc.name AS name, nc.network_context_id
        FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
-              ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
+              ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
               ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
            -- source_node = 0 means reversible (this is an adjustment as network schema cant store reversibility)
@@ -5265,7 +5265,7 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
       	   AND nr.node_id = nn1.network_node_id
       	   AND nr.associated_node_id = nn2.network_node_id
       	   AND  nrl.network_rel_context_id = nrc.network_rel_context_id
-      	   AND  nrl.network_id = n.network_id
+      	   AND  nc.network_context_id = nrc.network_context_id
       	   AND nn1.node_type_id = 1
      	   ) x
 WHERE s1.property = 'CID'
