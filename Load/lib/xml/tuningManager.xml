@@ -5410,6 +5410,26 @@ where  pep.aa_sequence_id = seq.aa_sequence_id
     </sql>
   </tuningTable>
 
+  <tuningTable name="MSModificationSummary">
+    <internalDependency name="MSModifiedPeptideSummary"/>
+
+    <sql>
+    <![CDATA[
+SELECT mss.source_id,
+       mss.residue_location,
+       sum(mss.spectrum_count) number_of_matches,
+       count(distinct peptide_aa_feature_id) number_of_distinct_matches,
+       mss.modification_type as term_name,
+       mss.residue
+FROM apidbtuning.MSModifiedPeptideSummary mss
+group by  mss.source_id,
+          mss.residue_location,
+          mss.modification_type,
+          mss.residue
+ORDER BY source_id,mss.residue_location
+      ]]>
+    </sql>
+  </tuningTable>
 
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
