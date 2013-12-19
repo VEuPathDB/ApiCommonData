@@ -299,17 +299,19 @@ SQL
   $stmtt->finish();
   $c++;
 
-  my ($preStartMin, $preEndMax);
+  my ($preExonId, $preStartMin, $preEndMax);
   foreach my $k (sort keys %exonLocations) {
     my ($start, $end, $gid) = split (/\,/, $exonLocations{$k});
     if ($preStartMin ) {
       if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+	$preExonId = $k;
         $preStartMin = $start;
         $preEndMax = $end;
       } else {
-        print STDERR "ERROR: overlapped exons found.\n  double check the gene $gid for $k with start..end at $start..$end\n";
+        print STDERR "ERROR... overlapped exons found.\ndouble check the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
       }
     } else {
+      $preExonId = $k;
       $preStartMin = $start;
       $preEndMax = $end;
     }
