@@ -7,9 +7,6 @@ use ApiCommonData::Load::MergeSortedFiles;
 
 my ($file1, $file2, $outputFile);
 
-my $sequenceIndex = 0;
-my $locationIndex = 1;
-
 &GetOptions("file_1=s"=> \$file1,
             "file_2=s" => \$file2,
             "output_file=s" => \$outputFile,
