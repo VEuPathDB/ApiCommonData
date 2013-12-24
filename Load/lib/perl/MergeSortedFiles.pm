@@ -290,11 +290,35 @@ sub nextSNP {
     unless($sequenceId eq $peekSequenceId && $peekLocation == $location) {
       $isSameGroup = 0;
     }
-    push @rv, $line;
+
+    my $variation = $self->variation($line);
+
+    push @rv, $variation;
   }
   return \@rv;
 }
 
+
+sub variation {
+  my ($self, $line) = @_;
+
+  my ($sequenceId, $location, $strain, $base, $coverage, $percent, $quality, $pvalue, $externalDatabaseReleaseId, $matchesReference, $product, $positionInCds) = split(/\t/, $line);
+
+  my $rv = {'sequence_source_id' => $sequenceId,
+            'location' => $location,
+            'strain' => $strain,
+            'base' => $base,
+            'coverage' => $coverage,
+            'percent' => $percent,
+            'quality' => $quality,
+            'pvalue' => $pvalue,
+            'external_database_release_id' => $externalDatabaseReleaseId,
+            'matches_reference' => $matchesReference,
+            'product' => $product,
+            'position_in_cds' => $positionInCds,
+  };
+  return $rv;
+}
 
 
 1;
