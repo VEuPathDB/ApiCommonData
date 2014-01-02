@@ -5231,8 +5231,8 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
       SELECT  CASE WHEN nn1.node_type_id = 2 THEN nn1.display_label
                  WHEN nn2.node_type_id = 2 THEN nn2.display_label
                  ELSE 'None' END AS compound,
-            CASE WHEN nn1.node_type_id = 1 THEN REPLACE(nn1.display_label, '_X:Y:','')
-                 WHEN nn2.node_type_id = 1 THEN REPLACE(nn2.display_label, '_X:Y:','')
+            CASE WHEN nn1.node_type_id = 1 THEN REPLACE(nn1.display_label, '_X:_Y:','')
+                 WHEN nn2.node_type_id = 1 THEN REPLACE(nn2.display_label, '_X:_Y:','')
                  ELSE 'None' END AS enzyme,
              CASE  WHEN (nrc.source_node = 0 and nn1.node_type_id = 1) THEN  'product' -- reaction from enzyme to compound
                       ELSE 'substrate' END AS type,
@@ -5251,7 +5251,7 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
       	    AND  nc.network_context_id = nrc.network_context_id
      UNION
       -- CASE  B :   reversible
-     SELECT  nn2.display_label as compound, REPLACE(nn1.display_label, '_X:Y:','') AS enzyme, 
+     SELECT  nn2.display_label as compound, REPLACE(nn1.display_label, '_X:_Y:','') AS enzyme, 
                   'substrate/product' AS type,
                   nrt.display_name AS reaction, 
                   nc.description ||' ('||nc.name||')' as pathway, nc.name AS name, nc.network_context_id
