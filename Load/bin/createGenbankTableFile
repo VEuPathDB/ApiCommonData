@@ -1,4 +1,3 @@
-
 #!/usr/bin/perl
 
 use strict;
@@ -141,16 +140,17 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
       ## the sequences in dots.splicednasequence, the reversed strands have been upcased and reversed & complement
       ## so do not need to deal with strand here
       my @codons;
-      for (my $j=0; $j<length($splicedNaSeq); $j+=3) {
+      for (my $j=$trsltStart-1; $j<$trsltEnd-1; $j+=3) {
         push @codons, substr($splicedNaSeq, $j, 3);
       }
       my $first_codon = shift(@codons);
       $prefix5 = "<" if ($first_codon ne 'ATG');
-      #my $last_codon = pop @codons;
 
-      my $last_codon = substr($splicedNaSeq,-3);
-      #print STDERR "$gSourceId\t$first_codon\t$last_codon\n" if ($gSourceId eq 'ACA1_346150');
+      my $last_codon = pop @codons;
+      #my $last_codon = substr($splicedNaSeq,-3);
       $prefix3 = ">" if ( !($last_codon eq 'TAA' || $last_codon eq 'TAG' || $last_codon eq 'TGA') );
+
+      #print STDERR "$gSourceId\t$first_codon\t$last_codon\n" if ($gSourceId eq 'EAH_00051170');
     } 
 
 
