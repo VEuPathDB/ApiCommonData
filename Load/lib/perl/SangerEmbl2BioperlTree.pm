@@ -162,13 +162,13 @@ sub preprocess {
 	my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
 	if($type eq 'coding'){
 	    if($exonLoc->strand == -1){
-	      if ($codingLocCtr == $#exonLocations ) ) {
+	      if ($codingLocCtr == $#exonLocations) {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] - $codonStart);
 	      } else {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr]);
 	      }
 	    }else{
-	      if (codingLocCtr == 0) {
+	      if ($codingLocCtr == 0) {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] + $codonStart);
 	      } else {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr]);
