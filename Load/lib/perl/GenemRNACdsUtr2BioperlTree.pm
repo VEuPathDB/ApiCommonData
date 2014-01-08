@@ -174,7 +174,8 @@ sub traverseSeqFeatures {
         
         $type = 'coding' if ($type eq 'mRNA' || $type eq 'pseudogenic_transcript');
 
-        $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+        #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+        $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
         my($geneID) = $geneFeature->get_tag_values('ID');
 
         if($transcriptCount > 1){

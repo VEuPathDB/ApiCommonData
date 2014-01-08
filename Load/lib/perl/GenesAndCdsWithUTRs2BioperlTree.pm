@@ -199,7 +199,8 @@ sub traverseSeqFeatures {
 		#print STDERR "Missing poly: $id\n";
 		$CDSLocation  = $polypeptide{$id}->location;
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
 	    #print "ID:$geneID\n";

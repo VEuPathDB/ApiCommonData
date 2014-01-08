@@ -205,7 +205,8 @@ sub traverseSeqFeatures {
 	    if($type eq 'mRNA'){
 		$type = 'coding';
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
