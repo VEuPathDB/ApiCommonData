@@ -35,8 +35,22 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-open(FILE, ">$log") or die "Cannot open file $log for reading:$!";
+open(FILE, ">$log") or die "Cannot open file $log for writing:$!";
 
+my $selectSql = "select na_feature_id from dots.genefeature";
+
+my $sth = $dbh->prepare($selectSql) || die "Couldn't prepare the SQL statement: $selectSql";
+
+$sth->execute ||  die "Couldn't execute statement: ";
+
+my @ids;
+while(my ($naFeatureId)= $sth->fetchrow_array()){
+  push(@ids,$naFeatureId);
+}
+
+print STDERR "Retrieved ",scalar(@ids), " gene features to update\n";
+
+my $num;
 
 my $updateSql = "update dots.NaLocation
 set start_min = (select min(start_min)
@@ -61,20 +75,7 @@ set start_min = (select min(start_min)
                                        where parent_id = ?))
 where na_feature_id = ?";
 
-my $sth2 = $dbh->prepare($updateSql);
-
-# get taxon_id
-my $sth = $dbh->prepare("select na_feature_id from dots.genefeature") || die "Couldn't prepare the SQL statement: ";
-$sth->execute ||  die "Couldn't execute statement: ";
-
-my $num;
-
-my @ids;
-while(my ($naFeatureId)= $sth->fetchrow_array()){
-  push(@ids,$naFeatureId);
-}
-
-print STDERR "Retrieved ",scalar(@ids), " gene features to update\n";
+my $sth2 = $dbh->prepare($updateSql)|| die "Couldn't prepare the SQL statement: $updateSql";
 
 foreach my $naFeatureId (@ids){
   $sth2->execute($naFeatureId,$naFeatureId,$naFeatureId,$naFeatureId,$naFeatureId);
@@ -85,12 +86,14 @@ foreach my $naFeatureId (@ids){
     $dbh->commit;
     print FILE "Number of dots.genefeature rows updated = $num\n";
   }
+
 }
 
 print FILE "Total number of dots.genefeature rows updated = $num\n";
 
 $dbh->commit;
-print STDERR "Update Complete\n";
+
+print FILE "Update Complete\n";
 
 close FILE;
 
