@@ -48,7 +48,7 @@ while(my ($naFeatureId)= $sth->fetchrow_array()){
   push(@ids,$naFeatureId);
 }
 
-print STDERR "Retrieved ",scalar(@ids), " gene features to update\n";
+print FILE "Retrieved ",scalar(@ids), " gene features to update\n";
 
 my $num;
 
