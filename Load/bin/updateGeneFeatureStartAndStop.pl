@@ -37,9 +37,6 @@ $dbh->{AutoCommit} = 0;
 
 open(FILE, ">$log") or die "Cannot open file $log for reading:$!";
 
-# get taxon_id
-my $sth = $dbh->prepare("select na_feature_id from dots.genefeature") || die "Couldn't prepare the SQL statement: ";
-$sth->execute ||  die "Couldn't execute statement: ";
 
 my $updateSql = "update dots.NaLocation
 set start_min = (select min(start_min)
@@ -66,9 +63,20 @@ where na_feature_id = ?";
 
 my $sth2 = $dbh->prepare($updateSql);
 
+# get taxon_id
+my $sth = $dbh->prepare("select na_feature_id from dots.genefeature") || die "Couldn't prepare the SQL statement: ";
+$sth->execute ||  die "Couldn't execute statement: ";
+
 my $num;
 
+my @ids;
 while(my ($naFeatureId)= $sth->fetchrow_array()){
+  push(@ids,$naFeatureId);
+}
+
+print STDERR "Retrieved ",scalar(@ids), " gene features to update\n";
+
+foreach my $naFeatureId (@ids){
   $sth2->execute($naFeatureId,$naFeatureId,$naFeatureId,$naFeatureId,$naFeatureId);
 
   $num++;
