@@ -116,8 +116,16 @@ foreach my $k (sort keys %oldSeqs) {
 	print "gene model change -- $k\n";
 	$geneModelChangeCt++;
       } else {
-	print "WARNING 1: possible source Id reused -- $k\n";
-	$reuseCt++;
+	#print "WARNING 1: possible source Id reused -- $k\n";
+	#print ">old\n$oldSeqs{$k}\n";
+	#print ">new\n$newSeqs{$k}\n";
+	my $if = compare2seqs($oldSeqs{$k}, $newSeqs{$k});
+	print "WARNING: possible $k is $if\n";
+	if ($if =~ /geneModel/i) {
+	  $geneModelChangeCt++;
+	} else {
+	  $reuseCt++;
+	}
       }
     }
   } else {
@@ -146,6 +154,51 @@ $newIdCt=0;
 $aliasCt=0;
 $notAliasCt=0;
 
+
+sub compare2seqs {
+  my ($seq1, $seq2) = @_;
+
+  open (SE1, ">seq1.fa") || die "can not write seq1.fa\n";
+  print SE1 ">seq1\n";
+  print SE1 "$seq1\n";
+  close SE1;
+
+  open (SE2, ">seq2.fa") || die "can not write seq2.fa\n";
+  print SE2 ">seq2\n";
+  print SE2 "$seq2\n";
+  close SE2;
+
+  my $blast = "bl2seq -i seq1.fa -j seq2.fa -p blastn -o bl2seq.out -D 1";
+  `$blast`;
+
+  my @matches;
+  foreach my $i (0..length($seq2)-1) {
+    $matches[$i] = 0;
+  }
+
+  open (BOUT, "bl2seq.out") || die "can not open bl2seq.out file to read\n";
+  <BOUT>; <BOUT>; <BOUT>;
+  while (<BOUT>) {
+    my @items = split (/\t/, $_);
+    if ($items[2] > 90 ) {  ## sequence similarity set to 95
+      foreach my $i ($items[8]..$items[9]) {
+	$matches[$i] = 1;
+      }
+    }
+  }
+  close BOUT;
+
+  my $matchCts = 0;
+  foreach my $i (0..$#matches) {
+    $matchCts++ if ($matches[$i] == 1);
+  }
+
+  if ($matchCts/$#matches > 0.1) {  ## set the percentage of similarity to 10%
+    return "geneModelChange";
+  } else {
+    return "idReused, $matchCts of $#matches";
+  }
+}
 
 sub getSeqsInfoFromFasta {
   my ($inputFile) = @_;
