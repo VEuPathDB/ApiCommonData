@@ -7,6 +7,8 @@ Last modified: edliaw 2013-07-18 -->
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
+    <validator name="validateCodingSequenceLength" handler="api" method="validateCodingSequenceLength"/>
+    <validator name="validateGene" handler="api" method="validateGene"/>
     <qualifier name="3_prime_partial" ignore="true"/>
     <qualifier name="5_prime_partial" ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
@@ -68,8 +70,6 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="type" ignore="true"/>
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
-    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <validator name="validateGene" handler="api" method="validateGene"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
