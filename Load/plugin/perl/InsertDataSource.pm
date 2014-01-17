@@ -5,7 +5,7 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use GUS::Model::ApiDB::Datasource;
+use GUS::Model::ApiDB::DataSource;
 use Data::Dumper;
 
 
