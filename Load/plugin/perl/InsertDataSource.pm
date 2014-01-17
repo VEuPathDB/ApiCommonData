@@ -5,7 +5,7 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use GUS::Model::ApiDB::DataSource;
+use GUS::Model::ApiDB::Datasource;
 use Data::Dumper;
 
 
@@ -135,7 +135,7 @@ sub run {
     };
     $objArgs->{is_Species_Scope} = $isSpeciesScope if $taxonId;
 
-    my $datasource = GUS::Model::ApiDB::DataSource->new($objArgs);
+    my $datasource = GUS::Model::ApiDB::Datasource->new($objArgs);
     $datasource->submit();
     return "Inserted data source $dataSourceName";
 }
