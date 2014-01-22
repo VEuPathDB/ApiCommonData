@@ -2,8 +2,8 @@
 
 use strict;
 use Getopt::Long;
-use CBIL::Util::Utils;
 use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::Utils;
 
 # this script loops through each sample output directory and copy normalized bedgraph files to webService Dir. 
 
