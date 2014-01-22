@@ -220,7 +220,7 @@ sub getMapping {
 	($organismAbbrevCheckTable) = split (/\_/, $organismAbbrevCheckTable);
 	## check the source_id in the dots.genefeature view
 	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});
-	if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && $geneFeatureTableCheck->retrieveFromDB()) {
+	if ( $geneFeatureTableCheck->retrieveFromDB()) {
 	  my $dupGeneExtRls = $geneFeatureTableCheck->getExternalDatabaseReleaseId;
 	  my $dupExtRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupGeneExtRls});
 	  my $dupExtDbId = $dupExtRlsTable->getExternalDatabaseId if ($dupExtRlsTable->retrieveFromDB() );
@@ -233,7 +233,7 @@ sub getMapping {
 
 	## check the primary_identifier in the sres.dbref table
 	my $dbrefTableCheck = GUS::Model::SRes::DbRef->new({primary_identifier => $vals[$i+1]});
-	if ($dbrefTableCheck->retrieveFromDB()) {
+        if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && dbrefTableCheck->retrieveFromDB()){
 	  my $DupDbRefId = $dbrefTableCheck->getDbRefId;
 	  my $dupDbrefNaFeatTable = GUS::Model::DoTS::DbRefNAFeature->new({db_ref_id=>$DupDbRefId});
 	  my $dupNaFeatureId = $dupDbrefNaFeatTable->getNaFeatureId if($dupDbrefNaFeatTable->retrieveFromDB());
