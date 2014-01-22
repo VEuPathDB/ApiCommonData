@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use CBIL::Util::Utils;
 use List::Util qw(min max);
-use lib "$ENV{GUS_HOME}/lib/perl";
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
