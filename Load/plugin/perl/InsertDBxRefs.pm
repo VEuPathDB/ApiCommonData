@@ -220,7 +220,7 @@ sub getMapping {
 	($organismAbbrevCheckTable) = split (/\_/, $organismAbbrevCheckTable);
 	## check the source_id in the dots.genefeature view
 	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});
-	if ($geneFeatureTableCheck->retrieveFromDB()) {
+	if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && $geneFeatureTableCheck->retrieveFromDB()) {
 	  my $dupGeneExtRls = $geneFeatureTableCheck->getExternalDatabaseReleaseId;
 	  my $dupExtRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupGeneExtRls});
 	  my $dupExtDbId = $dupExtRlsTable->getExternalDatabaseId if ($dupExtRlsTable->retrieveFromDB() );
