@@ -567,6 +567,7 @@ sub publish {
       grant select on $prefix$tuningTableName$suffix to public
 SQL
 
+  ApiCommonData::Load::TuningConfig::Log::addLog("GRANTing privileges on new table $prefix$tuningTableName$suffix");
   my $stmt = $dbh->prepare($sql);
   my $grantRtn = $stmt->execute();
   if (!$grantRtn) {
