@@ -233,7 +233,7 @@ sub getMapping {
 
 	## check the primary_identifier in the sres.dbref table
 	my $dbrefTableCheck = GUS::Model::SRes::DbRef->new({primary_identifier => $vals[$i+1]});
-        if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && dbrefTableCheck->retrieveFromDB()){
+        if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && $dbrefTableCheck->retrieveFromDB()){
 	  my $DupDbRefId = $dbrefTableCheck->getDbRefId;
 	  my $dupDbrefNaFeatTable = GUS::Model::DoTS::DbRefNAFeature->new({db_ref_id=>$DupDbRefId});
 	  my $dupNaFeatureId = $dupDbrefNaFeatTable->getNaFeatureId if($dupDbrefNaFeatTable->retrieveFromDB());
