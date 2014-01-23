@@ -564,7 +564,7 @@ sub publish {
 
   # grant select privilege on new table
     my $sql = <<SQL;
-      grant select on $prefix$tuningTableName$suffix to gus_r
+      grant select on $prefix$tuningTableName$suffix to public
 SQL
 
   my $stmt = $dbh->prepare($sql);
