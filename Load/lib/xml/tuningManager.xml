@@ -1007,13 +1007,19 @@ UNION
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX SequenceId_sequence_idx&1 ON SequenceId&1 (sequence)
+CREATE INDEX SequenceId_sequence_idx&1 ON SequenceId&1 (sequence, id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX SequenceId_id_idx&1 ON SequenceId&1 (id)
+CREATE INDEX SequenceId_id_idx&1 ON SequenceId&1 (id, sequence)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX SequenceId_lowid_idx&1 ON SequenceId&1 (lower(id), sequence)
 tablespace indx
       ]]>
     </sql>
