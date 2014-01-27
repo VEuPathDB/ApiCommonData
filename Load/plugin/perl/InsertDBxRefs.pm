@@ -216,8 +216,7 @@ sub getMapping {
 
       ## check if duplicated aliases
       if ($cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/ ) {
-	my $organismAbbrevCheckTable = $self->getArg('extDbName');
-	($organismAbbrevCheckTable) = split (/\_/, $organismAbbrevCheckTable);
+
 	## check the source_id in the dots.genefeature view
 	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});
 	if ( $geneFeatureTableCheck->retrieveFromDB()) {
@@ -226,27 +225,34 @@ sub getMapping {
 	  my $dupExtDbId = $dupExtRlsTable->getExternalDatabaseId if ($dupExtRlsTable->retrieveFromDB() );
 	  my $dupExtDbTable = GUS::Model::SRes::ExternalDatabase->new({external_database_id=>$dupExtDbId});
 	  my $dupName = $dupExtDbTable->getName if ($dupExtDbTable->retrieveFromDB());
-	  my $dupOrganism = split (/\_/, $dupName);
+	  my $dupOrganism = $dupName;
+	  $dupOrganism =~ s/(\S+?)\_.*/$1/;
 
-	  die "Check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId is a genefeature source_id belongs to $dupOrganism\n";
+	  $self->log("WARNING .... check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId is a genefeature source_id belongs to $dupOrganism\n");
 	}
 
 	## check the primary_identifier in the sres.dbref table
 	my $dbrefTableCheck = GUS::Model::SRes::DbRef->new({primary_identifier => $vals[$i+1]});
-        if ( ($organismAbbrevCheckTable ne $self->getArg('organismAbbrev') ) && $dbrefTableCheck->retrieveFromDB()){
+        if ( $dbrefTableCheck->retrieveFromDB()){
 	  my $DupDbRefId = $dbrefTableCheck->getDbRefId;
-	  my $dupDbrefNaFeatTable = GUS::Model::DoTS::DbRefNAFeature->new({db_ref_id=>$DupDbRefId});
-	  my $dupNaFeatureId = $dupDbrefNaFeatTable->getNaFeatureId if($dupDbrefNaFeatTable->retrieveFromDB());
-	  my $dupGeneFeatTable = GUS::Model::DoTS::GeneFeature->new({na_feature_id=>$dupNaFeatureId});
-	  my $dupGene = $dupGeneFeatTable->getSourceId if ($dupGeneFeatTable->retrieveFromDB() );
-	  my $dupExtDbRlsId = $dupGeneFeatTable->getExternalDatabaseReleaseId if ($dupGeneFeatTable->retrieveFromDB());
-	  my $dupExtDbRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupExtDbRlsId});
-	  my $dupExtDbId = $dupExtDbRlsTable->getExternalDatabaseId if ($dupExtDbRlsTable->retrieveFromDB());
-	  my $dupExtDbTable = GUS::Model::SRes::ExternalDatabase->new({external_database_id=>$dupExtDbId});
-	  my $dupName = $dupExtDbTable->getName if ($dupExtDbTable->retrieveFromDB() );
-	  my ($dupOrganism) = split(/\_/, $dupName);
-
-	  die "Check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId already exits in the sres.dbref with db_ref_id $DupDbRefId for the gene $dupGene belongs to $dupOrganism\n";
+	  my $DupDbRefIdCheck = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id => $dbrefTableCheck->getExternalDatabaseReleaseId });
+	  my $DupIdType = $DupDbRefIdCheck->getIdType if ($DupDbRefIdCheck->retrieveFromDB());
+	  if ($DupIdType eq 'previous id' || $DupIdType eq 'alternate id') {
+	    my $dupDbrefNaFeatTable = GUS::Model::DoTS::DbRefNAFeature->new({db_ref_id=>$DupDbRefId});
+	    my $dupNaFeatureId = $dupDbrefNaFeatTable->getNaFeatureId if($dupDbrefNaFeatTable->retrieveFromDB());
+	    my $dupGeneFeatTable = GUS::Model::DoTS::GeneFeature->new({na_feature_id=>$dupNaFeatureId});
+	    my $dupGene = $dupGeneFeatTable->getSourceId if ($dupGeneFeatTable->retrieveFromDB() );
+	    my $dupExtDbRlsId = $dupGeneFeatTable->getExternalDatabaseReleaseId if ($dupGeneFeatTable->retrieveFromDB());
+	    my $dupExtDbRlsTable = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_release_id=>$dupExtDbRlsId});
+	    my $dupExtDbId = $dupExtDbRlsTable->getExternalDatabaseId if ($dupExtDbRlsTable->retrieveFromDB());
+	    my $dupExtDbTable = GUS::Model::SRes::ExternalDatabase->new({external_database_id=>$dupExtDbId});
+	    my $dupName = $dupExtDbTable->getName if ($dupExtDbTable->retrieveFromDB() );
+	    my $dupOrganism = $dupName;
+	    $dupOrganism =~ s/(\S+?)\_.*/$1/;
+	    if ($dupOrganism ne $self->getArg('organismAbbrev') ) {
+	      $self->log("WARNING .... check the aliases mapping file...\nThe alias $vals[$i+1] for $sourceId already exits in the sres.dbref with db_ref_id $DupDbRefId for the gene $dupGene belongs to $dupOrganism\n");
+	    }
+	  }
 	}
       }
 
