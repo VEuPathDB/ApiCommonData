@@ -47,16 +47,28 @@ declare
   userinfo varchar2(1000);
 begin
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
-    begin
-      select first_name || ' ' || last_name || '(' || organization || ')'
-      into userinfo
-      from userlogins3.users
-      where user_id = :new.user_id;
-    exception
-      when NO_DATA_FOUND then
-        userinfo := ' ()'; -- literals from userinfo string
-    end;
+  if :new.comment_target_id = 'gene' and (:new.is_visible = 1 or :new.is_visible is null) then
+    if :new.project_name = 'FungiDB' then
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins3.users
+        where user_id = :new.user_id;
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    else
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins4.users
+        where user_id = :new.user_id;
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    end if;
 
     insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
     values (:new.comment_id, :new.stable_id, :new.project_name, :new.organism,
@@ -84,16 +96,28 @@ begin
   delete from apidb.TextSearchableComment
   where comment_id = :old.comment_id;
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
-    begin
-      select first_name || ' ' || last_name || '(' || organization || ')'
-      into userinfo
-      from userlogins3.users
-      where user_id = :new.user_id;
-    exception
-      when NO_DATA_FOUND then
-        userinfo := ' ()'; -- literals from userinfo string
-    end;
+  if :new.comment_target_id = 'gene' and (:new.is_visible = 1 or :new.is_visible is null) then
+    if :new.project_name = 'FungiDB' then
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins3.users
+        where user_id = :new.user_id;
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    else
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins4.users
+        where user_id = :new.user_id;
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    end if;
 
     select apidb.author_list(:new.comment_id)
     into authorinfo
@@ -118,16 +142,31 @@ create or replace trigger comments2.csi_insert
   for each row
 declare
   userinfo varchar2(1000);
+  project varchar2(80);
 begin
-    begin
-      select first_name || ' ' || last_name || '(' || organization || ')'
-      into userinfo
-      from userlogins3.users
-      where user_id = (select user_id from comments2.Comments where comment_id = :new.comment_id);
-    exception
-      when NO_DATA_FOUND then
-        userinfo := ' ()'; -- literals from userinfo string
-    end;
+    select project_name into project from comments2.comments where comment_id = :new.comment_id;
+
+    if project = 'FungiDB' then
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins3.users
+        where user_id = (select user_id from comments2.Comments where comment_id = :new.comment_id);
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    else
+      begin
+        select first_name || ' ' || last_name || '(' || organization || ')'
+        into userinfo
+        from userlogins4.users
+        where user_id = (select user_id from comments2.Comments where comment_id = :new.comment_id);
+      exception
+        when NO_DATA_FOUND then
+          userinfo := ' ()'; -- literals from userinfo string
+      end;
+    end if;
 
   insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
   select comment_id, :new.stable_id, project_name, organism,
@@ -135,7 +174,7 @@ begin
   from comments2.Comments
   where comment_id = :new.comment_id
     and comment_target_id = 'gene'
-    and is_visible = 1 
+    and (is_visible = 1 or is_visible is null)
     and stable_id != :new.stable_id; -- don't duplicate comment-gene pairs
 end;
 /
@@ -160,13 +199,18 @@ create or replace trigger comments2.csi_update
   for each row
 declare
   userinfo varchar2(1000);
+  project varchar2(80);
 begin
+
   delete from apidb.TextSearchableComment
   where comment_id = :old.comment_id
     and source_id = :old.stable_id
     and (:old.comment_id, :old.stable_id)
         not in (select comment_id, stable_id from comments2.Comments);
 
+  select project_name into project from comments2.comments where comment_id = :new.comment_id;
+
+  if project = 'FungiDB' then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -176,6 +220,17 @@ begin
       when NO_DATA_FOUND then
         userinfo := ' ()'; -- literals from userinfo string
     end;
+  else
+    begin
+      select first_name || ' ' || last_name || '(' || organization || ')'
+      into userinfo
+      from userlogins4.users
+      where user_id = (select user_id from comments2.Comments where comment_id = :new.comment_id);
+    exception
+      when NO_DATA_FOUND then
+        userinfo := ' ()'; -- literals from userinfo string
+    end;
+  end if;
 
   insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
   select comment_id, :new.stable_id, project_name, organism,
@@ -183,7 +238,7 @@ begin
   from comments2.Comments
   where comment_id = :new.comment_id
     and comment_target_id = 'gene'
-        and is_visible = 1;
+        and (is_visible = 1 or is_visible is null);
 
 end;
 /
@@ -257,9 +312,13 @@ create or replace trigger comments2.cmntRef_updateTsc
    after insert or update or delete on comments2.CommentReference
 declare
   userinfo varchar2(1000);
+  project varchar2(80);
 begin
     for i in 1 .. cmntRef_trggr_pkg.stale.count loop
 
+      select project_name into project from comments2.comments where comment_id = cmntRef_trggr_pkg.stale(i);
+
+      if project = 'FungiDB' then
         begin
           select first_name || ' ' || last_name || '(' || organization || ')'
           into userinfo
@@ -269,12 +328,23 @@ begin
           when NO_DATA_FOUND then
             userinfo := ' ()'; -- literals from userinfo string
         end;
+      else
+        begin
+          select first_name || ' ' || last_name || '(' || organization || ')'
+          into userinfo
+          from userlogins4.users
+          where user_id = (select user_id from comments2.Comments where comment_id = cmntRef_trggr_pkg.stale(i));
+        exception
+          when NO_DATA_FOUND then
+            userinfo := ' ()'; -- literals from userinfo string
+        end;
+      end if;
 
-        update apidb.TextSearchableComment
-        set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
-                       from comments2.Comments
-                       where comment_id = cmntRef_trggr_pkg.stale(i))
-        where comment_id = cmntRef_trggr_pkg.stale(i);
+      update apidb.TextSearchableComment
+      set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
+                     from comments2.Comments
+                     where comment_id = cmntRef_trggr_pkg.stale(i))
+      where comment_id = cmntRef_trggr_pkg.stale(i);
     end loop;
 end;
 /
@@ -291,6 +361,22 @@ begin
     set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
                    from comments2.Comments
                    where comment_id = TextSearchableComment.comment_id)
-    where comment_id in (select comment_id from comments2.comments where user_id = :new.user_id);
+    where comment_id in (select comment_id from comments2.comments where user_id = :new.user_id and project_name = 'FungiDB');
+end;
+/
+
+create or replace trigger userlogins4.users_update
+before update on userlogins4.users
+for each row
+declare
+  userinfo varchar2(1000);
+begin
+    userinfo := :new.first_name || ' ' || :new.last_name || '(' || :new.organization || ')';
+
+    update apidb.TextSearchableComment
+    set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
+                   from comments2.Comments
+                   where comment_id = TextSearchableComment.comment_id)
+    where comment_id in (select comment_id from comments2.comments where user_id = :new.user_id and project_name != 'FungiDB');
 end;
 /
