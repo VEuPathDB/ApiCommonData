@@ -276,6 +276,7 @@ SELECT
    float2 as confidence,
    float3 as pvalue_mant,
    number1 as pvalue_exp,
+   float4 as false_discovery_rate,
    modification_date,
    user_read,
    user_write,
