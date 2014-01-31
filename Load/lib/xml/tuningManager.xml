@@ -971,12 +971,12 @@ FROM &prefixNewCsi
 CREATE TABLE SequenceId&1 NOLOGGING AS
 SELECT DISTINCT substr(id, 1, 50) as id, substr(sequence, 1, 50) AS sequence
 FROM (
-  SELECT lower(source_id) as id, source_id as sequence
+  SELECT source_id as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name in ('random_sequence', 'contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
 UNION
-  SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
+  SELECT dr.primary_identifier AS id, ns.source_id AS sequence
   FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
        sres.DbRef dr, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
@@ -991,13 +991,19 @@ UNION
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX SequenceId_sequence_idx&1 ON SequenceId&1 (sequence)
+CREATE INDEX SequenceId_sequence_idx&1 ON SequenceId&1 (sequence, id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX SequenceId_id_idx&1 ON SequenceId&1 (id)
+CREATE INDEX SequenceId_id_idx&1 ON SequenceId&1 (id, sequence)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX SequenceId_lowid_idx&1 ON SequenceId&1 (lower(id), sequence)
 tablespace indx
       ]]>
     </sql>
