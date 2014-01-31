@@ -4523,12 +4523,15 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="Intron">
+  <tuningTable name="UTR">
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GeneAttributes"/>
+    <externalDependency name="dots.ExonFeature"/>
     <sql>
       <![CDATA[
-CREATE TABLE Intron&1 NOLOGGING AS
+CREATE TABLE UTR&1 NOLOGGING AS
+SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_reversed,is_deprecated,end_max-start_min+1 as length FROM 
+(
   (SELECT exon_loc.na_feature_id,
           exon_loc.parent_id,
           exon_loc.na_sequence_id,
@@ -4536,6 +4539,9 @@ CREATE TABLE Intron&1 NOLOGGING AS
           CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_start - 1 
                ELSE exon_loc.coding_end - 1 
                END end_max,
+          CASE WHEN exon_loc.is_reversed = 0 THEN 5 
+               WHEN exon_loc.is_reversed = 1 THEN 3 
+               ELSE 0 END direction,
           exon_loc.is_reversed,
           ga.is_deprecated
    FROM   FeatureLocation exon_loc, GeneAttributes ga
@@ -4548,8 +4554,13 @@ CREATE TABLE Intron&1 NOLOGGING AS
   (SELECT exon_loc.na_feature_id, 
           exon_loc.parent_id,
           exon_loc.na_sequence_id,
-          CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_end + 1 ELSE exon_loc.coding_start + 1 END start_min,
+          CASE WHEN exon_loc.is_reversed = 0 THEN exon_loc.coding_end + 1 
+               ELSE exon_loc.coding_start + 1 
+               END start_min,
           exon_loc.end_max,
+          CASE WHEN exon_loc.is_reversed = 0 THEN 3 
+          WHEN exon_loc.is_reversed = 1 THEN 5 
+          ELSE 0 END direction,
           exon_loc.is_reversed, 
           ga.is_deprecated 
    FROM   FeatureLocation exon_loc, GeneAttributes ga
@@ -4564,18 +4575,29 @@ CREATE TABLE Intron&1 NOLOGGING AS
            exon_loc.na_sequence_id,
            exon_loc.start_min,
            exon_loc.end_max,
+           CASE WHEN ef.order_number <= eo.max_order_number THEN 5
+                WHEN ef.order_number > eo.max_order_number THEN 3
+                ELSE 0
+                END direction,
            exon_loc.is_reversed, 
            ga.is_deprecated 
-    FROM   FeatureLocation exon_loc, GeneAttributes ga
+    FROM   FeatureLocation exon_loc, GeneAttributes ga, dots.exonfeature ef,
+           (select parent_id, max(order_number) as max_order_number from dots.exonfeature
+            where coding_start is not null
+            group by parent_id) eo
     WHERE  exon_loc.feature_type = 'ExonFeature'
        AND ga.na_feature_id = exon_loc.parent_id
+       and ef.na_feature_id = exon_loc.na_feature_id
+       and ef.parent_id = eo.parent_id
        AND ga.gene_type = 'protein coding'
        AND exon_loc.coding_start is null)
+)
+WHERE end_max - start_min != 0
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index IntronSeq_ix&1 on Intron&1 (na_feature_id)
+create index UTRSeq_ix&1 on UTR&1 (na_feature_id)
 tablespace indx
       ]]>
     </sql>
