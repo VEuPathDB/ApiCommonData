@@ -2734,7 +2734,7 @@ sub getReversedTstarts {
     </perl>
   </tuningTable>
 
-
+<!--
   <tuningTable name="GeneNeighbors">
     <internalDependency name="GeneAttributes"/>
     <sql>
@@ -2787,7 +2787,7 @@ ORDER BY a.source_id
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <tuningTable name="EstAlignmentGeneSummary">
     <internalDependency name="GenomicSequence"/>
@@ -2889,6 +2889,7 @@ tablespace indx
   </tuningTable>
 
 
+<!--
   <tuningTable name="FeatureSo">
     <externalDependency name="dots.NaFeature"/>
     <externalDependency name="sres.SequenceOntology"/>
@@ -2912,7 +2913,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <tuningTable name="SnpStrains">
     <internalDependency name="SequenceAttributes"/>
@@ -3586,7 +3587,7 @@ SELECT * FROM AsmAlignmentGene
     </sql>
   </tuningTable>
 
-
+<!--
   <tuningTable name="NaSynteny">
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.ExternalNaSequence"/>
@@ -3664,6 +3665,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
+-->
 
 
   <tuningTable name="Subcellular">
@@ -3746,6 +3748,7 @@ tablespace indx
     </sql>
   </tuningTable>
 -->
+
 <!--
   <tuningTable name="SnpSummary">
     <internalDependency name="SnpAttributes"/>
@@ -3829,6 +3832,7 @@ tablespace indx
   </tuningTable>
 -->
 
+<!--
   <tuningTable name="DistinctLowerProduct">
     <internalDependency name="GeneAttributes"/>
     <sql>
@@ -3840,8 +3844,9 @@ from (select distinct lower(product) as dlp
       ]]>
     </sql>
   </tuningTable>
+-->
 
-
+<!--
   <tuningTable name="GeneProduct">
     <internalDependency name="DistinctLowerProduct"/>
     <sql>
@@ -3859,7 +3864,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <tuningTable name="TajimasStats">
     <internalDependency name="IsolateAttributes"/>
@@ -4776,7 +4781,7 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
+<!--
   <tuningTable name="NextGenSeqStats">
     <externalDependency name="apidb.NextGenSeqCoverage"/>
     <sql>
@@ -4801,8 +4806,9 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
+-->
 
-
+<!--
   <tuningTable name="SnpCombined">
     <externalDependency name="dots.SeqVariation"/>
     <internalDependency name="SnpAttributes"/>
@@ -4824,7 +4830,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <!-- This table will eventually be replaced by workflow -->
   <tuningTable name="OrganismAbbreviation">
@@ -5437,6 +5443,7 @@ where  pep.aa_sequence_id = seq.aa_sequence_id
     </sql>
   </tuningTable>
 
+<!--
   <tuningTable name="MSModificationSummary">
     <internalDependency name="MSModifiedPeptideSummary"/>
 
@@ -5458,6 +5465,7 @@ ORDER BY source_id,mss.residue_location
       ]]>
     </sql>
   </tuningTable>
+-->
 
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
