@@ -1620,6 +1620,8 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        nvl(tothtssnps.hts_nonsynonymous_snps,0) as hts_nonsynonymous_snps,
        nvl(tothtssnps.hts_synonymous_snps,0) as hts_synonymous_snps,
        nvl(tothtssnps.hts_nonsyn_syn_ratio,0) as hts_nonsyn_syn_ratio, 
+       0 as five_prime_utr_length,
+       0 as three_prime_utr_length,
        protein.signalp_scores,protein.signalp_peptide, sequence.taxon_id, protein.aa_sequence_id, protein.protein_source_id
 FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
@@ -1852,6 +1854,32 @@ tablespace indx
                group by source_id
                having min(len) > 10
            )
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+  update &prefixGeneAttributes&1 ga
+  set five_prime_utr_length = (
+    select u.utr_length from
+      ( select sum(length) utr_length, na_sequence_id, parent_id, is_reversed from UTR 
+        where direction = 5
+        group by na_sequence_id, parent_id, is_reversed ) u
+    where u.parent_id = ga.na_feature_id
+      and u.na_sequence_id = ga.na_sequence_id
+   )
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+  update &prefixGeneAttributes&1 ga
+  set three_prime_utr_length = (
+    select u.utr_length from
+      ( select sum(length) utr_length, na_sequence_id, parent_id, is_reversed from UTR 
+        where direction = 3
+        group by na_sequence_id, parent_id, is_reversed ) u
+    where u.parent_id = ga.na_feature_id
+      and u.na_sequence_id = ga.na_sequence_id
+   )
       ]]>
     </sql>
 <!--
