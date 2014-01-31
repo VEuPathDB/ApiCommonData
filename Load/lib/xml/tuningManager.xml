@@ -971,22 +971,6 @@ FROM &prefixNewCsi
 CREATE TABLE SequenceId&1 NOLOGGING AS
 SELECT DISTINCT substr(id, 1, 60) as id, substr(sequence, 1, 60) AS sequence
 FROM (
-  SELECT lower(source_id) as id, source_id as sequence
-  FROM dots.NaSequence ns, sres.SequenceOntology so
-  WHERE ns.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name in ('random_sequence', 'contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
-UNION
-  SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
-  FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
-       sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed
-  WHERE dr.primary_identifier IS NOT NULL
-    AND ns.na_sequence_id = drnf.na_sequence_id
-    AND drnf.db_ref_id = dr.db_ref_id
-    AND dr.external_database_release_id
-          = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
-UNION
   SELECT source_id as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
