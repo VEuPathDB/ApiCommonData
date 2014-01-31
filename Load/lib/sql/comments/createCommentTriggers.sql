@@ -40,6 +40,9 @@ end;
 
 grant execute on apidb.author_list to public;
 
+grant select on userlogins3.users to comments2;
+grant select on userlogins4.users to comments2;
+
 create or replace trigger comments2.comments_insert
   after insert on comments2.Comments
   for each row
