@@ -2,29 +2,11 @@
 <tuningConfig>
 
 
-  <tuningTable name="SequenceAlias">
-    <externalDependency name="dots.ExternalNaSequence"/>
-    <externalDependency name="dots.VirtualSequence"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE SequenceAlias&1 NOLOGGING AS
-SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
-FROM dots.ExternalNaSequence ens
-UNION
-SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
-FROM dots.VirtualSequence ens
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX SequenceAlias_idx&1 ON SequenceAlias&1(lowercase_source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
-
   <tuningTable name="GoTermSummary">
+    <!-- GoTermSummary: each row represents one GO term assignment to one gene.
+         (Typically, a gene has multiple such assignments.) This is used for
+          finding gene-GO mappings, such as for the gene-page GO table.
+      -->
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.GeneFeature"/>
     <externalDependency name="dots.GoAssociation"/>
@@ -82,20 +64,23 @@ tablespace indx
   </tuningTable>
 
 
-
   <tuningTable name="DatasetExampleSourceId" prefixEnabled="false">
-    <externalDependency name="ApiDB.ProfileSet"/>
+    <!-- Each row maps a dataset onto an ID for which the dataset contains data;
+         each dataset gets one such row.
+         Used in dataset record queries.
+      -->
+    <externalDependency name="apidb.ProfileSet"/>
     <externalDependency name="sres.externaldatabase"/>
     <sql>
       <![CDATA[
 CREATE TABLE DatasetExampleSourceId&1 NOLOGGING AS
 with profiles as (
 select p.source_id,
-       d.name, 
+       d.name,
        row_number() over(partition by d.name
                          order by ga.chromosome_order_num, pe.value desc) as rn
 from apidb.profileset ps, apidb.profile p, APIDB.profileelement pe,
-     sres.externaldatabase d, SRES.externaldatabaserelease r, apidbtuning.geneattributes ga
+     sres.externaldatabase d, sres.externaldatabaserelease r, apidbtuning.geneattributes ga
 where ps.profile_set_id = p.profile_set_id
 and ps.external_database_release_id = r.external_database_release_id
 and r.external_database_id = d.external_database_id
@@ -103,7 +88,7 @@ and p.profile_id = pe.profile_id
 and pe.value is not null
 and p.source_id = ga.source_id (+)
 )
-select p.source_id as example_source_id, 
+select p.source_id as example_source_id,
        p.name as dataset
 from profiles p
 where p.rn = 1
@@ -113,6 +98,9 @@ where p.rn = 1
 
 
   <tuningTable name="OrganismAttributes" prefixEnabled="true">
+    <!-- Stores per-organism information. Used by the organism record, as well
+         as by project_id(), the function that maps an organism to a project.
+      -->
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="GeneId"/>
     <internalDependency name="SequenceAttributes"/>
@@ -123,9 +111,9 @@ where p.rn = 1
     <internalDependency name="EstAttributes"/>
     <internalDependency name="IsolateAttributes"/>
     <externalDependency name="sres.TaxonName"/>
-    <externalDependency name="ApiDB.Profile"/>
-    <externalDependency name="ApiDB.ProfileSet"/>
-    <externalDependency name="ApiDB.phylogeneticprofile"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
+    <externalDependency name="apidb.phylogeneticprofile"/>
     <externalDependency name="dots.GoAssociation"/>
     <externalDependency name="apidb.massspecsummary"/>
     <externalDependency name="dots.translatedaafeature"/>
@@ -141,79 +129,79 @@ SELECT o.project_name as project_id,
        o.family_name_for_files,
        tn.name as organism_name,
        o.genome_source,
-       o.strain_abbrev, 
+       o.strain_abbrev,
        o.is_annotated_genome,
        o.is_reference_strain,
-       o.is_family_representative, 
+       o.is_family_representative,
        o.name_for_filenames,
        o.taxon_id as component_taxon_id,
        version.database_version,
-       nvl(isOrganellar.ct, 0) as isOrganellar, 
-       nvl(hasArray.ct, 0) as hasArray, 
-       nvl(geneArrayCount.ct, 0) as arrayGeneCount, 
+       nvl(isOrganellar.ct, 0) as isOrganellar,
+       nvl(hasArray.ct, 0) as hasArray,
+       nvl(geneArrayCount.ct, 0) as arrayGeneCount,
        nvl(geneCount.ct, 0) as geneCount,
        nvl(pseudoGeneCount.ct, 0) as pseudoGeneCount,
        nvl(codingGeneCount.ct, 0) as codingGeneCount,
        nvl(otherGeneCount.ct, 0) as otherGeneCount,
-       nvl(ecNumberCount.ct, 0) as ecNumberCount, 
-       nvl(isolateCount.ct, 0) as isolateCount, 
-       nvl(sageTagCount.ct, 0) as sageTagCount, 
-       nvl(rnaSeqCount.ct, 0) as rnaSeqCount, 
-       nvl(chipChipGeneCount.ct, 0) as chipChipGeneCount, 
-       nvl(rtPCRCount.ct, 0) as rtPCRCount, 
-       nvl(orthologCount.ct, 0) as orthologCount, 
-       nvl(goCount.ct, 0) as goCount, 
-       nvl(tfbsCount.ct, 0) as tfbsCount, 
-       nvl(proteomicsCount.ct, 0) as proteomicsCount, 
-       nvl(estCount.ct, 0) as estCount, 
-       nvl(snpCount.ct, 0) as snpCount, 
-       nvl(communityCount.ct, 0) as communityCount, 
+       nvl(ecNumberCount.ct, 0) as ecNumberCount,
+       nvl(isolateCount.ct, 0) as isolateCount,
+       nvl(sageTagCount.ct, 0) as sageTagCount,
+       nvl(rnaSeqCount.ct, 0) as rnaSeqCount,
+       nvl(chipChipGeneCount.ct, 0) as chipChipGeneCount,
+       nvl(rtPCRCount.ct, 0) as rtPCRCount,
+       nvl(orthologCount.ct, 0) as orthologCount,
+       nvl(goCount.ct, 0) as goCount,
+       nvl(tfbsCount.ct, 0) as tfbsCount,
+       nvl(proteomicsCount.ct, 0) as proteomicsCount,
+       nvl(estCount.ct, 0) as estCount,
+       nvl(snpCount.ct, 0) as snpCount,
+       nvl(communityCount.ct, 0) as communityCount,
        nvl(hasIsolate.ct, 0) as hasIsolate,
        nvl(hasHTSIsolate.ct, 0) as hasHTSIsolate,
        nvl(hasEpitope.ct, 0) as hasEpitope,
        nvl(genomestat.megabps, 0) as megabps,
        nvl(genomestat.ncbi_tax_id, 0) as ncbi_tax_id
-FROM   Apidb.Organism o, 
-       SRES.TaxonName tn, 
+FROM   apidb.Organism o,
+       sres.TaxonName tn,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
+        FROM   apidb.DataSource ds
         WHERE ds.type = 'organellar_genome'
         GROUP BY ds.taxon_id
        ) isOrganellar,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
+        FROM   apidb.DataSource ds
         WHERE ds.type = 'isolates'
           AND ds.subtype = 'HTS_SNP'
         GROUP BY ds.taxon_id
-       ) hasHTSIsolate, 
+       ) hasHTSIsolate,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
+        FROM   apidb.DataSource ds
         WHERE ds.type = 'isolates'
           AND ds.subtype = 'sequenceing_types'
         GROUP BY ds.taxon_id
-       ) hasIsolate, 
+       ) hasIsolate,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
+        FROM   apidb.DataSource ds
         WHERE ds.type = 'epitope'
         GROUP BY ds.taxon_id
-       ) hasEpitope, 
+       ) hasEpitope,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
+        FROM   apidb.DataSource ds
         WHERE ds.type = 'transcript_expression'
           AND ds.subtype = 'array'
         GROUP BY ds.taxon_id
        ) hasArray,
        (SELECT ds.taxon_id, count(distinct p.source_id) as ct
-        FROM   apidb.datasource ds, 
-               APIDB.profile p, 
+        FROM   apidb.datasource ds,
+               APIDB.profile p,
                apidb.profileset ps,
-               SRES.externaldatabase d, 
-               SRES.externaldatabaserelease r
+               sres.externaldatabase d,
+               sres.externaldatabaserelease r
         WHERE ds.type = 'transcript_expression'
           AND ds.subtype = 'array'
           and ps.profile_set_id = p.profile_set_id
@@ -223,37 +211,37 @@ FROM   Apidb.Organism o,
           group by ds.taxon_id
        ) geneArrayCount,
        (SELECT taxon_id,
-               count(*) as ct  
-        FROM   GeneAttributes 
-        GROUP BY taxon_id 
-       ) geneCount, 
+               count(*) as ct
+        FROM   GeneAttributes
+        GROUP BY taxon_id
+       ) geneCount,
        (SELECT taxon_id,
               sum(is_pseudo) as ct
         FROM  GeneAttributes
         GROUP BY taxon_id
-       ) pseudoGeneCount, 
+       ) pseudoGeneCount,
        (SELECT taxon_id,
                count(*) as ct
         FROM  GeneAttributes
         WHERE gene_type = 'protein coding'
-        GROUP BY taxon_id 
-       ) codingGeneCount, 
+        GROUP BY taxon_id
+       ) codingGeneCount,
        (SELECT taxon_id,
                count(*) as ct
         FROM  GeneAttributes
         WHERE gene_type != 'protein coding'
-        GROUP BY taxon_id 
-       ) otherGeneCount, 
+        GROUP BY taxon_id
+       ) otherGeneCount,
        (SELECT taxon_id,
                count(ec_numbers) as ct
         FROM GeneAttributes
-        GROUP BY taxon_id 
-       ) ecNumberCount, 
+        GROUP BY taxon_id
+       ) ecNumberCount,
        (
         SELECT count(distinct gene.source_id) as ct, sim.taxon_id
         FROM (
           (SELECT i.source_id, tn.taxon_id, nas.source_id as sequence_source_id
-           FROM dots.similarity s, 
+           FROM dots.similarity s,
                 ApidbTuning.IsolateAttributes i,
                 core.tableinfo t, dots.nasequence nas, sres.taxonname tn
            WHERE s.query_id = i.na_sequence_id
@@ -289,7 +277,7 @@ FROM   Apidb.Organism o,
         GROUP BY ga.taxon_id
        ) sageTagCount, 
        (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
-        FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps,
+        FROM GeneAttributes ga, apidb.Profile p, apidb.ProfileSet ps,
              sres.externaldatabaserelease edr, sres.externaldatabase ed
         WHERE ps.profile_set_id = p.profile_set_id and p.source_id = ga.source_id 
           AND edr.external_database_id = ed.external_database_id 
@@ -305,7 +293,7 @@ FROM   Apidb.Organism o,
         GROUP BY ga.taxon_id
        ) chipChipGeneCount, 
       (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
-       FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps  
+       FROM GeneAttributes ga, apidb.Profile p, apidb.ProfileSet ps  
        WHERE ps.profile_set_id = p.profile_set_id 
          AND p.source_id = ga.source_id 
          AND lower(ps.name) like '%rt_pcr%' 
@@ -343,7 +331,7 @@ FROM   Apidb.Organism o,
        GROUP BY ga.taxon_id 
       ) proteomicsCount, 
       (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
-       FROM ApiDBTuning.GeneAttributes ga, 
+       FROM ApidbTuning.GeneAttributes ga, 
          ( SELECT distinct s.gene as source_id 
            FROM EstAlignmentGeneSummary s,  
                 EstAttributes e 
@@ -422,7 +410,12 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="PdbSimilarity">
+    <!-- Each record maps a gene to a PDB structure. Used by the model to find
+         genes that have a PDB structure and to find the PDB structures for a
+         given gene.
+      -->
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.ExternalAaSequence"/>
     <externalDependency name="dots.GeneFeature"/>
@@ -483,6 +476,11 @@ tablespace indx
 
 
   <tuningTable name="SequencePieceClosure" prefixEnabled="true">
+    <!-- Extends dots.SequencePiece to handle multiple levels. Used in
+         sequence-record queries and in other tuning tables, including
+         SequenceAttributes, FeatureLocation, BlatAlignmentLocation,
+         and SimilaritySpanLocation
+      -->
     <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
@@ -534,6 +532,12 @@ tablespace indx
 
 
   <tuningTable name="FeatureLocation" prefixEnabled="true">
+    <!-- Addresses a performance problem with feature location queries, namely
+         that the sequence and the location on that sequence are in different
+         tables, so it's impossible to create an index on the whole shebang.
+         Used by both model and GBrowse queries, as well as inputs to a
+         dozen-odd other tuning tables.
+      -->
     <internalDependency name="SequencePieceClosure"/>
     <internalDependency name="SequenceAttributes"/>
     <externalDependency name="core.ProjectInfo"/>
@@ -960,6 +964,12 @@ FROM &prefixNewCsi
 
 
   <tuningTable name="SequenceId">
+  <!-- This table maps IDs for a sequence onto the official ID of the sequence.
+       It is analogous to GeneId, which does the same thing for genes. Used by
+       genomic-sequence record queries, by the sequence retrieval tool, and by
+       the BasketFixer, which updates users' baskets at release time to replace
+       old IDs with updated ones.
+    -->
     <externalDependency name="dots.DbRefNaSequence"/>
     <externalDependency name="dots.NaSequence"/>
     <externalDependency name="sres.DbRef"/>
@@ -1011,6 +1021,8 @@ tablespace indx
 
 
   <tuningTable name="EpitopeSummary">
+    <!-- Used by GeneTables.Epitopes to map a gene to its epitopes.
+     -->
     <externalDependency name="dots.AaLocation"/>
     <externalDependency name="dots.EpitopeFeature"/>
     <externalDependency name="dots.GeneFeature"/>
@@ -1060,6 +1072,9 @@ tablespace indx
 
 
   <tuningTable name="GeneCentromereDistance">
+    <!-- Stores (gene, sequence, distance from centromere) 3-tuples for genes
+         that lie on a sequence for which we have a centomere location.
+     -->
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="sres.SequenceOntology"/>
     <sql>
@@ -1087,7 +1102,11 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="SageTagLibraryTotal">
+    <!-- For each sage-tag library, store the total of the counts of all tags.
+         Used by GeneTables.SageTags.
+     -->
     <externalDependency name="rad.DataTransformationResult"/>
     <externalDependency name="rad.Analysis"/>
     <externalDependency name="rad.Protocol"/>
@@ -1104,7 +1123,12 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="SageTagAnalysisAttributes">
+    <!-- Stores information specific to a given SAGE tag within a given library.
+         Used by gene and sage-tag queries in the model, by GBrowse queries, and
+         in the creation of the tuning tables SageTagGene and SageTagAttributes.
+     -->
     <internalDependency name="SageTagLibraryTotal"/>
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.SageTagFeature"/>
@@ -1121,7 +1145,6 @@ tablespace indx
     <intermediateTable name="SageTagInfo"/>
     <intermediateTable name="SageTagGenomicOccurrence"/>
     <intermediateTable name="SageTagQuantificationTotal"/>
-
     <sql>
       <![CDATA[
 create table SageTagInfo NOLOGGING as
@@ -1199,6 +1222,10 @@ tablespace indx
 
 
   <tuningTable name="SageTagGene">
+    <!-- Stores info about colocated gene-sage tag pairs. Used by the model for
+         sage tag and gene queries, and in the creation of the tuning tables
+         OrganismAttributes and SageTagAttributes.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="SageTagAnalysisAttributes"/>
     <externalDependency name="rad.DataTransformationResult"/>
@@ -1343,6 +1370,11 @@ tablespace indx
 
 
   <tuningTable name="GeneAttributes" prefixEnabled="true">
+    <!-- The BFMV for the gene record. Each gene gets a single record, which
+         stores all its attributes. Used widely, in the model and elsewhere, for
+         queries involving genes, as well as in the creation of more than a
+         dozen other tuning tables.
+     -->
     <internalDependency name="GeneId"/>
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GenomicSequence"/>
@@ -1970,11 +2002,16 @@ This code will scale the context start and end so that ~ 10 genes appear in the 
       ]]>
     </sql>
 -->
-
   </tuningTable>
 
 
   <tuningTable name="GenomicSequence" prefixEnabled="true">
+    <!-- Combines ExternalNaSequence with VirtualSequence, while excluding
+         ExternalNaSequence records whose source_id also appears in
+         VirtualSequence. Used by both model and GBrowse queries, as well as in
+         the creation of several tuning tables, including SequenceAttributes and
+         GeneAttributes. 
+     -->
     <externalDependency name="dots.ExternalNaSequence"/>
     <externalDependency name="dots.VirtualSequence"/>
     <externalDependency name="sres.SequenceOntology"/>
@@ -2031,6 +2068,11 @@ tablespace indx
 
 
   <tuningTable name="SequenceAttributes" prefixEnabled="true">
+    <!-- Each row represents one genomic sequence for which a WDK sequence
+         record can be instantiated. Used widely in the workflow, the model,
+         and GBrowse, as well as in the creation of a dozen or so other tuning
+         tables.
+     -->
     <internalDependency name="GenomicSequence"/>
     <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="dots.DbRefNaSequence"/>
@@ -2113,6 +2155,10 @@ create unique index SeqAttr_naseqid&1 ON &prefixSequenceAttributes&1 (na_sequenc
 
 
   <tuningTable name="SnpAttributes">
+    <!-- Each record represents one SNP. Widely used in the model, as well as in
+         the creation of several other tuning tables, including SnpSummary and
+         IsolateSnps.
+     -->
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.GeneFeature"/>
     <externalDependency name="dots.NaSequence"/>
@@ -2242,7 +2288,12 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="HtsVariant">
+    <!-- This table is like SeqVariation, but only for HTS SNPs, and filtered
+         for allele_percent > 80. Used in SNP queries, and to make the
+         GoodHtsSnp tuning table.
+     -->
     <internalDependency name="SnpAttributes"/>
     <externalDependency name="dots.SeqVariation"/>
     <sql>
@@ -2285,7 +2336,11 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="GoodHtsSnp">
+    <!-- One record per HTS SNP location, rolled up from HtsVariant. Used for
+         SNP queries.
+     -->
     <internalDependency name="HtsVariant"/>
     <sql>
       <![CDATA[
@@ -2331,7 +2386,11 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="OrfAttributes">
+    <!-- Each record represents an ORF. Used by the model and the sequence
+         retrieval tool for ORF-related queries.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GenomicSequence"/>
     <externalDependency name="dots.ExternalNaSequence"/>
@@ -2397,6 +2456,9 @@ tablespace indx
 
 
   <tuningTable name="EstAttributes">
+    <!-- Each row represents one EST. Used widely in the model, and to make the
+         tuning tables BlastTypes, OrganismAbbreviationBlast, and OrganismAttributes.
+     -->
     <externalDependency name="dots.BlatAlignment"/>
     <externalDependency name="dots.Est"/>
     <externalDependency name="dots.ExternalNaSequence"/>
@@ -2462,6 +2524,11 @@ tablespace indx
 
 
   <tuningTable name="BlatAlignmentLocation">
+    <!-- Locations of BLAT alignments, both on the sequences they're annotated
+         onto and also transitively through SequencePiece. Used in model and
+         GBrowse queries, as well as in the creation of the tuning tables
+         EstAlignmentGeneSummary and AsmAlignmentGeneSummary.
+     -->
     <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.BlatAlignment"/>
@@ -2610,6 +2677,8 @@ sub getReversedTstarts {
 
 
   <tuningTable name="BlatProtAlignLocation">
+    <!-- BLAT protein alignments. Used by GBrowse for the track proteinAlignment:BLAT
+     -->
     <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="apidb.BlatProteinAlignment"/>
     <externalDependency name="core.TableInfo"/>
@@ -2746,62 +2815,12 @@ sub getReversedTstarts {
     </perl>
   </tuningTable>
 
-<!--
-  <tuningTable name="GeneNeighbors">
-    <internalDependency name="GeneAttributes"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE GeneNeighbors&1 AS 
-SELECT a.prev_id, a.source_id, b.next_id
-FROM
-(SELECT  ga.source_id, ga2.source_id AS prev_id
- FROM GeneAttributes ga, GeneAttributes ga2,
-  (SELECT max(prev.end_max) AS alpha, ga.source_id
-   FROM GeneAttributes ga, GeneAttributes  prev
-   WHERE ga.na_sequence_id = prev.na_sequence_id 
-   AND prev.end_max < ga.start_min  GROUP BY ga.source_id) sub
- WHERE ga.source_id = sub.source_id
- AND ga2.end_max = sub.alpha
- AND ga.na_sequence_id = ga2.na_sequence_id
- UNION
- SELECT  source_id, 'null' as prev_id 
- FROM (
-  SELECT ga.na_sequence_id , ga.source_id
-  FROM GeneAttributes ga, 
-    (SELECT min(start_min) as min_start_min, na_sequence_id
-     FROM GeneAttributes
-     GROUP BY na_sequence_id) sub
-  WHERE ga.na_sequence_id = sub.na_sequence_id
-  AND ga.start_min = sub.min_start_min )
-) a,
-(SELECT ga.source_id, ga2.source_id as next_id
- FROM GeneAttributes ga, GeneAttributes ga2,
-  (SELECT min(nxt.start_min) AS alpha, ga.source_id
-   FROM GeneAttributes ga, GeneAttributes  nxt
-   WHERE ga.na_sequence_id = nxt.na_sequence_id 
-   AND nxt.start_min > ga.end_max group by ga.source_id) sub
- WHERE ga.source_id = sub.source_id
- AND ga2.start_min = sub.alpha
- AND ga.na_sequence_id = ga2.na_sequence_id
- UNION
- SELECT  source_id, 'null' as next_id
- FROM (
-   SELECT ga.na_sequence_id , ga.source_id, 0 as alpha
-   FROM GeneAttributes ga, 
-     (SELECT max(end_max) AS max_end_max, na_sequence_id
-      FROM GeneAttributes
-      GROUP BY na_sequence_id)  sub
-   WHERE ga.na_sequence_id = sub.na_sequence_id
-   AND ga.end_max = sub.max_end_max )
-) b
-WHERE a.source_id = b.source_id
-ORDER BY a.source_id
-      ]]>
-    </sql>
-  </tuningTable>
--->
 
   <tuningTable name="EstAlignmentGeneSummary">
+    <!-- Each row represents a colocated EST alignment - gene pair. Used by the
+         model, by generateGeneMetrics, and in the creation of the
+         OrganismAttributes tuning table
+     -->
     <internalDependency name="GenomicSequence"/>
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="BlatAlignmentLocation"/>
@@ -2901,33 +2920,12 @@ tablespace indx
   </tuningTable>
 
 
-<!--
-  <tuningTable name="FeatureSo">
-    <externalDependency name="dots.NaFeature"/>
-    <externalDependency name="sres.SequenceOntology"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE FeatureSo&1 NOLOGGING AS
-  SELECT t.na_feature_id, so.sequence_ontology_id, so.term_name
-  FROM dots.NaFeature gf, dots.NaFeature t, sres.SequenceOntology so
-  WHERE  gf.na_feature_id =  t.parent_id
-  AND gf.sequence_ontology_id = so.sequence_ontology_id
-UNION
-  SELECT na_feature_id, so.sequence_ontology_id, so.term_name
-  FROM dots.Miscellaneous misc, sres.SequenceOntology so
-  WHERE misc.sequence_ontology_id = so.sequence_ontology_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX featso_id_ix&1 ON FeatureSo&1(na_feature_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
   <tuningTable name="SnpStrains">
+    <!-- Each record captures info for an (organism, strain,
+         external_database_release_id) 3-tuple. Used in the model, including
+         gene and SNP queries, as well as the gene record. Also used by the
+         FindPolymorphismsPlugin in the workflow.
+     -->
     <internalDependency name="SequenceAttributes"/>
     <externalDependency name="dots.SnpFeature"/>
     <externalDependency name="dots.SeqVariation"/>
@@ -2946,7 +2944,7 @@ CREATE TABLE SnpStrains&1 NOLOGGING AS
                        ELSE 1 
                   END as is_queryable,
                   d.name as extdb_name, vd.name as var_extdb_name, sa.taxon_id
-  FROM   Dots.SnpFeature sf, 
+  FROM   dots.SnpFeature sf, 
          (select strain, external_database_release_id, max(parent_id) as parent_id
           from dots.SeqVariation
           group by strain, external_database_release_id) sv, 
@@ -2971,74 +2969,15 @@ tablespace indx
     </sql>
   </tuningTable>
 
-<!--
-  <tuningTable name="Polymorphism">
-    <internalDependency name="FeatureLocation"/>
-    <externalDependency name="dots.SnpFeature"/>
-    <externalDependency name="dots.SeqVariation"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE Polymorphism&1 NOLOGGING AS
-  SELECT snp.na_feature_id AS snp_na_feature_id, fl.na_sequence_id,
-         fl.start_min AS start_min,
-         snp.source_id AS snp_source_id,
-         snp.position_in_protein,
-         sa.na_feature_id as na_feature_id_a,
-         sb.na_feature_id as na_feature_id_b,
-         substr(sa.strain, 1, 100) AS strain_a,
-         substr(sb.strain, 1, 100) AS strain_b,
-         substr(sa.allele, 1, 1) AS allele_a,
-         substr(sb.allele, 1, 1) AS allele_b,
-         substr(sa.product, 1, 1) AS product_a,
-         substr(sb.product, 1, 1) AS product_b,
-         sa.coverage as coverage_a, sb.coverage as coverage_b,
-         sa.allele_percent as allele_percent_a, sb.allele_percent as allele_percent_b,
-         sa.pvalue as pvalue_a, sb.pvalue as pvalue_b,
-         snp.external_database_release_id,
-         snp.parent_id as gene_na_feature_id,
-         nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id,
-         case when sa.product is null then 1 else 0 end as is_non_coding,
-         case when sa.product = sb.product then 1 else 0 end as is_synonymous,
-         case when sa.product != sb.product then 1 else 0 end as is_non_synonymous,
-         case when sa.product = '*' OR  sb.product = '*' then 1 else 0 end as is_stop
-  FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
-       FeatureLocation fl, FeatureLocation nl, dots.GeneFeature gf
-  WHERE (sa.strain < sb.strain OR (sa.strain = sb.strain AND sa.na_feature_id < sb.na_feature_id) )
-    AND sa.allele != sb.allele
-    AND sa.parent_id = sb.parent_id
-    AND sa.parent_id = snp.na_feature_id
-    AND snp.na_feature_id = fl.na_feature_id
-    AND fl.parent_id = nl.na_feature_id (+)
-    AND fl.na_sequence_id = nl.na_sequence_id (+)
-    AND snp.parent_id = gf.na_feature_id (+)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX polymorphism_ix&1 ON Polymorphism&1(na_sequence_id, strain_a, strain_b, start_min)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX polymorphism_loc_ix&1
-ON Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, strain_b, start_min, pvalue_a, allele_percent_a, coverage_a, pvalue_b, allele_percent_b, coverage_b)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index polymorph_htsgene_ix&1
-on Polymorphism&1(external_database_release_id, strain_a, strain_b, start_min, pvalue_a, allele_percent_a,
-                  coverage_a, pvalue_b, allele_percent_b, coverage_b, is_non_coding, is_synonymous,
-                  is_non_synonymous, is_stop, gene_source_id, snp_na_feature_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
 
   <tuningTable name="IsolateAttributes">
+    <!-- The BFMV for the WDK isolate record. Widely used in the model for
+         queries related to isolates (including gene and SNP queries as well as
+         isolate queries). Used as input in the creation of half a dozen other
+         tuning tables, including GeneIsolateOverlap, IsolateSequence,
+         IsolateSNPs, OrganismAttributes, SnpsWithIsolates, and TajimasStats.
+         Aggregated into portal instances for use in the portal site.
+     -->
     <internalDependency name="SequenceAttributes"/>
     <externalDependency name="apidb.IsolateMapping"/>
     <externalDependency name="apidb.IsolateVocabulary"/>
@@ -3255,6 +3194,8 @@ tablespace indx
 
 
   <tuningTable name="ChIPProtocolParams">
+    <!-- Used by the GenesByChipChip(Plasmo|Toxo) query, as well as by GBrowse.
+     -->
     <externalDependency name="rad.Analysis"/>
     <externalDependency name="rad.AnalysisParam"/>
     <externalDependency name="rad.ProtocolParam"/>
@@ -3334,6 +3275,9 @@ tablespace indx
 
 
   <tuningTable name="ChIPchipGene">
+    <!-- Used by the GenesByChipChip(Plasmo|Toxo) query, as well as by
+         generateGeneMetrics. Also an input to OrganismAttributes.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="SequenceAttributes"/>
@@ -3393,6 +3337,9 @@ tablespace indx
 
 
   <tuningTable name="TFBSGene">
+    <!-- Used by gene queries, as well as by generateGeneMetrics. Also an input
+         to OrganismAttributes.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="SequenceAttributes"/>
@@ -3448,6 +3395,9 @@ tablespace indx
 
 
   <tuningTable name="SageTagAttributes">
+    <!-- The BFMV for the SAGE tag WDK record. Widely used in the model, as
+         well as by GBrowse. Propagated to portal instances for use there.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="SageTagAnalysisAttributes"/>
     <internalDependency name="SageTagGene"/>
@@ -3525,6 +3475,9 @@ tablespace indx
 
 
   <tuningTable name="AsmAlignmentGeneSummary">
+    <!-- Each record represents a 2-tuple of a gene and a colocated assembly
+         alignment. Used in assembly ID queries and in the assembly record.
+     -->
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="GenomicSequence"/>
     <internalDependency name="BlatAlignmentLocation"/>
@@ -3599,88 +3552,11 @@ SELECT * FROM AsmAlignmentGene
     </sql>
   </tuningTable>
 
-<!--
-  <tuningTable name="NaSynteny">
-    <externalDependency name="core.TableInfo"/>
-    <externalDependency name="dots.ExternalNaSequence"/>
-    <externalDependency name="dots.Similarity"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE NaSynteny&1 NOLOGGING AS
-SELECT
-    sim.similarity_id,
-    extq.na_sequence_id query_na_sequence_id,
-    extt.na_sequence_id target_na_sequence_id,
-    extq.source_id query_source_id,
-    extt.source_id target_source_id,
-    sim.min_subject_start ,
-    sim.max_subject_end ,
-    sim.min_query_start ,
-    sim.max_query_end,
-    sim.is_reversed,
-    sim.score,
-    sim.pvalue_mant,
-    sim.pvalue_exp
-FROM
-    dots.Similarity sim,
-    dots.ExternalNaSequence extt,
-    dots.ExternalNaSequence extq,
-    core.TableInfo qtab,
-    core.TableInfo stab
-WHERE
-    sim.query_id = extq.na_sequence_id and
-    sim.subject_id = extt.na_sequence_id and
-    sim.subject_table_id = stab.table_id and
-    stab.name = 'ExternalNASequence'and
-    sim.query_table_id  = qtab.table_id and
-    qtab.name = 'ExternalNASequence'
-UNION
-SELECT
-    sim.similarity_id,
-    extt.na_sequence_id query_na_sequence_id,
-    extq.na_sequence_id target_na_sequence_id,
-    extt.source_id query_source_id,
-    extq.source_id target_source_id,
-    sim.min_query_start min_subject_start,
-    sim.max_query_end max_subject_end,
-    sim.min_subject_start min_query_start,
-    sim.max_subject_end max_query_end,
-    sim.is_reversed,
-    sim.score,
-    sim.pvalue_mant,
-    sim.pvalue_exp
-FROM
-    dots.Similarity sim,
-    dots.ExternalNaSequence extt,
-    dots.ExternalNaSequence extq,
-    core.TableInfo qtab,
-    core.TableInfo stab
-WHERE
-    sim.query_id = extq.na_sequence_id and
-    sim.subject_id = extt.na_sequence_id and
-    sim.subject_table_id = stab.table_id and
-    stab.name = 'ExternalNASequence'and
-    sim.query_table_id  = qtab.table_id and
-    qtab.name = 'ExternalNASequence'
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create bitmap index syn_query_ix&1 ON NaSynteny&1(query_na_sequence_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create bitmap index syn_target_ix&1 ON NaSynteny&1(target_na_sequence_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
 
   <tuningTable name="Subcellular">
+    <!-- Each record maps a gene onto a subcellular location. Used by
+         GenesBySubcellularLocalization.
+     -->
     <internalDependency name="GeneId"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
@@ -3719,166 +3595,11 @@ tablespace indx
     </sql>
   </tuningTable>
 
-<!--
-  <tuningTable name="Expression">
-    <externalDependency name="apidb.Profile"/>
-    <externalDependency name="apidb.ProfileElement"/>
-    <externalDependency name="apidb.ProfileElementName"/>
-    <externalDependency name="apidb.ProfileSet"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE Expression&1 NOLOGGING AS
-  SELECT pct_p.source_id, pct_pe.value, pct_ps.name AS profile_set_name,
-       pct_pe.element_order, pen.name AS element_name
-  FROM apidb.ProfileSet pct_ps,
-     apidb.Profile pct_p, apidb.ProfileElement pct_pe,apidb.ProfileElementName pen,
-     apidb.ProfileSet exp_ps,
-     apidb.Profile exp_p, apidb.ProfileElement exp_pe
-  WHERE pct_ps.profile_set_id = pct_p.profile_set_id
-  AND pct_p.profile_id = pct_pe.profile_id
-  AND pct_ps.name like '%Pct'
-  AND exp_ps.profile_set_id = exp_p.profile_set_id
-  AND exp_p.profile_id = exp_pe.profile_id
-  AND exp_pe.element_order = pct_pe.element_order
-  AND exp_p.source_id = pct_p.source_id
-  AND exp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Exp')
-  AND pct_ps.profile_set_id = pen.profile_set_id
-  AND exp_pe.element_order = pen.element_order
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index Exp_value_ix&1 ON Expression&1 (value, element_order, source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index Exp_element_ix&1 ON Expression&1 (element_order, source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
-<!--
-  <tuningTable name="SnpSummary">
-    <internalDependency name="SnpAttributes"/>
-    <externalDependency name="dots.TranslatedAAFeature"/>
-    <externalDependency name="dots.GeneFeature"/>
-    <externalDependency name="dots.Transcript"/>
-    <externalDependency name="dots.SeqVariation"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE SnpSummary&1 NOLOGGING AS
-SELECT type,cds_length, na_feature_id, source_id,
-       strain_a, strain_b,
-       sum(synonymous) as synonymous,
-       sum(non_synonymous) as non_synonymous,
-       sum(non_coding) as non_coding,
-       sum(stop) as stop,
-       sum(non_coding) + sum(synonymous) + sum(non_synonymous) as total
-FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
-              - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
-              gf.na_feature_id, gf.source_id,
-              SUBSTR(sva.strain, 1, 100) AS strain_a,
-              SUBSTR(svb.strain, 1, 100) AS strain_b,
-              CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
-              CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
-              CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
-              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
-              sa.type
-       FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
-            dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
-       WHERE sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
-         AND sva.parent_id = sa.na_feature_id
-         AND sva.parent_id = svb.parent_id
-         AND sva.strain  < svb.strain
-         AND sva.allele != svb.allele
-         AND (sa.project_id in ('ToxoDB','PlasmoDB','CryptoDB')
-              OR (NVL(sva.allele_percent,100) >= 40
-                  AND NVL(svb.allele_percent,100) >= 40))
-         AND (sa.project_id in ('TriTrypDB','AmoebaDB')
-              OR (NVL(sva.allele_percent,100) >= 80
-                  AND NVL(svb.allele_percent,100) >= 80))
-         AND nvl(sva.pvalue, 0) < 0.01
-         AND nvl(svb.pvalue, 0) < 0.01
-         AND nvl(sva.coverage, 10) > 5
-         AND nvl(svb.coverage, 10) > 5
-         AND gf.source_id = sa.gene_source_id
-         AND gf.na_feature_id = transcript.parent_id
-         AND transcript.na_feature_id = taf.na_feature_id
-)
-GROUP BY cds_length, na_feature_id, source_id,
-         strain_a, strain_b,type
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX SnpSummary_idx&1
-       ON SnpSummary&1(na_feature_id, source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX SnpSummary_strain_idx&1
-       ON SnpSummary&1(strain_a, strain_b, source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX SnpSummary_strainb_idx&1
-       ON SnpSummary&1(strain_b, strain_a, source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX SnpSummary_srcId_idx&1
-       ON SnpSummary&1(source_id, na_feature_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
-<!--
-  <tuningTable name="DistinctLowerProduct">
-    <internalDependency name="GeneAttributes"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE DistinctLowerProduct&1 NOLOGGING AS
-select rownum as dlp_id, dlp
-from (select distinct lower(product) as dlp
-      from GeneAttributes)
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
-<!--
-  <tuningTable name="GeneProduct">
-    <internalDependency name="DistinctLowerProduct"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE GeneProduct&1 NOLOGGING AS
-select dlp_id, na_feature_id
-from DistinctLowerProduct, dots.GeneFeature
-where lower(product) = dlp
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX geneProduct_ix&1 ON GeneProduct&1(dlp_id, na_feature_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
 
   <tuningTable name="TajimasStats">
+    <!-- Each record stores values for the Tajima's D statistic associated with
+         a particular N value. Used by GenesByTajimasDHtsSnps.
+     -->
     <internalDependency name="IsolateAttributes"/>
     <sql>
       <![CDATA[ 
@@ -3954,6 +3675,10 @@ SQL
 
 
   <tuningTable name="SimilaritySpanLocation">
+    <!-- Like dots.SimilaritySpan, except that for sequences that are mapped by
+         SequencePiece into parts of other sequences, both locations are stored.
+         Used by GBrowse, and also in the creation of the Blastx tuning table.
+     -->
     <externalDependency name="dots.Similarity"/>
     <externalDependency name="dots.SimilaritySpan"/>
     <externalDependency name="core.TableInfo"/>
@@ -4039,6 +3764,9 @@ tablespace indx
 
 
   <tuningTable name="IsolateSNPs">
+    <!-- Associates SNPs with isolates. Used for the SNP record and for SNP ID
+         queries, as well as for the creation of the SnpsWithIsolates tuning table.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="IsolateAttributes"/>
     <internalDependency name="SnpAttributes"/>
@@ -4090,6 +3818,9 @@ tablespace indx
 
 
   <tuningTable name="SnpsWithIsolates">
+    <!-- Each record summarizes statistics for a single SNP location within a
+         single isolate external database release. Used by GBrowse.
+     -->
     <internalDependency name="IsolateAttributes"/>
     <internalDependency name="IsolateSNPs"/>
     <sql>
@@ -4144,6 +3875,9 @@ where swa.major_allele is null
 
 
   <tuningTable name="Blastp">
+    <!-- Each record stores a Blastp similarity of a gene. Used by the gene-page
+         Blastp table. 
+     -->
     <externalDependency name="dots.Similarity"/>
     <externalDependency name="dots.ExternalAaSequence"/>
     <externalDependency name="dots.GeneFeature"/>
@@ -4156,7 +3890,7 @@ where swa.major_allele is null
     <internalDependency name="TaxonSpecies"/>
     <sql>
       <![CDATA[
-create table Blastp&1 as
+create table Blastp&1 nologging as
 select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
        subject.source_id as subject_source_id, sim.score score, sim.query_id, 
        sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
@@ -4221,12 +3955,15 @@ create index Blastp_text_ix on Blastp&1(description) indextype is ctxsys.context
 
 
   <tuningTable name="GeneIsolateOverlap">
+    <!-- Each record stores a colocated (gene, isolate) 2-tuple. Used by the
+         gene page as well as the IsolateByOverlap query.
+     -->
     <internalDependency name="IsolateAttributes"/>
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.Similarity"/>
     <sql>
       <![CDATA[
-create table GeneIsolateOverlap&1 as
+create table GeneIsolateOverlap&1 nologging as
 select substr(ia.source_id, 1, 30) as isolate_source_id,
        fl.feature_source_id as gene_source_id,
        min(pvalue_exp) as min_pvalue_exp
@@ -4255,9 +3992,12 @@ tablespace indx
 
 
   <tuningTable name="TableWeight">
+    <!-- Each record assigns a weight (i.e. an importance) to one WDK table.
+         Used to order the results of text searches.
+     -->
     <sql>
       <![CDATA[
-create table TableWeight&1 as
+create table TableWeight&1 nologging as
 -- genes
   select cast ('GoTerms' as varchar2(80)) as table_name, 1 as weight from dual
 union
@@ -4291,11 +4031,17 @@ tablespace indx
 
 
   <tuningTable name="TaxonSpecies" prefixEnabled="true">
+    <!-- Each record maps a taxon_id of interest onto the taxon_id that taxon's
+         taxon-tree ancestor whose rank is "species". Used by
+         buildAnnotationChangeTT and by gene queries, as well as an input in the
+         creation of several tuning tables, including GeneAttributes and
+         OrganismTree.
+     -->
     <internalDependency name="SequenceAttributes"/>
     <externalDependency name="sres.Taxon"/>
     <sql>
       <![CDATA[
-create table &prefixTaxonSpecies&1 as    
+create table &prefixTaxonSpecies&1 nologging as
 select t.taxon_id, species.taxon_id as species_taxon_id
 from sres.Taxon species, (select distinct sa.taxon_id
       from &prefixSequenceAttributes sa) t
@@ -4309,6 +4055,9 @@ where species.taxon_id in (select taxon_id from sres.Taxon
 
 
   <tuningTable name="Blastx">
+    <!-- Each record stores a Blastx similarity. Used by GBrowse for the
+         match:WU_BLASTX track.
+     -->
     <externalDependency name="dots.ExternalAaSequence"/>
     <externalDependency name="dots.NaSequence"/>
     <internalDependency name="SimilaritySpanLocation"/>
@@ -4347,6 +4096,9 @@ where sim.query_id = extq.na_sequence_id
 
 
   <tuningTable name="TranscriptSequence">
+    <!-- Each record stores the transcript sequence of one gene. Used by the
+         gene record and the sequence retrieval tool. Propagated to the portal.
+     -->
     <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.SplicedNaSequence"/>
     <externalDependency name="sres.TaxonName"/>
@@ -4373,6 +4125,9 @@ tablespace indx
 
 
   <tuningTable name="CodingSequence">
+    <!-- Each record stores the coding sequence of one gene. Used by the
+         gene record and the sequence retrieval tool. Propagated to the portal.
+     -->
     <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.SplicedNaSequence"/>
     <externalDependency name="dots.TranslatedAaFeature"/>
@@ -4403,6 +4158,10 @@ tablespace indx
 
 
   <tuningTable name="ProteinSequence">
+    <!-- Each record stores the coding sequence of one gene. Used by the
+         gene record and the sequence retrieval tool, as well as by
+         buildTrackOldAnnotationTT. Propagated to the portal.
+     -->
     <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.TranslatedAaSequence"/>
     <externalDependency name="dots.TranslatedAaFeature"/>
@@ -4432,6 +4191,11 @@ tablespace indx
 
 
   <tuningTable name="NaSequence">
+    <!-- Each record stores the nucleotide sequence for one genomic sequence
+         that is "official" (in the sense that it can be instantiated as a WDK
+         sequence record. Used by generatePathoLogicFile and the sequence
+         retrieval tool Propagated to portal instances.
+     -->
     <externalDependency name="dots.NaSequence"/>
     <externalDependency name="sres.TaxonName"/>
     <internalDependency name="SequenceAttributes"/>
@@ -4456,6 +4220,10 @@ tablespace indx
 
 
   <tuningTable name="OrfSequence">
+    <!-- Each record stores the amino-acid sequence of an ORF. Used by the
+         relevant attribute query of the WDK ORF record, as well as by the
+         sequence retrieval tool. Propagated to portal instances.
+     -->
     <externalDependency name="dots.TranslatedAaSequence"/>
     <externalDependency name="dots.TranslatedAaFeature"/>
     <externalDependency name="dots.NaFeature"/>
@@ -4487,6 +4255,10 @@ tablespace indx
 
 
   <tuningTable name="EstSequence">
+    <!-- Each record stores the nucleotide sequence of an EST, for use by the
+         relevant attribute query in the WDK EST record. Propagated to portal
+         instances.
+     -->
     <externalDependency name="dots.ExternalNaSequence"/>
     <externalDependency name="sres.SequenceOntology"/>
     <externalDependency name="sres.TaxonName"/>
@@ -4513,6 +4285,8 @@ tablespace indx
 
 
   <tuningTable name="AssemblySequence">
+    <!-- 
+     -->
     <externalDependency name="dots.Assembly"/>
     <externalDependency name="sres.TaxonName"/>
     <sql>
@@ -4536,6 +4310,8 @@ tablespace indx
 
 
   <tuningTable name="UTR">
+    <!-- Used as an input to the GeneAttributes tuning table.
+     -->
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GeneAttributes"/>
     <externalDependency name="dots.ExonFeature"/>
@@ -4617,6 +4393,10 @@ tablespace indx
 
 
   <tuningTable name="IsolateSequence">
+    <!-- Each record stores the nucleotide sequence of one isolate. Used in the
+         relevant attribute query of the WDK isolate record, as well as by
+         IsolateClustalw. Propagated to portal instances.
+     -->
     <internalDependency name="IsolateAttributes"/>
     <externalDependency name="dots.NaSequence"/>
     <externalDependency name="sres.TaxonName"/>
@@ -4642,6 +4422,11 @@ tablespace indx
 
 
   <tuningTable name="TypeAheadCounts">
+    <!-- Stores strings that can be used in parameters with type-ahead, such as
+         GO terms, EC numbers, or InterPro domains. Each record stores such a
+         string, along with the project ID and the number of genes with which it
+         is associated. Used for gene queries.
+     -->
     <internalDependency name="GeneAttributes"/>
     <externalDependency name="dots.DbRefAaFeature"/>
     <externalDependency name="sres.DbRef"/>
@@ -4724,6 +4509,10 @@ tablespace indx
 
 
   <tuningTable name="ExpressionElement">
+    <!-- Each record associates expression values for an NaFeature with that
+         feature's ID and location. Used by GBrowse, as well as in the creation
+         of the ChIPchipGene table.
+     -->
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="rad.DataTransformationResult"/>
     <sql>
@@ -4746,7 +4535,9 @@ tablespace indx
 
 
   <tuningTable name="OrthologousPair">
-    <!-- each record contains a pair of genes that are orthologous to each other -->
+    <!-- Each record contains a pair of genes that are orthologous to each other.
+         Used in the creation of the tuning table OrthologGeneTable.
+     -->
     <internalDependency name="GeneAttributes"/>
     <sql>
       <![CDATA[
@@ -4780,7 +4571,10 @@ tablespace indx
 
 
   <tuningTable name="OrthologGeneTable">
-    <!-- each record contains a record from OrthologousPair, augmented by the IS_SYNTENIC column -->
+    <!-- Each record contains a record from OrthologousPair, augmented by the
+         IS_SYNTENIC column. Used by the relevant table query of the WDK gene
+         record.
+      -->
     <internalDependency name="OrthologousPair"/>
     <externalDependency name="apidb.Synteny"/>
     <sql>
@@ -4815,59 +4609,12 @@ tablespace indx
     </sql>
   </tuningTable>
 
-<!--
-  <tuningTable name="NextGenSeqStats">
-    <externalDependency name="apidb.NextGenSeqCoverage"/>
-    <sql>
-      <![CDATA[
-      create table NextGenSeqStats&1 nologging as
-      select name as ext_db_name, sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length, sum_span_length
-      from (select d.name, c.sample, count(*) as num_spans,
-                   sum(c.coverage * (c.mapping_end - c.mapping_start)) as sum_coverage,
-                   sum(c.mapping_end - c.mapping_start) as sum_span_length
-            from apidb.NextGenSeqCoverage c,sres.ExternalDatabaseRelease r, sres.ExternalDatabase d
-            where c.multiple = 0
-             and c.external_database_release_id = r.external_database_release_id
-             and d.external_database_id = r.external_database_id
-            group by d.name, c.sample)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-      create index ngss_sple_idx&1
-      on NextGenSeqStats&1 (sample)
-      tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
--->
 
-<!--
-  <tuningTable name="SnpCombined">
-    <externalDependency name="dots.SeqVariation"/>
-    <internalDependency name="SnpAttributes"/>
-    <sql>
-      <![CDATA[
-       create table SnpCombined&1
-              (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product,
-               constraint SeqVar&1_pk primary key (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product))
-       nologging
-       as
-       select sa.na_sequence_id, sa.dataset, sa.start_min,
-              substr(var.strain, 1, 100) as strain, sa.na_feature_id,
-              substr(var.allele, 1, 40) as allele,
-              substr(var.phenotype, 1, 20) as phenotype, nvl(substr(var.product, 1, 20), ' ') as product
-       FROM SnpAttributes sa,
-            dots.SeqVariation var
-       WHERE var.parent_id = sa.na_feature_id
-         and sa.dataset = 'pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC'
-      ]]>
-    </sql>
-  </tuningTable>
--->
-
-  <!-- This table will eventually be replaced by workflow -->
   <tuningTable name="OrganismAbbreviation">
+    <!-- Each record maps an organism name onto an abbreviation, getting the
+         pair either from apidb.Organism or (in the case of Tvag), hardwired
+         into the below SQL. This table will eventually be replaced by workflow.
+      -->
     <externalDependency name="apidb.Organism"/>
     <externalDependency name="sres.TaxonName"/>
     <sql>
@@ -4887,9 +4634,13 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
- <!-- Special webservice abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationWS">
+    <!-- Stores special webservice abbreviations which are not standard organism
+         names. Each record maps an organism name onto this abbreviation, as
+         well as the species name and project ID. Used by the model and as an
+         input in the creation of the OrganismAbbreviationBlast tuning table.
+         Propagated to portal instances.
+      -->
     <internalDependency name="OrganismAbbreviation"/>
     <internalDependency name="OrganismTree"/>
     <sql>
@@ -4908,9 +4659,10 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
- <!-- Query to group projects by higher level taxonomy --> 
   <tuningTable name="ProjectIdTaxonLevel">
+    <!-- Groups projects by higher level taxonomy. Used in the creation of the
+         OrganismTree tuning table.
+      -->
     <internalDependency name="SequenceAttributes"/>
     <sql>
       <![CDATA[
@@ -5012,9 +4764,13 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
- <!-- Query to group species by higher level taxonomy --> 
   <tuningTable name="OrganismTree">
+    <!-- Group species by higher level taxonomy. Each row associates a taxon of
+         interest with one of its ancestors in the taxon tree. Used in parameter
+         queries that have to know about the taxon tree, as well as
+         apidb.project_id(), the function that maps an organism name to a
+         project. Propagated to portal instances.
+      -->
     <internalDependency name="ProjectIdTaxonLevel"/>
     <internalDependency name="SequenceAttributes"/>
     <internalDependency name="TaxonSpecies"/>
@@ -5117,9 +4873,10 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
     </sql>
   </tuningTable>
 
-
- <!-- Special BLAST  abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationBlast">
+    <!-- Each record maps an organism to its BLAST abbreviation. Used by
+         BLAST-query parameters. Propagated to portal instances.
+      -->
     <internalDependency name="OrganismAbbreviationWS"/>
     <internalDependency name="OrganismTree"/>
     <internalDependency name="EstAttributes"/>
@@ -5164,6 +4921,9 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
 
 
   <tuningTable name="BlastTypes">
+    <!-- For each project, show which BLAST databases are available for which
+         species. Used in BLAST param queries. Propagated to portal instances.
+      -->
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="SequenceAttributes"/>
     <internalDependency name="EstAttributes"/>
@@ -5251,8 +5011,12 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
 
 
   <tuningTable name="CompoundAttributes">
-    <externalDependency name="ApiDB.PubChemSubstance"/>
-    <externalDependency name="ApiDB.PubChemCompound"/>
+    <!-- The BFMV for the compound WDK record type. Used by the model for the
+         compound record and queries, as well as in the creation of the
+         PathwayCompounds tuning table. Propagated to portal instances.
+      -->
+    <externalDependency name="apidb.PubChemSubstance"/>
+    <externalDependency name="apidb.PubChemCompound"/>
     <sql>
       <![CDATA[
 CREATE TABLE CompoundAttributes&1 NOLOGGING AS
@@ -5260,11 +5024,11 @@ SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id,
               apidb.tab_to_string(set(cast(COLLECT(to_char(nameTable.name)) AS apidb.varchartab)), ', ') AS name,
               apidb.tab_to_string(set(cast(COLLECT(to_char(substTable.substance_id)) AS apidb.varchartab)), ', ') AS substance_id,
               wtTable.mol_wt, REGEXP_REPLACE(formTable.formula,'(\d)','<sub>\1</sub>') AS formula
-        FROM ApiDB.PubChemCompound comp,
-                  (SELECT compound_id , value as name FROM ApiDB.PubChemCompound where property='Name') nameTable,
-                  (SELECT compound_id , value as mol_wt FROM ApiDB.PubChemCompound where property='MolecularWeight') wtTable,
-                  (SELECT compound_id , value as formula FROM ApiDB.PubChemCompound where property='MolecularFormula') formTable,
-                  (SELECT substance_id, value as cid FROM ApiDB.PubChemSubstance where property='CID' )  substTable 
+        FROM apidb.PubChemCompound comp,
+                  (SELECT compound_id , value as name FROM apidb.PubChemCompound where property='Name') nameTable,
+                  (SELECT compound_id , value as mol_wt FROM apidb.PubChemCompound where property='MolecularWeight') wtTable,
+                  (SELECT compound_id , value as formula FROM apidb.PubChemCompound where property='MolecularFormula') formTable,
+                  (SELECT substance_id, value as cid FROM apidb.PubChemSubstance where property='CID' )  substTable 
        WHERE comp.compound_id = nameTable.compound_id (+)
          AND comp.compound_id = wtTable.compound_id
          AND comp.compound_id = formTable.compound_id
@@ -5276,24 +5040,28 @@ SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id,
 
 
   <tuningTable name="PathwayCompounds">
+    <!-- Each record represents a 5-tuple of (reaction, compound, pathway,
+         enzyme, type). Used extensively in the model for pathway-related
+         queries, as well as by getImageMap.pl.
+      -->
     <internalDependency name="CompoundAttributes"/>
     <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.TranslatedAaFeature"/>
     <externalDependency name="dots.AaSequenceEnzymeClass"/>
     <externalDependency name="sres.EnzymeClass"/>
-    <externalDependency name="ApiDB.Network"/>
-    <externalDependency name="ApiDB.NetworkNode"/>
-    <externalDependency name="ApiDB.NetworkRelationship"/>
-    <externalDependency name="ApiDB.NetworkRelationshipType"/>
-    <externalDependency name="ApiDB.NetworkContext"/>
-    <externalDependency name="ApiDB.NetworkRelContext"/>
-    <externalDependency name="ApiDB.NetworkRelContextLink"/>
-    <externalDependency name="ApiDB.PubChemSubstance"/>
+    <externalDependency name="apidb.Network"/>
+    <externalDependency name="apidb.NetworkNode"/>
+    <externalDependency name="apidb.NetworkRelationship"/>
+    <externalDependency name="apidb.NetworkRelationshipType"/>
+    <externalDependency name="apidb.NetworkContext"/>
+    <externalDependency name="apidb.NetworkRelContext"/>
+    <externalDependency name="apidb.NetworkRelContextLink"/>
+    <externalDependency name="apidb.PubChemSubstance"/>
     <sql>
       <![CDATA[
 CREATE TABLE PathwayCompounds&1 NOLOGGING AS
 SELECT  '@PROJECT_ID@' AS project_id, ca.compound_id, ca.source_id AS compound_source_id, x.*
-FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes ca,
+FROM   apidb.PubChemSubstance s1, apidb.PubChemSubstance s2, CompoundAttributes ca,
     (  -- CASE  A :  NOT reversible
       SELECT  CASE WHEN nn1.node_type_id = 2 THEN nn1.display_label
                  WHEN nn2.node_type_id = 2 THEN nn2.display_label
@@ -5305,9 +5073,9 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
                       ELSE 'substrate' END AS type,
               nrt.display_name AS reaction,
               nc.description ||' ('||nc.name||')' AS pathway, nc.name AS name, nc.network_context_id
-     FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
-              ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
-              ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
+     FROM apidb.NetworkRelationshipType nrt, apidb.NetworkRelContext nrc, apidb.NetworkRelationship nr,
+              apidb.NetworkRelContextLink nrl, apidb.NetworkContext nc,
+              apidb.NetworkNode nn1, apidb.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
            -- source_node = 1 means irreversible (this is an adjustment as network schema cant store reversibility)
             AND nrc.source_node = 1 
@@ -5322,9 +5090,9 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
                   'substrate/product' AS type,
                   nrt.display_name AS reaction, 
                   nc.description ||' ('||nc.name||')' as pathway, nc.name AS name, nc.network_context_id
-       FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
-              ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
-              ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
+       FROM apidb.NetworkRelationshipType nrt, apidb.NetworkRelContext nrc, apidb.NetworkRelationship nr,
+              apidb.NetworkRelContextLink nrl, apidb.NetworkContext nc,
+              apidb.NetworkNode nn1, apidb.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
            -- source_node = 0 means reversible (this is an adjustment as network schema cant store reversibility)
       	   AND nrc.source_node = 0 
@@ -5345,17 +5113,22 @@ WHERE s1.property = 'CID'
 
 
   <tuningTable name="MSPeptideSummary">
+    <!-- Each row stores mass-spec. based expression evidence for one sample of
+         one experiment for one gene. Used for mass spec queries in the model,
+         GBrowse, and PBrowse, and also in the creation of the MSGeneSummary
+         tuning table.
+      -->
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="MassSpecTerms"/>
     <internalDependency name="DatasetPresenter"/>
-    <externalDependency name="Dots.AAFeature"/>
-    <externalDependency name="Dots.AALocation"/>
+    <externalDependency name="dots.AAFeature"/>
+    <externalDependency name="dots.AALocation"/>
     <externalDependency name="Sres.ExternalDatabase"/>
     <externalDependency name="Sres.ExternalDatabaseRelease"/>
     <intermediateTable name="MSExptTrustedSpectrum"/>
     <sql>
 <![CDATA[
-create table MSExptTrustedSpectrum&1  NOLOGGING AS        
+create table MSExptTrustedSpectrum&1 nologging as        
 select distinct mss.external_database_release_id, mss.sample_file
 from apidb.massspecsummary mss, dots.massspecfeature msf
 where mss.mass_spec_summary_id = msf.source_id
@@ -5363,7 +5136,7 @@ where mss.mass_spec_summary_id = msf.source_id
     </sql>        
     <sql>
     <![CDATA[
-create table MSPeptideSummary&1 as
+create table MSPeptideSummary&1 nologging as
 select dbms_lob.SUBSTR(seq.SEQUENCE,
                             pep.aa_end_max - pep.aa_start_min + 1,
                             pep.aa_start_min) as peptide_sequence,
@@ -5378,9 +5151,9 @@ select ga.source_id,
        l.start_min as aa_start_min,
        l.end_max as aa_end_max,
        mst.html_color, mst.internal_id, mst.organism, mst.project_id, mst.sample, mst.sort_order
-from apidb.massspecsummary mss, DOTS.massspecfeature msf, DOTS.aalocation l, 
-     geneattributes ga, Msexpttrustedspectrum&1 good, SRES.externaldatabase d,
-     SRES.externaldatabaserelease r, massspecterms mst, datasetnametaxon dsnt, datasetpresenter dsp
+from apidb.massspecsummary mss, dots.massspecfeature msf, dots.aalocation l, 
+     geneattributes ga, Msexpttrustedspectrum&1 good, sres.externaldatabase d,
+     sres.externaldatabaserelease r, massspecterms mst, datasetnametaxon dsnt, datasetpresenter dsp
 where mss.mass_spec_summary_id = msf.source_id
 and msf.aa_feature_id = l.aa_feature_id
 and mss.aa_sequence_id = ga.aa_sequence_id (+)
@@ -5399,11 +5172,15 @@ where pep.aa_sequence_id = seq.aa_sequence_id
       ]]>
     </sql>
   </tuningTable>
+
+
   <tuningTable name="MSGeneSummary">
+    <!--
+      -->
     <internalDependency name="MSPeptideSummary"/>
     <sql>
     <![CDATA[
-create table MSGeneSummary&1 as
+create table MSGeneSummary&1 nologging as
 select msps.source_id, msps.external_database_name, msps.experiment, msps.sample, msps.sample_file, msps.internal_id, msps.organism, msps.project_id, sum(msps.spectrum_count) as spectrum_count, count(*) as sequence_count
 from mspeptidesummary msps
 where source_id is not null
@@ -5412,20 +5189,23 @@ group by msps.source_id, msps.external_database_name, msps.experiment, msps.samp
     </sql>
   </tuningTable>
 
+
   <tuningTable name="MSModifiedPeptideSummary">
+    <!--
+      -->
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="MassSpecTerms"/>
     <internalDependency name="DatasetPresenter"/>
-    <externalDependency name="Dots.AAFeature"/>
-    <externalDependency name="Dots.AALocation"/>
+    <externalDependency name="dots.AAFeature"/>
+    <externalDependency name="dots.AALocation"/>
     <externalDependency name="Sres.ExternalDatabase"/>
     <externalDependency name="Sres.ExternalDatabaseRelease"/>
     <externalDependency name="Sres.SequenceOntology"/>
-    <externalDependency name="Apidb.massSpecSummary"/>
-    <externalDependency name="Apidb.massSpecSummary"/>
+    <externalDependency name="apidb.massSpecSummary"/>
+    <externalDependency name="apidb.massSpecSummary"/>
     <sql>
     <![CDATA[
-create table MSModifiedPeptideSummary&1 as
+create table MSModifiedPeptideSummary&1 nologging as
 select dbms_lob.substr(seq.sequence, pep.aa_end_max - pep.aa_start_min + 1,
               pep.aa_start_min)                                   as
        peptide_sequence,
@@ -5477,45 +5257,34 @@ where  pep.aa_sequence_id = seq.aa_sequence_id
     </sql>
   </tuningTable>
 
-<!--
-  <tuningTable name="MSModificationSummary">
-    <internalDependency name="MSModifiedPeptideSummary"/>
-
-    <sql>
-    <![CDATA[
-create table MSModificationSummary&1 as
-SELECT mss.source_id,
-       mss.residue_location,
-       sum(mss.spectrum_count) number_of_matches,
-       count(distinct peptide_aa_feature_id) number_of_distinct_matches,
-       mss.modification_type as term_name,
-       mss.residue
-FROM apidbtuning.MSModifiedPeptideSummary mss
-group by  mss.source_id,
-          mss.residue_location,
-          mss.modification_type,
-          mss.residue
-ORDER BY source_id,mss.residue_location
-      ]]>
-    </sql>
-  </tuningTable>
--->
 
   <tuningTable name="Ssgcid" alwaysUpdate="true">
+    <!-- Data from the Seattle Structural Genomics Center for Infectious Disease,
+         populated from their web service. Used in the gene record.
+      -->
     <program commandLine="buildSsgcidTT"/>
   </tuningTable>
 
+
   <tuningTable name="MassSpecTerms" alwaysUpdate="true">
+    <!-- Used by the model and GBrowse, as well as an input in the creation of
+         the tuning tables MSModifiedPeptideSummary and MSPeptideSummary.
+      -->
     <program commandLine="buildMassSpecTermsTT_trunk"/>
   </tuningTable>
 
 
   <tuningTable name="GbrowseTracksOrganism" alwaysUpdate="true">
+    <!-- Associates an organism with the GBrowse and PBrowse tracks available
+         for it. Used by the gene record.
+      -->
     <program commandLine="buildGbrowseImageUrlTT"/>
   </tuningTable>
 
 
   <tuningTable name="DatasetPresenter" alwaysUpdate="true">
+    <!--
+      -->
     <ancillaryTable name="DatasetContact"/>
     <ancillaryTable name="DatasetHyperLink"/>
     <ancillaryTable name="DatasetPublication"/>
@@ -5526,6 +5295,8 @@ ORDER BY source_id,mss.residue_location
 
 
   <tuningTable name="DatasetDetail">
+    <!--
+      -->
     <internalDependency name="DatasetPresenter"/>
     <sql>
       <![CDATA[
@@ -5552,7 +5323,7 @@ ORDER BY source_id,mss.residue_location
       sub.citation,
       dp.summary,
       dp.description
-      from APIDBTUNING.datasetpresenter dp,
+      from ApidbTuning.datasetpresenter dp,
       (
       select distinct
       dp.dataset_presenter_id as dataset_presenter_id, 
@@ -5567,8 +5338,8 @@ ORDER BY source_id,mss.residue_location
       dc.affiliation as institution,
       LISTAGG(dpub.pmid, ' ') WITHIN GROUP (ORDER BY dpub.pmid) as pubmed_id,
       LISTAGG(dpub.citation, '  ') WITHIN GROUP (ORDER BY dpub.citation) as citation
-      from apidbtuning.datasetpresenter dp, APIDBTUNING.datasetcontact dc, 
-      APIDBTUNING.datasetpublication dpub  
+      from apidbtuning.datasetpresenter dp, ApidbTuning.datasetcontact dc, 
+      ApidbTuning.datasetpublication dpub  
       where dp.dataset_presenter_id = dc.dataset_presenter_id
       and   dp.dataset_presenter_id = dpub.dataset_presenter_id
       and   dc.is_primary_contact = 1
@@ -5591,33 +5362,10 @@ ORDER BY source_id,mss.residue_location
 
 
   <tuningTable name="TrackOldAnnotation" alwaysUpdate="true">
+    <!--
+      -->
     <program commandLine="buildTrackOldAnnotationTT"/>
   </tuningTable>
 
-
-  <tuningTable name="ProjectMapping">
-    <externalDependency name="apidb.Organism"/>
-    <externalDependency name="sres.Taxon"/>
-    <externalDependency name="sres.TaxonName"/>
-    <sql>
-      <![CDATA[
-        create table ProjectMapping&1 nologging as
-          select substr(organism, 1, 30) as organism, project_id
-          from (
-                -- Organism.taxon_id
-                select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
-                from apidb.Organism o, sres.TaxonName tn
-                where o.taxon_id = tn.taxon_id
-                  and tn.name_class = 'scientific name'
-              union
-                -- Organism.family_ncbi_taxon_ids
-                select lower(regexp_replace(tn.name || ' ', ' .*$', '')) as organism, o.project_name as project_id
-                from apidb.Organism o, sres.TaxonName tn, sres.Taxon t
-                where o.family_ncbi_taxon_ids = t.ncbi_tax_id
-                  and t.taxon_id = tn.taxon_id
-                  and tn.name_class = 'scientific name')
-      ]]>
-    </sql>
-  </tuningTable>
 
 </tuningConfig>
