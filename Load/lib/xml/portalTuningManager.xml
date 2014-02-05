@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-<?xml version="1.0"?>
-<!DOCTYPE tuningConfig [
-<!ELEMENT tuningConfig (tuningTable+)>
-<!ELEMENT tuningTable (externalTuningTableDependency*,internalDependency*,intermediateTable*,unionization+,sql*,perl*)>
-<!ELEMENT externalTuningTableDependency EMPTY>
-<!ELEMENT internalDependency EMPTY>
-<!ELEMENT intermediateTable EMPTY>
-<!ELEMENT unionization (source+)>
-<!ELEMENT source (query*)>
-<!ELEMENT query (#PCDATA)>
-<!ELEMENT sql (#PCDATA)>
-<!ELEMENT perl (#PCDATA)>
 
-<!ATTLIST tuningTable name CDATA #REQUIRED>
-
-<!ATTLIST externalTuningTableDependency 
-  name CDATA #REQUIRED
-  dblink CDATA #IMPLIED
->
-
-<!ATTLIST internalDependency name CDATA #REQUIRED>
-<!ATTLIST source dblink CDATA #IMPLIED>
-]>
+<!-- These are component tuning tables, which are propagated into portal
+     instances with the XML below. See the component XML file,
+     tuningManager.xml, for details about their construction and use.
 -->
+
 <tuningConfig>
 
   <tuningTable name="ApidbTuning.OrganismAbbreviationWS">
