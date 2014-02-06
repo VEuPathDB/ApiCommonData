@@ -1379,6 +1379,7 @@ tablespace indx
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GenomicSequence"/>
     <internalDependency name="TaxonSpecies"/>
+    <internalDependency name="UTR"/>
     <externalDependency name="apidb.AaSequenceAttribute"/>
     <externalDependency name="apidb.GeneFeatureName"/>
     <externalDependency name="apidb.GeneFeatureProduct"/>
@@ -4314,12 +4315,13 @@ tablespace indx
          GBrowse.
      -->
     <internalDependency name="FeatureLocation"/>
-    <internalDependency name="GeneAttributes"/>
     <externalDependency name="dots.ExonFeature"/>
+    <externalDependency name="dots.GeneFeature"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
 CREATE TABLE UTR&1 NOLOGGING AS
-SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_reversed,is_deprecated,end_max-start_min+1 as length FROM 
+SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_reversed,end_max-start_min+1 as length FROM 
 (
   (SELECT exon_loc.na_feature_id,
           exon_loc.parent_id,
@@ -4331,12 +4333,12 @@ SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_rev
           CASE WHEN exon_loc.is_reversed = 0 THEN 5 
                WHEN exon_loc.is_reversed = 1 THEN 3 
                ELSE 0 END direction,
-          exon_loc.is_reversed,
-          ga.is_deprecated
-   FROM   FeatureLocation exon_loc, GeneAttributes ga
+          exon_loc.is_reversed
+   FROM   FeatureLocation exon_loc, dots.GeneFeature gf, sres.SequenceOntology so
    WHERE  exon_loc.feature_type = 'ExonFeature'
-      AND ga.na_feature_id = exon_loc.parent_id
-      AND ga.gene_type = 'protein coding'
+      AND gf.na_feature_id = exon_loc.parent_id
+      AND gf.sequence_ontology_id = so.sequence_ontology_id
+      AND so.term_name = 'protein_coding'
       AND ((exon_loc.is_reversed = 0 AND exon_loc.coding_start - exon_loc.start_min  != 0)
        OR (exon_loc.is_reversed = 1 AND exon_loc.coding_end - exon_loc.start_min  != 0)))
   UNION
@@ -4350,12 +4352,12 @@ SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_rev
           CASE WHEN exon_loc.is_reversed = 0 THEN 3 
           WHEN exon_loc.is_reversed = 1 THEN 5 
           ELSE 0 END direction,
-          exon_loc.is_reversed, 
-          ga.is_deprecated 
-   FROM   FeatureLocation exon_loc, GeneAttributes ga
+          exon_loc.is_reversed
+   FROM   FeatureLocation exon_loc, dots.GeneFeature gf, sres.SequenceOntology so
    WHERE  exon_loc.feature_type = 'ExonFeature'
-      AND ga.na_feature_id = exon_loc.parent_id
-      AND ga.gene_type = 'protein coding'
+      AND gf.na_feature_id = exon_loc.parent_id
+      AND gf.sequence_ontology_id = so.sequence_ontology_id
+      AND so.term_name = 'protein_coding'
       AND ((exon_loc.is_reversed = 0 AND exon_loc.end_max - exon_loc.coding_end  != 0)
        OR (exon_loc.is_reversed = 1 AND exon_loc.end_max - exon_loc.coding_start  != 0))  )
    UNION
@@ -4368,17 +4370,17 @@ SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_rev
                 WHEN ef.order_number > eo.max_order_number THEN 3
                 ELSE 0
                 END direction,
-           exon_loc.is_reversed, 
-           ga.is_deprecated 
-    FROM   FeatureLocation exon_loc, GeneAttributes ga, dots.exonfeature ef,
+           exon_loc.is_reversed
+    FROM   FeatureLocation exon_loc, dots.exonfeature ef, dots.GeneFeature gf, sres.SequenceOntology so,
            (select parent_id, max(order_number) as max_order_number from dots.exonfeature
             where coding_start is not null
             group by parent_id) eo
     WHERE  exon_loc.feature_type = 'ExonFeature'
-       AND ga.na_feature_id = exon_loc.parent_id
-       and ef.na_feature_id = exon_loc.na_feature_id
-       and ef.parent_id = eo.parent_id
-       AND ga.gene_type = 'protein coding'
+       AND gf.na_feature_id = exon_loc.parent_id
+       AND ef.na_feature_id = exon_loc.na_feature_id
+       AND ef.parent_id = eo.parent_id
+       AND gf.sequence_ontology_id = so.sequence_ontology_id
+       AND so.term_name = 'protein_coding'
        AND exon_loc.coding_start is null)
 )
 WHERE end_max - start_min != 0
