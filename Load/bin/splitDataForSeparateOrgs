@@ -6,17 +6,19 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
+use Data::Dumper;
 
-my ($gusConfigFile,$extDbSpec,$outFile,$verbose,$inFile);
+my ($gusConfigFile,$extDbSpec,$outFile,$verbose,$inFile,$headerFile);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "extDbSpec=s" => \$extDbSpec,
 	    "infile=s" => \$inFile,
+            "headerfile=s" => \$headerFile,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile);
 
 
-unless(-e $extDbSpec && -e $inFile && $outFile) {
-  print STDERR "usage breakDBRefsIntoOrganismSpecificBySourceId --inFile map_file --outFile out_put_file --extDbSpec 'Name|Version' [--gus_config_file]\n";
+unless($extDbSpec && -e $inFile && $outFile) {
+  print STDERR "usage plitDataForSeparateOrgs --inFile map_file --outFile out_put_file --extDbSpec 'Name|Version' [--headerfile][--gus_config_file]\n";
   exit;
 }
 
@@ -60,7 +62,7 @@ while(my ($sourceId,$naFeatId) = $stmt1->fetchrow_array()) {
   $genes{$sourceId} = $naFeatId;
 }
 
-$sql = "select ng.name from dots.nagene ng,dots.nafeaturenagene nn where nn.na_feature_id = ? and ng.na_gene_id = nn.na_gene_id";
+$sql = "select drf.primary_identifier from SRes.DbRef drf, DoTS.DbRefNAFeature drnf where drnf.db_ref_id=drf.db_ref_id and drnf.na_feature_id = ?";
 
 my $stmt2 = $dbh->prepare($sql);
 
@@ -71,11 +73,18 @@ foreach my $sourceId (keys %genes) {
     $genes{$aliasName}=1;
   }
 }
-
+#print Dumper (\%genes);
 open(FILE, $inFile) or die "Cannot open file $inFile for reading:$!";
 
 open(OUT,">$outFile"); 
 
+if($headerFile){
+  open(HEADERFILE, $headerFile) or die "Cannot open file $headerFile for reading:$!";
+  while(<HEADERFILE>){
+    next unless($_);
+    print OUT "$_";
+  }
+}
 while(<FILE>) {
 
   next unless($_);
