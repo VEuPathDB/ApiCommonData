@@ -20,20 +20,38 @@ use DBD::Oracle;
 
 use ApiCommonData::Load::MergeSortedFiles;
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain);
+my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug);
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
             "cache_file=s"=> \$cacheFile,
             "gusConfigFile|gc=s"=> \$gusConfigFile,
-            "transcript_extdb_spec=s" => \$transcriptExtDbRlsSpec,
-            "organism_abbrev=s" =>\$organismAbbrev,
             "undone_strains_file=s" => \$undoneStrainsFile,
             "varscan_directory=s" => \$varscanDirectory,
+            "transcript_extdb_spec=s" => \$transcriptExtDbRlsSpec,
+            "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
+            "minAllelePercent=i"=> \$minAllelePercent, 
+            "debug" => \$debug,
+            "help|h" => \$help,
     );
 
-unless(-e $gusConfigFile) {
-  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+if($help) {
+  &usage();
+}
+
+$minAllelePercent = 60 unless($minAllelePercent);
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
+
+unless(-e $newSampleFile && -e $gusConfigFile && -e $cacheFile && -e $undoneStrainsFile) {
+  &usage("Required File Missing");
+}
+
+unless(-d $varscanDirectory) {
+  &usage("Required Directory Missing");
+}
+
+unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain) {
+  &usage("Missing Required param value");
 }
 
 my $gusConfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -49,9 +67,12 @@ my $dbh = $db->getQueryHandle();
 
 my $dirname = dirname($cacheFile);
 
-my $tempOutputFile = $dirname . "/cache.tmp";
+my $tempCacheFile = $dirname . "/cache.tmp";
+my $snpOutputFile = $dirname . "/snp.tmp";
 
-open(OUT, "> $tempOutputFile") or die "Cannot open file $tempOutputFile for writing: $!";
+my ($snpFh, $cacheFh);
+open($cacheFh, "> $tempCacheFile") or die "Cannot open file $tempCacheFile for writing: $!";
+open($snpFh, "> $snpOutputFile") or die "Cannot open file $snpOutputFile for writing: $!";
 
 my $strainVarscanFileHandles = &openVarscanFiles($varscanDirectory);
 
@@ -60,7 +81,8 @@ my @allStrains = keys %{$strainVarscanFileHandles};
 my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
 
-my ($transcriptLocs, $exonLocs) = &getTranscriptLocations($dbh, $transcriptExtDbRlsId);
+my $agpMap = &queryForAgpMap($dbh);
+my ($transcriptSummary, $exonLocs) = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
 
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
@@ -68,46 +90,68 @@ close UNDONE;
 
 my $merger = ApiCommonData::Load::MergeSortedFiles::SeqVarCache->new($newSampleFile, $cacheFile, \@undoneStrains);
 
+my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts);
 while($merger->hasNext()) {
   my $variations = $merger->nextSNP();
 
-  # loop throught to make sure the seqid/location are same for all
+  # sanity check and get the location and seq id
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
 
   # some variables are needed to store attributes of the SNP
-  my ($referenceAllele, $positionInCds, $product, $positionInProtein);
+  my ($referenceAllele, $positionInCds, $product, $positionInProtein, $referenceVariation);
 
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
-  my $transcripts = &lookupTranscripts($sequenceId, $location, $exonLocs);
+
+  my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
+
+  print STDERR "HAS TRANSCRIPTS=" . defined($transcripts) . "\n"  if($debug);
+
+  # clear the transcripts cache once we pass the max exon for a group of transcripts
+  if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
+    &cleanCdsCache($transcriptSummary, $prevTranscripts);
+  }
 
   # for the refereence, get   positionInCds, positionInProtein, product, codon?
   if($cachedReferenceVariation) {
+    print STDERR "HAS_CACHED REFERENCE VARIATION\n" if($debug);
+    $referenceVariation = $cachedReferenceVariation;
     $product = $cachedReferenceVariation->{product};
     $positionInCds = $cachedReferenceVariation->{position_in_cds};
     $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
     $referenceAllele = $cachedReferenceVariation->{base};
   }
   else {
-    $referenceAllele = &queryReferenceAllele($dbh, $sequenceId, $location);
-    ($product, $positionInCds, $positionInProtein) = &processVariation($transcriptExtDbRlsId, $transcripts, $transcriptLocs, $sequenceId, $location, $referenceAllele);
+    print STDERR "REFERENCE VARIATION NOT CACHED\n" if($debug);
+    $referenceAllele = &querySequenceSubstring($dbh, $sequenceId, $location, $location);
+    ($product, $positionInCds, $positionInProtein) = &processVariation($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $referenceAllele);
 
     # add a variation for the reference
-    push @$variations, {'base' => $referenceAllele,
-                        'external_database_release_id' => $transcriptExtDbRlsId,
-                        'location' => $location,
-                        'sequence_source_id' => $sequenceId,
-                        'matches_reference' => 1,
-                        'position_in_cds' => $positionInCds,
-                        'strain' => $referenceStrain,
-                        'product' => $product,
+    $referenceVariation = {'base' => $referenceAllele,
+                              'external_database_release_id' => $transcriptExtDbRlsId,
+                              'location' => $location,
+                              'sequence_source_id' => $sequenceId,
+                              'matches_reference' => 1,
+                              'position_in_cds' => $positionInCds,
+                              'strain' => $referenceStrain,
+                              'product' => $product,
     };
+
+    print STDERR "REFERENCE PRODUCT=$product\n";
+    print STDERR "REFERENCE CDS POS=$positionInCds\n";
+    print STDERR "\n";
+    push @$variations, $referenceVariation;
   }
 
-  # Check for a variation at this point;  Important for when we undo strains
+  # No need to continue if there is no variation at this point:  Important for when we undo!!
   next unless(&hasVariation($variations));
+  print STDERR "Has at leaset one variation.  cont....\n" if($debug);
 
- # TODO:  loop over all strains  add coverage vars
+ # loop over all strains  add coverage vars
+  my @variationStrains = map { $_->{strain} } @$variations;
+  my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation,$minAllelePercent);
+  push @$variations, @$coverageVariations;
 
+  # loop through variations and print
   foreach my $variation (@$variations) {
     my $strain = $variation->{strain};
 
@@ -118,7 +162,7 @@ while($merger->hasNext()) {
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
-      &printVariation($variation);
+      &printVariation($variation, $cacheFh);
       next;
     }
 
@@ -134,31 +178,217 @@ while($merger->hasNext()) {
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
-      my ($p, $cdsPos, $proteinPos) = &processVariation($extDbRlsId, $transcripts, $transcriptLocs, $strainSequenceSourceId, $location, $allele);
+      my ($p, $cdsPos, $proteinPos) = &processVariation($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $allele);
       $variation->{product} = $p;
       $variation->{position_in_cds} = $cdsPos;
 
     }
-    else {
-      $variation->{external_database_release_id} = $extDbRlsId;
-    }
-    &printVariation($variation);
-  }
 
+    $variation->{external_database_release_id} = $extDbRlsId;
+    
+    &printVariation($variation, $cacheFh);
+  }
+  print $cacheFh "\n";
+
+  my $snp = &makeSNPFeatureFromVariations($variations);
+  &printSNP($snp, $snpFh);
+
+  # need to track these so we know when to clear the cache
+  my @transcriptEnds = sort map {$transcriptSummary->{max_exon_end}} @$transcripts;
+  $prevTranscriptMaxEnd = $transcriptEnds[scalar @transcriptEnds];
+  $prevSequenceId = $sequenceId;
+  $prevTranscripts = $transcripts;
   
-  # TODO write the SNP Feature from variations
+  $db->undefPointerCache();
 }
 
-# TODO clean transcript cache once we hit a new transcript
-
-# TODO unlink the existing FullCache File
-
-# TODO unlink the NewSampleCache File - Should replace w/ Empty File
-
-# TODO Rename the OutputFile to FullCache File
-
-
+close $cacheFh;
+close $snpFh;
 &closeVarscanFiles($strainVarscanFileHandles);
+
+# Rename the output file to full cache file
+#unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
+#system("mv $tempCacheFile $cacheFile");
+
+# overwrite existing sample file w/ empty file
+#open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
+#close(TRUNCATE);
+
+1;
+
+#--------------------------------------------------------------------------------
+# BEGIN SUBROUTINES
+#--------------------------------------------------------------------------------
+sub queryForAgpMap {
+  my ($dbh) = @_;
+
+  my %agpMap;
+
+  my $sql = "select sp.virtual_na_sequence_id
+                                , p.na_sequence_id as piece_na_sequence_id
+                               , decode(sp.strand_orientation, '+', '+1', '-', '-1', '+1') as piece_strand
+                               , p.length as piece_length
+                               , sp.distance_from_left as virtual_start_min
+                               , sp.distance_from_left + p.length as virtual_end_max
+                               , p.source_id as piece_source_id
+                               , vs.source_id as virtual_source_id
+                   from dots.sequencepiece sp
+                           , dots.nasequence p
+                           ,  dots.nasequence vs
+                   where  sp.piece_na_sequence_id = p.na_sequence_id
+                    and sp.virtual_na_sequence_id = vs.na_sequence_id";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my $hash = $sh->fetchrow_hashref()) {
+    my $ctg = Bio::Location::Simple->new( -seq_id => $hash->{PIECE_SOURCE_ID}, 
+                                          -start => 1, 
+                                          -end =>  $hash->{PIECE_LENGTH}, 
+                                          -strand => $hash->{PIECE_STRAND});
+
+    my $ctg_on_chr = Bio::Location::Simple->new( -seq_id =>  $hash->{VIRTUAL_SOURCE_ID}, 
+                                                 -start => $hash->{VIRTUAL_START_MIN},
+                                                 -end =>  $hash->{VIRTUAL_END_MAX} , 
+                                                 -strand => '+1' );
+
+    my $agp = Bio::Coordinate::Pair->new( -in  => $ctg, -out => $ctg_on_chr );
+    my $pieceSourceId = $hash->{PIECE_SOURCE_ID};
+ 
+    $agpMap{$pieceSourceId} = $agp;
+  }
+
+  $sh->finish();
+
+  return \%agpMap;
+}
+
+sub usage {
+  my ($m) = @_;
+
+  if($m) {
+    print STDERR $m . "\n";
+    die "Error running program";
+  }
+
+  print STDERR "usage:  processSequenceVariations.pl --new_sample_file=<FILE> --cache_file=<FILE> [--gusConfigFile=<GUS_CONFIG>] --undone_strains_file=<FILE> --varscan_directory=<DIR> --transcript_extdb_spec=s --organism_abbrev=s --reference_strain=s [--minAllelePercent=i]\n";
+  exit;
+}
+
+sub printVariation {
+  my ($variation, $fh) = @_;
+
+  my @keys = ('external_database_release_id',
+              'strain',
+              'sequence_source_id',
+              'location',
+              'base',
+              'matches_reference',
+              'position_in_cds',
+              'product',
+              'pvalue',
+              'percent',
+              'coverage',
+              'quality');
+
+  print $fh join("\t", map {$variation->{$_}} @keys) . "\n";
+
+}
+
+sub printSNP {
+  my ($snp, $fh) = @_;
+
+  print $fh $snp->{ref_loc}."\n";
+}
+
+
+sub makeSNPFeatureFromVariations {
+  my ($variations) = @_;
+
+  return { ref_loc => 232
+  };
+
+}
+
+sub makeCoverageVariations {
+  my ($allStrains, $variationStrains, $strainVarscanFileHandles, $referenceVariation, $minAllelePercent) = @_;
+
+  my @rv;
+
+  foreach my $strain (@$allStrains) {
+    my $hasVariation;
+
+    foreach my $varStrain (@$variationStrains) {
+      if($varStrain eq $strain) {
+        $hasVariation = 1;
+        last;
+      }
+    }
+    unless($hasVariation) {
+      my $fh = $strainVarscanFileHandles->{$strain} ;
+      my $variation = &makeCoverageVariation($fh, $referenceVariation, $strain, $minAllelePercent);
+
+      if($variation) {
+        push @rv, $variation;
+      }
+    }
+  }
+  return \@rv;
+}
+
+sub makeCoverageVariation {
+  my ($fh, $referenceVariation, $strain, $minAllelePercent) = @_;
+
+  my $rv;
+
+  my $location = $referenceVariation->{location};
+  my $sequenceId = $referenceVariation->{sequence_source_id};
+  my $referenceAllele = $referenceVariation->{base};
+
+  my $pos;
+  while(1) {
+    $pos = tell $fh;
+    my $line = <$fh> or last;
+    chomp $line;
+    
+    my @a = split(/\t/, $line);
+    my $varSequence = $a[0];
+    my $varLocation = $a[1];
+    
+    if($varSequence eq $sequenceId && $varLocation == $location) {
+      my $varRef = $a[2];
+      my $varCons = $a[3];
+
+      if($varRef ne $referenceAllele) {
+        die "Calculated Reference Allele [$referenceAllele] does not match Varscan Ref [$varRef] for Sequence [$sequenceId] and Location [$location]";
+      }
+
+      next unless($varRef eq $varCons);
+      
+      my $varCoverage = $a[4] + $a[5];
+      chop $a[6];
+      my $varPercent = $a[2] eq $a[3] ? 100 - $a[6] : $a[6];
+
+      if($varPercent >= $minAllelePercent) {
+      
+        $rv = {'base' => $referenceAllele,
+               'location' => $location,
+               'sequence_source_id' => $sequenceId,
+               'matches_reference' => 1,
+               'strain' => $strain,
+        };
+        last;
+      }
+      # I've read enough to know when I've read too much
+      if($varSequence gt $sequenceId || ($varSequence eq $sequenceId && $varLocation > $location)) {
+        seek $fh, $pos, 0 or die "Couldn't seek to $pos: $!\n";
+        last;
+      }
+    }
+  }
+  return $rv;
+}
+
 
 
 sub hasVariation {
@@ -174,17 +404,16 @@ sub hasVariation {
 }
 
 sub querySequenceSubstring {
-  my ($dbh, $sequenceId, $seqExtDbRlsId, $start, $end ) = @_;
+  my ($dbh, $sequenceId, $start, $end) = @_;
 
   my $length = $end - $start + 1;
 
   my $sql = "select substr(s.sequence, ?, ?) as base
                       from dots.nasequence s
-                     where s.source_id = ?
-                     and s.external_database_release_id = ?";
+                     where s.source_id = ?";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($start, $length, $sequenceId, $seqExtDbRlsId);
+  $sh->execute($start, $length, $sequenceId);
 
   my ($base) = $sh->fetchrow_array();
   $sh->finish();
@@ -193,62 +422,66 @@ sub querySequenceSubstring {
 }
 
 sub processVariation {
-  my ($transcriptExtDbRlsId, $transcripts, $transcriptLocs, $sequenceId, $location, $base) = @_;
+  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $base) = @_;
 
   my %products;
   my %positionInCdss;
   my %positionInProteins;
 
   foreach my $transcript (@$transcripts) {
-    next if($transcriptLocs->{$transcript}->{is_non_coding}); # don't bother for non coding transcripts
+    next if($transcriptSummary->{$transcript}->{is_non_coding}); # don't bother for non coding transcripts
 
-    my $consensusCodingSequence = $transcriptLocs->{$transcript}->{$transcriptExtDbRlsId}->{consensus_cds};
-    unless($consensusCodingSequence) {
-      $consensusCodingSequence = &getCodingSequenceForTranscript($dbh, $sequenceId, $location, $location, $transcript, $transcriptLocs, $transcriptExtDbRlsId);
-    }
+    print STDERR "TRANSCRIPT=$transcript\n";
 
-    my $isCoding;
-    if($transcriptLocs->{$transcript}->{is_coding}) {
-      $isCoding = 1;
+    my ($consensusCodingSequence, $mockCodingSequence, $isCoding);
+
+    if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}) {
+      print STDERR "Using sequence from CACHE\n";
+
+      $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
+      $mockCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds};
     }
     else { # first time through
-      my $mockCodingSequence = &getMockSequenceForTranscript($sequenceId, $location, $location, $transcript, $transcriptLocs, $transcriptExtDbRlsId);
+      print STDERR "Putting Sequence in CACHE\n" if($debug);
 
-      my $isCoding = $consensusCodingSequence ne $mockCodingSequence;
+      $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, '', $transcriptExtDbRlsId);
+      $mockCodingSequence = &getMockSequenceForTranscript($sequenceId, $location, $location, $transcript, $transcriptSummary, $transcriptExtDbRlsId);
 
-      if($isCoding) {
-        my ($codingSnpStart, $codingSnpEnd) = &getCodingSubstitutionPositions($consensusCodingSequence, $mockCodingSequence);
-        unless($codingSnpStart == $codingSnpEnd) {
-          die "Should be exactly one coding position for this snp";
-        }
-        $positionInCdss{$codingSnpStart}++;
-        $transcriptLocs->{$transcript}->{position_in_cds} = $codingSnpStart;
-      }
-      $transcriptLocs->{$transcript}->{is_coding} = $isCoding;
-      $transcriptLocs->{$transcript}->{is_non_coding} = 1 unless($isCoding);
+      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
+      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds} = $mockCodingSequence;
     }
-      
-      if($isCoding) {
-        my $posInCds = $transcriptLocs->{$transcript}->{position_in_cds};
 
-        if($transcriptLocs->{$transcript}->{is_reversed}) {
-          $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
-        }
+    $isCoding = $consensusCodingSequence ne $mockCodingSequence;
 
-        my $newCodingSequence = &_swapBaseInSequence($consensusCodingSequence, 1, 1, $posInCds, $posInCds, $base, '');
+    if($isCoding) {
+      my ($codingSnpStart, $codingSnpEnd) = &getCodingSubstitutionPositions($consensusCodingSequence, $mockCodingSequence);
 
-        my $positionInProtein = &calculateAminoAcidPosition($posInCds, $posInCds);
-
-        my $product = &_getAminoAcidSequenceOfSnp($newCodingSequence, $positionInProtein, $positionInProtein);
-        $products{$product}++;
-        $positionInProteins{$positionInProtein}++;
+      unless($codingSnpStart == $codingSnpEnd) {
+        die "Should be exactly one coding position for this snp";
       }
+
+      $positionInCdss{$codingSnpStart}++;
+
+      if($transcriptSummary->{$transcript}->{is_reversed}) {
+        $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
+      }
+
+    my $newCodingSequence = &swapBaseInSequence($consensusCodingSequence, 1, 1, $codingSnpStart, $codingSnpStart, $base, '');
+    my $positionInProtein = &calculateAminoAcidPosition($codingSnpStart, $codingSnpStart);
+    my $product = &getAminoAcidSequenceOfSnp($newCodingSequence, $positionInProtein, $positionInProtein);
+  
+    $products{$product}++;
+    $positionInProteins{$positionInProtein}++;
+    }
+    else {
+      $transcriptSummary->{$transcript}->{is_non_coding} = 1;
+    }
   }
 
   my $rvProduct = scalar keys %products == 1 ? (keys %products)[0] : "NA";
   my $rvPositionInCds = scalar keys %positionInCdss == 1 ? (keys %positionInCdss)[0] : "NA";
   my $rvPositionInProtein = scalar keys %positionInProteins == 1 ? (keys %positionInProteins)[0] : "NA";
-
+  print STDERR "RESULT=" . join("\t", ($rvProduct, $rvPositionInCds, $rvPositionInProtein)) . "\n";
   return($rvProduct, $rvPositionInCds, $rvPositionInProtein);
 }
 
@@ -320,8 +553,6 @@ sub closeVarscanFiles {
 sub queryExtDbRlsIdsForStrains {
   my ($strains, $dbh, $organismAbbrev) = @_;
 
-  print STDERR "ORGANISM=$organismAbbrev\n\n";
-
   my $sql = "select d.name, d.external_database_name, d.version
 from apidb.organism o, apidb.datasource d 
 where o.abbrev = ?
@@ -336,13 +567,10 @@ and d.name like ?
   foreach my $strain (@$strains) {
 
     my $match = "\%_${strain}_HTS_SNPSample_RSRC";
-    print STDERR "MATCH=$match\n";
-
     $sh->execute($organismAbbrev, $match);
 
     my $ct;
     while(my ($name, $extDbName, $extDbVersion) = $sh->fetchrow_array()) {
-      print STDERR "NAME=$name\n";
       my $spec = "$extDbName|$extDbVersion";
       my $extDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $spec);
 
@@ -373,6 +601,7 @@ sub openVarscanFiles {
       my $strain = $1;
 
       if($file =~ /\.gz$/) {
+        print STDERR "OPEN GZ FILE: $file for Strain $strain\n" if($debug);
         open($fh, "zcat $fullPath |") || die "unable to open file $fullPath";
       } 
       else {
@@ -386,13 +615,11 @@ sub openVarscanFiles {
 }
 
 sub cleanCdsCache {
-  my ($transcriptLocs) = @_;
+  my ($transcriptSummary, $transcripts) = @_;
 
-  foreach my $key (keys %$transcriptLocs) {
-    $transcriptLocs->{$key}->{consensus_cds} = undef;
-    $transcriptLocs->{$key}->{reference_cds} = undef;
+  foreach my $transcript (@$transcripts) {
+    $transcriptSummary->{$transcript}->{cache} = undef;
   }
-
 }
 
 
@@ -416,7 +643,7 @@ and d.name || '|' || r.version = '$extDbRlsSpec'";
   return $extDbRlsId;
 }
 
-sub lookupTranscripts {
+sub lookupTranscriptsByLocation {
   my ($sequenceId, $l, $exonLocs) = @_;
 
   return(undef) unless(ref ($exonLocs->{$sequenceId}) eq 'ARRAY');
@@ -443,9 +670,7 @@ sub lookupTranscripts {
     else {  }
 
     if($l >= $location->{start} && $l <= $location->{end}) {
-
-      my $transcripts = $location->{transcripts};
-      return($transcripts);
+      return($location->{transcripts});
     }
   }
   return(undef);
@@ -454,10 +679,10 @@ sub lookupTranscripts {
 
 
 sub getTranscriptLocations {
-  my ($dbh, $transcriptExtDbRlsId) = @_;
+  my ($dbh, $transcriptExtDbRlsId, $agpMap) = @_;
 
   my %exonLocs;
-  my %transcriptLocs;
+  my %transcriptSummary;
 
 my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_feature_id) as transcripts,
        s.source_id, 
@@ -474,7 +699,6 @@ AND rfe.exon_feature_id = ef.na_feature_id
 AND ef.na_feature_id = el.na_feature_id
 AND ef.na_sequence_id = s.na_sequence_id
 AND tf.external_database_release_id = $transcriptExtDbRlsId
-AND s.source_id = 'M76611'
 GROUP BY s.source_id, el.start_min, el.end_max, ef.coding_start, ef.coding_end, el.is_reversed
 ORDER BY s.source_id, el.start_min
 ";
@@ -485,6 +709,18 @@ ORDER BY s.source_id, el.start_min
   while(my ($transcripts, $sequenceSourceId, $exonStart, $exonEnd, $cdsStart, $cdsEnd, $isReversed) = $sh->fetchrow_array()) {
     my @transcripts = split(",", $transcripts);
 
+    # if this sequence is a PIECE in another sequence... lookup the higher level sequence
+    if(my $agp = $agpMap->{$sequenceSourceId}) {
+      my $exonMatch = Bio::Location::Simple->
+          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
+
+      my $matchOnVirtual = $agp->map( $exonMatch );
+
+      $sequenceSourceId = $matchOnVirtual->seq_id();
+      $exonStart = $matchOnVirtual->start();
+      $exonEnd = $matchOnVirtual->end();
+    }
+
     my $location = { transcripts => \@transcripts,
                      end => $exonEnd,
                      start => $exonStart,
@@ -493,22 +729,21 @@ ORDER BY s.source_id, el.start_min
     push(@{$exonLocs{$sequenceSourceId}}, $location);
 
     foreach my $transcriptId (@transcripts) {
-      my $exonLocation = [$exonStart, $exonEnd, $cdsStart, $cdsEnd];
-      push @{$transcriptLocs{$transcriptId}->{exons}}, $exonLocation;
-      $transcriptLocs{$transcriptId}->{is_reversed} = $isReversed;
-
+      if(!$transcriptSummary{$transcriptId}->{max_exon_end} || $exonEnd > $transcriptSummary{$transcriptId}->{max_exon_end}) {
+        $transcriptSummary{$transcriptId}->{max_exon_end} = $exonEnd;
+      }
     }
   }
 
   $sh->finish();
 
-  return \%transcriptLocs, \%exonLocs;
+  return \%transcriptSummary, \%exonLocs;
 }
 
 
 
-sub _getCodingSequence {
-  my ($dbh, $sequenceId, $transcriptLocs, $transcriptId, $snpStart, $snpEnd, $base, $seqExtDbRlsId) = @_;
+sub getCodingSequence {
+  my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $base, $seqExtDbRlsId) = @_;
 
   return unless($transcriptId);
 
@@ -540,9 +775,7 @@ sub _getCodingSequence {
 
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
 
-    
-
-    my $chunk = &querySequenceSubstring($dbh, $sequenceId, $seqExtDbRlsId, $exonStart, $exonEnd);
+    my $chunk = &querySequenceSubstring($dbh, $sequenceId, $exonStart, $exonEnd);
 
     my $codingStart = $exon->getCodingStart();
     my $codingEnd = $exon->getCodingEnd();
@@ -553,11 +786,11 @@ sub _getCodingSequence {
     my $isReverseCoding = $snpStart >= $codingEnd && $snpEnd <= $codingStart && $exonIsReversed;
 
     if($isReverseCoding) {
-      $transcriptLocs->{$transcript}->{is_reversed} = 1;
+      $transcriptSummary->{$transcript}->{is_reversed} = 1;
     }
 
     if($base && ($isForwardCoding || $isReverseCoding)) {
-      $chunk = &_swapBaseInSequence($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
+      $chunk = &swapBaseInSequence($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
     }
 
     my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
@@ -572,7 +805,7 @@ sub _getCodingSequence {
 }
 
 
-sub _swapBaseInSequence {
+sub swapBaseInSequence {
   my ($seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
 
   my $normSnpStart = $isReversed ? $exonEnd - $snpEnd : $snpStart - $exonStart;
@@ -596,31 +829,13 @@ sub _swapBaseInSequence {
   return($newSeq);
 }
 
-sub getCodingSequenceForTranscript {
-  my ($dbh, $sequenceId, $snpStart, $snpEnd, $transcriptId, $transcriptLocs, $seqExtDbRlsId) = @_;
-
-  my ($codingSequence, $mockCodingSequence);
-  return($codingSequence, $mockCodingSequence) unless($transcriptId);
-
-
-  if($transcriptLocs->{$transcriptId}->{$seqExtDbRlsId}->{consensus_cds}) {
-    $codingSequence = $transcriptLocs->{$transcriptId}->{$seqExtDbRlsId}->{consensus_cds};
-  }
-
-  else {
-    $codingSequence = &_getCodingSequence($dbh, $sequenceId, $transcriptLocs, $transcriptId, $snpStart, $snpEnd, '', $seqExtDbRlsId);
-    $transcriptLocs->{$transcriptId}->{$seqExtDbRlsId}->{consensus_cds} = $codingSequence;
-  }
-
-  return $codingSequence;
-}
-
-
 sub getMockSequenceForTranscript {
-  my ($sequenceId, $snpStart, $snpEnd, $transcriptId, $transcriptLocs, $seqExtDbRlsId) = @_;
+  my ($sequenceId, $snpStart, $snpEnd, $transcriptId, $transcriptSummary, $seqExtDbRlsId) = @_;
 
   my $mockSequence = &createMockSequence($snpStart, $snpEnd);
-  my $mockCodingSequence = &_getCodingSequence($dbh, $sequenceId, $transcriptLocs, $transcriptId, $snpStart, $snpEnd, $mockSequence, $seqExtDbRlsId);
+  my $mockCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $mockSequence, $seqExtDbRlsId);
+
+  $transcriptSummary->{$transcriptId}->{cache}->{$seqExtDbRlsId}->{mock_cds} = $mockCodingSequence;
 
   return $mockCodingSequence;
 }
@@ -638,8 +853,8 @@ sub createMockSequence {
   return($mockString);
 }
 
-
-sub _isSynonymous {
+# TODO:  Is this needed???
+sub isSynonymous {
   my ($codingSequence, $newCodingSequence) = @_;
 
   my $cds = Bio::Seq->new( -seq => $codingSequence );
@@ -659,7 +874,7 @@ sub calculateAminoAcidPosition {
   return($aaPos);
 }
 
-sub _getAminoAcidSequenceOfSnp {
+sub getAminoAcidSequenceOfSnp {
   my ($codingSequence, $start, $end) = @_;
 
   my $normStart = $start - 1;
@@ -678,3 +893,4 @@ $dbh->disconnect();
 close OUT;
 
 
+1;
