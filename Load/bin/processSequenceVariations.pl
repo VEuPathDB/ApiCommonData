@@ -104,7 +104,7 @@ while($merger->hasNext()) {
 
   my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
 
-  print STDERR "HAS TRANSCRIPTS=" . defined($transcripts) . "\n"  if($debug);
+  print STDERR "HAS TRANSCRIPTS=" . defined($transcripts) or "0" . "\n"  if($debug);
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
@@ -134,11 +134,8 @@ while($merger->hasNext()) {
                               'position_in_cds' => $positionInCds,
                               'strain' => $referenceStrain,
                               'product' => $product,
+                           'position_in_protein' => $positionInProtein,
     };
-
-    print STDERR "REFERENCE PRODUCT=$product\n";
-    print STDERR "REFERENCE CDS POS=$positionInCds\n";
-    print STDERR "\n";
     push @$variations, $referenceVariation;
   }
 
@@ -181,6 +178,7 @@ while($merger->hasNext()) {
       my ($p, $cdsPos, $proteinPos) = &processVariation($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $allele);
       $variation->{product} = $p;
       $variation->{position_in_cds} = $cdsPos;
+      $variation->{position_in_protein} = $proteinPos;
 
     }
 
@@ -188,7 +186,6 @@ while($merger->hasNext()) {
     
     &printVariation($variation, $cacheFh);
   }
-  print $cacheFh "\n";
 
   my $snp = &makeSNPFeatureFromVariations($variations);
   &printSNP($snp, $snpFh);
@@ -285,6 +282,7 @@ sub printVariation {
               'base',
               'matches_reference',
               'position_in_cds',
+              'position_in_protein',
               'product',
               'pvalue',
               'percent',
@@ -431,57 +429,53 @@ sub processVariation {
   foreach my $transcript (@$transcripts) {
     next if($transcriptSummary->{$transcript}->{is_non_coding}); # don't bother for non coding transcripts
 
-    print STDERR "TRANSCRIPT=$transcript\n";
-
-    my ($consensusCodingSequence, $mockCodingSequence, $isCoding);
+    my ($consensusCodingSequence, $mockCodingSequence, $isCoding, $positionInCds);
 
     if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}) {
-      print STDERR "Using sequence from CACHE\n";
-
       $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
       $mockCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds};
+      $positionInCds = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{position_in_cds};
+      $isCoding = 1;
     }
-    else { # first time through
-      print STDERR "Putting Sequence in CACHE\n" if($debug);
-
+    else { # first time through for this transcript
       $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, '', $transcriptExtDbRlsId);
       $mockCodingSequence = &getMockSequenceForTranscript($sequenceId, $location, $location, $transcript, $transcriptSummary, $transcriptExtDbRlsId);
 
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds} = $mockCodingSequence;
+      $isCoding = $consensusCodingSequence ne $mockCodingSequence;
+
+      if($isCoding) {
+        my ($codingSnpStart, $codingSnpEnd) = &getCodingSubstitutionPositions($consensusCodingSequence, $mockCodingSequence);
+
+        unless($codingSnpStart == $codingSnpEnd) {
+          die "Should be exactly one coding position for this snp";
+        }
+        $positionInCds = $codingSnpStart;
+        $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{position_in_cds} = $positionInCds;
+      }
+      else {
+        $transcriptSummary->{$transcript}->{is_non_coding} = 1;
+      }
     }
 
-    $isCoding = $consensusCodingSequence ne $mockCodingSequence;
+    if($transcriptSummary->{$transcript}->{is_reversed}) {
+      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
+    }
 
-    if($isCoding) {
-      my ($codingSnpStart, $codingSnpEnd) = &getCodingSubstitutionPositions($consensusCodingSequence, $mockCodingSequence);
+    $positionInCdss{$positionInCds}++;
 
-      unless($codingSnpStart == $codingSnpEnd) {
-        die "Should be exactly one coding position for this snp";
-      }
-
-      $positionInCdss{$codingSnpStart}++;
-
-      if($transcriptSummary->{$transcript}->{is_reversed}) {
-        $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
-      }
-
-    my $newCodingSequence = &swapBaseInSequence($consensusCodingSequence, 1, 1, $codingSnpStart, $codingSnpStart, $base, '');
-    my $positionInProtein = &calculateAminoAcidPosition($codingSnpStart, $codingSnpStart);
+    my $newCodingSequence = &swapBaseInSequence($consensusCodingSequence, 1, 1, $positionInCds, $positionInCds, $base, '');
+    my $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
     my $product = &getAminoAcidSequenceOfSnp($newCodingSequence, $positionInProtein, $positionInProtein);
   
     $products{$product}++;
     $positionInProteins{$positionInProtein}++;
-    }
-    else {
-      $transcriptSummary->{$transcript}->{is_non_coding} = 1;
-    }
   }
 
   my $rvProduct = scalar keys %products == 1 ? (keys %products)[0] : "NA";
   my $rvPositionInCds = scalar keys %positionInCdss == 1 ? (keys %positionInCdss)[0] : "NA";
   my $rvPositionInProtein = scalar keys %positionInProteins == 1 ? (keys %positionInProteins)[0] : "NA";
-  print STDERR "RESULT=" . join("\t", ($rvProduct, $rvPositionInCds, $rvPositionInProtein)) . "\n";
   return($rvProduct, $rvPositionInCds, $rvPositionInProtein);
 }
 
@@ -530,7 +524,7 @@ sub snpLocationFromVariations {
     die "sequenceSourceId and location required for every variation" unless($sequenceSourceId && $location);
 
     if(($sequenceIdRv && $sequenceIdRv ne $sequenceSourceId) || ($locationRv && $locationRv != $location)) {
-      print STDER Dumper $variations;
+      print STDERR Dumper $variations;
       die "Multiple variation locations found for a snp";
     }
 
