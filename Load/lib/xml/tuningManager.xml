@@ -133,7 +133,7 @@ where p.rn = 1
 
     <sql>
       <![CDATA[
-CREATE TABLE dataSourceCount nologging as ( 
+CREATE TABLE DataSourceCount&1 nologging as ( 
         SELECT ds.taxon_id,
                max(case when ds.type = 'organellar_genome' 
                      then 1 
@@ -160,7 +160,7 @@ CREATE TABLE dataSourceCount nologging as (
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE communityCount nologging as (
+CREATE TABLE CommunityCount&1 nologging as (
              select ga.taxon_id, count (distinct (case when ga.is_deprecated = 0
                   then gi.gene
                   else NULL 
@@ -174,7 +174,7 @@ CREATE TABLE communityCount nologging as (
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE profileCount nologging as (
+CREATE TABLE ProfileCount&1 nologging as (
         select ga.taxon_id,         
               count(distinct(case when lower(ps.name) like '%rt_pcr%' 
                                    and ga.is_deprecated = 0 
@@ -205,7 +205,7 @@ CREATE TABLE profileCount nologging as (
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE IsolateCount nologging as (    
+CREATE TABLE IsolateCount&1 nologging as (    
         SELECT count(distinct gene.source_id) as isolateCount, sim.taxon_id
         FROM (
           (SELECT i.source_id, tn.taxon_id, nas.source_id as sequence_source_id
@@ -243,7 +243,7 @@ CREATE TABLE IsolateCount nologging as (
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE GeneCount nologging as (    
+CREATE TABLE GeneCount&1 nologging as (    
 select genomestat.taxon_id,
        genomestat.project_id,
        genomestat.database_version,
