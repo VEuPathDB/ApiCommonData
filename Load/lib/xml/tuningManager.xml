@@ -388,11 +388,11 @@ SELECT o.project_name as project_id,
        nvl(pc.rtPCRCount, 0) as rtPCRCount
 FROM   apidb.Organism o,
        sres.TaxonName tn,
-       DataSourceCount dsc,
-       CommunityCount cc,
-       GeneCount gc,
-       isolateCount ic,
-       profileCount pc
+       DataSourceCount&1 dsc,
+       CommunityCount&1 cc,
+       GeneCount&1 gc,
+       isolateCount&1 ic,
+       profileCount&1 pc
 WHERE tn.taxon_id = o.taxon_id
   AND tn.name_class = 'scientific name' 
   AND o.taxon_id = dsc.taxon_id (+)
