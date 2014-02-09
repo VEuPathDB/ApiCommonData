@@ -167,7 +167,7 @@ sub readKeggFiles {
                                             shape => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{TYPE},
                                             height => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{HEIGHT},
                                             width => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{WIDTH}
-                                           }); 
+					    });
     }
 
 
@@ -194,7 +194,6 @@ sub readKeggFiles {
                                                                                             direction => $direction,
                                                                                             reaction_name => $reactName
                                                                                           });
-
         }
       } 
 
@@ -218,17 +217,18 @@ sub readKeggFiles {
     foreach my $relationKey (keys %{$pathwayElements->{RELATIONS}}) {
       my $relation = $pathwayElements->{RELATIONS}->{$relationKey};
       foreach my $x (keys %{$relation} ) {
-    	if ($relation->{$x}->{INTERACTION_TYPE} eq 'Maplink'){
+	##do for ALL relations
+    	if ($relation->{$x}->{INTERACTION_TYPE} ){ ##BB 
     	  my $entity = $relation->{$x}->{INTERACTION_ENTITY_ENTRY}; # compound
 	  my $cpdId = $reverseNodeLookup->{$entity};
-	  if ( $pathwayElements->{NODES}->{$cpdId}->{ENTRY_ID} eq $entity) {
+	  if ( $cpdId && $pathwayElements->{NODES}->{$cpdId}->{ENTRY_ID} eq $entity) {
     	      $entity = $pathwayElements->{NODES}->{$cpdId}->{SOURCE_ID} ;
     	    }
 
     	  # if relation is between compound and entry
     	  my $entry = $relation->{$x}->{ENTRY};
 	  my $nodeId = $reverseNodeLookup->{$entry};
-	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	  if ( $nodeId && $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry ) {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
 	    $pathwayObj->{map}->{$nodeId} = $cpdId;
 	    print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
@@ -237,7 +237,7 @@ sub readKeggFiles {
     	  # if relation is between compound and associated_entry instead
     	  $entry = $relation->{$x}->{ASSOCIATED_ENTRY}; 
 	  $nodeId = $reverseNodeLookup->{$entry};
-	  if ( $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry && $pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	  if ($nodeId &&  $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry) {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
 	    $pathwayObj->{map}->{$nodeId} = $cpdId;
 	    print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
