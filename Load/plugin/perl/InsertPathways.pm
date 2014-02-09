@@ -316,6 +316,18 @@ sub loadPathway {
       } 
 
 
+      # load ALL nodes
+      print "Loading ALL pathways Nodes\n";
+      foreach my $n (keys %{$pathwayObj->{nodes}}) {
+        my $node = $pathwayObj->{nodes}->{$n};
+	  my $mapNode = $node->{node_name};
+	  my $nodeGraphics = $pathwayObj->{graphics}->{$mapNode};
+	  $self->loadNetworkNode($pathwayId, $node, $nodeGraphics);
+
+	print "CHECK: $pathwayId, $node, $mapNode\n";
+      }
+
+
       #read and load nodes and associations
       print "Loading Nodes and Associations for.. $pathwayName\n";
       foreach my $reactionKey (keys %{$pathwayObj->{associations}}) {
@@ -365,16 +377,6 @@ sub loadPathway {
         $self->undefPointerCache();
       }# close relationships
 
-      #read and load maps
-      print "Loading pathways Nodes\n";
-      foreach my $n (keys %{$pathwayObj->{nodes}}) {
-        my $node = $pathwayObj->{nodes}->{$n};
-	if ( $node->{node_type} eq 'map' ) {
-	  my $mapNode = $node->{node_name};
-	  my $nodeGraphics = $pathwayObj->{graphics}->{$mapNode};
-	  $self->loadNetworkNode($pathwayId, $node, $nodeGraphics);
-	}
-      }
       print "Loading initial relationship(s)\n";
       # now load the pathway to first compound relationship	
       foreach my $n (keys %{$pathwayObj->{map}}) {  #test3.log
