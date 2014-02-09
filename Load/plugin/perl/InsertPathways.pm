@@ -323,8 +323,6 @@ sub loadPathway {
 	  my $mapNode = $node->{node_name};
 	  my $nodeGraphics = $pathwayObj->{graphics}->{$mapNode};
 	  $self->loadNetworkNode($pathwayId, $node, $nodeGraphics);
-
-	print "CHECK: $pathwayId, $node, $mapNode\n";
       }
 
 
