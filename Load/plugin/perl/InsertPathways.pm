@@ -217,8 +217,7 @@ sub readKeggFiles {
     foreach my $relationKey (keys %{$pathwayElements->{RELATIONS}}) {
       my $relation = $pathwayElements->{RELATIONS}->{$relationKey};
       foreach my $x (keys %{$relation} ) {
-	##do for ALL relations
-    	if ($relation->{$x}->{INTERACTION_TYPE} ){ ##BB 
+    	if ($relation->{$x}->{INTERACTION_TYPE} eq 'Maplink'){
     	  my $entity = $relation->{$x}->{INTERACTION_ENTITY_ENTRY}; # compound
 	  my $cpdId = $reverseNodeLookup->{$entity};
 	  if ( $cpdId && $pathwayElements->{NODES}->{$cpdId}->{ENTRY_ID} eq $entity) {
