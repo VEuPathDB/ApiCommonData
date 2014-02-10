@@ -472,7 +472,7 @@ sub loadNetworkNode {
 							      table_id => $networkNode_tableId,
 							      row_id => $nodeId
                                                              });
-      $pathwayNode->submit();
+      $pathwayNode->submit()  unless $pathwayNode->retrieveFromDB();
     }
     return $nodeId;
   }
