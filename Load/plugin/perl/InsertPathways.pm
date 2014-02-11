@@ -380,7 +380,7 @@ sub loadPathway {
 
       print "Loading initial relationship(s)\n";
       # now load the pathway to first compound relationship	
-      foreach my $n (keys %{$pathwayObj->{map}}) {  #test3.log
+      foreach my $n (keys %{$pathwayObj->{map}}) {
 	my $identifier = $pathwayId ."_" . $n ; # eg: 571_1.14.-.-_X:140_Y:333
 
 	print STDOUT  " RELATIONSHIP :  $pathwayId _" . $pathwayObj->{map}->{$n} . "  and  $identifier \n";
