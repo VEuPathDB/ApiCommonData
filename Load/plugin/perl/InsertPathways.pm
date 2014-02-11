@@ -229,8 +229,10 @@ sub readKeggFiles {
 	  my $nodeId = $reverseNodeLookup->{$entry};
 	  if ( $nodeId && $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry ) {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$nodeId} = $cpdId;
-	    print STDOUT "    RELATION1 : $entry,\t AND $entity\n";
+	    if ($pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	      $pathwayObj->{map}->{$nodeId} = $cpdId;
+	      print STDOUT "    RELATION1 : $entry,\t AND $entity \n";
+	    }
 	  }
 
     	  # if relation is between compound and associated_entry instead
@@ -238,8 +240,10 @@ sub readKeggFiles {
 	  $nodeId = $reverseNodeLookup->{$entry};
 	  if ($nodeId &&  $pathwayElements->{NODES}->{$nodeId}->{ENTRY_ID} eq $entry) {
 	    $entry = $pathwayElements->{NODES}->{$nodeId}->{SOURCE_ID};
-	    $pathwayObj->{map}->{$nodeId} = $cpdId;
-	    print STDOUT "    RELATION2 : $entry,\t AND $entity\n";
+	    if ($pathwayElements->{NODES}->{$nodeId}->{TYPE} eq 'map') {
+	      $pathwayObj->{map}->{$nodeId} = $cpdId;
+	      print STDOUT "    RELATION2 : $entry,\t AND $entity \n";
+	    }
 	  }
 
     	}
