@@ -533,12 +533,12 @@ sub loadPathwayImage{
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.NetworkContext',
-	  'ApiDB.Network',
+  return ('ApiDB.NetworkRelContext',
+          'ApiDB.Network',
+          'ApiDB.NetworkRelationship',
 	  'ApiDB.NetworkNode',
-	  'ApiDB.NetworkRelationship',
 	  'ApiDB.NetworkRelationshipType',
-	  'ApiDB.NetworkRelContext',
+          'ApiDB.NetworkContext',
 	  'ApiDB.NetworkRelContextLink',
 	  'ApiDB.Pathway',
 	  'ApiDB.PathwayNode',
