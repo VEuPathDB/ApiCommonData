@@ -2,18 +2,25 @@
 
 use strict;
 
+use FileHandle;
+
 use File::Basename;
 use Data::Dumper;
 
 use GUS::Model::DoTS::Transcript;
 
 use Getopt::Long;
+
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 
-use Bio::Tools::GFF;
-use Bio::Seq;
 use CBIL::Bio::SequenceUtils;
+
+use Bio::Seq;
+use Bio::Tools::GFF;
+use Bio::Coordinate::GeneMapper;
+use Bio::Coordinate::Pair;
+use Bio::Location::Simple;
 
 use DBI;
 use DBD::Oracle;
@@ -98,13 +105,14 @@ while($merger->hasNext()) {
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
 
   # some variables are needed to store attributes of the SNP
-  my ($referenceAllele, $positionInCds, $product, $positionInProtein, $referenceVariation);
+  my ($referenceAllele, $positionInCds, $product, $positionInProtein, $referenceVariation, $isCoding);
 
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
 
   my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
 
-  print STDERR "HAS TRANSCRIPTS=" . defined($transcripts) or "0" . "\n"  if($debug);
+  my $hasTranscripts = defined($transcripts) ? 1 : 0;
+  print STDERR "HAS TRANSCRIPTS=$hasTranscripts\n"  if($debug);
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
@@ -119,11 +127,16 @@ while($merger->hasNext()) {
     $positionInCds = $cachedReferenceVariation->{position_in_cds};
     $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
     $referenceAllele = $cachedReferenceVariation->{base};
+    $isCoding = $cachedReferenceVariation->{is_coding};
   }
   else {
     print STDERR "REFERENCE VARIATION NOT CACHED\n" if($debug);
     $referenceAllele = &querySequenceSubstring($dbh, $sequenceId, $location, $location);
-    ($product, $positionInCds, $positionInProtein) = &processVariation($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $referenceAllele);
+
+    # These 3 are only calculated for the reference; IsCoding is set to true if the snp is contained w/in any coding transcript
+    ($isCoding, $positionInCds, $positionInProtein) = &calculateCdsPosition($transcripts, $transcriptSummary, $sequenceId, $location);
+    
+    $product = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) if($positionInProtein);
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
@@ -175,11 +188,10 @@ while($merger->hasNext()) {
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
-      my ($p, $cdsPos, $proteinPos) = &processVariation($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $allele);
+      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInProtein) if($positionInProtein);
       $variation->{product} = $p;
-      $variation->{position_in_cds} = $cdsPos;
-      $variation->{position_in_protein} = $proteinPos;
-
+      $variation->{position_in_cds} = $positionInCds; #got this from the refernece
+      $variation->{position_in_protein} = $positionInProtein; #got this from the reference
     }
 
     $variation->{external_database_release_id} = $extDbRlsId;
@@ -211,11 +223,68 @@ close $snpFh;
 #open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
 #close(TRUNCATE);
 
-1;
+$dbh->disconnect();
+close OUT;
 
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
+
+sub calculateCdsPosition {
+  my ($transcripts, $transcriptSummary, $sequenceId, $location) = @_;
+
+  my %cdsPositions;
+  my %proteinPositions;
+
+  my $isCoding;
+
+  foreach my $transcript (@$transcripts) {
+    my $gene = Bio::Coordinate::GeneMapper->new(
+      -in  => "chr",
+      -out => "cds",
+      -cds => Bio::Location::Simple->new(
+         -start  => $transcriptSummary->{$transcript}->{min_cds_start},
+         -end  => $transcriptSummary->{$transcript}->{max_cds_end},
+         -strand => $transcriptSummary->{$transcript}->{cds_strand},
+         -seq_id => $sequenceId,
+      ),
+      -exons => $transcriptSummary->{$transcript}->{exons}
+    );
+
+    my $loc =   Bio::Location::Simple->new(
+      -start => $location,
+      -end   => $location,,
+      -strand => +1,
+      -seq_id => $sequenceId,
+    );
+
+    my $map = $gene->map($loc);
+
+    my $cdsPos = $map->start;
+    if($cdsPos && $cdsPos > 1) {
+      my $positionInProtein = &calculateAminoAcidPosition($cdsPos, $cdsPos);
+
+      $cdsPositions{$cdsPos}++;
+      $proteinPositions{$positionInProtein}++;
+
+      $isCoding = 1;
+    }
+  }
+
+  my $rvPositionInCds;
+  my $rvPositionInProtein;
+
+  if(scalar keys %cdsPositions == 1) {
+    $rvPositionInCds = (keys %cdsPositions)[0];
+  }
+  if(scalar keys %proteinPositions == 1) {
+    $rvPositionInProtein = (keys %proteinPositions)[0] ;
+  }
+
+  return($isCoding, $rvPositionInCds, $rvPositionInProtein);
+}
+
+
 sub queryForAgpMap {
   my ($dbh) = @_;
 
@@ -300,6 +369,7 @@ sub printSNP {
 }
 
 
+# TODO
 sub makeSNPFeatureFromVariations {
   my ($variations) = @_;
 
@@ -419,64 +489,32 @@ sub querySequenceSubstring {
   return $base;
 }
 
-sub processVariation {
-  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $base) = @_;
+sub variationProduct {
+  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) = @_;
 
   my %products;
-  my %positionInCdss;
-  my %positionInProteins;
 
   foreach my $transcript (@$transcripts) {
-    next if($transcriptSummary->{$transcript}->{is_non_coding}); # don't bother for non coding transcripts
 
-    my ($consensusCodingSequence, $mockCodingSequence, $isCoding, $positionInCds);
-
+    my $consensusCodingSequence;
     if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}) {
       $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
-      $mockCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds};
-      $positionInCds = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{position_in_cds};
-      $isCoding = 1;
     }
     else { # first time through for this transcript
-      $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, '', $transcriptExtDbRlsId);
-      $mockCodingSequence = &getMockSequenceForTranscript($sequenceId, $location, $location, $transcript, $transcriptSummary, $transcriptExtDbRlsId);
-
+      $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $transcriptExtDbRlsId);
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
-      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{mock_cds} = $mockCodingSequence;
-      $isCoding = $consensusCodingSequence ne $mockCodingSequence;
-
-      if($isCoding) {
-        my ($codingSnpStart, $codingSnpEnd) = &getCodingSubstitutionPositions($consensusCodingSequence, $mockCodingSequence);
-
-        unless($codingSnpStart == $codingSnpEnd) {
-          die "Should be exactly one coding position for this snp";
-        }
-        $positionInCds = $codingSnpStart;
-        $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{position_in_cds} = $positionInCds;
-      }
-      else {
-        $transcriptSummary->{$transcript}->{is_non_coding} = 1;
-      }
     }
 
-    if($transcriptSummary->{$transcript}->{is_reversed}) {
-      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
-    }
-
-    $positionInCdss{$positionInCds}++;
-
-    my $newCodingSequence = &swapBaseInSequence($consensusCodingSequence, 1, 1, $positionInCds, $positionInCds, $base, '');
-    my $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
-    my $product = &getAminoAcidSequenceOfSnp($newCodingSequence, $positionInProtein, $positionInProtein);
-  
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInProtein, $positionInProtein);
     $products{$product}++;
-    $positionInProteins{$positionInProtein}++;
   }
 
-  my $rvProduct = scalar keys %products == 1 ? (keys %products)[0] : "NA";
-  my $rvPositionInCds = scalar keys %positionInCdss == 1 ? (keys %positionInCdss)[0] : "NA";
-  my $rvPositionInProtein = scalar keys %positionInProteins == 1 ? (keys %positionInProteins)[0] : "NA";
-  return($rvProduct, $rvPositionInCds, $rvPositionInProtein);
+  my $rvProduct;
+  if(scalar keys %products == 1) {
+    $rvProduct = (keys %products)[0];
+  }
+
+  return($rvProduct);
 }
 
 sub cachedReferenceVariation {
@@ -485,30 +523,6 @@ sub cachedReferenceVariation {
     foreach(@$variations) {
       return $_ if($_->{strain} eq $referenceStrain);
     }
-}
-
-sub getCodingSubstitutionPositions {
-  my ($codingSequence, $mockCodingSequence) = @_;
-
-  my @cdsArray = split("", $codingSequence);
-  my @mockCdsArray = split("", $mockCodingSequence);
-
-  my @results;
-
-  for(my $i = 0; $i < scalar(@cdsArray); $i++) {
-    push(@results, ($i + 1)) if($cdsArray[$i] ne $mockCdsArray[$i] && $mockCdsArray[$i] eq '*');
-  }
-  my $snpStart = $results[0];
-  my $snpEnd = $results[scalar(@results) - 1];
-
-  return($snpStart, $snpEnd);
-}
-
-
-sub hasCachedReference {
-  my ($variations) = @_;
-
-  
 }
 
 sub snpLocationFromVariations {
@@ -539,7 +553,7 @@ sub closeVarscanFiles {
   my ($fhHash) = @_;
 
   foreach(keys %$fhHash) {
-    close $_;
+    $fhHash->{$_}->close();
   }
 }
 
@@ -588,7 +602,7 @@ sub openVarscanFiles {
   opendir(DIR, $varscanDirectory) or die "Cannot open directory $varscanDirectory for reading: $!";
 
   while(my $file = readdir(DIR)) {
-    my $fh;
+    my $fh = FileHandle->new;
     my $fullPath = $varscanDirectory . "/$file";
 
     if($file =~ /(.+)\.varscan.cons/) {
@@ -596,15 +610,16 @@ sub openVarscanFiles {
 
       if($file =~ /\.gz$/) {
         print STDERR "OPEN GZ FILE: $file for Strain $strain\n" if($debug);
-        open($fh, "zcat $fullPath |") || die "unable to open file $fullPath";
-      } 
+        $fh->open("zcat $fullPath |") || die "unable to open file $fullPath";
+    } 
       else {
-       open($fh, $fullPath) || die "unable to open file $fullPath"; 
+        $fh->open($fullPath) || die "unable to open file $fullPath"; 
       }
 
       $rv{$strain} = $fh;
     }
   }
+
   return \%rv;
 }
 
@@ -682,8 +697,8 @@ my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_fe
        s.source_id, 
        el.start_min as exon_start, 
        el.end_max as exon_end,
-       ef.coding_start,
-       ef.coding_end,
+       decode(el.is_reversed, 1, ef.coding_end, ef.coding_start) as cds_start,
+       decode(el.is_reversed, 1, ef.coding_start, ef.coding_end) as cds_end,
        el.is_reversed
 FROM dots.TRANSCRIPT tf, dots.rnafeatureexon rfe, 
      dots.exonfeature ef, dots.nalocation el,
@@ -708,21 +723,45 @@ ORDER BY s.source_id, el.start_min
       my $exonMatch = Bio::Location::Simple->
           new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
 
+      my $cdsMatch;
+      if($cdsStart && $cdsEnd) {
+        $cdsMatch = Bio::Location::Simple->
+            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+      }
+
       my $matchOnVirtual = $agp->map( $exonMatch );
+      my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
 
       $sequenceSourceId = $matchOnVirtual->seq_id();
       $exonStart = $matchOnVirtual->start();
       $exonEnd = $matchOnVirtual->end();
+      $cdsStart = $cdsMatchOnVirtual->start();
+      $cdsEnd = $cdsMatchOnVirtual->end();
     }
 
+    my $strand = $isReversed ? -1 : +1;
+    my $loc = Bio::Location::Simple->new( -seq_id => $sequenceSourceId, -start => $exonStart  , -end => $exonEnd , -strand => $strand);
+
     my $location = { transcripts => \@transcripts,
-                     end => $exonEnd,
                      start => $exonStart,
+                     end => $exonEnd,
                    };
 
     push(@{$exonLocs{$sequenceSourceId}}, $location);
 
     foreach my $transcriptId (@transcripts) {
+      push @{$transcriptSummary{$transcriptId}->{exons}}, $loc;
+
+      if($cdsStart && $cdsEnd) {
+        $transcriptSummary{$transcriptId}->{cds_strand} = $strand;
+        if(!{$transcriptSummary{$transcriptId}->{max_cds_end}} || $cdsEnd > $transcriptSummary{$transcriptId}->{max_cds_end}) {
+          $transcriptSummary{$transcriptId}->{max_cds_end} = $cdsEnd;
+        }
+        if(!$transcriptSummary{$transcriptId}->{min_cds_start} || $cdsStart < $transcriptSummary{$transcriptId}->{min_cds_start}) {
+          $transcriptSummary{$transcriptId}->{min_cds_start} = $cdsStart;
+        }
+      }
+
       if(!$transcriptSummary{$transcriptId}->{max_exon_end} || $exonEnd > $transcriptSummary{$transcriptId}->{max_exon_end}) {
         $transcriptSummary{$transcriptId}->{max_exon_end} = $exonEnd;
       }
@@ -737,21 +776,18 @@ ORDER BY s.source_id, el.start_min
 
 
 sub getCodingSequence {
-  my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $base, $seqExtDbRlsId) = @_;
+  my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $seqExtDbRlsId) = @_;
 
   return unless($transcriptId);
 
   my $transcript = GUS::Model::DoTS::Transcript->new({na_feature_id => $transcriptId});
 
-
   unless($transcript->retrieveFromDB()) {
     die "Could not retrieve transcript $transcriptId from the db";
   }
 
-
   my @rnaFeatureExons = $transcript->getChildren("DoTS::RNAFeatureExon",1);
   my @exons = map { $_->getParent("DoTS::ExonFeature",1) } @rnaFeatureExons;
-
 
   unless (@exons) {
     die ("Transcript with na_feature_id = $transcriptId had no exons\n");
@@ -766,26 +802,14 @@ sub getCodingSequence {
   my $transcriptSequence;
 
   for my $exon (@exons) {
-
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
-
-    my $chunk = &querySequenceSubstring($dbh, $sequenceId, $exonStart, $exonEnd);
 
     my $codingStart = $exon->getCodingStart();
     my $codingEnd = $exon->getCodingEnd();
     next unless ($codingStart && $codingEnd);
 
-    # For a Snp to be considered coding...it must be totally included in the coding sequence
-    my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
-    my $isReverseCoding = $snpStart >= $codingEnd && $snpEnd <= $codingStart && $exonIsReversed;
-
-    if($isReverseCoding) {
-      $transcriptSummary->{$transcript}->{is_reversed} = 1;
-    }
-
-    if($base && ($isForwardCoding || $isReverseCoding)) {
-      $chunk = &swapBaseInSequence($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
-    }
+    my $chunk =   &querySequenceSubstring($dbh, $sequenceId, $exonStart, $exonEnd);
+    $chunk = CBIL::Bio::SequenceUtils::reverseComplementSequence($chunk) if($exonIsReversed);
 
     my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
     substr($chunk, 0, $trim5, "") if $trim5 > 0;
@@ -798,67 +822,6 @@ sub getCodingSequence {
   return($transcriptSequence);
 }
 
-
-sub swapBaseInSequence {
-  my ($seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
-
-  my $normSnpStart = $isReversed ? $exonEnd - $snpEnd : $snpStart - $exonStart;
-  my $normSnpEnd = $isReversed ? $exonEnd - $snpStart  : $snpEnd - $exonStart;
-
-  my ($fivePrimeFlank, $threePrimeFlank);
-
-  # An insertion is when the snpStart is one base less than the snpEnd
-  # deletion have a base of '-' and are treated identically to substitutions
-
-  $fivePrimeFlank = substr($seq, 0, $normSnpStart);
-  $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
-
-  my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
-  $newSeq =~ s/\-//g;
-
-  unless($newSeq =~ /$fivePrimeFlank/ || $newSeq =~ /$threePrimeFlank/) {
-    die "Error in creating new Seq: \nnew=$newSeq\nold=$seq";
-  }
-
-  return($newSeq);
-}
-
-sub getMockSequenceForTranscript {
-  my ($sequenceId, $snpStart, $snpEnd, $transcriptId, $transcriptSummary, $seqExtDbRlsId) = @_;
-
-  my $mockSequence = &createMockSequence($snpStart, $snpEnd);
-  my $mockCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $mockSequence, $seqExtDbRlsId);
-
-  $transcriptSummary->{$transcriptId}->{cache}->{$seqExtDbRlsId}->{mock_cds} = $mockCodingSequence;
-
-  return $mockCodingSequence;
-}
-
-
-sub createMockSequence {
-  my ($snpStart, $snpEnd) = @_;
-
-  my $length = $snpEnd - $snpStart + 1;
-  my $mockString;
-
-  foreach(1..$length) {
-    $mockString = $mockString."*";
-  }
-  return($mockString);
-}
-
-# TODO:  Is this needed???
-sub isSynonymous {
-  my ($codingSequence, $newCodingSequence) = @_;
-
-  my $cds = Bio::Seq->new( -seq => $codingSequence );
-  my $newCds = Bio::Seq->new( -seq => $newCodingSequence );
-
-  my $translatedCds = $cds->translate();
-  my $translatedNewCds = $newCds->translate();
-
-  return($translatedCds->seq() eq $translatedNewCds->seq());
-}
 
 sub calculateAminoAcidPosition {
   my ($codingPosition) = @_;
@@ -883,8 +846,6 @@ sub getAminoAcidSequenceOfSnp {
 }
 
 
-$dbh->disconnect();
-close OUT;
 
 
 1;
