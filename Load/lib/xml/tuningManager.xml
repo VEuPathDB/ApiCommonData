@@ -4310,7 +4310,7 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="UTR">
+  <tuningTable name="UTR" prefixEnabled="true">
     <!-- Each record represents an untranslated region (UTR) of a gene. Used by
          GBrowse.
      -->
@@ -4320,7 +4320,7 @@ tablespace indx
     <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
-CREATE TABLE UTR&1 NOLOGGING AS
+CREATE TABLE &prefixUTR&1 NOLOGGING AS
 SELECT na_feature_id,parent_id,na_sequence_id,start_min,end_max,direction,is_reversed,end_max-start_min+1 as length FROM 
 (
   (SELECT exon_loc.na_feature_id,
