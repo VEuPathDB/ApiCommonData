@@ -1,4 +1,5 @@
 package ApiCommonData::Load::MergeSortedFiles;
+use base qw(ApiCommonData::Load::FileReader);
 
 use strict;
 
@@ -14,29 +15,13 @@ sub wantFirstLine {
   return $firstLine le $secondLine
 }
 
-# this skips empty lines; can override to skip lines as needed
-sub skipLine {
-  my ($self, $line, $fh) = @_;
-
-  return !$line;
-}
 
 #--------------------------------------------------------------------------------
-
-sub getFile1 {$_[0]->{_file_1}}
-sub setFile1 {$_[0]->{_file_1} = $_[1]}
 
 sub getFile2 {$_[0]->{_file_2}}
 sub setFile2 {$_[0]->{_file_2} = $_[1]}
 
-sub getCurrentLine {$_[0]->{_current_line}}
-sub setCurrentLine {$_[0]->{_current_line} = $_[1]}
-
-sub getPeek {
-  my ($self) = @_;
-
-  return $self->getCurrentLine();
-}
+#--------------------------------------------------------------------------------
 
 sub getFirstLine {$_[0]->{_first_line}}
 sub setFirstLine {$_[0]->{_first_line} = $_[1]}
@@ -50,32 +35,28 @@ sub setFirstFh {$_[0]->{_first_fh} = $_[1]}
 sub getSecondFh {$_[0]->{_second_fh}}
 sub setSecondFh {$_[0]->{_second_fh} = $_[1]}
 
-sub getFile1Fh {$_[0]->{_file1_fh}}
-sub setFile1Fh {$_[0]->{_file1_fh} = $_[1]}
+#--------------------------------------------------------------------------------
 
 sub readingFile1Fh {
   my ($self, $fh) = @_;
 
-  return $self->getFile1Fh() eq $fh;
+  return $self->getFh() eq $fh;
 }
 
 sub readingFile2Fh {
   my ($self, $fh) = @_;
 
-  return $self->getFile1Fh() ne $fh;
+  return $self->getFh() ne $fh;
 }
 
-sub getFilters {$_[0]->{_filters}}
-sub setFilters {$_[0]->{_filters} = $_[1]}
-
 #--------------------------------------------------------------------------------
-
+# @OVERRIDE
 sub new {
   my ($class, $file1, $file2, $filters) = @_;
 
   my $self = bless {}, $class;
 
-  $self->setFile1($file1);
+  $self->setFile($file1);
   $self->setFile2($file2);
 
   $self->setFilters($filters);
@@ -84,7 +65,7 @@ sub new {
   open($file1Fh, $file1) or die "Cannot open file $file1 for reading: $!";
   open($file2Fh, $file2) or die "Cannot open file $file2 for reading: $!";
 
-  $self->setFile1Fh($file1Fh);
+  $self->setFh($file1Fh);
 
   my $file1Line = $self->readNextLine($file1Fh);
   my $file2Line = $self->readNextLine($file2Fh);
@@ -98,27 +79,12 @@ sub new {
   $self->setSecondLine($file2Line);
   $self->setSecondFh($file2Fh);
 
-  my $currentLine = $self->processNextMerge();
-  $self->setCurrentLine($currentLine);
+  my $nextLine = $self->processNext();
+  $self->setNextLine($nextLine);
 
   return $self;
 }
 
-sub readNextLine {
-  my ($self, $fh) = @_;
-
-  # handle empty lines or whatever
-  while(!eof($fh)) {
-    my $line = readline($fh);
-    chomp($line);
-
-    next if($self->skipLine($line, $fh));
-
-    return $line;
-  }
-
-  return undef;
-}
 
 sub merge {
   my ($self) = @_;
@@ -151,16 +117,10 @@ sub merge {
   return $rv;
 }
 
-
-sub hasNext {
+# @OVERRIDE
+sub closeFileHandle {
   my ($self) = @_;
-
-  if($self->getCurrentLine()) {
-    return 1;
-  }
-
-  $self->closeFileHandles();
-  return 0;
+  $self->closeFileHandles(); 
 }
 
 sub closeFileHandles {
@@ -173,7 +133,8 @@ sub closeFileHandles {
   close $fh2;
 }
 
-sub processNextMerge {
+# @OVERRIDE
+sub processNext {
   my ($self) = @_;
 
   my $firstFh = $self->getFirstFh();
@@ -190,7 +151,6 @@ sub processNextMerge {
   elsif(!$secondLine) {
     $nextLine = $firstLine;
     $self->setFirstLine($self->readNextLine($firstFh));
-
   }
   else {
     $nextLine = $self->merge();
@@ -200,22 +160,6 @@ sub processNextMerge {
 }
 
 
-# this is the one which will be called by users
-sub nextLine {
-  my ($self) = @_;
-
-  my $rv = $self->getCurrentLine();
-
-  unless($rv) {
-    die "Cannot call nextLine after all lines have been read";
-  }
-
-  my $newCurrentLine = $self->processNextMerge();
-
-  $self->setCurrentLine($newCurrentLine);
-
-  return $rv;
-}
 
 
 1;
