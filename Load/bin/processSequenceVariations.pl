@@ -2,9 +2,8 @@
 
 use strict;
 
-use FileHandle;
-
 use File::Basename;
+
 use Data::Dumper;
 
 use GUS::Model::DoTS::Transcript;
@@ -26,6 +25,7 @@ use DBI;
 use DBD::Oracle;
 
 use ApiCommonData::Load::MergeSortedFiles;
+use ApiCommonData::Load::FileReader;
 
 my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug);
 
@@ -84,6 +84,7 @@ open($snpFh, "> $snpOutputFile") or die "Cannot open file $snpOutputFile for wri
 my $strainVarscanFileHandles = &openVarscanFiles($varscanDirectory);
 
 my @allStrains = keys %{$strainVarscanFileHandles};
+print STDERR "STRAINS=" . join(",", @allStrains) . "\n" if($debug);
 
 my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
@@ -94,36 +95,39 @@ my ($transcriptSummary, $exonLocs) = &getTranscriptLocations($dbh, $transcriptEx
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
+print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
 my $merger = ApiCommonData::Load::MergeSortedFiles::SeqVarCache->new($newSampleFile, $cacheFile, \@undoneStrains);
 
-my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts);
+my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
 while($merger->hasNext()) {
   my $variations = $merger->nextSNP();
 
   # sanity check and get the location and seq id
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
+  print STDERR "SEQUENCEID=$sequenceId\tLOCATION=$location\n" if($debug);
 
   # some variables are needed to store attributes of the SNP
-  my ($referenceAllele, $positionInCds, $product, $positionInProtein, $referenceVariation, $isCoding);
-
-  my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
+  my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
 
   my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
-
   my $hasTranscripts = defined($transcripts) ? 1 : 0;
   print STDERR "HAS TRANSCRIPTS=$hasTranscripts\n"  if($debug);
+  print STDERR "TRANSCRIPTS=" . join(",", @$transcripts) . "\n" if($debug && $hasTranscripts);
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
+    print STDERR "CLEANING CDS CACHE\n" if($debug);;
     &cleanCdsCache($transcriptSummary, $prevTranscripts);
   }
+
+  my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
 
   # for the refereence, get   positionInCds, positionInProtein, product, codon?
   if($cachedReferenceVariation) {
     print STDERR "HAS_CACHED REFERENCE VARIATION\n" if($debug);
     $referenceVariation = $cachedReferenceVariation;
-    $product = $cachedReferenceVariation->{product};
+    $referenceProduct = $cachedReferenceVariation->{product};
     $positionInCds = $cachedReferenceVariation->{position_in_cds};
     $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
     $referenceAllele = $cachedReferenceVariation->{base};
@@ -135,8 +139,10 @@ while($merger->hasNext()) {
 
     # These 3 are only calculated for the reference; IsCoding is set to true if the snp is contained w/in any coding transcript
     ($isCoding, $positionInCds, $positionInProtein) = &calculateCdsPosition($transcripts, $transcriptSummary, $sequenceId, $location);
-    
-    $product = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) if($positionInProtein);
+
+    print STDERR "ISCODING=$isCoding, POSITIONINCDS=$positionInCds, POSITIONINPROTEIN=$positionInProtein\n" if($debug);
+
+    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) if($positionInProtein);
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
@@ -146,19 +152,26 @@ while($merger->hasNext()) {
                               'matches_reference' => 1,
                               'position_in_cds' => $positionInCds,
                               'strain' => $referenceStrain,
-                              'product' => $product,
+                              'product' => $referenceProduct,
                            'position_in_protein' => $positionInProtein,
     };
     push @$variations, $referenceVariation;
   }
 
   # No need to continue if there is no variation at this point:  Important for when we undo!!
-  next unless(&hasVariation($variations));
-  print STDERR "Has at leaset one variation.  cont....\n" if($debug);
+  unless(&hasVariation($variations)) {
+    print STDERR  "NO VARIATION FOR STRAINS:  " . join(",", map { $_->{strain}} @$variations) . "\n" if($debug);
+    next;
+  }
 
  # loop over all strains  add coverage vars
   my @variationStrains = map { $_->{strain} } @$variations;
+  print STDERR "HAS VARIATIONS FOR THE FOLLOWING:  " . join(",", @variationStrains) . "\n" if($debug);
+
   my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation,$minAllelePercent);
+  my @coverageVariationStrains = map { $_->{strain} } @$coverageVariations;
+  print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
+
   push @$variations, @$coverageVariations;
 
   # loop through variations and print
@@ -203,12 +216,19 @@ while($merger->hasNext()) {
   &printSNP($snp, $snpFh);
 
   # need to track these so we know when to clear the cache
-  my @transcriptEnds = sort map {$transcriptSummary->{max_exon_end}} @$transcripts;
-  $prevTranscriptMaxEnd = $transcriptEnds[scalar @transcriptEnds];
+  my @transcriptEnds = sort map {$transcriptSummary->{$_}->{max_exon_end}} @$transcripts;
+
+
+  $prevTranscriptMaxEnd = $transcriptEnds[scalar(@transcriptEnds) - 1];
   $prevSequenceId = $sequenceId;
   $prevTranscripts = $transcripts;
-  
+
   $db->undefPointerCache();
+
+  print STDERR "\n" if($debug);
+  if($counter++ % 1000 == 0) {
+    print STDERR "Processed $counter SNPs\n";
+  }
 }
 
 close $cacheFh;
@@ -239,13 +259,19 @@ sub calculateCdsPosition {
   my $isCoding;
 
   foreach my $transcript (@$transcripts) {
+    my $cdsStart = $transcriptSummary->{$transcript}->{min_cds_start};
+    my $cdsEnd = $transcriptSummary->{$transcript}->{max_cds_end};
+    my $cdsStrand = $transcriptSummary->{$transcript}->{cds_strand};
+
+    next unless($cdsStart && $cdsEnd);
+
     my $gene = Bio::Coordinate::GeneMapper->new(
       -in  => "chr",
       -out => "cds",
       -cds => Bio::Location::Simple->new(
-         -start  => $transcriptSummary->{$transcript}->{min_cds_start},
-         -end  => $transcriptSummary->{$transcript}->{max_cds_end},
-         -strand => $transcriptSummary->{$transcript}->{cds_strand},
+         -start  => $cdsStart,
+         -end  => $cdsEnd,
+         -strand => $cdsStrand,
          -seq_id => $sequenceId,
       ),
       -exons => $transcriptSummary->{$transcript}->{exons}
@@ -393,8 +419,9 @@ sub makeCoverageVariations {
       }
     }
     unless($hasVariation) {
-      my $fh = $strainVarscanFileHandles->{$strain} ;
-      my $variation = &makeCoverageVariation($fh, $referenceVariation, $strain, $minAllelePercent);
+      my $fileReader = $strainVarscanFileHandles->{$strain} ;
+
+      my $variation = &makeCoverageVariation($fileReader, $referenceVariation, $strain, $minAllelePercent);
 
       if($variation) {
         push @rv, $variation;
@@ -405,7 +432,7 @@ sub makeCoverageVariations {
 }
 
 sub makeCoverageVariation {
-  my ($fh, $referenceVariation, $strain, $minAllelePercent) = @_;
+  my ($fileReader, $referenceVariation, $strain, $minAllelePercent) = @_;
 
   my $rv;
 
@@ -413,16 +440,15 @@ sub makeCoverageVariation {
   my $sequenceId = $referenceVariation->{sequence_source_id};
   my $referenceAllele = $referenceVariation->{base};
 
-  my $pos;
-  while(1) {
-    $pos = tell $fh;
-    my $line = <$fh> or last;
-    chomp $line;
-    
+
+  while($fileReader->hasNext()) {
+    my $line = $fileReader->nextLine();
+
     my @a = split(/\t/, $line);
     my $varSequence = $a[0];
     my $varLocation = $a[1];
-    
+  
+
     if($varSequence eq $sequenceId && $varLocation == $location) {
       my $varRef = $a[2];
       my $varCons = $a[3];
@@ -447,13 +473,19 @@ sub makeCoverageVariation {
         };
         last;
       }
-      # I've read enough to know when I've read too much
-      if($varSequence gt $sequenceId || ($varSequence eq $sequenceId && $varLocation > $location)) {
-        seek $fh, $pos, 0 or die "Couldn't seek to $pos: $!\n";
-        last;
-      }
     }
+
+    # peek ahead to ensure we don't go too far
+    my $peek = $fileReader->getPeek();
+    last unless $peek;
+
+    my @p = split(/\t/, $peek);
+    my $peekSequence = $p[0];
+    my $peekLocation = $p[1];
+ 
+    last if($peekSequence gt $sequenceId || ($peekSequence eq $sequenceId && $peekLocation > $location));
   }
+
   return $rv;
 }
 
@@ -553,7 +585,7 @@ sub closeVarscanFiles {
   my ($fhHash) = @_;
 
   foreach(keys %$fhHash) {
-    $fhHash->{$_}->close();
+    $fhHash->{$_}->closeFileHandle();
   }
 }
 
@@ -602,7 +634,7 @@ sub openVarscanFiles {
   opendir(DIR, $varscanDirectory) or die "Cannot open directory $varscanDirectory for reading: $!";
 
   while(my $file = readdir(DIR)) {
-    my $fh = FileHandle->new;
+    my $reader;
     my $fullPath = $varscanDirectory . "/$file";
 
     if($file =~ /(.+)\.varscan.cons/) {
@@ -610,13 +642,14 @@ sub openVarscanFiles {
 
       if($file =~ /\.gz$/) {
         print STDERR "OPEN GZ FILE: $file for Strain $strain\n" if($debug);
-        $fh->open("zcat $fullPath |") || die "unable to open file $fullPath";
+
+        $reader = ApiCommonData::Load::FileReader->new("zcat $fullPath |", []);
     } 
       else {
-        $fh->open($fullPath) || die "unable to open file $fullPath"; 
+        $reader = ApiCommonData::Load::FileReader->new($fullPath, []);
       }
 
-      $rv{$strain} = $fh;
+      $rv{$strain} = $reader;
     }
   }
 
