@@ -149,6 +149,7 @@ sub traverseSeqFeatures {
 	     'pseudogenic_transcript',
              'scRNA',
              'srpRNA',
+             'SRP.RNA',
              )
         ) {
 
@@ -161,7 +162,7 @@ sub traverseSeqFeatures {
 	    # 	}
 	    # }
 
-        if ($type eq 'srpRNA') {
+        if ($type eq 'srpRNA' || $type eq 'SRP.RNA') {
           $type = "SRP_RNA";
         }
 
@@ -187,11 +188,12 @@ sub traverseSeqFeatures {
 	    #print "ID:$geneID\n";
 	    $gene->add_tag_value("ID",$geneID);
 	    $gene = &copyQualifiers($geneFeature, $gene);
-            $gene = &copyQualifiers($RNA,$gene);
 
 	## add transcript_id to gene feature
 	my ($transId) = $RNA->get_tag_values('ID');
 	$gene->add_tag_value("transcript_id", $transId);
+
+        $gene = &copyQualifiers($RNA,$gene);
 
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
   	    #$transcript = &copyQualifiers($RNA,$transcript);
