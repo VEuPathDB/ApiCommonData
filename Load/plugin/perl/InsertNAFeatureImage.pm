@@ -126,7 +126,8 @@ sub run {
 
   while(<inputFile>) {
     chomp;
-    my($gene, $tag, $product, $goterm, @img_uris) = split /\|/, $_;
+    next if /^##/;
+    my($gene, $tag, $product, $goterm, @img_uris) = split /\t/, $_;
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, 0) ;
     my $note = "GO term: $goterm; Gene annotation: $product";
 
