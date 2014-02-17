@@ -102,7 +102,6 @@ foreach my $k (sort keys %naSeqIds) {
   ## if genbank submission, need grep more info here, such as 
 
   ## get the genes in the sequence
-
   my $sqlGene = "select gf.source_id, gf.na_feature_id, gf.name, nl.start_min, nl.end_max, nl.is_reversed, gf.is_pseudo
  from dots.genefeature gf, DOTS.nalocation nl
  where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqIds{$k}
@@ -113,7 +112,7 @@ foreach my $k (sort keys %naSeqIds) {
   foreach my $j (0..$#$geneRef) {
     my ($gSourceId, $gNaFeatureId, $gType, $gStart, $gEnd, $gStrand, $gIsPseudo) = split(/\t/, $geneRef->[$j]);
     $gType =~ s/\_gene//g;
-    $gType = "mRNA" if ($gType !~ /RNA/i);
+    $gType = "mRNA" if ($gType !~ /RNA/i);   ## in the case of coding_gene or pseudo_gene
 
     ## get product info
     my $sqlProduct = "select product from APIDB.genefeatureproduct where na_feature_id=$gNaFeatureId";
@@ -168,22 +167,39 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
     }
 
 
-    ## get the codon_start and transl_table
-    my $sqlCodonStart = "select codon_start, transl_table from DOTS.transcript where parent_id=$gNaFeatureId";
-    my $codonStartRef = readFromDatabase($dbh, $sqlCodonStart);
-    my ($codonStart, $translTable) = split(/\t/, $codonStartRef->[0]);
+    ## get the codon_start
+    my $codonStart = 1;
+    my (@cdsPairs, $cdsPairsString);
 
-    ## print the transcipt coordinates
     ## get the transcript position from exon
-
-    my $sqlExonLocRef = "select ef.order_number, nl.start_min, nl.end_max
+    my $sqlExonLocRef = "select ef.order_number, nl.start_min, nl.end_max, ef.coding_start, ef.coding_end
  from dots.exonfeature ef, dots.nalocation nl
  where nl.na_feature_id=ef.na_feature_id and ef.parent_id=$gNaFeatureId
  order by ef.order_number";
 
     my $exonLocRef = readFromDatabase($dbh, $sqlExonLocRef);
+    my $cdsCtr = 0;
     foreach my $i (0..$#$exonLocRef) {
-      my ($order, $tStart, $tEnd) = split(/\t/, $exonLocRef->[$i]);
+      my ($order, $tStart, $tEnd, $cStart, $cEnd) = split(/\t/, $exonLocRef->[$i]);
+
+      ## deal with codonStart and CDS
+      if ($cStart && $cEnd) {
+	#print "before, $tStart, $tEnd, $cStart, $cEnd, $gStrand\n" if ($gNaFeatureId eq "45637516" || $gNaFeatureId eq "45647687");
+	my $shift = 0;
+	if ($gStrand == 0) {
+	  $shift = abs($tStart - $cStart);
+	} else {
+	  $shift = abs($tEnd - $cStart);
+	}
+	if ($shift > 0 && $shift < 3 && $cdsCtr == 0 && $prefix5) {
+	  $codonStart += $shift;
+	  $cStart = ($gStrand == 0) ? ($cStart - $shift) : ($cStart + $shift);
+	}
+	$cdsPairsString = "$order\t$cStart\t$cEnd";
+	push (@cdsPairs, $cdsPairsString);
+	$cdsCtr++;
+	#print "after, $tStart, $tEnd, $cStart, $cEnd, $shift, $codonStart\n" if ($gNaFeatureId eq "45637516" || $gNaFeatureId eq "45647687");
+      }
 
       ## need to add start and end seperately
       ($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, $prefix5, '') if ($i == 0 && $prefix5);
@@ -195,20 +211,16 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
         ($gStrand != 1) ? print TBL "$tStart\t$tEnd\t\t\t\n" : print TBL "$tEnd\t$tStart\t\t\t\n";
       }
       print TBL "\t\t\tlocus_tag\t$gSourceId\n" if ($i == $#$exonLocRef);
+
     }
 
     if ($gType =~ /mRNA/) {
 
-      ## if mRNA get CDS locations
-      my $sqlCDSLoc = "select order_number, coding_start, coding_end from DOTS.exonfeature
- where parent_id=$gNaFeatureId order by order_number";
-      my $CDSLocRef = readFromDatabase ($dbh, $sqlCDSLoc);
-      ## need to slip over if reversed strand
-      #@$CDSLocRef = sort {$a <=> $b} @$results;
-      foreach my $i (0..$#$CDSLocRef) {
-        my ($order, $cStart, $cEnd) = split(/\t/, $CDSLocRef->[$i]);
+      foreach my $i (0..$#cdsPairs) {
+        #my ($order, $cStart, $cEnd) = split(/\t/, $CDSLocRef->[$i]);
+        my ($order, $cStart, $cEnd) = split(/\t/, $cdsPairs[$i]);
         $cStart = $prefix5.$cStart if ($i == 0 && $prefix5);
-        $cEnd = $prefix3.$cEnd if ($i == $#$CDSLocRef && $prefix3);
+        $cEnd = $prefix3.$cEnd if ($i == $#cdsPairs && $prefix3);
         ($i == 0) ? print TBL "$cStart\t$cEnd\tCDS\t\t\n" : print TBL "$cStart\t$cEnd\t\t\t\n";
       }
       print TBL "\t\t\tlocus_tag\t$gSourceId\n";
@@ -217,12 +229,7 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
       ($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
 
       ## need to print condon_start if $prefix5
-      print TBL "\t\t\tcodon_start\t$codonStart\n" if ($codonStart && $prefix5);
-
-      ## print transl_table ## TODO need to double check the transl_table
-      $translTable = 1 if (!$translTable);
-      print TBL "\t\t\ttransl_table\t$translTable\n" if ($translTable);
-
+      print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5);
 
       ## add protein sequence
       my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
@@ -233,7 +240,6 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
       ($proteinSeq) ? print TBL "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
 
     } else {
-
 
       ## TODO for ncRNA need the info of ncRNA_class
       ## print TBL "\t\t\tncRNA_class\t$ncRNA_class\n";
