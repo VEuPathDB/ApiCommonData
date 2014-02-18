@@ -2,8 +2,8 @@
 
 use strict;
 use Getopt::Long;
+use ApiCommonData::Load::MergeSortedSeqVariations;
 
-use ApiCommonData::Load::MergeSortedFiles;
 
 my ($file1, $file2, $outputFile);
 
@@ -21,7 +21,7 @@ open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writi
 
 my $filters = [];
 
-my $merger = ApiCommonData::Load::MergeSortedFiles::SeqVarCache->new($file1, $file2, $filters);
+my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($file1, $file2, $filters, qr/\t/);
 
 while($merger->hasNext()) {
   print OUT $merger->nextLine() . "\n";

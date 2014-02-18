@@ -24,7 +24,7 @@ use Bio::Location::Simple;
 use DBI;
 use DBD::Oracle;
 
-use ApiCommonData::Load::MergeSortedFiles;
+use ApiCommonData::Load::MergeSortedSeqVariations;
 use ApiCommonData::Load::FileReader;
 
 my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug);
@@ -97,7 +97,7 @@ my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
 print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
-my $merger = ApiCommonData::Load::MergeSortedFiles::SeqVarCache->new($newSampleFile, $cacheFile, \@undoneStrains);
+my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($newSampleFile, $cacheFile, \@undoneStrains, qr/\t/);
 
 my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
 while($merger->hasNext()) {
@@ -442,9 +442,8 @@ sub makeCoverageVariation {
 
 
   while($fileReader->hasNext()) {
-    my $line = $fileReader->nextLine();
+    my @a = $fileReader->nextLine();
 
-    my @a = split(/\t/, $line);
     my $varSequence = $a[0];
     my $varLocation = $a[1];
   
@@ -476,10 +475,13 @@ sub makeCoverageVariation {
     }
 
     # peek ahead to ensure we don't go too far
+    #----------------------------------------------------------------------
+    # first make sure we have something on the next line
     my $peek = $fileReader->getPeek();
     last unless $peek;
 
-    my @p = split(/\t/, $peek);
+    # now test if we've gone too far
+    my @p = $fileReader->getPeek();
     my $peekSequence = $p[0];
     my $peekLocation = $p[1];
  
@@ -643,10 +645,10 @@ sub openVarscanFiles {
       if($file =~ /\.gz$/) {
         print STDERR "OPEN GZ FILE: $file for Strain $strain\n" if($debug);
 
-        $reader = ApiCommonData::Load::FileReader->new("zcat $fullPath |", []);
+        $reader = ApiCommonData::Load::FileReader->new("zcat $fullPath |", [], qr/\t/);
     } 
       else {
-        $reader = ApiCommonData::Load::FileReader->new($fullPath, []);
+        $reader = ApiCommonData::Load::FileReader->new($fullPath, [], qr/\t/);
       }
 
       $rv{$strain} = $reader;
