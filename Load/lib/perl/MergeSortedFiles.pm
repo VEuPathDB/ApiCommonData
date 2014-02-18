@@ -87,7 +87,7 @@ sub new {
   $self->setSecondLineAsArray($file2LineAsArray);
   $self->setSecondFh($file2Fh);
 
-  my $nextLine = $self->processNext();
+  $self->processNext();
 
   return $self;
 }
