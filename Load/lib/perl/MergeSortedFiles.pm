@@ -5,7 +5,7 @@ use strict;
 
 #--------------------------------------------------------------------------------
 
-## probably you will need to override this w/ something interesting
+## SUBCLASSES SHOULD override this w/ something interesting
 sub wantFirstLine {
   my ($self) = @_;
 
@@ -15,12 +15,6 @@ sub wantFirstLine {
   return $firstLine le $secondLine
 }
 
-
-#--------------------------------------------------------------------------------
-
-sub getFile2 {$_[0]->{_file_2}}
-sub setFile2 {$_[0]->{_file_2} = $_[1]}
-
 #--------------------------------------------------------------------------------
 
 sub getFirstLine {$_[0]->{_first_line}}
@@ -28,6 +22,12 @@ sub setFirstLine {$_[0]->{_first_line} = $_[1]}
 
 sub getSecondLine {$_[0]->{_second_line}}
 sub setSecondLine {$_[0]->{_second_line} = $_[1]}
+
+sub getFirstLineAsArray {$_[0]->{_first_line_as_array}}
+sub setFirstLineAsArray {$_[0]->{_first_line_as_array} = $_[1]}
+
+sub getSecondLineAsArray {$_[0]->{_second_line_as_array}}
+sub setSecondLineAsArray {$_[0]->{_second_line_as_array} = $_[1]}
 
 sub getFirstFh {$_[0]->{_first_fh}}
 sub setFirstFh {$_[0]->{_first_fh} = $_[1]}
@@ -52,13 +52,18 @@ sub readingFile2Fh {
 #--------------------------------------------------------------------------------
 # @OVERRIDE
 sub new {
-  my ($class, $file1, $file2, $filters) = @_;
+  my ($class, $file1, $file2, $filters, $delimiter) = @_;
 
   my $self = bless {}, $class;
 
-  $self->setFile($file1);
-  $self->setFile2($file2);
+  if($delimiter) {
+    $self->setDelimiter($delimiter);
+  }
+  else {
+    $self->setDelimiter(qr//);
+  }
 
+  $self->setFile($file1);
   $self->setFilters($filters);
 
   my ($file1Fh, $file2Fh);
@@ -67,20 +72,22 @@ sub new {
 
   $self->setFh($file1Fh);
 
-  my $file1Line = $self->readNextLine($file1Fh);
-  my $file2Line = $self->readNextLine($file2Fh);
+  my ($file1Line, $file1LineAsArray) = $self->readNextLine($file1Fh);
+  my ($file2Line, $file2LineAsArray) = $self->readNextLine($file2Fh);
 
   unless($file1Line || $file2Line) {
     die "One of the 2 input files must contain at least one row.";
   }
 
   $self->setFirstLine($file1Line);
+  $self->setFirstLineAsArray($file1LineAsArray);
   $self->setFirstFh($file1Fh);
+
   $self->setSecondLine($file2Line);
+  $self->setSecondLineAsArray($file2LineAsArray);
   $self->setSecondFh($file2Fh);
 
   my $nextLine = $self->processNext();
-  $self->setNextLine($nextLine);
 
   return $self;
 }
@@ -95,26 +102,38 @@ sub merge {
   my $firstLine = $self->getFirstLine();
   my $secondLine = $self->getSecondLine();
 
+  my $firstLineAsArray = $self->getFirstLineAsArray();
+  my $secondLineAsArray = $self->getSecondLineAsArray();
+
   my $rv;
+  my $rvAsArray;
 
   if($self->wantFirstLine()) {
     $rv = $firstLine;
+    $rvAsArray = $firstLineAsArray;
   }
 
   else {
     $self->setFirstLine($secondLine);
+    $self->setFirstLineAsArray($secondLineAsArray);
     $self->setFirstFh($secondFh);
+
     $self->setSecondLine($firstLine);
+    $self->setSecondLineAsArray($firstLineAsArray);
     $self->setSecondFh($firstFh);
 
     $rv = $secondLine;
+    $rvAsArray = $secondLineAsArray;
   }
 
+  
   my $fh = $self->getFirstFh();
-  $firstLine= $self->readNextLine($fh);
-  $self->setFirstLine($firstLine);
+  ($firstLine, $firstLineAsArray) = $self->readNextLine($fh);
 
-  return $rv;
+  $self->setFirstLine($firstLine);
+  $self->setFirstLineAsArray($firstLineAsArray);
+
+  return($rv, $rvAsArray);
 }
 
 # @OVERRIDE
@@ -144,19 +163,30 @@ sub processNext {
   my $secondLine = $self->getSecondLine();
 
   my $nextLine;
+  my $nextLineAsArray;
+
   if(!$firstLine) {
     $nextLine = $secondLine;
-    $self->setSecondLine($self->readNextLine($secondFh));
+    $nextLineAsArray = $self->getSecondLineAsArray();
+
+    my ($l, $laa) = $self->readNextLine($secondFh);
+    $self->setSecondLine($l);
+    $self->setSecondLineAsArray($laa);
   }
   elsif(!$secondLine) {
     $nextLine = $firstLine;
-    $self->setFirstLine($self->readNextLine($firstFh));
+    $nextLineAsArray = $self->getFirstLineAsArray();
+
+    my ($l, $laa) = $self->readNextLine($firstFh);
+    $self->setFirstLine($l);
+    $self->setFirstLineAsArray($laa);
   }
   else {
-    $nextLine = $self->merge();
+    ($nextLine, $nextLineAsArray) = $self->merge();
   }
 
-  return $nextLine;
+  $self->setPeekLineAsArray($nextLineAsArray);
+  $self->setPeekLine($nextLine);
 }
 
 
@@ -164,105 +194,3 @@ sub processNext {
 
 1;
 
-package ApiCommonData::Load::MergeSortedFiles::SeqVarCache;
-use base qw(ApiCommonData::Load::MergeSortedFiles);
-
-sub getSequenceIndex { return 0 }
-sub getLocationIndex { return 1 }
-sub getStrainIndex { return 2 }
-
-
-sub wantFirstLine {
-  my ($self) = @_;
-
-  my $sequenceIndex = $self->getSequenceIndex();
-  my $locationIndex = $self->getLocationIndex();;
-
-  my $firstLine = $self->getFirstLine();
-  my $secondLine = $self->getSecondLine();
-
-  my @a = split(/\t/, $firstLine);
-  my @b = split(/\t/, $secondLine);
-
-  return $a[$sequenceIndex] lt $b[$sequenceIndex] || ($a[$sequenceIndex] eq $b[$sequenceIndex] && $a[$locationIndex] <= $b[$locationIndex])
-}
-
-sub skipLine {
-  my ($self, $line, $fh) = @_;
-
-  return 1 unless($line);
-  return 0 if($self->readingFile1Fh($fh));
-
-  my $strainIndex = $self->getStrainIndex();
-
-  my $filters = $self->getFilters();
-  my @a = split(/\t/, $line);
-
-  foreach(@$filters) {
-    if($a[$strainIndex] eq $_) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-sub nextSNP {
-  my ($self) = @_;
-
-  my @rv;
-
-  my $sequenceIndex = $self->getSequenceIndex();
-  my $locationIndex = $self->getLocationIndex();
-
-  my $isSameGroup = 1;
-
-  while($isSameGroup) {
-    last unless($self->hasNext());
-
-    my $line = $self->nextLine();
-    my $peekLine = $self->getPeek();
-
-    my @a = split(/\t/, $line);
-    my @b = split(/\t/, $peekLine);
-
-    my $sequenceId = $a[$sequenceIndex];
-    my $peekSequenceId = $b[$sequenceIndex];
-
-    my $location = $a[$locationIndex];
-    my $peekLocation = $b[$locationIndex];
-
-    unless($sequenceId eq $peekSequenceId && $peekLocation == $location) {
-      $isSameGroup = 0;
-    }
-
-    my $variation = $self->variation($line);
-
-    push @rv, $variation;
-  }
-  return \@rv;
-}
-
-
-sub variation {
-  my ($self, $line) = @_;
-
-  my ($sequenceId, $location, $strain, $base, $coverage, $percent, $quality, $pvalue, $externalDatabaseReleaseId, $matchesReference, $product, $positionInCds) = split(/\t/, $line);
-
-  my $rv = {'sequence_source_id' => $sequenceId,
-            'location' => $location,
-            'strain' => $strain,
-            'base' => $base,
-            'coverage' => $coverage,
-            'percent' => $percent,
-            'quality' => $quality,
-            'pvalue' => $pvalue,
-            'external_database_release_id' => $externalDatabaseReleaseId,
-            'matches_reference' => $matchesReference,
-            'product' => $product,
-            'position_in_cds' => $positionInCds,
-  };
-  return $rv;
-}
-
-
-1;
