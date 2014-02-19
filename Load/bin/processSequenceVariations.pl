@@ -6,8 +6,6 @@ use File::Basename;
 
 use Data::Dumper;
 
-use GUS::Model::DoTS::Transcript;
-
 use Getopt::Long;
 
 use GUS::ObjRelP::DbiDatabase;
@@ -46,6 +44,8 @@ if($help) {
   &usage();
 }
 
+
+
 $minAllelePercent = 60 unless($minAllelePercent);
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
 
@@ -61,6 +61,9 @@ unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain) {
   &usage("Missing Required param value");
 }
 
+my $totalTime;
+my $totalTimeStart = time();
+
 my $gusConfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
@@ -71,6 +74,12 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
                                         );
 
 my $dbh = $db->getQueryHandle();
+
+my $SEQUENCE_QUERY = "select substr(s.sequence, ?, ?) as base
+                      from dots.nasequence s
+                     where s.source_id = ?";
+
+my $SEQUENCE_QUERY_SH = $dbh->prepare($SEQUENCE_QUERY);
 
 my $dirname = dirname($cacheFile);
 
@@ -100,7 +109,13 @@ print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($newSampleFile, $cacheFile, \@undoneStrains, qr/\t/);
 
 my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
+
+
+
+
 while($merger->hasNext()) {
+
+
   my $variations = $merger->nextSNP();
 
   # sanity check and get the location and seq id
@@ -164,15 +179,21 @@ while($merger->hasNext()) {
     next;
   }
 
+
+
+
  # loop over all strains  add coverage vars
   my @variationStrains = map { $_->{strain} } @$variations;
-  print STDERR "HAS VARIATIONS FOR THE FOLLOWING:  " . join(",", @variationStrains) . "\n" if($debug);
+  print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
   my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation,$minAllelePercent);
   my @coverageVariationStrains = map { $_->{strain} } @$coverageVariations;
   print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
 
   push @$variations, @$coverageVariations;
+
+
+
 
   # loop through variations and print
   foreach my $variation (@$variations) {
@@ -198,6 +219,8 @@ while($merger->hasNext()) {
       $variation->{matches_reference} = 0;
     }
 
+
+
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
@@ -206,6 +229,8 @@ while($merger->hasNext()) {
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
       $variation->{position_in_protein} = $positionInProtein; #got this from the reference
     }
+
+
 
     $variation->{external_database_release_id} = $extDbRlsId;
     
@@ -223,12 +248,13 @@ while($merger->hasNext()) {
   $prevSequenceId = $sequenceId;
   $prevTranscripts = $transcripts;
 
-  $db->undefPointerCache();
 
   print STDERR "\n" if($debug);
-  if($counter++ % 1000 == 0) {
+  if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
+
+
 }
 
 close $cacheFh;
@@ -245,6 +271,12 @@ close $snpFh;
 
 $dbh->disconnect();
 close OUT;
+
+$totalTime += time() - $totalTimeStart;
+print STDERR "Total Time:  $totalTime Seconds\n";
+
+
+
 
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
@@ -407,6 +439,7 @@ sub makeSNPFeatureFromVariations {
 sub makeCoverageVariations {
   my ($allStrains, $variationStrains, $strainVarscanFileHandles, $referenceVariation, $minAllelePercent) = @_;
 
+
   my @rv;
 
   foreach my $strain (@$allStrains) {
@@ -428,6 +461,8 @@ sub makeCoverageVariations {
       }
     }
   }
+
+
   return \@rv;
 }
 
@@ -510,16 +545,10 @@ sub querySequenceSubstring {
 
   my $length = $end - $start + 1;
 
-  my $sql = "select substr(s.sequence, ?, ?) as base
-                      from dots.nasequence s
-                     where s.source_id = ?";
+  $SEQUENCE_QUERY_SH->execute($start, $length, $sequenceId);
+  my ($base) = $SEQUENCE_QUERY_SH->fetchrow_array();
 
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($start, $length, $sequenceId);
-
-  my ($base) = $sh->fetchrow_array();
-  $sh->finish();
-
+  $SEQUENCE_QUERY_SH->finish();
   return $base;
 }
 
@@ -530,16 +559,20 @@ sub variationProduct {
 
   foreach my $transcript (@$transcripts) {
 
-    my $consensusCodingSequence;
-    if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}) {
+    my ($consensusCodingSequence, $proteinSequence);
+    if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds}) {
       $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
+      $proteinSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence};
     }
     else { # first time through for this transcript
       $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $transcriptExtDbRlsId);
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
+
+      $proteinSequence = &getTranslation($consensusCodingSequence);
+      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence} = $proteinSequence;
     }
 
-    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInProtein, $positionInProtein);
+    my $product = &getAminoAcidSequenceOfSnp($proteinSequence, $positionInProtein, $positionInProtein);
     $products{$product}++;
   }
 
@@ -717,6 +750,8 @@ sub lookupTranscriptsByLocation {
       return($location->{transcripts});
     }
   }
+
+
   return(undef);
 
 }
@@ -815,43 +850,35 @@ sub getCodingSequence {
 
   return unless($transcriptId);
 
-  my $transcript = GUS::Model::DoTS::Transcript->new({na_feature_id => $transcriptId});
-
-  unless($transcript->retrieveFromDB()) {
-    die "Could not retrieve transcript $transcriptId from the db";
-  }
-
-  my @rnaFeatureExons = $transcript->getChildren("DoTS::RNAFeatureExon",1);
-  my @exons = map { $_->getParent("DoTS::ExonFeature",1) } @rnaFeatureExons;
+  # Exons are already sorted by start_min from query!!
+  my @exons = @{$transcriptSummary->{$transcriptId}->{exons}};
+  my $minCodingStart = $transcriptSummary->{$transcriptId}->{min_cds_start};
+  my $maxCodingEnd = $transcriptSummary->{$transcriptId}->{max_cds_end};
 
   unless (@exons) {
     die ("Transcript with na_feature_id = $transcriptId had no exons\n");
   }
 
-  # this code gets the feature locations of the exons and puts them in order
-  @exons = map { $_->[0] }
-    sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
-      map { [ $_, $_->getFeatureLocation ]}
-	@exons;
-
   my $transcriptSequence;
 
   for my $exon (@exons) {
-    my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
+    my $exonStart = $exon->start();
+    my $exonEnd = $exon->end();
+    my $exonIsReversed = $exon->strand() == -1 ? 1 : 0;
 
-    my $codingStart = $exon->getCodingStart();
-    my $codingEnd = $exon->getCodingEnd();
-    next unless ($codingStart && $codingEnd);
+    my $codingMin = $minCodingStart >= $exonStart ? $minCodingStart : $exonStart;
+    my $codingMax = $maxCodingEnd <= $exonEnd ? $maxCodingEnd : $exonEnd;
 
-    my $chunk =   &querySequenceSubstring($dbh, $sequenceId, $exonStart, $exonEnd);
-    $chunk = CBIL::Bio::SequenceUtils::reverseComplementSequence($chunk) if($exonIsReversed);
+    my $chunk =   &querySequenceSubstring($dbh, $sequenceId, $codingMin, $codingMax);
 
-    my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
-    substr($chunk, 0, $trim5, "") if $trim5 > 0;
-    my $trim3 = $exonIsReversed ? $codingEnd - $exonStart : $exonEnd - $codingEnd;
-    substr($chunk, -$trim3, $trim3, "") if $trim3 > 0;
+    if($exonIsReversed) {
+      $chunk = CBIL::Bio::SequenceUtils::reverseComplementSequence($chunk);
+      $transcriptSequence = $chunk . $transcriptSequence;
+    }
+    else {
+      $transcriptSequence .= $chunk;
+    }
 
-    $transcriptSequence .= $chunk;
   }
 
   return($transcriptSequence);
@@ -867,17 +894,22 @@ sub calculateAminoAcidPosition {
 }
 
 sub getAminoAcidSequenceOfSnp {
-  my ($codingSequence, $start, $end) = @_;
+  my ($proteinSequence, $start, $end) = @_;
 
   my $normStart = $start - 1;
   my $normEnd = $end - 1;
 
-  my $cds = Bio::Seq->new( -seq => $codingSequence );
-  my $translated = $cds->translate();
-
   my $lengthOfSnp = $normEnd - $normStart + 1;
 
-  return(substr($translated->seq(), $normStart, $lengthOfSnp));
+  return(substr($proteinSequence, $normStart, $lengthOfSnp));
+}
+
+sub getTranslation {
+  my ($codingSequence) = @_;
+
+  my $cds = Bio::Seq->new( -seq => $codingSequence );
+  my $translated = $cds->translate();
+  return $translated->seq();
 }
 
 
