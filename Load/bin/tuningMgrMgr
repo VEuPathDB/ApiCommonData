@@ -9,7 +9,7 @@ use Getopt::Long qw(GetOptions);
 use File::Path qw(make_path remove_tree);
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 
-my ($help, $propFile, $connectInstance, $password, $instance, $family, $svn, $configFile, $dir, $alwaysUpdateOnly, $schema);
+my ($help, $propFile, $connectInstance, $password, $instance, $family, $svn, $configFile, $dir, $currentEnv, $alwaysUpdateOnly, $schema);
 my $props;
 
 my $subcommand = $ARGV[0];
@@ -23,6 +23,7 @@ GetOptions("propFile=s" => \$propFile,
            "svn=s" => \$svn,
            "configFile=s" => \$configFile,
            "dir=s" => \$dir,
+           "currentEnv!" => \$currentEnv,
            "alwaysUpdateOnly!" => \$alwaysUpdateOnly,
 	  );
 
@@ -145,7 +146,7 @@ archive($dbh, $dblink, $instance, 1)
 archive($dbh, $dblink, $instance, 0)
   if $subcommand eq "unarchiveinstance";
 
-updateInstance($dbh, $dblink, $instance, $schema, $configFile, $dir, $alwaysUpdateOnly)
+updateInstance($dbh, $dblink, $instance, $schema, $configFile, $dir, $currentEnv, $alwaysUpdateOnly)
   if $subcommand eq "updateinstance";
 
 ###############################################################################
@@ -369,7 +370,7 @@ SQL
 }
 
 sub updateInstance {
-  my ($dbh, $dblink, $instance, $schema, $configFile, $dir, $alwaysUpdateOnly) = @_;
+  my ($dbh, $dblink, $instance, $schema, $configFile, $dir, $currentEnv, $alwaysUpdateOnly) = @_;
 
   my $tmpDir;
 
@@ -379,6 +380,14 @@ sub updateInstance {
   my $svn = $tuningRegistry->getSubversionUrl();
   if ($svn =~ /ApiCommonData\/(.*)\/Load\/lib/) {
     $svn = $1;
+  }
+
+  if ($currentEnv) {
+    # use current GUS environment
+    $dir = `dirname $ENV{GUS_HOME}`;
+    chomp $dir;
+
+    die "GUS environment not set up" unless $dir;
   }
 
   if (!$dir) {
@@ -432,6 +441,10 @@ sub updateInstance {
   system("source $dir/project_home/install/bin/gusEnv.bash -local; bld ApiCommonShared; bld TuningManager; propertiesFromDatasets EuPathDatasets");
   print "\$cmd = \"$cmd\"\n";
   system("source $dir/project_home/install/bin/gusEnv.bash -local; $cmd");
+
+  # clean up
+  remove_tree($dir)
+    if ($tmpDir);
 }
 
 sub writeGusConfigFile {
