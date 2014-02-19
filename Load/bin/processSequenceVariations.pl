@@ -106,21 +106,21 @@ my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
 print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
+my $naSequenceIds = &queryNaSequenceIds($dbh);
+
 my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($newSampleFile, $cacheFile, \@undoneStrains, qr/\t/);
 
 my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
 
-
-
-
 while($merger->hasNext()) {
-
-
   my $variations = $merger->nextSNP();
 
   # sanity check and get the location and seq id
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
   print STDERR "SEQUENCEID=$sequenceId\tLOCATION=$location\n" if($debug);
+
+  my $naSequenceId = $naSequenceIds->{$sequenceId};
+  die "Could not find na_sequence_id for sequence source id: $sequenceId" unless($naSequenceId);
 
   # some variables are needed to store attributes of the SNP
   my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
@@ -169,6 +169,7 @@ while($merger->hasNext()) {
                               'strain' => $referenceStrain,
                               'product' => $referenceProduct,
                            'position_in_protein' => $positionInProtein,
+                           'na_sequence_id' => $naSequenceId,
     };
     push @$variations, $referenceVariation;
   }
@@ -179,9 +180,6 @@ while($merger->hasNext()) {
     next;
   }
 
-
-
-
  # loop over all strains  add coverage vars
   my @variationStrains = map { $_->{strain} } @$variations;
   print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
@@ -191,9 +189,6 @@ while($merger->hasNext()) {
   print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
 
   push @$variations, @$coverageVariations;
-
-
-
 
   # loop through variations and print
   foreach my $variation (@$variations) {
@@ -206,9 +201,15 @@ while($merger->hasNext()) {
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
+
+      my $cachedNaSequenceId = $variation->{na_sequence_id};
+      die "cachedNaSequenceId did not match" if($naSequenceId != $cachedNaSequenceId);
+
       &printVariation($variation, $cacheFh);
       next;
     }
+
+    $variation->{na_sequence_id} = $naSequenceId;
 
     my $allele = $variation->{base};
 
@@ -219,8 +220,6 @@ while($merger->hasNext()) {
       $variation->{matches_reference} = 0;
     }
 
-
-
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
@@ -229,8 +228,6 @@ while($merger->hasNext()) {
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
       $variation->{position_in_protein} = $positionInProtein; #got this from the reference
     }
-
-
 
     $variation->{external_database_release_id} = $extDbRlsId;
     
@@ -243,17 +240,14 @@ while($merger->hasNext()) {
   # need to track these so we know when to clear the cache
   my @transcriptEnds = sort map {$transcriptSummary->{$_}->{max_exon_end}} @$transcripts;
 
-
   $prevTranscriptMaxEnd = $transcriptEnds[scalar(@transcriptEnds) - 1];
   $prevSequenceId = $sequenceId;
   $prevTranscripts = $transcripts;
-
 
   print STDERR "\n" if($debug);
   if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
-
 
 }
 
@@ -281,6 +275,29 @@ print STDERR "Total Time:  $totalTime Seconds\n";
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
+
+sub queryNaSequenceIds {
+  my ($dbh) = @_;
+
+  my $sql = "select s.na_sequence_id, s.source_id
+from SRES.sequenceontology so
+    ,dots.nasequence s
+where s.sequence_ontology_id = so.sequence_ontology_id
+and so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my %naSequences;
+  while(my ($naSequenceId, $sourceId) = $sh->fetchrow_array()) {
+    $naSequences{$sourceId} = $naSequenceId;
+  }
+  $sh->finish();
+
+  return \%naSequences;
+}
+
 
 sub calculateCdsPosition {
   my ($transcripts, $transcriptSummary, $sequenceId, $location) = @_;
@@ -414,7 +431,8 @@ sub printVariation {
               'pvalue',
               'percent',
               'coverage',
-              'quality');
+              'quality',
+              'na_sequence_id');
 
   print $fh join("\t", map {$variation->{$_}} @keys) . "\n";
 
