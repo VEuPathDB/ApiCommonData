@@ -126,9 +126,15 @@ while($merger->hasNext()) {
   my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
 
   my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
+
   my $hasTranscripts = defined($transcripts) ? 1 : 0;
   print STDERR "HAS TRANSCRIPTS=$hasTranscripts\n"  if($debug);
   print STDERR "TRANSCRIPTS=" . join(",", @$transcripts) . "\n" if($debug && $hasTranscripts);
+
+  my $geneNaFeatureId;
+  if($hasTranscripts) {
+    $geneNaFeatureId = &getGeneNaFeatureId($transcripts, $transcriptSummary);
+  }
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
@@ -234,7 +240,7 @@ while($merger->hasNext()) {
     &printVariation($variation, $cacheFh);
   }
 
-  my $snp = &makeSNPFeatureFromVariations($variations);
+  my $snp = &makeSNPFeatureFromVariations($variations, $referenceVariation, $geneNaFeatureId);
   &printSNP($snp, $snpFh);
 
   # need to track these so we know when to clear the cache
@@ -275,6 +281,23 @@ print STDERR "Total Time:  $totalTime Seconds\n";
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
+
+sub getGeneNaFeatureId {
+  my ($transcripts, $transcriptSummary) = @_;
+
+  my $rv;
+  foreach(@$transcripts) {
+    my $geneNaFeatureId = $transcriptSummary->{$_}->{gene_na_feature_id};
+
+    if($rv && $rv != $geneNaFeatureId) {
+      die "Found more than one gene na_feature_id for transcripts:  " . join(",", @$transcripts) . "\n";
+    }
+    $rv = $geneNaFeatureId;
+  }
+
+  return $rv;
+}
+
 
 sub queryNaSequenceIds {
   my ($dbh) = @_;
@@ -441,15 +464,51 @@ sub printVariation {
 sub printSNP {
   my ($snp, $fh) = @_;
 
-  print $fh $snp->{ref_loc}."\n";
+  my @keys = ('gene_na_feature_id',
+              'source_id',
+              'na_sequence_id',
+              'location',
+              'reference_strain',
+              'reference_na',
+              'reference_aa',
+              'position_in_cds',
+              'position_in_protein',
+              # TODO ...
+      );
+
+  print $fh join("\t", map {$snp->{$_}} @keys) . "\n";
 }
 
 
-# TODO
 sub makeSNPFeatureFromVariations {
-  my ($variations) = @_;
+  my ($variations, $referenceVariation, $geneNaFeatureId) = @_;
 
-  return { ref_loc => 232
+  my $sequenceSourceId = $referenceVariation->{sequence_source_id};
+  my $location = $referenceVariation->{location};
+  my $snpSourceId = "NGS_SNP.$sequenceSourceId.$location";
+
+  my $referenceStrain = $referenceVariation->{strain};
+
+#TODO 
+ #   external_database_release_id    number(10) not null,
+ #   major_allele            varchar(1) not null,
+ #   major_allele_count        number(5) not null,
+ #   major_product            varchar(1),
+ #   minor_product            varchar(1),
+ #   minor_allele            varchar(10) not null,  /* note there could be  more than one */
+ #   minor_allele_count        number(5) not null,
+ #   has_nonsynonymous_allele    number(1)  /* if 1 then at least one allele 
+
+
+  return { "gene_na_feature_id" => $geneNaFeatureId,
+           "source_id" => $snpSourceId,
+           "na_sequence_id" => $referenceVariation->{na_sequence_id},
+           "location" => $location,
+           "reference_strain" => $referenceStrain,
+           "reference_na" => $referenceVariation->{base},
+           "reference_aa" => $referenceVariation->{product},
+           "position_in_cds" => $referenceVariation->{position_in_cds},
+           "position_in_protein" => $referenceVariation->{position_in_protein},
   };
 
 }
@@ -783,6 +842,7 @@ sub getTranscriptLocations {
 
 my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_feature_id) as transcripts,
        s.source_id, 
+       tf.parent_id as gene_na_feature_id, 
        el.start_min as exon_start, 
        el.end_max as exon_end,
        decode(el.is_reversed, 1, ef.coding_end, ef.coding_start) as cds_start,
@@ -796,14 +856,14 @@ AND rfe.exon_feature_id = ef.na_feature_id
 AND ef.na_feature_id = el.na_feature_id
 AND ef.na_sequence_id = s.na_sequence_id
 AND tf.external_database_release_id = $transcriptExtDbRlsId
-GROUP BY s.source_id, el.start_min, el.end_max, ef.coding_start, ef.coding_end, el.is_reversed
+GROUP BY s.source_id, tf.parent_id, el.start_min, el.end_max, ef.coding_start, ef.coding_end, el.is_reversed
 ORDER BY s.source_id, el.start_min
 ";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($transcripts, $sequenceSourceId, $exonStart, $exonEnd, $cdsStart, $cdsEnd, $isReversed) = $sh->fetchrow_array()) {
+  while(my ($transcripts, $sequenceSourceId, $geneNaFeatureId, $exonStart, $exonEnd, $cdsStart, $cdsEnd, $isReversed) = $sh->fetchrow_array()) {
     my @transcripts = split(",", $transcripts);
 
     # if this sequence is a PIECE in another sequence... lookup the higher level sequence
@@ -839,6 +899,7 @@ ORDER BY s.source_id, el.start_min
 
     foreach my $transcriptId (@transcripts) {
       push @{$transcriptSummary{$transcriptId}->{exons}}, $loc;
+      $transcriptSummary{$transcriptId}->{gene_na_feature_id} = $geneNaFeatureId;
 
       if($cdsStart && $cdsEnd) {
         $transcriptSummary{$transcriptId}->{cds_strand} = $strand;
