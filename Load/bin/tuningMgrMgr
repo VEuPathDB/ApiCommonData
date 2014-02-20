@@ -6,40 +6,48 @@ use Data::Dumper;
 use XML::Simple;
 use DBI;
 use Getopt::Long qw(GetOptions);
+use File::Path qw(make_path remove_tree);
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 
-my ($help, $propFile, $connectName, $password, $instanceNickname, $family, $svn);
+my ($help, $propFile, $connectInstance, $password, $instance, $family, $svn, $configFile, $dir, $currentEnv, $alwaysUpdateOnly, $schema);
+my $props;
 
 my $subcommand = $ARGV[0];
 
 GetOptions("propFile=s" => \$propFile,
-           "connectName=s" => \$connectName,
+           "instance=s" => \$instance,
+           "schema=s" => \$schema,
+           "connectInstance=s" => \$connectInstance,
            "password=s" => \$password,
-           "instanceNickname=s" => \$instanceNickname,
            "family=s" => \$family,
            "svn=s" => \$svn,
+           "configFile=s" => \$configFile,
+           "dir=s" => \$dir,
+           "currentEnv!" => \$currentEnv,
+           "alwaysUpdateOnly!" => \$alwaysUpdateOnly,
 	  );
 
 my $badUsage;
 
 if ($subcommand ne "addinstance" && $subcommand ne "removeinstance"
-    && $subcommand ne "list" && $subcommand ne "changesvn"&& $subcommand ne "archiveinstance" && $subcommand ne "unarchiveinstance") {
-  print STDERR "ERROR: Illegal Subcommand \"$subcommand\".  Should be one of [addinstance|removeinstance|list|changesvn]\n";
+    && $subcommand ne "list" && $subcommand ne "changesvn"&& $subcommand ne "archiveinstance"
+    && $subcommand ne "unarchiveinstance" && $subcommand ne "updateinstance") {
+  print STDERR "ERROR: Illegal Subcommand \"$subcommand\".  Should be one of [addinstance | removeinstance | list | changesvn | archiveinstance | unarchiveinstance | updateinstance]\n";
   $badUsage = 1;
 }
 
-if ($subcommand && !$propFile && !$password) {
-  print STDERR "ERROR: The \"$subcommand\" subcommand requires either \"-propFile\" or \"-password\" parameter\n";
+if (!$propFile && !$password) {
+  print STDERR "ERROR: Either the \"-propFile\" or the \"-password\" parameter must be supplied.\n";
   $badUsage = 1;
 }
 
-if ($subcommand && $subcommand ne "list" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
-  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instanceNickname\" parameter\n";
+if ($subcommand ne "list" && $subcommand ne "changesvn" && !$connectInstance && !$instance) {
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instance\" parameter\n";
   $badUsage = 1;
 }
 
-if ($subcommand && $subcommand ne "list" && $subcommand ne "addinstance" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
-  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instanceNickname\" parameter\n";
+if ($subcommand && $subcommand ne "list" && $subcommand ne "addinstance" && $subcommand ne "changesvn" && !$connectInstance && !$instance) {
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instance\" parameter\n";
   $badUsage = 1;
 }
 
@@ -54,13 +62,8 @@ if ($subcommand eq "changesvn" && !$family) {
 }
 
 if ($subcommand eq "addinstance") {
-  if (!$connectName) {
-    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-connectName\" parameter\n";
-    $badUsage = 1;
-  }
-
-  if (!$instanceNickname) {
-    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-instanceNickname\" parameter\n";
+  if (!$instance) {
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-instance\" parameter\n";
     $badUsage = 1;
   }
 
@@ -70,48 +73,100 @@ if ($subcommand eq "addinstance") {
   }
 }
 
+if ($subcommand eq "updateinstance") {
+  if (!$instance) {
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-instance\" parameter\n";
+    $badUsage = 1;
+  }
+
+  if (!$propFile) {
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-propFile\" parameter\n";
+    $badUsage = 1;
+  }
+
+  if ($family) {
+    print STDERR "ERROR: the \"-family\" parameter cannot be used with the \"$subcommand\" subcommand.\n";
+    $badUsage = 1;
+  }
+
+  if ($svn) {
+    print STDERR "ERROR: the \"-svn\" parameter cannot be used with the \"$subcommand\" subcommand.\n";
+    $badUsage = 1;
+  }
+
+  if ($connectInstance) {
+    print STDERR "ERROR: the \"-connectInstance\" parameter cannot be used with the \"$subcommand\" subcommand.\n";
+    $badUsage = 1;
+  }
+}
+
 if ($badUsage) {
   usage();
   die;
 }
 
-my $dblink = "\@prodS.login_comment";
-if (!$connectName) {
-  $connectName = "apicommS";
-  $dblink = "";
+  if ($propFile) {
+    my $simple = XML::Simple->new();
+    $props = $simple->XMLin($propFile);
+  }
+
+my $dblink;
+
+if ($props->{dblink}) {
+  $dblink = $props->{dblink};
+} else {
+  $dblink = "\@prodS.login_comment";
 }
 
-my $dbh = getDbHandle($connectName, $propFile, $password);
+if (!$connectInstance) {
+  if ($instance) {
+    $connectInstance = $instance;
+  } else {
+    $connectInstance = "apicommS";
+    $dblink = "";
+  }
+}
+
+my $dbh = getDbHandle($connectInstance, $password);
 
 list($dbh, $dblink) if $subcommand eq "list";
-addInstance($dbh, $instanceNickname, $family, $svn)
+
+addInstance($dbh, $instance, $family, $svn)
   if $subcommand eq "addinstance";
-removeInstance($dbh, $dblink, $instanceNickname)
+
+removeInstance($dbh, $dblink, $instance)
   if $subcommand eq "removeinstance";
+
 changeSvn($dbh, $dblink, $family, $svn)
   if $subcommand eq "changesvn";
-archive($dbh, $dblink, $instanceNickname, 1)
+
+archive($dbh, $dblink, $instance, 1)
   if $subcommand eq "archiveinstance";
-archive($dbh, $dblink, $instanceNickname, 0)
+
+archive($dbh, $dblink, $instance, 0)
   if $subcommand eq "unarchiveinstance";
+
+updateInstance($dbh, $dblink, $instance, $schema, $configFile, $dir, $currentEnv, $alwaysUpdateOnly)
+  if $subcommand eq "updateinstance";
 
 ###############################################################################
 
 sub usage {
-  ApiCommonData::Load::TuningConfig::Log::addLog(
+  print STDERR 
 q{
 Usage:
 
-tuningMgrMgr addinstance -connectName=s -instanceNickname=s -family=s [-svn=s] [-password=s | -propFile <FILE>]
-tuningMgrMgr removeinstance [-connectName=s | -instanceNickname=s] [-password=s | -propFile <FILE>]
+tuningMgrMgr addinstance -connectInstance=s -instance=s -family=s [-svn=s] [-password=s | -propFile <FILE>]
+tuningMgrMgr removeinstance [-connectInstance=s | -instance=s] [-password=s | -propFile <FILE>]
 tuningMgrMgr list [-password=s | -propFile <FILE>]
 tuningMgrMgr changesvn -family=s -svn=s [-password=s | -propFile <FILE>]
-tuningMgrMgr [archiveinstance | unarchiveinstance] -connectName=s
+tuningMgrMgr [archiveinstance | unarchiveinstance] -connectInstance=s
+tuningMgrMgr updateinstance -instance <instance> -propFile <XML file> [ -configFile <XML file> ] [ -dir <path> ]
 
 options:
   propFile         pathname of a file containing database username and password, as with tuningManager
-  connectName      tnsping name to use to connect to database
-  instanceNickname unique name to identify instance in registry and in email subject-lines
+  instance         database instance to operate on
+  connectInstance  instance to log in to (if different from instance being worked on)
   family           name of family of instances (e.g. "toxo440") to which this instance belongs
   password         database login password
   svn              Subversion trunk/branch info, e.g. "trunk" or "branches/api-aug-08"
@@ -121,20 +176,15 @@ Sample prop file:
   <password>JoeSentMe</password>
   <username>apidb</username>
 </tuningProps>
-});
+};
 }
 
 
 sub getDbHandle {
-  my ($instance, $propFile, $password) = @_;
+  my ($instance, $password) = @_;
   my $username = 'apidb';
 
-  if ($propFile) {
-    my $simple = XML::Simple->new();
-    my $props = $simple->XMLin($propFile);
-    $password = $props->{password} if !$password;
-    $username = $props->{username} if $props->{username};
-  }
+  $password = $props->{password} if !$password;
 
   my $dsn = "dbi:Oracle:" . $instance;
 
@@ -168,12 +218,10 @@ SQL
   my $printedSomething;
   my $lastFamily = 'gambino';
   my $instanceCount;
-  while (my ($nickname, $svn, $family) = $stmt->fetchrow_array()) {
+  while (my ($instance, $svn, $family) = $stmt->fetchrow_array()) {
     $instanceCount++;
 
-    # print "\n---------family--------- ---instance_nickname----- ---subversion------------ -- last OK --------------------- -- out-of-date since ---------\n"
-
-    print "\n---------family--------- ---instance_nickname----- ---subversion------------\n"
+    print "\n---------family--------- --------instance--------- ---subversion------------\n"
       if !$printedSomething;
 
     $printedSomething = 1;
@@ -189,7 +237,7 @@ SQL
 #      $lastFamily = $family;
 #    }
 
-    printf "%-24s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn;
+    printf "%-24s %-25s %-25s %-32s %-32s\n", $family, $instance, $svn;
   }
   $stmt->finish();
 
@@ -197,7 +245,7 @@ SQL
 }
 
 sub addInstance {
-  my ($dbh, $instanceNickname, $family, $svn) = @_;
+  my ($dbh, $instance, $family, $svn) = @_;
 
   # find out whether this family exists
   my $stmt = $dbh->prepare(<<SQL);
@@ -238,32 +286,32 @@ SQL
     or die $dbh->errstr;
 
   # add new InstanceMetaInfo
-  $dbh->do("insert into apidb.InstanceMetaInfo (instance_nickname) values ('$instanceNickname')")
+  $dbh->do("insert into apidb.InstanceMetaInfo (instance_nickname) values ('$instance')")
     or die $dbh->errstr;
 
   # insert new TuningInstance
   $dbh->do(<<SQL) or die $dbh->errstr;
       insert into apidb_r.TuningInstance\@prodS.login_comment
           (instance_nickname, family_name)
-      values ('$instanceNickname', '$family')
+      values ('$instance', '$family')
 SQL
 }
 
 sub removeInstance {
-  my ($dbh, $dblink, $instanceNickname) = @_;
+  my ($dbh, $dblink, $instance) = @_;
 
-  # get instanceNickname from InstanceMetaInfo, if not supplied
-  if (!$instanceNickname) {
+  # get instance from InstanceMetaInfo, if not supplied
+  if (!$instance) {
     my $stmt = $dbh->prepare("select instance_nickname from apidb.InstanceMetaInfo");
     $stmt->execute() or print STDERR $dbh->errstr;
-    ($instanceNickname) = $stmt->fetchrow_array();
+    ($instance) = $stmt->fetchrow_array();
     $stmt->finish();
   }
 
   # get family name
   my $stmt = $dbh->prepare(<<SQL);
     select family_name from apidb_r.TuningInstance$dblink
-    where instance_nickname = '$instanceNickname'
+    where instance_nickname = '$instance'
 SQL
   $stmt->execute() or print STDERR $dbh->errstr;
   my ($family) = $stmt->fetchrow_array();
@@ -272,10 +320,10 @@ SQL
   # remove instance
   my $rowCount = $dbh->do(<<SQL) or die $dbh->errstr;
     delete from apidb_r.TuningInstance$dblink
-    where instance_nickname = '$instanceNickname'
+    where instance_nickname = '$instance'
 SQL
 
-  printf "removed %d " . ($rowCount == 1 ? "instance" : "instances") . ", nicknamed \"$instanceNickname\", from the family \"$family\"\n", $rowCount;
+  printf "removed %d " . ($rowCount == 1 ? "instance" : "instances") . ", named \"$instance\", from the family \"$family\"\n", $rowCount;
 
   # is this the last member of the family?
   my $stmt = $dbh->prepare("select count(*) from apidb_r.TuningInstance$dblink where family_name = '$family'");
@@ -310,25 +358,138 @@ sub svnUrl {
 }
 
 sub archive {
-  my ($dbh, $dblink, $instanceNickname, $archiveFlag) = @_;
+  my ($dbh, $dblink, $instance, $archiveFlag) = @_;
 
   my $rowCount = $dbh->do(<<SQL) or die $dbh->errstr;
      update apidb_r.TuningInstance$dblink
        set archived = $archiveFlag
-  where instance_nickname = '$instanceNickname'
+  where instance_nickname = '$instance'
 SQL
 
-  printf "set \"archived\" to " . $archiveFlag . " for " . $rowCount . ($rowCount == 1 ? " instance" : " instances") . ", nicknamed \"$instanceNickname\"\n";
+  printf "set \"archived\" to " . $archiveFlag . " for " . $rowCount . ($rowCount == 1 ? " instance" : " instances") . ", named \"$instance\"\n";
 }
 
-sub  {
-   my ($dbh, $dblink, $instanceNickname, $archiveFlag) = @_;
+sub updateInstance {
+  my ($dbh, $dblink, $instance, $schema, $configFile, $dir, $currentEnv, $alwaysUpdateOnly) = @_;
 
-   # set svn, based on family
-   my $url = svnUrl($svn);
-   my $familyCount = $dbh->do(<<SQL);
-SQL
-  printf "set archive to \"$archiveFlag\" of \"$svn\") for %d "
-    . (($familyCount == 1) ? "family" : "families") . " named \"$family\".\n", $familyCount;
+  my $tmpDir;
+
+  my $tuningRegistry =
+    ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $dblink);
+
+  my $svn = $tuningRegistry->getSubversionUrl();
+  if ($svn =~ /ApiCommonData\/(.*)\/Load\/lib/) {
+    $svn = $1;
+  }
+
+  if ($currentEnv) {
+    # use current GUS environment
+    $dir = `dirname $ENV{GUS_HOME}`;
+    chomp $dir;
+
+    die "GUS environment not set up" unless $dir;
+  }
+
+  if (!$dir) {
+    # if no dir was supplied, create one
+    $tmpDir = 1;
+    $dir = "/tmp/tMan." . $$ . "." . time . "/";
+
+    make_path("$dir/project_home", "$dir/gus_home/lib/java/db_driver");
+    system("cp $ENV{GUS_HOME}/lib/java/db_driver/* $dir/gus_home/lib/java/db_driver");
+    chdir "$dir/project_home";
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/install/trunk install");
+    system("svn checkout https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared/$svn ApiCommonShared");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/WDK/$svn WDK");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/FgpUtil/$svn FgpUtil");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/WSF/$svn WSF");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/CBIL/$svn CBIL");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/ReFlow/$svn ReFlow");
+    system("svn checkout https://www.cbil.upenn.edu/svn/gus/TuningManager/$svn TuningManager");
+    system("svn checkout https://www.cbil.upenn.edu/svn/apidb/EuPathPresenters/$svn EuPathPresenters");
+    system("svn checkout https://www.cbil.upenn.edu/svn/apidb/EuPathDatasets/$svn EuPathDatasets");
+
+    writeGusConfigFile($dir, $instance);
+
+  } else {
+    # using an existing directory; get it up to date
+    chdir "$dir/project_home";
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/install/trunk install");
+    system("svn switch https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared/$svn ApiCommonShared");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/WDK/$svn WDK");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/FgpUtil/$svn FgpUtil");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/WSF/$svn WSF");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/CBIL/$svn CBIL");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/ReFlow/$svn ReFlow");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/TuningManager/$svn TuningManager");
+    system("svn switch https://www.cbil.upenn.edu/svn/apidb/EuPathPresenters/$svn EuPathPresenters");
+    system("svn switch https://www.cbil.upenn.edu/svn/apidb/EuPathDatasets/$svn EuPathDatasets");
+  }
+
+  # build and run
+  my $doUp = "-doUpdate";
+  if ($alwaysUpdateOnly) {
+    $doUp = ""; # -doUpdate controls non-AlwaysUpdate tables
+  }
+
+  my $cmd = "tuningManager $doUp -instance $instance -propfile $propFile -notifyEmail TuningMgr\@pcbi.upenn.edu";
+  $schema = $props->{schema} if !$schema;
+  $cmd .= " -schema " . $schema;
+  $cmd .= " -configFile " . getConfigFileName($configFile, $tuningRegistry, $dir);
+
+
+  system("source $dir/project_home/install/bin/gusEnv.bash -local; bld ApiCommonShared; bld TuningManager; propertiesFromDatasets EuPathDatasets");
+  print "\$cmd = \"$cmd\"\n";
+  system("source $dir/project_home/install/bin/gusEnv.bash -local; $cmd");
+
+  # clean up
+  # remove_tree($dir)
+  #  if ($tmpDir);
 }
+
+sub writeGusConfigFile {
+
+  my ($dir, $instance) = @_;
+
+  my $login = $props->{schema};
+  my $password = $props->{password};
+  my $dsn = "dbi:Oracle:$instance";
+
+  mkdir ("$dir/gus_home/config");
+
+  system (<<SYSTEM);
+    cat $dir/project_home/install/gus.config.sample | \
+    substitute '<dbVendor>' Oracle | \
+    substitute '<dbiDsn>' "$dsn" | \
+    substitute '<dbLogin>' "$login" | \
+    substitute '<dbPassword>' "$password" | \
+    cat > $dir/gus_home/config/gus.config
+SYSTEM
+
+}
+
+sub getConfigFileName {
+  my ($configFile, $tuningRegistry, $dir) = @_;
+
+  my $configPath;
+
+  # if no config file was supplied, use one from Subversion
+  if (!$configFile) {
+    $configFile = $tuningRegistry->getConfigFile();
+
+    # default to component tuning manager
+    $configFile = "tuningManager.xml" if !$configFile; 
+    $configPath = "$dir/gus_home/lib/xml/tuningManager/" . $configFile;
+    return $configPath;
+  } elsif (substr($configFile, 0, 1) ne "/") {
+    # if a relative pathname is given, look under gus_home/lib/xml
+    $configPath = "$dir/gus_home/lib/xml/tuningManager/" . $configFile;
+    return $configPath;
+  } else {
+    # absolute path? Use as is.
+    return $configFile;
+  }
+
+}
+
 
