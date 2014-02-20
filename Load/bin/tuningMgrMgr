@@ -443,8 +443,8 @@ sub updateInstance {
   system("source $dir/project_home/install/bin/gusEnv.bash -local; $cmd");
 
   # clean up
-  remove_tree($dir)
-    if ($tmpDir);
+  # remove_tree($dir)
+  #  if ($tmpDir);
 }
 
 sub writeGusConfigFile {
