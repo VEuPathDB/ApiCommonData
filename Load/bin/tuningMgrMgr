@@ -414,7 +414,7 @@ sub updateInstance {
   } else {
     # using an existing directory; get it up to date
     chdir "$dir/project_home";
-    system("svn switch https://www.cbil.upenn.edu/svn/gus/install/trunk install");
+    system("svn switch https://www.cbil.upenn.edu/svn/gus/install/$svn install");
     system("svn switch https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared/$svn ApiCommonShared");
     system("svn switch https://www.cbil.upenn.edu/svn/gus/WDK/$svn WDK");
     system("svn switch https://www.cbil.upenn.edu/svn/gus/FgpUtil/$svn FgpUtil");
