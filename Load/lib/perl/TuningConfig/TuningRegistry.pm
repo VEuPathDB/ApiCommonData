@@ -2,7 +2,6 @@ package ApiCommonData::Load::TuningConfig::TuningRegistry;
 
 
 use strict;
-use ApiCommonData::Load::TuningConfig::Log;
 
 sub new {
     my ($class, $dbh, $dblink) = @_;
@@ -31,10 +30,10 @@ sub getInfoFromRegistry {
 SQL
 
     my $stmt = $dbh->prepare($sql)
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+      or print STDERR "\n" . $dbh->errstr . "\n";
 
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+      or print STDERR "\n" . $dbh->errstr . "\n";
 
     ($self->{service_name},
      $self->{instance_name},
@@ -47,8 +46,8 @@ SQL
     )
       = $stmt->fetchrow_array();
 
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for instance_nickname \"$self->{service_name}\".\n"
-						       . "Use \"tuningMgrMgr addInstance\" to add this instance to the registry.")
+    print STDERR "no tuning info found in registry for instance_nickname \"$self->{service_name}\".\n"
+						       . "Use \"tuningMgrMgr addInstance\" to add this instance to the registry."
 	if !defined $self->{subversion_url};
     $stmt->finish();
 }
@@ -71,7 +70,7 @@ sub getSubversionBranch {
     if ($Url =~ /ApiCommonData.(.*).Load.lib/) {
       $branch = $1;
     } else {
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("Can't parse branch out of Subversion URL \"$Url\"");
+      print STDERR "Can't parse branch out of Subversion URL \"$Url\"";
     }
 
     return($branch);
