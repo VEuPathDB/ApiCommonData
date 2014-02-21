@@ -441,10 +441,16 @@ sub updateInstance {
   system("source $dir/project_home/install/bin/gusEnv.bash -local; bld ApiCommonShared; bld TuningManager; propertiesFromDatasets EuPathDatasets");
   print "\$cmd = \"$cmd\"\n";
   system("source $dir/project_home/install/bin/gusEnv.bash -local; $cmd");
-
-  # clean up
-  # remove_tree($dir)
-  #  if ($tmpDir);
+  my $exitCode = $? >> 8;
+  if ($exitCode) {
+    print STDERR "tuningManager exits with error code $exitCode\n";
+    print STDERR "leaving temporary directory $dir\n"
+      if ($tmpDir);
+  } else {
+    # clean up
+    remove_tree($dir)
+      if ($tmpDir);
+  }
 }
 
 sub writeGusConfigFile {
