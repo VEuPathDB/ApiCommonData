@@ -36,44 +36,54 @@ sub bedName {
     return $sampleName
 }
 
-# Calculate coverage ratio for each bin for every pair of bedfiles
+# Get all bedfiles in dir
 my @bedFiles = `ls $experimentDir/*.bed`;
-for (my $i=0; $i<scalar @bedFiles; $i++){
-    my $refCoverage = bedExtract($bedFiles[$i]);
-    my $refName = bedName($bedFiles[$i]);
-    for (my $j=0; $j<scalar @bedFiles; $j++){
-        if ($i != $j) {
-            my $compCoverage = bedExtract($bedFiles[$j]);
-            my $compName = bedName($bedFiles[$j]);
-            my $count = 0;
-            my $outputFile = $outputDir."/".$refName."_".$compName.".bed.tmp";
-            open (OUT, ">$outputFile") or die "Cannot write output file\n$!\n";
-            foreach my $ref (@{$refCoverage}){
-                my ($refChr, $refStart, $refEnd, $refMapped) = @{$ref};
-                my ($compChr, $compStart, $compEnd, $compMapped) = @{@{$compCoverage}[$count]};
-                ++$count;
-                if ($refChr eq $compChr && $refStart  == $compStart && $refEnd == $compEnd){
-                    my $mapRatio = $compMapped/$refMapped unless ($refMapped == 0 || $compMapped == 0);
-                    if (defined ($mapRatio)){
-                        printf OUT "%s\t%d\t%d\t%g\n", $refChr, $refStart, $refEnd, $mapRatio;
-                    }
-                } else {
-                    die "Element in reference and comparison arrays are not in the same order\n";
-                }    
-            }
-            close (OUT);
-            # sort bedGraph file
-            my $sortedOutput = $outputDir."/".$refName."_".$compName.".bed";
-            system ("sort -k1,1 -k2,2 $outputFile > $sortedOutput");
-            # convert to bigwig
-            my $bigWig = $outputDir."/".$refName."_".$compName.".bw";
-            system ("bedGraphToBigWig $sortedOutput $chromSizesFile $bigWig");
-            # remove unsorted bedGraphs
-            system ("rm -f $outputFile");
 
-        }
-    }
+#Determine which one is the ref for the expt (should have 'ref' in filename)
+# TODO - this needs to exit if there is >1 ref file too
+my $index = 0;
+my $refFile;
+$index ++ until index($bedFiles[$index], 'ref') != -1 or $index == scalar @bedFiles -1;
+#Check that you have found ref and not just reached end of array
+if (index($bedFiles[$index], 'ref') != -1) {
+    #Set reference file and remove from array
+    $refFile = $bedFiles[$index];
+    splice(@bedFiles, $index, 1);
+}else{
+    die "There is no reference file";
 }
 
-
+# Calculate coverage ratio for each sample in comparison to the reference
+my $refCoverage = bedExtract($refFile);
+my $refName = bedName($refFile);
+foreach my $compFile (@bedFiles){
+    my $compCoverage = bedExtract($compFile);
+    my $compName = bedName($compFile);
+    my $count = 0;
+    my $outputFile = $outputDir."/".$refName."_".$compName.".bed.tmp";
+    open (OUT, ">$outputFile") or die "Cannot write output file\n$!\n";
+    foreach my $ref (@{$refCoverage}){
+        my ($refChr, $refStart, $refEnd, $refMapped) = @{$ref};
+        my ($compChr, $compStart, $compEnd, $compMapped) = @{@{$compCoverage}[$count]};
+        ++$count;
+        if ($refChr eq $compChr && $refStart == $compStart && $refEnd ==$compEnd){
+            my $mapRatio = $compMapped/$refMapped unless ($refMapped == 0 || $compMapped == 0);
+            if (defined($mapRatio)){
+                printf OUT "%s\t%d\t%d\t%g\n", $refChr, $refStart, $refEnd, $mapRatio;
+            }
+        }else{
+            die "Elements in reference and comparison arrays are not in the same order\n";
+        }
+    }
+    close (OUT);
+    # sort bedGraph File
+    my $sortedOutput = $outputDir."/".$refName."_".$compName.".bed";
+    system ("sort -k1,1 -k2,2n $outputFile > $sortedOutput");
+    # convert to bigwig
+    my $bigWig = $outputDir."/".$refName."_".$compName.".bw";
+    system ("bedGraphToBigWig $sortedOutput $chromSizesFile $bigWig");
+    # remove unsorted bedGraph
+    system ("rm -f $outputFile");
+}
 exit;
+

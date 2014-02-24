@@ -8,23 +8,25 @@ use warnings;
 use Getopt::Long;
 
 my $bamFile;
-my $genome;
+#my $genome;
 my $window;
 my $outputFile;
-my $experimentDir;
+#my $experimentDir;
+my $samtoolsIndex;
 
 &GetOptions("bamFile|b=s" => \$bamFile,
-            "genome|g=s" => \$genome,
+            #"genome|g=s" => \$genome,
             "window|w=i" => \$window,
             "outputFile|o=s" => \$outputFile,
-            "experimentDir|e=s" => \$experimentDir
+#            "experimentDir|e=s" => \$experimentDir,
+            "samtoolsIndex|s=s" => \$samtoolsIndex
             );
 
-if (! -e $bamFile && $genome){
+if (! -e $bamFile || ! -e $samtoolsIndex){
 die <<endOfUsage;
 generateBinnedCoverage.pl usage:
 
-    generateBinnedCoverage.pl --bamFile|b <bamFile of mapped reads from which to generate coverage> --genome|g <path to reference genome in fasta format> --window|w <size of bins in which to calculate coverage> --outputFile|o <path to outputFile> --experimentDir|e <path to dir for this experiment in workflow
+    generateBinnedCoverage.pl --bamFile|b <bamFile of mapped reads from which to generate coverage> --window|w <size of bins in which to calculate coverage> --outputFile|o <path to outputFile> --samtoolsIndex|s <path to samtools index of genome>
 endOfUsage
 } 
  
@@ -49,10 +51,10 @@ endOfUsage
 
     # gets coverage for each window - uses BAM file of mapped reads and BED file for windows on genome
     sub getCoverage {
-        my ($bed, $bam, $dir, $out) = @_;
+        my ($bed, $bam, $out) = @_;
         my @coverageBed = `bedtools coverage -abam $bam -b $bed`;
         my $totalMapped = `samtools view -c -F 4 $bam`;
-        open (OUT, ">$dir/$out") or die "Cannot write output file\n$!\n";
+        open (OUT, ">$out") or die "Cannot write output file\n$!\n";
         foreach (@coverageBed){
             my ($chr, $start, $end, $mapped, $numNonZero, $lenB, $propNonZero) = split(/\t/,$_);
             die "Chromosome, start and end coordinates or number of mapped reads are not defined\n$!\n" unless (defined($chr) && defined($start) && defined($end) && defined($mapped));
@@ -62,17 +64,18 @@ endOfUsage
         close OUT;
     }
 
-    system ("samtools faidx $genome > $genome.fai");
-    my $genomeIndex = "$genome.fai";
-    unless (-e $genomeIndex){
-        die "Genome index was not successfully created\n$!\n";
-    }
-    my $bedfile = createBed($genomeIndex, $window);
+# Now done as a workflowstep
+#    system ("samtools faidx $genome > $genome.fai");
+#    my $genomeIndex = "$genome.fai";
+#    unless (-e $genomeIndex){
+#        die "Genome index was not successfully created\n$!\n";
+#    }
+    my $bedfile = createBed($samtoolsIndex, $window);
     unless (-e $bedfile){
         die "Bedfile was not successfully created\n";
     }
 
-    my $coverage = getCoverage($bedfile, $bamFile, $experimentDir, $outputFile);
+    my $coverage = getCoverage($bedfile, $bamFile, $outputFile);
         
     system ("rm $bedfile");
 exit;
