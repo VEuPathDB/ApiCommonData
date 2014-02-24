@@ -22,7 +22,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="citation" ignore="true"/>
-    <qualifier name="inference" ignore="true"/>
     <qualifier name="exception" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -184,10 +183,20 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="telomerase_RNA_gene" ignore="true">
   </feature>
 
-  <feature name="RNase_P_RNA_gene" ignore="true">
+  <feature name="RNase_P_RNA_gene" so="RNase_P_RNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="gene"           ignore="true"/>
   </feature>
 
-  <feature name="SRP_RNA_gene" ignore="true">
+  <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="gene"           ignore="true"/>
   </feature>
 
   <feature name="mRNA" ignore="true">
