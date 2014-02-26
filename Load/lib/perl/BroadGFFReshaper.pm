@@ -156,6 +156,7 @@ sub traverseSeqFeatures {
              'snoRNA',
              'tRNA',
              'ncRNA',
+             'miRNA',
              'transcript',
 	     'pseudogenic_transcript',	
              'scRNA',
