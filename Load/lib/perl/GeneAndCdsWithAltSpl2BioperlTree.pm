@@ -246,7 +246,7 @@ sub traverseSeqFeatures {
         if ($transcriptCount > 1) {
           my ($rnaId) = $RNA->get_tag_values('locus_tag');
           if ($rnaId eq $geneId) {
-            $geneId = $geneId."\.$ctr";
+            $geneId = $geneId."\_$ctr";
           } else {
             $geneId = $rnaId;
           }
