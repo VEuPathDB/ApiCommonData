@@ -579,6 +579,7 @@ begin
             when 'vahlkampfiidae' then project := 'AmoebaDB';
             when 'vavraia' then project := 'MicrosporidiaDB';
             when 'vittaforma' then project := 'MicrosporidiaDB';
+            when 'yarrowia' then project := 'FungiDB';
             when 'zygomycetes' then project := 'FungiDB';
             else raise_application_error(-20101,
                                             'project_id("'
