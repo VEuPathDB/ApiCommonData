@@ -77,10 +77,6 @@ sub new {
 
   $self->processNext();
 
-  unless($self->getPeek()) {
-    die "Input File Should Contain at least one Row";
-  }
-
   return $self;
 }
 

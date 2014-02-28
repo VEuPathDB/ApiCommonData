@@ -124,6 +124,7 @@ sub variation {
             'matches_reference' => $matchesReference,
             'product' => $product,
             'position_in_cds' => $positionInCds,
+            # need to add na_sequence_id (need to make sure this is in sync w/ processSequence var)
   };
   return $rv;
 }

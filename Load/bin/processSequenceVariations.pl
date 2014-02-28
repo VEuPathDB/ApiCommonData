@@ -110,6 +110,8 @@ my $naSequenceIds = &queryNaSequenceIds($dbh);
 
 my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($newSampleFile, $cacheFile, \@undoneStrains, qr/\t/);
 
+
+# TODO: Could use the gene_na_feature_id to clear cache
 my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
 
 while($merger->hasNext()) {
@@ -119,6 +121,7 @@ while($merger->hasNext()) {
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
   print STDERR "SEQUENCEID=$sequenceId\tLOCATION=$location\n" if($debug);
 
+  # TODO: This is only for the reference... check that we have this also for the consensus
   my $naSequenceId = $naSequenceIds->{$sequenceId};
   die "Could not find na_sequence_id for sequence source id: $sequenceId" unless($naSequenceId);
 
@@ -187,6 +190,7 @@ while($merger->hasNext()) {
   }
 
  # loop over all strains  add coverage vars
+    # TODO: Consider threading getting coverage variations
   my @variationStrains = map { $_->{strain} } @$variations;
   print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
@@ -215,6 +219,7 @@ while($merger->hasNext()) {
       next;
     }
 
+    # TODO:  BUG... this should be the strain_na_sequence_id??
     $variation->{na_sequence_id} = $naSequenceId;
 
     my $allele = $variation->{base};
@@ -230,6 +235,8 @@ while($merger->hasNext()) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
       my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInProtein) if($positionInProtein);
+      
+      # TODO:  Look in the CBIL at SequenceUtils
       $variation->{product} = $p;
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
       $variation->{position_in_protein} = $positionInProtein; #got this from the reference
@@ -442,6 +449,7 @@ sub usage {
 sub printVariation {
   my ($variation, $fh) = @_;
 
+    # TODO:  Rename "na_sequence_id" to "ref_na_sequence_id" and add nasequence id for the strain
   my @keys = ('external_database_release_id',
               'strain',
               'sequence_source_id',
@@ -499,6 +507,14 @@ sub makeSNPFeatureFromVariations {
  #   minor_allele_count        number(5) not null,
  #   has_nonsynonymous_allele    number(1)  /* if 1 then at least one allele 
 
+
+# TODO:  Count distinct strains 
+# todo:  ref_seq_source_id
+# todo: GENE_STRAND
+# todo: gene_source_id
+# TODO:  what todo about lflank and rflank ... these are currently reference sequence
+  # makes sense to add this in the srt reportmaker for snps 
+# TODO: Count Number of distinct alleles
 
   return { "gene_na_feature_id" => $geneNaFeatureId,
            "source_id" => $snpSourceId,
@@ -923,7 +939,7 @@ ORDER BY s.source_id, el.start_min
 }
 
 
-
+# TODO:  could cache na sequence's and pull out the codon and translate that
 sub getCodingSequence {
   my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $seqExtDbRlsId) = @_;
 

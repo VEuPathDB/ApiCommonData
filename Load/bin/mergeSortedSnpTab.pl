@@ -4,28 +4,47 @@ use strict;
 use Getopt::Long;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 
+use ApiCommonData::Load::SNPSampleTabFilter;
 
-my ($file1, $file2, $outputFile);
+my ($inputFile, $cacheFile, $removeStrain);
 
-&GetOptions("file_1=s"=> \$file1,
-            "file_2=s" => \$file2,
-            "output_file=s" => \$outputFile,
+&GetOptions("inputFile=s"=> \$inputFile,
+            "cacheFile=s" => \$cacheFile,
+            "removeStrain=s" => \$removeStrain,
     );
 
-unless(-e $file1 && -e $file2) {
-  print STDERR "usage: perl --file1 <FILE> --file2 <FILE>\n";
-  exit;
+unless(-e $inputFile) {
+  print STDERR "usage: perl --inputFile <FILE> --cacheFile <FILE> [removeStrain]\n";
+  exit(0);
 }
 
-open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing: $!";
+unless(-e $cacheFile) {
+  die "Trying to remove strain $removeStrain strain BUT the cache does not exist" if($removeStrain);
+  open(FILE, "> $cacheFile") or die "Could not open file $cacheFile for writing: $!";
+  close FILE;
+}
+
+my $cacheTmp = "$cacheFile.tmp";
+rename $cacheFile, $cacheTmp;
+
+open(OUT, "> $cacheFile") or die "Cannot open output file $cacheFile for writing: $!";
 
 my $filters = [];
+my $reader;
 
-my $merger = ApiCommonData::Load::MergeSortedSeqVariations->new($file1, $file2, $filters, qr/\t/);
+if($removeStrain) {
+  $filters = ["$removeStrain"];
+  $reader = ApiCommonData::Load::SNPSampleTabFilter->new($cacheTmp, $filters, qr/\t/);
+}
+else {
+  $reader = ApiCommonData::Load::MergeSortedSeqVariations->new($inputFile, $cacheTmp, $filters, qr/\t/);
+}
 
-while($merger->hasNext()) {
-  print OUT $merger->nextLine() . "\n";
+while($reader->hasNext()) {
+  print OUT $reader->nextLine() . "\n";
 }
 
 close OUT;
+
+unlink $cacheTmp;
 
