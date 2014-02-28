@@ -1,24 +1,18 @@
 #!/usr/bin/perl
 # This script uses samtools and BEDtools
 
-#@ISA = (ApiCommonWorkflow::Main::WorkflowSteps::WorkflowStep);
-
 use strict;
 use warnings;
 use Getopt::Long;
 
 my $bamFile;
-#my $genome;
 my $window;
 my $outputFile;
-#my $experimentDir;
 my $samtoolsIndex;
 
 &GetOptions("bamFile|b=s" => \$bamFile,
-            #"genome|g=s" => \$genome,
             "window|w=i" => \$window,
             "outputFile|o=s" => \$outputFile,
-#            "experimentDir|e=s" => \$experimentDir,
             "samtoolsIndex|s=s" => \$samtoolsIndex
             );
 
@@ -64,12 +58,7 @@ endOfUsage
         close OUT;
     }
 
-# Now done as a workflowstep
-#    system ("samtools faidx $genome > $genome.fai");
-#    my $genomeIndex = "$genome.fai";
-#    unless (-e $genomeIndex){
-#        die "Genome index was not successfully created\n$!\n";
-#    }
+
     my $bedfile = createBed($samtoolsIndex, $window);
     unless (-e $bedfile){
         die "Bedfile was not successfully created\n";
