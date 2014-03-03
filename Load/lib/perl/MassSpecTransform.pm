@@ -943,3 +943,24 @@ sub isProteinLine {
 }
 
 1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineMethylarginine;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'monomethylarginine',
+           '#' => 'dimethyarginine',
+           '#(a)' => 'asymmetric dimethylarginine',
+           '#(s)' => 'symmetric dimethylarginine',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
