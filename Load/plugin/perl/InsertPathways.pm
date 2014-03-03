@@ -7,6 +7,7 @@ use warnings;
 use Data::Dumper;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::ParseKeggXml;
+use GUS::Supported::ParseXgmml;
 use GUS::Supported::MetabolicPathway;
 use GUS::Supported::MetabolicPathways;
 use GUS::Model::ApiDB::NetworkContext;
@@ -43,11 +44,11 @@ sub getArgsDeclaration {
                 }),
 
      enumArg({ name           => 'format',
-               descr          => 'The file format for pathways (Kegg, Biopax, Other)',
+               descr          => 'The file format for pathways (Kegg, XGMML, Biopax, Other)',
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
-               enum           => 'KEGG, Biopax, Other'
+               enum           => 'KEGG, XGMML, Biopax, Other'
              }),
 
      stringArg({ name => 'imageFileDir',
@@ -67,9 +68,9 @@ sub getArgsDeclaration {
 # ----------------------------------------------------------------------
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts KEGG pathways from a set of KGML files into Network schema.";
+  my $purposeBrief = "Inserts pathways from a set of KGML or XGMML files into Network schema.";
 
-  my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
+  my $purpose =  "Inserts pathways from a set of KGML or XGMML files into Network schema.";
 
   my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.NetworkRelContextLink','One row per association between a relationship and a network'],['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']];
 
@@ -120,14 +121,17 @@ sub run {
   my $inputFileDir = $self->getArg('pathwaysFileDir');
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
-  my @pathwayFiles = <$inputFileDir/*.xml>;
-  die "No files found in the directory $inputFileDir\n" if not @pathwayFiles;
+  my $pathwayFormat = $self->getArg('format');
+  my $extension = ($pathwayFormat eq 'XGMML') ? 'xgmml' : 'xml';
+
+  my @pathwayFiles = <$inputFileDir/*.$extension>;
+  die "No $extension files found in the directory $inputFileDir\n" if not @pathwayFiles;
 
   my $pathwaysObj = new GUS::Supported::MetabolicPathways;
   $self->{"pathwaysCollection"} = $pathwaysObj;
 
-  my $pathwayFormat = $self->getArg('format');
   $self->readKeggFiles(\@pathwayFiles) if $pathwayFormat eq 'KEGG';
+  $self->readXgmmlFiles(\@pathwayFiles) if $pathwayFormat eq 'XGMML';
 
   $self->loadPathway($pathwayFormat);
 }
@@ -257,6 +261,42 @@ sub readKeggFiles {
 }
 
 
+sub readXgmmlFiles {
+  my ($self, $xgmmlFiles) = @_;
+
+  my $xgmmlParser = new GUS::Supported::ParseXgmml;
+
+  my $pathwaysObj = $self->{pathwaysCollection};
+  print "Reading XGMML files...\n";
+  my $reverseNodeLookup; # to get uniqId if one has the indexId in hand
+  foreach my $xgmml (@{$xgmmlFiles}) {
+
+    my $pathwayElements = $xgmmlParser->parseXGMML($xgmml);
+    my $pathwayObj = $pathwaysObj->getNewPathwayObj($pathwayElements->{NAME});
+    $pathwayObj->{source_id} = $pathwayElements->{SOURCE_ID};
+    $pathwayObj->{url} = $pathwayElements->{URI};
+
+    foreach my $node  (keys %{$pathwayElements->{NODES}}) {
+      my $uniqId = $node;
+      my $id = $node;
+      $id =~s/\_X:\d+\_Y:\d+//;  # remove coordinates 
+
+      $reverseNodeLookup->{$pathwayElements->{NODES}->{$node}->{ENTRY_ID}} = $pathwayElements->{NODES}->{$node}->{UNIQ_ID};
+
+      $pathwayObj->setPathwayNode($node, { node_name => $uniqId,
+					   uniqId => $uniqId,
+                                           node_type => $pathwayElements->{NODES}->{$node}->{TYPE}
+                                         });
+      $pathwayObj->setNodeGraphics($node, { x => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{X},
+                                            y => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{Y}
+					    });
+    }
+    $pathwaysObj->setPathwayObj($pathwayObj);
+    #print STDOUT Dumper $pathwaysObj;
+  }
+  $self->{"pathwaysCollection"} = $pathwaysObj;
+}
+
 
 sub loadPathway {
   my ($self, $format) = @_;
@@ -291,12 +331,13 @@ sub loadPathway {
       }
       my $networkContextId = $networkContext->getNetworkContextId();
 
+      my $pathway;
+      print "CHECk name= $pathwayName, source_id=" . $pathwayObj->{source_id} . " AND url=" . $pathwayObj->{url} ." DONE\n";
+      $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
+						   external_database_release_id => 0000,
+						   source_id => $pathwayObj->{source_id},
+						   url => $pathwayObj->{url} });
 
-
-      my $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
-                                                      external_database_release_id => 0000,
-                                                      source_id => $pathwayObj->{source_id},
-                                                      url => $pathwayObj->{url} });
       if (! $pathway->retrieveFromDB()) {
         $pathway->submit();
         print "Loaded Pathway Record for..$pathwayName\n";
@@ -448,7 +489,7 @@ sub loadNetworkNode {
     my $identifier = $pathwayId ."_" . $node->{node_name}; # eg: 571_1.14.-.-_X:140_Y:333
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
     my $display_label = $node->{node_name};
-    $display_label =~s/\_X:\d+\_Y:\d+//;  # remove coordinates
+    $display_label =~s/\_X:\d+(\.\d*)\_Y:\d+(\.\d*)//;  # remove coordinates
 
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $display_label,
                                                             node_type_id => $node_type,
@@ -457,9 +498,12 @@ sub loadNetworkNode {
 
     $networkNode->submit() unless $networkNode->retrieveFromDB();
     my $nodeId = $networkNode->getNetworkNodeId();
- 
-    my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
-                    ($nodeGraphics->{shape} eq 'rectangle') ? 2 : ($nodeGraphics->{shape} eq 'roundrectangle') ? 3 : 4;
+
+    my $nodeShape ='';
+    if ($nodeGraphics->{shape}) {
+      $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
+	($nodeGraphics->{shape} eq 'rectangle') ? 2 : ($nodeGraphics->{shape} eq 'roundrectangle') ? 3 : 4;
+    }
 
   my ($networkNode_tableId) = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = 'NetworkNode'" );
 
