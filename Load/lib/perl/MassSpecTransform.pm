@@ -951,9 +951,9 @@ sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
   return { '*' => 'monomethylarginine',
-           '#' => 'dimethyarginine',
-           '#(a)' => 'asymmetric dimethylarginine',
-           '#(s)' => 'symmetric dimethylarginine',
+           '#' => 'dimethylarginine',
+           '@' => 'asymmetric dimethylarginine',
+           '+' => 'symmetric dimethylarginine',
   };
 }
 
