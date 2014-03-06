@@ -58,6 +58,7 @@ if ($pathwayList eq 'ALL') {
 print "Size of array of Pathway IDs is ".( $#pids +1)  . "\n\n" if $verbose;
 
 foreach my $pathwayId (@pids) {
+  print "Working for Pathway IDs: $pathwayId\n" if $verbose;
   my $sql = &getNodesQuery($pathwayId);
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
@@ -78,9 +79,10 @@ foreach my $pathwayId (@pids) {
     $node{$id}->{pathName} = $pathName;
 
     if ($type eq 'enzyme') {
-	$node{$id}->{ecOrgs} = &getOrganismsQuery($display);
+      $node{$id}->{ecOrgs} = &getOrganismsQuery($display, "NOT");
+      $node{$id}->{ecOrgsOrthomcl} = &getOrganismsQuery($display, "");
     }
- }
+  }
 
   my $sql = &getEdgesQuery($pathwayId);
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
@@ -92,7 +94,7 @@ foreach my $pathwayId (@pids) {
       $edge{$source. $target}->{dir} = $direction;
   }
 
-  my $output = IO::File->new("> ".$outDir.  $pathwayId . ".xgmml");
+  my $output = IO::File->new("> ".$outDir ."/".  $pathwayId . ".xgmml");
   my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
 
   $writer->startTag("graph", "label"=>"Demo",
@@ -135,6 +137,9 @@ foreach my $pathwayId (@pids) {
     if (  $node{$k}->{type} eq 'enzyme' ) {
       $writer->startTag("att", "name"=>"Organisms", "value"=>$node{$k}->{ecOrgs}, "type"=>"string");
       $writer->endTag("att");
+      $writer->startTag("att", "name"=>"OrganismsInferredByOthoMCL", "value"=>$node{$k}->{ecOrgsOrthomcl}, "type"=>"string");
+      $writer->endTag("att");
+
     }
 
     $writer->startTag("graphics", 
@@ -224,9 +229,9 @@ AND pn.display_label = map.source_id (+)";
 
 #getOrganisms query with cpd_name AND gene_orgs
 sub getOrganismsQuery {
-    my $ecNum = shift;
+    my ($ecNum, $sqlNot) = @_;
     my $sql = 
-"SELECT apidb.tab_to_string(set(cast(COLLECT(DISTINCT gf.organism) AS apidb.varchartab))) 
+"SELECT apidb.tab_to_string(set(cast(COLLECT(DISTINCT SUBSTR( gf.organism , 1, 1) || '. ' ||  SUBSTR(gf.organism , INSTR(gf.organism, ' ', 1, 1) +1)) AS apidb.varchartab))) 
             FROM apidbtuning.geneattributes gf, ApidbTuning.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
@@ -236,6 +241,7 @@ sub getOrganismsQuery {
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = asec.aa_sequence_id
               AND asec.enzyme_class_id = ec.enzyme_class_id
+              AND  $sqlNot asec.evidence_code = 'OrthoMCLDerived'
               AND ec.ec_number LIKE REPLACE(REPLACE(REPLACE(REPLACE(lower( '$ecNum'),' ',''),'-', '%'),'*','%'),'any','%')";
 
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
