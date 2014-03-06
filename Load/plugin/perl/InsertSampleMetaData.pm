@@ -5,7 +5,7 @@ package ApiCommonData::Load::Plugin::InsertSampleMetaData;
 use GUS::Model::Study::BioMaterialCharacteristic;
 use GUS::Model::Study::OntologyEntry;
 use GUS::Model::Study::Study;
-use GUS::Model::Study::BioSample;
+use GUS::Model::Study::BioMaterial;
 use GUS::Model::RAD::StudyBioMaterial;
 use GUS::Model::ApiDB::ProfileSet;
 use GUS::Model::ApiDB::ProfileElementName;
@@ -48,11 +48,12 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({name           => 'dataType',
-            descr          => 'used to identify which tables the sample data is stored in. This allows the metadata to be properly associated with the sample it describes.',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
+     enumArg({ name           => 'dataType',
+               descr          => 'used to identify which tables the sample data is stored in. This allows the metadata to be properly associated with the sample it describes.',
+               reqd           => 0,
+               isList         => 0, 
+               enum           => 'immuneResponse,SNP,chip-chip,massSpec'
+             }),
 
    fileArg({name           => 'file',
             descr          => 'file for the sample data',
@@ -152,7 +153,7 @@ sub run {
     my $dbh = $self->getQueryHandle();
     my $stmt = $dbh->prepareAndExecute($sql);
     while(my $sampleName = $stmt->fetchrow_array()){
-      push(@$sampleNames,$profileElementName);
+      push(@$sampleNames,$sampleName);
     }
   }
 
@@ -164,8 +165,9 @@ sub run {
   my $header = <FILE>;
   chomp $header;
 
-  $self->validateHeader($header);
-
+  if ($dataType=~/SNP/|| !$dataType) {
+    $self->validateHeader($header);
+  }
 
   my $count = 0;
   while(<FILE>) {
@@ -175,11 +177,11 @@ sub run {
 
     if((!$sampleId) ||  ($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId))){
       if($sampleExtDbRlsSpecTemplate){
-        $self->processRow($rowAsHash, $study, $sampleExtDbRlsSpecTemplate, $studyExtDbRlsId, $useTemplate, $sampleNames);
+        $self->processRow($rowAsHash, $study, $sampleExtDbRlsSpecTemplate, $studyExtDbRlsId, $useTemplate, $sampleNames,$dataType);
         $count++;
       }
       else {
-        $self->processRow($rowAsHash, $study, $sampleExtDbRlsSpec, $studyExtDbRlsId, $useTemplate, $sampleNames);
+        $self->processRow($rowAsHash, $study, $sampleExtDbRlsSpec, $studyExtDbRlsId, $useTemplate, $sampleNames,$dataType);
         $count++;
       }
     }
@@ -217,7 +219,7 @@ sub validateHeader {
 
 
 sub processRow {
-  my ($self, $rowAsHash, $study, $sampleExtDbRlsSpec, $studyExtDbRlsId, $useTemplate, $sampleNames) = @_;
+  my ($self, $rowAsHash, $study, $sampleExtDbRlsSpec, $studyExtDbRlsId, $useTemplate, $sampleNames,$dataType) = @_;
   my $sampleName;
   foreach my $key (keys %$rowAsHash) {
 	my ($header, $index) = split(/\|/, $key);
@@ -238,7 +240,7 @@ sub processRow {
       $self->error("Sample external database Release ID not found for $sampleName with External database release spec $sampleExtDbRlsSpec");
   }
 
-  $bioSample = $self->makeBioSample($rowAsHash, $sampleName, $sampleExtDbRlsId, $sampleNames );
+  $bioSample = $self->makeBioSample($rowAsHash, $sampleName, $sampleExtDbRlsId, $sampleNames, $dataType );
 
   my $studyBioMaterial = GUS::Model::RAD::StudyBioMaterial->new({});
 
@@ -282,18 +284,27 @@ sub makeBioSample {
       push(@characteristics, $characteristic);
     }
   }
-
-  my $bioSample = GUS::Model::Study::BioSample->new({name => $sourceName, 
-                                                     source_id => $sourceId,
-                                                     description => $description,
-                                                     external_database_release_id => $sampleExtDbRlsId,
-                                                    });
-
+  my $bioMaterial;
+  if ($dataType =~ /SNP/) {
+    my $bioMaterial = GUS::Model::Study::BioSource->new({name => $sourceName, 
+                                                         source_id => $sourceId,
+                                                         description => $description,
+                                                         external_database_release_id => $sampleExtDbRlsId,
+                                                        });
+  }
+  else {
+    my $bioMaterial = GUS::Model::Study::BioSample->new({name => $sourceName, 
+                                                         source_id => $sourceId,
+                                                         description => $description,
+                                                         external_database_release_id => $sampleExtDbRlsId,
+                                                        });
+  }
+    
   foreach(@characteristics) {
-    $_->setParent($bioSample);
+    $_->setParent($bioMaterial);
   }
 
-  return $bioSample;
+  return $bioMaterial;
 }
 
 
