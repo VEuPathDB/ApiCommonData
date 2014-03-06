@@ -148,6 +148,8 @@ sub traverseSeqFeatures {
              'miRNA',
 	     'pseudogenic_transcript',
              'scRNA',
+             'srpRNA',
+             'SRP.RNA',
              )
         ) {
 
@@ -160,6 +162,10 @@ sub traverseSeqFeatures {
 	    # 	}
 	    # }
 
+        if ($type eq 'srpRNA' || $type eq 'SRP.RNA') {
+          $type = "SRP_RNA";
+        }
+
         if($type eq 'pseudogenic_transcript'){
             $RNA->add_tag_value("pseudo","");
             $type = 'coding';
@@ -170,7 +176,8 @@ sub traverseSeqFeatures {
 		$type = 'coding';
 
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);    ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
 	    if($transcriptCount > 1){
@@ -181,11 +188,12 @@ sub traverseSeqFeatures {
 	    #print "ID:$geneID\n";
 	    $gene->add_tag_value("ID",$geneID);
 	    $gene = &copyQualifiers($geneFeature, $gene);
-            $gene = &copyQualifiers($RNA,$gene);
 
 	## add transcript_id to gene feature
 	my ($transId) = $RNA->get_tag_values('ID');
 	$gene->add_tag_value("transcript_id", $transId);
+
+        $gene = &copyQualifiers($RNA,$gene);
 
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
   	    #$transcript = &copyQualifiers($RNA,$transcript);
@@ -201,13 +209,15 @@ sub traverseSeqFeatures {
 	    }
 	    $codonStart -= 1 if $codonStart > 0;
 
-	    my (@exons, @codingStart, @codingEnd);
+	    #my (@exons, @codingStart, @codingEnd);
+	    my (@exons, @codingStartAndEndPairs);
 
 	    my $CDSctr =0;
 	    my $prevPhase =0;
 
-	    my($codingStart,$codingEnd);
+	    #my($codingStart,$codingEnd);
 
+	    my $CDSLocation;
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
 	      $codonStart = $subFeature->frame();
@@ -217,20 +227,28 @@ sub traverseSeqFeatures {
 		}
 
 		if($subFeature->primary_tag eq 'CDS'){
+		  $CDSLocation = $subFeature->location;
+		  my $cdsStrand = $subFeature->location->strand;
+		  my $cdsFrame = $subFeature->frame();
 
 		    if($subFeature->location->strand == -1){
-			$codingStart = $subFeature->location->end;
-			$codingEnd = $subFeature->location->start;
-			$codingStart -= $codonStart if ($codonStart > 0);
-
+			#$codingStart = $subFeature->location->end;
+			#$codingEnd = $subFeature->location->start;
+			#$codingStart -= $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->end);
+		        my $cdsCodingStart = $subFeature->location->end;
+			my $cdsCodingEnd = $subFeature->location->start;
+			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }else{
-			$codingStart = $subFeature->location->start;
-			$codingEnd = $subFeature->location->end;
-			$codingStart += $codonStart if ($codonStart > 0);
-
+			#$codingStart = $subFeature->location->start;
+			#$codingEnd = $subFeature->location->end;
+			#$codingStart += $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->start);
+		        my $cdsCodingStart = $subFeature->location->start;
+			my $cdsCodingEnd = $subFeature->location->end;
+			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }
-		    push(@codingStart,$codingStart);
-		    push(@codingEnd,$codingEnd);
+
+		    #push(@codingStart,$codingStart);
+		    #push(@codingEnd,$codingEnd);
 
 		    $CDSctr++;
 		}
@@ -245,16 +263,34 @@ sub traverseSeqFeatures {
 
 	    #$codingStart[$#codingStart] = $codingStart;
 
-	    $codingStart = shift(@codingStart);
-	    $codingEnd = shift(@codingEnd);
+	    #$codingStart = shift(@codingStart);
+	    #$codingEnd = shift(@codingEnd);
+
+	    ## deal with codonStart, use the frame of the 1st CDS
+	    foreach my $j (0..$#codingStartAndEndPairs) {
+	      my ($Start, $End, $strand, $frame) = split(/\t/, $codingStartAndEndPairs[$j]);
+
+	      if ($j == 0 && $strand == 1 && $frame > 0) {
+		$Start += $frame;
+		$codingStartAndEndPairs[$j] = "$Start\t$End\t$strand\t$frame";
+	      } elsif ($j == $#codingStartAndEndPairs && $strand == -1 && $frame > 0) {
+		$Start -= $frame;
+		$codingStartAndEndPairs[$j] = "$Start\t$End\t$strand\t$frame";
+	      }
+
+	    }
+
+	    my ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+
 	    foreach my $exon (@exons){
 
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
 
-		    $codingStart = shift(@codingStart);
-		    $codingEnd = shift(@codingEnd);
+		    #$codingStart = shift(@codingStart);
+		    #$codingEnd = shift(@codingEnd);
+		    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 
 		} elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start) 
 			 || ($codingStart >= $exon->location->end && $codingEnd >= $exon->location->end) ) {
@@ -264,6 +300,13 @@ sub traverseSeqFeatures {
 
 		$transcript->add_SeqFeature($exon);
 	    }
+
+	    if ($#codingStartAndEndPairs > 0) {
+	      my ($errorGene) = $gene->get_tag_values('ID');
+	      my ($start, $end) = split (/\t/, shift(@codingStartAndEndPairs) );
+	      die "double check the number of CDS for $errorGene has $start..$end ...... it is not consistant with the exon number\n";
+	    }
+
   	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
 		foreach my $exonLoc (@exonLocs){
@@ -287,8 +330,8 @@ sub traverseSeqFeatures {
 		$gene->location->end($transcript->location->end);
 	    }
 
-	$gene->add_SeqFeature($transcript);
-        push(@genes, $gene);
+	    $gene->add_SeqFeature($transcript);
+            push(@genes, $gene);
 
 	}
     }
