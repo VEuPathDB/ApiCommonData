@@ -952,8 +952,8 @@ sub getReportedModificationSymbolMap {
 
   return { '*' => 'monomethylarginine',
            '#' => 'dimethylarginine',
-           '@' => 'asymmetric dimethylarginine',
-           '+' => 'symmetric dimethylarginine',
+           '@' => 'asymmetric_dimethylarginine',
+           '+' => 'symmetric_dimethylarginine',
   };
 }
 
