@@ -25,7 +25,10 @@ use DBD::Oracle;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 use ApiCommonData::Load::FileReader;
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug);
+my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug, $extDbRlsSpec);
+
+# TODO:  add snp_ext_db rls
+
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
             "cache_file=s"=> \$cacheFile,
@@ -33,6 +36,7 @@ my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undon
             "undone_strains_file=s" => \$undoneStrainsFile,
             "varscan_directory=s" => \$varscanDirectory,
             "transcript_extdb_spec=s" => \$transcriptExtDbRlsSpec,
+            "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
             "minAllelePercent=i"=> \$minAllelePercent, 
@@ -49,7 +53,14 @@ if($help) {
 $minAllelePercent = 60 unless($minAllelePercent);
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
 
-unless(-e $newSampleFile && -e $gusConfigFile && -e $cacheFile && -e $undoneStrainsFile) {
+# First time through
+unless(-e $cacheFile) {
+  open(CACHE, ">$cacheFile") or die "Cannot create a cache file: $!";
+  close CACHE;
+}
+
+
+unless(-e $newSampleFile && -e $gusConfigFile && -e $undoneStrainsFile) {
   &usage("Required File Missing");
 }
 
@@ -57,7 +68,7 @@ unless(-d $varscanDirectory) {
   &usage("Required Directory Missing");
 }
 
-unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain) {
+unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain && $extDbRlsSpec) {
   &usage("Missing Required param value");
 }
 
@@ -84,7 +95,7 @@ my $SEQUENCE_QUERY_SH = $dbh->prepare($SEQUENCE_QUERY);
 my $dirname = dirname($cacheFile);
 
 my $tempCacheFile = $dirname . "/cache.tmp";
-my $snpOutputFile = $dirname . "/snp.tmp";
+my $snpOutputFile = $dirname . "/snpFeature.dat";
 
 my ($snpFh, $cacheFh);
 open($cacheFh, "> $tempCacheFile") or die "Cannot open file $tempCacheFile for writing: $!";
@@ -97,6 +108,7 @@ print STDERR "STRAINS=" . join(",", @allStrains) . "\n" if($debug);
 
 my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
+my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
 my $agpMap = &queryForAgpMap($dbh);
 my ($transcriptSummary, $exonLocs) = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
@@ -121,7 +133,6 @@ while($merger->hasNext()) {
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
   print STDERR "SEQUENCEID=$sequenceId\tLOCATION=$location\n" if($debug);
 
-  # TODO: This is only for the reference... check that we have this also for the consensus
   my $naSequenceId = $naSequenceIds->{$sequenceId};
   die "Could not find na_sequence_id for sequence source id: $sequenceId" unless($naSequenceId);
 
@@ -170,15 +181,18 @@ while($merger->hasNext()) {
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
-                              'external_database_release_id' => $transcriptExtDbRlsId,
-                              'location' => $location,
-                              'sequence_source_id' => $sequenceId,
-                              'matches_reference' => 1,
-                              'position_in_cds' => $positionInCds,
-                              'strain' => $referenceStrain,
-                              'product' => $referenceProduct,
+                           'external_database_release_id' => $transcriptExtDbRlsId,
+                           'location' => $location,
+                           'sequence_source_id' => $sequenceId,
+                           'matches_reference' => 1,
+                           'position_in_cds' => $positionInCds,
+                           'strain' => $referenceStrain,
+                           'product' => $referenceProduct,
                            'position_in_protein' => $positionInProtein,
                            'na_sequence_id' => $naSequenceId,
+                           'ref_na_sequence_id' => $naSequenceId,
+                           'snp_external_database_release_id' => $thisExtDbRlsId,
+
     };
     push @$variations, $referenceVariation;
   }
@@ -190,7 +204,6 @@ while($merger->hasNext()) {
   }
 
  # loop over all strains  add coverage vars
-    # TODO: Consider threading getting coverage variations
   my @variationStrains = map { $_->{strain} } @$variations;
   print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
@@ -212,15 +225,23 @@ while($merger->hasNext()) {
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
 
-      my $cachedNaSequenceId = $variation->{na_sequence_id};
-      die "cachedNaSequenceId did not match" if($naSequenceId != $cachedNaSequenceId);
+      my $cachedNaSequenceId = $variation->{ref_na_sequence_id};
+      die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
 
+      $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
       &printVariation($variation, $cacheFh);
       next;
     }
 
-    # TODO:  BUG... this should be the strain_na_sequence_id??
-    $variation->{na_sequence_id} = $naSequenceId;
+    $variation->{ref_na_sequence_id} = $naSequenceId;
+
+    my $varSequenceSourceId = "$sequenceId.$strain";
+    my $varNaSequenceId = $naSequenceIds->{$varSequenceSourceId};
+
+    $variation->{na_sequence_id} = $varNaSequenceId;
+    unless($varNaSequenceId) {
+      die "Didn't find an na_sequence_id for source_id $varSequenceSourceId";
+    }
 
     my $allele = $variation->{base};
 
@@ -236,18 +257,18 @@ while($merger->hasNext()) {
 
       my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInProtein) if($positionInProtein);
       
-      # TODO:  Look in the CBIL at SequenceUtils
       $variation->{product} = $p;
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
       $variation->{position_in_protein} = $positionInProtein; #got this from the reference
     }
 
     $variation->{external_database_release_id} = $extDbRlsId;
+    $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
     
     &printVariation($variation, $cacheFh);
   }
 
-  my $snp = &makeSNPFeatureFromVariations($variations, $referenceVariation, $geneNaFeatureId);
+  my $snp = &makeSNPFeatureFromVariations($variations, $referenceVariation, $geneNaFeatureId, $thisExtDbRlsId);
   &printSNP($snp, $snpFh);
 
   # need to track these so we know when to clear the cache
@@ -261,7 +282,6 @@ while($merger->hasNext()) {
   if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
-
 }
 
 close $cacheFh;
@@ -269,12 +289,16 @@ close $snpFh;
 &closeVarscanFiles($strainVarscanFileHandles);
 
 # Rename the output file to full cache file
-#unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
-#system("mv $tempCacheFile $cacheFile");
+unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
+rename $tempCacheFile, $cacheFile;
 
 # overwrite existing sample file w/ empty file
-#open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
-#close(TRUNCATE);
+open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
+close(TRUNCATE);
+
+# overwrite existing UndoneStrains file w/ empty file
+open(TRUNCATE, ">$undoneStrainsFile") or die "Cannot open file $undoneStrainsFile for writing: $!";
+close(TRUNCATE);
 
 $dbh->disconnect();
 close OUT;
@@ -313,7 +337,7 @@ sub queryNaSequenceIds {
 from SRES.sequenceontology so
     ,dots.nasequence s
 where s.sequence_ontology_id = so.sequence_ontology_id
-and so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+and so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome', 'variant_genome')
 ";
 
   my $sh = $dbh->prepare($sql);
@@ -443,27 +467,29 @@ sub usage {
   }
 
   print STDERR "usage:  processSequenceVariations.pl --new_sample_file=<FILE> --cache_file=<FILE> [--gusConfigFile=<GUS_CONFIG>] --undone_strains_file=<FILE> --varscan_directory=<DIR> --transcript_extdb_spec=s --organism_abbrev=s --reference_strain=s [--minAllelePercent=i]\n";
-  exit;
+  exit(0);
 }
 
 sub printVariation {
   my ($variation, $fh) = @_;
 
-    # TODO:  Rename "na_sequence_id" to "ref_na_sequence_id" and add nasequence id for the strain
-  my @keys = ('external_database_release_id',
-              'strain',
-              'sequence_source_id',
+  my @keys = ('sequence_source_id',
               'location',
+              'strain',
               'base',
+              'coverage',
+              'percent',
+              'quality',
+              'pvalue',
+              'external_database_release_id',
               'matches_reference',
+              'product',
               'position_in_cds',
               'position_in_protein',
-              'product',
-              'pvalue',
-              'percent',
-              'coverage',
-              'quality',
-              'na_sequence_id');
+              'na_sequence_id',
+              'ref_na_sequence_id',
+              'snp_external_database_release_id',
+      );
 
   print $fh join("\t", map {$variation->{$_}} @keys) . "\n";
 
@@ -472,16 +498,25 @@ sub printVariation {
 sub printSNP {
   my ($snp, $fh) = @_;
 
-  my @keys = ('gene_na_feature_id',
-              'source_id',
-              'na_sequence_id',
-              'location',
-              'reference_strain',
-              'reference_na',
-              'reference_aa',
-              'position_in_cds',
-              'position_in_protein',
-              # TODO ...
+  my @keys = ("gene_na_feature_id",
+              "source_id",
+              "na_sequence_id",
+              "location",
+              "reference_strain",
+              "reference_na",
+              "reference_aa",
+              "position_in_cds",
+              "position_in_protein",
+              "external_database_release_id",
+              "has_nonsynonymous_allele",
+              "major_allele",
+              "minor_allele",
+              "major_allele_count",
+              "minor_allele_count",
+              "major_product",
+              "minor_product",
+              "distinct_strain_count",
+              "distinct_allele_count"
       );
 
   print $fh join("\t", map {$snp->{$_}} @keys) . "\n";
@@ -489,7 +524,7 @@ sub printSNP {
 
 
 sub makeSNPFeatureFromVariations {
-  my ($variations, $referenceVariation, $geneNaFeatureId) = @_;
+  my ($variations, $referenceVariation, $geneNaFeatureId, $extDbRlsId) = @_;
 
   my $sequenceSourceId = $referenceVariation->{sequence_source_id};
   my $location = $referenceVariation->{location};
@@ -497,24 +532,38 @@ sub makeSNPFeatureFromVariations {
 
   my $referenceStrain = $referenceVariation->{strain};
 
-#TODO 
- #   external_database_release_id    number(10) not null,
- #   major_allele            varchar(1) not null,
- #   major_allele_count        number(5) not null,
- #   major_product            varchar(1),
- #   minor_product            varchar(1),
- #   minor_allele            varchar(10) not null,  /* note there could be  more than one */
- #   minor_allele_count        number(5) not null,
- #   has_nonsynonymous_allele    number(1)  /* if 1 then at least one allele 
+  my %alleleCounts;
+  my %productCounts;
+  my %strains;
+  foreach my $variation (@$variations) {
+    my $allele = $variation->{base};
+    my $product = $variation->{product};
+    my $strain = $variation->{strain};
 
+    $alleleCounts{$allele} ++;
+    $strains{$strain}++;
 
-# TODO:  Count distinct strains 
-# todo:  ref_seq_source_id
-# todo: GENE_STRAND
-# todo: gene_source_id
-# TODO:  what todo about lflank and rflank ... these are currently reference sequence
-  # makes sense to add this in the srt reportmaker for snps 
-# TODO: Count Number of distinct alleles
+    next if(uc($product) eq 'X');
+    $productCounts{$product}++;
+  }
+
+  my $distinctStrainCount = scalar keys %strains;
+  my $distinctAlleleCount =  scalar keys %alleleCounts;
+
+  my $hasNonSynonymousAllele = scalar keys %productCounts > 1 ? 1 : 0;
+
+  my @sortedAlleles = sort { ($alleleCounts{$b} cmp $alleleCounts{$a}) || ($a cmp $b) } keys %alleleCounts;
+  my @sortedProducts = sort { ($productCounts{$b} cmp $productCounts{$a}) || ($a cmp $b) } keys %productCounts;
+  my @sortedAlleleCounts = map {$alleleCounts{$_}} @sortedAlleles;
+
+  my $majorAllele = $sortedAlleles[0];
+  my $minorAllele = $sortedAlleles[1];
+
+  my $majorProduct = $sortedProducts[0];
+  my $minorProduct = $sortedProducts[1];
+
+  my $majorAlleleCount = $sortedAlleleCounts[0];
+  my $minorAlleleCount = $sortedAlleleCounts[1];
 
   return { "gene_na_feature_id" => $geneNaFeatureId,
            "source_id" => $snpSourceId,
@@ -525,6 +574,16 @@ sub makeSNPFeatureFromVariations {
            "reference_aa" => $referenceVariation->{product},
            "position_in_cds" => $referenceVariation->{position_in_cds},
            "position_in_protein" => $referenceVariation->{position_in_protein},
+           "external_database_release_id" => $extDbRlsId,
+           "has_nonsynonymous_allele" => $hasNonSynonymousAllele,
+           "major_allele" => $majorAllele,
+           "minor_allele" => $minorAllele,
+           "major_allele_count" => $majorAlleleCount,
+           "minor_allele_count" => $minorAlleleCount,
+           "major_product" => $majorProduct,
+           "minor_product" => $minorProduct,
+           "distinct_strain_count" => $distinctStrainCount,
+           "distinct_allele_count" => $distinctAlleleCount,
   };
 
 }

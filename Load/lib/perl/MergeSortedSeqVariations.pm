@@ -110,7 +110,7 @@ sub nextSNP {
 sub variation {
   my ($self, $lineAsArray) = @_;
 
-  my ($sequenceId, $location, $strain, $base, $coverage, $percent, $quality, $pvalue, $externalDatabaseReleaseId, $matchesReference, $product, $positionInCds) = @$lineAsArray;
+  my ($sequenceId, $location, $strain, $base, $coverage, $percent, $quality, $pvalue, $externalDatabaseReleaseId, $matchesReference, $product, $positionInCds, $positionInProtein, $naSequenceId, $refNaSequenceId, $snpExternalDatabaseReleaseId) = @$lineAsArray;
 
   my $rv = {'sequence_source_id' => $sequenceId,
             'location' => $location,
@@ -124,7 +124,10 @@ sub variation {
             'matches_reference' => $matchesReference,
             'product' => $product,
             'position_in_cds' => $positionInCds,
-            # need to add na_sequence_id (need to make sure this is in sync w/ processSequence var)
+            'position_in_protein' => $positionInProtein,
+            'na_sequence_id' => $naSequenceId,
+            'ref_na_sequence_id' => $refNaSequenceId,
+            'snp_external_database_release_id' => $snpExternalDatabaseReleaseId,
   };
   return $rv;
 }
