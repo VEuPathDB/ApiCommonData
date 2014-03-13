@@ -15,6 +15,12 @@ use CBIL::Util::V;
 
 use GUS::Supported::Util;
 
+use File::Temp;
+use File::Basename;
+
+use Bio::Coordinate::Pair;
+use Bio::Location::Simple;
+
 use Data::Dumper;
 
 my $argsDeclaration = 
@@ -105,6 +111,8 @@ my $documentation = { purpose=>$purpose,
 sub setGeneLocations {$_[0]->{_gene_locations} = $_[1]}
 sub getGeneLocations {$_[0]->{_gene_locations}}
 
+sub getAgpCoords {$_[0]->{_agp_coords}}
+
 #--------------------------------------------------------------------------------
 
 sub new {
@@ -132,6 +140,22 @@ sub run {
 
   my $file = $self->getArg('inputFile');
 
+  my $dirname = dirname($file);
+  my $basename = basename($file);
+  $basename =~ s/\.align-synteny//;
+  my $alignDir = "$dirname/alignments";
+
+  unless(-d $alignDir) {
+    $self->userError("Input Directory must contain alignments sub directory");
+  }
+
+  my ($organismAbbrevB, $organismAbbrevA) = split(/-/, $basename);
+  my $orgAAgp = "$dirname/$organismAbbrevA.agp";
+  my $orgBAgp = "$dirname/$organismAbbrevB.agp";
+
+  $self->addCoordPairs($orgAAgp, $organismAbbrevA);
+  $self->addCoordPairs($orgBAgp, $organismAbbrevB);
+
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
   my $count = 0;
@@ -143,10 +167,7 @@ sub run {
   while (<IN>) {
     chomp;
 
-    my ($synA, $synB) = $self->_handleSyntenySpan($_, $synDbRlsId);
-
-    push(@synA, $synA);
-    push(@synB, $synB);
+    my ($synA, $synB) = $self->_handleSyntenySpan($_, $synDbRlsId, $organismAbbrevA, $organismAbbrevB, $alignDir);
 
     # 2 Synteny rows each
     $count = $count + 2;
@@ -159,12 +180,43 @@ sub run {
   }
   close(IN);
 
-  $self->insertAnchors(\@synA);
-  $self->insertAnchors(\@synB);
-
   my $anchorCount = $self->getAnchorCount();
 
   return "inserted $count synteny spans and $anchorCount anchors ";
+}
+
+#--------------------------------------------------------------------------------
+
+sub addCoordPairs {
+  my ($self, $agp, $organismAbbrev) = @_;
+
+  open(AGP, $agp) or $self->error("Could not open file $agp for reading: $!");
+
+  while(<AGP>) {
+    chomp;
+    my @a = split(/\t/, $_);
+
+    next if($a[4] eq 'N');
+
+    my $ctg = Bio::Location::Simple->new( -seq_id => $a[5],
+                                          -start => $a[6], 
+                                          -end =>  $a[7],
+                                          -strand => $a[8] eq '-' ? -1 : +1,
+        );
+
+
+    my $assem = Bio::Location::Simple->new( -seq_id =>  $a[0],
+                                             -start => $a[1],
+                                             -end =>  $a[2],
+                                             -strand => '+1' ,
+        );
+    
+    my $agp = Bio::Coordinate::Pair->new( -in  => $assem, -out => $ctg );
+
+    push @{$self->{_agp_coords}->{$organismAbbrev}}, $agp;
+  }
+
+  close AGP;
 }
 
 #--------------------------------------------------------------------------------
@@ -234,7 +286,7 @@ B<Return Type:> ARRAY
 =cut
 
 sub _handleSyntenySpan {
-  my ($self, $line, $synDbRlsId) = @_;
+  my ($self, $line, $synDbRlsId, $organismAbbrevA, $organismAbbrevB, $alignDir) = @_;
 
   my ($a_id, $b_id,
       $a_start, $a_len,
@@ -251,8 +303,106 @@ sub _handleSyntenySpan {
   my $synteny = $self->makeSynteny($a_pk, $b_pk, $a_start, $b_start, $a_end, $b_end, $isReversed, $synDbRlsId);
   my $reverse = $self->makeSynteny($b_pk, $a_pk, $b_start, $a_start, $b_end, $a_end, $isReversed, $synDbRlsId);
 
+  my @sortedGeneLocations = sort {$a->{min} <=> $b->{min}}  @{$self->findGenes($a_pk, $a_start, $a_end)};
+
+  my $fh = File::Temp->new();
+  my $filename = $fh->filename();
+
+  foreach my $loc (@sortedGeneLocations) {
+    my $min = $loc->{min};
+    my $max = $loc->{max};
+
+    print $fh "$a_id $min $max +\n";
+  }
+
+  my @output = `cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'`;
+
+  my @pairsA;
+  my @pairsB;
+  my $orgALine;
+
+  foreach my $line(@output) {
+    chomp $line;
+    next if($line =~ /Interval not in map/);
+
+    unless($orgALine) {
+      $orgALine = $line;
+      next;
+    }
+
+    my $locA = $self->getSliceAlignLineLocation($orgALine, $organismAbbrevA);
+    my $locB = $self->getSliceAlignLineLocation($line, $organismAbbrevB);
+
+    unless($locA && $locB) {
+      $orgALine = undef;
+      next;
+    }
+
+
+    push @pairsA, [$locA->{a},$locB->{a} ];
+    push @pairsA, [$locA->{b},$locB->{b} ];
+
+    push @pairsB, [$locB->{a},$locA->{a} ];
+    push @pairsB, [$locB->{b},$locA->{b} ];
+
+    $orgALine = undef;
+  }
+
+  
+  my @sortedPairsA = sort {$a->[0] <=> $b->[0] } @pairsA;
+  $self->createSyntenyAnchors($synteny, \@sortedPairsA);  
+
+  my @sortedPairsB = sort {$a->[0] <=> $b->[0] } @pairsB;
+  $self->createSyntenyAnchors($reverse, \@sortedPairsB);  
+
   return($synteny, $reverse);
 }
+
+
+#--------------------------------------------------------------------------------
+
+sub getSliceAlignLineLocation {
+  my ($self, $line, $expectGenome) = @_;
+
+  if($line eq ">$expectGenome") {
+    return;
+  }
+
+  my ($genome, $contig, $start, $end, $strand) = $line =~ />([a-zA-Z0-9_]+) (\S*?):(\d+)-(\d+)([-+])/;
+
+  if($genome ne $expectGenome) {
+    print STDERR "$line\n";
+    $self->error("error reading output from sliceAlign");
+  }
+
+  my $agpLocations = $self->getAgpCoords();
+  my ($rv, $count);
+
+  foreach my $agp (@{$agpLocations->{$genome}}) {
+    my $assemStart = $agp->in()->start();
+    my $assemEnd = $agp->in()->end();
+    my $assemSeqId = $agp->in()->seq_id();
+
+    if($contig eq $assemSeqId && $start >= $assemStart && $end <= $assemEnd) {
+
+      my $matchOnAssem = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $start, -end =>  $end, -strand => +1 );
+
+      my $matchOnContig = $agp->map($matchOnAssem);
+      $rv = {a => $matchOnContig->start(), b => $matchOnContig->end()};
+
+
+      $count++;
+    }
+  }
+
+  if($count != 1) {
+    $self->error("could not find agp row containing $genome");
+  }
+
+  return $rv;
+}
+
 
 #--------------------------------------------------------------------------------
 
@@ -350,9 +500,10 @@ sub insertAnchors {
 #--------------------------------------------------------------------------------
 
 sub createSyntenyAnchors {
-  my ($self, $syntenyObj, $pairs) = @_;
+  my ($self, $syntenyObj, $sortedPairs) = @_;
 
-  my @sortedPairs = sort {$a->[0] <=> $b->[0] } @$pairs;
+  my @sortedPairs = @$sortedPairs;
+
 
   my $prevRefLoc = -9999999999;
   my $lastRefLoc = 9999999999;
