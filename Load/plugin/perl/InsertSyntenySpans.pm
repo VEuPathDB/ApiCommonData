@@ -290,9 +290,6 @@ B<Return Type:> ARRAY
 sub _handleSyntenySpan {
   my ($self, $line, $synDbRlsId, $organismAbbrevA, $organismAbbrevB, $alignDir) = @_;
 
-  print STDERR "ORGA=$organismAbbrevA\n";
-  print STDERR "ORGB=$organismAbbrevB\n";
-
   my ($a_id, $b_id,
       $a_start, $a_len,
       $b_start, $b_len,
@@ -320,8 +317,6 @@ sub _handleSyntenySpan {
     print $fh "$a_id $min $max +\n";
 #    print  "$a_id $min $max +\n";
   }
-
-  print STDERR "cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'\n";
 
   my @output = `cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'`;
 
