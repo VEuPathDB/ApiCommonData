@@ -176,6 +176,8 @@ sub run {
       $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
     }
 
+    $synA->submit();
+    $synB->submit();
     $self->undefPointerCache();
   }
   close(IN);
