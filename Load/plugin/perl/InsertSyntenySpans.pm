@@ -288,6 +288,9 @@ B<Return Type:> ARRAY
 sub _handleSyntenySpan {
   my ($self, $line, $synDbRlsId, $organismAbbrevA, $organismAbbrevB, $alignDir) = @_;
 
+  print STDERR "ORGA=$organismAbbrevA\n";
+  print STDERR "ORGB=$organismAbbrevB\n";
+
   my ($a_id, $b_id,
       $a_start, $a_len,
       $b_start, $b_len,
@@ -313,31 +316,31 @@ sub _handleSyntenySpan {
     my $max = $loc->{max};
 
     print $fh "$a_id $min $max +\n";
+#    print  "$a_id $min $max +\n";
   }
+
+  print STDERR "cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'\n";
 
   my @output = `cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'`;
 
   my @pairsA;
   my @pairsB;
-  my $orgALine;
+  my ($locA, $locB);
 
   foreach my $line(@output) {
     chomp $line;
     next if($line =~ /Interval not in map/);
 
-    unless($orgALine) {
-      $orgALine = $line;
-      next;
+    if($line =~  /$organismAbbrevA/) {
+      $locA = $self->getSliceAlignLineLocation($line, $organismAbbrevA);
     }
-
-    my $locA = $self->getSliceAlignLineLocation($orgALine, $organismAbbrevA);
-    my $locB = $self->getSliceAlignLineLocation($line, $organismAbbrevB);
+    if($line =~ /$organismAbbrevB/) {
+      $locB = $self->getSliceAlignLineLocation($line, $organismAbbrevB);
+    }
 
     unless($locA && $locB) {
-      $orgALine = undef;
       next;
     }
-
 
     push @pairsA, [$locA->{a},$locB->{a} ];
     push @pairsA, [$locA->{b},$locB->{b} ];
@@ -345,7 +348,8 @@ sub _handleSyntenySpan {
     push @pairsB, [$locB->{a},$locA->{a} ];
     push @pairsB, [$locB->{b},$locA->{b} ];
 
-    $orgALine = undef;
+    $locA = undef;
+    $locB = undef;
   }
 
   
@@ -371,7 +375,7 @@ sub getSliceAlignLineLocation {
   my ($genome, $contig, $start, $end, $strand) = $line =~ />([a-zA-Z0-9_]+) (\S*?):(\d+)-(\d+)([-+])/;
 
   if($genome ne $expectGenome) {
-    print STDERR "$line\n";
+    print STDERR "Genome [$genome] does not match [$expectGenome] for line:  $line\n";
     $self->error("error reading output from sliceAlign");
   }
 
