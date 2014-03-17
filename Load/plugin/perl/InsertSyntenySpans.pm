@@ -209,16 +209,16 @@ sub addCoordPairs {
 
     next if($a[4] eq 'N');
 
+
     my $ctg = Bio::Location::Simple->new( -seq_id => $a[5],
-                                          -start => $a[6], 
-                                          -end =>  $a[7],
+                                          -start => $a[6] - 1, 
+                                          -end =>  $a[7] -1 ,
                                           -strand => $a[8] eq '-' ? -1 : +1,
         );
 
-
     my $assem = Bio::Location::Simple->new( -seq_id =>  $a[0],
-                                             -start => $a[1],
-                                             -end =>  $a[2],
+                                             -start => $a[1] - 1,
+                                             -end =>  $a[2] - 1,
                                              -strand => '+1' ,
         );
     
@@ -388,28 +388,52 @@ sub getSliceAlignLineLocation {
   }
 
   my $agpLocations = $self->getAgpCoords();
-  my ($rv, $count);
+
+  my $rv = {};
+
 
   foreach my $agp (@{$agpLocations->{$genome}}) {
     my $assemStart = $agp->in()->start();
     my $assemEnd = $agp->in()->end();
     my $assemSeqId = $agp->in()->seq_id();
 
-    if($contig eq $assemSeqId && $start >= $assemStart && $end <= $assemEnd) {
 
+    if($contig eq $assemSeqId && $start >= $assemStart && $end <= $assemEnd) {
       my $matchOnAssem = Bio::Location::Simple->
           new( -seq_id => 'hit', -start =>   $start, -end =>  $end, -strand => +1 );
 
       my $matchOnContig = $agp->map($matchOnAssem);
       $rv = {a => $matchOnContig->start(), b => $matchOnContig->end()};
-
-
-      $count++;
     }
-  }
 
-  if($count != 1) {
-    $self->error("could not find agp row containing $genome");
+    else {
+
+      if($contig eq $assemSeqId && $start >= $assemStart && $start <= $assemEnd) {
+
+        my $matchOnAssem = Bio::Location::Simple->
+            new( -seq_id => 'hit', -start =>   $start, -end =>  $start, -strand => +1 );
+
+        my $matchOnContig = $agp->map($matchOnAssem);
+
+
+        # End is in a gap??
+        $rv = {a => $matchOnContig->start(), b => $matchOnContig->start() + 1};
+
+      }
+
+
+      if($contig eq $assemSeqId && $end <= $assemEnd && $end >= $assemStart) {
+
+        my $matchOnAssem = Bio::Location::Simple->
+            new( -seq_id => 'hit', -start =>   $end, -end =>  $end, -strand => +1 );
+
+        my $matchOnContig = $agp->map($matchOnAssem);
+
+        # Start is in a gap??
+        $rv = {a => $matchOnContig->end() - 1, b => $matchOnContig->end()};
+      }
+    }
+
   }
 
   return $rv;
