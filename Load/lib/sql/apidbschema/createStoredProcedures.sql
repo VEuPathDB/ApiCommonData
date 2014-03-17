@@ -407,33 +407,43 @@ return varchar2
 is
    lowerOrg varchar2(50);
    project varchar2(80);
+   isComponent number(1);
    queryFailed boolean;
 
 begin
 
+    queryFailed := false;
+
+    -- figure out whether we're in a component or portal instance
+    select count(*)
+    into isComponent
+    from all_tables
+    where owner = 'SRES'
+      and table_name = 'TAXON';
+
     lowerOrg := substr(lower(organism), 1, instr(organism||' ', ' ') - 1);
 
-    begin
+    if isComponent = 1 then
+        -- component instance: check apidb.Organism
+        begin
 
-      select project_id
-      into project
-      from (select critter, max(project_id) as project_id
-            from (select project_id,
-                         substr(lower(family_name_for_files), 1, instr(family_name_for_files||' ', ' ') - 1) as critter
-                  from ApidbTuning.OrganismAttributes
-                  where family_name_for_files is not null
-                  union
-                  select project_id,
-                         substr(lower(organism_name), 1, instr(organism_name||' ', ' ') - 1) as critter
-                  from ApidbTuning.OrganismAttributes
-                  union
-                  select project_id,
-                         substr(lower(term), 1, instr(term||' ', ' ') - 1) as critter
-                  from ApidbTuning.OrganismTree
-                 )
-            group by critter
-           )
-      where critter = lowerOrg;
+	    execute immediate
+                'select project_id ' ||
+                'from (select critter, max(project_id) as project_id ' ||
+                '      from (select project_name as project_id, ' ||
+                '                   substr(lower(family_name_for_files), 1, instr(family_name_for_files||'' '', '' '') - 1) as critter ' ||
+                '            from apidb.Organism ' ||
+                '            where family_name_for_files is not null ' ||
+                '            union ' ||
+                '            select o.project_name as project_id, ' ||
+                '                   substr(lower(tn.name), 1, instr(tn.name||'' '', '' '') - 1) as critter ' ||
+                '            from apidb.Organism o, sres.TaxonName tn ' ||
+                '            where o.taxon_id = tn.taxon_id ' ||
+                '           ) ' ||
+                '      group by critter ' ||
+                '     ) ' ||
+                'where critter = ''' || lowerOrg || ''''
+            into project;
 
             exception
 
@@ -441,6 +451,40 @@ begin
               queryFailed := true;
 
         end;
+
+    else
+        -- portal instance: check ApidbTuning.OrganismAttributes and ApidbTuning.OrganismTree
+        begin
+
+	    execute immediate
+                'select project_id ' ||
+                'from (select critter, max(project_id) as project_id ' ||
+                '      from (select project_id, ' ||
+                '                   substr(lower(family_name_for_files), 1, instr(family_name_for_files||'' '', '' '') - 1) as critter ' ||
+                '            from ApidbTuning.OrganismAttributes ' ||
+                '            where family_name_for_files is not null ' ||
+                '            union ' ||
+                '            select project_id, ' ||
+                '                   substr(lower(organism_name), 1, instr(organism_name||'' '', '' '') - 1) as critter ' ||
+                '            from ApidbTuning.OrganismAttributes ' ||
+                '            union ' ||
+                '            select project_id, ' ||
+                '                   substr(lower(term), 1, instr(term||'' '', '' '') - 1) as critter ' ||
+                '            from ApidbTuning.OrganismTree ' ||
+                '           ) ' ||
+                '      group by critter ' ||
+                '     ) ' ||
+                'where critter = ''' || lowerOrg || ''''
+            into project;
+
+            exception
+
+              when NO_DATA_FOUND then
+              queryFailed := true;
+
+        end;
+
+    end if;
 
     if queryFailed then
          -- use hardwired genus->project mappings
