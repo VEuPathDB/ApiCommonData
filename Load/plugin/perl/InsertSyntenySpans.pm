@@ -149,7 +149,16 @@ sub run {
     $self->userError("Input Directory must contain alignments sub directory");
   }
 
-  my ($organismAbbrevB, $organismAbbrevA) = split(/-/, $basename);
+
+  my $gffFileA = $self->getArg('gffFileA');
+  my $gffFileB = $self->getArg('gffFileB');
+
+  my $organismAbbrevA = basename($gffFileA);
+  my $organismAbbrevB = basename($gffFileB);
+
+  $organismAbbrevA =~ s/\.gff//;
+  $organismAbbrevB =~ s/\.gff//;
+
   my $orgAAgp = "$dirname/$organismAbbrevA.agp";
   my $orgBAgp = "$dirname/$organismAbbrevB.agp";
 
