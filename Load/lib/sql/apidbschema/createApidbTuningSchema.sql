@@ -30,21 +30,4 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to ApiDBTuning;
 CREATE INDEX ApidbTuning.blastp_text_ix
 ON core.tableinfo(superclass_table_id, table_id, database_id);
 
--- create empty stubs of OrganismAttributes and OrganismTree, so we can 
--- make functions that reference them before the tuning manager has run
--- (for apidb.project_id())
-create table ApidbTuning.OrganismAttributes0000 (
-  project_id            varchar2(20),
-  organism_name         varchar2(20),
-  family_name_for_files varchar2(20)
-);
-grant select on ApidbTuning.OrganismAttributes0000 to public;
-create synonym ApidbTuning.OrganismAttributes for ApidbTuning.OrganismAttributes0000;
-
-create table ApidbTuning.OrganismTree0000 (
-  project_id varchar2(20),
-  term       varchar2(20)
-);
-grant select on ApidbTuning.OrganismTree0000 to public;
-create synonym ApidbTuning.OrganismTree for ApidbTuning.OrganismTree0000;
 exit
