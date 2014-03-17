@@ -350,6 +350,18 @@ sub _handleSyntenySpan {
       next;
     }
 
+    unless(defined($locA->{a}) &&
+           defined($locA->{b}) &&
+           defined($locB->{a}) &&
+           defined($locB->{b})) {
+
+
+      $locA = undef;
+      $locB = undef;
+      next;
+    }
+
+
     push @pairsA, [$locA->{a},$locB->{a} ];
     push @pairsA, [$locA->{b},$locB->{b} ];
 
@@ -415,10 +427,7 @@ sub getSliceAlignLineLocation {
 
         my $matchOnContig = $agp->map($matchOnAssem);
 
-
-        # End is in a gap??
-        $rv = {a => $matchOnContig->start(), b => $matchOnContig->start() + 1};
-
+        $rv->{a} = $matchOnContig->start();
       }
 
 
@@ -429,12 +438,20 @@ sub getSliceAlignLineLocation {
 
         my $matchOnContig = $agp->map($matchOnAssem);
 
-        # Start is in a gap??
-        $rv = {a => $matchOnContig->end() - 1, b => $matchOnContig->end()};
+        $rv->{b} = $matchOnContig->end();
       }
     }
-
   }
+
+
+  if($rv->{a} && !defined($rv->{b})) {
+    $rv->{b} = $rv->{a} + ($end - $start);
+  }
+
+  if($rv->{b} && !defined($rv->{a})) {
+    $rv->{a} = $rv->{b} - ($end - $start);
+  }
+
 
   return $rv;
 }
