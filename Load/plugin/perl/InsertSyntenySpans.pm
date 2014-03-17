@@ -299,9 +299,9 @@ B<Return Type:> ARRAY
 sub _handleSyntenySpan {
   my ($self, $line, $synDbRlsId, $organismAbbrevA, $organismAbbrevB, $alignDir) = @_;
 
-  my ($a_id, $b_id,
-      $a_start, $a_len,
+  my ($b_id, $a_id,
       $b_start, $b_len,
+      $a_start, $a_len,
       $strand) = split(" ", $line);
 
   my $a_pk = $self->getNaSequenceId($a_id);
@@ -328,6 +328,8 @@ sub _handleSyntenySpan {
   }
 
   my @output = `cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'`;
+
+#  print STDERR "cat $filename|sliceAlignment $alignDir $organismAbbrevA 2>/dev/null|grep '>'\n";
 
   my @pairsA;
   my @pairsB;
