@@ -149,7 +149,7 @@ for (( i = 1 ; i < ${#BASENAMES[@]} ; i++ ))
        AGP_FILE=$MERCATOR_OUTPUT/${BASENAMES[$i]}.agp
        OUT=$MERCATOR_DIR/${BASENAMES[$i]}-${BASENAMES[$j]}.align
 
-       $MAP_DRAFT ${BASENAMES[$i]} ${BASENAMES[$j]} $AGP_FILE $ALIGN_DIR >$OUT
+       bash -e $MAP_DRAFT ${BASENAMES[$i]} ${BASENAMES[$j]} $AGP_FILE $ALIGN_DIR >$OUT
      done
   done
  

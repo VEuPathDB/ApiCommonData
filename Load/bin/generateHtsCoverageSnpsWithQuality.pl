@@ -68,7 +68,7 @@ my $row_user_id;
 my $row_group_id;
 my $row_project_id;
 
-my $snpSQL = <<EOSQL;
+my $snpSQL = "
 select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.strain,sv.row_alg_invocation_id,sv.row_group_id,sv.row_project_id,sv.row_user_id,sv.sequence_ontology_id,sv.matches_reference
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
 SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s, sres.sequenceontology so
@@ -81,7 +81,7 @@ and l.na_feature_id = sf.na_feature_id
 and s.na_sequence_id = sf.na_sequence_id
 and sf.sequence_ontology_id = so.sequence_ontology_id
 and so.term_name = 'SNP'
-EOSQL
+";
 
 my %snps;
 
