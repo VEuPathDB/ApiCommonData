@@ -40,17 +40,20 @@ sub bedName {
 my @bedFiles = `ls $experimentDir/*.bed`;
 
 #Determine which one is the ref for the expt (should have 'ref' in filename)
-# TODO - this needs to exit if there is >1 ref file too
-my $index = 0;
 my $refFile;
-$index ++ until index($bedFiles[$index], 'ref') != -1 or $index == scalar @bedFiles -1;
-#Check that you have found ref and not just reached end of array
-if (index($bedFiles[$index], 'ref') != -1) {
-    #Set reference file and remove from array
-    $refFile = $bedFiles[$index];
-    splice(@bedFiles, $index, 1);
+if (grep(/ref/, @bedFiles) <= 1){
+    my $index = 0;
+    $index ++ until index($bedFiles[$index], 'ref') != -1 or $index == scalar @bedFiles -1;
+    #Check that you have found ref and not just reached end of array
+    if (index($bedFiles[$index], 'ref') != -1) {
+        #Set reference file and remove from array
+        $refFile = $bedFiles[$index];
+        splice(@bedFiles, $index, 1);
+    }else{
+        die "There is no reference file";
+    }
 }else{
-    die "There is no reference file";
+    die "There is more than one reference file";
 }
 
 # Calculate coverage ratio for each sample in comparison to the reference
