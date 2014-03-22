@@ -182,7 +182,6 @@ sub run {
         my $syntenyStartA = $synteny->{$pk}->{$organismAbbrevA}->{synteny_start};
         my $syntenyEndA = $synteny->{$pk}->{$organismAbbrevA}->{synteny_end};
         $syntenyA = $self->findPartialSyntenyLoc($fullSyntenyLocA, $syntenyStartA, $syntenyEndA);
-        
       }
 
       if($seqIdStats->{$seqIdB}->{counts} == 1) {
@@ -192,8 +191,11 @@ sub run {
         my $syntenyEndB = $synteny->{$pk}->{$organismAbbrevB}->{synteny_end};
 
         $syntenyB = $self->findPartialSyntenyLoc($fullSyntenyLocB, $syntenyStartB, $syntenyEndB);
-
       }
+
+
+#      print "SyntenyA: " . $syntenyA->seq_id . " " . $syntenyA->start . " " . $syntenyA->end . "\n";
+#      print "SyntenyB: " . $syntenyB->seq_id . " " . $syntenyB->start . " " . $syntenyB->end . "\n";
 
       my @pairs;
 
@@ -404,8 +406,8 @@ sub findPartialSyntenyLoc {
     $newEnd = defined($fragEnd) ? $fragEnd : $end;
   }
   else {
-    $newStart = defined($fragStart) ? $fragEnd : $start;
-    $newEnd = defined($fragEnd) ? $fragStart : $end;
+    $newStart = defined($fragEnd) ? $fragEnd : $start;
+    $newEnd = defined($fragStart) ? $fragStart : $end;
   }
 
   my $rv = Bio::Location::Simple->
