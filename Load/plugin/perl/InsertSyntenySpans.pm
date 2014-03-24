@@ -211,11 +211,11 @@ sub run {
       }
 
       my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId);
-      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
-
       $syntenyObjA->submit();
-      $syntenyObjB->submit();
+      $self->undefPointerCache();
 
+      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
+      $syntenyObjB->submit();
       $self->undefPointerCache();
 
       if($count && $count % 500 == 0) {
