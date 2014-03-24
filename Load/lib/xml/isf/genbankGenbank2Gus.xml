@@ -41,6 +41,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="inference" ignore="true"/>
     <qualifier name="artificial_location" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="colour" ignore="true"/>
+    <qualifier name="similarity" ignore="true"/>
+    <qualifier name="partial"         handler="api" method="setPartial"/>
     <qualifier name="pseudo"         handler="api" method="setPseudo"/>
   </feature>
 
@@ -176,6 +180,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="source" table="DoTS::Source" so="">
+    <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="chromosome"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="isolate"/>
@@ -190,6 +195,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="country" ignore="true"/>
     <qualifier name="specific_host" ignore="true"/>
     <qualifier name="note"			ignore="true"/>
+    <qualifier name="primary_name"			ignore="true"/>
     <qualifier name="tissue_type"/>
     <qualifier name="cell_type"/>
     <qualifier name="clone"/>
