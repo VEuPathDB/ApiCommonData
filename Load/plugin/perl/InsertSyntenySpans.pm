@@ -108,6 +108,8 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
 
   my $dirname = $self->getArg('inputDirectory');
 
