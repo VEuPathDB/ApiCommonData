@@ -45,13 +45,14 @@ sub preprocess {
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	   
-	    if($type eq 'repeat_region'){
-			if($bioperlFeatureTree->has_tag("satellite")){
-		    	$bioperlFeatureTree->primary_tag("microsatellite");
+	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap'){
+			if ($type eq 'assembly_gap'){
+			  $bioperlFeatureTree->primary_tag("gap");
 			}
 			if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    	$bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 			}
+			$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 
 	    if($type eq 'STS'){
@@ -205,7 +206,8 @@ sub traverseSeqFeatures {
 	    if($type eq 'mRNA'){
 		$type = 'coding';
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
