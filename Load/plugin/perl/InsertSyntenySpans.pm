@@ -108,6 +108,8 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
 
   my $dirname = $self->getArg('inputDirectory');
 
@@ -143,9 +145,10 @@ sub run {
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
   while(<MAP>) {
     chomp;
-
     #1       assembled7      14891   39021   +       assembled34     2947    27303   +
     my ($subdir, $assemA, $startA, $endA, $strandA, $assemB, $startB, $endB, $strandB) = split(/\t/, $_);
+
+#    next unless($assemA eq 'assembled6' && $assemB eq 'assembled73');
 
     my $constraints = $self->readConstraints("$alignDir/$subdir/cons");
 
@@ -188,9 +191,13 @@ sub run {
       } else {
         my $syntenyStartB = $synteny->{$pk}->{$organismAbbrevB}->{synteny_start};
         my $syntenyEndB = $synteny->{$pk}->{$organismAbbrevB}->{synteny_end};
+
         $syntenyB = $self->findPartialSyntenyLoc($fullSyntenyLocB, $syntenyStartB, $syntenyEndB);
       }
 
+
+#      print "SyntenyA: " . $syntenyA->seq_id . " " . $syntenyA->start . " " . $syntenyA->end . "\n";
+#      print "SyntenyB: " . $syntenyB->seq_id . " " . $syntenyB->start . " " . $syntenyB->end . "\n";
 
       my @pairs;
 
@@ -206,11 +213,11 @@ sub run {
       }
 
       my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId);
-      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
-
       $syntenyObjA->submit();
-      $syntenyObjB->submit();
+      $self->undefPointerCache();
 
+      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
+      $syntenyObjB->submit();
       $self->undefPointerCache();
 
       if($count && $count % 500 == 0) {
@@ -358,8 +365,8 @@ sub separateByAnchors {
       my $syntenyEndA = $isReversedA ? $prevAnchorA - $additionA : $prevAnchorA + $additionA;
       my $syntenyEndB = $isReversedB ? $prevAnchorB - $additionB : $prevAnchorB + $additionB;
 
-      $synteny{$synPk}->{$organismAbbrevA}->{synteny_end} = $syntenyEndA;
-      $synteny{$synPk}->{$organismAbbrevB}->{synteny_end} = $syntenyEndB;
+      $synteny{$synPk}->{$organismAbbrevA}->{synteny_end} = $prevSeqA eq $locA->seq_id ? $syntenyEndA : undef;
+      $synteny{$synPk}->{$organismAbbrevB}->{synteny_end} = $prevSeqB eq $locB->seq_id ? $syntenyEndB : undef;
 
       # Here is where we switch to the next row of synteny
       $synPk++;
@@ -367,8 +374,8 @@ sub separateByAnchors {
       my $syntenyStartA = $isReversedA ? $locA->start() + $additionA : $locA->start() - $additionA;
       my $syntenyStartB = $isReversedB ? $locB->start() + $additionB : $locB->start() - $additionB;
 
-      $synteny{$synPk}->{$organismAbbrevA}->{synteny_start} = $syntenyStartA;
-      $synteny{$synPk}->{$organismAbbrevB}->{synteny_start} = $syntenyStartB;
+      $synteny{$synPk}->{$organismAbbrevA}->{synteny_start} = $prevSeqA eq $locA->seq_id ? $syntenyStartA : undef;
+      $synteny{$synPk}->{$organismAbbrevB}->{synteny_start} = $prevSeqB eq $locB->seq_id ? $syntenyStartB : undef;
     }
       
     $synteny{$synPk}->{$organismAbbrevA}->{seq_id} = $locA->seq_id;
@@ -394,9 +401,16 @@ sub findPartialSyntenyLoc {
 
   my $start = $synteny->start();
   my $end = $synteny->end();
-  
-  my $newStart = defined($fragStart) ? $fragStart : $start;
-  my $newEnd = defined($fragEnd) ? $fragEnd : $end;
+
+  my ($newStart, $newEnd);
+  if($synteny->strand == 1) {
+    $newStart = defined($fragStart) ? $fragStart : $start;
+    $newEnd = defined($fragEnd) ? $fragEnd : $end;
+  }
+  else {
+    $newStart = defined($fragEnd) ? $fragEnd : $start;
+    $newEnd = defined($fragStart) ? $fragStart : $end;
+  }
 
   my $rv = Bio::Location::Simple->
       new( -seq_id => $synteny->seq_id, -start => $newStart, -end => $newEnd, -strand => $synteny->strand());
