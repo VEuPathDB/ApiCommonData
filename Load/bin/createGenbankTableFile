@@ -231,6 +231,13 @@ select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId)";
       ## need to print condon_start if $prefix5
       print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5);
 
+      ## get transl_table info
+      my $translTable;
+      my $sqlTranslTable = "select transl_table from dots.transcript where parent_id=$gNaFeatureId";
+      my $translTableRef = readFromDatabase($dbh, $sqlTranslTable);
+      $translTable = $translTableRef->[0];
+      print TBL "\t\t\ttransl_table\t$translTable\n" if ($translTable);  ## only print transl_table if it is not null
+
       ## add protein sequence
       my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
  (select aa_sequence_id from DOTS.translatedaafeature where na_feature_id in
