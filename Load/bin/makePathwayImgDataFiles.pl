@@ -79,8 +79,10 @@ foreach my $pathwayId (@pids) {
     $node{$id}->{pathName} = $pathName;
 
     if ($type eq 'enzyme') {
+      print "Getting orgs for enzyme: $display\n" if $verbose;
       $node{$id}->{ecOrgs} = &getOrganismsQuery($display, "NOT");
       $node{$id}->{ecOrgsOrthomcl} = &getOrganismsQuery($display, "");
+      print "Got orgs for enzyme: $display\n" if $verbose;
     }
   }
 
