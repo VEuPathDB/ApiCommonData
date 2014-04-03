@@ -1,0 +1,52 @@
+<!--
+The feature and qualifier names to use here follow those set by BioPerl's
+tree structure and any reshaping/renaming done by bioperlSeqPreprocessor, not
+necessarily by what's defined in the input (eg. Genbank) file
+-->
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::GenemRNACdsUtr2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <!-- genbank feature CDS reshaped to coding_gene -->
+  <feature name="coding_gene" so="protein_coding">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Parent" handler="api" method="setParent"/>
+    <qualifier name="transcript_id"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+
+  <feature name="transcript">
+    <qualifier name="CDSLength" ignore="true"/>
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
+    <qualifier name="OrderNumber"    column="order_number"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="ID" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="exonType" ignore="true"/>
+  </feature>
+  
+  <feature name="UTR" table="DoTS::UTRFeature" so="">
+    <qualifier name="Parent" ignore="true"/>
+  </feature>
+
+</mapping>
