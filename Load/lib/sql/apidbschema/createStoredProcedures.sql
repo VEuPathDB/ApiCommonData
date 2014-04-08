@@ -599,7 +599,6 @@ begin
             when 'sordaria' then project := 'FungiDB';
             when 'sordariaceae' then project := 'FungiDB';
             when 'sordariomycetes' then project := 'FungiDB';
-            when 'spironucleus' then project := 'GiardiaDB';
             when 'spizellomyces' then project := 'FungiDB';
             when 'spizellomycetaceae' then project := 'FungiDB';
             when 'sporisorium' then project := 'FungiDB';
