@@ -56,6 +56,7 @@ foreach my $d (map  { $_->[0] }
   my $expt = "unique";
   my $strand = "forward";
   my $selected = 1;
+  my $islogged = 1;
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
@@ -67,6 +68,8 @@ foreach my $d (map  { $_->[0] }
     $selected = 0 if $f =~ /NU/;
     $strand = 'reverse' if $f =~ /minus/;
     $strand = 'forward' if $f =~ /plus/;
+    $islogged = 1 if $f !~ /unlogged/i;
+    $islogged = 0 if $f =~ /unlogged/i;
 
     if($f =~ /minus/ || $f =~ /plus/) {
       $meta =<<EOL;
@@ -76,6 +79,7 @@ display_name = $sample ($expt $strand)
 sample       = $sample
 alignment    = $expt
 strand       = $strand
+islogged     = $islogged
 type         = Coverage
 
 EOL
@@ -86,6 +90,7 @@ EOL
 display_name = $sample ($expt)
 sample       = $sample
 alignment    = $expt
+islogged     = $islogged
 type         = Coverage
 
 EOL

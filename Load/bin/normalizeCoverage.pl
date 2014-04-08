@@ -103,16 +103,21 @@ sub update_coverage {
       open(F, "$k/$f");
 
       open OUT, ">$out_dir/$f";
+      open OUTUNLOGGED, ">$out_dir/$f_unlogged";
       <F>;
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
         my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 1) );
-
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
+
+        my $normalized_score_unlogged = $score == 0 ? 0 : sprintf ("%.2f", max(($score * $max_sum_coverage / $v ), 1) );
+        print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score_unlogged\n";
+
       }
       close F;
       close OUT;
+      close OUTUNLOGGED;
     }
   }
 }
