@@ -2,8 +2,9 @@
 
 use strict;
 use Getopt::Long;
-use CBIL::Util::Utils;
 use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::Utils;
+use List::Util qw(min max);
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
@@ -70,11 +71,20 @@ sub merge_normalized_coverage {
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus_unlogged.bw"); 
+
     } else {  # regular Unique +, Nonunique -
       #&runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
       #&runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_unlogged.bw"); 
+
     }
   }
 }
@@ -102,16 +112,21 @@ sub update_coverage {
       open(F, "$k/$f");
 
       open OUT, ">$out_dir/$f";
+      open OUTUNLOGGED, ">$out_dir/${f}_unlogged";
       <F>;
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
-        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", log($score * $max_sum_coverage / $v )/log(2) );
-
+        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 1) );
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
+
+        my $normalized_score_unlogged = $score == 0 ? 0 : sprintf ("%.2f", max(($score * $max_sum_coverage / $v ), 1) );
+        print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score_unlogged\n";
+
       }
       close F;
       close OUT;
+      close OUTUNLOGGED;
     }
   }
 }

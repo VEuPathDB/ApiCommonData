@@ -2,8 +2,8 @@
 
 use strict;
 use Getopt::Long;
-use CBIL::Util::Utils;
 use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::Utils;
 
 # this script loops through each sample output directory and copy normalized bedgraph files to webService Dir. 
 
@@ -32,7 +32,11 @@ die $usage unless -e $outputDir;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-foreach my $d (sort @ds) {
+# sort diretory name by the number in the string, e.g. hour2, hour10, hour20...
+#foreach my $d (sort @ds) {
+foreach my $d (map  { $_->[0] }
+               sort { $a->[1] <=> $b->[1] }
+               map  { [$_, $_=~/(\d+)/] } @ds) {
   next unless $d =~ /^analyze_(\S+)/;
   $inputDir =~ s/\/$//;
   my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
@@ -52,6 +56,7 @@ foreach my $d (sort @ds) {
   my $expt = "unique";
   my $strand = "forward";
   my $selected = 1;
+  my $islogged = 1;
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
@@ -63,6 +68,8 @@ foreach my $d (sort @ds) {
     $selected = 0 if $f =~ /NU/;
     $strand = 'reverse' if $f =~ /minus/;
     $strand = 'forward' if $f =~ /plus/;
+    $islogged = 1 if $f !~ /unlogged/i;
+    $islogged = 0 if $f =~ /unlogged/i;
 
     if($f =~ /minus/ || $f =~ /plus/) {
       $meta =<<EOL;
@@ -72,6 +79,7 @@ display_name = $sample ($expt $strand)
 sample       = $sample
 alignment    = $expt
 strand       = $strand
+islogged     = $islogged
 type         = Coverage
 
 EOL
@@ -82,6 +90,7 @@ EOL
 display_name = $sample ($expt)
 sample       = $sample
 alignment    = $expt
+islogged     = $islogged
 type         = Coverage
 
 EOL
