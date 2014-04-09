@@ -117,6 +117,8 @@ sub update_coverage {
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
+        next unless ($chr && $start && $stop && $score);
+
         my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 1) );
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
 
