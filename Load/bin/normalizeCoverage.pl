@@ -71,11 +71,20 @@ sub merge_normalized_coverage {
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus_unlogged.bw"); 
+
     } else {  # regular Unique +, Nonunique -
       #&runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
       #&runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
       &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_unlogged.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov_unlogged $topLevelSeqSizeFile $k/normalized/final/RUM_NU_unlogged.bw"); 
+
     }
   }
 }
