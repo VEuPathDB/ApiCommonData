@@ -57,20 +57,20 @@ foreach my $d (map  { $_->[0] }
   my $expt = "unique";
   my $strand = "forward";
   my $selected = 1;
-  #my $islogged = 1;
+  my $count = 0;
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
   foreach my $f(sort @fs) {
     next if $f !~ /\.bw$/;
+    $count++;
     $expt = 'non-unique' if $f =~ /NU/;
     $expt = 'unique' if $f =~ /Unique/;
     $selected = 1 if $f =~ /Unique/;
     $selected = 0 if $f =~ /NU/;
+    $selected = 0 if $count > 15;
     $strand = 'reverse' if $f =~ /minus/;
     $strand = 'forward' if $f =~ /plus/;
-    #$islogged = 1 if $f !~ /unlogged/i;
-    #$islogged = 0 if $f =~ /unlogged/i;
 
     if($f =~ /minus/ || $f =~ /plus/) {
       $meta =<<EOL;
