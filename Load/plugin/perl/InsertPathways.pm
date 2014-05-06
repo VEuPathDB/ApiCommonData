@@ -7,7 +7,7 @@ use warnings;
 use Data::Dumper;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::ParseKeggXml;
-use GUS::Supported::ParseXgmml;
+use GUS::Supported::ParseMpmp;
 use GUS::Supported::MetabolicPathway;
 use GUS::Supported::MetabolicPathways;
 use GUS::Model::ApiDB::NetworkContext;
@@ -44,11 +44,11 @@ sub getArgsDeclaration {
                 }),
 
      enumArg({ name           => 'format',
-               descr          => 'The file format for pathways (Kegg, XGMML, Biopax, Other)',
+               descr          => 'The file format for pathways (Kegg, MPMP, Biopax, Other)',
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
-               enum           => 'KEGG, XGMML, Biopax, Other'
+               enum           => 'KEGG, MPMP, Biopax, Other'
              }),
 
      stringArg({ name => 'imageFileDir',
@@ -68,9 +68,9 @@ sub getArgsDeclaration {
 # ----------------------------------------------------------------------
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts pathways from a set of KGML or XGMML files into Network schema.";
+  my $purposeBrief = "Inserts pathways from a set of KGML or XGMML (MPMP) files into Network schema.";
 
-  my $purpose =  "Inserts pathways from a set of KGML or XGMML files into Network schema.";
+  my $purpose =  "Inserts pathways from a set of KGML or XGMML (MPMP) files into Network schema.";
 
   my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.NetworkRelContextLink','One row per association between a relationship and a network'],['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']];
 
@@ -122,7 +122,7 @@ sub run {
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
   my $pathwayFormat = $self->getArg('format');
-  my $extension = ($pathwayFormat eq 'XGMML') ? 'xgmml' : 'xml';
+  my $extension = ($pathwayFormat eq 'MPMP') ? 'xgmml' : 'xml';
 
   my @pathwayFiles = <$inputFileDir/*.$extension>;
   die "No $extension files found in the directory $inputFileDir\n" if not @pathwayFiles;
@@ -131,7 +131,7 @@ sub run {
   $self->{"pathwaysCollection"} = $pathwaysObj;
 
   $self->readKeggFiles(\@pathwayFiles) if $pathwayFormat eq 'KEGG';
-  $self->readXgmmlFiles(\@pathwayFiles) if $pathwayFormat eq 'XGMML';
+  $self->readXgmmlFiles(\@pathwayFiles) if ($pathwayFormat eq 'MPMP');
 
   $self->loadPathway($pathwayFormat);
 }
@@ -264,7 +264,7 @@ sub readKeggFiles {
 sub readXgmmlFiles {
   my ($self, $xgmmlFiles) = @_;
 
-  my $xgmmlParser = new GUS::Supported::ParseXgmml;
+  my $xgmmlParser = new GUS::Supported::ParseMpmp;
 
   my $pathwaysObj = $self->{pathwaysCollection};
   print "Reading XGMML files...\n";
