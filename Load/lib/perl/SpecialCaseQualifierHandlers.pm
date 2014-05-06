@@ -1468,6 +1468,7 @@ sub validateGene {
 
 		  $msg .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
 		  $msg .= "Pseudogene " if ($feature->getIsPseudo());
+		  $msg .= "Partial gene " if ($feature->getIsPartial());
 
 		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)."\n";
 	
@@ -1486,6 +1487,7 @@ sub validateGene {
 
 		    $warning .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
 		    $warning .= "Pseudogene " if ($feature->getIsPseudo());
+		    $warning .= "Partial gene " if ($feature->getIsPartial());
 
 		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
