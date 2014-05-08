@@ -291,6 +291,35 @@ sub readXgmmlFiles {
                                             y => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{Y}
 					    });
     }
+
+
+    foreach my $edge_id (keys %{$pathwayElements->{EDGES}}) {
+      my $edge = $pathwayElements->{EDGES}->{$edge_id};
+      my $source_id = $edge->{SOURCE_ID};
+      my $target_id =  $edge->{TARGET_ID};
+
+      my ($source, $target);
+      foreach my $node (keys %{$pathwayElements->{NODES}}) {
+	if ($pathwayElements->{NODES}->{$node}->{ENTRY_ID} eq $source_id) {
+	  $source = $pathwayElements->{NODES}->{$node}->{UNIQ_ID};
+	}
+	if ($pathwayElements->{NODES}->{$node}->{ENTRY_ID} eq $target_id) {
+	  $target = $pathwayElements->{NODES}->{$node}->{UNIQ_ID};
+	}
+      }
+
+      $pathwayObj->setPathwayNodeAssociation("$edge_id",
+					     {  source_node => $source,
+						associated_node => $target,
+						assoc_type => "mpmp",
+						direction => 1,
+						reaction_name => $edge_id
+					     });
+
+
+    }
+
+
     $pathwaysObj->setPathwayObj($pathwayObj);
     #print STDOUT Dumper $pathwaysObj;
   }
@@ -380,12 +409,12 @@ sub loadPathway {
         next if (!$reaction->{source_node} || !$reaction->{associated_node});
 
         #source node
-        my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
+	my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
         my $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
         my $srcNodeId = $self->loadNetworkNode($pathwayId, $srcNode, $nodeGraphics);
 
         #associated node
-        my $asscNode = $pathwayObj->{nodes}->{($reaction->{associated_node})}; 
+	my $asscNode = $pathwayObj->{nodes}->{($reaction->{associated_node})};
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
         my $asscNodeId = $self->loadNetworkNode($pathwayId, $asscNode, $nodeGraphics);
 
