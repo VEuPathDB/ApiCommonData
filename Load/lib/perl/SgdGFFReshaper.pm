@@ -94,6 +94,11 @@ sub preprocess {
 	    
 	    # SGD genes already have IDs so this isn't really necessary.
 	    uniquify_and_add_id($feature,$bp_seq_obj);	
+
+		if ($feature->has_tag("ID")){
+			my ($cID) = $feature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
 	    	    
 #	my ($gene,$utrs) = gene2centraldogma($feature, $bp_seq_obj);
 	    my $gene = gene2centraldogma($feature, $bp_seq_obj);
