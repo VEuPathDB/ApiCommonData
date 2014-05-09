@@ -3,11 +3,10 @@
 use strict;
 use Getopt::Long qw(GetOptions);
 
-my ($login, $password, $password, $tuningMgrMgrPwd, $svn, $script, $skipInstances);
+my ($login, $password, $tuningMgrMgrPwd, $svn, $script, $skipInstances);
 
 # parse command line
 GetOptions("login=s" => \$login,
-           "password=s" => \$password,
            "password=s" => \$password,
            "svn=s" => \$svn,
            "script=s" => \$script,
@@ -15,7 +14,7 @@ GetOptions("login=s" => \$login,
            "tuningMgrMgrPwd=s" => \$tuningMgrMgrPwd,
 	  );
 
-unless ( ($password || $propfile) && $svn && $script) {
+if (!$password || !$svn || !$script) {
   usage();
   die;
 }
