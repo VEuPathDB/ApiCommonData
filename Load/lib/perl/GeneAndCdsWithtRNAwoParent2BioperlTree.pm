@@ -69,6 +69,11 @@ sub preprocess {
 		    	$geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 			}	   
  
+			if (($geneFeature->has_tag("locus_tag"))){
+				my ($cID) = $geneFeature->get_tag_values("locus_tag");
+				print STDERR "processing $cID...\n";
+			}
+
 			for my $tag ($geneFeature->get_all_tags) {    
 
 		    	if($tag eq 'pseudo'){
