@@ -448,9 +448,14 @@ sub updateInstance {
       if ($tmpDir);
   } else {
     # clean up
+    print STDERR "cleaning up temporary directory $dir\n";
     remove_tree($dir)
       if ($tmpDir);
   }
+
+  # remove tmp directories more than 7 days old
+  print STDERR "cleaning up tuning-manager temp directories more than 7 days old\n";
+  system("find /tmp/ -maxdepth 1 -name 'tMan.*' -mtime +7 -exec rm -rf {} \;");
 }
 
 sub writeGusConfigFile {

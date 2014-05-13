@@ -138,6 +138,11 @@ echo $TREE >treefile
 
 $MAKEALIGNMENTINPUT $MERCATOR_OUTPUT $ALIGN_DIR
 
+if ! [ -d "$ALIGN_DIR/1" ]; then
+  # Empty alignment directory.  Skip pair. 
+  exit 0
+fi
+
 $MAVIDALIGNDIRS --init-dir $ALIGN_DIR --mavidpath $MAVID_EXE
 
 $OMAP2COORDINATES --map-dir $ALIGN_DIR < $ALIGN_DIR/map > $ALIGN_DIR/coordinates

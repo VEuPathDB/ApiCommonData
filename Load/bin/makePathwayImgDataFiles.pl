@@ -76,11 +76,13 @@ foreach my $pathwayId (@pids) {
     $node{$id}->{cpdCID} = $cpdCID;
     $node{$id}->{cpdSID} = $cpdSID;
     $node{$id}->{ecDescription} = $ecDescription;
-    $node{$id}->{pathName} = $pathName;
+    $node{$id}->{pathName} = ($pathName)? $pathName : $display; # $display needed if pathway not loaded in db (as for MPMP)
 
     if ($type eq 'enzyme') {
+      print "Getting orgs for enzyme: $display\n" if $verbose;
       $node{$id}->{ecOrgs} = &getOrganismsQuery($display, "NOT");
       $node{$id}->{ecOrgsOrthomcl} = &getOrganismsQuery($display, "");
+      print "Got orgs for enzyme: $display\n" if $verbose;
     }
   }
 
@@ -264,7 +266,7 @@ FROM APIDB.network n, APIDB.networkrelcontextlink nrcl,
   APIDB.networkrelcontext nrc, APIDB.networkcontext nc,
   APIDB.networkrelationship nr,
   APIDB.networknode n1, APIDB.networknode n2
-WHERE  n.name = 'Metabolic Pathways - KEGG'
+WHERE  n.name like  'Metabolic Pathways%'
   AND n.network_id = nrcl.network_id
   AND nrcl.network_rel_context_id = nrc.network_rel_context_id
   AND nc.network_context_id = nrc.network_context_id
