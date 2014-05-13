@@ -23,6 +23,7 @@ WHERE table_name IN (SELECT table_name
   AND owner != 'CTXSYS'
   AND owner != 'EXFSYS'
   AND owner != 'SYSMAN'
+  AND owner != 'WMSYS'
 ORDER BY owner, table_name;
 
 exit

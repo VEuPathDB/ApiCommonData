@@ -70,6 +70,12 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
+
+		if (($geneFeature->has_tag("ID"))){
+			my ($cID) = $geneFeature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
+
 		if(!($geneFeature->has_tag("ID"))){
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
 		}      

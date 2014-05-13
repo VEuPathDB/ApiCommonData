@@ -1,6 +1,12 @@
--- For GUS tables which have had columns added after the "housekeeping" columns,
--- this script rearranges the columns so that the housekeeping columns are last,
--- where GUS plugins like them.
+-- orderHousekeepers.sql
+--
+-- This script reorders the columns of a table so that the GUS housekeeping columns
+-- are last. GUS might require that those be at the end. (Or might not, depending
+-- on what you're doing. Or whom you ask.)
+--
+-- usage: sqlplus <dbuser>/<password>@<instance> @orderHousekeepers <table-name>
+
+set verify off
 
 ALTER TABLE &1
 ADD (
