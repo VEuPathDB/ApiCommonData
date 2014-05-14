@@ -51,6 +51,12 @@ $dbh->do("create table apidb.snp as (select * from apidb.snp_tmp)");
 
 $dbh->do("drop table apidb.snp_tmp");
 
+# Grant permissions
+$dbh->do("GRANT insert, select, update, delete ON ApiDB.SNP TO gus_w");
+$dbh->do("GRANT select ON ApiDB.SNP TO gus_r");
+$dbh->do("GRANT insert, select, update, delete ON ApiDB.SequenceVariation TO gus_w");
+$dbh->do("GRANT select ON ApiDB.SequenceVariation TO gus_r");
+
 $dbh->disconnect();
 
 
