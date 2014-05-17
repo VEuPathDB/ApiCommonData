@@ -34,6 +34,8 @@ while (my $feature = $gffIO->next_feature()) {
   foreach ($feature->get_tag_values('Allele')) {
     my ($strain, $base, $coverage, $percent, $quality, $pvalue) = split(':', $_);
 
+    next if($base eq 'undefined');
+
     print OUT join("\t", ($sequenceId, $snpStart, $strain, $base, $coverage, $percent, $quality, $pvalue)) . "\n";
   }
 }
