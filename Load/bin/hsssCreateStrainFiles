@@ -2,11 +2,11 @@
 
 use strict;
 
-my ($variantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrain) = @ARGV;
+my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName) = @ARGV;
 
 usage() unless scalar(@ARGV) == 5;
 
-die "Variants file '$variantsFile' does not exist\n" unless -e $variantsFile;
+die "Variants file '$inputVariantsFile' does not exist\n" unless -e $inputVariantsFile;
 die "Varscan dir '$varscanDir' does not exist\n" unless -d $varscanDir;
 die "Target dir '$targetDir' does not exist\n" unless -d $targetDir;
 die "Read freq cutoff must be a multiple of five less than 100\n" unless $readFreqCutoff =~ /\d0/ || $readFreqCutoff =~ /\d5/;
@@ -16,50 +16,81 @@ my $readFreqDir = "$targetDir/readFreq$readFreqCutoff";
 die "Read freq dir '$readFreqDir' already exists.  Please remove before running.\n" if -e "$readFreqDir";
 mkdir($readFreqDir) || die "Could not make read freq dir '$readFreqDir'\n";
 
-my %strainName2Index = writeStrainsIdToNameFile($readFreqDir, $varscanDir);
-my $strainCount = scalar(keys(%strainName2Index));
+# zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
+open(STRAINMAP, ">$readFreqDir\strainIdToName.dat") || die "Can't open file '$readFreqDir\strainIdToName.dat' for writing\n";
+opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
+my $strainCount = 0;
+while(readdir($dirhandle)) {
+  next if /^\./;
+  $strainCount++;
+  print STRAINMAP "$strainCount\t$varscanFileName\n";   # map strain index (count) to strain name;
+  open( my "fh$strainCount", ">$readFreqDir\$strainCount");    # open variants file for this strain, named after its index (count)
+}
+close($dirhandle);
+close(STRAINMAP);
 
-my $seqIndexesFile = "$readFreqDir/contigIdToSourceId.dat";
-my $strainIndexesFile = "$readFreqDir/strainIdToName.dat";
-my $sequenceIndex = 1;
+# open the input file and two of the output files
+open(V, $inputVariantsFile) || die "Can't open variants file '$inputVariantsFile'\n";
+open(SEQID, ">$readFreqDir/contigIdToSourceId.dat") || die "Can't open seq IDs file '$readFreqDir/contigIdToSourceId.dat' for writing\n";
+open(REFGENOME, ">$readFreqDir/referenceGenome.dat") || die "Can't open ref genome file '$readFreqDir/referenceGenome.dat' for writing\n";
 
-open(V, $variantsFile) || die "Can't open variants file '$variantsFile'\n";
-open(SEQ, ">");
+my $prevSourceId;                 # the seq source id of the previous SNP 
+my $prevLocation;                 # the location of the previous SNP
+my @variantsInOneSnp;             # array of array refs. holds all the variants in one snp, as parsed from input file.  cleared out after processing that snp
+my @strainArray;                  # a pre-allocated array of length = number of strains.  tracks if a strain was seen in current snp
+my $foundVariantOverThreshold;    # a flag indicating that in current snp we found at least one variant that passes read freq threshold
+my $foundVariantThatDoesNotMatchRef;  # a flag indicating that in current snp we found at least one above-threshold variant that does not match ref
+my @refGenomeVariant;             # an array holding the info about the most recently seen reference genome array
+my $sequenceIndex = 1;            # incremented for each sequence we see.  used to compress seq id in variant files
 
-my $prevSourceId;
-my %strainsAlreadySeen;
-my @variantsInOneSnp;
-my $prevLocation;
-my $foundVariantThatDoesNotMatchRef;
-my @strainArray;
-
+# scan variants input file.  gather all variants for a snp, and process that snp when we hit the next snp
 while (<V>) {
   chomp;
+
+  # parse variant from input file NEEDS FIXING TO REFLECT REAL INPUT FORMAT.
   my ($strain, $sourceId, $location, $allele, $product, $readFreq, $matchesRef) = split(/\t/);
 
+  # process previous snp if we got to the next one; ignore it if no variants were above threshold.
+  # if not being ignored, write the ref genome info for this snp to the ref genome file, and write to variants files
   if ($prevLocation && $location != $prevLocation) {
-    processSnp(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation) if $foundVariantThatDoesNotMatchRef;
+    if ($foundVariantOverThreshold) {
+      print REFGENOME "$sequenceIndex\t$location\t$refGenomeVariant[3]\t$refGenomeVariant[4]\n";
+      writeToVariantsFiles(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation);
+    }
     @variantsInOneSnp = ();
-    $foundVariantThatDoesNotMatchRef = 0;
+    $foundVariantOverThreshold = 0;
   }
 
+  # if new seq source id, write it to the seq id mapping flie
   if ($sourceId ne $prevSourceId) {
-    print SEQ "$sequenceIndex\t$sourceId\n";
+    print SEQID "$sequenceIndex\t$sourceId\n";
     $sequenceIndex++;
   }
 
-  my @variant = ($strain, $sourceId, $location, $allele, $product, $readFreq, $matchesRef);
-  if ($readFreq < $readFreqCutoff && $strain ne $refStrain) {
-    $foundVariantThatDoesNotMatchRef = 1 unless $matchesRef;
+  my @variant = ($strain, $sourceId, $location, $allele, $product, $readFreq, $matchesRef);  # just the fields we need
+
+  # if this variant is from ref genome, save it to write to ref genome file when we hit next snp
+  if ($strain eq $refStrainName) {
+    @refGenomeVariant = @variant;
+  }
+  # else, if above threshold, save to write to variants file
+  elsif ($readFreq >= $readFreqCutoff) {
+    $foundVariantOverThreshold = 1;
     push(@variantsInOneSnp, \@variant);
   }
 }
 
-processSnp(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation) if $foundVariantThatDoesNotMatchRef;
+# final mop up of last SNP
+print REFGENOME "$sequenceIndex\t$location\t$refGenomeVariant->[3]\t$refGenomeVariant->[4]\n" if ($foundVariantOverThreshold) ;
+writeToVariantsFiles(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation);
+print SEQID "$sequenceIndex\t$sourceId\n" if ($sourceId ne $prevSourceId);
 
 
-sub processSnp {
-  my ($variantsInOneSnp, $strainName2Index, $strainArray, $strainCount, $seqIndex, $location) = @_;
+#############################    SUBROUTINES   ###################################################################################
+
+
+sub writeToVariantsFiles {
+  my ($variantsInOneSnp, $strainName2Index, $strainArray, $strainCount, $seqIndex, $location, $refGenomeVariant) = @_;
 
   # initialize array that tracks strains we have seen
   for (my $i=0; $i<=$strainCount; $i++) { $strainArray[$i] = 0; }
@@ -97,10 +128,10 @@ sub processSnp {
 
     if ($writeFlag) {
       my $strainFileHandle = "STR" . $strainIndex + 1;
-      if (!$strainsAlreadySeen{$strainIndex}) {
+      if (!$strainFilesAlreadyOpen{$strainIndex}) {
 	my $strainFile = "$readFreqDir/" . $strainIndex + 1;
 	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
-	$strainsAlreadySeen{$strainIndex} = 1;
+	$strainFilesAlreadyOpen{$strainIndex} = 1;
       }
       my $allele = $variant->[3];
       my $product = $variant->[4];
@@ -109,10 +140,10 @@ sub processSnp {
 
     if ($writePrevMatchesRefFlag) {
       my $strainFileHandle = "STR" . $strainIndex + 1;
-      if (!$strainsAlreadySeen{$strainIndex}) {
+      if (!$strainFilesAlreadyOpen{$strainIndex}) {
 	my $strainFile = "$readFreqDir/" . $strainIndex + 1;
 	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
-	$strainsAlreadySeen{$strainIndex} = 1;
+	$strainFilesAlreadyOpen{$strainIndex} = 1;
       }
       my $allele = $prevMatchesRefVariant->[3];
       my $product = $prevMatchesRefVariant->[4];
@@ -125,7 +156,7 @@ sub processSnp {
     if (!$strainArray[$i]) {
       my $inx = $i + 1;  # strain index is 1 based
       my $strainFileHandle = "STR$inx";
-      if (!$strainsAlreadySeen{$i}) {
+      if (!$strainFilesAlreadyOpen{$i}) {
 	my $strainFile = "$readFreqDir/$inx";
 	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
       }
