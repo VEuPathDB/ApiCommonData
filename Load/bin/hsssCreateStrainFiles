@@ -20,11 +20,15 @@ mkdir($readFreqDir) || die "Could not make read freq dir '$readFreqDir'\n";
 open(STRAINMAP, ">$readFreqDir\strainIdToName.dat") || die "Can't open file '$readFreqDir\strainIdToName.dat' for writing\n";
 opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
 my $strainCount = 0;
+my @fileHandles;
+my %strainName2Index;
 while(readdir($dirhandle)) {
   next if /^\./;
+  my $strainName = $_;
   $strainCount++;
-  print STRAINMAP "$strainCount\t$varscanFileName\n";   # map strain index (count) to strain name;
-  open( my "fh$strainCount", ">$readFreqDir\$strainCount");    # open variants file for this strain, named after its index (count)
+  $strainName2Index{$strainName} = $strainCount;
+  print STRAINMAP "$strainCount\t$strainName\n";   # map strain index (count) to strain name;
+  open( $fileHandles[$strainCount], ">$readFreqDir\$strainCount");    # open variants file for this strain, named after its index (count)
 }
 close($dirhandle);
 close(STRAINMAP);
@@ -52,10 +56,10 @@ while (<V>) {
 
   # process previous snp if we got to the next one; ignore it if no variants were above threshold.
   # if not being ignored, write the ref genome info for this snp to the ref genome file, and write to variants files
-  if ($prevLocation && $location != $prevLocation) {
+  if ($prevLocation && ($sourceId ne $prevSourceId || $location != $prevLocation)) {
     if ($foundVariantOverThreshold) {
       print REFGENOME "$sequenceIndex\t$location\t$refGenomeVariant[3]\t$refGenomeVariant[4]\n";
-      writeToVariantsFiles(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation);
+      writeToVariantsFiles(\@variantsInOneSnp, \%strainName2Index, \@strainArray, \@fileHandles, $strainCount, $sequenceIndex, $prevLocation);
     }
     @variantsInOneSnp = ();
     $foundVariantOverThreshold = 0;
@@ -78,26 +82,32 @@ while (<V>) {
     $foundVariantOverThreshold = 1;
     push(@variantsInOneSnp, \@variant);
   }
+
+  $prevLocation = $location;
+  $prevSourceId = $sourceId;
 }
 
 # final mop up of last SNP
-print REFGENOME "$sequenceIndex\t$location\t$refGenomeVariant->[3]\t$refGenomeVariant->[4]\n" if ($foundVariantOverThreshold) ;
+print REFGENOME "$sequenceIndex\t$prevLocation\t$refGenomeVariant[3]\t$refGenomeVariant[4]\n" if ($foundVariantOverThreshold) ;
 writeToVariantsFiles(\@variantsInOneSnp, \%strainName2Index, \@strainArray, $strainCount, $sequenceIndex, $prevLocation);
-print SEQID "$sequenceIndex\t$sourceId\n" if ($sourceId ne $prevSourceId);
 
 
 #############################    SUBROUTINES   ###################################################################################
 
-
+# write the variants in one SNP to separately to strains files.  the usage() method explains the details of these output files.
+# this method is complicated by heterozygous strains.   in their case we need to write all alleles to the strain file,
+# including those that match reference.  this forces to track previous variants that matched reference and see if they belong to
+# this strain
 sub writeToVariantsFiles {
-  my ($variantsInOneSnp, $strainName2Index, $strainArray, $strainCount, $seqIndex, $location, $refGenomeVariant) = @_;
+  my ($variantsInOneSnp, $strainName2Index, $strainArray, $fileHandles, $strainCount, $seqIndex, $location, $refGenomeVariant) = @_;
 
   # initialize array that tracks strains we have seen
   for (my $i=0; $i<=$strainCount; $i++) { $strainArray[$i] = 0; }
 
-  my $prevMatchesRefVariant;
-  my $prevMatchesRefStrainIndex;
-  my $prevStrainIndex;
+  my $prevStrainIndex;            # the previous strain index
+  my $prevMatchesRefStrainIndex;  # the previous strain index that matched reference, ie, the previous strain that matched ref
+  my $prevMatchesRefVariant;      # the previous variant that matched reference.  a pointer to an array holding variant info
+
   foreach my $variant (@$variantsInOneSnp) {
     my $strainName = $variant->[0];
     my $strainIndex = $strainName2Index->{$strainName};
@@ -107,20 +117,20 @@ sub writeToVariantsFiles {
     $strainArray[$strainIndex] = 1;
 
     # logic is a little tricky here because on diploids we have to write out matchesRef strains
-    my $matchesRef = $variant->[0];
-    my $writeFlag;
-    my $writePrevMatchesRefFlag;
+    my $matchesRef = $variant->[6];
+    my $writeFlag;                  # a flag that indicates we should write this variant to its strain file
+    my $writePrevMatchesRefFlag;    # a flag that indicates we should write the previous variant matching ref to its file
     if ($matchesRef) {
-      if ($strainIndex eq $prevStrainIndex) {
+      if ($strainIndex eq $prevStrainIndex) {         # if we match reference and previous variant was from same strain, write
 	$writeFlag = 1;      # write matches ref if diploid
-	$prevMatchesRefStrainIndex = -1;
+	$prevMatchesRefStrainIndex = -1;              # since we are writing out this matches ref variant, don't remember it for later
       } else {
-	$prevMatchesRefVariant = $variant;
+	$prevMatchesRefVariant = $variant;            # this matches ref variant is first for this strain.  remember it because will write it if diploid
 	$prevMatchesRefStrainIndex = $strainIndex;
       }
     } else {
-      $writeFlag = 1;
-      if ($strainIndex eq $prevMatchesRefStrainIndex) {
+      $writeFlag = 1;                                      # always write variants that don't match reference
+      if ($strainIndex eq $prevMatchesRefStrainIndex) {    # if previous matches ref variant was from the same strain, write it out (and wipe memory of it)
 	$writePrevMatchesRefFlag = 1;
 	$prevMatchesRefStrainIndex = -1;
       }
@@ -128,26 +138,16 @@ sub writeToVariantsFiles {
 
     if ($writeFlag) {
       my $strainFileHandle = "STR" . $strainIndex + 1;
-      if (!$strainFilesAlreadyOpen{$strainIndex}) {
-	my $strainFile = "$readFreqDir/" . $strainIndex + 1;
-	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
-	$strainFilesAlreadyOpen{$strainIndex} = 1;
-      }
       my $allele = $variant->[3];
       my $product = $variant->[4];
-      print $strainFileHandle "$seqIndex\t$location\t$allele\t$product\n";
+      print($fileHandles->[$strainIndex], "$seqIndex\t$location\t$allele\t$product\n");
     }
 
     if ($writePrevMatchesRefFlag) {
       my $strainFileHandle = "STR" . $strainIndex + 1;
-      if (!$strainFilesAlreadyOpen{$strainIndex}) {
-	my $strainFile = "$readFreqDir/" . $strainIndex + 1;
-	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
-	$strainFilesAlreadyOpen{$strainIndex} = 1;
-      }
       my $allele = $prevMatchesRefVariant->[3];
       my $product = $prevMatchesRefVariant->[4];
-      print $strainFileHandle "$seqIndex\t$location\t$allele\t$product\n";
+      print($fileHandles->[$strainIndex], "$seqIndex\t$location\t$allele\t$product\n");
     }
   }
 
@@ -156,11 +156,7 @@ sub writeToVariantsFiles {
     if (!$strainArray[$i]) {
       my $inx = $i + 1;  # strain index is 1 based
       my $strainFileHandle = "STR$inx";
-      if (!$strainFilesAlreadyOpen{$i}) {
-	my $strainFile = "$readFreqDir/$inx";
-	open($strainFileHandle, ">$strainFile") || die "Can't open strain file '$strainFile' for writing\n";
-      }
-      print $strainFileHandle "$inx\t$location\t0\0\n";
+      print($fileHandles->[$inx], "$inx\t$location\t0\0\n");   # the encoding of a "unknown" variant, ie, below threshold
     }
   }
 }
@@ -177,7 +173,9 @@ Where:
   variants_file:     a file containing all variants for all strains.  Within each sequence, the variants are
                      grouped by SNP, and the SNPs are ordered by location.  Thus we get a series of variants
                      per SNP, for each SNP.  Each SNP includes a variant for the reference strain.  The variants
-                     each have this info: strain, seq_id, location, allele, product, matches_reference
+                     each have this info: strain, seq_id, location, allele, product, matches_reference.  Within
+                     a SNP any strain that has multiple alleles must have those heterozygous variants consecutively.
+                     In other words, all variants for a strain within a SNP must come together.
 
   varscan_dir:       a directory containing one varscan file for each strain we will make an output file for.
                      The files are named for with the strain name.
