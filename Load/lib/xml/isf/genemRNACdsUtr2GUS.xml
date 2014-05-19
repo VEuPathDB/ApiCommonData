@@ -26,9 +26,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Name"         ignore="true"/>
     <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
     <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
     <qualifier name="threeutr_Sample"         ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"         ignore="true"/>
     <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
     <qualifier name="partial"     handler="api"    method="setPartial"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
@@ -52,6 +56,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
   
   <feature name="UTR" table="DoTS::UTRFeature" so="">
+    <qualifier name="ID" column="source_id"/>
     <qualifier name="Parent" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
   </feature>
