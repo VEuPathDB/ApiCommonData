@@ -49,6 +49,9 @@ sub setPeekLineAsArray {$_[0]->{_peek_line_as_array} = $_[1]}
 sub getDelimiter {$_[0]->{_delimiter}}
 sub setDelimiter {$_[0]->{_delimiter} = $_[1]}
 
+sub getDictionaryNames {$_[0]->{_dictionary_names}}
+sub setDictionaryNames {$_[0]->{_dictionary_names} = $_[1]}
+
 sub getPeek {
   my ($self) = @_;
 
@@ -85,6 +88,12 @@ sub skipLine {
   my ($self, $line, $fh) = @_;
 
   return !$line;
+}
+
+# used for collecting like rows into an array of rows (each row should be made into a dictionary / hash)
+#  Default is false;  Subclasses can override as needed
+sub isSameGroup {
+  return 0;
 }
 
 sub readNextLine {
@@ -148,6 +157,53 @@ sub processNext {
 
   $self->setPeekLineAsArray($lineAsArray);
   $self->setPeekLine($line);
+}
+
+sub readNextGroupOfLines {
+  my ($self) = @_;
+
+    my @rv;
+
+  my $isSameGroup = 1;
+
+  while($isSameGroup) {
+    last unless($self->hasNext());
+
+    my @a = $self->nextLine();
+    my @b = $self->getPeek();
+
+    unless($self->isSameGroup(\@a, \@b)) {
+      $isSameGroup = 0;
+    }
+
+    my $lineAsDictionary = $self->makeDictionary(\@a);
+
+    push @rv, $lineAsDictionary;
+  }
+  return \@rv;
+
+}
+
+
+sub makeDictionary {
+  my ($self, $lineAsArray) = @_;
+
+  my $dictionaryNames = $self->getDictionaryNames();
+
+  unless($dictionaryNames) {
+    die "Cannot call makeDictionary unless you have first setDictionaryNames(\@names)";
+  }
+
+  my %dict;
+
+  for(my $i = 0; $i < scalar @$dictionaryNames ; $i++) {
+    my $key = $dictionaryNames->[$i];
+    my $value = $lineAsArray->[$i];
+
+    $dict{$key} = $value;
+  }
+
+  return \%dict;
 }
 
 

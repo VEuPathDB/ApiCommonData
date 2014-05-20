@@ -32,20 +32,28 @@ while($reader->hasNext()) {
 
 =cut
 
-
-
 use strict;
 
-sub getSequenceIndex { return 0 }
-sub getLocationIndex { return 1 }
-sub getStrainIndex { return 2 }
+use ApiCommonData::Load::SnpUtils  qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP);
+
+sub new {
+  my $class = shift;
+
+  my $self = $class->SUPER::new(@_);
+
+  my $columnNames = &variationFileColumnNames();
+  $self->setDictionaryNames($columnNames);
+
+  return $self;
+}
+
 
 # @OVERRIDE
 sub wantFirstLine {
   my ($self) = @_;
 
-  my $sequenceIndex = $self->getSequenceIndex();
-  my $locationIndex = $self->getLocationIndex();;
+  my $sequenceIndex = &sequenceIndex();
+  my $locationIndex = &locationIndex();;
 
   my @a = @{$self->getFirstLineAsArray()};
   my @b = @{$self->getSecondLineAsArray()};
@@ -60,7 +68,7 @@ sub skipLine {
   return 1 unless($line);
   return 0 if($self->readingFile1Fh($fh));
 
-  my $strainIndex = $self->getStrainIndex();
+  my $strainIndex = &strainIndex();
 
   my $filters = $self->getFilters();
 
@@ -73,64 +81,20 @@ sub skipLine {
   return 0;
 }
 
+
 sub nextSNP {
   my ($self) = @_;
 
-  my @rv;
-
-  my $sequenceIndex = $self->getSequenceIndex();
-  my $locationIndex = $self->getLocationIndex();
-
-  my $isSameGroup = 1;
-
-  while($isSameGroup) {
-    last unless($self->hasNext());
-
-    my @a = $self->nextLine();
-    my @b = $self->getPeek();
-
-    my $sequenceId = $a[$sequenceIndex];
-    my $peekSequenceId = $b[$sequenceIndex];
-
-    my $location = $a[$locationIndex];
-    my $peekLocation = $b[$locationIndex];
-
-    unless($sequenceId eq $peekSequenceId && $peekLocation == $location) {
-      $isSameGroup = 0;
-    }
-
-    my $variation = $self->variation(\@a);
-
-    push @rv, $variation;
-  }
-  return \@rv;
+  $self->readNextGroupOfLines();
 }
 
+# @OVERRIDE
+sub isSameGroup {
+  my ($self, $a, $b) = @_;
 
-sub variation {
-  my ($self, $lineAsArray) = @_;
-
-  my ($sequenceId, $location, $strain, $base, $coverage, $percent, $quality, $pvalue, $externalDatabaseReleaseId, $matchesReference, $product, $positionInCds, $positionInProtein, $naSequenceId, $refNaSequenceId, $snpExternalDatabaseReleaseId) = @$lineAsArray;
-
-  my $rv = {'sequence_source_id' => $sequenceId,
-            'location' => $location,
-            'strain' => $strain,
-            'base' => $base,
-            'coverage' => $coverage,
-            'percent' => $percent,
-            'quality' => $quality,
-            'pvalue' => $pvalue,
-            'external_database_release_id' => $externalDatabaseReleaseId,
-            'matches_reference' => $matchesReference,
-            'product' => $product,
-            'position_in_cds' => $positionInCds,
-            'position_in_protein' => $positionInProtein,
-            'na_sequence_id' => $naSequenceId,
-            'ref_na_sequence_id' => $refNaSequenceId,
-            'snp_external_database_release_id' => $snpExternalDatabaseReleaseId,
-  };
-  return $rv;
+  return &isSameSNP($a, $b);
 }
+
 
 
 1;
