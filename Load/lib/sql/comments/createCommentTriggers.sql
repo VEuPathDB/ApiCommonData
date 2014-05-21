@@ -292,19 +292,3 @@ begin
     where comment_id in (select comment_id from userlogins5.comments where user_id = :new.user_id);
 end;
 /
-
-create or replace trigger userlogins5.users_update
-before update on userlogins5.users
-for each row
-declare
-  userinfo varchar2(1000);
-begin
-    userinfo := :new.first_name || ' ' || :new.last_name || '(' || :new.organization || ')';
-
-    update apidb.TextSearchableComment
-    set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
-                   from userlogins5.Comments
-                   where comment_id = TextSearchableComment.comment_id)
-    where comment_id in (select comment_id from userlogins5.comments where user_id = :new.user_id);
-end;
-/
