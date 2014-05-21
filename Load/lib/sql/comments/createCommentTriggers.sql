@@ -76,7 +76,7 @@ begin
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
-      from userlogins4.users
+      from userlogins5.users
       where user_id = :new.user_id;
     exception
       when NO_DATA_FOUND then
