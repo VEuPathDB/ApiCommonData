@@ -1,0 +1,194 @@
+#!/usr/bin/perl
+
+use strict;
+
+use ApiCommonData::Load::VariationFileReader;
+
+use Data::Dumper;
+
+my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName) = @ARGV;
+
+usage() unless scalar(@ARGV) == 5;
+
+die "Variants file '$inputVariantsFile' does not exist\n" unless -e $inputVariantsFile;
+die "Varscan dir '$varscanDir' does not exist\n" unless -d $varscanDir;
+die "Target dir '$targetDir' does not exist\n" unless -d $targetDir;
+die "Read freq cutoff must be a multiple of five less than 100\n" unless $readFreqCutoff =~ /\d0/ || $readFreqCutoff =~ /\d5/;
+
+my %ALLELE_HASH = ('a'=>1, 'c'=>2, 'g'=>3, 't'=>4,
+                   'A'=>1, 'C'=>2, 'G'=>3, 'T'=>4);
+
+# make readFreqXX dir
+my $readFreqDir = "$targetDir/readFreq$readFreqCutoff";
+die "Read freq dir '$readFreqDir' already exists.  Please remove before running.\n" if -e "$readFreqDir";
+mkdir($readFreqDir) || die "Could not make read freq dir '$readFreqDir'\n";
+
+# zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
+open(STRAINMAP, ">$readFreqDir\strainIdToName.dat") || die "Can't open file '$readFreqDir\strainIdToName.dat' for writing\n";
+opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
+my $strainCount = 0;
+
+my %allStrains;
+
+while(my $fn = readdir($dirhandle)) {
+
+  next unless($fn =~ /(.+)\.varscan\.cons\.gz$/);
+
+  my $strainName = $1;
+
+  $strainCount++;
+
+  $allStrains{$strainName}->{index} = $strainCount;
+  print STRAINMAP "$strainCount\t$strainName\n";   # map strain index (count) to strain name;
+
+  my $fh;
+  open($fh, ">$readFreqDir/$strainCount");    # open variants file for this strain, named after its index (count)
+  $allStrains{$strainName}->{fh} = $fh;
+}
+
+close($dirhandle);
+close(STRAINMAP);
+
+my @filters = ($readFreqCutoff);
+my $reader = ApiCommonData::Load::VariationFileReader->new($inputVariantsFile, \@filters, qr/\t/);
+
+open(SEQID, ">$readFreqDir/contigIdToSourceId.dat") || die "Can't open seq IDs file '$readFreqDir/contigIdToSourceId.dat' for writing\n";
+open(REFGENOME, ">$readFreqDir/referenceGenome.dat") || die "Can't open ref genome file '$readFreqDir/referenceGenome.dat' for writing\n";
+
+my $sequenceIndex;            # incremented for each sequence we see.  used to compress seq id in variant files
+my $prevSourceId;
+
+while($reader->hasNext()) {
+
+  # array of all variations (as dictionary) at a location; pre filtered by readFreqCutoff
+  my $variations = $reader->nextSNP() ;
+
+  my ($refVar, $hasVariation, %foundStrains);
+  foreach my $variation (@$variations) {
+    my $strain = $variation->{strain};
+    $foundStrains{$strain}++;
+
+    if($variation->{strain} eq $refStrainName) {
+      $refVar = $variation;
+      next;
+    }
+    if(!$variation->{matches_reference}) {
+      $hasVariation = 1;
+    }
+  }
+
+  # chech for reference variation
+  unless($refVar) {
+    print STDERR Dumper $variations;
+    die "No Reference Variation Found";
+  }
+
+  my $location = $refVar->{location};
+  my $sourceId = $refVar->{sequence_source_id};
+
+  if ($sourceId ne $prevSourceId) {
+    $sequenceIndex++;
+    print SEQID "$sequenceIndex\t$sourceId\n";
+  }
+
+  # require exactly one REFERENCES variation
+  die "Expected exactly one Reference Variation: $sourceId, $location" unless($foundStrains{$refStrainName} == 1);
+
+  # Nothing to see here if only one variation (it is the reference)
+  next unless($hasVariation);
+
+  foreach my $variation (@$variations) {
+    my $strain = $variation->{strain};
+
+    my $allele = $variation->{base};
+    my $product = $variation->{product};
+
+    my $alleleCode = 0;
+    $alleleCode = $ALLELE_HASH{$allele} if $allele;
+
+    my $productCode = ord($product);
+
+
+    if($foundStrains{$strain} > 1) {
+      print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+      next;
+    }
+
+    if($strain eq $refStrainName) {
+      print REFGENOME "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+      next;
+    }
+
+    # do nothing if it matches reference
+    next if($variation->{matches_reference});
+
+    # write the remaining variations
+    print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+  }
+
+  #write the unknowns for those strains which wwere not found to have a variation
+  foreach my $strain (keys %allStrains) {
+    next if($foundStrains{$strain});
+    print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t0\t0\n";
+  }
+
+
+  $prevSourceId = $sourceId;
+}
+
+close SEQID;
+close REFGENOME;
+
+
+###############################################################
+
+sub usage {
+  die "
+Create SNP variation files, one per strain, for use by the HighSpeedSnpSearch system (C based SNP searches).
+
+Usage:  hsssCreateStrainFiles variants_file varscan_dir target_dir read_freq_cutoff ref_strain_name
+
+Where:
+  variants_file:     a file containing all variants for all strains.  Within each sequence, the variants are
+                     grouped by SNP, and the SNPs are ordered by location.  Thus we get a series of variants
+                     per SNP, for each SNP.  Each SNP includes a variant for the reference strain.  The variants
+                     each have this info: strain, seq_id, location, allele, product, matches_reference.  Within
+                     a SNP any strain that has multiple alleles must have those heterozygous variants consecutively.
+                     In other words, all variants for a strain within a SNP must come together.
+
+  varscan_dir:       a directory containing one varscan file for each strain we will make an output file for.
+                     The files are named for with the strain name.
+
+  target_dir:        the directory in which to place the new directory that will hold the strain files created
+
+  read_freq_cutoff:  ignore variants that have a read frequency below this cutoff.
+
+  ref_strain_name:   the name of the reference strain
+
+
+Details:
+
+Create a directory called readFreqXX where XX is the read_freq_cutoff supplied on the command line.  (Read frequency is
+the percentage of reads at this location that support an allele.)  The output strain files are created in that directory.
+
+Each output strain file is named for the strain's strain index, which is generated by this program.  The strain index for a strain is
+its position in the alphabetical list of strain file names as found in the varscan directory.  The output strain files are compliant with the
+HighSpeedSnpSearch system.  They contain an ordered set of SNPs.  Each SNP is represented in the file by a set of variants for that SNP.
+SNPs are excluded from consideration if they have no variants at or above the read frequency threshold.  The SNPs are ordered by sequence
+and location, as found in the input file.
+
+Each variant has columns: seq_index, location, allele_code, product_code.  The files are binary, with each variant taking XX bytes: 
+Y for seq_index, Z for location, 1 for allele and 1 for product.  Variants that match the reference strain are omitted from the file.
+Strains which do not have an above-threshold variant at a SNP are included in the file as a fake variant with unknown allele and product.
+If a strain is has heterozygous alleles (above threshold) at a SNP, then all its variants are included, including one that matches reference.
+
+The encoding of the alleles is:  0=unknown, 1=a, 2=c, 3=g, 4=t.  The encoding of the proteins is the ascii code of the capitalized product (65=A).
+Nonsense product is encoded as 42 (*).
+
+This program also writes an additional three files into the readFreqXX directory:
+  - contigIdToSourceId.dat:  a mapping from sequence index to source_id
+  - referenceGenome.dat:     a strain file like all the others, but for the reference genome
+  - strainIdToName.dat:      a mapping from the strain index to strain name
+
+";
+}
