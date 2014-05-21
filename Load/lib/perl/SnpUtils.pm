@@ -1,13 +1,14 @@
 package ApiCommonData::Load::SnpUtils;
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP);
+@EXPORT = qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP allelePercentIndex);
 
 use strict;
 
 sub sequenceIndex { return 0 }
 sub locationIndex { return 1 }
 sub strainIndex { return 2 }
+sub allelePercentIndex { return 5 }
 
 sub variationFileColumnNames {
   my @columnNames = 

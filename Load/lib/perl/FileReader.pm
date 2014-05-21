@@ -85,7 +85,7 @@ sub new {
 
 # this skips empty lines; can override to skip lines as needed (skip based on filters for example)
 sub skipLine {
-  my ($self, $line, $fh) = @_;
+  my ($self, $line, $a, $fh) = @_;
 
   return !$line;
 }
