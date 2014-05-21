@@ -52,4 +52,8 @@ unlink $cacheTmp;
 open(TRUNCATE, ">$inputFile") or die "Cannot open file $inputFile for writing: $!";
 close(TRUNCATE);
 
+open(TRUNCATE, ">$undoneStrainsFile") or die "Cannot open file $undoneStrainsFile for writing: $!";
+close(TRUNCATE);
+
+
 1;

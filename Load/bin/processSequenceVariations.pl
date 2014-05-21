@@ -60,7 +60,7 @@ unless(-e $cacheFile) {
 }
 
 
-unless(-e $newSampleFile && -e $gusConfigFile && -e $undoneStrainsFile) {
+unless(-e $newSampleFile && -e $gusConfigFile) {
   &usage("Required File Missing");
 }
 
@@ -70,6 +70,11 @@ unless(-d $varscanDirectory) {
 
 unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain && $extDbRlsSpec) {
   &usage("Missing Required param value");
+}
+
+unless(-e $undoneStrainsFile) {
+  open(FILE, "> $undoneStrainsFile") or die "Could not open file $undoneStrainsFile for writing: $!";
+  close FILE;
 }
 
 my $totalTime;
