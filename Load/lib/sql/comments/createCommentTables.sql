@@ -66,7 +66,7 @@ CREATE TABLE userlogins5.comments
   location_string VARCHAR(1000),
   content CLOB,
   organism VARCHAR(100),
-  is_visible NUMBER(1),
+  is_visible NUMBER(1) DEFAULT 1 NOT NULL,
   CONSTRAINT comments_pkey PRIMARY KEY (comment_id),
   CONSTRAINT comments_ct_id_fkey FOREIGN KEY (comment_target_id)
       REFERENCES userlogins5.comment_target (comment_target_id),
