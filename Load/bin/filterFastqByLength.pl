@@ -44,6 +44,6 @@ my $output = Bio::SeqIO->new(
 while (my $seq = $sequences->next_seq){
     my $length = $seq->length;
     if ($minLength <= $length and $length <= $maxLength){
-        $output->write_seq($seq);
+        $output->write_fastq($seq);
     }
 }    

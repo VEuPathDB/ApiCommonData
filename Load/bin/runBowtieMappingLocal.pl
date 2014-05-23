@@ -25,7 +25,7 @@ die "mateB file not found\n".&getParams() if ($mateB && !-e "$mateB");
 die "bowtie index must be specified\n".&getParams() unless (-e "$bowtieIndex.1.bt2" || ($isColorspace && -e "$bowtieIndex.1.ebwt")); 
 die "you must provide a sample name\n".&getParams() unless $sampleName;
 ##should add in usage
-$bowtie2 = $bowtie2 eq 'default' ? 'bowtie2' : $bowtie2;  ##if not specified then bowtie2 must be in path.
+$bowtie2 = (! defined($bowtie2) ? 'bowtie2' : $bowtie2);  ##if not specified then bowtie2 must be in path.
 
 #change bowtie params back to corret form
 $extraBowtieParams =~ s/_/-/g;
@@ -36,7 +36,7 @@ open(L,">>$workingDir/runBowtieMapping.log");
 select L;
 $| = 1;
 
-print L "runBowtieMapping.pl run starting ".&getDate()."\n\n";
+print L "runBowtieMappingLocal.pl run starting ".&getDate()."\n\n";
 
 my $out = $sampleName;
 my $tmpOut = $out . "_tmp";
@@ -64,7 +64,7 @@ if($isColorspace && -e "$bowtieIndex.1.ebwt"){
 }elsif( -e "$bowtieIndex.1.bt2"){  
   $cmd = "($bowtie2 --rg-id EuP --rg 'SM:TU114' --rg 'PL:Illumina' ";
   if ($extraBowtieParams){$cmd = $cmd.$extraBowtieParams;}
-  $cmd = $cmd." -x $bowtieIndex ".(-e "$mateB" ? "-1 $mateA -2 $mateB " : "-U $mateA ")."-S $workingDir/$tmpOut.sam) >& $workingDir/bowtie.log";
+  $cmd = $cmd." -x $bowtieIndex ".(-e "$mateB" ? "-1 $mateA -2 $mateB " : "-U $mateA ")." | samtools view -buS - | samtools sort - $workingDir/$tmpOut) >& $workingDir/bowtie.log";
   
   print L &getDate().": $cmd\n";
   if(-e "$workingDir/complete" || -e "$workingDir/$out.bam"){ print L "  succeeded in previous run\n\n";
@@ -72,12 +72,6 @@ if($isColorspace && -e "$bowtieIndex.1.ebwt"){
 }else{
   die "ERROR: indices for short read aligner (bowtie2 / bowtie) not found\n";
 }
-
-# Convert to bam and sort
-$cmd = "(samtools view -buS $workingDir/$tmpOut.sam | samtools sort - $workingDir/$tmpOut) >& $workingDir/$tmpOut.samtools_view.err";
-print L &getDate().": $cmd\n";
-if (-e "$workingDir/$out.bam"){print L " succeeded in previous run\n\n";
-}else{ &runCmd($cmd); print L "\n"; }
 
 # Remove PCR duplicates if flagged
 if ($removePCRDuplicates) {
@@ -111,7 +105,7 @@ if($delIntFiles){
 close L;
 
 sub getParams {
-  return &getDate().": runBowtieMapping.pl ... parameter values:\n\tOR\n\tbowtieIndex=$bowtieIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tsampleName=$sampleName\n\tworkingDir=$workingDir\n\n";
+  return &getDate().": runBowtieMappingLocal.pl ... parameter values:\n\tOR\n\tbowtieIndex=$bowtieIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tsampleName=$sampleName\n\tworkingDir=$workingDir\n\n";
 }
 
 sub getDate {
