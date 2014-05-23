@@ -26,9 +26,6 @@ if (! -e $readsFile || $maxLength <= $minLength){
 endOfUsage
 }
 
-#Generate prefix for output file
-#my $filePrefix = (split /\.([^\.]+)$/, $fileName)[0];
-
 #SeqIO object to read from
 my $sequences = Bio::SeqIO->new(
     -format => $type,
