@@ -25,9 +25,7 @@ use DBD::Oracle;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 use ApiCommonData::Load::FileReader;
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $minAllelePercent, $help, $debug, $extDbRlsSpec);
-
-# TODO:  add snp_ext_db rls
+my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
 
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
@@ -39,7 +37,6 @@ my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undon
             "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
-            "minAllelePercent=i"=> \$minAllelePercent, 
             "debug" => \$debug,
             "help|h" => \$help,
     );
@@ -48,9 +45,6 @@ if($help) {
   &usage();
 }
 
-
-
-$minAllelePercent = 60 unless($minAllelePercent);
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
 
 # First time through
@@ -212,7 +206,7 @@ while($merger->hasNext()) {
   my @variationStrains = map { $_->{strain} } @$variations;
   print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
-  my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation,$minAllelePercent);
+  my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation);
   my @coverageVariationStrains = map { $_->{strain} } @$coverageVariations;
   print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
 
@@ -471,7 +465,7 @@ sub usage {
     die "Error running program";
   }
 
-  print STDERR "usage:  processSequenceVariations.pl --new_sample_file=<FILE> --cache_file=<FILE> [--gusConfigFile=<GUS_CONFIG>] --undone_strains_file=<FILE> --varscan_directory=<DIR> --transcript_extdb_spec=s --organism_abbrev=s --reference_strain=s [--minAllelePercent=i]\n";
+  print STDERR "usage:  processSequenceVariations.pl --new_sample_file=<FILE> --cache_file=<FILE> [--gusConfigFile=<GUS_CONFIG>] --undone_strains_file=<FILE> --varscan_directory=<DIR> --transcript_extdb_spec=s --organism_abbrev=s --reference_strain=s\n";
   exit(0);
 }
 
@@ -594,7 +588,7 @@ sub makeSNPFeatureFromVariations {
 }
 
 sub makeCoverageVariations {
-  my ($allStrains, $variationStrains, $strainVarscanFileHandles, $referenceVariation, $minAllelePercent) = @_;
+  my ($allStrains, $variationStrains, $strainVarscanFileHandles, $referenceVariation) = @_;
 
 
   my @rv;
@@ -611,7 +605,7 @@ sub makeCoverageVariations {
     unless($hasVariation) {
       my $fileReader = $strainVarscanFileHandles->{$strain} ;
 
-      my $variation = &makeCoverageVariation($fileReader, $referenceVariation, $strain, $minAllelePercent);
+      my $variation = &makeCoverageVariation($fileReader, $referenceVariation, $strain);
 
       if($variation) {
         push @rv, $variation;
@@ -624,61 +618,37 @@ sub makeCoverageVariations {
 }
 
 sub makeCoverageVariation {
-  my ($fileReader, $referenceVariation, $strain, $minAllelePercent) = @_;
+  my ($fileReader, $referenceVariation, $strain) = @_;
 
   my $rv;
 
   my $location = $referenceVariation->{location};
   my $sequenceId = $referenceVariation->{sequence_source_id};
   my $referenceAllele = $referenceVariation->{base};
-
-
-  while($fileReader->hasNext()) {
-    my @a = $fileReader->nextLine();
-
-    my $varSequence = $a[0];
-    my $varLocation = $a[1];
   
+while($fileReader->hasNext()) {
+  # look at the line in memory to see if my sequence and location are inside;  if so, then last
+    my @p = $fileReader->getPeek();
+    my $pSequenceId = $p[0];
+    my $pStart = $p[1];
+    my $pEnd = $p[2];
 
-    if($varSequence eq $sequenceId && $varLocation == $location) {
-      my $varRef = $a[2];
-      my $varCons = $a[3];
-
-      if($varRef ne $referenceAllele) {
-        die "Calculated Reference Allele [$referenceAllele] does not match Varscan Ref [$varRef] for Sequence [$sequenceId] and Location [$location]";
-      }
-
-      next unless($varRef eq $varCons);
-      
-      my $varCoverage = $a[4] + $a[5];
-      chop $a[6];
-      my $varPercent = $a[2] eq $a[3] ? 100 - $a[6] : $a[6];
-
-      if($varPercent >= $minAllelePercent) {
-      
+    if($pSequenceId eq $sequenceId && $location >= $pStart && $location <= $pEnd) {
         $rv = {'base' => $referenceAllele,
                'location' => $location,
                'sequence_source_id' => $sequenceId,
                'matches_reference' => 1,
                'strain' => $strain,
         };
-        last;
-      }
+      last;
     }
 
-    # peek ahead to ensure we don't go too far
-    #----------------------------------------------------------------------
-    # first make sure we have something on the next line
-    my $peek = $fileReader->getPeek();
-    last unless $peek;
+    # stop when the location from the line in memory is > the refLoc
+    last if($pSequenceId gt $sequenceId || ($pSequenceId eq $sequenceId && $pStart > $location));
 
-    # now test if we've gone too far
-    my @p = $fileReader->getPeek();
-    my $peekSequence = $p[0];
-    my $peekLocation = $p[1];
- 
-    last if($peekSequence gt $sequenceId || ($peekSequence eq $sequenceId && $peekLocation > $location));
-  }
+    # read the next line into memory
+    $fileReader->nextLine();
+}
 
   return $rv;
 }
@@ -829,7 +799,7 @@ sub openVarscanFiles {
     my $reader;
     my $fullPath = $varscanDirectory . "/$file";
 
-    if($file =~ /(.+)\.varscan.cons/) {
+    if($file =~ /(.+)\.coverage\.txt/) {
       my $strain = $1;
 
       if($file =~ /\.gz$/) {
