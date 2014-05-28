@@ -24,7 +24,7 @@ die "Read freq dir '$readFreqDir' already exists.  Please remove before running.
 mkdir($readFreqDir) || die "Could not make read freq dir '$readFreqDir'\n";
 
 # zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
-open(STRAINMAP, ">$readFreqDir\strainIdToName.dat") || die "Can't open file '$readFreqDir\strainIdToName.dat' for writing\n";
+open(STRAINMAP, ">$readFreqDir/strainIdToName.dat") || die "Can't open file '$readFreqDir/strainIdToName.dat' for writing\n";
 opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
 my $strainCount = 0;
 
