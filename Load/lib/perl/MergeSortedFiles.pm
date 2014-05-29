@@ -109,11 +109,13 @@ sub merge {
   my $rvAsArray;
 
   if($self->wantFirstLine()) {
+#    print STDERR "KEEP\n";
     $rv = $firstLine;
     $rvAsArray = $firstLineAsArray;
   }
 
   else {
+#    print STDERR "SWITCH\n";
     $self->setFirstLine($secondLine);
     $self->setFirstLineAsArray($secondLineAsArray);
     $self->setFirstFh($secondFh);
@@ -129,6 +131,8 @@ sub merge {
   
   my $fh = $self->getFirstFh();
   ($firstLine, $firstLineAsArray) = $self->readNextLine($fh);
+
+#  print STDERR $firstLine . "\n\n";
 
   $self->setFirstLine($firstLine);
   $self->setFirstLineAsArray($firstLineAsArray);
