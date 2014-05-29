@@ -58,7 +58,10 @@ sub wantFirstLine {
   my @a = @{$self->getFirstLineAsArray()};
   my @b = @{$self->getSecondLineAsArray()};
 
-  return $a[$sequenceIndex] lt $b[$sequenceIndex] || ($a[$sequenceIndex] eq $b[$sequenceIndex] && $a[$locationIndex] <= $b[$locationIndex])
+#  print STDERR "A:  $a[$sequenceIndex]\t$a[$locationIndex]\n";
+#  print STDERR "B:  $b[$sequenceIndex]\t$b[$locationIndex]\n";
+
+  return lc($a[$sequenceIndex]) lt lc($b[$sequenceIndex]) || (lc($a[$sequenceIndex]) eq lc($b[$sequenceIndex]) && $a[$locationIndex] <= $b[$locationIndex])
 }
 
 # @OVERRIDE
