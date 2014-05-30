@@ -127,6 +127,9 @@ if (!$connectInstance) {
   }
 }
 
+$dblink = "\@" . $dblink
+  if ($dblink && !($dblink =~ /^\@/));
+
 my $dbh = getDbHandle($connectInstance, $password);
 
 list($dbh, $dblink) if $subcommand eq "list";
