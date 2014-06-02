@@ -96,7 +96,10 @@ while($reader->hasNext()) {
   die "Expected exactly one Reference Variation: $sourceId, $location" unless($foundStrains{$refStrainName} == 1);
 
   # Nothing to see here if only one variation (it is the reference)
-  next unless($hasVariation);
+  unless($hasVariation) {
+      $prevSourceId = $sourceId;
+      next
+  }
 
   foreach my $variation (@$variations) {
     my $strain = $variation->{strain};
@@ -128,6 +131,7 @@ while($reader->hasNext()) {
   }
 
   #write the unknowns for those strains which wwere not found to have a variation
+
   foreach my $strain (keys %allStrains) {
     next if($foundStrains{$strain});
     print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t0\t0\n";
