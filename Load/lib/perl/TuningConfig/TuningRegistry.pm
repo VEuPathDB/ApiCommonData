@@ -19,11 +19,13 @@ sub getInfoFromRegistry {
 
     my $dbh = $self->{dbh};
     my $dblink = $self->{dblink};
+    $dblink = "\@" . $dblink
+      if ($dblink && !($dblink =~ /^\@/));
 
     my $sql = <<SQL;
       select imi.instance_nickname, ti.instance_nickname, tf.subversion_url,
              tf.notify_emails, tf.is_live, tf.config_file, imi.project_id, imi.version
-      from apidb_r.TuningInstance\@$dblink ti, apidb_r.TuningFamily\@$dblink tf,
+      from apidb_r.TuningInstance$dblink ti, apidb_r.TuningFamily$dblink tf,
            apidb.InstanceMetaInfo imi
       where lower(ti.instance_nickname(+)) =  lower(imi.instance_nickname)
         and ti.family_name = tf.family_name(+)
