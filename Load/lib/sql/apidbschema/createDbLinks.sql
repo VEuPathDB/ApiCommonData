@@ -18,5 +18,12 @@ CONNECT TO APICOMM_DBLINK
 IDENTIFIED BY po34weep
 USING 'apicommDevN';
 
+-- rm15873 is for development of apicomm release-maintenance stuff
+-- https://redmine.apidb.org/issues/15873
+CREATE PUBLIC DATABASE LINK rm15873.login_comment
+CONNECT TO APICOMM_DBLINK
+IDENTIFIED BY po34weep
+USING 'rm15873';
+
 
 exit
