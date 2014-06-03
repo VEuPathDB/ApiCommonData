@@ -132,10 +132,6 @@ while($reader->hasNext()) {
 
   #write the unknowns for those strains which wwere not found to have a variation
 
-  print STDERR Dumper \%foundStrains;
-
-  print STDERR Dumper \%allStrains;
-
   foreach my $strain (keys %allStrains) {
     next if($foundStrains{$strain});
     print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t0\t0\n";
