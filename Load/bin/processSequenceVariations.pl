@@ -799,7 +799,7 @@ sub openVarscanFiles {
     my $reader;
     my $fullPath = $varscanDirectory . "/$file";
 
-    if($file =~ /(.+)\.coverage\.txt/) {
+    if($file =~ /(.+)\.coverage\.txt$/) {
       my $strain = $1;
 
       if($file =~ /\.gz$/) {
