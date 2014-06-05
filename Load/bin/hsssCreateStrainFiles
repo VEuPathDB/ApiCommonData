@@ -114,12 +114,12 @@ while($reader->hasNext()) {
 
 
     if($foundStrains{$strain} > 1) {
-      print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+      print { $allStrains{$strain}->{fh} } pack("slcc", "$sequenceIndex\t$location\t$alleleCode\t$productCode\n");
       next;
     }
 
     if($strain eq $refStrainName) {
-      print REFGENOME "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+      print REFGENOME pack("slcc", "$sequenceIndex\t$location\t$alleleCode\t$productCode\n");
       next;
     }
 
@@ -127,14 +127,14 @@ while($reader->hasNext()) {
     next if($variation->{matches_reference});
 
     # write the remaining variations
-    print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t$alleleCode\t$productCode\n";
+    print { $allStrains{$strain}->{fh} } pack("slcc", "$sequenceIndex\t$location\t$alleleCode\t$productCode\n");
   }
 
   #write the unknowns for those strains which wwere not found to have a variation
 
   foreach my $strain (keys %allStrains) {
     next if($foundStrains{$strain});
-    print { $allStrains{$strain}->{fh} } "$sequenceIndex\t$location\t0\t0\n";
+    print { $allStrains{$strain}->{fh} } pack("slcc", "$sequenceIndex\t$location\t0\t0\n");
   }
 
 
