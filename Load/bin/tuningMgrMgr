@@ -385,6 +385,8 @@ sub updateInstance {
     $svn = $1;
   }
 
+  die "\$svn undefined" unless $svn;
+
   if ($currentEnv) {
     # use current GUS environment
     $dir = `dirname $ENV{GUS_HOME}`;
