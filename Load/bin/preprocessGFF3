@@ -36,6 +36,8 @@ foreach my $line(<IN>){
     my (@cols) = split(/\t/,$line);
 
     $cols[0] =~ s/\;$//;
+    $cols[0] =~ s/\s+$//;
+    $cols[0] =~ s/^\s+//;
 
 #    print "$cols[8]\t\t";
     $cols[8] =~ s/stop_codon_redefined_as_selenocysteine;/stop_codon_redefined_as_selenocysteine=;/;
@@ -217,7 +219,7 @@ foreach my $line(<IN>){
 
     $cols[8] = $tagsFixed;
 
-    $cols[8] =~ s/\+/ /g;
+#    $cols[8] =~ s/\+/ /g;
     my $fixed = join("\t",@cols);
 
  #   print "$id\n";

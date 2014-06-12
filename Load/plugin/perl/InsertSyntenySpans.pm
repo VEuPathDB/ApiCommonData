@@ -15,45 +15,24 @@ use CBIL::Util::V;
 
 use GUS::Supported::Util;
 
+use File::Temp;
+use File::Basename;
+
+use Bio::Coordinate::Pair;
+use Bio::Location::Simple;
+
 use Data::Dumper;
 
 my $argsDeclaration = 
   [
-   fileArg({ name           => 'inputFile',
-	     descr          => 'tab-delimited synteny span data',
+   fileArg({ name           => 'inputDirectory',
+	     descr          => 'directory for mercator results',
 	     reqd           => 1,
-	     mustExist      => 1,
+	     mustExist      => 0,
 	     format         => 'custom',
 	     constraintFunc => undef,
 	     isList         => 0,
 	   }),
-
-
-   fileArg({ name           => 'gffFileA',
-	     descr          => 'gff file for exon locations which was input to mercator',
-	     reqd           => 1,
-	     mustExist      => 1,
-	     format         => 'gff',
-	     constraintFunc => undef,
-	     isList         => 0,
-	   }),
-
-   fileArg({ name           => 'gffFileB',
-	     descr          => 'gff file for exon locations which was input to mercator',
-	     reqd           => 1,
-	     mustExist      => 1,
-	     format         => 'gff',
-	     constraintFunc => undef,
-	     isList         => 0,
-	   }),
-
-     stringArg({ name => 'gffVersion',
-                 descr => '[1,2,3]',
-                 constraintFunc=> undef,
-                 isList => 0,
-                 reqd => 0,
-                 default => 3,
-         }),
 
 
    stringArg({name => 'syntenyDbRlsSpec',
@@ -105,6 +84,8 @@ my $documentation = { purpose=>$purpose,
 sub setGeneLocations {$_[0]->{_gene_locations} = $_[1]}
 sub getGeneLocations {$_[0]->{_gene_locations}}
 
+sub getAgpCoords {$_[0]->{_agp_coords}}
+
 #--------------------------------------------------------------------------------
 
 sub new {
@@ -127,76 +108,468 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $geneLocations = $self->readGeneLocationsFromGFFs();
-  $self->setGeneLocations($geneLocations);
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
 
-  my $file = $self->getArg('inputFile');
+  my $dirname = $self->getArg('inputDirectory');
+
+  my $alignDir = "$dirname/alignments";
+  my $genomesFile = "$alignDir/genomes";
+  my $mapFile = "$alignDir/map";
+
+  unless(-d $alignDir) {
+    $self->userError("Input Directory must contain alignments sub directory");
+  }
+
+  open(GENOMES, $genomesFile) or die "Cannot open map file $genomesFile for reading:$!";
+  my $genomes = <GENOMES>;
+  close GENOMES;
+
+  chomp $genomes;
+  my ($organismAbbrevA, $organismAbbrevB) = split(/\t/, $genomes);
+
+  $self->lookupNaSeqIdsByAbbrev($organismAbbrevA, $organismAbbrevB);
+
+  my $orgAAgp = "$dirname/$organismAbbrevA.agp";
+  my $orgBAgp = "$dirname/$organismAbbrevB.agp";
+
+  $self->addCoordPairs($orgAAgp, $organismAbbrevA);
+  $self->addCoordPairs($orgBAgp, $organismAbbrevB);
 
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
+  my $agpLocations = $self->getAgpCoords();  
+
   my $count = 0;
 
-  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
-
-  my (@synA, @synB);
-
-  while (<IN>) {
+  open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
+  while(<MAP>) {
     chomp;
+    #1       assembled7      14891   39021   +       assembled34     2947    27303   +
+    my ($subdir, $assemA, $startA, $endA, $strandA, $assemB, $startB, $endB, $strandB) = split(/\t/, $_);
 
-    my ($synA, $synB) = $self->_handleSyntenySpan($_, $synDbRlsId);
+#    next unless($assemA eq 'assembled6' && $assemB eq 'assembled73');
 
-    push(@synA, $synA);
-    push(@synB, $synB);
+    my $constraints = $self->readConstraints("$alignDir/$subdir/cons");
 
-    # 2 Synteny rows each
-    $count = $count + 2;
+    # Get Assem Coords
+    my $adjustedConstraintsA = $self->adjustConstraints($constraints, $organismAbbrevA, $startA, $endA, $strandA);
+    my $adjustedConstraintsB = $self->adjustConstraints($constraints, $organismAbbrevB, $startB, $endB, $strandB);
 
-    if($count && $count % 500 == 0) {
-      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
+    unless(scalar @$adjustedConstraintsA == scalar @$adjustedConstraintsB) {
+      $self->error("Expected Pairs of Constraints");
     }
 
-    $self->undefPointerCache();
-  }
-  close(IN);
+    my $syntenyLocsA = $self->mapSyntenicLocation($agpLocations->{$organismAbbrevA}, $assemA, $startA, $endA, $strandA);
+    my $syntenyLocsB = $self->mapSyntenicLocation($agpLocations->{$organismAbbrevB}, $assemB, $startB, $endB, $strandB);
 
-  $self->insertAnchors(\@synA);
-  $self->insertAnchors(\@synB);
+    my $synteny = $self->separateByAnchors($adjustedConstraintsA, $adjustedConstraintsB, $agpLocations, $organismAbbrevA, $organismAbbrevB, $assemA, $assemB);
+    my $seqIdStats = $self->makeSeqStats($synteny);
+
+    foreach my $pk (keys %$synteny) {
+      my $seqIdA = $synteny->{$pk}->{$organismAbbrevA}->{seq_id};
+      my $seqIdB = $synteny->{$pk}->{$organismAbbrevB}->{seq_id};
+
+      my $anchorsA = $synteny->{$pk}->{$organismAbbrevA}->{locations};
+      my $anchorsB = $synteny->{$pk}->{$organismAbbrevB}->{locations};
+
+      my $fullSyntenyLocA = $syntenyLocsA->{$seqIdA};
+      my $fullSyntenyLocB = $syntenyLocsB->{$seqIdB};
+
+      my ($syntenyA, $syntenyB);
+
+      if($seqIdStats->{$seqIdA}->{counts} == 1) {
+        $syntenyA = $fullSyntenyLocA;
+      } else {
+        my $syntenyStartA = $synteny->{$pk}->{$organismAbbrevA}->{synteny_start};
+        my $syntenyEndA = $synteny->{$pk}->{$organismAbbrevA}->{synteny_end};
+        $syntenyA = $self->findPartialSyntenyLoc($fullSyntenyLocA, $syntenyStartA, $syntenyEndA);
+      }
+
+      if($seqIdStats->{$seqIdB}->{counts} == 1) {
+        $syntenyB = $fullSyntenyLocB;
+      } else {
+        my $syntenyStartB = $synteny->{$pk}->{$organismAbbrevB}->{synteny_start};
+        my $syntenyEndB = $synteny->{$pk}->{$organismAbbrevB}->{synteny_end};
+
+        $syntenyB = $self->findPartialSyntenyLoc($fullSyntenyLocB, $syntenyStartB, $syntenyEndB);
+      }
+
+
+#      print "SyntenyA: " . $syntenyA->seq_id . " " . $syntenyA->start . " " . $syntenyA->end . "\n";
+#      print "SyntenyB: " . $syntenyB->seq_id . " " . $syntenyB->start . " " . $syntenyB->end . "\n";
+
+      my @pairs;
+
+      my ($sas, $sae) = $self->getSyntenyStartEndAnchors($syntenyA);
+      my ($sbs, $sbe) = $self->getSyntenyStartEndAnchors($syntenyB);
+
+      push @pairs, [$sas, $sbs];
+      push @pairs, [$sae, $sbe];
+
+
+      for(my $i = 0; $i < scalar @$anchorsA; $i++) {
+        push @pairs, [$anchorsA->[$i],$anchorsB->[$i]];
+      }
+
+      my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId);
+      $syntenyObjA->submit();
+      $self->undefPointerCache();
+
+      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
+      $syntenyObjB->submit();
+      $self->undefPointerCache();
+
+      if($count && $count % 500 == 0) {
+        $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
+      }
+
+      $count++;
+    }
+
+  }
+  close MAP;
 
   my $anchorCount = $self->getAnchorCount();
 
   return "inserted $count synteny spans and $anchorCount anchors ";
 }
 
+
+sub getNaSequenceMap {$_[0]->{_na_sequence_map}}
+sub lookupNaSeqIdsByAbbrev {
+  my ($self, $organismAbbrevA, $organismAbbrevB) =  @_;
+
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "SELECT s.source_id, s.na_sequence_id 
+             FROM dots.nasequence s, sres.sequenceontology so, apidb.organism o
+             WHERE  so.sequence_ontology_id = s.sequence_ontology_id
+              and so.term_name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')
+              and o.taxon_id = s.taxon_id
+              and o.abbrev in ('$organismAbbrevA', '$organismAbbrevB')";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my ($sourceId, $naSequenceId) = $sh->fetchrow_array()) {
+    $self->{_na_sequence_map}->{$sourceId} = $naSequenceId;
+  }
+  $sh->finish();
+
+}
+
+
+
 #--------------------------------------------------------------------------------
 
-sub readGeneLocationsFromGFFs {
-  my ($self) = @_;
+sub getSyntenyStartEndAnchors {
+  my ($self, $synteny) = @_;
 
-  my $gffFileA = $self->getArg('gffFileA');
-  my $gffFileB = $self->getArg('gffFileB');
+  if($synteny->strand() == 1) {
+    return($synteny->start(), $synteny->end());
+  }
+  return($synteny->end(), $synteny->start());
 
-  my $gffVersion = $self->getArg('gffVersion');
+}
 
-  my $allFeatureLocations = {};
-  GUS::Supported::Util::addGffFeatures($allFeatureLocations, $gffFileA, $gffVersion);
-  GUS::Supported::Util::addGffFeatures($allFeatureLocations, $gffFileB, $gffVersion);
+#--------------------------------------------------------------------------------
 
-  my $geneLocations = {};
-  foreach my $seqId (keys %$allFeatureLocations) {
-    foreach my $gene (keys %{$allFeatureLocations->{$seqId}}) {
-      foreach my $strand (keys %{$allFeatureLocations->{$seqId}->{$gene}}) {
-        my $min = CBIL::Util::V::min(@{$allFeatureLocations->{$seqId}->{$gene}->{$strand}});
-        my $max = CBIL::Util::V::max(@{$allFeatureLocations->{$seqId}->{$gene}->{$strand}});
+sub makeSynteny {
+  my ($self, $syntenyA, $syntenyB, $pairs, $index, $synDbRlsId) = @_;
 
-        push @{$geneLocations->{$seqId}}, {gene => $gene,
-                                           min => $min,
-                                           max => $max,
-                                          };
+
+  my $naSequenceMap = $self->getNaSequenceMap();
+
+  my $isReversed = $syntenyA->strand == $syntenyB->strand ? 0 : 1;
+
+
+  my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $naSequenceMap->{$syntenyA->seq_id},
+						  b_na_sequence_id => $naSequenceMap->{$syntenyB->seq_id},
+						  a_start => $syntenyA->start,
+						  b_start => $syntenyB->start,
+						  a_end   => $syntenyA->end,
+						  b_end   => $syntenyB->end,,
+						  is_reversed => $isReversed,
+						  external_database_release_id => $synDbRlsId,
+						});
+
+
+  my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
+
+
+  my $synIndex = $index == 1 ? 0 : 1;
+
+  $self->createSyntenyAnchors($synteny, \@sortedPairs, $index, $synIndex);
+
+
+  return $synteny;
+}
+
+#--------------------------------------------------------------------------------
+
+
+sub makeSeqStats {
+  my ($self, $synteny) = @_;
+
+  my %seqIdStats;
+
+  foreach my $pk (keys %$synteny) {
+    foreach my $oa (keys %{$synteny->{$pk}}) {
+      my $seqId = $synteny->{$pk}->{$oa}->{seq_id};
+      $seqIdStats{$seqId}->{counts}++;
+
+#      my $max = CBIL::Util::V::max(@{$synteny->{$pk}->{$oa}->{locations}});
+#      my $min = CBIL::Util::V::min(@{$synteny->{$pk}->{$oa}->{locations}});
+        
+#      $seqIdStats{$seqId}->{coverage} += $max - $min;
+    }
+  }
+  return \%seqIdStats;
+}
+
+#--------------------------------------------------------------------------------
+
+sub separateByAnchors {
+  my ($self, $adjustedConstraintsA, $adjustedConstraintsB, $agpLocations, $organismAbbrevA, $organismAbbrevB, $assemA, $assemB) = @_;
+
+  my %synteny;
+  my ($prevSeqA, $prevSeqB, $prevAnchorA, $prevAnchorB);
+  my $synPk = 1;
+
+  for(my $i = 0; $i < scalar @$adjustedConstraintsA; $i++) {
+    my $conA = $adjustedConstraintsA->[$i];
+    my $conB = $adjustedConstraintsB->[$i];
+
+    my $locA = $self->disassemble($agpLocations->{$organismAbbrevA}, $assemA, $conA);
+    my $locB = $self->disassemble($agpLocations->{$organismAbbrevB}, $assemB, $conB);
+
+    unless(defined($locA)) {
+      print STDERR "WARN:  Could Not Map:  $organismAbbrevA, $assemA, $conA\n";
+    }
+    unless(defined($locB)) {
+      print STDERR "WARN:  Could Not Map:  $organismAbbrevB, $assemB, $conB\n";
+    }
+
+    next unless(defined($locA) && defined($locB));
+
+    # Test for a breakpoint
+    if($prevSeqA && ($locA->seq_id() ne $prevSeqA || $locB->seq_id() ne $prevSeqB)) {
+      my $isReversedA = $prevAnchorA > $locA->start() ? 1 : 0;
+      my $isReversedB = $prevAnchorB > $locB->start() ? 1 : 0;
+
+      my $additionA = sprintf("%.0f", abs($locA->start() - $prevAnchorA) / 2);
+      my $additionB = sprintf("%.0f", abs($locB->start() - $prevAnchorB) / 2);
+
+      my $syntenyEndA = $isReversedA ? $prevAnchorA - $additionA : $prevAnchorA + $additionA;
+      my $syntenyEndB = $isReversedB ? $prevAnchorB - $additionB : $prevAnchorB + $additionB;
+
+      $synteny{$synPk}->{$organismAbbrevA}->{synteny_end} = $prevSeqA eq $locA->seq_id ? $syntenyEndA : undef;
+      $synteny{$synPk}->{$organismAbbrevB}->{synteny_end} = $prevSeqB eq $locB->seq_id ? $syntenyEndB : undef;
+
+      # Here is where we switch to the next row of synteny
+      $synPk++;
+
+      my $syntenyStartA = $isReversedA ? $locA->start() + $additionA : $locA->start() - $additionA;
+      my $syntenyStartB = $isReversedB ? $locB->start() + $additionB : $locB->start() - $additionB;
+
+      $synteny{$synPk}->{$organismAbbrevA}->{synteny_start} = $prevSeqA eq $locA->seq_id ? $syntenyStartA : undef;
+      $synteny{$synPk}->{$organismAbbrevB}->{synteny_start} = $prevSeqB eq $locB->seq_id ? $syntenyStartB : undef;
+    }
+      
+    $synteny{$synPk}->{$organismAbbrevA}->{seq_id} = $locA->seq_id;
+    $synteny{$synPk}->{$organismAbbrevB}->{seq_id} = $locB->seq_id;
+
+    push @{$synteny{$synPk}->{$organismAbbrevA}->{locations}}, $locA->start();
+    push @{$synteny{$synPk}->{$organismAbbrevB}->{locations}}, $locB->start();
+
+    $prevSeqA = $locA->seq_id();
+    $prevSeqB = $locB->seq_id();
+    $prevAnchorA = $locA->start();
+    $prevAnchorB = $locB->start();
+  }
+
+  return \%synteny;
+}
+
+
+#--------------------------------------------------------------------------------
+
+sub findPartialSyntenyLoc {
+  my ($self, $synteny, $fragStart, $fragEnd) = @_;
+
+  my $start = $synteny->start();
+  my $end = $synteny->end();
+
+  my ($newStart, $newEnd);
+  if($synteny->strand == 1) {
+    $newStart = defined($fragStart) ? $fragStart : $start;
+    $newEnd = defined($fragEnd) ? $fragEnd : $end;
+  }
+  else {
+    $newStart = defined($fragEnd) ? $fragEnd : $start;
+    $newEnd = defined($fragStart) ? $fragStart : $end;
+  }
+
+  my $rv = Bio::Location::Simple->
+      new( -seq_id => $synteny->seq_id, -start => $newStart, -end => $newEnd, -strand => $synteny->strand());
+
+  return $rv;
+}
+
+#--------------------------------------------------------------------------------
+
+sub mapSyntenicLocation {
+  my ($self, $agps, $assem, $assemStart, $assemEnd, $strand) = @_;
+
+  my %locations;
+
+  my $bpStrand = $strand eq '+' ? +1 : -1;
+
+  foreach my $agp (@$agps) {
+    my $seqId = $agp->in()->seq_id();
+    my $start = $agp->in()->start();
+    my $end = $agp->in()->end();
+
+    my $assemMatch;
+    # assembly matches the full contig
+    if($assem eq $seqId && $assemStart < $start && $assemEnd > $end) {
+      $assemMatch = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $start, -end =>  $end, -strand => $bpStrand );
+    }
+
+    # assembly match is fully contained in a single contig 
+    elsif($assem eq $seqId && $assemStart >= $start && $assemEnd <= $end) {
+      $assemMatch = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $assemStart, -end =>  $assemEnd, -strand => $bpStrand );
+    }
+
+    # assembly match is paritally contained...run off the end
+    elsif($assem eq $seqId && $assemStart <= $end && $assemEnd >= $end) {
+      $assemMatch = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $assemStart, -end =>  $end, -strand => $bpStrand );
+    }
+
+    # assembly match is paritally contained...run off the start
+    elsif($assem eq $seqId && $assemStart <= $start && $assemEnd >= $start) {
+      $assemMatch = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $start, -end =>  $assemEnd, -strand => $bpStrand );
+    }
+
+    else {}
+
+    if($assemMatch) {
+      my $match = $agp->map( $assemMatch );
+      foreach my $location ($match->each_match()) {
+        my $seqId = $location->seq_id();
+
+        $locations{$seqId} = $location;
       }
     }
   }
 
-  return $geneLocations;
+  return \%locations;
+}
+#--------------------------------------------------------------------------------
+
+sub disassemble {
+  my ($self, $agps, $assem, $loc) = @_;
+
+  foreach(@$agps) {
+    my $seqId = $_->in()->seq_id();
+    my $start = $_->in()->start();
+    my $end = $_->in()->end();
+
+    if($assem eq $seqId && $loc >= $start && $loc <= $end) {
+      my $assemMatch = Bio::Location::Simple->
+          new( -seq_id => 'hit', -start =>   $loc, -end =>  $loc, -strand => +1 );
+
+      my $match = $_->map( $assemMatch );
+      return $match;
+    }
+  }
+  return undef;
+}
+
+#--------------------------------------------------------------------------------
+
+sub adjustConstraints {
+  my ($self, $constraints, $organismAbbrev, $start, $end, $strand) = @_;
+
+  my @rv;
+
+  foreach my $con(@{$constraints->{$organismAbbrev}}) {
+    if($strand eq '+') {
+      push @rv, $start + $con;
+    }
+    elsif($strand eq '-') {
+      push @rv, $end - $con;
+    }
+    else {
+      $self->error("Strand $strand not defined correctly in map file");
+    }
+  }
+
+  return \@rv;
+}
+
+#--------------------------------------------------------------------------------
+
+sub readConstraints {
+  my ($self, $file) = @_;
+
+  open(CONS, "sort -k 2n $file|") or die "Cannot opoen file $file for reading: $!";
+
+  my %rv;
+
+  while(<CONS>) {
+    chomp;
+
+    my ($orgA, $startA, $endA, $orgB, $startB, $endB) = split(/ /, $_);
+
+    push @{$rv{$orgA}}, $startA;
+    push @{$rv{$orgA}}, $endA;
+
+    push @{$rv{$orgB}}, $startB;
+    push @{$rv{$orgB}}, $endB;
+  }
+
+  close CONS;
+  return \%rv;
+}
+
+#--------------------------------------------------------------------------------
+
+sub addCoordPairs {
+  my ($self, $agp, $organismAbbrev) = @_;
+
+  open(AGP, $agp) or $self->error("Could not open file $agp for reading: $!");
+
+  while(<AGP>) {
+    chomp;
+    my @a = split(/\t/, $_);
+
+    next if($a[4] eq 'N');
+
+    my $ctg = Bio::Location::Simple->new( -seq_id => $a[5],
+                                          -start => $a[6], 
+                                          -end =>  $a[7],
+                                          -strand => $a[8] eq '-' ? -1 : +1,
+        );
+
+    my $assem = Bio::Location::Simple->new( -seq_id =>  $a[0],
+                                             -start => $a[1],
+                                             -end =>  $a[2],
+                                             -strand => '+1' ,
+        );
+    
+    my $agp = Bio::Coordinate::Pair->new( -in  => $assem, -out => $ctg );
+
+    push @{$self->{_agp_coords}->{$organismAbbrev}}, $agp;
+  }
+
+  close AGP;
 }
 
 #--------------------------------------------------------------------------------
@@ -213,146 +586,11 @@ sub countAnchor {
 
 #--------------------------------------------------------------------------------
 
-=head2 Subroutines
-
-=over 4
-
-=item I<_handleSyntenySpan>
-
-B<Parameters:>
-
- $self(_PACKAGE_):
- $line(STRING): ex: "MAL13   ctg_7202        111895  790019  115060  856803  +"
- $extDbRlsIdA(NUMBER): SRes::ExternalDatabaseRelease id for the Genome in the first column
- $extDbRlsIdB(NUMBER): SRes::ExternalDatabaseRelease id for the Genome in the second column
- $synDbRlsId(NUBER): SRes::ExternalDatabaseRelease id for the results
-
-B<Return Type:> ARRAY
-
- 2 Elements, Both are ApiDB.Synteny Objects... the second being the opposite of the first
-
-=cut
-
-sub _handleSyntenySpan {
-  my ($self, $line, $synDbRlsId) = @_;
-
-  my ($a_id, $b_id,
-      $a_start, $a_len,
-      $b_start, $b_len,
-      $strand) = split(" ", $line);
-
-  my $a_pk = $self->getNaSequenceId($a_id);
-  my $b_pk = $self->getNaSequenceId($b_id);
-
-  my $a_end = $a_start + $a_len - 1;
-  my $b_end = $b_start + $b_len - 1;
-  my $isReversed = $strand eq "-" ? 1 : 0;
-
-  my $synteny = $self->makeSynteny($a_pk, $b_pk, $a_start, $b_start, $a_end, $b_end, $isReversed, $synDbRlsId);
-  my $reverse = $self->makeSynteny($b_pk, $a_pk, $b_start, $a_start, $b_end, $a_end, $isReversed, $synDbRlsId);
-
-  return($synteny, $reverse);
-}
-
-#--------------------------------------------------------------------------------
-
-=item I<makeSynteny>
-
-B<Parameters:>
-
- $self(_PACKAGE_):
- $a_pk(NUMBER): na_sequence_id
- $b_pk(NUMBER): na_sequence_id
- $a_start(NUMBER): Genomic coordinate where synteny begins
- $b_start(NUMBER): Genomic coordinate where synteny begins
- $a_end(NUMBER): Genomic coordinate where synteny ends
- $b_end(NUMBER): Genomic coordinate where synteny ends
- $isReversed(BOOLEAN): 1 for - strand; 0 for + strand
- $synDbRlsId(NUMBER): SRes::ExternalDatabaseRelease Id for the Synteny object
-
-B<Return Type:> ARRAY
-
- 2 Elements, Both are ApiDB.Synteny Objects... the second being the opposite of the first
-
-=cut
-
-sub makeSynteny {
-  my ($self, $a_pk, $b_pk, $a_start, $b_start, $a_end, $b_end, $isReversed, $synDbRlsId) = @_;
-
-  my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $a_pk,
-						  b_na_sequence_id => $b_pk,
-						  a_start => $a_start,
-						  b_start => $b_start,
-						  a_end   => $a_end,
-						  b_end   => $b_end,
-						  is_reversed => $isReversed,
-						  external_database_release_id => $synDbRlsId,
-						});
-  return $synteny;
-}
-
-#--------------------------------------------------------------------------------
-
-sub getNaSequenceId {
-  my ($self, $sourceId) = @_;
-
-  my $dbh = $self->getQueryHandle();
-
-  my $sql = "SELECT s.na_sequence_id FROM dots.nasequence s, sres.sequenceontology so
-             WHERE  so.sequence_ontology_id = s.sequence_ontology_id and s.source_id = ? 
-              and so.term_name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')";
-
-  my $sh = $dbh->prepare($sql);
-
-  my @ids = $self->sqlAsArray( Handle => $sh, Bind => [$sourceId] );
-
-
-  if(scalar @ids != 1) {
-    $self->error("Sql Should return only one value: $sql\n for values: $sourceId");
-  }
-
-  $self->{_nasequence_source_ids}->{$ids[0]} = $sourceId;
-
-  return $ids[0];
-}
-
-#--------------------------------------------------------------------------------
-
-sub insertAnchors {
-  my ($self, $synRows) = @_;
-
-  my $gene2orthologGroup = $self->findOrthologGroups();
-
-  foreach my $syntenyObj (@$synRows) {
-
-    my $refGenes = $self->findGenes($syntenyObj->getANaSequenceId(),
-				    $syntenyObj->getAStart(),
-				    $syntenyObj->getAEnd()
-                                    );
-
-    my $synGenes = $self->findGenes($syntenyObj->getBNaSequenceId(),
-				    $syntenyObj->getBStart(),
-				    $syntenyObj->getBEnd()
-                                   );
-
-    my $pairs = $self->findAnchorPairs($refGenes, $synGenes,
-                                       $gene2orthologGroup, $syntenyObj);
-
-
-    $self->createSyntenyAnchors($syntenyObj, $pairs);
-
-    $syntenyObj->submit();
-    $self->undefPointerCache();
-  }
-  return 1;
-}
-
-#--------------------------------------------------------------------------------
-
 sub createSyntenyAnchors {
-  my ($self, $syntenyObj, $pairs) = @_;
+  my ($self, $syntenyObj, $sortedPairs, $refIndex, $synIndex) = @_;
 
-  my @sortedPairs = sort {$a->[0] <=> $b->[0] } @$pairs;
+  my @sortedPairs = @$sortedPairs;
+
 
   my $prevRefLoc = -9999999999;
   my $lastRefLoc = 9999999999;
@@ -363,11 +601,11 @@ sub createSyntenyAnchors {
       $nextRefLoc = $lastRefLoc;
     }
     else {
-      $nextRefLoc = $sortedPairs[$i+1]->[0];
+      $nextRefLoc = $sortedPairs[$i+1]->[$refIndex];
     }
 
-    my $refLoc = $sortedPairs[$i]->[0];
-    my $synLoc = $sortedPairs[$i]->[1];
+    my $refLoc = $sortedPairs[$i]->[$refIndex];
+    my $synLoc = $sortedPairs[$i]->[$synIndex];
 
     my $anchor = {prev_ref_loc=> $prevRefLoc,
                   ref_loc=> $refLoc,
@@ -381,156 +619,6 @@ sub createSyntenyAnchors {
   }
 
 }
-
-#--------------------------------------------------------------------------------
-
-=item I<findOrthologGroups>
-
-B<Parameters:>
-
- $self(_PACKAGE_):
- $extDbRlsIdA(NUMBER): SRes::ExternalDatabaseRelease id for the Reference Genome
-
-B<Return Type:> ARRAY
-
-2 elements, each are HASHREFS.  
-   The first maps GeneFeature na_feature_id to SequenceSequenceGroup sequence_group_id
-   The second tracks which na_feature_ids are from the reference.
-
-=cut
-
-sub findOrthologGroups {
-  my ($self) = @_;
-
-my $sql = "select g.source_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
-    from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
-    where g.source_id = ssg.source_id
-    UNION
-    select g.source_id, to_char(ssg.sequence_group_id), g.external_database_release_id
-    from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
-    where t.name = 'GeneFeature'
-    and g.na_feature_id = ssg.sequence_id
-    and t.table_id = ssg.source_table_id
-    ";
-
-  my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
-
-  my $gene2orthologGroup = {};
-
-  while (my ($geneFeatId, $ssgId, $extDbRlsId) = $stmt->fetchrow_array()) {
-     $gene2orthologGroup->{$geneFeatId} = $ssgId;
-  }
-  return $gene2orthologGroup
-}
-
-#--------------------------------------------------------------------------------
-
-=item I<findGenes>
-
-B<Parameters:>
-
- $self(_PACKAGE_):
- $stmt(prepared dbi statement handle): Find all genes (and their start/end) for given genomic coordinates
- $na_sequence_id(NUMBER): Dots::NaSequence pk (contig/chromosome where were looking)
- $start(NUMBER): Where the synteny begins
- $end(NUMBER): Where the synteny ends
-
-B<Return Type:> ARRAYREF
-
- Each element is a HASH of genes with keys id, start, end. (id is the na_feature_id)
-
-=cut
-
-sub findGenes {
-  my ($self, $na_sequence_id, $start, $end) = @_;
-
-  my $seqId = $self->{_nasequence_source_ids}->{$na_sequence_id};
-  my $allLocations = $self->getGeneLocations();
-
-  my @genes;
-
-  foreach my $geneLocation (@{$allLocations->{$seqId}}) {
-    if($geneLocation->{min} > $start && $geneLocation->{max} < $end) {
-      push @genes, $geneLocation;
-    }
-  }
-
-  return \@genes;
-}
-
-#--------------------------------------------------------------------------------
-
-=item I<findAnchorPairs>
-
-B<Parameters:>
-
- $self(_PACKAGE_)
- $refGenes(ARRAYREF): ARRAYREF, Each element is a hash of genes (id, start, end)
- $synGenes(HASHREF): ARRAYREF, Each element is a hash of genes (id, start, end)
- $gene2orthologGroup(HASHREF): na_feature_id to SequenceSequenceGroup sequence_group_id
- $orthologGroup2refGenes(HASHREF): second tracks which na_feature_ids are from the reference.
-
-B<Return Type:> ARRAYREF
-
- ArrayRef of GenePairs for a Syntenic Region.  Each pair is a hash with keys: refStart, synStart, refEnd, synEnd
-
-=cut
-
-sub findAnchorPairs {
-  my ($self, $refGenes, $synGenes, $gene2orthologGroup, $syntenyObj) = @_;
-
-  my $genePairsHashRef = {};
-  foreach my $synGene (@$synGenes) {
-    my $ssgId = $gene2orthologGroup->{$synGene->{gene}};
-    next unless($ssgId);
-
-    foreach my $refGene (@$refGenes) {
-      my $ssgIdRef = $gene2orthologGroup->{$refGene->{gene}};
-
-      if ($ssgId eq $ssgIdRef) {
-        push @{$genePairsHashRef->{start}->{$refGene->{min}}}, ($synGene->{min}, $synGene->{max});
-        push @{$genePairsHashRef->{end}->{$refGene->{max}}}, ($synGene->{min}, $synGene->{max});
-      }
-    }
-  }
-
-  my @pairs;
-
-  foreach my $refStart (keys %{$genePairsHashRef->{start}}) {
-    my $synStart;
-    if($syntenyObj->getIsReversed()) {
-      $synStart = CBIL::Util::V::max(@{$genePairsHashRef->{start}->{$refStart}});
-    }
-    else {
-      $synStart = CBIL::Util::V::min(@{$genePairsHashRef->{start}->{$refStart}});
-    }
-    push @pairs, [$refStart,$synStart];
-  }
-
-  foreach my $refEnd (keys %{$genePairsHashRef->{end}}) {
-    my $synEnd;
-    if($syntenyObj->getIsReversed()) {
-      $synEnd = CBIL::Util::V::min(@{$genePairsHashRef->{end}->{$refEnd}});
-    }
-    else {
-      $synEnd = CBIL::Util::V::max(@{$genePairsHashRef->{end}->{$refEnd}});
-    }
-    push @pairs, [$refEnd,$synEnd];
-  }
-
-  if($syntenyObj->getIsReversed()) {
-    push @pairs, [$syntenyObj->getAStart(), $syntenyObj->getBEnd()];
-    push @pairs, [$syntenyObj->getAEnd(), $syntenyObj->getBStart()];
-  }
-  else {
-    push @pairs, [$syntenyObj->getAStart(), $syntenyObj->getBStart()];
-    push @pairs, [$syntenyObj->getAEnd(), $syntenyObj->getBEnd()];
-  }
-
-  return \@pairs;
-}
-
-#--------------------------------------------------------------------------------
 
 
 sub addAnchorToGusObj {

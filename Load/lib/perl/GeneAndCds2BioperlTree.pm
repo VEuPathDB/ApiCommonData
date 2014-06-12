@@ -84,6 +84,11 @@ sub preprocess {
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
+		if (($geneFeature->has_tag("locus_tag"))){
+			my ($cID) = $geneFeature->get_tag_values("locus_tag");
+			print STDERR "processing $cID...\n";
+		}
+
 		if(!($geneFeature->has_tag("locus_tag"))){
 		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}      
@@ -226,7 +231,8 @@ sub traverseSeqFeatures {
 	    if($type eq 'mRNA'){
 		$type = 'coding';
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);

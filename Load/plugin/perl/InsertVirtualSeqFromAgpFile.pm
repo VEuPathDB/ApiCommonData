@@ -124,6 +124,11 @@ integerArg({name => 'ncbiTaxId',
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
+ booleanArg({  name            =>  'allowSplits', 
+               descr           =>  'if true the plugin allows splitting a genome piece for use in more than one virtual sequence',
+               reqd            =>  0,
+               isList          =>  0
+              }),
 
 ];
 
@@ -661,7 +666,8 @@ sub validateFileFormat {
     push (@checkItems, $k) if ($testFragmentIds{$k} > 1 && $k !~ /^\d+/);
   }
   if (scalar(@checkItems) > 0) { 
-    die "Check agp file for ".join (", ", @checkItems).", one single fragment can only be assembled to one position\n";
+    $self->log("WARNING .... Check agp file for splitted genome piece(s)".join (", ", @checkItems)."\n");
+    die "Check agp file for ".join (", ", @checkItems).", one single fragment can only be assembled to one position\n" unless $self->getArg('allowSplits');
   }
 
   $self->log("File format validated\n");

@@ -817,6 +817,19 @@ sub transcriptTranslExcept {
 
 sub _undoTranscriptTranslExcept {}
 
+############### transl_table ###############################
+sub transcriptTransTable {
+  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+  my $transcript = $geneFeature->getChild("DoTS::Transcript");
+  my ($transl_table) = $bioperlFeature->get_tag_values($tag);
+  $transcript->setTranslTable($transl_table);
+  return [];
+}
+
+sub _undoTranscriptTransTable {
+  my ($self) = @_;
+}
+
 ################ EC Number ###############################
 
 # attach EC number to translated aa seq.
@@ -1448,13 +1461,16 @@ sub validateGene {
 
 #		last;
 	    }else{
-		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
+               my $transl_table = $transcript->getTranslTable();
+               my $codonTable = ($transl_table) ? ($transl_table - 1) : 0;
+		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)){
 		  $msg = "***ERROR********* ";
 
 		  $msg .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
 		  $msg .= "Pseudogene " if ($feature->getIsPseudo());
+		  $msg .= "Partial gene " if ($feature->getIsPartial());
 
-		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
+		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)."\n";
 	
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$msg\n");
@@ -1471,6 +1487,7 @@ sub validateGene {
 
 		    $warning .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
 		    $warning .= "Pseudogene " if ($feature->getIsPseudo());
+		    $warning .= "Partial gene " if ($feature->getIsPartial());
 
 		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 

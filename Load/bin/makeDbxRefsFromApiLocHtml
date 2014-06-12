@@ -15,9 +15,13 @@ my %ids;
 open(F, $apilocHtmlFile) || die "can't open html file '$apilocHtmlFile'";
 while(<F>){
   next if /common/;  # skip a junky line of html
-  next unless /gene\/$apilocOrganismName\/(.*?)\"/;
-  print "$1\t$1\n" unless ($ids{$1});
+  #next unless /gene\/$apilocOrganismName\/(.*?)\"/;
+  #print "$1\t$1\n" unless ($ids{$1});
+
+  next unless /gene\/$apilocOrganismName\/(.*?)\"\>(.*?)\</;
+  print "$2\t$1\n" unless ($ids{$1});
   $ids{$1}=1;
+
 }
 
 sub usage {

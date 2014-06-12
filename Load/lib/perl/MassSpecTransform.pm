@@ -658,23 +658,24 @@ sub isProteinLine {
 
 1;
 
-package ApiCommonData::Load::MassSpecTransform::Almeida_Proteomics;
+
+
+package ApiCommonData::Load::MassSpecTransform::IgnoreArtifacts;
 use base qw(ApiCommonData::Load::MassSpecTransform);
+
 sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {'#' => 'modified_L_methionine',
-	    '*' => 'modified_L_cysteine',
-  };
- return $rv;
+  return {};
 }
 
 sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
 
-  my $rv = {
+  return {'*' => 'modified_L_cysteine',
+          '#' => 'modified_L_methionine',
+          '%' => 'modified_L_methionine',
   };
- return $rv;
 }
 
 1;
@@ -754,19 +755,7 @@ sub isPeptideLine {
 
 1;
 
-package ApiCommonData::Load::MassSpecTransform::Broadhead;
-use base qw(ApiCommonData::Load::MassSpecTransform);
 
-sub getReportedModificationSymbolMap {
-  my ($self) = @_;
-
-  my $rv = { '*' => 'modified_L_cysteine',
-	   '%' => 'modified_L_methionine',
-	   '#' => 'iodoacetamide_derivatized_residue'
-  };
-  return $rv;
-}
-1;
 
 
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine;
@@ -778,6 +767,26 @@ sub isPeptideLine {
 
   return $self->isProteinLine($lineString, $lineArray);
 
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineIgnoreArtifacts;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {'*' => 'modified_L_cysteine',
+          '#' => 'modified_L_methionine',
+          '%' => 'modified_L_methionine',
+  };
 }
 
 1;
@@ -931,6 +940,27 @@ sub isProteinLine {
     return 1;
   }
   return 0;
+}
+
+1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineMethylarginine;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'monomethylarginine',
+           '#' => 'dimethylarginine',
+           '@' => 'asymmetric_dimethylarginine',
+           '+' => 'symmetric_dimethylarginine',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
 }
 
 1;

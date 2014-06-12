@@ -64,13 +64,14 @@ $stmt->finish();
 
 
 ## A. check for if source_id is null
-my @tables = ("DOTS.genefeature",
+my @tables = ("DOTS.genefeature", "DOTS.externalnasequence",
 	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
 	      "DOTS.transcript",
 	     "DOTS.exonfeature");
 
 my %priKeys =(
 	      'DOTS.genefeature' => 'na_feature_id',
+	      'DOTS.externalnasequence' => 'na_sequence_id',
 	      'DOTS.transcript' => 'na_feature_id',
 	      'DOTS.exonfeature' => 'na_feature_id',
 	      'DOTS.translatedaafeature' => 'aa_feature_id',
@@ -94,7 +95,7 @@ SQL
 }
 
 ## B. check if source_id is duplicated
-my @tables = ("DOTS.genefeature",
+my @tables = ("DOTS.genefeature", "DOTS.externalnasequence",
 	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
 	      "DOTS.transcript",
 	     "DOTS.exonfeature");
@@ -190,7 +191,10 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array() ) {
   print STDERR "ERROR... the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
-  print STDERR "WARNING... the length of protein sequence is less than 10 aa.\n    $aaSourceId: $aaSeq\n" if (length($aaSeq) < 10);
+  if (length($aaSeq) < 10) {
+    $aaSourceId =~ s/\-\d$//g;
+    print STDERR "WARNING... the length of protein sequence is less than 10 aa.\n    $aaSourceId: $aaSeq\n";
+  }
 }
 $stmt->finish();
 
@@ -299,17 +303,19 @@ SQL
   $stmtt->finish();
   $c++;
 
-  my ($preStartMin, $preEndMax);
+  my ($preExonId, $preStartMin, $preEndMax);
   foreach my $k (sort keys %exonLocations) {
     my ($start, $end, $gid) = split (/\,/, $exonLocations{$k});
     if ($preStartMin ) {
       if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+	$preExonId = $k;
         $preStartMin = $start;
         $preEndMax = $end;
       } else {
-        print STDERR "ERROR: overlapped exons found.\n  double check the gene $gid for $k with start..end at $start..$end\n";
+        print STDERR "ERROR... overlapped exons found.\ndouble check the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
       }
     } else {
+      $preExonId = $k;
       $preStartMin = $start;
       $preEndMax = $end;
     }

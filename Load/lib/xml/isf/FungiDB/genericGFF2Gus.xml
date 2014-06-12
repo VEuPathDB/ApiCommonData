@@ -7,9 +7,15 @@ Last modified: edliaw 2013-07-18 -->
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
+    <validator name="validateCodingSequenceLength" handler="api" method="validateCodingSequenceLength"/>
+    <validator name="validateGene" handler="api" method="validateGene"/>
     <qualifier name="3_prime_partial" ignore="true"/>
     <qualifier name="5_prime_partial" ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="external_name" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
@@ -68,8 +74,19 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="type" ignore="true"/>
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
-    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <validator name="validateGene" handler="api" method="validateGene"/>
+  </feature>
+  
+  <feature name="miRNA_gene" so="miRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="constitutive" ignore="true"/>
+    <qualifier name="ensembl_end_phase" ignore="true"/>
+    <qualifier name="rank" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="external_name" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
@@ -135,7 +152,10 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
   </feature>
+
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="Alias" ignore="true"/>
@@ -181,6 +201,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="source" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="repeat_consensus" ignore="true"/>
   </feature>
 
   <feature name="binding_site" table="DoTS::Miscellaneous" so="binding_site">
@@ -331,6 +352,10 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="external_name" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
@@ -357,6 +382,10 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="external_name" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
@@ -412,6 +441,8 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -465,6 +496,12 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="external_name" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="pseudo" handler="api" method="setPseudo"/>
   </feature>
 
   <feature name="unsure" ignore="true">

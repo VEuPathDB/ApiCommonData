@@ -70,6 +70,12 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
+
+		if (($geneFeature->has_tag("ID"))){
+			my ($cID) = $geneFeature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
+
 		if(!($geneFeature->has_tag("ID"))){
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
 		}      
@@ -156,6 +162,8 @@ sub traverseSeqFeatures {
              'snoRNA',
              'tRNA',
              'ncRNA',
+             'miRNA',
+             'transcript',
 	     'pseudogenic_transcript',	
              'scRNA',
 				
@@ -178,7 +186,8 @@ sub traverseSeqFeatures {
 		$type = 'coding';
 
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
 	    if($transcriptCount > 1){
@@ -195,9 +204,9 @@ sub traverseSeqFeatures {
   	    #$transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-	    
+
 	    my $codonStart = 0;
-	    
+
 	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 	    if($gene->has_tag('selenocysteine')){
 		$gene->remove_tag('selenocysteine');
@@ -205,57 +214,51 @@ sub traverseSeqFeatures {
 	    }
 	    $codonStart -= 1 if $codonStart > 0;
 
-	    my (@exons, @codingStart, @codingEnd);
-
-	    
+	    #my (@exons, @codingStart, @codingEnd);
+	    my (@exons, @codingStartAndEndPairs);
 	    my $CDSctr =0;
 
 	    my $prevPhase =0;
-	    
 	    my($codingStart,$codingEnd);
 
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
-        $codonStart = $subFeature->frame();
+	      $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
 
 		    push(@exons,$exon);
-		    
-		
 		}
 
 		if($subFeature->primary_tag eq 'CDS'){
-		    
-
+		    my $cdsStrand = $subFeature->location->strand;
+		    my $cdsFrame = $subFeature->frame();
 		    if($subFeature->location->strand == -1){
-			$codingStart = $subFeature->location->end;
-
-			$codingEnd = $subFeature->location->start;
-			$codingStart -= $codonStart if ($codonStart > 0);
+			#$codingStart = $subFeature->location->end;
+			#$codingEnd = $subFeature->location->start;
+			#$codingStart -= $codonStart if ($codonStart > 0);
+		      my $cdsCodingStart = $subFeature->location->end;
+		      my $cdsCodingEnd = $subFeature->location->start;
+		      push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 
 		    }else{
-			$codingStart = $subFeature->location->start;
-			
-			$codingEnd = $subFeature->location->end;
-			$codingStart += $codonStart if ($codonStart > 0);
-
+			#$codingStart = $subFeature->location->start;
+			#$codingEnd = $subFeature->location->end;
+			#$codingStart += $codonStart if ($codonStart > 0);
+		      my $cdsCodingStart = $subFeature->location->start;
+		      my $cdsCodingEnd = $subFeature->location->end;
+		      push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }
-		    
-
-		    
-		    push(@codingStart,$codingStart);
-		    push(@codingEnd,$codingEnd);
-
+		    #push(@codingStart,$codingStart);
+		    #push(@codingEnd,$codingEnd);
 
 		    $CDSctr++;
-
 		}
 
 		if ($subFeature->primary_tag eq 'five_prime_utr' || $subFeature->primary_tag eq 'three_prime_utr' || 
 $subFeature->primary_tag eq 'splice_acceptor_site'){
-		    
+
 		    my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
 
 		    $UTR = &copyQualifiers($subFeature,$UTR);
@@ -264,26 +267,38 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 		}
 
-
 	    }
 
+	    #$codingStart = shift(@codingStart);
+	    #$codingEnd = shift(@codingEnd);
 
-	    
-	    
-	    #$codingStart[$#codingStart] = $codingStart;
-	    
-	    $codingStart = shift(@codingStart);
-	    $codingEnd = shift(@codingEnd);
+	    ## deal with codonStart, use the frame of the 1st CDS to assign codonStart
+	    foreach my $j (0..$#codingStartAndEndPairs) {
+	      my ($Start, $End, $strand, $frame) = split(/\t/, $codingStartAndEndPairs[$j]);
+
+	      #print STDERR Dumper "$Start, $End, $strand, $frame";
+
+	      if ($j == 0 && $strand == 1 && $frame > 0) {
+		$Start += $frame;
+		$codingStartAndEndPairs[$j] = "$Start\t$End\t$strand\t$frame";
+	      } elsif ($j == $#codingStartAndEndPairs && $strand == -1 && $frame > 0) {
+		$Start -= $frame;
+		$codingStartAndEndPairs[$j] = "$Start\t$End\t$strand\t$frame";
+	      }
+	    }
+
+	    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+
 	    foreach my $exon (@exons){
 
-		
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
 
-		    $codingStart = shift(@codingStart);
-		    $codingEnd = shift(@codingEnd);
+		    #$codingStart = shift(@codingStart);
+		    #$codingEnd = shift(@codingEnd);
+		    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 
 
 		} elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start) 
@@ -294,9 +309,9 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 
 		$transcript->add_SeqFeature($exon);
-		
-	    }		    
-	    
+
+	    }
+
   	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
 		foreach my $exonLoc (@exonLocs){
@@ -310,19 +325,16 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 		}
 	    }
 
-	    
 	    if($gene->location->start > $transcript->location->start){
 		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
 		$gene->location->start($transcript->location->start);
 	    }
 
-	    
 	    if($gene->location->end < $transcript->location->end){
 		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
 		$gene->location->end($transcript->location->end);
 	    }
 
-	    
 	$gene->add_SeqFeature($transcript);
         push(@genes, $gene);
 

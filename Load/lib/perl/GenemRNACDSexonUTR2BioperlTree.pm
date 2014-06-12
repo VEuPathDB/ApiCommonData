@@ -77,6 +77,11 @@ sub preprocess {
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
 		}      
 
+		if (($geneFeature->has_tag("ID"))){
+			my ($cID) = $geneFeature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
+
 		if($geneFeature->has_tag("Note")){
 		    my($note) = $geneFeature->get_tag_values("Note");
 
@@ -202,7 +207,8 @@ sub traverseSeqFeatures {
 		$type = 'coding';
 
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
 	    #print "ID:$geneID\n";

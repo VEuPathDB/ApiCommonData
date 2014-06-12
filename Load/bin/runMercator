@@ -138,6 +138,11 @@ echo $TREE >treefile
 
 $MAKEALIGNMENTINPUT $MERCATOR_OUTPUT $ALIGN_DIR
 
+if ! [ -d "$ALIGN_DIR/1" ]; then
+  # Empty alignment directory.  Skip pair. 
+  exit 0
+fi
+
 $MAVIDALIGNDIRS --init-dir $ALIGN_DIR --mavidpath $MAVID_EXE
 
 $OMAP2COORDINATES --map-dir $ALIGN_DIR < $ALIGN_DIR/map > $ALIGN_DIR/coordinates
@@ -149,7 +154,7 @@ for (( i = 1 ; i < ${#BASENAMES[@]} ; i++ ))
        AGP_FILE=$MERCATOR_OUTPUT/${BASENAMES[$i]}.agp
        OUT=$MERCATOR_DIR/${BASENAMES[$i]}-${BASENAMES[$j]}.align
 
-       $MAP_DRAFT ${BASENAMES[$i]} ${BASENAMES[$j]} $AGP_FILE $ALIGN_DIR >$OUT
+       bash -e $MAP_DRAFT ${BASENAMES[$i]} ${BASENAMES[$j]} $AGP_FILE $ALIGN_DIR >$OUT
      done
   done
  
