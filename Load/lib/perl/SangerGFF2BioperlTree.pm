@@ -110,6 +110,11 @@ sub preprocess {
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
 		}   
 
+		if (($geneFeature->has_tag("ID"))){
+			my ($cID) = $geneFeature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
+
 		for my $tag ($geneFeature->get_all_tags) {    
 		    
 		    if($tag eq 'pseudo'){

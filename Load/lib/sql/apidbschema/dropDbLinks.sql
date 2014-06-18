@@ -7,4 +7,6 @@ DROP PUBLIC DATABASE LINK prodN.login_comment;
 DROP PUBLIC DATABASE LINK devS.login_comment;
 DROP PUBLIC DATABASE LINK devN.login_comment;
 
+DROP PUBLIC DATABASE LINK rm15873.login_comment;
+
 exit;

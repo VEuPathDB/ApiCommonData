@@ -142,10 +142,10 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
 
     while(my $profileElementName = $stmt->fetchrow_array()){
       push(@$profileElementNames,$profileElementName);
-	} 
-  }
-  unless (scalar @$profileElementNames) { 
-    $self->userError("No samples retrieved for the study external database release spec, please check to make sure that a profile set was load with the external database release id $studyExtDbRlsId.");
+	  } 
+    unless (scalar @$profileElementNames) { 
+      $self->userError("No samples retrieved for the study external database release spec, please check to make sure that a profile set was load with the external database release id $studyExtDbRlsId.");
+    }
   }
   my $file = $self->getArg('file');
   open(FILE, $file) or $self->error("Cannot open file $file for reading: $!");

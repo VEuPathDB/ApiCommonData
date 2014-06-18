@@ -35,7 +35,7 @@ declare
   userinfo varchar2(1000);
 begin
 
-  if :new.comment_target_id = 'gene' and (:new.is_visible = 1 or :new.is_visible is null) then
+  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -72,11 +72,11 @@ begin
   delete from apidb.TextSearchableComment
   where comment_id = :old.comment_id;
 
-  if :new.comment_target_id = 'gene' and (:new.is_visible = 1 or :new.is_visible is null) then
+  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
-      from userlogins4.users
+      from userlogins5.users
       where user_id = :new.user_id;
     exception
       when NO_DATA_FOUND then
@@ -126,7 +126,7 @@ begin
   from userlogins5.Comments
   where comment_id = :new.comment_id
     and comment_target_id = 'gene'
-    and (is_visible = 1 or is_visible is null)
+    and is_visible = 1
     and stable_id != :new.stable_id; -- don't duplicate comment-gene pairs
 end;
 /
@@ -178,7 +178,7 @@ begin
   from userlogins5.Comments
   where comment_id = :new.comment_id
     and comment_target_id = 'gene'
-        and (is_visible = 1 or is_visible is null);
+        and is_visible = 1;
 
 end;
 /
@@ -274,22 +274,6 @@ begin
                      where comment_id = cmntRef_trggr_pkg.stale(i))
       where comment_id = cmntRef_trggr_pkg.stale(i);
     end loop;
-end;
-/
-
-create or replace trigger userlogins5.users_update
-before update on userlogins5.users
-for each row
-declare
-  userinfo varchar2(1000);
-begin
-    userinfo := :new.first_name || ' ' || :new.last_name || '(' || :new.organization || ')';
-
-    update apidb.TextSearchableComment
-    set content = (select headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
-                   from userlogins5.Comments
-                   where comment_id = TextSearchableComment.comment_id)
-    where comment_id in (select comment_id from userlogins5.comments where user_id = :new.user_id);
 end;
 /
 
