@@ -49,6 +49,7 @@ $dbh->{AutoCommit} = 0;
 # comma-separated list of pathway Ids for which the files are needed.
 
 my @pids; # pathway IDs
+my $validFlag = 0;
 if ($pathwayList eq 'ALL') {
   @pids =&getPathwayIds();
 } else {
@@ -59,6 +60,7 @@ print "Size of array of Pathway IDs is ".( $#pids +1)  . "\n\n" if $verbose;
 
 foreach my $pathwayId (@pids) {
   print "Working for Pathway IDs: $pathwayId\n" if $verbose;
+  $validFlag = 0;
   my $sql = &getNodesQuery($pathwayId);
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
@@ -68,6 +70,7 @@ foreach my $pathwayId (@pids) {
 
   while (my ($id, $display, $type, $glyph_type_id, $x, $y, $width, 
 	     $cpdName, $cpdCID, $cpdSID, $ecDescription, $pathName) = $sth->fetchrow_array()) {
+    $validFlag = 1;
     $node{$id}->{display} = $display;
     $node{$id}->{type} = $type;
     $node{$id}->{x} = $x;
@@ -99,85 +102,92 @@ foreach my $pathwayId (@pids) {
   my $output = IO::File->new("> ".$outDir ."/".  $pathwayId . ".xgmml");
   my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
 
-  $writer->startTag("graph", "label"=>"Demo",
-		    "xmlns:dc"=>"http://purl.org/dc/elements/1.1/",
-		    "xmlns:xlink"=>"http://www.w3.org/1999/xlink",
-		    "xmlns:rdf"=>"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-		    "xmlns:cy"=>"http://www.cytoscape.org",
-		    "xmlns"=>"http://www.cs.rpi.edu/XGMML",
-		    "directed"=>"1"
-		   );
+  if ($validFlag ) {
+      $writer->startTag("graph", "label"=>"Demo",
+			"xmlns:dc"=>"http://purl.org/dc/elements/1.1/",
+			"xmlns:xlink"=>"http://www.w3.org/1999/xlink",
+			"xmlns:rdf"=>"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+			"xmlns:cy"=>"http://www.cytoscape.org",
+			"xmlns"=>"http://www.cs.rpi.edu/XGMML",
+			"directed"=>"1"
+	  );
 
-  ## nodes
-  for my $k (keys(%node) ){
-    if (  $node{$k}->{type} eq 'map' ) {
-      $writer->startTag("node", "label" =>  $node{$k}->{pathName} , "id" => $k);
-    } else {
-      $writer->startTag("node", "label" => $node{$k}->{display} , "id" => $k);
-    }
+      ## nodes
+      for my $k (keys(%node) ){
+	if (  $node{$k}->{type} eq 'map' ) {
+	  $writer->startTag("node", "label" =>  $node{$k}->{pathName} , "id" => $k);
+	} else {
+	  $writer->startTag("node", "label" => $node{$k}->{display} , "id" => $k);
+	}
 
-    $writer->startTag("att", "name"=>"Type", "value"=>$node{$k}->{type}, "type"=>"string");
-    $writer->endTag("att");
+	$writer->startTag("att", "name"=>"Type", "value"=>$node{$k}->{type}, "type"=>"string");
+	$writer->endTag("att");
 
 
-    if (  $node{$k}->{type} eq 'enzyme' ) {
-      $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{ecDescription}, "type"=>"string");
-      $writer->endTag("att");
-    } elsif (  $node{$k}->{type} eq 'compound') {
-      $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{cpdName}, "type"=>"string");
-      $writer->endTag("att");
-      $writer->startTag("att", "name"=>"CID", "value"=>$node{$k}->{cpdCID}, "type"=>"string");
-      $writer->endTag("att");
-      $writer->startTag("att", "name"=>"SID", "value"=>$node{$k}->{cpdSID}, "type"=>"string");
-      $writer->endTag("att");
+	if (  $node{$k}->{type} eq 'enzyme' ) {
+	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{ecDescription}, "type"=>"string");
+	  $writer->endTag("att");
+	} elsif (  $node{$k}->{type} eq 'compound') {
+	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{cpdName}, "type"=>"string");
+	  $writer->endTag("att");
+	  $writer->startTag("att", "name"=>"CID", "value"=>$node{$k}->{cpdCID}, "type"=>"string");
+	  $writer->endTag("att");
+	  $writer->startTag("att", "name"=>"SID", "value"=>$node{$k}->{cpdSID}, "type"=>"string");
+	  $writer->endTag("att");
 
-    } elsif (  $node{$k}->{type} eq 'map') {
-      $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{display}, "type"=>"string");
-      $writer->endTag("att");
-    }
+	} elsif (  $node{$k}->{type} eq 'map') {
+	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{display}, "type"=>"string");
+	  $writer->endTag("att");
+	}
 
-    if (  $node{$k}->{type} eq 'enzyme' ) {
-      $writer->startTag("att", "name"=>"Organisms", "value"=>$node{$k}->{ecOrgs}, "type"=>"string");
-      $writer->endTag("att");
-      $writer->startTag("att", "name"=>"OrganismsInferredByOthoMCL", "value"=>$node{$k}->{ecOrgsOrthomcl}, "type"=>"string");
-      $writer->endTag("att");
+	if (  $node{$k}->{type} eq 'enzyme' ) {
+	  $writer->startTag("att", "name"=>"Organisms", "value"=>$node{$k}->{ecOrgs}, "type"=>"string");
+	  $writer->endTag("att");
+	  $writer->startTag("att", "name"=>"OrganismsInferredByOthoMCL", "value"=>$node{$k}->{ecOrgsOrthomcl}, "type"=>"string");
+	  $writer->endTag("att");
 
-    }
+	}
 
-    $writer->startTag("graphics", 
-		      "x" => $node{$k}->{x},
-		      "y" => $node{$k}->{y}
-		     );
-    $writer->endTag("graphics");
-    $writer->endTag("node");
+	$writer->startTag("graphics", 
+			  "x" => $node{$k}->{x},
+			  "y" => $node{$k}->{y}
+			 );
+	$writer->endTag("graphics");
+	$writer->endTag("node");
+      }
+
+      ## edges
+      my $ct =0;
+      for my $k (keys(%edge) ){
+	$writer->startTag("edge", "label"=>$ct,  "source" => $edge{$k}->{source}, 
+			  "target" => $edge{$k}->{target} );
+	if ( $edge{$k}->{dir} ) {
+	  $writer->startTag("att", "name"=>"direction", "value"=>$edge{$k}->{dir}, "type"=>"string");
+	  $writer->endTag("att");
+	}
+	$ct++;
+
+	$writer->startTag("graphics",
+			  "width"=>"1",
+			  "fill"=>"#000000",
+			  "cy:sourceArrow"=>"0",
+			  "cy:targetArrow"=>"3"
+			 );
+	$writer->endTag("graphics");
+	$writer->endTag("edge");
+      }
+
+      $writer->endTag("graph");
+
+      $writer->end();
+      $output->close();
+    } # if ($validFlag )
+  else {
+    my $outFile = $outDir ."/".  $pathwayId . ".xgmml";
+    system ("/bin/rm $outFile");
   }
-
-  ## edges
-  my $ct =0;
-  for my $k (keys(%edge) ){
-    $writer->startTag("edge", "label"=>$ct,  "source" => $edge{$k}->{source}, 
-		      "target" => $edge{$k}->{target} );
-    if ( $edge{$k}->{dir} ) {
-      $writer->startTag("att", "name"=>"direction", "value"=>$edge{$k}->{dir}, "type"=>"string");
-      $writer->endTag("att");
-    }
-    $ct++;
-
-    $writer->startTag("graphics",
-		      "width"=>"1",
-		      "fill"=>"#000000",
-		      "cy:sourceArrow"=>"0",
-		      "cy:targetArrow"=>"3"
-		     );
-    $writer->endTag("graphics");
-    $writer->endTag("edge");
-  }
-
-  $writer->endTag("graph");
-
-  $writer->end();
-  $output->close();
 }
+
 $dbh->disconnect;
 
 
@@ -206,7 +216,8 @@ SELECT  distinct nn.identifier, pn.display_label,
         cpdTable.cmpd_name, cpdTable.CID, substTable.SID,
         enzy.description, map.name
 FROM APIDB.pathwaynode pn, APIDB.pathway p, apidb.NetworkNode nn,
-       ( SELECT s2.value, ca.name as cmpd_name,  ca.compound_id as CID
+    apidb.NetworkContext nc, apidb.NetworkRelContext nrc,  apidb.NetworkRelationship nr,
+    ( SELECT s2.value, ca.name as cmpd_name,  ca.compound_id as CID
 	      FROM APIDB.pubchemsubstance s1, APIDB.pubchemsubstance s2, ApidbTuning.CompoundAttributes ca
 	      WHERE s1.property = 'CID'
              AND s1.value = ca.compound_id
@@ -225,7 +236,11 @@ AND pn.row_id = nn.network_node_id
 AND  pn.display_label = cpdTable.value (+) 
 AND  pn.display_label = substTable.value (+) 
 AND pn.display_label = enzy.ec_number(+)
-AND pn.display_label = map.source_id (+)";
+AND pn.display_label = map.source_id (+)
+AND (nn.network_node_id = nr.node_id OR nn.network_node_id = nr.associated_node_id)
+AND nr.network_relationship_id = nrc.network_relationship_id
+AND nrc.network_context_id = nc.network_context_id
+AND nn.identifier NOT LIKE '%_X:_Y:'";
     return $sql;
 }
 
@@ -275,6 +290,7 @@ WHERE  n.name like  'Metabolic Pathways%'
   AND nr.node_id = n1.network_node_id
   AND nr.associated_node_id = n2.network_node_id
   AND n1.identifier like '%_X:%'   AND n2.identifier like '%_X:%'
+  AND n1.identifier NOT LIKE '%_X:_Y:' AND n2.identifier NOT LIKE '%_X:_Y:' 
 ORDER BY nr.network_relationship_id");
 }
 
