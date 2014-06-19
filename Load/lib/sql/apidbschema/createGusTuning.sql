@@ -12,24 +12,21 @@
 --alter table sres.ExternalDatabase modify (name varchar2(150));
 --alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
-alter table sres.EnzymeClass modify (description varchar2(200));
-
-alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
-
-alter table dots.NaFeatureImp modify (name varchar2(80));
-
-alter table sres.dbref modify (secondary_identifier varchar2(200));
-
-alter table dots.Library modify (stage varchar2(150));
+-- added to XML
+-- alter table sres.EnzymeClass modify (description varchar2(200));
+-- alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
+-- alter table dots.NaFeatureImp modify (name varchar2(80));
+-- alter table sres.dbref modify (secondary_identifier varchar2(200));
+-- alter table dots.Library modify (stage varchar2(150));
 
 -- indexes on GUS tables
 
 create index dots.AaSeq_source_ix
   on dots.AaSequenceImp (lower(source_id)) tablespace INDX;
 
-create index dots.NaFeat_alleles_ix
-  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
-  tablespace INDX;
+--create index dots.NaFeat_alleles_ix
+--  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
+--  tablespace INDX;
 
 create index dots.AaSequenceImp_string2_ix
   on dots.AaSequenceImp (string2, aa_sequence_id)
@@ -43,21 +40,21 @@ create index dots.nasequenceimp_string1_ix
   on dots.NaSequenceImp (string1, na_sequence_id)
   tablespace INDX;
 
-create index dots.ExonOrder_ix
-  on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id)
-  tablespace INDX; 
+-- create index dots.ExonOrder_ix
+--   on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id)
+--   tablespace INDX; 
 
-create index dots.SeqvarStrain_ix
-  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
-  tablespace INDX; 
+-- create index dots.SeqvarStrain_ix
+--   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
+--   tablespace INDX; 
 
-create index dots.FeatLocIx
-  on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
-  tablespace INDX; 
+-- create index dots.FeatLocIx
+--   on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
+--   tablespace INDX; 
 
-create index sres.RefIx
-  on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
-  tablespace indx;
+-- create index sres.RefIx
+--   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
+--   tablespace indx;
 
 -- for the tuning manager, which decides whether an input table has changed
 -- by finding its record count and max(modification_date)
