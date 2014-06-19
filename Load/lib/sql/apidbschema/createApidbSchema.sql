@@ -27,6 +27,8 @@ GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
 GRANT REFERENCES ON study.Biomaterial TO ApiDB;
 GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
+grant references on SRes.ExternalDatabaseRelease to ApiDB;
+grant references on dots.nafeatureimp to ApiDB;
 
 -- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;
