@@ -1,6 +1,3 @@
-GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
-GRANT REFERENCES ON sres.ExternalDatabaseRelease TO apidb;
-GRANT REFERENCES ON dots.GeneFeature TO apidb;
 GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.ExternalDatabase TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.ExternalDatabaseRelease TO apidb WITH GRANT OPTION;

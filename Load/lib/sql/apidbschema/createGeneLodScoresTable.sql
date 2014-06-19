@@ -1,6 +1,3 @@
-GRANT references ON DoTS.NaFeatureImp TO ApiDB;
-GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
-GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
 ------------------------------------------------------------------------------
 
 CREATE TABLE ApiDB.GeneFeatureLodScore (
