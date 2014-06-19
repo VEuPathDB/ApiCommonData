@@ -76,33 +76,23 @@ my @create = qw(
                insertGusVersion.sql
                removeNullConstraintsFromSimilarityTables.sql
                createGusTuning.sql
-               modifySeqVariation.sql
                createApidbTuningSchema.sql
                createApidbSchema.sql
 	       createAnalysisMethodInvocation.sql
-	       createChromosome6Orthology.sql
 	       createDatasource.sql
 	       createDbLinks.sql
-	       createExpressionProfileTables.sql
 	       createGeneInteractionTables.sql
-	       createGeneMappingView.sql
 	       createGeneFeatureProduct.sql
 	       createGeneFeatureName.sql
-	       createIsolateVocabulary.sql
-	       createIsolateGPS.sql
-	       createMassSpecSummary.sql
 	       createOrthologGroup.sql
 	       createPhylogeneticProfile.sql
 	       createPhylogeneticTree.sql
 	       createRelatedNaFeature.sql
 	       createReportCache.sql
-	       createRodentChrColors.sql
 	       createSequenceAttributeTables.sql
 	       createOrganism.sql
 	       createStoredProcedures.sql
 	       createSyntenyTables.sql
-	       createToxodbGenesView.sql
-	       createTransmembraneTable.sql
 	       createSpliceSiteFeature.sql
 	       createPubChemSubstance.sql
 	       createPubChemCompound.sql
@@ -110,27 +100,15 @@ my @create = qw(
 	       createOldAnnotation.sql
 	       createOldCodingSequence.sql
 	       createTuningManager.sql
-	       createContinents.sql
 	       createWorkflow.sql
-	       createsiRNA.sql
-	       createNextGenSeqCoverage.sql
-	       createNextGenSeq_Align.sql
-	       createPlasmoPfalLocations.sql
-	       createPlasmoMapp.sql
-	       createGeneGenomicSequence_Split.sql
-	       createIsolateMapping.sql
-	       createRUMIntronFeature.sql
-	       createGeneLodScoresTable.sql
+	       createTranscriptSequenceSplit.sql
+	       createIntronJunction.sql
+	       createNAFeatureHaploblock.sql
                createBlatProteinAlignment.sql
-	       createPhenotypeFeature.sql
 	       createGFF3Table.sql
 	       createEcNumberGenus.sql
-               createNetworkTables.sql
-               createPathwayTables.sql	
-               createPathwayImageTable.sql	
 	       createSpliceSiteGenes.sql
 	       createPolyAGenes.sql
-               createVocabularyBiomaterial.sql
 	     );
 
 # drop GUS first, then ApidbTuning, then Apidb (same order as we created).
