@@ -1,4 +1,4 @@
-create table apidb.GeneDetail (
+create table apidb.TranscriptDetail (
       SOURCE_ID VARCHAR2(100 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
@@ -8,24 +8,24 @@ create table apidb.GeneDetail (
       MODIFICATION_DATE DATE
 );
 
-CREATE UNIQUE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name) tablespace indx;
-CREATE INDEX apidb.genedtl_idx02 ON apidb.GeneDetail(field_name, source_id) tablespace indx;
-CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id) tablespace indx;
+CREATE UNIQUE INDEX apidb.transcriptdtl_idx01 ON apidb.TranscriptDetail(source_id, project_id, field_name) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx02 ON apidb.TranscriptDetail(field_name, source_id) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx03 ON apidb.TranscriptDetail(row_count, source_id) tablespace indx;
 
-CREATE INDEX apidb.gene_text_ix on apidb.GeneDetail(content)
+CREATE INDEX apidb.transcript_text_ix on apidb.TranscriptDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
 
-CREATE TRIGGER apidb.GeneDtl_md_tg
-BEFORE UPDATE OR INSERT ON apidb.GeneDetail
+CREATE TRIGGER apidb.TranscriptDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.TranscriptDetail
 FOR EACH ROW
 BEGIN
   :new.modification_date := sysdate;
 END;
 /
 
-GRANT insert, select, update, delete ON apidb.GeneDetail TO gus_w;
-GRANT select ON apidb.GeneDetail TO gus_r;
+GRANT insert, select, update, delete ON apidb.TranscriptDetail TO gus_w;
+GRANT select ON apidb.TranscriptDetail TO gus_r;
 
 ------------------------------------------------------------------------------
 
@@ -139,9 +139,9 @@ GRANT insert, select, update, delete ON apidb.GroupDetail TO gus_w;
 GRANT select ON apidb.GroupDetail TO gus_r;
 
 ------------------------------------------------------------------------------
--- GeneGff (formerly GeneTable) holds data used for the GFF download
+-- TranscriptGff (formerly TranscriptTable) holds data used for the GFF download
 
-CREATE TABLE apidb.GeneGff (
+CREATE TABLE apidb.TranscriptGff (
  wdk_table_id number(10) not null,
  source_id  VARCHAR2(50),
  project_id  VARCHAR2(50),
@@ -153,15 +153,15 @@ CREATE TABLE apidb.GeneGff (
 );
 
 CREATE INDEX apidb.gtab_ix
-       ON apidb.GeneGff (source_id, table_name, row_count);
+       ON apidb.TranscriptGff (source_id, table_name, row_count);
 CREATE INDEX apidb.gtab_name_ix
-       ON apidb.GeneGff (table_name, source_id, row_count);
+       ON apidb.TranscriptGff (table_name, source_id, row_count);
 
-GRANT insert, select, update, delete ON ApiDB.GeneGff TO gus_w;
-GRANT select ON ApiDB.GeneGff TO gus_r;
+GRANT insert, select, update, delete ON ApiDB.TranscriptGff TO gus_w;
+GRANT select ON ApiDB.TranscriptGff TO gus_r;
 
-CREATE OR REPLACE TRIGGER apidb.GeneGff_md_tg
-before update or insert on apidb.GeneGff
+CREATE OR REPLACE TRIGGER apidb.TranscriptGff_md_tg
+before update or insert on apidb.TranscriptGff
 for each row
 begin
   :new.modification_date := sysdate;
@@ -169,9 +169,9 @@ end;
 /
 
 ------------------------------------------------------------------------------
-CREATE SEQUENCE apidb.geneGff_pkseq;
+CREATE SEQUENCE apidb.transcriptGff_pkseq;
 
-GRANT SELECT ON apidb.geneGff_pkseq TO gus_w;
+GRANT SELECT ON apidb.transcriptGff_pkseq TO gus_w;
 
 ------------------------------------------------------------------------------
 
