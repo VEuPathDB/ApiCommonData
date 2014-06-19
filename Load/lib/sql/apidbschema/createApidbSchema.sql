@@ -25,10 +25,13 @@ GRANT REFERENCES ON dots.NaFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
-GRANT REFERENCES ON study.Biomaterial TO ApiDB;
-GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
-grant references on SRes.ExternalDatabaseRelease to ApiDB;
-grant references on dots.nafeatureimp to ApiDB;
+GRANT references ON dots.nafeatureimp TO apidb;
+GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
+GRANT references ON Sres.SequenceOntology TO ApiDB;
+GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
+GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
+
+
 
 -- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;
