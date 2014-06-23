@@ -1,4 +1,4 @@
-DROP TABLE apidb.Genegenomicsequence;
-DROP SEQUENCE apidb.Genegenomicsequence_sq;
+DROP TABLE apidb.transcriptsequencesplit;
+DROP SEQUENCE apidb.transcriptsequencesplit_sq;
  
 exit;
