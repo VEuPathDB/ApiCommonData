@@ -19,7 +19,7 @@ create table apidb.TranscriptSequenceSplit (
 );
 
 create index ggss_source_id_indx  on apidb.TRANSCRIPTSEQUENCESPLIT(source_id);
-CREATE SEQUENCE ApiDB.TranscritpSequenceSplit_sq;
+CREATE SEQUENCE ApiDB.transcriptSequenceSPLIT_sq;
 
 GRANT SELECT ON apidb.TranscriptSEQUENCESPLIT TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON apidb.TRANSCRIPTSEQUENCESPLIT TO gus_w;

@@ -91,8 +91,8 @@ create index dots.sim_mod_ix on dots.similarity (modification_date, similarity_i
 create index dots.simspan_mod_ix on dots.similarityspan (modification_date, similarity_span_id);
 
 create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
-create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
-create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
+--create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
+--create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
 create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
 create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 

@@ -27,7 +27,7 @@ GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
 GRANT references ON dots.nafeatureimp TO apidb;
 GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
-GRANT references ON Sres.SequenceOntology TO ApiDB;
+GRANT references ON Sres.OntologyTerm TO ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
 GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
 
@@ -37,7 +37,6 @@ GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
 GRANT SELECT ON core.ProjectInfo to ApiDB;
 GRANT SELECT ON sres.TaxonName to ApiDB;
 GRANT SELECT ON sres.Taxon to ApiDB;
-GRANT SELECT, UPDATE ON dots.SeqVariation to ApiDB;
 
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
