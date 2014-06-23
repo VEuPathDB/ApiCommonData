@@ -6,12 +6,13 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 
-#my ($gusConfigFile,$inputFile,$outputFile,$isolateType);
-my ($gusConfigFile,$inputFile,$outputFile);
+my ($gusConfigFile,$inputFile,$outputFile,$isolateType);
+#my ($gusConfigFile,$inputFile,$outputFile);
 
 &GetOptions( "gusConfigFile=s" => \$gusConfigFile,
              "inputFile=s"     => \$inputFile,
              "outputFile=s"    => \$outputFile,
+             "isolateType=s"   => \$isolateType,
            );
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -79,8 +80,8 @@ while(<F>) {
   my ($seqid, $start, $stop) = $sth->fetchrow_array;
 
   next unless $seqid;
-  #print OUT "$seqid\tBroad\tSNP\t$start\t$stop\t.\t.\t.\tID $id". "_". "$isolateType; Allele ";
-  print OUT "$seqid\tBroad\tSNP\t$start\t$stop\t.\t+\t.\tID $id; Allele ";
+  print OUT "$seqid\tBroad_". $isolateType."\tSNP\t$start\t$stop\t.\t+\t.\tID $id". "_". "$isolateType; Allele ";
+  #print OUT "$seqid\tBroad\tSNP\t$start\t$stop\t.\t+\t.\tID $id; Allele ";
 
   my $count = 0;
   foreach my $snp (@snps) {
