@@ -27,7 +27,7 @@ sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
   my $name = $protocolAppNode->findvalue('./name');
   my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $name});
-  $protocolAppNode->retrieveFromDB();
+   $self->userError("Input ProtocolAppNode $name is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
   my $id = $protocolAppNode->getId();
 
   return ($id);
