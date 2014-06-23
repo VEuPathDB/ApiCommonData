@@ -1,4 +1,5 @@
-CREATE TABLE ApiDB.PlasmoMapp (
+CREATE TABLE ApiDB.PlasmoMapp
+ (
  plasmoMapp_id      NUMBER(10),
  na_sequence_id  NUMBER(10) NOT NULL,
  strand          NUMBER(3)  NOT NULL,

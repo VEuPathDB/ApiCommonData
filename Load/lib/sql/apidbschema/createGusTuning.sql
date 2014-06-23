@@ -70,14 +70,6 @@ create index dots.ns_submod_ix
 create index dots.as_submod_ix
   on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id);
 
-create index rad.ar_submod_ix
-  on rad.AnalysisResultImp (subclass_view, modification_date, analysis_result_id);
-
-create index rad.ce_submod_ix
-  on rad.CompositeElementImp (subclass_view, modification_date, composite_element_id);
-
-create index rad.cer_submod_ix
-  on rad.CompositeElementResultImp (subclass_view, modification_date, composite_element_result_id);
 
 create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id);
 create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id);
@@ -215,11 +207,10 @@ GRANT SELECT ANY DICTIONARY to GUS_W;
 -- GRANTs required for CTXSYS
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to core;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to dots;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to rad;
+
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to study;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
+
 
 -- indexes to help queries against SnpFeature
 -- (and some ALTER TABLE statements to make the indexes possible;
@@ -264,36 +255,6 @@ UNIQUE (executable, cvs_revision);
 -- add columns to a GUS view
 -- drop first, because this view already exists from GUS install
 -- (and don't drop in dropGusTuning.sql)
-DROP VIEW rad.DifferentialExpression;
-CREATE VIEW rad.DifferentialExpression AS
-SELECT
-   analysis_result_id,
-   subclass_view,
-   analysis_id,
-   table_id,
-   row_id,
-   float1 as fold_change,
-   float2 as confidence,
-   float3 as pvalue_mant,
-   number1 as pvalue_exp,
-   float4 as false_discovery_rate,
-   modification_date,
-   user_read,
-   user_write,
-   group_read,
-   group_write,
-   other_read,
-   other_write,
-   row_user_id,
-   row_group_id,
-   row_project_id,
-   row_alg_invocation_id
-FROM RAD.AnalysisResultImp
-WHERE subclass_view = 'DifferentialExpression'
-WITH CHECK OPTION;
-
-GRANT SELECT ON rad.DifferentialExpression TO gus_r;
-GRANT INSERT, UPDATE, DELETE ON rad.DifferentialExpression TO gus_w;
 
 
 
