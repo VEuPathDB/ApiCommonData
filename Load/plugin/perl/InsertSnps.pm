@@ -618,7 +618,8 @@ sub calculatePhenotype {
 sub createSnpFeature {
   my ($self,$feature) = @_;
 
-  my $name = $feature->primary_tag();
+  my $name   = $feature->primary_tag();
+  my $source = $feature->source_tag();
   my $sfName = $name =~ /(insertion|deletion)/ ? 'indel' : $name;
 
   my $ngsExtDbRlsId = $self->{'ngsSnpExtDbRlsId'};
@@ -641,7 +642,8 @@ sub createSnpFeature {
   my $ref = $self->getArg('reference');
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
-    new({name => $sfName,
+    new({#name => $sfName,
+         name => $source,
          sequence_ontology_id => $sfSoId,
          source_id => $sourceId,
          reference_strain => $ref,
