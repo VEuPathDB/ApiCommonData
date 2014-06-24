@@ -37,12 +37,6 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({name           => 'sampleId',
-            descr          => 'A sample row can be identified by either the first column or one of the data file columns.  if provided, only data from matching rows will be loaded',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
-
    stringArg({name           => 'sampleExtDbRlsSpecTemplate',
             descr          => 'used for SnpSamples. this template contains a macro for the sample name. when the sample name is substituted into the template, this will be used to look up the sample and add the ext db rls id to study.biosample',
             reqd           => 0,
@@ -151,9 +145,7 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
   open(FILE, $file) or $self->error("Cannot open file $file for reading: $!");
 
 
-  my $sampleId = $self->getArg('sampleId');
-  
-  my $header = <FILE>;
+   my $header = <FILE>;
   chomp $header;
 
   $self->validateHeader($header);
@@ -162,27 +154,26 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
   my $count = 0;
   while(<FILE>) {
     chomp;
-
+    
     my $rowAsHash = $self->parseRow($header, $_);
-
-    if((!$sampleId) ||  ($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId))){
-        if($sampleExtDbRlsSpecTemplate){
-        $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
+    
+    if($sampleExtDbRlsSpecTemplate){
+      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
       $count++;
-	  }
-	  elsif($sampleExtDbRlsSpec) {
-		$self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpec,);
-		$count++;
-	  }
-	  else {
-		$self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, 0);
-		$count++;
-	  }
-
     }
-  }
-  close FILE;
+    elsif($sampleExtDbRlsSpec) {
+      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpec,);
+      $count++;
+    }
+    else {
+            $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, 0);
+            $count++;
+	  }
 
+  }
+
+  close FILE;
+  
 
   if($count < 1) {
     $self->userError("No rows processed. Please check your input file.");
@@ -369,26 +360,6 @@ sub makeCharacteristic {
 
   return $characteristic;
 }
-
-
-
-sub isSampleIdRow {
-  my ($self, $rowAsHash, $sampleId) = @_;
-
-  my @searchColumns = ('Source Name', 'Data File');
-
-  foreach my $target (keys %$rowAsHash) {
-    my ($header, $index) = split(/\|/, $target);
-
-    foreach my $query (@searchColumns) {
-      if(lc($query) eq lc($header) && lc($sampleId) eq lc($rowAsHash->{$target})) {
-        return 1;
-      }
-    }
-  }
-  return 0;
-}
-
 
 
 
