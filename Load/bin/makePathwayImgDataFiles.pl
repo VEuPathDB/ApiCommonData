@@ -216,7 +216,6 @@ SELECT  distinct nn.identifier, pn.display_label,
         cpdTable.cmpd_name, cpdTable.CID, substTable.SID,
         enzy.description, map.name
 FROM APIDB.pathwaynode pn, APIDB.pathway p, apidb.NetworkNode nn,
-    apidb.NetworkContext nc, apidb.NetworkRelContext nrc,  apidb.NetworkRelationship nr,
     ( SELECT s2.value, ca.name as cmpd_name,  ca.compound_id as CID
 	      FROM APIDB.pubchemsubstance s1, APIDB.pubchemsubstance s2, ApidbTuning.CompoundAttributes ca
 	      WHERE s1.property = 'CID'
@@ -237,9 +236,6 @@ AND  pn.display_label = cpdTable.value (+)
 AND  pn.display_label = substTable.value (+) 
 AND pn.display_label = enzy.ec_number(+)
 AND pn.display_label = map.source_id (+)
-AND (nn.network_node_id = nr.node_id OR nn.network_node_id = nr.associated_node_id)
-AND nr.network_relationship_id = nrc.network_relationship_id
-AND nrc.network_context_id = nc.network_context_id
 AND nn.identifier NOT LIKE '%_X:_Y:'";
     return $sql;
 }

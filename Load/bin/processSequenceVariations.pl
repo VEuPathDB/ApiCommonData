@@ -942,20 +942,20 @@ ORDER BY s.source_id, el.start_min
       my $exonMatch = Bio::Location::Simple->
           new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
 
-      my $cdsMatch;
       if($cdsStart && $cdsEnd) {
-        $cdsMatch = Bio::Location::Simple->
+        my $cdsMatch = Bio::Location::Simple->
             new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+        my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
+        $cdsStart = $cdsMatchOnVirtual->start();
+        $cdsEnd = $cdsMatchOnVirtual->end();
       }
 
       my $matchOnVirtual = $agp->map( $exonMatch );
-      my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
-
+     
       $sequenceSourceId = $matchOnVirtual->seq_id();
       $exonStart = $matchOnVirtual->start();
       $exonEnd = $matchOnVirtual->end();
-      $cdsStart = $cdsMatchOnVirtual->start();
-      $cdsEnd = $cdsMatchOnVirtual->end();
+
     }
 
     my $strand = $isReversed ? -1 : +1;
