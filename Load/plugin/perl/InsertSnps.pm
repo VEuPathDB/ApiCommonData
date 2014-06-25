@@ -701,7 +701,8 @@ sub createSnpFeature {
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
            'external_database_release_id' => $seqVarExtRelId ? $seqVarExtRelId : $extDbRlsId,
-           'name' => $name,
+           #'name' => $name,
+           'name' => $source,
            'sequence_ontology_id' => $soId,
            'strain' => $strain,
            'allele' => $base,
