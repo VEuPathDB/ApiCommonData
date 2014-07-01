@@ -422,7 +422,7 @@ sub queryForAgpMap {
                                 , p.na_sequence_id as piece_na_sequence_id
                                , decode(sp.strand_orientation, '+', '+1', '-', '-1', '+1') as piece_strand
                                , p.length as piece_length
-                               , sp.distance_from_left as virtual_start_min
+                               , sp.distance_from_left + 1 as virtual_start_min
                                , sp.distance_from_left + p.length as virtual_end_max
                                , p.source_id as piece_source_id
                                , vs.source_id as virtual_source_id
