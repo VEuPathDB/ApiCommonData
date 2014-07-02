@@ -14,3 +14,6 @@ create index apidb.comments_text_ix
 on apidb.TextSearchableComment(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
+
+create index apidb.commentid_ix
+on apidb.TextSearchableComment(comment_id);
