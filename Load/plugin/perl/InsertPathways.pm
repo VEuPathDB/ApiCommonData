@@ -152,7 +152,7 @@ sub readKeggFiles {
     my $pathwayObj = $pathwaysObj->getNewPathwayObj($pathwayElements->{NAME});
     $pathwayObj->{source_id} = $pathwayElements->{SOURCE_ID};
     $pathwayObj->{url} = $pathwayElements->{URI};    
-    $pathwayObj->{image_file} = $pathwayElements->{IMAGE_FILE};    
+    # $pathwayObj->{image_file} = $pathwayElements->{IMAGE_FILE};
 
     foreach my $node  (keys %{$pathwayElements->{NODES}}) {
 
