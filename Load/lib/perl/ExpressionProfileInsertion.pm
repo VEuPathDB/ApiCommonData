@@ -175,6 +175,7 @@ sub makeProfile {
     my $count = 1;
     foreach my $value (@$profileRow) {
       $value = undef if($value eq 'NA');
+      $value=~s/\r//g;
       my $profileElement = GUS::Model::ApiDB::ProfileElement->
 	new({value => $value });
 
