@@ -60,13 +60,12 @@ sub preprocess {
 	#$unflattener->unflatten_seq(-seq=>$bioperlSeq,-use_magic=>1);
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
 	my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
-	
-        my %polypeptide;
 
+        my %polypeptide;
         my %rnas;
+
 	foreach my $bioperlFeatureTree (@seqFeatures){
 	    my $type = $bioperlFeatureTree->primary_tag();
-
 
 	    if($type eq 'polypeptide'){
 		my $id;
@@ -86,12 +85,11 @@ sub preprocess {
 	    }
 
 	}
-	    
 
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
-	    
+
 	    if($type eq 'pseudogene'){
 		$bioperlFeatureTree->primary_tag('gene');
 		$bioperlFeatureTree->add_tag_value("pseudo","");
@@ -129,7 +127,7 @@ sub preprocess {
 		$geneFeature = $bioperlFeatureTree; 
 		if(!($geneFeature->has_tag("ID"))){
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
-		}   
+		}
 
 		if (($geneFeature->has_tag("ID"))){
 			my ($cID) = $geneFeature->get_tag_values("ID");
@@ -137,7 +135,6 @@ sub preprocess {
 		}
 
 		for my $tag ($geneFeature->get_all_tags) {    
-		    
 		    if($tag eq 'pseudo'){
 
 			if ($geneFeature->get_SeqFeatures){
@@ -154,32 +151,25 @@ sub preprocess {
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
 			}
-			
 		    }
-		}       
+		}
 		my ($geneArrayRef,$UTRArrayRef,$polypeptideRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
 
 		my @UTRs = @{$UTRArrayRef};
-		
 		my @genes = @{$geneArrayRef};
 
 		%polypeptide = %{$polypeptideRef};
 
-		
-		
 
 		foreach my $gene (@genes){
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
-		
+
 		foreach my $UTR (@UTRs){
-
-
 		#    print STDERR Dumper $UTR;
 		    $bioperlSeq->add_SeqFeature($UTR);
 		}
 
-	    
 	    }else{
 
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_UTR' || $type eq 'five_prime_UTR' || $type eq 'splice_acceptor_site'){
@@ -188,7 +178,7 @@ sub preprocess {
 	    }
 
 	}
-    
+
     foreach my $rnaId (keys %polypeptide){
 
 	if(!($polypeptide{$rnaId}->{flag})){
@@ -207,7 +197,6 @@ sub traverseSeqFeatures {
     my @RNAs = $geneFeature->get_SeqFeatures;
 
     my $transcriptFlag = 0;
-
 
 
 
@@ -280,27 +269,12 @@ sub traverseSeqFeatures {
 	    }
 
 	    my($geneID) = $geneFeature->get_tag_values('ID');
-	    if (!$gene) {
+	    if (!$gene) {    ## only create one gene for multiple transcript
 	      $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
-	      #$gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	      $gene->add_tag_value("ID",$geneID);
 	      $gene = &copyQualifiers($geneFeature, $gene);
 	    }
 
-	    #my($parentID) = $RNA->get_tag_values('Parent') if $RNA->has_tag('Parent');
-	    #if($transcriptCount > 1){
-		#$rnaId =~ s/\:mRNA$//g;
-		#if($rnaId eq $geneID){
-		 #   $geneID = $rnaId."\.$ctr";
-		#}else{
-		#    $geneID = $rnaId;
-		#}
-		#$ctr++;
-	    #}
-
-	    #print "ID:$geneID\n";
-            #$gene = &copyQualifiers($RNA,$gene);
-	    #$gene->add_tag_value("parentID",$parentID);
 
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
 	    my ($rnaID) = $RNA->get_tag_values('ID');
@@ -312,6 +286,7 @@ sub traverseSeqFeatures {
 	      $ctr++;
 	    }
 	    $transcript->add_tag_value("ID", $rnaID);
+
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 	    my $codonStart = 0;
