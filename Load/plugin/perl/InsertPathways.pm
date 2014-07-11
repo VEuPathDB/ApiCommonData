@@ -518,7 +518,7 @@ sub loadNetworkNode {
     my $identifier = $pathwayId ."_" . $node->{node_name}; # eg: 571_1.14.-.-_X:140_Y:333
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : ($node->{node_type} eq 'map') ? 3 : 4;
     my $display_label = $node->{node_name};
-    $display_label =~s/\_X:\d+(\.\d*)\_Y:\d+(\.\d*)//;  # remove coordinates
+    $display_label =~s/\_X:\d+(\.?\d*)\_Y:\d+(\.?\d*)//;  # remove coordinates
 
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $display_label,
                                                             node_type_id => $node_type,
