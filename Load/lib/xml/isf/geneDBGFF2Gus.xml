@@ -68,7 +68,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range"    ignore="true"/>
     <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
     <!-- from gene records -->
-    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="pseudo"      ignore="true"/>
     <qualifier name="blast_file"             ignore="true"/>
     <qualifier name="blastp+go_file"         ignore="true"/>
     <qualifier name="blastp_file"            ignore="true"/>
@@ -85,7 +85,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastp" ignore="true"/>
     <qualifier name="isFmaxPartial" ignore="true"/>
     <qualifier name="isFminPartial" ignore="true"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
@@ -110,8 +110,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="history"    ignore="true"/>
     <!-- from gene records -->
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
@@ -467,6 +467,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="transcript">
     <qualifier name="ID" column="source_id"/>
+    <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
     <!-- created by the reshaper -->
     <qualifier name="CDSLength" ignore="true"/>
   </feature>

@@ -18,7 +18,7 @@ package ApiCommonData::Load::SpecialCaseQualifierHandlers;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -785,16 +785,17 @@ sub _undoNote{
 
 sub setPseudo {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
+      $feature->setIsPseudo(1);
   
-  if($bioperlFeature->primary_tag() =~ /gene/){
-      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
+#  if($bioperlFeature->primary_tag() =~ /gene/){
+#      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
 
-      $feature->setIsPseudo(1);
-      $transcript->setIsPseudo(1); 
+#      $feature->setIsPseudo(1);
+#      $transcript->setIsPseudo(1);
 
-  }else{
-      $feature->setIsPseudo(1);
-  }
+#  }else{
+#      $feature->setIsPseudo(1);
+#  }
 
 
   return [];
@@ -804,19 +805,20 @@ sub _undoPseudo{
     my ($self) = @_;
 }
 
-############### Pseudo  ###############################
+############### Partial  ###############################
 
 sub setPartial {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  
-  if($bioperlFeature->primary_tag() =~ /gene/){
-      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
+       $feature->setIsPartial(1);
 
-      $feature->setIsPartial(1);
-      $transcript->setIsPartial(1);
-  }else{
-      $feature->setIsPartial(1);
-  }
+#  if($bioperlFeature->primary_tag() =~ /gene/){
+#      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
+
+#      $feature->setIsPartial(1);
+#      $transcript->setIsPartial(1);
+#  }else{
+#      $feature->setIsPartial(1);
+#  }
 
 
   return [];
@@ -1336,12 +1338,13 @@ sub validateCodingSequenceLength {
 		    $warning .= "$proteinSourceId does not have a stop codon\n";
 
 		    ## set is_partial=1 if gene does not have a stop codon
-		    if ($bioperlFeature->primary_tag() =~ /gene/) {
-		      $feature->setIsPartial(1);
-		      $transcript->setIsPartial(1);
-		    } else {
-		      $feature->setIsPartial(1);
-		    }
+		    $transcript->setIsPartial(1);
+		    #if ($bioperlFeature->primary_tag() =~ /gene/) {
+		    #  $feature->setIsPartial(1);
+		    #  $transcript->setIsPartial(1);
+		    #} else {
+		    #  $feature->setIsPartial(1);
+		    #}
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1365,12 +1368,13 @@ sub validateCodingSequenceLength {
 		  # }
 
 		    ## set is_partial=1 if gene does not have a stop codon
-		    if ($bioperlFeature->primary_tag() =~ /gene/) {
-		      $feature->setIsPartial(1);
-		      $transcript->setIsPartial(1);
-		    } else {
-		      $feature->setIsPartial(1);
-		    }
+		    $transcript->setIsPartial(1);
+		    #if ($bioperlFeature->primary_tag() =~ /gene/) {
+		    #  $feature->setIsPartial(1);
+		    #  $transcript->setIsPartial(1);
+		    #} else {
+		    #  #$feature->setIsPartial(1);
+		    #}
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");

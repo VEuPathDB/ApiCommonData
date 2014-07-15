@@ -303,8 +303,16 @@ sub traverseSeqFeatures {
 	      my ($comment_val) = $gene->get_tag_values('comment');
 	      if ($comment_val =~ /partial/) {
 		#$gene->remove_tag('comment');
-		$gene->add_tag_value('Partial','');
+		$transcript->add_tag_value('Partial','');  ## add to transcript instead of gene in GUS4
 	      }
+	    }
+
+	    ## add is_pseudo and is_partial to transcript
+	    if ($gene->has_tag('Pseudo') || $gene->has_tag('pseudo')) {
+	      $transcript->add_tag_value('Pseudo', '');
+	    }
+	    if ($gene->has_tag('Partial') || $gene->has_tag('partial')) {
+	      $transcript->add_tag_value('Partial', '');
 	    }
 
 	    $codonStart -= 1 if $codonStart > 0;
