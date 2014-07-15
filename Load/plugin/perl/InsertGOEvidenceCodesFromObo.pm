@@ -3,7 +3,7 @@
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | broken
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | fixed
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
@@ -35,7 +35,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
-use GUS::Model::SRes::GOEvidenceCode;
+use GUS::Model::SRes::OntologyTerm;
 
 use Text::Balanced qw(extract_quotelike);
 
@@ -51,18 +51,26 @@ my $argsDeclaration =
 	     constraintFunc => undef,
 	     isList         => 0,
 	   }),
+
+     stringArg({name => 'extDbRlsSpec',
+       descr => 'Sres externaldatabase name and version',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
   ];
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Creates new entries in table SRes.GOEvidenceCode to represent GO evidence codes in GUS.
+Creates new entries in table SRes.OntologyTerm to represent GO evidence codes in GUS.
 PURPOSEBRIEF
     
 my $purpose = <<PLUGIN_PURPOSE;
-Creates new entries in table SRes.GOEvidenceCode to represent GO evidence codes in GUS.
+Creates new entries in table SRes.OntologyTerm to represent GO evidence codes in GUS.
 PLUGIN_PURPOSE
 
 my $tablesAffected = 
-	[['SRes.GOEvidenceCode', 'The entry representing the new evidence code is created here']];
+	[['SRes.OntologyTerm', 'The entry representing the new evidence code is created here']];
 
 my $tablesDependedOn = [];
 
@@ -109,6 +117,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
   my $oboFile = $self->getArg('oboFile');
   open(OBO, "<$oboFile") or $self->error("Couldn't open '$oboFile': $!\n");
 
@@ -116,12 +127,12 @@ sub run {
 
   my %seen;
 
-  $self->_parseTerms(\*OBO, \%seen);
+  $self->_parseTerms(\*OBO, \%seen, $extDbRlsId);
 
   close(OBO);
   
   for my $missing (grep { !$seen{$_} } @missingCodes) {
-    my $evidenceCode = GUS::Model::SRes::GOEvidenceCode->new({name => $missing});
+    my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $missing, source_id => $missing, external_database_release_id => $extDbRlsId});
     $evidenceCode->submit();
   }
 
@@ -129,12 +140,12 @@ sub run {
 }
 
 sub _parseTerms {
-  my ($self, $fh, $seen) = @_;
+  my ($self, $fh, $seen, $extDbRlsId) = @_;
 
   my $block = "";
   while (<$fh>) {
     if (m/^\[ ([^\]]+) \]/x) {
-      $self->_processBlock($block, $seen)
+      $self->_processBlock($block, $seen, $extDbRlsId)
 	if $block =~ m/\A\[Term\]/; # the very first block will be the
                                     # header, and so should not get
                                     # processed; also, some blocks may
@@ -145,7 +156,7 @@ sub _parseTerms {
     $block .= $_;
   }
 
-  $self->_processBlock($block, $seen)
+  $self->_processBlock($block, $seen, $extDbRlsId)
     if $block =~ m/\A\[Term\]/; # the very first block will be the
                                 # header, and so should not get
                                 # processed; also, some blocks may be
@@ -153,7 +164,7 @@ sub _parseTerms {
 }
 
 sub _processBlock {
-  my ($self, $block, $seen) = @_;
+  my ($self, $block, $seen, $extDbRlsId) = @_;
 
   my @evidCodes = keys (%$seen);
 
@@ -164,7 +175,7 @@ sub _processBlock {
 
   return unless ($name && $name =~ m/^\w+$/);
 
-  my $evidenceCode = GUS::Model::SRes::GOEvidenceCode->new({name => $name, description => $def});
+  my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $name, description => $def, source_id => $name, external_database_release_id => $extDbRlsId});
   $evidenceCode->submit();
 
   $seen->{$name}++;
@@ -207,7 +218,7 @@ sub _parseBlock {
 sub undoTables {
   my ($self) = @_;
 
-  return ('SRes.GOEvidenceCode');
+  return ('SRes.OntologyTerm');
 }
 
 1;
