@@ -422,7 +422,7 @@ sub queryForAgpMap {
                                 , p.na_sequence_id as piece_na_sequence_id
                                , decode(sp.strand_orientation, '+', '+1', '-', '-1', '+1') as piece_strand
                                , p.length as piece_length
-                               , sp.distance_from_left as virtual_start_min
+                               , sp.distance_from_left + 1 as virtual_start_min
                                , sp.distance_from_left + p.length as virtual_end_max
                                , p.source_id as piece_source_id
                                , vs.source_id as virtual_source_id
@@ -942,20 +942,20 @@ ORDER BY s.source_id, el.start_min
       my $exonMatch = Bio::Location::Simple->
           new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
 
-      my $cdsMatch;
       if($cdsStart && $cdsEnd) {
-        $cdsMatch = Bio::Location::Simple->
+        my $cdsMatch = Bio::Location::Simple->
             new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+        my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
+        $cdsStart = $cdsMatchOnVirtual->start();
+        $cdsEnd = $cdsMatchOnVirtual->end();
       }
 
       my $matchOnVirtual = $agp->map( $exonMatch );
-      my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
-
+     
       $sequenceSourceId = $matchOnVirtual->seq_id();
       $exonStart = $matchOnVirtual->start();
       $exonEnd = $matchOnVirtual->end();
-      $cdsStart = $cdsMatchOnVirtual->start();
-      $cdsEnd = $cdsMatchOnVirtual->end();
+
     }
 
     my $strand = $isReversed ? -1 : +1;
