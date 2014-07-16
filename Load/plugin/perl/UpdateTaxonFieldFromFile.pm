@@ -354,7 +354,6 @@ sub undoTables {
           'DoTS.OpticalMap',
           'DoTS.MicrosatelliteMap',
           'DoTS.RHMap',
-          'Tess.MoietyImp',
           'DoTS.EndSequencePairMap'
 	 );
 }
