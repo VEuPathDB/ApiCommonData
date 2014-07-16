@@ -160,7 +160,15 @@ sub sourceIdAndTranscriptSeq {
 #	  print ${[$prevExon->getFeatureLocation()]}[1]."\n";
 	  if(${[$exon->getFeatureLocation()]}[0] == ${[$prevExon->getFeatureLocation()]}[0] && ${[$exon->getFeatureLocation()]}[1] == ${[$prevExon->getFeatureLocation()]}[1] && ${[$exon->getFeatureLocation()]}[2] == ${[$prevExon->getFeatureLocation()]}[2]){
 	      $order--;
-	  
+
+	      ## if find the exon with the same location,
+	      ## and if has the same codingStart and codingEnd
+	      ## 1. delete the line $order--
+	      ## 2. update the RNAFeatureExon to link the EXON_FEATURE_ID to it in $prevExon
+	      ## 3. delete the entry in dots.naLocation with na_feature_id equal to this row in dots.exonfeature
+	      ## 4. delete the entry in dots.exonfeature with this $exon;
+	      ## 5. go to next exon
+
 	  }
       }
 
@@ -194,6 +202,7 @@ sub sourceIdAndTranscriptSeq {
   foreach my $transcript (@transcripts) {
     $count++;
     $transcript->setSourceId("$tagValues[0]-$count");
+
     my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
     if ($translatedAAFeat) {
       $translatedAAFeat->setSourceId("$tagValues[0]-$count");
@@ -201,6 +210,19 @@ sub sourceIdAndTranscriptSeq {
       if ($aaSeq) {
 	$aaSeq->setSourceId("$tagValues[0]-$count");
       }
+    }
+
+    # add order_number for rnaFeatureExon
+    my @rnaFeatureExon = $transcript->getChildren('DoTS::RNAFeatureExon');
+    my @rnaFeatureExonSorted = map { $_->[0] }
+      sort { $a->[3] ? ($b->[1] <=> $a->[1] || $b->[2] <=> $a->[2]) : ($a->[1] <=> $b->[1] || $a->[2] <=> $b->[2])}
+	map { [ $_, $_->getParent('DoTS::ExonFeature')->getFeatureLocation ]}
+	  @rnaFeatureExon;
+
+    my $rnaExCt = 0;
+    foreach my $rnaExon (@rnaFeatureExonSorted) {
+      $rnaExCt++;
+      $rnaExon->setOrderNumber($rnaExCt);
     }
   }
 
