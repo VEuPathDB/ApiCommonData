@@ -175,7 +175,7 @@ sub _processBlock {
 
   return unless ($name && $name =~ m/^\w+$/);
 
-  my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $name, description => $def, source_id => $name, external_database_release_id => $extDbRlsId});
+  my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $name, definition => $def, source_id => $name, external_database_release_id => $extDbRlsId});
   $evidenceCode->submit();
 
   $seen->{$name}++;
