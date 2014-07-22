@@ -990,7 +990,14 @@ ORDER BY s.source_id, el.start_min
 
   $sh->finish();
 
-  return \%transcriptSummary, \%exonLocs;
+  my %sortedExonLocs;
+  foreach my $seqId (keys %exonLocs) {
+    my @sortedLocations = sort { $a->{start} <=> $b->{start} } @{$exonLocs{$seqId}};
+    push @{$sortedExonLocs{$seqId}}, @sortedLocations;
+  }
+
+
+  return \%transcriptSummary, \%sortedExonLocs;
 }
 
 
