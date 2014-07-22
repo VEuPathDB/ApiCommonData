@@ -65,12 +65,15 @@ sub makeGeneSkeleton{
 
   my $transcriptExons;  # hash to remember each transcript's exons
 
+  ##create hash to identify distinct exons based start_end
+  my %distinctExons;
+
   foreach my $bioperlTranscript ($bioperlGene->get_SeqFeatures()) {
     my $transcriptNaSeq = &makeTranscriptNaSeq($plugin, $bioperlTranscript, $taxonId, $dbRlsId);
 
     my $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
     $gusTranscript->setParent($gusGene);
-    $bioperlTranscript->{gusFeature} = $gusTranscript;
+##    $bioperlTranscript->{gusFeature} = $gusTranscript;
 
     $transcriptNaSeq->addChild($gusTranscript);
 
@@ -78,45 +81,55 @@ sub makeGeneSkeleton{
     $transcriptExons->{$gusTranscript}->{transcript} = $gusTranscript;
 
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
-      my $gusExon = &getGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId, $gusGene);
-      $bioperlExon->{gusFeature} = $gusExon;
-
-      push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
-    }
-
+      ##check to see if I've seen this exon:
+      my $gusExon;
+      if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()}){
+        $gusExon = $plugin->makeGusExon($bioperlExon, $genomicSeqId, $dbRlsId, $gusGene);
+        $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()} = $gusExon;
+        ## is this ever used?? $bioperlExon->{gusFeature} = $gusExon;
+        $gusExon->setParent($gusGene);
+      }else{
+        $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
+      }
+      ##what is this doing??         push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
+      
+      ##here want to make the rnafeatureexon so associate this exon with this transcript
+      my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
+      $rnaFeatureExon->setParent($gusTranscript);
+      $rnaFeatureExon->setParent($gusExon);
+      
+    } ##this should end the exon loop
 
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
 
-      my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
+      my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       
 
-      my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
+      my $translatedAASeq = $plugin->makeTranslatedAASeq($taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
 
-      # make sure we submit all kids of the translated aa seq
-      $gusGene->addToSubmitList($translatedAASeq);
     }
   }
 
   # attach gene's exons to the appropriate transcripts
   # update the transcript's splicedNaSequence
   # the transcriptObjId is the perl object id for the transcript object
-  foreach my $transcriptObjId (keys %$transcriptExons) {
-    my $gusTranscript = $transcriptExons->{$transcriptObjId}->{transcript};
-
-    if(my $exons = $transcriptExons->{$transcriptObjId}->{exons}) {
-
-      foreach my $exon (@$exons) {
-	my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
-        $rnaFeatureExon->setParent($gusTranscript);
-        $rnaFeatureExon->setParent($exon);
-
-        $exon->setParent($gusGene);
-      }
-    }
-  }
-  return $gusGene;
+#  foreach my $transcriptObjId (keys %$transcriptExons) {
+#    my $gusTranscript = $transcriptExons->{$transcriptObjId}->{transcript};
+#
+#    if(my $exons = $transcriptExons->{$transcriptObjId}->{exons}) {
+#
+#      foreach my $exon (@$exons) {
+#	my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
+#        $rnaFeatureExon->setParent($gusTranscript);
+#        $rnaFeatureExon->setParent($exon);
+#
+#        $exon->setParent($gusGene);
+#      }
+#    }
+#  }
+        return $gusGene;
 }
 
 sub makeOrfSkeleton{
@@ -231,7 +244,7 @@ sub getGusExon {
 #--------------------------------------------------------------------------------
 
 sub makeGusExon {
-  my ($plugin, $bioperlExon, $genomicSeqId, $dbRlsId) = @_;
+  my ($plugin, $bioperlExon, $genomicSeqId, $dbRlsId,$gusGene) = @_;
 
   my $type = $bioperlExon->primary_tag();
 
