@@ -18,7 +18,7 @@ package ApiCommonData::Load::GusSkeletonMaker;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -61,7 +61,7 @@ sub makeGeneSkeleton{
 
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $isPredicted);
 
-  $bioperlGene->{gusFeature} = $gusGene;
+  ##$bioperlGene->{gusFeature} = $gusGene;
 
   my $transcriptExons;  # hash to remember each transcript's exons
 
@@ -73,7 +73,7 @@ sub makeGeneSkeleton{
 
     my $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
     $gusTranscript->setParent($gusGene);
-##    $bioperlTranscript->{gusFeature} = $gusTranscript;
+    ##$bioperlTranscript->{gusFeature} = $gusTranscript;
 
     $transcriptNaSeq->addChild($gusTranscript);
 
@@ -83,16 +83,22 @@ sub makeGeneSkeleton{
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
       ##check to see if I've seen this exon:
       my $gusExon;
-      if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()}){
-        $gusExon = $plugin->makeGusExon($bioperlExon, $genomicSeqId, $dbRlsId, $gusGene);
-        $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()} = $gusExon;
-        ## is this ever used?? $bioperlExon->{gusFeature} = $gusExon;
+      my $codingStart = 0;
+      my $codingEnd = 0;
+      ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+      ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+
+      if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd}){
+        $gusExon = &makeGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId);
+        $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd} = $gusExon;
+        ##$bioperlExon->{gusFeature} = $gusExon;
         $gusExon->setParent($gusGene);
       }else{
-        $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
+        $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd};
       }
       ##what is this doing??         push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
-      
+
+      $bioperlExon->{gusFeature} = $gusExon;
       ##here want to make the rnafeatureexon so associate this exon with this transcript
       my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
       $rnaFeatureExon->setParent($gusTranscript);
@@ -102,11 +108,11 @@ sub makeGeneSkeleton{
 
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
 
-      my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
+      my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       
 
-      my $translatedAASeq = $plugin->makeTranslatedAASeq($taxonId, $dbRlsId);
+      my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
 
     }
@@ -136,7 +142,7 @@ sub makeOrfSkeleton{
   my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId, $taxonId, $isPredicted) = @_;
 
   my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted);
-  $bioperlOrf->{gusFeature} = $gusMiscFeature;
+  ##$bioperlOrf->{gusFeature} = $gusMiscFeature;
 
   my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
   $gusMiscFeature->addChild($translatedAAFeat);
