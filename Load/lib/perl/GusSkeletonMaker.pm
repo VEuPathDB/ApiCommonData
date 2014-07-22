@@ -138,10 +138,10 @@ sub makeOrfSkeleton{
   my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted);
   $bioperlOrf->{gusFeature} = $gusMiscFeature;
 
-  my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
+  my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
   $gusMiscFeature->addChild($translatedAAFeat);
 
-  my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
+  my $translatedAASeq = $plugin->makeTranslatedAASeq($taxonId, $dbRlsId);
   $translatedAASeq->addChild($translatedAAFeat);
 
   # make sure we submit all kids of the translated aa seq
@@ -281,7 +281,7 @@ sub makeTranslatedAASeq {
 #--------------------------------------------------------------------------------
 
 sub makeTranslatedAAFeat {
-  my ($dbRlsId) = @_;
+  my ($plugin,$dbRlsId) = @_;
 
   my $transAAFeat = GUS::Model::DoTS::TranslatedAAFeature->
     new({external_database_release_id => $dbRlsId,
