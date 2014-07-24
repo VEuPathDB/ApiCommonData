@@ -22,6 +22,9 @@ create table apidb.Snp (
     modification_date            date
 );
 
+create index apidb.SnpNASeqLoc_idx
+on apidb.Snp (location, na_sequence_id);
+
 create sequence apidb.Snp_sq;
 
 grant select on apidb.Snp to gus_r;
@@ -46,6 +49,9 @@ create table apidb.SequenceVariation (
     ref_na_sequence_id           number(10) not null,
     modification_date            date
 );
+
+create index apidb.SnpVarNASeqLoc_idx
+on apidb.SequenceVariation (ref_na_sequence_id, location);
 
 create sequence apidb.SequenceVariation_sq;
 
