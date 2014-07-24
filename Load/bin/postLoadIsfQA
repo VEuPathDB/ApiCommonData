@@ -17,8 +17,8 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -145,7 +145,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeq) = $stmt->fetchrow_array();
-print STDERR "The total number of sequence that have been loaded = $totalSeq\n";
+print STDERR "The number of sequences that have been loaded = $totalSeq\n";
 $stmt->finish();
 
 ## D. check the total sequence length
@@ -155,7 +155,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeqLength) = $stmt->fetchrow_array();
-print STDERR "The total sequence length = $totalSeqLength\n";
+print STDERR "The length of sequences that have been loaded = $totalSeqLength\n";
 $stmt->finish();
 
 ## E. check the gene number that has been loaded
@@ -165,12 +165,12 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($geneCount) = $stmt->fetchrow_array();
-print STDERR "The total gene number that have been loaded = $geneCount\n";
+print STDERR "The number of genes that have been loaded = $geneCount\n";
 $stmt->finish();
 
 ## F. check the gene number that has been loaded in different categories 
 my $sql = <<SQL;
-  select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name
+  select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name order by name
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -179,27 +179,48 @@ while (my ($geneType, $geneTypeCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## G. check the pseudogene
+## E-2. check the transcript number that has been loaded
 my $sql = <<SQL;
-  select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_pseudo
+  select count(*) from DOTS.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "For coding_gene, check if it is pseudogene...\n";
+my ($codingGeneCount) = $stmt->fetchrow_array();
+$stmt->finish();
+
+my $sql = <<SQL;
+  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId)
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($codingTransCount) = $stmt->fetchrow_array();
+$stmt->finish();
+
+print STDERR "For $codingGeneCount coding_genes, the number of transcripts that have been loaded = $codingTransCount\n" if ($codingGeneCount && $codingTransCount);
+
+## G. check the pseudogene
+my $sql = <<SQL;
+  select distinct t.is_pseudo, count(*) from dots.genefeature gf, dots.transcript t 
+where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_pseudo
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+print STDERR "  check the transcript of coding_gene if it is pseudo...\n";
 while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
-  ($if == 1 )? print STDERR "  is pseudogene = $psdCount\n" : print STDERR "  not pseudogene = $psdCount\n";
+  ($if == 1 )? print STDERR "    is pseudogene = $psdCount\n" : print STDERR "    is not pseudogene = $psdCount\n";
 }
 $stmt->finish();
 
 ## H. check if is_partial
 my $sql = <<SQL;
-  select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_partial
+  select distinct t.is_partial, count(*) from dots.genefeature gf, dots.transcript t where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_partial
 SQL
+
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "For coding_gene, check if it is partial gene...\n";
+print STDERR "  check the transcript of coding_gene if it is partial...\n";
 while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
-  ($if == 1 )? print STDERR "  is partial gene = $ptlCount\n" : print STDERR "  not partial gene = $ptlCount\n";
+  ($if == 1 )? print STDERR "    is partial = $ptlCount\n" : print STDERR "    is not partial = $ptlCount\n";
 }
 $stmt->finish();
 
@@ -221,21 +242,13 @@ $stmt->finish();
 
 ## J. check the seq # in translatedaaSequence table and translatedaaFeature table
 my $sql = <<SQL;
-  select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene'
-SQL
-my $stmt = $dbh->prepare($sql);
-$stmt->execute();
-my ($codingGene) = $stmt->fetchrow_array();
-$stmt->finish();
-
-my $sql = <<SQL;
   select count(*) from dots.translatedaasequence where external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaSeq) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the translated aa sequence = $tranAaSeq, which is not equal to coding_gene = $codingGene\n" unless ($tranAaSeq == $codingGene);
+print STDERR "ERROR: the translated aa sequence = $tranAaSeq, which is not equal to coding_gene = $codingTransCount\n" unless ($tranAaSeq == $codingTransCount);
 
 my $sql = <<SQL;
   select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
@@ -244,7 +257,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaFeat) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR... the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
+print STDERR "ERROR... the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingTransCount\n" unless ($tranAaFeat == $codingTransCount);
 
 
 ## K. check the translatedAaFeature table, translation_start or translation_stop can not be null or < 0
@@ -264,7 +277,7 @@ SQL
 
 ## L. for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
 my $sql = <<SQL;
-  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null
+  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null and gf.external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -284,7 +297,7 @@ while (my ($gfSourceId, $nlStartMin, $nlEndMax, $seqSourceId, $seqLength) = $stm
 }
 $stmt->finish();
 
-## N. check if there is any duplicated exons since it happens in TriTryp
+## N. check if there is any duplicated exons since it happens in TriTryp, This also can be a check for alternative splicing coding of distinct exons.
 my $sql = <<SQL;
   select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and nl.na_feature_id=rfe.exon_feature_id and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
 SQL
@@ -295,7 +308,7 @@ while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array
 }
 $stmt->finish();
 
-## O. check if overlap exons which happen in TriTrypDB
+## O. check if there is any overlap exon, check by each transcript in case of alternative splicing
 my $sql = <<SQL;
   select source_id from DOTS.genefeature where external_database_release_id=$extDbRlsId
 SQL
@@ -308,37 +321,39 @@ while (my ($sourceId) = $stmt->fetchrow_array()) {
   my %exonLocations;
 
 my $sqll = <<SQL;
-  select gf.source_id, ef.source_id, nl.start_min, nl.end_max
-from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
-where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
-and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId' 
-order by nl.start_min
+  select gf.source_id, t.source_id, ef.source_id, nl.start_min, nl.end_max
+from DOTS.genefeature gf, Dots.transcript t, DOTS.rnafeatureexon rfe, DOTS.exonfeature ef, DOTS.nalocation nl 
+where gf.na_feature_id=t.parent_id and t.na_feature_id=rfe.rna_feature_id and rfe.exon_feature_id=ef.na_feature_id 
+and nl.na_feature_id=ef.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId' 
+order by t.source_id, nl.start_min
 SQL
 
   my $stmtt = $dbh->prepare($sqll);
   $stmtt->execute();
 
-  while (my ($gfSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
-    $exonLocations{$efSourceId} = "$nlStartMin,$nlEndMax,$gfSourceId" if ($efSourceId && $nlStartMin && $nlEndMax && $gfSourceId);
+  while (my ($gfSourceId, $tSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
+    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax,$gfSourceId" if ($efSourceId && $nlStartMin && $nlEndMax && $gfSourceId && $tSourceId);
   }
   $stmtt->finish();
   $c++;
 
-  my ($preExonId, $preStartMin, $preEndMax);
   foreach my $k (sort keys %exonLocations) {
-    my ($start, $end, $gid) = split (/\,/, $exonLocations{$k});
-    if ($preStartMin ) {
-      if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
-	$preExonId = $k;
-        $preStartMin = $start;
-        $preEndMax = $end;
+    my ($preExonId, $preStartMin, $preEndMax);
+    foreach my $kk (sort keys %{$exonLocations{$k}}) {
+      my ($start, $end, $gid) = split (/\,/, $exonLocations{$k}{$kk});
+      if ($preStartMin ) {
+	if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+	  $preExonId = $k;
+	  $preStartMin = $start;
+	  $preEndMax = $end;
+	} else {
+	  print STDERR "ERROR... overlapped exons found.\ndouble check the transcript $k of the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	}
       } else {
-        print STDERR "ERROR... overlapped exons found.\ndouble check the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	$preExonId = $k;
+	$preStartMin = $start;
+	$preEndMax = $end;
       }
-    } else {
-      $preExonId = $k;
-      $preStartMin = $start;
-      $preEndMax = $end;
     }
   }
 }
