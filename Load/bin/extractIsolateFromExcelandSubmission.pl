@@ -270,6 +270,38 @@ while(my ($k, $v) = each %hash) {
   my $seq13_genbank         = $hash{$k}{$cn{seq13_genbank}};
   my $seq13_trace           = $hash{$k}{$cn{seq13_trace}};
 
+  my $seq14                 = $hash{$k}{$cn{seq14}};
+  my $seq14_primer_names    = $hash{$k}{$cn{seq14_primer_names}};
+  my $seq14_primer_seqs     = $hash{$k}{$cn{seq14_primer_seqs}};
+  my $seq14_product         = $hash{$k}{$cn{seq14_product}};
+  my $seq14_desc            = $hash{$k}{$cn{seq14_desc}};
+  my $seq14_genbank         = $hash{$k}{$cn{seq14_genbank}};
+  my $seq14_trace           = $hash{$k}{$cn{seq14_trace}};
+
+  my $seq15                 = $hash{$k}{$cn{seq15}};
+  my $seq15_primer_names    = $hash{$k}{$cn{seq15_primer_names}};
+  my $seq15_primer_seqs     = $hash{$k}{$cn{seq15_primer_seqs}};
+  my $seq15_product         = $hash{$k}{$cn{seq15_product}};
+  my $seq15_desc            = $hash{$k}{$cn{seq15_desc}};
+  my $seq15_genbank         = $hash{$k}{$cn{seq15_genbank}};
+  my $seq15_trace           = $hash{$k}{$cn{seq15_trace}};
+
+  my $seq16                 = $hash{$k}{$cn{seq16}};
+  my $seq16_primer_names    = $hash{$k}{$cn{seq16_primer_names}};
+  my $seq16_primer_seqs     = $hash{$k}{$cn{seq16_primer_seqs}};
+  my $seq16_product         = $hash{$k}{$cn{seq16_product}};
+  my $seq16_desc            = $hash{$k}{$cn{seq16_desc}};
+  my $seq16_genbank         = $hash{$k}{$cn{seq16_genbank}};
+  my $seq16_trace           = $hash{$k}{$cn{seq16_trace}};
+
+  my $seq17                 = $hash{$k}{$cn{seq17}};
+  my $seq17_primer_names    = $hash{$k}{$cn{seq17_primer_names}};
+  my $seq17_primer_seqs     = $hash{$k}{$cn{seq17_primer_seqs}};
+  my $seq17_product         = $hash{$k}{$cn{seq17_product}};
+  my $seq17_desc            = $hash{$k}{$cn{seq17_desc}};
+  my $seq17_genbank         = $hash{$k}{$cn{seq17_genbank}};
+  my $seq17_trace           = $hash{$k}{$cn{seq17_trace}};
+
   $seq1_primer_seqs =~ s/\s+//g;
   $seq2_primer_seqs =~ s/\s+//g;
   $seq3_primer_seqs =~ s/\s+//g;
@@ -283,6 +315,10 @@ while(my ($k, $v) = each %hash) {
   $seq11_primer_seqs =~ s/\s+//g;
   $seq12_primer_seqs =~ s/\s+//g;
   $seq13_primer_seqs =~ s/\s+//g;
+  $seq14_primer_seqs =~ s/\s+//g;
+  $seq15_primer_seqs =~ s/\s+//g;
+  $seq16_primer_seqs =~ s/\s+//g;
+  $seq17_primer_seqs =~ s/\s+//g;
 
   my @seq1_primer_name = split /;/, $seq1_primer_names;
   my @seq2_primer_name = split /;/, $seq2_primer_names;
@@ -297,6 +333,10 @@ while(my ($k, $v) = each %hash) {
   my @seq11_primer_name = split /;/, $seq11_primer_names;
   my @seq12_primer_name = split /;/, $seq12_primer_names;
   my @seq13_primer_name = split /;/, $seq13_primer_names;
+  my @seq14_primer_name = split /;/, $seq14_primer_names;
+  my @seq15_primer_name = split /;/, $seq15_primer_names;
+  my @seq16_primer_name = split /;/, $seq16_primer_names;
+  my @seq17_primer_name = split /;/, $seq17_primer_names;
 
   my @seq1_primer_seq = split /;/, $seq1_primer_seqs;
   my @seq2_primer_seq = split /;/, $seq2_primer_seqs;
@@ -311,6 +351,10 @@ while(my ($k, $v) = each %hash) {
   my @seq11_primer_seq = split /;/, $seq11_primer_seqs;
   my @seq12_primer_seq = split /;/, $seq12_primer_seqs;
   my @seq13_primer_seq = split /;/, $seq13_primer_seqs;
+  my @seq14_primer_seq = split /;/, $seq14_primer_seqs;
+  my @seq15_primer_seq = split /;/, $seq15_primer_seqs;
+  my @seq16_primer_seq = split /;/, $seq16_primer_seqs;
+  my @seq17_primer_seq = split /;/, $seq17_primer_seqs;
 
   $country    .= ": $city" if $city;
   $country    .= ", $county" if $county;
@@ -355,6 +399,10 @@ while(my ($k, $v) = each %hash) {
          [$seq11, $seq11_product, $seq11_desc, \@seq11_primer_name, \@seq11_primer_seq, $seq11_trace, $seq11_genbank],
          [$seq12, $seq12_product, $seq12_desc, \@seq12_primer_name, \@seq12_primer_seq, $seq12_trace, $seq12_genbank],
          [$seq13, $seq13_product, $seq13_desc, \@seq13_primer_name, \@seq13_primer_seq, $seq13_trace, $seq13_genbank],
+         [$seq14, $seq14_product, $seq14_desc, \@seq14_primer_name, \@seq14_primer_seq, $seq14_trace, $seq14_genbank],
+         [$seq15, $seq15_product, $seq15_desc, \@seq15_primer_name, \@seq15_primer_seq, $seq15_trace, $seq15_genbank],
+         [$seq16, $seq16_product, $seq16_desc, \@seq16_primer_name, \@seq16_primer_seq, $seq16_trace, $seq16_genbank],
+         [$seq17, $seq17_product, $seq17_desc, \@seq17_primer_name, \@seq17_primer_seq, $seq17_trace, $seq17_genbank],
 				 );
 
   my $count = 1;
@@ -556,4 +604,31 @@ DK,Sequence 13 Description,seq13_desc
 DL,Sequence 13,seq13
 DM,Sequence 13 Genbank Number,seq13_genbank
 DN,Sequence 13 Trace File,seq13_trace
-
+DO,Sequence 14 Product or Locus Name,seq14_product
+DP,Sequence 14 Primer Name,seq14_primer_names
+DQ,Sequence 14 Primer Seq,seq14_primer_seqs
+DR,Sequence 14 Description,seq14_desc
+DS,Sequence 14,seq14
+DT,Sequence 14 Genbank Number,seq14_genbank
+DU,Sequence 14 Trace File,seq14_trace
+DV,Sequence 15 Product or Locus Name,seq15_product
+DW,Sequence 15 Primer Name,seq15_primer_names
+DX,Sequence 15 Primer Seq,seq15_primer_seqs
+DY,Sequence 15 Description,seq15_desc
+DZ,Sequence 15,seq15
+EA,Sequence 15 Genbank Number,seq15_genbank
+EB,Sequence 15 Trace File,seq15_trace
+EC,Sequence 16 Product or Locus Name,seq16_product
+ED,Sequence 16 Primer Name,seq16_primer_names
+EE,Sequence 16 Primer Seq,seq16_primer_seqs
+EF,Sequence 16 Description,seq16_desc
+EG,Sequence 16,seq16
+EH,Sequence 16 Genbank Number,seq16_genbank
+EI,Sequence 16 Trace File,seq16_trace
+EJ,Sequence 17 Product or Locus Name,seq17_product
+EK,Sequence 17 Primer Name,seq17_primer_names
+EL,Sequence 17 Primer Seq,seq17_primer_seqs
+EM,Sequence 17 Description,seq17_desc
+EN,Sequence 17,seq17
+EO,Sequence 17 Genbank Number,seq17_genbank
+EP,Sequence 17 Trace File,seq17_trace
