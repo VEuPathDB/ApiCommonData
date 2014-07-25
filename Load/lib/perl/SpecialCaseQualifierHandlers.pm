@@ -122,53 +122,36 @@ sub sourceIdAndTranscriptSeq {
 
   # first set source id, and propogate it to the transcript and aa seq
   my @tagValues = $bioperlFeature->get_tag_values($tag);
-  
 
   $tagValues[0] =~ s/^\s+//;
   $tagValues[0] =~ s/\s+$//;
 
   $geneFeature->setSourceId($tagValues[0]);
 
-  
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
 
+  ## DoTS::ExonFeature
   my @exonFeatures = $geneFeature->getChildren("DoTS::ExonFeature");
-  
-  
+
   my @exonsSorted = map { $_->[0] }
   sort { $a->[3] ? ($b->[1] <=> $a->[1] || $b->[2] <=> $a->[2]) : ($a->[1] <=> $b->[1] || $a->[2] <=> $b->[2])}
   map { [ $_, $_->getFeatureLocation ]}
   @exonFeatures;
-  
 
   my $final = scalar(@exonsSorted) - 1;
-  
-  my $order = 1;
 
+  my $order = 1;
   my $prevExon;
 
   my @exons;
 
   for my $exon (@exonsSorted) {
-    
 
-
-
-      
-   
       if($prevExon){
 #	  print ${[$prevExon->getFeatureLocation()]}[1]."\n";
 	  if(${[$exon->getFeatureLocation()]}[0] == ${[$prevExon->getFeatureLocation()]}[0] && ${[$exon->getFeatureLocation()]}[1] == ${[$prevExon->getFeatureLocation()]}[1] && ${[$exon->getFeatureLocation()]}[2] == ${[$prevExon->getFeatureLocation()]}[2]){
-	      $order--;
-
-	      ## if find the exon with the same location,
-	      ## and if has the same codingStart and codingEnd
-	      ## 1. delete the line $order--
-	      ## 2. update the RNAFeatureExon to link the EXON_FEATURE_ID to it in $prevExon
-	      ## 3. delete the entry in dots.naLocation with na_feature_id equal to this row in dots.exonfeature
-	      ## 4. delete the entry in dots.exonfeature with this $exon;
-	      ## 5. go to next exon
-
+	    ## $order--;  ## comment this out since each exon in table DoTs::ExonFeature is unique
+	    die "duplicated exon found in the table Dots.ExonFeature for $tagValues[0]\n";  ## temporary make it die
 	  }
       }
 
@@ -186,24 +169,34 @@ sub sourceIdAndTranscriptSeq {
 	  $exon->setCodingStart($exonStart);
 	  $exon->setCodingEnd($exonStop);
       }
-	 
+
       $prevExon = $exon;
       $order++;
-      
+
       push(@exons,$exon);
-      
   }
-  
-  my @transcripts = $geneFeature->getChildren("DoTS::Transcript");
-  
+
+  # second, initialize isPseudo
+  if (!defined($geneFeature->getIsPseudo())) {
+    $geneFeature->setIsPseudo(0);
+  }
+
+  ## intialize isPartial
+  if (!defined($geneFeature->getIsPartial())) {
+    $geneFeature->setIsPartial(0);
+  }
 
 
+  ## DoTS::Transcript
   my $count = 0;
-  foreach my $transcript (@transcripts) {
+
+  foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
+
     $count++;
     $transcript->setSourceId("$tagValues[0]-$count");
 
     my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+
     if ($translatedAAFeat) {
       $translatedAAFeat->setSourceId("$tagValues[0]-$count");
       my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
@@ -224,22 +217,9 @@ sub sourceIdAndTranscriptSeq {
       $rnaExCt++;
       $rnaExon->setOrderNumber($rnaExCt);
     }
-  }
 
 
-  # second, initialize isPseudo
-  if (!defined($geneFeature->getIsPseudo())) {
-    $geneFeature->setIsPseudo(0);
-  }
-
-  ## intialize isPartial
-  if (!defined($geneFeature->getIsPartial())) {
-    $geneFeature->setIsPartial(0);
-  }
-
-  # now do the exons and transcript seq
-  foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
-
+    # now do the exons and transcript seq
     my ($transcriptMin, $transcriptMax, @exons, $isReversed);
 
     foreach my $rnaExon ($transcript->getChildren('DoTS::RNAFeatureExon')) {
@@ -278,36 +258,27 @@ sub sourceIdAndTranscriptSeq {
     $transcriptLoc->setEndMax($transcriptLength);
     $transcriptLoc->setIsReversed(0);
     $transcript->setIsPredicted(1);
-    
+
 
     if($bioperlFeature->primary_tag() eq "coding_gene" || $bioperlFeature->primary_tag() eq "pseudo_gene"){
- 
-
 
       my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
       my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
 
       my($codingStart,$codingStop);
 	foreach my $sortedExon (@exonsSorted){
-
 	    $codingStart = $sortedExon->get("coding_start");
-
-
 	    if($codingStart ne 'null' && $codingStart ne ''){
 		last;
 	    }
 	}
 
 	foreach my $sortedExon (reverse @exonsSorted){
-
 	    $codingStop = $sortedExon->get("coding_end");
-		
-
 	    if($codingStop ne 'null' && $codingStop ne ''){
 		last;
 	    }
 	}
-
 
       my $firstExonLoc = $exonsSorted[0]->getChild("DoTS::NALocation");
       my $finalExonLoc = $exonsSorted[$final]->getChild("DoTS::NALocation");
@@ -326,18 +297,11 @@ sub sourceIdAndTranscriptSeq {
 
 #      print STDERR $transcript->getSourceId()."\tCoding $codingStart\t$codingStop\t$transcriptLength\t$isReversed\t$translationStart\t$translationStop\n";
       if($translatedAaFeature){
-	 
 	  $translatedAaFeature->setTranslationStart($translationStart);
 	  $translatedAaFeature->setTranslationStop($translationStop);
       }
-      
-
-
+    }
   }
-
-    
-  }
-
 
   return [];
 }
@@ -1327,7 +1291,8 @@ sub validateCodingSequenceLength {
     my ($msg, $warning);
 
 
-    my $transcript = $feature->getChild("DoTS::Transcript");
+    my @transcripts = $feature->getChildren("DoTS::Transcript");
+    foreach my $transcript (@transcripts) {
 
     my $splicedNASequence = $transcript->getParent('DoTS::SplicedNASequence');
 
@@ -1409,6 +1374,7 @@ sub validateCodingSequenceLength {
 	    }
 	}
 	}
+  }
 
 
     return [];
@@ -1435,7 +1401,7 @@ sub validateStopCodons {
 	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
 	if ($translatedAAFeat) {
 	    my $proteinSourceId = $translatedAAFeat->get("source_id");
-	    $proteinSourceId =~ s/\-\d+$//;
+	    #$proteinSourceId =~ s/\-\d+$//;
 	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
 
 #	    print $aaSeq->get('sequence');
@@ -1497,7 +1463,7 @@ sub validateGene {
 	if ($translatedAAFeat) {
 	    my $proteinSourceId = $translatedAAFeat->get("source_id");
 	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
-	    $proteinSourceId =~ s/\-\d+$//;
+	    #$proteinSourceId =~ s/\-\d+$//;
 #	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
 	    if($aaSeq){
 
@@ -1514,8 +1480,8 @@ sub validateGene {
 		  $msg = "***ERROR********* ";
 
 		  $msg .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
-		  $msg .= "Pseudogene " if ($feature->getIsPseudo());
-		  $msg .= "Partial gene " if ($feature->getIsPartial());
+		  $msg .= "Pseudogene " if ($transcript->getIsPseudo());
+		  $msg .= "Partial gene " if ($transcript->getIsPartial());
 
 		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)."\n";
 	
@@ -1533,8 +1499,8 @@ sub validateGene {
 		    $warning = "***WARNING********* ";
 
 		    $warning .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
-		    $warning .= "Pseudogene " if ($feature->getIsPseudo());
-		    $warning .= "Partial gene " if ($feature->getIsPartial());
+		    $warning .= "Pseudogene " if ($transcript->getIsPseudo());
+		    $warning .= "Partial gene " if ($transcript->getIsPartial());
 
 		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
