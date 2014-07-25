@@ -388,7 +388,7 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[isolation-source=$source]" if $source;
     $modifier .= "[collection-date=$collection_date]" if $year;
     $modifier .= "[host=$host]" if $host;
-    $modifier .= "[isolation-source=$material]" if $material;
+    $modifier .= "[bio-material=$material]" if $material;
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
     #$modifier .= "[gcode=4]"; 
