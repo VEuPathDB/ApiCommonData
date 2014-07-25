@@ -198,25 +198,119 @@ while(my ($k, $v) = each %hash) {
   my $seq4_genbank         = $hash{$k}{$cn{seq4_genbank}};
   my $seq4_trace           = $hash{$k}{$cn{seq4_trace}};
 
-  #$seq1_primer_names =~ s/[^\s+|\s$]//g; 
-  #$seq2_primer_names =~ s/[^\s+|\s$]//g; 
-  #$seq3_primer_names =~ s/[^\s+|\s$]//g; 
-  #$seq4_primer_names =~ s/[^\s+|\s$]//g; 
+  my $seq5                 = $hash{$k}{$cn{seq5}};
+  my $seq5_primer_names    = $hash{$k}{$cn{seq5_primer_names}};
+  my $seq5_primer_seqs     = $hash{$k}{$cn{seq5_primer_seqs}};
+  my $seq5_product         = $hash{$k}{$cn{seq5_product}};
+  my $seq5_desc            = $hash{$k}{$cn{seq5_desc}};
+  my $seq5_genbank         = $hash{$k}{$cn{seq5_genbank}};
+  my $seq5_trace           = $hash{$k}{$cn{seq5_trace}};
+
+  my $seq6                 = $hash{$k}{$cn{seq6}};
+  my $seq6_primer_names    = $hash{$k}{$cn{seq6_primer_names}};
+  my $seq6_primer_seqs     = $hash{$k}{$cn{seq6_primer_seqs}};
+  my $seq6_product         = $hash{$k}{$cn{seq6_product}};
+  my $seq6_desc            = $hash{$k}{$cn{seq6_desc}};
+  my $seq6_genbank         = $hash{$k}{$cn{seq6_genbank}};
+  my $seq6_trace           = $hash{$k}{$cn{seq6_trace}};
+
+  my $seq7                 = $hash{$k}{$cn{seq7}};
+  my $seq7_primer_names    = $hash{$k}{$cn{seq7_primer_names}};
+  my $seq7_primer_seqs     = $hash{$k}{$cn{seq7_primer_seqs}};
+  my $seq7_product         = $hash{$k}{$cn{seq7_product}};
+  my $seq7_desc            = $hash{$k}{$cn{seq7_desc}};
+  my $seq7_genbank         = $hash{$k}{$cn{seq7_genbank}};
+  my $seq7_trace           = $hash{$k}{$cn{seq7_trace}};
+
+  my $seq8                 = $hash{$k}{$cn{seq8}};
+  my $seq8_primer_names    = $hash{$k}{$cn{seq8_primer_names}};
+  my $seq8_primer_seqs     = $hash{$k}{$cn{seq8_primer_seqs}};
+  my $seq8_product         = $hash{$k}{$cn{seq8_product}};
+  my $seq8_desc            = $hash{$k}{$cn{seq8_desc}};
+  my $seq8_genbank         = $hash{$k}{$cn{seq8_genbank}};
+  my $seq8_trace           = $hash{$k}{$cn{seq8_trace}};
+
+  my $seq9                 = $hash{$k}{$cn{seq9}};
+  my $seq9_primer_names    = $hash{$k}{$cn{seq9_primer_names}};
+  my $seq9_primer_seqs     = $hash{$k}{$cn{seq9_primer_seqs}};
+  my $seq9_product         = $hash{$k}{$cn{seq9_product}};
+  my $seq9_desc            = $hash{$k}{$cn{seq9_desc}};
+  my $seq9_genbank         = $hash{$k}{$cn{seq9_genbank}};
+  my $seq9_trace           = $hash{$k}{$cn{seq9_trace}};
+
+  my $seq10                 = $hash{$k}{$cn{seq10}};
+  my $seq10_primer_names    = $hash{$k}{$cn{seq10_primer_names}};
+  my $seq10_primer_seqs     = $hash{$k}{$cn{seq10_primer_seqs}};
+  my $seq10_product         = $hash{$k}{$cn{seq10_product}};
+  my $seq10_desc            = $hash{$k}{$cn{seq10_desc}};
+  my $seq10_genbank         = $hash{$k}{$cn{seq10_genbank}};
+  my $seq10_trace           = $hash{$k}{$cn{seq10_trace}};
+
+  my $seq11                 = $hash{$k}{$cn{seq11}};
+  my $seq11_primer_names    = $hash{$k}{$cn{seq11_primer_names}};
+  my $seq11_primer_seqs     = $hash{$k}{$cn{seq11_primer_seqs}};
+  my $seq11_product         = $hash{$k}{$cn{seq11_product}};
+  my $seq11_desc            = $hash{$k}{$cn{seq11_desc}};
+  my $seq11_genbank         = $hash{$k}{$cn{seq11_genbank}};
+  my $seq11_trace           = $hash{$k}{$cn{seq11_trace}};
+
+  my $seq12                 = $hash{$k}{$cn{seq12}};
+  my $seq12_primer_names    = $hash{$k}{$cn{seq12_primer_names}};
+  my $seq12_primer_seqs     = $hash{$k}{$cn{seq12_primer_seqs}};
+  my $seq12_product         = $hash{$k}{$cn{seq12_product}};
+  my $seq12_desc            = $hash{$k}{$cn{seq12_desc}};
+  my $seq12_genbank         = $hash{$k}{$cn{seq12_genbank}};
+  my $seq12_trace           = $hash{$k}{$cn{seq12_trace}};
+
+  my $seq13                 = $hash{$k}{$cn{seq13}};
+  my $seq13_primer_names    = $hash{$k}{$cn{seq13_primer_names}};
+  my $seq13_primer_seqs     = $hash{$k}{$cn{seq13_primer_seqs}};
+  my $seq13_product         = $hash{$k}{$cn{seq13_product}};
+  my $seq13_desc            = $hash{$k}{$cn{seq13_desc}};
+  my $seq13_genbank         = $hash{$k}{$cn{seq13_genbank}};
+  my $seq13_trace           = $hash{$k}{$cn{seq13_trace}};
 
   $seq1_primer_seqs =~ s/\s+//g;
   $seq2_primer_seqs =~ s/\s+//g;
   $seq3_primer_seqs =~ s/\s+//g;
   $seq4_primer_seqs =~ s/\s+//g;
+  $seq5_primer_seqs =~ s/\s+//g;
+  $seq6_primer_seqs =~ s/\s+//g;
+  $seq7_primer_seqs =~ s/\s+//g;
+  $seq8_primer_seqs =~ s/\s+//g;
+  $seq9_primer_seqs =~ s/\s+//g;
+  $seq10_primer_seqs =~ s/\s+//g;
+  $seq11_primer_seqs =~ s/\s+//g;
+  $seq12_primer_seqs =~ s/\s+//g;
+  $seq13_primer_seqs =~ s/\s+//g;
 
   my @seq1_primer_name = split /;/, $seq1_primer_names;
   my @seq2_primer_name = split /;/, $seq2_primer_names;
   my @seq3_primer_name = split /;/, $seq3_primer_names;
   my @seq4_primer_name = split /;/, $seq4_primer_names;
+  my @seq5_primer_name = split /;/, $seq5_primer_names;
+  my @seq6_primer_name = split /;/, $seq6_primer_names;
+  my @seq7_primer_name = split /;/, $seq7_primer_names;
+  my @seq8_primer_name = split /;/, $seq8_primer_names;
+  my @seq9_primer_name = split /;/, $seq9_primer_names;
+  my @seq10_primer_name = split /;/, $seq10_primer_names;
+  my @seq11_primer_name = split /;/, $seq11_primer_names;
+  my @seq12_primer_name = split /;/, $seq12_primer_names;
+  my @seq13_primer_name = split /;/, $seq13_primer_names;
 
   my @seq1_primer_seq = split /;/, $seq1_primer_seqs;
   my @seq2_primer_seq = split /;/, $seq2_primer_seqs;
   my @seq3_primer_seq = split /;/, $seq3_primer_seqs;
   my @seq4_primer_seq = split /;/, $seq4_primer_seqs;
+  my @seq5_primer_seq = split /;/, $seq5_primer_seqs;
+  my @seq6_primer_seq = split /;/, $seq6_primer_seqs;
+  my @seq7_primer_seq = split /;/, $seq7_primer_seqs;
+  my @seq8_primer_seq = split /;/, $seq8_primer_seqs;
+  my @seq9_primer_seq = split /;/, $seq9_primer_seqs;
+  my @seq10_primer_seq = split /;/, $seq10_primer_seqs;
+  my @seq11_primer_seq = split /;/, $seq11_primer_seqs;
+  my @seq12_primer_seq = split /;/, $seq12_primer_seqs;
+  my @seq13_primer_seq = split /;/, $seq13_primer_seqs;
 
   $country    .= ": $city" if $city;
   $country    .= ", $county" if $county;
@@ -251,7 +345,17 @@ while(my ($k, $v) = each %hash) {
          [$seq1, $seq1_product, $seq1_desc, \@seq1_primer_name, \@seq1_primer_seq, $seq1_trace, $seq1_genbank],
          [$seq2, $seq2_product, $seq2_desc, \@seq2_primer_name, \@seq2_primer_seq, $seq2_trace, $seq2_genbank],
          [$seq3, $seq3_product, $seq3_desc, \@seq3_primer_name, \@seq3_primer_seq, $seq3_trace, $seq3_genbank],
-         [$seq4, $seq4_product, $seq4_desc, \@seq4_primer_name, \@seq4_primer_seq, $seq4_trace, $seq4_genbank]);
+         [$seq4, $seq4_product, $seq4_desc, \@seq4_primer_name, \@seq4_primer_seq, $seq4_trace, $seq4_genbank],
+         [$seq5, $seq5_product, $seq5_desc, \@seq5_primer_name, \@seq5_primer_seq, $seq5_trace, $seq5_genbank],
+         [$seq6, $seq6_product, $seq6_desc, \@seq6_primer_name, \@seq6_primer_seq, $seq6_trace, $seq6_genbank],
+         [$seq7, $seq7_product, $seq7_desc, \@seq7_primer_name, \@seq7_primer_seq, $seq7_trace, $seq7_genbank],
+         [$seq8, $seq8_product, $seq8_desc, \@seq8_primer_name, \@seq8_primer_seq, $seq8_trace, $seq8_genbank],
+         [$seq9, $seq9_product, $seq9_desc, \@seq9_primer_name, \@seq9_primer_seq, $seq9_trace, $seq9_genbank],
+         [$seq10, $seq10_product, $seq10_desc, \@seq10_primer_name, \@seq10_primer_seq, $seq10_trace, $seq10_genbank],
+         [$seq11, $seq11_product, $seq11_desc, \@seq11_primer_name, \@seq11_primer_seq, $seq11_trace, $seq11_genbank],
+         [$seq12, $seq12_product, $seq12_desc, \@seq12_primer_name, \@seq12_primer_seq, $seq12_trace, $seq12_genbank],
+         [$seq13, $seq13_product, $seq13_desc, \@seq13_primer_name, \@seq13_primer_seq, $seq13_trace, $seq13_genbank],
+				 );
 
   my $count = 1;
   foreach my $s (@seqs) {
@@ -271,9 +375,11 @@ while(my ($k, $v) = each %hash) {
     $sequence =~ s/\W+//g;
     my $length   = length($sequence);
 
-    $note .= "; trace file: $trace" if $trace;
-    $note .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
-    $note .= "; seq description: $seq_description" if $seq_description;
+		my $seqnote = "";
+
+    $seqnote .= "; trace file: $trace" if $trace;
+    $seqnote .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
+    $seqnote .= "; seq description: $seq_description" if $seq_description;
 
     my $modifier = "";
     $modifier .= "[organism=$species]" if $species;
@@ -288,7 +394,7 @@ while(my ($k, $v) = each %hash) {
     #$modifier .= "[gcode=4]"; 
     $modifier .= "[breed=$breed]" if $breed;
     $modifier .= "[lat-lon=$lat $lon]" if ($lat && $lon) ;
-    $modifier .= "[note=$note]" if $note;
+    $modifier .= "[note=$note$seqnote]" if $note;
     $modifier .= "[protein=$product]" if $product;
 
     if ($#primer_names > 0) {
@@ -387,3 +493,67 @@ AZ,Sequence 4 Description,seq4_desc
 BA,Sequence 4,seq4
 BB,Sequence 4 Genbank Number,seq4_genbank
 BC,Sequence 4 Trace File,seq4_trace
+BD,Sequence 5 Product or Locus Name,seq5_product
+BE,Sequence 5 Primer Name,seq5_primer_names
+BF,Sequence 5 Primer Seq,seq5_primer_seqs
+BG,Sequence 5 Description,seq5_desc
+BH,Sequence 5,seq5
+BI,Sequence 5 Genbank Number,seq5_genbank
+BJ,Sequence 5 Trace File,seq5_trace
+BK,Sequence 6 Product or Locus Name,seq6_product
+BL,Sequence 6 Primer Name,seq6_primer_names
+BM,Sequence 6 Primer Seq,seq6_primer_seqs
+BN,Sequence 6 Description,seq6_desc
+BO,Sequence 6,seq6
+BP,Sequence 6 Genbank Number,seq6_genbank
+BQ,Sequence 6 Trace File,seq6_trace 
+BR,Sequence 7 Product or Locus Name,seq7_product
+BS,Sequence 7 Primer Name,seq7_primer_names
+BT,Sequence 7 Primer Seq,seq7_primer_seqs
+BU,Sequence 7 Description,seq7_desc
+BV,Sequence 7,seq7
+BW,Sequence 7 Genbank Number,seq7_genbank
+BX,Sequence 7 Trace File,seq7_trace
+BY,Sequence 8 Product or Locus Name,seq8_product
+BZ,Sequence 8 Primer Name,seq8_primer_names
+CA,Sequence 8 Primer Seq,seq8_primer_seqs
+CB,Sequence 8 Description,seq8_desc
+CC,Sequence 8,seq8
+CD,Sequence 8 Genbank Number,seq8_genbank
+CE,Sequence 8 Trace File,seq8_trace
+CF,Sequence 9 Product or Locus Name,seq9_product
+CG,Sequence 9 Primer Name,seq9_primer_names
+CH,Sequence 9 Primer Seq,seq9_primer_seqs
+CI,Sequence 9 Description,seq9_desc
+CJ,Sequence 9,seq9
+CK,Sequence 9 Genbank Number,seq9_genbank
+CL,Sequence 9 Trace File,seq9_trace
+CM,Sequence 10 Product or Locus Name,seq10_product
+CN,Sequence 10 Primer Name,seq10_primer_names
+CO,Sequence 10 Primer Seq,seq10_primer_seqs
+CP,Sequence 10 Description,seq10_desc
+CQ,Sequence 10,seq10
+CR,Sequence 10 Genbank Number,seq10_genbank
+CS,Sequence 10 Trace File,seq10_trace
+CT,Sequence 11 Product or Locus Name,seq11_product
+CU,Sequence 11 Primer Name,seq11_primer_names
+CV,Sequence 11 Primer Seq,seq11_primer_seqs
+CW,Sequence 11 Description,seq11_desc
+CX,Sequence 11,seq11
+CY,Sequence 11 Genbank Number,seq11_genbank
+CZ,Sequence 11 Trace File,seq11_trace
+DA,Sequence 12 Product or Locus Name,seq12_product
+DB,Sequence 12 Primer Name,seq12_primer_names
+DC,Sequence 12 Primer Seq,seq12_primer_seqs
+DD,Sequence 12 Description,seq12_desc
+DE,Sequence 12,seq12
+DF,Sequence 12 Genbank Number,seq12_genbank
+DG,Sequence 12 Trace File,seq12_trace
+DH,Sequence 13 Product or Locus Name,seq13_product
+DI,Sequence 13 Primer Name,seq13_primer_names
+DJ,Sequence 13 Primer Seq,seq13_primer_seqs
+DK,Sequence 13 Description,seq13_desc
+DL,Sequence 13,seq13
+DM,Sequence 13 Genbank Number,seq13_genbank
+DN,Sequence 13 Trace File,seq13_trace
+
