@@ -22,104 +22,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="Name"          ignore="true"/>
-    <qualifier name="synonym"          ignore="true"/>
-    <qualifier name="product_synonym"          ignore="true"/>
-    <qualifier name="feature_id"    ignore="true"/>
-    <qualifier name="phase" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="seq_id" ignore="true"/>
-    <qualifier name="source" ignore="true"/>
-    <qualifier name="colour" ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"               ignore="true"/>
-    <qualifier name="literature"        ignore="true"/>
-    <qualifier name="Dbxref"               ignore="true"/>
-    <qualifier name="note"                  ignore="true"/>
-    <qualifier name="Note"                  ignore="true"/>
-    <qualifier name="product"               ignore="true"/>
-    <qualifier name="curation"          ignore="true"/>
-    <qualifier name="controlled_curation"          ignore="true"/>
-    <qualifier name="comment"           ignore="true"/>
-    <qualifier name="eC_number"         ignore="true"/>
-    <qualifier name="previous_systematic_id"  ignore="true"/>
-    <qualifier name="protein_id"            method="transcriptProteinId"/>
-    <qualifier name="transl_except"       handler="api"  method="transcriptTranslExcept"/>
-    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
-    <qualifier name="transl_table" ignore="true"/> 
-    <qualifier name="GO_component" ignore="true"/>
-    <qualifier name="GO_process" ignore="true"/>
-    <qualifier name="GO_function" ignore="true"/>
-    <qualifier name="gO"          ignore="true"/>
-    <qualifier name="fasta_file"             ignore="true"/>
-    <!-- from mRNA records -->
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="function" ignore="true"/>
-    <qualifier name="standard_name" ignore="true"/>
-    <qualifier name="orthologous_to" ignore="true"/>
-    <qualifier name="paralogous_to" ignore="true"/>
-    <qualifier name="private" ignore="true"/>
-    <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="added"    ignore="true"/>
-    <qualifier name="confirmed"    ignore="true"/>
-    <qualifier name="query"    ignore="true"/>
-    <qualifier name="Start_range"    ignore="true"/>
-    <qualifier name="End_range"    ignore="true"/>
-    <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
-    <!-- from gene records -->
+    <qualifier name="feature_id"          ignore="true"/>
+    <qualifier name="isObsolete" 				ignore="true"/>
+    <qualifier name="orthologous_to"          ignore="true"/>
+    <qualifier name="previous_systematic_id"      ignore="true"/>
+    <qualifier name="product_synonym"      ignore="true"/>
     <qualifier name="pseudo"      ignore="true"/>
-    <qualifier name="blast_file"             ignore="true"/>
-    <qualifier name="blastp+go_file"         ignore="true"/>
-    <qualifier name="blastp_file"            ignore="true"/>
-    <qualifier name="blastn_file"            ignore="true"/>
-    <qualifier name="blastx_file"            ignore="true"/>
-    <qualifier name="gPI_anchor_cleavage_site"            ignore="true"/>
-    <qualifier name="membrane_structure"            ignore="true"/>
-    <qualifier name="non_cytoplasmic_polypeptide_region"            ignore="true"/>
-    <qualifier name="cytoplasmic_polypeptide_region"            ignore="true"/>
-    <qualifier name="polypeptide_domain"            ignore="true"/>
-    <qualifier name="signal_peptide"            ignore="true"/>
-    <qualifier name="transmembrane_polypeptide_region"            ignore="true"/>
-    <qualifier name="history"    ignore="true"/>
-    <qualifier name="blastp" ignore="true"/>
-    <qualifier name="isFmaxPartial" ignore="true"/>
-    <qualifier name="isFminPartial" ignore="true"/>
-    <qualifier name="Partial"      ignore="true"/>
-  </feature>
-
-  <feature name="pseudo_gene" so="protein_coding">
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  ignore="true"/>
-    <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"               ignore="true"/>
-    <qualifier name="note"                  ignore="true"/>
-    <qualifier name="product"               ignore="true"/>
-    <qualifier name="curation"          ignore="true"/>
-    <qualifier name="EC_number"             ignore="true"/>
-    <qualifier name="protein_id"            method="transcriptProteinId"/>
-    <qualifier name="transl_except"    handler="api"     method="transcriptTranslExcept"/>
-    <qualifier name="translation"     handler="api"      method="setProvidedTranslation"/>
-    <qualifier name="transl_table" ignore="true"/> 
-   <qualifier name="GO_component" ignore="true"/>
-    <qualifier name="GO_process" ignore="true"/>
-    <qualifier name="GO_function" ignore="true"/>
-    <!-- from mRNA records -->
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="function" ignore="true"/>
-    <qualifier name="standard_name" ignore="true"/>
-    <qualifier name="history"    ignore="true"/>
-    <!-- from gene records -->
-    <qualifier name="pseudo"       ignore="true"/>
-    <qualifier name="Partial"      ignore="true"/>
-  </feature>
-
-  <!-- genebank gene feature qualifiers reshaped into new coding_gene created
-       from cds/rna, so ignore this feature -->
-  <feature name="gene" ignore="true">
-    <qualifier name="gene"/>
-    <qualifier name="ID"/>
-    <qualifier name="note"/>
+    <qualifier name="synonym"      ignore="true"/>
+    <qualifier name="timelastmodified"      ignore="true"/>
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
@@ -467,8 +377,44 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="transcript">
     <qualifier name="ID" column="source_id"/>
+    <qualifier name="previous_systematic_id"               ignore="true"/>
+    <qualifier name="Name"               ignore="true"/>
+    <qualifier name="Note"               ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/>
+    <qualifier name="blastp"               ignore="true"/>
+    <qualifier name="blastx_file"               ignore="true"/>
+    <qualifier name="colour"               ignore="true"/>
+    <qualifier name="comment"               ignore="true"/>
+    <qualifier name="controlled_curation"               ignore="true"/>
+    <qualifier name="curation"               ignore="true"/>
+    <qualifier name="cytoplasmic_polypeptide_region"               ignore="true"/>
+    <qualifier name="eC_number"               ignore="true"/>
+    <qualifier name="fasta_file"               ignore="true"/>
+    <qualifier name="feature_id"               ignore="true"/>
+    <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
+    <qualifier name="history"               ignore="true"/>
+    <qualifier name="isObsolete"               ignore="true"/>
+    <qualifier name="literature"               ignore="true"/>
+    <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
+    <qualifier name="paralogous_to"               ignore="true"/>
+    <qualifier name="polypeptide_domain"               ignore="true"/>
+    <qualifier name="orthologous_to"               ignore="true"/>
+    <qualifier name="polypeptide_domain"               ignore="true"/>
+    <qualifier name="product"               ignore="true"/>
+    <qualifier name="product_synonym"               ignore="true"/>
+    <qualifier name="query"               ignore="true"/>
+    <qualifier name="signal_peptide"               ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
+    <qualifier name="timelastmodified"               ignore="true"/>
+    <qualifier name="transmembrane_polypeptide_region"               ignore="true"/>
     <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="protein_id"            method="transcriptProteinId"/>
+    <qualifier name="transl_except"       handler="api"  method="transcriptTranslExcept"/>
+    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
     <!-- created by the reshaper -->
     <qualifier name="CDSLength" ignore="true"/>
   </feature>
