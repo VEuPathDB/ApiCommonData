@@ -143,6 +143,7 @@ sub preprocess {
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    $transcript->add_tag_value("pseudo", '');
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
@@ -286,6 +287,7 @@ sub traverseSeqFeatures {
 	      $ctr++;
 	    }
 	    $transcript->add_tag_value("ID", $rnaID);
+	    $transcript = &copyQualifiers($RNA, $transcript);
 
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
