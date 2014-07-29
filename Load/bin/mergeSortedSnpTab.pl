@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use Getopt::Long;
 use ApiCommonData::Load::MergeSortedSeqVariations;

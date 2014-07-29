@@ -33,6 +33,7 @@ while($reader->hasNext()) {
 =cut
 
 use strict;
+use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
 use ApiCommonData::Load::SnpUtils  qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP);
 
