@@ -86,7 +86,7 @@ sub run {
       my ($ecNumber, $genus) = split(/\t/, $_);
 
       my $ecgenus= GUS::Model::ApiDB::EcNumberGenus->
-	       new({ecNumber => $ecNumber,
+	       new({EC_NUMBER => $ecNumber,
 		    genus => $genus
 		   });
       $ecgenus->submit();

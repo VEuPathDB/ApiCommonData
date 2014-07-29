@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 
 use File::Basename;
@@ -625,20 +625,19 @@ sub makeCoverageVariation {
   my $location = $referenceVariation->{location};
   my $sequenceId = $referenceVariation->{sequence_source_id};
   my $referenceAllele = $referenceVariation->{base};
-  
-while($fileReader->hasNext()) {
-  # look at the line in memory to see if my sequence and location are inside;  if so, then last
+
+  while($fileReader->hasNext()) {
+    # look at the line in memory to see if my sequence and location are inside;  if so, then last
     my @p = $fileReader->getPeek();
     my $pSequenceId = $p[0];
     my $pStart = $p[1];
     my $pEnd = $p[2];
-
     if($pSequenceId eq $sequenceId && $location >= $pStart && $location <= $pEnd) {
-      
+
       unless(defined($fileReader->{_coverage_array})) {
         my @coverageArray = split(",", $p[3]);
         my @percentsArray = split(",", $p[4]);
-
+        
         $fileReader->{_coverage_array} = \@coverageArray;
         $fileReader->{_percents_array} = \@percentsArray;
       }
@@ -648,28 +647,27 @@ while($fileReader->hasNext()) {
       #print STDERR Dumper $fileReader->{_coverage_array};
       #print STDERR Dumper $fileReader->{_percents_array};
 
-
-        $rv = {'base' => $referenceAllele,
-               'location' => $location,
-               'sequence_source_id' => $sequenceId,
-               'matches_reference' => 1,
-               'strain' => $strain,
-               'coverage' => $fileReader->{_coverage_array}->[$index],
-               'percent' => $fileReader->{_percents_array}->[$index],
-        };
+      $rv = {'base' => $referenceAllele,
+             'location' => $location,
+             'sequence_source_id' => $sequenceId,
+             'matches_reference' => 1,
+             'strain' => $strain,
+             'coverage' => $fileReader->{_coverage_array}->[$index],
+             'percent' => $fileReader->{_percents_array}->[$index],
+      };
       last;
     }
 
     # stop when the location from the line in memory is > the refLoc
     if($pSequenceId gt $sequenceId || ($pSequenceId eq $sequenceId && $pStart > $location)) {
-      $fileReader->{_coverage_array} = undef;
-      $fileReader->{_percents_array} = undef;
       last;
     }
 
     # read the next line into memory
     $fileReader->nextLine();
-}
+    $fileReader->{_coverage_array} = undef;
+    $fileReader->{_percents_array} = undef;
+  }
 
   return $rv;
 }
@@ -990,7 +988,14 @@ ORDER BY s.source_id, el.start_min
 
   $sh->finish();
 
-  return \%transcriptSummary, \%exonLocs;
+  my %sortedExonLocs;
+  foreach my $seqId (keys %exonLocs) {
+    my @sortedLocations = sort { $a->{start} <=> $b->{start} } @{$exonLocs{$seqId}};
+    push @{$sortedExonLocs{$seqId}}, @sortedLocations;
+  }
+
+
+  return \%transcriptSummary, \%sortedExonLocs;
 }
 
 
