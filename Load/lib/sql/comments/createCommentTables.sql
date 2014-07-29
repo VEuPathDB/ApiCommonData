@@ -1,27 +1,70 @@
 /*
-CREATE USER comments
-IDENTIFIED BY commentpwd
-QUOTA UNLIMITED ON users 
-QUOTA UNLIMITED ON gus
-DEFAULT TABLESPACE gus
-TEMPORARY TABLESPACE temp;
+DROP SEQUENCE userlogins5.commentStableId_pkseq; 
+DROP SEQUENCE userlogins5.commentTargetCategory_pkseq; 
+DROP SEQUENCE userlogins5.commentReference_pkseq; 
+DROP SEQUENCE userlogins5.commentFile_pkseq; 
+DROP SEQUENCE userlogins5.commentSequence_pkseq; 
+DROP SEQUENCE userlogins5.comments_pkseq; 
+DROP SEQUENCE userlogins5.locations_pkseq; 
+DROP SEQUENCE userlogins5.external_databases_pkseq; 
 
-ALTER USER comments ACCOUNT LOCK;
+DROP TABLE userlogins5.CommentStableId;
+DROP TABLE userlogins5.CommentFile;
+DROP TABLE userlogins5.CommentTargetCategory;
+DROP TABLE userlogins5.TargetCategory;
+DROP TABLE userlogins5.CommentReference;
+DROP TABLE userlogins5.CommentSequence;
 
-GRANT SCHEMA_OWNER TO comments;
-GRANT GUS_R TO comments;
-GRANT GUS_W TO comments;
-GRANT CREATE VIEW TO comments;
+DROP TABLE userlogins5.comment_external_database;
+DROP TABLE userlogins5.external_databases;
+DROP TABLE userlogins5.locations;
+DROP TABLE userlogins5.comments;
+DROP TABLE userlogins5.comment_target;
+DROP TABLE userlogins5.review_status;
 */
 
-/*
-DROP TABLE comment_external_database;
-DROP TABLE external_databases;
-DROP TABLE locations;
-DROP TABLE comments;
-DROP TABLE comment_target;
-DROP TABLE review_status;
-*/
+CREATE SEQUENCE userlogins5.comments_pkseq START WITH 100000000 INCREMENT BY 10;
+
+GRANT select on userlogins5.comments_pkseq to GUS_W;
+GRANT select on userlogins5.comments_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.locations_pkseq START WITH 100000000 INCREMENT BY 10;
+
+GRANT select on userlogins5.locations_pkseq to GUS_W;
+GRANT select on userlogins5.locations_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.external_databases_pkseq START WITH 100000000 INCREMENT BY 10;
+
+GRANT select on userlogins5.external_databases_pkseq to GUS_W;
+GRANT select on userlogins5.external_databases_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.commentTargetCategory_pkseq START WITH 100000000 INCREMENT BY 10;
+
+GRANT select on userlogins5.commentTargetCategory_pkseq to GUS_W;
+GRANT select on userlogins5.commentTargetCategory_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.commentReference_pkseq START WITH 100000000 INCREMENT BY 10;
+GRANT select on userlogins5.commentReference_pkseq to GUS_W;
+GRANT select on userlogins5.commentReference_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.commentSequence_pkseq START WITH 100000000 INCREMENT BY 10;
+GRANT select on userlogins5.commentSequence_pkseq to GUS_W;
+GRANT select on userlogins5.commentSequence_pkseq to GUS_R;
+
+
+CREATE SEQUENCE userlogins5.commentFile_pkseq START WITH 100000000 INCREMENT BY 10;
+GRANT select on userlogins5.commentFile_pkseq to GUS_W;
+GRANT select on userlogins5.commentFile_pkseq to GUS_R;
+
+CREATE SEQUENCE userlogins5.commentStableId_pkseq START WITH 100000000 INCREMENT BY 10;
+GRANT select on userlogins5.commentStableId_pkseq to GUS_W;
+GRANT select on userlogins5.commentStableId_pkseq to GUS_R;
+
 
 
 CREATE TABLE userlogins5.comment_target
@@ -41,7 +84,6 @@ CREATE TABLE userlogins5.review_status
   review_status_name varchar(200) NOT NULL,
   CONSTRAINT review_status PRIMARY KEY (review_status_id)
 );
-
 
 GRANT insert, update, delete on userlogins5.review_status to GUS_W;
 GRANT select on userlogins5.review_status to GUS_R;
@@ -133,23 +175,3 @@ CREATE INDEX userlogins5.comment_edb_idx01 ON userlogins5.comment_external_datab
 
 GRANT insert, update, delete on userlogins5.comment_external_database to GUS_W;
 GRANT select on userlogins5.comment_external_database to GUS_R;
-
-
-CREATE SEQUENCE userlogins5.comments_pkseq START WITH 1 INCREMENT BY 1;
-
-GRANT select on userlogins5.comments_pkseq to GUS_W;
-GRANT select on userlogins5.comments_pkseq to GUS_R;
-
-
-CREATE SEQUENCE userlogins5.locations_pkseq START WITH 1 INCREMENT BY 1;
-
-GRANT select on userlogins5.locations_pkseq to GUS_W;
-GRANT select on userlogins5.locations_pkseq to GUS_R;
-
-
-CREATE SEQUENCE userlogins5.external_databases_pkseq START WITH 1 INCREMENT BY 1;
-
-GRANT select on userlogins5.external_databases_pkseq to GUS_W;
-GRANT select on userlogins5.external_databases_pkseq to GUS_R;
-
-exit

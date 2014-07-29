@@ -63,17 +63,37 @@ sub run {
     chomp;
     my ($category, $value) = split(/\t/, $_);
 	next unless $category;
+
     my $oe = GUS::Model::Study::OntologyEntry->new({ category=> $category, 
 	                                                 value=> $value,
                                            });
 	unless($oe->retrieveFromDB()) {
-	my $parent = GUS::Model::Study::OntologyEntry->new({ value=> $category, 
+          my $sql = <<EOSQL;
+   select id from (
+            select parent_id as id, count(parent_id) as id_count 
+                 from study.ontologyEntry oe
+                where oe.category ='$category'
+                group by parent_id
+              union
+              select distinct ontology_entry_id, 0 as id_count 
+               from study.ontologyEntry oe
+                where oe.value ='$category'
+                order by id_count desc
+                )
+                where ROWNUM = 1           
+EOSQL
+  my $dbh = $self->getQueryHandle();
+  my $sth = $dbh->prepareAndExecute($sql);
+
+  my $parent_id = $sth->fetchrow_array();
+
+	my $parent = GUS::Model::Study::OntologyEntry->new({ ontology_entry_id=> $parent_id, 
                                            }); 
 	$self->error("Category $category is not found in the database: $!") unless($parent->retrieveFromDB());
-	
+
 	$oe->setParent($parent);
 	$oe->submit()
-	}
+      }
   }
 }
  

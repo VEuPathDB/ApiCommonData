@@ -6,6 +6,7 @@ use strict;
 #--------------------------------------------------------------------------------
 
 ## SUBCLASSES SHOULD override this w/ something interesting
+## NOTE:  Pay special attention to "locale" and LC_COLLATE if you are comparing lines from unix sorted files;  Perl's default is not to 'use locale'.  Ie. your subclass must know how the files were sorted originally
 sub wantFirstLine {
   my ($self) = @_;
 
