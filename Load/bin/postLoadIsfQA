@@ -383,34 +383,31 @@ where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by 
 }
 $stmt->finish();
 
-## MM. check if the length of the gene is shorter than the sum of the exons' length, Bug #14407 
-my (%gSourceIds, %gLengths);
-my $sql = "select gf.na_feature_id, gf.source_id, nl.start_min, nl.end_max, nl.is_reversed 
-from dots.genefeature gf, dots.nalocation nl
-where nl.na_feature_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId";
+## MM. check the length of transcript is not shorter than the sum of the exons's length, Bug #14407 
+my (%tSourceIds, %tLengths);
+my $sql = "select t.na_feature_id, t.source_id, nl.start_min, nl.end_max, nl.is_reversed 
+from dots.transcript t, dots.nalocation nl
+where nl.na_feature_id=t.na_feature_id and t.external_database_release_id=$extDbRlsId";
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-while (my ($gNaFeatureId, $gSourceId, $gStart, $gEnd, $ifReversed) = $stmt->fetchrow_array() ) {
-    $gSourceIds{$gNaFeatureId} = $gSourceId;
-    $gLengths{$gNaFeatureId} = abs($gStart-$gEnd) + 1;
+while (my ($tNaFeatureId, $tSourceId, $tStart, $tEnd, $ifTrasReversed) = $stmt->fetchrow_array() ) {
+  $tSourceIds{$tNaFeatureId} = $tSourceId;
+  $tLengths{$tNaFeatureId} = abs($tStart-$tEnd) + 1;
 }
 $stmt->finish();
 
-foreach my $kk (sort keys %gSourceIds) {
- 
-my $sql = "select start_min, end_max, is_reversed from dots.nalocation where na_feature_id in (
-select na_feature_id from dots.exonfeature where parent_id=?)"; 
-
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute($kk);
-    my $exonLength = 0;
-    while (my ($eStart, $eEnd, $eIfRev) = $stmt->fetchrow_array() ) {
-        $exonLength += abs($eStart-$eEnd)+1;
-    }
-    $stmt->finish();
-    print STDERR "ERROR... the gene $gSourceIds{$kk} found with the gene length $gLengths{$kk} < sum of exons length $exonLength, need to contact the data provider to make sure the gene coordinates are correct\n" if ($gLengths{$kk} < $exonLength);
-    #print ".";
+foreach my $kk (sort keys %tSourceIds) {
+  my $sql = "select nl.start_min, nl.end_max, nl.is_reversed from DOTS.rnafeatureexon rfe, dots.exonfeature ef, DOTS.nalocation nl where rfe.exon_feature_id=ef.na_feature_id and ef.na_feature_id=nl.na_feature_id and rfe.rna_feature_id=?";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute($kk);
+  my $exonLength = 0;
+  while (my ($eStart, $eEnd, $eIfRev) = $stmt->fetchrow_array() ) {
+    $exonLength += abs($eStart-$eEnd)+1;
+  }
+  $stmt->finish();
+  print STDERR "ERROR... the transcript $tSourceIds{$kk} found with the transcript length $tLengths{$kk} < sum of exons length $exonLength , need to contact the data provider to make sure the gene coordinates are correct\n" if ($tLengths{$kk} < $exonLength);
 }
+
 
 ## P. check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;
