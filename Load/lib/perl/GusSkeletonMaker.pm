@@ -61,7 +61,7 @@ sub makeGeneSkeleton{
 
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $isPredicted);
 
-  ##$bioperlGene->{gusFeature} = $gusGene;
+  $bioperlGene->{gusFeature} = $gusGene;
 
   my $transcriptExons;  # hash to remember each transcript's exons
 
@@ -73,7 +73,7 @@ sub makeGeneSkeleton{
 
     my $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
     $gusTranscript->setParent($gusGene);
-    ##$bioperlTranscript->{gusFeature} = $gusTranscript;
+    $bioperlTranscript->{gusFeature} = $gusTranscript;
 
     $transcriptNaSeq->addChild($gusTranscript);
 
@@ -115,6 +115,8 @@ sub makeGeneSkeleton{
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
 
+      # make sure we submit all kids of the translated aa seq
+      $gusGene->addToSubmitList($translatedAASeq);
     }
   }
 
@@ -142,7 +144,7 @@ sub makeOrfSkeleton{
   my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId, $taxonId, $isPredicted) = @_;
 
   my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted);
-  ##$bioperlOrf->{gusFeature} = $gusMiscFeature;
+  $bioperlOrf->{gusFeature} = $gusMiscFeature;
 
   my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
   $gusMiscFeature->addChild($translatedAAFeat);
