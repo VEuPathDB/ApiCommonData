@@ -1390,7 +1390,7 @@ sub validateGene {
 
 	       if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)){
 		 $msg = "***ERROR********* ";
-		 $msg .= "selenoprotein " if ($transcript->has_tag('stop_codon_redefined_as_selenocysteine') );
+		 $msg .= "selenoprotein " if ($transcript->{bioperlFeature}->has_tag('stop_codon_redefined_as_selenocysteine') );
 		 $msg .= "Pseudo " if ($transcript->getIsPseudo());
 		 $msg .= "Partial " if ($transcript->getIsPartial());
 
