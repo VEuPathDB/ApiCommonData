@@ -197,15 +197,23 @@ sub sourceIdAndTranscriptSeq {
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
     $count++;
-    $transcript->setSourceId("$tagValues[0]-$count");
+    #$transcript->setSourceId("$tagValues[0]-$count");
+    my $transcSourceId;
+    ($transcSourceId) = $transcript->{bioperlFeature}->get_tag_values($tag);
+    if (!$transcSourceId) {
+      $transcript->setSourceId("$tagValues[0]-$count");
+    }
+    $transcript->setSourceId("$transcSourceId");
 
     my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
 
     if ($translatedAAFeat) {
-      $translatedAAFeat->setSourceId("$tagValues[0]-$count");
+      #$translatedAAFeat->setSourceId("$tagValues[0]-$count");
+      $translatedAAFeat->setSourceId("$transcSourceId");
       my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
       if ($aaSeq) {
-	$aaSeq->setSourceId("$tagValues[0]-$count");
+	#$aaSeq->setSourceId("$tagValues[0]-$count");
+	$aaSeq->setSourceId("$transcSourceId");
       }
     }
 
