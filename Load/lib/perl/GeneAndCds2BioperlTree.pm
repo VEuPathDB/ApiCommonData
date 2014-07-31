@@ -17,8 +17,8 @@ package ApiCommonData::Load::GeneAndCds2BioperlTree;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed 
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
@@ -123,6 +123,7 @@ sub preprocess {
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    $transcript->add_tag_value("Locus_tag",($geneFeature->get_tag_values("Locus_tag") ) );
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
@@ -226,6 +227,10 @@ sub traverseSeqFeatures {
     # as found in GI:32456060.
     # And will accept transcripts that do not have 'gene' parents (e.g. tRNA
     # in GI:32456060)
+
+    my $transcriptCount = scalar @RNAs;
+    my $ctr = 1;
+
     foreach my $RNA (@RNAs){ 
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
@@ -252,19 +257,32 @@ sub traverseSeqFeatures {
 	    if($type eq 'mRNA'){
 		$type = 'coding';
 	    }
-	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
-	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
-	    $gene = &copyQualifiers($geneFeature, $gene);
-            $gene = &copyQualifiers($RNA,$gene);
+
+	    #my ($geneID) = $geneFeature->get_tag_values('locus_tag');
+	    if (!$gene) { ## only create one gene if there are multiple transcripts
+		$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+		#$gene->add_tag_value("locus_tag",$geneID);
+		$gene = &copyQualifiers($geneFeature, $gene);
+	    }
+            #$gene = &copyQualifiers($RNA,$gene);
+
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
 	    $transcript = &copyQualifiers($RNA,$transcript);
+	    $transcript = &copyQualifiers($geneFeature,$transcript);
+	    my ($rnaId) = $RNA->get_tag_values('locus_tag');
+	    if ($transcriptCount > 1) {
+		$rnaId .= "\.$ctr";
+		$ctr++;
+		$transcript = remove_tag('locus_tag');
+		$transcript->add_tag_value('locus_tag',$rnaId);
+	    }
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 		
 			my $CDSLength = 0;
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
-		    $gene = &copyQualifiers($subFeature, $gene);
+		    $transcript = &copyQualifiers($subFeature, $transcript);
 		    $CDSLocation  = $subFeature->location;
 		}
 		if($subFeature->primary_tag eq 'exon'){
@@ -275,15 +293,15 @@ sub traverseSeqFeatures {
 		    if(defined $CDSLocation){
 			my $codonStart = 0;
 
-			for my $qualifier ($gene->get_all_tags()) {
+			for my $qualifier ($subFeature->get_all_tags()) {
 			    if($qualifier eq 'codon_start'){
-				foreach my $value ($gene->get_tag_values($qualifier)){
+				foreach my $value ($subFeature->get_tag_values($qualifier)){
 				    $codonStart = $value - 1;
 				}
 			    }
 			    if($qualifier eq 'selenocysteine'){
-	 		       $gene->remove_tag('selenocysteine');
-			       $gene->add_tag_value('selenocysteine','selenocysteine');
+	 		       $transcript->remove_tag('selenocysteine');
+			       $transcript->add_tag_value('selenocysteine','selenocysteine');
 			    }
 			}
 			$codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
