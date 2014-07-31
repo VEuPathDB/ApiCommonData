@@ -551,8 +551,8 @@ sub makeSNPFeatureFromVariations {
 
   my $hasNonSynonymousAllele = scalar keys %productCounts > 1 ? 1 : 0;
 
-  my @sortedAlleles = sort { ($alleleCounts{$b} cmp $alleleCounts{$a}) || ($a cmp $b) } keys %alleleCounts;
-  my @sortedProducts = sort { ($productCounts{$b} cmp $productCounts{$a}) || ($a cmp $b) } keys %productCounts;
+  my @sortedAlleles = sort { ($alleleCounts{$b} <=> $alleleCounts{$a}) || ($a cmp $b) } keys %alleleCounts;
+  my @sortedProducts = sort { ($productCounts{$b} <=> $productCounts{$a}) || ($a cmp $b) } keys %productCounts;
   my @sortedAlleleCounts = map {$alleleCounts{$_}} @sortedAlleles;
 
   my $majorAllele = $sortedAlleles[0];
