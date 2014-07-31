@@ -62,6 +62,7 @@ sub makeGeneSkeleton{
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $isPredicted);
 
   $bioperlGene->{gusFeature} = $gusGene;
+  $gusGene->{bioperlFeature} = $bioperlGene;
 
   my $transcriptExons;  # hash to remember each transcript's exons
 
@@ -74,6 +75,7 @@ sub makeGeneSkeleton{
     my $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
     $gusTranscript->setParent($gusGene);
     $bioperlTranscript->{gusFeature} = $gusTranscript;
+    $gusTranscript->{bioperlFeature} = $bioperlTranscript;
 
     $transcriptNaSeq->addChild($gusTranscript);
 
@@ -91,7 +93,6 @@ sub makeGeneSkeleton{
       if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd}){
         $gusExon = &makeGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId);
         $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd} = $gusExon;
-        ##$bioperlExon->{gusFeature} = $gusExon;
         $gusExon->setParent($gusGene);
       }else{
         $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd};
@@ -99,6 +100,8 @@ sub makeGeneSkeleton{
       ##what is this doing??         push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
 
       $bioperlExon->{gusFeature} = $gusExon;
+      #$gusExon->{bioperlFeature} = $bioperlExon;  ### gusExon to bioperlExon is one to many
+
       ##here want to make the rnafeatureexon so associate this exon with this transcript
       my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
       $rnaFeatureExon->setParent($gusTranscript);
@@ -145,6 +148,7 @@ sub makeOrfSkeleton{
 
   my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted);
   $bioperlOrf->{gusFeature} = $gusMiscFeature;
+  $gusMiscFeature->{bioperlFeature} = $bioperlOrf;
 
   my $translatedAAFeat = $plugin->makeTranslatedAAFeat($dbRlsId);
   $gusMiscFeature->addChild($translatedAAFeat);
