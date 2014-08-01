@@ -107,7 +107,7 @@ while($reader->hasNext()) {
     my $allele = $variation->{base};
     my $product = $variation->{product};
 
-    my $alleleCode = 0;
+    my $alleleCode = 0; # init to zero;  if not actg will disregard (including ambiguous nucleic acid calls)
     $alleleCode = $ALLELE_HASH{$allele} if $allele;
 
     my $productCode = ord($product);
