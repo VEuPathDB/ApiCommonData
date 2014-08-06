@@ -243,7 +243,7 @@ SQL
 
 ## L. for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
 my $sql = <<SQL;
-  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null
+  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and gf.name not like 'kinetoplast_gene' and ef.coding_end is not null
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
