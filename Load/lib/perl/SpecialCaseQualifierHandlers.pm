@@ -237,7 +237,6 @@ sub sourceIdAndTranscriptSeq {
     foreach my $rnaExon ($transcript->getChildren('DoTS::RNAFeatureExon')) {
       my $exon = $rnaExon->getParent('DoTS::ExonFeature');
 
-
       push(@exons, $exon);
     }
 
@@ -277,7 +276,7 @@ sub sourceIdAndTranscriptSeq {
       my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
       my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
 
-      my($codingStart,$codingStop);
+      my ($codingStart,$codingStop);
 	foreach my $sortedExon (@exonsSorted){
 	    $codingStart = $sortedExon->get("coding_start");
 	    if($codingStart ne 'null' && $codingStart ne ''){
@@ -393,9 +392,11 @@ sub _setCodingAndTranslationStartAndStop{
   if ($codingValue ne '' && $codingValue ne 'null'){
 
     my @rnaExons = $exonFeature->getChildren("DoTS::RNAFeatureExon");
+
+    my $tc = 0;
     foreach my $rnaExon (@rnaExons) {
       my $transcript = $rnaExon->getParent("DoTS::Transcript");
-
+      $tc++;
       my $gene = $transcript->getParent("DoTS::GeneFeature");
       my $transcriptLoc = $transcript->getChild("DoTS::NALocation");
       my $translatedAAFeat = $transcript->getChild("DoTS::TranslatedAAFeature");
@@ -408,56 +409,91 @@ sub _setCodingAndTranslationStartAndStop{
 
       my @eachRnaExons = $transcript->getChildren('DoTS::RNAFeatureExon');
       my $totalExonsLength = 0;
-      my ($firstExonLoc, $lastExonLoc);
 
+      my @eachRnaExonsSorted = map { $_->[0] }
+      sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+	map { [ $_, $_->getParent('DoTS::ExonFeature')->getFeatureLocation ]}
+	  @eachRnaExons;
 
-      foreach my $eachRnaExon (@eachRnaExons) {
-	my $exonLoc = $eachRnaExon->getParent('DoTS::ExonFeature')->getChild('DoTS::NALocation');
-	$totalExonsLength += $exonLoc->getEndMax() - $exonLoc->getStartMin() + 1;
-	$firstExonLoc = $exonLoc if ($eachRnaExon->getOrderNumber() == 1);
-	$lastExonLoc = $exonLoc if ($eachRnaExon->getOrderNumber() == scalar @eachRnaExons );
-      }
-
-      #print STDERR "for transcript: ". $transcript->getSourceId(). " the size of exon = ".scalar @eachRnaExons."\n";
+      my $intronLength = 0;
+      my $final = scalar (@eachRnaExonsSorted) - 1;
+      my $firstExonLoc = $eachRnaExonsSorted[0]->getParent('DoTS::ExonFeature')->getChild("DoTS::NALocation");
+      my $finalExonLoc = $eachRnaExonsSorted[$final]->getParent('DoTS::ExonFeature')->getChild("DoTS::NALocation");
 
       if($isStop){  ## set exonFeature.codingStop and AAFeature.translationStop
 
-	  $exonFeature->setCodingEnd($codingValue);
+	$exonFeature->setCodingEnd($codingValue);
 
-	  if ($codingValue >= $lastExonLoc->getStartMin() && $codingValue <= $lastExonLoc->getEndMax()) {
-	    my $seq = $transcriptSeq->getSequence();
-	    my $transcriptLength = length($seq);
+	my $seq = $transcriptSeq->getSequence();
+	my $transcriptLength = length($seq);
 
-	    my $codingPos;
+	my $tmpExon = $finalExonLoc;
+	my $ctr = $final-1;
+	while(!($codingValue >= $tmpExon->getStartMin() && $codingValue <= $tmpExon->getEndMax())){
+	  #print STDERR "process \$codingValue at codingStop: $codingValue..... For transcript: ".$transcript->getSourceId()." for exon: ".$tmpExon->getParent('DoTS::ExonFeature')->getSourceId()." at ".$tmpExon->getStartMin()."--".$tmpExon->getEndMax()."\n";
+	    my $currentExon = $eachRnaExonsSorted[$ctr]->getParent('DoTS::ExonFeature');
 
 	    if ($isReversed) {
-	      $codingPos = $codingValue - $lastExonLoc->getStartMin();
+		$intronLength += ($currentExon->getChild("DoTS::NALocation")->getStartMin() - $tmpExon->getEndMax()) - 1;
 	    } else {
-	      $codingPos = $lastExonLoc->getEndMax() - $codingValue;
+		$intronLength += ($tmpExon->getStartMin() - $currentExon->getChild("DoTS::NALocation")->getEndMax()) - 1;
 	    }
+	    $tmpExon = $currentExon->getChild("DoTS::NALocation");
+	    $ctr--;
+	}
 
-	    my $translationStop = $self->_getTranslationStop($isReversed, $codingPos, $transcriptLoc, $transcriptLength);
-	    $translatedAAFeat->setTranslationStop($translationStop);
-	    #print STDERR "For $isReversed strand, translationStop set to $translationStop\n";
-	  }
+	if(!$translatedAAFeat->{tempCodingStop} || (!$isReversed && $codingValue > $translatedAAFeat->{tempCodingStop}) || ($isReversed && $codingValue < $translatedAAFeat->{tempCodingStop})){
+
+	   $translatedAAFeat->{tempCodingStop} = $codingValue;
+
+	   my $codingPos;
+	   if ($isReversed) {
+	       $codingPos = $codingValue - $finalExonLoc->getStartMin() - $intronLength;
+	   } else {
+	       $codingPos = $finalExonLoc->getEndMax() - $codingValue - $intronLength;
+	   }
+
+	   my $translationStop = $self->_getTranslationStop($isReversed, $codingPos, $transcriptLoc, $transcriptLength);
+	   $translatedAAFeat->setTranslationStop($translationStop);
+	}
 
       }else{   ## set exon.codingStart and aafeature.translationStart
 
 	$exonFeature->setCodingStart($codingValue);
 
-	if ($codingValue >= $firstExonLoc->getStartMin() && $codingValue <= $firstExonLoc->getEndMax() ) {
-	  my $codingPos;
+	my $tmpExon = $firstExonLoc;
+	my $ctr = 1;
 
-	  if ($isReversed) {
-	    $codingPos = $firstExonLoc->getEndMax() - $codingValue;
-	  } else {
-	    $codingPos = $codingValue - $firstExonLoc->getStartMin();
-	  }
-	  my $translationStart = $self->_getTranslationStart($isReversed, $codingPos, $transcriptLoc);
-	  $translatedAAFeat->setTranslationStart($translationStart);
-	  #print STDERR "For $isReversed strand, translationStart set to $translationStart\n";
+	while(!($codingValue >= $tmpExon->getStartMin() && $codingValue <= $tmpExon->getEndMax())){
+	  #print STDERR "process \$codingValue at codingStart: $codingValue.....transcript: ".$transcript->getSourceId()." for exon: ".$tmpExon->getParent('DoTS::ExonFeature')->getSourceId()." at ".$tmpExon->getStartMin()."--".$tmpExon->getEndMax()."\n";
+
+	    my $currentExon = $eachRnaExonsSorted[$ctr]->getParent('DoTS::ExonFeature');
+
+	    if ($isReversed) {
+		$intronLength += ($tmpExon->getStartMin() - $currentExon->getChild("DoTS::NALocation")->getEndMax()) - 1;
+	    } else {
+		$intronLength += ($currentExon->getChild("DoTS::NALocation")->getStartMin() - $tmpExon->getEndMax()) - 1;
+	    }
+	    $tmpExon = $currentExon->getChild("DoTS::NALocation");
+	    $ctr++;
+	}
+
+	if(!$translatedAAFeat->{tempCodingStart} || (!$isReversed && $codingValue < $translatedAAFeat->{tempCodingStart}) || ($isReversed && $codingValue > $translatedAAFeat->{tempCodingStart})){
+
+	    $translatedAAFeat->{tempCodingStart} = $codingValue;
+
+	    my $codingPos;
+	    if($isReversed){
+		$codingPos = $firstExonLoc->getEndMax() - $codingValue - $intronLength;
+	    } else {
+		$codingPos = $codingValue - $firstExonLoc->getStartMin() - $intronLength;
+	    }
+
+	    my $translationStart = $self->_getTranslationStart($isReversed, $codingPos, $transcriptLoc);
+	    $translatedAAFeat->setTranslationStart($translationStart);
 	}
       }
+
     }
   }else{
       if($isStop){
@@ -467,8 +503,10 @@ sub _setCodingAndTranslationStartAndStop{
       }
   }
 
+
   return [];
 }
+
 
 sub _undoSetCodingAndTranslationStop {
   my ($self) = @_;
