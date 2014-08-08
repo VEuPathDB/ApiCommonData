@@ -371,6 +371,8 @@ sub calculateCdsPosition {
 
     next unless($cdsStart && $cdsEnd);
 
+    next if($location < $cdsStart || $location > $cdsEnd);
+
     my $gene = Bio::Coordinate::GeneMapper->new(
       -in  => "chr",
       -out => "cds",
@@ -393,6 +395,7 @@ sub calculateCdsPosition {
     my $map = $gene->map($loc);
 
     my $cdsPos = $map->start;
+
     if($cdsPos && $cdsPos > 1) {
       my $positionInProtein = &calculateAminoAcidPosition($cdsPos, $cdsPos);
 
@@ -1054,6 +1057,7 @@ sub getAminoAcidSequenceOfSnp {
   my $codonLength = 3;
   my $modCds = $positionInCds % $codonLength;
   my $offset = $positionInCds - $modCds;
+
   my $codon = substr $cdsSequence, $offset, $codonLength;
   my $subbedAllele = substr $codon, $modCds - 1, 1, $allele;
 
