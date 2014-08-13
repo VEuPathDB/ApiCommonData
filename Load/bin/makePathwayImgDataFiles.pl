@@ -216,7 +216,7 @@ SELECT  distinct nn.identifier, pn.display_label,
         cpdTable.cmpd_name, cpdTable.CID, substTable.SID,
         enzy.description, map.name
 FROM APIDB.pathwaynode pn, APIDB.pathway p, apidb.NetworkNode nn,
-    ( SELECT s2.value, ca.name as cmpd_name,  ca.compound_id as CID
+    ( SELECT s2.value, ca.preferred_name AS cmpd_name,  ca.compound_id as CID
 	      FROM APIDB.pubchemsubstance s1, APIDB.pubchemsubstance s2, ApidbTuning.CompoundAttributes ca
 	      WHERE s1.property = 'CID'
              AND s1.value = ca.compound_id

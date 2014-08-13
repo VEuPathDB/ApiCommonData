@@ -19,6 +19,8 @@ use Bio::Coordinate::GeneMapper;
 use Bio::Coordinate::Pair;
 use Bio::Location::Simple;
 
+use Bio::Tools::CodonTable;
+
 use DBI;
 use DBD::Oracle;
 
@@ -70,6 +72,8 @@ unless(-e $undoneStrainsFile) {
   open(FILE, "> $undoneStrainsFile") or die "Could not open file $undoneStrainsFile for writing: $!";
   close FILE;
 }
+
+my $CODON_TABLE = Bio::Tools::CodonTable->new( -id => 1); #standard codon table
 
 my $totalTime;
 my $totalTimeStart = time();
@@ -176,7 +180,7 @@ while($merger->hasNext()) {
 
     print STDERR "ISCODING=$isCoding, POSITIONINCDS=$positionInCds, POSITIONINPROTEIN=$positionInProtein\n" if($debug);
 
-    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) if($positionInProtein);
+    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $referenceAllele) if($positionInCds);
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
@@ -254,7 +258,7 @@ while($merger->hasNext()) {
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
-      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInProtein) if($positionInProtein);
+      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInCds, $allele);
       
       $variation->{product} = $p;
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
@@ -367,6 +371,8 @@ sub calculateCdsPosition {
 
     next unless($cdsStart && $cdsEnd);
 
+    next if($location < $cdsStart || $location > $cdsEnd);
+
     my $gene = Bio::Coordinate::GeneMapper->new(
       -in  => "chr",
       -out => "cds",
@@ -389,6 +395,7 @@ sub calculateCdsPosition {
     my $map = $gene->map($loc);
 
     my $cdsPos = $map->start;
+
     if($cdsPos && $cdsPos > 1) {
       my $positionInProtein = &calculateAminoAcidPosition($cdsPos, $cdsPos);
 
@@ -699,26 +706,22 @@ sub querySequenceSubstring {
 }
 
 sub variationProduct {
-  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) = @_;
+  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $allele) = @_;
 
   my %products;
 
   foreach my $transcript (@$transcripts) {
 
-    my ($consensusCodingSequence, $proteinSequence);
+    my $consensusCodingSequence;
     if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds}) {
       $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
-      $proteinSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence};
     }
     else { # first time through for this transcript
       $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $transcriptExtDbRlsId);
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
-
-      $proteinSequence = &getTranslation($consensusCodingSequence);
-      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence} = $proteinSequence;
     }
 
-    my $product = &getAminoAcidSequenceOfSnp($proteinSequence, $positionInProtein, $positionInProtein);
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele);
     $products{$product}++;
   }
 
@@ -1014,7 +1017,7 @@ sub getCodingSequence {
     die ("Transcript with na_feature_id = $transcriptId had no exons\n");
   }
 
-  my $transcriptSequence;
+  my $codingSequence;
 
   for my $exon (@exons) {
     my $exonStart = $exon->start();
@@ -1028,15 +1031,15 @@ sub getCodingSequence {
 
     if($exonIsReversed) {
       $chunk = CBIL::Bio::SequenceUtils::reverseComplementSequence($chunk);
-      $transcriptSequence = $chunk . $transcriptSequence;
+      $codingSequence = $chunk . $codingSequence;
     }
     else {
-      $transcriptSequence .= $chunk;
+      $codingSequence .= $chunk;
     }
 
   }
 
-  return($transcriptSequence);
+  return($codingSequence);
 }
 
 
@@ -1049,25 +1052,17 @@ sub calculateAminoAcidPosition {
 }
 
 sub getAminoAcidSequenceOfSnp {
-  my ($proteinSequence, $start, $end) = @_;
+  my ($cdsSequence, $positionInCds, $allele) = @_;
 
-  my $normStart = $start - 1;
-  my $normEnd = $end - 1;
+  my $codonLength = 3;
+  my $modCds = $positionInCds % $codonLength;
+  my $offset = $positionInCds - $modCds;
 
-  my $lengthOfSnp = $normEnd - $normStart + 1;
+  my $codon = substr $cdsSequence, $offset, $codonLength;
+  my $subbedAllele = substr $codon, $modCds - 1, 1, $allele;
 
-  return(substr($proteinSequence, $normStart, $lengthOfSnp));
+  # Assuming this is a simple hash lookup which is quick; 
+  return $CODON_TABLE->translate($codon);
 }
-
-sub getTranslation {
-  my ($codingSequence) = @_;
-
-  my $cds = Bio::Seq->new( -seq => $codingSequence );
-  my $translated = $cds->translate();
-  return $translated->seq();
-}
-
-
-
 
 1;

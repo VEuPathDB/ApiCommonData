@@ -37,6 +37,7 @@ sub handleExistingProtocolAppNode {
 sub setExtDbSpec () {
 my ($self, $node) = @_;
 my $extDbSpec = $node->findvalue('./external_database_release');
+$extDbSpec = $node->findvalue('./ext_db_rls') unless $extDbSpec;
 $extDbSpec = 'OBI|http://purl.obolibrary.org/obo/obi/2012-07-01/obi.owl' unless $extDbSpec;
  my $extDbRlsId =  $self->getExtDbRlsId($extDbSpec) ;
       if (!$extDbRlsId || !defined($extDbRlsId)) {
