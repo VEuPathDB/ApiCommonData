@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertMetadataSpec;
+package ApiCommonData::Load::Plugin::InsertMetadataType;
 
 @ISA = qw(GUS::Supported::Plugin::InsertOntologyTermsAndRelationships);
 
@@ -16,14 +16,14 @@ use GUS::PluginMgr::PluginUtilities;
 
 use GUS::Supported::Plugin::InsertOntologyTermsAndRelationships;
 
-use GUS::Model::ApiDB::MetadataSpec;
+use GUS::Model::ApiDB::MetadataType;
 
 use Data::Dumper;
 
 my $argsDeclaration =
 [
 
- fileArg({name           => 'metadataSpecFile',
+ fileArg({name           => 'metadataTypeFile',
 	  descr          => 'A tab file containing descriptive information about ontology terms.',
 	  reqd           => 1,
 	  mustExist      => 1,
@@ -33,7 +33,7 @@ my $argsDeclaration =
 	 }),
 
  stringArg({ descr => 'Name of the External Database',
-	     name  => 'extDbRlsSpec',
+	     name  => 'extDbRlsType',
 	     isList    => 0,
 	     reqd  => 1,
 	     constraintFunc => undef,
@@ -42,7 +42,7 @@ my $argsDeclaration =
 ];
 
 my $purpose = <<PURPOSE;
-The purpose of this plugin is to parse a tab file and load metadata spec info.  
+The purpose of this plugin is to parse a tab file and load metadata types and units.  
 PURPOSE
 
 my $purposeBrief = <<PURPOSE_BRIEF;
@@ -54,7 +54,7 @@ my $notes = <<NOTES;
 NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
-Apidb::MetadataSpec
+Apidb::MetadataType
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
@@ -114,7 +114,7 @@ B<Return type:>
 sub run {
   my ($self) = @_;
 
-  my $file = $self->getArg('metadataSpecFile');
+  my $file = $self->getArg('metadataTypeFile');
 
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
@@ -133,7 +133,7 @@ sub run {
   my $dbh        = $self->getQueryHandle();
   my $sth        = $dbh->prepare($sqlCheck);
 
-  my @metadataSpecs;
+  my @metadataTypes;
 
   open(FILE,$file);
 
@@ -169,17 +169,17 @@ sub run {
     my $units = undef;
     $units = $row->[2] if scalar(@$row)>2;
     
-    my $metadataSpec = GUS::Model::ApiDB::MetadataSpec->
+    my $metadataType = GUS::Model::ApiDB::MetadataType->
       new({name => $term,
            ontology_term_id => $ont_term_id,
            variable_type => $variable_type,
            external_database_release_id => $extDbRlsId,
            units => $units,
           });
-  push (@metadataSpecs,$metadataSpec); 
+  push (@metadataTypes,$metadataType); 
   } 
-  $self->submitObjectList(\@metadataSpecs);
-  $self->log("added $lineNum rows to Apidb.MetadataSpec");
+  $self->submitObjectList(\@metadataTypes);
+  $self->log("added $lineNum rows to Apidb.MetadataType");
         
   $self->undefPointerCache();
 }
@@ -199,7 +199,7 @@ sub submitObjectList {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.MetadataSpec');
+  return ('ApiDB.MetadataType');
 }
 
 1;
