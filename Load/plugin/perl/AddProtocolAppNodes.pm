@@ -5,23 +5,23 @@ package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
 use strict;
 use GUS::Community::Plugin::AddToStudy;
 
-# sub new {
-#   my ($class) = @_;
-#   my $self = {};
-#   bless($self,$class);
+ sub new {
+   my ($class) = @_;
+   my $self = {};
+   bless($self,$class);
 
-#   my $documentation = &getDocumentation();
-#   my $argumentDeclaration    = &getArgumentsDeclaration();
+   my $documentation = $self->SUPER::getDocumentation();
+   my $argumentDeclaration    = $self->SUPER::getArgumentsDeclaration();
 
-#   $self->initialize({requiredDbVersion => 4.0,
-# 		     cvsRevision => '$Revision$',
-# 		     name => ref($self),
-# 		     revisionNotes => '',
-# 		     argsDeclaration => $argumentDeclaration,
-# 		     documentation => $documentation
-# 		    });
-#   return $self;
-# }
+   $self->initialize({requiredDbVersion => 4.0,
+ 		     cvsRevision => '$Revision$',
+ 		     name => ref($self),
+ 		     revisionNotes => '',
+ 		     argsDeclaration => $argumentDeclaration,
+ 		     documentation => $documentation
+ 		    });
+   return $self;
+ }
 
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
