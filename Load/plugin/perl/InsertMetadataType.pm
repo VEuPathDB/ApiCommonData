@@ -33,7 +33,7 @@ my $argsDeclaration =
 	 }),
 
  stringArg({ descr => 'Name of the External Database',
-	     name  => 'extDbRlsType',
+	     name  => 'extDbRlsSpec',
 	     isList    => 0,
 	     reqd  => 1,
 	     constraintFunc => undef,
