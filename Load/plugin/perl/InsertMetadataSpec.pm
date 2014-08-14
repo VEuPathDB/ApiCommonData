@@ -173,6 +173,7 @@ sub run {
       new({name => $term,
            ontology_term_id => $ont_term_id,
            variable_type => $variable_type,
+           external_database_release_id => $extDbRlsId,
            units => $units,
           });
   push (@metadataSpecs,$metadataSpec); 
