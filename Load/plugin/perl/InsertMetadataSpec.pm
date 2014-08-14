@@ -177,7 +177,7 @@ sub run {
           });
   push (@metadataSpecs,$metadataSpec); 
   } 
-  submitObjectList(\@metadataSpecs);
+  $self->submitObjectList(\@metadataSpecs);
   $self->log("added $lineNum rows to Apidb.MetadataSpec");
         
   $self->undefPointerCache();
