@@ -92,28 +92,40 @@ sub makeGeneSkeleton{
 
       if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd}){
         $gusExon = &makeGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId);
+        $gusExon->setCodingStart($codingStart);
+        $gusExon->setCodingEnd($codingEnd);
         $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd} = $gusExon;
         $gusExon->setParent($gusGene);
       }else{
         $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd};
       }
-      ##what is this doing??         push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
 
       $bioperlExon->{gusFeature} = $gusExon;
       #$gusExon->{bioperlFeature} = $bioperlExon;  ### gusExon to bioperlExon is one to many
 
-      ##here want to make the rnafeatureexon so associate this exon with this transcript
+      ## make rnafeatureexon and associate it with its transcript
       my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
       $rnaFeatureExon->setParent($gusTranscript);
       $rnaFeatureExon->setParent($gusExon);
-      
+      #$rnaFeatureExon->{bioperlFeature} = $bioperlExon;  ## rnaFeatureExon to bioperlExon is one to one
+
     } ##this should end the exon loop
+
+    ## set order_number exons in DoTS::RNAFeatureExon
+    my @sortedRnaExons;
+    if($gusGene->getChild('DoTS::NALocation', 1)->getIsReversed()){
+      @sortedRnaExons = sort {$b->getParent('DoTS::ExonFeature', 1)->getChild('DoTS::NALocation', 1)->getStartMin() <=> $a->getParent('DoTS::ExonFeature', 1)->getChild('DoTS::NALocation', 1)->getStartMin()} $gusTranscript->getChildren('DoTS::RNAFeatureExon', 1);
+    } else {
+      @sortedRnaExons = sort {$a->getParent('DoTS::ExonFeature', 1)->getChild('DoTS::NALocation', 1)->getStartMin() <=> $b->getParent('DoTS::ExonFeature', 1)->getChild('DoTS::NALocation', 1)->getStartMin()} $gusTranscript->getChildren('DoTS::RNAFeatureExon', 1);
+    }
+    foreach my $i (0..$#sortedRnaExons) {
+      $sortedRnaExons[$i]->setOrderNumber($i+1);
+    }
 
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
 
       my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
-      
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
@@ -123,24 +135,21 @@ sub makeGeneSkeleton{
     }
   }
 
-  # attach gene's exons to the appropriate transcripts
-  # update the transcript's splicedNaSequence
-  # the transcriptObjId is the perl object id for the transcript object
-#  foreach my $transcriptObjId (keys %$transcriptExons) {
-#    my $gusTranscript = $transcriptExons->{$transcriptObjId}->{transcript};
-#
-#    if(my $exons = $transcriptExons->{$transcriptObjId}->{exons}) {
-#
-#      foreach my $exon (@$exons) {
-#	my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
-#        $rnaFeatureExon->setParent($gusTranscript);
-#        $rnaFeatureExon->setParent($exon);
-#
-#        $exon->setParent($gusGene);
-#      }
-#    }
-#  }
-        return $gusGene;
+  ##sort exons in DoTS::ExonFeature
+  my @sortedGusExons;
+  if($gusGene->getChild('DoTS::NALocation', 1)->getIsReversed()){
+    @sortedGusExons = sort{$b->getChild('DoTS::NALocation', 1)->getStartMin() <=> $a->getChild('DoTS::NALocation', 1)->getStartMin()} $gusGene->getChildren('DoTS::ExonFeature', 1);
+  }else{
+    @sortedGusExons = sort{$a->getChild('DoTS::NALocation', 1)->getStartMin() <=> $b->getChild('DoTS::NALocation', 1)->getStartMin()} $gusGene->getChildren('DoTS::ExonFeature', 1);
+  }
+
+  ##set the order number
+
+  for(my $a = 0;$a<scalar(@sortedGusExons);$a++){
+    $sortedGusExons[$a]->setOrderNumber($a+1);
+  }
+
+  return $gusGene;
 }
 
 sub makeOrfSkeleton{
