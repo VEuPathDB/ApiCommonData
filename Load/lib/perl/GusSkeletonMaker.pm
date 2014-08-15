@@ -83,21 +83,15 @@ sub makeGeneSkeleton{
     $transcriptExons->{$gusTranscript}->{transcript} = $gusTranscript;
 
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
-      ##check to see if I've seen this exon:
       my $gusExon;
-      my $codingStart = 0;
-      my $codingEnd = 0;
-      ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
-      ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
 
-      if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd}){
+      ##check to see if I've seen this exon:
+      if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()}){
         $gusExon = &makeGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId);
-        $gusExon->setCodingStart($codingStart);
-        $gusExon->setCodingEnd($codingEnd);
-        $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd} = $gusExon;
+        $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()} = $gusExon;
         $gusExon->setParent($gusGene);
       }else{
-        $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()."_".$codingStart."_".$codingEnd};
+        $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
       }
 
       $bioperlExon->{gusFeature} = $gusExon;
@@ -107,7 +101,13 @@ sub makeGeneSkeleton{
       my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
       $rnaFeatureExon->setParent($gusTranscript);
       $rnaFeatureExon->setParent($gusExon);
-      #$rnaFeatureExon->{bioperlFeature} = $bioperlExon;  ## rnaFeatureExon to bioperlExon is one to one
+      $rnaFeatureExon->{bioperlFeature} = $bioperlExon;  ## rnaFeatureExon to bioperlExon is one to one
+      my $codingStart = 0;
+      my $codingEnd = 0;
+      ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+      ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+      ($codingStart) ? $rnaFeatureExon->setCodingStart($codingStart) : $rnaFeatureExon->setCodingStart('');
+      ($codingEnd) ? $rnaFeatureExon->setCodingEnd($codingEnd) : $rnaFeatureExon->setCodingEnd('');
 
     } ##this should end the exon loop
 
@@ -144,7 +144,6 @@ sub makeGeneSkeleton{
   }
 
   ##set the order number
-
   for(my $a = 0;$a<scalar(@sortedGusExons);$a++){
     $sortedGusExons[$a]->setOrderNumber($a+1);
   }
