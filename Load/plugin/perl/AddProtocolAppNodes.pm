@@ -5,23 +5,23 @@ package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
 use strict;
 use GUS::Community::Plugin::AddToStudy;
 
-# sub new {
-#   my ($class) = @_;
-#   my $self = {};
-#   bless($self,$class);
+ sub new {
+   my ($class) = @_;
+   my $self = {};
+   bless($self,$class);
 
-#   my $documentation = &getDocumentation();
-#   my $argumentDeclaration    = &getArgumentsDeclaration();
+   my $documentation = $self->SUPER::getDocumentation();
+   my $argumentDeclaration    = $self->SUPER::getArgumentsDeclaration();
 
-#   $self->initialize({requiredDbVersion => 4.0,
-# 		     cvsRevision => '$Revision$',
-# 		     name => ref($self),
-# 		     revisionNotes => '',
-# 		     argsDeclaration => $argumentDeclaration,
-# 		     documentation => $documentation
-# 		    });
-#   return $self;
-# }
+   $self->initialize({requiredDbVersion => 4.0,
+ 		     cvsRevision => '$Revision$',
+ 		     name => ref($self),
+ 		     revisionNotes => '',
+ 		     argsDeclaration => $argumentDeclaration,
+ 		     documentation => $documentation
+ 		    });
+   return $self;
+ }
 
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
@@ -37,6 +37,7 @@ sub handleExistingProtocolAppNode {
 sub setExtDbSpec () {
 my ($self, $node) = @_;
 my $extDbSpec = $node->findvalue('./external_database_release');
+$extDbSpec = $node->findvalue('./ext_db_rls') unless $extDbSpec;
 $extDbSpec = 'OBI|http://purl.obolibrary.org/obo/obi/2012-07-01/obi.owl' unless $extDbSpec;
  my $extDbRlsId =  $self->getExtDbRlsId($extDbSpec) ;
       if (!$extDbRlsId || !defined($extDbRlsId)) {

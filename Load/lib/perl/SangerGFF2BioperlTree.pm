@@ -309,6 +309,10 @@ sub traverseSeqFeatures {
 	      }
 	    }
 
+	    if ($gene->has_tag('fiveEndPartial') || $gene->has_tag('threeEndPartial') ){
+		$gene->add_tag_value('Partial','');
+	    }
+
 	    $codonStart -= 1 if $codonStart > 0;
 
 	    my (@fixedExons, $prevExon);
