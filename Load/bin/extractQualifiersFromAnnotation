@@ -304,7 +304,7 @@ sub processGoAsso {
 		  }
 		}
 	      }
-	} elsif (lc($qualifier) eq 'go') {
+	} elsif (lc($qualifier) eq 'go' || lc($qualifier) eq 'full_go') {
 		foreach my $value ($bioperlFeature->get_tag_values($qualifier)) {
 		    my @goFields = split(/,/, $value);
 		    foreach my $goField (@goFields) {
