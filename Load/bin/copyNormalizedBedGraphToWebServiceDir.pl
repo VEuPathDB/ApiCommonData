@@ -22,8 +22,8 @@ my $usage =<<endOfUsage;
 Usage:
   copyNormalizedBedGraphToWebServiceDir.pl --inputDir input_diretory --outputDir output_directory 
 
-    intpuDir:top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
-    outputDir:e.g. /eupath/data/apiSiteFilesStaging/PlasmoDB/htsSNPTest_2/real/webServices/PlasmoDB/release-htsSNPTest_2/Pfalciparum3D7/bigwig/Su_strand_specific/
+    intpuDir:top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/CURRENT/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
+    outputDir:e.g. /eupath/data/apiSiteFilesStaging/PlasmoDB/18/real/webServices/PlasmoDB/release-CURRENT/Pfalciparum3D7/bigwig/pfal3D7_Su_strand_specific_rnaSeq_RSRC
 endOfUsage
 
 die $usage unless -e $inputDir;
@@ -31,6 +31,18 @@ die $usage unless -e $outputDir;
 
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
+
+my %fileOrder = ( 'RUM_Unique_plus.bw'  => 1,
+                  'RUM_NU_plus.bw'      => 2, 
+                  'RUM_Unique_minus.bw' => 3, 
+                  'RUM_NU_minus.bw'     => 4,
+                  'RUM_Unique.bw'       => 5,
+                  'RUM_NU.bw'           => 6,
+                  'RUM_Unique_plus_unlogged.bw'  => 7,
+                  'RUM_NU_plus_unlogged.bw'      => 8,
+                  'RUM_Unique_minus_unlogged.bw' => 9,
+                  'RUM_NU_minus_unlogged.bw'     => 10 
+                );
 
 # sort diretory name by the number in the string, e.g. hour2, hour10, hour20...
 #foreach my $d (sort @ds) {
@@ -61,7 +73,9 @@ foreach my $d (map  { $_->[0] }
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
-  foreach my $f(sort @fs) {
+  # sort files in the order of RUM_Unique_plus.bw RUM_NU_plus.bw RUM_Unique_minus.bw RUM_NU_minus.bw
+  # redmine refs #15678
+  foreach my $f(sort { $fileOrder{$a} <=> $fileOrder{$b} } @fs) {
     next if $f !~ /\.bw$/;
     $count++;
     $expt = 'non-unique' if $f =~ /NU/;
