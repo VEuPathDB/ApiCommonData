@@ -42,6 +42,8 @@ my %fileOrder = ( 'RUM_Unique_plus.bw'  => 1,
                   'RUM_NU_plus_unlogged.bw'      => 8,
                   'RUM_Unique_minus_unlogged.bw' => 9,
                   'RUM_NU_minus_unlogged.bw'     => 10 
+                  'RUM_Unique_unlogged.bw'       => 11,
+                  'RUM_NU_unlogged.bw'           => 12
                 );
 
 # sort diretory name by the number in the string, e.g. hour2, hour10, hour20...
