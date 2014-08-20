@@ -1079,15 +1079,17 @@ sub calculateAminoAcidPosition {
   return($aaPos);
 }
 
+
+
 sub getAminoAcidSequenceOfSnp {
   my ($cdsSequence, $positionInCds, $allele) = @_;
 
   my $codonLength = 3;
-  my $modCds = $positionInCds % $codonLength;
+  my $modCds = ($positionInCds - 1)  % $codonLength;
   my $offset = $positionInCds - $modCds;
 
-  my $codon = substr $cdsSequence, $offset, $codonLength;
-  my $subbedAllele = substr $codon, $modCds - 1, 1, $allele;
+  my $codon = substr $cdsSequence, $offset - 1, $codonLength;
+ my $subbedAllele = substr $codon, $modCds, 1, $allele;
 
   # Assuming this is a simple hash lookup which is quick; 
   return $CODON_TABLE->translate($codon);
