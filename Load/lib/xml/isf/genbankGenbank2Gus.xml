@@ -41,6 +41,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="GO" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="similarity" ignore="true"/>
+    <qualifier name="pseudo"			handler="api" method="setPseudo"/>
   </feature>
 
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
@@ -54,6 +55,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="transcript" so="transcript">
     <qualifier name="locus_tag" ignore="source_id"/>
     <qualifier name="codon_start"			ignore="true"/>
+    <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="GO_component"			ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="protein_id"			ignore="true"/>
     <qualifier name="note"			ignore="true"/>
@@ -65,13 +68,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="inference" ignore="true"/>
-    <qualifier name="pseudo" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="partial"         handler="api" method="setPartial"/>
     <qualifier name="pseudo"         handler="api" method="setPseudo"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
+    <qualifier name="pseudo"			handler="api" method="setPseudo"/>
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
