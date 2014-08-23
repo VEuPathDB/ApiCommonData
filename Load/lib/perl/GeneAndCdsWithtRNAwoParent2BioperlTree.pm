@@ -45,13 +45,14 @@ sub preprocess {
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	   
-	    if($type eq 'repeat_region'){
-			if($bioperlFeatureTree->has_tag("satellite")){
-		    	$bioperlFeatureTree->primary_tag("microsatellite");
+	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap'){
+			if ($type eq 'assembly_gap'){
+			  $bioperlFeatureTree->primary_tag("gap");
 			}
 			if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    	$bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 			}
+			$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 
 	    if($type eq 'STS'){
@@ -68,6 +69,11 @@ sub preprocess {
 		    	$geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 			}	   
  
+			if (($geneFeature->has_tag("locus_tag"))){
+				my ($cID) = $geneFeature->get_tag_values("locus_tag");
+				print STDERR "processing $cID...\n";
+			}
+
 			for my $tag ($geneFeature->get_all_tags) {    
 
 		    	if($tag eq 'pseudo'){

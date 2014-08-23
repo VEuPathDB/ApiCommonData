@@ -97,6 +97,11 @@ sub preprocess {
                 $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
             }      
 
+			if (($geneFeature->has_tag("ID"))){
+				my ($cID) = $geneFeature->get_tag_values("ID");
+				print STDERR "processing $cID...\n";
+			}
+
             if($geneFeature->has_tag("gene_type")){
                 my($geneType) = $geneFeature->get_tag_values("gene_type");
 

@@ -52,19 +52,23 @@ foreach my $d (map  { $_->[0] }
 
   # create a metadata text file for better organizing gbrowse subtracks
   open(META, ">>$outputDir/metadata");
+  open(METAUNLOGGED, ">>$outputDir/metadata_unlogged");
   my $meta = "";
   my $expt = "unique";
   my $strand = "forward";
   my $selected = 1;
+  my $count = 0;
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
   foreach my $f(sort @fs) {
     next if $f !~ /\.bw$/;
+    $count++;
     $expt = 'non-unique' if $f =~ /NU/;
     $expt = 'unique' if $f =~ /Unique/;
     $selected = 1 if $f =~ /Unique/;
     $selected = 0 if $f =~ /NU/;
+    $selected = 0 if $count > 15;
     $strand = 'reverse' if $f =~ /minus/;
     $strand = 'forward' if $f =~ /plus/;
 
@@ -90,9 +94,16 @@ type         = Coverage
 
 EOL
    }
-   print META $meta;
-  }
+
+   if($f !~ /unlogged/) {
+     print META $meta;
+   } else {
+     print METAUNLOGGED $meta;
+   }
+
+  } # end foreach loop
 
   closedir(D);
   close(META);
+  close(METAUNLOGGED);
 }

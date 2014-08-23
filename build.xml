@@ -25,6 +25,13 @@
     </ant>
   </target>  
 
+  <target name="TuningManager-Installation">
+    <ant antfile="../TuningManager/build.xml" target="TuningManager-Installation">
+      <property name="project" value="TuningManager"/>
+      <property name="version" value=""/>
+    </ant>
+  </target>  
+
   <target name="GUS-Checkout" unless="GUS.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false"> 
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/GusAppFramework" />
@@ -49,15 +56,25 @@
     </ant>
   </target>
 
+  <target name="TuningManager-Checkout" unless="TuningManager.present"> 
+    <ant target="defaultProjectCheckout" inheritAll="false">
+      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/TuningManager" />
+      <property name="project" value="TuningManager"/>
+      <property name="version" value="trunk"/>
+    </ant>
+  </target>
+
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-ChildCheckout">
     <available file="../FgpUtil" type="dir" property="FgpUtil.present" />
+    <available file="../TuningManager" type="dir" property="TuningManager.present" />
     <available file="../GUS" type="dir" property="GUS.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
     <antcall target="FgpUtil-Checkout" />
+    <antcall target="TuningManager-Checkout" />
     <antcall target="GUS-Checkout" />
     <antcall target="DoTS-Checkout" />
   </target>
@@ -72,6 +89,9 @@
       <property name="project" value="FgpUtil"/>
     </ant>
     <ant target="defaultProjectUpdate">
+      <property name="project" value="TuningManager"/>
+    </ant>
+    <ant target="defaultProjectUpdate">
       <property name="project" value="GUS"/>
     </ant>
     <ant target="defaultProjectUpdate">
@@ -84,6 +104,7 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
+                                            TuningManager-Installation,
                                             GUS-Installation,
                                             DoTS-Installation,
                                             ApiCommonData/Load-Installation">

@@ -80,6 +80,7 @@ sub preprocess {
 
       if($bioperlFeatureTree->has_tag('locus_tag')){
 	  ($geneID) = $bioperlFeatureTree->get_tag_values('locus_tag');
+	  print STDERR "processing $geneID...\n";
       }
 
       my $gene = $bioperlFeatureTree;

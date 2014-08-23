@@ -44,6 +44,11 @@ if(-d $inputFileOrDir){
 	    foreach my $line (<FILE>){
 		$linesRead++;
 		if($line =~ /^ID/){
+			$line =~ s/embl\///;  
+			$line =~ s/\_size\d+//; ## use these 2 lines for Chromera
+			$line =~ s/^ID\s+(\S+) ;/ID   cvel_$1  standard; SV 1; linear; unassigned DNA; STD; UNC;/;
+			$line =~ s/ ; ; ; ; / /;
+
 		    $line =~ s/^(ID\s+\S+);/$1  standard;/;
 		    #$line =~ s/SV/SV 1/;   ## comment this line out when process files for tevaSTIB805 in TriTryp
                     $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump

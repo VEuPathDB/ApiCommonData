@@ -52,6 +52,10 @@ create index dots.SeqvarStrain_ix
   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
   tablespace INDX; 
 
+create index dots.FeatLocIx
+  on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
+  tablespace INDX; 
+
 create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;

@@ -84,6 +84,11 @@ sub preprocess {
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
+		if (($geneFeature->has_tag("locus_tag"))){
+			my ($cID) = $geneFeature->get_tag_values("locus_tag");
+			print STDERR "processing $cID...\n";
+		}
+
 		if(!($geneFeature->has_tag("locus_tag"))){
 		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}      

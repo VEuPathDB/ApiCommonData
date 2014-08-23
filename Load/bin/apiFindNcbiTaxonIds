@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+use DBI;
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::PropertySet;
+
+usage() unless scalar(@ARGV) == 1;
+
+my $outputFile = $ARGV[0];
+
+my $dbh = getDbHandle();
+
+my $sql = "
+select distinct ncbi_tax_id
+from sres.taxon t, dots.externalaasequence s
+where s.taxon_id = t.taxon_id
+";
+
+open(F, ">$outputFile") || die "Can't open file '$outputFile' for writing\n";
+
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while(my ($taxon_id) = $stmt->fetchrow_array()) {
+  print F "$taxon_id\n";
+}
+
+$dbh->disconnect();
+
+sub getDbHandle {
+
+  my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+  my $u = $gusconfig->{props}->{databaseLogin};
+  my $pw = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
+
+  my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+  $dbh->{RaiseError} = 1;
+  $dbh->{AutoCommit} = 0;
+
+  return $dbh;
+}
+
+
+sub usage {
+die "
+Get a distinct list of all NCBI Taxon IDs found in the ExternalAASequence table.
+
+Usage: orthomclFindNcbiTaxonIds output_file
+
+";
+}
+
