@@ -230,67 +230,67 @@ sub traverseSeqFeatures {
 		$gene->add_tag_value('selenocysteine','selenocysteine');
 	    }
 
-	    my (@exons, @codingStart, @codingEnd);
-
-	    my($codingStart,$codingEnd);
-
+	    #my (@exons, @codingStart, @codingEnd);
+	    my (@exons, @codingStartAndEndPairs);
+	    
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
 		if($subFeature->primary_tag eq 'exon'){
-
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
-
 		    push(@exons,$exon);
-		    
-		
 		}
 
 		if($subFeature->primary_tag eq 'CDS'){
+		    my $cdsStrand = $subFeature->location->strand;
+		    my $cdsFrame = $subFeature->frame();
+
 		    if($subFeature->location->strand == -1){
-			$codingStart = $subFeature->location->end;
-
-			$codingEnd = $subFeature->location->start;
-			
-			$codingStart -= $subFeature->frame() if ($subFeature->frame() > 0 );
+			my $cdsCodingStart = $subFeature->location->end;
+			my $cdsCodingEnd = $subFeature->location->start;
+			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }else{
-			$codingStart = $subFeature->location->start;
-			
-			$codingEnd = $subFeature->location->end;
-
-			$codingStart += $subFeature->frame() if ($subFeature->frame() > 0 );
+			my $cdsCodingStart = $subFeature->location->start;
+			my $cdsCodingEnd = $subFeature->location->end;
+			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }
-		    
-		    push(@codingStart,$codingStart);
-		    push(@codingEnd,$codingEnd);
 		}
 
 		if ($subFeature->primary_tag eq 'five_prime_utr' || $subFeature->primary_tag eq 'three_prime_utr' || $subFeature->primary_tag eq 'splice_acceptor_site'){
 		    
 		    my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
-
 		    $UTR = &copyQualifiers($subFeature,$UTR);
-
 		    push(@UTRs,$UTR);
-
 		}
 
 	    }
-	    
-	    $codingStart = shift(@codingStart);
-	    $codingEnd = shift(@codingEnd);
+
+	    ## deal with codonStart, use the frame of the 1st CDS to assign codonStart
+	    foreach my $j (0..$#codingStartAndEndPairs) {
+	      my ($start, $end, $strand, $frame) = split (/\t/, $codingStartAndEndPairs[$j]);
+	      if ($j == 0 && $strand ==1 && $frame > 0) {
+		$start += $frame;
+		$codingStartAndEndPairs[$j] = "$start\t$end\t$strand\t$frame";
+	      } elsif ($j == $#codingStartAndEndPairs && $strand == -1 && $frame > 0) {
+		$start -= $frame;
+		$codingStartAndEndPairs[$j] = "$start\t$end\t$strand\t$frame";
+	      }
+	    }
+
+	    ## add codingStart and codingEnd
+	    my ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+
 	    foreach my $exon (@exons){
 
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
-
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
-
-		    $codingStart = shift(@codingStart);
-		    $codingEnd = shift(@codingEnd);
+		    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+		} else {
+		    $exon->add_tag_value('CodingStart',"");
+		    $exon->add_tag_value('CodingEnd',"");
 		}
 
 		$transcript->add_SeqFeature($exon);
-		
 	    }		    
 	    
   	    if(!($transcript->get_SeqFeatures())){

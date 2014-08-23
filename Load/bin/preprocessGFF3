@@ -29,7 +29,8 @@ foreach my $line(<IN>){
     
     $line =~ s/\cM//g;
 
-    if(!($line =~ /^\#\#/) && !($line =~ /^\s+$/)){
+    #if(!($line =~ /^\#\#/) && !($line =~ /^\s+$/)){
+    if(!($line =~ /^\#/) && !($line =~ /^\s+$/)){
     my %pmids;
     my %prevSysIds;
     chomp($line);

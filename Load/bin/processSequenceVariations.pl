@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 
 use File::Basename;
@@ -18,6 +18,8 @@ use Bio::Tools::GFF;
 use Bio::Coordinate::GeneMapper;
 use Bio::Coordinate::Pair;
 use Bio::Location::Simple;
+
+use Bio::Tools::CodonTable;
 
 use DBI;
 use DBD::Oracle;
@@ -71,6 +73,8 @@ unless(-e $undoneStrainsFile) {
   close FILE;
 }
 
+my $CODON_TABLE = Bio::Tools::CodonTable->new( -id => 1); #standard codon table
+
 my $totalTime;
 my $totalTimeStart = time();
 
@@ -110,7 +114,9 @@ my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpe
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
 my $agpMap = &queryForAgpMap($dbh);
-my ($transcriptSummary, $exonLocs) = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
+my $transcriptSummary = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
+my $geneLocations = &getGeneLocations($transcriptSummary);
+
 
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
@@ -138,16 +144,20 @@ while($merger->hasNext()) {
   # some variables are needed to store attributes of the SNP
   my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
 
-  my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
+  my $geneLocation = &lookupByLocation($sequenceId, $location, $geneLocations);
+
+  my ($transcripts, $geneNaFeatureId);
+  if($geneLocation) {
+    $transcripts = $geneLocation->{transcripts};
+    $geneNaFeatureId = $geneLocation->{na_feature_id};
+  }
 
   my $hasTranscripts = defined($transcripts) ? 1 : 0;
+
+  print STDERR "GENE_NA_FEATURE_ID=$geneNaFeatureId\n"  if($debug);
   print STDERR "HAS TRANSCRIPTS=$hasTranscripts\n"  if($debug);
   print STDERR "TRANSCRIPTS=" . join(",", @$transcripts) . "\n" if($debug && $hasTranscripts);
 
-  my $geneNaFeatureId;
-  if($hasTranscripts) {
-    $geneNaFeatureId = &getGeneNaFeatureId($transcripts, $transcriptSummary);
-  }
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
@@ -176,7 +186,7 @@ while($merger->hasNext()) {
 
     print STDERR "ISCODING=$isCoding, POSITIONINCDS=$positionInCds, POSITIONINPROTEIN=$positionInProtein\n" if($debug);
 
-    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) if($positionInProtein);
+    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $referenceAllele) if($positionInCds);
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
@@ -254,7 +264,7 @@ while($merger->hasNext()) {
     if($positionInCds) {
       my $strainSequenceSourceId = $sequenceId . "." . $strain;
 
-      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInProtein) if($positionInProtein);
+      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInCds, $allele);
       
       $variation->{product} = $p;
       $variation->{position_in_cds} = $positionInCds; #got this from the refernece
@@ -312,22 +322,6 @@ print STDERR "Total Time:  $totalTime Seconds\n";
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
 
-sub getGeneNaFeatureId {
-  my ($transcripts, $transcriptSummary) = @_;
-
-  my $rv;
-  foreach(@$transcripts) {
-    my $geneNaFeatureId = $transcriptSummary->{$_}->{gene_na_feature_id};
-
-    if($rv && $rv != $geneNaFeatureId) {
-      die "Found more than one gene na_feature_id for transcripts:  " . join(",", @$transcripts) . "\n";
-    }
-    $rv = $geneNaFeatureId;
-  }
-
-  return $rv;
-}
-
 
 sub queryNaSequenceIds {
   my ($dbh) = @_;
@@ -367,6 +361,8 @@ sub calculateCdsPosition {
 
     next unless($cdsStart && $cdsEnd);
 
+    next if($location < $cdsStart || $location > $cdsEnd);
+
     my $gene = Bio::Coordinate::GeneMapper->new(
       -in  => "chr",
       -out => "cds",
@@ -389,6 +385,7 @@ sub calculateCdsPosition {
     my $map = $gene->map($loc);
 
     my $cdsPos = $map->start;
+
     if($cdsPos && $cdsPos > 1) {
       my $positionInProtein = &calculateAminoAcidPosition($cdsPos, $cdsPos);
 
@@ -551,8 +548,8 @@ sub makeSNPFeatureFromVariations {
 
   my $hasNonSynonymousAllele = scalar keys %productCounts > 1 ? 1 : 0;
 
-  my @sortedAlleles = sort { ($alleleCounts{$b} cmp $alleleCounts{$a}) || ($a cmp $b) } keys %alleleCounts;
-  my @sortedProducts = sort { ($productCounts{$b} cmp $productCounts{$a}) || ($a cmp $b) } keys %productCounts;
+  my @sortedAlleles = sort { ($alleleCounts{$b} <=> $alleleCounts{$a}) || ($a cmp $b) } keys %alleleCounts;
+  my @sortedProducts = sort { ($productCounts{$b} <=> $productCounts{$a}) || ($a cmp $b) } keys %productCounts;
   my @sortedAlleleCounts = map {$alleleCounts{$_}} @sortedAlleles;
 
   my $majorAllele = $sortedAlleles[0];
@@ -625,20 +622,19 @@ sub makeCoverageVariation {
   my $location = $referenceVariation->{location};
   my $sequenceId = $referenceVariation->{sequence_source_id};
   my $referenceAllele = $referenceVariation->{base};
-  
-while($fileReader->hasNext()) {
-  # look at the line in memory to see if my sequence and location are inside;  if so, then last
+
+  while($fileReader->hasNext()) {
+    # look at the line in memory to see if my sequence and location are inside;  if so, then last
     my @p = $fileReader->getPeek();
     my $pSequenceId = $p[0];
     my $pStart = $p[1];
     my $pEnd = $p[2];
-
     if($pSequenceId eq $sequenceId && $location >= $pStart && $location <= $pEnd) {
-      
+
       unless(defined($fileReader->{_coverage_array})) {
         my @coverageArray = split(",", $p[3]);
         my @percentsArray = split(",", $p[4]);
-
+        
         $fileReader->{_coverage_array} = \@coverageArray;
         $fileReader->{_percents_array} = \@percentsArray;
       }
@@ -648,28 +644,27 @@ while($fileReader->hasNext()) {
       #print STDERR Dumper $fileReader->{_coverage_array};
       #print STDERR Dumper $fileReader->{_percents_array};
 
-
-        $rv = {'base' => $referenceAllele,
-               'location' => $location,
-               'sequence_source_id' => $sequenceId,
-               'matches_reference' => 1,
-               'strain' => $strain,
-               'coverage' => $fileReader->{_coverage_array}->[$index],
-               'percent' => $fileReader->{_percents_array}->[$index],
-        };
+      $rv = {'base' => $referenceAllele,
+             'location' => $location,
+             'sequence_source_id' => $sequenceId,
+             'matches_reference' => 1,
+             'strain' => $strain,
+             'coverage' => $fileReader->{_coverage_array}->[$index],
+             'percent' => $fileReader->{_percents_array}->[$index],
+      };
       last;
     }
 
     # stop when the location from the line in memory is > the refLoc
     if($pSequenceId gt $sequenceId || ($pSequenceId eq $sequenceId && $pStart > $location)) {
-      $fileReader->{_coverage_array} = undef;
-      $fileReader->{_percents_array} = undef;
       last;
     }
 
     # read the next line into memory
     $fileReader->nextLine();
-}
+    $fileReader->{_coverage_array} = undef;
+    $fileReader->{_percents_array} = undef;
+  }
 
   return $rv;
 }
@@ -701,26 +696,22 @@ sub querySequenceSubstring {
 }
 
 sub variationProduct {
-  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInProtein) = @_;
+  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $allele) = @_;
 
   my %products;
 
   foreach my $transcript (@$transcripts) {
 
-    my ($consensusCodingSequence, $proteinSequence);
+    my $consensusCodingSequence;
     if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds}) {
       $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
-      $proteinSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence};
     }
     else { # first time through for this transcript
       $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $transcriptExtDbRlsId);
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
-
-      $proteinSequence = &getTranslation($consensusCodingSequence);
-      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{protein_sequence} = $proteinSequence;
     }
 
-    my $product = &getAminoAcidSequenceOfSnp($proteinSequence, $positionInProtein, $positionInProtein);
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele);
     $products{$product}++;
   }
 
@@ -868,12 +859,12 @@ and d.name || '|' || r.version = '$extDbRlsSpec'";
   return $extDbRlsId;
 }
 
-sub lookupTranscriptsByLocation {
-  my ($sequenceId, $l, $exonLocs) = @_;
+sub lookupByLocation {
+  my ($sequenceId, $l, $geneLocs) = @_;
 
-  return(undef) unless(ref ($exonLocs->{$sequenceId}) eq 'ARRAY');
+  return(undef) unless(ref ($geneLocs->{$sequenceId}) eq 'ARRAY');
 
-  my @locations = @{$exonLocs->{$sequenceId}};
+  my @locations = @{$geneLocs->{$sequenceId}};
 
   my $startCursor = 0;
   my $endCursor = scalar(@locations) - 1;
@@ -895,7 +886,7 @@ sub lookupTranscriptsByLocation {
     else {  }
 
     if($l >= $location->{start} && $l <= $location->{end}) {
-      return($location->{transcripts});
+      return($location);
     }
   }
 
@@ -905,10 +896,56 @@ sub lookupTranscriptsByLocation {
 }
 
 
+sub getGeneLocations {
+  my ($transcriptSummary) = @_;
+
+  my %geneSummary;
+  my %geneLocations;
+  my %sortedGeneLocs;
+
+  foreach my $transcriptId (keys %$transcriptSummary) {
+    my $geneId = $transcriptSummary->{$transcriptId}->{gene_na_feature_id};
+    my $sequenceSourceId = $transcriptSummary->{$transcriptId}->{sequence_source_id};
+    my $transcriptMinStart = $transcriptSummary->{$transcriptId}->{min_exon_start};
+    my $transcriptMaxEnd = $transcriptSummary->{$transcriptId}->{max_exon_end};
+
+    if(!{$geneSummary{$geneId}->{max_end}} || $transcriptMaxEnd > $geneSummary{$geneId}->{max_end}) {
+      $geneSummary{$geneId}->{max_end} = $transcriptMaxEnd;
+    }
+
+    if(!{$geneSummary{$geneId}->{min_start}} || $transcriptMinStart > $geneSummary{$geneId}->{min_start}) {
+      $geneSummary{$geneId}->{min_start} = $transcriptMinStart;
+    }
+
+    $geneSummary{$geneId}->{sequence_source_id} = $sequenceSourceId;
+    push @{$geneSummary{$geneId}->{transcripts}}, $transcriptId;
+  }
+
+  foreach my $geneId (keys %geneSummary) {
+    my $sequenceSourceId = $geneSummary{$geneId}->{sequence_source_id};
+
+    my $location = { transcripts => $geneSummary{$geneId}->{transcripts},
+                     start => $geneSummary{$geneId}->{min_start},
+                     end => $geneSummary{$geneId}->{max_end},
+                     na_feature_id => $geneId,
+    };
+
+    push(@{$geneLocations{$sequenceSourceId}}, $location);
+
+  }
+
+  foreach my $seqId (keys %geneLocations) {
+    my @sortedLocations = sort { $a->{start} <=> $b->{start} } @{$geneLocations{$seqId}};
+    push @{$sortedGeneLocs{$seqId}}, @sortedLocations;
+  }
+
+  return \%sortedGeneLocs;
+}
+  
+
 sub getTranscriptLocations {
   my ($dbh, $transcriptExtDbRlsId, $agpMap) = @_;
 
-  my %exonLocs;
   my %transcriptSummary;
 
 my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_feature_id) as transcripts,
@@ -961,16 +998,11 @@ ORDER BY s.source_id, el.start_min
     my $strand = $isReversed ? -1 : +1;
     my $loc = Bio::Location::Simple->new( -seq_id => $sequenceSourceId, -start => $exonStart  , -end => $exonEnd , -strand => $strand);
 
-    my $location = { transcripts => \@transcripts,
-                     start => $exonStart,
-                     end => $exonEnd,
-                   };
-
-    push(@{$exonLocs{$sequenceSourceId}}, $location);
 
     foreach my $transcriptId (@transcripts) {
       push @{$transcriptSummary{$transcriptId}->{exons}}, $loc;
       $transcriptSummary{$transcriptId}->{gene_na_feature_id} = $geneNaFeatureId;
+      $transcriptSummary{$transcriptId}->{sequence_source_id} = $sequenceSourceId;
 
       if($cdsStart && $cdsEnd) {
         $transcriptSummary{$transcriptId}->{cds_strand} = $strand;
@@ -985,16 +1017,20 @@ ORDER BY s.source_id, el.start_min
       if(!$transcriptSummary{$transcriptId}->{max_exon_end} || $exonEnd > $transcriptSummary{$transcriptId}->{max_exon_end}) {
         $transcriptSummary{$transcriptId}->{max_exon_end} = $exonEnd;
       }
+
+      if(!$transcriptSummary{$transcriptId}->{min_exon_start} || $exonStart < $transcriptSummary{$transcriptId}->{min_exon_start}) {
+        $transcriptSummary{$transcriptId}->{min_exon_start} = $exonStart;
+      }
+
     }
   }
 
   $sh->finish();
 
-  return \%transcriptSummary, \%exonLocs;
+  return \%transcriptSummary;
 }
 
 
-# TODO:  could cache na sequence's and pull out the codon and translate that
 sub getCodingSequence {
   my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $seqExtDbRlsId) = @_;
 
@@ -1009,7 +1045,7 @@ sub getCodingSequence {
     die ("Transcript with na_feature_id = $transcriptId had no exons\n");
   }
 
-  my $transcriptSequence;
+  my $codingSequence;
 
   for my $exon (@exons) {
     my $exonStart = $exon->start();
@@ -1023,15 +1059,15 @@ sub getCodingSequence {
 
     if($exonIsReversed) {
       $chunk = CBIL::Bio::SequenceUtils::reverseComplementSequence($chunk);
-      $transcriptSequence = $chunk . $transcriptSequence;
+      $codingSequence = $chunk . $codingSequence;
     }
     else {
-      $transcriptSequence .= $chunk;
+      $codingSequence .= $chunk;
     }
 
   }
 
-  return($transcriptSequence);
+  return($codingSequence);
 }
 
 
@@ -1043,26 +1079,20 @@ sub calculateAminoAcidPosition {
   return($aaPos);
 }
 
+
+
 sub getAminoAcidSequenceOfSnp {
-  my ($proteinSequence, $start, $end) = @_;
+  my ($cdsSequence, $positionInCds, $allele) = @_;
 
-  my $normStart = $start - 1;
-  my $normEnd = $end - 1;
+  my $codonLength = 3;
+  my $modCds = ($positionInCds - 1)  % $codonLength;
+  my $offset = $positionInCds - $modCds;
 
-  my $lengthOfSnp = $normEnd - $normStart + 1;
+  my $codon = substr $cdsSequence, $offset - 1, $codonLength;
+ my $subbedAllele = substr $codon, $modCds, 1, $allele;
 
-  return(substr($proteinSequence, $normStart, $lengthOfSnp));
+  # Assuming this is a simple hash lookup which is quick; 
+  return $CODON_TABLE->translate($codon);
 }
-
-sub getTranslation {
-  my ($codingSequence) = @_;
-
-  my $cds = Bio::Seq->new( -seq => $codingSequence );
-  my $translated = $cds->translate();
-  return $translated->seq();
-}
-
-
-
 
 1;
