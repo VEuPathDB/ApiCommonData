@@ -25,9 +25,9 @@ use GUS::Community::Plugin::AddToStudy;
 
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
-  my $name = $protocolAppNode->findvalue('./name');
-  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $name});
-   $self->userError("Input ProtocolAppNode $name is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
+  my $source_id = $protocolAppNode->findvalue('./source_id');
+  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({source_id => $source_id});
+   $self->userError("Input ProtocolAppNode $source_id is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
   my $id = $protocolAppNode->getId();
 
   return ($id);
