@@ -711,7 +711,9 @@ sub variationProduct {
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
     }
 
-    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele);
+    my $strand = $transcriptSummary->{$transcript}->{cds_strand};
+
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele, $strand);
     $products{$product}++;
   }
 
@@ -1082,13 +1084,18 @@ sub calculateAminoAcidPosition {
 
 
 sub getAminoAcidSequenceOfSnp {
-  my ($cdsSequence, $positionInCds, $allele) = @_;
+  my ($cdsSequence, $positionInCds, $allele, $strand) = @_;
 
   my $codonLength = 3;
   my $modCds = ($positionInCds - 1)  % $codonLength;
   my $offset = $positionInCds - $modCds;
 
   my $codon = substr $cdsSequence, $offset - 1, $codonLength;
+
+  if($strand == -1) {
+    $allele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+  }
+
  my $subbedAllele = substr $codon, $modCds, 1, $allele;
 
   # Assuming this is a simple hash lookup which is quick; 
