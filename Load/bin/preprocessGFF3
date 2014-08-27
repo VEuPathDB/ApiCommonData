@@ -41,6 +41,7 @@ foreach my $line(<IN>){
     $cols[0] =~ s/^\s+//;
 
 #    print "$cols[8]\t\t";
+    $cols[8] =~ s/stop_codon_redefined_as_selenocysteine=stop_codon_redefined_as_selenocysteine;/stop_codon_redefined_as_selenocysteine=;/;
     $cols[8] =~ s/stop_codon_redefined_as_selenocysteine;/stop_codon_redefined_as_selenocysteine=;/;
     $cols[8] =~ s/isFminPartial;/isFminPartial=;/;
     $cols[8] =~ s/isFmaxPartial;/isFmaxPartial=;/;
