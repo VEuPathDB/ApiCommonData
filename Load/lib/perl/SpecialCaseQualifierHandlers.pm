@@ -199,7 +199,7 @@ sub sourceIdAndTranscriptSeq {
     $count++;
     #$transcript->setSourceId("$tagValues[0]-$count");
     my $transcSourceId;
-    ($transcSourceId) = $transcript->{bioperlFeature}->get_tag_values($tag);
+    ($transcSourceId) = $transcript->{bioperlFeature}->get_tag_values($tag) if ($transcript->{bioperlFeature}->has_tag($tag));
     if (!$transcSourceId) {
       $transcript->setSourceId("$tagValues[0]-$count");
     }
