@@ -18,7 +18,7 @@ package ApiCommonData::Load::PlasmoSpecialCaseQualifierHandlers;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
