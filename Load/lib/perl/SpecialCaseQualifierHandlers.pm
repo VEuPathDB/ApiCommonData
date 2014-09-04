@@ -197,11 +197,12 @@ sub sourceIdAndTranscriptSeq {
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
     $count++;
-    #$transcript->setSourceId("$tagValues[0]-$count");
+    ## if transcript has sourceId, load it, otherwise use the sourceId of gene, sourceId-$count
     my $transcSourceId;
-    ($transcSourceId) = $transcript->{bioperlFeature}->get_tag_values($tag) if ($transcript->{bioperlFeature}->has_tag($tag));
-    if (!$transcSourceId) {
-      $transcript->setSourceId("$tagValues[0]-$count");
+    if ($transcript->{bioperlFeature}->has_tag($tag)) {
+      ($transcSourceId) = $transcript->{bioperlFeature}->get_tag_values($tag);
+    } else {
+      $transcSourceId = "$tagValues[0]-$count";
     }
     $transcript->setSourceId("$transcSourceId");
 
