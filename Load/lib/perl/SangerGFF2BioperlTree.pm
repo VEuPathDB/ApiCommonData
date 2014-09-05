@@ -352,6 +352,8 @@ sub traverseSeqFeatures {
 		    $UTR->add_tag_value('Parent',$parent) if $parent;
 
 		    $subFeature->primary_tag('exon');
+		    $exonType = "non_coding";
+
 		    push(@UTRs, $UTR);
 
 			if(($polypeptide{$rnaId}->location->start <= $subFeature->location->start && $polypeptide{$rnaId}->location->end >= $subFeature->location->end)){
