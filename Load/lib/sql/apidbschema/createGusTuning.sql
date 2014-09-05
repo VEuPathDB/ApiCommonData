@@ -12,6 +12,9 @@
 --alter table sres.ExternalDatabase modify (name varchar2(150));
 --alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
+alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(12) );
+
+
 -- added to XML
 -- alter table sres.EnzymeClass modify (description varchar2(200));
 -- alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
