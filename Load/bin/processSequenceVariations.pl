@@ -114,7 +114,9 @@ my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpe
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
 my $agpMap = &queryForAgpMap($dbh);
-my ($transcriptSummary, $exonLocs) = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
+my $transcriptSummary = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
+my $geneLocations = &getGeneLocations($transcriptSummary);
+
 
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
@@ -142,16 +144,20 @@ while($merger->hasNext()) {
   # some variables are needed to store attributes of the SNP
   my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
 
-  my $transcripts = &lookupTranscriptsByLocation($sequenceId, $location, $exonLocs);
+  my $geneLocation = &lookupByLocation($sequenceId, $location, $geneLocations);
+
+  my ($transcripts, $geneNaFeatureId);
+  if($geneLocation) {
+    $transcripts = $geneLocation->{transcripts};
+    $geneNaFeatureId = $geneLocation->{na_feature_id};
+  }
 
   my $hasTranscripts = defined($transcripts) ? 1 : 0;
+
+  print STDERR "GENE_NA_FEATURE_ID=$geneNaFeatureId\n"  if($debug);
   print STDERR "HAS TRANSCRIPTS=$hasTranscripts\n"  if($debug);
   print STDERR "TRANSCRIPTS=" . join(",", @$transcripts) . "\n" if($debug && $hasTranscripts);
 
-  my $geneNaFeatureId;
-  if($hasTranscripts) {
-    $geneNaFeatureId = &getGeneNaFeatureId($transcripts, $transcriptSummary);
-  }
 
   # clear the transcripts cache once we pass the max exon for a group of transcripts
   if($sequenceId ne $prevSequenceId || $location > $prevTranscriptMaxEnd) {
@@ -315,22 +321,6 @@ print STDERR "Total Time:  $totalTime Seconds\n";
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
-
-sub getGeneNaFeatureId {
-  my ($transcripts, $transcriptSummary) = @_;
-
-  my $rv;
-  foreach(@$transcripts) {
-    my $geneNaFeatureId = $transcriptSummary->{$_}->{gene_na_feature_id};
-
-    if($rv && $rv != $geneNaFeatureId) {
-      die "Found more than one gene na_feature_id for transcripts:  " . join(",", @$transcripts) . "\n";
-    }
-    $rv = $geneNaFeatureId;
-  }
-
-  return $rv;
-}
 
 
 sub queryNaSequenceIds {
@@ -721,7 +711,9 @@ sub variationProduct {
       $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
     }
 
-    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele);
+    my $strand = $transcriptSummary->{$transcript}->{cds_strand};
+
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele, $strand);
     $products{$product}++;
   }
 
@@ -869,12 +861,12 @@ and d.name || '|' || r.version = '$extDbRlsSpec'";
   return $extDbRlsId;
 }
 
-sub lookupTranscriptsByLocation {
-  my ($sequenceId, $l, $exonLocs) = @_;
+sub lookupByLocation {
+  my ($sequenceId, $l, $geneLocs) = @_;
 
-  return(undef) unless(ref ($exonLocs->{$sequenceId}) eq 'ARRAY');
+  return(undef) unless(ref ($geneLocs->{$sequenceId}) eq 'ARRAY');
 
-  my @locations = @{$exonLocs->{$sequenceId}};
+  my @locations = @{$geneLocs->{$sequenceId}};
 
   my $startCursor = 0;
   my $endCursor = scalar(@locations) - 1;
@@ -896,7 +888,7 @@ sub lookupTranscriptsByLocation {
     else {  }
 
     if($l >= $location->{start} && $l <= $location->{end}) {
-      return($location->{transcripts});
+      return($location);
     }
   }
 
@@ -906,10 +898,56 @@ sub lookupTranscriptsByLocation {
 }
 
 
+sub getGeneLocations {
+  my ($transcriptSummary) = @_;
+
+  my %geneSummary;
+  my %geneLocations;
+  my %sortedGeneLocs;
+
+  foreach my $transcriptId (keys %$transcriptSummary) {
+    my $geneId = $transcriptSummary->{$transcriptId}->{gene_na_feature_id};
+    my $sequenceSourceId = $transcriptSummary->{$transcriptId}->{sequence_source_id};
+    my $transcriptMinStart = $transcriptSummary->{$transcriptId}->{min_exon_start};
+    my $transcriptMaxEnd = $transcriptSummary->{$transcriptId}->{max_exon_end};
+
+    if(!{$geneSummary{$geneId}->{max_end}} || $transcriptMaxEnd > $geneSummary{$geneId}->{max_end}) {
+      $geneSummary{$geneId}->{max_end} = $transcriptMaxEnd;
+    }
+
+    if(!{$geneSummary{$geneId}->{min_start}} || $transcriptMinStart > $geneSummary{$geneId}->{min_start}) {
+      $geneSummary{$geneId}->{min_start} = $transcriptMinStart;
+    }
+
+    $geneSummary{$geneId}->{sequence_source_id} = $sequenceSourceId;
+    push @{$geneSummary{$geneId}->{transcripts}}, $transcriptId;
+  }
+
+  foreach my $geneId (keys %geneSummary) {
+    my $sequenceSourceId = $geneSummary{$geneId}->{sequence_source_id};
+
+    my $location = { transcripts => $geneSummary{$geneId}->{transcripts},
+                     start => $geneSummary{$geneId}->{min_start},
+                     end => $geneSummary{$geneId}->{max_end},
+                     na_feature_id => $geneId,
+    };
+
+    push(@{$geneLocations{$sequenceSourceId}}, $location);
+
+  }
+
+  foreach my $seqId (keys %geneLocations) {
+    my @sortedLocations = sort { $a->{start} <=> $b->{start} } @{$geneLocations{$seqId}};
+    push @{$sortedGeneLocs{$seqId}}, @sortedLocations;
+  }
+
+  return \%sortedGeneLocs;
+}
+  
+
 sub getTranscriptLocations {
   my ($dbh, $transcriptExtDbRlsId, $agpMap) = @_;
 
-  my %exonLocs;
   my %transcriptSummary;
 
 my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_feature_id) as transcripts,
@@ -962,16 +1000,11 @@ ORDER BY s.source_id, el.start_min
     my $strand = $isReversed ? -1 : +1;
     my $loc = Bio::Location::Simple->new( -seq_id => $sequenceSourceId, -start => $exonStart  , -end => $exonEnd , -strand => $strand);
 
-    my $location = { transcripts => \@transcripts,
-                     start => $exonStart,
-                     end => $exonEnd,
-                   };
-
-    push(@{$exonLocs{$sequenceSourceId}}, $location);
 
     foreach my $transcriptId (@transcripts) {
       push @{$transcriptSummary{$transcriptId}->{exons}}, $loc;
       $transcriptSummary{$transcriptId}->{gene_na_feature_id} = $geneNaFeatureId;
+      $transcriptSummary{$transcriptId}->{sequence_source_id} = $sequenceSourceId;
 
       if($cdsStart && $cdsEnd) {
         $transcriptSummary{$transcriptId}->{cds_strand} = $strand;
@@ -986,23 +1019,20 @@ ORDER BY s.source_id, el.start_min
       if(!$transcriptSummary{$transcriptId}->{max_exon_end} || $exonEnd > $transcriptSummary{$transcriptId}->{max_exon_end}) {
         $transcriptSummary{$transcriptId}->{max_exon_end} = $exonEnd;
       }
+
+      if(!$transcriptSummary{$transcriptId}->{min_exon_start} || $exonStart < $transcriptSummary{$transcriptId}->{min_exon_start}) {
+        $transcriptSummary{$transcriptId}->{min_exon_start} = $exonStart;
+      }
+
     }
   }
 
   $sh->finish();
 
-  my %sortedExonLocs;
-  foreach my $seqId (keys %exonLocs) {
-    my @sortedLocations = sort { $a->{start} <=> $b->{start} } @{$exonLocs{$seqId}};
-    push @{$sortedExonLocs{$seqId}}, @sortedLocations;
-  }
-
-
-  return \%transcriptSummary, \%sortedExonLocs;
+  return \%transcriptSummary;
 }
 
 
-# TODO:  could cache na sequence's and pull out the codon and translate that
 sub getCodingSequence {
   my ($dbh, $sequenceId, $transcriptSummary, $transcriptId, $snpStart, $snpEnd, $seqExtDbRlsId) = @_;
 
@@ -1051,15 +1081,22 @@ sub calculateAminoAcidPosition {
   return($aaPos);
 }
 
+
+
 sub getAminoAcidSequenceOfSnp {
-  my ($cdsSequence, $positionInCds, $allele) = @_;
+  my ($cdsSequence, $positionInCds, $allele, $strand) = @_;
 
   my $codonLength = 3;
-  my $modCds = $positionInCds % $codonLength;
+  my $modCds = ($positionInCds - 1)  % $codonLength;
   my $offset = $positionInCds - $modCds;
 
-  my $codon = substr $cdsSequence, $offset, $codonLength;
-  my $subbedAllele = substr $codon, $modCds - 1, 1, $allele;
+  my $codon = substr $cdsSequence, $offset - 1, $codonLength;
+
+  if($strand == -1) {
+    $allele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+  }
+
+ my $subbedAllele = substr $codon, $modCds, 1, $allele;
 
   # Assuming this is a simple hash lookup which is quick; 
   return $CODON_TABLE->translate($codon);

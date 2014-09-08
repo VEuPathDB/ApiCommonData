@@ -5,29 +5,29 @@ package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
 use strict;
 use GUS::Community::Plugin::AddToStudy;
 
-# sub new {
-#   my ($class) = @_;
-#   my $self = {};
-#   bless($self,$class);
+ sub new {
+   my ($class) = @_;
+   my $self = {};
+   bless($self,$class);
 
-#   my $documentation = &getDocumentation();
-#   my $argumentDeclaration    = &getArgumentsDeclaration();
+   my $documentation = $self->SUPER::getDocumentation();
+   my $argumentDeclaration    = $self->SUPER::getArgumentsDeclaration();
 
-#   $self->initialize({requiredDbVersion => 4.0,
-# 		     cvsRevision => '$Revision$',
-# 		     name => ref($self),
-# 		     revisionNotes => '',
-# 		     argsDeclaration => $argumentDeclaration,
-# 		     documentation => $documentation
-# 		    });
-#   return $self;
-# }
+   $self->initialize({requiredDbVersion => 4.0,
+ 		     cvsRevision => '$Revision$',
+ 		     name => ref($self),
+ 		     revisionNotes => '',
+ 		     argsDeclaration => $argumentDeclaration,
+ 		     documentation => $documentation
+ 		    });
+   return $self;
+ }
 
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
-  my $name = $protocolAppNode->findvalue('./name');
-  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $name});
-   $self->userError("Input ProtocolAppNode $name is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
+  my $source_id = $protocolAppNode->findvalue('./source_id');
+  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({source_id => $source_id});
+   $self->userError("Input ProtocolAppNode $source_id is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
   my $id = $protocolAppNode->getId();
 
   return ($id);
