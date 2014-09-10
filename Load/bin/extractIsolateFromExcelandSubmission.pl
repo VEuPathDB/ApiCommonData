@@ -134,6 +134,7 @@ while(my ($k, $v) = each %hash) {
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
+  $isolate_id  =~ s/\s/_/g;
 
   # in case of duplicate isolate ids
   if(exists $idhash{$isolate_id}) {
@@ -361,11 +362,9 @@ while(my ($k, $v) = each %hash) {
   $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
 
-  $symptoms = chomp($symptoms);
-
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
-  $note .= "; habitat: $habitat" if $habitat;
+  $note .= "; non-human habitat: $habitat" if $habitat;
   $note .= "; purpose of sample collection: $purpose" if $purpose;
   $note .= "; altitude: $alt" if $alt;
   $note .= "; internal id: $isolate_id";
