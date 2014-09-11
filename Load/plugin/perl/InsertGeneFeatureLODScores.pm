@@ -14,11 +14,10 @@ package ApiCommonData::Load::Plugin::InsertGeneFeatureLODScores;
   # GUS4_STATUS | Pathway                        | auto   | absent
   # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
   # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | broken
+  # GUS4_STATUS | Simple Rename                  | auto   | fixed
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -30,7 +29,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::GeneFeature;
-use GUS::Model::ApiDB::GeneFeatureLodScore;
+use GUS::Model::ApiDB::NAFeatureHaploblock;
 use GUS::Supported::Util;
 
 # ----------------------------------------------------------
@@ -94,7 +93,7 @@ PURPOSEBRIEF
 NOTES
 
   my $tablesAffected = <<AFFECT;
-ApiDB.GeneFeatureLodScore
+ApiDB.NAFeatureHaploblock
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -129,7 +128,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
                         cvsRevision => '$Revision: 45343 $',
                         name => ref($self),
                         argsDeclaration => $args,
@@ -180,7 +179,7 @@ sub run {
     foreach my $gene (@genes) {
       if ($geneFeature{$gene}) {
         my @score = split(/E/i,$elements[$iter]);
-        my $geneFeatLodScore = GUS::Model::ApiDB::GeneFeatureLodScore->new({ 
+        my $geneFeatLodScore = GUS::Model::ApiDB::NAFeatureHaploblock->new({ 
                                 'NA_FEATURE_ID' => $geneFeature{$gene},
                                 'HAPLOTYPE_BLOCK_NAME' => $cMorgan,
                                 'LOD_SCORE_MANT' => $score[0],
@@ -200,6 +199,6 @@ sub run {
 
 
 sub undoTables {
-  return ('ApiDB.GeneFeatureLodScore');
+  return ('ApiDB.NAFeatureHaploblock');
 }
 

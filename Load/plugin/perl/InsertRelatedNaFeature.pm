@@ -7,7 +7,7 @@ package ApiCommonData::Load::Plugin::InsertRelatedNaFeature;
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | broken
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | fixed
   # GUS4_STATUS | Study.Study                    | auto   | absent
   # GUS4_STATUS | Dots.Isolate                   | auto   | absent
   # GUS4_STATUS | DeprecatedTables               | auto   | absent
@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::InsertRelatedNaFeature;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
@@ -31,7 +30,6 @@ use FileHandle;
 use GUS::Supported::Util;
 
 use GUS::Model::ApiDB::RelatedNaFeature;
-use GUS::Model::ApiDB::ProfileSet;
 
 my $argsDeclaration =
 [
@@ -108,7 +106,7 @@ sub new {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 3.6,
+  $self->initialize({ requiredDbVersion => 4.0,
 		      cvsRevision       => '$Revision$',
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
