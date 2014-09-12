@@ -202,11 +202,13 @@ sub run{
 	$$newPredAAFeat->submit();
 	$added++;
 
-      }else{
-	$skipped++;
-	$self->undefPointerCache();
-	next;
       }
+
+        unless($aaSeqIds) {
+          $skipped++;
+          $self->undefPointerCache();
+          next;
+        }
     }
     $self->undefPointerCache();
   }
