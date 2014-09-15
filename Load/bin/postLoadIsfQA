@@ -422,6 +422,16 @@ my ($repeatsCount) = $stmt->fetchrow_array();
 print STDERR "the number of repeats = $repeatsCount\n" if ($repeatsCount);
 $stmt->finish();
 
+## T. check the table dots.TransposableElement
+my $sql = <<SQL;
+  select count(*) from dots.transposableelement where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($transposableCount) = $stmt->fetchrow_array();
+print STDERR "the number of transposableElement = $transposableCount\n" if ($repeatsCount);
+$stmt->finish();
+
 
 sub usage {
   die
