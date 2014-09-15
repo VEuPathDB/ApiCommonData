@@ -1,0 +1,183 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use CBIL::Util::PropertySet;
+use ApiCommonData::Load::CalculationsForCNVs;
+
+our @ISA = qw(ApiCommonData::Load::CalculationsForCNVs);
+
+my ($gusConfigFile, $chrPloidyFile, $fpkmFile, $outputDir, $sampleName, $sql);
+my $ploidy = 2;
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+            "fpkmFile=s" => \$fpkmFile,
+            "ploidy=i" => \$ploidy,
+            "outputDir=s" => \$outputDir,
+            "sampleName=s" => \$sampleName,
+            "sql=s" => \$sql
+            );
+ 
+&usage() unless ($fpkmFile && $outputDir && $sampleName && $sql);
+
+#get hashrefs of chromosome data
+my $chrValues = getChrFPKMVals($fpkmFile);
+my $chrMedians = getChrMedians($chrValues);
+my $allChrMedian = getMedianAcrossChrs($chrValues);
+my $chrPloidies = getChrPloidies($chrMedians, $allChrMedian, $ploidy);
+
+# get OrthoMCL IDs from DB
+if (!$gusConfigFile) {
+    $gusConfigFile = $ENV{GUS_HOME}."/config/gus.config";
+}
+my @properties = ();
+die "Config file $gusConfigFile does not exist" unless -e $gusConfigFile;
+
+my $gusConfig = CBIL::Util::PropertySet -> new ($gusConfigFile, \@properties, 1);
+
+my $db = GUS::ObjRelP::DbiDatabase-> new($gusConfig->{props}->{dbiDsn},
+                                         $gusConfig->{props}->{databaseLogin},
+                                         $gusConfig->{props}->{databasePassword},
+                                         0,0,1, # verbose, no insert, default
+                                         $gusConfig->{props}->{coreSchemaName},
+                                         );
+my $dbh = $db->getQueryHandle();
+my $orthoMclStmt = $dbh->prepare($sql);
+$orthoMclStmt->execute();
+my $geneOrthoMclIds = {};
+while (my @row = $orthoMclStmt->fetchrow_array()){
+    $geneOrthoMclIds->{$row[0]} = $row[1];
+}           
+
+my $allGenesData = geneCopyNumberCalc($fpkmFile, $ploidy, $chrMedians, $geneOrthoMclIds);
+calcCnvForOrthologGroups($allGenesData, $chrPloidies, $outputDir, $sampleName);
+ 
+sub geneCopyNumberCalc {
+    my ($fpkmFile, $ploidy, $chrMedians, $geneOrthoMclIds) = @_;
+    my $allGenesData = [];
+    open (IN, $fpkmFile) or die "Cannot read FPKM file $fpkmFile\n$!\n";
+
+    while (<IN>) {
+        my $line = $_;
+        chomp ($line);
+
+        #ignore header in fpkm file 
+        if ($line=~/^tracking_id\t/){
+            next;
+        }
+        else{
+            my @data = split(/\t/, $line);
+            die "Error: Line $line from file $fpkmFile is incomplete\n" unless (scalar(@data)) > 11;
+            my ($transId, $junk1, $junk2, $geneId, $junk3, $junk4, $locus, $length, $coverage, $fpkm, $junk5, $junk6, $junk7) = @data;
+            my ($chr, $startEnd) = split(/\:/, $locus);
+            my ($start, $end) = split(/\-/, $startEnd);
+        
+            die "Error: Chromosome and FPKM values are missing in line $line\n" unless (defined($chr) && defined($fpkm));
+
+            if ($chrMedians->{$chr}==0){
+                print STDERR "Error: Bad median for chromosome $chr.  No copy number calculation for $transId\n";
+                next;
+            }
+            my $rawCN = $fpkm/($chrMedians->{$chr}/$ploidy);
+            my $orthoMclId;
+            if (exists $geneOrthoMclIds->{$geneId}) {
+                $orthoMclId = $geneOrthoMclIds->{$geneId};
+            }else{
+                $orthoMclId = "UNK_.$geneId";
+            }
+            my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage];
+            push (@{$allGenesData}, $geneData);
+        }
+    }
+    return $allGenesData;
+}
+
+sub calcCnvForOrthologGroups {
+    my ($allGenesData, $chrPloidies, $outputDir, $sampleName) = @_;
+    my %clusterData;
+    # cluster genes that are on the same chr and share orthoMclId
+    foreach my $geneData (@{$allGenesData}) {
+        my ($orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage) = @{$geneData};
+        my $id = $orthoMclId."___".$chr;
+        push @{$clusterData{$id}->{"genes"}}, $geneId;
+        push @{$clusterData{$id}->{"starts"}}, $start;
+        push @{$clusterData{$id}->{"ends"}}, $end;
+        push @{$clusterData{$id}->{"rawCNs"}}, $rawCN;
+        $clusterData{$id}->{"rawCNTotal"} += $rawCN;
+        push @{$clusterData{$id}->{"fpkms"}}, $fpkm;
+        push @{$clusterData{$id}->{"coverages"}}, $coverage;
+    }
+    #TSV will contain data as produced by Nick's original script.  TXT contains data in the correct format for loading
+    open (TSV, ">$outputDir/$sampleName\_CNVestimations.tsv") or die "Cannot open output file $outputDir/$sampleName\_CNVestimations.tsv for writing\n$!\n";
+    open (TXT, ">$outputDir/$sampleName\_geneCNVs.txt") or die "Cannot open outputfile $outputDir/$sampleName\_geneCNVs.txt for writing\n$!\n";
+
+    # Print header lines in both files
+    print TSV "OrthoMclId\tChromosome\tPloidy\tRegion Start\tRegion End\tGenes In Ref\tTotal CN\tHaploid Number\tGene Dose\tGene List\n";
+    print TXT "ID_ref\tfloat_value\tint_value\n";
+
+    # calculate values for clusters
+    foreach my $cluster (keys %clusterData) {
+        my ($orthoMclId, $chr) = split (/___/, $cluster);
+        my $chrPloidy = $chrPloidies->{$chr};
+        next if $chrPloidy == 0;
+        my $regionStart = min($clusterData{$cluster}->{"starts"});
+        my $regionEnd = max($clusterData{$cluster}->{"ends"});
+        my $haploidCN = $clusterData{$cluster}->{"rawCNTotal"}/$chrPloidy;
+        my $geneDose = $haploidCN * $chrPloidy;
+        my $genesInRef = scalar(@{$clusterData{$cluster}->{"genes"}});
+        my $geneList = join(", ", @{$clusterData{$cluster}->{"genes"}});
+
+        print TSV "$orthoMclId\t$chr\t$chrPloidy\t$regionStart\t$regionEnd\t$genesInRef\t".sprintf("%4.3f", $clusterData{$cluster}->{"rawCNTotal"})."\t".sprintf("%4.2f", $haploidCN)."\t".sprintf("3.1f", $geneDose)."\t$geneList\n";
+
+        foreach my $gene (@{$clusterData{$cluster}->{"genes"}}) {
+            print TXT "$gene\t$haploidCN\t$genesInRef\n";
+        }
+    }
+    close (TSV);
+    close (TXT);
+}
+ 
+sub min {
+    my ($arrayRef) = @_;
+    my $min;
+    foreach my $value (@{$arrayRef}) {
+        if (defined($min) && $value < $min) {
+            $min = $value;
+        }
+        elsif (!defined($min)) {
+            $min = $value;
+        }
+        else {
+            next;
+        }
+    }
+    return $min;
+}
+
+sub max {
+    my ($arrayRef) = @_;
+    my $max;
+    foreach my $value (@{$arrayRef}) {
+        if (defined($max) && $value>$max) {
+            $max = $value;
+        }
+        elsif (!defined($max)) {
+            $max = $value;
+        }
+        else {
+            next;
+        }
+    }
+    return $max;
+}
+            
+       
+sub usage {
+    print STDERR "calculateGeneCNVs --fpkmFile <path to genes.fpkm_tracking file generated by Cufflinks> --outputDir <Dir to write output files> --sampleName <sample name> --sql <sql statement to return a list of genes and their OrthoMCL_Ids> [--gusConfigFile <supply if not using default>] --ploidy <Base ploidy for this organism (i.e., what you expect the majority of chromosomes to be) - default is 2>";
+    exit;
+}
+
+exit;
+
