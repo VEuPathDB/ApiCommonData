@@ -188,25 +188,22 @@ sub  insertAnticodon {
 
   foreach my $geneSourceId (keys %{$tRNAs}) {
 
-  my $transcriptIds = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
+    my $transcriptIds = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
 
-  next if (scalar @$transcriptIds == 0);
+    next if (scalar @$transcriptIds == 0);
 
-  my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
+    my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
 
-  foreach my $transcriptId (@$transcriptIds) {
-    my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
-    my $exist = $transcript->retrieveFromDB() || $self->error("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
+    foreach my $transcriptId (@$transcriptIds) {
+      my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
+      my $exist = $transcript->retrieveFromDB() || $self->error("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
 
-    $transcript->addChild($rnaType);
-
-    $transcript->submit();
-
-    $self->undefPointerCache();
-
-    $processed++;
+      $transcript->addChild($rnaType);
+      $transcript->submit();
+      $self->undefPointerCache();
+      $processed++;
+    }
   }
-
   return $processed;
 }
 
