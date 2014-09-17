@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::InsertAntiCodon;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | broken
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -27,6 +26,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
+use GUS::Supported::Util;
 
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::RNAType;
@@ -127,7 +127,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
 			cvsRevision => '$Revision$',
 			name => ref($self),
 			argsDeclaration => $args,
@@ -141,6 +141,8 @@ sub new {
 
 sub run {
   my $self = shift;
+
+  die;
 
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),$self->getArg('genomeDbVer')) || $self->error("Can't find db_rel_id for genome");
 
@@ -171,13 +173,11 @@ sub parseFile {
 
     my @line = split(/\t/,$_);
 
-    my $transcriptSourceId = $line[0] || $self->error("File is missing a source_id or is not formatted properly");
+    my $geneSourceId = $line[0] || $self->error("File is missing a source_id or is not formatted properly");
 
-    my $anticodon = $line[1] || $self->error("File is missing an anticodon for $transcriptSourceId or is not formatted properly");
+    my $anticodon = $line[1] || $self->error("File is missing an anticodon for $geneSourceId or is not formatted properly");
 
-    $transcriptSourceId .= "-1";
-
-    $tRNAs{$transcriptSourceId} = $anticodon;
+    $tRNAs{$geneSourceId} = $anticodon;
   }
 
   return \%tRNAs;
@@ -188,12 +188,12 @@ sub  insertAnticodon {
 
   my $processed;
 
-  foreach my $transcriptSourceId (keys %{$tRNAs}) {
-    my $transcript = $self->getTranscript($genomeReleaseId,$transcriptSourceId);
+  foreach my $geneSourceId (keys %{$tRNAs}) {
+    my $transcript = $self->getTranscript($genomeReleaseId,$geneSourceId);
 
     next if (!$transcript);
 
-    my $rnaType = $self->getRNAType($tRNAs->{$transcriptSourceId});
+    my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
 
     $transcript->addChild($rnaType);
 
@@ -208,11 +208,13 @@ sub  insertAnticodon {
 }
 
 sub getTranscript {
-  my ($self,$genomeReleaseId,$transcriptSourceId) = @_;
+  my ($self,$genomeReleaseId,$geneSourceId) = @_;
 
-  my $transcript =  GUS::Model::DoTS::Transcript->new({'external_database_release_id' => $genomeReleaseId,
-					     'source_id' => $transcriptSourceId });
-  my $exist = $transcript->retrieveFromDB() || $self->log("No transcript row exists for $transcriptSourceId and db_rel_id = $genomeReleaseId");
+
+  my $transcriptId = GUS::Supported::Util::getTranscriptIdsFromGeneId($geneSourceId, $genomeReleaseId);
+
+  my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
+  my $exist = $transcript->retrieveFromDB() || $self->log("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
 
   return $transcript if ($exist);
 }
