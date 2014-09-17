@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 #TODO: Test restart method
 package ApiCommonData::Load::Plugin::InsertSingleMotifMultMappings;
@@ -30,7 +29,6 @@ use FileHandle;
 use GUS::Model::DoTS::PredictedAAFeature;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::MotifAASequence;
-use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 
@@ -144,7 +142,7 @@ sub new {
     my $self = {};
     bless($self, $class);
 
-    $self->initialize({requiredDbVersion => 3.6,
+    $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision =>  '$Revision$',
 		       name => ref($self),
 		       argsDeclaration   => $argsDeclaration,
@@ -192,15 +190,16 @@ sub run{
 
     unless(%done->{$sourceId}){
 
-	my $aaSeqId;
+	my $aaSeqIds;
 
 	if ($self->getArg('organismAbbrev')){
-	      $aaSeqId = &GUS::Supported::Util::getAASeqIdFromGeneId($self,$sourceId,$seqExtDbRls,$self->getArg('organismAbbrev'));
+
+	      $aaSeqIds = &GUS::Supported::Util::getAASeqIdsFromGeneId($self,$sourceId,$seqExtDbRls,$self->getArg('organismAbbrev'));
 	}else{
-	      $aaSeqId = &GUS::Supported::Util::getAASeqIdFromGeneId($self,$sourceId,$seqExtDbRls);
+	      $aaSeqIds = &GUS::Supported::Util::getAASeqIdsFromGeneId($self,$sourceId,$seqExtDbRls);
         }
 
-      if($aaSeqId){
+      foreach my $aaSeqId(@$aaSeqIds){
 
 	my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId, $motifId);
 
@@ -210,11 +209,13 @@ sub run{
 	$$newPredAAFeat->submit();
 	$added++;
 
-      }else{
-	$skipped++;
-	$self->undefPointerCache();
-	next;
       }
+
+       if(scalar @$aaSeqIds ==0) {
+         $skipped++;
+         $self->undefPointerCache();
+         next;
+       }
     }
     $self->undefPointerCache();
   }
@@ -253,24 +254,6 @@ sub createAALocation{
 
   return \$aaLocation;
 
-}
-
-sub getAaSeqId{
-  my($self, $sourceId) = @_;
-  my $aaSeqId;
-  my $extDbRls = $self->getExtDbRlsId($self->getArg('seqExtDbRelSpec'));
-
-  my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({source_id => $sourceId,
-							   external_database_release_id => $extDbRls,
-							  });
-
-  if($aaSeq->retrieveFromDB()){
-    $aaSeqId = $aaSeq->getId();
-  }else{
-    $self->log("Translated AA Sequence $sourceId not found");
-  }
-
-  return $aaSeqId;
 }
 
 
