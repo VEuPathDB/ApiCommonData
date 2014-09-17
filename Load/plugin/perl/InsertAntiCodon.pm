@@ -209,7 +209,7 @@ sub getTranscript {
   my ($self,$genomeReleaseId,$geneSourceId) = @_;
 
 
-  my $transcriptId = GUS::Supported::Util::getTranscriptIdsFromGeneId($geneSourceId, $genomeReleaseId);
+  my $transcriptId = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
 
   my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
   my $exist = $transcript->retrieveFromDB() || $self->log("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
