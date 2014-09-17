@@ -187,11 +187,16 @@ sub  insertAnticodon {
   my $processed;
 
   foreach my $geneSourceId (keys %{$tRNAs}) {
-    my $transcript = $self->getTranscript($genomeReleaseId,$geneSourceId);
 
-    next if (!$transcript);
+  my $transcriptIds = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
 
-    my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
+  next if (scalar @$transcriptIds == 0);
+
+  my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
+
+  foreach my $transcriptId (@$transcriptIds) {
+    my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
+    my $exist = $transcript->retrieveFromDB() || $self->error("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
 
     $transcript->addChild($rnaType);
 
@@ -205,17 +210,6 @@ sub  insertAnticodon {
   return $processed;
 }
 
-sub getTranscript {
-  my ($self,$genomeReleaseId,$geneSourceId) = @_;
-
-
-  my $transcriptId = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
-
-  my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
-  my $exist = $transcript->retrieveFromDB() || $self->log("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
-
-  return $transcript if ($exist);
-}
 
 sub getRNAType {
   my ($self,$anticodon) = @_;
