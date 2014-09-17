@@ -142,8 +142,6 @@ sub new {
 sub run {
   my $self = shift;
 
-  die;
-
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),$self->getArg('genomeDbVer')) || $self->error("Can't find db_rel_id for genome");
 
   my $tRNAs = $self->parseFile();
