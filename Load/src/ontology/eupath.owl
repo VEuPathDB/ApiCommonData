@@ -114,6 +114,22 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_00003064 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ENVO_00003064">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:EUPATH_0000052>drinking water source</obo:EUPATH_0000052>
+        <obo:IAO_0000115>Water that is safe enough to be consumed by humans or used with low risk of immediate or long term harm.</obo:IAO_0000115>
+        <obo:IAO_0000119>http://en.wikipedia.org/wiki/Drinking_water</obo:IAO_0000119>
+    </rdf:Description>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000001">
@@ -123,18 +139,8 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                        <owl:someValuesFrom>
-                            <owl:Class>
-                                <owl:unionOf rdf:parseType="Collection">
-                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
-                                    <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
-                                    </owl:Restriction>
-                                </owl:unionOf>
-                            </owl:Class>
-                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000105"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -166,8 +172,8 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000106"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -202,44 +208,14 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000007"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000108"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity of floor.</obo:IAO_0000115>
         <obo:EUPATH_0000052>floor material</obo:EUPATH_0000052>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000007 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000007">
-        <rdfs:label xml:lang="en">floor</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000008 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000008">
-        <rdfs:label xml:lang="en">wall</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -253,8 +229,8 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000008"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000107"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -268,28 +244,16 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000010 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000010">
-        <rdfs:label xml:lang="en">brick</rdfs:label>
+        <rdfs:label xml:lang="en">wall brick</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000007"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000107"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000005"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000008"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment>brick 
-has_role wall_material_role
-has_role floor_material_role
-
-
-wall_material_role is realized only in
-&apos;process and has_participant (begining_to exist) and has_specified_out some &apos;wall and has_part some 
-(material_entity and bearer_of wall_material_role&apos;)</rdfs:comment>
+        <obo:IAO_0000119>http://www.thefreedictionary.com/brick</obo:IAO_0000119>
+        <obo:IAO_0000115>A processed material shaped a small rectangular block typically made of clay mixed with sand and fired in a kiln or baked by the sun, used in building wall construction.</obo:IAO_0000115>
     </owl:Class>
     
 
@@ -337,14 +301,14 @@ wall_material_role is realized only in
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000098"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A processed material that is the bottom edge of a roof.  The primary function of the eaves is to keep rain water off the walls and to prevent the ingress of water at the junction where the roof meets the wall.  The secondary function is to control solar penetration; the eaves overhang can be designed to adjust the building&apos;s solar heat gain to suit the local climate, the latitude and orientation of the building, refer to passive solar building design. The eaves overhang may also shelter openings to ventilate the roof space.</obo:IAO_0000115>
@@ -380,7 +344,7 @@ wall_material_role is realized only in
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000098"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A brick with holes which is embedded in a wall to allow ventilation through it.</obo:IAO_0000115>
@@ -412,6 +376,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000021">
         <rdfs:label xml:lang="en">toilet</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000968"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A device that is a sanitation fixture used primarily for the disposal of human urine and feces.</obo:IAO_0000115>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Toilet</obo:IAO_0000119>
         <obo:EUPATH_0000052>toilet type</obo:EUPATH_0000052>
@@ -441,6 +411,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000023">
         <rdfs:label xml:lang="en">cooking fuel material</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of fuel mainly used for cooking.</obo:IAO_0000115>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:EUPATH_0000052>cooking fuel type</obo:EUPATH_0000052>
@@ -453,6 +429,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000024">
         <rdfs:label xml:lang="en">lighting material</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of an energy source for lighting.</obo:IAO_0000115>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:EUPATH_0000052>lighting type</obo:EUPATH_0000052>
@@ -715,6 +697,12 @@ wall_material_role is realized only in
             </owl:Restriction>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization criteria.</obo:IAO_0000115>
         <obo:EUPATH_0000052>severe malaria symptom</obo:EUPATH_0000052>
     </owl:Class>
@@ -726,6 +714,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000047">
         <rdfs:label xml:lang="en">hemoglobin level in gm/dL</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum about the level of hemoglobin in the blood with a value in units of g/dl.</obo:IAO_0000115>
         <obo:EUPATH_0000052>Hb (g/dl)</obo:EUPATH_0000052>
     </owl:Class>
@@ -737,6 +731,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000048">
         <rdfs:label xml:lang="en">blood smear reading as positive or negative</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of blood cells with abnormal shapes using a value of positive or negative.</obo:IAO_0000115>
         <obo:EUPATH_0000052>blood smear reading (+/-)</obo:EUPATH_0000052>
     </owl:Class>
@@ -788,13 +788,17 @@ wall_material_role is realized only in
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000053">
         <rdfs:label xml:lang="en">dwelling ventilation</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000098"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity which is part of a dwelling for providing fresh air to the dwelling.</obo:IAO_0000115>
         <obo:EUPATH_0000052>dwelling ventilation</obo:EUPATH_0000052>
     </owl:Class>
@@ -897,6 +901,12 @@ wall_material_role is realized only in
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000092">
         <rdfs:label xml:lang="en">parasite density in count/ul</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is about parasite density in count per ul.</obo:IAO_0000115>
         <obo:EUPATH_0000052>parasite density</obo:EUPATH_0000052>
     </owl:Class>
@@ -961,27 +971,33 @@ wall_material_role is realized only in
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
-        <rdfs:label xml:lang="en">human participant characteristics</rdfs:label>
+        <rdfs:label xml:lang="en">participant characteristics</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000005"/>
+                <owl:unionOf rdf:parseType="Collection">
                     <owl:Class>
-                        <owl:unionOf rdf:parseType="Collection">
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000020"/>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
-                                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+                                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
                             </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000031"/>
                             <owl:Restriction>
                                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
-                                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+                                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
                             </owl:Restriction>
-                        </owl:unionOf>
+                        </owl:intersectionOf>
                     </owl:Class>
-                </owl:intersectionOf>
+                </owl:unionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A dependent continuant which is a feature of a human participant under investigation.</obo:IAO_0000115>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A dependent continuant which is a feature of a participant under investigation.</obo:IAO_0000115>
         <obo:EUPATH_0000052>participant characteristics</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -1000,6 +1016,12 @@ wall_material_role is realized only in
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">elevated temperature or subjective fever</obo:IAO_0000115>
         <obo:EUPATH_0000052>febrile</obo:EUPATH_0000052>
     </owl:Class>
@@ -1020,6 +1042,12 @@ wall_material_role is realized only in
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000099">
         <rdfs:label xml:lang="en">dwelling facility</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity in a dwelling that is designed, built, installed, selected, etc., to serve a specific function affording a convenience or service to people who are living in the dwelling.</obo:IAO_0000115>
         <obo:EUPATH_0000052>dwelling facility</obo:EUPATH_0000052>
@@ -1053,7 +1081,119 @@ wall_material_role is realized only in
         <rdfs:label xml:lang="en">temperature measurement datum</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is about temperature.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000103 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000103">
+        <rdfs:label xml:lang="en">dwelling ventilation function</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000098"/>
+        <rdfs:comment>A ventilation function to provide fresh air to a dwelling.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000104 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000104">
+        <rdfs:label xml:lang="en">participant under investigation</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0100026"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OBI_0000097"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000105 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000105">
+        <rdfs:label xml:lang="en">building material role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <obo:IAO_0000115>A role that inheres in a material entity that is realized in a building process in which the material entity will become part of a structure with a roof and walls standing more or less permanently in one place.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000106 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000106">
+        <rdfs:label xml:lang="en">roof material role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000105"/>
+        <obo:IAO_0000115>A building material role that inheres in a material entity that is realized in a building process in which the material entity will become part of a roof.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000107 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000107">
+        <rdfs:label xml:lang="en">wall material role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000105"/>
+        <obo:IAO_0000115>A building material role that inheres in a material entity that is realized in a building process in which the material entity will become part of a wall.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000108 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000108">
+        <rdfs:label xml:lang="en">floor material role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000105"/>
+        <obo:IAO_0000115>A building material role that inheres in a material entity that is realized in a building process in which the material entity will become part of a floor.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000109 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000109">
+        <rdfs:label xml:lang="en">dwelling facility role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <obo:IAO_0000115>A role that inheres in a material entity that is realized in a process that provides a convenience or service to people who are living in a dwelling.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000110 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000110">
+        <rdfs:label xml:lang="en">organismal body temperature measurement datum</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000102"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>A temperature measurement datum that is about an organism.</obo:IAO_0000115>
         <obo:EUPATH_0000052>temperature</obo:EUPATH_0000052>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000111 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000111">
+        <rdfs:label xml:lang="en">floor brick</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000108"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000119>http://www.thefreedictionary.com/brick</obo:IAO_0000119>
+        <obo:IAO_0000115>A processed material shaped a small rectangular block typically made of clay mixed with sand and fired in a kiln or baked by the sun, used in building floor construction.</obo:IAO_0000115>
     </owl:Class>
     
 
@@ -1071,10 +1211,38 @@ wall_material_role is realized only in
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:EUPATH_0000052>age</obo:EUPATH_0000052>
+    </rdf:Description>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0001305 -->
 
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0001305">
         <obo:EUPATH_0000052>genotype</obo:EUPATH_0000052>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000018 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OGMS_0000018">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <obo:EUPATH_0000052>laboratory finding</obo:EUPATH_0000052>
     </rdf:Description>
     
 
@@ -1087,29 +1255,20 @@ wall_material_role is realized only in
     
 
 
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotations
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
+    <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OGMS_0000018">
-        <obo:EUPATH_0000052>laboratory finding</obo:EUPATH_0000052>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:EUPATH_0000052>sex</obo:EUPATH_0000052>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
-        <obo:EUPATH_0000052>age</obo:EUPATH_0000052>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ENVO_00003064">
-        <obo:EUPATH_0000052>drinking water source</obo:EUPATH_0000052>
     </rdf:Description>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 1.3.8.1099) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
 
