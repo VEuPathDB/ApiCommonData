@@ -153,7 +153,12 @@ stringArg({ name            => 'checkSQL',
 	     constraintFunc  => undef,
 	     isList          => 0 }),
 
-
+     stringArg({name => 'SOTermName',
+		descr => 'The extDbRlsName of the Sequence Ontology to use',
+		reqd => 1,
+		constraintFunc => undef,
+		isList => 0
+	       }),
 
      stringArg({name => 'SOExtDbRlsSpec',
 		descr => 'The extDbRlsName of the Sequence Ontology to use',
@@ -684,6 +689,8 @@ sub getMonomerCount{
 sub fetchSequenceOntologyId {
   my ($self) = @_;
 
+
+  my $name = $self->getArg('SOTermName');
   my $extDbRlsSpec = $self->getArg('SOExtDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
