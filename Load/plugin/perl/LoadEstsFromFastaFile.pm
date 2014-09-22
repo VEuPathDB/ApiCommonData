@@ -684,7 +684,7 @@ sub getMonomerCount{
 sub fetchSequenceOntologyId {
   my ($self) = @_;
 
-  my $name = $self->getArg('SOExtDbRlsSpec');
+  my $extDbRlsSpec = $self->getArg('SOExtDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name ,
