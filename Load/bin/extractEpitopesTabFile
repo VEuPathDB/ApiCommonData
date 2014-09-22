@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
@@ -18,7 +18,6 @@
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -28,7 +27,7 @@ use CBIL::Util::PropertySet;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($outputFile, $taxonIdList) = @ARGV;
+my ($outputFile, $taxonIdList, $soExtDbName) = @ARGV;
 
 usage() unless $outputFile && $taxonIdList;
 
@@ -51,9 +50,13 @@ $dbh->{LongTruncOk} = 1;
 
 my $sql = "
 select s.sequence, s.description
-from dots.aasequence s, sres.sequenceontology o
-where o.term_name = 'epitope'
-and s.sequence_ontology_id = o.sequence_ontology_id
+from dots.aasequence s, sres.ontologyterm o,
+  sres.externaldatabase d, sres.externaldatabaserelease r
+where o.name = 'epitope'
+and s.sequence_ontology_id = o.ontology_term_id
+and o.external_database_release_id = r.external_database_release_id  
+and r.external_database_id = d.external_database_id
+and d.name = '$soExtDbName'
 and s.taxon_id in ($taxonIdList)
 ";
 
