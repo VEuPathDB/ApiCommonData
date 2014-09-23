@@ -27,6 +27,8 @@ use DBD::Oracle;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 use ApiCommonData::Load::FileReader;
 
+use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
+
 my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
 
 
