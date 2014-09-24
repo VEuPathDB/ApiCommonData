@@ -227,7 +227,7 @@ sub processFeature {
 							    }
 							  }
 							}
-						} elsif ($outputHash{$qualifier} =~ /aliases/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
+						} elsif ($outputHash{$qualifier} =~ /alias/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
 							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
 																	## and synonyms by "," in Tbrucei927
 							foreach my $alias (@aliases) {
