@@ -18,7 +18,6 @@
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## script for running blast over a batch of sequences against a database and outputting the top match that matches in length and with at least 98% identity
@@ -192,7 +191,8 @@ sub runBlast{
 sub validateHit{
   my ($queryLength, $subject, $seqId) = @_;
   my $subId = $subject->getID();
-  $subId .= "-1" unless ($subId =~/\-/);
+
+#  $subId .= "-1" unless ($subId =~/\-/);
   my $subjSeq;
 
   my $msg = "Query ID: $seqId Query Length: $queryLength\tBLAST Result: $subId Subject Length: ".$subject->getLength().".";
@@ -223,6 +223,8 @@ EOSQL
 
   my $sth = $dbh->prepareAndExecute($sql);
   my ($sequence) = $sth->fetchrow_array();
+
+  die "No TranslatedAASequence w/ source_id:  $subId" unless($sequence);
 
   return $sequence;
 }
