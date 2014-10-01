@@ -144,7 +144,7 @@ GRANT SELECT ON ApiDB.Pathway TO gus_r;
 GRANT SELECT ON ApiDB.PathwayNode TO gus_r;
 GRANT SELECT ON ApiDB.PathwayRelationship TO gus_r;
 GRANT SELECT ON ApiDB.Reaction TO gus_r;
-GRANT SELECT ON ApiDB.Relationship TO gus_r;
+GRANT SELECT ON ApiDB.ReactionRelationship TO gus_r;
 GRANT SELECT ON ApiDB.ReactionXRefs TO gus_r;
 
 
@@ -152,7 +152,7 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Pathway TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayNode TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayRelationship TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Reaction TO gus_w;
-GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Relationship TO gus_w;
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.ReactionRelationship TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.ReactionXRefs TO gus_w;
 
 
@@ -160,7 +160,7 @@ GRANT SELECT ON ApiDB.Pathway_SQ TO gus_w;
 GRANT SELECT ON ApiDB.PathwayNode_SQ TO gus_w;
 GRANT SELECT ON ApiDB.PathwayRelationship_SQ TO gus_w;
 GRANT SELECT ON ApiDB.Reaction_SQ TO gus_w;
-GRANT SELECT ON ApiDB.Relationship_SQ TO gus_w;
+GRANT SELECT ON ApiDB.ReactionRelationship_SQ TO gus_w;
 GRANT SELECT ON ApiDB.ReactionXRefs_SQ TO gus_w;
 
 
