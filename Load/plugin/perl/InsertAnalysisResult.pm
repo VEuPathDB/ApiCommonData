@@ -557,7 +557,7 @@ close CONFIG;
 sub undoTables {
   my ($self) = @_;
 
-  return ('RAD.AnalysisInput','RAD.AnalysisResultImp', 'RAD.AnalysisParam', 'RAD.Analysis', 'RAD.LogicalGroupLink','RAD.LogicalGroup');
+  return ('RAD.AnalysisInput','RAD.AnalysisResultImp', 'RAD.AnalysisParam', 'RAD.Analysis', 'RAD.LogicalGroupLink','RAD.LogicalGroup', 'RAD.Protocol', 'RAD.ProtocolParam');
 }
 
 1;
