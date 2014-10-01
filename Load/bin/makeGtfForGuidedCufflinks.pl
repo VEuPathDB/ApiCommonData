@@ -70,8 +70,8 @@ while(my (@row) = $gtfStmt->fetchrow_array()){
 
 sub writeGtfEntry{
     my @gtfRow = @_;
-    die "Row returned from SQL is not the correct length\n" unless (scalar(@gtfRow) == 9);
-    my ($chr, $geneId, $exonId, $transcriptId, $exonStart, $exonEnd, $strand, $codingStart, $codingEnd) = @gtfRow;
+    die "Row returned from SQL is not the correct length\n" unless (scalar(@gtfRow) == 10);
+    my ($chr, $geneId, $exonId, $transcriptId, $exonStart, $exonEnd, $strand, $codingStart, $codingEnd, $phase) = @gtfRow;
     my ($cdsStart,$cdsEnd);
     if ($strand eq '+'){
         $cdsStart = $codingStart;
@@ -81,6 +81,14 @@ sub writeGtfEntry{
         $cdsStart = $codingEnd;
         $cdsEnd = $codingStart;
     }
-    printf OUT ("%s\t%s\texon\t%d\t%d\t.\t%s\t.\ttranscript_id qq[rna_%s]; gene_id qq[%s]; gene_name qq[%s];\n%s\t%s\tCDS\t%d\t%d\t.\t%s\t0\ttranscript_id qq[rna_%s]; gene_id qq[%s]; gene_name qq[%s];\n", $chr,$project,$exonStart,$exonEnd,$strand,$transcriptId,$geneId,$geneId,$chr,$project,$cdsStart,$cdsEnd,$strand,$transcriptId,$geneId,$geneId);
+
+    if ($cdsStart == 0 || $cdsEnd == 0 ) {
+        printf OUT ("%s\t%s\texon\t%d\t%d\t.\t%s\t.\ttranscript_id \"rna_%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $chr,$project,$exonStart,$exonEnd,$strand,$transcriptId,$geneId,$geneId);
+    }
+    
+    else { 
+        printf OUT ("%s\t%s\texon\t%d\t%d\t.\t%s\t.\ttranscript_id \"rna_%s\"; gene_id \"%s\"; gene_name \"%s\";\n%s\t%s\tCDS\t%d\t%d\t.\t%s\t%d\ttranscript_id \"rna_%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $chr,$project,$exonStart,$exonEnd,$strand,$transcriptId,$geneId,$geneId,$chr,$project,$cdsStart,$cdsEnd,$strand,$phase,$transcriptId,$geneId,$geneId);
+    }
 }
+close (OUT);
 exit;

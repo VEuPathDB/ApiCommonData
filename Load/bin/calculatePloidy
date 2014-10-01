@@ -1,5 +1,6 @@
-#!/usr/lib/perl
+#!/usr/bin/perl
 
+use lib "$ENV{GUS_HOME}/lib/perl";
 use ApiCommonData::Load::CalculationsForCNVs;
 use strict;
 use warnings;
@@ -9,10 +10,10 @@ our @ISA = qw(ApiCommonData::Load::CalculationsForCNVs);
 
 sub calculateChrPloidies {
     my ($fpkmFile, $ploidy) = @_;
-    my $chrValues = getChrFPKMVals($fpkmFile);
-    my $chrMedians = getChrMedians($chrValues);
-    my $allChrMedian = getMedianAcrossChrs($chrValues);
-    my $chrPloidies = getChrPloidies($chrMedians, $allChrMedian, $ploidy);
+    my $chrValues = ApiCommonData::Load::CalculationsForCNVs::getChrFPKMVals($fpkmFile);
+    my $chrMedians = ApiCommonData::Load::CalculationsForCNVs::getChrMedians($chrValues);
+    my $allChrMedian = ApiCommonData::Load::CalculationsForCNVs::getMedianAcrossChrs($chrValues);
+    my $chrPloidies = ApiCommonData::Load::CalculationsForCNVs::getChrPloidies($chrMedians, $allChrMedian, $ploidy);
     return $chrPloidies;
 }
 
@@ -37,7 +38,7 @@ my $chrPloidies = calculateChrPloidies ($fpkm, $ploidy);
 open (OUT, ">$outputDir/$sampleName\_Ploidy.txt") or die "Cannot open $outputDir/$sampleName\_Ploidy.tsv for writing\n$!\n";
 printf OUT "Id_ref\tint_value\n";
 foreach my $chr (keys %{$chrPloidies}) {
-    printf OUT "%s\t%S\n", $chr, $chrPloidies->{$chr};
+    printf OUT "%s\t%d\n", $chr, $chrPloidies->{$chr};
 }
 close OUT;
 

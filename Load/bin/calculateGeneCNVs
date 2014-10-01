@@ -23,10 +23,10 @@ my $ploidy = 2;
 &usage() unless ($fpkmFile && $outputDir && $sampleName && $sql);
 
 #get hashrefs of chromosome data
-my $chrValues = getChrFPKMVals($fpkmFile);
-my $chrMedians = getChrMedians($chrValues);
-my $allChrMedian = getMedianAcrossChrs($chrValues);
-my $chrPloidies = getChrPloidies($chrMedians, $allChrMedian, $ploidy);
+my $chrValues = ApiCommonData::Load::CalculationsForCNVs::getChrFPKMVals($fpkmFile);
+my $chrMedians = ApiCommonData::Load::CalculationsForCNVs::getChrMedians($chrValues);
+my $allChrMedian = ApiCommonData::Load::CalculationsForCNVs::getMedianAcrossChrs($chrValues);
+my $chrPloidies = ApiCommonData::Load::CalculationsForCNVs::getChrPloidies($chrMedians, $allChrMedian, $ploidy);
 
 # get OrthoMCL IDs from DB
 if (!$gusConfigFile) {
@@ -129,7 +129,7 @@ sub calcCnvForOrthologGroups {
         my $genesInRef = scalar(@{$clusterData{$cluster}->{"genes"}});
         my $geneList = join(", ", @{$clusterData{$cluster}->{"genes"}});
 
-        print TSV "$orthoMclId\t$chr\t$chrPloidy\t$regionStart\t$regionEnd\t$genesInRef\t".sprintf("%4.3f", $clusterData{$cluster}->{"rawCNTotal"})."\t".sprintf("%4.2f", $haploidCN)."\t".sprintf("3.1f", $geneDose)."\t$geneList\n";
+        print TSV "$orthoMclId\t$chr\t$chrPloidy\t$regionStart\t$regionEnd\t$genesInRef\t".sprintf("%4.3f", $clusterData{$cluster}->{"rawCNTotal"})."\t".sprintf("%4.2f", $haploidCN)."\t".sprintf("%3.1f", $geneDose)."\t$geneList\n";
 
         foreach my $gene (@{$clusterData{$cluster}->{"genes"}}) {
             print TXT "$gene\t$haploidCN\t$genesInRef\n";
