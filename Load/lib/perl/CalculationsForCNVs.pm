@@ -7,9 +7,9 @@ use Statistics::Descriptive;
 # Common subroutines used by CNV scripts
 
 sub getChrFPKMVals {
-    my $fpkmFile = $_;
+    my $fpkmFile = shift;
     my $chrValues = {};
-    open (FPKM, $fpkmFile) or die "Cannot read fileof FPKM values $fpkmFile\n$!\n";
+    open (FPKM, $fpkmFile) or die "Cannot read file of FPKM values $fpkmFile\n$!\n";
     while (<FPKM>) {
         my $line = $_;
         chomp($line);
@@ -27,19 +27,19 @@ sub getChrFPKMVals {
 }
 
 sub getChrMedians {
-    my $chrValues = $_;
+    my $chrValues = shift;
     my $chrMedians = {};
     my $stat = Statistics::Descriptive::Full->new();
     foreach my $chr (keys %{$chrValues}){
         $stat->clear;
         $stat->add_data(@{$chrValues->{$chr}});
-        $chrMedians->{$chr} = $stat->medians();
+        $chrMedians->{$chr} = $stat->median();
     }
     return $chrMedians;
 }
 
 sub getMedianAcrossChrs {
-    my $chrValues = $_;
+    my $chrValues = shift;
     my @medians;
     my $stat = Statistics::Descriptive::Full->new();
     foreach my $chr (keys %{$chrValues}){
