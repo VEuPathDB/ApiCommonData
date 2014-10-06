@@ -53,7 +53,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="gO"          ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
-    <!-- from mRNA records -->
     <qualifier name="gene" ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="standard_name" ignore="true"/>
@@ -67,7 +66,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range"    ignore="true"/>
     <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
-    <!-- from gene records -->
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="blast_file"             ignore="true"/>
     <qualifier name="blastp+go_file"         ignore="true"/>
@@ -89,6 +87,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isFminPartial" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="tritryp_uc"     ignore="true"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -105,15 +104,17 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_except"    handler="api"     method="transcriptTranslExcept"/>
     <qualifier name="translation"     handler="api"      method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
-   <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
-    <!-- from mRNA records -->
     <qualifier name="gene" ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="history"    ignore="true"/>
-    <!-- from gene records -->
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
@@ -149,6 +150,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
 
@@ -164,6 +171,12 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -237,6 +250,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
    <qualifier name="Name"         column="standard_name"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="deletion" table="DoTS::Miscellaneous" so="direct_repeat">
@@ -321,6 +338,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
 
@@ -346,6 +369,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
@@ -370,6 +399,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="ncRNA_gene" so="non_protein_coding">
@@ -399,6 +434,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastx_file" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -450,6 +491,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="private" ignore="true"/>
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -538,6 +585,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="curation" ignore="true"/>
    <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="history" ignore="true"/> 
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
   </feature>
 
   <feature name="splice_acceptor_site" table="DoTS::UTRFeature" so="three_prime_UTR">
@@ -567,6 +616,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="literature" ignore="true"/>
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
 
   </feature>
 

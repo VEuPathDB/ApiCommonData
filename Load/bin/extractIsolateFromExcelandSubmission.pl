@@ -76,10 +76,30 @@ for(my $i=1; $i<=$count; $i++) {
 
   my @names = split /\s/, $name;
 
-  my $f = shift(@names);
-  my $l = pop(@names);
+  my $size = @names;
+  my $f = "";
+  my $l = "";
+  my $m = "";
+  my $s = "";
 
-  $author_form .= " -F 'author_first_$i=$f' -F 'author_mi_$i=' -F 'author_last_$i=$l' -F 'author_suffix_$i='";
+  if($size == 2) {
+    $f = $names[0];
+    $l = $names[1];
+  } elsif($size == 3) {
+    $f = $names[0];
+    $m = $names[1];
+    $l = $names[2];
+  } elsif($size == 4) {
+    $f = $names[0];
+    $m = $names[1];
+    $l = $names[2];
+    $s = $names[3];
+  } else {
+    $f = shift(@names);
+    $l = pop(@names);
+  }
+
+  $author_form .= " -F 'author_first_$i=$f' -F 'author_mi_$i=$m' -F 'author_last_$i=$l' -F 'author_suffix_$i=$s'";
 }
 
 my $publish_status = $pmid ? "published" : "unpublished";
@@ -134,6 +154,7 @@ while(my ($k, $v) = each %hash) {
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
+  $isolate_id  =~ s/\s/_/g;
 
   # in case of duplicate isolate ids
   if(exists $idhash{$isolate_id}) {
@@ -361,11 +382,9 @@ while(my ($k, $v) = each %hash) {
   $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
 
-  $symptoms = chomp($symptoms);
-
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
-  $note .= "; habitat: $habitat" if $habitat;
+  $note .= "; non-human habitat: $habitat" if $habitat;
   $note .= "; purpose of sample collection: $purpose" if $purpose;
   $note .= "; altitude: $alt" if $alt;
   $note .= "; internal id: $isolate_id";
@@ -403,7 +422,7 @@ while(my ($k, $v) = each %hash) {
          [$seq15, $seq15_product, $seq15_desc, \@seq15_primer_name, \@seq15_primer_seq, $seq15_trace, $seq15_genbank],
          [$seq16, $seq16_product, $seq16_desc, \@seq16_primer_name, \@seq16_primer_seq, $seq16_trace, $seq16_genbank],
          [$seq17, $seq17_product, $seq17_desc, \@seq17_primer_name, \@seq17_primer_seq, $seq17_trace, $seq17_genbank],
-				 );
+         );
 
   my $count = 1;
   foreach my $s (@seqs) {
@@ -423,7 +442,7 @@ while(my ($k, $v) = each %hash) {
     $sequence =~ s/\W+//g;
     my $length   = length($sequence);
 
-		my $seqnote = "";
+    my $seqnote = "";
 
     $seqnote .= "; trace file: $trace" if $trace;
     $seqnote .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
@@ -481,8 +500,9 @@ while(my ($k, $v) = each %hash) {
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
-#my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
+#my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
+# don't allow tbl2asn annotate the longest ORF
+my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
 system($cmd);
 
 __DATA__
