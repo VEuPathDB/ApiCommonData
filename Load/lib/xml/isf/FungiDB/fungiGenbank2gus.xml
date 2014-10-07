@@ -11,7 +11,7 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
 
 
@@ -19,7 +19,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene" handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength" handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="citation" ignore="true"/>
     <qualifier name="exception" ignore="true"/>
@@ -59,7 +59,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/>
@@ -70,7 +70,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -95,7 +95,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="temporary_systematic_id" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
@@ -109,7 +109,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
    <feature name="ncRNA_gene" so="ncRNA">
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note" ignore="true"/>
     <qualifier name="product" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
@@ -118,7 +118,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
  <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="note" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -158,7 +158,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="tRNA_gene" so="tRNA_encoding">
     <qualifier name="gene" ignore="true"/>
-    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="note" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -185,7 +185,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="RNase_P_RNA_gene" so="RNase_P_RNA_encoding">
-    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"          ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="product"           ignore="true"/>
@@ -193,7 +193,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
-    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"          ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
     <qualifier name="product"           ignore="true"/>

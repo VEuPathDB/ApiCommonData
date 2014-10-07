@@ -6,13 +6,13 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 <feature name="source" ignore="true"/>
 
 
   <feature name="coding_gene" so="protein_coding">
-    <qualifier name="systematic_id"    handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id"    handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"    handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id"    handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="N_glycosylation" ignore="true"/>
     <qualifier name="OMP_count" ignore="true"/>
     <qualifier name="SNP" ignore="true"/>
@@ -113,11 +113,11 @@
 
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="previou_systematic_id" handler="api" method="gene"/>
-    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
    <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="synonym"              handler="api" method="gene"/>
@@ -147,9 +147,9 @@
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="product"              handler="api" method="product"/>
@@ -179,9 +179,9 @@
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="product"              handler="api" method="product"/>
@@ -214,8 +214,8 @@
 
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeq"/> 
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/> 
     <qualifier name="pseudo"           handler="api" method="setPseudo"/>
     <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="partial"           handler="api" method="setPartial"/>
@@ -236,9 +236,9 @@
   </feature>
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="temporary_systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="temporary_systematic_id"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="note"                   handler="api" method="note"/>
     <qualifier name="domain"                 handler="api" method="note"/>

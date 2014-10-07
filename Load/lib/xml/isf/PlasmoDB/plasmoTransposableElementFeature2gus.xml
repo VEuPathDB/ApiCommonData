@@ -6,14 +6,14 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
     <qualifier name="TU"             ignore="true"/>
     <qualifier name="Note"           handler="api" method="product"/>
     <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
     <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
-    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="ECNumber"       handler="api" method="ECNumber"/>
   </feature>

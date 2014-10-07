@@ -6,10 +6,10 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="note"           ignore="true"/>
     <qualifier name="ECNumber"       ignore="true"/>
@@ -32,7 +32,7 @@
   </feature>
 
   <feature name="pseudo_gene" so="pseudogene">
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="note"           ignore="true"/>
     <qualifier name="ECNumber"       ignore="true"/>
@@ -111,7 +111,7 @@
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -131,7 +131,7 @@
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -152,7 +152,7 @@
   </feature>
  
   <feature name="miRNA_gene" so="miRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -172,7 +172,7 @@
   </feature>
  
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -192,7 +192,7 @@
   </feature>
  
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -212,7 +212,7 @@
   </feature>
  
   <feature name="ncRNA_gene" so="ncRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>
@@ -232,7 +232,7 @@
   </feature>
  
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
     <qualifier name="gene_id"       ignore="true"/>

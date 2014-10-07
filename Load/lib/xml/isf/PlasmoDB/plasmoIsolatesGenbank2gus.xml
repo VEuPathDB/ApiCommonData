@@ -9,7 +9,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
  
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
 
 
@@ -72,7 +72,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding" ignore="true">
-    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              ignore="true"/>
@@ -277,7 +277,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 <feature name="old_sequence" ignore="true"/>
 
 <feature name="ncRNA" so="gene_fragment" ignore="true">
-    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>

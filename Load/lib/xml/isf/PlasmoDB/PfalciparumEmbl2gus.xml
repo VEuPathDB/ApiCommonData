@@ -6,18 +6,18 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <specialCaseQualifierHandler name="plasmo" 
            class="ApiCommonData::Load::PlasmoSpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
-    <qualifier name="systematic_id"    handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="id"    handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"    handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="id"    handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="translation"      ignore="true"/>
-    <qualifier name="pseudo"           handler="api" method="setPseudo"/>
-    <qualifier name="partial"           handler="api" method="setPseudo"/>
+    <qualifier name="pseudo"           ignore="true"/>
+    <qualifier name="partial"          ignore="true"/>
     <qualifier name="EC_number"        ignore="true"/>
     <qualifier name="product"          ignore="true"/>
     <qualifier name="literature"       ignore="true"/>
@@ -93,7 +93,7 @@
     <qualifier name="partial"          ignore="true"/>
     <qualifier name="EC_number"        ignore="true"/>
     <qualifier name="product"          ignore="true"/>
-    <qualifier name="literature"       handler="plasmo" method="literature"/>
+    <qualifier name="literature"       ignore="true"/>
     <qualifier name="obsolete_product" ignore="true"/>
     <qualifier name="curation"         ignore="true"/>
     <qualifier name="cuartion"         ignore="true"/>
@@ -159,8 +159,7 @@
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"                 handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="product"              ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="synonym"              ignore="true"/>
@@ -184,7 +183,7 @@
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="curation"             ignore="true"/>
@@ -194,7 +193,7 @@
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="product"             ignore="true"/>
     <qualifier name="anticodon"           handler="api" method="anticodon"/>
     <qualifier name="note"                ignore="true"/>
@@ -258,8 +257,7 @@
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"                   ignore="true"/>
     <qualifier name="domain"                 ignore="true"/>
     <qualifier name="controlled_curation"    ignore="true"/>

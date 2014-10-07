@@ -7,12 +7,12 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="locus_tag"		handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"		handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="gene" 		ignore="true"/>
     <qualifier name="secondary_id" 	ignore="true"/>
     <qualifier name="note"		ignore="true"/>
@@ -27,7 +27,7 @@
   </feature>
 
   <feature name="rRNA_gene">
-    <qualifier name="locus_tag" 	handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" 	handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="gene" 		ignore="true"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="product"		ignore="true"/>
@@ -36,7 +36,7 @@
   </feature>
  
   <feature name="tRNA_gene">
-    <qualifier name="locus_tag"		handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"		handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="gene" 		ignore="true"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="product"		ignore="true"/>

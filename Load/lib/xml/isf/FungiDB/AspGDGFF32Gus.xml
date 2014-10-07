@@ -11,12 +11,12 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"          handler="api" method="validateGene" />
-    <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeq" />
+    <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
     <qualifier name="ID"                  ignore="true" />
     <qualifier name="synonym"             handler="api" method="gene" />
     <qualifier name="Alias"               handler="api" method="gene" />
@@ -75,7 +75,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="pseudo_gene" so="protein_coding">
     <qualifier name="pseudo"               handler="api" method="setPseudo"/>
-    <qualifier name="Name"                 handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"                 handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="ID"                   ignore="true" />
     <qualifier name="synonym"              handler="api" method="gene" />
     <qualifier name="codon_start"          ignore="true" />
@@ -109,7 +109,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"                     ignore="true" />
      <qualifier name="product"			ignore="true"/>
      <qualifier name="Alias"                  handler="api" method="gene" />
@@ -137,7 +137,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="ID"  ignore="true" />
     <qualifier name="note"                 handler="api" method="note"/>
    <qualifier name="Name"         handler="api" method="gene"/>
@@ -300,7 +300,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"               ignore="true" />
      <qualifier name="comment"                handler="api" method="note" />
      <qualifier name="product"			ignore="true"/>
@@ -326,7 +326,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"               ignore="true" />
      <qualifier name="comment"                handler="api" method="note" />
      <qualifier name="product"			ignore="true"/>
@@ -353,7 +353,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
-     <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"                  ignore="true" />
      <qualifier name="comment"             handler="api" method="note" />
      <qualifier name="product"			ignore="true"/>
@@ -378,7 +378,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="ncRNA_gene" so="ncRNA">
-     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"                  ignore="true" />
      <qualifier name="comment"             handler="api" method="note" />
      <qualifier name="product"			ignore="true"/>
@@ -431,7 +431,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <!-- 2010.10: SGD:tRNA 299 -->
   <feature name="tRNA_gene" so="tRNA_encoding"> 
-     <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeq" />
+     <qualifier name="Name"                handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat" />
      <qualifier name="ID"                  ignore="true" />
      <qualifier name="comment"             handler="api" method="note" />
      <qualifier name="product"			ignore="true"/>

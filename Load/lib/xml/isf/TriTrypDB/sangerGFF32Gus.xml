@@ -11,14 +11,14 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
 
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="synonym"         handler="api" method="gene"/>
     <qualifier name="feature_id"    ignore="true"/>
@@ -72,7 +72,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   </feature>
   <feature name="pseudo_gene" so="protein_coding">
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -104,7 +104,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
    <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
@@ -126,7 +126,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"                 handler="api" method="note"/>
    <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -256,7 +256,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -277,7 +277,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -298,7 +298,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -319,7 +319,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="embl_qualifier"                 handler="api" method="note"/>
     <qualifier name="eMBL_qualifier"                 handler="api" method="note"/>
@@ -365,7 +365,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="tRNA_gene" so="tRNA_encoding">
  
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="note"                 handler="api" method="note"/>
