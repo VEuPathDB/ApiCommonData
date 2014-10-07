@@ -4,7 +4,7 @@ package ApiCommonData::Load::GusSkeletonMaker;
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | fixed
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
@@ -17,7 +17,7 @@ package ApiCommonData::Load::GusSkeletonMaker;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
@@ -64,23 +64,33 @@ sub makeGeneSkeleton{
   $bioperlGene->{gusFeature} = $gusGene;
   $gusGene->{bioperlFeature} = $bioperlGene;
 
-  my $transcriptExons;  # hash to remember each transcript's exons
-
   ##create hash to identify distinct exons based start_end
   my %distinctExons;
 
+  ## create hash to identify distince transcript based on exons and their locations
+  my %distinctTranscripts;
+
   foreach my $bioperlTranscript ($bioperlGene->get_SeqFeatures()) {
-    my $transcriptNaSeq = &makeTranscriptNaSeq($plugin, $bioperlTranscript, $taxonId, $dbRlsId);
+    my $transcriptKey;
+    foreach my $exon ($bioperlTranscript->get_SeqFeatures()){
+      $transcriptKey .= $exon->start()."_".$exon->end().",";
+    }
+    #print STDERR "\$transcriptKey = $transcriptKey\n";
 
-    my $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
-    $gusTranscript->setParent($gusGene);
+    my ($transcriptNaSeq, $gusTranscript);
+    if (!$distinctTranscripts{$transcriptKey}) {
+      $transcriptNaSeq = &makeTranscriptNaSeq($plugin, $bioperlTranscript, $taxonId, $dbRlsId);
+      $gusTranscript = &makeGusTranscript($plugin, $bioperlTranscript, $dbRlsId);
+      $distinctTranscripts{$transcriptKey} = $gusTranscript;
+
+      $gusTranscript->setParent($gusGene);
+      $transcriptNaSeq->addChild($gusTranscript);
+
+    } else {
+      $gusTranscript = $distinctTranscripts{$transcriptKey};
+    }
     $bioperlTranscript->{gusFeature} = $gusTranscript;
-    $gusTranscript->{bioperlFeature} = $bioperlTranscript;
-
-    $transcriptNaSeq->addChild($gusTranscript);
-
-#    my $gusTranscriptId = $gusTranscript->getId();
-    $transcriptExons->{$gusTranscript}->{transcript} = $gusTranscript;
+    push (@{$gusTranscript->{bioperlFeature}}, $bioperlTranscript);
 
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
       my $gusExon;
@@ -90,24 +100,26 @@ sub makeGeneSkeleton{
         $gusExon = &makeGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId);
         $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()} = $gusExon;
         $gusExon->setParent($gusGene);
+	$bioperlExon->{gusFeature} = $gusExon;
       }else{
         $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
+	$bioperlExon->{gusFeature} = $gusExon;
       }
-
-      $bioperlExon->{gusFeature} = $gusExon;
-      #$gusExon->{bioperlFeature} = $bioperlExon;  ### gusExon to bioperlExon is one to many
+      push (@{$gusExon->{bioperlFeature}}, $bioperlExon);  ### gusExon to bioperlExon is one to many
 
       ## make rnafeatureexon and associate it with its transcript
       my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
       $rnaFeatureExon->setParent($gusTranscript);
       $rnaFeatureExon->setParent($gusExon);
       $rnaFeatureExon->{bioperlFeature} = $bioperlExon;  ## rnaFeatureExon to bioperlExon is one to one
-      my $codingStart = 0;
-      my $codingEnd = 0;
-      ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
-      ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
-      ($codingStart) ? $rnaFeatureExon->setCodingStart($codingStart) : $rnaFeatureExon->setCodingStart('');
-      ($codingEnd) ? $rnaFeatureExon->setCodingEnd($codingEnd) : $rnaFeatureExon->setCodingEnd('');
+
+#### do not assign the codingStart and codingEnd to rnaFeatureExon
+#      my $codingStart = 0;
+#      my $codingEnd = 0;
+#      ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+#      ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+#      ($codingStart) ? $rnaFeatureExon->setCodingStart($codingStart) : $rnaFeatureExon->setCodingStart('');
+#      ($codingEnd) ? $rnaFeatureExon->setCodingEnd($codingEnd) : $rnaFeatureExon->setCodingEnd('');
 
     } ##this should end the exon loop
 
@@ -122,13 +134,16 @@ sub makeGeneSkeleton{
       $sortedRnaExons[$i]->setOrderNumber($i+1);
     }
 
+    ## make translatedAAFeat and translatedAASeq for coding gene
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
 
       my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
+      $translatedAAFeat->{bioperlTranscript} = $bioperlTranscript;
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
+      $translatedAASeq->{bioperlTranscript} = $bioperlTranscript;
 
       # make sure we submit all kids of the translated aa seq
       $gusGene->addToSubmitList($translatedAASeq);
