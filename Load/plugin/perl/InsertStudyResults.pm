@@ -15,6 +15,8 @@ use GUS::Model::Study::ProtocolAppParam;
 use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 
+use GUS::Model::SRes::OntologyTerm;
+
 use GUS::Supported::Util;
 
 use Data::Dumper;
@@ -131,7 +133,7 @@ sub run {
 
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes);
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum);
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName);
     push @$existingAppNodes, $protocolAppNode;
 
     my $studyLink = $self->linkAppNodeToStudy($study, $protocolAppNode);
@@ -307,7 +309,18 @@ sub retrieveAppNodesForStudy {
 
 
 sub makeProtocolAppNode {
-  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum) = @_;
+  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $protocolName) = @_;
+
+  my %dictionary = ( "Profiles" => "data transformation",
+                     "PaGE" => "differential expression analysis data transformation"
+      );
+
+  my $oe = $dictionary{$protocolName};
+
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $oe});
+  unless($ontologyTerm->retrieveFromDB()) {
+    $self->error("Required Ontology Term $oe not found in database");
+  }
 
   foreach my $e (@$existingAppNodes) {
     my $existingName = $e->getName();
@@ -317,7 +330,7 @@ sub makeProtocolAppNode {
     }
   }
 
-  return GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum});
+  return GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum, type_id => $ontologyTerm->getId()});
 }
 
 
