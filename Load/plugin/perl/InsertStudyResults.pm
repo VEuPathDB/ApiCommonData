@@ -383,6 +383,8 @@ sub undoTables {
     'Study.Input',
     'Study.Output',
     'Study.StudyLink',
+    'Results.NAFeatureExpression',
+    'Results.NAFeatureDiffResult',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
