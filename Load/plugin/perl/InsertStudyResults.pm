@@ -122,17 +122,18 @@ sub run {
 
   my $study = $self->makeStudy();
 
-
+  my $existingAppNodes = $self->retrieveAppNodesForStudy($study);
   my $nodeOrderNum = 1;
 
   while(<CONFIG>) {
     chomp;
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  @protocolParamValues) = split(/\t/, $_);
 
-    my $existingAppNodes = $self->retrieveAppNodesForStudy($study);
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes);
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum);
+    push @$existingAppNodes, $protocolAppNode;
+
     my $studyLink = $self->linkAppNodeToStudy($study, $protocolAppNode);
 
     my $protocol = $self->makeProtocol($protocolName);
