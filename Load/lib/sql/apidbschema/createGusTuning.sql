@@ -303,11 +303,17 @@ GRANT INSERT, UPDATE, DELETE ON DOTS.MASSSPECFEATURE TO gus_w;
 
 alter table study.protocolappnode add (node_order_num number(10));
 
-alter table results.FamilyExpression add (percentile FLOAT(126));
-alter table results.GeneExpression add (percentile FLOAT(126));
-alter table results.NaFeatureExpression add (percentile FLOAT(126));
-alter table results.ReporterExpression add (percentile FLOAT(126));
-alter table results.RnaExpression add (percentile FLOAT(126));
+alter table results.FamilyExpression add (percentile_channel1 FLOAT(126));
+alter table results.GeneExpression add (percentile_channel1 FLOAT(126));
+alter table results.NaFeatureExpression add (percentile_channel1 FLOAT(126));
+alter table results.ReporterExpression add (percentile_channel1 FLOAT(126));
+alter table results.RnaExpression add (percentile_channel1 FLOAT(126));
+
+alter table results.FamilyExpression add (percentile_channel2 FLOAT(126));
+alter table results.GeneExpression add (percentile_channel2 FLOAT(126));
+alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
+alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
+alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
 
 exit
