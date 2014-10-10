@@ -192,11 +192,14 @@ sub GetExonQuery {
                   regexp_replace(ef.source_id, '-[[:digit:]]+\$', '') as gene_source_id
            FROM   DoTS.ExonFeature ef,
                   ApidbTuning.${tuningTablePrefix}FeatureLocation nl,
+                  ApidbTuning.${tuningTablePrefix}GeneAttributes ga,
                   DoTS.NaSequence ns
            WHERE  ef.na_feature_id = nl.na_feature_id
            AND    nl.is_top_level = 1
            AND    nl.na_sequence_id = ns.na_sequence_id
            AND    ns.taxon_id in ($TaxonID)
+           AND    nl.parent_id=ga.na_feature_id
+           AND    ga.gene_type='protein coding'
            ORDER BY ef.source_id,ef.order_number");
 }
 
