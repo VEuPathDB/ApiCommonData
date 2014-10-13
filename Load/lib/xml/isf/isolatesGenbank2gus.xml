@@ -25,7 +25,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="attenuator" ignore="true"/>
   <feature name="rep_origin" ignore="true"/>
   <feature name="LTR" ignore="true"/>
-
+  <feature name="telomerase_RNA_gene" ignore="true"/>
+  <feature name="SRP_RNA_gene" ignore="true"/>
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"           column="source_id"/>
@@ -34,6 +35,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                handler="api" method="note"/>
     <qualifier name="pseudo"         	  column="is_pseudo"/>
+    <qualifier name="pseudogene"         ignore="true"/>
     <qualifier name="allele"/>
     <qualifier name="experiment" 	  column="evidence"/>
     <qualifier name="product"		handler="api" method="product"/>
@@ -135,7 +137,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="isolate"/>
     <qualifier name="mol_type"/>
-    <qualifier name="organism"/>
+    <qualifier name="organism" ignore="true"/>
     <qualifier name="organelle"/>
     <qualifier name="serotype"/>
     <qualifier name="strain"/>
@@ -159,7 +161,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="specimen_voucher" ignore="true"/>
     <qualifier name="source_id"/>
     <qualifier name="locus_tag" column="source_id"/>
-    <!-- from ToxoDB  -->
+    <qualifier name="altitude" ignore="true"/>
+    <qualifier name="ecotype" ignore="true"/>
+	 <!-- from ToxoDB  -->
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="tissue_lib" ignore="true"/>
     <!-- from GiardiaDB  -->
@@ -169,8 +173,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="mating_type"              ignore="true"/>
     <qualifier name="plasmid"              ignore="true"/>
     <qualifier name="cultivar"              ignore="true"/>
-    <qualifier name="bio_material"              ignore="true"/>
-    <qualifier name="ecotype"              ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
