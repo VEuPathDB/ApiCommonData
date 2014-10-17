@@ -25,6 +25,9 @@ GRANT REFERENCES ON dots.NaFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
+
+GRANT REFERENCES ON sres.PathwayRelationship TO ApiDB;
+
 GRANT references ON dots.nafeatureimp TO apidb;
 GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
 GRANT references ON Sres.OntologyTerm TO ApiDB;
