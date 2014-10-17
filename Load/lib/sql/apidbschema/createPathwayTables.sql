@@ -77,14 +77,6 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.ReactionRelationship TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.ReactionXRefs TO gus_w;
 
 
-GRANT SELECT ON ApiDB.Reaction_SQ TO gus_w;
-GRANT SELECT ON ApiDB.ReactionRelationship_SQ TO gus_w;
-GRANT SELECT ON ApiDB.ReactionXRefs_SQ TO gus_w;
-
-
-
-
-
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable,
