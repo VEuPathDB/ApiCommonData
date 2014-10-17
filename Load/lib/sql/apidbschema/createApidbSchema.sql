@@ -37,6 +37,7 @@ GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
 GRANT SELECT ON core.ProjectInfo to ApiDB;
 GRANT SELECT ON sres.TaxonName to ApiDB;
 GRANT SELECT ON sres.Taxon to ApiDB;
+GRANT SELECT, DELETE ON dots.NaFeatureImp TO PUBLIC;
 
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
