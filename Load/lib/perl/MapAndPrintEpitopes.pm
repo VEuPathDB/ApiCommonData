@@ -17,7 +17,7 @@ package ApiCommonData::Load::MapAndPrintEpitopes;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use lib "$ENV{GUS_HOME}/lib/perl";
