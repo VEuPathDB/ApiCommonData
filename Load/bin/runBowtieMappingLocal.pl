@@ -23,6 +23,7 @@ die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this l
 
 use strict;
 use Getopt::Long;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::Utils;
 
 my($mateA,$mateB,$sampleName,$delIntFiles,$bowtieIndex,$isColorspace,$removePCRDuplicates,$bowtie2,$extraBowtieParams);

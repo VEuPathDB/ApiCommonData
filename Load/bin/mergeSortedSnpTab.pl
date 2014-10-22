@@ -21,6 +21,8 @@
 die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use strict;
 use Getopt::Long;
 use ApiCommonData::Load::MergeSortedSeqVariations;

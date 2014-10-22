@@ -114,40 +114,40 @@ sub run {
   my $sampleExtDbRlsSpec = $self->getArg('sampleExtDbRlsSpec');
   my $isProfile = $self->getArg('isProfile');
   my $studyExtDbRlsId;
-  
+
   unless($studyExtDbRlsSpec || $sampleExtDbRlsSpec) {
  	$self->error("External database release spec must be provided for the study or the samples");
   }
-  
+
   $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec) if $studyExtDbRlsSpec;
   my $sampleExtDbRlsSpecTemplate = $self->getArg('sampleExtDbRlsSpecTemplate');
-  
+
   my $useTemplate = $sampleExtDbRlsSpecTemplate ? 1 : 0;
-  
- 
+
+
   if($sampleExtDbRlsSpecTemplate && $sampleExtDbRlsSpec) {
 	$self->error("sampleExtDbRlsSpec cannot be used with sampleExtDbRlsSpecTemplate please provided one or the other");
   }
-  
+
   my $studyName = $self->getArg('studyName');
   my $study;
   if($studyExtDbRlsId) {
 	$study = GUS::Model::Study::Study->new(
 		                           {name => $studyName,
-	                                external_database_release_id => $studyExtDbRlsId,	
-								   }); 
+                                            external_database_release_id => $studyExtDbRlsId,	
+                                           }); 
   }
-   else {
+  else {
     $study = GUS::Model::Study::Study->new(
 		                           {name => $studyName
-								   }); 
+                                           }); 
   }
-  
+
   unless($study->retrieveFromDB()) {
     $self->error("Could not retrieve study $studyName from db.");   
   }
   my $profileElementNames=[];
- 
+
   if($isProfile) {
     my $samplesSql = "Select Distinct Pen.Name From Apidb.Profileelementname Pen, Apidb.Profileset Ps Where 
 Ps.External_Database_Release_Id = $studyExtDbRlsId";
@@ -175,9 +175,9 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
   my $count = 0;
   while(<FILE>) {
     chomp;
-    
+
     my $rowAsHash = $self->parseRow($header, $_);
-    
+
     if($sampleExtDbRlsSpecTemplate){
       $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
       $count++;
@@ -187,20 +187,19 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
       $count++;
     }
     else {
-            $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, 0);
-            $count++;
-	  }
+      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, 0);
+      $count++;
+    }
 
   }
 
   close FILE;
-  
 
   if($count < 1) {
     $self->userError("No rows processed. Please check your input file.");
   }
 
- return("Processed $count rows of sample meta data.");
+  return("Processed $count rows of sample meta data.");
 }
 
 
@@ -229,23 +228,23 @@ sub processRow {
   my ($self, $rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames,  $sampleExtDbRlsSpec,) = @_;
   my $sampleName;
   foreach my $key (keys %$rowAsHash) {
-	my ($header, $index) = split(/\|/, $key);
-	my $value = $rowAsHash->{$key};
+    my ($header, $index) = split(/\|/, $key);
+    my $value = $rowAsHash->{$key};
 
-	if($header =~ /source name/i) {
-		$sampleName = $value;
-		last;
-	}
+    if($header =~ /source name/i) {
+      $sampleName = $value;
+      last;
+    }
   }
   if($useTemplate){
-	$sampleExtDbRlsSpec=~s/\@SAMPLE_NAME\@/$sampleName/;
+    $sampleExtDbRlsSpec=~s/\@SAMPLE_NAME\@/$sampleName/;
   }
   my $bioSample;
   my $sampleExtDbRlsId = '';
   if($sampleExtDbRlsSpec){
-    my $sampleExtDbRlsId = $self->getExtDbRlsId($sampleExtDbRlsSpec) or 
-      $self->error("Sample external database Release ID not found for $sampleName with External database release spec $sampleExtDbRlsSpec");
-  }
+     $sampleExtDbRlsId = $self->getExtDbRlsId($sampleExtDbRlsSpec) or 
+       $self->error("Sample external database Release ID not found for $sampleName with External database release spec $sampleExtDbRlsSpec");
+   }
   if ($sampleExtDbRlsId){
     $bioSample = $self->makeBioSample($rowAsHash, $sampleName, $studyExtDbRlsId, $profileElementNames, $sampleExtDbRlsId,);
   }
@@ -263,10 +262,10 @@ sub processRow {
 
 sub makeBioSample {
   my ($self, $rowAsHash, $sampleName,  $studyExtDbRlsId, $profileElementNames, $sampleExtDbRlsId,) = @_;
-          
-  	if (scalar @$profileElementNames >=1 ){
-	    $self->userError("No sample $sampleName found for this experiment, please check your input file.") unless ( grep( $sampleName, @$profileElementNames ) );
-	}
+
+  if (scalar @$profileElementNames >=1 ){
+    $self->userError("No sample $sampleName found for this experiment, please check your input file.") unless ( grep( $sampleName, @$profileElementNames ) );
+  }
 
   #Source Name     Description     Comment [source_id]     Characteristics [Organism]      Data File 
 
@@ -302,7 +301,7 @@ sub makeBioSample {
                                                      description => $description,
                                                      external_database_release_id => $sampleExtDbRlsId,
                                                     });
-  
+
   foreach(@characteristics) {
     $_->setParent($bioSample);
   }
@@ -332,12 +331,12 @@ sub makeCharacteristic {
   #                                                 category => $category});
 
   #       $oe->retrieveFromDB();
-	
+
   #   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({});
   # }
   # else {
 
-    my $oeSql = "With BMCT As (
+  my $oeSql = "With BMCT As (
                         Select Distance, Id, Parent_Id,lower(Category) as category, lower(Value) as value 
                         From (
                             Select level + 0 as distance, Oe.Ontology_Entry_Id as id, Oe.Parent_Id, Oe.Category, Oe.Value
@@ -367,17 +366,17 @@ sub makeCharacteristic {
 		     From Existing, New_Value
                     Where New_Value.Id = Existing.Id (+)";
 
-    my $dbh = $self->getQueryHandle();
-    my $stmt = $dbh->prepareAndExecute($oeSql);
-    my $oe_id = $stmt->fetchrow_array();
+  my $dbh = $self->getQueryHandle();
+  my $stmt = $dbh->prepareAndExecute($oeSql);
+  my $oe_id = $stmt->fetchrow_array();
 
   my $default_category =  'OntologyEntry';
 
   $oe = GUS::Model::Study::OntologyEntry->new({ontology_entry_id => $oe_id,});
   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({value => $value});
- 
-    $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
-    $characteristic->setParent($oe);
+
+  $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
+  $characteristic->setParent($oe);
 
   return $characteristic;
 }
@@ -399,7 +398,7 @@ sub parseRow {
   for(my $i = 0; $i < scalar @keys; $i++) {
     my $header = $keys[$i];
     my $value = $values[$i];
-    
+
     my $key = "$header|$i";
 
     $rv{$key} = $value;
@@ -416,7 +415,7 @@ sub undoTables {
   return ( 'Study.BioMaterialCharacteristic',
            'RAD.StudyBioMaterial',
            'Study.BioSample',
-     );
+         );
 }
 
 1;

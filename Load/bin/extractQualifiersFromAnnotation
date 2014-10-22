@@ -248,7 +248,7 @@ sub processFeature {
 							    }
 							  }
 							}
-						} elsif ($outputHash{$qualifier} =~ /aliases/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
+						} elsif ($outputHash{$qualifier} =~ /alias/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
 							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
 																	## and synonyms by "," in Tbrucei927
 							foreach my $alias (@aliases) {
@@ -267,8 +267,8 @@ sub processFeature {
 							}
 						} else {
 							## get rid of some funny character after ; for product
-							$value =~ s/rank=1;// if ($outputHash{$qualifier} =~ /products/);  ## for pyoeyoelii17XNL
-							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /products/);
+							$value =~ s/rank=1;// if ($outputHash{$qualifier} =~ /product/);  ## for pyoeyoelii17XNL
+							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /product/);
 							if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value}) {
 							  if (!$idsInDb{$sourceId} ) {
 							    $funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value});
@@ -325,7 +325,7 @@ sub processGoAsso {
 		  }
 		}
 	      }
-	} elsif (lc($qualifier) eq 'go') {
+	} elsif (lc($qualifier) eq 'go' || lc($qualifier) eq 'full_go') {
 		foreach my $value ($bioperlFeature->get_tag_values($qualifier)) {
 		    my @goFields = split(/,/, $value);
 		    foreach my $goField (@goFields) {

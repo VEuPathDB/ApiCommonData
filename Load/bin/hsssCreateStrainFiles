@@ -21,6 +21,8 @@
 die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
+use lib "$ENV{GUS_HOME}/lib/perl"; 
+
 use strict;
 
 use ApiCommonData::Load::VariationFileReader;
@@ -86,18 +88,27 @@ while($reader->hasNext()) {
   my $variations = $reader->nextSNP() ;
 
   my ($refVar, $hasVariation, %foundStrains);
+
+  foreach my $variation (@$variations) {
+    my $strain = $variation->{strain};
+
+    if($strain eq $refStrainName) {
+      $refVar = $variation;
+      last;
+    }
+  }
+
   foreach my $variation (@$variations) {
     my $strain = $variation->{strain};
     $foundStrains{$strain}++;
 
-    if($variation->{strain} eq $refStrainName) {
-      $refVar = $variation;
-      next;
-    }
-    if(!$variation->{matches_reference}) {
+    next if($strain eq $refStrainName);
+
+    if(!$variation->{matches_reference} || $variation->{product} ne $refVar->{product} ) {
       $hasVariation = 1;
     }
   }
+
 
   # chech for reference variation
   unless($refVar) {
@@ -128,7 +139,7 @@ while($reader->hasNext()) {
     my $allele = $variation->{base};
     my $product = $variation->{product};
 
-    my $alleleCode = 0;
+    my $alleleCode = 0; # init to zero;  if not actg will disregard (including ambiguous nucleic acid calls)
     $alleleCode = $ALLELE_HASH{$allele} if $allele;
 
     my $productCode = ord($product);
@@ -144,8 +155,8 @@ while($reader->hasNext()) {
       next;
     }
 
-    # do nothing if it matches reference
-    next if($variation->{matches_reference});
+    # do nothing if it matches reference and the products of the variation is the same as the ref
+    next if($variation->{matches_reference} && $variation->{product} eq $refVar->{product});
 
     # write the remaining variations
     print { $allStrains{$strain}->{fh} } pack("slcc", $sequenceIndex, $location, $alleleCode, $productCode);
