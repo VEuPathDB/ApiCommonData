@@ -4,7 +4,7 @@ package ApiCommonData::Load::SpecialCaseQualifierHandlers;
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | fixed
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
