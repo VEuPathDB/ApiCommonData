@@ -18,13 +18,16 @@ use Data::Dumper;
 
 use CBIL::Util::PropertySet;
 
-my ($inFile, $dataFile, $outFile, $valueMapFile, $help,);
+my ($inFile, $dataFile, $outFile, $valueMapFile, $help, $force);
+my $delimiter = "\t";
 
 &GetOptions('help|h' => \$help,
             'inFile=s' => \$inFile,
 	    'valueMapFile=s' => \$valueMapFile,
             'dataFile=s' => \$dataFile,
             'outFile=s' => \$outFile,
+            'delimiter=s' => \$delimiter,
+            'force|f' =>\$force,
            );
 
 #&usage() if($help);
@@ -41,8 +44,9 @@ my @Header;
 my @Samples;
 my $mapHash = {};
 my $ColumnMap = {};
-my $subjects = [];
+my $sample_ids = [];
 my $sourceNames = [];
+my $origin = " ";
 
 my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
 
@@ -71,35 +75,39 @@ open (MAP, $valueMapFile) || die "Can't open $valueMapFile for reading : $!\n";
  }
 }
 
-open (OUTFILE, ">$outFile") || die "Can't open $outFile for reading\n";
+open (OUTFILE, ">$outFile") || die "Can't open $outFile for writing\n";
 open (INFILE, $inFile) || die "Can't open $inFile for reading : $!\n";
 my $rowCount = 0;
+my $lines = {};
+my $charSet;
 foreach my $row (<INFILE>){
 
   chomp $row;
   my %hash;
-
-  my $charSet;
-    if ($isHeader) {
+  if ($isHeader) {
     $ColumnMap = parseHeader($dbh,$row);
     $isHeader=0;
     $charSet = $ColumnMap->{"characteristics"};
-	print OUTFILE 'Source Name'."\t";
-	my $first = 1;
+    print OUTFILE 'Source Name'."\t";
+    my $first = 1;
     foreach my $char (@$charSet) {
-	  my $token = $char;
-	  if ($char =~ /subject/) {
-		$token = "Comment [subject]";
-	  }
-	  else {
-		$token = "Characteristics [".$char."]";
-		}
-	  unless ($first) {
-	    $token = "\t$token";
-	  }
-	  $first = 0;
+      my $token = $char;
+      # if ($char =~ /subject/) {
+      #   $token = "Comment [subject]";
+      # }
+      if ($char =~ /sample.?id/i) {
+        print $char;
+        $token = "Comment [sample_id]";
+      }
+      else {
+        $token = "Characteristics [".$char."]";
+      }
+      unless ($first) {
+        $token = "\t$token";
+      }
+      $first = 0;
       print OUTFILE $token;
-	}
+    }
     print OUTFILE "\n";
     next;
   }
@@ -108,24 +116,22 @@ foreach my $row (<INFILE>){
   my $colCount;
   my $finalValues = [];
   my $sourceName="";
-  my $origin = " ";
-  my $subject = " ";
+  my $sample_id = " ";
   foreach my $val ( @$values ) {
-    my $charSet = $ColumnMap->{"characteristics"};
-	$colCount = scalar @$charSet;
-	my $currentChar = $charSet->[$counter];
-	$origin = $val if $currentChar =~ /^sample_origin$/;
-	$subject = $val if $currentChar =~ /^subject$/;
+    $colCount = scalar @$charSet;
+    my $currentChar = $charSet->[$counter];
+    next unless (defined $currentChar);
+    $origin = $val if (defined $currentChar && $currentChar =~ /^sample.?origin$/i);
+    $sample_id = $val if $currentChar =~ /sample_id/i;
     my $holder = $val;
-	$holder = ' ' unless $holder;
+    $holder = ' ' unless $holder;
     $holder = $mapHash->{$charSet->[$counter]}->{ $val } if ($mapHash->{$charSet->[$counter]}->{ $val });
     $counter++;
-    push ( @$finalValues,  $holder ) if $holder;
-
+    push ( @$finalValues,  $holder );
   }
-  $sourceName = $origin."_".$subject;
+  $sourceName = $origin."_".$sample_id;
   $sourceName =~ s/ /_/;
-  push (@$subjects, $subject);
+  push (@$sample_ids, $sample_id);
   push (@$sourceNames, $sourceName);
   unshift ( @$finalValues, $sourceName );
 
@@ -135,67 +141,92 @@ foreach my $row (<INFILE>){
 	  $counter++;
 	}
   $line =~ s/ \t/\t/g;
-  print OUTFILE $line."\n";
+  $lines->{$sourceName}=$line;
+}
+
+close INFILE;
+my $matchedIds =  validateSampleNames ($dataFile, $sample_ids, $sourceNames, $origin);
+while (my ($id,$outline) = each %$lines) {
+  if (grep { ($_ ~~ $id ) } @$matchedIds) {
+    print OUTFILE $outline."\n";
+  }
 }
 close OUTFILE;
-close INFILE;
-validateSampleNames ($dataFile, $subjects, $sourceNames);
 
 sub validateSampleNames {
-  my ($dataFile , $subjects, $sourceNames) = @_;
+  my ($dataFile , $sample_ids, $sourceNames, $origin) = @_;
   my $isHeader = 1;
   my $dataSampleNames;
   my $dataOut = [];
-  
-  
+  my $discardOut = [];
+  my $lineHolder = [];
+  my $index = 0;
+  my $validIndices = [];
+  my $invalidIndices = [];
+  my $validSampleNames = [];
+  my $invalidSampleNames = [];
+  my $filteredLine = [];
   open (DATAIN, "<$dataFile") || die "Can't open $dataFile for reading\n";
   while (<DATAIN>) {
     my $line = $_;
     chomp $line;
+    $line=~s/\r//g;
     if ($isHeader) {
-      $dataSampleNames = [split ("\t" , $line)];
+      my $tempSampleNames = [];
+      $dataSampleNames = [split ("$delimiter" , $line)];
+      splice(@$dataSampleNames, 0, 1);
       $isHeader = 0;
-      next;
+      foreach my $sample (@$dataSampleNames) {
+        my $sample_id_string = $origin."_".$sample unless grep { /^$sample$/ } @$sourceNames;
+        $sample_id_string =~ s/ +/_/g unless $sample_id_string =~ /^\s+$/;
+        if (grep { /^$sample_id_string$/ } @$sourceNames) {
+          push (@$validIndices, $index);
+          push (@$validSampleNames, $sample_id_string) unless grep { /^$sample_id_string$/ } @$validSampleNames;
+         }
+        else {
+          push (@$invalidIndices, $index);
+          push (@$invalidSampleNames, $sample);
+        }
+        push (@$tempSampleNames, $sample_id_string);
+        $index++;
+      }
+      $dataSampleNames=$tempSampleNames;
     }
     else {
+      $line=~s/$delimiter/\t/g;
+      my @splitLine = split(/\t/, $line);
+      for my $validIndex (@$validIndices) {
+#        $line=$line."\t".$splitLine[@$validIndex];
+      }
       push (@$dataOut, $line);
     }
   }
   my $count = 0;
-  foreach my $sample (@$dataSampleNames) {
-    if (grep { /^$sample/ } @$sourceNames) {
-      $count++;
-      next;
-    }
-    elsif (grep { /^$sample/ } @$subjects) {
-      $dataSampleNames->[$count] = $sourceNames->[$count];
-      $count++;
-    }
-  }
+
   close DATAIN;
-  open (DATAOUT, ">$dataFile") || die "Can't open $dataFile for writing\n";
-  my $output = join ("\t",@$dataSampleNames);
+  open (DATAOUT, ">profiles.txt") || die "Can't open profiles.txt for writing\n";
+  my $output = "ID\t".join ("\t",@$dataSampleNames);
   print DATAOUT $output."\n";
   $output = join ("\n",@$dataOut);
-  print DATAOUT $output."\n";
-  my @unmatchedFromMetadata = grep { !($_ ~~ @$dataSampleNames ) } @$sourceNames;
-  my @unmatchedFromData = grep { !($_ ~~ @$sourceNames ) } @$dataSampleNames;
+  print DATAOUT $output;
+  my @unmatchedFromMetadata = grep { !($_ ~~ @$validSampleNames ) } @$sourceNames;
+  my @unmatchedFromData = grep { !($_ ~~ /^$/ ) } @$invalidSampleNames;
   if (scalar (@unmatchedFromMetadata)) {
     print STDERR "WARNING : the following samples in the metadata file has no match in the data file provided. Please verify the sample name in the metadata file.";
-    print STDERR Dumper (\@unmatchedFromMetadata);
+    print STDERR Dumper \@unmatchedFromMetadata;
   }
   if (scalar (@unmatchedFromData)) {
     print STDERR "WARNING : The following samples in the data file has no match in the metadata file provided. Please verify the sample names.";
-    print STDERR Dumper (\@unmatchedFromData);
+    print STDERR Dumper \@unmatchedFromData;
   }
   close DATAOUT;
+  return ($dataSampleNames);
 }
-
- 
 
 sub parseHeader {
 
 	my ($dbh,$header) = @_;
+        #$dbh->trace($dbh->parse_trace_flags('SQL|1|test'));
 	my @requiredCols = ("Organism","StrainOrLine","BioSourceType","Host");
 	my @Header = split ("\t" , $header);
 
@@ -203,46 +234,44 @@ sub parseHeader {
   	my $colMap = {};
         my $chars = [];
         my $unmatched = [];
+        my $sql = "select distinct value from STUDY.ONTOLOGYENTRY where regexp_replace(lower(value),'[^[:alnum:]]+','_') = ?";
+        my $sh = $dbh->prepare($sql);
         foreach my $char (@Header) {
-          $char =~ s/^\s+//;
+          $char =~ s/^\W+//;
           $char =~ s/\s+$//;
-          $char =~ s/\s+/_/g;
+          $char =~ s/\W+/_/g;
           $char = lc($char);
           $char =~ s/^study_subject_unique_id$/subject/;
           $char =~ s/^gender$/sex/;
           $char =~ s/^location$/geographiclocation/;
 
-
-          if ($char =~ /^subject$/) {
+          if ($char =~ /sample_id/i) {
             push (@$chars,$char);
             next;
           }
-          my $sql = "select distinct value from STUDY.ONTOLOGYENTRY where replace(lower(value),' ','_') = '$char'";
-          my $sh = $dbh->prepare($sql);
-          $sh->execute();
+
+          $sh->execute($char);
 
           my $temp = $sh->fetchrow_array(); #or push (@$unmatched,$char);
-          $sh->finish();
-
           if ($temp) {
             $char = $temp;
           }
           else {
             push (@$unmatched,$char);
-            next;
           }
           push (@$chars,$char);
         }
         if (scalar (@$unmatched)) {
           print STDERR "The following ontology terms have no match in the database.\nPlease verifiy that the characteristics have been loaded into the Study.ontologyEntry\n";
           print STDERR Dumper ( $unmatched );
-          die "Please fix the header and rerun this program";
+          die "Please fix the header and rerun this program" unless $force;
         }
 	foreach my $col (@requiredCols) {
 	  push (@$chars,$col);
 	}
 
 	$colMap->{"characteristics"} = $chars;
+        $sh->finish();
         $dbh->disconnect();
         return $colMap;
 }
