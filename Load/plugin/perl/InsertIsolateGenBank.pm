@@ -143,11 +143,10 @@ sub loadStudy {
         $title = substr $title, 0, 150;
         my $location = $value->location;
 
-        next if $title eq "";
+        next if ($title eq "" || $title =~ /Direct Submission/i);
         push @{$studyHash{$title}}, $source_id; # title with a list of isolate source_id 
 
         my ($pmid) = $location =~ /PUBMED\s+(\d+)/;
-        next if $title =~ /Direct Submission/i; # ?
 
         if($pmid) {
           $publicationHash{$title} = $pmid;
@@ -197,19 +196,16 @@ sub loadStudyBibRef {
   pcbiPubmed::setPubmedID ($pmid);
   my $publication = pcbiPubmed::fetchPublication(); 
   my $authors = pcbiPubmed::fetchAuthorListLong();
-  my ($year) = $publication =~ /\s(\d\d\d\d)\s/;
 
   my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
                                                             authors     => $authors,
                                                             publication => $publication,
-                                                            #year => 1999,
                                                            });
   $ref->submit;
 
   $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
                                                          authors     => $authors,
                                                          publication => $publication,
-                                                        #year => 1999,
                                                        });
 
   $ref->retrieveFromDB;
