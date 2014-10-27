@@ -115,9 +115,9 @@ sub run {
 
   $self->loadOntologyTerm($termHash, $extDbRlsId);
 
-	my $nodes = $self->createProtocolAppNodeObject($studyHash, $nodeHash, $extDbRlsId);
+  my $nodes = $self->createProtocolAppNodeObject($studyHash, $nodeHash, $extDbRlsId);
 
-	$self->loadStudy($studyHash, $nodes, $extDbRlsId);
+  $self->loadStudy($studyHash, $nodes, $extDbRlsId);
 
   return $count; ### return count #### need update 
 }
@@ -188,17 +188,21 @@ sub readGenBankFile {
   #print Dumper(%nodeHash);
   #print Dumper(%studyHash);
 
+  $seq_io->close;
+
+  $termHash{taxon} = 1; # add taxon as a term
+
   return (\%studyHash, \%termHash, \%nodeHash);
 }
 
 sub createProtocolAppNodeObject {
   my ($self, $studyHash, $nodeHash, $extDbRlsId) = @_;
 
-	my %tmpHash;
+  my %tmpHash;
 
-	my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'sample from organism' });
-	$ontologyObj->retrieveFromDB;
-	my $type_id = $ontologyObj->getOntologyTermTypeId;
+  my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'sample from organism' });
+  $ontologyObj->retrieveFromDB;
+  my $type_id = $ontologyObj->getOntologyTermTypeId;
 
   # type_id in sres.ontologyterm to use # "sample from organism" or "DNA extract"
   while(my ($source_id, $v) = each %$nodeHash) {
@@ -213,6 +217,11 @@ sub createProtocolAppNodeObject {
 
     while(my ($term, $value) = each %{$v->{terms}}) {
 
+      if($term eq 'db_xref' && $value =~ /taxon/i) {
+        $term = 'taxon';
+        $value =~ s/taxon://;
+        $node->setTaxonId($value);
+      }
 
       $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => $term,
                                                           external_database_release_id => $extDbRlsId,
@@ -231,15 +240,15 @@ sub createProtocolAppNodeObject {
     #$extNASeq->setSequenceVersion(1);
     #$extNASeq->addChild($node); 
 
-		$tmpHash{$source_id} = $node;
+    $tmpHash{$source_id} = $node;
   }
 
-	return \%tmpHash;
+  return \%tmpHash;
 }
 
 sub loadStudy {
 
-	my($self, $studyHash, $nodeObject, $extDbRlsId) = @_;
+  my($self, $studyHash, $nodeObject, $extDbRlsId) = @_;
 
   while(my ($title, $sv) = each %$studyHash) {
 
@@ -248,24 +257,24 @@ sub loadStudy {
                                               });
 
     foreach my $id ( @{$sv->{ids}} ) {
-			my $node = $nodeObject->{$id};
+      my $node = $nodeObject->{$id};
       my $link = GUS::Model::Study::StudyLink->new();
       $link->setParent($study);
       $link->setParent($node);
     } 
 
-		my $pmid = $sv->{pmid}; 
+    my $pmid = $sv->{pmid}; 
 
-		pcbiPubmed::setPubmedID ($pmid);
-		my $publication = pcbiPubmed::fetchPublication(); 
-		my $authors = pcbiPubmed::fetchAuthorListLong();
+    pcbiPubmed::setPubmedID ($pmid);
+    my $publication = pcbiPubmed::fetchPublication(); 
+    my $authors = pcbiPubmed::fetchAuthorListLong();
 
-		my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
-																															authors     => $authors,
-																															publication => $publication,
-																														 });
+    my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
+                                                              authors     => $authors,
+                                                              publication => $publication,
+                                                             });
 
-		my $study_ref = GUS::Model::Study::StudyBibRef->new();
+    my $study_ref = GUS::Model::Study::StudyBibRef->new();
 
     $study_ref->setParent($study);
     $study_ref->setParent($ref);
@@ -285,12 +294,11 @@ sub loadOntologyTerm {
                                                         external_database_release_id => $extDbRlsId,
                                                       });
 
-
     if (!$termObj->retrieveFromDB ) {
       $termObj->submit; 
-		} else {
-			die "term $term has already exists in SRes.OntologyTerm table\n";
-		}
+    } else {
+      die "term $term has already exists in SRes.OntologyTerm table\n";
+    }
 
     $count++;
     $self->log("processed $count terms") if ($count % 1000) == 0;
