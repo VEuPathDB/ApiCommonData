@@ -141,14 +141,14 @@ sub readGenBankFile {
     # process source modifiers, store distince terms as a list
     for my $feat ($seq->get_SeqFeatures) {    
       my $primary_tag = $feat->primary_tag;
-      if($primary_tag =~ /source/i) {   
+      if($primary_tag =~ /source/i || $primary_tag =~ /rna/i) {    
         for my $tag ($feat->get_all_tags) {    
           $termHash{$tag} = 1;
           for my $value ($feat->get_tag_values($tag)) {
              $nodeHash{$source_id}{terms}{$tag} = $value;
           }
         }   
-      }
+      } 
     }
 
     # process references
