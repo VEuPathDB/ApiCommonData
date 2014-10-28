@@ -103,23 +103,21 @@ sub new {
 sub run {
 
   my ($self) = @_;
-  my $count = 0;
   my $dbiDb = $self->getDb();
   $dbiDb->setMaximumNumberOfObjects(100000);
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'), $self->getArg('extDbRlsVer'));
-
   my $inputFile = $self->getArg('inputFile');
 
-  my ($studyHash, $termHash, $nodeHash) = $self->readGenBankFile($inputFile, $extDbRlsId);
+  my ($studyHash, $nodeHash, $termHash) = $self->readGenBankFile($inputFile, $extDbRlsId);
 
-  $self->loadOntologyTerm($termHash, $extDbRlsId);
+  $self->makeOntologyTerm($termHash, $extDbRlsId);
 
-  my $nodes = $self->createProtocolAppNodeObject($studyHash, $nodeHash, $extDbRlsId);
+  my $count = $self->loadIsolates($studyHash, $nodeHash);
 
-  $self->loadStudy($studyHash, $nodes, $extDbRlsId);
-
-  return $count; ### return count #### need update 
+  my $msg = "$count isolate records have been loaded.";
+  $self->log("$msg \n");
+  return $msg;
 }
 
 sub readGenBankFile {
@@ -192,78 +190,56 @@ sub readGenBankFile {
 
   $termHash{taxon} = 1; # add taxon as a term
 
-  return (\%studyHash, \%termHash, \%nodeHash);
+  return (\%studyHash, \%nodeHash, \%termHash);
 }
 
-sub createProtocolAppNodeObject {
-  my ($self, $studyHash, $nodeHash, $extDbRlsId) = @_;
+sub loadIsolates {
 
-  my %tmpHash;
+  my($self, $studyHash, $nodeHash, $extDbRlsId) = @_;
+
+  my $count = 0;
 
   my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'sample from organism' });
-  $ontologyObj->retrieveFromDB;
-  my $type_id = $ontologyObj->getOntologyTermTypeId;
+  $self->error("cannot find ontology term 'sample from organism'") unless $ontologyObj->retrieveFromDB;
 
-  # type_id in sres.ontologyterm to use # "sample from organism" or "DNA extract"
-  while(my ($source_id, $v) = each %$nodeHash) {
-    my $node = GUS::Model::Study::ProtocolAppNode->new({ type_id     => $type_id, 
-                                                         description => $v->{desc},
-                                                         name        => $source_id,  
-                                                         source_id   => $source_id,
-                                                         external_database_release_id => $extDbRlsId,
-                                                         ### taxon
-
-                                                       });
-
-    while(my ($term, $value) = each %{$v->{terms}}) {
-
-      if($term eq 'db_xref' && $value =~ /taxon/i) {
-        $term = 'taxon';
-        $value =~ s/taxon://;
-        $node->setTaxonId($value);
-      }
-
-      $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => $term,
-                                                          external_database_release_id => $extDbRlsId,
-                                                       });
-
-      my $characteristic = GUS::Model::Study::Characteristic->new({ value => $value,
-                                                                 });
-
-      $characteristic->setParent($ontologyObj);
-      $characteristic->setParent($node);
-    }
-
-    #my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
-    #$extNASeq->setExternalDatabaseReleaseId($extDbRlsId);
-    #$extNASeq->setSequence($v->{seq});
-    #$extNASeq->setSequenceVersion(1);
-    #$extNASeq->addChild($node); 
-
-    $tmpHash{$source_id} = $node;
-  }
-
-  return \%tmpHash;
-}
-
-sub loadStudy {
-
-  my($self, $studyHash, $nodeObject, $extDbRlsId) = @_;
-
-  while(my ($title, $sv) = each %$studyHash) {
+  while(my ($title, $v) = each %$studyHash) {
 
     my $study = GUS::Model::Study::Study->new({ name => $title, 
                                                 external_database_release_id => $extDbRlsId,
                                               });
 
-    foreach my $id ( @{$sv->{ids}} ) {
-      my $node = $nodeObject->{$id};
-      my $link = GUS::Model::Study::StudyLink->new();
+    foreach my $id ( @{$v->{ids}} ) {  # id is each isolate accession
+
+      my $node = GUS::Model::Study::ProtocolAppNode->new;
+      $node->setDescription($nodeHash->{$id}->{desc});
+      $node->setName($id);
+      $node->setSourceId($id);
+      $node->setExternalDatabaseReleaseId($extDbRlsId);
+      $node->setParent($ontologyObj);  # type_id 
+
+      while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  # loop each source modifiers
+
+        if($term eq 'db_xref' && $value =~ /taxon/i) {
+          $term = 'taxon';
+          $value =~ s/taxon://;
+          $node->setTaxonId($value);
+        }
+
+        my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
+        my $characteristic = GUS::Model::Study::Characteristic->new({ value => $value });
+
+        $characteristic->setParent($categoryOntologyObj);
+        $characteristic->setParent($node);
+      }
+
+      my $link = GUS::Model::Study::StudyLink->new;
       $link->setParent($study);
       $link->setParent($node);
-    } 
 
-    my $pmid = $sv->{pmid}; 
+      $count++;
+    }
+
+    my $pmid = $v->{pmid}; 
 
     pcbiPubmed::setPubmedID ($pmid);
     my $publication = pcbiPubmed::fetchPublication(); 
@@ -274,34 +250,43 @@ sub loadStudy {
                                                               publication => $publication,
                                                              });
 
-    my $study_ref = GUS::Model::Study::StudyBibRef->new();
-
+    my $study_ref = GUS::Model::Study::StudyBibRef->new;
     $study_ref->setParent($study);
     $study_ref->setParent($ref);
 
     $study->submit;
   }
+
+  return $count;
 }
 
-sub loadOntologyTerm {
-  my ($self, $termHash, $extDbRlsId) = @_;
+sub addOntologyCategory {
+ my ($self, $ontologyTermObj) = @_;
 
-  my $count = 0;
+ push @{$self->{_ontology_category_terms} }, $ontologyTermObj;
+}
+
+sub findOntologyTermByCategory {
+  my ($self, $name) = @_;
+  foreach my $term ( @{$self->{_ontology_category_terms}}) {
+     return $term if ($term->getName eq $name);
+  }
+
+  $self->error("cannot find ontology name $name");
+}
+
+sub makeOntologyTerm {
+  my ($self, $termHash, $extDbRlsId) = @_;
 
   # insert all distinct qualifier into SRes.OntologyTerm table 
   foreach my $term( keys %$termHash) {
-    my $termObj = GUS::Model::SRes::OntologyTerm->new({ name                         => $term,
-                                                        external_database_release_id => $extDbRlsId,
-                                                      });
+    my $termObj = GUS::Model::SRes::OntologyTerm->new({ name => $term });
 
-    if (!$termObj->retrieveFromDB ) {
-      $termObj->submit; 
-    } else {
-      die "term $term has already exists in SRes.OntologyTerm table\n";
+    unless  ($termObj->retrieveFromDB ){ 
+      $termObj->setExternalDatabaseReleaseId($extDbRlsId);
     }
 
-    $count++;
-    $self->log("processed $count terms") if ($count % 1000) == 0;
+    $self->addOntologyCategory($termObj);
   }
 }
 
