@@ -116,11 +116,9 @@ sub run {
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
-  my $protocolParamColStart = 5;
+
 
   my $header = <CONFIG>;
-  chomp $header;
-  my @headerArray = split(/\t/, $header);
 
   my $study = $self->makeStudy();
 
@@ -129,7 +127,7 @@ sub run {
 
   while(<CONFIG>) {
     chomp;
-    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  @protocolParamValues) = split(/\t/, $_);
+    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues) = split(/\t/, $_);
 
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes);
 
@@ -154,7 +152,7 @@ sub run {
     $output->setParent($protocolApp);
     $output->setParent($protocolAppNode);
 
-    my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, \@headerArray, \@protocolParamValues, $protocolParamColStart);
+    my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
     $study->submit();
 
@@ -345,22 +343,43 @@ sub makeProtocol {
 }
 
 
+sub lookupProtocolParam {
+  my ($self, $name, $protocolName) = @_;
+
+  my $protocolParams = $self->getProtocolParams();
+
+  return unless($protocolParams);
+
+  foreach my $pp (@$protocolParams) {
+    if($pp->getName eq $name && $protocolName eq $pp->getParent('Study::Protocol')) {
+      return $pp;
+    }
+  }
+  return undef;
+}
+
+
+sub getProtocolParams { $_[0]->{_protocol_params} }
+sub addProtocolParam  { push @{$_[0]->{_protocol_params}}, $_[1]; }
+
 sub makeProtocolAppParams {
-  my ($self, $protocolApp, $protocol, $headerArray, $protocolParamValues, $protocolParamColStart) = @_;
+  my ($self, $protocolApp, $protocol, $protocolParamValues) = @_;
 
   my @rv;
 
-  for(my $i = $protocolParamColStart; $i < scalar @$headerArray; $i++) {
-    my $adjustIndex = $i - $protocolParamColStart;
-    my $ppValue = $protocolParamValues->[$adjustIndex];
-    next unless $ppValue; # skip if no value
+  my %protocolParamValues;
 
-    my $ppName = $headerArray->[$i];
+  my @protocolParamValues = split(';', $protocolParamValues);
+  foreach my $ppv (@protocolParamValues) {
+    my ($ppName, $ppValue) = split('=', $ppv);
 
-    $self->userError("Header Error:  Expected ProtocolParam but found $ppName ") unless($ppName =~ /ProtocolParam/i);
+    my $protocolParam = $self->lookupProtocolParam($ppName, $protocol->getName());
 
-    my $protocolParam = GUS::Model::Study::ProtocolParam->new({name => $ppName});
-    $protocolParam->setParent($protocol);
+    unless($protocolParam) {
+      $protocolParam = GUS::Model::Study::ProtocolParam->new({name => $ppName});
+      $protocolParam->setParent($protocol);
+      $self->addProtocolParam($protocolParam);
+    }
 
     $protocolParam->retrieveFromDB();
 
