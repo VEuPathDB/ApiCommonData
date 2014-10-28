@@ -271,9 +271,8 @@ sub getInputAppNodes {
   }
 
   unless(scalar @inputNames == scalar @rv) {
-    print STDERR Dumper \@inputNames;
-    print STDERR Dumper \@rv;
-    $self->userError("Error Finding Input ProtocolAppNodes (must already exist)");
+    my $foundNames = join(";",  map { $_->getName() } @rv);
+    $self->warn("Could not match Input Names $inputNames.  Found:   $foundNames");
   }
 
   return \@rv;
