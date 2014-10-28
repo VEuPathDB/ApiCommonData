@@ -272,7 +272,7 @@ sub getInputAppNodes {
 
   unless(scalar @inputNames == scalar @rv) {
     my $foundNames = join(";",  map { $_->getName() } @rv);
-    $self->warn("Could not match Input Names $inputNames.  Found:   $foundNames");
+    $self->log("Could not match Input Names $inputNames.  Found:   $foundNames");
   }
 
   return \@rv;
