@@ -40,6 +40,11 @@ unless (-e $inputDir) {
 
 open (IN, "$configFile") || die "$configFile not found\n";
 
+chdir $inputDir;
+
+# strip the header
+<IN>;
+
 while(<IN>){
 
     chomp;
@@ -47,16 +52,11 @@ while(<IN>){
 
     my @data=split(/\t/, $_);
 
-    my $fileName = $data[0];
+    my $fileName = $data[1];
 
-    my $cmd="cp $inputDir/$fileName $outputDir/$fileName";
+    my $cmd="cp --parents $fileName $outputDir";
 
-    system ($cmd); 
-
-    #my $lcFileName = lc $fileName;
-
-    #system ($cmd) unless ($lcFileName =~ /pct$/);
-
+    system ($cmd)  == 0 or die "command $cmd failed: $?";
 }
 
 close (IN);
