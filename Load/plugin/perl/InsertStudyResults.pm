@@ -173,15 +173,16 @@ sub addResults {
   my $inputDir = $self->getArg('inputDir');
   my $fullFilePath = "$inputDir/$file";
 
-  # TODO:  Dictionary to Lookup Table from souceIdType and ProtocolName
-  my %dictionary = ( "Profiles" => "Results::NAFeatureExpression",
-                     "PaGE" => "Results::NAFeatureDiffResult"
-      );
 
-  my $tableString = $dictionary{$protocolName};
+  my $tableString;
+  if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
+    $tableString = "Results::NAFeatureDiffResult";
+  }
+  else {
+    $tableString = "Results::NAFeatureExpression";
+  }
 
   my $class = "GUS::Model::$tableString";
-
 
   eval "require $class";
   if($@) {
@@ -308,11 +309,13 @@ sub retrieveAppNodesForStudy {
 sub makeProtocolAppNode {
   my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $protocolName) = @_;
 
-  my %dictionary = ( "Profiles" => "data transformation",
-                     "PaGE" => "differential expression analysis data transformation"
-      );
-
-  my $oe = $dictionary{$protocolName};
+  my $oe;
+  if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
+    $oe = "differential expression analysis data transformation";
+  }
+  else {
+    $oe = "data transformation";
+  }
 
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $oe});
   unless($ontologyTerm->retrieveFromDB()) {
