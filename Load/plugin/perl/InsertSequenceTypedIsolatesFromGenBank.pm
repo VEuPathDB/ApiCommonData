@@ -174,17 +174,14 @@ sub readGenBankFile {
         my ($pmid) = $location =~ /PUBMED\s+(\d+)/;
 
         if($pmid) {
-          $studyHash{$title}{pmid} = $pmid; 
+          push @{$studyHash{$title}{pmid}}, $pmid; 
         }
-
-        last; # load first title only ? should be good enough for isolates
-        
       } # end foreach value   
      } # end foreach key
   } # end foreach seq
 
-  #print Dumper(%nodeHash);
-  #print Dumper(%studyHash);
+  print Dumper(%nodeHash);
+  print Dumper(%studyHash);
 
   $seq_io->close;
 
@@ -239,20 +236,24 @@ sub loadIsolates {
       $count++;
     }
 
-    my $pmid = $v->{pmid}; 
+    my %seen = ();
+    my @pmids = grep { ! $seen{$_}++ } @{$v->{pmid}};  # unique pmid
 
-    pcbiPubmed::setPubmedID ($pmid);
-    my $publication = pcbiPubmed::fetchPublication(); 
-    my $authors = pcbiPubmed::fetchAuthorListLong();
+    foreach my $pmid (@pmids) { 
 
-    my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
-                                                              authors     => $authors,
-                                                              publication => $publication,
-                                                             });
+      pcbiPubmed::setPubmedID ($pmid);
+      my $publication = pcbiPubmed::fetchPublication(); 
+      my $authors = pcbiPubmed::fetchAuthorListLong();
 
-    my $study_ref = GUS::Model::Study::StudyBibRef->new;
-    $study_ref->setParent($study);
-    $study_ref->setParent($ref);
+      my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
+                                                                authors     => $authors,
+                                                                publication => $publication,
+                                                               });
+
+      my $study_ref = GUS::Model::Study::StudyBibRef->new;
+      $study_ref->setParent($study);
+      $study_ref->setParent($ref);
+    }
 
     $study->submit;
   }
