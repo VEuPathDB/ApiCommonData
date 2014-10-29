@@ -13,6 +13,7 @@ use GUS::Model::Study::StudyLink;
 use GUS::Model::Study::StudyBibRef;
 use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::Characteristic;
+use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::BibliographicReference;
 use Data::Dumper;
@@ -104,7 +105,7 @@ sub run {
 
   my ($self) = @_;
   my $dbiDb = $self->getDb();
-  $dbiDb->setMaximumNumberOfObjects(100000);
+  $dbiDb->setMaximumNumberOfObjects(1000000);
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'), $self->getArg('extDbRlsVer'));
   my $inputFile = $self->getArg('inputFile');
@@ -164,7 +165,7 @@ sub readGenBankFile {
         my $title = $value->title;
 
         # tile cut to 200 characters - study.study name column
-        #$title = substr $title, 0, 150;
+        $title = substr $title, 0, 150;
         my $location = $value->location;
 
         next if ($title eq "" || $title =~ /Direct Submission/i);
@@ -180,12 +181,12 @@ sub readGenBankFile {
      } # end foreach key
   } # end foreach seq
 
-  print Dumper(%nodeHash);
-  print Dumper(%studyHash);
+  #print Dumper(%nodeHash);
+  #print Dumper(%studyHash);
 
   $seq_io->close;
 
-  $termHash{taxon} = 1; # add taxon as a term
+  $termHash{ncbi_taxon} = 1; # add hardcoded term "ncbi_taxon" as a term
 
   return (\%studyHash, \%nodeHash, \%termHash);
 }
@@ -201,13 +202,13 @@ sub loadIsolates {
 
   while(my ($title, $v) = each %$studyHash) {
 
-    my $study = GUS::Model::Study::Study->new({ name => $title, 
-                                                external_database_release_id => $extDbRlsId,
-                                              });
+    my $study = GUS::Model::Study::Study->new();
+    $study->setName($title);
+    $study->setExternalDatabaseReleaseId($extDbRlsId);
 
     foreach my $id ( @{$v->{ids}} ) {  # id is each isolate accession
 
-      my $node = GUS::Model::Study::ProtocolAppNode->new;
+      my $node = GUS::Model::Study::ProtocolAppNode->new();
       $node->setDescription($nodeHash->{$id}->{desc});
       $node->setName($id);
       $node->setSourceId($id);
@@ -217,19 +218,24 @@ sub loadIsolates {
       while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  # loop each source modifiers
 
         if($term eq 'db_xref' && $value =~ /taxon/i) {
-          $term = 'taxon';
+          $term = 'ncbi_taxon';
           $value =~ s/taxon://;
-          $node->setTaxonId($value);
+
+          my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $value });
+          $taxonObj->retrieveFromDB;
+
+          $node->setParent($taxonObj);
         }
 
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
-        my $characteristic = GUS::Model::Study::Characteristic->new({ value => $value });
+        my $characteristic = GUS::Model::Study::Characteristic->new();
+        $characteristic->setValue($value);
 
         $characteristic->setParent($categoryOntologyObj);
         $characteristic->setParent($node);
       }
 
-      my $link = GUS::Model::Study::StudyLink->new;
+      my $link = GUS::Model::Study::StudyLink->new();
       $link->setParent($study);
       $link->setParent($node);
 
