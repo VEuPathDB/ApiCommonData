@@ -159,6 +159,7 @@ sub run {
     $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
 
     $nodeOrderNum++;
+
   }
 
   close CONFIG;
@@ -354,29 +355,8 @@ sub makeProtocol {
   return $protocol;
 }
 
-
-sub lookupProtocolParam {
-  my ($self, $name, $protocolName) = @_;
-
-  my $protocolParams = $self->getProtocolParams();
-
-  return unless($protocolParams);
-
-  foreach my $pp (@$protocolParams) {
-    if($pp->getName eq $name && $protocolName eq $pp->getParent('Study::Protocol', 1)->getName()) {
-      return $pp;
-    }
-  }
-  return undef;
-}
-
-
-sub getProtocolParams { $_[0]->{_protocol_params} }
-sub addProtocolParam  { push @{$_[0]->{_protocol_params}}, $_[1]; }
-
 sub getProtocols { $_[0]->{_protocols} }
 sub addProtocol  { push @{$_[0]->{_protocols}}, $_[1]; }
-
 
 sub makeProtocolAppParams {
   my ($self, $protocolApp, $protocol, $protocolParamValues) = @_;
@@ -389,16 +369,9 @@ sub makeProtocolAppParams {
   foreach my $ppv (@protocolParamValues) {
     my ($ppName, $ppValue) = split(/\|/, $ppv);
 
-    my $protocolParam = $self->lookupProtocolParam($ppName, $protocol->getName());
-
-    unless($protocolParam) {
-      $protocolParam = GUS::Model::Study::ProtocolParam->new({name => $ppName});
-      $protocolParam->setParent($protocol);
-
-      $protocolParam->retrieveFromDB();
-      $self->addProtocolParam($protocolParam);
-    }
-
+    my $protocolParam = GUS::Model::Study::ProtocolParam->new({name => $ppName});
+    $protocolParam->setParent($protocol);
+    $protocolParam->retrieveFromDB();
 
     my $protocolAppParam = GUS::Model::Study::ProtocolAppParam->new({value => $ppValue});
     $protocolAppParam->setParent($protocolApp);
