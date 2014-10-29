@@ -373,7 +373,7 @@ sub makeProtocolAppParams {
 
   my @protocolParamValues = split(';', $protocolParamValues);
   foreach my $ppv (@protocolParamValues) {
-    my ($ppName, $ppValue) = split('=', $ppv);
+    my ($ppName, $ppValue) = split('|', $ppv);
 
     my $protocolParam = $self->lookupProtocolParam($ppName, $protocol->getName());
 
