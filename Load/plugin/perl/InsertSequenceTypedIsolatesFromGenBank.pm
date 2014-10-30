@@ -158,27 +158,30 @@ sub readGenBankFile {
     foreach my $key ( $ac->get_all_annotation_keys ) { 
       next unless $key =~ /reference/i;
       my @values = $ac->get_Annotations($key);
+
+      # one isolate record could have multiple references
+      my $title_count = 0;
+
       foreach my $value ( @values ) { 
-        # value is an Bio::AnnotationI, and defines a "as_text" method
-        # 'location' => 'Mol. Bi chem. Parasitol. 61 (2), 159-169 (1993) PUBMED   7903426'
+        # value is an Bio::AnnotationI
+        # location => 'Mol. Bi chem. Parasitol. 61 (2), 159-169 (1993) PUBMED   7903426'
 
         my $title = $value->title;
-
         # tile cut to 200 characters - study.study name column
         $title = substr $title, 0, 150;
-        my $location = $value->location;
-
         next if ($title eq "" || $title =~ /Direct Submission/i);
 
-        push @{$studyHash{$title}{ids}}, $source_id; # title with a list of isolate source_id 
-
+        my $location = $value->location;
         my ($pmid) = $location =~ /PUBMED\s+(\d+)/;
-
         if($pmid) {
           push @{$studyHash{$title}{pmid}}, $pmid; 
         }
+
+        push @{$studyHash{$title}{ids}}, $source_id unless $title_count > 0; # only associlate id with first title
+        $title_count++;
+
       } # end foreach value   
-     } # end foreach key
+     } # end foreach key 
   } # end foreach seq
 
   #print Dumper(%nodeHash);
@@ -215,6 +218,12 @@ sub loadIsolates {
       $node->setExternalDatabaseReleaseId($extDbRlsId);
       $node->setParent($ontologyObj);  # type_id 
 
+      my $extNASeq = $self->buildSequence($nodeHash->{$id}->{seq}, $id, $extDbRlsId);
+      $extNASeq->submit;
+      #my $segmentResult = GUS::Model::Results::SegmentResult->new();
+      #$segmentResult->setParent($extNASeq);
+      #$segmentResult->setParent($study);
+
       while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  # loop each source modifiers
 
         if($term eq 'db_xref' && $value =~ /taxon/i) {
@@ -233,7 +242,7 @@ sub loadIsolates {
 
         $characteristic->setParent($categoryOntologyObj);
         $characteristic->setParent($node);
-      }
+      } # end load terms
 
       my $link = GUS::Model::Study::StudyLink->new();
       $link->setParent($study);
@@ -251,10 +260,10 @@ sub loadIsolates {
       my $publication = pcbiPubmed::fetchPublication(); 
       my $authors = pcbiPubmed::fetchAuthorListLong();
 
-      my $ref = GUS::Model::SRes::BibliographicReference->new({ title       => $title,
-                                                                authors     => $authors,
-                                                                publication => $publication,
-                                                               });
+      my $ref = GUS::Model::SRes::BibliographicReference->new();
+      $ref->setTitle($title);
+      $ref->setAuthors($authors);
+      $ref->setPublication($publication);
 
       my $study_ref = GUS::Model::Study::StudyBibRef->new;
       $study_ref->setParent($study);
@@ -285,7 +294,6 @@ sub findOntologyTermByCategory {
 sub makeOntologyTerm {
   my ($self, $termHash, $extDbRlsId) = @_;
 
-  # insert all distinct qualifier into SRes.OntologyTerm table 
   foreach my $term( keys %$termHash) {
     my $termObj = GUS::Model::SRes::OntologyTerm->new({ name => $term });
 
@@ -298,12 +306,13 @@ sub makeOntologyTerm {
 }
 
 sub buildSequence {
-  my ($self, $seq, $extDbRlsId) = @_;
+  my ($self, $seq, $source_id, $extDbRlsId) = @_;
 
   my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
 
   $extNASeq->setExternalDatabaseReleaseId($extDbRlsId);
   $extNASeq->setSequence($seq);
+  $extNASeq->setSourceId($source_id);
   $extNASeq->setSequenceVersion(1);
 
   return $extNASeq;
