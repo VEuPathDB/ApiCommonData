@@ -92,11 +92,11 @@ sub new {
   my $self = {};
   bless($self,$class); 
 
-  $self->initialize({requiredDbVersion => 4.0,
-                     cvsRevision => '$Revision$', # cvs fills this in!
-                     name => ref($self),
-                     argsDeclaration => $argsDeclaration,
-                     documentation => $documentation
+  $self->initialize({ requiredDbVersion => 4.0,
+                      cvsRevision => '$Revision$', # cvs fills this in!
+                      name => ref($self),
+                      argsDeclaration => $argsDeclaration,
+                      documentation => $documentation
                    });
   return $self;
 }
@@ -184,9 +184,6 @@ sub readGenBankFile {
      } # end foreach key 
   } # end foreach seq
 
-  #print Dumper(%nodeHash);
-  #print Dumper(%studyHash);
-
   $seq_io->close;
 
   $termHash{ncbi_taxon} = 1; # add hardcoded term "ncbi_taxon" as a term
@@ -220,6 +217,7 @@ sub loadIsolates {
 
       my $extNASeq = $self->buildSequence($nodeHash->{$id}->{seq}, $id, $extDbRlsId);
       $extNASeq->submit;
+
       #my $segmentResult = GUS::Model::Results::SegmentResult->new();
       #$segmentResult->setParent($extNASeq);
       #$segmentResult->setParent($study);
@@ -277,9 +275,8 @@ sub loadIsolates {
 }
 
 sub addOntologyCategory {
- my ($self, $ontologyTermObj) = @_;
-
- push @{$self->{_ontology_category_terms} }, $ontologyTermObj;
+  my ($self, $ontologyTermObj) = @_;
+  push @{$self->{_ontology_category_terms} }, $ontologyTermObj;
 }
 
 sub findOntologyTermByCategory {
