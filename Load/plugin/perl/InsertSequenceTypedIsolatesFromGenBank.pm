@@ -167,8 +167,6 @@ sub readGenBankFile {
         # location => 'Mol. Bi chem. Parasitol. 61 (2), 159-169 (1993) PUBMED   7903426'
 
         my $title = $value->title;
-        # tile cut to 200 characters - study.study name column
-        $title = substr $title, 0, 150;
         next if ($title eq "" || $title =~ /Direct Submission/i);
 
         my $location = $value->location;
@@ -177,10 +175,12 @@ sub readGenBankFile {
           push @{$studyHash{$title}{pmid}}, $pmid; 
         }
 
-        push @{$studyHash{$title}{ids}}, $source_id unless $title_count > 0; # only associlate id with first title
+        # only associlate id with first title
+        push @{$studyHash{$title}{ids}}, $source_id unless $title_count > 0; 
         $title_count++;
 
       } # end foreach value   
+
      } # end foreach key 
   } # end foreach seq
 
@@ -207,22 +207,20 @@ sub loadIsolates {
     $study->setExternalDatabaseReleaseId($extDbRlsId);
 
     foreach my $id ( @{$v->{ids}} ) {  # id is each isolate accession
-
       my $node = GUS::Model::Study::ProtocolAppNode->new();
       $node->setDescription($nodeHash->{$id}->{desc});
       $node->setName($id);
       $node->setSourceId($id);
       $node->setExternalDatabaseReleaseId($extDbRlsId);
       $node->setParent($ontologyObj);  # type_id 
+      
+      $study->addToSubmitList($node);
 
       my $extNASeq = $self->buildSequence($nodeHash->{$id}->{seq}, $id, $extDbRlsId);
-      $extNASeq->submit;
+      $study->addToSubmitList($extNASeq);
 
-      #my $segmentResult = GUS::Model::Results::SegmentResult->new();
-      #$segmentResult->setParent($extNASeq);
-      #$segmentResult->setParent($study);
-
-      while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  # loop each source modifiers
+      # loop each source modifiers, e.g. isolate => cp2; host => cow
+      while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  
 
         if($term eq 'db_xref' && $value =~ /taxon/i) {
           $term = 'ncbi_taxon';
@@ -245,6 +243,11 @@ sub loadIsolates {
       my $link = GUS::Model::Study::StudyLink->new();
       $link->setParent($study);
       $link->setParent($node);
+
+      my $segmentResult = GUS::Model::Results::SegmentResult->new();
+      ## need to handle feature location
+      $segmentResult->setParent($extNASeq);
+      $segmentResult->setParent($node);
 
       $count++;
     }
