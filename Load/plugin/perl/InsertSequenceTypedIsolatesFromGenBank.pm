@@ -140,16 +140,37 @@ sub readGenBankFile {
     $nodeHash{$source_id}{seq}  = $seq->seq;
 
     # process source modifiers, store distince terms as a list
-    for my $feat ($seq->get_SeqFeatures) {    
+    foreach my $feat ($seq->get_SeqFeatures) {    
+      
       my $primary_tag = $feat->primary_tag;
-      if($primary_tag =~ /source/i || $primary_tag =~ /rna/i) {    
-        for my $tag ($feat->get_all_tags) {    
-          $termHash{$tag} = 1;
-          for my $value ($feat->get_tag_values($tag)) {
-             $nodeHash{$source_id}{terms}{$tag} = $value;
+      foreach my $tag ($feat->get_all_tags) {    
+        next if ($primary_tag =~ /cds/i && $tag ne "product"); # if tag is CDS/rna, only store product
+        next if ($primary_tag =~ /rna/i && $tag ne "product"); 
+        next if ($primary_tag =~ /variation/i && $tag eq "replace"); 
+        next if ($primary_tag =~ /conflict/i); 
+
+        $termHash{$tag} = 1;
+
+        foreach my $value ($feat->get_tag_values($tag)) {
+          print "$source_id: $primary_tag: $tag => $value\n";
+
+          if($tag eq "note" && $value =~ /:(.*)?;+/ ) { # handle EuPathDB notes - key:value ; key:value
+            my @pairs = split /;/, $value;
+            foreach my $p (@pairs) {
+              my ($k, $v) = split /:/, $p;
+              $k =~ s/^\s+|\s+$//g; # trim off leading and trailing white spaces
+              $v =~ s/^\s+|\s+$//g; # trim off leading and trailing white spaces
+              next if $k =~ /PCR_primers/i;
+              $nodeHash{$source_id}{terms}{$k} = $v unless $v eq "";
+              $termHash{$k} = 1 unless $v eq ""; 
+
+              print "node hash: $k => $v\n";
+            }
+          } else {
+            $nodeHash{$source_id}{terms}{$tag} = $value;
           }
-        }   
-      } 
+        }
+      }   
     }
 
     # process references
