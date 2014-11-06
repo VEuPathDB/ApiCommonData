@@ -402,7 +402,7 @@ end alphanumeric_str;
 grant execute on apidb.alphanumeric_str to public;
 
 -------------------------------------------------------------------------------
-create or replace function apidb.project_id (organism varchar2)
+create or replace function apidb.prefixed_project_id (organism varchar2, prefix varchar2)
 return varchar2
 is
    project varchar2(80);
@@ -412,16 +412,32 @@ begin
    begin
       execute immediate
          'select distinct project_id ' ||
-         'from ApidbTuning.ProjectTaxon pt ' ||
+         'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
          'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;
       exception
          when NO_DATA_FOUND then
             raise_application_error(-20101,
-                                    'project_id("'|| organism || '"): unknown project assignment' );
+                                    'prefixed_project_id("'|| organism || '"): unknown project assignment' );
    end;
 
    return project;
+
+end prefixed_project_id;
+/
+
+show errors;
+
+GRANT execute ON apidb.prefixed_project_id TO public;
+
+-------------------------------------------------------------------------------
+create or replace function apidb.project_id (organism varchar2)
+return varchar2
+is
+
+begin
+
+   return prefixed_project_id(organism, '');
 
 end project_id;
 /
