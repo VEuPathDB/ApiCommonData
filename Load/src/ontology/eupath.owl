@@ -166,7 +166,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000002">
         <rdfs:label xml:lang="en">dwelling</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A self-contained &apos;substantial&apos; unit of accommodation, such as a building, part of a building, caravan, houseboat or other mobile home. A tent is not normally considered to be substantial.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity for accommodation, such as a building, part of a building, caravan, houseboat or other mobile home. A tent is not normally considered to be substantial.</obo:IAO_0000115>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Dwelling</obo:IAO_0000119>
         <obo:EUPATH_0000052>dwelling type</obo:EUPATH_0000052>
     </owl:Class>
@@ -224,7 +224,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity of floor.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A building material used in the construction of a floor</obo:IAO_0000115>
         <obo:EUPATH_0000052>floor material</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -297,7 +297,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of a household&apos;s cumulative living standard. The wealth index is calculated using easy-to-collect data on a household’s ownership of selected assets, such as televisions and bicycles; materials used for housing construction; and types of water access and sanitation facilities.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of a household&apos;s cumulative living standard. The wealth index is calculated using easy-to-collect data on a household&apos;s ownership of selected assets, such as televisions and bicycles; materials used for housing construction; and types of water access and sanitation facilities.</obo:IAO_0000115>
         <obo:EUPATH_0000052>household wealth index</obo:EUPATH_0000052>
         <obo:IAO_0000119>http://dhsprogram.com/topics/Wealth-Index.cfm</obo:IAO_0000119>
     </owl:Class>
@@ -517,7 +517,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of days eating meat in the last week</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of days eating meat in a  week</obo:IAO_0000115>
         <obo:EUPATH_0000052># meat meals / wk</obo:EUPATH_0000052>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
     </owl:Class>
@@ -571,7 +571,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000055"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of female anopheles mosquitoes that may be of a particular type such as those collected in a household in a given night</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum which is number of female anopheles mosquitoes that may be of a particular type such as those collected using CDC trap in a household in a given night</obo:IAO_0000115>
         <obo:IAO_0000119>Person: Chris Stoeckert</obo:IAO_0000119>
         <obo:EUPATH_0000052>#F anopheles (CDC trap)</obo:EUPATH_0000052>
     </owl:Class>
@@ -634,7 +634,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000038">
         <rdfs:label xml:lang="en">diagnosis of uncomplicated malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000036"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria which depends on the demonstration of parasites in the blood, usually by microscopy. Additional laboratory findings may include mild anemia, mild decrease in blood platelets (thrombocytopenia), elevation of bilirubin, and elevation of aminotransferases.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria without evidence of complicated malaria.</obo:IAO_0000115>
         <obo:EUPATH_0000052>uncomplicated malaria</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -645,6 +645,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000040">
         <rdfs:label xml:lang="en">diagnosis of complicated malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000036"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria with the presence of any danger signs including inability to sit up or stand, vomiting everything, unable to breastfeed or drink and lethargy or meeting criteria for severe malaria.</obo:IAO_0000115>
         <obo:EUPATH_0000052>complicated malaria</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -664,7 +665,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000042">
         <rdfs:label xml:lang="en">diagnoses of complicated malaria with danger signs</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000040"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of complicated malaria with signs and symptoms that are not listed as criteria used to diagnose severe malaria.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of complicated malaria with signs and symptoms, such as inability to sit up or stand, vomiting everything, unable to breastfeed or drink, lethargy, which are not listed as WHO criteria used to diagnose severe malaria.</obo:IAO_0000115>
         <obo:EUPATH_0000052>complicated malaria with danger signs</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -713,7 +714,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization criteria.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization (WHO) criteria.</obo:IAO_0000115>
         <obo:EUPATH_0000052>severe malaria symptom</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -747,7 +748,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of blood cells with abnormal shapes using a value of positive or negative.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of asexual parasites in blood cells by microscopy using a value of positive or negative.</obo:IAO_0000115>
         <obo:EUPATH_0000052>blood smear reading (+/-)</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -809,7 +810,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity which is part of a dwelling for providing fresh air to the dwelling.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity whichis part of a dwelling for providing fresh air to the dwelling.</obo:IAO_0000115>
         <obo:EUPATH_0000052>dwelling ventilation</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -872,7 +873,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000089">
         <rdfs:label xml:lang="en">diagnosis of asymptomatic parasitemia</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on positive blood smear in the absence of fever</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:IAO_0000115>
         <obo:EUPATH_0000052>asymptomatic parasitemia</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -917,7 +918,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is about parasite density in count per ul.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is the number of asexual parasites per ul.</obo:IAO_0000115>
         <obo:EUPATH_0000052>parasite density</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -1070,7 +1071,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000100">
         <rdfs:label xml:lang="en">subjective fever</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The temporary increase in the body&apos;s temperature in response to some disease or illness.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A phenotypic abnormality of a subjective fever as reported by the study participant or their parent/guardian</obo:IAO_0000115>
         <obo:EUPATH_0000052>fever</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -1185,7 +1186,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115>A temperature measurement datum that is about an organism.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A temperature measurement datum that is about an organism.</obo:IAO_0000115>
         <obo:EUPATH_0000052>temperature</obo:EUPATH_0000052>
     </owl:Class>
     
@@ -1208,7 +1209,7 @@
     
 
 
-        <!-- http://purl.obolibrary.org/obo/EUPATH_0000113 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000113 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000113">
         <rdfs:label>age since birth at time of visit</rdfs:label>
@@ -1243,8 +1244,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000115">
         <rdfs:label>average asexual parasite density of a participant with malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
-        <obo:EUPATH_0000112>The average asexual parasite density (count per ul of whole blood) across all visits of the participant who was diagnosed with malaria</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>The average asexual parasite density (count per ul of whole blood) across all visits of the participant who was diagnosed with malaria</obo:EUPATH_0000112>
         <obo:IAO_0000115>An average value of asexual parasites counted per microliter of blood (i.e. malaria parasite density) across mulitiple clinical visits of a participant who was diagnosed with malaria.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
@@ -1258,8 +1259,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000116">
         <rdfs:label>average number of female Anoepheles</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
-        <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
         <obo:EUPATH_0000112>An average count of female Anopheles mosquitoes collected across multiple collections.</obo:EUPATH_0000112>
         <obo:EUPATH_0000052>avg F Anopheles</obo:EUPATH_0000052>
         <obo:IAO_0000115>An average count of female Anopheles mosquitoes collected across multiple collections (e.g. from one or more households on a number of nights).</obo:IAO_0000115>
@@ -1276,9 +1277,9 @@
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:EUPATH_0000112>Average number of female Anopheles mosquitoes tested for sporozoites across multiple collections from a household</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
-        <dc:source>PRISM</dc:source>
-        <obo:IAO_0000115>An average value of Anopheles mosquitoes tested for sporozoites across multiple collections (e.g. from a given household across CDC light trap collections) in a given period.</obo:IAO_0000115>
         <obo:EUPATH_0000052>avg num F Anopheles tested</obo:EUPATH_0000052>
+        <obo:IAO_0000115>An average value of Anopheles mosquitoes tested for sporozoites across multiple collections (e.g. from a given household across CDC light trap collections) in a given period.</obo:IAO_0000115>
+        <dc:source>PRISM</dc:source>
     </owl:Class>
     
 
@@ -1305,8 +1306,8 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
         <obo:EUPATH_0000052>avg sporozoite rate</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
-        <obo:IAO_0000115>An average precentage value of female Anopheles mosquitoes tested as sporozoites-positive in all female mosquitoes tested for sporozoites across multiple collections.</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
+        <obo:IAO_0000115>An average precentage value of female Anopheles mosquitoes tested as sporozoites-positive in all female mosquitoes tested for sporozoites across multiple collections.</obo:IAO_0000115>
         <obo:EUPATH_0000112>Average proportion of mosquitoes which tested positive for sporozoites</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
     </owl:Class>
@@ -1350,8 +1351,8 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
-        <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:EUPATH_0000052>num visits with malaria</obo:EUPATH_0000052>
+        <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with malaria</obo:IAO_0000115>
         <obo:EUPATH_0000112>The number of clinical visits during which the participant was diagnosed with malaria</obo:EUPATH_0000112>
     </owl:Class>
@@ -1381,8 +1382,8 @@
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the total number of clinical visits which were not sheduled routine visits.</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
-        <obo:EUPATH_0000052>num non-routine visits</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000052>num non-routine visits</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>The total number of clinical visits which were not part of the routine visit schedule.</obo:EUPATH_0000112>
     </owl:Class>
     
@@ -1393,8 +1394,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000125">
         <rdfs:label>number of routine clinical visits</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
-        <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
+        <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the total number of clinical visits which were sheduled routine visits.</obo:IAO_0000115>
         <obo:EUPATH_0000052>total num routine visits</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>The total number of clinical visits which were part of the routine visit schedule.</obo:EUPATH_0000112>
@@ -1403,7 +1404,7 @@
     
 
 
-	<!-- http://purl.obolibrary.org/obo/HP_0000952 -->
+    <!-- http://purl.obolibrary.org/obo/HP_0000952 -->
 
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/HP_0000952">
         <rdfs:subClassOf>
@@ -1475,5 +1476,5 @@
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 1.3.8.1099) http://owlapi.sourceforge.net -->
 
