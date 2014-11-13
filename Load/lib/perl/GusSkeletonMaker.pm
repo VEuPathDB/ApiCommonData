@@ -158,7 +158,7 @@ sub makeGeneSkeleton{
                                                                   coding_end => $exonCdsArray->[2],
                                                                  });
         $aaFeatureExon->setParent($translatedAAFeat);
-        $aaFeatureExon->setParent($_);
+        $aaFeatureExon->setParent($_->[0]);
       }
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
