@@ -98,6 +98,7 @@ sub makeGeneSkeleton{
 
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
       my $gusExon;
+      my ($codingStart, $codingEnd);
 
       ##check to see if I've seen this exon:
       if(!$distinctExons{$bioperlExon->start()."_".$bioperlExon->end()}){
@@ -106,13 +107,18 @@ sub makeGeneSkeleton{
         $gusExon->setParent($gusGene);
 	$bioperlExon->{gusFeature} = $gusExon;
 
-        my ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
-        my ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+        ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+        ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
 
         push @gusExonsAndCodingLocations, [$gusExon, $codingStart, $codingEnd];
       }else{
         $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
 	$bioperlExon->{gusFeature} = $gusExon;
+
+        ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+        ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+
+        push @gusExonsAndCodingLocations, [$gusExon, $codingStart, $codingEnd];
       }
       push (@{$gusExon->{bioperlFeature}}, $bioperlExon);  ### gusExon to bioperlExon is one to many
 
