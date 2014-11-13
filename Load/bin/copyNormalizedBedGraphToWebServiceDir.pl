@@ -42,13 +42,14 @@ my ($inputDir, $outputDir, $analysisConfig);
 
 my $usage =<<endOfUsage;
 Usage:
-  copyNormalizedBedGraphToWebServiceDir.pl --inputDir input_diretory --outputDir output_directory --datasetXml eupath_datset_xml
+  copyNormalizedBedGraphToWebServiceDir.pl --inputDir input_diretory --outputDir output_directory --analysisConfig analysisConfig.xml
 
     intpuDir:top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/CURRENT/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
+
     outputDir: webservice directory, e.g. /eupath/data/apiSiteFilesStaging/PlasmoDB/18/real/webServices/PlasmoDB/release-CURRENT/Pfalciparum3D7/bigwig/pfal3D7_Su_strand_specific_rnaSeq_RSRC
 
     analysisConfig: use to track sample order and display name. Here is a sample analysis config file - 
-        /eupath/data/EuPathDB/manualDelivery/PlasmoDB/pfal3D7/rnaSeq/Su_strand_specific/2011-11-16/final/analysisConfig.xml ?
+        /eupath/data/EuPathDB/manualDelivery/PlasmoDB/pfal3D7/rnaSeq/Su_strand_specific/2011-11-16/final/analysisConfig.xml
 
     ## datasetXml: dataset xml in order to keep the order of samples e.g. EuPathDatasets/Datasets/lib/xml/datasets/PlasmoDB/pfal3D7/Su_strand_specific.xml. In this case, samples are in the order of lateTroph, schizont, gametocyteII, gametocyteV
 endOfUsage
