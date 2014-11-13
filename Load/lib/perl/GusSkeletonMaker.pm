@@ -29,6 +29,7 @@ use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
+use GUS::Model::DoTS::AAFeatureExon;
 use GUS::Model::DoTS::Gene;
 use GUS::Model::DoTS::GeneInstance;
 
@@ -93,6 +94,8 @@ sub makeGeneSkeleton{
     $bioperlTranscript->{gusFeature} = $gusTranscript;
     push (@{$gusTranscript->{bioperlFeature}}, $bioperlTranscript);
 
+    my @gusExonsAndCodingLocations;
+
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
       my $gusExon;
 
@@ -102,6 +105,11 @@ sub makeGeneSkeleton{
         $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()} = $gusExon;
         $gusExon->setParent($gusGene);
 	$bioperlExon->{gusFeature} = $gusExon;
+
+        my ($codingStart) = $bioperlExon->get_tag_values('CodingStart');
+        my ($codingEnd) = $bioperlExon->get_tag_values('CodingEnd');
+
+        push @gusExonsAndCodingLocations, [$gusExon, $codingStart, $codingEnd];
       }else{
         $gusExon =  $distinctExons{$bioperlExon->start()."_".$bioperlExon->end()};
 	$bioperlExon->{gusFeature} = $gusExon;
@@ -141,6 +149,14 @@ sub makeGeneSkeleton{
       my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       $translatedAAFeat->{bioperlTranscript} = $bioperlTranscript;
+
+      foreach my $exonCdsArray (@gusExonsAndCodingLocations) {
+        my $aaFeatureExon = GUS::Model::DoTS::AAFeatureExon->new({coding_start => $exonCdsArray->[1],
+                                                                  coding_end => $exonCdsArray->[2],
+                                                                 });
+        $aaFeatureExon->addParent($translatedAAFeat);
+        $aaFeatureExon->addParent($_);
+      }
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
