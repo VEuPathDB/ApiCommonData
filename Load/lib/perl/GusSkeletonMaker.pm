@@ -74,9 +74,11 @@ sub makeGeneSkeleton{
 
   foreach my $bioperlTranscript ($bioperlGene->get_SeqFeatures()) {
     my $transcriptKey;
-    foreach my $exon ($bioperlTranscript->get_SeqFeatures()){
-      $transcriptKey .= $exon->start()."_".$exon->end().",";
-    }
+
+    my @sortedExons = sort { $a->start <=> $b->start || $a->end <=> $b->end } $bioperlTranscript->get_SeqFeatures();
+    my @sortedExonLocationStrings = map { $_->start . "_" . $_->end } @sortedExons;
+    my $transcriptKey = join(",", @sortedKeys);
+
     #print STDERR "\$transcriptKey = $transcriptKey\n";
 
     my ($transcriptNaSeq, $gusTranscript);
