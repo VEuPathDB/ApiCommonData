@@ -157,8 +157,8 @@ sub makeGeneSkeleton{
         my $aaFeatureExon = GUS::Model::DoTS::AAFeatureExon->new({coding_start => $exonCdsArray->[1],
                                                                   coding_end => $exonCdsArray->[2],
                                                                  });
-        $aaFeatureExon->addParent($translatedAAFeat);
-        $aaFeatureExon->addParent($_);
+        $aaFeatureExon->setParent($translatedAAFeat);
+        $aaFeatureExon->setParent($_);
       }
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
