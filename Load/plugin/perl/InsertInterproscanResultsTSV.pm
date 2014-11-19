@@ -144,7 +144,6 @@ AFFECT
   my $tablesDependedOn = <<TABD;
 DoTS.AASequenceImp
 SRes.GOTerm
-SRes.GOEvidenceCode
 SRes.ExternalDatabaseRelease
 SRes.ExternalDatabaseEntry
 Core.TableInfo
@@ -194,7 +193,9 @@ sub run {
 
   my $goVersion = $self->getArg('goVersion');
   $self->{GOAnnotater} =
-    GUS::Supported::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"]);
+
+      # TODO:  Why are we hard coding these Externaldatabaes Releae names here????
+    GUS::Supported::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"], "GO_evidence_codes_RSRC^%");
 
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('extDbName'),
 					     $self->getArg('extDbRlsVer'));
