@@ -3,7 +3,7 @@ package ApiCommonData::Load::Plugin::InsertInterproscanResultsTSV;
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | broken
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | fixed
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::InsertInterproscanResultsTSV;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -143,7 +142,6 @@ AFFECT
 
   my $tablesDependedOn = <<TABD;
 DoTS.AASequenceImp
-SRes.GOTerm
 SRes.ExternalDatabaseRelease
 SRes.ExternalDatabaseEntry
 Core.TableInfo
@@ -171,7 +169,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  $self->initialize({requiredDbVersion => 3.6,
+  $self->initialize({requiredDbVersion => 4.0,
                      cvsRevision => '$Revision$',
                      name => ref($self),
                      argsDeclaration   => $args,
