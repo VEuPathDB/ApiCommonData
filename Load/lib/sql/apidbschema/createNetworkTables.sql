@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.NetworkContext (
-  NETWORK_CONTEXT_ID             NUMBER(3)    NOT NULL,
-  NAME                           VARCHAR(50)  NOT NULL,
+  NETWORK_CONTEXT_ID             NUMBER(4)    NOT NULL,
+  NAME                           VARCHAR(100)  NOT NULL,
   DESCRIPTION                    VARCHAR(250),
   ANATOMY_ID                     NUMBER(10),
   BIOLOGICAL_PROCESS_ID          NUMBER(10),
