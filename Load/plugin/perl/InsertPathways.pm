@@ -176,7 +176,7 @@ sub readBioCycSgml {
 
 	foreach my $substrate (@{$pHash{$pathway}->{REACTIONS}->{$reactn}->{SUBSTRATES}}){
 	  my $enzyme = $pHash{$pathway}->{REACTIONS}->{$reactn}->{ENZYMES};
-	  $pathwayObj->setPathwayNodeAssociation($reactName , { 
+	  $pathwayObj->setPathwayNodeAssociation($reactName . "_" . $substrate , { 
 							       source_node => $substrate ,
 							       associated_node => $enzyme,
 							       assoc_type => "Reaction ".$reactType,
@@ -187,7 +187,7 @@ sub readBioCycSgml {
 
 	foreach my $product (@{$pHash{$pathway}->{REACTIONS}->{$reactn}->{PRODUCTS}}){
 	  my $enzyme = $pHash{$pathway}->{REACTIONS}->{$reactn}->{ENZYMES};
-	  $pathwayObj->setPathwayNodeAssociation($reactName , { 
+	  $pathwayObj->setPathwayNodeAssociation($reactName . "_" . $product , { 
 							       source_node => $enzyme,
 							       associated_node => $product ,
 							       assoc_type => "Reaction ".$reactType,
