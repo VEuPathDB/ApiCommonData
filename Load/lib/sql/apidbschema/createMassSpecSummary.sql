@@ -40,7 +40,7 @@ REFERENCES study.protocolappnode (protocol_app_node_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.MassSpecSummary TO gus_w;
 GRANT SELECT ON apidb.MassSpecSummary TO gus_r;
 
-CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_database_release_id,number_of_spans,spectrum_count);
+CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_database_release_id,number_of_spans,spectrum_count, mass_spec_summary_id);
 CREATE INDEX apiDB.massspecsumm_aaseqid_idx ON apiDB.Massspecsummary(aa_sequence_id);
 
 ------------------------------------------------------------------------------
