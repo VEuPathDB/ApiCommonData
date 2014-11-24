@@ -54,6 +54,7 @@ use GUS::Model::Study::Output;
 use Bio::Location::Split;
 use Bio::Location::Simple;
 use Bio::Coordinate::GeneMapper;
+use GUS::Community::GeneModelLocations;
 
 # debugging
 use Data::Dumper;
@@ -141,6 +142,9 @@ sub run {
     
 
   $self->{geneExtDbRlsId} = join ',', map{ $self->getExtDbRlsId($_) } split (/,/,$self->getArg('geneExternalDatabaseSpec'));
+
+  $self->{geneModelLocations} = GUS::Community::GeneModelLocations->new($self->getQueryHandle(), $self->{geneExtDbRlsId});
+
   my $minPMatch = $self->getArg('minPercentPeptidesToMap');
   $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
   ##prepare the query statements
@@ -184,7 +188,8 @@ sub run {
 
   ##now need to loop through records and assign to genes ..
   $self->addRecordsToGenes($recordSet);
-  
+
+  $recordSet = $self->{copiedRecords};
 
   $self->pruneDuplicateAndEmptyRecords($recordSet);
 
@@ -559,8 +564,6 @@ sub addRecordsToGenes {
     $self->undefPointerCache();
 
   }
-
-  print STDERR Dumper $self->{copiedRecords}
 
 }
 
@@ -959,7 +962,7 @@ sub insertMassSpecFeatures {
 
       my $naFeature = $self->addNAFeatureAndLocations (
         $record->{geneSourceId} . "-ms.$ct",
-        $record->{geneNaFeatureId},
+        $record->{geneSourceId},
         $record->{naSequenceId},
         $pep);
 
@@ -1011,7 +1014,7 @@ sub fetchSequenceOntologyId {
 }
 
 sub addNAFeatureAndLocations {
-  my ($self, $sourceId, $naFeatureId, $naSequenceId, $pep) = @_;
+  my ($self, $sourceId, $geneSourceId, $naSequenceId, $pep) = @_;
 
   if (! $pep->{start} and ! $pep->{end}) {
     warn "WARNING: pepStart and pepEnd coordinates not available for $pep->{sequence} ... discarding";
@@ -1019,9 +1022,8 @@ sub addNAFeatureAndLocations {
   }
 
 
-
   my $naLocations = $self->mapToNASequence(
-                                           $naFeatureId, $pep->{start}, $pep->{end}
+                                           $geneSourceId, $pep->{start}, $pep->{end}
                                           );
     
   if (! $naLocations) {
@@ -1058,41 +1060,42 @@ sub addNAFeatureAndLocations {
   return $naFeature;
 }
 
-sub mapToNASequence {
-  my ($self, $naFeatureId, $pepStart, $pepEnd) = @_;
+sub mapToNASequence{
+  my ($self, $geneSourceId, $pepStart, $pepEnd) = @_;
   my $naLocations = [];
 
-  # This should really be getExonsWithCodingSequence
-  my @exons = @{$self->getExons($naFeatureId)} or return;
+  my %mapped;
 
-  # CDS in chromosome coordinates
-  my $cds = new Bio::Location::Split;
-  foreach (@exons) {
-    $cds->add_sub_Location(new Bio::Location::Simple(
-                                                     -start  =>  @$_[0],
-                                                     -end    =>  @$_[1],
-                                                     -strand =>  @$_[2]
-                                                    ));
-  }
+  my $geneModelLocations = $self->{geneModelLocations};
 
-  my $gene = Bio::Coordinate::GeneMapper->new(
-                                              -in    => 'peptide',
-                                              -out   => 'chr',
-                                              -exons => [$cds->sub_Location],
-                                             );
+  foreach my $transcriptSourceId (@{$geneModelLocations->getTranscriptIdsFromGeneSourceId($geneSourceId)}) {
+    foreach my $proteinSourceId (@{$geneModelLocations->getProteinIdsFromTranscriptSourceId($transcriptSourceId)}) {
+      my ($exons, $cdsRange) = $geneModelLocations->getExonLocationsFromProteinId($proteinSourceId);
 
+      my $mapper = Bio::Coordinate::GeneMapper->new(
+        -in    => 'peptide',
+        -out   => 'chr',
+        -exons => $exons,
+        -cds => $cdsRange
+          );
+      my $peptideCoords = Bio::Location::Simple->new (
+        -start => $pepStart,
+        -end   => $pepEnd,
+          );
+      
+      my $map = $mapper->map($peptideCoords);
+      return undef if ! $map;
 
-  my $peptideCoords = Bio::Location::Simple->new (
-                                                  -start => $pepStart,
-                                                  -end   => $pepEnd,
-                                                 );
+      foreach (sort { $a->start <=> $b->start } $map->each_Location ) {
+        my $key = $_->start. "_" . $_->end . "_" . $_->strand;
 
-  my $map = $gene->map($peptideCoords);
-    
-  return undef if ! $map;
-    
-  foreach (sort { $a->start <=> $b->start } $map->each_Location ) {
-    push @$naLocations, [$_->start, $_->end, $_->strand];
+        unless($mapped{$key}) { # already seen this in a different protein for this gene
+          push @$naLocations, [$_->start, $_->end, $_->strand];
+        }
+
+        $mapped{$key} = 1;
+      }
+    }
   }
 
   return $naLocations;
@@ -1154,14 +1157,7 @@ sub getExons {
     $exonParent = $gf;
     @exons = $gf->getChildren("DoTS::ExonFeature", 1);
   } else {
-    # should be an orf
-    $exonParent = GUS::Model::DoTS::NAFeature->new({ na_feature_id => $id });
-    unless ($exonParent->retrieveFromDB()) {
-      $self->logVerbose(
-                        "No Transcript or Miscellaneous row was fetched with na_feature_id = $id\n");
-      return undef;
-    }
-    @exons = ($exonParent);
+    return undef;
   }
 
 
@@ -1173,26 +1169,23 @@ EOF
   }
 
   for my $exon (@exons) {
-    if ($exon->isValidAttribute('coding_start') && $exon->isValidAttribute('coding_end')){
-      next unless($exon->getCodingStart() && $exon->getCodingEnd());
-    }
-
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
 
-    my $codingStart = ($exon->isValidAttribute('coding_start')) ?
-      $exon->getCodingStart() || $exonStart :
-        $exonStart;
+# TODO:  Remove these lines they are unused
+#    my $codingStart = ($exon->isValidAttribute('coding_start')) ?
+#      $exon->getCodingStart() || $exonStart :
+#        $exonStart;
 
-    my $codingEnd = ($exon->isValidAttribute('coding_end')) ?
-      $exon->getCodingEnd() || $exonEnd :
-        $exonEnd;
+#    my $codingEnd = ($exon->isValidAttribute('coding_end')) ?
+#      $exon->getCodingEnd() || $exonEnd :
+#        $exonEnd;
 
     my $strand = ($exonIsReversed) ? -1 : 1;
         
-    ($codingStart > $codingEnd) && 
-      (($codingStart, $codingEnd) = ($codingEnd, $codingStart));
+#    ($codingStart > $codingEnd) && 
+#      (($codingStart, $codingEnd) = ($codingEnd, $codingStart));
 
-    push @$exonCoords, [$codingStart, $codingEnd, $strand];
+    push @$exonCoords, [$exonStart, $exonEnd, $strand];
   }
   return $exonCoords;
 }
