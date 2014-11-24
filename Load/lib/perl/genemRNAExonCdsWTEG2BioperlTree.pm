@@ -244,7 +244,7 @@ sub traverseSeqFeatures {
 		    $exonCtr++;
 		}
 
-		if($subFeature->primary_tag eq 'CD'){
+		if($subFeature->primary_tag eq 'CDS'){
 		    $cdsCtr++;
 		  $CDSLocation = $subFeature->location;
 		  my $cdsStrand = $subFeature->location->strand;
