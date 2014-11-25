@@ -91,7 +91,7 @@ CREATE INDEX ApiDB.nr_mod_ix ON ApiDB.NetworkRelationship (modification_date, ne
 CREATE TABLE ApiDB.NetworkRelationshipType(
   NETWORK_RELATIONSHIP_TYPE_ID   NUMBER(11)   NOT NULL,
   RELATIONSHIP_TYPE_ID           NUMBER(10)   NOT NULL,
-  DISPLAY_NAME                   VARCHAR(100) NOT NULL,
+  DISPLAY_NAME                   VARCHAR(150) NOT NULL,
   MODIFICATION_DATE              DATE,
   USER_READ                      NUMBER(1),
   USER_WRITE                     NUMBER(1),
