@@ -354,6 +354,7 @@ sub makeTranslatedAAFeat {
 
 sub undoTables {
  return ('DoTS.RNAFeatureExon',
+         'DoTS.AAFeatureExon',
 	 'DoTS.TranslatedAAFeature',
 	 'DoTS.TranslatedAASequence',
 	 );
