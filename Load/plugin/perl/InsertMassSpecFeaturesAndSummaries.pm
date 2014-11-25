@@ -191,6 +191,10 @@ sub run {
 
   $recordSet = $self->{copiedRecords};
 
+  unless($recordSet) {
+    $self->error("Failure:  Did not map any peptides to any proteins");
+  }
+
   $self->pruneDuplicateAndEmptyRecords($recordSet);
 
   my $recordsById = $self->unionPeptidesForRecords($recordSet);
@@ -229,6 +233,7 @@ sub unionPeptidesForRecords {
   my ($self, $recordSet) = @_;
 
   my %recordsById;
+
 
   # fill in the hashmap so we can lookup records by aaSequenceId
   for(my $i = 0; $i < scalar @$recordSet; $i++) {
@@ -328,7 +333,9 @@ sub unionPeptidesForRecords {
           
           ##what to do if spectrum counts differ??
           ## possibly should sum the spectrum counts as could represent different spectra mapped to same peptide??
-          print STDERR "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}\n" unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+
+          print STDERR "WARNING: duplicate peptide sequence w/ unequal spectrum counts: $peptideA->{sequence}=$peptideA->{spectrum_count}, $peptideB->{sequence}=$peptideB->{spectrum_count}.\n" if($self->getArg('veryVerbose')); #unless($peptideA->{spectrum_count} == $peptideB->{spectrum_count});
+
           $peptideA->{spectrum_count_diff} += $peptideB->{spectrum_count};
           
           $peptideB->{failed} = 1;
@@ -533,15 +540,24 @@ sub addRecordsToGenes {
     my $aaSeqIds =  GUS::Supported::Util::getAASeqIdsFromGeneId($self, $id, $self->{geneExtDbRlsId}, $self->getArg('organismAbbrev')) ;
 
     if(ref($aaSeqIds) eq 'ARRAY') {
-      $wasFound = 1;
+
       foreach my $aaSeqId (@$aaSeqIds) {
-        $self->copyRecord($record,$aaSeqId);
+        foreach my $prot ($self->getAllProteins()){
+          next unless($prot->[0] == $aaSeqId);
+
+          # ensure that all peptides match on to this protein
+          if($self->checkThatAllPeptidesMatch($record,$prot->[1])) {
+            $wasFound = 1;
+            $self->copyRecord($record, $aaSeqId);
+          }
+        }
       }
     }
    
     unless ($wasFound) { ##failed finding from source id...  try testing all proteins
 
       my $result = $self->testPeptidesAgainstAllProteins($record);
+
       if(ref($result) eq 'ARRAY'){  #hit more than one protein
         $wasFound = 1;
 
@@ -554,6 +570,8 @@ sub addRecordsToGenes {
 
     
     unless ($wasFound) {
+
+
       warn "Unable to find gene for $record->{sourceId} (".scalar(@{$record->{peptides}})." peptides)... discarding\n";
       $record->{failed} = 1;
       next;
@@ -610,6 +628,8 @@ sub copyRecord {
 
   $self->mapPeptidesAndSetIdentifiers($recordCopy,$aaSeqId);
   push(@{$self->{copiedRecords}},$recordCopy);
+
+  return $recordCopy;
 }
 
 ##return genefeature if only one protein contains all peptides ...
@@ -753,8 +773,11 @@ sub getGeneFromNaFeatureId {
 
 sub checkThatAllPeptidesMatch {
   my($self,$record,$protSeq) = @_;
+
   foreach my $pep (@{$record->{peptides}}) {
-    return 0 unless $protSeq =~ /$pep->{sequence}/i;
+    unless($protSeq =~ /$pep->{sequence}/i) {
+      return 0;
+    }
   }
   return 1;
 }
