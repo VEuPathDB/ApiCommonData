@@ -427,7 +427,6 @@ sub loadPathway {
       my $networkContextId = $networkContext->getNetworkContextId();
 
       my $pathway;
-      print "CHECk name= $pathwayName, source_id=" . $pathwayObj->{source_id} . " AND url=" . $pathwayObj->{url} ." DONE\n";
       $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
 						   external_database_release_id => 0000,
 						   source_id => $pathwayObj->{source_id},
