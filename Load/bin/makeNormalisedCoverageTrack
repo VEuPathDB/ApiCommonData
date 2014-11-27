@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use CBIL::Util::PropertySet;
+use Statistics::Descriptive;
+use List::MoreUtils qw { any };
+
+
+my ($gusConfigFile, $SQL, $coverageFile, $ploidy, $sampleName, $outputDir, $chromSizesFile);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+            "SQL=s" =>\$SQL,
+            "coverageFile=s" => \$coverageFile,
+            "ploidy=i" => \$ploidy,
+            "sampleName=s" => \$sampleName,
+            "outputDir=s" => \$outputDir,
+            "chromSizesFile=s" => \$chromSizesFile);
+
+if (!$SQL || !$coverageFile || !$ploidy || !$sampleName || !$outputDir || !$chromSizesFile){
+    die "usage: makeNormalisedCoverageFile --SQL 'sql statement that returns a list of source ids for chromosomes' --coverageFile <bed file of normalised coverage across genome in bins> --ploidy <base ploidy for genome> --sampleName <name of sample> --outputDir <Directory for output files> --chromSizesFile <File of chromosome sizes> (--gusConfigFile(only required if not default)\n";
+}
+
+sub getConstant {
+    my ($ploidy, $coverageValues) = @_;
+    my $stat = Statistics::Descriptive::Full->new();
+    $stat->add_data(@{$coverageValues});
+    return $ploidy/$stat->median();
+}
+
+# Don't want to use unordered seq for normalisation so get only ordered by SO from db
+if (!$gusConfigFile) {
+    $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config"; 
+}
+
+my @properties = ();
+
+die "Config file $gusConfigFile does not exist. " unless -e $gusConfigFile;
+
+my $gusConfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->{props}->{dbiDsn},
+                                        $gusConfig->{props}->{databaseLogin},
+                                        $gusConfig->{props}->{databasePassword},
+                                        0,0,1,
+                                        $gusConfig->{props}->{coreSchemaName},
+                                        );
+
+my $dbh = $db->getQueryHandle();
+my $stmt = $dbh->prepare($SQL);
+my $chrs = $dbh->selectcol_arrayref($stmt);
+
+open (COV, "$coverageFile") or die "Cannot open coverage file $coverageFile for reading\n$!\n";
+my $coverageValues;
+my $coverages;
+while (<COV>) {
+    my ($chr, $start, $end, $coverage) = split (/\t/, $_);
+    die "Line $_ in coverage file $coverageFile is incomplete\n" unless (defined ($chr) && defined ($start) && defined ($end) && defined ($coverage));
+    push (@{$coverages}, ([$chr, $start, $end, $coverage]));
+    # exclude unordered "bin" chromosomes from calculation of median
+    if (any {$_ eq $chr} @{$chrs}) {
+        push (@{$coverageValues}, $coverage);
+    }
+}
+
+my $constant = getConstant($ploidy, $coverageValues);
+
+#make bed output
+open (BED, ">$outputDir/$sampleName.unsrt.bed") or die "Cannot open bedgraph file $outputDir/$sampleName.unsrt.bed for writing\n$!\n";
+foreach my $coverageLine (@{$coverages}) {
+    my $cn = $constant*$coverageLine->[3];
+    print BED "$coverageLine->[0]\t$coverageLine->[1]\t$coverageLine->[2]\t$cn\n";
+}
+close (BED);
+
+#convert to bigwig for GBrowse
+system ("sort -k1,1 -k2,2n $outputDir/$sampleName.unsrt.bed > $outputDir/$sampleName.srt.bed") == 0 or die "Sort bedfile failed\n$?\n";
+system ("bedGraphToBigWig $outputDir/$sampleName.srt.bed $chromSizesFile $outputDir/$sampleName.bw") == 0 or die "Convert to bigwig failed\n$?\n";
+# clean up files that are not needed
+system ("rm -f $outputDir/$sampleName.unsrt.bed $outputDir/$sampleName.srt.bed") == 0 or die "Cleanup failed\n$?\n";
+
+exit;
