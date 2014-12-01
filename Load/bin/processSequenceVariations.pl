@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | fixed
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -52,11 +51,12 @@ use ApiCommonData::Load::FileReader;
 
 use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
+my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
 
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
             "cache_file=s"=> \$cacheFile,
+            "clean_cache"=> \$cleanCache,
             "gusConfigFile|gc=s"=> \$gusConfigFile,
             "undone_strains_file=s" => \$undoneStrainsFile,
             "varscan_directory=s" => \$varscanDirectory,
@@ -74,8 +74,8 @@ if($help) {
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
 
-# First time through
-unless(-e $cacheFile) {
+# First time through or force clean the cache
+unless(-e $cacheFile || !$cleanCache) {
   open(CACHE, ">$cacheFile") or die "Cannot create a cache file: $!";
   close CACHE;
 }
@@ -139,9 +139,10 @@ my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpe
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
 my $agpMap = &queryForAgpMap($dbh);
+
+# NOTE:  The key in this hash is actually the aa_feature_id in dots.translatedaafeature because we are interested in cds coords
 my $transcriptSummary = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
 my $geneLocations = &getGeneLocations($transcriptSummary);
-
 
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
@@ -352,10 +353,9 @@ sub queryNaSequenceIds {
   my ($dbh) = @_;
 
   my $sql = "select s.na_sequence_id, s.source_id
-from SRES.sequenceontology so
-    ,dots.nasequence s
-where s.sequence_ontology_id = so.sequence_ontology_id
-and so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome', 'variant_genome')
+from dots.nasequence s, sres.ontologyterm o
+where s.sequence_ontology_id = o.ontology_term_id
+and o.name in ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome', 'variant_genome')
 ";
 
   my $sh = $dbh->prepare($sql);
@@ -975,24 +975,28 @@ sub getTranscriptLocations {
 
   my %transcriptSummary;
 
-my $sql = "SELECT listagg(tf.na_feature_id, ',') WITHIN GROUP (ORDER BY tf.na_feature_id) as transcripts,
+my $sql = "select listagg(taf.aa_feature_id, ',') WITHIN GROUP (ORDER BY taf.aa_feature_id) as transcripts,
        s.source_id, 
        tf.parent_id as gene_na_feature_id, 
        el.start_min as exon_start, 
        el.end_max as exon_end,
-       decode(el.is_reversed, 1, ef.coding_end, ef.coding_start) as cds_start,
-       decode(el.is_reversed, 1, ef.coding_start, ef.coding_end) as cds_end,
+       decode(el.is_reversed, 1, afe.coding_end, afe.coding_start) as cds_start,
+       decode(el.is_reversed, 1, afe.coding_start, afe.coding_end) as cds_end,
        el.is_reversed
-FROM dots.TRANSCRIPT tf, dots.rnafeatureexon rfe, 
-     dots.exonfeature ef, dots.nalocation el,
-     dots.nasequence s
-WHERE tf.na_feature_id = rfe.rna_feature_id
-AND rfe.exon_feature_id = ef.na_feature_id
-AND ef.na_feature_id = el.na_feature_id
-AND ef.na_sequence_id = s.na_sequence_id
-AND tf.external_database_release_id = $transcriptExtDbRlsId
-GROUP BY s.source_id, tf.parent_id, el.start_min, el.end_max, ef.coding_start, ef.coding_end, el.is_reversed
-ORDER BY s.source_id, el.start_min
+from dots.transcript tf
+   , dots.translatedaafeature taf
+   , dots.aafeatureexon afe
+   , dots.exonfeature ef
+   , dots.nalocation el
+   , dots.nasequence s
+where tf.na_feature_id = taf.na_feature_id
+ and taf.aa_feature_id = afe.aa_feature_id
+ and afe.exon_feature_id = ef.na_feature_id
+ and ef.na_feature_id = el.na_feature_id
+ and ef.na_sequence_id = s.na_sequence_id
+ and tf.external_database_release_id = $transcriptextdbrlsid
+group by s.source_id, tf.parent_id, el.start_min, el.end_max, afe.coding_start, afe.coding_end, el.is_reversed
+order by s.source_id, el.start_min
 ";
 
   my $sh = $dbh->prepare($sql);
