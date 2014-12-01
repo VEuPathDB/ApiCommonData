@@ -76,6 +76,14 @@ sub getArgsDeclaration {
        reqd  => 1,
        isList => 0
       }),
+
+     stringArg({name => 'seqExtDbRlsVer',
+       descr => 'Version of the seq ext db',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
      stringArg({name => 'soExtDbSpec',
        descr => 'sequence ontology external database spec',
        constraintFunc=> undef,
