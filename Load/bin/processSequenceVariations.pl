@@ -43,6 +43,8 @@ use Bio::Location::Simple;
 
 use Bio::Tools::CodonTable;
 
+use ApiCommonData::Load::SnpUtils  qw(variationFileColumnNames snpFileColumnNames);
+
 use DBI;
 use DBD::Oracle;
 
@@ -293,8 +295,6 @@ while($merger->hasNext()) {
     }
 
     if($positionInCds) {
-      print STDERR "Position IN CDS\n";
-
       my $strainSequenceSourceId = $isLegacyVariations ? $sequenceId : $sequenceId . "." . $strain;
 
       my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInCds, $allele);
@@ -503,53 +503,18 @@ sub usage {
 sub printVariation {
   my ($variation, $fh) = @_;
 
-  my @keys = ('sequence_source_id',
-              'location',
-              'strain',
-              'base',
-              'coverage',
-              'percent',
-              'quality',
-              'pvalue',
-              'external_database_release_id',
-              'matches_reference',
-              'product',
-              'position_in_cds',
-              'position_in_protein',
-              'na_sequence_id',
-              'ref_na_sequence_id',
-              'snp_external_database_release_id',
-      );
+  my $keys = &variationFileColumnNames();
 
-  print $fh join("\t", map {$variation->{$_}} @keys) . "\n";
+  print $fh join("\t", map {$variation->{$_}} @$keys) . "\n";
 
 }
 
 sub printSNP {
   my ($snp, $fh) = @_;
 
-  my @keys = ("gene_na_feature_id",
-              "source_id",
-              "na_sequence_id",
-              "location",
-              "reference_strain",
-              "reference_na",
-              "reference_aa",
-              "position_in_cds",
-              "position_in_protein",
-              "external_database_release_id",
-              "has_nonsynonymous_allele",
-              "major_allele",
-              "minor_allele",
-              "major_allele_count",
-              "minor_allele_count",
-              "major_product",
-              "minor_product",
-              "distinct_strain_count",
-              "distinct_allele_count"
-      );
+  my $keys = &snpFileColumnNames();
 
-  print $fh join("\t", map {$snp->{$_}} @keys) . "\n";
+  print $fh join("\t", map {$snp->{$_}} @$keys) . "\n";
 }
 
 
@@ -747,6 +712,7 @@ sub variationProduct {
 
     my $strand = $transcriptSummary->{$transcript}->{cds_strand};
 
+    next if($positionInCds > length $consensusCodingSequence);
     my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele, $strand);
     $products{$product}++;
   }
@@ -1125,6 +1091,7 @@ sub calculateAminoAcidPosition {
 
 sub getAminoAcidSequenceOfSnp {
   my ($cdsSequence, $positionInCds, $allele, $strand) = @_;
+
 
   my $codonLength = 3;
   my $modCds = ($positionInCds - 1)  % $codonLength;
