@@ -15,7 +15,6 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
 
-  <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"      handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
@@ -27,9 +26,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="orthologous_to"          ignore="true"/>
     <qualifier name="previous_systematic_id"      ignore="true"/>
     <qualifier name="product_synonym"      ignore="true"/>
-    <qualifier name="pseudo"      ignore="true"/>
+    <qualifier name="pseudo"      ignore="true"/>  <!-- ignore in gene since load in RNA level -->
     <qualifier name="synonym"      ignore="true"/>
     <qualifier name="isFmaxPartial"      ignore="true"/>
+    <qualifier name="isFminPartial"      ignore="true"/>
     <qualifier name="timelastmodified"      ignore="true"/>
   </feature>
 
@@ -459,6 +459,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="isFmaxPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="isFminPartial"      handler="api"    method="setPartial"/>
     <qualifier name="protein_id"            method="transcriptProteinId"/>
     <qualifier name="transl_except"       handler="api"  method="transcriptTranslExcept"/>
     <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
