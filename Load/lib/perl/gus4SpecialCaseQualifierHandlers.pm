@@ -483,6 +483,24 @@ sub _undoRptUnit{
   my ($self) = @_;
 }
 
+################ rpt_type ################################
+
+# create a comma delimited list of rpt_type
+sub rptType {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  my $rptType = join(", ", @tagValues);
+  $feature->setRptType($rptType);
+  return [];
+}
+
+# nothing special to do
+sub _undoRptType{
+  my ($self) = @_;
+
+}
+
 ################ comment_Nterm ################################
 
 # map a consensus comment to the rpt_unit column, ignore every other value
