@@ -21,7 +21,7 @@ package ApiCommonData::Load::SnpUtils;
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP allelePercentIndex);
+@EXPORT = qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP allelePercentIndex snpFileColumnNames);
 
 use strict;
 
@@ -30,6 +30,7 @@ sub locationIndex { return 1 }
 sub strainIndex { return 2 }
 sub allelePercentIndex { return 5 }
 
+# DON"T CHANGE THESE UNLESS YOU KNOW WHAT YOU ARE DOING
 sub variationFileColumnNames {
   my @columnNames = 
       ('sequence_source_id',
@@ -52,6 +53,34 @@ sub variationFileColumnNames {
 
   return \@columnNames;
 }
+
+# DON"T CHANGE THESE UNLESS YOU KNOW WHAT YOU ARE DOING
+sub snpFileColumnNames {
+  my @columnNames = ("gene_na_feature_id",
+                     "source_id",
+                     "na_sequence_id",
+                     "location",
+                     "reference_strain",
+                     "reference_na",
+                     "reference_aa",
+                     "position_in_cds",
+                     "position_in_protein",
+                     "external_database_release_id",
+                     "has_nonsynonymous_allele",
+                     "major_allele",
+                     "minor_allele",
+                     "major_allele_count",
+                     "minor_allele_count",
+                     "major_product",
+                     "minor_product",
+                     "distinct_strain_count",
+                     "distinct_allele_count"
+      );
+
+  return \@columnNames;
+}
+
+
 
 sub isSameSNP {
   my ($a, $b) = @_;
