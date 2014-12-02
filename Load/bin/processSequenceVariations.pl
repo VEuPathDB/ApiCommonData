@@ -51,7 +51,7 @@ use ApiCommonData::Load::FileReader;
 
 use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
-my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
+my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec, $isLegacyVariations);
 
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
@@ -60,6 +60,7 @@ my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismA
             "gusConfigFile|gc=s"=> \$gusConfigFile,
             "undone_strains_file=s" => \$undoneStrainsFile,
             "varscan_directory=s" => \$varscanDirectory,
+            "is_legacy_variations" => \$isLegacyVariations,
             "transcript_extdb_spec=s" => \$transcriptExtDbRlsSpec,
             "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
@@ -74,19 +75,19 @@ if($help) {
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile);
 
-# First time through or force clean the cache
-unless(-e $cacheFile || !$cleanCache) {
+my $cacheFileExists = -e $cacheFile;
+
+if(!$cacheFileExists || $cleanCache) {
   open(CACHE, ">$cacheFile") or die "Cannot create a cache file: $!";
   close CACHE;
 }
-
 
 unless(-e $newSampleFile && -e $gusConfigFile) {
   &usage("Required File Missing");
 }
 
 unless(-d $varscanDirectory) {
-  &usage("Required Directory Missing");
+  &usage("Required Directory Missing") unless($isLegacyVariations);
 }
 
 unless($transcriptExtDbRlsSpec && $organismAbbrev && $referenceStrain && $extDbRlsSpec) {
@@ -129,12 +130,13 @@ my ($snpFh, $cacheFh);
 open($cacheFh, "> $tempCacheFile") or die "Cannot open file $tempCacheFile for writing: $!";
 open($snpFh, "> $snpOutputFile") or die "Cannot open file $snpOutputFile for writing: $!";
 
-my $strainVarscanFileHandles = &openVarscanFiles($varscanDirectory);
+my $strainVarscanFileHandles = &openVarscanFiles($varscanDirectory, $isLegacyVariations);
 
 my @allStrains = keys %{$strainVarscanFileHandles};
 print STDERR "STRAINS=" . join(",", @allStrains) . "\n" if($debug);
 
 my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
+
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
@@ -194,7 +196,7 @@ while($merger->hasNext()) {
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
 
   # for the refereence, get   positionInCds, positionInProtein, product, codon?
-  if($cachedReferenceVariation) {
+  if($cachedReferenceVariation && !$isLegacyVariations) {
     print STDERR "HAS_CACHED REFERENCE VARIATION\n" if($debug);
     $referenceVariation = $cachedReferenceVariation;
     $referenceProduct = $cachedReferenceVariation->{product};
@@ -242,11 +244,13 @@ while($merger->hasNext()) {
   my @variationStrains = map { $_->{strain} } @$variations;
   print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
-  my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation);
-  my @coverageVariationStrains = map { $_->{strain} } @$coverageVariations;
-  print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
+  unless($isLegacyVariations) {
+    my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation);
+    my @coverageVariationStrains = map { $_->{strain} } @$coverageVariations;
+    print STDERR "HAS COVERAGE VARIATIONS FOR THE FOLLOWING:  " . join(",", @coverageVariationStrains) . "\n" if($debug);
 
-  push @$variations, @$coverageVariations;
+    push @$variations, @$coverageVariations;
+  }
 
   # loop through variations and print
   foreach my $variation (@$variations) {
@@ -254,7 +258,7 @@ while($merger->hasNext()) {
 
     my $extDbRlsId;
     if($strain ne $referenceStrain) {
-      $extDbRlsId = $strainExtDbRlsIds->{$strain};
+      $extDbRlsId = $strainExtDbRlsIds->{$strain}; # this will be null if skip_coverage is turned on
     }
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
@@ -273,10 +277,11 @@ while($merger->hasNext()) {
     my $varSequenceSourceId = "$sequenceId.$strain";
     my $varNaSequenceId = $naSequenceIds->{$varSequenceSourceId};
 
-    $variation->{na_sequence_id} = $varNaSequenceId;
-    unless($varNaSequenceId) {
+    if(!$varNaSequenceId && !$isLegacyVariations) {
       die "Didn't find an na_sequence_id for source_id $varSequenceSourceId";
     }
+
+    $variation->{na_sequence_id} = $varNaSequenceId ? $varNaSequenceId : $naSequenceId;
 
     my $allele = $variation->{base};
 
@@ -288,7 +293,9 @@ while($merger->hasNext()) {
     }
 
     if($positionInCds) {
-      my $strainSequenceSourceId = $sequenceId . "." . $strain;
+      print STDERR "Position IN CDS\n";
+
+      my $strainSequenceSourceId = $isLegacyVariations ? $sequenceId : $sequenceId . "." . $strain;
 
       my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInCds, $allele);
       
@@ -327,9 +334,11 @@ close $snpFh;
 unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
 rename $tempCacheFile, $cacheFile;
 
-# overwrite existing sample file w/ empty file
-open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
-close(TRUNCATE);
+# overwrite existing sample file w/ empty file unless we are skipping coverage
+unless($isLegacyVariations) {
+  open(TRUNCATE, ">$newSampleFile") or die "Cannot open file $newSampleFile for writing: $!";
+  close(TRUNCATE);
+}
 
 # overwrite existing UndoneStrains file w/ empty file
 open(TRUNCATE, ">$undoneStrainsFile") or die "Cannot open file $undoneStrainsFile for writing: $!";
@@ -828,9 +837,11 @@ and d.name like ?
 
 
 sub openVarscanFiles {
-  my ($varscanDirectory) = @_;
+  my ($varscanDirectory, $isLegacyVariations) = @_;
 
   my %rv;
+
+  return \%rv if($isLegacyVariations);
 
   opendir(DIR, $varscanDirectory) or die "Cannot open directory $varscanDirectory for reading: $!";
 
@@ -994,7 +1005,7 @@ where tf.na_feature_id = taf.na_feature_id
  and afe.exon_feature_id = ef.na_feature_id
  and ef.na_feature_id = el.na_feature_id
  and ef.na_sequence_id = s.na_sequence_id
- and tf.external_database_release_id = $transcriptextdbrlsid
+ and tf.external_database_release_id = $transcriptExtDbRlsId
 group by s.source_id, tf.parent_id, el.start_min, el.end_max, afe.coding_start, afe.coding_end, el.is_reversed
 order by s.source_id, el.start_min
 ";
