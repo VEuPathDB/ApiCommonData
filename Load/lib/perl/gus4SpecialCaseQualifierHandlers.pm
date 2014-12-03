@@ -397,9 +397,9 @@ sub _undoPartial{
 
 ############### transl_except  ###############################
 
-sub transcriptTranslExcept {   #### need more work for gus4
-  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
-  my $transcript = $geneFeature->getChild("DoTS::Transcript");
+sub transcriptTranslExcept {
+  my ($self, $tag, $bioperlFeature, $transcript) = @_;
+  #my $transcript = $geneFeature->getChild("DoTS::Transcript");
   my ($transl_except) = $bioperlFeature->get_tag_values($tag);
   $transcript->setTranslExcept($transl_except);
   return [];
@@ -409,9 +409,9 @@ sub _undoTranscriptTranslExcept {}
 
 ############### transl_table ###############################
 
-sub transcriptTransTable {   #### need more work for gus4
-  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
-  my $transcript = $geneFeature->getChild("DoTS::Transcript");
+sub transcriptTransTable {
+  my ($self, $tag, $bioperlFeature, $transcript) = @_;
+  #my $transcript = $geneFeature->getChild("DoTS::Transcript");
   my ($transl_table) = $bioperlFeature->get_tag_values($tag);
   $transcript->setTranslTable($transl_table);
   return [];
