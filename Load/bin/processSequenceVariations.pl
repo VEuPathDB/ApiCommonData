@@ -231,6 +231,7 @@ while($merger->hasNext()) {
                            'na_sequence_id' => $naSequenceId,
                            'ref_na_sequence_id' => $naSequenceId,
                            'snp_external_database_release_id' => $thisExtDbRlsId,
+                           'snp_source_id' => $variations->[0]->{snp_source_id},
 
     };
     push @$variations, $referenceVariation;
@@ -523,7 +524,7 @@ sub makeSNPFeatureFromVariations {
 
   my $sequenceSourceId = $referenceVariation->{sequence_source_id};
   my $location = $referenceVariation->{location};
-  my $snpSourceId = "NGS_SNP.$sequenceSourceId.$location";
+  my $snpSourceId = $referenceVariation->{snp_source_id} ? $referenceVariation->{snp_source_id} : "NGS_SNP.$sequenceSourceId.$location";
 
   my $referenceStrain = $referenceVariation->{strain};
 
