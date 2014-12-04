@@ -285,6 +285,7 @@ sub undoTables {
   return ('DoTS.NALocation',
           'Results.SeqVariation',
           'DoTS.SnpFeature',
+          'Study.StudyLink',
           'Study.ProtocolAppNode',
           'Study.Study',
       );
