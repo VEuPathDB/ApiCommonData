@@ -188,10 +188,11 @@ sub run {
 
     $self->load(\%snpAttributes, $variations, $ontologyTermId, $variationOntologyTermId);
 
+    $variationCount += scalar @$variations;
     if($snpCount++ % 1000 == 0) {
       $self->log("Inserted $snpCount SNP Features and $variationCount variations...");
     }
-    $variationCount += scalar @$variations;
+
 
     $self->undefPointerCache();
   }
