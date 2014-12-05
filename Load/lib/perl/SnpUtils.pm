@@ -41,6 +41,7 @@ sub variationFileColumnNames {
        'percent',
        'quality',
        'pvalue',
+       'snp_source_id',
        'external_database_release_id',
        'matches_reference',
        'product',
