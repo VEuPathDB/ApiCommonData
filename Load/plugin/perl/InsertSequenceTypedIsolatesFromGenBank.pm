@@ -114,7 +114,7 @@ sub run {
 
   $self->makeOntologyTerm($termHash, $extDbRlsId);
 
-  my $count = $self->loadIsolates($studyHash, $nodeHash);
+  my $count = $self->loadIsolates($studyHash, $nodeHash, $extDbRlsId);
 
   my $msg = "$count isolate records have been loaded.";
   $self->log("$msg \n");
