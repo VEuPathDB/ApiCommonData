@@ -341,15 +341,17 @@ sub buildSequence {
 
 sub undoTables {
   my ($self) = @_;
-  return ( 'DoTS.ExternalNASequence',
-           'Study.Study',
-           'Study.StudyLink',
-           'Study.StudyBibRef',
-           'Study.ProtocolAppNode',
-           'Study.Characteristic',
-           'SRes.OntologyTerm',
-           'SRes.BibliographicReference', 
+  return (  'Results.SegmentResult',
+            'DoTS.ExternalNASequence',
+            'Study.StudyBibRef', 
+            'SRes.BibliographicReference', 
+            'Study.StudyLink',
+            'Study.Characteristic',
+            'Study.ProtocolAppNode',
+
+            'Study.Study',
          );
+
 }
 
 1;
