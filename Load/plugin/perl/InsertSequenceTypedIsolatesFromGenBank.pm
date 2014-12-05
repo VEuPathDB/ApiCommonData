@@ -251,6 +251,7 @@ sub loadIsolates {
           $taxonObj->retrieveFromDB;
 
           $node->setParent($taxonObj);
+          $extNASeq->setParent($taxonObj);
         }
 
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
