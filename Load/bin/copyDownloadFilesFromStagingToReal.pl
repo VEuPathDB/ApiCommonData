@@ -7,17 +7,19 @@ use strict;
 use IO::File;
 use Getopt::Long;
 
-my($workflowVersion,$projectName,$releaseNumber);
+my($workflowVersion,$projectName,$releaseNumber,$copyFromPreRelease);
 
 &GetOptions("projectName=s" => \$projectName,
             "workflowVersion=s" => \$workflowVersion,
             "releaseNumber=s" => \$releaseNumber,
+            "copyFromPreRelease!" => \$copyFromPreRelease,
             );
 
-die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --releaseNumber\n" unless ($projectName && $workflowVersion && $releaseNumber);
+die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --releaseNumber [--copyFromPreRelease]\n" unless ($projectName && $workflowVersion && $releaseNumber);
 die "you must use fully qualified value for --projectName\n" unless ($projectName =~ /DB/);
 my $targetDir="/eupath/data/apiSiteFiles/downloadSite/${projectName}";
 my $sourceDir="/eupath/data/apiSiteFilesStaging/${projectName}/${workflowVersion}/real/downloadSite/${projectName}/release-CURRENT/";
+$sourceDir="/eupath/data/apiSiteFilesStagingPreRelease/${projectName}/${workflowVersion}/real/downloadSite/${projectName}/release-CURRENT/" if ($copyFromPreRelease);
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 die "targetDir $targetDir does not exist\n" unless -d "$targetDir";
 
@@ -27,6 +29,11 @@ system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
 chdir $targetDir or die "Can't chdir to $targetDir\n";
 &loopDir($targetDir);
+print STDERR "Creating Release_number file under $targetDir\n"; 
+my $filename = "$targetDir/Release_number";
+open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+print $fh "$releaseNumber\n";
+close $fh;
 
 sub loopDir {
    my($dir) = @_;
