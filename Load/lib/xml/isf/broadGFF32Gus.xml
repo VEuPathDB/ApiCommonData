@@ -17,47 +17,42 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
-  <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateGene"     handler="api" method="validateGene"/>
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="synonym"         handler="api" method="gene"/>
-    <qualifier name="Alias"         handler="api" method="gene"/>
+    <qualifier name="Alias"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="Dbxref"			ignore="true"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="Note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="controlled_curation"         handler="api" method="note"/>
-    <qualifier name="comment"          handler="api" method="note"/>
-    <qualifier name="eC_number"            handler="api" method="ECNumber"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="note"              ignore="true"/>
+    <qualifier name="Note"              ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="curation"          ignore="true"/>
+    <qualifier name="controlled_curation"         ignore="true"/>
+    <qualifier name="comment"           ignore="true"/>
+    <qualifier name="eC_number"         ignore="true"/>
+    <qualifier name="previous_systematic_id"   ignore="true"/>
     <qualifier name="protein_id"           ignore="true"/>
-    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
-    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
-   <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="gO"          ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
-    <!-- from mRNA records -->
+    <qualifier name="biotype"             ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="orthologous_to" ignore="true"/>
     <qualifier name="private" ignore="true"/>
-
-    <!-- from gene records -->
-    <qualifier name="pseudo"         handler="api" method="setPseudo"/>
     <qualifier name="blast_file"             ignore="true"/>
     <qualifier name="blastp+go_file"         ignore="true"/>
     <qualifier name="blastp_file"            ignore="true"/>
@@ -73,6 +68,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="3_prime_partial"                             ignore="true"/>
     <qualifier name="Name"                                        ignore="true"/>
     <qualifier name="5_prime_partial"                             ignore="true"/>
+    <qualifier name="synonym"       ignore="true"/>
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
