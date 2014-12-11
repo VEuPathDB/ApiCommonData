@@ -161,8 +161,14 @@ sub readGenBankFile {
               $k =~ s/^\s+|\s+$//g; # trim off leading and trailing white spaces
               $v =~ s/^\s+|\s+$//g; # trim off leading and trailing white spaces
               next if $k =~ /PCR_primers/i;
-              $nodeHash{$source_id}{terms}{$k} = $v unless $v eq "";
-              $termHash{$k} = 1 unless $v eq ""; 
+
+              if($v ne "") {
+                $nodeHash{$source_id}{terms}{$k} = $v;
+                $termHash{$k} = 1;
+              } else { # in some cases, the text is not well formatted
+                $nodeHash{$source_id}{terms}{note} = $k;
+                $termHash{note} = 1;
+              }
 
               print "node hash: $k => $v\n";
             }
