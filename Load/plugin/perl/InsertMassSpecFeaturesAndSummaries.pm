@@ -143,7 +143,7 @@ sub run {
 
   $self->{geneExtDbRlsId} = join ',', map{ $self->getExtDbRlsId($_) } split (/,/,$self->getArg('geneExternalDatabaseSpec'));
 
-  $self->{geneModelLocations} = GUS::Community::GeneModelLocations->new($self->getQueryHandle(), $self->{geneExtDbRlsId});
+  $self->{geneModelLocations} = GUS::Community::GeneModelLocations->new($self->getQueryHandle(), $self->{geneExtDbRlsId}, 0);
 
   my $minPMatch = $self->getArg('minPercentPeptidesToMap');
   $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
@@ -1093,14 +1093,9 @@ sub mapToNASequence{
 
   foreach my $transcriptSourceId (@{$geneModelLocations->getTranscriptIdsFromGeneSourceId($geneSourceId)}) {
     foreach my $proteinSourceId (@{$geneModelLocations->getProteinIdsFromTranscriptSourceId($transcriptSourceId)}) {
-      my ($exons, $cdsRange) = $geneModelLocations->getExonLocationsFromProteinId($proteinSourceId);
 
-      my $mapper = Bio::Coordinate::GeneMapper->new(
-        -in    => 'peptide',
-        -out   => 'chr',
-        -exons => $exons,
-        -cds => $cdsRange
-          );
+      my $mapper = $geneModelLocations->getProteinToGenomicCoordMapper($proteinSourceId);
+
       my $peptideCoords = Bio::Location::Simple->new (
         -start => $pepStart,
         -end   => $pepEnd,
