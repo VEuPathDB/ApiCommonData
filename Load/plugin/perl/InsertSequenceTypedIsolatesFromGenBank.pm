@@ -18,7 +18,7 @@ use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::BibliographicReference;
 use Data::Dumper;
 
-use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
+#use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
 use ApiCommonShared::Model::pcbiPubmed;
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -152,7 +152,7 @@ sub readGenBankFile {
         $termHash{$tag} = 1;
 
         foreach my $value ($feat->get_tag_values($tag)) {
-          print "$source_id: $primary_tag: $tag => $value\n";
+          #print "$source_id: $primary_tag: $tag => $value\n";
 
           if($tag eq "note" && $value =~ /:(.*)?;+/ ) { # handle EuPathDB notes - key:value ; key:value
             my @pairs = split /;/, $value;
@@ -163,17 +163,15 @@ sub readGenBankFile {
               next if $k =~ /PCR_primers/i;
 
               if($v ne "") {
-                $nodeHash{$source_id}{terms}{$k} = $v;
+                $nodeHash{$source_id}{terms}{$k} = defined $nodeHash{$source_id}{terms}{$k} ? "$nodeHash{$source_id}{terms}{$k}; $v" : $v;
                 $termHash{$k} = 1;
               } else { # in some cases, the text is not well formatted
-                $nodeHash{$source_id}{terms}{note} = $k;
+                $nodeHash{$source_id}{terms}{note} = defined $nodeHash{$source_id}{terms}{note} ? "$nodeHash{$source_id}{terms}{note}; $k" : $k;
                 $termHash{note} = 1;
               }
-
-              print "node hash: $k => $v\n";
             }
           } else {
-            $nodeHash{$source_id}{terms}{$tag} = $value;
+            $nodeHash{$source_id}{terms}{$tag} = defined $nodeHash{$source_id}{terms}{$tag} ? "$nodeHash{$source_id}{terms}{$tag}; $value" : $value;
           }
         }
       }   
