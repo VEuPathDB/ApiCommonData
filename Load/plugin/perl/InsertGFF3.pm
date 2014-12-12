@@ -174,7 +174,6 @@ sub new {
 sub run {
   my $self = shift;
   
-  my $start = time;
 
   my $gff3ExtDbReleaseId = $self->getExtDbRlsId($self->getArg('gff3DbName'),
              $self->getArg('gff3DbVer')) || $self->error("Can't find external_database_release_id for gff3 data source");
@@ -196,139 +195,77 @@ sub run {
                                    -gff_version => $self->getArg('gffFormat'),
                                   );
 
+  $self->getDb()->manageTransaction(0,'begin');
+
   while (my $feature = $gffIO->next_feature()) {
      $self->insertGFF3($feature, $gff3ExtDbReleaseId, $seqHash, $soHash);
      $processed++;
+
+     if ($processed % 1000 == 0) {
+        $self->getDb()->manageTransaction(0,'commit');
+        $self->getDb()->manageTransaction(0,'begin');
+    }
      $self->undefPointerCache();
   }
-  my $runTime = (time - $start);
-  print "Run time: $runTime\n";
+  $self->getDb()->manageTransaction(0,'commit');
   return "$processed gff3 lines parsed and loaded";
 
 }
 
 
 sub getNaSequencefromSourceId {
-    my $startTime = time;
     my ($self, $seqid, $seqHash) = @_;
     my $naSeqId = $seqHash->{$seqid};
     unless (defined $naSeqId) {
         $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
     }
-    my $totalTime = (time - $startTime);
-    print "Subroutine getNaSequenceFromSourceId time: $totalTime\n";
     return $naSeqId;
 }
 
-#sub getNaSequencefromSourceId {
-#   my ($self, $seqid, $genomeDbRlsId) = @_;
-#   if(my $found = $self->{nasequences}->{$seqid}) {
-#     print "NA Sequence Id found!\n";
-#     return $found;
-#   }
-#   
-#   my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid,
-#                                                  external_database_release_id => $genomeDbRlsId});
-#   unless ($naSeq->retrieveFromDB) {
-#      $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
-#   } 
-#   $self->{nasequences}->{$seqid} = $naSeq;
-#   return $naSeq;
-#}
 
 sub getSOfromSoTerm {
-    my $startTime = time;
     my ($self, $soterm, $soHash) = @_;
     my $soTermId = $soHash->{$soterm};
     unless (defined $soTermId) {
         $self->error("Can't find so_term_id for $soterm");
     }
-    my $totalTime = (time - $startTime);
-    print "Subroutine getSOfromSoTerm time: $totalTime\n";
     return $soTermId;
 }
 
-#sub getSOfromSoTerm {
-#   my ($self, $soterm,  $soExtDbRlsId) = @_;
-#   if(my $found = $self->{soids}->{$soterm}) {
-#     print "SO ID found!\n";
-#     return $found;
-#   }
-#
-#   my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $soterm, 'external_database_release_id' => $soExtDbRlsId });
-#   unless($SOTerm->retrieveFromDB){
-#      $self->error("Can't find sequence onotology id for term $soterm");
-#   }
-#   $self->{soids}->{$soterm} = $SOTerm;
-#   return $SOTerm;
-#}
-
-
-
-#sub getGFF3AttributeKeys{
-# my ($self, $key) = @_;
-#   if(my $found = $self->{attr_keys}->{$key}) {
-#     return $found;
-#   }
-#   
-#   my $attrKey = GUS::Model::ApiDB::GFF3AttributeKeys->new({'name' => $key });
-#   unless($attrKey->retrieveFromDB){
-#     print 'key $key added to GFF3AttributeKeys'; 
-#     $attrKey->submit();
-#   }
-#}
-
-
 
 sub getGFF3AttributeKey{
- my $startTime = time;
  my ($self, $key) = @_;
  if(my $found = $self->{attr_keys}->{$key}) {
-     my $totalTime = (time - $startTime);
-     print "Subroutine getGFF3AttributeKey did not contact the db: $totalTime\n";
      return $found;
    }
    
    my $attrKey = GUS::Model::ApiDB::GFF3AttributeKey->new({'name' => $key });
    unless($attrKey->retrieveFromDB){
-    # print "key $key added to GFF3AttributeKey\n"; 
      $attrKey->submit();
 
    }
    $self->{attr_keys}->{$key} = $attrKey;
-   my $totalTime = (time - $startTime);
-   print "Subroutine getGFF3AttributeKey contacted db: $totalTime\n";
    return $attrKey;
 }
 
 sub createGff3AttrObj{
-  my $startTime = time;
   my ($self,$key,$value) = @_;
   my $attrKey = $self->getGFF3AttributeKey($key);
   my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
   $attr->setParent($attrKey);
-  my $totalTime = (time - $startTime);
-  print "Subroutine createGff3AttrObj time: $totalTime\n";
   return $attr
 }
 
 sub insertGFF3{
-  my $startTime = time;
   my ($self,$feature, $gff3ExtDbReleaseId, $seqHash, $soHash) = @_;
 
   my $seqid = $feature->seq_id;
   my $naSeqId = $self->getNaSequencefromSourceId($seqid, $seqHash);
   die "Can't find na_sequence_id for $seqid\n" unless defined $naSeqId;
 
-#  my $naSeq = $self->getNaSequencefromSourceId($seqid, $genomeDbRlsId);
-#  die "can't find na_sequence_id for '$seqid'" unless $naSeq;
   my $soterm = $feature->primary_tag;
   my $soId = $self->getSOfromSoTerm($soterm, $soHash);
   die "Can't find ontology_term_id for $soterm\n" unless defined $soId;
-#  my $sotermObj = $self->getSOfromSoTerm($soterm,  $soExtDbRlsId);
-
-#  my $naSeqId = $naSeq->getNaSequenceId();
-#    my $soId = $sotermObj->getOntologyTermId();
 
   my $snpStart = $feature->location()->start();
   my $snpEnd = $feature->location()->end();
@@ -341,10 +278,7 @@ sub insertGFF3{
   my $attr = '';
   my $parent = '';
   my $id = '';
-  my $parseTime = (time - $startTime);
-  print "Time to parse GFF: $parseTime\n";
 
-  my $tagStart = time;
   my @tags = $feature->get_all_tags();
   my @attr;
 
@@ -356,7 +290,6 @@ sub insertGFF3{
         $self->userError("Only one parent allowed");
       }
       $parent = $parents[0];
-     # print $parent
     }
     elsif (uc($tag) eq "ID"){
       my @ids = $feature->get_tag_values($tag);
@@ -368,7 +301,6 @@ sub insertGFF3{
     else {
       my @values = $feature->get_tag_values($tag);
       my $value = $values[0];
-     # print "SeqID = $seqid : $tag : $value\n";
       $attr .= $tag. '='. join(',', @values) . ';';
       foreach my $value(@values){
         my $gff3Attr = $self->createGff3AttrObj($tag,$value);
@@ -377,11 +309,8 @@ sub insertGFF3{
     }
   }
   $attr =~ s/;$//;
-  print "$attr\n";
-  my $tagTime = (time - $tagStart);
-  print "Time to parse tags: $tagTime\n";
 
-  my$objTime = time;
+
   my $gff3 = GUS::Model::ApiDB::GFF3->new({ 
                                 'source' => $source,
                                 'mapping_start' => $snpStart,
@@ -402,11 +331,7 @@ sub insertGFF3{
     $attribute->setParent($gff3);
     }
 
-  $gff3->submit();
-  my$objTotalTime = (time - $objTime);
-  print "Time to submit GUS object: $objTotalTime\n";
-  my $totalTime = (time - $startTime);
-  print "Subroutine InsertGFF3 time: $totalTime\n";
+  $gff3->submit(0,1);
 }
 
 
