@@ -14,8 +14,9 @@ begin
       into project;
       exception
          when NO_DATA_FOUND then
-            raise_application_error(-20101,
-                                    'project_id("'|| organism || '"): unknown project assignment' );
+              project := 'PiroplasmoDB';
+--            raise_application_error(-20101,
+--                                    'project_id("'|| organism || '"): unknown project assignment' );
    end;
 
    return project;
