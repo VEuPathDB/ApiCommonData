@@ -265,10 +265,27 @@ sub processFeature {
 								}
 								$done{$sourceId}{$alias} = "done";
 							}
+						} elsif ( $outputHash{$qualifier} =~ /product/ && $outputHash{$qualifier} !~ /synonym/) {
+						  ## get rid of some funny character after ; for product
+						  my @prodArray = split (/\,/, $value);
+						  foreach my $i (0..$#prodArray) {
+						    $prodArray[$i] =~ s/.*term=(.+?)(;.*$|$)/$1/;
+						    $prodArray[$i] =~ s/.*term =(.+?)(;.*$|$)/$1/;
+						    $prodArray[$i] =~ s/;.*$//;
+						    #$prodArray[$i] =~ s/\(.+?\)//; ## can not use this since it will remove some extra info
+						  }
+						  $value = join (',', @prodArray);
+						  if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value}) {
+						    if (!$idsInDb{$sourceId} ) {
+						      $funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value});
+						    } else {
+						      foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+							$funcFhHash{$qualifier}->print("$idsInDb{$sourceId}[$i]\t$value\n")
+						      }
+						    }
+						  }
+						  $done{$sourceId}{$qualifier}{$value} = "done";
 						} else {
-							## get rid of some funny character after ; for product
-							$value =~ s/rank=1;// if ($outputHash{$qualifier} =~ /product/);  ## for pyoeyoelii17XNL
-							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /product/);
 							if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value}) {
 							  if (!$idsInDb{$sourceId} ) {
 							    $funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value});

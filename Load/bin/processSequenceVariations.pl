@@ -43,6 +43,8 @@ use Bio::Location::Simple;
 
 use Bio::Tools::CodonTable;
 
+use GUS::Community::GeneModelLocations;
+
 use ApiCommonData::Load::SnpUtils  qw(variationFileColumnNames snpFileColumnNames);
 
 use DBI;
@@ -142,7 +144,7 @@ my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organis
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
-my $agpMap = &queryForAgpMap($dbh);
+my $agpMap = GUS::Community::GeneModelLocations::queryForAgpMap($dbh);
 
 # NOTE:  The key in this hash is actually the aa_feature_id in dots.translatedaafeature because we are interested in cds coords
 my $transcriptSummary = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
@@ -445,49 +447,6 @@ sub calculateCdsPosition {
 }
 
 
-sub queryForAgpMap {
-  my ($dbh) = @_;
-
-  my %agpMap;
-
-  my $sql = "select sp.virtual_na_sequence_id
-                                , p.na_sequence_id as piece_na_sequence_id
-                               , decode(sp.strand_orientation, '+', '+1', '-', '-1', '+1') as piece_strand
-                               , p.length as piece_length
-                               , sp.distance_from_left + 1 as virtual_start_min
-                               , sp.distance_from_left + p.length as virtual_end_max
-                               , p.source_id as piece_source_id
-                               , vs.source_id as virtual_source_id
-                   from dots.sequencepiece sp
-                           , dots.nasequence p
-                           ,  dots.nasequence vs
-                   where  sp.piece_na_sequence_id = p.na_sequence_id
-                    and sp.virtual_na_sequence_id = vs.na_sequence_id";
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  while(my $hash = $sh->fetchrow_hashref()) {
-    my $ctg = Bio::Location::Simple->new( -seq_id => $hash->{PIECE_SOURCE_ID}, 
-                                          -start => 1, 
-                                          -end =>  $hash->{PIECE_LENGTH}, 
-                                          -strand => $hash->{PIECE_STRAND});
-
-    my $ctg_on_chr = Bio::Location::Simple->new( -seq_id =>  $hash->{VIRTUAL_SOURCE_ID}, 
-                                                 -start => $hash->{VIRTUAL_START_MIN},
-                                                 -end =>  $hash->{VIRTUAL_END_MAX} , 
-                                                 -strand => '+1' );
-
-    my $agp = Bio::Coordinate::Pair->new( -in  => $ctg, -out => $ctg_on_chr );
-    my $pieceSourceId = $hash->{PIECE_SOURCE_ID};
- 
-    $agpMap{$pieceSourceId} = $agp;
-  }
-
-  $sh->finish();
-
-  return \%agpMap;
-}
 
 sub usage {
   my ($m) = @_;

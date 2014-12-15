@@ -306,7 +306,7 @@ WHERE  n.name like  'Metabolic Pathways%'
   AND nrc.network_relationship_id = nr.network_relationship_id
   AND nr.node_id = n1.network_node_id
   AND nr.associated_node_id = n2.network_node_id
-  AND n1.identifier like '%_X:%'   AND n2.identifier like '%_X:%'
+  AND ( (n1.IDENTIFIER LIKE '%_X:%'   AND n2.IDENTIFIER LIKE '%_X:%') OR ( nc.NAME NOT LIKE '%ec%'))
   AND n1.identifier NOT LIKE '%_X:_Y:' AND n2.identifier NOT LIKE '%_X:_Y:' 
 ORDER BY nr.network_relationship_id");
 }
