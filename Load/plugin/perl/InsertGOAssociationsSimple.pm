@@ -63,7 +63,7 @@ Use the Undo plugin, and re-run.
 PLUGIN_RESTART
 
 my $failureCases = <<PLUGIN_FAILURE_CASES;
-None that we've found so far.
+None that we have found so far.
 PLUGIN_FAILURE_CASES
 
 my $notes = <<PLUGIN_NOTES;

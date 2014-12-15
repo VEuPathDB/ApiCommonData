@@ -229,9 +229,9 @@ sub run {
   $self->log("Locations loaded (noIPR): $self->{noIPR}->{locationCount}");
   $self->log("Locations total: $totalLocationCount");
   $self->log("testnumber = " . $self->getArg('testnumber'))
-    if $self->getArg('testnumber');
-	
-	return "Done inserting Interpro scan results\n";
+  if $self->getArg('testnumber');
+  $self->testRowsLoaded;
+  return "Done inserting Interpro scan results\n";
 }
 
 sub processProteinResults {
@@ -494,6 +494,22 @@ FROM Dots.$aaSeqTable
 
   return $self->{sourceId2aaSeqId}->{$sourceId};
 }
+
+
+sub testRowsLoaded {
+  my ($self) = @_;
+  
+  my $algInvId   = $self->getAlgInvocation()->getId();
+
+  my $sql = "SELECT count(*) FROM DoTS.DomainFeature where row_alg_invocation_id in ($algInvId)";
+
+  my $stmt = $self->prepareAndExecute($sql);
+
+  my $loadedDomainFeature = $stmt->fetchrow_array();
+ 
+  die "The plugin loaded no result rows!\n" unless ($loadedDomainFeature);
+}
+
 
 sub undoTables {
   my ($self) = @_;

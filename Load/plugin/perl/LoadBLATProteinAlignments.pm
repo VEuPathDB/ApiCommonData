@@ -400,6 +400,14 @@ sub run {
    }
 
    if (!$action || $action eq 'load') {
+      my $emptyBlatFiles=0;
+      foreach my $file (@blatFiles) {
+      if(-z $file){
+	  $self->log("$file is empty.");
+	  $emptyBlatFiles++;
+	  }
+      }
+      die "LoadBLATProteinAlignments: all blat files are empty" if ($emptyBlatFiles == scalar(@blatFiles));
       my $blatFiles = join(',', @blatFiles);
       $self->log("Load alignments from raw BLAT output files $blatFiles ...");
       my $qIndex;
