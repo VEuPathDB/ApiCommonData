@@ -158,7 +158,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 4.0,
-                        cvsRevision => '$Revision: 65726 $',
+                        cvsRevision => '$Revision: 65727 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -240,10 +240,10 @@ sub getGFF3AttributeKey{
    }
    
    my $attrKey = GUS::Model::ApiDB::GFF3AttributeKey->new({'name' => $key });
-#   unless($attrKey->retrieveFromDB){
-#     $attrKey->submit();
-#
-#   }
+   unless($attrKey->retrieveFromDB){
+     $attrKey->submit();
+
+   }
    $self->{attr_keys}->{$key} = $attrKey;
    return $attrKey;
 }
