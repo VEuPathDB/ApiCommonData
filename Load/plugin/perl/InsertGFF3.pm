@@ -240,10 +240,10 @@ sub getGFF3AttributeKey{
    }
    
    my $attrKey = GUS::Model::ApiDB::GFF3AttributeKey->new({'name' => $key });
-   unless($attrKey->retrieveFromDB){
-     $attrKey->submit();
-
-   }
+#   unless($attrKey->retrieveFromDB){
+#     $attrKey->submit();
+#
+#   }
    $self->{attr_keys}->{$key} = $attrKey;
    return $attrKey;
 }
