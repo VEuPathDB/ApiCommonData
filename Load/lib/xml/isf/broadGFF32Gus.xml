@@ -18,6 +18,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Alias"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
@@ -78,10 +79,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="EC_number"            handler="api" method="ECNumber"/>
+    <qualifier name="note"              ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="curation"          ignore="true"/>
+    <qualifier name="EC_number"            ignore="true"/>
     <qualifier name="protein_id"           ignore="true"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
@@ -89,12 +90,9 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
-    <!-- from mRNA records -->
     <qualifier name="gene" ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="standard_name" ignore="true"/>
-
-    <!-- from gene records -->
     <qualifier name="pseudo"         handler="api" method="setPseudo"/>
   </feature>
 
@@ -108,15 +106,15 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="Alias"              handler="api" method="gene"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="Alias"             ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
-   <qualifier name="comment"                 handler="api" method="note"/>
-  <qualifier name="Note"                 handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="product"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+   <qualifier name="comment"            ignore="true"/>
+  <qualifier name="Note"                ignore="true"/>
+   <qualifier name="Name"               ignore="true"/>
+    <qualifier name="previous_systematic_id"  ignore="true"/>
+   <qualifier name="synonym"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -132,13 +130,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
+    <qualifier name="note"          ignore="true"/>
+   <qualifier name="Name"           ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -267,13 +265,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="comment"          ignore="true"/>
+    <qualifier name="product"          ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
-  <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+  <qualifier name="Name"               ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -288,13 +286,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="comment"              ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+   <qualifier name="Name"           ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -309,13 +307,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="comment"              ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+   <qualifier name="Name"           ignore="true"/>
+    <qualifier name="previous_systematic_id"  ignore="true"/>
+   <qualifier name="synonym"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -330,13 +328,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="ncRNA_gene" so="ncRNA">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="embl_qualifier"                 handler="api" method="note"/>
-    <qualifier name="eMBL_qualifier"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="embl_qualifier"          ignore="true"/>
+    <qualifier name="eMBL_qualifier"          ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+   <qualifier name="Name"                  ignore="true"/>
+    <qualifier name="previous_systematic_id"  ignore="true"/>
+   <qualifier name="synonym"            ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="Dbxref"			ignore="true"/>
  <qualifier name="feature_id"    ignore="true"/>
@@ -376,14 +374,14 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA_gene" so="tRNA_encoding">
  
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="Note"              handler="api" method="product"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="selenocysteine"       handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="product"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-    <qualifier name="Alias" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="comment"           ignore="true"/>
+    <qualifier name="Note"              ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="selenocysteine"       ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id"  ignore="true"/>
+    <qualifier name="Alias"                   ignore="true"/>
+   <qualifier name="synonym"            ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
    <qualifier name="Dbxref"			ignore="true"/>
    <qualifier name="feature_id"    ignore="true"/>
