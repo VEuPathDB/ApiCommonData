@@ -1,7 +1,7 @@
 
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | broken
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 package ApiCommonData::Load::Plugin::InsertSyntenySpans;
 @ISA = qw( GUS::PluginMgr::Plugin);
@@ -114,7 +113,7 @@ sub new {
     my $self = {};
     bless($self,$class);
 
-    $self->initialize({requiredDbVersion => 3.6,
+    $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
@@ -265,9 +264,9 @@ sub lookupNaSeqIdsByAbbrev {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "SELECT s.source_id, s.na_sequence_id 
-             FROM dots.nasequence s, sres.sequenceontology so, apidb.organism o
-             WHERE  so.sequence_ontology_id = s.sequence_ontology_id
-              and so.term_name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')
+             FROM dots.nasequence s, sres.ontologyterm so, apidb.organism o
+             WHERE  so.ontology_term_id = s.sequence_ontology_id
+              and so.name in ('random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')
               and o.taxon_id = s.taxon_id
               and o.abbrev in ('$organismAbbrevA', '$organismAbbrevB')";
 
