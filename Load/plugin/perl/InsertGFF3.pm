@@ -26,12 +26,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
-use Time::HiRes qw/ time /;
 
-#use GUS::Model::DoTS::NASequence;
-#use GUS::Model::SRes::OntologyTerm;
-#use GUS::Model::SRes::ExternalDatabase;
-#use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GFF3;
 use GUS::Model::ApiDB::GFF3AttributeKey;
 use GUS::Model::ApiDB::GFF3Attributes;
@@ -158,7 +153,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 4.0,
-                        cvsRevision => '$Revision: 65751 $',
+                        cvsRevision => '$Revision: 65752 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -253,10 +248,6 @@ sub createGff3AttrObj{
   my $attrKey = $self->getGFF3AttributeKey($key);
   my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
   $attr->setParent($attrKey);
-  my $fk = $attrKey->getId();
-  unless ($fk){
-    die "Primary key not obtained\n";
-  }
   return $attr
 }
 
