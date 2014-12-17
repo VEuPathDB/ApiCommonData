@@ -158,7 +158,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 4.0,
-                        cvsRevision => '$Revision: 65728 $',
+                        cvsRevision => '$Revision: 65729 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -253,6 +253,10 @@ sub createGff3AttrObj{
   my $attrKey = $self->getGFF3AttributeKey($key);
   my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
   $attr->setParent($attrKey);
+  my $fk = $attrKey->getId();
+  unless ($fk){
+    die "Primary key not obtained\n";
+  }
   return $attr
 }
 
