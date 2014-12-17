@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## identifies toxo genes for the three strains by walking through each gene for each 
@@ -83,8 +82,10 @@ my %seqGenes;
 my %tmpSeqGenes;
 
 my $gffLocations = {};
+
+print STDERR "GFFVERSION=$gffVersion\n";
 foreach my $gffFile (@gffFiles) {
-  GUS::Supported::Util::addGffFeatures($gffLocations, $gffFile, $gffVersion);
+  &addGffFeatures($gffLocations, $gffFile, $gffVersion);
 }
 
 
@@ -187,6 +188,35 @@ sub getOverlapping {
   }
   return @genes;
 }
+
+
+sub addGffFeatures {
+  my ($allFeatureLocations, $gffFile, $gffVersion) = @_;
+
+  die "HASHREF expected but not found" unless(ref($allFeatureLocations) eq 'HASH');
+
+  my $gffIO = Bio::Tools::GFF->new('-gff_version' => $gffVersion,
+                                   -file => $gffFile
+                                  );
+
+  while (my $feature = $gffIO->next_feature()) {
+    next unless ($feature->primary_tag() eq 'gene');
+
+    my $seqId = $feature->seq_id();
+    my ($gene) = $feature->get_tag_values('ID');
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+    my $strand = $location->strand();
+
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{$strand}}, $start;
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{$strand}}, $end;
+  }
+
+  $gffIO->close();
+}
+
 
 $db->logout();
 $dbh->disconnect();
