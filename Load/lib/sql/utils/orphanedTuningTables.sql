@@ -26,4 +26,4 @@ WHERE table_name IN (SELECT table_name
   AND owner != 'WMSYS'
 ORDER BY owner, table_name;
 
-exit
+-- exit
