@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
 
 use strict;
 use GUS::Community::Plugin::AddToStudy;
+use Data::Dumper;
 
  sub new {
    my ($class) = @_;
@@ -26,7 +27,8 @@ use GUS::Community::Plugin::AddToStudy;
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
   my $source_id = $protocolAppNode->findvalue('./source_id');
-  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({source_id => $source_id});
+  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $source_id});
+
    $self->userError("Input ProtocolAppNode $source_id is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
   my $id = $protocolAppNode->getId();
 
