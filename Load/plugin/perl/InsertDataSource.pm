@@ -5,7 +5,7 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use GUS::Model::ApiDB::DataSource;
+use GUS::Model::ApiDB::Datasource;
 use Data::Dumper;
 
 
@@ -18,7 +18,7 @@ Insert Data Sources from a resource.xml file
 PLUGIN_PURPOSE
 
 my $tablesAffected =
-	[['ApiDB.DataSource', ''],
+	[['ApiDB.Datasource', ''],
 ];
 
 my $tablesDependedOn = [];
@@ -135,7 +135,7 @@ sub run {
     };
     $objArgs->{is_Species_Scope} = $isSpeciesScope if $taxonId;
 
-    my $datasource = GUS::Model::ApiDB::DataSource->new($objArgs);
+    my $datasource = GUS::Model::ApiDB::Datasource->new($objArgs);
     $datasource->submit();
     return "Inserted data source $dataSourceName";
 }
@@ -143,7 +143,7 @@ sub run {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.DataSource');
+  return ('ApiDB.Datasource');
 }
 
 
