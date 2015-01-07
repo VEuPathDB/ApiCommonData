@@ -56,6 +56,7 @@ sub getTaxonId {
   return $taxonId;
 }
 
+# get all gene source_ids and previous and alternate IDs, to compare against uniprot
 sub getLocusTags {
   my ($taxonId) = @_;
 
@@ -69,7 +70,14 @@ sub getLocusTags {
      $genes{$sourceId} = 1;
    }
 
-  my $sql = "select d.primary_identifier from sres.dbref d, dots.dbrefnafeature dnf, sres.externaldatabaserelease dbr, dots.genefeature gf, dots.nasequence na where d.external_database_release_id = dbr.external_database_release_id and dbr.id_type in ('previous_id','alternate_id') and d.db_ref_id = dnf.db_ref_id and dnf.na_feature_id = gf.na_feature_id and gf.na_sequence_id = na.na_sequence_id and na.taxon_id = ?";
+  my $sql = "select d.primary_identifier
+from sres.dbref d, dots.dbrefnafeature dnf, sres.externaldatabaserelease dbr, dots.genefeature gf, dots.nasequence na 
+where d.external_database_release_id = dbr.external_database_release_id 
+and dbr.id_type in ('previous_id','alternate_id') 
+and d.db_ref_id = dnf.db_ref_id 
+and dnf.na_feature_id = gf.na_feature_id 
+and gf.na_sequence_id = na.na_sequence_id 
+and na.taxon_id = ?";
 
    my $stmt2 = $dbh->prepare($sql);
 
