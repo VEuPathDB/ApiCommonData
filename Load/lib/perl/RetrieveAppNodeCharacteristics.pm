@@ -32,7 +32,7 @@ SQL
 	my $appNodeCategories;
 
 	my $getValuesSql =  <<SQL;
-							Select distinct source_id, name, value
+							Select distinct name, value
 							from $source_table
 							where type = ?
 							and category = ?
@@ -61,21 +61,23 @@ SQL
 		}
 		$vh->execute($type,$category) or die $dbh->errstr;
 		my $values = [];
-		my ($source_id, $name, $value);
-		while (($source_id,$name,$value) = $vh->fetchrow_array()) {
-			if (exists ($allValuesHash->{$type}->{$source_id}->{$category} )){
-				$values = $allValuesHash->{$type}->{$source_id}->{$category};
+		my ($name, $value);
+		while (($name,$value) = $vh->fetchrow_array()) {
+			if (exists ($allValuesHash->{$type}->{$name}->{$category} )){
+				$values = $allValuesHash->{$type}->{$name}->{$category};
 				push @$values, $value;
 			}
 			else {
-				$allValuesHash->{$type}->{$source_id}->{'name'} = $name;
-				$allValuesHash->{$type}->{$source_id}->{$category} = [ $value ];
+				$allValuesHash->{$type}->{$name}->{'name'} = $name;
+				$allValuesHash->{$type}->{$name}->{$category} = [ $value ];
 			}
 		}
 	}
 
 	$selectRow->finish();
 	$vh->finish();
+#        print STDERR Dumper ($appNodeCategories);
+#        print STDERR Dumper ($allValuesHash);
 	return ($appNodeCategories,$allValuesHash);
 }
 
