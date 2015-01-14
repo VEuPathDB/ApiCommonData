@@ -86,11 +86,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isFmaxPartial" ignore="true"/>
     <qualifier name="isFminPartial" ignore="true"/>
     <qualifier name="tritryp_uc"     ignore="true"/>
-    <qualifier name="internalGap"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="internalGap"     handler="api"   method="setPartial"/>
     <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
     <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
@@ -115,11 +115,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history"    ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="internalGap"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="internalGap"     handler="api"    method="setPartial"/>
     <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
     <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
   </feature>
 
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
