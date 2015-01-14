@@ -1,0 +1,104 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long qw(GetOptions);
+
+my ($trainscriptsIdFile, $prevTranscriptsIdFile, $oldGeneIdsMapFile, $skipValidation);
+
+GetOptions("transcriptIdsFile=s" => \$trainscriptsIdFile,
+	   "prevTranscriptIdsFile=s" => \$prevTrainscriptsIdFile,
+	   "oldGeneIdsMapFile=s" => \$oldGeneIdsMapFile,
+           "skipValidation" => \$skipValidation
+	  );
+usage() unless ($trainscriptsIdFile && $prevTrainscriptsIdFile);
+
+
+#mapping
+# read gene mapping file
+
+# if we have old->new gene id mapping, read it in
+my $oldToNewGeneIds;
+if ($oldGeneIdsMapFile) {
+  open(F, $oldGeneIdsMapFile) || die "Can't open oldGeneIdsMapFile '$oldGeneIdsMapFile'\n";
+  while(<F>) {
+    my ($oldGeneId, $newGeneId) = split(/\t/);
+    die "oldGeneIdsMapFile '$oldGeneIdsMapFile' is not in a valid format.  Must be two cols, tab delim." unless ($oldGeneId && $newGeneId);
+    $oldToNewGeneIds->{$oldGeneId} = $newGeneId;
+  }
+  close(F);
+}
+
+# old revision
+# make hash of oldGene->seq->id
+# and id->(geneid, seq)
+my $oldGenes;
+my $oldTranscripts;
+open(OLD, $prevTranscriptsIdFile) || die "Can't open prevTranscriptIdsFile '$prevTranscriptIdsFile'\n";
+while(<OLD>) {
+  my ($geneId, $seq, $transcriptId) = split(/\t/);
+  die "prevTranscriptIdsFile '$prevTranscriptIdsFile' is not in a valid format.  Must be three cols, tab delim." unless ($geneId, $seq, $transcriptId);
+  my $newGeneId = $oldToNewGeneIds->{$geneId};
+  $geneId = $newGeneId if $newGeneId;
+  $oldGenes->{$geneId}->{$seq} = $transcriptId;
+  $oldTranscripts->{$transcriptId} = [$geneId, $seq];
+}
+close(OLD);
+
+# validate
+
+# make map of old transcript ID to new
+my $newGenes;
+my $newTranscripts;
+open(NEW, $transcriptsIdFile) || die "Can't open transcriptIdsFile '$transcriptIdsFile'\n";
+while(<NEW>) {
+  my ($geneId, $seq, $transcriptId) = split(/\t/);
+  die "transcriptIdsFile '$transcriptIdsFile' is not in a valid format.  Must be three cols, tab delim." unless ($geneId, $seq, $transcriptId);
+  $newGenes->{$geneId}->{$seq} = $transcriptId;
+  $newTranscripts->{$transcriptId} = [$geneId, $seq];
+}
+
+my $invalidCount;
+foreach my $newTranscriptId (keys %{$newTranscripts}) {
+  my ($newGeneId, $newSeq) = $newTranscripts->{$newTranscriptId};
+  my ($oldGeneId, $oldSeq) = $oldTranscripts->{$newTranscriptId};
+
+  next if ($newGeneId eq $oldGeneId && $newSeq eq $oldSeq);
+
+  my $oldTranscriptId = $oldGenes->{$newGeneId}->{$newSeq};
+
+  print STDOUT "$oldTranscriptId, $newTranscriptId\n" if ($oldTranscriptId);
+
+  # validate
+  # if new id is found in old hash with different sequence and gene id
+  # and sequence and gene are in new, but go to different id
+  my ($oldGeneId, $oldSeq) = @{$oldTranscripts->{$newTranscriptId}};
+  if (!$skipValidation && $oldGeneId && &oldGeneId ne $newGeneId && $oldSeq ne $newSeq) {
+    $invalidCount++;
+    print STDERR "" if $newGenes->{$oldGeneId}->{$oldSeq};
+  }
+  die "Found $invalidCount invalid transcript IDs" if $invalidCount;
+}
+
+sub usage {
+
+  die "
+Validate transcript IDs provided by an annotation center, relative to a previous revision of the annotation, and output a mapping from old transcript IDs to new.
+
+Usage apiValidateTranscriptIds --transcriptIdsFile file --prevTranscriptIdsFile file [--oldGeneIdsMapFile file] [--skipValidation]
+
+Where:
+  transcriptIdsFile: a tab file with these columns:  geneId, transcriptSeq, transcriptId
+  prevTranscriptIdsFile: Same format as transcriptIdsFile.
+  oldGeneIdsMapFile: optional. A tab file with two columns:  oldGeneId, newGeneId.  From previous revision of genome, if available
+  skipValidation: optional.  Don't do the validation.  Useful if we know validation will fail, but have decided to ignore the issues.
+
+Output: writes to standard out a mapping of old transcript IDs to new (tab delim).
+
+Throws an error if a transcript ID is assigned to a different sequence than in the last revision, and if the old sequence is still present, and is assigned to a different transcript ID that was previously present.   In other words, transcript IDs are swapped, which indicates invalid reuse of transcript IDs.
+
+";
+
+}
+
+
+my ($trainscriptIdsFile, $previous) = @_;
