@@ -58,7 +58,7 @@ foreach my $geneSourceId (@geneSourceIds) {
 
             # If an exon belongs to 2 transcripts, we need to write it twice...
             my @parents = $subFeature->get_tag_values('PARENT');
-            die "A feature belonging to gene $geneSourceId has more than one parent" unless (scalar @parents == 1);
+            die "A feature belonging to gene $geneSourceId has more than one parent\n" unless (scalar @parents == 1);
                
             foreach my $parent (@parents) { 
                 my @transcriptIds = sort (split (',', $parent));
@@ -73,7 +73,8 @@ foreach my $geneSourceId (@geneSourceIds) {
         elsif ($subFeature->primary_tag() eq 'CDS') {
             # Separate CDS features by parent
             my @parents = $subFeature->get_tag_values('PARENT');
-            die "A feature belonging to gene $geneSourceId has more than one parent" unless (scalar @parents == 1);
+            die "A feature belonging to gene $geneSourceId has more than one parent\n" unless (scalar @parents == 1);
+
             foreach my $parent (@parents) { 
                 push (@{$cdsHash->{$parent}}, $subFeature);
             }
@@ -121,15 +122,8 @@ foreach my $geneSourceId (@geneSourceIds) {
 sub getStrand {
     my ($subFeature) = @_;
     my $strand = $subFeature->strand();
-    if ($strand > 0) {
-        $strand = '+';
-    } 
-    elsif ($strand < 0) {
-        $strand = '-';
-    }
-    else {
-        die "Strand $strand cannot be 0";
-    }
+    die "Strand $strand cannot be 0" unless ($strand != 0);
+    $strand = $strand > 0 ? '+' :'-';
     return $strand;
 }
 
@@ -152,16 +146,12 @@ sub writeGtfRow {
         $phase = '.';
     }
     my $transcriptId;
-    my @values;
+    my @values = $subFeature->get_tag_values('PARENT');
+    die "A feature belonging to gene $geneId has more than one parent\n" unless (scalar @values == 1);
     foreach my $value ($subFeature->get_tag_values('PARENT')) {
-        push (@values, $value);
+        $transcriptId = $value;
     }
-    if (scalar @values != 1) {
-        die "Feature belonging to gene $geneId has more than one parent\n";
-    }
-    else {
-        $transcriptId = $values[0];
-    }
+
     printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\ttranscript_id \"rna_%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$transcriptId,$geneId,$geneId);
 }
     
