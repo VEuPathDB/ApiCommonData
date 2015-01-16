@@ -54,7 +54,16 @@ foreach my $geneSourceId (@geneSourceIds) {
     foreach my $subFeature (@{$feature}) {
         # Of bioperl features from GeneModelLocation, only CDS and exon are valid for gtf files
         if ($subFeature->primary_tag() eq 'exon') {
-            writeGtfRow($subFeature, $project, $geneSourceId, 'exon');
+
+            # If an exon belongs to 2 transcripts, we need to write it twice...
+            foreach my $value ($subFeature->get_tag_values('PARENT')) { # assumes exon object only has 1 value for 'PARENT'
+                my @values = sort (split (',', $value));
+                foreach my $parent (@values) {
+                    $subFeature->remove_tag('PARENT');
+                    $subFeature->add_tag_value('PARENT', $parent);
+                    writeGtfRow($subFeature, $project, $geneSourceId, 'exon');
+                }
+            }
         }
 
         elsif ($subFeature->primary_tag() eq 'CDS') {
@@ -67,7 +76,7 @@ foreach my $geneSourceId (@geneSourceIds) {
     }
     
     #Calculate phase for CDS features.  Store in frame attribute of BioPerl object as this is not used in objects obtained from GeneModelLocations
-    foreach my $key (keys %{$cdsHash}){
+    foreach my $key (sort (keys %{$cdsHash})){
         my $cdsList = $cdsHash->{$key};
 
     #CDS on + strand
