@@ -51,16 +51,20 @@ my @geneSourceIds = sort @{$geneModelLocations->getAllGeneIds()};
 foreach my $geneSourceId (@geneSourceIds) {
     my $cdsHash = {};
     my $feature = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
+
     foreach my $subFeature (@{$feature}) {
         # Of bioperl features from GeneModelLocation, only CDS and exon are valid for gtf files
         if ($subFeature->primary_tag() eq 'exon') {
 
             # If an exon belongs to 2 transcripts, we need to write it twice...
-            foreach my $value ($subFeature->get_tag_values('PARENT')) { # assumes exon object only has 1 value for 'PARENT'
-                my @values = sort (split (',', $value));
-                foreach my $parent (@values) {
+            my @parents = $subFeature->get_tag_values('PARENT');
+            die "A feature belonging to gene $geneSourceId has more than one parent" unless (scalar @parents == 1);
+               
+            foreach my $parent (@parents) { 
+                my @transcriptIds = sort (split (',', $parent));
+                foreach my $transcriptId (@transcriptIds) {
                     $subFeature->remove_tag('PARENT');
-                    $subFeature->add_tag_value('PARENT', $parent);
+                    $subFeature->add_tag_value('PARENT', $transcriptId);
                     writeGtfRow($subFeature, $project, $geneSourceId, 'exon');
                 }
             }
@@ -68,11 +72,12 @@ foreach my $geneSourceId (@geneSourceIds) {
 
         elsif ($subFeature->primary_tag() eq 'CDS') {
             # Separate CDS features by parent
-            foreach my $value ($subFeature->get_tag_values('PARENT')) { # assumes CDS object only has 1 value for 'PARENT'
-                push (@{$cdsHash->{$value}}, $subFeature);
+            my @parents = $subFeature->get_tag_values('PARENT');
+            die "A feature belonging to gene $geneSourceId has more than one parent" unless (scalar @parents == 1);
+            foreach my $parent (@parents) { 
+                push (@{$cdsHash->{$parent}}, $subFeature);
             }
         }
-
     }
     
     #Calculate phase for CDS features.  Store in frame attribute of BioPerl object as this is not used in objects obtained from GeneModelLocations
@@ -152,7 +157,7 @@ sub writeGtfRow {
         push (@values, $value);
     }
     if (scalar @values != 1) {
-        die "Feature ". $subFeature->seq_id(). " should not have more than one parent\n";
+        die "Feature belonging to gene $geneId has more than one parent\n";
     }
     else {
         $transcriptId = $values[0];
