@@ -3,18 +3,15 @@
 use strict;
 use Getopt::Long qw(GetOptions);
 
-my ($trainscriptsIdFile, $prevTranscriptsIdFile, $oldGeneIdsMapFile, $skipValidation);
+my ($transcriptIdsFile, $prevTranscriptIdsFile, $oldGeneIdsMapFile, $skipValidation);
 
-GetOptions("transcriptIdsFile=s" => \$trainscriptsIdFile,
-	   "prevTranscriptIdsFile=s" => \$prevTrainscriptsIdFile,
+GetOptions("transcriptIdsFile=s" => \$transcriptIdsFile,
+	   "prevTranscriptIdsFile=s" => \$prevTranscriptIdsFile,
 	   "oldGeneIdsMapFile=s" => \$oldGeneIdsMapFile,
            "skipValidation" => \$skipValidation
 	  );
-usage() unless ($trainscriptsIdFile && $prevTrainscriptsIdFile);
+usage() unless ($transcriptIdsFile && $prevTranscriptIdsFile);
 
-
-#mapping
-# read gene mapping file
 
 # if we have old->new gene id mapping, read it in
 my $oldToNewGeneIds;
@@ -33,8 +30,9 @@ if ($oldGeneIdsMapFile) {
 # and id->(geneid, seq)
 my $oldGenes;
 my $oldTranscripts;
-open(OLD, $prevTranscriptsIdFile) || die "Can't open prevTranscriptIdsFile '$prevTranscriptIdsFile'\n";
+open(OLD, $prevTranscriptIdsFile) || die "Can't open prevTranscriptIdsFile '$prevTranscriptIdsFile'\n";
 while(<OLD>) {
+  chomp;
   my ($geneId, $seq, $transcriptId) = split(/\t/);
   die "prevTranscriptIdsFile '$prevTranscriptIdsFile' is not in a valid format.  Must be three cols, tab delim." unless ($geneId, $seq, $transcriptId);
   my $newGeneId = $oldToNewGeneIds->{$geneId};
@@ -49,8 +47,9 @@ close(OLD);
 # make map of old transcript ID to new
 my $newGenes;
 my $newTranscripts;
-open(NEW, $transcriptsIdFile) || die "Can't open transcriptIdsFile '$transcriptIdsFile'\n";
+open(NEW, $transcriptIdsFile) || die "Can't open transcriptIdsFile '$transcriptIdsFile'\n";
 while(<NEW>) {
+  chomp;
   my ($geneId, $seq, $transcriptId) = split(/\t/);
   die "transcriptIdsFile '$transcriptIdsFile' is not in a valid format.  Must be three cols, tab delim." unless ($geneId, $seq, $transcriptId);
   $newGenes->{$geneId}->{$seq} = $transcriptId;
@@ -59,24 +58,23 @@ while(<NEW>) {
 
 my $invalidCount;
 foreach my $newTranscriptId (keys %{$newTranscripts}) {
-  my ($newGeneId, $newSeq) = $newTranscripts->{$newTranscriptId};
-  my ($oldGeneId, $oldSeq) = $oldTranscripts->{$newTranscriptId};
+  my ($newGeneId, $newSeq) = @{$newTranscripts->{$newTranscriptId}};
+  my ($oldGeneId, $oldSeq) = @{$oldTranscripts->{$newTranscriptId}} if $oldTranscripts->{$newTranscriptId};
 
   next if ($newGeneId eq $oldGeneId && $newSeq eq $oldSeq);
 
   my $oldTranscriptId = $oldGenes->{$newGeneId}->{$newSeq};
 
-  print STDOUT "$oldTranscriptId, $newTranscriptId\n" if ($oldTranscriptId);
+  print STDOUT "$oldTranscriptId\t$newTranscriptId\n" if ($oldTranscriptId);
 
   # validate
   # if new id is found in old hash with different sequence and gene id
   # and sequence and gene are in new, but go to different id
-  my ($oldGeneId, $oldSeq) = @{$oldTranscripts->{$newTranscriptId}};
-  if (!$skipValidation && $oldGeneId && &oldGeneId ne $newGeneId && $oldSeq ne $newSeq) {
+  if (!$skipValidation && $oldGeneId) {
     $invalidCount++;
-    print STDERR "" if $newGenes->{$oldGeneId}->{$oldSeq};
+    print STDERR "Invalid new ID: $newTranscriptId is re-used with a different transcript.  It used to belong to the transcript that now has ID $newGenes->{$oldGeneId}->{$oldSeq}\n" if $newGenes->{$oldGeneId} && $newGenes->{$oldGeneId}->{$oldSeq};
   }
-  die "Found $invalidCount invalid transcript IDs" if $invalidCount;
+  die "Found $invalidCount invalid transcript IDs.  See error log for details\n" if $invalidCount;
 }
 
 sub usage {
@@ -101,4 +99,4 @@ Throws an error if a transcript ID is assigned to a different sequence than in t
 }
 
 
-my ($trainscriptIdsFile, $previous) = @_;
+my ($transcriptIdsFile, $previous) = @_;
