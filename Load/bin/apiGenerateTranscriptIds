@@ -1,12 +1,13 @@
 #!/usr/bin/perl
 
 use strict;
+use Data::Dumper;
 
 my ($buildNumber, $transcriptInfoFile, $prevTranscriptInfoAndIdsFile) = @ARGV;
 
 usage() unless $buildNumber && $transcriptInfoFile;
 
-my %oldGenes, %oldSeq2TransId, %oldPath2TransId;
+my (%oldGenes, %oldSeq2TransId, %oldPath2TransId);
 
 # parse old file into three hashes
 if ($prevTranscriptInfoAndIdsFile) {
@@ -34,7 +35,7 @@ while(<NEW>) {
   my ($geneId, $seq, $pathStr, $locations) = @t;
   my @path = split(/,\s*/, $pathStr);
   $newGenes{$geneId} = [] unless $newGenes{$geneId};
-  push(@{$newGenes{$geneId}}, (seq=>$seq, pathStr=>$pathStr, path=>\@path, loc=>$locations));
+  push(@{$newGenes{$geneId}}, {seq=>$seq, pathStr=>$pathStr, path=>\@path, loc=>$locations});
 }
 close(NEW);
 
@@ -44,22 +45,22 @@ foreach my $geneId (keys(%newGenes)) {
 
   # we want a gene to have a set of consective transcript indexes.
   # make an arry of all of these, to track which have been used in an ID (claimed)
-  my @unclaimedIndexes;   
+  my @unclaimedIndexes;
   for (my $i=0; $i<scalar(@transcripts); $i++) {
     push(@unclaimedIndexes, $i+1);
   }
 
   # if old IDs, transfer where possible
-  if ($oldGenes) {
+  if ($prevTranscriptInfoAndIdsFile) {
 
     # first try by seq identity
     foreach my $transcript (@sortedTrans) {
       my $id = $oldSeq2TransId{$geneId}->{$transcript->{seq}};
       if ($id) {
 	$transcript->{id} = $id;
-	$id =~ /(_\d+$)/ || die "can't parse index in transcript id $id";
-	my $index = $i;
-	splice(@$unclaimedIndexes, $i-1, 1);
+	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
+	$transcript->{index} = $1;
+	splice(@unclaimedIndexes, $transcript->{index}-1, 1);
       }
     }
 
@@ -68,31 +69,29 @@ foreach my $geneId (keys(%newGenes)) {
       next if $transcript->{id};
       my $id = $oldPath2TransId{$geneId}->{$transcript->{pathStr}};
       if ($id) {
-	$id =~ /(_\d+$)/ || die "can't parse index in transcript id $id";
-	my $index = $i;
-	$transcript->{id} = "$gene-t{$buildNumber}_$i";
-	splice(@$unclaimedIndexes, $i-1, 1);
+	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
+	$transcript->{index} = $1;
+	$transcript->{id} = "$geneId-t${buildNumber}_$transcript->{index}";
+	splice(@unclaimedIndexes, $transcript->{index}-1, 1);
       }
     }
   }
 
-  # assign remaining available indexes
+  # assign remaining available indexes, and print all transcripts
   my $nextIndex;
+
   foreach my $transcript (@sortedTrans) {
-    if !($transcript->{id}) {
-      $nextIndex = shift(@unclaimedIndexes);
-      $transcript->{id} = "$gene-t{$buildNumber}_$nextIndex";
+    if (!$transcript->{id}) {
+      $transcript->{index} = shift(@unclaimedIndexes);
+      $transcript->{id} = "$geneId-t${buildNumber}_$transcript->{index}";
     }
+  }
+
+  # for legibility, sort by index.  print!
+  my @sortedByIndex = sort { $a->{index} <=> $b->{index}} @sortedTrans;
+  foreach my $transcript (@sortedByIndex) {
     print STDOUT "$geneId\t$transcript->{seq}\t$transcript->{pathStr}\t$transcript->{loc}\t$transcript->{id}\n";
   }
-}
-
-sub assignId {
-  my ($transcript, $id, $unclaimedIndexes) = @_;
-  $transcript->{id} = $id;
-  $id =~ /(_\d+$)/ || die "can't parse index in transcript id $id";
-  my $index = $i;
-  splice(@$unclaimedIndexes, $i-1, 1);
 }
 
 sub sortGeneTranscripts {
@@ -108,8 +107,8 @@ sub compareTwoExonPaths {
   $len = scalar(@$t2) if scalar(@$t2) < $len;
 
   for (my $i=0; $i<$len; $i++) {
-    if ($t1->[$i] < $t2->[$i]) return -1;
-    if ($t2->[$i] < $t1->[$i]) return 1;
+    return -1 if ($t1->[$i] < $t2->[$i]);
+    return 1 if ($t2->[$i] < $t1->[$i]);
   }
   return scalar(@$t1) - scalar(@$t2);
 }
