@@ -69,7 +69,7 @@ sub undoAll{
 #  $self->_undoECNumber();
   $self->_undoAnticodon();
   $self->_undoProvidedTranslation();
-#  $self->_undoMiscSignalNote();
+  $self->_undoMiscSignalNote();
   $self->_undoSetParent();
 #  $self->_undoSourceIdAndTranscriptSeq();
   $self->_undoSourceIdAndTranscriptSeqAndTranslatedAAFeat();
@@ -141,7 +141,8 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
       }
 
       #$exon->setOrderNumber($order);
-      my $sourceId = "$tagValues[0]-$order";
+      #my $sourceId = "$tagValues[0]-$order";
+      my $sourceId = $tagValues[0]."-E".$order;
       $exon->setSourceId("$sourceId");
       my $naLoc = $exon->getChild('DoTS::NALocation');
 
