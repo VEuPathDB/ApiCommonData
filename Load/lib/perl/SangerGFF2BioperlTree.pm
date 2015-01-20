@@ -313,7 +313,9 @@ sub traverseSeqFeatures {
 	    if ($gene->has_tag('Pseudo') || $gene->has_tag('pseudo')) {
 	      $transcript->add_tag_value('Pseudo', '');
 	    }
-	    if ($gene->has_tag('Partial') || $gene->has_tag('partial')) {
+	    if ($gene->has_tag('Partial') || $gene->has_tag('partial') 
+		|| $gene->has_tag('fiveEndPartial') || $gene->has_tag('threeEndPartial')
+	        || $gene->has_tag('internalGap') ) {
 	      $transcript->add_tag_value('Partial', '');
 	    }
 
