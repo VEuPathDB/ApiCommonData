@@ -10,15 +10,16 @@ use GUS::Community::GeneModelLocations;
 
 use Data::Dumper;
 
-my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsId);
+my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly);
 &GetOptions("verbose!"=> \$verbose,
             "outputFile=s" => \$outFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "project=s" => \$project,
-            "genomeExtDbRlsId=i" => \$genomeExtDbRlsId); 
+            "genomeExtDbRlsSpec=s" => \$genomeExtDbRlsSpec,
+            "cds_only" => \$cdsOnly); 
 
 if(!$outFile || !$project){
-	die "usage: makeGtf.pl --outputFile <outfile> --verbose --gusConfigFile [\$GUS_CONFIG_FILE] --project 'TriTrypDB, PlasmoDB etc to show origin of data in gtf' -- genomeExtDbRlsId genomeExtDbRlsId\n";
+	die "usage: makeGtf.pl --outputFile <outfile> --verbose --gusConfigFile [\$GUS_CONFIG_FILE] --project 'TriTrypDB, PlasmoDB etc to show origin of data in gtf' -- genomeExtDbRlsSpec genomeExtDbRlsSpec\n";
 }
 
 ##Create db handle
@@ -45,6 +46,10 @@ my $dbh = $db->getQueryHandle();
 
 open(OUT,">$outFile");
 
+my $genomeExtDbRlsId = &getExtDbRlsIdFromSpec($dbh, $genomeExtDbRlsSpec);
+
+
+
 my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1);
 my @geneSourceIds = sort @{$geneModelLocations->getAllGeneIds()};
 
@@ -65,7 +70,7 @@ foreach my $geneSourceId (@geneSourceIds) {
                 foreach my $transcriptId (@transcriptIds) {
                     $subFeature->remove_tag('PARENT');
                     $subFeature->add_tag_value('PARENT', $transcriptId);
-                    writeGtfRow($subFeature, $project, $geneSourceId, 'exon');
+                    writeGtfRow($subFeature, $project, $geneSourceId, 'exon') unless($cdsOnly);
                 }
             }
         }
@@ -111,6 +116,13 @@ foreach my $geneSourceId (@geneSourceIds) {
                 }
             }
         }
+
+        if($cdsOnly) {
+          foreach my $cds (@{$cdsList}) {
+            writeGtfRow($cds, $project, $geneSourceId, 'exon');
+          }
+        }
+
         #Now write CDS features with phase
         foreach my $cds (@{$cdsList}) {
             writeGtfRow($cds, $project, $geneSourceId, 'CDS');
@@ -119,6 +131,38 @@ foreach my $geneSourceId (@geneSourceIds) {
     
 }
 ##subroutines
+
+sub getExtDbRlsIdFromSpec {
+  my ($dbh, $genomeExtDbRlsSpec) = @_;
+
+  my ($name, $version) = split(/\|/, $genomeExtDbRlsSpec);
+
+  my $sql = "select r.external_database_release_id 
+from sres.externaldatabase d
+   , sres.externaldatabaserelease r
+where d.EXTERNAL_DATABASE_ID = r.EXTERNAL_DATABASE_ID
+and d.name = ?
+and r.version = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($name, $version);
+
+  my ($count, $rv);
+
+  while(my ($id) = $sh->fetchrow_array()) {
+    $rv =  $id;
+    $count++;
+  }
+
+  $sh->finish();
+
+  if($count != 1) {
+    die "Could not find an external database release id for the spec $genomeExtDbRlsSpec";
+  }
+
+  return $rv;
+}
+
 sub getStrand {
     my ($subFeature) = @_;
     my $strand = $subFeature->strand();
@@ -141,7 +185,7 @@ sub writeGtfRow {
     my $start = $subFeature->start();
     my $end = $subFeature->end();
     my $strand = getStrand($subFeature);
-    my $phase = $subFeature->frame();
+    my $phase = $cdsOnly && $type eq 'exon' ? undef : $subFeature->frame();
     if (!defined($phase)){
         $phase = '.';
     }
