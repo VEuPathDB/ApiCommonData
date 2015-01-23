@@ -411,15 +411,14 @@ sub printTranscriptInfo {
     my $exonStart = $gusFeatureTree;
     my $exonEnd = $gusFeatureTree;
     push(@exonPath, $exonNumber);
-    push(@exonLocations, [$exonStart, $exonEnd]);
+    push(@exonLocations, $exonStart, $exonEnd);
   }
 
   @exonPath = sort {$a <=> $b} @exonPath;
   my $exonPathStr = join(",", @exonPath);
 
-  @exonLocations = sort {$a->[0] - $b->[0] || $a->[1] - $b->[1]} @exonLocations;
-  my @exonLocStrings = map { "$_->[0]-$_->[1]"} @exonLocations;
-  my $exonLocationsStr = join(",", @exonLocStrings);
+  @exonLocations = sort {$a <=> $b} @exonLocations;
+  my $exonLocationsStr = join(",", @exonLocations);
 
   print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
 
