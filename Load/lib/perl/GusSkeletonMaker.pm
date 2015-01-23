@@ -380,11 +380,6 @@ sub printTranscriptIds {
     $postprocessDataStore->open(">$postprocessDir/transcriptIds") || die "Can't open transcript IDs file '$postprocessDir/transcriptIds' for writing\n";
   }
 
-  # SUFEN TODO: fill these in with proper values from the feature tree.  ---- DONE ----
-  #my $geneId = $gusFeatureTree;
-  #my $transcriptId = $gusFeatureTree;
-  #my $transcriptSeq = $gusFeatureTree;
-
   my $gusGene = $gusFeatureTree;
   my $geneId = $gusGene->getSourceId();
   my @gusTranscripts = $gusGene->getChildren('DoTS::Transcript', 1);
@@ -409,11 +404,6 @@ sub printTranscriptInfo {
     $postprocessDataStore = FileHandle->new();
     $postprocessDataStore->open(">$postprocessDir/transcriptInfo") || die "Can't open transcript info file '$postprocessDir/transcriptInfo' for writing\n";
   }
-
-  # SUFEN TODO: fill these in with proper values from the feature tree.  ---- DONE ---
-  #my $geneId = $gusFeatureTree;
-  #my $transcriptId = $gusFeatureTree;
-  #my $transcriptSeq = $gusFeatureTree;
 
   my $gusGene = $gusFeatureTree;
   my $geneId = $gusGene->getSourceId();
@@ -444,24 +434,6 @@ sub printTranscriptInfo {
     print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
   }
 
-  #my @exonPath;
-  #my @exonLocations;
-  #foreach my $exon ($gusFeatureTree) {
-  #  my $exonNumber = $gusFeatureTree;
-  #  my $exonStart = $gusFeatureTree;
-  #  my $exonEnd = $gusFeatureTree;
-  #  push(@exonPath, $exonNumber);
-  #  push(@exonLocations, $exonStart, $exonEnd);
-  #}
-
-  #@exonPath = sort {$a <=> $b} @exonPath;
-  #my $exonPathStr = join(",", @exonPath);
-
-  #@exonLocations = sort {$a <=> $b} @exonLocations;
-  #my $exonLocationsStr = join(",", @exonLocations);
-
-  #print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
-
   return $postprocessDataStore;
 }
 
@@ -482,12 +454,6 @@ sub setTranscriptIds{
     $fh->close();
   }
 
-  # SUFEN TODO   ---- DONE -----
-  #my $geneId = $gusFeatureTree;
-  #my $transcriptSeq = $gusFeatureTree;
-
-  #my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
-
   my $gusGene = $gusFeatureTree;
   my $geneId = $gusGene->getSourceId();
   my @gusTranscripts = $gusGene->getChildren('DoTS::Transcript', 1);
@@ -499,8 +465,6 @@ sub setTranscriptIds{
     my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
     $gusTranscript->setSourceId($transcriptId) if ($transcriptId);   ## set transcript ID in gus object
   }
-
-  # SUFEN TODO -- set transcript id in gus object  ---- DONE ----
 
   return $postprocessDataStore;
 }
