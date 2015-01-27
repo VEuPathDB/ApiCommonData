@@ -18,12 +18,13 @@ use Data::Dumper;
 
 use CBIL::Util::PropertySet;
 
-my ($inFile, $dataFile, $outFile, $valueMapFile, $help, $force);
+my ($inFile, $dataFile, $outFile, $valueMapFile, $headerMapFile, $help, $force);
 my $delimiter = "\t";
 
 &GetOptions('help|h' => \$help,
             'inFile=s' => \$inFile,
 	    'valueMapFile=s' => \$valueMapFile,
+            'headerMapFile=s'=> \$headerMapFile,
             'dataFile=s' => \$dataFile,
             'outFile=s' => \$outFile,
             'delimiter=s' => \$delimiter,
@@ -59,21 +60,35 @@ my $dsn = $gusconfig->{props}->{dbiDsn};
 my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 
 open (MAP, $valueMapFile) || die "Can't open $valueMapFile for reading : $!\n";
-	foreach my $line (<MAP>){
-	  chomp $line;
-	  my @row = split(/\t/,$line);
-	  my $characteristic = $row[0];
-	  my $skipCol = 1;
+foreach my $line (<MAP>){
+  chomp $line;
+  my @row = split(/\t/,$line);
+  my $characteristic = $row[0];
+  my $skipCol = 1;
 
-	  foreach my $col (@row) {
-		if ($skipCol) {
-			$skipCol = 0;
-			next;
-		}
-		my ($key,$value) = split (/:/,$col);
-		$mapHash->{$characteristic}->{$key} = $value;
- }
+  foreach my $col (@row) {
+    if ($skipCol) {
+      $skipCol = 0;
+      next;
+    }
+    my ($key,$value) = split (/:/,$col);
+    $mapHash->{$characteristic}->{$key} = $value;
+  }
+  close MAP;
 }
+
+my $headerMapHash = {};
+if (defined ($headerMapFile)) {
+  open (MAP, $headerMapFile) || die "Can't open $headerMapFile for reading : $!\n";
+  foreach my $line (<MAP>){
+    chomp $line;
+
+    my ($inputValue,$correctedValue) = split (/:/,$line);
+    $inputValue = lc($inputValue);
+    $headerMapHash->{$inputValue} = $correctedValue;
+  }
+}
+
 
 open (OUTFILE, ">$outFile") || die "Can't open $outFile for writing\n";
 open (INFILE, $inFile) || die "Can't open $inFile for reading : $!\n";
@@ -85,7 +100,7 @@ foreach my $row (<INFILE>){
   chomp $row;
   my %hash;
   if ($isHeader) {
-    $ColumnMap = parseHeader($dbh,$row);
+    $ColumnMap = parseHeader($dbh,$row,$headerMapHash);
     $isHeader=0;
     $charSet = $ColumnMap->{"characteristics"};
     print OUTFILE 'Source Name'."\t";
@@ -177,6 +192,7 @@ sub validateSampleNames {
       splice(@$dataSampleNames, 0, 1);
       $isHeader = 0;
       foreach my $sample (@$dataSampleNames) {
+        $sample=~s/"//g;
         my $sample_id_string = $origin."_".$sample unless grep { /^$sample$/ } @$sourceNames;
         $sample_id_string =~ s/ +/_/g unless $sample_id_string =~ /^\s+$/;
         if (grep { /^$sample_id_string$/ } @$sourceNames) {
@@ -223,13 +239,20 @@ sub validateSampleNames {
   return ($dataSampleNames);
 }
 
+sub swapHeaderValue{
+  my ($characteristic, $headerMapHash) =@_;
+    if (defined $headerMapHash->{$characteristic}) {
+      $characteristic = $headerMapHash->{$characteristic};
+    }
+  return $characteristic;
+}
+
 sub parseHeader {
-
-	my ($dbh,$header) = @_;
-        #$dbh->trace($dbh->parse_trace_flags('SQL|1|test'));
-	my @requiredCols = ("Organism","StrainOrLine","BioSourceType","Host");
-	my @Header = split ("\t" , $header);
-
+  my ($dbh,$header,$headerMap) = @_;
+  #$dbh->trace($dbh->parse_trace_flags('SQL|1|test'));
+  my @requiredCols = ("Organism","StrainOrLine","BioSourceType","Host");
+  my @Header = split ("\t" , $header);
+        
 
   	my $colMap = {};
         my $chars = [];
@@ -241,9 +264,7 @@ sub parseHeader {
           $char =~ s/\s+$//;
           $char =~ s/\W+/_/g;
           $char = lc($char);
-          $char =~ s/^study_subject_unique_id$/subject/;
-          $char =~ s/^gender$/sex/;
-          $char =~ s/^location$/geographiclocation/;
+          $char = swapHeaderValue($char,$headerMap);
 
           if ($char =~ /sample_id/i) {
             push (@$chars,$char);
