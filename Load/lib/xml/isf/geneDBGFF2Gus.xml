@@ -85,10 +85,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="full_GO" ignore="true"/>
     <qualifier name="isFmaxPartial" ignore="true"/>
     <qualifier name="isFminPartial" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="tritryp_uc"     ignore="true"/>
+    <qualifier name="internalGap"     handler="api"    method="setPartial"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
@@ -113,10 +115,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history"    ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="internalGap"     handler="api"    method="setPartial"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
   </feature>
 
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
@@ -152,9 +155,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -173,9 +176,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -250,9 +253,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
    <qualifier name="Name"         column="standard_name"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -340,9 +343,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -371,9 +374,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -401,9 +404,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -436,9 +439,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Start_range"    ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -494,9 +497,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Start_range" ignore="true"/>
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
-    <qualifier name="fiveEndPartial"      ignore="true"/>
-    <qualifier name="threeEndPartial"     ignore="true"/>
     <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="fiveEndPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"     handler="api"    method="setPartial"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
@@ -571,6 +574,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="product" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
   </feature>
 
   <feature name="three_prime_UTR" table="DoTS::UTRFeature" so="three_prime_UTR">
@@ -685,17 +689,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="eMBL_qualifier" ignore="true"/>
+    <qualifier name="gap_type" ignore="true"/>
    
   </feature>
-
-<!--
-  <feature name="pseudo_gene" so="pseudogene" table="DoTS::GeneFeature">
-    <qualifier name="ID" column="source_id"/>
-     <qualifier name="note"  ignore="true"/>
-     <qualifier name="is_pseudo" column="is_pseudo"/>
-     <qualifier name="pseudo" ignore="true"/>
-  </feature>
-
--->
 
 </mapping>

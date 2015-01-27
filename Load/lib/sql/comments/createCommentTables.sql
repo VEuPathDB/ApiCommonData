@@ -176,3 +176,18 @@ CREATE INDEX userlogins5.comment_edb_idx01 ON userlogins5.comment_external_datab
 
 GRANT insert, update, delete on userlogins5.comment_external_database to GUS_W;
 GRANT select on userlogins5.comment_external_database to GUS_R;
+
+-- view of comments with stable_id either as-is or mapped through commentStableId
+create or replace view userlogins5.mappedComment as
+select c.comment_id, c.user_id, c.email, c.comment_date, c.comment_target_id,
+       idMap.stable_id, c.conceptual, c.project_name, c.project_version, c.headline,
+       c.review_status_id, c.accepted_version, c.location_string, c.organism, c.is_visible
+from userlogins5.comments c, 
+     (select stable_id, comment_id
+         from userlogins5.comments
+       union
+         select stable_id, comment_id
+         from userlogins5.commentStableId) idMap
+where c.comment_id = idMap.comment_id;
+
+grant select on userlogins5.mappedComment to gus_r;

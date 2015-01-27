@@ -10,6 +10,7 @@ use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
 use GUS::Model::DoTS::Gene;
 use GUS::Model::DoTS::GeneInstance;
+use FileHandle;
 
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
@@ -260,6 +261,110 @@ sub makeTranslatedAAFeat {
 
 #--------------------------------------------------------------------------------
 
+# postprocess a feature tree (before it is written to database by ISF)
+sub postprocessFeatureTree {
+  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore);
+
+  return unless $postprocessDirective;
+
+  if ($postprocessDirective eq 'PRINT_TRANSCRIPT_IDS') {
+    return printTranscriptIds($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore);
+  }
+
+  if ($postprocessDirective eq 'PRINT_TRANSCRIPT_INFO') {
+    return printTranscriptInfo($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore);
+  }
+
+  if ($postprocessDirective eq 'SET_TRANSCRIPT_IDS') {
+    return setTranscriptIds($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore);
+  }
+
+  die "You have provided an unsupported postprocessing directive in argument '--postprocessingDirective $postprocessDirective'.  Supported directives are PRINT_TRANSCRIPT_IDS, PRINT_TRANSCRIPT_INFO and SET_TRANSCRIPT_IDS\n";
+}
+
+sub printTranscriptIds {
+  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore) = @_;
+
+  if (!$postprocessDataStore) {
+    -d $postprocessDir || die "Error: the postprocessing dir provided in argument '--postprocessingDir $postprocessDir' is not a directory\n";
+    # save the file handle in the data store for use in following feature trees
+    $postprocessDataStore = FileHandle->new();
+    $postprocessDataStore->open(">$postprocessDir/transcriptIds") || die "Can't open transcript IDs file '$postprocessDir/transcriptIds' for writing\n";
+  }
+
+  # SUFEN TODO: fill these in with proper values from the feature tree.
+  my $geneId = $gusFeatureTree;
+  my $transcriptId = $gusFeatureTree;
+  my $transcriptSeq = $gusFeatureTree;
+
+  print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\n";
+
+  return $postprocessDataStore;
+}
+
+sub printTranscriptInfo {
+  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore) = @_;
+
+  if (!$postprocessDataStore) {
+    -d $postprocessDir || die "Error: the postprocessing dir provided in argument '--postprocessingDir $postprocessDir' is not a directory\n";
+    # save the file handle in the data store for use in following feature trees
+    $postprocessDataStore = FileHandle->new();
+    $postprocessDataStore->open(">$postprocessDir/transcriptInfo") || die "Can't open transcript info file '$postprocessDir/transcriptInfo' for writing\n";
+  }
+
+  # SUFEN TODO: fill these in with proper values from the feature tree.
+  my $geneId = $gusFeatureTree;
+  my $transcriptId = $gusFeatureTree;
+  my $transcriptSeq = $gusFeatureTree;
+  my @exonPath;
+  my @exonLocations;
+  foreach my $exon ($gusFeatureTree) {
+    my $exonNumber = $gusFeatureTree;
+    my $exonStart = $gusFeatureTree;
+    my $exonEnd = $gusFeatureTree;
+    push(@exonPath, $exonNumber);
+    push(@exonLocations, [$exonStart, $exonEnd]);
+  }
+
+  @exonPath = sort {$a <=> $b} @exonPath;
+  my $exonPathStr = join(",", @exonPath);
+
+  @exonLocations = sort {$a->[0] - $b->[0] || $a->[1] - $b->[1]} @exonLocations;
+  my @exonLocStrings = map { "$_->[0]-$_->[1]"} @exonLocations;
+  my $exonLocationsStr = join(",", @exonLocStrings);
+
+  print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
+
+  return $postprocessDataStore;
+}
+
+sub setTranscriptIds{
+  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore) = @_;
+
+  if (!$postprocessDataStore) {
+    -d $postprocessDir || die "Error: the postprocessing dir provided in argument '--postprocessingDir $postprocessDir' is not a directory\n";
+    # save the file handle in the data store for use in following feature trees
+    my $fh = FileHandle->new();
+    $fh->open("$postprocessDir/transcriptInfoAndIds") || die "Can't open transcript info and IDs file '$postprocessDir/transcriptInfoAndIds'\n";
+    while(<$fh>) {
+      chomp;
+      my ($geneId, $transcriptSeq, $exonPath, $exonLocations, $transcriptId) = split(/\t/);
+      die "Invalid line in file $postprocessDir/transcriptInfoAndIds:\n$_\n" unless $geneId && $transcriptSeq && $transcriptId;
+      $postprocessDataStore->{$geneId}->{$transcriptSeq} = $transcriptId;
+    }
+    $fh->close();
+  }
+
+  # SUFEN TODO
+  my $geneId = $gusFeatureTree;
+  my $transcriptSeq = $gusFeatureTree;
+
+  my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
+
+  # SUFEN TODO -- set transcript id in gus object
+
+  return $postprocessDataStore;
+}
 
 
 #################################################################

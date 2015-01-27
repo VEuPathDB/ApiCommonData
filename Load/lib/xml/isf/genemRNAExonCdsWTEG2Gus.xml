@@ -30,6 +30,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
   </feature>
 
   <feature name="repeated_gene" so="repeat_region">
@@ -203,7 +204,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPartial"      ignore="true"/>
   </feature> 
 
-  <feature name="TIR" table="DoTS::Repeats" so="repeat_region">
+  <feature name="TIR" table="DoTS::Repeats" so="terminal_inverted_repeat">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="Name"              ignore="true"/>
     <qualifier name="product"              ignore="true"/>
