@@ -60,8 +60,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
 
@@ -81,8 +81,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -248,8 +248,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
 
@@ -279,8 +279,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
@@ -309,8 +309,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="non_protein_coding">
@@ -344,8 +344,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="End_range" ignore="true"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -402,8 +402,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
     <qualifier name="fiveEndPartial"      ignore="true"/>
     <qualifier name="threeEndPartial"     ignore="true"/>
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true">
@@ -423,7 +423,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="transcript">
-    <qualifier name="ID" ignore="true"/>
+    <qualifier name="ID"                 column="source_id"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -456,15 +456,17 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
     <qualifier name="timelastmodified"               ignore="true"/>
     <qualifier name="transmembrane_polypeptide_region"               ignore="true"/>
-    <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="protein_id"            method="transcriptProteinId"/>
+    <qualifier name="transl_except"         handler="api"  method="transcriptTranslExcept"/>
+    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
+    <qualifier name="Partial"            handler="api"    method="setPartial"/>
     <qualifier name="isFmaxPartial"      handler="api"    method="setPartial"/>
     <qualifier name="isFminPartial"      handler="api"    method="setPartial"/>
-    <qualifier name="protein_id"            method="transcriptProteinId"/>
-    <qualifier name="transl_except"       handler="api"  method="transcriptTranslExcept"/>
-    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
-    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="fiveEndPartial"     handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"    handler="api"    method="setPartial"/>
+    <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="region" ignore="true">
