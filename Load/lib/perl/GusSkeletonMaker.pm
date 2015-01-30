@@ -174,9 +174,9 @@ sub makeGeneSkeleton{
   ##sort exons in DoTS::ExonFeature
   my @sortedGusExons;
   if($gusGene->getChild('DoTS::NALocation', 1)->getIsReversed()){
-    @sortedGusExons = sort{$b->getChild('DoTS::NALocation', 1)->getStartMin() <=> $a->getChild('DoTS::NALocation', 1)->getStartMin()} $gusGene->getChildren('DoTS::ExonFeature', 1);
+    @sortedGusExons = sort{$b->getChild('DoTS::NALocation', 1)->getStartMin() <=> $a->getChild('DoTS::NALocation', 1)->getStartMin() || $b->getChild('DoTS::NALocation', 1)->getEndMax() <=> $a->getChild('DoTS::NALocation', 1)->getEndMax()} $gusGene->getChildren('DoTS::ExonFeature', 1);
   }else{
-    @sortedGusExons = sort{$a->getChild('DoTS::NALocation', 1)->getStartMin() <=> $b->getChild('DoTS::NALocation', 1)->getStartMin()} $gusGene->getChildren('DoTS::ExonFeature', 1);
+    @sortedGusExons = sort{$a->getChild('DoTS::NALocation', 1)->getStartMin() <=> $b->getChild('DoTS::NALocation', 1)->getStartMin() || $a->getChild('DoTS::NALocation', 1)->getEndMax() <=> $b->getChild('DoTS::NALocation', 1)->getEndMax() } $gusGene->getChildren('DoTS::ExonFeature', 1);
   }
 
   ##set the order number
