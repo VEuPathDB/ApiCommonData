@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 59418 $',
+                     cvsRevision       => '$Revision: 66195 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -121,8 +121,13 @@ sub run {
 
 
   ##now need to loop through records and assign to genes ..
-  $self->addRecordsToGenes($recordSet);
-  
+
+  if($self->getArg('onlyTestOrfs')){
+      $self->addRecordsToOrfs($recordSet);
+  }else{
+      $self->addRecordsToGenes($recordSet);
+  }
+
   $self->pruneDuplicateAndEmptyRecords($recordSet);
     
 
@@ -464,6 +469,35 @@ sub getAaSequenceId {
 ## also setDescription of peptides
 ## have multiple identifiers (source_id, split("|",description))
 ##if none are the official annot then get overlapping genes and see if all peptides map
+sub addRecordsToOrfs { 
+  my ($self, $recordSet) = @_;
+  foreach my $record (@{$recordSet}) {
+    my $official = 0;
+
+    ##Test all orfs >= 100 aa then 50 - 100 aa
+      $official = $self->testPeptidesAgainstAllOrfs($record);
+      if(ref($official) =~ /array/i){  #hit more than one orf 
+        my $first = shift(@$official);
+        foreach my $f (@$official){
+          $self->copyRecord($record,$f);
+        }
+        $official = $first;
+      }
+    
+    if (!$official) {
+      warn "Unable to find ORF for $record->{proteinId} (".scalar(@{$record->{peptides}})." peptides)... discarding\n";
+      $record->{failed} = 1;
+      next;
+    }
+    ##need to map the peptides and set the identifiers ....
+    $self->mapPeptidesAndSetIdentifiers($record,$official);
+    $self->undefPointerCache();
+  } 
+  ##want copied records as part of the record set so append them here
+  push(@{$recordSet},@{$self->{copiedRecords}}) if $self->{copiedRecords};
+
+}
+
 sub addRecordsToGenes { 
   my ($self, $recordSet) = @_;
   foreach my $record (@{$recordSet}) {
@@ -580,6 +614,8 @@ sub addRecordsToGenes {
   push(@{$recordSet},@{$self->{copiedRecords}}) if $self->{copiedRecords};
 
 }
+
+
 
 sub mapPeptidesAndSetIdentifiers {
   my($self,$record,$gf) = @_;
@@ -1365,6 +1401,13 @@ sub declareArgs {
    booleanArg({
                name            =>  'doNotTestOrfs', 
                descr           =>  'if true then do not retrieve all orfs and test peptides against them.',
+               reqd            =>  0,
+               isList          =>  0
+              }),
+
+   booleanArg({
+               name            =>  'onlyTestOrfs', 
+               descr           =>  'if true then do retrieve all orfs and test peptides against them, not using gene models',
                reqd            =>  0,
                isList          =>  0
               }),
