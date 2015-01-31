@@ -155,14 +155,16 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
   }
 
   ## DoTS::Transcript
-  my $count = 0;
+  my $tcount = 0;
+  my $aaCount = 0;
 
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
-    $count++;
-    ## load gene sourceId-$count as transcript sourceId
-    my $transcSourceId = "$tagValues[0]-$count";
-    $transcript->setSourceId("$transcSourceId");
+    $tcount++;
+    ## load gene sourceId-$tcount as transcript sourceId
+    #my $transcSourceId = $tagValues[0]."-T".$tcount;
+    #$transcript->setSourceId("$transcSourceId");
+    ## transcript ID assign by annotation file or transcriptID file
 
     # now do the exons and transcript seq
     my ($transcriptMin, $transcriptMax, @exons, $isReversed);
@@ -205,11 +207,10 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
     if($bioperlFeature->primary_tag() eq "coding_gene" || $bioperlFeature->primary_tag() eq "pseudo_gene"){
 
       my @translatedAaFeatures = $transcript->getChildren('DoTS::TranslatedAAFeature');
-      my $aaCount = 0;
 
       foreach my $translatedAaFeature (@translatedAaFeatures) {
 	$aaCount++;
-	my $aaSourceId = $transcSourceId."-".$aaCount;
+	my $aaSourceId = $tagValues[0]."-P".$aaCount;
 	$translatedAaFeature->setSourceId("$aaSourceId");
 
 	my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
