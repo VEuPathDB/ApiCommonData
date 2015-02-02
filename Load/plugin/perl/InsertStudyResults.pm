@@ -52,6 +52,13 @@ my $argsDeclaration =
 	      reqd  => 1,
 	      isList => 0
 	     }),
+    
+    stringArg({name => 'platformExtDbSpec',
+	      descr => 'External database spec for probeset',
+	      constraintFunc=> undef,
+	      reqd  => 0,
+	      isList => 0
+	     }),
 
 #   stringArg({name => 'organismAbbrev',
 #	      descr => 'if supplied, use a prefix to use for tuning manager tables',
@@ -179,6 +186,12 @@ sub addResults {
   if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
     $tableString = "Results::NAFeatureDiffResult";
   }
+  elsif ($protocolName =~ /cghArrayQuantification/ ) {
+    $tableString = "Results::ReporterIntensity";
+  }
+  elsif ($protocolName =~ /chipChipSmoothed/ || $protocolName =~ /chipChipPeaks/) {
+    $tableString = "Results::SegmentResult";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -202,16 +215,32 @@ sub addResults {
 
     my @a = split(/\t/, $_);
 
-    my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-
-    unless($naFeatureId) {
-      $self->log("No NAFeatureId found for sourceId $a[0]");
-      next;
+    my ($hash, $start);
+    if ($sourceIdType =~ /segment/) {
+        my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+        $hash = { na_sequence_id => $naSequenceId,
+                  segment_start => $a[1],
+                  segment_end => $a[2]
+                };
+        $start = 3;
+    }
+    elsif ($sourceIdType =~ /reporter/) {
+        my $reporterId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+        $hash = { reporter_id => $reporterId };
+        $start = 1;
+    }
+    else {
+        my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+        $hash = { na_feature_id => $naFeatureId };
+        $start = 1;
     }
 
-    my $hash = { na_feature_id => $naFeatureId };
+    #unless($primaryKey) {
+    #  $self->log("No primary key found\n");
+    #  next;
+    #}
 
-    for(my $i = 1; $i < scalar @header; $i++) {
+    for(my $i = $start; $i < scalar @header; $i++) {
       my $key = $header[$i];
       my $value = $a[$i];
 
@@ -248,6 +277,22 @@ sub lookupIdFromSourceId {
   }
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
+  }
+  elsif ($sourceIdType eq 'segment') {
+    $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
+  }
+  elsif ($sourceIdType eq 'reporter') {
+    my $probeExtDbRlsSpec = $self->getArg('platformExtDbSpec');
+    my $probeExtDbRlsId = $self->getExtDbRlsId($probeExtDbRlsSpec);
+    my @reporterIds = $self->sqlAsArray(Sql => "select r.reporter_id
+                                                from platform.reporter r
+                                                where r.external_database_release_id = $probeExtDbRlsId
+                                                and r.source_id = $sourceId");
+    unless (scalar @reporterIds == 1) {
+        die "Number of probes returned should be 1\n";
+    }
+ 
+    $rv = @reporterIds[0];
   }
   else {
     $self->error("Unsupported sourceId Type:  $sourceIdType");
