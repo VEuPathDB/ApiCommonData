@@ -315,5 +315,55 @@ alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
 alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
+create table RESULTS.REPORTERINTENSITY
+  (
+    REPORTER_INTENSITY_ID number(12) not null,
+    PROTOCOL_APP_NODE_ID   number(10) not null,
+    REPORTER_ID            number(12) not null,
+    value float(126),
+    CONFIDENCE float(126),
+    STANDARD_ERROR float(126),
+    CATEGORICAL_VALUE     varchar2(100),
+    MODIFICATION_DATE     date not null,
+    USER_READ             number(1) not null,
+    USER_WRITE            number(1) not null,
+    GROUP_READ            number(1) not null,
+    GROUP_WRITE           number(1) not null,
+    OTHER_READ            number(1) not null,
+    OTHER_WRITE           number(1) not null,
+    ROW_USER_ID           number(12) not null,
+    ROW_GROUP_ID          number(4) not null,
+    ROW_PROJECT_ID        number(4) not null,
+    ROW_ALG_INVOCATION_ID number(12) not null,
+    foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
+    foreign key (REPORTER_ID) references PLATFORM.REPORTER,
+    primary key (REPORTER_INTENSITY_ID)
+  );
+
+
+create sequence RESULTS.REPORTERINTENSITY_SQ;
+
+GRANT insert, select, update, delete ON  RESULTS.REPORTERINTENSITY TO gus_w;
+GRANT select ON RESULTS.REPORTERINTENSITY TO gus_r;
+GRANT select ON RESULTS.REPORTERINTENSITY_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     ROW_ALG_INVOCATION_ID)
+select CORE.TABLEINFO_SQ.NEXTVAL, 'ReporterIntensity',
+       'Standard', 'reporter_intensity_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
+WHERE 'reporterintensity' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where DATABASE_ID = D.DATABASE_ID);
+
+
+
 
 exit
