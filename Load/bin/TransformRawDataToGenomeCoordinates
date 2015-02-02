@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -53,12 +52,13 @@ my $dbh = $db->getQueryHandle(0);
 my $extDbRlsId = getDbRlsId($extDbSpec);
 
 
-my $sql = "select aef.name,ns.source_id, nl.start_min
-from dots.nalocation nl, dots.nasequence ns, DoTS.ArrayElementFeature aef
-where aef.external_database_release_id=$extDbRlsId
-and aef.na_feature_id=nl.na_feature_id
-and aef.na_sequence_id= ns.na_sequence_id
-order by ns.source_id, nl.start_min";
+my $sql = "select R.SOURCE_ID, NS.SOURCE_ID, RL.REPORTER_START
+from PLATFORM.REPORTER R
+   , PLATFORM.REPORTERLOCATION rl
+   , DOTS.NASEQUENCE NS
+where R.REPORTER_ID = RL.REPORTER_ID
+ and RL.NA_SEQUENCE_ID = NS.NA_SEQUENCE_ID
+ and r.external_database_release_id = $extDbRlsId";
 
 my %probeFeatureHash;
 my %reversedProbeFeatureHash;
