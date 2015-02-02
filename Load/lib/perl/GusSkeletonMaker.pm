@@ -351,7 +351,7 @@ sub makeTranslatedAAFeat {
 
 # postprocess a feature tree (before it is written to database by ISF)
 sub postprocessFeatureTree {
-  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore);
+  my ($gusFeatureTree, $postprocessDirective, $postprocessDir, $postprocessDataStore) = @_;
 
   return unless $postprocessDirective;
 
