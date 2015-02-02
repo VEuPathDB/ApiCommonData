@@ -420,7 +420,7 @@ sub printTranscriptInfo {
     foreach my $gusExon (@gusExons) {
       my $exonStart = $gusExon->getChild('DoTS::NALocation', 1)->getStartMin(); 
       my $exonEnd = $gusExon->getChild('DoTS::NALocation', 1)->getEndMax();
-      my $exonOrderNumber = $gusExon->getChild('DoTS::NALocation', 1)->getOrderNumber();
+      my $exonOrderNumber = $gusExon->getOrderNumber();
       push (@exonPath, $exonOrderNumber);
       push (@exonLocations, $exonStart, $exonEnd);
     }
