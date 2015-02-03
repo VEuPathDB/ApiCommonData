@@ -511,7 +511,7 @@ sub _makeSnpFeatureDescriptionFromSeqVars {
 
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
-  my (@strains, @strainsRevComp);
+  #my (@strains, @strainsRevComp);
 
   foreach my $seqVar (@seqVars) {
     my $strain = $seqVar->getStrain();
@@ -523,23 +523,23 @@ sub _makeSnpFeatureDescriptionFromSeqVars {
     $product =~ s/\s//g;
 
     my $revCompAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+    ##remove the line which populates into the strains column (and strains_revcomp),those are not needed anymore.
+    #if($isCoding) {
+    #  push(@strains, "\"$strain\:$allele\:$product\"");
+    #  push(@strainsRevComp, "\"$strain\:$revCompAllele\:$product\"");
 
-    if($isCoding) {
-      push(@strains, "\"$strain\:$allele\:$product\"");
-      push(@strainsRevComp, "\"$strain\:$revCompAllele\:$product\"");
-
-    } 
-    else {
-      push(@strains, "\"$strain\:$allele\"");
-      push(@strainsRevComp, "\"$strain\:$revCompAllele\"");
-    }
+    #} 
+    #else {
+    #  push(@strains, "\"$strain\:$allele\"");
+    #  push(@strainsRevComp, "\"$strain\:$revCompAllele\"");
+    #}
   }
 
-  my $strains = join(' ', @strains);
-  my $strainsRevComp = join(' ', @strainsRevComp);
+  #my $strains = join(' ', @strains);
+  #my $strainsRevComp = join(' ', @strainsRevComp);
 
-  $snpFeature->setStrains($strains);
-  $snpFeature->setStrainsRevcomp($strainsRevComp);
+  #$snpFeature->setStrains($strains);
+  #$snpFeature->setStrainsRevcomp($strainsRevComp);
 
   return($snpFeature);
 }
