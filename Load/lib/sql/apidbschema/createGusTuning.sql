@@ -364,6 +364,6 @@ WHERE 'reporterintensity' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
 
-
+alter table Sres.PathwayNode add (cellular_location varchar2(200));
 
 exit
