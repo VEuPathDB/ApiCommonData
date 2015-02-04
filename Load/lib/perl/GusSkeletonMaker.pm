@@ -408,6 +408,7 @@ sub printTranscriptInfo {
   my $gusGene = $gusFeatureTree;
   my $geneId = $gusGene->getSourceId();
   my @gusTranscripts = $gusGene->getChildren('DoTS::Transcript', 1);
+
   foreach my $gusTranscript (@gusTranscripts) {
     my $transcriptId = $gusTranscript->getSourceId();
     #my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence', 1);
@@ -431,7 +432,7 @@ sub printTranscriptInfo {
     @exonLocations = sort {$a <=> $b} @exonLocations;
     my $exonLocationsStr = join (",", @exonLocations);
 
-    print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
+    print $postprocessDataStore "$geneId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\n";
   }
 
   return $postprocessDataStore;
@@ -464,6 +465,22 @@ sub setTranscriptIds{
 
     my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
     $gusTranscript->setSourceId($transcriptId) if ($transcriptId);   ## set transcript ID in gus object
+
+    my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence');
+    $splicedNaSeq->setSourceId($transcriptId);  ## set sourceId for splicedNaSequence
+
+    if ($gusGene->getName() eq 'coding_gene' || $gusGene->getName() eq 'pseudo_gene') {
+      my @translatedAaFeatures = $gusTranscript->getChildren('DoTS::TranslatedAAFeature');
+      my $aaCount = 0;
+      foreach my $translatedAaFeature (sort {$a->translation_stop <=> $b->translation_stop} @translatedAaFeatures) {
+	$aaCount++;
+	my $aaSourceId = $transcriptId."-p".$aaCount;
+	$translatedAaFeature->setSourceId("$aaSourceId");
+
+	my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
+	$translatedAaSequence->setSourceId("$aaSourceId");
+      }
+    }
   }
 
   return $postprocessDataStore;
