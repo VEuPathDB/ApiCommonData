@@ -389,7 +389,25 @@ sub printTranscriptIds {
     #my $transcriptSeq = $splicedNaSeq->getSequence();
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
 
-    print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\n";
+    my @exonPath;
+    my @exonLocations;
+    my @gusExons = $gusTranscript->getExons();
+    foreach my $gusExon (@gusExons) {
+      my $exonStart = $gusExon->getChild('DoTS::NALocation', 1)->getStartMin(); 
+      my $exonEnd = $gusExon->getChild('DoTS::NALocation', 1)->getEndMax();
+      my $exonOrderNumber = $gusExon->getOrderNumber();
+      push (@exonPath, $exonOrderNumber);
+      push (@exonLocations, $exonStart, $exonEnd);
+    }
+
+    @exonPath = sort {$a <=> $b} @exonPath;
+    my $exonPathStr = join (",", @exonPath);
+
+    @exonLocations = sort {$a <=> $b} @exonLocations;
+    my $exonLocationsStr = join (",", @exonLocations);
+
+    #print $postprocessDataStore "$geneId\t$transcriptId\t$transcriptSeq\n";
+    print $postprocessDataStore "$geneId\t$transcriptSeq\t$exonPathStr\t$exonLocationsStr\t$transcriptId\n";
   }
 
   return $postprocessDataStore;
