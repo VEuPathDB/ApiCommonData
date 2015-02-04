@@ -486,6 +486,7 @@ sub setTranscriptIds{
 
     my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence');
     $splicedNaSeq->setSourceId($transcriptId);  ## set sourceId for splicedNaSequence
+    $splicedNaSeq->setSequence($transcriptSeq);
 
     if ($gusGene->getName() eq 'coding_gene' || $gusGene->getName() eq 'pseudo_gene') {
       my @translatedAaFeatures = $gusTranscript->getChildren('DoTS::TranslatedAAFeature');
