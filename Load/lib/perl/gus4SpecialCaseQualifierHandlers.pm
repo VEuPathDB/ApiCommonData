@@ -161,10 +161,9 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
     $tcount++;
-    ## load gene sourceId-$tcount as transcript sourceId
-    #my $transcSourceId = $tagValues[0]."-T".$tcount;
-    #$transcript->setSourceId("$transcSourceId");
-    ## transcript ID assign by annotation file or transcriptID file
+    ## set up a temporary transcript id 
+    my $transcSourceId = $tagValues[0]."-T".$tcount;
+    $transcript->setSourceId("$transcSourceId");
 
     # now do the exons and transcript seq
     my ($transcriptMin, $transcriptMax, @exons, $isReversed);
