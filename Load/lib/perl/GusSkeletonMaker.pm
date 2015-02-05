@@ -482,7 +482,11 @@ sub setTranscriptIds{
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
 
     my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
-    $gusTranscript->setSourceId($transcriptId) if ($transcriptId);   ## set transcript ID in gus object
+    if ($transcriptId) { ## set transcript ID in gus object
+      $gusTranscript->setSourceId($transcriptId);
+    } else {
+      die "Can not find the generated transcript ID for gene: $geneId\n";
+    }
 
     my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence');
     $splicedNaSeq->setSourceId($transcriptId);  ## set sourceId for splicedNaSequence
