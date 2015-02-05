@@ -239,7 +239,7 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
 	$translationStart = $translationStart ? $translationStart : 1;
 	$translationStop = $translationStop ? $translationStop : $tLength;
 
-	print STDERR $geneFeature->getChild('DoTS::NALocation')->getIsReversed(). "strand, ".$transcript->getSourceId().": start at $translationStart, end at $translationStop\n";
+	#print STDERR $geneFeature->getChild('DoTS::NALocation')->getIsReversed(). "strand, ".$transcript->getSourceId().": start at $translationStart, end at $translationStop\n";
 
 	if($translatedAaFeature){
 	  $translatedAaFeature->setTranslationStart($translationStart);
