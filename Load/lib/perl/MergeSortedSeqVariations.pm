@@ -62,7 +62,7 @@ sub wantFirstLine {
 #  print STDERR "A:  $a[$sequenceIndex]\t$a[$locationIndex]\n";
  # print STDERR "B:  $b[$sequenceIndex]\t$b[$locationIndex]\n";
 
-  return uc($a[$sequenceIndex]) lt uc($b[$sequenceIndex]) || (uc($a[$sequenceIndex]) eq uc($b[$sequenceIndex]) && $a[$locationIndex] <= $b[$locationIndex])
+  return $a[$sequenceIndex] lt $b[$sequenceIndex] || ($a[$sequenceIndex] eq $b[$sequenceIndex] && $a[$locationIndex] <= $b[$locationIndex]);
 }
 
 # @OVERRIDE

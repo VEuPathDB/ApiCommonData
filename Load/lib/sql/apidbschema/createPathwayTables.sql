@@ -3,7 +3,7 @@ CREATE TABLE ApiDB.Pathway (
   NAME                          VARCHAR(150)  NOT NULL,
   DESCRIPTION                   VARCHAR(255),
   EXTERNAL_DATABASE_RELEASE_ID  NUMBER(10)    NOT NULL,
-  SOURCE_ID                     VARCHAR(50)   NOT NULL,
+  SOURCE_ID                     VARCHAR(100)   NOT NULL,
   URL                           VARCHAR(255)  NOT NULL,
   MODIFICATION_DATE             DATE,
   USER_READ                     NUMBER(1) ,

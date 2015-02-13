@@ -7,6 +7,7 @@ use warnings;
 use Data::Dumper;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::ParseKeggXml;
+use GUS::Supported::ParseBiocycSgml;
 use GUS::Supported::ParseMpmp;
 use GUS::Supported::MetabolicPathway;
 use GUS::Supported::MetabolicPathways;
@@ -44,11 +45,11 @@ sub getArgsDeclaration {
                 }),
 
      enumArg({ name           => 'format',
-               descr          => 'The file format for pathways (Kegg, MPMP, Biopax, Other)',
+               descr          => 'The file format for pathways (Kegg, MPMP, BioCyc, Other)',
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
-               enum           => 'KEGG, MPMP, Biopax, Other'
+               enum           => 'KEGG, MPMP, TrypanoCyc'
              }),
 
      stringArg({ name => 'imageFileDir',
@@ -131,11 +132,76 @@ sub run {
   $self->{"pathwaysCollection"} = $pathwaysObj;
 
   $self->readKeggFiles(\@pathwayFiles) if $pathwayFormat eq 'KEGG';
+  $self->readBioCycSgml(\@pathwayFiles) if $pathwayFormat eq 'TrypanoCyc';
   $self->readXgmmlFiles(\@pathwayFiles) if ($pathwayFormat eq 'MPMP');
 
   $self->loadPathway($pathwayFormat);
 }
 
+
+
+sub readBioCycSgml {
+  my ($self, $inFiles) = @_;
+  my $parser = new GUS::Supported::ParseBiocycSgml;
+  my $pathwaysObj = $self->{pathwaysCollection};
+
+  foreach my $file (@{$inFiles}) {
+    my $pathwaysRef = $parser->parseXML($file);
+    my %pHash = %{$pathwaysRef};
+    foreach my $pathway  (keys %pHash) {
+      print STDERR "Name and source_id of Pathway: " . $pHash{$pathway}->{NAME} . "\n";
+      my $pathwayObj = $pathwaysObj->getNewPathwayObj($pHash{$pathway}->{NAME});
+      $pathwayObj->{source_id} = $pHash{$pathway}->{SOURCE_ID};
+      $pathwayObj->{url} = $pHash{$pathway}->{URI};
+
+      # add nodes
+      my $nodesHash = $pHash{$pathway}->{NODES};
+      foreach my $node  (keys %{$nodesHash}) {
+	#print STDERR "Adding NODE:  $node\n";
+	$pathwayObj->setPathwayNode($node, {
+					    node_name => $pHash{$pathway}->{NODES}->{$node}->{SOURCE_ID},
+					    uniqId    =>  $pHash{$pathway}->{NODES}->{$node}->{SOURCE_ID},
+					    node_type =>$pHash{$pathway}->{NODES}->{$node}->{TYPE}
+					   });
+      }
+
+      # add reactions
+      my $reactionsHash = $pHash{$pathway}->{REACTIONS};
+      foreach my $reactn  (keys %{$reactionsHash}) {
+	print STDERR "Adding REACTION: $reactn\n";
+	my $reactName = $pHash{$pathway}->{REACTIONS}->{$reactn}->{NAME};
+	my $reactType = $pHash{$pathway}->{REACTIONS}->{$reactn}->{TYPE};
+	my $direction = 1;
+	$direction = 0 unless ($reactType eq 'irreversible');
+
+	foreach my $substrate (@{$pHash{$pathway}->{REACTIONS}->{$reactn}->{SUBSTRATES}}){
+	  my $enzyme = $pHash{$pathway}->{REACTIONS}->{$reactn}->{ENZYMES};
+	  $pathwayObj->setPathwayNodeAssociation($reactName . "_" . $substrate , { 
+							       source_node => $substrate ,
+							       associated_node => $enzyme,
+							       assoc_type => "Reaction ".$reactType,
+							       direction => $direction,
+							       reaction_name => $reactName
+							      });
+	}
+
+	foreach my $product (@{$pHash{$pathway}->{REACTIONS}->{$reactn}->{PRODUCTS}}){
+	  my $enzyme = $pHash{$pathway}->{REACTIONS}->{$reactn}->{ENZYMES};
+	  $pathwayObj->setPathwayNodeAssociation($reactName . "_" . $product , { 
+							       source_node => $enzyme,
+							       associated_node => $product ,
+							       assoc_type => "Reaction ".$reactType,
+							       direction => $direction,
+							       reaction_name => $reactName
+							      });
+	}
+
+
+      }
+    }
+
+  }
+}
 
 
 sub readKeggFiles {
@@ -361,7 +427,6 @@ sub loadPathway {
       my $networkContextId = $networkContext->getNetworkContextId();
 
       my $pathway;
-      print "CHECk name= $pathwayName, source_id=" . $pathwayObj->{source_id} . " AND url=" . $pathwayObj->{url} ." DONE\n";
       $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
 						   external_database_release_id => 0000,
 						   source_id => $pathwayObj->{source_id},

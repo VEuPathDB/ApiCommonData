@@ -118,8 +118,9 @@ CREATE TABLE userlogins5.comments
       REFERENCES userlogins5.review_status (review_status_id)
 );
 
-CREATE INDEX userlogins5.comments_idx01 ON userlogins5.comments (comment_target_id);
-CREATE INDEX userlogins5.comments_idx02 ON userlogins5.comments (review_status_id);
+CREATE INDEX userlogins5.comments_idx02 ON userlogins5.comments (review_status_id, project_name, comment_id);
+CREATE INDEX userlogins5.comments_idx03
+    ON userlogins5.comments (project_name, is_visible, stable_id, comment_id, comment_target_id, review_status_id);
 CREATE UNIQUE INDEX userlogins5.comments_ux01 ON userlogins5.comments (user_id, comment_id);
 CREATE UNIQUE INDEX userlogins5.comments_ux02 ON userlogins5.comments (stable_id, project_name, comment_id);
 

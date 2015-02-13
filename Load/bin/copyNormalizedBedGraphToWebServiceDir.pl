@@ -121,7 +121,7 @@ foreach my $d (sort @ds) {
     my $display_order_sample = "";
 
     if(-e $analysisConfig) {
-      $display_order_sample = "$sampleOrder{$sample}.$order ".  $sampleDisplayName{$sample};
+      $display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
     } else {
       $display_order_sample = $sample; 
     }
