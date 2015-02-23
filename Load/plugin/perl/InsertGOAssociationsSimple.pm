@@ -3,7 +3,7 @@ package ApiCommonData::Load::Plugin::InsertGOAssociationsSimple;
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | broken
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | fixed
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::InsertGOAssociationsSimple;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | fixed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw( GUS::PluginMgr::Plugin);
@@ -51,10 +50,9 @@ my $tablesAffected =
 	 ['DoTS.GOAssocInstEvidCode', 'Writes an entry here linking the Instance with a GO Evidence Code supporting the instance, as provided in the input file']];
     
 my $tablesDependedOn = 
-	[['SRes.GOTerm', 'Retrieves information about a GOTerm from this table'],
-	 ['SRes.GORelationship', 'Retrieves information about GO Hierarchy relationships among GO Terms from this table'],
+	[['SRes.OntologyTerm', 'Retrieves information about a GOTerm and GO Evidence Codes from this table'],
+	 ['SRes.OntologyRelationship', 'Retrieves information about GO Hierarchy relationships among GO Terms from this table'],
 	 ['SRes.ExternalDatabaseRelease', 'Information about the latest release of the Gene Ontology and the organism to be loaded must be provided here'],
-	 ['SRes.GOEvidenceCode', 'The different GO Evidence Codes as defined by the GO Consortium must be provided in this table'],
 	 ['DoTS.ExternalAASequence', 'Sequences with which to make Associations must be provided here'],
 	 ['Core.TableInfo', 'An entry for DoTS.ExternalAASequence must be provided here']];
 
@@ -109,6 +107,13 @@ my $argsDeclaration =
 
          stringArg({name => 'goExtDbRlsName',
 	    descr => 'Targeted GO Term database name',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0
+	    }),
+
+         stringArg({name => 'goEvidenceCodeExtDbRlsName',
+	    descr => 'Targeted GO evidence code database name',
 	    constraintFunc => undef,
 	    reqd => 1,
 	    isList => 0
@@ -171,7 +176,7 @@ sub new {
     my $self = {};
     bless($self,$class);
 
-    $self->initialize({requiredDbVersion => 3.6,
+    $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
@@ -206,6 +211,15 @@ sub run {
     my $goDbRlsId = 
       $self->getExtDbRlsId($goExternalDatabaseSpec);
 
+    my $goEvidenceCodeExtDbRlsName = $self->getArg('goEvidenceCodeExtDbRlsName');
+
+    my $goEvidenceCodeExtDbRlsVer = GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $goEvidenceCodeExtDbRlsName);
+
+    my $goEvidenceCodeExternalDatabaseSpec = $goEvidenceCodeExtDbRlsName."|".$goEvidenceCodeExtDbRlsVer;
+
+    my $goEvidenceCodeDbRlsId = 
+      $self->getExtDbRlsId($goEvidenceCodeExternalDatabaseSpec);
+
     $self->{targetTableId}
       = $self->className2TableId($self->getArg('targetTable'));
 
@@ -226,7 +240,7 @@ sub run {
 
 	my $assocId = $self->findAssociationId($rowId,$inputAssoc,$goDbRlsId);
 
-	$self->addAssociationInstance($assocId, $inputAssoc);
+	$self->addAssociationInstance($assocId, $inputAssoc, $goEvidenceCodeDbRlsId);
 
 	$self->log("processing $sourceId; processed $count lines")
 	    if ($logFrequency && ($count % $logFrequency == 0));
@@ -337,20 +351,20 @@ sub getGoTermId {
   my ($self, $goId, $goDbRlsId) = @_;
 
   if (!$self->{goTermIds}) {
-    my $sql = "SELECT go_term_id, go_id FROM SRes.GOTerm WHERE external_database_release_id = $goDbRlsId";
+    my $sql = "SELECT ontology_term_id, source_id FROM SRes.OntologyTerm WHERE external_database_release_id = $goDbRlsId";
 
     my $stmt = $self->prepareAndExecute($sql);
     while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
       $self->{goTermIds}->{$go_id} = $go_term_id;
     }
 
-    # also collect SRes.GOSynonym's:
+    # also collect SRes.OntologySynonym's:
     $sql = <<EOSQL;
 
-  SELECT g.go_term_id, s.source_id
-  FROM   SRes.GOTerm g,
-         SRes.GOSynonym s
-  WHERE  g.go_term_id = s.go_term_id
+ SELECT g.ontology_term_id, s.source_id
+  FROM   SRes.OntologyTerm g,
+         SRes.OntologySynonym s
+  WHERE  g.ontology_term_id = s.ontology_term_id
     AND  s.source_id IS NOT NULL
     AND  g.external_database_release_id = $goDbRlsId
 EOSQL
@@ -392,7 +406,7 @@ SELECT row_id, go_term_id, is_not, go_association_id from DoTS.GOAssociation WHE
 }
 
 sub addAssociationInstance {
-  my ($self, $assocId, $inputAssoc) = @_;
+  my ($self, $assocId, $inputAssoc, $goEvidenceCodeDbRlsId) = @_;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
@@ -405,7 +419,7 @@ sub addAssociationInstance {
   $instance->setIsDeprecated(0);
   $instance->setExternalDatabaseReleaseId($extDbRlsId);
 
-  my $evidenceId = $self->getEvidenceId($inputAssoc->getEvidence());
+  my $evidenceId = $self->getEvidenceId($inputAssoc->getEvidence(),$goEvidenceCodeDbRlsId);
 
   my $link = GUS::Model::DoTS::GOAssocInstEvidCode->new();
   $link->setGoEvidenceCodeId($evidenceId);
@@ -431,10 +445,10 @@ sub getLoeId {
 }
 
 sub getEvidenceId {
-  my ($self, $evidenceCode) = @_;
+  my ($self, $evidenceCode, $goEvidenceCodeDbRlsId) = @_;
 
   if (!$self->{evidenceIds}) {
-    my $sql = "select go_evidence_code_id, name from sres.goevidencecode";
+    my $sql = "select ontology_term_id, source_id from SRes.OntologyTerm  WHERE external_database_release_id = $goEvidenceCodeDbRlsId ";
     my $stmt = $self->prepareAndExecute($sql);
     while (my ($id, $name) = $stmt->fetchrow_array()) { 
       $self->{evidenceIds}->{$name} = $id;
