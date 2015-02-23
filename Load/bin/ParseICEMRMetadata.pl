@@ -22,7 +22,7 @@ my ($inFile, $dataFile, $outFile, $valueMapFile, $headerMapFile, $help, $force);
 my $delimiter = "\t";
 
 &GetOptions('help|h' => \$help,
-            'inFile=s' => \$inFile,
+            'metadataFile=s' => \$inFile,
 	    'valueMapFile=s' => \$valueMapFile,
             'headerMapFile=s'=> \$headerMapFile,
             'dataFile=s' => \$dataFile,
