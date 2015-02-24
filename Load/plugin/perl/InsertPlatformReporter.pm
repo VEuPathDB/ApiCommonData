@@ -2,6 +2,9 @@ package ApiCommonData::Load::Plugin::InsertPlatformReporter;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use GUS::PluginMgr::Plugin;
 
 use Bio::SeqIO;

@@ -235,11 +235,6 @@ sub addResults {
         $start = 1;
     }
 
-    #unless($primaryKey) {
-    #  $self->log("No primary key found\n");
-    #  next;
-    #}
-
     for(my $i = $start; $i < scalar @header; $i++) {
       my $key = $header[$i];
       my $value = $a[$i];

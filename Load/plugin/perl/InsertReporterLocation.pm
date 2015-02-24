@@ -3,6 +3,8 @@ package ApiCommonData::Load::Plugin::InsertReporterLocation;
 
 use strict;
 
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 
@@ -40,12 +42,15 @@ my $notes = <<NOTES;
 NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
+Platform.ReporterLocation
 TABLES_AFFECTED
-#TODO: add
+
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
+Platform.Reporter
+Dots.NaSequence
 TABLES_DEPENDED_ON
-#TODO: add
+
 
 my $howToRestart = <<RESTART;
 There are no restart facilities for this plugin
@@ -130,4 +135,13 @@ sub run {
         $reporterLocation->submit();                 
     }
 }
+
+sub undoTables {
+  my ($self) = @_;
+
+    return ( 
+      'Platform.ReporterLocation',
+        );
+}
+
 1;
