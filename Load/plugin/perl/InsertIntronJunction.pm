@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertRUMIntronFeature;
+package ApiCommonData::Load::Plugin::InsertIntronJunction;
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
