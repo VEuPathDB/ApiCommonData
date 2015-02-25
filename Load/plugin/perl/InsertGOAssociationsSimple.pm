@@ -333,7 +333,7 @@ sub findAssociationId {
     $assoc->setIsNot($isNot);
     $assoc->setIsDeprecated(0);
     $assoc->setDefining(1);
-    $assoc->submit();
+    $assoc->submit() if (!$assoc->retrieveFromDB());
 
     $self->{assocIds}->{$rowId}->{$goTermId}->{$isNot}
       = $assoc->getId();
