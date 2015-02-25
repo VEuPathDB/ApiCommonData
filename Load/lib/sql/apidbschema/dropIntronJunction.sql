@@ -1,5 +1,7 @@
-DROP TABLE apidb.RUMIntronFeature;
+DROP TABLE apidb.IntronJunction;
 
-DROP SEQUENCE apidb.RUMIntronFeature_sq;
+DROP SEQUENCE apidb.IntronJunction_sq;
+
+delete from Core.TableInfo where name = 'IntronJunction';
 
 exit;
