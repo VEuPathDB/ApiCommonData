@@ -113,7 +113,7 @@ my $argsDeclaration =
 	     }),
 
    stringArg({name => 'organismAbbrev',
-	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables, or check if alias used for gene source_id or alias in other organisms',
 	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
