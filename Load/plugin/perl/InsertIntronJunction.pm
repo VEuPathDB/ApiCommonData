@@ -179,7 +179,7 @@ sub processFileAndInsertIntronJunctions {
 
     my ($seqSourceId,$location) = split(":", $temp[0]);
 
-    my $naSeqId = GUS::Supported::Util::getNASequenceId($seqSourceId);
+    my $naSeqId = GUS::Supported::Util::getNASequenceId($self, $seqSourceId);
 
     my ($start, $end) = split("\-", $location);
 
