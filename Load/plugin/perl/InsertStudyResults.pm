@@ -231,6 +231,7 @@ sub addResults {
     }
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+	next unless $naFeatureId;
         $hash = { na_feature_id => $naFeatureId };
         $start = 1;
     }
