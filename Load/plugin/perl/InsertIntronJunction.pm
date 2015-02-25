@@ -31,8 +31,9 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
-use GUS::Model::DoTS::NASequence;
-use GUS::Model::ApiDB::RUMIntronFeature;
+use GUS::Model::ApiDB::IntronJunction;
+
+use GUS::Supported::Util;
 
 
 # ----------------------------------------------------------
@@ -80,22 +81,22 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load RUM Exon Junction Calls in apidb.RUMIntronFeature table
+Plugin to load RUM Exon Junction Calls in apidb.IntronJunction table
 DESCR
 
   my $purpose = <<PURPOSE;
-Plugin to load RUM Exon Junction Calls in apidb.RUMIntronFeature table
+Plugin to load RUM Exon Junction Calls in apidb.IntronJunction table
 PURPOSE
 
   my $purposeBrief = <<PURPOSEBRIEF;
-Plugin to load RUM Exon Junction Calls in apidb.RUMIntronFeature table
+Plugin to load RUM Exon Junction Calls in apidb.IntronJunction table
 PURPOSEBRIEF
 
   my $notes = <<NOTES;
 NOTES
 
   my $tablesAffected = <<AFFECT;
-ApiDB.RUMIntronFeature
+ApiDB.IntronJunction
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -156,54 +157,51 @@ sub run {
 
   my $sampleName = $self->getArg('sampleName');
 
-  $self->processFileAndInsertRUMIntronFeatures($file, $extDbReleaseId, $sampleName);
+  $self->processFileAndInsertIntronJunctions($file, $extDbReleaseId, $sampleName);
 
   return "Processed $file.";
 }
 
 
 
-sub processFileAndInsertRUMIntronFeatures {
+sub processFileAndInsertIntronJunctions {
   my ($self, $file, $extDbReleaseId, $sampleName) = @_;
 
-  open (FILE, $file);
+  open (FILE, $file) or die "Cannot open file $file for reading: $!";
 
   my $count = 0; 
 
   while (<FILE>){
     chomp;
 
-    next if (/^intron/);
-
-    # -----------------------------------------------------------------------------------------------------------------------
-    # intron  score   known   standard_splice_signal  signal_not_canonical    ambiguous       long_overlap_unique_reads       short_overlap_unique_reads      long_overlap_nu_reads short_overlap_nu_reads
-    # Tb927_10_v5:2096882-2096896     0       0       0       0       1       0       0       0       1
-    #
-    # -----------------------------------------------------------------------------------------------------------------------
+    next if (/^Junction/);
 
     my @temp = split("\t", $_);
 
     my ($seqSourceId,$location) = split(":", $temp[0]);
 
-    my $naSeqId = $self->getNaSequenceFromSourceId($seqSourceId);
+    my $naSeqId = GUS::Supported::Util::getNASequenceId($seqSourceId);
 
-    my ($mapping_start,$mapping_end) = split("\-", $location);
+    my ($start, $end) = split("\-", $location);
 
-    my $rifeature = GUS::Model::ApiDB::RUMIntronFeature->new({external_database_release_id => $extDbReleaseId,
-							       sample_name => $sampleName,
-							       na_sequence_id => $naSeqId,
-							       mapping_start => $mapping_start,
-							       mapping_end => $mapping_end,
-							       score => $temp[1],
-							       known_intron => $temp[2],
-							       standard_splice_signal => $temp[3],
-							       signal_not_canonical => $temp[4],
-							       ambiguous => $temp[5],
-							       long_overlap_unique_reads => $temp[6],
-							       short_overlap_unique_reads => $temp[7],
-							       long_overlap_nu_reads => $temp[8],
-							       short_overlap_nu_reads => $temp[9],
-							      });
+    my $strand = $temp[1];
+    my $unique = $temp[2];
+    my $nu = $temp[3];
+
+    my $score = $unique + $nu;
+
+    my $isReversed = $strand eq '+' ? 0 : 1;
+
+    my $rifeature = GUS::Model::ApiDB::IntronJunction->new({external_database_release_id => $extDbReleaseId,
+                                                            sample_name => $sampleName,
+                                                            na_sequence_id => $naSeqId,
+                                                            mapping_start => $start,
+                                                            mapping_end => $end,
+                                                            is_reversed => $isReversed, 
+                                                            score => $score,
+                                                            unique_reads => $unique,
+                                                            nu_reads => $nu,
+                                                           });
     $rifeature->submit();
     $count++;
     $self->undefPointerCache() if $count % 1000 == 0;
@@ -214,27 +212,11 @@ sub processFileAndInsertRUMIntronFeatures {
 
 }
 
-sub getNaSequenceFromSourceId {
-  my ($self, $srcId) = @_;
-  if (my $id = $self->{naSequence}->{$srcId}) {
-    return $id;
-  }
-
-  my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $srcId});
-  unless ($naSeq->retrieveFromDB) {
-    $self->error("Can't find na_sequence_id for sequence $srcId");
-  }
-  my $naSeqId = $naSeq->getNaSequenceId();
-  $self->{naSequence}->{$srcId} = $naSeqId;
-
-  return $naSeqId;
-}
-
 
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.RUMIntronFeature');
+  return ('ApiDB.IntronJunction');
 }
 
 
