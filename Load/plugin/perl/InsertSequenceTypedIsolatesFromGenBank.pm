@@ -247,11 +247,12 @@ sub loadIsolates {
       # loop each source modifiers, e.g. isolate => cp2; host => cow
       while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  
 
-        if($term eq 'db_xref' && $value =~ /taxon/i) {
-          $term = 'ncbi_taxon';
-          $value =~ s/taxon://;
+        if($term eq 'db_xref' && $value =~ /taxon\:(\d+)/i) {
 
-          my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $value });
+          $term = 'ncbi_taxon';
+          my $ncbiTax = $1;
+          my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbiTax });
+
           $taxonObj->retrieveFromDB;
 
           $node->setParent($taxonObj);
