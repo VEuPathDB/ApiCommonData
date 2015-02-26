@@ -215,7 +215,7 @@ sub getMapping {
       $dbRef{$cols->[$i]} = $vals[$i+1];
 
       ## check if duplicated aliases
-      if ($self->getArg('organismAbbrev') && $cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/i ) {
+      if ($self->getArg('organismAbbrev') && $cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/i && $self->getArg('tableName') =~ /NAFeature/i ) {
 
 	## check the source_id in the dots.genefeature view
 	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});
