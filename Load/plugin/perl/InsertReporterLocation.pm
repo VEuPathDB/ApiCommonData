@@ -25,7 +25,7 @@ my $argsDeclaration =
         
     stringArg ( { name => 'platformExtDbSpec',
                   descr => 'External database for probeset',
-                  constrainFunction => undef,
+                  constraintFunction => undef,
                   reqd => 1,
                   isList => 0 })
 ];
