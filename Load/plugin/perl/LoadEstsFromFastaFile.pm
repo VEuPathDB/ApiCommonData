@@ -740,7 +740,6 @@ sub undoTables {
     DoTS.EST
     DoTS.ExternalNASequence
     DoTS.Library
-    SRes.Contact
     );
 }
 
