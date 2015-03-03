@@ -108,6 +108,8 @@ sub run {
     my $bam = Bio::DB::Sam->new(-bam => $bamFile);
     my @alignments = $bam->features();
 
+
+    my $count;
     foreach my $alignment (@alignments) {
         my $probeSourceId = $alignment->query->name;
         my $naSequenceSourceId = $alignment->seq_id;
@@ -133,9 +135,12 @@ sub run {
                                                                              reporter_end => $end,
         });
         $reporterLocation->submit();                 
+        $count++;
 
         $self->undefPointerCache();
     }
+
+    return("Inserted $count Rows into Platform::ReporterLocation");
 }
 
 sub undoTables {
