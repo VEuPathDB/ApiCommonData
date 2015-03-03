@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -60,18 +59,18 @@ die $usage unless -e $outputDir;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-my %subOrder = ( 'RUM_Unique_plus.bw'  => 1,
-                 'RUM_NU_plus.bw'      => 2, 
-                 'RUM_Unique_minus.bw' => 3, 
-                 'RUM_NU_minus.bw'     => 4,
-                 'RUM_Unique.bw'       => 1,
-                 'RUM_NU.bw'           => 2,
-                 'RUM_Unique_plus_unlogged.bw'  => 1,
-                 'RUM_NU_plus_unlogged.bw'      => 2,
-                 'RUM_Unique_minus_unlogged.bw' => 3,
-                 'RUM_NU_minus_unlogged.bw'     => 4, 
-                 'RUM_Unique_unlogged.bw'       => 1,
-                 'RUM_NU_unlogged.bw'           => 2
+my %subOrder = ( 'results_unique_sorted_forward.bed'  => 1,
+                 'results_nu_sorted_forward.bed'      => 2, 
+                 'results_unique_sorted_reverse.bed' => 3, 
+                 'results_nu_sorted_reverse.bed'     => 4,
+                 'results_unique_sorted.bed'       => 1,
+                 'results_nu_sorted.bed'           => 2,
+                 'results_unique_sorted_forward_unlogged.bed'  => 1,
+                 'results_nu_sorted_forward_unlogged.bed'      => 2, 
+                 'results_unique_sorted_reverse_unlogged.bed' => 3, 
+                 'results_nu_sorted_reverse_unlogged.bed'     => 4,
+                 'results_unique_sorted_unlogged.bed'       => 1,
+                 'results_nu_sorted_unlogged.bed'           => 2,
                 );
 
 my %sampleOrder;
@@ -125,18 +124,18 @@ foreach my $d (sort @ds) {
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
-  # sort files in the order of RUM_Unique_plus.bw RUM_NU_plus.bw RUM_Unique_minus.bw RUM_NU_minus.bw
+  # sort files in the order of RUM_Unique_plus.bw RUM_nu_plus.bw RUM_Unique_minus.bw RUM_nu_minus.bw
   # redmine refs #15678
   foreach my $f(sort { $subOrder{$a} <=> $subOrder{$b} } @fs) {
     next if $f !~ /\.bw$/;
     $count++;
-    $expt = 'non-unique' if $f =~ /NU/;
-    $expt = 'unique' if $f =~ /Unique/;
-    $selected = 1 if $f =~ /Unique/;
-    $selected = 0 if $f =~ /NU/;
+    $expt = 'non-unique' if $f =~ /nu/;
+    $expt = 'unique' if $f =~ /unique/;
+    $selected = 1 if $f =~ /unique/;
+    $selected = 0 if $f =~ /nu/;
     $selected = 0 if $count > 15;
-    $strand = 'reverse' if $f =~ /minus/;
-    $strand = 'forward' if $f =~ /plus/;
+    $strand = 'reverse' if $f =~ /reverse/;
+    $strand = 'forward' if $f =~ /forward/;
 
     my $order = $subOrder{$f} % 5;
 
@@ -149,7 +148,7 @@ foreach my $d (sort @ds) {
     }
 
 
-    if($f =~ /minus/ || $f =~ /plus/) {
+    if($f =~ /forward/ || $f =~ /reverse/) {
       $meta =<<EOL;
 [$sample/$f]
 :selected    = $selected
