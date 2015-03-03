@@ -59,8 +59,7 @@ while (<IDS>) {
 
   $seen{$accession} = 1;
 
-  my $seq;
-  eval{ $seq = $db->get_Seq_by_acc($accession)};
+  my $seq = $db->get_Seq_by_acc($accession);
   if ($seq) {
     print OUT ">".$accession." ".$seq->desc()." length=".$seq->length()."\n".&breakSequence($seq->seq());
     $foundSeq++;
