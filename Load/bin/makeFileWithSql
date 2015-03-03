@@ -31,15 +31,11 @@ open (OUT,"> $outFile");
 
 my $sth = $dbh->prepareAndExecute($sql);
 
-print OUT ("WHENEVER SQLERROR EXIT 1;\n");
-
 while (my ($string) = $sth->fetchrow_array()) {
   print OUT ("$string\n");
 }
 
 $sth->finish();
-
-print OUT ("exit;\n");
 
 close OUT;
 

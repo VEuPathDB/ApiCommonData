@@ -60,14 +60,11 @@ die $usage unless -e $topLevelSeqSizeFile;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-foreach my $d (@ds) {
-  next unless $d =~ /^analyze_/;
-  $inputDir =~ s/\/$//;
-  my $exp_dir = "$inputDir/$d/master/mainresult";
-
-  my $sum_coverage = get_sum_coverage($exp_dir);
+foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
+  my $sum_coverage = &get_sum_coverage($exp_dir);
   $hash{$exp_dir} = $sum_coverage;
 }
+
 
 update_coverage(\%hash);
 
@@ -152,7 +149,7 @@ sub get_sum_coverage {
     <F>;
     while(<F>) {
       chomp;
-      my($chr, $start, $stop, $junk, $score) = split /\t/, $_;
+      my($chr, $start, $stop, $score) = split /\t/, $_;
       $sum_coverage += $score;
     }
     close F;
