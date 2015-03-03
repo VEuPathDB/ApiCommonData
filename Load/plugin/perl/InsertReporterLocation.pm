@@ -124,7 +124,7 @@ sub run {
             $parent = $reporterHash{$probeSourceId};
         }
         else {
-            die "Probe $probeSourceId not found in ReporterTable\n";
+            $self->error("Probe $probeSourceId not found in ReporterTable");
         }
 
         my $reporterLocation = GUS::Model::Platform::ReporterLocation->new({ reporter_id => $parent,
@@ -133,6 +133,8 @@ sub run {
                                                                              reporter_end => $end,
         });
         $reporterLocation->submit();                 
+
+        $self->undefPointerCache();
     }
 }
 
