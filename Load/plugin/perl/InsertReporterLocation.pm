@@ -20,12 +20,12 @@ my $argsDeclaration =
                 reqd => 1,
                 mustExist => 1,
                 format => 'bam',
-                constraintFunction => undef,
+	  constraintFunc => undef,
                 isList => 0, }),
         
     stringArg ( { name => 'platformExtDbSpec',
                   descr => 'External database for probeset',
-                  constraintFunction => undef,
+	  constraintFunc => undef,
                   reqd => 1,
                   isList => 0 })
 ];
