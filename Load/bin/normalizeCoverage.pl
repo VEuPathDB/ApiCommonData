@@ -114,7 +114,11 @@ sub update_coverage {
       open(F, "$k/$f");
 
       open OUT, ">$out_dir/$f";
-      open OUTUNLOGGED, ">$out_dir/${f}_unlogged";
+
+      my $outputFile = $f;
+      $outputFile =~ s/\.bed$/_unlogged.bed/;
+
+      open OUTUNLOGGED, ">$out_dir/$outputFile";
       <F>;
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
