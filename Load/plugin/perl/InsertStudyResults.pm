@@ -448,6 +448,8 @@ sub undoTables {
     'Study.StudyLink',
     'Results.NAFeatureExpression',
     'Results.NAFeatureDiffResult',
+    'Results.ReporterIntensity',
+    'Results.SegmentResult',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
