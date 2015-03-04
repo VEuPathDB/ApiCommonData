@@ -12,7 +12,7 @@ my $outputFile;
             "outputFile|o=s" => \$outputFile
             );
 
-if (! -e $inputFile || ! -e $outputFile){
+if (! -e $inputFile ){
 die <<endOfUsage;
 reformatSmoothedProfiles.pl usage:
 
