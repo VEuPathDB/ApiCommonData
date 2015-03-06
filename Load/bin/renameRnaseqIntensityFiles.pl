@@ -4,29 +4,42 @@ use strict;
 
 use Getopt::Long;
 use File::Basename;
-use File::Copy qw(copy);
 
-my ($help, $outputDirectory, $inputDirectory) = @_;
+my ($help, $outputDirectory, $inputDirectory, $sampleName) = @_;
 
 &GetOptions('help|h' => \$help,
             'inputDirectory=s' => \$inputDirectory,
             'outputDirectory=s' => \$outputDirectory,
+            'sampleName=s' => \$sampleName, 
     );
 
 unless(-e $inputDirectory && -e $outputDirectory) {
-  die "usage:  renameRnaseqIntensityFiles.pl --inputDirectory <DIR> --outputDirectory <DIR2>";
+  die "usage:  renameRnaseqIntensityFiles.pl --inputDirectory <DIR> --outputDirectory <DIR2> --sampleName=s";
 }
 
 
 my $replacement = ".fpkm_tracking";
 
+
+
+
 foreach my $file (glob "$inputDirectory/*$replacement*") {
+  open(FILE, "cut -f 1,10 $file|") or die "Cannot open file $file for reading: $!";
+
   my $basename = basename $file;
   my $newFile = $basename;
   $newFile =~ s/$replacement//;
+  $newFile = "$sampleName.$newFile";
 
-  copy $file, "$outputDirectory/$newFile";
+  open(OUT, ">$outputDirectory/$newFile") or die "Cannot open file $newFile for writing: $!";
+
+  while(<FILE>) {
+    print OUT;
+  }
+  close OUT;
+  close FILE;
 }
 
+1;
 
 
