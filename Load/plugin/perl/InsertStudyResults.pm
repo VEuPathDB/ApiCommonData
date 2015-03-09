@@ -368,8 +368,7 @@ sub makeProtocolAppNode {
     my $existingName = $e->getName();
 
     if($nodeName eq $existingName) {
-      $self->log("Study contains ProtocolAppNode Named $nodeName ... will reuse");
-      return $e;
+      $self->userError("Study contains ProtocolAppNode Named $nodeName");
     }
   }
 
