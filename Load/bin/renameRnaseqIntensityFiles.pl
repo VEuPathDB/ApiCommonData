@@ -21,8 +21,6 @@ unless(-e $inputDirectory && -e $outputDirectory) {
 my $replacement = ".fpkm_tracking";
 
 
-
-
 foreach my $file (glob "$inputDirectory/*$replacement*") {
   open(FILE, "cut -f 1,10 $file|") or die "Cannot open file $file for reading: $!";
 
@@ -34,6 +32,9 @@ foreach my $file (glob "$inputDirectory/*$replacement*") {
   open(OUT, ">$outputDirectory/$newFile") or die "Cannot open file $newFile for writing: $!";
 
   while(<FILE>) {
+    # ARGH...GSNAP adds rna_ as prefix to unique id.  need to remove
+    s/^rna_// if($newFile =~ /isoform/);
+
     print OUT;
   }
   close OUT;

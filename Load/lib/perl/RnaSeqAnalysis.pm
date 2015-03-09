@@ -33,7 +33,6 @@ my $OUTPUT_FILE_BASE = "profiles";
 
  sub getSamples                 { $_[0]->{samples} }
  sub getIsPairedEnd             { $_[0]->{isPairedEnd} }
- sub getIsTimeSeries            { $_[0]->{isTimeSeries} }
  sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
 
 #-------------------------------------------------------------------------------
@@ -76,9 +75,8 @@ sub makeProfiles {
   my ($self, $strand, $featureType, $alignmentType, $makePercentiles) = @_;
 
   my $samples = $self->getSamples();
-  my $isTimeSeries = $self->getIsTimeSeries() ? $self->getIsTimeSeries() : 'false';
-  my $isPairedEnd = $self->getIsPairedEnd() ? $self->getIsPairedEnd() : 'false';
-  my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'false';
+  my $isPairedEnd = $self->getIsPairedEnd() ? $self->getIsPairedEnd() : 'FALSE';
+  my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
   my $strandSuffix = ".$strand";
   my $featureTypeSuffix = ".$featureType";
@@ -97,12 +95,15 @@ sub makeProfiles {
              });
 
 
+  if($featureType eq 'genes') {
+    $profile->setSourceIdType('gene');
+  }
+
   $profile->setProtocolName("GSNAP $featureType $alignmentType $strand");
   
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
   $profile->addProtocolParamValue('AlignmentType', $alignmentType);
-  $profile->addProtocolParamValue('IsTimeSeries', $isTimeSeries);
   $profile->addProtocolParamValue('IsPairedEnd', $isPairedEnd);
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
 
