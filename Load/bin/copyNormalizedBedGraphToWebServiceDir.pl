@@ -21,7 +21,7 @@ my ($inputDir, $outputDir, $analysisConfig);
 
 my $usage =<<endOfUsage;
 Usage:
-  copyNormalizedBedGraphToWebServiceDir.pl --inputDir input_diretory --outputDir output_directory --datasetXml eupath_datset_xml
+  copyNormalizedBedGraphToWebServiceDir.pl --inputDir input_diretory --outputDir output_directory --analysisConfig analysisConfig.xml
 
     intpuDir:top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/CURRENT/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     outputDir: webservice directory, e.g. /eupath/data/apiSiteFilesStaging/PlasmoDB/18/real/webServices/PlasmoDB/release-CURRENT/Pfalciparum3D7/bigwig/pfal3D7_Su_strand_specific_rnaSeq_RSRC
