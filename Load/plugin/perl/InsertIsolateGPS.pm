@@ -83,12 +83,26 @@ sub run {
       next unless $_;
       next if /^##/;
 
-      my ($country, $lat, $lng) = split(/\|/, $_);
+      my ($alpha2, $alpha3, $numeric, $fips, $country, $capital, $area, $population, $continent, $lat, $lng, $toponym_name) = split(/\|/, $_);
+      next unless $country;
+      $area =~ s/,//g;
+      $population =~ s/,//g;
+
       my $gps = GUS::Model::ApiDB::IsolateGPS->
-         new({country => $country,
-              lat => $lat,
-              lng => $lng
-           });
+
+	new({country              => $country,
+	     lat                  => $lat,
+	     lng                  => $lng,
+	     country_code_alpha2  => $alpha2,
+	     country_code_alpha3  => $alpha3,
+	     country_code_numeric => $numeric,
+	     fips                 => $fips,
+	     capital              => $capital,
+	     area_in_km2          => $area,
+	     population           => $population,
+	     continent            => $continent,
+	     toponym_name         => $toponym_name 
+	    });
       $gps->submit();
 
     $count++;
