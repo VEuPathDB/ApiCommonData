@@ -1,15 +1,15 @@
 #!/usr/bin/perl
 
 use lib "$ENV{GUS_HOME}/lib/perl";
-use WDK::Model::CommandHelper;
+use FgpUtil::Util::CommandHelper;
 
 my $GUS_HOME = $ENV{GUS_HOME};
-my $CLASSPATH = &WDK::Model::CommandHelper::getJavaClasspath($GUS_HOME);
-my $sysProps = &WDK::Model::CommandHelper::getSystemProps($GUS_HOME, 'validateResourceXml');
+my $CLASSPATH = &FgpUtil::Util::CommandHelper::getJavaClasspath($GUS_HOME);
+my $sysProps = &FgpUtil::Util::CommandHelper::getSystemProps($GUS_HOME, 'validateResourceXml');
 if ($ARGV[0] != /^\//) {
   $ARGV[0] = "$ENV{PWD}/$ARGV[0]";
 }
-my $args = &WDK::Model::CommandHelper::getJavaArgs(@ARGV);
+my $args = &FgpUtil::Util::CommandHelper::getJavaArgs(@ARGV);
 
 my $cmd = "java $sysProps -classpath $CLASSPATH org.apidb.dataload.ResourceXmlValidator $args";
 
