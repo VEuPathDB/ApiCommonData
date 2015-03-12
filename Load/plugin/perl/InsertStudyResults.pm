@@ -136,7 +136,7 @@ sub run {
     chomp;
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues) = split(/\t/, $_);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes);
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $study, $nodeOrderNum);
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName);
     push @$existingAppNodes, $protocolAppNode;
@@ -299,7 +299,7 @@ sub lookupIdFromSourceId {
 
 
 sub getInputAppNodes {
-  my ($self, $inputNames, $existingAppNodes) = @_;
+  my ($self, $inputNames, $existingAppNodes, $study, $nodeOrderNum) = @_;
 
   my @inputNames = split(';', $inputNames);
 
@@ -311,6 +311,11 @@ sub getInputAppNodes {
         push @rv, $existing;
       }
     }
+
+    my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
+    my $studyLink = $self->linkAppNodeToStudy($study, $newInput);
+
+    push @rv, $newInput;
   }
 
   unless(scalar @inputNames == scalar @rv) {
@@ -368,7 +373,8 @@ sub makeProtocolAppNode {
     my $existingName = $e->getName();
 
     if($nodeName eq $existingName) {
-      $self->userError("Study contains ProtocolAppNode Named $nodeName");
+      $self->log("WARN:  Study already contains ProtocolAppNode Named $nodeName.  If this node is output in more than one ProtocolApplication, It is impossible to distinguish results unless you either store in different Results Tables or can distinguish by some GUS Subclass (Transcripts and GeneFeature are ok for example)");
+      return $e;
     }
   }
 
