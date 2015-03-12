@@ -315,6 +315,7 @@ sub getInputAppNodes {
     my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
     my $studyLink = $self->linkAppNodeToStudy($study, $newInput);
 
+    push @$existingAppNodes, $newInput;
     push @rv, $newInput;
   }
 
