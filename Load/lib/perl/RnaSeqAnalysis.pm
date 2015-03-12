@@ -75,6 +75,7 @@ sub makeProfiles {
   my ($self, $strand, $featureType, $alignmentType, $makePercentiles) = @_;
 
   my $samples = $self->getSamples();
+
   my $isPairedEnd = $self->getIsPairedEnd() ? $self->getIsPairedEnd() : 'FALSE';
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
@@ -95,17 +96,21 @@ sub makeProfiles {
              });
 
 
+  $profile->setHasHeader(1);
+
   if($featureType eq 'genes') {
     $profile->setSourceIdType('gene');
   }
 
-  $profile->setProtocolName("GSNAP $featureType $alignmentType $strand");
+  $profile->setProtocolName("GSNAP/Cufflinks");
   
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
   $profile->addProtocolParamValue('AlignmentType', $alignmentType);
   $profile->addProtocolParamValue('IsPairedEnd', $isPairedEnd);
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
+
+  $profile->setDisplaySuffix(" - $alignmentType");
 
   $profile->munge();
 
