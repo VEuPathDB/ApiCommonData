@@ -1,21 +1,21 @@
 #!/usr/bin/perl
 
-##to be used to copy the files from apiSiteFilesStaging to the appropriate directories in apiSiteFiles. Also it needs to replace CURRENT with the actual release number.
+##to be used to copy the files from apiSiteFilesStaging to the appropriate directories in apiSiteFiles. Also it needs to replace CURRENT with the actual build number.
 ## both sourceDir and targetDir must be full paths to these directories
 
 use strict;
 use IO::File;
 use Getopt::Long;
 
-my($workflowVersion,$projectName,$releaseNumber,$copyFromPreRelease);
+my($workflowVersion,$projectName,$buildNumber,$copyFromPreRelease);
 
 &GetOptions("projectName=s" => \$projectName,
             "workflowVersion=s" => \$workflowVersion,
-            "releaseNumber=s" => \$releaseNumber,
+            "buildNumber=s" => \$buildNumber,
             "copyFromPreRelease!" => \$copyFromPreRelease,
             );
 
-die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --releaseNumber [--copyFromPreRelease]\n" unless ($projectName && $workflowVersion && $releaseNumber);
+die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --buildNumber [--copyFromPreRelease]\n" unless ($projectName && $workflowVersion && $buildNumber);
 die "you must use fully qualified value for --projectName\n" unless ($projectName =~ /DB/);
 my $targetDir="/eupath/data/apiSiteFiles/downloadSite/${projectName}";
 my $sourceDir="/eupath/data/apiSiteFilesStaging/${projectName}/${workflowVersion}/real/downloadSite/${projectName}/release-CURRENT/";
@@ -23,16 +23,16 @@ $sourceDir="/eupath/data/apiSiteFilesStagingPreRelease/${projectName}/${workflow
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 die "targetDir $targetDir does not exist\n" unless -d "$targetDir";
 
-$targetDir = "$targetDir/release-${releaseNumber}";
+$targetDir = "$targetDir/build-${buildNumber}";
 print STDERR "Copying $sourceDir to $targetDir\n"; 
 system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
 chdir $targetDir or die "Can't chdir to $targetDir\n";
 &loopDir($targetDir);
-print STDERR "Creating Release_number file under $targetDir\n"; 
-my $filename = "$targetDir/Release_number";
+print STDERR "Creating Build_number file under $targetDir\n"; 
+my $filename = "$targetDir/Build_number";
 open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
-print $fh "$releaseNumber\n";
+print $fh "$buildNumber\n";
 close $fh;
 
 sub loopDir {
@@ -43,11 +43,11 @@ sub loopDir {
    while (my $f=readdir(DIR)) {
       next if ($f eq "." || $f eq "..");
       if (-d $f) {
-	  print STDERR "Replacing 'CURRENT' with release number $releaseNumber under $f\n"; 
+	  print STDERR "Replacing 'CURRENT' with build number $buildNumber under $f\n"; 
          &loopDir($f);
      }else{
 	   my $oldname= $f;
-	   $f =~ s/CURRENT/$releaseNumber/;
+	   $f =~ s/CURRENT/$buildNumber/;
            my $fileSize =  (stat($oldname))[7];
 	   if($fileSize<1){
 	       unlink($oldname) or die "Can't remove empty file $oldname\n";
