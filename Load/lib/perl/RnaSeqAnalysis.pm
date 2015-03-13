@@ -110,7 +110,7 @@ sub makeProfiles {
   $profile->addProtocolParamValue('IsPairedEnd', $isPairedEnd);
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
 
-  $profile->setDisplaySuffix(" - $alignmentType");
+  $profile->setDisplaySuffix(" - $alignmentType - $strand");
 
   $profile->munge();
 
