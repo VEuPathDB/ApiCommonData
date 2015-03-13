@@ -138,10 +138,8 @@ sub run {
 
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $study, $nodeOrderNum);
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName);
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $study);
     push @$existingAppNodes, $protocolAppNode;
-
-    my $studyLink = $self->linkAppNodeToStudy($study, $protocolAppNode);
 
     my $protocol = $self->makeProtocol($protocolName);
 
@@ -359,7 +357,7 @@ sub retrieveAppNodesForStudy {
 
 
 sub makeProtocolAppNode {
-  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $protocolName) = @_;
+  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $study) = @_;
 
   my $oe;
   if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
@@ -383,7 +381,10 @@ sub makeProtocolAppNode {
     }
   }
 
-  return GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum, type_id => $ontologyTerm->getId()});
+  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum, type_id => $ontologyTerm->getId()});
+  my $studyLink = $self->linkAppNodeToStudy($study, $protocolAppNode);
+
+  return $protocolAppNode;
 }
 
 
