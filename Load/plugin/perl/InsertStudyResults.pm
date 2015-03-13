@@ -306,11 +306,15 @@ sub getInputAppNodes {
   my @rv;
 
   foreach my $input (@inputNames) {
+    my $found;
     foreach my $existing (@$existingAppNodes) {
       if($existing->getName eq $input) {
         push @rv, $existing;
+        $found++;
       }
     }
+
+    next if($found);
 
     my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
     my $studyLink = $self->linkAppNodeToStudy($study, $newInput);
