@@ -10,13 +10,15 @@ use GUS::Community::GeneModelLocations;
 
 use Data::Dumper;
 
-my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly);
+my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly, $soTermName);
 &GetOptions("verbose!"=> \$verbose,
             "outputFile=s" => \$outFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "project=s" => \$project,
             "genomeExtDbRlsSpec=s" => \$genomeExtDbRlsSpec,
-            "cds_only" => \$cdsOnly); 
+            "cds_only" => \$cdsOnly,
+            "sequence_ontology_term=s" => \$soTermName,
+    ); 
 
 if(!$outFile || !$project){
 	die "usage: makeGtf.pl --outputFile <outfile> --verbose --gusConfigFile [\$GUS_CONFIG_FILE] --project 'TriTrypDB, PlasmoDB etc to show origin of data in gtf' -- genomeExtDbRlsSpec genomeExtDbRlsSpec\n";
@@ -50,7 +52,7 @@ my $genomeExtDbRlsId = &getExtDbRlsIdFromSpec($dbh, $genomeExtDbRlsSpec);
 
 
 
-my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1);
+my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, $soTermName);
 my @geneSourceIds = sort @{$geneModelLocations->getAllGeneIds()};
 
 foreach my $geneSourceId (@geneSourceIds) {
@@ -196,7 +198,7 @@ sub writeGtfRow {
         $transcriptId = $value;
     }
 
-    printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\ttranscript_id \"rna_%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$transcriptId,$geneId,$geneId);
+    printf OUT ("%s\t%s\t%s\t%d\t%d\t.\t%s\t%s\ttranscript_id \"%s\"; gene_id \"%s\"; gene_name \"%s\";\n", $seqid,$project,$type,$start,$end,$strand,$phase,$transcriptId,$geneId,$geneId);
 }
     
 close (OUT);
