@@ -67,7 +67,7 @@ SQL
   $dbh->{PrintError} = 1;
   $dbh->{RaiseError} = 1;
 
-  logMessage ("creating CustomHtvVariant");
+  logMessage ("creating CustomHtsVariant");
   $dbh->do(<<SQL) or die "creating CustomHtsVariant";
 
     create table CustomHtsVariant nologging as
@@ -130,7 +130,7 @@ SQL
   logMessage("creating index 2");
   $dbh->do(<<SQL) or die "creating index";
     -- for update statement immediately following
-    create index maxe_ix on CustomHtsVariant (matches_reference, max_explicit, strain, snp_source_id)
+    create index maxe_ix$$ on CustomHtsVariant (matches_reference, max_explicit, strain, snp_source_id)
 SQL
 
   logMessage("preparing max_explicit update");
