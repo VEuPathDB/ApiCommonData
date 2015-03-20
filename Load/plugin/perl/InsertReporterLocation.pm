@@ -136,7 +136,7 @@ sub run {
                                                                              na_sequence_id => $naSequenceId,
                                                                              reporter_start => $start,
                                                                              reporter_end => $end,
-                                                                             onReverseStrand => $onReverseStrand,
+                                                                             on_reverse_strand => $onReverseStrand,
         });
         $reporterLocation->submit();                 
         $count++;
