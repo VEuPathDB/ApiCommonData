@@ -119,6 +119,9 @@ sub run {
         my $naSequenceId = GUS::Supported::Util::getNASequenceId ($self, $naSequenceSourceId);
         my $start = $alignment->start;
         my $end = $alignment->end;
+        my $strand = $alignment->strand;
+
+        my $onReverseStrand = $strand == -1 ? 1 : 0;
         
         my $parent;
 
@@ -133,6 +136,7 @@ sub run {
                                                                              na_sequence_id => $naSequenceId,
                                                                              reporter_start => $start,
                                                                              reporter_end => $end,
+                                                                             onReverseStrand => $onReverseStrand,
         });
         $reporterLocation->submit();                 
         $count++;

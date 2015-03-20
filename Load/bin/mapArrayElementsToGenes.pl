@@ -18,7 +18,6 @@
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
@@ -78,16 +77,19 @@ my $geneExtDbRlsId = getDbRlsId($geneExtDbSpec);
 my $aefExtDbRlsId = getDbRlsId($aefExtDbSpec);
 print STDERR "Extracting Array Element Features.....\n";
 
-my $aefSql = "select aef.na_sequence_id,
-                     aef.source_id,
-                     aef.name,
-                     nl.start_min,
-                     nl.end_max,
-                     nl.is_reversed 
-              from   dots.arrayelementfeature aef, 
-                     dots.nalocation nl 
-              where  aef.na_feature_id = nl.na_feature_id 
-              and     aef.external_database_release_id = $aefExtDbRlsId";
+my $aefSql = "select rl.na_sequence_id
+     , rl.reporter_location_id as source_id
+     , r.source_id as name
+     , rl.reporter_start
+     , rl.reporter_end
+     , rl.ON_REVERSE_STRAND
+from platform.ArrayDesign rs
+   , platform.reporter r
+   , PLATFORM.REPORTERLOCATION rl
+where rs.external_database_release_id = $aefExtDbRlsId
+and rs.REPORTER_SET_ID = r.REPORTER_SET_ID
+and rl.REPORTER_ID = r.REPORTER_ID
+";
 
 my $sth = $dbh->prepare($aefSql);
 
