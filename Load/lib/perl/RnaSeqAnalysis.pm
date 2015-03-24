@@ -102,6 +102,12 @@ sub makeProfiles {
     $profile->setSourceIdType('gene');
   }
 
+  if($featureType eq 'isoforms') {
+    $profile->setSourceIdType('transcript');
+  }
+
+
+
   $profile->setProtocolName("GSNAP/Cufflinks");
   
   $profile->addProtocolParamValue('Strand', $strand);
