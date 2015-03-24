@@ -127,39 +127,48 @@ sub run {
 
   my $header = <CONFIG>;
 
-  my $study = $self->makeStudy();
+  my $investigation = $self->makeStudy($self->getArg('studyName'));
 
-  my $existingAppNodes = $self->retrieveAppNodesForStudy($study);
+  my @studyLinks = $investigation->getChildren('Study::StudyLink', 1);
+  my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
   my $nodeOrderNum = 1;
 
   while(<CONFIG>) {
     chomp;
-    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues) = split(/\t/, $_);
+    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $study, $nodeOrderNum);
+    my $study = $self->makeStudy($studyName);
+    $study->setParent($investigation);
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $study);
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
+
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $investigation);
+
     push @$existingAppNodes, $protocolAppNode;
 
     my $protocol = $self->makeProtocol($protocolName);
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
-    $study->addToSubmitList($protocolApp);
+    $investigation->addToSubmitList($protocolApp);
 
     foreach my $inputAppNode (@$inputAppNodes) {
       my $input = GUS::Model::Study::Input->new();
       $input->setParent($protocolApp);
       $input->setParent($inputAppNode);
+
+      $self->linkAppNodeToStudy($study, $inpuAppNode); 
     }
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
     $output->setParent($protocolAppNode);
 
+    $self->linkAppNodeToStudy($study, $protocolAppNode); 
+
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
-    $study->submit();
+    $investigation->submit();
 
     $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
 
@@ -317,7 +326,7 @@ sub getInputAppNodes {
     next if($found);
 
     my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
-    my $studyLink = $self->linkAppNodeToStudy($study, $newInput);
+    $self->linkAppNodeToStudy($study, $newInput); 
 
     push @$existingAppNodes, $newInput;
     push @rv, $newInput;
@@ -334,6 +343,16 @@ sub getInputAppNodes {
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
 
+  my @studyLinks = $study->getChildren('Study::StudyLink', 1);
+
+  foreach my $sl (@studyLinks) {
+    my $linkParent = $sl->getParent("Study::ProtocolAppNode", 1);
+
+    # already Linked
+    return $sl if($linkParent->getName() eq $protocolAppNode->getName());
+  }
+
+
   my $studyLink = GUS::Model::Study::StudyLink->new();
   $studyLink->setParent($study);
   $studyLink->setParent($protocolAppNode);
@@ -342,13 +361,11 @@ sub linkAppNodeToStudy {
 }
 
 sub retrieveAppNodesForStudy {
-  my ($self, $study) = @_;
-
-  my @studyLinks = $study->getChildren('Study::StudyLink', 1);
+  my ($self, $study, $studyLinks) = @_;
 
   my @appNodes;
 
-  foreach my $link (@studyLinks) {
+  foreach my $link (@$studyLinks) {
     my $appNode = $link->getParent('Study::ProtocolAppNode', 1);
 
     push(@appNodes, $appNode) if($appNode);
@@ -384,7 +401,7 @@ sub makeProtocolAppNode {
   }
 
   my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum, type_id => $ontologyTerm->getId()});
-  my $studyLink = $self->linkAppNodeToStudy($study, $protocolAppNode);
+  $self->linkAppNodeToStudy($study, $protocolAppNode); 
 
   return $protocolAppNode;
 }
@@ -439,9 +456,7 @@ sub makeProtocolAppParams {
 }
 
 sub makeStudy {
-  my ($self) = @_;
-  
-  my $studyName = $self->getArg('studyName');
+  my ($self, $studyName) = @_;
 
   my $extDbSpec = $self->getArg('extDbSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
