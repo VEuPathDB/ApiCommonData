@@ -238,6 +238,8 @@ sub addResults {
       my $key = $header[$i];
       my $value = $a[$i];
 
+      $value = undef if($value eq "NA");
+
       $hash->{$key} = $value;
     }
 
