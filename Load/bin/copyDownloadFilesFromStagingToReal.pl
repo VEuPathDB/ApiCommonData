@@ -23,7 +23,7 @@ $sourceDir="/eupath/data/apiSiteFilesStagingPreRelease/${projectName}/${workflow
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 die "targetDir $targetDir does not exist\n" unless -d "$targetDir";
 
-$targetDir = "$targetDir/build-${buildNumber}";
+$targetDir = "$targetDir/release-${buildNumber}";
 print STDERR "Copying $sourceDir to $targetDir\n"; 
 system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
