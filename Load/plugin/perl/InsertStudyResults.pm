@@ -129,8 +129,6 @@ sub run {
 
   my $investigation = $self->makeStudy($self->getArg('studyName'));
 
-  my @studyLinks = $investigation->getChildren('Study::StudyLink', 1);
-  my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
   my $nodeOrderNum = 1;
 
   while(<CONFIG>) {
@@ -140,11 +138,12 @@ sub run {
     my $study = $self->makeStudy($studyName);
     $study->setParent($investigation);
 
+    my @studyLinks = $study->getChildren('Study::StudyLink', 1);
+    my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
+
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $investigation);
-
-    push @$existingAppNodes, $protocolAppNode;
 
     my $protocol = $self->makeProtocol($protocolName);
 
@@ -158,6 +157,7 @@ sub run {
       $input->setParent($inputAppNode);
 
       $self->linkAppNodeToStudy($study, $inputAppNode); 
+      $self->linkAppNodeToStudy($investigation, $inputAppNode); 
     }
 
     my $output = GUS::Model::Study::Output->new();
@@ -165,6 +165,7 @@ sub run {
     $output->setParent($protocolAppNode);
 
     $self->linkAppNodeToStudy($study, $protocolAppNode); 
+    $self->linkAppNodeToStudy($investigation, $protocolAppNode); 
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
@@ -326,7 +327,6 @@ sub getInputAppNodes {
     next if($found);
 
     my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
-    $self->linkAppNodeToStudy($study, $newInput); 
 
     push @$existingAppNodes, $newInput;
     push @rv, $newInput;
@@ -401,7 +401,6 @@ sub makeProtocolAppNode {
   }
 
   my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $nodeName, node_order_num => $nodeOrderNum, type_id => $ontologyTerm->getId()});
-  $self->linkAppNodeToStudy($study, $protocolAppNode); 
 
   return $protocolAppNode;
 }
