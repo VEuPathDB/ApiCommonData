@@ -157,7 +157,7 @@ sub run {
       $input->setParent($protocolApp);
       $input->setParent($inputAppNode);
 
-      $self->linkAppNodeToStudy($study, $inpuAppNode); 
+      $self->linkAppNodeToStudy($study, $inputAppNode); 
     }
 
     my $output = GUS::Model::Study::Output->new();
