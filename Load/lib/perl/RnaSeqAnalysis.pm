@@ -31,6 +31,7 @@ my $OUTPUT_FILE_BASE = "profiles";
 
 #-------------------------------------------------------------------------------
 
+ sub getProfileSetName          { $_[0]->{profileSetName} }
  sub getSamples                 { $_[0]->{samples} }
  sub getIsPairedEnd             { $_[0]->{isPairedEnd} }
  sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
@@ -40,6 +41,7 @@ sub new {
   my ($class, $args) = @_;
     my $requiredParams = [
                           'samples',
+                          'profileSetName',
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
 
@@ -76,6 +78,8 @@ sub makeProfiles {
 
   my $samples = $self->getSamples();
 
+  my $profileSetName = $self->getProfileSetName();
+
   my $isPairedEnd = $self->getIsPairedEnd() ? $self->getIsPairedEnd() : 'FALSE';
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
@@ -93,6 +97,7 @@ sub makeProfiles {
            isLogged => 0,
            fileSuffix => $featureTypeSuffix.$alignmentTypeSuffix.$strandSuffix,
            samples => $samples,
+           profileSetName => $profileSetName,
              });
 
 
