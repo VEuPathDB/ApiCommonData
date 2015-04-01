@@ -33,7 +33,7 @@ my $OUTPUT_FILE_BASE = "profiles";
 
  sub getProfileSetName          { $_[0]->{profileSetName} }
  sub getSamples                 { $_[0]->{samples} }
- sub getIsPairedEnd             { $_[0]->{isPairedEnd} }
+
  sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
 
 #-------------------------------------------------------------------------------
@@ -80,7 +80,6 @@ sub makeProfiles {
 
   my $profileSetName = $self->getProfileSetName();
 
-  my $isPairedEnd = $self->getIsPairedEnd() ? $self->getIsPairedEnd() : 'FALSE';
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
   my $strandSuffix = ".$strand";
@@ -118,7 +117,6 @@ sub makeProfiles {
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
   $profile->addProtocolParamValue('AlignmentType', $alignmentType);
-  $profile->addProtocolParamValue('IsPairedEnd', $isPairedEnd);
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
 
   $profile->setDisplaySuffix(" - $alignmentType - $strand");
