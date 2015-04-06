@@ -8,7 +8,9 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath.owl">
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/import_OBO.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/externalByHand.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_DOID.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/obi/NIAID-GSC-BRC.owl"/>
     </owl:Ontology>
     
@@ -376,14 +378,14 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DRON_00021247">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
+                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
-                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000118>chloroquine tablets</obo:IAO_0000118>
@@ -992,6 +994,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000037 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000037">
+        <rdfs:label xml:lang="en">presence of bacteria in the blood</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <obo:IAO_0000119>http://en.wikipedia.org/wiki/Bacteremia</obo:IAO_0000119>
+        <obo:IAO_0000115>A phenotypic abnormality of the presence of bacteria in the blood.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000038 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000038">
@@ -1003,6 +1016,17 @@
         <obo:EUPATH_0000112>Symptomatic malaria without evidence of complicated malaria. In Uganda, diagnoses of uncomplicated malaria are always followed by treatment with Artemether/lumefantrine.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000039 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000039">
+        <rdfs:label xml:lang="en">presence of virus in the blood</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <obo:IAO_0000115>A phenotypic abnormality of the presence of a virus in the blood. It is a medical condition where viruses enter the bloodstream and hence have access to the rest of the body.</obo:IAO_0000115>
+        <obo:IAO_0000119>http://en.wikipedia.org/wiki/Viremia</obo:IAO_0000119>
     </owl:Class>
     
 
@@ -1356,6 +1380,12 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DRON_00000005"/>
         <rdfs:subClassOf>
             <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00017631"/>
             </owl:Restriction>
@@ -1366,12 +1396,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00019223"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Artemether/lumefantrine</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000118>artemether-lumefantrine</obo:IAO_0000118>
@@ -1380,6 +1404,24 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:EUPATH_0000112>A drug used in the treatment or prevention of malaria. In Uganda, coartem (artemether-lumefantrine) is used to treat a patient when he/she is diagnosed as having a new episode of uncomplicated malaria occurring more than 14 days since the last episode.</obo:EUPATH_0000112>
         <obo:IAO_0000118>coartem</obo:IAO_0000118>
         <obo:IAO_0000115>A drug product that is the of combination artemether/lumefantrine (trade names Coartem and Riamet, Falcynate-LF). It is generally used for the treatment of acute uncomplicated Plasmodium falciparum malaria.</obo:IAO_0000115>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000064 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000064">
+        <rdfs:label xml:lang="en">clinical characteristics</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/HP_0000118"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
+        <obo:IAO_0000115>A dependent continuant which is either disease or phenotypic abnormality.</obo:IAO_0000115>
     </owl:Class>
     
 
@@ -2012,6 +2054,18 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:EUPATH_0000052>total num routine visits</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>The total number of clinical visits which were part of the routine visit schedule.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_a2 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_a2">
+        <rdfs:label xml:lang="en">viremia</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <obo:IAO_0000115>The presence of a virus in the blood. a medical condition where viruses enter the bloodstream and hence have access to the rest of the body.source: http://en.wikipedia.org/wiki/Viremia</obo:IAO_0000115>
+        <obo:IAO_0000118>viremia</obo:IAO_0000118>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/EUPATH"/>
     </owl:Class>
     
 
