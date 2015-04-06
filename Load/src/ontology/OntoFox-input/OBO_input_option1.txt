@@ -1,5 +1,5 @@
 [URI of the OWL(RDF/XML) output file]
-http://purl.obolibrary.org/obo/eupath/import_OBO.owl
+http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl
 
 
 
@@ -156,7 +156,7 @@ OGMS
 http://purl.obolibrary.org/obo/OGMS_0000073 #diagnosis
 http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 http://purl.obolibrary.org/obo/OGMS_0000090 #treatment
-http://purl.obolibrary.org/obo/OGMS_0000031 #disease
+#http://purl.obolibrary.org/obo/OGMS_0000031 #disease
 http://purl.obolibrary.org/obo/OGMS_0000018 #laboratory finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
 
@@ -167,8 +167,8 @@ http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 subClassOf http://purl.obolibrary.org/obo/IAO_0000027 #data item
 http://purl.obolibrary.org/obo/OGMS_0000090 #treatment
 subClassOf http://purl.obolibrary.org/obo/OBI_0000011 #planned process
-http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-subClassOf http://purl.obolibrary.org/obo/BFO_0000016 #disposition
+#http://purl.obolibrary.org/obo/OGMS_0000031 #disease
+#subClassOf http://purl.obolibrary.org/obo/BFO_0000016 #disposition
 http://purl.obolibrary.org/obo/OGMS_0000018 #laboratory finding
 subClassOf http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
@@ -184,65 +184,6 @@ http://purl.obolibrary.org/obo/IAO_0000115
 
 ############################################################
 [Source ontology]
-#comment here
-DOID
-
-[Low level source term URIs]
-http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-http://purl.obolibrary.org/obo/DOID_12365 #malaria
-http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
-http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
-http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
-http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-
-[Top level source term URIs and target direct superclass URIs]
-http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-http://purl.obolibrary.org/obo/DOID_12365 #malaria
-subClassOf http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
-subClassOf http://purl.obolibrary.org/obo/DOID_12365 #malaria
-http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
-subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
-subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-
-[Source term retrieval setting]
-includeNoIntermediates
-
-[Source annotation URIs]
-http://www.w3.org/2000/01/rdf-schema#label
-http://purl.obolibrary.org/obo/IAO_0000115
-
-############################################################
-[Source ontology]
-HP
-
-[Low level source term URIs]
-http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
-http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
-#http://purl.obolibrary.org/obo/HP_0001943 #hypoglycemia
-
-[Top level source term URIs and target direct superclass URIs]
-http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
-subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
-http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
-subClassOf http://purl.obolibrary.org/obo/BFO_0000019 #quality
-
-[Source term retrieval setting]
-includeNoIntermediates
-
-[Source annotation URIs]
-http://www.w3.org/2000/01/rdf-schema#label
-http://purl.obolibrary.org/obo/IAO_0000115
-
-
-
-
-############################################################
-[Source ontology]
 PCO
 
 [Low level source term URIs]
@@ -251,6 +192,117 @@ http://purl.obolibrary.org/obo/PCO_0000024 #household
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/PCO_0000024 #household
 subClassOf http://purl.obolibrary.org/obo/BFO_0000040 #material entity
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
+############################################################
+[Source ontology]
+#comment here
+#List of ontologies: OBI, NCBITaxon, MP, PATO, GO, DOID, IDO, CHEBI, SO, PRO, CL, ENVO, FMA, CARO
+HP
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/HP_0000421 #Epistaxis
+http://purl.obolibrary.org/obo/HP_0000692 #Misalignment_of_teeth
+http://purl.obolibrary.org/obo/HP_0000989 #Pruritus
+http://purl.obolibrary.org/obo/HP_0001944 #Dehydration
+http://purl.obolibrary.org/obo/HP_0002013 #Vomiting
+http://purl.obolibrary.org/obo/HP_0002027 #Abdominal pain
+http://purl.obolibrary.org/obo/HP_0002315 #Headache
+http://purl.obolibrary.org/obo/HP_0003249 #Genital_ulcers
+http://purl.obolibrary.org/obo/HP_0011801 #Enlargement of parotid gland
+http://purl.obolibrary.org/obo/HP_0011848 #Abdominal colic
+http://purl.obolibrary.org/obo/HP_0012531 #Pain
+http://purl.obolibrary.org/obo/HP_0100845 #Anaphylactic_reaction
+http://purl.obolibrary.org/obo/HP_0200043 #Verrucae
+http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
+http://purl.obolibrary.org/obo/HP_0004395 #Malnutrition
+http://purl.obolibrary.org/obo/HP_0200039 #Pustule
+http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+subClassOf http://purl.obolibrary.org/obo/BFO_0000019 #BFO:quality
+http://purl.obolibrary.org/obo/HP_0000421 #Epistaxis
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0000692 #Misalignment_of_teeth
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0000989 #Pruritus
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0001944 #Dehydration
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0002013 #Vomiting
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0002027 #Abdominal pain
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0002315 #Headache
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0003249 #Genital_ulcers
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0011801 #Enlargement of parotid gland
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0011848 #Abdominal colic
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0012531 #Pain
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0100845 #Anaphylactic_reaction
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0200043 #Verrucae
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0004395 #Malnutrition
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/HP_0200039 #Skin pustule
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
+############################################################
+[Source ontology]
+#comment here
+#List of ontologies: OBI, NCBITaxon, MP, PATO, GO, DOID, IDO, CHEBI, SO, PRO, CL, ENVO, FMA, CARO
+SYMP
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/SYMP_0000174 #wasting
+http://purl.obolibrary.org/obo/SYMP_0000475 #underweight
+http://purl.obolibrary.org/obo/SYMP_0000596 #convulsion
+http://purl.obolibrary.org/obo/SYMP_0000672 #abscess
+http://purl.obolibrary.org/obo/SYMP_0019148 #septicemia
+
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/SYMP_0000174 #wasting
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+#subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+http://purl.obolibrary.org/obo/SYMP_0000475 #underweight
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+#subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+http://purl.obolibrary.org/obo/SYMP_0000596 #convulsion
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+#subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+http://purl.obolibrary.org/obo/SYMP_0000672 #abscess
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+#subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+http://purl.obolibrary.org/obo/SYMP_0019148 #septicemia
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+#subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+#http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
+#subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+
 
 [Source term retrieval setting]
 includeNoIntermediates
@@ -285,12 +337,45 @@ http://purl.obolibrary.org/obo/IAO_0000115
 ############################################################
 ############################################################
 #[Source ontology]
-#comment here
+#move to HP_input_option2 file
 #HP
 #
 #[Low level source term URIs]
 #http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
 #http://purl.obolibrary.org/obo/HP_0001943 #hypoglycemia
 ############################################################
+############################################################
+#[Source ontology]
+#move to DOID_input.txt
+#DOID
+
+#[Low level source term URIs]
+#http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
+#http://purl.obolibrary.org/obo/DOID_12365 #malaria
+#http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
+#http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
+#http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
+#http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
+
+#[Top level source term URIs and target direct superclass URIs]
+#http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
+#subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
+#http://purl.obolibrary.org/obo/DOID_12365 #malaria
+#subClassOf http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
+#http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
+#subClassOf http://purl.obolibrary.org/obo/DOID_12365 #malaria
+#http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
+#subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
+#http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
+#subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
+#http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
+#subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
+#
+#[Source term retrieval setting]
+#includeNoIntermediates
+#
+#[Source annotation URIs]
+#http://www.w3.org/2000/01/rdf-schema#label
+#http://purl.obolibrary.org/obo/IAO_0000115
 
 
