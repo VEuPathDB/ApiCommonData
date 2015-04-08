@@ -7,7 +7,7 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-my ($help, $name, $file, $outputFile, $sourceIdType, @inputProtocolAppNodes, $protocol, @protocolParams);
+my ($help, $name, $file, $outputFile, $sourceIdType, @inputProtocolAppNodes, $protocol, @protocolParams, $profileSetName);
 
 &GetOptions('help|h!' => \$help,
             'name=s' => \$name,
@@ -16,6 +16,7 @@ my ($help, $name, $file, $outputFile, $sourceIdType, @inputProtocolAppNodes, $pr
             'sourceIdType=s' => \$sourceIdType,
             'inputProtocolAppNodes=s' => \@inputProtocolAppNodes,
             'protocol=s' => \$protocol,
+            'profileSetName=s' => \$profileSetName,
             'protocolParams=s' => \@protocolParams # string of form param|paramValue
             );
 
@@ -30,13 +31,13 @@ sub usage {
     exit;
 }
 
-my @columns = ('Name', 'File Name', 'Source Id Type', 'Input ProtocolAppNodes', 'Protocol', 'ProtocolParams');
+my @columns = ('Name', 'File Name', 'Source Id Type', 'Input ProtocolAppNodes', 'Protocol', 'ProtocolParams', 'ProfileSet');
 
 open(OUT, "> $outputFile") or die "Cannot open $outputFile for writing: $!";
 
 print OUT join("\t", @columns) . "\n";
 
-print OUT "$name\t$file\t$sourceIdType\t".join(';', @inputProtocolAppNodes)."\t$protocol\t".join(';', @protocolParams)."\n";
+print OUT "$name\t$file\t$sourceIdType\t".join(';', @inputProtocolAppNodes)."\t$protocol\t".join(';', @protocolParams)."\t" . $profileSetName . "\n";
 
 close OUT;
 
