@@ -22,7 +22,6 @@ package ApiCommonData::Load::Plugin::InsertStudy;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-use GUS::Model::SRes::Contact;
 use GUS::Model::Study::Study;
 
 # ----------------------------------------------------------------------
