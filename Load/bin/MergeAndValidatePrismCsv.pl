@@ -72,22 +72,23 @@ foreach my $inFile (@inputFiles) {
 
     my $ValueMap = parseRow($row);
     my $id = $ValueMap->{$idColumn};
-    next unless (defined $id);
+    next unless (defined $id && $id =~/\w/);
     
     unless (exists ($values->{$inFile}->{$id})) {
       $values->{$inFile}->{$id} = $ValueMap;
       push (@$ids,$id) ;
     }
-    else {
+    else { 
       push(@$dupIds,$id);
     }
   }
   
   $allIds->{$inFile}=$ids;
+  ($dupIds) = uniq($dupIds);
   $duplicateIds->{$inFile}=$dupIds if (scalar ($dupIds) != 0);
 }
 my @id_set= values(%$allIds);
-my @uniqueIds;
+my @uniqueIds; 
 foreach my $subArray (@id_set){
   push (@uniqueIds, @$subArray);
 }
@@ -111,6 +112,7 @@ sub parseHeader {
   for (my $i = 0; $i < $columnCount; $i++) {
     my $value = $Row[$i];
     $value =~ s/^\s+|\s+$//g if defined ($value);
+    $value =~ s/^"|"$//g if defined ($value);
     $value = lc($value);
     if ($value =~/^$idColumnName$/) {
       $columns->{output}->{$fn}->{idColumn}=$i;
@@ -138,7 +140,9 @@ sub parseRow {
 #  print STDERR $row if ($row !~ /,/);
   for (my $i = 0; $i < $columnCount; $i++) {
     my $value = $Row[$i];
-     $colMap-> {$i} =$value;
+    $value =~ s/^\s+|\s+$//g if defined ($value);
+    $value =~ s/^"|"$//g if defined ($value);
+    $colMap-> {$i} =$value;
   }
   
   return $colMap;
@@ -208,8 +212,9 @@ sub printReport {
   my ($allIds,$duplicateIds,$uniqueIds,$absentIds,$conflictedCharacteristics,$reportFile) = @_;
   my @fileNames = keys(%$allIds);
   foreach my $fileName (keys(%$allIds)) {
-    my @ids = (values(%$allIds));
-    my $grep_ids = join '|', @ids;
+    my ($ids) = values(%$allIds);
+    my $grep_ids = join("|",  @$ids);
+    #print $grep_ids;
     my @missingIds = grep { !(/$grep_ids/) } @$uniqueIds;
     $absentIds->{$fileName} = \@missingIds;
   }
