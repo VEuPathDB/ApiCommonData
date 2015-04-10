@@ -45,6 +45,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="score" ignore="true"/>
     <qualifier name="size" ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
@@ -150,6 +152,34 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+  </feature>
+ 
+  <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
