@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-## Downloads biopax level 3 files from trypanocyc or leishcyc via web services from a list of available pathways in xml format obtained using: 
+## Downloads biopax level 3 files from trypanocyc or leishcyc via web services from a list of available pathways in xml format. A list of all available pathways is obtained using: 
 ## wget 'http://vm-trypanocyc.toulouse.inra.fr/TRYPANO/xmlquery?[x:x<-trypano^^pathways]&detail=none' -q -O - | grep -v "class='true'" | sed 's/'\''/'\"'/g'> pathwayList.xml
 
 use strict;
