@@ -212,11 +212,15 @@ sub printReport {
   my ($allIds,$duplicateIds,$uniqueIds,$absentIds,$conflictedCharacteristics,$reportFile) = @_;
   my @fileNames = keys(%$allIds);
   foreach my $fileName (keys(%$allIds)) {
-    my ($ids) = values(%$allIds);
+    my $ids = $allIds->{$fileName} ;
     my $grep_ids = join("|",  @$ids);
-    #print $grep_ids;
     my @missingIds = grep { !(/$grep_ids/) } @$uniqueIds;
-    $absentIds->{$fileName} = \@missingIds;
+    if ($grep_ids =~ /\w/) {
+      $absentIds->{$fileName} = \@missingIds;
+    }
+      else {
+        $absentIds->{$fileName} = "No valid ids in file";
+      }
   }
   open(Report, ">$reportFile");
 #  while( my( $key, $value ) = each( %$conflictedCharacteristics ) ) {
