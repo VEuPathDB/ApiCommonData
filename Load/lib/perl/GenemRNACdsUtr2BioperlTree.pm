@@ -242,10 +242,10 @@ sub traverseSeqFeatures {
                 $CDSctr++;
             }
 
-            if ($subFeature->primary_tag eq 'five_prime_utr' || $subFeature->primary_tag eq 'three_prime_utr' 
+            if (lc($subFeature->primary_tag) eq 'five_prime_utr' || lc($subFeature->primary_tag) eq 'three_prime_utr' 
                     || $subFeature->primary_tag eq 'UTR'){
                 
-                my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
+                my $UTR = &makeBioperlFeature(lc($subFeature->primary_tag),$subFeature->location,$bioperlSeq);
 
                 $UTR = &copyQualifiers($subFeature,$UTR);
 
