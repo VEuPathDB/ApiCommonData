@@ -139,6 +139,10 @@ if ($header_regexp) {
   my @header_terms = split(/,/,$header_regexp);
   foreach my $pair (@header_terms) {
     my ($pattern,$official) = split(/\|/,$pair);
+    if (exists $official_header_hash->{$official}) {
+      my $old_pattern = $official_header_hash->{$official};
+      $pattern = $old_pattern."|".$pattern;
+    }
     $official_header_hash->{$official} = $pattern;
   }
 }
@@ -206,7 +210,7 @@ foreach my $row (<INFILE>){
   }
 
   if ($isHeader) {
-    $ColumnMap = parseHeader($row);
+    $ColumnMap = parseHeader($row,$official_header_hash);
     $isHeader=0;
     $validHeader = 1;
     next;
@@ -365,7 +369,7 @@ print STDERR "Skipped these IDs";
 my @uniqSkippedInputs = uniq(@$SkippedInputs);
 
 print STDERR Dumper (\@uniqSkippedInputs);
-exit;
+
 
 
 sub parseHeader {
@@ -376,26 +380,28 @@ sub parseHeader {
   my $colMap = {};
   my $chars = [];
   my $paramValues = [];
-  for (my $i = 0; $i < $columnCount; $i++) {
+  for (my $i = 0; $i < $columnCount; $i++) { 
     $colMap->{"Input"} = $i if ($Header[$i] =~ /Input/i);
     $colMap->{"Output"} = $i if $Header[$i] =~ /Output/i;
     $colMap->{"Date"} = $i if $Header[$i] =~ /\[DATE\]/i;
+    print STDERR "GOT here\n";
     if ($Header[$i] =~ /Characteristics\s*\[\w+\]/i) {
       my $bareChar = $Header[$i];
+      my $official_hash_size = keys %{$official_header_hash};
       $bareChar =~ s/.*\[//i;
       $bareChar =~ s/\]//i;
       $bareChar = lc($bareChar);
       my $display_term = $bareChar;
-      if ($official_header_hash) {
+      if ($official_hash_size) {
         while (my ($official,$pattern) = each %$offical_header_hash) {
           if ($display_term =~ /$pattern/) {
-            $display_term =~ s/$pattern/$official/ ;
+            $display_term =~ s/$pattern/$official/i ;
           }
         }
       }
       my $charHash = {characteristic=>$bareChar,
-                                     column=>$i,
-                                     official_characteristic=>$display_term};
+                      column=>$i,
+                      official_characteristic=>$display_term};
       push @$chars,$charHash;
     }
     elsif ($Header[$i] =~ /Parameter\s*Value\s*\[\w+\]/i) {
@@ -403,17 +409,14 @@ sub parseHeader {
       $bareChar =~ s/.*\[//i;
       $bareChar =~ s/\].*//i;
       my $charHash =  {characteristic=>$bareChar,
-                                     column=>$i,
-                                     display=>$bareChar};
+                                      column=>$i,
+                                      display=>$bareChar};
       push @$paramValues,$charHash;
-      
     }
-
   }
   $colMap->{"characteristics"} = $chars;
   $colMap->{"paramValues"} = $paramValues;
   $colMap->{"Input"} = undef unless  (defined $colMap->{"Input"});
-
   return $colMap;
 }
 
@@ -448,6 +451,7 @@ sub parseCharacteristics {
     my $characteristic = $characteristicsHash->{official_characteristic};
     my $column = $characteristicsHash->{column};
     unless (defined $characteristic && $characteristic=~/\w/) {
+     print STDERR " $characteristic is null";
         next;
     }    my $value = $values->[$column];
     unless ( (defined $value) && ($value =~/\w/)) {
@@ -475,8 +479,9 @@ sub parseCharacteristics {
       $db_value = undef;
 
       $sh->execute($lower_characteristic);
-
+      
       $db_category = $sh->fetchrow_array;
+      print $db_category;
     }
     else {
       $sh->execute($lower_characteristic);

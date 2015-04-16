@@ -108,21 +108,26 @@ create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
 create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
 create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 
+create index rad.anlrslt_ix
+on rad.analysisResultImp
+   (subclass_view, analysis_id, row_id, float1, float2, float3, float4, number1, table_id, analysis_result_id)
+tablespace indx;
+
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
-create index lwrFullId_ix
+create index dots.lwrFullId_ix
 on dots.AaSequenceImp(lower(string1), aa_sequence_id, string1)
 tablespace indx;
 
-create index lwrSrcId_ix
+create index dots.lwrSrcId_ix
 on dots.AaSequenceImp(lower(source_id), aa_sequence_id, string1)
 tablespace indx;
 
-create index lwrRefPrim_ix
+create index sres.lwrRefPrim_ix
 on sres.DbRef(lower(primary_identifier), db_ref_id, external_database_release_id)
 tablespace indx;
 
-create index lwrRefSec_ix
+create index sres.lwrRefSec_ix
 on sres.DbRef(lower(secondary_identifier), db_ref_id, external_database_release_id)
 tablespace indx;
 
@@ -234,11 +239,11 @@ alter table dots.NaFeatureImp
               string12 varchar(1500), 
               string18 varchar(1500));
 
-create index SnpStrain_ix on dots.NaFeatureImp
+create index dots.SnpStrain_ix on dots.NaFeatureImp
    (subclass_view, string9, string8, number3, float2, float3, parent_id, string12, string18, na_feature_id)
    tablespace INDX;
 
-create index SnpDiff_ix on dots.NaFeatureImp
+create index dots.SnpDiff_ix on dots.NaFeatureImp
   (subclass_view, parent_id, string18, string9, number3, float2, float3, string12, na_feature_id)
   tablespace INDX;
 

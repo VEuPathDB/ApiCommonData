@@ -97,9 +97,9 @@ foreach my $subArray (@id_set){
 my $confilctedCharacteristics = {};
 
 my $mergedFile = mergeFiles($columns,$values,\@uniqueIds,$confilctedCharacteristics,$dateColumnName,$inputColumnName);
-open (OUTPUT, ">$outFile");
+open (OUTPUT, ">$outFile") or die "Unable to open file for writing :$!";
 print OUTPUT $mergedFile;
-
+close OUTPUT;
 my $absentIds ={};
 my $reportFile = $outFile."_Report";
 printReport ($allIds,$duplicateIds,\@uniqueIds,$absentIds,$confilctedCharacteristics,$reportFile);
@@ -222,7 +222,7 @@ sub printReport {
         $absentIds->{$fileName} = "No valid ids in file";
       }
   }
-  open(Report, ">$reportFile");
+  open(Report, ">$reportFile") or die "Unable to open file for writing :$!";
 #  while( my( $key, $value ) = each( %$conflictedCharacteristics ) ) {
   print Report "Characteristics with conflicting values:\n";
   print Report Dumper ($conflictedCharacteristics);
@@ -230,4 +230,5 @@ sub printReport {
   print Report Dumper ($duplicateIds);
   print Report "Ids  which do not appear in one of the premerged files: \n";
   print Report Dumper ($absentIds);
+  close Report;
 }
