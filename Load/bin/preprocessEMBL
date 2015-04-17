@@ -67,6 +67,8 @@ if(-d $inputFileOrDir){
     foreach my $line (<IN>){
 		$linesRead++;
 		if($line =~ /^ID/){
+		    $line =~ s/^ID(\s+)chromosome:AspGD:(\S+?):\d+:\d+;/ID$1$2;/;  ## use this 2 lines for aoryRIB40 from AspGD
+		    $line =~ s/^ID(\s+)contig:AspGD:(\S+?):\d+:\d+;/ID$1$2;/;  ## use this 2 lines for aoryRIB40 from AspGD
 		    $line =~ s/^(ID\s+\S+);/$1  standard;/;
                     $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump
                     print OUTEMBL "$line";
