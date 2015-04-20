@@ -65,6 +65,28 @@ sub preprocess {
 		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 
+	    if($type eq 'tRNA' || $type eq 'rRNA') {
+	      $geneFeature = $bioperlFeatureTree;
+
+	      my $geneLoc = $geneFeature->location();
+	      my $gene = &makeBioperlFeature("${type}_gene", $geneLoc, $bioperlSeq);
+	      my($geneID) = $geneFeature->get_tag_values('ID');
+	      $gene->add_tag_value("ID",$geneID);
+	      $gene = &copyQualifiers($geneFeature, $gene);
+
+              my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+
+	      my @exonLocs = $geneLoc->each_Location();
+	      foreach my $exonLoc (@exonLocs){
+		my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+		$exon->add_tag_value('CodingStart', '');
+		$exon->add_tag_value('CodingEnd', '');
+		$transcript->add_SeqFeature($exon);
+	      }
+	      $gene->add_SeqFeature($transcript);
+	      $bioperlSeq->add_SeqFeature($gene); 
+	    }  ## end of $type eq tRNA or rRNA
+
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
@@ -185,10 +207,11 @@ sub traverseSeqFeatures {
 	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);    ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
-	    if($transcriptCount > 1){
-              $geneID = $geneID."\_$ctr";
-              $ctr++;
+  	    if($transcriptCount > 1){
+	      $geneID = $geneID."\_$ctr";
+	      $ctr++;
 	    }
+
 
 	    #print "ID:$geneID\n";
 	    $gene->add_tag_value("ID",$geneID);
