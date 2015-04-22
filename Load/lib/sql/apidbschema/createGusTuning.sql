@@ -230,6 +230,10 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
 
+-- for v$ selects, which are needed by org.gusdb.fgputil.db.ConnectionWrapper to
+-- check for uncommitted transactions before returning connections to the pool.
+GRANT SELECT_CATALOG_ROLE TO GUS_R;
+
 -- indexes to help queries against SnpFeature
 -- (and some ALTER TABLE statements to make the indexes possible;
 --  Oracle wants index keys no bigger than about 6K bytes)
