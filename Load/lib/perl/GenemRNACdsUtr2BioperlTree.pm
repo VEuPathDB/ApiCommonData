@@ -91,6 +91,11 @@ sub preprocess {
                 $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
             }      
 
+			if (($geneFeature->has_tag("ID"))){
+				my ($cID) = $geneFeature->get_tag_values("ID");
+				print STDERR "processing $cID...\n";
+			}
+
             for my $tag ($geneFeature->get_all_tags) {    
                 if($tag eq 'pseudo'){
                     if ($geneFeature->get_SeqFeatures){
@@ -156,9 +161,8 @@ sub traverseSeqFeatures {
              'snoRNA',
              'tRNA',
              'ncRNA',
-         'pseudogenic_transcript',  
+             'pseudogenic_transcript',
              'scRNA',
-                
              )
         ) {
 
@@ -174,16 +178,18 @@ sub traverseSeqFeatures {
         
         $type = 'coding' if ($type eq 'mRNA' || $type eq 'pseudogenic_transcript');
 
-        $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+        #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+        $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
         my($geneID) = $geneFeature->get_tag_values('ID');
 
         if($transcriptCount > 1){
-            $geneID = $geneID."\_$ctr";
+            $geneID = $geneID."\.$ctr";
             $ctr++;
         }
 
         $gene->add_tag_value("ID",$geneID);
-        $gene = &copyQualifiers($geneFeature,$gene);   ## get the value of the tag Name
+        #$gene = &copyQualifiers($geneFeature,$gene);   ## get the value of the tag Name
+        $gene = &copyQualifiers($RNA,$gene);   ## get the value of the tag Name
 
 
         my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
@@ -192,23 +198,21 @@ sub traverseSeqFeatures {
         
         my $codonStart = 0;
         
-#        ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
-#        $codonStart -= 1 if $codonStart > 0;   ## those 2 lines only for genbank format
+        ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
+        $codonStart -= 1 if $codonStart > 0;   ## those 2 lines only for genbank format
 
         if($gene->has_tag('selenocysteine')){
             $gene->remove_tag('selenocysteine');
             $gene->add_tag_value('selenocysteine','selenocysteine');
         }
 
-        my (@exons, @codingStart, @codingEnd);
-        
-        my $CDSctr =0;
+        #my (@exons, @codingStart, @codingEnd);
+        my (@exons, @codingStartAndEndPairs);
 
-        my($codingStart,$codingEnd);
+        my $CDSctr =0;
 
         foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
-            $codonStart = $subFeature->frame();
 
             #if($subFeature->primary_tag eq 'exon'){
             #    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
@@ -219,31 +223,29 @@ sub traverseSeqFeatures {
 
                 my $exon = &makeBioperlFeature("exon",$subFeature->location,$bioperlSeq);
                 $exon = &copyQualifiers($subFeature, $exon);
+		$exon->add_tag_value('exonType', "coding");
+		push (@exons, $exon);
+
+		my $cdsStrand = $subFeature->location->strand;
+		my $cdsFrame = $subFeature->frame();
+
                 if($subFeature->location->strand == -1){
-                    $codingStart = $subFeature->location->end;
-                    $codingEnd = $subFeature->location->start;
-                    $codingStart -= $codonStart if ($codonStart > 0);
-
+		  my $cdsCodingStart = $subFeature->location->end;
+		  my $cdsCodingEnd = $subFeature->location->start;
+		  push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
                 }else{
-                    $codingStart = $subFeature->location->start;
-                    $codingEnd = $subFeature->location->end;
-                    $codingStart += $codonStart if ($codonStart > 0);
-
+                  my $cdsCodingStart = $subFeature->location->start;
+                  my $cdsCodingEnd = $subFeature->location->end;
+		  push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
                 }
 
-                $exon->add_tag_value('CodingStart',$codingStart);
-                $exon->add_tag_value('CodingEnd',$codingEnd);
-               
-                $exon = &copyQualifiers($subFeature,$exon);
-                 
-                $transcript->add_SeqFeature($exon);
                 $CDSctr++;
             }
 
-            if ($subFeature->primary_tag eq 'five_prime_utr' || $subFeature->primary_tag eq 'three_prime_utr' 
-                    || $subFeature->primary_tag eq 'splice_acceptor_site' || $subFeature->primary_tag eq 'UTR'){
+            if (lc($subFeature->primary_tag) eq 'five_prime_utr' || lc($subFeature->primary_tag) eq 'three_prime_utr' 
+                    || $subFeature->primary_tag eq 'UTR'){
                 
-                my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
+                my $UTR = &makeBioperlFeature(lc($subFeature->primary_tag),$subFeature->location,$bioperlSeq);
 
                 $UTR = &copyQualifiers($subFeature,$UTR);
 
@@ -253,10 +255,67 @@ sub traverseSeqFeatures {
                 $UTR->add_tag_value('Parent',$utrParent) if $utrParent;
 
                 push(@UTRs,$UTR);
+
+		# if UTR is not in exon, it needs to add to exon
+		my $exon = &makeBioperlFeature("exon",$subFeature->location,$bioperlSeq);
+		$exon->add_tag_value('exonType', "nonCoding");
+		push (@exons, $exon);
             }
         }
 
-        
+	## combine the UTR with CDS if they are adjacent
+	my @fixedExons;
+	my @sortExons = sort {$a->location->start <=> $b->location->start} @exons;
+	foreach my $i (0..$#sortExons) {
+	  if ($sortExons[$i+1]) {
+	    my ($exonType) = $sortExons[$i]->get_tag_values('exonType');
+	    my ($nextExonType) = $sortExons[$i+1]->get_tag_values('exonType');
+	    if (  ( $sortExons[$i+1]->location->start <= $sortExons[$i]->location->end +1 )
+	       && ($exonType ne $nextExonType ) ) {
+	      $sortExons[$i+1]->location->start($sortExons[$i]->location->start);
+	      $sortExons[$i+1]->remove_tag('exonType');
+	      $sortExons[$i+1]->add_tag_value('exonType', "coding");
+	    } else {
+	      push (@fixedExons, $sortExons[$i]);
+	    }
+	  } else {
+	    push (@fixedExons, $sortExons[$i]);
+	  }
+	}
+
+	## deal with codonStart, use the frame of the 1st CDS to assign codonStart
+	foreach my $j (0..$#codingStartAndEndPairs) {
+	  my ($start, $end, $strand, $frame) = split (/\t/, $codingStartAndEndPairs[$j]);
+	  if ($j == 0 && $strand ==1 && $frame > 0) {
+	    $start += $frame;
+	    $codingStartAndEndPairs[$j] = "$start\t$end\t$strand\t$frame";
+	  } elsif ($j == $#codingStartAndEndPairs && $strand == -1 && $frame > 0) {
+	    $start -= $frame;
+	    $codingStartAndEndPairs[$j] = "$start\t$end\t$strand\t$frame";
+	  } 
+	  #else {
+	  #  next;
+	  #}
+	}
+
+	## add codingStart and codingEnd
+	my ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+	foreach my $exon (@fixedExons){
+
+	  if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
+	    $exon->add_tag_value('CodingStart',$codingStart);
+	    $exon->add_tag_value('CodingEnd',$codingEnd);
+	    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
+	  } else {
+	  #elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start)
+	  #|| ($codingStart >= $exon->location->end && $codingEnd >= $exon->location->end) ) {
+	    $exon->add_tag_value('CodingStart',"");
+	    $exon->add_tag_value('CodingEnd',"");
+	  }
+
+	  $transcript->add_SeqFeature($exon);
+	}
+
         if(!($transcript->get_SeqFeatures())){
             my @exonLocs = $RNA->location->each_Location();
             foreach my $exonLoc (@exonLocs){

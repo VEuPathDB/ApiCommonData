@@ -80,6 +80,7 @@ sub preprocess {
 
       if($bioperlFeatureTree->has_tag('locus_tag')){
 	  ($geneID) = $bioperlFeatureTree->get_tag_values('locus_tag');
+	  print STDERR "processing $geneID...\n";
       }
 
       my $gene = $bioperlFeatureTree;
@@ -158,16 +159,23 @@ sub preprocess {
       my @exonLocations = $transcriptLoc->each_Location();
 
       $codingLocCtr = 0;
-      foreach my $exonLoc (@exonLocations) {
+      foreach my $exonLoc (sort {$a->start <=> $b->start} @exonLocations) {
 	my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
 	if($type eq 'coding'){
 	    if($exonLoc->strand == -1){
+	      if ($codingLocCtr == $#exonLocations) {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] - $codonStart);
-		$exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
+	      } else {
+		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr]);
+	      }
 	    }else{
+	      if ($codingLocCtr == 0) {
 		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] + $codonStart);
-		$exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
+	      } else {
+		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr]);
+	      }
 	    }
+	    $exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
 	}
 
 	$codingLocCtr++;

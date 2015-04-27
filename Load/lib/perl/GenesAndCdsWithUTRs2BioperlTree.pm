@@ -90,6 +90,12 @@ sub preprocess {
 		if(!($geneFeature->has_tag("ID"))){
 		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
 		}      
+
+		if (($geneFeature->has_tag("ID"))){
+			my ($cID) = $geneFeature->get_tag_values("ID");
+			print STDERR "processing $cID...\n";
+		}
+
 		for my $tag ($geneFeature->get_all_tags) {    
 
 		    if($tag eq 'pseudo'){
@@ -199,7 +205,8 @@ sub traverseSeqFeatures {
 		#print STDERR "Missing poly: $id\n";
 		$CDSLocation  = $polypeptide{$id}->location;
 	    }
-	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
 	    #print "ID:$geneID\n";
