@@ -5,7 +5,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 -->
 <mapping>
 
-  <bioperlSeqPreprocessor class="ApiCommonData::Load::SangerEmbl2BioperlTree"/>
+<!--  <bioperlSeqPreprocessor class="ApiCommonData::Load::GenemRNACds2BioperlTree"/>  -->
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::GeneAndCds2BioperlTree"/>
 
   <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
                     method="makeGeneSkeleton"/>
@@ -79,6 +80,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"          ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="id" ignore="true"/>
     <qualifier name="inference" ignore="true"/>
     <qualifier name="pseudo" ignore="true"/>
   </feature>
@@ -208,6 +211,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="GenePrediction" column="source_id"/>
     <qualifier name="OrderNumber"    column="order_number"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="id" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
