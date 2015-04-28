@@ -26,6 +26,8 @@ on apidb.Snp (snp_id, na_sequence_id, location, source_id, gene_na_feature_id);
 create index apidb.SnpNASeqLocIx 
 on apidb.Snp (location, na_sequence_id);
 
+create index apidb.SnpFeatIx
+on apidb.Snp (gene_na_feature_id, snp_id, na_sequence_id, location, source_id);
 ----------------------------------------------------------------
 
 grant insert, select, update, delete ON apidb.SequenceVariation to gus_w;

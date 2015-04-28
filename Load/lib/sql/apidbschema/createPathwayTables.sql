@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.PathwayReaction (
   PATHWAY_REACTION_ID                   NUMBER(12)    NOT NULL,
-  SOURCE_ID                     VARCHAR(50)   NOT NULL,
+  SOURCE_ID                     VARCHAR(100)   NOT NULL,
   DESCRIPTION                   VARCHAR(255),
   EQUATION                    	VARCHAR(255),  
   MODIFICATION_DATE             DATE,

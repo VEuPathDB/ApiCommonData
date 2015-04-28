@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.NetworkContext (
-  NETWORK_CONTEXT_ID             NUMBER(3)    NOT NULL,
-  NAME                           VARCHAR(50)  NOT NULL,
+  NETWORK_CONTEXT_ID             NUMBER(4)    NOT NULL,
+  NAME                           VARCHAR(100)  NOT NULL,
   DESCRIPTION                    VARCHAR(250),
   ANATOMY_ID                     NUMBER(10),
   BIOLOGICAL_PROCESS_ID          NUMBER(10),
@@ -91,7 +91,7 @@ CREATE INDEX ApiDB.nr_mod_ix ON ApiDB.NetworkRelationship (modification_date, ne
 CREATE TABLE ApiDB.NetworkRelationshipType(
   NETWORK_RELATIONSHIP_TYPE_ID   NUMBER(11)   NOT NULL,
   RELATIONSHIP_TYPE_ID           NUMBER(10)   NOT NULL,
-  DISPLAY_NAME                   VARCHAR(100) NOT NULL,
+  DISPLAY_NAME                   VARCHAR(150) NOT NULL,
   MODIFICATION_DATE              DATE,
   USER_READ                      NUMBER(1),
   USER_WRITE                     NUMBER(1),
