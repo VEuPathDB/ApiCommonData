@@ -5,13 +5,14 @@ use strict;
 
 
 sub new {
-  my ($class, $file, $ontologyTerms, $tableIds, $rowIds) = @_;
+  my ($class, $file, $ontologyTerms, $tableIds, $rowIds, $extDbRlsId) = @_;
 
   my $self = $class->SUPER::new($file);
 
   $self->setOntologyTerms($ontologyTerms);
   $self->setTableIds($tableIds);
   $self->setRowIds($rowIds);
+  $self->setExtDbRlsId($extDbRlsId);
 
   return $self;
 }
@@ -25,6 +26,17 @@ sub setOntologyTerms {
 sub getOntologyTerms {
   my ($self) = @_;
   return $self->{_ontology_terms};
+}
+
+sub setExtDbRlsId {
+  my ($self, $extDbRlsId) = @_;
+
+  $self->{_ext_db_rls_id} = $extDbRlsId
+}
+
+sub getExtDbRlsId {
+  my ($self) = @_;
+  return $self->{_ext_db_rls_id};
 }
 
 
@@ -58,7 +70,10 @@ sub addReaction {
 
   my $expected = 'GUS::Model::ApiDB::PathwayReaction';
   my $className = ref($gusReaction);
-  &checkClass($className, $expected);
+
+  unless($className eq $expected) {
+    die "ClassName $className did not match expected $expected;";
+  }
 
   $self->{_gus_reactions}->{$uniqueReactionId} = $gusReaction;
 }
