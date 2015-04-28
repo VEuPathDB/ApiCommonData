@@ -113,8 +113,6 @@ sub run {
   foreach my $file (@pathwayFiles) {
     my $metabolicPathwayClass = "ApiCommonData::Load::${pathwayFormat}MetabolicPathway";
 
-    print  "require $metabolicPathwayClass\n";
-
     eval "require $metabolicPathwayClass";
 
     my $metabolicPathway = eval {
@@ -125,28 +123,23 @@ sub run {
       $self->error($@);
     }
 
-    print "Calling makeGusObjects\n";
     $metabolicPathway->makeGusObjects();
-
     
-    
-#    my $pathway = $metabolicPathway->getPathway();
+    my $pathway = $metabolicPathway->getPathway();
 
- #   foreach my $reaction (@{$metabolicPathway->getReactions()}) {
-      #TODO:  Ensure there is at least one Relationship attached
+    foreach my $reaction (@{$metabolicPathway->getReactions()}) {
+      $pathway->addToSubmitList($reaction);
+    }
 
- #     $pathway->addToSubmittList($reaction);
- #   }
+    foreach my $node (@{$metabolicPathway->getNodes()}) {
+      $node->setParent($pathway);
+    }
 
- #   foreach my $node (@{$metabolicPathway->getNodes()}) {
- #     $node->setParent($pathway);
- #   }
+    foreach my $relationship (@{$metabolicPathway->getRelationships()}) {
+      $pathway->addToSubmitList($relationship);
+    }
 
- #   foreach my $relationship (@{$metabolicPathway->getRelationships()}) {
- #     $pathway->addToSubmittList($relationship);
- #   }
-
-  #  $pathway->submit()
+    $pathway->submit()
   }
 }
 
@@ -213,8 +206,11 @@ select 'SRes::Pathway', source_id,pathway_id from sres.pathway
 sub undoTables {
   my ($self) = @_;
 
-  #TODO: Fill this in
-  return (
+  return ('SRes.Pathway',
+          'SRes.PathwayNode',
+          'SRes.PathwayRelationship',
+          'ApiDB.PathwayReaction',
+          'ApiDB.PathwayReactionRel',
 	 );
 }
 
