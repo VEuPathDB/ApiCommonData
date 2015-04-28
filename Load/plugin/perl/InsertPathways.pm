@@ -27,6 +27,15 @@ sub getArgsDeclaration {
                isList         => 0,
                enum           => 'KEGG, MPMP, TrypanoCyc'
              }),
+        
+ stringArg({ name => 'extDbRlsSpec',
+	     descr => 'Extenral Database Release Name|version',
+	     isList    => 0,
+	     reqd  => 1,
+	     constraintFunc => undef,
+	   }),
+
+
     ];
 
   return $argsDeclaration;
@@ -97,19 +106,26 @@ sub run {
   my $tables = $self->queryForTableIds();
   my $ids = $self->queryForIds();
 
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
+
   foreach my $file (@pathwayFiles) {
     my $metabolicPathwayClass = "ApiCommonData::Load::${pathwayFormat}MetabolicPathway";
+
+    print  "require $metabolicPathwayClass\n";
 
     eval "require $metabolicPathwayClass";
 
     my $metabolicPathway = eval {
-      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids);
+      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids, $extDbRlsId);
     };
 
     if($@) {
       $self->error($@);
     }
 
+    print "Calling makeGusObjects\n";
     $metabolicPathway->makeGusObjects();
 
     
