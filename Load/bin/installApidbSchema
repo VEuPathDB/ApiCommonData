@@ -93,7 +93,6 @@ my $password = $gusconfig->getDatabasePassword();
 #       so that if needed, the create can be manually reversed
 
 my @create = qw(
-               insertGusVersion.sql
                removeNullConstraintsFromSimilarityTables.sql
                createGusTuning.sql
                createApidbTuningSchema.sql
@@ -137,8 +136,7 @@ my @create = qw(
 # drop GUS first, then ApidbTuning, then Apidb (same order as we created).
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
 # need to be reversed.  The trick here is to order these to avoid failures
-my @delete = qw( deleteGusVersion.sql
-                 restoreNullConstraintsFromSimilarityTables.sql
+my @delete = qw( restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
       	         dropDbLinks.sql
                  dropApidbTuningSchema.sql
