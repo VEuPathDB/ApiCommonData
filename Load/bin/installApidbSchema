@@ -78,6 +78,7 @@ my @create = qw(
                createGusTuning.sql
                modifySeqVariation.sql
                createApidbTuningSchema.sql
+               createTestTuningSchema.sql
                createApidbSchema.sql
 	       createAnalysisMethodInvocation.sql
 	       createChromosome6Orthology.sql
@@ -133,13 +134,14 @@ my @create = qw(
                createVocabularyBiomaterial.sql
 	     );
 
-# drop GUS first, then ApidbTuning, then Apidb (same order as we created).
+# drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
 # need to be reversed.  The trick here is to order these to avoid failures
 my @delete = qw( deleteGusVersion.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
       	         dropDbLinks.sql
+                 dropTestTuningSchema.sql
                  dropApidbTuningSchema.sql
                  dropApidbSchema.sql
                );
