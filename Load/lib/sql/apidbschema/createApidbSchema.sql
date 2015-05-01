@@ -28,6 +28,7 @@ GRANT REFERENCES ON sres.Taxon TO ApiDB;
 GRANT REFERENCES ON study.protocolappnode TO ApiDB;
 
 GRANT REFERENCES ON sres.PathwayRelationship TO ApiDB;
+GRANT REFERENCES ON sres.Pathway TO ApiDB;
 
 GRANT references ON dots.nafeatureimp TO apidb;
 GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
