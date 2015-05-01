@@ -22,7 +22,7 @@ sub makeGusObjects {
   my $reader = $self->getReader();
   my $pathwayHash = $reader->getPathwayHash();
 
-  my $typeToTableMap = {compound => 'ApiDB::PubChemCompound', enzyme => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
+  my $typeToTableMap = {compound => 'ApiDB::PubChemSubstance', enzyme => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
   my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme'};
 
   print STDERR "Making GUS Objects for pathway $pathwayHash->{NAME} ($pathwayHash->{SOURCE_ID} )\n";

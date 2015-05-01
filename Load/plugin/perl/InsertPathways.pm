@@ -170,7 +170,7 @@ sub queryForTableIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'PubChemCompound', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
+  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'PubChemSubstance', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
 
   my $sh = $dbh->prepare($query);
   $sh->execute();
@@ -190,7 +190,7 @@ sub queryForIds {
   my $dbh = $self->getQueryHandle();
   my $sql = "select 'SRes::EnzymeClass', ec_number, enzyme_class_id from sres.enzymeclass
 union
-select 'ApiDB::PubChemCompound', value, compound_id from apidb.pubchemcompound where property = 'Synonym'
+select 'ApiDB::PubChemSubstance', value, substance_id from apidb.pubchemsubstance where property = 'Synonym'
 union
 select 'SRes::Pathway', source_id,pathway_id from sres.pathway
 ";
