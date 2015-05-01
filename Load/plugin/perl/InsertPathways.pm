@@ -92,6 +92,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   my $inputFileDir = $self->getArg('pathwaysFileDir');
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
@@ -139,7 +142,8 @@ sub run {
       $pathway->addToSubmitList($relationship);
     }
 
-    $pathway->submit()
+    $pathway->submit();
+    $self->undefPointerCache();
   }
 }
 
@@ -206,11 +210,11 @@ select 'SRes::Pathway', source_id,pathway_id from sres.pathway
 sub undoTables {
   my ($self) = @_;
 
-  return ('SRes.Pathway',
-          'SRes.PathwayNode',
+  return ('ApiDB.PathwayReactionRel',
           'SRes.PathwayRelationship',
           'ApiDB.PathwayReaction',
-          'ApiDB.PathwayReactionRel',
+          'SRes.PathwayNode',
+          'SRes.Pathway',
 	 );
 }
 

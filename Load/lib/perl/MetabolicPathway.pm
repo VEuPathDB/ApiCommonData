@@ -14,6 +14,8 @@ sub new {
   $self->setRowIds($rowIds);
   $self->setExtDbRlsId($extDbRlsId);
 
+  $self->{_gus_reactions} = {};
+
   return $self;
 }
 

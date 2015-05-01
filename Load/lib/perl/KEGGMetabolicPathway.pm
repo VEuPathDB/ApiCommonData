@@ -18,13 +18,14 @@ sub getReaderClass {
 sub makeGusObjects {
   my ($self) = @_;
 
-  print "ENTER makeGusObjects\n";
 
   my $reader = $self->getReader();
   my $pathwayHash = $reader->getPathwayHash();
 
   my $typeToTableMap = {compound => 'ApiDB::PubChemCompound', enzyme => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
   my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme'};
+
+  print STDERR "Making GUS Objects for pathway $pathwayHash->{NAME} ($pathwayHash->{SOURCE_ID} )\n";
 
   my $pathway = GUS::Model::SRes::Pathway->new({name => $pathwayHash->{NAME}, 
                                                source_id => $pathwayHash->{SOURCE_ID},
@@ -75,103 +76,103 @@ sub makeGusObjects {
 
   foreach my $reaction (values %{$pathwayHash->{REACTIONS}}) {
     my $reactionSourceId = $reaction->{SOURCE_ID};
-    my $isReversible = lc($reaction->{TYPE}) eq 'reversible' ? 1 : 0;
-
     my $gusReaction = GUS::Model::ApiDB::PathwayReaction->new({source_id => $reactionSourceId});
     $self->addReaction($gusReaction, $reactionSourceId);
+  }
 
-    foreach my $enzymeId (@{$reaction->{ENZYMES}}) {
-      my $enzymeNode = $self->getNodeByUniqueId($enzymeId);
+  foreach my $compoundId (keys %{$pathwayHash->{EDGES}}) {
+    my $compoundNode = $pathwayHash->{NODES}->{$compoundId};
+    my $compoundSourceId = $compoundNode->{SOURCE_ID};
+    my $gusCompoundNode = $self->getNodeByUniqueId($compoundId);
 
-      foreach my $substrateHash(@{$reaction->{SUBSTRATES}}) {
-        my $substrateId = $substrateHash->{ENTRY};
-        my $substrateEnzymeRelation = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId,
-                                                              is_reversible => $isReversible});
+    foreach my $otherId (@{$pathwayHash->{EDGES}->{$compoundId}}) {
+      my $otherNode = $pathwayHash->{NODES}->{$otherId};
+      my $gusOtherNode = $self->getNodeByUniqueId($otherId);
 
-        my $substrateNode = $self->getNodeByUniqueId($substrateId);
+      my $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId});;
+      if($otherNode->{TYPE} eq 'enzyme') {
+        my $reactionId = $otherNode->{REACTION};
+        $reactionId =~ s/rn\://g;
+        my $reactionHash = $self->findReactionById($reactionId);
 
-        $substrateEnzymeRelation->setParent($substrateNode, "node_id");
-        $substrateEnzymeRelation->setParent($enzymeNode, "associated_node_id");
 
-        my $pathwayReactionRel = GUS::Model::ApiDB::PathwayReactionRel->new();
-        $pathwayReactionRel->setParent($gusReaction);
-        $pathwayReactionRel->setParent($substrateEnzymeRelation);
+        if($reactionHash) {
+          my $gusReaction = $self->getReactionByUniqueId($reactionId);
 
-        $self->addRelationship($substrateEnzymeRelation);
+          my $isReversible;
+          if($reactionHash->{TYPE} eq 'irreversible') {
+            $isReversible = 0;
+          }
+          if($reactionHash->{TYPE} eq 'reversible') {
+            $isReversible = 1;
+          }
+
+          if(&existsInArrayOfHashes($compoundSourceId, $reactionHash->{SUBSTRATES})) {
+            $gusRelationship->setParent($gusCompoundNode, "node_id");
+            $gusRelationship->setParent($gusOtherNode, "associated_node_id");
+            $gusRelationship->setIsReversible($isReversible);
+          }
+          elsif(&existsInArrayOfHashes($compoundSourceId, $reactionHash->{PRODUCTS})) {
+            $gusRelationship->setParent($gusOtherNode, "node_id");
+            $gusRelationship->setParent($gusCompoundNode, "associated_node_id");
+            $gusRelationship->setIsReversible($isReversible);
+          }
+          else {
+            die "Could not find compound $compoundId in either substrates or products ";
+          }
+
+
+          my $pathwayReactionRel = GUS::Model::ApiDB::PathwayReactionRel->new();
+          $pathwayReactionRel->setParent($gusReaction);
+          $pathwayReactionRel->setParent($gusRelationship);
+        }
+        else {
+          print STDERR "WARN:  Reaction $reactionId not found in this map xml file... cannot set is_reversible for this relation\n";
+          $gusRelationship->setParent($gusCompoundNode, "node_id");
+          $gusRelationship->setParent($gusOtherNode, "associated_node_id");
+        }
+      }
+      elsif($otherNode->{TYPE} eq 'map') {
+          $gusRelationship->setParent($gusCompoundNode, "node_id");
+          $gusRelationship->setParent($gusOtherNode, "associated_node_id");
+
+          #TODO:  How would I ever know if this is reversible??
+      }
+      else {
+        print  "WARN:  Edge should only be compound to X where X is either an enzyme or a map.  Found $otherNode->{TYPE}... skipping\n";
+        next;
       }
 
-      foreach my $productHash (@{$reaction->{PRODUCTS}}) {
-        my $productId = $productHash->{ENTRY};
-        my $enzymeProductRelation = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId,
-                                                                                    is_reversible => $isReversible});
-
-        my $productNode = $self->getNodeByUniqueId($productId);
-
-        $enzymeProductRelation->setParent($enzymeNode, "node_id");
-        $enzymeProductRelation->setParent($productNode, "associated_node_id");
-
-        my $pathwayReactionRel = GUS::Model::ApiDB::PathwayReactionRel->new();
-        $pathwayReactionRel->setParent($gusReaction);
-        $pathwayReactionRel->setParent($enzymeProductRelation);
-
-        $self->addRelationship($enzymeProductRelation);
-      }
+      $self->addRelationship($gusRelationship);
     }
   }
 
-
-  # MAKE MAP RELATIONS
-  foreach my $relation (values %{$pathwayHash->{RELATIONS}->{Maplink}}) {
-
-    my $ae = $relation->{ASSOCIATED_ENTRY};
-    my $aeType = $pathwayHash->{NODES}->{$ae}->{TYPE};
-
-    my $e = $relation->{ENTRY};
-    my $eType = $pathwayHash->{NODES}->{$e}->{TYPE};
-
-    my $ie = $relation->{INTERACTION_ENTITY_ENTRY};
-    my $ieType = $pathwayHash->{NODES}->{$ie}->{TYPE};
-
-
-    my $simpleRelation = {$ieType => $ie,
-    $eType => $e,
-    $aeType => $ae
-    };
-
-    my $enzymeId = $simpleRelation->{enzyme};
-    my $reaction = $pathwayHash->{REACTIONS}->{$enzymeId};
-    my $reactionType = $reaction->{TYPE};
-    my $isReversible = $reactionType eq 'reversible' ? 1 : 0;    
-
-    my @foundList;
-    foreach my $found (("SUBSTRATES", "PRODUCTS")) {
-      foreach my $hash (@{$reaction->{$found}}) {
-        push @foundList, $found if($hash->{ENTRY} eq $simpleRelation->{compound});
-      }
-    }
-    unless(scalar @foundList == 1) {
-      die "Found Compound $simpleRelation->{compound} more than once for reaction $reaction->{SOURCE_ID}";
-    }
-
-    my $compoundNode = $self->getNodeByUniqueId($simpleRelation->{compound});
-    my $mapNode = $self->getNodeByUniqueId($simpleRelation->{map});
-
-    my $mapRelation = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId,
-                                                                                    is_reversible => $isReversible});
-
-    # compound is a substrate. map is input
-    if($foundList[0] eq "SUBSTRATES") {
-        $mapRelation->setParent($mapNode, "node_id");
-        $mapRelation->setParent($compoundNode, "associated_node_id");
-    }
-
-    # compound is a product. map is output
-    if($foundList[0] eq "PRODUCTS") {
-        $mapRelation->setParent($compoundNode, "node_id");
-        $mapRelation->setParent($mapNode, "associated_node_id");
-    }
-  }
 }
+
+sub existsInArrayOfHashes {
+  my ($e, $ar) = @_;
+
+  foreach(@$ar) {
+    return 1 if($e == $_->{NAME});
+  }
+
+  return 0;
+}
+
+
+
+sub findReactionById {
+  my ($self, $reactionId) = @_;
+
+  my $reader = $self->getReader();
+  my $pathwayHash = $reader->getPathwayHash();
+
+  foreach my $reaction (values %{$pathwayHash->{REACTIONS}}) {
+    return $reaction if($reaction->{SOURCE_ID} eq $reactionId);
+  }
+
+}
+
 
 sub mapAndCheck {
   my ($self, $key, $hash) = @_;
