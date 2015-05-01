@@ -77,6 +77,7 @@ sub makeGusObjects {
   foreach my $reaction (values %{$pathwayHash->{REACTIONS}}) {
     my $reactionSourceId = $reaction->{SOURCE_ID};
     my $gusReaction = GUS::Model::ApiDB::PathwayReaction->new({source_id => $reactionSourceId});
+    $gusReaction->retrieveFromDB();
     $self->addReaction($gusReaction, $reactionSourceId);
   }
 
@@ -125,6 +126,7 @@ sub makeGusObjects {
           my $pathwayReactionRel = GUS::Model::ApiDB::PathwayReactionRel->new();
           $pathwayReactionRel->setParent($gusReaction);
           $pathwayReactionRel->setParent($gusRelationship);
+          $pathwayReactionRel->setParent($pathway);
         }
         else {
           print STDERR "WARN:  Reaction $reactionId not found in this map xml file... cannot set is_reversible for this relation\n";
