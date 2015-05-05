@@ -955,6 +955,21 @@ sub _undoFunction{
 
 }
 
+################ Evidence ################################
+
+sub evidence{
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  $feature->setEvidence(join(' | ', @tagValues));
+
+  return [];
+}
+
+sub _undoEvidence{
+  my ($self) = @_;
+
+}
 
 ################### open reading frame translation  #################
 ################ Translation#############################
