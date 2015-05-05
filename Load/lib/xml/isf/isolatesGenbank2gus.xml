@@ -49,7 +49,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_table" 	  ignore="true"/>
     <qualifier name="standard_name"/>
     <qualifier name="label"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
     <!-- from mRNA records -->
     <qualifier name="gene"/>
     <qualifier name="gene_synonym" 	  ignore="true"/>
@@ -79,7 +79,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
     <qualifier name="function"     handler="api" method="function"/>
     <qualifier name="experiment"		column="evidence"/>
     <qualifier name="standard_name"		ignore="true"/>
@@ -96,7 +96,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="function"     handler="api" method="function"/>
     <qualifier name="anticodon"        ignore="true" />
     <qualifier name="citation"        ignore="true" />
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <!-- misc_RNA_gene is different around 4 organism -->
@@ -106,7 +106,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region" ignore="true">
@@ -186,6 +186,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="cultivar"              ignore="true"/>
 	<qualifier name="bio_material"              ignore="true"/>
     <qualifier name="ecotype"              ignore="true"/>
+    <qualifier name="forma"              ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -195,7 +196,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="gene"		ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -206,7 +207,18 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="experiment"		ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
+  </feature>
+
+  <feature name="scRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
+    <qualifier name="locus_tag"            column="source_id"/>
+	<qualifier name="gene"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="product"		handler="api" method="product"/>
+    <qualifier name="db_xref"		ignore="true"/>
+    <qualifier name="experiment"		ignore="true"/>
+    <qualifier name="function"     handler="api" method="function"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="guide_RNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -216,7 +228,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"       handler="api" method="product"/>
     <qualifier name="db_xref"       ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="STS" table="DoTS::IsolateFeature" so="STS">
@@ -247,7 +259,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="mobile_element" table="DoTS::IsolateFeature" so="transposable_element">
     <qualifier name="mobile_element_type" column="label"/>
     <qualifier name="note" handler="api" method="note"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
+    <qualifier name="rpt_family" 	  ignore="true"/>
   </feature>
 
   <!--  from ToxoDB -->
@@ -261,7 +274,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier  name="GeneType" column="gene_type"/>
     <qualifier name="chromosome" column="map"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="transcript" ignore="true">
@@ -340,12 +353,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  handler="api" method="evidence"/>
   </feature>
 
   <feature name="polyA_site" so="polyA_site" ignore="true">
   </feature>
   <feature name="gap" ignore="true">
+  </feature>
+  <feature name="assembly_gap" ignore="true">
   </feature>
   <feature name="intron" ignore="true">
   </feature>
@@ -370,4 +385,5 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="protein_bind" ignore="true"/>
   <!-- from ToxoDB  -->
   <feature name="stem_loop" ignore="true"/>
+  <feature name="C_region" ignore="true"/>
 </mapping>
