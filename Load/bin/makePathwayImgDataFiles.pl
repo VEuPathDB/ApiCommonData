@@ -1,26 +1,4 @@
 #!/usr/bin/perl
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | broken
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | broken
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
-
 ## To make the xgmml data files for pathway images, drawn via Cytoscape Web
 
 use strict;
@@ -82,6 +60,7 @@ print "Size of array of Pathway IDs is ".( $#pids +1)  . "\n\n" if $verbose;
 foreach my $pathwayId (@pids) {
   print "Working for Pathway IDs: $pathwayId\n" if $verbose;
   $validFlag = 0;
+
   my $sql = &getNodesQuery($pathwayId);
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
@@ -89,18 +68,18 @@ foreach my $pathwayId (@pids) {
   my %node;
   my %edge;
 
-  while (my ($id, $display, $type, $glyph_type_id, $x, $y, $width, 
-	     $cpdName, $cpdCID, $cpdSID, $ecDescription, $pathName) = $sth->fetchrow_array()) {
+  while (my ($id, $display, $x, $y, $type,
+	     $primaryId, $altId, $primaryName, $altName) = $sth->fetchrow_array()) {
     $validFlag = 1;
+
     $node{$id}->{display} = $display;
     $node{$id}->{type} = $type;
     $node{$id}->{x} = $x;
     $node{$id}->{y} = $y;
-    $node{$id}->{cpdName} = $cpdName;
-    $node{$id}->{cpdCID} = $cpdCID;
-    $node{$id}->{cpdSID} = $cpdSID;
-    $node{$id}->{ecDescription} = $ecDescription;
-    $node{$id}->{pathName} = ($pathName)? $pathName : $display; # $display needed if pathway not loaded in db (as for MPMP)
+    $node{$id}->{primaryId} = $primaryId;
+    $node{$id}->{alternativeId} = $altId;
+    $node{$id}->{primaryName} = $primaryName;
+    $node{$id}->{alternativeName} = $altName;
 
     if ($type eq 'enzyme') {
       print "Getting orgs for enzyme: $display\n" if $verbose;
@@ -135,8 +114,8 @@ foreach my $pathwayId (@pids) {
 
       ## nodes
       for my $k (keys(%node) ){
-	if (  $node{$k}->{type} eq 'map' ) {
-	  $writer->startTag("node", "label" =>  $node{$k}->{pathName} , "id" => $k);
+	if (  $node{$k}->{type} eq 'metabolic process' ) {
+	  $writer->startTag("node", "label" =>  $node{$k}->{primaryName} , "id" => $k);
 	} else {
 	  $writer->startTag("node", "label" => $node{$k}->{display} , "id" => $k);
 	}
@@ -146,17 +125,17 @@ foreach my $pathwayId (@pids) {
 
 
 	if (  $node{$k}->{type} eq 'enzyme' ) {
-	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{ecDescription}, "type"=>"string");
+	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{primaryName}, "type"=>"string");
 	  $writer->endTag("att");
-	} elsif (  $node{$k}->{type} eq 'compound') {
-	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{cpdName}, "type"=>"string");
+	} elsif (  $node{$k}->{type} eq 'molecular entity') {
+	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{primaryName}, "type"=>"string");
 	  $writer->endTag("att");
-	  $writer->startTag("att", "name"=>"CID", "value"=>$node{$k}->{cpdCID}, "type"=>"string");
+	  $writer->startTag("att", "name"=>"CID", "value"=>$node{$k}->{primaryId}, "type"=>"string");
 	  $writer->endTag("att");
-	  $writer->startTag("att", "name"=>"SID", "value"=>$node{$k}->{cpdSID}, "type"=>"string");
+	  $writer->startTag("att", "name"=>"SID", "value"=>$node{$k}->{alternativeId}, "type"=>"string");
 	  $writer->endTag("att");
 
-	} elsif (  $node{$k}->{type} eq 'map') {
+	} elsif (  $node{$k}->{type} eq 'metabolic process') {
 	  $writer->startTag("att", "name"=>"Description", "value"=>$node{$k}->{display}, "type"=>"string");
 	  $writer->endTag("att");
 	}
@@ -191,8 +170,6 @@ foreach my $pathwayId (@pids) {
 	$writer->startTag("graphics",
 			  "width"=>"1",
 			  "fill"=>"#000000",
-			  "cy:sourceArrow"=>"0",
-			  "cy:targetArrow"=>"3"
 			 );
 	$writer->endTag("graphics");
 	$writer->endTag("edge");
@@ -214,7 +191,7 @@ $dbh->disconnect;
 
 # get ALL the pathway Ids
 sub getPathwayIds {
-  my $sql = "SELECT source_id FROM APIDB.pathway";
+  my $sql = "SELECT source_id FROM sres.pathway";
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
@@ -229,35 +206,71 @@ sub getPathwayIds {
 sub getNodesQuery {
     my $pathwayId = shift;
     my $sql = "
-SELECT  distinct nn.identifier, pn.display_label, 
-         CASE WHEN pathway_node_type_id =1 THEN 'enzyme' 
-                    WHEN  pathway_node_type_id =2 THEN 'compound' 
-                    ELSE 'map' END AS type, 
-        glyph_type_id, x, y, width,
-        cpdTable.cmpd_name, cpdTable.CID, substTable.SID,
-        enzy.description, map.name
-FROM APIDB.pathwaynode pn, APIDB.pathway p, apidb.NetworkNode nn,
-    ( SELECT s2.value, ca.preferred_name AS cmpd_name,  ca.compound_id as CID
-	      FROM APIDB.pubchemsubstance s1, APIDB.pubchemsubstance s2, ApidbTuning.CompoundAttributes ca
-	      WHERE s1.property = 'CID'
-             AND s1.value = ca.compound_id
-	      AND s1.substance_id = s2.substance_id
-	      AND NOT s2.property = 'CID'
- ) cpdTable,
-       ( SELECT substance_id AS SID, value
-	      FROM APIDB.pubchemsubstance 
-	      WHERE property = 'Synonym'
- ) substTable,
-             (SELECT ec_number, description FROM sres.enzymeClass) enzy,
-             (SELECT name, source_id FROM apidb.pathway) map
-WHERE pn.parent_id = p.pathway_id
-AND p.source_id= '$pathwayId' 
-AND pn.row_id = nn.network_node_id
-AND  pn.display_label = cpdTable.value (+) 
-AND  pn.display_label = substTable.value (+) 
-AND pn.display_label = enzy.ec_number(+)
-AND pn.display_label = map.source_id (+)
-AND nn.identifier NOT LIKE '%_X:_Y:'";
+select n.pathway_node_id
+     , n.display_label
+     , n.x
+     , n.y
+     , ot.name
+     , s.substance_id as identifier
+     , cpd.compound_id as alternative_identifier
+     , cpd.iupac_name as name 
+     , s.name as alternative_name
+from sres.pathwaynode n
+   , sres.pathway p
+   , sres.ontologyterm ot
+   , (select s.substance_id, c.compound_id, c.iupac_name
+      from apidb.pubchemsubstance s, apidbtuning.compoundattributes c
+      where s.property = 'CID'
+      and s.value = c.compound_id) cpd
+   , (select substance_id, listagg(value, ';') within group (order by substance_id) as name
+      from apidb.pubchemsubstance
+      where property != 'CID'
+      group by substance_id) s
+where p.source_id = '$pathwayId'
+and  n.pathway_id = p.pathway_id
+and n.pathway_node_type_id = ot.ontology_term_id
+and ot.name = 'molecular entity'
+and n.row_id = cpd.substance_id (+)
+and n.row_id = s.substance_id (+)
+union
+select n.pathway_node_id
+     , n.display_label
+     , n.x
+     , n.y
+     , ot.name
+     , ec.enzyme_class_id as identifier
+     , null as alternative_identifier
+     , ec.description as name 
+     , null as alternative_name
+from sres.pathway p
+   , sres.pathwaynode n
+   , sres.ontologyterm ot
+   , sres.enzymeclass ec
+where p.source_id = '$pathwayId'
+and p.pathway_id = n.pathway_id
+and n.pathway_node_type_id =ot.ontology_term_id
+and ot.name = 'enzyme'
+and n.row_id = ec.enzyme_class_id (+)
+union
+select n.pathway_node_id
+     , n.display_label
+     , n.x
+     , n.y
+     , ot.name
+     , m.pathway_id as identifier
+     , null as alternative_identifier
+     , m.name as name 
+     , null as alternative_name
+from sres.pathway p
+   , sres.pathwaynode n
+   , sres.ontologyterm ot
+   , sres.pathway m
+where p.source_id = '$pathwayId'
+and p.pathway_id = n.pathway_id
+and n.pathway_node_type_id =ot.ontology_term_id
+and ot.name = 'metabolic process'
+and n.display_label = m.source_id (+)
+";
     return $sql;
 }
 
@@ -265,18 +278,17 @@ AND nn.identifier NOT LIKE '%_X:_Y:'";
 sub getOrganismsQuery {
     my ($ecNum, $sqlNot) = @_;
     my $sql = 
-"SELECT apidb.tab_to_string(set(cast(COLLECT(DISTINCT SUBSTR( gf.organism , 1, 1) || '. ' ||  SUBSTR(gf.organism , INSTR(gf.organism, ' ', 1, 1) +1)) AS apidb.varchartab))) 
-            FROM apidbtuning.geneattributes gf, ApidbTuning.GenomicSequence gs,
-                 dots.Transcript t, dots.translatedAaFeature taf,
-                 dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
-            WHERE gs.na_sequence_id = gf.na_sequence_id
-              AND ga.source_id = gf.source_id
-              AND gf.na_feature_id = t.parent_id
-              AND t.na_feature_id = taf.na_feature_id
-              AND taf.aa_sequence_id = asec.aa_sequence_id
-              AND asec.enzyme_class_id = ec.enzyme_class_id
-              AND  $sqlNot asec.evidence_code = 'OrthoMCLDerived'
-              AND ec.ec_number LIKE REPLACE(REPLACE(REPLACE(REPLACE(lower( '$ecNum'),' ',''),'-', '%'),'*','%'),'any','%')";
+"select apidb.tab_to_string(set(cast(collect(distinct substr( tn.name , 1, 1) || '. ' ||  substr(tn.name , instr(tn.name, ' ', 1, 1) +1)) as apidb.varchartab))) 
+  from sres.taxonname tn
+         , dots.aasequenceenzymeclass asec
+         , dots.aasequence s
+         , sres.enzymeclass ec
+   where asec.enzyme_class_id = ec.enzyme_class_id
+    and asec.aa_sequence_id = s.aa_sequence_id
+    and s.taxon_id = tn.taxon_id
+    and tn.name_class = 'scientific name'
+   AND  $sqlNot asec.evidence_code = 'OrthoMCLDerived'
+    AND ec.ec_number LIKE REPLACE(REPLACE(REPLACE(REPLACE(lower( '$ecNum'),' ',''),'-', '%'),'*','%'),'any','%')";
 
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
@@ -291,24 +303,19 @@ sub getOrganismsQuery {
 
 sub getEdgesQuery {
     my $pathwayId = shift;
-    return ("SELECT n1.identifier AS source, n2.identifier AS target,
-             CASE WHEN  nrc.source_node = 0 THEN 'Reversible'
-               ELSE 'Irreversible' END AS direction
-FROM APIDB.network n, APIDB.networkrelcontextlink nrcl,
-  APIDB.networkrelcontext nrc, APIDB.networkcontext nc,
-  APIDB.networkrelationship nr,
-  APIDB.networknode n1, APIDB.networknode n2
-WHERE  n.name like  'Metabolic Pathways%'
-  AND n.network_id = nrcl.network_id
-  AND nrcl.network_rel_context_id = nrc.network_rel_context_id
-  AND nc.network_context_id = nrc.network_context_id
-  AND nc.name = '$pathwayId'
-  AND nrc.network_relationship_id = nr.network_relationship_id
-  AND nr.node_id = n1.network_node_id
-  AND nr.associated_node_id = n2.network_node_id
-  AND ( (n1.IDENTIFIER LIKE '%_X:%'   AND n2.IDENTIFIER LIKE '%_X:%') OR ( nc.NAME NOT LIKE '%ec%'))
-  AND n1.identifier NOT LIKE '%_X:_Y:' AND n2.identifier NOT LIKE '%_X:_Y:' 
-ORDER BY nr.network_relationship_id");
+    return ("select n.pathway_node_id as source
+     , a.pathway_node_id as target
+     , decode(r.is_reversible, 1, 'Reversible', 0, 'Irreversible', 'Unknown') as direction
+from sres.pathway p
+   , sres.pathwaynode n
+   , sres.pathwaynode a
+   , sres.pathwayrelationship r
+where r.node_id = n.pathway_node_id
+and r.associated_node_id = a.pathway_node_id
+and a.pathway_id = p.pathway_id
+and n.pathway_id = p.pathway_id
+and p.source_id = '$pathwayId'
+");
 }
 
 
