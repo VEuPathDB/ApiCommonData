@@ -246,8 +246,11 @@ sub getGFF3AttributeKey{
 sub createGff3AttrObj{
   my ($self,$key,$value) = @_;
   my $attrKey = $self->getGFF3AttributeKey($key);
-  my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
-  $attr->setParent($attrKey);
+
+  my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value ,
+                                                    gff3_attribute_key_id => $attrKey->getId() });
+#  $attr->setParent($attrKey);
+
   return $attr
 }
 
