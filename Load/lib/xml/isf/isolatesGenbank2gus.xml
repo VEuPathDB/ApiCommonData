@@ -87,6 +87,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="experiment"		column="evidence"/>
     <qualifier name="standard_name"		ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="allele" ignore="true"/>
   </feature>
 
   <feature name="tRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -102,6 +103,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="citation"        ignore="true" />
     <qualifier name="inference" 	  ignore="true"/>
     <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
   </feature>
 
   <!-- misc_RNA_gene is different around 4 organism -->
@@ -205,6 +207,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="experiment"		ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
     <qualifier name="inference" 	  ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -216,6 +219,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="experiment"		ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
     <qualifier name="inference" 	  ignore="true"/>
+    <qualifier name="citation" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
