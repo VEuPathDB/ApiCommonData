@@ -253,10 +253,13 @@ sub loadIsolates {
           my $ncbiTax = $1;
           my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbiTax });
 
-          $taxonObj->retrieveFromDB;
-
-          $node->setParent($taxonObj);
-          $extNASeq->setParent($taxonObj);
+          if($taxonObj->retrieveFromDB()) {
+            $node->setParent($taxonObj);
+            $extNASeq->setParent($taxonObj);
+          }
+          else {
+            $self->log("No Row in SRes::Taxon for ncbi tax id $ncbiTax");
+          }
         }
 
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
