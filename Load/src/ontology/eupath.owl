@@ -717,7 +717,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity to indicate whether a household has electricity.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity to indicate whether a household has electricity in a dwelling.</obo:IAO_0000115>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">electricity?</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:EUPATH_0000112>Information states whether a household has electricity.</obo:EUPATH_0000112>
@@ -805,7 +805,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># acres</obo:EUPATH_0000052>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">land area measured in acres: a scalar measurement datum of land measured in acres that may be of a particular type such as land owned.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">land area measured in acres: a scalar measurement datum of land measured in acres that may be of a particular type such as land owned by a household.</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:EUPATH_0000112>land area measured in acres</obo:EUPATH_0000112>
@@ -827,7 +827,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># meals / day</obo:EUPATH_0000052>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">usual number of meals per day</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of meals per day in a household</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:EUPATH_0000112>usual number of meals per day</obo:EUPATH_0000112>
@@ -849,7 +849,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># meat meals / wk</obo:EUPATH_0000052>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of days eating meat in a  week</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of days eating meat in a  week in a household</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:EUPATH_0000112>number of days eating meat in the last week</obo:EUPATH_0000112>
@@ -871,7 +871,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">food problems / wk</obo:EUPATH_0000052>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how often problems satisfying food needs</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how often problems satisfying food needs in a household</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
@@ -892,7 +892,7 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A length measurement datum of the distance in kilometers to the nearest health facility.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A length measurement datum of the distance in kilometers to from a dwelling to the nearest health facility.</obo:IAO_0000115>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dist to health facility</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000119>Person: Chris Stoeckert</obo:IAO_0000119>
@@ -1106,12 +1106,6 @@
             </owl:Restriction>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000064"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization (WHO) criteria.</obo:IAO_0000115>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">severe malaria symptom</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
@@ -1652,12 +1646,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">elevated temperature or subjective fever</obo:IAO_0000115>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">febrile</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>elevated temperature or subjective fever</obo:EUPATH_0000112>
@@ -1825,12 +1813,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000110">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">organismal body temperature measurement datum</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000102"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A temperature measurement datum that is about an organism.</obo:IAO_0000115>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temperature</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
@@ -2171,12 +2153,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>Age of an organism since birth</obo:EUPATH_0000112>
     </owl:Class>
@@ -2231,12 +2207,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex</obo:EUPATH_0000052>
         <obo:EUPATH_0000112>Either of the two main categories (male and female) into which humans and many other living things are divided on the basis of their reproductive functions</obo:EUPATH_0000112>
     </owl:Class>
