@@ -60,7 +60,7 @@ foreach(@chrs) {
 
 sub printFasta {
   my ($dbh, $chr, $path)  = @_;
-  my $sql = "select sequence from ApidbTuning.NASequence where source_id = '$chr'"; 
+  my $sql = "select sequence from ApidbTuning.GenomicSequenceSequence where source_id = '$chr'"; 
   my $sth = $dbh->prepareAndExecute($sql);
   while(my ($seq) = $sth->fetchrow_array) {
     $seq =~ s/(.{1,60})/$1\n/g;

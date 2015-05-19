@@ -2822,7 +2822,7 @@ sub makeMixedGenomicDownloadFile {
                ns.sequence
            FROM dots.nasequence ns,
 	        sres.taxonname tn,
-                ApidbTuning.SequenceAttributes sa
+                ApidbTuning.GenomicSequenceAttributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
 	    AND ns.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'
