@@ -219,6 +219,9 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to dots;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to study;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
 
+-- for v$ selects, which are needed by org.gusdb.fgputil.db.ConnectionWrapper to
+-- check for uncommitted transactions before returning connections to the pool.
+GRANT SELECT_CATALOG_ROLE TO GUS_R;
 
 -- indexes to help queries against SnpFeature
 -- (and some ALTER TABLE statements to make the indexes possible;
