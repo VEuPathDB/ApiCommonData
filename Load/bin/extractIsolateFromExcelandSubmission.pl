@@ -521,9 +521,9 @@ while(my ($k, $v) = each %hash) {
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-#my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
+my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
 # don't allow tbl2asn annotate the longest ORF
-my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
+#my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
 system($cmd);
 
 __DATA__

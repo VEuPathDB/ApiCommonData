@@ -37,6 +37,8 @@ use Getopt::Long qw(GetOptions);
 
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
+use File::Basename;
+
 
 use File::Temp qw(tempfile);
 
@@ -78,15 +80,17 @@ unless (-e $inputFile) {
   die "The specified inputFile is not valid!\n";
 }
 
+my $DIR = dirname($inputFile);
+
 if($inputFileType eq 'blat'){
   print STDERR "Sorting blat results file by genome sequence and score\n";
-  system($inputFile =~  m/\.gz$/ ? "gunzip -c " : "cat "." $inputFile | addScoreColumnToBlatFile | sort  -k 14,14 -k 22,22rn | cut -f 1-21 > $inputFile.sorted");
+  system($inputFile =~  m/\.gz$/ ? "gunzip -c " : "cat "." $inputFile | addScoreColumnToBlatFile | sort  -T $DIR -k 14,14 -k 22,22rn | cut -f 1-21 > $inputFile.sorted");
   $inputFile = "$inputFile.sorted";
 }
 
 if ($inputFile =~ m/\.gz$/) {
   open(INPUT, "gunzip -c $inputFile |") or die $!;
-} 
+}
 else {
   open(INPUT, "<$inputFile") or die $!;
 }
@@ -316,6 +320,8 @@ if($inputFileType eq 'blast'){
 }
 close(INPUT);
 close(OUTPUT);
+
+die "$outputFile is empty" if (-z $outputFile);
 
 # rescan output file to replace counts:
 ## don't need to do this for blat
