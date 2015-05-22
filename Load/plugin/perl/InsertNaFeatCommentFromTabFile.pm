@@ -149,7 +149,7 @@ sub run {
 
       chomp;
 
-      my ($sourceId, $comment) = split(/\t/,$_);
+      my ($sourceId, $comment, $comment_date) = split(/\t/,$_);
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
 
@@ -157,7 +157,7 @@ sub run {
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
-	  $self->makeNaFeatComment($nafeatureId,$comment);
+	  $self->makeNaFeatComment($nafeatureId,$comment, $comment_date);
   
 	  $processed++;
 
@@ -175,10 +175,12 @@ sub run {
 
 
 sub makeNaFeatComment {
-  my ($self,$naFeatId,$comment) = @_;
+  my ($self,$naFeatId,$comment,$comment_date) = @_;
 
   my $naFeatComment = GUS::Model::DoTS::NAFeatureComment->new({'na_feature_id' => $naFeatId,
-						              'comment_string' => $comment});
+						              'comment_string' => $comment,
+						              'comment_date' => $comment_date
+                        });
 
   $naFeatComment->submit();
 }
