@@ -1,7 +1,9 @@
 create table ApiDB.PhenotypeModel (
  phenotype_model_id                       number(10) ,
  external_database_release_id      NUMBER(10) NOT NULL,
- name                                                  varchar(100),
+ na_feature_id                   NUMBER(10),
+ source_id                                             varchar(50),
+ name                                            varchar(100),
  pubmed_id                                        number(10),
  modification_type                            varchar(100),
  is_successful                                  number(1),
@@ -18,6 +20,7 @@ create table ApiDB.PhenotypeModel (
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
  FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
+ FOREIGN KEY (na_feature_id) REFERENCES dots.nafeatureimp,
  PRIMARY KEY (phenotype_model_id)
 );
 
@@ -49,7 +52,6 @@ create table ApiDB.PhenotypeResult (
  phenotype_result_id                  number(10),
  phenotype_model_id                   NUMBER(10),
  external_database_release_id      NUMBER(10) NOT NULL,
- na_feature_id                   NUMBER(10),
  phenotype_quality_term_id                   NUMBER(10),
  phenotype_entity_term_id                   NUMBER(10),
  timing           varchar2(50),
@@ -70,7 +72,6 @@ create table ApiDB.PhenotypeResult (
  ROW_ALG_INVOCATION_ID        NUMBER(12),
  FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
  FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
- FOREIGN KEY (na_feature_id) REFERENCES dots.nafeatureimp,
  FOREIGN KEY (phenotype_quality_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (phenotype_entity_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (life_cycle_stage_term_id) REFERENCES sres.ontologyterm,
