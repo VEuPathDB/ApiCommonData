@@ -55,7 +55,6 @@ create table ApiDB.PhenotypeResult (
  phenotype_entity_term_id                   NUMBER(10),
  timing           varchar2(50),
  life_cycle_stage_term_id                   NUMBER(10),
- life_cycle_stage           varchar2(250),
  phenotype_post_composition           varchar2(2000),
  evidence_term_id                    NUMBER(10),
  MODIFICATION_DATE            DATE,
