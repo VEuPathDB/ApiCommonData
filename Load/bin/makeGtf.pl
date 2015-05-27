@@ -10,7 +10,7 @@ use GUS::Community::GeneModelLocations;
 
 use Data::Dumper;
 
-my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly, $soTermName);
+my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly, $soTermName, $soExclude);
 &GetOptions("verbose!"=> \$verbose,
             "outputFile=s" => \$outFile,
             "gusConfigFile=s" => \$gusConfigFile,
@@ -18,6 +18,7 @@ my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec, $cdsOnly, $so
             "genomeExtDbRlsSpec=s" => \$genomeExtDbRlsSpec,
             "cds_only" => \$cdsOnly,
             "sequence_ontology_term=s" => \$soTermName,
+            "so_exclude" => \$soExclude,
     ); 
 
 if(!$outFile || !$project){
@@ -52,7 +53,7 @@ my $genomeExtDbRlsId = &getExtDbRlsIdFromSpec($dbh, $genomeExtDbRlsSpec);
 
 
 
-my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, $soTermName);
+my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, $soTermName, $soExclude);
 my @geneSourceIds = sort @{$geneModelLocations->getAllGeneIds()};
 
 foreach my $geneSourceId (@geneSourceIds) {
