@@ -303,11 +303,13 @@ sub getMapping {
 
     my $featId;
 
-    if ($self->getArg('organismAbbrev')){
+    ###comment out this part because it caused failures when "viewName" is "Transcript"
+    #if ($self->getArg('organismAbbrev')){
 
-	$featId = &$method($self, $sourceId, $geneExtDbRlsId, $self->getArg('organismAbbrev'));
-    }
-    elsif($viewName eq 'Transcript'){
+    #	$featId = &$method($self, $sourceId, $geneExtDbRlsId, $self->getArg('organismAbbrev'));
+    #}
+
+    if($viewName eq 'Transcript'){
       $featId = &$method($self, $sourceId, $viewName);
     }
     elsif($viewName eq 'GeneFeature'){
