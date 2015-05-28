@@ -331,9 +331,11 @@ sub traverseSeqFeatures {
 
 	    $gene->add_SeqFeature($transcript);
             push(@genes, $gene);
-	    if ($cdsCtr > $exonCtr) {
-	      print STDERR "missed exon find: $transId\n";
-	    }
+
+	    ### testing if number of exon is less than the number of cds
+	    #if ($cdsCtr > $exonCtr) {
+	    #  print STDERR "missed exon find: $transId\n";
+	    #}
 	}
     }
     return (\@genes ,\@UTRs);
