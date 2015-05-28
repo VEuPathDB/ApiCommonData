@@ -125,10 +125,10 @@ sub update_coverage {
 
         next unless ($chr && $start && $stop && $score);
 
-        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 1) );
+        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 0) );
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
 
-        my $normalized_score_unlogged = $score == 0 ? 0 : sprintf ("%.2f", max(($score * $max_sum_coverage / $v ), 1) );
+        my $normalized_score_unlogged = sprintf ("%.2f", ($score * $max_sum_coverage / $v ));
         print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score_unlogged\n";
 
       }
