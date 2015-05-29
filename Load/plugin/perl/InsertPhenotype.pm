@@ -129,6 +129,7 @@ sub run {
     my $lifeCycleTerm = $a[10];
     my $phenotypeString = $a[11];
     my $evidenceTerm = $a[12];
+    my $note = $a[13];
 
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $sourceId, 0, $self->getArg('organismAbbrev')) ;
 
@@ -171,6 +172,7 @@ sub run {
                                                                    timing => $timing,
                                                                    life_cycle_stage_term_id => $lifeCycleTermId,
                                                                    phenotype_post_composition => $phenotypeString,
+                                                                   phenotype_comment => $note,
                                                                    evidence_term_id => $evidenceTermId,
                                                                   });
 
