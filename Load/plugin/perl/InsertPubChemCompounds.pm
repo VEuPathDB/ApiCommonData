@@ -232,20 +232,26 @@ sub insertPubChemCompound {
 									property    => $p,
 									value       => $l->{content}
 								      });
-	    $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
+            if (!$pubChemCmpd->retrieveFromDB()) {
+              $pubChemCmpd->submit()  ;
+              $count++;
+            }
 	  }
 	} else {
 	  my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
 								      property    => $p,
 								      value       => $cmpd{$cid}{$p}
 								    });
-	  $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
+          if (!$pubChemCmpd->retrieveFromDB()) {
+            $pubChemCmpd->submit()  ;
+            $count++;
+          }
 	}
-      }
-      $count++;
-      if ($count % 100 == 0) {
-	$self->undefPointerCache();
-	$self->log("Inserted entries for $count PubChem Compounds.");
+
+        if ($count % 1000 == 0) {
+          $self->undefPointerCache();
+          $self->log("Inserted entries for $count PubChem Compounds.");
+        }
       }
     }
   }
