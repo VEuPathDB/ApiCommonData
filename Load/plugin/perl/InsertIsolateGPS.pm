@@ -9,7 +9,7 @@ package ApiCommonData::Load::Plugin::InsertIsolateGPS;
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
   # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | broken
+  # GUS4_STATUS | Dots.Isolate                   | auto   | fixed
   # GUS4_STATUS | DeprecatedTables               | auto   | absent
   # GUS4_STATUS | Pathway                        | auto   | absent
   # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
@@ -18,7 +18,6 @@ package ApiCommonData::Load::Plugin::InsertIsolateGPS;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
@@ -38,6 +37,16 @@ my $argsDeclaration =
             format         => '',
             constraintFunc => undef,
             isList         => 0, }),
+
+ stringArg({ descr => 'External DB Spec for the Ontology containing the country names',
+	     name  => 'extDbRlsSpec',
+	     isList    => 0,
+	     reqd  => 1,
+	     constraintFunc => undef,
+	   }),
+
+
+
   ];
 
 my $purpose = <<PURPOSE;
@@ -99,6 +108,8 @@ sub run {
 
   my $count;
 
+  my $ontologyTerms = $self->getOntologyTerms();
+
   while(<FILE>) {
       chomp;
       next unless $_;
@@ -106,6 +117,11 @@ sub run {
 
       my ($alpha2, $alpha3, $numeric, $fips, $country, $capital, $area, $population, $continent, $lat, $lng, $toponym_name) = split(/\|/, $_);
       next unless $country;
+
+      unless($ontologyTerms->{$country}) {
+        $self->userError("Country [$country] was not found as an existing ontology term.  Update the GPS file to match the ontology");
+      }
+
       $area =~ s/,//g;
       $population =~ s/,//g;
       my $gps = GUS::Model::ApiDB::IsolateGPS->
@@ -132,6 +148,25 @@ sub run {
     }
   }
   return("Loaded $count ApiDB::IsolateGPS");
+}
+
+
+sub getOntologyTerms {
+  my ($self) = @_;
+
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $dbh = $self->getQueryHandle();
+  my $sql = "select name from sres.ontologyterm where external_database_release_id = ?";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+
+  my %rv;
+  while(my ($name) = $sh->fetchrow_array()) {
+    $rv{$name} = 1;
+  }
+  $sh->finish();
+
+  return \%rv;
 }
 
 sub undoTables {
