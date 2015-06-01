@@ -92,7 +92,7 @@ sub run {
 
   my $studyName = "Mass Spec Peptides from $extDbSpec";
 
-  my $study = GUS::Model::Study::Study->new({name => $studyName});
+  my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
   my $protocol = GUS::Model::Study::Protocol->new({name => ref($self) });
   $protocol->retrieveFromDB();
 
