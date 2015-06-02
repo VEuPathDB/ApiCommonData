@@ -25,7 +25,7 @@ CREATE TABLE ApiDB.PubChemCompound (
 
 CREATE TABLE ApiDB.PubChemCompoundProperty (
  	pubchem_compound_property_id  NUMBER(10),
- 	puchem_compound_id            NUMBER(10) NOT NULL,
+ 	pubchem_compound_id            NUMBER(10) NOT NULL,
  	property                VARCHAR2(20) NOT NULL,
  	value                   VARCHAR2(3000) NOT NULL,
  	MODIFICATION_DATE       DATE,
@@ -40,7 +40,7 @@ CREATE TABLE ApiDB.PubChemCompoundProperty (
  	ROW_PROJECT_ID          NUMBER(4),
  	ROW_ALG_INVOCATION_ID   NUMBER(12),
  	PRIMARY KEY (pubchem_compound_property_id),
-	FOREIGN KEY (puchem_compound_id) REFERENCES ApiDB.PubChemCompound (pubchem_compound_id)
+	FOREIGN KEY (pubchem_compound_id) REFERENCES ApiDB.PubChemCompound (pubchem_compound_id)
 );
 
 

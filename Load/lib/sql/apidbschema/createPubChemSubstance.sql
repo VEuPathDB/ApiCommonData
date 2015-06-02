@@ -25,7 +25,7 @@ CREATE TABLE apidb.PubChemSubstanceProperty (
  	USER_READ               NUMBER(1),
  	USER_WRITE              NUMBER(1),
  	GROUP_READ              NUMBER(1),
- 	GROUP_WRITE             NUMBERsubstance(1),
+ 	GROUP_WRITE             NUMBER(1),
  	OTHER_READ              NUMBER(1),
  	OTHER_WRITE             NUMBER(1),
  	ROW_USER_ID             NUMBER(12),
@@ -33,7 +33,7 @@ CREATE TABLE apidb.PubChemSubstanceProperty (
  	ROW_PROJECT_ID          NUMBER(4),
  	ROW_ALG_INVOCATION_ID   NUMBER(12),
  	PRIMARY KEY (pubchem_substance_property_id),
-	FOREIGN KEY (puchem_substance_id) REFERENCES ApiDB.PubChemSubstance (pubchem_substance_id)
+	FOREIGN KEY (pubchem_substance_id) REFERENCES ApiDB.PubChemSubstance (pubchem_substance_id)
 );
 
 CREATE INDEX apidb.pcs_mod_ix ON apidb.PubChemSubstance (modification_date, pubchem_substance_id);
