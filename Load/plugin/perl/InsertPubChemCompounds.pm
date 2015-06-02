@@ -32,6 +32,7 @@ use warnings;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemCompound;
+use GUS::Model::ApiDB::PubChemCompoundProperty;
 
 
 my %cmpd;
@@ -70,7 +71,7 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Compounds out of a single XML file, into ApiDB.PubChemCompound
+Plugin to load PubChem Compounds out of a single XML file, into ApiDB.PubChemCompound and ApiDB.PubChemCompoundProperty
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -86,6 +87,7 @@ NOTES
 
   my $tablesAffected = <<AFFECT;
 ApiDB.PubChemCompound
+ApiDB.PubChemCompoundProperty
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -191,7 +193,7 @@ sub getExistingCids {
   my ($self) = @_;
   my %cidHash;
 
-  my $sql = "SELECT distinct compound_id from ApiDB.PubChemCompound";
+  my $sql = "SELECT compound_id from ApiDB.PubChemCompound";
 
   my $dbh = $self->getQueryHandle();
   my $sth = $dbh->prepareAndExecute($sql);
@@ -220,32 +222,38 @@ sub insertPubChemCompound {
     if ($loadedCids{$cid}) {
       $self->log("Ignoring CID $cid; it is already present in ApiDB.PubChemCompound.");
     } else {
-
       my %y = %{$cmpd{$cid}};
       my @props = keys(%y);   # keys are inner various properties for each compound
+
+      my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({
+								 compound_id => $cid,
+								 MolecularWeight   => $cmpd{$cid}{'MolecularWeight'},
+								 MolecularFormula  => $cmpd{$cid}{'MolecularFormula'},
+								 IUPACName   => $cmpd{$cid}{'IUPACName'},
+								 InChI   => $cmpd{$cid}{'InChI'},
+								 InChIKey  => $cmpd{$cid}{'InChIKey'},
+								 IsomericSmiles   => $cmpd{$cid}{'IsomericSmiles'},
+								 CanonicalSmiles   => $cmpd{$cid}{'CanonicalSmiles'},
+								});
+      if (!$pubChemCmpd->retrieveFromDB()) {
+	$pubChemCmpd->submit()  ;
+	$count++;
+      }
+      my $pubchem_compound_id = $pubChemCmpd->getPubchemCompoundId($cid);
 
       foreach my $p (@props) {
 	if($p eq 'Synonym' || $p eq  'Name') {
 	  my @lst = @{$cmpd{$cid}{$p}};
 	  foreach my $l (@lst) {
-	    my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-									property    => $p,
-									value       => $l->{content}
-								      });
-            if (!$pubChemCmpd->retrieveFromDB()) {
-              $pubChemCmpd->submit()  ;
-              $count++;
+	    my $pubChemCmpdProperty = GUS::Model::ApiDB::PubChemCompoundProperty->new({ 
+									       pubchem_compound_id => $pubchem_compound_id,
+									       property    => $p,
+									       value       => $l->{content}
+									      });
+            if (!$pubChemCmpdProperty->retrieveFromDB()) {
+              $pubChemCmpdProperty->submit()  ;
             }
 	  }
-	} else {
-	  my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-								      property    => $p,
-								      value       => $cmpd{$cid}{$p}
-								    });
-          if (!$pubChemCmpd->retrieveFromDB()) {
-            $pubChemCmpd->submit()  ;
-            $count++;
-          }
 	}
 
         if ($count % 1000 == 0) {

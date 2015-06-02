@@ -32,6 +32,7 @@ use warnings;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemSubstance;
+use GUS::Model::ApiDB::PubChemSubstanceProperty;
 
 
 my %subst;
@@ -86,7 +87,7 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Substances data (compound_id or synonymns) into ApiDB.PubChemSubstance, and to create a file of PubChem compounds IDs (ithat were in the data file).
+Plugin to load PubChem Substances data (compound_id into ApiDB.PubChemSubstance and  synonymns in ApiDB.PubChemSubstanceProperty), and to create a file of PubChem compounds IDs (ithat were in the data file).
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -102,6 +103,7 @@ NOTES
 
   my $tablesAffected = <<AFFECT;
 ApiDB.PubChemSubstance
+ApiDB.PubChemSubstanceProperty
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -190,11 +192,7 @@ sub getExistingSids {
   my ($self) = @_;
   my %sidHash;
 
-  my $sql = <<EOSQL;
-  SELECT distinct substance_id 
-  FROM ApiDB.PubChemSubstance 
-  WHERE property= '$property'
-EOSQL
+  my $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance";
 
   my $dbh = $self->getQueryHandle();
   my $sth = $dbh->prepareAndExecute($sql);
@@ -225,26 +223,32 @@ sub insertPubChemSubstance {
     } else {
 
       my %y = %{$subst{$sid}};
-      my @props = keys(%y);   # keys of inner hash are various properties for each substance
 
-      foreach my $p (@props) {
-	if($p eq 'Synonym') {
-	  my @syns = @{ $subst{$sid}{Synonym} };
-	  foreach my $s (@syns) {
-	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-									  property     => $p,
-									  value        => $s
-									});
-	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
-	  }
-	} elsif ($p eq 'CID' && $subst{$sid}{$p}){
-	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-									property     => $p,
-									value        => $subst{$sid}{$p}
+      if ($property eq 'CID' && $subst{$sid}{ 'CID'}){
+	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ 
+								       substance_id => $sid,
+								       compound_id     => $subst{$sid}{'CID'}
 								      });
 	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+
+	} else {
+	  my @syns = @{ $subst{$sid}{'Synonym'} };
+	  foreach my $s (@syns) {
+	    # make an entry in PubChemSubstance, if not there
+	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ 
+									 substance_id => $sid 
+									});
+	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+	    my $pubchem_substance_id = $pubChemSubst->getPubchemSubstanceId();
+
+	    my $pubChemSubstProperty = GUS::Model::ApiDB::PubChemSubstanceProperty->new({
+											 pubchem_substance_id => $pubchem_substance_id,
+											 property     => 'Synonym',
+											 value        => $s
+											});
+	    $pubChemSubstProperty->submit();
+	  }
 	}
-      }
       $count++;
       $self->undefPointerCache() if $count % 100 == 0;
 
