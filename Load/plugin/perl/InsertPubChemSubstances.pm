@@ -224,10 +224,11 @@ sub insertPubChemSubstance {
 
       my %y = %{$subst{$sid}};
 
-      if ($property eq 'CID' && $subst{$sid}{ 'CID'}){
+      if ($property eq 'CID') {
+	  my $cid = ($subst{$sid}{ 'CID'})? $subst{$sid}{ 'CID'} : '';
 	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ 
 								       substance_id => $sid,
-								       compound_id     => $subst{$sid}{'CID'}
+								       compound_id     => $cid
 								      });
 	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 
@@ -269,8 +270,10 @@ sub makeCidFile {
 
   foreach my $sid (@data) {
     my $cid = $subst{$sid}{CID};
-    $self->log("sid is $sid AND cid is $cid");
-    print FILE "$cid\n";
+    if ($cid) {
+        $self->log("sid is $sid AND cid is $cid") 
+	print FILE "$cid\n";
+    }
   }
   close(FILE);
 }
