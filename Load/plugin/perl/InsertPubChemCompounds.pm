@@ -269,7 +269,9 @@ sub insertPubChemCompound {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.PubChemCompound');
+  return ('ApiDB.PubChemCompound',
+	  'ApiDB.PubChemCompoundProperty'
+	 );
 }
 
 
