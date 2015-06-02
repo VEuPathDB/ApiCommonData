@@ -189,11 +189,15 @@ sub parseFile {
 
 # get SIDs of already_loaded PubChem structures
 sub getExistingSids {
-  my ($self) = @_;
+  my ($self, $prop) = @_;
   my %sidHash;
+  my $sql;
 
-  my $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance";
-
+  if ($prop eq 'CID'){
+    $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance";
+  } else {
+    $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance s, ApiDB.PubChemSubstanceProperty p WHERE p.pubchem_substance_id = s.pubchem_substance_id";
+  }
   my $dbh = $self->getQueryHandle();
   my $sth = $dbh->prepareAndExecute($sql);
 
@@ -210,7 +214,7 @@ sub insertPubChemSubstance {
   my $count;
 
   # get list (as hash) of substance (IDs) that are already in the database
-  my $hashRef=$self->getExistingSids();
+  my $hashRef=$self->getExistingSids($property);
   my %loadedSids = %$hashRef;
 
   # process array of hashes (of hashes) for each substance
