@@ -271,7 +271,7 @@ sub makeCidFile {
   foreach my $sid (@data) {
     my $cid = $subst{$sid}{CID};
     if ($cid) {
-        $self->log("sid is $sid AND cid is $cid") 
+        $self->log("sid is $sid AND cid is $cid"); 
 	print FILE "$cid\n";
     }
   }
