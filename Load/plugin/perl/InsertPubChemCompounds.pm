@@ -135,6 +135,9 @@ sub new {
 
 sub run {
   my $self = shift;
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   my $fileCount = 0;
   my $fileDir = $self->getArg('fileDir');
   my @fileArray = @{$self->getArg('fileNames')};
@@ -271,7 +274,7 @@ sub undoTables {
 
   return (
 	  'ApiDB.PubChemCompoundProperty',
-      'ApiDB.PubChemCompound'
+	  'ApiDB.PubChemCompound'
 	 );
 }
 

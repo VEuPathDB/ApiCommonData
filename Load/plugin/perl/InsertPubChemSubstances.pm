@@ -286,8 +286,9 @@ sub makeCidFile {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.PubChemSubstance',
-	  'ApiDB.PubChemSubstanceProperty'
+  return (
+	  'ApiDB.PubChemSubstanceProperty',
+	  'ApiDB.PubChemSubstance'
 	 );
 }
 
