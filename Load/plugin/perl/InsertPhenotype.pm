@@ -3,7 +3,7 @@ package ApiCommonData::Load::Plugin::InsertPhenotype;
 
 use strict;
 use GUS::PluginMgr::Plugin;
-
+use GUS::Supported::Util;
 use GUS::Model::ApiDB::PhenotypeModel;
 use GUS::Model::ApiDB::PhenotypeResult;
 
@@ -89,7 +89,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  $self->initialize({requiredDbVersion => 3.6,
+  $self->initialize({requiredDbVersion => 4.0,
 		     cvsRevision => '$Revision$',
 		      name => ref($self),
 		     argsDeclaration   => $args,
@@ -131,14 +131,14 @@ sub run {
     my $evidenceTerm = $a[12];
     my $note = $a[13];
 
-    my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $sourceId, 0, $self->getArg('organismAbbrev')) ;
+    my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
 
     my $phenotypeModel = $self->lookupModel($modelSourceId, $naFeatureId, $pubmedId);
 
     unless($phenotypeModel) {
       $phenotypeModel = GUS::Model::ApiDB::PhenotypeModel->new({external_database_release_id => $extDbReleaseId, 
                                                                 na_feature_id => $naFeatureId,
-                                                                sourceId => $modelSourceId,
+                                                                source_id => $modelSourceId,
                                                                 name => $name,
                                                                 pubmed_id => $pubmedId,
                                                                 modification_type => $modType,
