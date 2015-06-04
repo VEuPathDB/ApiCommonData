@@ -302,6 +302,13 @@ sub traverseSeqFeatures {
 	my ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 	foreach my $exon (@fixedExons){
 
+          ## check if gene, mRNA, and CDS are on the same strand
+          if ( ($geneFeature->location->strand != $RNA->location->strand)
+               || ($geneFeature->location->strand != $exon->location->strand)
+               || ($RNA->location->strand != $exon->location->strand) ) {
+            die "gene, rna, and exon are not on the same strand\n";
+          }
+
 	  if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 	    $exon->add_tag_value('CodingStart',$codingStart);
 	    $exon->add_tag_value('CodingEnd',$codingEnd);
