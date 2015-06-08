@@ -128,6 +128,8 @@ sub run {
     my $entityTerm = $a[8];
     my $timing = $a[9];
     my $lifeCycleTerm = $a[10];
+    $lifeCycleTerm =~ s/^\s+//;
+    $lifeCycleTerm =~ s/\s+$//;
     my $phenotypeString = $a[11];
     my $evidenceTerm = $a[12];
     my $note = $a[13];
@@ -223,6 +225,10 @@ sub queryForOntologyTermIds {
   return \%terms;
 }
 
+sub undoTables {
+  my ($self) = @_;
 
+  return ('ApiDB.PhenotypeModel');
+}
 
 1;
