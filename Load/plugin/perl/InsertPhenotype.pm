@@ -121,7 +121,8 @@ sub run {
     my $name = $a[2];
     my $pubmedId = $a[3];
     my $modType = $a[4];
-    my $isSuccessful = $a[5];
+
+    my $isSuccessful = $a[5] eq 'yes'? 1 : 0;
     my $organism = $a[6];
     my $qualityTerm = $a[7];
     my $entityTerm = $a[8];
