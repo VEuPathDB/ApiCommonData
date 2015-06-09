@@ -2,13 +2,13 @@ package ApiCommonData::Load::Plugin::InsertStudyMetaData;
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | broken
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | fixed
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
   # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | broken
-  # GUS4_STATUS | Study.Study                    | auto   | broken
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | fixed
+  # GUS4_STATUS | Study.Study                    | auto   | fixed
   # GUS4_STATUS | Dots.Isolate                   | auto   | absent
   # GUS4_STATUS | DeprecatedTables               | auto   | absent
   # GUS4_STATUS | Pathway                        | auto   | absent
@@ -18,59 +18,38 @@ package ApiCommonData::Load::Plugin::InsertStudyMetaData;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
-
-use GUS::Model::Study::BioMaterialCharacteristic;
-use GUS::Model::Study::OntologyEntry;
-use GUS::Model::Study::Study;
-use GUS::Model::Study::BioSample;
-use GUS::Model::RAD::StudyBioMaterial;
-use GUS::Model::ApiDB::ProfileSet;
-use GUS::Model::ApiDB::ProfileElementName;
-# ----------------------------------------------------------------------
-
-use strict;
 use GUS::PluginMgr::Plugin;
+use strict;
+
+use GUS::Model::Study::ProtocolAppNode;
+use GUS::Model::Study::ProtocolApp;
+use GUS::Model::Study::Input;
+use GUS::Model::Study::Output;
+use GUS::Model::Study::Protocol;
+use GUS::Model::Study::Characteristic;
+
+use GUS::Model::SRes::OntologyTerm;
 
 use Data::Dumper;
 
 my $argsDeclaration =
   [
-   stringArg({name           => 'studyName',
-            descr          => 'Study Name - Fail if not retrieved',
+   stringArg({name           => 'studyExtDbRlsSpec',
+            descr          => 'External Database Spec (external_database_name|external_database_version) for the study.',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({name           => 'studyExtDbRlsSpec',
-            descr          => 'External Database Spec (external_database_name|external_database_version) for the study. In the case of Hts_Snps, this is related to the the experiment , in the case of array type experiments, this is related to the profile_set.',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
 
-
-   stringArg({name           => 'sampleExtDbRlsSpec',
-            descr          => 'External Database Spec to be associated with sample(s)',
-            reqd           => 0,
+   stringArg({name           => 'orderedOntologyExtDbRlsSpecs',
+            descr          => 'External Database Specs (external_database_name|external_database_version) for the ontologys which should be used if the term is available.  Ordered for the case when the term is found in more than one ontology ',
+            reqd           => 1,
             constraintFunc => undef,
-            isList         => 0, }),
+            isList         => 1, }),
 
-   stringArg({name           => 'sampleExtDbRlsSpecTemplate',
-            descr          => 'used for SnpSamples. this template contains a macro for the sample name. when the sample name is substituted into the template, this will be used to look up the sample and add the ext db rls id to study.biosample',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
-			
-   booleanArg({ name  => 'isProfile',
-		  descr => 'If true, require an exact match in apidb.profileElementName from a profileset related to the studyExtDbRlsSpec',
-		  constraintFunc => undef,
-		  reqd           => 0,
-		  isList         => 0 }),
-      
-    
    fileArg({name           => 'file',
             descr          => 'file for the sample data',
             reqd           => 1,
@@ -96,7 +75,7 @@ sub new {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 3.6,
+  $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
@@ -111,66 +90,26 @@ sub run {
   my ($self) = @_;
 
   my $studyExtDbRlsSpec = $self->getArg('studyExtDbRlsSpec');
-  my $sampleExtDbRlsSpec = $self->getArg('sampleExtDbRlsSpec');
-  my $isProfile = $self->getArg('isProfile');
-  my $studyExtDbRlsId;
+  my $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec);
 
-  unless($studyExtDbRlsSpec || $sampleExtDbRlsSpec) {
- 	$self->error("External database release spec must be provided for the study or the samples");
-  }
+  $self->setStudyExtDbRlsId($studyExtDbRlsId);
 
-  $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec) if $studyExtDbRlsSpec;
-  my $sampleExtDbRlsSpecTemplate = $self->getArg('sampleExtDbRlsSpecTemplate');
+  my $ontologySpecs = $self->getArg('orderedOntologyExtDbRlsSpecs');
 
-  my $useTemplate = $sampleExtDbRlsSpecTemplate ? 1 : 0;
+  my @ontologyExtDbRlsIds = map { $self->getExtDbRlsId($_) } @$ontologySpecs;
+  $self->setOrderedOntologyExtDbRlsIds(\@ontologyExtDbRlsIds);
 
+  $self->setProtocolAppNodes($studyExtDbRlsId);
 
-  if($sampleExtDbRlsSpecTemplate && $sampleExtDbRlsSpec) {
-	$self->error("sampleExtDbRlsSpec cannot be used with sampleExtDbRlsSpecTemplate please provided one or the other");
-  }
+  $self->setOntologyStatementHandle();
 
-  my $studyName = $self->getArg('studyName');
-  my $study;
-  if($studyExtDbRlsId) {
-	$study = GUS::Model::Study::Study->new(
-		                           {name => $studyName,
-                                            external_database_release_id => $studyExtDbRlsId,	
-                                           }); 
-  }
-  else {
-    $study = GUS::Model::Study::Study->new(
-		                           {name => $studyName
-                                           }); 
-  }
-
-  unless($study->retrieveFromDB()) {
-    $self->error("Could not retrieve study $studyName from db.");   
-  }
-  my $profileElementNames=[];
-
-  if($isProfile) {
-    my $samplesSql = "Select Distinct Pen.Name From Apidb.Profileelementname Pen, Apidb.Profileset Ps Where 
-Ps.External_Database_Release_Id = $studyExtDbRlsId";
-
-    my $dbh = $self->getQueryHandle();
-    my $stmt = $dbh->prepareAndExecute($samplesSql);
-
-    while(my $profileElementName = $stmt->fetchrow_array()){
-      push(@$profileElementNames,$profileElementName);
-	  } 
-    unless (scalar @$profileElementNames) { 
-      $self->userError("No samples retrieved for the study external database release spec, please check to make sure that a profile set was load with the external database release id $studyExtDbRlsId.");
-    }
-  }
   my $file = $self->getArg('file');
   open(FILE, $file) or $self->error("Cannot open file $file for reading: $!");
 
-
-   my $header = <FILE>;
+  my $header = <FILE>;
   chomp $header;
 
   $self->validateHeader($header);
-
 
   my $count = 0;
   while(<FILE>) {
@@ -178,19 +117,8 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
 
     my $rowAsHash = $self->parseRow($header, $_);
 
-    if($sampleExtDbRlsSpecTemplate){
-      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpecTemplate,);
-      $count++;
-    }
-    elsif($sampleExtDbRlsSpec) {
-      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, $sampleExtDbRlsSpec,);
-      $count++;
-    }
-    else {
-      $self->processRow($rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames, 0);
-      $count++;
-    }
-
+    $self->processRow($rowAsHash);
+    $count++;
   }
 
   close FILE;
@@ -203,191 +131,353 @@ Ps.External_Database_Release_Id = $studyExtDbRlsId";
 }
 
 
+sub setStudyExtDbRlsId {
+  my ($self, $studyExtDbRlsId) = @_;
+
+  $self->{_study_ext_db_rls_id} = $studyExtDbRlsId;
+}
+
+sub getStudyExtDbRlsId {
+  my ($self) = @_;
+
+  return $self->{_study_ext_db_rls_id};
+}
+
+sub setOntologyStatementHandle {
+  my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+  my $sql ="select o.name as ontology_term_name
+     , o.ontology_term_id
+     , r.external_database_release_id 
+     , d.name as external_database_name
+     , rlsct.ct as ontology_count
+from sres.externaldatabase d
+   , sres.externaldatabaserelease r
+   , sres.ontologyterm o
+   , (select external_database_release_id, count(*) as ct from sres.ontologyterm group by external_database_release_id) rlsct
+where o.name = ?
+and o.external_database_release_id = r.external_database_release_id
+and r.external_database_id = d.external_database_id
+and rlsct.external_database_release_id = o.external_database_release_id"; 
+
+  my $sh = $dbh->prepare($sql);
+
+  $self->{_ontology_statement_handle} = $sh;
+}
+
+sub getOntologyStatementHandle {
+  my ($self) = @_;
+
+  return $self->{_ontology_statement_handle};
+}
+
+sub getOrderedOntologyExtDbRlsIds {
+  my ($self) = @_;
+  return $self->{_ordered_ontology_ext_db_rls_ids};
+}
+
+sub setOrderedOntologyExtDbRlsIds {
+  my ($self, $orderedOntoloygExtDbRlsIds) = @_;
+  $self->{_ordered_ontology_ext_db_rls_ids} = $orderedOntoloygExtDbRlsIds;
+}
+
+
+sub getProtocolAppNodeByName {
+  my ($self, $name) = @_;
+
+  return $self->{_protocol_app_nodes}->{sample}->{$name};
+}
+
+sub getHostProtocolAppNodeByName {
+  my ($self, $name) = @_;
+  return $self->{_protocol_app_nodes}->{host}->{$name};
+}
+
+
+sub lookupTaxonId {
+  my ($self, $name) = @_;
+
+  return unless($name);
+
+  my $dbh = $self->getQueryHandle();
+  my $sql = "select taxon_id
+from sres.taxonname 
+where name = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($name);
+
+  my $count;
+
+  my $taxonId;
+  while( my ($id) = $sh->fetchrow_array()) {
+    $taxonId = $id;
+    $count++;
+  }
+  $sh->finish();
+
+  unless($count == 1) {
+    $self->error("Found $count Rows in Taxon Name for $name");
+  }
+
+  return $taxonId;
+}
+
+
+sub setProtocolAppNodes {
+  my ($self, $studyExtDbRlsId) = @_;
+
+  my $dbh = $self->getQueryHandle();
+  my $sql = "select sl.PROTOCOL_APP_NODE_ID
+from study.study s
+   , study.studylink sl
+where s.EXTERNAL_DATABASE_RELEASE_ID = ?
+and s.study_id = sl.STUDY_ID";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($studyExtDbRlsId);
+
+  my %seen;
+
+  while( my ($id) = $sh->fetchrow_array()) {
+    my $pan = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $id});
+    unless($pan->retrieveFromDB()) {
+      $self->error("Protocol app node $id not retrieved");
+    }
+
+    my $name = $pan->getName();
+    if($seen{$name}) {
+      $self->userError("This Study Has more than one protocol app node named $name");
+    }
+    $seen{$name} = 1;
+    $self->{_protocol_app_nodes}->{sample}->{$name} = $pan;
+  }
+  $sh->finish();
+}
+
 sub validateHeader {
   my ($self, $header) = @_;
 
-  my @columns = split(/\t/, $header);
+#  my @columns = split(/\t/, $header);
+  my @columns = split("," , $header);
+  my %counts;
+  foreach my $column (@columns) {
+    $counts{$column}++;
+  }
 
-  my @requiredCharacteristics = ('Organism',
-                                 'StrainOrLine',
-                                 'BioSourceType', #IsolationSource
-                                 'Host',
-                                 'GeographicLocation',
-                                );
+  my @requiredSingleColumns = ('Name',
+                               'Description',
+                               'Taxon Name',
+                               'Characteristics [Strain]',
+                               'Host Name',
+                               'Host Taxon Name',
+      );
 
-  foreach my $r (@requiredCharacteristics) {
-    my @found =  map {/Characteristics\s?\[($r)\]/} @columns;
-    unless(scalar @found > 0) {
-      $self->userError("Required Column [$r] not found in the meta data file");
+  my @otherRequiredColumns = ('Characteristics [Environmental Material]', 
+                              'Characteristics [geographic location]',
+      );
+
+
+  foreach my $r (@requiredSingleColumns) {
+    unless($counts{$r} == 1) {
+      $self->userError("Required Column [$r] must be found exactly once");
+    }
+  }
+
+  foreach my $r (@otherRequiredColumns) {
+    unless($counts{$r} >= 1) {
+      $self->userError("Required Column [$r] must be found at least once");
     }
   }
 }
 
 
-sub processRow {
-  my ($self, $rowAsHash, $study, $studyExtDbRlsId, $useTemplate, $profileElementNames,  $sampleExtDbRlsSpec,) = @_;
-  my $sampleName;
-  foreach my $key (keys %$rowAsHash) {
-    my ($header, $index) = split(/\|/, $key);
-    my $value = $rowAsHash->{$key};
+sub getHostByName {
+  my ($self, $hostName) = @_;
 
-    if($header =~ /source name/i) {
-      $sampleName = $value;
-      last;
+  return $self->{_hosts}->{$hostName};
+}
+
+sub addHost {
+  my ($self, $host) =@_;
+
+  my $hostName = $host->getName();
+
+  if($self->{_hosts}->{$hostName}) {
+    $self->error("Should not be adding another host w/ same name $hostName.  getHostByName instead");
+  }
+
+  $self->{_hosts}->{$hostName} = $host;
+}
+
+sub processRow {
+  my ($self, $rowAsHash) = @_;
+
+  # already validated found exactly once  
+  my $sampleName = $rowAsHash->{Name}->[0]; 
+  my $description = $rowAsHash->{Description}->[0];
+  my $taxonName = $rowAsHash->{'Taxon Name'}->[0]; 
+
+  # host items already validated found exactly once  
+  my $hostName = $rowAsHash->{'Host Name'}->[0]; 
+  my $hostTaxonName = $rowAsHash->{'Host Taxon Name'}->[0]; 
+
+  my $pan = $self->getProtocolAppNodeByName($sampleName);
+  $pan->setDescription($description);
+
+  my $taxonId = $self->lookupTaxonId($taxonName);
+  $pan->setTaxonId($taxonId) if($taxonId);
+
+  my $host = $self->getHostByName($hostName); # try to get obj from cache
+  unless($host) {
+    $host = GUS::Model::Study::ProtocolAppNode->new({name => $hostName});
+    my $hostTaxonId = $self->lookupTaxonId($hostTaxonName);
+    $host->setTaxonId($hostTaxonId) if($hostTaxonId);
+  }
+
+  $self->makeProtocolApplication($pan, $host);
+
+  foreach my $key (keys %$rowAsHash) {
+    next unless($key =~ /characteristics/i);
+
+
+    foreach my $value (@{$rowAsHash->{$key}}) {
+      my $characteristic = $self->makeCharacteristic($key, $value);
+      $characteristic->setParent($pan);
     }
   }
-  if($useTemplate){
-    $sampleExtDbRlsSpec=~s/\@SAMPLE_NAME\@/$sampleName/;
-  }
-  my $bioSample;
-  my $sampleExtDbRlsId = '';
-  if($sampleExtDbRlsSpec){
-     $sampleExtDbRlsId = $self->getExtDbRlsId($sampleExtDbRlsSpec) or 
-       $self->error("Sample external database Release ID not found for $sampleName with External database release spec $sampleExtDbRlsSpec");
-   }
-  if ($sampleExtDbRlsId){
-    $bioSample = $self->makeBioSample($rowAsHash, $sampleName, $studyExtDbRlsId, $profileElementNames, $sampleExtDbRlsId,);
-  }
-  else {
-    $bioSample = $self->makeBioSample($rowAsHash, $sampleName, $studyExtDbRlsId, $profileElementNames, undef);
-  }
-  my $studyBioMaterial = GUS::Model::RAD::StudyBioMaterial->new({});
 
-  $studyBioMaterial->setParent($study);
-  $studyBioMaterial->setParent($bioSample);
-
-  $bioSample->submit();
+  $pan->submit();
   $self->undefPointerCache();
 }
 
-sub makeBioSample {
-  my ($self, $rowAsHash, $sampleName,  $studyExtDbRlsId, $profileElementNames, $sampleExtDbRlsId,) = @_;
+sub makeProtocolApplication {
+    my ($self, $pan, $host) = @_;
 
-  if (scalar @$profileElementNames >=1 ){
-    $self->userError("No sample $sampleName found for this experiment, please check your input file.") unless ( grep( $sampleName, @$profileElementNames ) );
-  }
+    my $protocolName = 'isolate collection from host';
 
-  #Source Name     Description     Comment [source_id]     Characteristics [Organism]      Data File 
+    my $protocol = $self->makeProtocol($protocolName);
 
-  my ($sourceName, $description, $sourceId);
+    my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
+    $protocolApp->setParent($protocol);
 
-  my @characteristics;
+    my $input = GUS::Model::Study::Input->new();
+    $input->setParent($protocolApp);
+    $input->setParent($host);
 
-  foreach my $key (keys %$rowAsHash) {
-    my ($header, $index) = split(/\|/, $key);
+    my $output = GUS::Model::Study::Output->new();
+    $output->setParent($protocolApp);
+    $output->setParent($pan);
 
-    my $value = $rowAsHash->{$key};
-
-    if($header =~ /source name/i) {
-      $sourceName = $value;
-    }
-
-    if($header =~ /description/i) {
-      $description = $value
-    }
-
-    if($header =~ /comment \[source_id\]/i) {
-      $sourceId = $value;
-    }
-
-    if($header =~ /characteristics/i) {
-      my $characteristic = $self->makeCharacteristic($header, $value);
-      push(@characteristics, $characteristic);
-    }
-  }
-
-  my $bioSample = GUS::Model::Study::BioSample->new({name => $sourceName, 
-                                                     source_id => $sourceId,
-                                                     description => $description,
-                                                     external_database_release_id => $sampleExtDbRlsId,
-                                                    });
-
-  foreach(@characteristics) {
-    $_->setParent($bioSample);
-  }
-
-  return $bioSample;
+    return $protocolApp;
 }
+
+sub makeProtocol {
+  my ($self, $protocolName) = @_;
+
+  my $protocols = $self->getProtocols() or [];
+
+  foreach my $protocol (@$protocols) {
+    if($protocol->getName eq $protocolName) {
+      return $protocol;
+    }
+  }
+
+  my $protocol = GUS::Model::Study::Protocol->new({name => $protocolName});
+  $protocol->retrieveFromDB();
+
+  $self->addProtocol($protocol);
+
+  return $protocol;
+}
+
+sub getProtocols { $_[0]->{_protocols} }
+sub addProtocol  { push @{$_[0]->{_protocols}}, $_[1]; }
 
 
 sub makeCharacteristic {
   my ($self, $header, $value) = @_;
 
-  my $category;
+  $self->error("Characteristic header malformed:  $header") unless($header =~ /characteristics \[(.+)\]/i);
+  my $category = $1;
 
-  if($header =~ /characteristics \[(.+)\]/i) {
-    $category = $1;
-    print STDERR "$category\n";
+  # first look for the value.  If that is an ontologyterm use that and leave characteristics.value null
+  my $valueTermId = $self->fetchOntologyTerm($value);
+  if($valueTermId) {
+    return GUS::Model::Study::Characteristic->new({ontology_term_id => $valueTermId});
   }
-  else {
-    $self->error("Characteristic header malformed:  $header");
+
+  # Require that the header at least be an existing ontology term and put the value as the string value
+  my $categoryTermId = $self->fetchOntologyTerm($category);
+  if($categoryTermId) {
+    return GUS::Model::Study::Characteristic->new({ontology_term_id => $categoryTermId, value => $value});    
   }
 
-  my $oe;
-  my $alt_oe;
-  my $characteristic;
-  # unless($value=~/^(\d+\.?\d*|\.\d+)$/) {
-  #       $oe = GUS::Model::Study::OntologyEntry->new({value => $value,
-  #                                                 category => $category});
-
-  #       $oe->retrieveFromDB();
-
-  #   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({});
-  # }
-  # else {
-
-  my $oeSql = "With BMCT As (
-                        Select Distance, Id, Parent_Id,lower(Category) as category, lower(Value) as value 
-                        From (
-                            Select level + 0 as distance, Oe.Ontology_Entry_Id as id, Oe.Parent_Id, Oe.Category, Oe.Value
-                            From Study.Ontologyentry oe Start With Category = 'BioMaterialCharacteristics'
-                            Connect By Prior Value = Category
-                            Order By Parent_Id, Id
-                         )
-                      ),
-                      Existing As (
-                        Select Distinct Ontology_Entry_Id As Id, Parent_Id, Category, Value 
-                        From Study.Ontologyentry
-                        Where lower(Category) = lower('$category')
-                        And lower(Value) = lower('$value')
-                      ),
-                      New_Value as (
-					    Select Distinct Id, Parent_Id, Category, Bmct.value
-						From ( select value,
-							          Max(bmct.distance) As distance
-							   From Bmct
-                               Group By Value
-					    ) Sub, Bmct
-					    Where lower(Sub.Value)=lower('$category')
-						  And Sub.Distance = Bmct.Distance
-						  and sub.value = bmct.value
-                   )
-		   Select Distinct Nvl(Existing.Id,New_Value.Id) as id
-		     From Existing, New_Value
-                    Where New_Value.Id = Existing.Id (+)";
-
-  my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepareAndExecute($oeSql);
-  my $oe_id = $stmt->fetchrow_array();
-
-  my $default_category =  'OntologyEntry';
-
-  $oe = GUS::Model::Study::OntologyEntry->new({ontology_entry_id => $oe_id,});
-  $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({value => $value});
-
-  $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
-  $characteristic->setParent($oe);
-
-  return $characteristic;
+  my $studyExtDbRlsId = $self->getStudyExtDbRlsId();
+  my $newOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $category, external_database_release_id => $studyExtDbRlsId});
+  return GUS::Model::Study::Characteristic->new({ontology_term_id => $newOntologyTerm->getId(), value => $value});    
 }
 
+sub getCachedOntologyTerms {
+  my ($self) = @_;
+
+  return $self->{_cached_ontology_terms};
+}
+
+sub fetchOntologyTerm {
+  my ($self, $term) = @_;
+
+  my $cachedTerms = $self->getCachedOntologyTerms();
+
+  if($cachedTerms->{$term}) {
+    return $cachedTerms->{$term};
+  }
+
+  my $ontologyExtDbRlsIds = $self->getOrderedOntologyExtDbRlsIds();
+  my $sh = $self->getOntologyStatementHandle();
+
+  $sh->execute($term);
+
+  my $ontologyExtDbRlsCount = scalar @$ontologyExtDbRlsIds;
+
+  my @ar;
+
+  while(my $row = $sh->fetchrow_hashref()) {
+
+    $row->{ONTOLOGY_ORDER} = $ontologyExtDbRlsCount + 1;
+    
+    for(my $i = 0; $i < scalar @$ontologyExtDbRlsIds; $i++) {
+      my $extDbRlsId = $ontologyExtDbRlsIds->[$i];
+
+      if($row->{EXTERNAL_DATABASE_RELEASE_ID} == $extDbRlsId) {
+        $row->{ONTOLOGY_ORDER} = $i;
+      }
+    }
+    
+    push @ar, $row;
+  }
+  $sh->finish();
+
+  my @sorted = sort {$a->{ONTOLOGY_ORDER} <=> $b->{ONTOLOGY_ORDER} || $b->{ONTOLOGY_COUNT} <=> $a->{ONTOLOGY_COUNT} || $b->{ONTOLOGY_TERM_ID} <=> $a->{ONTOLOGY_TERM_ID}} @ar;
+
+  my $rv = $sorted[0]->{ONTOLOGY_TERM_ID};
+
+  $self->{_cached_ontology_terms}->{$term} = $rv;
+
+  return $rv;
+}
 
 
 sub parseRow {
   my ($self, $header, $row) = @_;
 
-  my @keys = split(/\t/, $header);
-  my @values = split(/\t/, $row);
+#  my @keys = split(/\t/, $header);
+ # my @values = split(/\t/, $row);
+
+  my @keys = split(",", $header);
+  my @values = split(",", $row);
+
 
   unless(scalar @keys == scalar @values) {
     $self->error("Mismatched number of headers and data columns");
@@ -398,10 +488,8 @@ sub parseRow {
   for(my $i = 0; $i < scalar @keys; $i++) {
     my $header = $keys[$i];
     my $value = $values[$i];
-
-    my $key = "$header|$i";
-
-    $rv{$key} = $value;
+    
+    push @{$rv{$header}}, $value;
   }
 
   return \%rv;
@@ -412,16 +500,14 @@ sub parseRow {
 sub undoTables {
   my ($self) = @_;
 
-  return ( 'Study.BioMaterialCharacteristic',
-           'RAD.StudyBioMaterial',
-           'Study.BioSample',
-         );
+  return ( 
+    'Study.Input',
+    'Study.Output',
+    'Study.Characteristic',
+    'Study.ProtocolAppNode',
+    'Study.ProtocolApp',
+     );
 }
 
 1;
-
-
-
-
-
 
