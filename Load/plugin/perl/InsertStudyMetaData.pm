@@ -337,6 +337,8 @@ sub processRow {
     $host = GUS::Model::Study::ProtocolAppNode->new({name => $hostName});
     my $hostTaxonId = $self->lookupTaxonId($hostTaxonName);
     $host->setTaxonId($hostTaxonId) if($hostTaxonId);
+
+    $self->addHost($host);
   }
 
   $self->makeProtocolApplication($pan, $host);
