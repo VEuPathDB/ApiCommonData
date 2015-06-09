@@ -30,6 +30,7 @@ use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 use GUS::Model::Study::Protocol;
 use GUS::Model::Study::Characteristic;
+use GUS::Model::Study::StudyLink;
 
 use GUS::Model::SRes::OntologyTerm;
 
@@ -88,6 +89,8 @@ sub new {
 
 sub run {
   my ($self) = @_;
+
+  $self->getDb()->setDoNotUpdateAlgoInvoId(1);
 
   my $studyExtDbRlsSpec = $self->getArg('studyExtDbRlsSpec');
   my $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec);
@@ -365,6 +368,9 @@ sub makeProtocolApplication {
     my $input = GUS::Model::Study::Input->new();
     $input->setParent($protocolApp);
     $input->setParent($host);
+
+    $protocolApp->addToSubmitList($input);
+    $input->addToSubmitList($host);
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
