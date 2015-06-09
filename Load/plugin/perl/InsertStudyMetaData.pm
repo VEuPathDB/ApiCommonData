@@ -423,6 +423,7 @@ sub makeCharacteristic {
 
   my $studyExtDbRlsId = $self->getStudyExtDbRlsId();
   my $newOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $category, external_database_release_id => $studyExtDbRlsId});
+  $newOntologyTerm->submit();
   return GUS::Model::Study::Characteristic->new({ontology_term_id => $newOntologyTerm->getId(), value => $value});    
 }
 
