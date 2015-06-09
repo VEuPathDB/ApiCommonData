@@ -370,7 +370,6 @@ sub makeProtocolApplication {
     $input->setParent($host);
 
     $protocolApp->addToSubmitList($input);
-    $input->addToSubmitList($host);
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
