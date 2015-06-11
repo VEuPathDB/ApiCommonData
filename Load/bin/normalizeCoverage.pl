@@ -78,13 +78,13 @@ sub merge_normalized_coverage {
       &runCmd("mkdir $k/normalized/final");
     }
 
-    my @bedFiles = glob "$k/normalized/*.bed";
+    my @bedFiles = glob "$k/normalized/*.cov";
 
     foreach my $bedFile (@bedFiles) {
       my $baseBed = basename $bedFile;
 
       my $bwFile = $baseBed;
-      $bwFile =~ s/\.bed$/.bw/;
+      $bwFile =~ s/\.cov$/.bw/;
 
       &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
     }
@@ -110,13 +110,13 @@ sub update_coverage {
     my $out_dir = "$k/normalized";
 
     foreach my $f (@fs) {
-      next if $f !~ /\.bed/i;
+      next if $f !~ /\.cov/i;
       open(F, "$k/$f");
 
       open OUT, ">$out_dir/$f";
 
       my $outputFile = $f;
-      $outputFile =~ s/\.bed$/_unlogged.bed/;
+      $outputFile =~ s/\.cov$/_unlogged.cov/;
 
       open OUTUNLOGGED, ">$out_dir/$outputFile";
       <F>;
@@ -148,7 +148,7 @@ sub get_sum_coverage {
   my @fs = readdir(D);
 
   foreach my $f (@fs) {
-    next unless $f =~ /\.bed/;
+    next unless $f =~ /\.cov/;
     open(F, "$d/$f") or die "Cannot open file $d/$f for reading:  $!";
     <F>;
     while(<F>) {
