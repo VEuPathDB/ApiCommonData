@@ -18,15 +18,14 @@ unless(-e $inputDirectory && -e $outputDirectory) {
 }
 
 
-my $replacement = ".fpkm_tracking";
+my $suffix = ".fpkm_tracking";
 
-
-foreach my $file (glob "$inputDirectory/*$replacement*") {
+foreach my $file (glob "$inputDirectory/*$suffix") {
   open(FILE, "cut -f 1,10 $file|") or die "Cannot open file $file for reading: $!";
 
   my $basename = basename $file;
   my $newFile = $basename;
-  $newFile =~ s/$replacement//;
+  $newFile =~ s/$suffix/\.fpkm/;
   $newFile = "$sampleName.$newFile";
 
   open(OUT, ">$outputDirectory/$newFile") or die "Cannot open file $newFile for writing: $!";
@@ -39,6 +38,23 @@ foreach my $file (glob "$inputDirectory/*$replacement*") {
   }
   close OUT;
   close FILE;
+}
+
+foreach my $suffix ('.fpkm', '.counts') {
+    foreach my $file (glob "$inputDirectory/*$suffix") {
+	open(FILE, $file) or die "Cannot open file $file for reading: $!";
+
+	my $basename = basename $file;
+	my $newFile = "$sampleName.$basename";
+	
+	open(OUT, ">$outputDirectory/$newFile") or die "Cannot open file $newFile for writing: $!";
+	
+	while(<FILE>) {
+	    print OUT;
+	}
+	close OUT;
+	close FILE;
+    }
 }
 
 1;
