@@ -182,6 +182,34 @@ while (my @row  = $getStrains->fetchrow_array()) {
 }
 close STRAINS;
 
+my $getSourceIds = $dbh->prepare(<<SQL) or die "preparing source_ids query";
+ select distinct snp.source_id, 
+                     seq.source_id as seq_source_id, 
+                     nal.start_min as location,
+                     snp.name as data_type
+     from dots.snpfeature snp,
+          dots.nalocation nal,
+          dots.NaSequence seq,
+          SRES.EXTERNALDATABASE ed, 
+          SRES.EXTERNALDATABASERELEASE edr
+    where snp.EXTERNAL_DATABASE_RELEASE_ID =edr.EXTERNAL_DATABASE_RELEASE_ID
+      and edr.EXTERNAL_DATABASE_ID = ed.EXTERNAL_DATABASE_ID
+      and snp.NA_FEATURE_ID = nal.NA_FEATURE_ID
+      and snp.na_sequence_id = seq.na_sequence_id
+      and lower(ed.name) like '%snpchip%'
+SQL
+
+$getSourceIds->execute();
+my ($junk, $outputFileDir) = fileparse($outputFile);
+my $sourceIdsFile =  $outputFileDir."/locationToSourceId.dat";
+open(SOURCEIDS, "|sort -T $tmpDir -k 2,2 -k 3,3n > $sourceIdsFile") or die "Cannot open file $sourceIdsFile for writing: $!";
+$getSourceIds->execute()
+  || die "executing SourceIds query: " . DBI->errstr;
+while (my @row  = $getSourceIds->fetchrow_array()) {
+  print SOURCEIDS join ("\t", @row)."\n";
+}
+close STRAINS;
+
 $dbh->disconnect;
 
 sub usage {
@@ -193,7 +221,7 @@ Usage: SnpChipVariationFileMaker --outputFileName {file_location} --workingDir {
 Where:
   outputFileName:   Name to use for for variations file that will be created. Strains file will be written to the same directory. 
   
-  workinDir:     Directory to use for temporary files created by this script.
+  workingDir:     Directory to use for temporary files created by this script.
 
   gusConfigFile:     location of the file containing information on how to connect to GUS databases. Default = \$GUS_HOME/config/gus.config
 
