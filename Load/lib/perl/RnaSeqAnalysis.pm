@@ -53,28 +53,26 @@ sub new {
 }
 
 sub munge {
-  my ($self) = @_;
-
-  foreach my $featureType ("genes", "isoforms") {
+    my ($self) = @_;
+    
+    my $featureType = 'genes';
+    my $valueType = 'fpkm';
+    my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
-
-    foreach my $alignmentType ("unique", "nu") {
-      my $makePercentiles = $alignmentType eq "unique" ? 1 : 0;
-
-      if($isStrandSpecific) {
-        $self->makeProfiles('fr-firststrand', $featureType, $alignmentType, $makePercentiles);
-        $self->makeProfiles('fr-secondstrand', $featureType, $alignmentType, $makePercentiles);
-      }
-      else {
-        my ($minOutFn, $maxOutfn) = $self->makeProfiles('fr-unstranded', $featureType, $alignmentType, $makePercentiles);
-      }
+    
+    foreach my $quantificationType ('cuff', 'htseq-union', 'htseq-intersection-nonempty', 'htseq-intersection-strict') {
+	if($isStrandSpecific) {
+	    $self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+	    $self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+	}
+	else {
+	    $self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
+	}
     }
-  }
 }
 
-
 sub makeProfiles {
-  my ($self, $strand, $featureType, $alignmentType, $makePercentiles) = @_;
+  my ($self, $strand, $featureType, $quantificationType, $valueType, $makePercentiles) = @_;
 
   my $samples = $self->getSamples();
 
@@ -84,48 +82,46 @@ sub makeProfiles {
 
   my $strandSuffix = ".$strand";
   my $featureTypeSuffix = ".$featureType";
-  my $alignmentTypeSuffix = ".$alignmentType";
+  my $quantificationTypeSuffix = ".$quantificationType";
+  my $valueTypeSuffix = ".$valueType";
 
 
-  my $outputFile = $OUTPUT_FILE_BASE.$featureTypeSuffix.$alignmentTypeSuffix.$strandSuffix;
+  my $outputFile = $OUTPUT_FILE_BASE.$featureTypeSuffix.$quantificationTypeSuffix.$strandSuffix.$valueTypeSuffix;
 
   my $profile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->
       new({mainDirectory => $self->getMainDirectory,
            outputFile => $outputFile,
            makePercentiles => $makePercentiles,
            isLogged => 0,
-           fileSuffix => $featureTypeSuffix.$alignmentTypeSuffix.$strandSuffix,
+           fileSuffix => $featureTypeSuffix.$quantificationTypeSuffix.$strandSuffix.$valueTypeSuffix,
            samples => $samples,
            profileSetName => $profileSetName,
              });
 
+  my $header = $quantificationType eq 'cuff' ? 1 : 0;
 
-  $profile->setHasHeader(1);
+  $profile->setHasHeader($header);
+  
+  $profile->setSourceIdType($featureType);
+  
+  my $protocolName = $quantificationType eq 'cuff' ? 'Cufflinks' : 'HTSeq';
 
-  if($featureType eq 'genes') {
-    $profile->setSourceIdType('gene');
-  }
-
-  if($featureType eq 'isoforms') {
-    $profile->setSourceIdType('transcript');
-  }
-
-
-
-  $profile->setProtocolName("GSNAP/Cufflinks");
+  $profile->setProtocolName("GSNAP/$protocolName");
   
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
-  $profile->addProtocolParamValue('AlignmentType', $alignmentType);
+  if ($protocolName eq 'HTSeq') {
+      $quantificationType =~ /^htseq-(.+)$/;
+      my $mode = $1;
+      $profile->addProtocolParamValue('Mode', $mode);
+  }
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
 
-  $profile->setDisplaySuffix(" - $alignmentType - $strand");
+  $profile->setDisplaySuffix(" - $quantificationType - $strand");
 
   $profile->munge();
 
   return($outputFile);
 }
-
-
 
 1;
