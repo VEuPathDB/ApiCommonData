@@ -219,6 +219,7 @@ sub processFeature {
 										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
 							}
 							if ($sourceId && $dbxrefId) {
+							  $dbxrefId =~ s/^(\d+).*$/$1/ if ($dbxrefType =~ /pmid/i);
 							  if (! $idsInDb{$sourceId} ) {
 							    $dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
 							  } else {
