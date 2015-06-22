@@ -21,6 +21,8 @@ ALTER TABLE apidb.OldCodingSequence
 ADD CONSTRAINT old_coding_sequence_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
+CREATE INDEX apidb.ocs_revfk1 on apidb.OldCodingSequence (external_database_release_id, old_coding_sequence_id) tablespace indx;
+
 CREATE SEQUENCE apidb.OldCodingSequence_sq;
 
 GRANT insert, select, update, delete ON apidb.OldCodingSequence TO gus_w;

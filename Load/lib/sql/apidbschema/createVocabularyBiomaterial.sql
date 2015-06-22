@@ -18,6 +18,12 @@ CREATE TABLE ApiDB.VocabularyBiomaterial (
  FOREIGN KEY (isolate_vocabulary_id) REFERENCES ApiDB.IsolateVocabulary (isolate_vocabulary_id)
 );
 
+CREATE INDEX apidb.vb_revfk1_ix on ApiDB.VocabularyBiomaterial (bio_material_id, vocabulary_biomaterial_id)
+tablespace indx;
+
+CREATE INDEX apidb.vb_revfk2_ix on ApiDB.VocabularyBiomaterial (isolate_vocabulary_id, vocabulary_biomaterial_id)
+tablespace indx;
+
 CREATE SEQUENCE ApiDB.VocabularyBiomaterial_sq;
 
 GRANT insert, select, update, delete ON ApiDB.VocabularyBiomaterial TO gus_w;

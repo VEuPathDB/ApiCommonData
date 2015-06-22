@@ -32,6 +32,9 @@ CREATE TABLE apidb.PhenotypeFeature (
 
 CREATE SEQUENCE apidb.PhenotypeFeature_sq;
 
+CREATE INDEX apidb.pfeat_revfk1_ix on apidb.PhenotypeFeature (external_database_release_id, phenotype_feature_id) tablespace indx;
+CREATE INDEX apidb.pfeat_revfk2_ix on apidb.PhenotypeFeature (na_feature_id, phenotype_feature_id) tablespace indx;
+
 GRANT insert, select, update, delete ON apidb.PhenotypeFeature TO gus_w;
 GRANT select ON apidb.PhenotypeFeature TO gus_r;
 GRANT select ON apidb.PhenotypeFeature_sq TO gus_w;

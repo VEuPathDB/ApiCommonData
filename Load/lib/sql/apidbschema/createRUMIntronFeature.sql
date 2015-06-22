@@ -30,6 +30,9 @@ CREATE TABLE apidb.RUMIntronFeature (
  PRIMARY KEY (RUM_intron_feature_id)
 );
 
+CREATE INDEX apiDB.rif_revfk_idx
+  ON apidb.RUMIntronFeature (external_database_release_id, RUM_intron_feature_id) tablespace indx;
+
 CREATE SEQUENCE apidb.RUMIntronFeature_sq;
 
 GRANT insert, select, update, delete ON apidb.RUMIntronFeature TO gus_w;

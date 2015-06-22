@@ -85,7 +85,10 @@ CREATE TABLE ApiDB.NetworkRelationship (
   FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.NetworkNode (NETWORK_NODE_ID)
 );
 
-CREATE INDEX ApiDB.nr_mod_ix ON ApiDB.NetworkRelationship (modification_date, network_relationship_id);
+CREATE INDEX ApiDB.nr_mod_ix ON ApiDB.NetworkRelationship (modification_date, network_relationship_id) tablespace indx;
+
+CREATE INDEX ApiDB.nr_revfk1_ix ON ApiDB.NetworkRelationship (node_id, network_relationship_id) tablespace indx;
+CREATE INDEX ApiDB.nr_revfk2_ix ON ApiDB.NetworkRelationship (associated_node_id, network_relationship_id) tablespace indx;
 
 
 CREATE TABLE ApiDB.NetworkRelationshipType(
@@ -131,7 +134,11 @@ CREATE TABLE ApiDB.NetworkRelContext(
   PRIMARY KEY (NETWORK_REL_CONTEXT_ID)
 );
 
-CREATE INDEX ApiDB.nrc_mod_ix ON ApiDB.NetworkRelContext (modification_date, network_rel_context_id);
+CREATE INDEX ApiDB.nrc_mod_ix ON ApiDB.NetworkRelContext (modification_date, network_rel_context_id) tablespace indx;
+
+CREATE INDEX ApiDB.nrc_revfk1_ix ON ApiDB.NetworkRelContext (network_relationship_id, network_rel_context_id) tablespace indx;
+CREATE INDEX ApiDB.nrc_revfk2_ix ON ApiDB.NetworkRelContext (network_relationship_type_id, network_rel_context_id) tablespace indx;
+CREATE INDEX ApiDB.nrc_revfk3_ix ON ApiDB.NetworkRelContext (network_context_id, network_rel_context_id) tablespace indx;
 
 
 CREATE TABLE ApiDB.NetworkRelContextLink(
@@ -152,7 +159,7 @@ CREATE TABLE ApiDB.NetworkRelContextLink(
   PRIMARY KEY (NETWORK_RC_LINK_ID)
 );
 
-CREATE INDEX ApiDB.nrcl_mod_ix ON ApiDB.NetworkRelContextLink (modification_date, network_rc_link_id);
+CREATE INDEX ApiDB.nrcl_mod_ix ON ApiDB.NetworkRelContextLink (modification_date, network_rc_link_id) tablespace indx;
 
 
 CREATE SEQUENCE ApiDB.NetworkContext_sq;

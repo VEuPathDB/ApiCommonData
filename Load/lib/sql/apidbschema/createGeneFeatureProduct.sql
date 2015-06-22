@@ -31,8 +31,9 @@ REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneFeatureProduct TO gus_w;
 GRANT SELECT ON apidb.GeneFeatureProduct TO gus_r;
 
-CREATE INDEX apidb.gene_prod_idx ON apidb.GeneFeatureProduct (na_feature_id, is_preferred, product);
-CREATE INDEX apidb.gfp_mod_idx ON apidb.GeneFeatureProduct (modification_date, gene_feature_product_id);
+CREATE INDEX apidb.gene_prod_idx ON apidb.GeneFeatureProduct (na_feature_id, is_preferred, product) tablespace indx;
+CREATE INDEX apidb.gfp_mod_idx ON apidb.GeneFeatureProduct (modification_date, gene_feature_product_id) tablespace indx;
+CREATE INDEX apidb.gfp_revfk_idx ON apidb.GeneFeatureProduct (external_database_release_id, gene_feature_product_id) tablespace indx;
 
 ------------------------------------------------------------------------------
 

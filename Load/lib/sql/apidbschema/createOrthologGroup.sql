@@ -37,17 +37,17 @@ ADD CONSTRAINT og_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease;
 
 CREATE INDEX apidb.OrthologGroup_revix
-ON apidb.OrthologGroup (external_database_release_id, ortholog_group_id);
+ON apidb.OrthologGroup (external_database_release_id, ortholog_group_id) tablespace indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroup TO gus_w;
 GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 
-CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id);
-CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name);
+CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id) tablespace indx;
+CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name) tablespace indx;
 
-CREATE INDEX apidb.og_match_ix ON apidb.OrthologGroup (avg_percent_match, ortholog_group_id, name);
-CREATE INDEX apidb.og_pct_ix ON apidb.OrthologGroup (percent_match_pairs, ortholog_group_id, name);
-CREATE INDEX apidb.og_id_ix ON apidb.OrthologGroup (avg_percent_identity, ortholog_group_id, name);
+CREATE INDEX apidb.og_match_ix ON apidb.OrthologGroup (avg_percent_match, ortholog_group_id, name) tablespace indx;
+CREATE INDEX apidb.og_pct_ix ON apidb.OrthologGroup (percent_match_pairs, ortholog_group_id, name) tablespace indx;
+CREATE INDEX apidb.og_id_ix ON apidb.OrthologGroup (avg_percent_identity, ortholog_group_id, name) tablespace indx;
 
 ------------------------------------------------------------------------------
 
@@ -108,11 +108,14 @@ ADD CONSTRAINT ot_fk1 FOREIGN KEY (parent_id)
 REFERENCES apidb.OrthomclTaxon (orthomcl_taxon_id);
 
 CREATE INDEX apidb.OrthomclTaxon_revix
-ON apidb.OrthomclTaxon (parent_id, orthomcl_taxon_id);
+ON apidb.OrthomclTaxon (parent_id, orthomcl_taxon_id) tablespace indx;
 
 ALTER TABLE apidb.OrthomclTaxon
 ADD CONSTRAINT ot_fk2 FOREIGN KEY (taxon_id)
 REFERENCES sres.Taxon (taxon_id);
+
+CREATE INDEX apidb.OrthomclTaxon_revix2
+ON apidb.OrthomclTaxon (taxon_id, orthomcl_taxon_id) tablespace indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthomclTaxon TO gus_w;
 GRANT SELECT ON apidb.OrthomclTaxon TO gus_r;
@@ -668,7 +671,7 @@ ADD CONSTRAINT gtm_fk1 FOREIGN KEY (ortholog_group_id)
 REFERENCES apidb.OrthologGroup (ortholog_group_id);
 
 CREATE UNIQUE INDEX apidb.gtm_group_id 
-    ON apidb.GroupTaxonMatrix (ortholog_group_id);
+    ON apidb.GroupTaxonMatrix (ortholog_group_id) tablespace indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GroupTaxonMatrix TO gus_w;
 GRANT SELECT ON apidb.GroupTaxonMatrix TO gus_r;
@@ -733,10 +736,10 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroupAaSequence TO gus_w;
 GRANT SELECT ON apidb.OrthologGroupAaSequence TO gus_r;
 
 CREATE INDEX apidb.ogas_ogas_ix
-ON apidb.OrthologGroupAaSequence (ortholog_group_id, aa_sequence_id);
+ON apidb.OrthologGroupAaSequence (ortholog_group_id, aa_sequence_id) tablespace indx;
 
 CREATE INDEX apidb.ogas_asog_ix
-ON apidb.OrthologGroupAaSequence (aa_sequence_id, ortholog_group_id);
+ON apidb.OrthologGroupAaSequence (aa_sequence_id, ortholog_group_id) tablespace indx;
 ------------------------------------------------------------------------------
 
 CREATE SEQUENCE apidb.OrthologGroupAaSequence_sq;
@@ -789,7 +792,7 @@ CREATE TABLE ApiDB.OrthomclResource (
 );
 
 CREATE INDEX ApiDB.OrthomclResource_revix
-ON ApiDB.OrthomclResource (orthomcl_taxon_id, orthomcl_resource_id);
+ON ApiDB.OrthomclResource (orthomcl_taxon_id, orthomcl_resource_id) tablespace indx;
 
 GRANT insert, select, update, delete ON ApiDB.OrthomclResource TO gus_w;
 GRANT select ON ApiDB.OrthomclResource TO gus_r;
@@ -844,7 +847,7 @@ CREATE TABLE ApiDB.OrthomclGroupKeyword (
 GRANT insert, select, update, delete ON ApiDB.OrthomclGroupKeyword TO gus_w;
 GRANT select ON ApiDB.OrthomclGroupKeyword TO gus_r;
 
-CREATE INDEX apidb.ogk_group_ix ON apidb.OrthomclGroupKeyword(ortholog_group_id, keyword, frequency);
+CREATE INDEX apidb.ogk_group_ix ON apidb.OrthomclGroupKeyword(ortholog_group_id, keyword, frequency) tablespace indx;
 
 ------------------------------------------------------------------------------
 
@@ -896,7 +899,7 @@ CREATE TABLE ApiDB.OrthomclGroupDomain (
 GRANT insert, select, update, delete ON ApiDB.OrthomclGroupDomain TO gus_w;
 GRANT select ON ApiDB.OrthomclGroupDomain TO gus_r;
 
-CREATE INDEX apidb.ogd_group_ix ON apidb.OrthomclGroupDomain(ortholog_group_id, frequency, description);
+CREATE INDEX apidb.ogd_group_ix ON apidb.OrthomclGroupDomain(ortholog_group_id, frequency, description) tablespace indx;
 
 ------------------------------------------------------------------------------
 
