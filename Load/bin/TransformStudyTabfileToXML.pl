@@ -26,6 +26,8 @@ use GUS::Model::SRes::OntologyTerm;
 
 use GUS::Model::Study::Study;
 
+use Date::Parse;
+
 my ($inFile, $configFile, $outFile, $table, $help, $valueMapFile,);
 
 &GetOptions('help|h' => \$help,
@@ -326,11 +328,12 @@ foreach my $row (<INFILE>){
   $output_pan_id = $pan_id;
   $pan_id++;
 
+  my $formattedDate = formatDate($output,$protocolAppDate);
   my %protocolAppHash; 
   tie (%protocolAppHash,'Tie::IxHash', (
                                         "addition" => 'true',
                                         "protocol" => {content => $protocol},
-                                        "protocol_app_date" => {content => $protocolAppDate},
+                                        "protocol_app_date" => {content => $formattedDate},
                                         "input" => {content => $input_pan_id},
                                         "output" => {content => $output_pan_id},
                                        )
@@ -384,7 +387,6 @@ sub parseHeader {
     $colMap->{"Input"} = $i if ($Header[$i] =~ /Input/i);
     $colMap->{"Output"} = $i if $Header[$i] =~ /Output/i;
     $colMap->{"Date"} = $i if $Header[$i] =~ /\[DATE\]/i;
-    print STDERR "GOT here\n";
     if ($Header[$i] =~ /Characteristics\s*\[\w+\]/i) {
       my $bareChar = $Header[$i];
       my $official_hash_size = keys %{$official_header_hash};
@@ -521,4 +523,18 @@ sub parseCharacteristics {
   }
   
 return ($nodeChars);
+}
+
+sub formatDate {
+
+  my ($output,$date) = @_;
+  my $dateArray = [];
+  my  ($junk1,$junk2,$junk3,$day,$month,$year) = strptime($date);
+  $month += 1;
+  die "invalid month for id = $output, $date, $year-$month-$day " unless (0< $month &&  $month<13);
+  die "invalid day for id = $output, $date, $year-$month-$day " unless (0< $day &&  $day <32);
+  $month = "0".$month if $month <10;
+  $year = $year+1900;
+
+  return $year.$month.$day;
 }

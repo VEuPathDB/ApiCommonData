@@ -8,13 +8,11 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath.owl">
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/obi/NIAID-GSC-BRC.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/externalByHand.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_DOID.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/EupathLabel.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/EupathDefinition.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/PrismCategory.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/diagCodeEupathLabel.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/obi/NIAID-GSC-BRC.owl"/>
     </owl:Ontology>
     
 
@@ -47,7 +45,7 @@
         <obo:IAO_0000115>definition shown on EuPathDB website</obo:IAO_0000115>
         <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
     </owl:AnnotationProperty>
-
+    
 
 
     <!-- http://purl.obolibrary.org/obo/IAO_0000111 -->
@@ -95,15 +93,6 @@
     <!-- http://purl.obolibrary.org/obo/IAO_0000119 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000119"/>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/PRISM_display_category -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/PRISM_display_category">
-        <rdfs:label xml:lang="en">PRISM display category</rdfs:label>
-        <obo:IAO_0000115>The ontology term used as parent of this ontology term for display on the PRISM project website.</obo:IAO_0000115>
-    </owl:AnnotationProperty>
     
 
 
@@ -195,6 +184,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/BFO_0000052 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000052"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/BFO_0000053 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000053"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/BFO_0000087 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000087"/>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000005 -->
 
     <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000005">
@@ -253,24 +260,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/RO_0000052 -->
-
-    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000052"/>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/RO_0000053 -->
-
-    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000053"/>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/RO_0000087 -->
-
-    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000087"/>
-    
-
-
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -279,6 +268,12 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/BFO_0000005 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/BFO_0000005"/>
     
 
 
@@ -362,18 +357,19 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DRON_00021246">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
                 <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115>A drug product in solution form for injection that has the chemical ingredient chloroquine and used in the treatment or prevention of malaria.</obo:IAO_0000115>
         <obo:IAO_0000118>chloroquine injection</obo:IAO_0000118>
+        <obo:EUPATH_0000052>chloroquine (injectable)</obo:EUPATH_0000052>
     </rdf:Description>
     
 
@@ -394,6 +390,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000118>chloroquine tablets</obo:IAO_0000118>
+        <obo:EUPATH_0000052>chloroquine (oral)</obo:EUPATH_0000052>
         <obo:IAO_0000115>A drug product in tablet form for oral administration that has the chemical ingredient chloroquine and used in the treatment or prevention of malaria.</obo:IAO_0000115>
     </rdf:Description>
     
@@ -404,11 +401,13 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00003064">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drinking water source</obo:EUPATH_0000052>
         <obo:IAO_0000115>Water that is safe enough to be consumed by humans or used with low risk of immediate or long term harm.</obo:IAO_0000115>
+        <obo:EUPATH_0000112>Water that is safe enough to be consumed by humans or used with low risk of immediate or long term harm.</obo:EUPATH_0000112>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Drinking_water</obo:IAO_0000119>
     </owl:Class>
     
@@ -423,16 +422,18 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000105"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity used to build a dwelling or part of a dwelling.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">building material</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>A material used in the construction of a dwelling.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -443,8 +444,10 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity for accommodation, such as a building, part of a building, caravan, houseboat or other mobile home. A tent is not normally considered to be substantial.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling type</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>A self-contained &apos;substantial&apos; unit of accommodation, such as a building, part of a building, caravan, houseboat or other mobile home. Generally there are two categories of dwellings, modern house (cement/wood/metal wall;  tiled/metal roof; and closed eaves) and traditional house (all other houses). A tent is not normally considered to be substantial.</obo:EUPATH_0000112>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Dwelling</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -460,16 +463,18 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000106"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A building material used in the construction of a roof.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">roof material</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>A material used in the construction of a roof.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -498,14 +503,16 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000108"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A building material used in the construction of a floor</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">floor material</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A material used in the construction of a floor.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -521,13 +528,15 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000107"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A building material used in the construction of a wall.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wall material</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>A material used in the construction of a wall.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -542,7 +551,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000107"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -582,7 +591,9 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of a household&apos;s cumulative living standard. The wealth index is calculated using easy-to-collect data on a household&apos;s ownership of selected assets, such as televisions and bicycles; materials used for housing construction; and types of water access and sanitation facilities.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household wealth index</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Household wealth index is a composite measure of a household&apos;s cumulative living standard. It is calculated using easy-to-collect data on a household&apos;s ownership of selected assets, such as televisions and bicycles; materials used for housing construction; and types of water access and sanitation facilities.</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>http://dhsprogram.com/topics/Wealth-Index.cfm</obo:IAO_0000119>
@@ -597,18 +608,20 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A processed material that is the bottom edge of a roof.  The primary function of the eaves is to keep rain water off the walls and to prevent the ingress of water at the junction where the roof meets the wall.  The secondary function is to control solar penetration; the eaves overhang can be designed to adjust the building&apos;s solar heat gain to suit the local climate, the latitude and orientation of the building, refer to passive solar building design. The eaves overhang may also shelter openings to ventilate the roof space.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">eaves</obo:EUPATH_0000052>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Eaves</obo:IAO_0000119>
+        <obo:EUPATH_0000112>The part of the house where the roof and the walls meet. It may have openings allowing ventilation and access by insects such as mosquitoes.</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
@@ -641,14 +654,16 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000010"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A brick with holes which is embedded in a wall to allow ventilation through it.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">air brick</obo:EUPATH_0000052>
         <obo:IAO_0000119>http://en.wiktionary.org/wiki/air_brick</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A brick with holes which is embedded in a wall to allow ventilation through it.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
     
@@ -665,8 +680,10 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># people / household</obo:EUPATH_0000052>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of people in a household.</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>number of people in a household</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -680,12 +697,14 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000968"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A device that is a sanitation fixture used primarily for the disposal of human urine and feces.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">toilet type</obo:EUPATH_0000052>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Toilet</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A sanitation fixture used primarily for the disposal of human urine and feces.</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
@@ -704,8 +723,10 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity to indicate whether a household has electricity in a dwelling.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity to indicate whether a household has electricity.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">electricity?</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>Information states whether a household has electricity.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -719,14 +740,16 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of fuel mainly used for cooking.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cooking fuel type</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
+        <obo:EUPATH_0000112>Fuel mainly used for cooking.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
     
@@ -739,11 +762,13 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of an energy source for lighting.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lighting type</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Energy source for lighting</obo:EUPATH_0000112>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -763,8 +788,10 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># rooms</obo:EUPATH_0000052>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of rooms in a dwelling that may be of a particular type such as used for sleeping.</obo:IAO_0000115>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
+        <obo:EUPATH_0000112>number of rooms in a dwelling that may be of a particular type such as used for sleeping.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -783,9 +810,11 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">land area measured in acres: a scalar measurement datum of land measured in acres that may be of a particular type such as land owned by a household.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># acres</obo:EUPATH_0000052>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">land area measured in acres: a scalar measurement datum of land measured in acres that may be of a particular type such as land owned.</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>land area measured in acres</obo:EUPATH_0000112>
         <obo:IAO_0000119>Person: Chris Stoeckert</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -803,9 +832,11 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of meals per day in a household</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># meals / day</obo:EUPATH_0000052>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">usual number of meals per day</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>usual number of meals per day</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
     </owl:Class>
@@ -823,9 +854,11 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum of days eating meat in a  week in a household</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># meat meals / wk</obo:EUPATH_0000052>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of days eating meat in a  week</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>number of days eating meat in the last week</obo:EUPATH_0000112>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -843,10 +876,12 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how often problems satisfying food needs in a household</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">food problems / wk</obo:EUPATH_0000052>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">how often problems satisfying food needs</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
+        <obo:EUPATH_0000112>how often problems satisfying food needs</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
     
@@ -863,9 +898,11 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000002"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A length measurement datum of the distance in kilometers to from a dwelling to the nearest health facility.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A length measurement datum of the distance in kilometers to the nearest health facility.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dist to health facility</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000119>Person: Chris Stoeckert</obo:IAO_0000119>
+        <obo:EUPATH_0000112>distance in kilometers to the nearest health facility</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -883,9 +920,11 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000055"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">#F anopheles (CDC trap)</obo:EUPATH_0000052>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum which is number of female anopheles mosquitoes that may be of a particular type such as those collected using CDC trap in a household in a given night</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Person: Chris Stoeckert</obo:IAO_0000119>
+        <obo:EUPATH_0000112>number of female anopheles mosquitoes that may be of a particular type such as those collected using CDC trap in a household in a given night</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
@@ -907,9 +946,11 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">glucose 6 phosphate dehydrogenase genotype</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001305"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A genotype information which is about the presence of certain genetic variants of glucose-6-phosphate dehydrogenase.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">G6PD genotype</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>Genotype information about the presence of certain genetic variants of glucose-6-phosphate dehydrogenase.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -920,9 +961,11 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">alpha thalassemia genotype</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001305"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A genotype information which is about the presence and degree of alpha-thalassemia, a form of thalassemia involving the number of functional HBA1 and HBA2 genes.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">a-thalassemia genotype</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>Genotype information about the presence and degree of alpha-thalassemia, a form of thalassemia involving the number of functional HBA1 and HBA2 genes.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -933,9 +976,11 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sickle hemoglobin genotype</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001305"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A genotype information which is about the presence of sickle-cell hemoglobin (HbS), an abnormal form of hemoglobin which is the oxygen-carrying protein within the red blood cells.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HbS genotype</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>Genotype information about the presence of sickle-cell hemoglobin (HbS), an abnormal form of hemoglobin which is the oxygen-carrying protein within the red blood cells.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -945,6 +990,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000036">
         <rdfs:label xml:lang="en">diagnosis of malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:EUPATH_0000052>symptomatic malaria</obo:EUPATH_0000052>
     </owl:Class>
     
 
@@ -966,7 +1012,9 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of uncomplicated malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000036"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria without evidence of complicated malaria.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">uncomplicated malaria</obo:EUPATH_0000052>
         <obo:IAO_0000119>Grant Dorsey</obo:IAO_0000119>
+        <obo:EUPATH_0000112>Symptomatic malaria without evidence of complicated malaria. In Uganda, diagnoses of uncomplicated malaria are always followed by treatment with Artemether/lumefantrine.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -990,6 +1038,8 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of complicated malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000036"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria with the presence of any danger signs including inability to sit up or stand, vomiting everything, unable to breastfeed or drink and lethargy or meeting criteria for severe malaria.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">complicated malaria</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Symptomatic malaria with the presence of any “danger signs” including inability to sit up or stand, vomiting everything, unable to breastfeed or drink and lethargy or meeting criteria for severe malaria</obo:EUPATH_0000112>
         <obo:IAO_0000119>Grant Dorsey</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
@@ -1012,9 +1062,11 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnoses of complicated malaria with danger signs</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000040"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of complicated malaria with signs and symptoms, such as inability to sit up or stand, vomiting everything, unable to breastfeed or drink, lethargy, which are not listed as WHO criteria used to diagnose severe malaria.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">complicated malaria with danger signs</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Grant Dorsey</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Complicated malaria with signs and symptoms, such as inability to sit up or stand, vomiting everything, unable to breastfeed or drink, lethargy, which are not listed as WHO criteria used to diagnose severe malaria.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1031,9 +1083,11 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of complicated malaria based on WHO criteria that include the presence of parasite infections, most commonly P.falciparum, and any one or more of symptoms/signs of serious organ failures or abnormalities, including cerebral malaria, severe anemia, generalized convulsions, hypoglycemia, respiratory distress, fluid and electrolyte disturbances, acute renal failure, ARDS, circulatory collapse, abnormal bleeding, and Jaundice.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">severe malaria</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Grant Dorsey</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>A kind of complicated malaria diagnosed based on WHO criteria that include the presence of parasite infections, most commonly P.falciparum, and any one or more of symptoms/signs of serious organ failures or abnormalities, including cerebral malaria, severe anemia, generalized convulsions, hypoglycemia, respiratory distress, fluid and electrolyte disturbances, acute renal failure, ARDS, circulatory collapse, abnormal bleeding, and Jaundice.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1057,9 +1111,17 @@
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000045"/>
             </owl:Restriction>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000064"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization (WHO) criteria.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">severe malaria symptom</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>symptom or sign that is used for the diagnosis of severe malaria based on World Health Organization criteria.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
@@ -1078,9 +1140,11 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum about the level of hemoglobin in the blood with a value in units of g/dl.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hb (g/dl)</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>the level of hemoglobin in the blood with a value in units of g/dl.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1097,9 +1161,11 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of asexual parasites in blood cells by microscopy using a value of positive or negative.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">blood smear reading (+/-)</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Whether or not a blood smear was positive for asexual parasites by microscopy</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1110,7 +1176,9 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical visit</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000011"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A planned process in which a patient is seen by a medical practitioner.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical visit</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A patient is seen by a medical practitioner</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -1123,6 +1191,8 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">routine clinical visit</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000049"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A clinical visit that is primarily for a regular examination.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">routine clinical visit</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>A clinical visit that is primarily for a regular examination.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
@@ -1139,7 +1209,7 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_9606"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OBI_0000097"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -1158,14 +1228,16 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000053"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity whichis part of a dwelling for providing fresh air to the dwelling.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling ventilation</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>Part of a dwelling that can serve to provide an air passage into the dwelling.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -1178,6 +1250,8 @@
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">district in Uganda</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A geographical location which is part of Uganda.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ugandan district</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>District which is part of Uganda.</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
@@ -1215,16 +1289,19 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000056"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <obo:EUPATH_0000052>medication</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000112>quinine used in malaria medication 
 blood used in transfusion for replacement blood lost during surgery or due to a serious injury.</obo:IAO_0000112>
+        <obo:EUPATH_0000112>Medications are used to treat symptoms, signs, or a diagnosed disease. Examples are quinine used as a malaria medication, and blood used in a transfusion for replacement of lost blood. 
+</obo:EUPATH_0000112>
         <obo:IAO_0000115>A material entity that is bearer of a medication role.</obo:IAO_0000115>
     </owl:Class>
     
@@ -1243,6 +1320,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
         <obo:IAO_0000115>A medication material intended to prevent or treat malaria.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000052>malaria medication</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>medication for prevention or treatment of malaria</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
     
@@ -1254,8 +1333,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label xml:lang="en">non-malaria medication</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>medication for prevention or treatment of a disease other than malaria.</obo:EUPATH_0000112>
         <obo:IAO_0000115>A medication material intended to prevent or treat a disease other than malaria.</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000052>non-malaria medication</obo:EUPATH_0000052>
     </owl:Class>
     
 
@@ -1282,11 +1363,13 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <obo:EUPATH_0000052>quinine</obo:EUPATH_0000052>
         <obo:IAO_0000118>quinine</obo:IAO_0000118>
         <obo:IAO_0000115>A drug product that has the chemical ingredient quinine and has antipyretic (fever-reducing), antimalarial, analgesic (painkilling), and anti-inflammatory properties.</obo:IAO_0000115>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Quinine</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A drug used in the treatment of malaria. In Uganda, quinine is used to treat a patient when he/she is diagnosed as having complicated malaria or has an episode of uncomplicated malaria in 14 or fewer days since the last episode or during the 1st trimester of pregnancy.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1315,11 +1398,13 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Artemether/lumefantrine</obo:IAO_0000119>
-        <obo:IAO_0000118>coartem</obo:IAO_0000118>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
-        <obo:IAO_0000115>A drug product that is the of combination artemether/lumefantrine (trade names Coartem and Riamet, Falcynate-LF). It is generally used for the treatment of acute uncomplicated Plasmodium falciparum malaria.</obo:IAO_0000115>
         <obo:IAO_0000118>artemether-lumefantrine</obo:IAO_0000118>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
+        <obo:EUPATH_0000052>artemether-lumefantrine</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>A drug used in the treatment or prevention of malaria. In Uganda, coartem (artemether-lumefantrine) is used to treat a patient when he/she is diagnosed as having a new episode of uncomplicated malaria occurring more than 14 days since the last episode.</obo:EUPATH_0000112>
+        <obo:IAO_0000118>coartem</obo:IAO_0000118>
+        <obo:IAO_0000115>A drug product that is the of combination artemether/lumefantrine (trade names Coartem and Riamet, Falcynate-LF). It is generally used for the treatment of acute uncomplicated Plasmodium falciparum malaria.</obo:IAO_0000115>
     </owl:Class>
     
 
@@ -1336,7 +1421,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 </owl:unionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
         <obo:IAO_0000115>A dependent continuant which is either disease or phenotypic abnormality.</obo:IAO_0000115>
     </owl:Class>
     
@@ -1358,8 +1443,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity is about household.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household information</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Information about household</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
     </owl:Class>
     
@@ -1371,8 +1458,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of uncomplicated malaria in the 1st trimester of pregnancy</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000038"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of uncomplicated malaria that occurs with the first trimester of pregnancy.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">uncomplicated malaria with pregnancy</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>uncomplicated malaria that occurs with the first trimester of pregnancy.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
     </owl:Class>
     
@@ -1384,7 +1473,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic parasitemia</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">asymptomatic parasitemia</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -1397,6 +1488,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of malaria - unspecified</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis to indicate whether a person has marlaria or not. It has value yes or no.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malaria</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>A diagnosis to indicate whether a person has marlaria or not. It has value yes or no.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -1416,7 +1509,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A time measurement datum that specifies the date of a clinical visit.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical visit date</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>The date of a clinical visit.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
@@ -1435,9 +1530,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is the number of asexual parasites per ul.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">parasite density</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Number of asexual parasites per ul</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1458,8 +1555,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Class>
         </owl:equivalentClass>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity about dwelling.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling information</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Information about dwelling</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
     </owl:Class>
     
@@ -1477,8 +1576,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symbol that denotes a specific household.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household ID</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>An identifier of a household</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
     
@@ -1496,9 +1597,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A symbol that denotes a specific human participant under investigation.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">participant ID</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:EUPATH_0000112>An identifier of a participant</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1514,7 +1617,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                         <owl:intersectionOf rdf:parseType="Collection">
                             <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000020"/>
                             <owl:Restriction>
-                                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000052"/>
+                                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
                                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
                             </owl:Restriction>
                         </owl:intersectionOf>
@@ -1531,8 +1634,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 </owl:unionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000005"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A dependent continuant which is a feature of a participant under investigation.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">participant characteristics</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>features of a participant</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -1553,7 +1658,15 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">elevated temperature or subjective fever</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">febrile</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>elevated temperature or subjective fever</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -1577,13 +1690,15 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling facility</rdfs:label>
         <owl:equivalentClass>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000109"/>
             </owl:Restriction>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity in a dwelling that is designed, built, installed, selected, etc., to serve a specific function affording a convenience or service to people who are living in the dwelling.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling facility</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>A material in a dwelling that is designed, built, installed, selected, etc., to serve a specific function affording a convenience or service to people who are living in the dwelling.</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
     </owl:Class>
@@ -1596,6 +1711,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">subjective fever</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A phenotypic abnormality of a subjective fever as reported by the study participant or their parent/guardian</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">fever</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Subjective fever as reported by the study participant or their parent/guardian</obo:EUPATH_0000112>
         <obo:IAO_0000119>Grant Dorsey</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
@@ -1641,7 +1758,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0100026"/>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OBI_0000097"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
@@ -1714,8 +1831,16 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000110">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">organismal body temperature measurement datum</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000102"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A temperature measurement datum that is about an organism.</obo:IAO_0000115>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temperature</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>Organismal body temperature</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
@@ -1729,7 +1854,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000087"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000108"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -1744,6 +1869,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000113">
         <rdfs:label>age since birth at time of visit</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001169"/>
+        <obo:EUPATH_0000052>age at time of visit</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>The age of the patient on the day of a clinical visit, measured in years.</obo:EUPATH_0000112>
         <obo:IAO_0000115>An age since birth measurement datum at the time of a clinical visit.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
@@ -1757,7 +1884,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000114">
         <rdfs:label>average asexual parasite density of a participant with asymptomatic parasitemia</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
+        <obo:EUPATH_0000112>The average asexual parasite density (count per ul of whole blood) across all visits of the participant who was diagnosed with asymptomatic parasitemia.</obo:EUPATH_0000112>
         <obo:IAO_0000115>An average value of asexual parasites counted per microliter of blood (i.e. malaria parasite density) across mulitiple clinical visits of a participant who was diagnosed with asymptomatic parasitemia.</obo:IAO_0000115>
+        <obo:EUPATH_0000052>avg parasite density with asymp parasitemia</obo:EUPATH_0000052>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -1771,9 +1900,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label>average asexual parasite density of a participant with malaria</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000112>The average asexual parasite density (count per ul of whole blood) across all visits of the participant who was diagnosed with malaria</obo:EUPATH_0000112>
         <obo:IAO_0000115>An average value of asexual parasites counted per microliter of blood (i.e. malaria parasite density) across mulitiple clinical visits of a participant who was diagnosed with malaria.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000052>avg parasite density with malaria</obo:EUPATH_0000052>
     </owl:Class>
     
 
@@ -1785,6 +1916,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>An average count of female Anopheles mosquitoes collected across multiple collections.</obo:EUPATH_0000112>
+        <obo:EUPATH_0000052>avg F Anopheles</obo:EUPATH_0000052>
         <obo:IAO_0000115>An average count of female Anopheles mosquitoes collected across multiple collections (e.g. from one or more households on a number of nights).</obo:IAO_0000115>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
@@ -1797,7 +1930,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label>average number of female Anopheles tested for sporozoite</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000112>Average number of female Anopheles mosquitoes tested for sporozoites across multiple collections from a household</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000052>avg num F Anopheles tested</obo:EUPATH_0000052>
         <obo:IAO_0000115>An average value of Anopheles mosquitoes tested for sporozoites across multiple collections (e.g. from a given household across CDC light trap collections) in a given period.</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
     </owl:Class>
@@ -1812,6 +1947,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:IAO_0000115>An average value of sporozoite positive Anopheles mosquitoes across multiple collections (e.g. from a given household over a number of nights of collections).</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000052>avg num F Anopheles positive</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Average number of female mosquitoes tested positive for sporozoites from a given household</obo:EUPATH_0000112>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
     </owl:Class>
     
@@ -1822,9 +1959,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000119">
         <rdfs:label>average sporozoite rate of female Anopheles</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
+        <obo:EUPATH_0000052>avg sporozoite rate</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000115>An average precentage value of female Anopheles mosquitoes tested as sporozoites-positive in all female mosquitoes tested for sporozoites across multiple collections.</obo:IAO_0000115>
+        <obo:EUPATH_0000112>Average proportion of mosquitoes which tested positive for sporozoites</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
     </owl:Class>
     
@@ -1838,7 +1977,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the total number of CDC Light Trap specimen collections in a given time period from a household.</obo:IAO_0000115>
+        <obo:EUPATH_0000112>Total number of Anoephles collection using CDC Light Trap over the course of the study from a household</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000052>num Anopheles collections</obo:EUPATH_0000052>
     </owl:Class>
     
 
@@ -1850,8 +1991,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the total number of clinical visits by a participant in an investigation.</obo:IAO_0000115>
+        <obo:EUPATH_0000052>total num visits</obo:EUPATH_0000052>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
+        <obo:EUPATH_0000112>The total number of clinical visits by a participant.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1863,8 +2006,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000052>num visits with malaria</obo:EUPATH_0000052>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with malaria</obo:IAO_0000115>
+        <obo:EUPATH_0000112>The number of clinical visits during which the participant was diagnosed with malaria</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1875,7 +2020,9 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:label>number of clinical visits with asymptomatic parasitemia</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:EUPATH_0000052>num visits with asymp parasitemia</obo:EUPATH_0000052>
         <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with asymptomatic parasitemia</obo:IAO_0000115>
+        <obo:EUPATH_0000112>The number of clinical visits during which the participant was diagnosed with asymptomatic parasitemia</obo:EUPATH_0000112>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
     </owl:Class>
@@ -1891,6 +2038,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:IAO_0000115>A data item of the total number of clinical visits which were not sheduled routine visits.</obo:IAO_0000115>
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <obo:EUPATH_0000052>num non-routine visits</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>The total number of clinical visits which were not part of the routine visit schedule.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -1903,58 +2052,21 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <dc:source>PRISM</dc:source>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of the total number of clinical visits which were sheduled routine visits.</obo:IAO_0000115>
+        <obo:EUPATH_0000052>total num routine visits</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>The total number of clinical visits which were part of the routine visit schedule.</obo:EUPATH_0000112>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
     </owl:Class>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000126 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_a2 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000126">
-        <rdfs:label xml:lang="en">sample available information</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
-        <obo:IAO_0000115>An information content entity that is about the type of sample/specimen collected during a clinical visit.</obo:IAO_0000115>
-        <obo:IAO_0000119>PRISM</obo:IAO_0000119>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000127 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000127">
-        <rdfs:label xml:lang="en">blood specimen on filter paper</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000655"/>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
-        <obo:IAO_0000119>Gruop: Penn group</obo:IAO_0000119>
-        <obo:IAO_0000115>A blood specimen that is located on a filter paper.</obo:IAO_0000115>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000128 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000128">
-        <rdfs:label xml:lang="en">peripheral blood mononuclear cell specimen</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000953"/>
-        <obo:IAO_0000118>PBMC specimen</obo:IAO_0000118>
-        <obo:IAO_0000115>A processed specimen that is extracted from whole blood using gradient centrifugation that separates the blood into a layer of peripheral blood mononuclear cell under the top layer of plasma. It contains lymphocytes, monocytes or macrophages that are critical components in the immune system.</obo:IAO_0000115>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
-        <obo:IAO_0000119>http://en.wikipedia.org/wiki/Peripheral_blood_mononuclear_cell</obo:IAO_0000119>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000129 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000129">
-        <rdfs:label xml:lang="en">red blood cell specimen</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000953"/>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
-        <obo:IAO_0000118>erythrocyte specimen</obo:IAO_0000118>
-        <obo:IAO_0000119>http://www.ruf.rice.edu/~bioslabs/studies/sds-page/gellab1.html</obo:IAO_0000119>
-        <obo:IAO_0000118>RBC specimen</obo:IAO_0000118>
-        <obo:IAO_0000115>A processed specimen consisting of red blood cells isolated from whole blood by centrifugation. </obo:IAO_0000115>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_a2">
+        <rdfs:label xml:lang="en">viremia</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <obo:IAO_0000115>The presence of a virus in the blood. a medical condition where viruses enter the bloodstream and hence have access to the rest of the body.source: http://en.wikipedia.org/wiki/Viremia</obo:IAO_0000115>
+        <obo:IAO_0000118>viremia</obo:IAO_0000118>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/EUPATH"/>
     </owl:Class>
     
 
@@ -2056,21 +2168,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     
 
 
-    <!-- http://purl.obolibrary.org/obo/OBI_0000953 -->
-
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0000953">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0000047"/>
-                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0100051"/>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-    </rdf:Description>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/OBI_0000968 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000968"/>
@@ -2079,13 +2176,25 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169"/>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Age of an organism since birth</obo:EUPATH_0000112>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/OBI_0001305 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001305"/>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001305">
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">genotype</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>A genetic characteristics information that is about the genetic material of an organism and minimally includes information about the genetic background and can in addition contain information about specific alleles, genetic modifications, etc.</obo:EUPATH_0000112>
+    </owl:Class>
     
 
 
@@ -2104,6 +2213,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
             </owl:Restriction>
         </owl:equivalentClass>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">laboratory finding</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>The result of a labortory test that can support an inference to an assertion about some quality of the patient.</obo:EUPATH_0000112>
     </owl:Class>
     
 
@@ -2116,13 +2227,25 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <!-- http://purl.obolibrary.org/obo/OGMS_0000073 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000073">
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>The identification of the nature of an illness or other problem by examination of the symptoms.</obo:EUPATH_0000112>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047"/>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000052"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:EUPATH_0000052 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex</obo:EUPATH_0000052>
+        <obo:EUPATH_0000112>Either of the two main categories (male and female) into which humans and many other living things are divided on the basis of their reproductive functions</obo:EUPATH_0000112>
+    </owl:Class>
     
 
 

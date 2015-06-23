@@ -3,7 +3,7 @@
 use strict;
 use Bio::Tools::GFF;
 use Getopt::Long;
-
+use File::Basename;
 my ($snpGff, $outFile, $gffVersion);
 
 &GetOptions("snp_gff=s"=> \$snpGff,
@@ -21,7 +21,8 @@ my $gffIO = Bio::Tools::GFF->new(-file => $snpGff,
     );
 
 # sort the output file by first 2 colulmns (second column is numeric)
-open(OUT, "|sort -k 1,1 -k 2,2n > $outFile") or die "Cannot open file $outFile for writing: $!";
+my $DIR = dirname($snpGff);
+open(OUT, "|sort -T $DIR -k 1,1 -k 2,2n > $outFile") or die "Cannot open file $outFile for writing: $!";
 
 while (my $feature = $gffIO->next_feature()) {
   my $snpStart = $feature->location()->start();
@@ -41,3 +42,4 @@ while (my $feature = $gffIO->next_feature()) {
 }
 close OUT;
 $gffIO->close();
+die "$outFile is empty" if (-z $outFile);

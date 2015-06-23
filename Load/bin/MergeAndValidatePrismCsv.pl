@@ -26,21 +26,47 @@ use GUS::Model::SRes::OntologyTerm;
 
 use GUS::Model::Study::Study;
 
-my ($inDir, $idColumnName, $dateColumnName, $inputColumnName, $configFile, $outFile, $help,);
+my ($inDir, $idColumnName, $dateColumnName, $inputColumnName, $outFile, $parentFile, $parentFileIdColumn, $help,);
 
 &GetOptions('help|h' => \$help,
-            'inDir=s' => \$inDir,
-            'outFile=s' =>\$outFile,
-            'idColumn=s' => \$idColumnName,
-            'dateColumn=s' => \$dateColumnName,
-            'inputColumn=s' => \$inputColumnName
+                      'inDir=s' => \$inDir,
+                      'outFile=s' =>\$outFile,
+                      'idColumn=s' => \$idColumnName,
+                      'dateColumn=s' => \$dateColumnName,
+                      'parentIdColumn=s' => \$inputColumnName,
+                      'parentFile=s' => \$parentFile,
+                      'parentFileIdColumn=s' => \$parentFileIdColumn,
            );
 $idColumnName ='id' unless $idColumnName;
 $dateColumnName = 'date' unless $dateColumnName;
+
+my $parentIdsHash = {};
+
+if (defined $inputColumnName || defined $parentFile || defined $parentFileIdColumn) {
+  die "To validate parent ids, the parentIdColumn, parentFileName and parentFileIdColumn must all be provided.". 
+         "if you do not wish to validate these ids, or if there is no parent entity type, these values should be null" 
+           unless (defined $inputColumnName && defined $parentFile && defined $parentFileIdColumn);
+  open (PARENT_ID_FILE, $parentFile) or die "unable to open parent file $parentFile: $!"  ;
+  my $isHeader = 1;
+  my $parentIdIndex;
+  foreach my $row (<PARENT_ID_FILE>) {
+    my $values = split("\t" , $row);
+    if ($isHeader) {
+      my %index;
+      @index{@$values} = (0..$#$values);
+      $parentIdIndex = $index{$parentFileIdColumn};
+      die "ParentFileIdColumn  $parentFileIdColumn not found in $parentFile" unless defined $parentIdIndex;
+      $isHeader = 0;
+      next;
+    }
+    my $parentId = $values->[$parentIdIndex];
+    $parentIdsHash->{$parentId} = 1;
+  }
+}
 my $headerSize = 0;
 my @Header;
-
-opendir(DH, $inDir);
+my $idToParentIdMap = {};
+opendir(DH, $inDir) or die "unable to open to open dir $inDir: $!";
 my @inputFiles = readdir(DH);
 closedir(DH);
 
@@ -48,8 +74,11 @@ my $columns = {};
 my $values = {};
 my $allIds = {};
 my $duplicateIds = {};
+my $invalidParentIds = {};
+
 foreach my $inFile (@inputFiles) {
   my $isHeader = 1;
+  my $parentIdIndex;
   open (INFILE, "$inDir/$inFile") || die "Can't open $inFile for reading : $!\n";
   next if (-d $inFile);
   my $ids = [];
@@ -66,23 +95,36 @@ foreach my $inFile (@inputFiles) {
     if ($isHeader) {
       $columns = parseHeader($row,$columns,$inFile,$idColumnName);
       $idColumn = $columns->{output}->{$inFile}->{idColumn};
+      $parentIdIndex = $columns->{characteristic}->{$inputColumnName}->{location}->[0]->{$inFile};
       $isHeader=0;
       next;
     }
 
     my $ValueMap = parseRow($row);
     my $id = $ValueMap->{$idColumn};
+    my $parentId;
+    $parentId = $ValueMap->{$parentIdIndex};
     next unless (defined $id && $id =~/\w/);
     
+    if (exists $parentIdsHash->{$parentId}) {
+      $idToParentIdMap->{$id} = $parentId;
+    }
+    elsif (exists $invalidParentIds->{$inFile}->{$parentId}) {
+      push (@{$invalidParentIds->{$inFile}->{$parentId}}, $id);
+    }
+    else {
+      $invalidParentIds->{$inFile}->{$parentId} = [$id];
+    }
+
     unless (exists ($values->{$inFile}->{$id})) {
-      $values->{$inFile}->{$id} = $ValueMap;
+      $values->{$inFile}->{$id} = $ValueMap unless exists $invalidParentIds->{$inFile}->{$parentId} ;
       push (@$ids,$id) ;
     }
-    else { 
+    else {
       push(@$dupIds,$id);
     }
   }
-  
+
   $allIds->{$inFile}=$ids;
   ($dupIds) = uniq($dupIds);
   $duplicateIds->{$inFile}=$dupIds if (scalar ($dupIds) != 0);
@@ -92,11 +134,12 @@ my @uniqueIds;
 foreach my $subArray (@id_set){
   push (@uniqueIds, @$subArray);
 }
+
 @uniqueIds = uniq(@uniqueIds);
 
 my $confilctedCharacteristics = {};
 
-my $mergedFile = mergeFiles($columns,$values,\@uniqueIds,$confilctedCharacteristics,$dateColumnName,$inputColumnName);
+my $mergedFile = mergeFiles($columns,$values,\@uniqueIds,$invalidParentIds,$confilctedCharacteristics,$dateColumnName,$inputColumnName);
 open (OUTPUT, ">$outFile") or die "Unable to open file for writing :$!";
 print OUTPUT $mergedFile;
 close OUTPUT;
@@ -127,6 +170,7 @@ sub parseHeader {
      push  (@{$columns->{characteristic}->{$value}->{location}}, {$fn=>$i});
     }
   }
+  die "Id column named $idColumnName not found, please provide the correct IdColumnName" unless exists $columns->{output}->{$fn}->{idColumn};
   return $columns;
 }
 
@@ -144,7 +188,7 @@ sub parseRow {
     $value =~ s/^"|"$//g if defined ($value);
     $colMap-> {$i} =$value;
   }
-  
+
   return $colMap;
 }
 
@@ -208,8 +252,9 @@ sub mergeFiles {
   return $output;
 }
 
+
 sub printReport {
-  my ($allIds,$duplicateIds,$uniqueIds,$absentIds,$conflictedCharacteristics,$reportFile) = @_;
+  my ($allIds,$duplicateIds,$uniqueIds,$invalidParentIds,$absentIds,$conflictedCharacteristics,$reportFile) = @_;
   my @fileNames = keys(%$allIds);
   foreach my $fileName (keys(%$allIds)) {
     my $ids = $allIds->{$fileName} ;
@@ -224,6 +269,8 @@ sub printReport {
   }
   open(Report, ">$reportFile") or die "Unable to open file for writing :$!";
 #  while( my( $key, $value ) = each( %$conflictedCharacteristics ) ) {
+  print Report "ids with invalid parent Ids\n";
+  print Report Dumper ($invalidParentIds);
   print Report "Characteristics with conflicting values:\n";
   print Report Dumper ($conflictedCharacteristics);
   print Report "Duplicate Ids in each file, these values are removed from final file: \n";

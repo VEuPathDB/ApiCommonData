@@ -51,11 +51,11 @@ while (my @row = $orthoMclStmt->fetchrow_array()){
     $geneOrthoMclIds->{$row[0]} = $row[1];
 }           
 
-my $allGenesData = geneCopyNumberCalc($fpkmFile, $ploidy, $chrMedians, $geneOrthoMclIds);
+my $allGenesData = geneCopyNumberCalc($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds);
 calcCnvForOrthologGroups($allGenesData, $chrPloidies, $outputDir, $sampleName);
  
 sub geneCopyNumberCalc {
-    my ($fpkmFile, $ploidy, $chrMedians, $geneOrthoMclIds) = @_;
+    my ($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds) = @_;
     my $allGenesData = [];
     open (IN, $fpkmFile) or die "Cannot read FPKM file $fpkmFile\n$!\n";
 
@@ -80,7 +80,7 @@ sub geneCopyNumberCalc {
                 print STDERR "Error: Bad median for chromosome $chr.  No copy number calculation for $transId\n";
                 next;
             }
-            my $rawCN = $fpkm/($chrMedians->{$chr}/$ploidy);
+            my $rawCN = $fpkm/($chrMedians->{$chr}/$chrPloidies->{$chr});
             my $orthoMclId;
             if (exists $geneOrthoMclIds->{$geneId}) {
                 $orthoMclId = $geneOrthoMclIds->{$geneId};
