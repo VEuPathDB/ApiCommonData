@@ -75,6 +75,14 @@ sub getArgsDeclaration {
                 default => 'source_id',
 	       }),
 
+     stringArg({name => 'srcIdRegex',
+		descr => 'The column of the primary id for each protein used in the interproScan',
+		constraintFunc=> undef,
+		reqd  => 0,
+		isList => 0,
+                default => '^>(\S+)',
+	       }),
+
      integerArg({name  => 'testnumber',
 		 descr => 'Number of query sequences to process for testing',
 		 reqd  => 0,
@@ -218,8 +226,9 @@ sub processProteinResults {
   my ($self, $proteins) = @_;
 
   my $tableName = $self->getArg('aaSeqTable');
+  my $regex = $self->getArg('srcIdRegex');
   my $queryTable = "GUS::Model::DoTS::$tableName";
-  my $protein_id = $1 if($proteins->[0] =~ m/^(\S+)/);
+  my $protein_id = $1 if($proteins->[0] =~ m/$regex/);
   if (!$protein_id) {
   	$self->log("Skipping: Interproscan Results file has a match with empty source ID");
 	return;
