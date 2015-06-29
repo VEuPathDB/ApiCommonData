@@ -158,7 +158,7 @@ sub run {
   AND ga.gene_type='protein coding' and ga.is_reversed=0
   UNION
   --CASE C:  last gene on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta, sa.length as gamma,
+  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta, sa.length as gamma,
    CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
   FROM apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}SequenceAttributes sa,
     (select max(end_max) as max_end_max, na_sequence_id from apidbTuning.${tuningTablePrefix}geneAttributes
@@ -180,7 +180,7 @@ sub run {
   AND ga.end_max = sub.max_end_max and ga.is_reversed=1
   UNION
   --CASE D: other genes on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta,
+  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta,
   CASE WHEN (sub1.gamma < sub2.gamma) THEN sub1.gamma ELSE sub2.gamma END AS gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
   FROM apidbTuning.${tuningTablePrefix}geneAttributes ga,
