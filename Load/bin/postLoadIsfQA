@@ -248,7 +248,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaSeq) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the translated aa sequence = $tranAaSeq, which is not equal to coding_gene = $codingTransCount\n" unless ($tranAaSeq == $codingTransCount);
+print STDERR "ERROR: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaSeq == $codingTransCount);
 
 my $sql = <<SQL;
   select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
@@ -257,7 +257,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaFeat) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR... the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingTransCount\n" unless ($tranAaFeat == $codingTransCount);
+print STDERR "ERROR... the number of translatedAAFeature, $tranAaFeat, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaFeat == $codingTransCount);
 
 
 ## K. check the translatedAaFeature table, translation_start or translation_stop can not be null or < 0
@@ -276,6 +276,7 @@ SQL
 }
 
 ## L. for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
+## this is not necessary in gus4 because the coding_start and coding_end in dots.exonfeature are always null
 my $sql = <<SQL;
   select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null and gf.external_database_release_id=$extDbRlsId
 SQL
@@ -299,7 +300,7 @@ $stmt->finish();
 
 ## N. check if there is any duplicated exons since it happens in TriTryp, This also can be a check for alternative splicing coding of distinct exons.
 my $sql = <<SQL;
-  select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and nl.na_feature_id=rfe.exon_feature_id and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
+  select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, dots.exonfeature ef, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and ef.NA_FEATURE_ID=rfe.EXON_FEATURE_ID and nl.NA_FEATURE_ID=ef.NA_FEATURE_ID and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -310,7 +311,7 @@ $stmt->finish();
 
 ## O. check if there is any overlap exon, check by each transcript in case of alternative splicing
 my $sql = <<SQL;
-  select source_id from DOTS.genefeature where external_database_release_id=$extDbRlsId
+  select source_id from DOTS.transcript where external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -321,18 +322,18 @@ while (my ($sourceId) = $stmt->fetchrow_array()) {
   my %exonLocations;
 
 my $sqll = <<SQL;
-  select gf.source_id, t.source_id, ef.source_id, nl.start_min, nl.end_max
-from DOTS.genefeature gf, Dots.transcript t, DOTS.rnafeatureexon rfe, DOTS.exonfeature ef, DOTS.nalocation nl 
-where gf.na_feature_id=t.parent_id and t.na_feature_id=rfe.rna_feature_id and rfe.exon_feature_id=ef.na_feature_id 
-and nl.na_feature_id=ef.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId' 
+  select t.source_id, ef.source_id, nl.start_min, nl.end_max
+from Dots.transcript t, DOTS.rnafeatureexon rfe, DOTS.exonfeature ef, DOTS.nalocation nl 
+where t.na_feature_id=rfe.rna_feature_id and rfe.exon_feature_id=ef.na_feature_id 
+and nl.na_feature_id=ef.na_feature_id and t.external_database_release_id=$extDbRlsId and t.source_id like '$sourceId' 
 order by t.source_id, nl.start_min
 SQL
 
   my $stmtt = $dbh->prepare($sqll);
   $stmtt->execute();
 
-  while (my ($gfSourceId, $tSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
-    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax,$gfSourceId" if ($efSourceId && $nlStartMin && $nlEndMax && $gfSourceId && $tSourceId);
+  while (my ($tSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
+    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax" if ($nlStartMin && $nlEndMax && $efSourceId && $tSourceId);
   }
   $stmtt->finish();
   $c++;
@@ -340,14 +341,14 @@ SQL
   foreach my $k (sort keys %exonLocations) {
     my ($preExonId, $preStartMin, $preEndMax);
     foreach my $kk (sort keys %{$exonLocations{$k}}) {
-      my ($start, $end, $gid) = split (/\,/, $exonLocations{$k}{$kk});
+      my ($start, $end) = split (/\,/, $exonLocations{$k}{$kk});
       if ($preStartMin ) {
 	if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
 	  $preExonId = $k;
 	  $preStartMin = $start;
 	  $preEndMax = $end;
 	} else {
-	  print STDERR "ERROR... overlapped exons found.\ndouble check the transcript $k of the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	  print STDERR "ERROR... overlapped exons found.\ndouble check the transcript '$k', exon '$kk' ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
 	}
       } else {
 	$preExonId = $k;
