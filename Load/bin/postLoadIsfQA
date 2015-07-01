@@ -196,7 +196,15 @@ $stmt->execute();
 my ($codingTransCount) = $stmt->fetchrow_array();
 $stmt->finish();
 
-print STDERR "For $codingGeneCount coding_genes, the number of transcripts that have been loaded = $codingTransCount\n" if ($codingGeneCount && $codingTransCount);
+my $sqlp = <<SQL;
+  select count(taf.SOURCE_ID) from dots.genefeature gf, dots.transcript t, DOTS.TRANSLATEDAAFEATURE taf where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and gf.name like 'coding_gene' and gf.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+SQL
+my $stmtp = $dbh->prepare($sqlp);
+$stmtp->execute();
+my ($codingProtCount) = $stmtp->fetchrow_array();
+$stmtp->finish();
+
+print STDERR "The number of coding_gene loaded = $codingGeneCount\nFor these coding_genes, transcript loaded = $codingTransCount, translatedAAFeature loaded = $codingProtCount\n" if ($codingGeneCount && $codingTransCount);
 
 ## G. check the pseudogene
 my $sql = <<SQL;
@@ -205,7 +213,7 @@ where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRls
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "  check the transcript of coding_gene if it is pseudo...\n";
+print STDERR "  check if pseudo...\n";
 while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
   ($if == 1 )? print STDERR "    is pseudogene = $psdCount\n" : print STDERR "    is not pseudogene = $psdCount\n";
 }
@@ -215,10 +223,9 @@ $stmt->finish();
 my $sql = <<SQL;
   select distinct t.is_partial, count(*) from dots.genefeature gf, dots.transcript t where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_partial
 SQL
-
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "  check the transcript of coding_gene if it is partial...\n";
+print STDERR "  check if partial...\n";
 while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
   ($if == 1 )? print STDERR "    is partial = $ptlCount\n" : print STDERR "    is not partial = $ptlCount\n";
 }
