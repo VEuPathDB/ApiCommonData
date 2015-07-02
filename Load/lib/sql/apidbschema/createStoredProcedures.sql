@@ -418,7 +418,7 @@ begin
       exception
          when NO_DATA_FOUND then
             raise_application_error(-20101,
-                                    'prefixed_project_id("'|| organism || '"): unknown project assignment' );
+                                    'unable to map the taxon name "'|| organism || '" to a component project' );
    end;
 
    return project;
