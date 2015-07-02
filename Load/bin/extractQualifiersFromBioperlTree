@@ -37,7 +37,7 @@ my ($help, $bioperlTreeFile, $qualifierList, $outputDir);
 &usage("Missing a Required Argument") unless (defined $bioperlTreeFile && $qualifierList);
 
 my @lists = split (/\;/, $qualifierList);
-my (%outputFiles, %outputFhs, $outputFile);
+my (%outputFiles, %outputFhs, $outputFile, %dbxrefFiles, %dbxrefFhs);
 
 foreach my $list (@lists) {
   $list =~ s/^\s+//;
@@ -57,18 +57,59 @@ my ($key, %gene);
 open (IN, $bioperlTreeFile) || die "can not open bioperlFile to read\n";
 while (<IN>) {
   chomp;
-  if ($_ =~ /source_id: (\S+)/) {
+  if ($_ =~ /gus source_id: (\S+)/) {
     $key = $1;
-  } elsif ($_ =~ /\s*(\S+?)\: (.+)/) {
-    $gene{$key}{$1} = $2;
+    $key =~ s/\'//g;
+    $key =~ s/^\s+//;
+    $key =~ s/\s+$//;
+  } elsif ($_ =~ /\s*(\S+?)\: (.+)/ && $key) {
+    my $qual = $1;
+    my $value = $2;
+    my (@values, @dbxrefValues);
+    if ($qual =~ /product/i) {  ## product separated by ';'
+      @values = split (/\;/, $value);
+    } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
+      push @values, $value;
+    #} elsif ($qual =~ /literature/i) { ## pmid separated by '.'
+    #  @values = split (/\./, $value);
+    } elsif ($qual =~ /Dbxref/i || $qual =~ /db_xref/i ) { ## special need for dbxref
+      #my $cValue = $value;
+      #($qual, $value) = split (/\:/, $cValue);
+      ($qual, $value) = split (/\:/, $value);
+      $qual = "dbxref_".$qual;
+      push @values, $value;
+      $dbxrefFiles{$qual} = $qual.".txt";
+      print STDERR "$qual\t$value\n";
+    } else {
+      @values = split (/\,/, $value);
+    }
+
+    foreach my $v (@values) {
+      $v =~ s/;current=false$//; ## for synonym, previous_systematic_id
+      $v =~ s/^term=//; ## for product
+      $v =~ s/^PMID://; ## for pmid in literature
+      push @{$gene{$key}{$qual}}, $v;
+    }
   }
 }
 close IN;
 
+foreach my $k (sort keys %dbxrefFiles) {
+  $dbxrefFiles{$k} = ($outputDir) ? "$outputDir\/$dbxrefFiles{$k}" : "$dbxrefFiles{$k}";
+  $outputFhs{$k} = FileHandle->new();
+  $outputFhs{$k}->open(">$dbxrefFiles{$k}") || die "can not open $dbxrefFiles{$k} to write\n";
+}
+
 foreach my $k (sort keys %gene) {
   foreach my $kk (sort keys %{$gene{$k}}) {
-    #print "$k; $kk; $gene{$k}{$kk}\n" if ($outputFiles{$kk});
-    $outputFhs{$kk}->print("$k\t$gene{$k}{$kk}\n") if ($outputFiles{$kk});
+    #print STDERR "\$k = $k; \$kk = $kk\n";
+    print STDERR "$k; $kk; $gene{$k}{$kk}\n" if ($outputFiles{$kk});
+    if ($outputFiles{$kk} || $dbxrefFiles{$kk} ) {
+      foreach my $i (0..$#{$gene{$k}{$kk}}) {
+	$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
+      }
+    }
+    #$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}\n") if ($outputFiles{$kk});
   }
 }
 
