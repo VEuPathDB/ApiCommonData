@@ -418,7 +418,7 @@ begin
       exception
          when NO_DATA_FOUND then
             raise_application_error(-20101,
-                                    'unable to map the taxon name "'|| organism || '" to a component project' );
+                                    'Cannot map the taxon name "'|| organism || '" to a component project' );
    end;
 
    return project;
