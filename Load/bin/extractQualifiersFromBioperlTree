@@ -57,7 +57,9 @@ my ($key, %gene);
 open (IN, $bioperlTreeFile) || die "can not open bioperlFile to read\n";
 while (<IN>) {
   chomp;
-  if ($_ =~ /gus source_id: (\S+)/) {
+  if ($_ =~ /^\</) {
+    $key = "";
+  } elsif ($_ =~ /gus source_id: (\S+)/) {
     $key = $1;
     $key =~ s/\'//g;
     $key =~ s/^\s+//;
@@ -79,7 +81,7 @@ while (<IN>) {
       $qual = "dbxref_".$qual;
       push @values, $value;
       $dbxrefFiles{$qual} = $qual.".txt";
-      print STDERR "$qual\t$value\n";
+      #print STDERR "$qual\t$value\n";
     } else {
       @values = split (/\,/, $value);
     }
@@ -103,7 +105,7 @@ foreach my $k (sort keys %dbxrefFiles) {
 foreach my $k (sort keys %gene) {
   foreach my $kk (sort keys %{$gene{$k}}) {
     #print STDERR "\$k = $k; \$kk = $kk\n";
-    print STDERR "$k; $kk; $gene{$k}{$kk}\n" if ($outputFiles{$kk});
+    #print STDERR "$k; $kk; $gene{$k}{$kk}\n" if ($outputFiles{$kk});
     if ($outputFiles{$kk} || $dbxrefFiles{$kk} ) {
       foreach my $i (0..$#{$gene{$k}{$kk}}) {
 	$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
