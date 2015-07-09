@@ -102,7 +102,7 @@ sub preprocess {
 
 
 	    if($type eq 'repeat_region' || $type eq 'repeat_unit'){
-		if($bioperlFeatureTree->has_tag("satellite")){
+    	        if($bioperlFeatureTree->has_tag("satellite")){
 		    $bioperlFeatureTree->primary_tag("microsatellite");
 		}
 		if(!($bioperlFeatureTree->has_tag("ID"))){
@@ -315,6 +315,14 @@ sub traverseSeqFeatures {
 		|| $gene->has_tag('fiveEndPartial') || $gene->has_tag('threeEndPartial')
 	        || $gene->has_tag('internalGap') ) {
 	      $transcript->add_tag_value('Partial', '');
+	    }
+
+	    ## some of gene have pseudogene or partial info in product tag 
+	    if($RNA->has_tag("product")){
+	      my($prod) = $RNA->get_tag_values("product");
+	      if($prod =~ /pseudogene/i && !$transcript->has_tag('pseudo')){
+		$transcript->add_tag_value("pseudo",'');
+	      }
 	    }
 
 	    $codonStart -= 1 if $codonStart > 0;
