@@ -68,8 +68,17 @@ while (<IN>) {
     my $qual = $1;
     my $value = $2;
     my (@values, @dbxrefValues);
-    if ($qual =~ /product/i) {  ## product separated by ';'
-      @values = split (/\;/, $value);
+    if ($qual =~ /product/i) {  ## multiple products separated by ",term="
+      @values = split (/\,term=/, $value);
+      foreach my $i (0..$#values) {
+	my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/);
+	$values[$i] =~ s/.*term=(.*?);.*/$1/;
+	$values[$i] =~ s/(.*?);.*/$1/;
+	$values[$i] =~ s/^term=//;
+	$values[$i] =~ s/,rank=1$//;
+	$values[$i] .= "\ttrue" if ($isPreferred == 1);
+      }
+      #push @values, $value;  ## push everything in one line to test
     } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
       push @values, $value;
     #} elsif ($qual =~ /literature/i) { ## pmid separated by '.'
@@ -88,7 +97,7 @@ while (<IN>) {
 
     foreach my $v (@values) {
       $v =~ s/;current=false$//; ## for synonym, previous_systematic_id
-      $v =~ s/^term=//; ## for product
+      #$v =~ s/^term=//; ## for product
       $v =~ s/^PMID://; ## for pmid in literature
       push @{$gene{$key}{$qual}}, $v;
     }
