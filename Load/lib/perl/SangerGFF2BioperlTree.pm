@@ -309,12 +309,18 @@ sub traverseSeqFeatures {
 
 	    ## add is_pseudo and is_partial to transcript
 	    if ($gene->has_tag('Pseudo') || $gene->has_tag('pseudo')) {
-	      $transcript->add_tag_value('Pseudo', '');
+	      $transcript->add_tag_value('Pseudo', '') if (!$transcript->has_tag('Pseudo') && !$transcript->has_tag('pseudo'));
 	    }
 	    if ($gene->has_tag('Partial') || $gene->has_tag('partial') 
+		|| $gene->has_tag('Start_range') || $gene->has_tag('End_range')
 		|| $gene->has_tag('fiveEndPartial') || $gene->has_tag('threeEndPartial')
 	        || $gene->has_tag('internalGap') ) {
-	      $transcript->add_tag_value('Partial', '');
+	      $transcript->add_tag_value('Partial', '') if (!$transcript->has_tag('Partial') && !$transcript->has_tag('partial'));
+	    }
+
+	    if ($transcript->has_tag('Start_range') || $transcript->has_tag('End_range')
+	        || $transcript->has_tag('internalGap') ) {
+	      $transcript->add_tag_value('Partial', '') if (!$transcript->has_tag('Partial') && !$transcript->has_tag('partial'));
 	    }
 
 	    ## some of gene have pseudogene or partial info in product tag 
