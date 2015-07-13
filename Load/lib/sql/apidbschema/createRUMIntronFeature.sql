@@ -30,6 +30,14 @@ CREATE TABLE apidb.RUMIntronFeature (
  PRIMARY KEY (RUM_intron_feature_id)
 );
 
+CREATE INDEX apidb.rif_rls_ix
+ON apidb.RumIntronFeature
+   (external_database_release_id, na_sequence_id, sample_name, mapping_start, 
+    mapping_end, rum_intron_feature_id, score, known_intron, 
+    standard_splice_signal, signal_not_canonical, ambiguous, 
+    long_overlap_unique_reads, short_overlap_unique_reads, 
+    long_overlap_nu_reads, short_overlap_nu_reads);
+
 CREATE INDEX apiDB.rif_revfk_idx
   ON apidb.RUMIntronFeature (external_database_release_id, RUM_intron_feature_id) tablespace indx;
 
