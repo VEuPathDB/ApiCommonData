@@ -331,6 +331,14 @@ sub traverseSeqFeatures {
 	      }
 	    }
 
+	    ## some of gene have pseudogene or partial info in comment tag
+	    if ($RNA->has_tag('comment') ) {
+	      my ($comment_val) = $RNA->get_tag_values("comment");
+	      if ($comment_val =~ /pseudogene/i && !$transcript->has_tag('pseudo') && !$transcript->has_tag('Pseudo')) {
+		$transcript->add_tag_value("pseudo", '');
+	      }
+	    }
+
 	    $codonStart -= 1 if $codonStart > 0;
 
 	    my (@fixedExons, $prevExon);
