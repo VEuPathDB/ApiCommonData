@@ -5,6 +5,12 @@ use DBI;
 use Getopt::Long;
 
 my %sites = ( 
+              AmoebaDB        => 'amoeba.b25',
+              CryptoDB        => 'cryptodb.b25',
+              PlasmoDB        => 'plasmo.b25',
+              ToxoDB          => 'toxo.b25',
+              TriTrypDB       => 'tritrypdb.b25',
+              FungiDB         => 'fungidb.b25',
               PiroplasmaDB    => 'piro.b25',
               MicrosporidiaDB => 'micro.b25',
               GiardiaDB       => 'giardiadb.b25',
@@ -31,9 +37,9 @@ die $usage unless $user && $pass;
 my %dbs; 
 my %workflowVersion;
 
-# step 1: copy lastest configs
+# step 1: copy lastest configs from oak.pcbi.upenn.edu, e.g. /var/www/FungiDB/fungidb.b25/gus_home/config/FungiDB/
 
-while( my ($db, $bld) = each %sites ) {
+while(my ($db, $bld) = each %sites) {
 
   my $cmd = "scp oak.pcbi.upenn.edu:/var/www/$db/$bld/gus_home/config/$db/* $ENV{GUS_HOME}/config/$db";
   system($cmd) if $commit;
