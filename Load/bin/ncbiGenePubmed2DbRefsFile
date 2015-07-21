@@ -82,6 +82,7 @@ while (<PUBMED>) {
   if ($taxaListHash{$myVals[0]}) {
       foreach my $source_id (keys %geneinfo){
 	  if ($source_id eq $myVals[1] ){
+	    $myVals[2] =~ s/^(\d+).*$/$1/;
 	            print "$geneinfo{$source_id}\t$myVals[2]\t$source_id\t\n";
 	  }
       }

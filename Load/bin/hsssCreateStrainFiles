@@ -28,12 +28,13 @@ use ApiCommonData::Load::VariationFileReader;
 
 use Data::Dumper;
 
-my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName) = @ARGV;
+my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName, $strainsFile) = @ARGV;
 
-usage() unless scalar(@ARGV) == 5;
+usage() unless scalar(@ARGV) == 5 || scalar(@ARGV) == 6;
 
 die "Variants file '$inputVariantsFile' does not exist\n" unless -e $inputVariantsFile;
-die "Varscan dir '$varscanDir' does not exist\n" unless -d $varscanDir;
+die "Varscan dir '$varscanDir' does not exist\n" unless ($varscanDir =~/^NA$/ || -d $varscanDir);
+die "strainsFile $strainsFile does not exist\n" unless ( -d $varscanDir || $varscanDir =~/^NA$/  && -e $strainsFile);
 die "Target dir '$targetDir' does not exist\n" unless -d $targetDir;
 die "Read freq cutoff must be a multiple of five less than 100\n" unless $readFreqCutoff =~ /\d0/ || $readFreqCutoff =~ /\d5/;
 
@@ -45,32 +46,50 @@ my $readFreqDir = "$targetDir/readFreq$readFreqCutoff";
 die "Read freq dir '$readFreqDir' already exists.  Please remove before running.\n" if -e "$readFreqDir";
 mkdir($readFreqDir) || die "Could not make read freq dir '$readFreqDir'\n";
 
-# zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
-open(STRAINMAP, ">$readFreqDir/strainIdToName.dat") || die "Can't open file '$readFreqDir/strainIdToName.dat' for writing\n";
-opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
-my $strainCount = 1;
 my %allStrains;
+open(STRAINMAP, ">$readFreqDir/strainIdToName.dat") || die "Can't open file '$readFreqDir/strainIdToName.dat' for writing\n";
+my $strainCount = 1;
 
-# Print a row for the reference (also write file)
-print STRAINMAP "$strainCount\t$refStrainName\n";  
-open(REF, ">$readFreqDir/$strainCount");   
-close REF;
+  # Print a row for the reference (also write file)
+  print STRAINMAP "$strainCount\t$refStrainName\n";  
+  open(REF, ">$readFreqDir/$strainCount");   
+  close REF;
 
-while(my $fn = readdir($dirhandle)) {
-  next unless($fn =~ /(.+)\.coverage\.txt$/);
-  my $strainName = $1;
+my @strainNames;
+
+unless (-e $strainsFile) {
+  # zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
+
+  opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
+  
+  while(my $fn = readdir($dirhandle)) {
+    next unless($fn =~ /(.+)\.coverage\.txt$/);
+    push (@strainNames, $1);
+  }
+  close($dirhandle);
+}
+
+else {
+  open (STRAINS, "<$strainsFile") or die "Could not open file $strainsFile for reading: $!\n";
+  foreach my $strain (<STRAINS>) {
+    $strain=~s/\s*$//;
+    push (@strainNames, $strain);
+  }
+}
+
+foreach my $strainName (@strainNames) {
   $strainCount++;
-
+  
   $allStrains{$strainName}->{index} = $strainCount;
   print STRAINMAP "$strainCount\t$strainName\n";   # map strain index (count) to strain name;
-
+  
   my $fh;
   open($fh, ">$readFreqDir/$strainCount");    # open variants file for this strain, named after its index (count)
   $allStrains{$strainName}->{fh} = $fh;
 }
 
-close($dirhandle);
 close(STRAINMAP);
+
 
 my @filters = ($readFreqCutoff);
 my $reader = ApiCommonData::Load::VariationFileReader->new($inputVariantsFile, \@filters, qr/\t/);
@@ -109,12 +128,11 @@ while($reader->hasNext()) {
   }
 
 
-  # chech for reference variation
+  # check for reference variation
   unless($refVar) {
-    print STDERR Dumper $variations;
     die "No Reference Variation Found";
   }
-
+  
   my $location = $refVar->{location};
   my $sourceId = $refVar->{sequence_source_id};
 
@@ -125,13 +143,13 @@ while($reader->hasNext()) {
 
   # require exactly one REFERENCES variation
   die "Expected exactly one Reference Variation: $sourceId, $location" unless($foundStrains{$refStrainName} == 1);
-
+  
   # Nothing to see here if only one variation (it is the reference)
   unless($hasVariation) {
-      $prevSourceId = $sourceId;
-      next
+    $prevSourceId = $sourceId;
+    next
   }
-
+  
   foreach my $variation (@$variations) {
     my $strain = $variation->{strain};
 
@@ -142,8 +160,8 @@ while($reader->hasNext()) {
     $alleleCode = $ALLELE_HASH{$allele} if $allele;
 
     my $productCode = ord($product);
-
-
+    
+    
     if($foundStrains{$strain} > 1) {
       print { $allStrains{$strain}->{fh} } pack("slcc", $sequenceIndex, $location, $alleleCode, $productCode);
       next;
@@ -156,9 +174,9 @@ while($reader->hasNext()) {
 
     # do nothing if it matches reference and the products of the variation is the same as the ref
     next if($variation->{matches_reference} && $variation->{product} eq $refVar->{product});
-
+    
     # write the remaining variations
-    print { $allStrains{$strain}->{fh} } pack("slcc", $sequenceIndex, $location, $alleleCode, $productCode);
+    print { $allStrains{$strain}->{fh} } pack("slcc", $sequenceIndex, $location, $alleleCode, $productCode) ;
   }
 
   #write the unknowns for those strains which wwere not found to have a variation
@@ -182,7 +200,7 @@ sub usage {
   die "
 Create SNP variation files, one per strain, for use by the HighSpeedSnpSearch system (C based SNP searches).
 
-Usage:  hsssCreateStrainFiles variants_file varscan_dir target_dir read_freq_cutoff ref_strain_name
+Usage:  hsssCreateStrainFiles variants_file varscan_dir target_dir read_freq_cutoff ref_strain_name [strains_file]
 
 Where:
   variants_file:     a file containing all variants for all strains.  Within each sequence, the variants are
@@ -193,13 +211,17 @@ Where:
                      In other words, all variants for a strain within a SNP must come together.
 
   varscan_dir:       a directory containing one varscan file for each strain we will make an output file for.
-                     The files are named for with the strain name.
+                     The files are named for with the strain name. NA if a strains_file is provided
 
   target_dir:        the directory in which to place the new directory that will hold the strain files created
 
   read_freq_cutoff:  ignore variants that have a read frequency below this cutoff.
 
   ref_strain_name:   the name of the reference strain
+
+  strains_file: [optional] txt file which contains a single column list of all strain names that we will make an
+                     output file for. The files are name with the strain name. If this file is provided, the varscan_dir must be  
+                     NA.
 
 
 Details:

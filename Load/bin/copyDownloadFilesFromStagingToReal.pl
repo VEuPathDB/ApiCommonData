@@ -34,7 +34,6 @@ my($workflowVersion,$projectName,$buildNumber,$copyFromPreRelease);
             "workflowVersion=s" => \$workflowVersion,
             "buildNumber=s" => \$buildNumber,
             "copyFromPreRelease!" => \$copyFromPreRelease,
-            "copyFromPreRelease!" => \$copyFromPreRelease,
             );
 
 die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --buildNumber [--copyFromPreRelease]\n" unless ($projectName && $workflowVersion && $buildNumber);
