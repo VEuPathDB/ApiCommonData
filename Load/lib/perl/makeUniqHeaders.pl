@@ -48,6 +48,7 @@ foreach my $inFile (@inputFiles) {
   my $headerHash = {};
 
   foreach my $field (@$inFields) {
+    $field = lc($field);
     if (exists $headerHash->{$field}) {
       my $occurance = $headerHash->{$field};
       push (@$outFields, $field.".".$occurance);
