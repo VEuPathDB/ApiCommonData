@@ -124,7 +124,7 @@ sub run {
 
   my $algInvocationId = $database->getDefaultAlgoInvoId();
 
-  my $tempTableCreateHSql = "CREATE TABLE apidb.SpliceSiteGeneCoordinates_$algInvocationId AS
+  my $tempTableCreateHSql = "CREATE TABLE apidb.SSGCoor_$algInvocationId AS
   SELECT na_sequence_id, source_id, alpha, beta, gamma, delta, strand FROM (
   --CASE A:  1st gene on forward strand
    SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
@@ -179,7 +179,7 @@ sub run {
   AND ga.gene_type='protein coding' and ga.is_reversed=0
   UNION
   --CASE C:  last gene on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta, sa.length as gamma,
+  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta, sa.length as gamma,
    CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
   FROM apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}SequenceAttributes sa,
     (select max(end_max) as max_end_max, na_sequence_id from apidbTuning.${tuningTablePrefix}geneAttributes
@@ -201,7 +201,7 @@ sub run {
   AND ga.end_max = sub.max_end_max and ga.is_reversed=1
   UNION
   --CASE D: other genes on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta,
+  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta,
   CASE WHEN (sub1.gamma < sub2.gamma) THEN sub1.gamma ELSE sub2.gamma END AS gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
   FROM apidbTuning.${tuningTablePrefix}geneAttributes ga,
@@ -245,7 +245,7 @@ sub run {
   CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$algInvocationId ga
+  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='forward'
   and ssf.strand ='+' and ssf.type='Splice Site'
@@ -256,7 +256,7 @@ sub run {
   CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$algInvocationId ga
+  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='reverse'
   and ssf.sample_name='$sampleName'
@@ -288,7 +288,7 @@ sub run {
       $self->undefPointerCache();
     }
   }
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SpliceSiteGeneCoordinates_$algInvocationId");
+  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SSGCoor_$algInvocationId");
   $tempTableDropH->execute() or die $dbh->errstr;
   $tempTableDropH->finish();
 }

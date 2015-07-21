@@ -1,4 +1,4 @@
-#######################################################################
+######################################################################
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
@@ -138,7 +138,7 @@ my $argsDeclaration =
 	     }),
 
    stringArg({name => 'organismAbbrev',
-	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      descr => 'if supplied, check if the alias used for gene source_id or alias in other organisms',
 	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -247,8 +247,8 @@ sub getMapping {
       $vals[$i+1] =~ s/\s+$//;
       $dbRef{$cols->[$i]} = $vals[$i+1];
 
-       ## check if duplicated aliases
-      if ($cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/ && my $viewName eq 'GeneFeature') {
+      ## check if duplicated aliases
+      if ($self->getArg('organismAbbrev') && $cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/i && $self->getArg('tableName') =~ /NAFeature/i ) {
 
 	## check the source_id in the dots.genefeature view
 	my $geneFeatureTableCheck = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[$i+1]});

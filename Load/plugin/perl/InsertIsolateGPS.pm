@@ -117,11 +117,6 @@ sub run {
 
       my ($alpha2, $alpha3, $numeric, $fips, $country, $capital, $area, $population, $continent, $lat, $lng, $toponym_name) = split(/\|/, $_);
       next unless $country;
-
-      unless($ontologyTerms->{$country}) {
-        $self->userError("Country [$country] was not found as an existing ontology term.  Update the GPS file to match the ontology");
-      }
-
       $area =~ s/,//g;
       $population =~ s/,//g;
       my $gps = GUS::Model::ApiDB::IsolateGPS->
