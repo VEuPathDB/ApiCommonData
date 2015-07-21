@@ -27,6 +27,8 @@ use Bio::Seq;
 
 #use ApiCommonWebsite::Model::ModelProp;
 
+use Data::Dumper;
+
 use CGI::Carp qw(fatalsToBrowser set_message);
 
 
@@ -54,22 +56,6 @@ sub new {
 
 #--------------------------------------------------------------------------------
 
-sub getAlignment {
-  my($self,$contig, $start, $stop, $strand) = @_;
-
-  my $agpDir = $self->getMercatorOutputDir();
-  my $alignDir = $self->getMercatorOutputDir()."/alignments";
-  my $sliceAlign = $self->getCndSrcBin()."/sliceAlignment";
-  my $fa2clustal = $self->getCndSrcBin()."/fa2clustal";
-
-  my ($genome, $assembly, $assemblyStart, $assemblyStop, $assemblyStrand) = &translateCoordinates($contig, $agpDir, $start, $stop, $strand);
-
-  &validateMapCoordinates($genome, $alignDir, $assembly, $assemblyStart, $assemblyStop, $agpDir);
-
-  my $multiFasta = makeAlignment($alignDir, $agpDir, $sliceAlign, $genome, $assembly, $assemblyStart, $assemblyStop, $assemblyStrand);
-
-  return $multiFasta;
-}
 
 sub getAlignmentLocations {
   my($self,$contig, $start, $stop, $strand) = @_;
@@ -80,8 +66,6 @@ sub getAlignmentLocations {
   my $fa2clustal = $self->getCndSrcBin()."/fa2clustal";
 
   my ($genome, $assembly, $assemblyStart, $assemblyStop, $assemblyStrand) = &translateCoordinates($contig, $agpDir, $start, $stop, $strand);
-
-#  &validateMapCoordinates($genome, $alignDir, $assembly, $assemblyStart, $assemblyStop, $agpDir);
 
   my $locations = &getLocations($alignDir, $agpDir, $sliceAlign, $genome, $assembly, $assemblyStart, $assemblyStop, '+');
 
@@ -114,9 +98,7 @@ sub translateCoordinates {
   my ($genome, $assembly);
 
   while (defined (my $fn = readdir DIR) ) {
-
-    print STDERR "AGPFILE=$fn\n";
-    next unless($fn =~ /([\w\d_]+)\.agp$/);
+    next unless($fn =~ /(.+)\.agp$/);
 
     my $thisGenome = $1;
 
@@ -169,165 +151,7 @@ sub translateCoordinates {
 
 #--------------------------------------------------------------------------------
 
-sub validateMapCoordinates {
-  my ($genome, $alignDir, $query, $start, $stop, $agpDir) = @_;
 
-  my $mapfile = "$alignDir/map";
-  my $genomesFile = "$alignDir/genomes";
-
-  unless(-e $mapfile) {
-    &error("Map file $mapfile does not exist");
-  }
-
-  unless(-e $genomesFile) {
-    &error("Genomes file $genomesFile does not exist");
-  }
-
-  my $index;
-  open(GENOME, $genomesFile) or &error("Cannot open file $genomesFile for reading: $!");
-  my $line = <GENOME>;
-  chomp $line;
-  my @genomes = split(/\t/, $line);
-  for(my $i = 0; $i < scalar(@genomes); $i++) {
-    $index = ($i + 1) * 4 if($genomes[$i] eq $genome);
-  }
-
-  close GENOME;
-
-  open(MAP, $mapfile) or error("Cannot open file $mapfile for reading: $!");
-
-  my %mapped;
-
-  while(<MAP>) {
-    chomp;
-
-    my @a = split(/\t/, $_);
-
-    my $contig = $a[$index - 3];
-    my $mapStart = $a[$index - 2];
-    my $mapStop = $a[$index - 1];
-
-    if(my $hash = $mapped{$contig}) {
-      $mapped{$contig}->{start} = $hash->{start} < $mapStart ? $hash->{start} : $mapStart;
-      $mapped{$contig}->{stop} = $hash->{stop} > $mapStop ? $hash->{stop} : $mapStop;
-    }
-    else {
-      $mapped{$contig} = {start => $mapStart, stop => $mapStop};
-    }
-  }
-  close MAP;
-
-  unless($mapped{$query}) {
-    &userError("There is no alignment data available for this Genomic Sequence:  $query.\n\nGenomic sequences with few or no genes will not be mapped.");
-  }
-
-  my $mapStart = $mapped{$query}->{start};
-  my $mapStop = $mapped{$query}->{stop};
-
-  if($start >= $mapStop || $stop <= $mapStart) {
-    my $mappedCoord = replaceAssembled($agpDir, $genome, $query, $mapStart, $mapStop, '+');
-    my ($junk, $included) = split(' ', $mappedCoord);
-
-    userError("Whoops!  Those Coordinates fall outside a mapped region!\nThe available region for this contig is:  $included");
-  }
-}
-
-#--------------------------------------------------------------------------------
-
-sub validateMacros {
-  my ($cgi) = @_;
-
-  my $project = $cgi->param('project_id');
-  my $props =  ApiCommonWebsite::Model::ModelProp->new($project);
-  my $mercatorOutputDir = $props->{MERCATOR_OUTPUT_DIR};
-  my $cndsrcBin =  $props->{CNDSRC_BIN};
-
-  my $alignmentsDir = "$mercatorOutputDir/alignments";
-  my $sliceAlignment = "$cndsrcBin/sliceAlignment";
-  my $fa2clustal = "$cndsrcBin/fa2clustal";
-
-  unless(-e $cndsrcBin) {
-    error("cndsrc Bin directory does not exist [$cndsrcBin]");
-  }
-  unless(-e $sliceAlignment) {
-    error("sliceAlignment exe does not exist [$sliceAlignment]");
-  }
-  unless(-e $fa2clustal) {
-    error("fa2clustal exe does not exist [$fa2clustal]");
-  }
-
-  unless(-e $alignmentsDir) {
-    error("alignments directory not found");
-  }
-
-  return($mercatorOutputDir, $alignmentsDir, $sliceAlignment, $fa2clustal);
-}
-
-#--------------------------------------------------------------------------------
-
-sub replaceAssembled {
-  my ($agpDir, $genome, $input, $start, $stop, $strand) = @_;
-
-  my $fn = "$agpDir/$genome" . ".agp";
-
-  open(FILE, $fn) or error("Cannot open file $fn for reading:$!");
-
-  my @v;
-
-  while(<FILE>) {
-    chomp;
-
-    my @ar = split(/\t/, $_);
-
-    my $assembly = $ar[0];
-    my $assemblyStart = $ar[1];
-    my $assemblyStop = $ar[2];
-    my $type = $ar[4];
-
-    my $contig = $ar[5];
-    my $contigStart = $ar[6];
-    my $contigStop = $ar[7];
-    my $contigStrand = $ar[8];
-
-    next unless($type eq 'D');
-    my $shift = $assemblyStart - $contigStart;
-    my $checkShift = $assemblyStop - $contigStop;
-
-    &error("Cannot determine shift") unless($shift == $checkShift);
-
-    if($assembly eq $input && 
-       (($start >= $assemblyStart && $start <= $assemblyStop) || 
-        ($stop >= $assemblyStart && $stop <= $assemblyStop) ||
-        ($start < $assemblyStart && $stop > $assemblyStop ))) {
-      
-      my ($newStart, $newStop, $newStrand);
-
-      # the +1 and -1 is because of a 1 off error in the sliceAlign program
-      if($contigStrand eq '+') {
-        $newStart = $start < $assemblyStart ? $contigStart : $start - $assemblyStart + $contigStart + 1;
-        $newStop = $stop > $assemblyStop ? $contigStop : $stop - $assemblyStart + $contigStart; 
-        $newStrand = $strand;
-      }
-      else {
-        $newStart = $start < $assemblyStart ? $contigStop : $assemblyStop - $start + $contigStart - 1;
-        $newStop = $stop > $assemblyStop ? $contigStart : $assemblyStop - $stop + $contigStart;  
-        $newStrand = $strand eq '+' ? '-' : '+';
-      }
-
-      if($newStart <= $newStop) {
-        push(@v, "$contig:$newStart-$newStop($newStrand)");
-      }
-      else {
-        push(@v, "$contig:$newStop-$newStart($newStrand)");
-      }
-    }
-  }
-  close FILE;
-
-  return ">$genome " . join(';', @v);
-}
-
-#--------------------------------------------------------------------------------
 
 sub getNewLocations {
   my ($agpDir, $genome, $input, $start, $stop, $strand) = @_;
@@ -393,32 +217,6 @@ sub getNewLocations {
 
 #--------------------------------------------------------------------------------
 
-sub makeAlignment {
-  my ($alignDir, $agpDir, $sliceAlign, $referenceGenome, $queryContig, $queryStart, $queryStop, $queryStrand) = @_;
-
-  my $command = "$sliceAlign $alignDir $referenceGenome '$queryContig' $queryStart $queryStop $queryStrand";
-
-  my @lines = `$command`;
-
-#  my @lines = split(/\n/, $alignments);
-  for(my $i = 0; $i < scalar (@lines); $i++) {
-    my $line = $lines[$i];
-    my ($genome, $assembled, $start, $stop, $strand) = $line =~ />(\w+) (\w+):(\d+)-(\d+)([-+])/;
-    next unless($genome);
-
-    my $replaced = &replaceAssembled($agpDir, $genome, $assembled, $start, $stop, $strand);
-
-    $lines[$i] = $replaced."\n";
-
-    if($line =~ />/) {
-      $lines[$i] =~ s/([+|-])$/\($1\)/;
-    }
-  }
-
-  return join("", @lines) . "\n";
-}
-
-#--------------------------------------------------------------------------------
 sub getLocations {  ##get the locations and identifiers of all toxo seqs
   my ($alignDir, $agpDir, $sliceAlign, $referenceGenome, $queryContig, $queryStart, $queryStop, $queryStrand) = @_;
 
@@ -426,13 +224,11 @@ sub getLocations {  ##get the locations and identifiers of all toxo seqs
   my $command = "$sliceAlign $alignDir $referenceGenome '$queryContig' $queryStart $queryStop $queryStrand";
  
   my @lines = `$command`;
- 
- 
+
   my @locs;
 
   foreach my $line (@lines) {
-    my ($genome, $assembled, $start, $stop, $strand) = $line =~ />([\w_\.]+) (\S*?):(\d+)-(\d+)([-+])/;
-
+    my ($genome, $assembled, $start, $stop, $strand) = $line =~ />(\S+) (\S+):(\d+)-(\d+)([\-+])/;
 
     next unless($genome);
 
@@ -461,33 +257,3 @@ sub userError {
 }
 
 1;
-
-__DATA__
-body
-{
-font-family: courier, 'serif'; 
-font-size: 100%;
-font-weight: bold;
-background-color: #F8F8FF;
-}
-b.red
-{
-font-family: courier, 'serif';
-font-weight: bold;
-color:#FF1800; 
-}
-b.maroon
-{
-font-family: courier, 'serif';
-font-weight: bold;
-color:#8B0000; 
-}
-tr 
-{
-font-family: courier, 'serif';
-font-weight: normal;
-font-size: 80%;
-}
-
-
-
