@@ -30,7 +30,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="protein_id"           ignore="true"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
-    <qualifier name="transl_table" ignore="true"/> 
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
     <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
@@ -41,6 +41,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="old_locus_tag" ignore="true"/>
     <qualifier name="inference" ignore="true"/>
     <qualifier name="artificial_location" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="colour" ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
+    <qualifier name="similarity" ignore="true"/>
+    <qualifier name="partial"         handler="api" method="setPartial"/>
     <qualifier name="pseudo"         handler="api" method="setPseudo"/>
   </feature>
 
@@ -158,6 +163,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="OrderNumber"    column="order_number"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="note" ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>  <!-- ignore since isf will assign the source_id -->
+    <qualifier name="number" ignore="true"/>  <!-- ignore since isf will assign the order_number -->
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -176,6 +184,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="source" table="DoTS::Source" so="">
+    <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="chromosome"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="isolate"/>
@@ -190,6 +199,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="country" ignore="true"/>
     <qualifier name="specific_host" ignore="true"/>
     <qualifier name="note"			ignore="true"/>
+    <qualifier name="primary_name"			ignore="true"/>
     <qualifier name="tissue_type"/>
     <qualifier name="cell_type"/>
     <qualifier name="clone"/>
@@ -200,6 +210,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isolation_source" ignore="true"/>
     <qualifier name="map" ignore="true"/>
     <qualifier name="variety" ignore="true"/>
+    <qualifier name="lat_lon" ignore="true"/>
+    <qualifier name="lab_host"/>
   </feature>
 
   <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
