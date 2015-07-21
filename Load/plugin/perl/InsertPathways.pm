@@ -25,11 +25,11 @@ sub getArgsDeclaration {
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
-               enum           => 'KEGG, MPMP, TrypanoCyc'
+               enum           => 'KEGG, MPMP, BioCyc'
              }),
         
  stringArg({ name => 'extDbRlsSpec',
-	     descr => 'Extenral Database Release Name|version',
+	     descr => 'External Database Release Name|version',
 	     isList    => 0,
 	     reqd  => 1,
 	     constraintFunc => undef,
@@ -42,9 +42,9 @@ sub getArgsDeclaration {
 }
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts pathways from a set of KGML or XGMML (MPMP) files into Pathway schema.";
+  my $purposeBrief = "Inserts pathways from a set of KGML, XGMML (MPMP) or biopax (BioCyc) files into Pathway schema.";
 
-  my $purpose =  "Inserts pathways from a set of KGML or XGMML (MPMP) files into Pathway schema.";
+  my $purpose =  "Inserts pathways from a set of KGML, XGMML (MPMP) or biopax (BioCyc) files into Pathway schema.";
 
   #TODO
   my $tablesAffected = [[]];
@@ -99,7 +99,9 @@ sub run {
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
   my $pathwayFormat = $self->getArg('format');
-  my $extension = ($pathwayFormat eq 'MPMP') ? 'xgmml' : 'xml';
+  my $extension = ($pathwayFormat eq 'MPMP') ? 'xgmml' 
+                : ($pathwayFormat eq 'BioCyc') ? 'biopax'
+                : 'xml';
 
   my @pathwayFiles = <$inputFileDir/*.$extension>;
   die "No $extension files found in the directory $inputFileDir\n" if not @pathwayFiles;
@@ -170,7 +172,8 @@ sub queryForTableIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'PubChemSubstance', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
+#  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'PubChemSubstance', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
+  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'Compounds', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
 
   my $sh = $dbh->prepare($query);
   $sh->execute();
@@ -188,11 +191,17 @@ sub queryForIds {
   my ($self) = @_;
  
   my $dbh = $self->getQueryHandle();
+#  my $sql = "select 'SRes::EnzymeClass', ec_number, enzyme_class_id from sres.enzymeclass
+#union
+#select 'ApiDB::PubChemSubstance', p.value, s.substance_id from apidb.pubchemsubstance s, apidb.pubchemsubstanceproperty p where p.property = 'Synonym' and p.pubchem_substance_id = s.pubchem_substance_id
+#union
+#select 'SRes::Pathway', source_id,pathway_id from sres.pathway
+#";
   my $sql = "select 'SRes::EnzymeClass', ec_number, enzyme_class_id from sres.enzymeclass
 union
-select 'ApiDB::PubChemSubstance', p.value, s.substance_id from apidb.pubchemsubstance s, apidb.pubchemsubstanceproperty p where p.property = 'Synonym' and p.pubchem_substance_id = s.pubchem_substance_id
+select 'chEBI::Compounds', chebi_accession, id from chebi.compounds
 union
-select 'SRes::Pathway', source_id,pathway_id from sres.pathway
+select 'SRes::Pathway', source_id, pathway_id from sres.pathway
 ";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
