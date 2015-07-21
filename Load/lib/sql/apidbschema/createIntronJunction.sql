@@ -31,6 +31,13 @@ GRANT insert, select, update, delete ON apidb.IntronJunction TO gus_w;
 GRANT select ON apidb.IntronJunction TO gus_r;
 GRANT select ON apidb.IntronJunction_sq TO gus_w;
 
+CREATE INDEX apidb.rif_rls_ix
+ON apidb.RumIntronFeature
+   (external_database_release_id, na_sequence_id, sample_name, mapping_start, 
+    mapping_end, intron_junction_id, score, is_reversed, unique_reads, nu_reads
+);
+
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 

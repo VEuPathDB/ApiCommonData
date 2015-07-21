@@ -43,13 +43,11 @@ grant insert, select, update, delete on Apidb.SpliceSiteGenes to gus_w;
 
 create index apidb.splicesitegenes_loc_idx
 ON Apidb.SpliceSiteGenes (source_id, na_sequence_id, location, type)
-tablespace indx
+tablespace indx;
 
 create index apidb.splicesitegenes_data_idx
 ON Apidb.SpliceSiteGenes (splice_site_feature_id, count_per_million, sample_name, source_id)
-tablespace indx
-
-
+tablespace indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

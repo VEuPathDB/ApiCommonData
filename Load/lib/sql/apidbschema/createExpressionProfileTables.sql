@@ -28,7 +28,9 @@ create table ApiDB.ProfileSet (
  PRIMARY KEY (profile_set_id)
 );
 
-CREATE INDEX apiDB.profileset_name_idx ON apiDB.ProfileSet (name, profile_set_id);
+CREATE INDEX apiDB.profileset_name_idx ON apiDB.ProfileSet (name, profile_set_id) tablespace indx;
+CREATE INDEX apiDB.profileset_revfk_idx
+  ON apiDB.ProfileSet (external_database_release_id, profile_set_id) tablespace indx;
 
 create sequence ApiDB.ProfileSet_sq;
 
@@ -91,10 +93,10 @@ create table ApiDB.Profile (
  PRIMARY KEY (profile_id)
 );
 
-CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id, profile_set_id, profile_id);
-CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id, profile_id);
-CREATE INDEX apiDB.p_mod_ix ON apiDB.Profile (modification_date, profile_id);
-CREATE INDEX apiDB.profile_info_ind ON apiDB.Profile(profile_id, source_id, profile_set_id);
+CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id, profile_set_id, profile_id) tablespace indx;
+CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id, profile_id) tablespace indx;
+CREATE INDEX apiDB.p_mod_ix ON apiDB.Profile (modification_date, profile_id) tablespace indx;
+CREATE INDEX apiDB.profile_info_ind ON apiDB.Profile(profile_id, source_id, profile_set_id) tablespace indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Profile TO gus_w;
 GRANT SELECT ON ApiDB.Profile TO gus_r;
@@ -141,8 +143,8 @@ create table ApiDB.ProfileElementName (
  PRIMARY KEY (profile_element_name_id)
 );
 
-create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name, profile_set_id, element_order);
-create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id);
+create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name, profile_set_id, element_order) tablespace indx;
+create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id) tablespace indx;
 
 create sequence ApiDB.ProfileElementName_sq;
 
@@ -191,13 +193,13 @@ create table ApiDB.ProfileElement (
 );
 
 CREATE INDEX apiDB.pe_profile_element_name_ind
-ON apiDB.ProfileElement(profile_element_name_id, profile_id, value);
+ON apiDB.ProfileElement(profile_element_name_id, profile_id, value) tablespace indx;
 
 CREATE INDEX apiDB.pe_profid_ind
-ON apiDB.ProfileElement(profile_id, profile_element_name_id, value);
+ON apiDB.ProfileElement(profile_id, profile_element_name_id, value) tablespace indx;
 
 CREATE INDEX apiDB.pe_mod_ix
-ON apiDB.profileelement (modification_date, profile_element_id);
+ON apiDB.profileelement (modification_date, profile_element_id) tablespace indx;
 
 CREATE SEQUENCE apiDB.ProfileElement_sq;
 
@@ -269,9 +271,9 @@ FROM dual,
 WHERE 'GeneProfileCorrelation' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-create index ApiDB.GeneProfileCorrelation_revix1 on ApiDB.GeneProfileCorrelation (second_profile_set_id, gene_profile_correlation_id);
-create index ApiDB.GeneProfileCorrelation_revix2 on ApiDB.GeneProfileCorrelation (first_profile_set_id, gene_profile_correlation_id);
-create index ApiDB.GeneProfileCorrelation_revix3 on ApiDB.GeneProfileCorrelation (gene_feature_id, gene_profile_correlation_id);
+create index ApiDB.GeneProfileCorrelation_revix1 on ApiDB.GeneProfileCorrelation (second_profile_set_id, gene_profile_correlation_id) tablespace indx;
+create index ApiDB.GeneProfileCorrelation_revix2 on ApiDB.GeneProfileCorrelation (first_profile_set_id, gene_profile_correlation_id) tablespace indx;
+create index ApiDB.GeneProfileCorrelation_revix3 on ApiDB.GeneProfileCorrelation (gene_feature_id, gene_profile_correlation_id) tablespace indx;
 
 ----------------------------------------------------------------------------
 

@@ -41,12 +41,15 @@ CREATE SEQUENCE apidb.PolyAGenes_sq;
 
 create index apidb.polyagenes_loc_idx
 ON Apidb.PolyAGenes (source_id, na_sequence_id, location, type)
-tablespace indx
+tablespace indx;
 
 create index apidb.polyagenes_data_idx
 ON Apidb.PolyAGenes (splice_site_feature_id, count_per_million, sample_name, source_id)
-tablespace indx
+tablespace indx;
 
+create index apidb.polyagenes_revfk_idx
+ON Apidb.PolyAGenes (splice_site_feature_id, poly_a_gene_id)
+tablespace indx;
 
 
 INSERT INTO core.TableInfo

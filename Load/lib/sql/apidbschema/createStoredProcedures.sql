@@ -413,12 +413,12 @@ begin
       execute immediate
          'select distinct project_id ' ||
          'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
-         'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
+         'where pt.taxon like substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;
       exception
          when NO_DATA_FOUND then
             raise_application_error(-20101,
-                                    'prefixed_project_id("'|| organism || '"): unknown project assignment' );
+                                    'Cannot map the taxon name "'|| organism || '" to a component project' );
    end;
 
    return project;
