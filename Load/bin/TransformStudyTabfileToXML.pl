@@ -28,20 +28,21 @@ use GUS::Model::Study::Study;
 
 use Date::Parse;
 
-my ($inFile, $configFile, $outFile, $table, $help, $valueMapFile,);
+my ($inFile, $configFile, $outFile, $help);
 
 &GetOptions('help|h' => \$help,
             'configFile=s' => \$configFile,
-	    'valueMapFile=s' =>\$valueMapFile,
            );
 
 #&usage() if($help);
 #&usage("Input dir containing csv files is required") unless(-e $inDir);
 #&usage("Output file name is required") unless($outFile);
 
+die "config file is required " unless $configFile;
 my $isHeader = 1;
 my $headerSize = 0;
 my @Header;
+my $ontologyHash = {};
 
 my $xmlObj = XML::Simple->new(KeepRoot =>1, ForceArray=>1);
 
@@ -50,28 +51,6 @@ my $pan_id = 1;
 my $validHeader = 2;
 
 my $mapHash = {};
-
-if (defined $valueMapFile) {
-  open (MAP, $valueMapFile) || die "Can't open $valueMapFile for reading : $!\n";
-  foreach my $line (<MAP>){
-    chomp $line;
-    $line=~s/\r//g;
-    my @row = split(/\t/,$line);
-    my $characteristic = $row[0];
-    my $skipCol = 1;
-
-    foreach my $col (@row) {
-      if ($skipCol) {
-        $skipCol = 0;
-        next;
-      }
-      my ($key,$value) = split (/:/,$col);
-      $characteristic = lc($characteristic);
-      $key = lc($key);
-      $mapHash->{$characteristic}->{$key} = $value;
-    }
-  }
-}
 
 my ($studyName,$db_id,$protocol,$entity_type,$header_regexp,$input_lookup,$external_database_release_spec);
 open (CONFIG, $configFile) || die "Can't open $configFile for reading : $!\n";
@@ -85,22 +64,14 @@ foreach my $line (<CONFIG>){
   if ($line =~ /db_id/) {
     $db_id = $line;
     $db_id =~ s/db_id://;
-	  }
+  }
   elsif ($line =~ /protocol/) {
     $protocol = $line;
     $protocol =~ s/protocol://;
   }
-  elsif ($line =~ /header_regexp/) {
-    $header_regexp = $line;
-    $header_regexp =~ s/header_regexp://;
-  }
   elsif ($line =~ /entity_type/) {
     $entity_type = $line;
     $entity_type =~ s/^\w*://;
-  }
-  elsif ($line =~ /input_lookup/) {
-    $input_lookup = $line;
-    $input_lookup =~ s/^\w*://;
   }
   elsif ($line =~ /external_database_release_spec/) {
     $external_database_release_spec = $line;
@@ -134,20 +105,6 @@ tie (%studyHash,'Tie::IxHash', (
     );
 
 my $studyHash={};
-
-my $official_header_hash ={};
-
-if ($header_regexp) {
-  my @header_terms = split(/,/,$header_regexp);
-  foreach my $pair (@header_terms) {
-    my ($pattern,$official) = split(/\|/,$pair);
-    if (exists $official_header_hash->{$official}) {
-      my $old_pattern = $official_header_hash->{$official};
-      $pattern = $old_pattern."|".$pattern;
-    }
-    $official_header_hash->{$official} = $pattern;
-  }
-}
 
 $studyHash->{"study"} = [\%studyHash,];
 my $temp = $outFile.".tmp";
@@ -183,21 +140,6 @@ my $ext_db_rls_id = $sh->fetchrow_array();
 
 $sh->finish();
 
-my $inputLookupSql = " select pan.name
-                         from study.protocolappnode pan, study.characteristic ch, SRES.ONTOLOGYTERM ot
-                        where pan.protocol_app_node_id = ch.protocol_app_node_id
-                          and ot.ontology_term_id = ch.ONTOLOGY_TERM_ID
-                          and ot.name = to_char(?)
-                          and ch.value= to_char(?) 
-                  ";
-my $ilsh = $dbh->prepare($inputLookupSql);
-my $inputValidateSql = " select pan.name
-                           from study.protocolappnode pan
-                          where name = to_char(?)
-                  ";
-my $ivsh = $dbh->prepare($inputValidateSql);
-
-
 open (INFILE, $inFile) || die "Can't open $inFile for reading : $!\n";
 my $protocolAppNodes = [];
 my $protocolApps = [];
@@ -212,7 +154,7 @@ foreach my $row (<INFILE>){
   }
 
   if ($isHeader) {
-    $ColumnMap = parseHeader($row,$official_header_hash);
+    $ColumnMap = parseHeader($row);
     $isHeader=0;
     $validHeader = 1;
     next;
@@ -229,39 +171,19 @@ foreach my $row (<INFILE>){
   my $outputCol = $ColumnMap->{"Output"};
   my $dateCol = $ColumnMap->{"Date"};
   my $chars =  $ColumnMap->{"characteristics"};
-  my $nodeChars = parseCharacteristics($chars,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$official_header_hash,$dbh);
-#  print STDERR Dumper ($nodeChars);
-#  exit;
+  my $nodeChars = parseCharacteristics($chars,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$ontologyHash,$dbh);
   my $panHash = {};
   my $paHash = {};
   my $input;
   $input = $values->[$inputCol] if (defined $ColumnMap->{"Input"});
   my $input_source_id;
-  my $unvalidated_input;
-  my $validated_input;
   my $output  = $values->[$outputCol];
   my $protocolAppDate = $values->[$dateCol];
   my $input_pan_id =undef;
   my $output_pan_id =undef;
   my %inputHash; 
   my $inputNode;
-  
-  if (defined $input) {
-    if ($input_lookup) {
-      $input_source_id = $ilsh->fetchrow_array;
-      print STDERR "no match found for $input\n" unless $input_source_id;
-    }
-    $unvalidated_input = (defined $input_lookup) ? $input_source_id : $input;
-    $ivsh->execute($unvalidated_input);
-    $validated_input = $ivsh->fetchrow_array;
-    unless ($validated_input) {
-      
-      print STDERR "no match found for $input\n";
-      push @$SkippedInputs,$input;
-      next;
-    }
-    
-    $input = $validated_input;
+  if (defined $input){  
     $inputNode = qq(
    <protocol_app_node addition="" id="$pan_id">
       <type></type>
@@ -293,10 +215,10 @@ foreach my $row (<INFILE>){
     # $panHash = {};
     $input_pan_id = $pan_id;
     $pan_id++;
-  }
-  my %outputHash; 
-  my $outputNode;
-  $outputNode = qq(   <protocol_app_node addition="true" id="$pan_id">
+  } 
+    my %outputHash; 
+    my $outputNode;
+    $outputNode = qq(   <protocol_app_node addition="true" id="$pan_id">
       <type>$entity_type</type>
       <subtype></subtype>
       <name>$output</name>
@@ -328,12 +250,11 @@ foreach my $row (<INFILE>){
   $output_pan_id = $pan_id;
   $pan_id++;
 
-  my $formattedDate = formatDate($output,$protocolAppDate);
   my %protocolAppHash; 
   tie (%protocolAppHash,'Tie::IxHash', (
                                         "addition" => 'true',
                                         "protocol" => {content => $protocol},
-                                        "protocol_app_date" => {content => $formattedDate},
+                                        "protocol_app_date" => {content => $protocolAppDate},
                                         "input" => {content => $input_pan_id},
                                         "output" => {content => $output_pan_id},
                                        )
@@ -345,8 +266,6 @@ foreach my $row (<INFILE>){
 }
 
 close INFILE;
-$ilsh->finish();
-$ivsh->finish();
 
 
 
@@ -377,7 +296,7 @@ print STDERR Dumper (\@uniqSkippedInputs);
 
 sub parseHeader {
 
-  my ($header,$offical_header_hash) = @_;
+  my ($header) = @_;
   my @Header = split ("\t" , $header);
   my $columnCount = scalar(@Header);
   my $colMap = {};
@@ -389,21 +308,14 @@ sub parseHeader {
     $colMap->{"Date"} = $i if $Header[$i] =~ /\[DATE\]/i;
     if ($Header[$i] =~ /Characteristics\s*\[\w+\]/i) {
       my $bareChar = $Header[$i];
-      my $official_hash_size = keys %{$official_header_hash};
       $bareChar =~ s/.*\[//i;
       $bareChar =~ s/\]//i;
       $bareChar = lc($bareChar);
       my $display_term = $bareChar;
-      if ($official_hash_size) {
-        while (my ($official,$pattern) = each %$offical_header_hash) {
-          if ($display_term =~ /$pattern/) {
-            $display_term =~ s/$pattern/$official/i ;
-          }
-        }
-      }
+
       my $charHash = {characteristic=>$bareChar,
-                      column=>$i,
-                      official_characteristic=>$display_term};
+                                    column=>$i,
+                                   };
       push @$chars,$charHash;
     }
     elsif ($Header[$i] =~ /Parameter\s*Value\s*\[\w+\]/i) {
@@ -412,7 +324,7 @@ sub parseHeader {
       $bareChar =~ s/\].*//i;
       my $charHash =  {characteristic=>$bareChar,
                                       column=>$i,
-                                      display=>$bareChar};
+                                    };
       push @$paramValues,$charHash;
     }
   }
@@ -422,119 +334,120 @@ sub parseHeader {
   return $colMap;
 }
 
-sub swapMappedValues {
-  my ($char, $value, $mapHash) = @_;
- 
-  if (defined ($mapHash->{$char})) {
-    if (defined ($mapHash->{$char}->{$value})) { 
-      $value = $mapHash->{$char}->{$value};
-    }
-    else {
-      print STDERR "Warning, mapping not defined for $char : $value \n";
-    }
-  }
-  return $value;
-}
-
 sub parseCharacteristics {
 
-  my ($characteristics,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$official_header_hash,$dbh) = @_;
-
+  my ($characteristics,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$ontologyHash,$dbh) = @_;
+  
   my $nodeChars = "Empty";
-  my $sql = "select value from (
-               select name as value 
-                 from SRES.ONTOLOGYTERM ot
+  my $controlledVocab = "select category, value from (
+               select pt.name as category, ot.name as value
+                 from SRES.ONTOLOGYTERM ot, SRES.ONTOLOGYTERM pt
                 where ot.external_database_release_id = $ext_db_rls_id
-                  and lower(name) = ?
+                  and ot.ancestor_term_id = pt.ontology_term_id
+                  and lower(pt.name) = ?
+                  and lower(ot.name) = ?
                   )";
-  my $sh = $dbh->prepare($sql);
+  my $cvsh = $dbh->prepare($controlledVocab);
 
+  my  $freeText = "select category, value from (
+               select pt.name as category, ot.name as value
+                 from SRES.ONTOLOGYTERM ot, SRES.ONTOLOGYTERM pt
+                where ot.external_database_release_id = $ext_db_rls_id
+                  and ot.ancestor_term_id = pt.ontology_term_id
+                  and lower(ot.name) = ?
+                  )";
+  my $ftsh = $dbh->prepare($freeText);
+
+  my $count =0;
   foreach my $characteristicsHash (@$characteristics) {
-    my $characteristic = $characteristicsHash->{official_characteristic};
+
+    my $characteristic = $characteristicsHash->{characteristic};
+    next if (exists $ontologyHash->{bad_characteristics}->{$characteristic});
     my $column = $characteristicsHash->{column};
     unless (defined $characteristic && $characteristic=~/\w/) {
-     print STDERR " $characteristic is null";
-        next;
-    }    my $value = $values->[$column];
-    unless ( (defined $value) && ($value =~/\w/)) {
+      print STDERR " $characteristic is null";
       next;
     }
-    my $lower_value = lc($value); 
-    my $lower_characteristic = lc($characteristic);
-
-    $lower_value =swapMappedValues($lower_characteristic,$lower_value,$mapHash);
-
-    $lower_value =~ s/\'/\'\'/g;
-    $lower_characteristic =~ s/\'/\'\'/g;
-
-    $sh->execute($lower_value);
-    my $db_value = undef;
-    $db_value = $sh->fetchrow_array;
-
-    my $db_ot = undef;
-    my $db_category = 'Characteristic';
-
-    $lower_characteristic =~ s/\'/\'\'/g;
-
-    if (defined $db_value) {
-      $db_ot = $db_value;
-      $db_value = undef;
-
-      $sh->execute($lower_characteristic);
+    my $valueSet = $values->[$column];
+    unless ( (defined $valueSet) && ($valueSet =~/\w/)) {
+      next;
+    }
+    my @values = split (/\|/, $valueSet);
+    foreach my $value (@values) {
       
-      $db_category = $sh->fetchrow_array;
-      print $db_category;
+      my $lower_value = lc($value); 
+      my $lower_characteristic = lc($characteristic);
+
+      $lower_value =~ s/\'/\'\'/g;
+      $lower_characteristic =~ s/\'/\'\'/g;
+      next unless (defined $lower_value && $lower_value=~/\w/);
+      next if $lower_value =~ /NULL/i;
+      
+      my $db_value = undef;
+      my $db_ot = undef;
+      my $db_category = undef;
+      my $free_value;
+      
+      if (exists $ontologyHash->{"$lower_characteristic:$lower_value"}) {
+        $db_category = $ontologyHash->{"$lower_characteristic:$lower_value"}->{db_category};   
+        $db_ot = $ontologyHash->{"$lower_characteristic:$lower_value"}->{db_ot}; 
+        $free_value = undef;
+      }
+      elsif (exists $ontologyHash->{$lower_characteristic}) {
+        $db_category = $ontologyHash->{$lower_characteristic}->{db_category};   
+        $db_ot = $ontologyHash->{$lower_characteristic}->{db_ot}; 
+        $free_value = $lower_value
+      }
+      else {
+        $cvsh->execute($lower_characteristic,$lower_value);
+        ($db_category,$db_value) = $cvsh->fetchrow_array;
+        if (defined $db_value) {
+          $db_ot = $db_value;
+          $free_value = undef;
+          $ontologyHash->{"$db_category:$db_ot"}->{db_category} =$db_category;
+          $ontologyHash->{"$db_category:$db_ot"}->{db_ot} = $db_ot;
+        }
+        else {
+          $ftsh->execute($lower_characteristic);
+          ($db_category,$db_ot) = $ftsh->fetchrow_array;
+          if (defined $db_ot) {
+            $free_value = $lower_value;
+            $ontologyHash->{"$db_ot"}->{db_category} =$db_category;
+            $ontologyHash->{"$db_ot"}->{db_ot} = $db_ot;
+          }
+        }
+      }
+      unless (defined $db_ot) {
+        print STDERR "\n ontology term $characteristic does not match anything in the database for the external database $external_database_release_spec\n";
+        $ontologyHash->{bad_characteristics}->{$characteristic}=1;
+        next;
+      }
+      $db_category = '' unless defined $db_category;
+    if (defined ($free_value)) { 
+      $free_value =~ s/&/&amp;/g;
+      $free_value =~ s/</&lt;/g;
+      $free_value =~ s/>/&gt;/g;
+      $free_value =~ s/'/&apos;/g;
+      $free_value =~ s/"/&quot;/g;
     }
     else {
-      $sh->execute($lower_characteristic);
-   #   print STDERR Dumper ($sh) if ($column=~/22/);
-      $db_ot = $sh->fetchrow_array;
-
-      print STDERR "\n ontology term $characteristic does not match anything in the database for the external database $external_database_release_spec\n" unless (defined $db_ot);
-     next unless (defined $db_ot);
-
-      $db_value = $lower_value;
+      $free_value = '';
     }
-
-#    unless (defined $db_ot) {
-#       exit;
-#    }
-    if (defined ($db_value)) { 
-      $db_value =~ s/&/&amp;/g;
-      $db_value =~ s/</&lt;/g;
-      $db_value =~ s/>/&gt;/g;
-      $db_value =~ s/'/&apos;/g;
-      $db_value =~ s/"/&quot;/g;
-    }
-
-    if ($nodeChars =~/Empty/) {
-      $nodeChars = qq(<node_characteristic addition="true">
+      if ($nodeChars =~/Empty/) {
+        $nodeChars = qq(<node_characteristic addition="true">
         <external_database_release>$external_database_release_spec</external_database_release>
         <ontology_term category="$db_category">$db_ot</ontology_term>
-        <value>$db_value</value>
+        <value>$free_value</value>
       </node_characteristic>)
-    } else {
-      $nodeChars = $nodeChars.qq(<node_characteristic addition="true">
+      } else {
+        $nodeChars = $nodeChars.qq(<node_characteristic addition="true">
         <external_database_release>$external_database_release_spec</external_database_release>
         <ontology_term category="$db_category">$db_ot</ontology_term>
-        <value>$db_value</value>
+        <value>$free_value</value>
       </node_characteristic>);
+      }
     }
   }
-  
-return ($nodeChars);
+  return ($nodeChars);
 }
 
-sub formatDate {
-
-  my ($output,$date) = @_;
-  my $dateArray = [];
-  my  ($junk1,$junk2,$junk3,$day,$month,$year) = strptime($date);
-  $month += 1;
-  die "invalid month for id = $output, $date, $year-$month-$day " unless (0< $month &&  $month<13);
-  die "invalid day for id = $output, $date, $year-$month-$day " unless (0< $day &&  $day <32);
-  $month = "0".$month if $month <10;
-  $year = $year+1900;
-
-  return $year.$month.$day;
-}
