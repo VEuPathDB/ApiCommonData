@@ -201,10 +201,14 @@ sub processFieldValue {
   my $key = lc($field);
   my $function = $header_hash->{$key}->{function};
   my $new_header = $header_hash->{$key}->{new_header};
-  $new_header = "Characteristics [$new_header]" unless ($old_header =~ /^$idFieldName|$dateFieldName|$parentIdFieldName$/i) ;
+ 
+  unless ($old_header =~ /^$idFieldName$|^$dateFieldName$/) {
+    unless  (defined $parentIdFieldName && $old_header =~ /^$parentIdFieldName/) {
+      $new_header = "Characteristics [$new_header]"  ;
+    }
+  }
   unless (defined $header_hash->{$key}->{exclude}) {
-    my @outputElementLines;
-    print STDERR "my new header : $new_header\n";
+    my @outputElementLines;   
     if ($function eq '') {
       push (@outputElementLines, "   <map name='$new_header'>");
       push (@outputElementLines, "      <in name='$old_header'/>");
@@ -222,3 +226,4 @@ sub processFieldValue {
   }
   return ($inputElement,$outputElement);   
 }
+
