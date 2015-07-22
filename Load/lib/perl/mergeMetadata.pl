@@ -95,16 +95,20 @@ foreach my $inFile (@inputFiles) {
         $parentIdMap->{$id}->{parent} = $parentId if defined $parentId;
       }
       elsif (ref $parentIdMap->{$id}->{parent} eq 'ARRAY') {
-        push (@{$parentIdMap->{$id}->{parent}}, $parentId);
-        $parentIdMap->{$id}->{invalid} = 1; 
-        $skipIds->{$id}->{Multiple_Parents} = $parentIdMap->{$id}->{parent};
-        $allDataHash->{$id}->{_exclude_flag_} = 1;
+        if (scalar(uniq (grep {defined} @{$parentIdMap->{$id}->{parent}})) > 1) {
+          print STDERR Dumper $parentIdMap->{$id}->{parent};
+          push (@{$parentIdMap->{$id}->{parent}}, $parentId) if (defined $parentId && !(grep { /$parentId/ } @{$parentIdMap->{$id}->{parent}}) ) ;
+          $parentIdMap->{$id}->{invalid} = 1; 
+          $skipIds->{$id}->{Multiple_Parents} = $parentIdMap->{$id}->{parent};
+          $allDataHash->{$id}->{_exclude_flag_} = 1;
+        }
       }
-      else {
-        $parentIdMap->{$id}->{parent} = [ ${$parentIdMap->{$id}->{parent}} , $parentId ] ;
+      elsif (defined $parentId && !( $parentIdMap->{$id}->{parent} =~ $parentId) ) {
+        $parentIdMap->{$id}->{parent} = [ $parentIdMap->{$id}->{parent} , $parentId ] ;
         $parentIdMap->{$id}->{invalid} = 1;
         $skipIds->{$id}->{Multiple_Parents} = $parentIdMap->{$id}->{parent};
         $allDataHash->{$id}->{_exclude_flag_} = 1;
+
       }
     }
     if ($id eq 'none') {
@@ -146,10 +150,10 @@ my $uniqIds;
 foreach my $key (keys %$allIds) {
   push (@$uniqIds,keys %{$allIds->{$key}});
 }
-my  @temp = uniq(split (";",(join ';' , @$uniqIds)));
-$uniqIds =  \@temp;
 
-$skipIds =validateIds($uniqIds,$parentIdMap,$skipIds,$parentFile ) if defined $parentFile;
+@{$uniqIds} = sort(uniq(split (";",(join ';' , @$uniqIds))));
+
+$skipIds =validateParentIds($uniqIds,$parentIdMap,$skipIds,$parentFile,$delimiter ) if defined $parentFile;
 
 foreach my $skipId (keys %{$skipIds}) {
   $allDataHash->{$skipId}->{_exclude_flag_}=1;
@@ -228,27 +232,28 @@ sub validateParentIds {
   my $parentHeader =  <PARENT>;
   $parentHeader =~ s/\n|\r//g;
   my @parentHeaderFields = split ($delimiter, $parentHeader);
-  my $parentFieIdIdx = first_index { /^INPUT$/i } @parentHeaderFields ;
-  
+  my $parentFieIdIdx = first_index { /^OUTPUT$/i } @parentHeaderFields ;
+
   foreach my $row (<PARENT>) {
-    my @parentFileFields = split ($delimiter, $parentHeader);
+    my @parentFileFields = split ($delimiter, $row);
     my $idHolder = $parentFileFields[$parentFieIdIdx ];
-    $validParentIds->{$idHolder} = undef;
+    $validParentIds->{$idHolder} = 1;
   }
-  
-  foreach my $id ($uniqIds) {
-    next if exists $skipIds->{$id}->{Orphan};
+  foreach my $id (@$uniqIds) {
+    next if exists $skipIds->{$id};
     unless (exists ($parentIdMap->{$id})) {
       $skipIds->{$id}->{Orphan} = "TRUE" ;
       next;
     }
-    next if ($parentIdMap->{$id}->{invalid}) ;
     my $parentId = $parentIdMap->{$id}->{parent} ;
-    
-    $skipIds->{$id}->{Invalid_Parent} = $parentId unless exists $validParentIds->{$parentId};
-    
+    if ($parentIdMap->{$id}->{invalid}) {
+      $skipIds->{$id}->{Invalid_Parent} = $parentId ;
+      next;
+    }
+    unless (exists $validParentIds->{$parentId}) {
+      $skipIds->{$id}->{Invalid_Parent} = $parentId unless exists $validParentIds->{$parentId};
+    }
   }
-  
   return ($skipIds);
 }
 
@@ -308,7 +313,6 @@ sub prepareReport {
   my $invalidParentLines = [];
   my $reportLines = [];
 
-
   foreach my $id (keys %$skipIds) {
     if (exists $skipIds->{$id}->{Dupe}) {
       my $fileNames = [];
@@ -364,39 +368,17 @@ Please correct these errors and rerun the merge script";
     push @$reportLines, @$blankIdLines;
   }
    if (scalar @$orphanLines){
-     push @$reportLines, "The following id were found with no associated parent id were found in your files. if you provide a parent file, all rows must have a parent_id, ";
-     push @$reportLines, @$blankIdLines;
+     push @$reportLines, "The following id(s) with no associated parent id were found in your files. if you provide a parent file, all rows must have a parent_id, ";
+     push @$reportLines, @$orphanLines;
    }
-  if (scalar @$multipleParentLines){
+  if (scalar @$multipleParentLines ){
     push @$reportLines, "The following ids were found with multiple associated parent id were found in your files. only parent id is allowed for each id, ";
       push @$reportLines, @$multipleParentLines;
   }
-  if (scalar @$multipleParentLines){
+  if (scalar @$invalidParentLines){
     push @$reportLines, "The following ids were found an associated parent id that is not present  were found in your files. only parent id is allowed for each id, ";
-    push @$reportLines, @$multipleParentLines;
+    push @$reportLines, @$invalidParentLines;
   }
-  #  open(Report, ">$reportFile") or die "Unable to open file for writing :$!";
-    # while( my( $key, $value ) = each( %$conflictedCharacteristics ) ) {
-    #  print Report "ids with invalid parent Ids\n";
-    #  print Report Dumper ($invalidParentIds);
-    #  print Report "Characteristics with conflicting values:\n";
-    #  print Report Dumper ($conflictedCharacteristics);
-    #  print Report "Duplicate Ids in each file, these values are removed from final file: \n";
-    #  print Report Dumper ($duplicateIds);
-    #  print Report "Ids  which do not appear in one of the premerged files: \n";
-    #   print Report Dumper ($absentIds);
-    #   close Report;
-  print STDERR Dumper $reportLines;
+
   return $reportLines;
-#   open(Report, ">$reportFile") or die "Unable to open file for writing :$!";
-# #  while( my( $key, $value ) = each( %$conflictedCharacteristics ) ) {
-#   print Report "ids with invalid parent Ids\n";
-#   print Report Dumper ($invalidParentIds);
-#   print Report "Characteristics with conflicting values:\n";
-#   print Report Dumper ($conflictedCharacteristics);
-#   print Report "Duplicate Ids in each file, these values are removed from final file: \n";
-#   print Report Dumper ($duplicateIds);
-#   print Report "Ids  which do not appear in one of the premerged files: \n";
-#   print Report Dumper ($absentIds);
-#   close Report;
 }
