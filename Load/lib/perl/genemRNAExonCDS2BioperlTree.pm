@@ -1,4 +1,4 @@
-package ApiCommonData::Load::ensemblGtf2Gff2BioperlTree;
+package ApiCommonData::Load::genemRNAExonCDS2BioperlTree;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
