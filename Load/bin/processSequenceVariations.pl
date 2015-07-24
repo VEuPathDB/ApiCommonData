@@ -978,6 +978,8 @@ ORDER BY s.source_id, el.start_min
   while(my ($transcripts, $sequenceSourceId, $geneNaFeatureId, $exonStart, $exonEnd, $cdsStart, $cdsEnd, $isReversed) = $sh->fetchrow_array()) {
     my @transcripts = split(",", $transcripts);
 
+    my $strand = $isReversed ? -1 : +1;
+
     # if this sequence is a PIECE in another sequence... lookup the higher level sequence
     if(my $agp = $agpMap->{$sequenceSourceId}) {
       my $exonMatch = Bio::Location::Simple->
@@ -996,10 +998,10 @@ ORDER BY s.source_id, el.start_min
       $sequenceSourceId = $matchOnVirtual->seq_id();
       $exonStart = $matchOnVirtual->start();
       $exonEnd = $matchOnVirtual->end();
-
+      $strand = $matchOnVirtual->strand();
     }
 
-    my $strand = $isReversed ? -1 : +1;
+
     my $loc = Bio::Location::Simple->new( -seq_id => $sequenceSourceId, -start => $exonStart  , -end => $exonEnd , -strand => $strand);
 
 
@@ -1040,7 +1042,6 @@ sub getCodingSequence {
 
   return unless($transcriptId);
 
-  # Exons are already sorted by start_min from query!!
   my @exons = @{$transcriptSummary->{$transcriptId}->{exons}};
   my $minCodingStart = $transcriptSummary->{$transcriptId}->{min_cds_start};
   my $maxCodingEnd = $transcriptSummary->{$transcriptId}->{max_cds_end};
@@ -1051,7 +1052,8 @@ sub getCodingSequence {
 
   my $codingSequence;
 
-  for my $exon (@exons) {
+  # sort exons by start_min
+  for my $exon (sort {$a->{_start} <=> $b->{_start} } @exons) {
     my $exonStart = $exon->start();
     my $exonEnd = $exon->end();
     my $exonIsReversed = $exon->strand() == -1 ? 1 : 0;
