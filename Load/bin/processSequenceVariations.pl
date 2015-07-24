@@ -29,7 +29,7 @@ use ApiCommonData::Load::FileReader;
 
 use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
+my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec, $forcePositionCompute);
 
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
@@ -41,6 +41,7 @@ my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undon
             "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
+            "force_position_compute" => \$forcePositionCompute,
             "debug" => \$debug,
             "help|h" => \$help,
     );
@@ -123,6 +124,11 @@ my $geneLocations = &getGeneLocations($transcriptSummary);
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
+
+if($forcePositionCompute) {
+  push @undoneStrains, $referenceStrain;
+}
+
 print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
 my $naSequenceIds = &queryNaSequenceIds($dbh);
@@ -226,6 +232,8 @@ while($merger->hasNext()) {
 
   # loop through variations and print
   foreach my $variation (@$variations) {
+
+
     my $strain = $variation->{strain};
 
     my $extDbRlsId;
@@ -234,14 +242,18 @@ while($merger->hasNext()) {
     }
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
+
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
 
       my $cachedNaSequenceId = $variation->{ref_na_sequence_id};
       die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
 
       $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
-      &printVariation($variation, $cacheFh);
-      next;
+
+      if(!$forcePositionCompute || $strain eq $referenceStrain) {
+        &printVariation($variation, $cacheFh);
+        next;
+      }
     }
 
     $variation->{ref_na_sequence_id} = $naSequenceId;
