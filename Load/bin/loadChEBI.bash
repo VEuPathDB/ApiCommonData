@@ -43,14 +43,19 @@ for f in $d/*
     fi;
 done
 
+echo Running:  sqlplus $u/$p@$i @$d/$createTablesFile;
 echo exit|sqlplus $u/$p@$i @$d/$createTablesFile;
 
+echo Running sqlplus $u/$p@$i @$d/$disableConstraintsFile;
 echo exit|sqlplus $u/$p@$i @$d/$disableConstraintsFile;
 
+echo Running:  imp $u/$p@$i PARFILE=$d/$parFile;
 imp $u/$p@$i PARFILE=$d/$parFile
 
+echo Running: sqlplus $u/$p@$i @$d/$enableConstraintsFile;
 echo exit|sqlplus $u/$p@$i @$d/$enableConstraintsFile;
 
+echo Running: sqlplus $u/$p@$i @$grantGusRolesFile;
 sqlplus $u/$p@$i @$grantGusRolesFile;
 
 
