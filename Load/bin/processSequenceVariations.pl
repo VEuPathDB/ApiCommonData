@@ -305,6 +305,7 @@ while($merger->hasNext()) {
   if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
+
 }
 
 close $cacheFh;
@@ -995,11 +996,11 @@ ORDER BY s.source_id, el.start_min
     # if this sequence is a PIECE in another sequence... lookup the higher level sequence
     if(my $agp = $agpMap->{$sequenceSourceId}) {
       my $exonMatch = Bio::Location::Simple->
-          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
+          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => $strand );
 
       if($cdsStart && $cdsEnd) {
         my $cdsMatch = Bio::Location::Simple->
-            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => $strand );
         my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
         $cdsStart = $cdsMatchOnVirtual->start();
         $cdsEnd = $cdsMatchOnVirtual->end();
