@@ -30,6 +30,9 @@ do
   esac
 done
 
+
+cwd=$PWD;
+
 disableConstraintsFile=disable_constraints.sql;
 enableConstraintsFile=enable_constraints.sql ;
 createTablesFile=create_tables.sql;
@@ -42,6 +45,8 @@ for f in $d/*
         gunzip -f $f;
     fi;
 done
+
+cd $d;
 
 echo Running:  sqlplus $u/$p@$i @$d/$createTablesFile;
 echo exit|sqlplus $u/$p@$i @$d/$createTablesFile;
@@ -58,6 +63,7 @@ echo exit|sqlplus $u/$p@$i @$d/$enableConstraintsFile;
 echo Running: sqlplus $u/$p@$i @$grantGusRolesFile;
 sqlplus $u/$p@$i @$grantGusRolesFile;
 
+cd $cwd;
 
 
 
