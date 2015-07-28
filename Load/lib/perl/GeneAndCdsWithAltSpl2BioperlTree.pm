@@ -86,7 +86,7 @@ sub preprocess {
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
 		if (($geneFeature->has_tag("locus_tag"))){
 			my ($cID) = $geneFeature->get_tag_values("locus_tag");
-			print STDERR "processing $cID...\n";
+			print STDERR "processing $type: $cID...\n";
 		}
 
 		if(!($geneFeature->has_tag("locus_tag"))){
@@ -206,7 +206,7 @@ sub traverseSeqFeatures {
     # as found in GI:32456060.
     # And will accept transcripts that do not have 'gene' parents (e.g. tRNA
     # in GI:32456060)
-    foreach my $RNA (@RNAs){ 
+    foreach my $RNA ( sort { $a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end } @RNAs){ 
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
              'mRNA',
