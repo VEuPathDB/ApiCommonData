@@ -211,7 +211,7 @@ sub traverseSeqFeatures {
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
   	    if($transcriptCount > 1){
-	      $geneID = $geneID."\_$ctr";
+	      $geneID = $geneID."\.$ctr";
 	      $ctr++;
 	    }
 
