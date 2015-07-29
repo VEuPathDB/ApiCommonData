@@ -26,13 +26,13 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 
-my ($gusConfigFile,$inputFile,$outputFile,$isolateType);
+my ($gusConfigFile,$inputFile,$outputFile,$platform);
 #my ($gusConfigFile,$inputFile,$outputFile);
 
 &GetOptions( "gusConfigFile=s" => \$gusConfigFile,
              "inputFile=s"     => \$inputFile,
              "outputFile=s"    => \$outputFile,
-             "isolateType=s"   => \$isolateType,
+             "platform=s"   => \$platform,
            );
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -44,7 +44,7 @@ unless(-e $gusConfigFile) {
 
 =usage
 
-perl convertIsolateAssay2GFF.pl --inputFile /home/hwang/workflows/PlasmoDB/miniflow_test/data/pfal3D7/organismSpecificNoAlias/SNPs/pfal3D7_SNP_Broad3KGenotyping_test_RSRC/isolateSNPs.txt --outputfile /home/hwang/workflows/PlasmoDB/miniflow_test/data/pfal3D7/organismSpecificNoAlias/SNPs/pfal3D7_SNP_Broad3KGenotyping_test_RSRC/isolateSNPs.gff --isolateType 3k_chip
+perl convertIsolateAssay2GFF.pl --inputFile /home/hwang/workflows/PlasmoDB/miniflow_test/data/pfal3D7/organismSpecificNoAlias/SNPs/pfal3D7_SNP_Broad3KGenotyping_test_RSRC/isolateSNPs.txt --outputfile /home/hwang/workflows/PlasmoDB/miniflow_test/data/pfal3D7/organismSpecificNoAlias/SNPs/pfal3D7_SNP_Broad3KGenotyping_test_RSRC/isolateSNPs.gff --platform 3k_chip
 
 example inputFile
 /eupath/data/EuPathDB/manualDelivery/PlasmoDB/pfal3D7/SNP/Broad3KGenotyping/2008-06-13/final/isolateSNPs.txt
@@ -52,7 +52,7 @@ example inputFile
 example outputFile gff
 /eupath/data/EuPathDB/manualDelivery/PlasmoDB/pfal3D7/SNP/Broad3KGenotyping/2008-06-13/final/isolateSNPs.gff
 
-example isolateType
+example platform
 barcode, 3k_chip and hd_array
 =cut
 
@@ -100,8 +100,7 @@ while(<F>) {
   my ($seqid, $start, $stop) = $sth->fetchrow_array;
 
   next unless $seqid;
-  print OUT "$seqid\tBroad_". $isolateType."\tSNP\t$start\t$stop\t.\t+\t.\tID $id". "_". "$isolateType; Allele ";
-  #print OUT "$seqid\tBroad\tSNP\t$start\t$stop\t.\t+\t.\tID $id; Allele ";
+  print OUT "$seqid\t". $platform."\tSNP\t$start\t$stop\t.\t+\t.\tID $id". "_". "$platform; Allele ";
 
   my $count = 0;
   foreach my $snp (@snps) {
