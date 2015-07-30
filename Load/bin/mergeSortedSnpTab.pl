@@ -26,11 +26,12 @@ use strict;
 use Getopt::Long;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 
-my ($inputFile, $cacheFile, $undoneStrainsFile);
+my ($inputFile, $cacheFile, $undoneStrainsFile, $doNotTruncateInputFile);
 
 &GetOptions("inputFile=s"=> \$inputFile,
             "cacheFile=s" => \$cacheFile,
             "undoneStrainsFile=s" => \$undoneStrainsFile,
+            "doNotTruncateInputFile" => \$doNotTruncateInputFile, # The main use case ("NGS SNPs" ) we need to truncate the input file;  Chip Snp we do not
     );
 
 unless(-e $inputFile) {
@@ -71,8 +72,10 @@ close OUT;
 
 unlink $cacheTmp;
 
-open(TRUNCATE, ">$inputFile") or die "Cannot open file $inputFile for writing: $!";
-close(TRUNCATE);
+unless($doNotTruncateInputFile) {
+  open(TRUNCATE, ">$inputFile") or die "Cannot open file $inputFile for writing: $!";
+  close(TRUNCATE);
+}
 
 open(TRUNCATE, ">$undoneStrainsFile") or die "Cannot open file $undoneStrainsFile for writing: $!";
 close(TRUNCATE);
