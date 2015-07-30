@@ -52,7 +52,7 @@ sub variationFileColumnNames {
        'snp_external_database_release_id'
       );
 
-  return \@columnNames;
+  return wantarray ? @columnNames : \@columnNames;
 }
 
 # DON"T CHANGE THESE UNLESS YOU KNOW WHAT YOU ARE DOING
