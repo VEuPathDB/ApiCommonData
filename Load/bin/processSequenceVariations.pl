@@ -55,8 +55,7 @@ use ApiCommonData::Load::FileReader;
 
 use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
-my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec, $isLegacyVariations);
-
+my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec, $isLegacyVariations, $forcePositionCompute);
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
             "cache_file=s"=> \$cacheFile,
@@ -69,6 +68,7 @@ my ($newSampleFile, $cacheFile, $cleanCache, $transcriptExtDbRlsSpec, $organismA
             "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
+            "force_position_compute" => \$forcePositionCompute,
             "debug" => \$debug,
             "help|h" => \$help,
     );
@@ -153,6 +153,11 @@ my $geneLocations = &getGeneLocations($transcriptSummary);
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
+
+if($forcePositionCompute) {
+  push @undoneStrains, $referenceStrain;
+}
+
 print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
 my $naSequenceIds = &queryNaSequenceIds($dbh);
@@ -259,6 +264,8 @@ while($merger->hasNext()) {
 
   # loop through variations and print
   foreach my $variation (@$variations) {
+
+
     my $strain = $variation->{strain};
 
     my $extDbRlsId;
@@ -267,14 +274,18 @@ while($merger->hasNext()) {
     }
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
+
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
 
       my $cachedNaSequenceId = $variation->{ref_na_sequence_id};
       die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
 
       $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
-      &printVariation($variation, $cacheFh);
-      next;
+
+      if(!$forcePositionCompute || $strain eq $referenceStrain) {
+        &printVariation($variation, $cacheFh);
+        next;
+      }
     }
 
     $variation->{ref_na_sequence_id} = $naSequenceId;
@@ -327,6 +338,7 @@ while($merger->hasNext()) {
   if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
+
 }
 
 close $cacheFh;
@@ -947,11 +959,11 @@ order by s.source_id, el.start_min
     # if this sequence is a PIECE in another sequence... lookup the higher level sequence
     if(my $agp = $agpMap->{$sequenceSourceId}) {
       my $exonMatch = Bio::Location::Simple->
-          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
+          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => $strand );
 
       if($cdsStart && $cdsEnd) {
         my $cdsMatch = Bio::Location::Simple->
-            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => $strand );
         my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
         $cdsStart = $cdsMatchOnVirtual->start();
         $cdsEnd = $cdsMatchOnVirtual->end();
