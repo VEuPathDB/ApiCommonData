@@ -10,11 +10,12 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 
 use List::MoreUtils qw(uniq first_index indexes);
 
-my ($inDir, $outDir, $configFile, $idFieldName, $dateFieldName, $parentIdFieldName, $help,);
+my ($inDir, $outDir, $configFile, $idFieldName, $hasCompId,$dateFieldName, $parentIdFieldName, $help,);
 
 &GetOptions('help|h' => \$help,
                       'input_directory=s' => \$inDir,
                       'output_directory=s' => \$outDir,
+                      'has_composite_id' => \$hasCompId,
                       'id_field=s' => \$idFieldName,
                       'date_field=s' => \$dateFieldName,
                       'parent_id_field=s' => \$parentIdFieldName,
@@ -39,7 +40,7 @@ my $cfgFileOpener = qq(<?xml version="1.0"  encoding="ISO-8859-1" ?>
 <cfg functions_class='GUS::Community::FileTranslator::Functions'>
   <inputs qualifier_row_present='0'>
       <header>);
-	  
+
 my $cfgMiddleBlock = qq(    </header>
   </inputs>
 
@@ -77,11 +78,13 @@ foreach my $inFile (@inputFiles) {
        splice (@fields,$parentIdFieldIdx,1);
        unshift (@fields, $parentIdFieldName);
      }
-   } 
-   my $idFieldIdx = first_index { $_ =~ /^$idFieldName$/i } @fields;
-   push (@$skippedFiles, $inFile) if $idFieldIdx == -1;
-   splice (@fields,$idFieldIdx,1);
-   unshift (@fields, $idFieldName);
+   }
+  unless ($hasCompId) {
+    my $idFieldIdx = first_index { $_ =~ /^$idFieldName$/i } @fields;
+    push (@$skippedFiles, $inFile) if $idFieldIdx == -1;
+    splice (@fields,$idFieldIdx,1);
+  }    
+  unshift (@fields, $idFieldName);
   
   foreach my $field (@fields){
     $field = lc($field);
@@ -91,7 +94,7 @@ foreach my $inFile (@inputFiles) {
     }
     my $required = ($field =~ /^$idFieldName|$dateFieldName|$parentIdFieldName$/i) ? 1 : 0 if defined $parentIdFieldName;
     my $required = ($field =~ /^$idFieldName|$dateFieldName$/i) ? 1 : 0 unless defined $parentIdFieldName;
-    my ($inputElement,$outputElement) = processFieldValue ($field,$header_hash,$required,$idFieldName,$dateFieldName,$parentIdFieldName);
+    my ($inputElement,$outputElement) = processFieldValue ($field,$header_hash,$hasCompId,$required,$idFieldName,$dateFieldName,$parentIdFieldName);
     push (@$inputBlock, $inputElement);
     push (@$outputBlock, $outputElement) if (defined $outputElement);
   }
@@ -149,7 +152,7 @@ sub parseHeaderConfig {
   for my $row (<CFG>) {
     $row=~s/\n|\r//g;
     my ($old_header, $new_header, $function, $functionVariableString, $exclude) = split("\t", $row);
-    
+
     $exclude = undef if (!defined $exclude || $exclude !~/\w/ || $exclude =~/false/i) ;
     $function = '' if (!defined $function || $function !~/\w/) ;
     
@@ -194,14 +197,14 @@ sub parseHeaderConfig {
 }  
 
 sub processFieldValue {
-  my ($field,$header_hash,$required,$idFieldName,$dateFieldName,$parentIdFieldName) = @_;
+  my ($field,$header_hash,$hasCompId,$required,$idFieldName,$dateFieldName,$parentIdFieldName) = @_;
   my $old_header = $header_hash->{$field}->{old_header};
-  my $inputElement = "       <col header_val='$old_header' req='$required' name='$old_header'/>";
+  my $inputElement = "       <col header_val='$old_header' req='$required' name='$old_header'/>" unless ($hasCompId && $field =~ $idFieldName);
   my $outputElement;
   my $key = lc($field);
   my $function = $header_hash->{$key}->{function};
   my $new_header = $header_hash->{$key}->{new_header};
- 
+
   unless ($old_header =~ /^$idFieldName$|^$dateFieldName$/) {
     unless  (defined $parentIdFieldName && $old_header =~ /^$parentIdFieldName/) {
       $new_header = "Characteristics [$new_header]"  ;
@@ -219,7 +222,18 @@ sub processFieldValue {
       push (@outputElementLines, "    <idmap function='$function'");
       push (@outputElementLines, "         output_header='$new_header'");
       push (@outputElementLines, "         mapkey='$variables'>");
-      push (@outputElementLines, "      <in name='$old_header'/>");
+      if ($hasCompId && $field =~ $idFieldName) {
+        my @variable_set = split ('\\\t',$variables);
+        foreach my $variable (@variable_set) {
+          if ($variable =~ /\$/) {
+            $variable =~s/\$//;
+            push (@outputElementLines, "      <in name='$variable'/>");
+          }
+        }
+      }
+      else {
+        push (@outputElementLines, "      <in name='$old_header'/>");
+      }
       push (@outputElementLines, "     </idmap>");      
     }
     $outputElement = join("\n", @outputElementLines);

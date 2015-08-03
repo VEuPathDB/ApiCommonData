@@ -96,7 +96,7 @@ foreach my $inFile (@inputFiles) {
       }
       elsif (ref $parentIdMap->{$id}->{parent} eq 'ARRAY') {
         if (scalar(uniq (grep {defined} @{$parentIdMap->{$id}->{parent}})) > 1) {
-          print STDERR Dumper $parentIdMap->{$id}->{parent};
+          #print STDERR Dumper $parentIdMap->{$id}->{parent};
           push (@{$parentIdMap->{$id}->{parent}}, $parentId) if (defined $parentId && !(grep { /$parentId/ } @{$parentIdMap->{$id}->{parent}}) ) ;
           $parentIdMap->{$id}->{invalid} = 1; 
           $skipIds->{$id}->{Multiple_Parents} = $parentIdMap->{$id}->{parent};
@@ -286,6 +286,11 @@ sub mergeFiles {
       my $valueString = '';
       $valueString = join ("|", uniq(@{$allDataHash->{$id}->{$characteristic}}) ) if exists ($allDataHash->{$id}->{$characteristic}); 
        if ($valueString=~/\|/) {
+         $valueString =~s/\|\s*\|/\|/;
+         $valueString =~s/^\|//;
+         $valueString =~s/\|$//;
+         
+
          if ($characteristic =~ /^$dateFieldName$/ ){
            $skipIds->{$id}->{DATE_CONFLICT} = $valueString;
            next;
