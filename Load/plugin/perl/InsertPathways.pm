@@ -197,11 +197,17 @@ sub queryForIds {
 #union
 #select 'SRes::Pathway', source_id,pathway_id from sres.pathway
 #";
-  my $sql = "select 'SRes::EnzymeClass', ec_number, enzyme_class_id from sres.enzymeclass
+  my $sql = "select 'SRes::EnzymeClass' tbl, ec_number as accession, enzyme_class_id as id from sres.enzymeclass
 union
-select 'chEBI::Compounds', chebi_accession, id from chebi.compounds
+select 'chEBI::Compounds', chebi_accession, nvl(parent_id, id) from chebi.compounds
 union
 select 'SRes::Pathway', source_id, pathway_id from sres.pathway
+union
+select 'chEBI::Compounds', da.accession_number as accession, nvl(c.parent_id, c.id)
+from chebi.database_accession da
+   , chebi.compounds c
+where c.id = da.compound_id
+and da.type = 'KEGG COMPOUND accession'
 ";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
