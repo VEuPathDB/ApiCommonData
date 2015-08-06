@@ -132,11 +132,16 @@ sub run {
 
       next if (/^\s*$/);
 
-      my ($sourceId, $product) = split(/\t/,$_);
+      my ($sourceId, $product, $preferred) = split(/\t/,$_);
+      if ($preferred =~ /true/i || $preferred == 1) {
+	$preferred = 1;
+      } else {
+	$preferred = 0;
+      }
 
       $self->error("Either sourceId or product is null on line of $. of input file '$tabFile'") unless $sourceId && $product;
 
-      my $preferred = 0;
+#      my $preferred = 0;
 	       
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
       
@@ -144,7 +149,7 @@ sub run {
       if($geneFeature->retrieveFromDB()){
 	  my $geneFeatProduct = $geneFeature->getChild('ApiDB::GeneFeatureProduct',1);
 
-	  $preferred = 1 unless $geneFeatProduct;
+#	  $preferred = 1 unless $geneFeatProduct;
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
