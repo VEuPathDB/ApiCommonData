@@ -9,17 +9,19 @@ use Getopt::Long;
 use XML::Writer;
 use IO::File;
 
-my ($outDir, $pathwayList,
+my ($outDir, $pathwayList, $extDbRlsId,
     $gusConfigFile, $debug, $verbose, $projectId);
 
 &GetOptions("outputDir=s" => \$outDir,
             "pathwayList=s" => \$pathwayList,
-	    "verbose!" => \$verbose,
+	        "verbose!" => \$verbose,
+            "extDbRlsId=s" => \$extDbRlsId,
             "gusConfigFile=s" => \$gusConfigFile,
 	   );
 
 if (!$outDir || !$pathwayList) {
-  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> -pathwayList <pathwayList | ALL> '
+  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> -pathwayList <pathwayList | ALL | source> '
+      .  "[--extDbRlsId] (only required if -pathwayList = source)"
       . " [--verbose] [--debug]"
       . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
 }
@@ -51,6 +53,9 @@ my @pids; # pathway IDs
 my $validFlag = 0;
 if ($pathwayList eq 'ALL') {
   @pids =&getPathwayIds();
+}elsif ($pathwayList eq 'source') {
+    die "If the --pathwayList option is 'source', an external database release id must be provided using the --extDbRlsId argument\n" unless defined ($extDbRlsId);
+    @pids = &getPathwayIdsFromSource($extDbRlsId);
 } else {
   @pids = split(",", $pathwayList);
 }
@@ -148,11 +153,13 @@ foreach my $pathwayId (@pids) {
 
 	}
 
-	$writer->startTag("graphics", 
-			  "x" => $node{$k}->{x},
-			  "y" => $node{$k}->{y}
-			 );
-	$writer->endTag("graphics");
+    if (defined($node{$k}->{x}) && defined($node{$k}->{y})) {
+        $writer->startTag("graphics", 
+                  "x" => $node{$k}->{x},
+                  "y" => $node{$k}->{y}
+                 );
+        $writer->endTag("graphics");
+    }
 	$writer->endTag("node");
       }
 
@@ -202,75 +209,150 @@ sub getPathwayIds {
   return @ids;
 }
 
+#gets all pathway ids by extDbRlsId
+sub getPathwayIdsFromSource {
+    my $extDbRlsId = shift;
+    my $sql = "SELECT source_id FROM sres.pathway WHERE external_database_release_id = $extDbRlsId";
+    my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+    $sth->execute() || die "Couldn't execute statement: " . $sth->errstr;
+
+    my @ids;
+    while (my ($id) = $sth->fetchrow_array()) {
+        push (@ids, $id);
+    }
+    return @ids;
+}
+
 # getNodes query with cpd_name AND gene_orgs
 sub getNodesQuery {
     my $pathwayId = shift;
     my $sql = "
 select n.pathway_node_id
-     , n.display_label
-     , n.x
-     , n.y
-     , ot.name
-     , s.substance_id as identifier
-     , cpd.compound_id as alternative_identifier
-     , cpd.iupac_name as name 
-     , s.name as alternative_name
+    , n.display_label
+    , n.x
+    , n.y
+    , ot.name
+    , c.chebi_accession as identifier
+    , cn.compound_id as alternative_identifier
+    , cn.name as name
+    , cn.name as alternative_name
 from sres.pathwaynode n
-   , sres.pathway p
-   , sres.ontologyterm ot
-   , (select s.substance_id, c.compound_id, c.iupac_name
-      from apidb.pubchemsubstance s, apidbtuning.compoundattributes c
-      where s.property = 'CID'
-      and s.value = c.compound_id) cpd
-   , (select substance_id, listagg(value, ';') within group (order by substance_id) as name
-      from apidb.pubchemsubstance
-      where property != 'CID'
-      group by substance_id) s
+    , sres.pathway p
+    , sres.ontologyterm ot
+    , chebi.compounds c LEFT OUTER JOIN
+        (select compound_id
+        , listagg(name, ';') within group (order by compound_id) as name
+        from chebi.names
+        where source = 'IUPAC'
+        and type = 'IUPAC NAME'
+        group by compound_id) cn
+    on c.ID = cn.compound_id
 where p.source_id = '$pathwayId'
-and  n.pathway_id = p.pathway_id
+and n.pathway_id = p.pathway_id
 and n.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'molecular entity'
-and n.row_id = cpd.substance_id (+)
-and n.row_id = s.substance_id (+)
+and n.row_id = c.ID
 union
 select n.pathway_node_id
-     , n.display_label
-     , n.x
-     , n.y
-     , ot.name
-     , ec.enzyme_class_id as identifier
-     , null as alternative_identifier
-     , ec.description as name 
-     , null as alternative_name
+    , n.display_label
+    , n.x
+    , n.y
+    , ot.name
+    , to_char(ec.enzyme_class_id) as identifier
+    , null as alternative_identifier
+    , ec.description as name
+    , null as alternative_name
 from sres.pathway p
-   , sres.pathwaynode n
-   , sres.ontologyterm ot
-   , sres.enzymeclass ec
+    , sres.pathwaynode n LEFT OUTER JOIN sres.enzymeclass ec on n.row_id = ec.enzyme_class_id
+    , sres.ontologyterm ot
 where p.source_id = '$pathwayId'
 and p.pathway_id = n.pathway_id
-and n.pathway_node_type_id =ot.ontology_term_id
+and n.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'enzyme'
-and n.row_id = ec.enzyme_class_id (+)
 union
 select n.pathway_node_id
-     , n.display_label
-     , n.x
-     , n.y
-     , ot.name
-     , m.pathway_id as identifier
-     , null as alternative_identifier
-     , m.name as name 
-     , null as alternative_name
+    , n.display_label
+    , n.x
+    , n.y
+    , ot.name
+    , to_char(m.pathway_id) as identifier
+    , null as alternative_identifier
+    , m.name as name
+    , null as alternative_name
 from sres.pathway p
-   , sres.pathwaynode n
-   , sres.ontologyterm ot
-   , sres.pathway m
+    , sres.pathwaynode n LEFT OUTER JOIN sres.pathway m on n.display_label = m.source_id
+    ,sres.ontologyterm ot
 where p.source_id = '$pathwayId'
 and p.pathway_id = n.pathway_id
-and n.pathway_node_type_id =ot.ontology_term_id
+and n.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'metabolic process'
-and n.display_label = m.source_id (+)
 ";
+#"
+#select n.pathway_node_id
+#     , n.display_label
+#     , n.x
+#     , n.y
+#     , ot.name
+#     , s.substance_id as identifier
+#     , cpd.compound_id as alternative_identifier
+#     , cpd.iupac_name as name 
+#     , s.name as alternative_name
+#from sres.pathwaynode n
+#   , sres.pathway p
+#   , sres.ontologyterm ot
+#   , (select s.substance_id, c.compound_id, c.iupac_name
+#      from apidb.pubchemsubstance s, apidbtuning.compoundattributes c
+#      where s.property = 'CID'
+#      and s.value = c.compound_id) cpd
+#   , (select substance_id, listagg(value, ';') within group (order by substance_id) as name
+#      from apidb.pubchemsubstance
+#      where property != 'CID'
+#      group by substance_id) s
+#where p.source_id = '$pathwayId'
+#and  n.pathway_id = p.pathway_id
+#and n.pathway_node_type_id = ot.ontology_term_id
+#and ot.name = 'molecular entity'
+#and n.row_id = cpd.substance_id (+)
+#and n.row_id = s.substance_id (+)
+#union
+#select n.pathway_node_id
+#     , n.display_label
+#     , n.x
+#     , n.y
+#     , ot.name
+#     , ec.enzyme_class_id as identifier
+#     , null as alternative_identifier
+#     , ec.description as name 
+#     , null as alternative_name
+#from sres.pathway p
+#   , sres.pathwaynode n
+#   , sres.ontologyterm ot
+#   , sres.enzymeclass ec
+#where p.source_id = '$pathwayId'
+#and p.pathway_id = n.pathway_id
+#and n.pathway_node_type_id =ot.ontology_term_id
+#and ot.name = 'enzyme'
+#and n.row_id = ec.enzyme_class_id (+)
+#union
+#select n.pathway_node_id
+#     , n.display_label
+#     , n.x
+#     , n.y
+#     , ot.name
+#     , m.pathway_id as identifier
+#     , null as alternative_identifier
+#     , m.name as name 
+#     , null as alternative_name
+#from sres.pathway p
+#   , sres.pathwaynode n
+#   , sres.ontologyterm ot
+#   , sres.pathway m
+#where p.source_id = '$pathwayId'
+#and p.pathway_id = n.pathway_id
+#and n.pathway_node_type_id =ot.ontology_term_id
+#and ot.name = 'metabolic process'
+#and n.display_label = m.source_id (+)
+#";
     return $sql;
 }
 
