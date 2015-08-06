@@ -14,14 +14,14 @@ my ($outDir, $pathwayList, $extDbRlsId,
 
 &GetOptions("outputDir=s" => \$outDir,
             "pathwayList=s" => \$pathwayList,
-	        "verbose!" => \$verbose,
-            "extDbRlsId=s" => \$extDbRlsId,
+            "verbose!" => \$verbose,
+            "extDbRlsId=i" => \$extDbRlsId,
             "gusConfigFile=s" => \$gusConfigFile,
 	   );
 
-if (!$outDir || !$pathwayList) {
-  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> -pathwayList <pathwayList | ALL | source> '
-      .  "[--extDbRlsId] (only required if -pathwayList = source)"
+if (!$outDir || (!$pathwayList && !$extDbRlsId) || ($pathwayList && $extDbRlsId)) {
+  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> [-pathwayList=s]  (required when extDbRlsId not specified)"'
+      .  "[--extDbRlsId=i] (required when pathwayList not specified)"
       . " [--verbose] [--debug]"
       . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
 }
@@ -53,11 +53,13 @@ my @pids; # pathway IDs
 my $validFlag = 0;
 if ($pathwayList eq 'ALL') {
   @pids =&getPathwayIds();
-}elsif ($pathwayList eq 'source') {
-    die "If the --pathwayList option is 'source', an external database release id must be provided using the --extDbRlsId argument\n" unless defined ($extDbRlsId);
+}
+elsif($pathwayList) {
+    @pids = split(",", $pathwayList);
+}
+else {
+    die "an external database release id must be provided\n" unless defined ($extDbRlsId);
     @pids = &getPathwayIdsFromSource($extDbRlsId);
-} else {
-  @pids = split(",", $pathwayList);
 }
 
 print "Size of array of Pathway IDs is ".( $#pids +1)  . "\n\n" if $verbose;
