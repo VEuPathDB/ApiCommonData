@@ -102,7 +102,7 @@ UNION
 --CASE C:  last gene on reverse strand
  SELECT ga.na_sequence_id , ga.source_id, ga.start_min as alpha, ga.coding_start as beta, sa.length as gamma,
   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
- FROM apidbTuning.geneAttributes ga, ApidbTuning.GenomicSequenceAttributes sa,
+ FROM apidbTuning.geneAttributes ga, ApidbTuning.GenomicSeqAttributes sa,
     (select max(end_max) as max_end_max, na_sequence_id from apidbTuning.geneAttributes
      where gene_type='protein coding'
      group by na_sequence_id)  sub,
