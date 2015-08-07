@@ -100,7 +100,7 @@ sub getArgsDeclaration {
 		constraintFunc=> undef,
 		reqd  => 0,
 		isList => 0,
-                default => '^>(\S+)',
+                default => '^(\S+)',
 	       }),
 
      integerArg({name  => 'testnumber',
