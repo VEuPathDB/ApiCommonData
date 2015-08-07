@@ -36,6 +36,9 @@ my ($help, $bioperlTreeFile, $qualifierList, $outputDir);
 &usage() if($help);
 &usage("Missing a Required Argument") unless (defined $bioperlTreeFile && $qualifierList);
 
+my $makeOutputDir = "mkdir $outputDir";
+system ($makeOutputDir) unless ($outputDir && -e $outputDir);
+
 my @lists = split (/\;/, $qualifierList);
 my (%outputFiles, %outputFhs, $outputFile, %dbxrefFiles, %dbxrefFhs);
 
