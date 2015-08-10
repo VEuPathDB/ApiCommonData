@@ -15,7 +15,7 @@ my ($inputFile, $outputFile, $help);
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $inputFile && $outputFile);
 
-my (%products, %isPreferred, %isPreferredProd);
+my (%products, %isPreferred, %isPreferredProd, %assignedProduct);
 
 open (IN, $inputFile) || die "can not open inputFile to read\n";
 open(OUT,">$outputFile") || die "can not open outputFile to write\n";
@@ -23,7 +23,13 @@ open(OUT,">$outputFile") || die "can not open outputFile to write\n";
 while (<IN>) {
   chomp;
   my @items= split (/\t/, $_);
-  push @{$products{$items[0]}}, $items[1];
+
+  ## check if the product name has been assigned to this gene
+  if (!$assignedProduct{$items[0]}{$items[1]}) {
+    push @{$products{$items[0]}}, $items[1];
+    $assignedProduct{$items[0]}{$items[1]} = 1;
+  }
+
   if ($items[2] == 1 || $items[2] =~ /true/) {
     $isPreferred{$items[0]} = 1;
     $isPreferredProd{$items[0]}{$items[1]} = 1;
@@ -44,7 +50,7 @@ foreach my $k (sort keys %products) {
 	  $is_preferred = 0;
 	}
       } else {
-	$is_preferred = 0;
+	$is_preferred = ($i == 0) ? 1 : 0;
       }
     }
     print OUT "$k\t$products{$k}[$i]\t$is_preferred\n";
