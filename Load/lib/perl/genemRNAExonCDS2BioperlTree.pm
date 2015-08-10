@@ -1,4 +1,4 @@
-package ApiCommonData::Load::ensemblGtf2Gff2BioperlTree;
+package ApiCommonData::Load::genemRNAExonCDS2BioperlTree;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -38,6 +38,9 @@ sub preprocess {
 #   $unflattener->unflatten_seq(-seq=>$bioperlSeq,-use_magic=>1);
 
     my @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
+
+    ## check if gene, rna, exon or CDS are on the same strand
+    &checkGeneStructure (\@topSeqFeatures);
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
@@ -208,7 +211,7 @@ sub traverseSeqFeatures {
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
   	    if($transcriptCount > 1){
-	      $geneID = $geneID."\_$ctr";
+	      $geneID = $geneID."\.$ctr";
 	      $ctr++;
 	    }
 
@@ -366,6 +369,28 @@ sub traverseSeqFeatures {
     return (\@genes ,\@UTRs);
 }
 
+## check if gene, rna, exon or CDS are on the same strand
+sub checkGeneStructure {
+  my $geneFeature = shift;
+  foreach my $gene (@{$geneFeature} ) {
+    my $type = $gene->primary_tag();
+    if ($type eq 'gene' || $type eq 'pseudogene') {
+      my @RNAs = $gene->get_SeqFeatures;
+      foreach my $RNA (sort {$a->location->start <=> $b->location->start
+			       || $a->location->end <=> $b->location->end} @RNAs){
+	die "gene and rna are not on the same strand \n" if ($gene->location->strand != $RNA->location->strand);
+	my @exons= $RNA->get_SeqFeatures;
+	foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
+	  if ( ($gene->location->strand != $exon->location->strand)
+	       || ($RNA->location->strand != $exon->location->strand ) ) {
+	    die "gene, rna, and exon are not on the same strand\n";
+	  }
+	}
+      }
+    }
+  }
+  return 1;
+}
 
 sub copyQualifiers {
   my ($geneFeature, $bioperlFeatureTree) = @_;

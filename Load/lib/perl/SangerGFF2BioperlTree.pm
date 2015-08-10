@@ -457,6 +457,14 @@ sub traverseSeqFeatures {
 	    my $last = 0;
 	    my $exonCtr = 0;
 	    foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @fixedExons){
+
+	      ## check if gene, mRNA, and CDS are on the same strand
+	      if ( ($geneFeature->location->strand != $RNA->location->strand)
+		   || ($geneFeature->location->strand != $exon->location->strand)
+		   || ($RNA->location->strand != $exon->location->strand) ) {
+		die "gene, rna, and exon are not on the same strand\n";
+	      }
+
 		if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
 		    $exon->add_tag_value('CodingStart', '');
 		    $exon->add_tag_value('CodingEnd', '');	

@@ -31,7 +31,10 @@ REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneFeatureName TO gus_w;
 GRANT SELECT ON apidb.GeneFeatureName TO gus_r;
 
-CREATE INDEX apiDB.gene_feature_name_idx ON apiDB.GeneFeatureName(na_feature_id, is_preferred, name);
+CREATE INDEX apiDB.gene_feature_name_idx ON apiDB.GeneFeatureName(na_feature_id, is_preferred, name) tablespace indx;
+
+CREATE INDEX apiDB.gfn_revfk_idx
+   ON apiDB.GeneFeatureName(external_database_release_id, gene_feature_name_id) tablespace indx;
 
 ------------------------------------------------------------------------------
 

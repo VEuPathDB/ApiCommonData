@@ -38,7 +38,13 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GFF3 TO gus_w;
 GRANT SELECT ON ApiDB.GFF3 TO gus_r;
 
 CREATE INDEX apidb.gff3_loc_idx
-ON ApiDB.GFF3 (na_sequence_id, mapping_start, mapping_end);
+ON ApiDB.GFF3 (na_sequence_id, mapping_start, mapping_end) tablespace indx;
+
+CREATE INDEX apidb.gff3_revfk1_idx
+ON ApiDB.GFF3 (sequence_ontology_id, gff3_feature_id) tablespace indx;
+
+CREATE INDEX apidb.gff3_revfk2_idx
+ON ApiDB.GFF3 (external_database_release_id, gff3_feature_id) tablespace indx;
 
 CREATE SEQUENCE apidb.GFF3_sq;
 
@@ -127,6 +133,12 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GFF3Attributes TO gus_w;
 GRANT SELECT ON ApiDB.GFF3Attributes TO gus_r;
 
 CREATE SEQUENCE apidb.GFF3Attributes_sq;
+
+CREATE INDEX apidb.gff3att_revfk1_idx
+ON ApiDB.GFF3Attributes (gff3_feature_id, gff3_attribute_id) tablespace indx;
+
+CREATE INDEX apidb.gff3att_revfk2_idx
+ON ApiDB.GFF3Attributes (gff3_attribute_key_id, gff3_attribute_id) tablespace indx;
 
 GRANT SELECT ON apidb.GFF3Attributes_sq TO gus_r;
 GRANT SELECT ON apidb.GFF3Attributes_sq TO gus_w;

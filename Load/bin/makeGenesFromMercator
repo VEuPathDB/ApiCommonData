@@ -76,6 +76,8 @@ foreach my $seqId (keys %{$gffLocations}) {
       my $maxLoc = CBIL::Util::V::max(@{$gffLocations->{$seqId}->{$gene}->{$strand}});
 
       $ct++;
+
+
       push(@{$tmpSeqGenes{$seqId}},[$gene,$minLoc,$maxLoc,$strand]);
     }
   }
@@ -84,7 +86,6 @@ foreach my $seqId (keys %{$gffLocations}) {
 foreach my $seq_id (keys%tmpSeqGenes){
   @{$seqGenes{$seq_id}} = sort { $a->[1] <=> $b->[1]} @{$tmpSeqGenes{$seq_id}};
 }
-
 
 print STDERR "Retrieved from GFF files a total of $ct gene instances to group into genes\n";
 

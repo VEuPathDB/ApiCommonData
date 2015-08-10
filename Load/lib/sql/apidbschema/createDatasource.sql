@@ -31,6 +31,9 @@ ALTER TABLE apidb.Datasource
 ADD CONSTRAINT datasource_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
 
+CREATE INDEX apidb.ds_tax_ix
+  ON apidb.Datasource (taxon_id, data_source_id) tablespace indx;
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Datasource TO gus_w;
 GRANT SELECT ON apidb.Datasource TO gus_r;
 

@@ -22,6 +22,8 @@ ALTER TABLE apidb.OldAnnotation
 ADD CONSTRAINT old_annotation_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
+CREATE INDEX apidb.oldann_revfk1_ix on apidb.OldAnnotation (external_database_release_id, old_annotation_id) tablespace indx;
+
 CREATE SEQUENCE apidb.OldAnnotation_sq;
 
 GRANT insert, select, update, delete ON apidb.OldAnnotation TO gus_w;

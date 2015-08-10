@@ -2,7 +2,7 @@
 -- these look like tuning tables (their names end in four digits) but no synonym points at them.
 --
 
-set time on timing on pagesize 50000 linesize 100
+set pagesize 50000 linesize 100
 
 SELECT 'drop table ' || owner || '.' || table_name || ';'
        AS "-- orphaned tuning tables"

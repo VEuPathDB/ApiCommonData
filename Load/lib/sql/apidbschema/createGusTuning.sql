@@ -56,6 +56,10 @@ create index dots.FeatLocIx
   on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
   tablespace INDX; 
 
+create index dots.rfe_rnaexix
+  on dots.RnaFeatureExon (rna_feature_id, exon_feature_id)
+  tablespace indx;
+
 create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;

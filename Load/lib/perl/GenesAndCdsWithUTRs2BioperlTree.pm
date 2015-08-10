@@ -331,6 +331,15 @@ sub traverseSeqFeatures {
 		}
 		if($subFeature->primary_tag eq 'exon' && $exonType ne 'UTR'){
 		    #print STDERR "In loop: 1: $exonType\n";
+
+		  ## check if gene, mRNA, and CDS are on the same strand
+		  if ( ($geneFeature->location->strand != $RNA->location->strand)
+		       || ($geneFeature->location->strand != $subFeature->location->strand)
+		       || ($RNA->location->strand != $subFeature->location->strand) ) {
+		    die "gene, rna, and exon are not on the same strand\n";
+		  }
+
+
 		    $exonType = 'exon';
 		    my $prevType = '';
 		    if($prevExon){

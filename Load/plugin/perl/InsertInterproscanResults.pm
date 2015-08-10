@@ -65,7 +65,7 @@ sub getArgsDeclaration {
 	      constraintFunc=> undef,
 	      reqd  => 1,
 	      isList => 0,
-	      enum => "ExternalAASequence, TranslatedAASequence",
+	      enum => "ExternalAASequence, TranslatedAASequence, AASequence",
 	     }),
 
      stringArg({name => 'srcIdColumn',

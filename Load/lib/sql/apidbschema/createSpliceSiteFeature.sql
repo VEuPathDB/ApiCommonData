@@ -26,6 +26,10 @@ CREATE TABLE apidb.SpliceSiteFeature (
  PRIMARY KEY (splice_site_feature_id)
 );
 
+CREATE INDEX apidb.ssf_revfk_ix
+  ON apidb.SpliceSiteFeature (external_database_release_id, splice_site_feature_id)
+tablespace indx;
+
 CREATE SEQUENCE apidb.SpliceSiteFeature_sq;
 
 GRANT insert, select, update, delete ON apidb.SpliceSiteFeature TO gus_w;

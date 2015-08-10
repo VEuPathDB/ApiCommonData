@@ -19,7 +19,13 @@ CREATE TABLE ApiDB.IsolateMapping (
 );
 
 CREATE INDEX apidb.im_mod_ix
-       ON ApiDB.IsolateMapping (modification_date, isolate_mapping_id);
+       ON ApiDB.IsolateMapping (modification_date, isolate_mapping_id) tablespace indx;
+
+CREATE INDEX apidb.im_revfk1_ix
+       ON ApiDB.IsolateMapping (na_sequence_id, isolate_mapping_id) tablespace indx;
+
+CREATE INDEX apidb.im_revfk2_ix
+       ON ApiDB.IsolateMapping (isolate_vocabulary_id, isolate_mapping_id) tablespace indx;
 
 CREATE SEQUENCE ApiDB.IsolateMapping_sq;
 

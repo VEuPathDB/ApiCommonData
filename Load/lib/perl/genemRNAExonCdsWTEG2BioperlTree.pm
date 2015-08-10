@@ -287,6 +287,13 @@ sub traverseSeqFeatures {
 
 	    foreach my $exon (@exons){
 
+              ## check if gene, mRNA, and CDS are on the same strand
+              if ( ($geneFeature->location->strand != $RNA->location->strand)
+                   || ($geneFeature->location->strand != $exon->location->strand)
+                   || ($RNA->location->strand != $exon->location->strand) ) {
+                die "gene, rna, and exon are not on the same strand\n";
+              }
+
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
@@ -331,9 +338,11 @@ sub traverseSeqFeatures {
 
 	    $gene->add_SeqFeature($transcript);
             push(@genes, $gene);
-	    if ($cdsCtr > $exonCtr) {
-	      print STDERR "missed exon find: $transId\n";
-	    }
+
+	    ### testing if number of exon is less than the number of cds
+	    #if ($cdsCtr > $exonCtr) {
+	    #  print STDERR "missed exon find: $transId\n";
+	    #}
 	}
     }
     return (\@genes ,\@UTRs);

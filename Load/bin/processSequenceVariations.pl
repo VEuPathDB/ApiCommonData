@@ -29,7 +29,7 @@ use ApiCommonData::Load::FileReader;
 
 use locale;  # Use this because the input files have been sorted by unix sort (otherwise perl's default string comparison will give weird results
 
-my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec);
+my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undoneStrainsFile, $gusConfigFile, $varscanDirectory, $referenceStrain, $help, $debug, $extDbRlsSpec, $forcePositionCompute);
 
 
 &GetOptions("new_sample_file=s"=> \$newSampleFile,
@@ -41,6 +41,7 @@ my ($newSampleFile, $cacheFile, $transcriptExtDbRlsSpec, $organismAbbrev, $undon
             "extdb_spec=s" => \$extDbRlsSpec,
             "organism_abbrev=s" =>\$organismAbbrev,
             "reference_strain=s" => \$referenceStrain,
+            "force_position_compute" => \$forcePositionCompute,
             "debug" => \$debug,
             "help|h" => \$help,
     );
@@ -123,6 +124,11 @@ my $geneLocations = &getGeneLocations($transcriptSummary);
 open(UNDONE, $undoneStrainsFile) or die "Cannot open file $undoneStrainsFile for reading: $!";
 my @undoneStrains =  map { chomp; $_ } <UNDONE>;
 close UNDONE;
+
+if($forcePositionCompute) {
+  push @undoneStrains, $referenceStrain;
+}
+
 print STDERR "UNDONE_STRAINS=" . join(",", @undoneStrains) . "\n" if($debug);
 
 my $naSequenceIds = &queryNaSequenceIds($dbh);
@@ -226,6 +232,8 @@ while($merger->hasNext()) {
 
   # loop through variations and print
   foreach my $variation (@$variations) {
+
+
     my $strain = $variation->{strain};
 
     my $extDbRlsId;
@@ -234,14 +242,18 @@ while($merger->hasNext()) {
     }
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
+
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
 
       my $cachedNaSequenceId = $variation->{ref_na_sequence_id};
       die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
 
       $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
-      &printVariation($variation, $cacheFh);
-      next;
+
+      if(!$forcePositionCompute || $strain eq $referenceStrain) {
+        &printVariation($variation, $cacheFh);
+        next;
+      }
     }
 
     $variation->{ref_na_sequence_id} = $naSequenceId;
@@ -293,6 +305,7 @@ while($merger->hasNext()) {
   if(++$counter % 1000 == 0) {
     print STDERR "Processed $counter SNPs\n";
   }
+
 }
 
 close $cacheFh;
@@ -978,14 +991,16 @@ ORDER BY s.source_id, el.start_min
   while(my ($transcripts, $sequenceSourceId, $geneNaFeatureId, $exonStart, $exonEnd, $cdsStart, $cdsEnd, $isReversed) = $sh->fetchrow_array()) {
     my @transcripts = split(",", $transcripts);
 
+    my $strand = $isReversed ? -1 : +1;
+
     # if this sequence is a PIECE in another sequence... lookup the higher level sequence
     if(my $agp = $agpMap->{$sequenceSourceId}) {
       my $exonMatch = Bio::Location::Simple->
-          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => +1 );
+          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => $strand );
 
       if($cdsStart && $cdsEnd) {
         my $cdsMatch = Bio::Location::Simple->
-            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => +1 );
+            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => $strand );
         my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
         $cdsStart = $cdsMatchOnVirtual->start();
         $cdsEnd = $cdsMatchOnVirtual->end();
@@ -996,10 +1011,10 @@ ORDER BY s.source_id, el.start_min
       $sequenceSourceId = $matchOnVirtual->seq_id();
       $exonStart = $matchOnVirtual->start();
       $exonEnd = $matchOnVirtual->end();
-
+      $strand = $matchOnVirtual->strand();
     }
 
-    my $strand = $isReversed ? -1 : +1;
+
     my $loc = Bio::Location::Simple->new( -seq_id => $sequenceSourceId, -start => $exonStart  , -end => $exonEnd , -strand => $strand);
 
 
@@ -1040,7 +1055,6 @@ sub getCodingSequence {
 
   return unless($transcriptId);
 
-  # Exons are already sorted by start_min from query!!
   my @exons = @{$transcriptSummary->{$transcriptId}->{exons}};
   my $minCodingStart = $transcriptSummary->{$transcriptId}->{min_cds_start};
   my $maxCodingEnd = $transcriptSummary->{$transcriptId}->{max_cds_end};
@@ -1051,7 +1065,8 @@ sub getCodingSequence {
 
   my $codingSequence;
 
-  for my $exon (@exons) {
+  # sort exons by start_min
+  for my $exon (sort {$a->{_start} <=> $b->{_start} } @exons) {
     my $exonStart = $exon->start();
     my $exonEnd = $exon->end();
     my $exonIsReversed = $exon->strand() == -1 ? 1 : 0;

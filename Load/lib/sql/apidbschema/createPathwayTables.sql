@@ -72,6 +72,10 @@ CREATE TABLE ApiDB.PathwayRelationship (
   FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.PathwayNode (PATHWAY_NODE_ID)
 );
 
+CREATE INDEX apidb.pathrel_revfk1_idx ON ApiDB.PathwayRelationship (PATHWAY_ID, PATHWAY_RELATIONSHIP_ID) tablespace indx;
+CREATE INDEX apidb.pathrel_revfk2_idx ON ApiDB.PathwayRelationship (NODE_ID, PATHWAY_RELATIONSHIP_ID) tablespace indx;
+CREATE INDEX apidb.pathrel_revfk3_idx ON ApiDB.PathwayRelationship (ASSOCIATED_NODE_ID, PATHWAY_RELATIONSHIP_ID) tablespace indx;
+
 CREATE SEQUENCE ApiDB.Pathway_SQ;
 CREATE SEQUENCE ApiDB.PathwayNode_SQ;
 CREATE SEQUENCE ApiDB.PathwayRelationship_SQ;
@@ -96,9 +100,9 @@ GRANT SELECT ON ApiDB.PathwayRelationship_SQ TO gus_w;
 
 
 
-CREATE INDEX apidb.pathway_idx ON ApiDB.Pathway (PATHWAY_ID,NAME);
-CREATE INDEX apidb.pathwayNode_idx ON ApiDB.PathwayNode (PATHWAY_NODE_ID,DISPLAY_LABEL);
-CREATE INDEX apidb.pathwayRelationship_idx ON ApiDB.PathwayRelationship (PATHWAY_RELATIONSHIP_ID,PATHWAY_ID);
+CREATE INDEX apidb.pathway_idx ON ApiDB.Pathway (PATHWAY_ID,NAME) tablespace indx;
+CREATE INDEX apidb.pathwayNode_idx ON ApiDB.PathwayNode (PATHWAY_NODE_ID,DISPLAY_LABEL) tablespace indx;
+CREATE INDEX apidb.pathwayRelationship_idx ON ApiDB.PathwayRelationship (PATHWAY_RELATIONSHIP_ID,PATHWAY_ID) tablespace indx;
 
 
 

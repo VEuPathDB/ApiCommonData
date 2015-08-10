@@ -30,8 +30,10 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GeneFeatureLodScore TO gus_w;
 GRANT SELECT ON ApiDB.GeneFeatureLodScore TO gus_r;
 
 CREATE INDEX apidb.geneHapBlock_idx
-ON ApiDB.GeneFeatureLodScore (NA_FEATURE_ID,HAPLOTYPE_BLOCK_NAME);
+ON ApiDB.GeneFeatureLodScore (NA_FEATURE_ID,HAPLOTYPE_BLOCK_NAME) tablespace indx;
 
+CREATE INDEX apidb.gfls_revfk1_idx
+ON ApiDB.GeneFeatureLodScore (EXTERNAL_DATABASE_RELEASE_ID, GENE_HAPBLOCK_SCORE_ID) tablespace indx;
 
 CREATE SEQUENCE apidb.GeneFeatureLodScore_sq;
 
