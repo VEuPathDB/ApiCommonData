@@ -73,6 +73,7 @@ if ($format =~ /gff/i) {
 
 } elsif ($format =~ /genbank/i) {
   $inputFileOrDir = "../whole_genome.gbf" if (!$inputFileOrDir);
+  $mappingFile = "\$PROJECT_HOME/ApiCommonData/Load/lib/xml/isf/genbankGenbank2Gus.xml" if (!$mappingFile);
 
   print STDERR "format = $format\n";
 
@@ -82,7 +83,7 @@ if ($format =~ /gff/i) {
   print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
   print "\n## for loading\n";
-  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir ../whole_genome.gbf --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
+  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
 
 } elsif ($format =~ /embl/i) {
   $inputFileOrDir = "../whole_genome.embl" if (!$inputFileOrDir);
