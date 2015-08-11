@@ -132,19 +132,31 @@ foreach my $row (<INFILE>){
   my $finalValues = [];
   my $sourceName="";
   my $sample_id = " ";
+  my $subject_id = " ";
+  my $sample_collecion_date = " ";
   foreach my $val ( @$values ) {
+    $val=~s/^\s+|\s$//g;
     $colCount = scalar @$charSet;
     my $currentChar = $charSet->[$counter];
     next unless (defined $currentChar);
     $origin = $val if (defined $currentChar && $currentChar =~ /^sample.?origin$/i);
-    $sample_id = $val if $currentChar =~ /sample_id/i;
+    $sample_id = $val if $currentChar =~ /sample.?id/i;
+    $subject_id = $val if $currentChar =~ /subject/i;
+    $sample_collecion_date = $val if $currentChar =~ /data.?sample.?collected/i;
     my $holder = $val;
     $holder = ' ' unless $holder;
     $holder = $mapHash->{$charSet->[$counter]}->{ $val } if ($mapHash->{$charSet->[$counter]}->{ $val });
     $counter++;
     push ( @$finalValues,  $holder );
   }
-  $sourceName = $origin."_".$sample_id;
+  $sample_collecion_date =~s/\///g;
+ if (defined $sample_id && $sample_id =~ /\w/) {
+    $sourceName = $origin."_".$sample_id."_".$sample_collecion_date;
+  }
+  else {
+    $sourceName = $origin."_".$subject_id."_".$sample_collecion_date;
+  }
+
   $sourceName =~ s/ /_/;
   push (@$sample_ids, $sample_id);
   push (@$sourceNames, $sourceName);
@@ -171,7 +183,7 @@ close OUTFILE;
 sub validateSampleNames {
   my ($dataFile , $sample_ids, $sourceNames, $origin) = @_;
   my $isHeader = 1;
-  my $dataSampleNames;
+  my @dataSampleNames;
   my $dataOut = [];
   my $discardOut = [];
   my $lineHolder = [];
@@ -188,25 +200,31 @@ sub validateSampleNames {
     $line=~s/\r//g;
     if ($isHeader) {
       my $tempSampleNames = [];
-      $dataSampleNames = [split ("$delimiter" , $line)];
-      splice(@$dataSampleNames, 0, 1);
+      @dataSampleNames = split ("$delimiter" , $line);
+      print Dumper \@dataSampleNames;
+      splice(@dataSampleNames, 0, 1);
       $isHeader = 0;
-      foreach my $sample (@$dataSampleNames) {
+      foreach my $sample (@dataSampleNames) {
         $sample=~s/"//g;
+        print STDERR "sample: [$sample]\n"; 
         my $sample_id_string = $origin."_".$sample unless grep { /^$sample$/ } @$sourceNames;
+        print "sampleid string: [$sample_id_string]\n"; 
         $sample_id_string =~ s/ +/_/g unless $sample_id_string =~ /^\s+$/;
-        if (grep { /^$sample_id_string$/ } @$sourceNames) {
+        my $sourceName;
+        my @matchedIds = grep { /^$sample_id_string/ } @$sourceNames;
+        if (scalar @matchedIds == 1 ) {
           push (@$validIndices, $index);
-          push (@$validSampleNames, $sample_id_string) unless grep { /^$sample_id_string$/ } @$validSampleNames;
+          $sourceName = $matchedIds[0];
+          push (@$validSampleNames, $sourceName) unless grep { /^$sourceName/ } @$validSampleNames;
          }
         else {
           push (@$invalidIndices, $index);
           push (@$invalidSampleNames, $sample);
         }
-        push (@$tempSampleNames, $sample_id_string);
+        push (@$tempSampleNames, $sourceName);
         $index++;
       }
-      $dataSampleNames=$tempSampleNames;
+      @dataSampleNames=@$tempSampleNames;
     }
     else {
       $line=~s/$delimiter/\t/g;
@@ -221,7 +239,7 @@ sub validateSampleNames {
 
   close DATAIN;
   open (DATAOUT, ">profiles.txt") || die "Can't open profiles.txt for writing\n";
-  my $output = "ID\t".join ("\t",@$dataSampleNames);
+  my $output = "ID\t".join ("\t",@dataSampleNames);
   print DATAOUT $output."\n";
   $output = join ("\n",@$dataOut);
   print DATAOUT $output;
@@ -236,7 +254,7 @@ sub validateSampleNames {
     print STDERR Dumper \@unmatchedFromData;
   }
   close DATAOUT;
-  return ($dataSampleNames);
+  return (\@dataSampleNames);
 }
 
 sub swapHeaderValue{
