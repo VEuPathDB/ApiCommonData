@@ -198,6 +198,9 @@ sub addResults {
   elsif ($protocolName =~ /chipChipSmoothed/ || $protocolName =~ /chipChipPeaks/) {
     $tableString = "Results::SegmentResult";
   } 
+  elsif ($protocolName =~ /MetaboliteProfiles/) {
+    $tableString = "Results::CompoundMassSpec";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -235,6 +238,20 @@ sub addResults {
         $hash = { reporter_id => $reporterId };
         $start = 1;
     }
+
+
+    elsif ($sourceIdType =~ /compound/) {
+
+      my ($chebi, $isotopomer) = split(/\|/, $a[0]);
+
+      my $compoundId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
+      $hash = { compound_id => $reporterId ,
+                isotopomer => $isotopomer,
+      };
+      $start = 1;
+    }
+
+
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
 	next unless $naFeatureId;
@@ -298,6 +315,19 @@ sub lookupIdFromSourceId {
  
     $rv = @reporterIds[0];
   }
+
+
+  elsif ($sourceIdType eq 'compound') {
+    my @compoundIds = $self->sqlAsArray(Sql => "select id from chebi.compounds where chebi_accession = '$sourceId'");
+
+    unless (scalar @compoundIds == 1) {
+        die "Number of compounds returned should be 1\n";
+    }
+ 
+    $rv = @compoundIds[0];
+  }
+
+
   else {
     $self->error("Unsupported sourceId Type:  $sourceIdType");
   }
