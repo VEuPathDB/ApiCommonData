@@ -2,6 +2,8 @@
 
 use strict;
 
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use GUS::Community::FileTranslator;
 
 use File::Basename;
@@ -10,7 +12,6 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-use lib "$ENV{GUS_HOME}/lib/perl";
 
 use List::MoreUtils qw(uniq first_index indexes);
 
