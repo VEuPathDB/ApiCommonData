@@ -244,7 +244,7 @@ sub addResults {
 
       my ($chebi, $isotopomer) = split(/\|/, $a[0]);
 
-      my $compoundId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
+      my $reporterId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
       $hash = { compound_id => $reporterId ,
                 isotopomer => $isotopomer,
       };
