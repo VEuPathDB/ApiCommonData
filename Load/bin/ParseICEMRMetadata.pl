@@ -198,6 +198,7 @@ sub validateSampleNames {
     my $line = $_;
     chomp $line;
     $line=~s/\r//g;
+    $line=~s/"//g;
     if ($isHeader) {
       my $tempSampleNames = [];
       @dataSampleNames = split ("$delimiter" , $line);
@@ -205,7 +206,6 @@ sub validateSampleNames {
       splice(@dataSampleNames, 0, 1);
       $isHeader = 0;
       foreach my $sample (@dataSampleNames) {
-        $sample=~s/"//g;
         print STDERR "sample: [$sample]\n"; 
         my $sample_id_string = $origin."_".$sample unless grep { /^$sample$/ } @$sourceNames;
         print "sampleid string: [$sample_id_string]\n"; 
