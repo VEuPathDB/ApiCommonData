@@ -229,31 +229,28 @@ sub getPathwayIdsFromSource {
 sub getNodesQuery {
     my $pathwayId = shift;
     my $sql = "
-select n.pathway_node_id
-    , n.display_label
-    , n.x
-    , n.y
+select pn.pathway_node_id
+    , pn.display_label
+    , pn.x
+    , pn.y
     , ot.name
     , c.chebi_accession as identifier
     , cn.compound_id as alternative_identifier
     , cn.name as name
-    , cn.name as alternative_name
-from sres.pathwaynode n
-    , sres.pathway p
+    , c.name as alternative_name
+from sres.pathway p
+    , sres.pathwaynode pn
+        LEFT OUTER JOIN chebi.compounds c on pn.row_id = c.id
+        LEFT OUTER JOIN (select n.compound_id
+                                , listagg(n.name, ';') within group (order by n.compound_id) as name from chebi.names n
+                                where n.source = 'IUPAC'
+                                and n.type = 'IUPAC NAME'
+                                group by n.compound_id) cn on pn.row_id = cn.compound_id
     , sres.ontologyterm ot
-    , chebi.compounds c LEFT OUTER JOIN
-        (select compound_id
-        , listagg(name, ';') within group (order by compound_id) as name
-        from chebi.names
-        where source = 'IUPAC'
-        and type = 'IUPAC NAME'
-        group by compound_id) cn
-    on c.ID = cn.compound_id
 where p.source_id = '$pathwayId'
-and n.pathway_id = p.pathway_id
-and n.pathway_node_type_id = ot.ontology_term_id
+and p.pathway_id = pn.pathway_id
+and pn.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'molecular entity'
-and n.row_id = c.ID
 union
 select n.pathway_node_id
     , n.display_label
