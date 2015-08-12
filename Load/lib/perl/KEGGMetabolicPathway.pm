@@ -155,7 +155,7 @@ sub existsInArrayOfHashes {
   my ($e, $ar) = @_;
 
   foreach(@$ar) {
-    return 1 if($e == $_->{NAME});
+    return 1 if($e eq $_->{NAME});
   }
 
   return 0;
