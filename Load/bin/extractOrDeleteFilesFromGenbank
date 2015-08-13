@@ -17,8 +17,7 @@
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## usage: extractOrDeleteFilesFromGenbank --genbankFile tequWA_genome.gbf --listFile chrList.txt --ifExtract > ../final/genome.gbf
@@ -26,28 +25,41 @@ die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this l
 use Getopt::Long;
 use strict;
 
-my ($ifExtract, $ifDelete, $genbankFile, $listFile, $help);
+my ($ifExtract, $ifDelete, $genbankFile, $listFile, $recordLists, $help);
 
 &GetOptions('ifExtract' => \$ifExtract,
 	    'ifDelete' => \$ifDelete,
             'help|h' => \$help,
             'genbankFile=s' => \$genbankFile,
 	    'listFile=s' => \$listFile,
+	    'recordLists=s' => \$recordLists,
            );
 
 &usage() if($help);
-&usage("Missing a Required Argument") unless(defined $genbankFile && $listFile && ($ifExtract || $ifDelete) );
+&usage("Missing a Required Argument") unless(defined $genbankFile && ($listFile || $recordLists) && ($ifExtract || $ifDelete) );
 
 my %skipIds;
-print STDERR "\$listFile = $listFile\n";
-open (LIST, $listFile) || die "can not open list file to read.\n";
-while (<LIST>) {
-  chomp;
-  my $curr = $_;
-  $curr =~ s/\s+//g;
-  $skipIds{$curr} = $curr;
+
+if ($recordLists) {
+  my @items = split (/\;/, $recordLists);
+  foreach my $i (0..$#items) {
+    $items[$i] =~ s/^\s+//;
+    $items[$i] =~ s/\s+$//;
+    $skipIds{$items[$i]} = $items[$i];
+  }
+} elsif ($listFile) {
+  print STDERR "\$listFile = $listFile\n";
+  open (LIST, $listFile) || die "can not open list file to read.\n";
+  while (<LIST>) {
+    chomp;
+    my $curr = $_;
+    $curr =~ s/\s+//g;
+    $skipIds{$curr} = $curr;
+  }
+  close LIST;
+} else {
+  print STDERR "missing required argument listFile or recordLists\n";
 }
-close LIST;
 
 foreach my $k (sort keys %skipIds) {
   print STDERR "$k\t$skipIds{$k}\n";
@@ -85,6 +97,7 @@ Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --l
 where
   --genbankFile:  the name of genbank format input file
   --listFile:    the list of LOCUS IDs that need to be extracted or deleted from genbank file, one ID per line
+  --recordLists:   semicolon delimited list of records that want to delete or extract
   --ifExtract:   if present, extract the records in the listFile from the genbank file
   --ifDelete:    if present, delete the records in the listFile from the genbank file 
 ";
