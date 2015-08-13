@@ -121,7 +121,7 @@ sub run {
     eval "require $metabolicPathwayClass";
 
     my $metabolicPathway = eval {
-      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids, $extDbRlsId);
+      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids, $extDbRlsId, $extDbRlsSpec);
     };
 
     if($@) {
