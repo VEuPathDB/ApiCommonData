@@ -90,7 +90,7 @@ sub makeGusObjects {
       my $otherNode = $pathwayHash->{NODES}->{$otherId};
       my $gusOtherNode = $self->getNodeByUniqueId($otherId);
 
-
+      my $gusRelationship;
       if($otherNode->{TYPE} eq 'enzyme') {
         my $reactionId = $otherNode->{REACTION};
         $reactionId =~ s/rn\://g;
@@ -119,7 +119,7 @@ sub makeGusObjects {
             print STDERR "WARN:  Could not find compound $compoundId in either substrates or products for Reaction $reactionId\n";
             next;
           }
-          my $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId});;
+          $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId});
 
           if($compoundIsSubstrate) {
             $gusRelationship->setParent($gusCompoundNode, "node_id");
@@ -145,6 +145,7 @@ sub makeGusObjects {
         }
       }
       elsif($otherNode->{TYPE} eq 'map') {
+          $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId});
           $gusRelationship->setParent($gusCompoundNode, "node_id");
           $gusRelationship->setParent($gusOtherNode, "associated_node_id");
 
