@@ -108,8 +108,8 @@ sub makeGusObjects {
             $isReversible = 1;
           }
 
-          my $compoundIsSubstrate = &existsInArrayOfHashes($compoundSourceId, $reactionHash->{SUBSTRATES});
-          my $compoundIsProduct = &existsInArrayOfHashes($compoundSourceId, $reactionHash->{PRODUCTS});
+          my $compoundIsSubstrate = &existsInArrayOfHashes($compoundId, $reactionHash->{SUBSTRATES});
+          my $compoundIsProduct = &existsInArrayOfHashes($compoundId, $reactionHash->{PRODUCTS});
 
           if($compoundIsSubstrate && $compoundIsProduct) {
             die "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
@@ -140,6 +140,7 @@ sub makeGusObjects {
         }
         else {
           print STDERR "WARN:  Reaction $reactionId not found in this map xml file... cannot set is_reversible for this relation\n";
+          $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({relationship_type_id => $relationshipTypeId});
           $gusRelationship->setParent($gusCompoundNode, "node_id");
           $gusRelationship->setParent($gusOtherNode, "associated_node_id");
         }
@@ -166,7 +167,7 @@ sub existsInArrayOfHashes {
   my ($e, $ar) = @_;
 
   foreach(@$ar) {
-    return 1 if($e eq $_->{NAME});
+    return 1 if($e == $_->{ENTRY});
   }
 
   return 0;
