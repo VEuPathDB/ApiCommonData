@@ -7,13 +7,14 @@ use DBD::Oracle;
 use Getopt::Long;
 use CBIL::Util::PropertySet;
 
-my ($help, $instances, $gusConfigFile, $inputMapFile, $category, $outputFile);
+my ($help, $instances, $gusConfigFile, $inputMapFile, $category, $outputFile, $instanceRegex);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'instance=s@' => \$instances,
             'inputMapFile=s' => \$inputMapFile,
             'category=s' => \$category,
-            'outputFile=s' => \$outputFile
+            'outputFile=s' => \$outputFile,
+            'instanceRegex=s' => \$instanceRegex,
     );
 
 ##Create db handle
@@ -36,6 +37,14 @@ unless($category eq 'host' || $category eq 'country' || $category eq 'isolation_
 unless(-e $inputMapFile) {
   &usage("inputMapFile $inputMapFile dies not exist");
 }
+
+
+unless($instances) {
+  my $tnsSummaryResult = `apiTnsSummary |grep -P '$instanceRegex'|cut -f 1 -d '.'`;
+  my @tnsInstances = split("\n", $tnsSummaryResult);
+  $instances = \@tnsInstances;
+}
+
 
 unless(scalar @$instances > 0) {
   &usage("missing instance param");
