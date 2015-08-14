@@ -9,7 +9,7 @@ package ApiCommonData::Load::Plugin::InsertIsolateVocabMapping;
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
   # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | broken
+  # GUS4_STATUS | Dots.Isolate                   | auto   | fixed
   # GUS4_STATUS | DeprecatedTables               | auto   | absent
   # GUS4_STATUS | Pathway                        | auto   | absent
   # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
@@ -17,22 +17,16 @@ package ApiCommonData::Load::Plugin::InsertIsolateVocabMapping;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | absent
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
  
 use strict;
 
-use FileHandle;
+use File::Basename;
 use GUS::PluginMgr::Plugin;
 
-use ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader;
-
-use ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader;
-use ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader;
-
-use ApiCommonData::Load::IsolateVocabulary::InsertMappedValues;
+use GUS::Model::Study::Characteristic;
 
 $| = 1;
 
@@ -40,49 +34,40 @@ $| = 1;
 my $argsDeclaration =
 [
 
-   fileArg({name => 'geographicXmlFile',
-	    descr => 'xml file with corrections to geographic location mappings',
-	    reqd => 0,
+
+   fileArg({name => 'inFile',
+	    descr => 'tab del mapping file of string value to ontology term',
+	    reqd => 1,
 	    mustExist => 1,
 	    format => '',
 	    constraintFunc => undef,
 	    isList => 0,
 	   }),
 
-   fileArg({name => 'sourceXmlFile',
-	    descr => 'xml file with corrections to isolation source mappings',
-	    reqd => 0,
-	    mustExist => 1,
-	    format => '',
-	    constraintFunc => undef,
-	    isList => 0,
-	   }),
-
-   fileArg({name => 'hostXmlFile',
-	    descr => 'xml file with corrections to specific host mappings',
-	    reqd => 0,
-	    mustExist => 1,
-	    format => '',
-	    constraintFunc => undef,
-	    isList => 0,
-	   }),
+     enumArg({ name           => 'qualifierType',
+               descr          => 'The qualifier type',
+               constraintFunc => undef,
+               reqd           => 1,
+               isList         => 0,
+               enum           => 'location,host,source'
+             }),
 
  ];
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Insert mappings between isolates and controlled vocabularies.
+Insert Characteristics 
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Insert mappings between isolates and controlled vocabularies for three fields: host, geographic loc, and isolation source.  They are mapped by finding matches between those fields in the isolate sequence (provided with the isolates from the original provider) and values in the vocabularly already loaded into the database.  the xml files provide mappings for the case in which the isolate feature fields do not map into the vocabulary, ie, corrected mappings. 
+insert characteristics for app nodes where existing characteristics do not map to an ontology
 PLUGIN_PURPOSE
 
 my $tablesAffected = [
-['ApiDB.IsolateMapping', 'One row is added to this table for each vocab term mapped to an isolate']
+['Study.Characteristic', 'One row is added to this table for each vocab term mapped to an isolate']
 ];
 
-my $tablesDependedOn = ['ApiDB.IsolateFeature', 'ApiDB.IsolateSource', 'ApiDB.ExternalNaSequence'];
+my $tablesDependedOn = ['Study.Characteristic', 'SRes.TaxonName', 'SRes.OntologyTerm'];
 
 my $howToRestart = <<PLUGIN_RESTART;
 This plugin cannot be restarted.
@@ -124,60 +109,99 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $sourceXmlFile = $self->getArg('sourceXmlFile');
-    my $locationXmlFile = $self->getArg('geographicXmlFile');
-    my $hostXmlFile = $self->getArg('hostXmlFile');
+    my $charCount;
 
-    my $vocabularyReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader->new($self->getDbHandle());
-    my $vocabulary = $vocabularyReader->extract();
+    my $inFile = $self->getArg('inFile');
+    my $qualifierType = $self->getArg('qualifierType');
 
-    my $count;
-    $count += $self->insert($sourceXmlFile, 'isolation_source', $vocabulary) if $sourceXmlFile;
-    $count += $self->insert($locationXmlFile, 'geographic_location', $vocabulary) if $locationXmlFile;
-    $count += $self->insert($hostXmlFile, 'specific_host', $vocabulary) if $hostXmlFile;
+    my %qualifierTypeToOntologyTermMap = ( 'host' => 'host',
+                                           'source' => 'isolation_source',
+                                           'location' => 'country'
+        );
 
-    # insert mapping for null/unknown terms
-    $count += $self->insertNullMappings($vocabulary,'isolation_source','geographic_location','specific_host');
-    return "Inserted $count rows into IsolateMapping";
-}
+    my $ontologyTerm = $qualifierTypeToOntologyTermMap{$qualifierType};
 
-sub insert {
-    my ($self, $xmlFile, $type, $vocabulary) = @_;
+    my $dbh = $self->getQueryHandle();
+    my $sql = $self->getSqlByQualifierType($qualifierType);
+    my $sh = $dbh->prepare($sql);
+    $sh->execute($ontologyTerm, $ontologyTerm);
 
-    my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader->new($xmlFile);
-    my $xmlTerms = $xmlReader->extract();
-
-    my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader->new($self->getDbHandle(), $type, $vocabulary);
-    my $sqlTerms = $sqlReader->extract();
-
-    my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $type, $xmlTerms, $sqlTerms, $vocabulary);
-    my ($count, $msg) = $inserter->insert();
-    $self->log("$type: $msg");
-    return $count;
-}
-
-sub insertNullMappings {
-    my ($self, $vocabulary, @types) = @_;
-    my $ct;
-
-    foreach my $type  (@types) {
-      my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader->new($self->getDbHandle(), $type, $vocabulary);
-      my $sqlTerms = $sqlReader->extract();
-
-      my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $type, '', $sqlTerms, $vocabulary);
-      my ($count, $msg) = $inserter->insertNullMappedTerms();
-      $ct += $count;
-      $self->log("$type: $msg");
+    my %toMap ;
+    my $ontologyTermId;
+    while(my ($pan, $oe, $value) = $sh->fetchrow_array()) {
+      push @{$toMap{$value}}, $pan;
+      $ontologyTermId = $oe;
     }
-    return $ct;
+    $sh->finish();
+
+    open(IN, $inFile) or die "Cannot open input file $inFile for reading:$!";
+    <IN>; # remove the header
+    while(<IN>) {
+      chomp;
+      my ($term, $category, $termURI, $label) = split(/\t/, $_);
+
+      next unless($toMap{$term});
+
+      my $termSourceId = basename $termURI;
+
+      foreach my $pan(@{$toMap{$term}}) {
+        # NOTE: Using the termsourceid here so we can tell apart from other characteristics
+        my $gusCharacteristic = GUS::Model::Study::Characteristic->new({protocol_app_node_id => $pan, ontology_term_id => $ontologyTermId, value => $termSourceId});
+        $gusCharacteristic->submit();
+        $charCount++;
+      }
+      $self->undefPointerCache();
+    }
+    return("Added $charCount Study.Characteristic Rows");
 }
+
+sub getSqlByQualifierType {
+  my ($self, $qualifierType) = @_;
+
+  if($qualifierType eq 'host') {
+    return "select c.protocol_app_node_id, c.ontology_term_id, c.value
+from study.characteristic c
+   , sres.ontologyterm o
+where c.ontology_term_id = o.ontology_term_id
+and o.name = ?
+minus
+select c.protocol_app_node_id, c.ontology_term_id, c.value
+from study.characteristic c
+   , sres.ontologyterm o
+   , sres.taxonname tn
+where c.ontology_term_id = o.ontology_term_id
+and tn.name = c.value
+and o.name = ?";
+  }
+
+
+return "select c.protocol_app_node_id, c.ontology_term_id, c.value
+from study.characteristic c
+   , sres.ontologyterm o
+where c.ontology_term_id = o.ontology_term_id
+and o.name = ?
+minus
+select c.protocol_app_node_id, c.ontology_term_id, c.value
+from study.characteristic c
+   , sres.ontologyterm o
+   , sres.ontologyterm ot
+where c.ontology_term_id = o.ontology_term_id
+and ot.name = c.value
+and o.name = ?
+and (ot.source_id like 'UBERON_%' 
+ or  ot.source_id like 'ENVO_%' 
+ or  ot.source_id like 'GAZ_%'
+ )
+";
+
+}
+
 
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.IsolateMapping',
-          'ApiDB.VocabularyBiomaterial',
-         );
+  return ( 'Study.Characteristic'
+      );
 }
 
 
