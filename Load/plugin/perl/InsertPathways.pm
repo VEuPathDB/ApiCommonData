@@ -172,7 +172,6 @@ sub queryForTableIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
-#  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'PubChemSubstance', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
   my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'Compounds', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
 
   my $sh = $dbh->prepare($query);
@@ -191,12 +190,6 @@ sub queryForIds {
   my ($self) = @_;
  
   my $dbh = $self->getQueryHandle();
-#  my $sql = "select 'SRes::EnzymeClass', ec_number, enzyme_class_id from sres.enzymeclass
-#union
-#select 'ApiDB::PubChemSubstance', p.value, s.substance_id from apidb.pubchemsubstance s, apidb.pubchemsubstanceproperty p where p.property = 'Synonym' and p.pubchem_substance_id = s.pubchem_substance_id
-#union
-#select 'SRes::Pathway', source_id,pathway_id from sres.pathway
-#";
   my $sql = "select 'SRes::EnzymeClass' tbl, ec_number as accession, enzyme_class_id as id from sres.enzymeclass
 union
 select 'chEBI::Compounds', chebi_accession, nvl(parent_id, id) from chebi.compounds
