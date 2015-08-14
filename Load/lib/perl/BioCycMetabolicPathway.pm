@@ -1,5 +1,4 @@
 package ApiCommonData::Load::BioCycMetabolicPathway;
-
 use base qw(ApiCommonData::Load::MetabolicPathway);
 
 use strict;
@@ -29,10 +28,24 @@ sub makeGusObjects {
 
     print STDERR "Making GUS Objects for pathway $pathwayHash->{'Description'} ($pathwayHash->{'SourceId'} )\n";
 
+    my $extDbRlsSpec = $self->getExtDbRlsSpec();
+    my $url;
+    my $pathwaySourceId = $pathwayHash->{'SourceId'};
+
+    if ($extDbRlsSpec =~ /TrypanoCyc/ || $extDbRlsSpec =~/LeishCyc/) {
+        my $organism = ($extDbRlsSpec =~ /TrypanoCyc/) ? 'TRYPANO' : 'LEISH';
+        $url = "vm-trypanocyc.toulouse.inra.fr/$organism/NEW-IMAGE?type=PATHWAY&object=$pathwaySourceId";
+        # leaving room for elsif clauses, e.g. for FungiCyc
+    }else{
+        print STDERR "WARN: Cannot make a URL for pathway $pathwaySourceId";
+    }
+        
+        
+
     my $pathway = GUS::Model::SRes::Pathway->new({name => $pathwayHash->{'Description'}, 
-                                               source_id => $pathwayHash->{'SourceId'},
-                                               external_database_release_id => $self->getExtDbRlsId()#,
-                                              # url => $pathwayHash->{URI} TODO: Make URL in reader and add
+                                               source_id => $pathwaySourceId,
+                                               external_database_release_id => $self->getExtDbRlsId(),
+                                               url => $url
                                                });
 
 
@@ -109,8 +122,9 @@ sub makeGusObjects {
                 my $gusNode = $self->getNodeByUniqueId($nodeId);
                 my $gusAssociatedNode = $self->getNodeByUniqueId($associatedNodeId);
 
-                # Don't have data on whether reactions are reversible
-                my $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({'relationship_type_id' => $relationshipTypeId});
+                # Don't have data on whether reactions are reversible so use 0 for every edge
+                my $gusRelationship = GUS::Model::SRes::PathwayRelationship->new({'relationship_type_id' => $relationshipTypeId,
+                                                                                  'is_reversible' => 0});
                 $gusRelationship->setParent($gusNode, "node_id");
                 $gusRelationship->setParent($gusAssociatedNode, "associated_node_id");
 
