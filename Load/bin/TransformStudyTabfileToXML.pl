@@ -280,7 +280,7 @@ close TEMP;
 open (TEMP, "$temp") || die "Can't open $outFile for reading\n";
 
 open (OUTFILE, ">$outFile") || die "Can't open $outFile for reading\n";
-print OUTFILE '<?xml version="1.0" encoding="UTF-8"?>'."\n<mage-tab>\n";
+print OUTFILE '<?xml version="1.0" encoding="iso-8859-1"?>'."\n<mage-tab>\n";
 while (<TEMP>) {
   print OUTFILE '  '.$_ unless $_=~/^<anon>\n/ || $_=~/^<\/anon>\n/;
 }
