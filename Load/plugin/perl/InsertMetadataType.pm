@@ -167,12 +167,23 @@ sub run {
     }
     
     my $units = undef;
-    $units = $row->[2] if scalar(@$row)>2;
+    $units = $row->[2] if scalar(@$row)>2 && defined $row->[2];
     
+    my $display_description = undef;
+    $display_description = $row->[3]  if scalar(@$row)>3 && defined $row->[3] ;
+
+    my $order_num = undef;
+    $order_num = $row->[4]  if scalar(@$row)>4 && defined $row->[4] ;
+
+
+
+
     my $metadataType = GUS::Model::ApiDB::MetadataType->
       new({name => $term,
            ontology_term_id => $ont_term_id,
            variable_type => $variable_type,
+           display_description => $display_description,
+           order_num => $order_num,
            external_database_release_id => $extDbRlsId,
            units => $units,
           });
