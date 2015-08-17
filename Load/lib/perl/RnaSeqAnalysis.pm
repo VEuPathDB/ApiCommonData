@@ -55,7 +55,7 @@ sub new {
 sub munge {
     my ($self) = @_;
     
-    my $featureType = 'genes';
+    my $featureType = 'gene';
     my $valueType = 'fpkm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
