@@ -121,7 +121,7 @@ foreach my $pathwayId (@pids) {
 
       ## nodes
       for my $k (keys(%node) ){
-	if (  $node{$k}->{type} eq 'metabolic process' ) {
+	if (  $node{$k}->{type} eq 'metabolic process' && $node{$k}->{primaryName}) {
 	  $writer->startTag("node", "label" =>  $node{$k}->{primaryName} , "id" => $k);
 	} else {
 	  $writer->startTag("node", "label" => $node{$k}->{display} , "id" => $k);
