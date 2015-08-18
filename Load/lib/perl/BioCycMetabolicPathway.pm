@@ -34,7 +34,7 @@ sub makeGusObjects {
 
     if ($extDbRlsSpec =~ /TrypanoCyc/ || $extDbRlsSpec =~/LeishCyc/) {
         my $organism = ($extDbRlsSpec =~ /TrypanoCyc/) ? 'TRYPANO' : 'LEISH';
-        $url = "vm-trypanocyc.toulouse.inra.fr/$organism/NEW-IMAGE?type=PATHWAY&object=$pathwaySourceId";
+        $url = "http://vm-trypanocyc.toulouse.inra.fr/$organism/NEW-IMAGE?type=PATHWAY&object=$pathwaySourceId";
         # leaving room for elsif clauses, e.g. for FungiCyc
     }else{
         print STDERR "WARN: Cannot make a URL for pathway $pathwaySourceId";
