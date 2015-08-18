@@ -55,7 +55,7 @@ sub new {
 sub munge {
     my ($self) = @_;
     
-    my $featureType = 'gene';
+    my $featureType = 'genes';
     my $valueType = 'fpkm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
@@ -101,8 +101,6 @@ sub makeProfiles {
   my $header = $quantificationType eq 'cuff' ? 1 : 0;
 
   $profile->setHasHeader($header);
-  
-  $profile->setSourceIdType($featureType);
   
   my $protocolName = $quantificationType eq 'cuff' ? 'Cufflinks' : 'HTSeq';
 
