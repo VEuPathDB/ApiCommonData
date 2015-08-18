@@ -8,14 +8,14 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath.owl">
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/import_GAZ.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/import_source.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_GAZ.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/EupathDefinition.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/EupathLabel.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/PrismCategory.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/externalByHand.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_DOID.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO2.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/obi/NIAID-GSC-BRC.owl"/>
     </owl:Ontology>
     
@@ -364,14 +364,14 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DRON_00021246">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
-                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
+                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115>A drug product in solution form for injection that has the chemical ingredient chloroquine and used in the treatment or prevention of malaria.</obo:IAO_0000115>
@@ -599,14 +599,14 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000047"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000053"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000103"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000004"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A processed material that is the bottom edge of a roof.  The primary function of the eaves is to keep rain water off the walls and to prevent the ingress of water at the junction where the roof meets the wall.  The secondary function is to control solar penetration; the eaves overhang can be designed to adjust the building&apos;s solar heat gain to suit the local climate, the latitude and orientation of the building, refer to passive solar building design. The eaves overhang may also shelter openings to ventilate the roof space.</obo:IAO_0000115>
@@ -1286,12 +1286,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DRON_00000005"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00017631"/>
             </owl:Restriction>
@@ -1300,6 +1294,12 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00019223"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Artemether/lumefantrine</obo:IAO_0000119>
@@ -2086,6 +2086,19 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:IAO_0000119>http://dhsprogram.com/topics/Wealth-Index.cfm</obo:IAO_0000119>
         <obo:IAO_0000115>A data item of a household&apos;s cumulative living standard represented in a categorical datum. The wealth index is calculated using easy-to-collect data on a household&apos;s ownership of selected assets, such as televisions and bicycles; materials used for housing construction; and types of water access and sanitation facilities.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
+        <rdfs:label xml:lang="en">household asset information</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <obo:IAO_0000115>An information content entity about items that a household owns such as a car, funiture, etc.</obo:IAO_0000115>
+        <dc:source>PRISM</dc:source>
+        <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
+        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, David Roos, Grant Dorsey</obo:IAO_0000117>
     </owl:Class>
     
 
