@@ -1,8 +1,9 @@
 [URI of the OWL(RDF/XML) output file]
 http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl
 
-
-
+############################################################
+# BFO, CHEBI, DRON, OBI, OGMS, STATO, IDOMAL, PCO, OBIB, HP, SYMP, IAO
+############################################################
 ############################################################
 [Source ontology]
 #comment here
@@ -23,6 +24,29 @@ http://www.w3.org/2000/01/rdf-schema#label
 http://purl.obolibrary.org/obo/IAO_0000115
 
 
+############################################################
+[Source ontology]
+#comment here
+IAO
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/IAO_0000414 #mass measurement datum
+http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/IAO_0000414 #mass measurement datum
+subClassOf http://purl.obolibrary.org/obo/IAO_0000032 #scalar measurement datum
+http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
+subClassOf http://purl.obolibrary.org/obo/IAO_0000032 #scalar measurement datum
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
 
 ############################################################
 [Source ontology]
@@ -32,11 +56,14 @@ CHEBI
 [Low level source term URIs]
 http://purl.obolibrary.org/obo/CHEBI_3638 #chloroquine
 http://purl.obolibrary.org/obo/CHEBI_15854 #quinine
+http://purl.obolibrary.org/obo/CHEBI_33521 #metal atom
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/CHEBI_3638 #chloroquine
 subClassOf http://purl.obolibrary.org/obo/CHEBI_23367 #molecular entity
 http://purl.obolibrary.org/obo/CHEBI_15854 #quinine
+subClassOf http://purl.obolibrary.org/obo/CHEBI_23367 #molecular entity
+http://purl.obolibrary.org/obo/CHEBI_33521 #metal atom
 subClassOf http://purl.obolibrary.org/obo/CHEBI_23367 #molecular entity
 
 [Source term retrieval setting]
@@ -81,38 +108,14 @@ includeNoIntermediates
 http://www.w3.org/2000/01/rdf-schema#label
 http://purl.obolibrary.org/obo/IAO_0000115
 
-
-############################################################
-[Source ontology]
-#comment here
-ENVO
-
-[Low level source term URIs]
-http://purl.obolibrary.org/obo/ENVO_00003064 #drinking water
-http://purl.obolibrary.org/obo/ENVO_00002006 #water
-
-[Top level source term URIs and target direct superclass URIs]
-http://purl.obolibrary.org/obo/ENVO_00003064 #drinking water
-subClassOf http://purl.obolibrary.org/obo/ENVO_00002006
-http://purl.obolibrary.org/obo/ENVO_00002006 #water
-subClassOf http://purl.obolibrary.org/obo/ENVO_00010483 #environment material
-
-[Source term retrieval setting]
-includeNoIntermediates
-
-[Source annotation URIs]
-http://www.w3.org/2000/01/rdf-schema#label
-http://purl.obolibrary.org/obo/IAO_0000115
-
-
 ############################################################
 [Source ontology]
 #comment here
 OBI
 
 [Low level source term URIs]
+http://purl.obolibrary.org/obo/OBI_0001876 #cell culture
 http://purl.obolibrary.org/obo/OBI_0000968 #device
-http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
 http://purl.obolibrary.org/obo/OBI_0000938 #categorical measurement datum
 http://purl.obolibrary.org/obo/OBI_0001305 #genotype information
 http://purl.obolibrary.org/obo/OBI_0001404 #genetic characteristics information
@@ -122,12 +125,13 @@ http://purl.obolibrary.org/obo/OBI_0001169 #age since birth measurement datum
 http://purl.obolibrary.org/obo/OBI_0100016 #blood plasma specimen
 http://purl.obolibrary.org/obo/OBI_0000655 #blood specimen
 http://purl.obolibrary.org/obo/OBI_0000953 #processed specimen
+http://purl.obolibrary.org/obo/OBI_0000844 #hospital
 
 [Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/OBI_0001876 #cell culture
+subClassOf http://purl.obolibrary.org/obo/OBI_0000047 #processed material
 http://purl.obolibrary.org/obo/OBI_0000968 #device
 subClassOf http://purl.obolibrary.org/obo/OBI_0000047 #processed material
-http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
-subClassOf http://purl.obolibrary.org/obo/IAO_0000032 #scalar measurement datum
 http://purl.obolibrary.org/obo/OBI_0000938 #categorical measurement datum
 subClassOf http://purl.obolibrary.org/obo/IAO_0000109
 http://purl.obolibrary.org/obo/OBI_0001305 #genotype information
@@ -146,6 +150,8 @@ http://purl.obolibrary.org/obo/OBI_0100016 #blood plasma specimen
 subClassOf http://purl.obolibrary.org/obo/OBI_0000953 #processed specimen
 http://purl.obolibrary.org/obo/OBI_0000655 #blood specimen
 subClassOf http://purl.obolibrary.org/obo/OBI_0001479 #tissue specimen
+http://purl.obolibrary.org/obo/OBI_0000844 #hospital
+subClassOf http://purl.obolibrary.org/obo/OBI_0000245 #organization
 
 
 [Source term retrieval setting]
@@ -168,6 +174,7 @@ http://purl.obolibrary.org/obo/OGMS_0000090 #treatment
 #http://purl.obolibrary.org/obo/OGMS_0000031 #disease
 http://purl.obolibrary.org/obo/OGMS_0000018 #laboratory finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
+http://purl.obolibrary.org/obo/OGMS_0000015 #clinical history
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/OGMS_0000073 #diagnosis
@@ -179,6 +186,8 @@ subClassOf http://purl.obolibrary.org/obo/OBI_0000011 #planned process
 #http://purl.obolibrary.org/obo/OGMS_0000031 #disease
 #subClassOf http://purl.obolibrary.org/obo/BFO_0000016 #disposition
 http://purl.obolibrary.org/obo/OGMS_0000018 #laboratory finding
+subClassOf http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
+http://purl.obolibrary.org/obo/OGMS_0000015 #clinical history
 subClassOf http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
 subClassOf http://purl.obolibrary.org/obo/OBI_0000070 #assay 
@@ -231,8 +240,30 @@ http://purl.obolibrary.org/obo/IAO_0000115
 
 ############################################################
 [Source ontology]
+PATO
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/PATO_0000383 #female
+http://purl.obolibrary.org/obo/PATO_0000384 #male
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/PATO_0000383 #female
+subClassOf http://purl.obolibrary.org/obo/PATO_0000047 #biological sex
+http://purl.obolibrary.org/obo/PATO_0000384 #male
+subClassOf http://purl.obolibrary.org/obo/PATO_0000047 #biological sex
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
+
+############################################################
+[Source ontology]
 #comment here
-#List of ontologies: OBI, NCBITaxon, MP, PATO, GO, DOID, IDO, CHEBI, SO, PRO, CL, ENVO, FMA, CARO
 HP
 
 [Low level source term URIs]
@@ -301,7 +332,6 @@ http://purl.obolibrary.org/obo/IAO_0000115
 ############################################################
 [Source ontology]
 #comment here
-#List of ontologies: OBI, NCBITaxon, MP, PATO, GO, DOID, IDO, CHEBI, SO, PRO, CL, ENVO, FMA, CARO
 SYMP
 
 [Low level source term URIs]
@@ -310,6 +340,12 @@ http://purl.obolibrary.org/obo/SYMP_0000475 #underweight
 http://purl.obolibrary.org/obo/SYMP_0000596 #convulsion
 http://purl.obolibrary.org/obo/SYMP_0000672 #abscess
 http://purl.obolibrary.org/obo/SYMP_0019148 #septicemia
+http://purl.obolibrary.org/obo/SYMP_0000064 #Joint pain
+http://purl.obolibrary.org/obo/SYMP_0000124 #Seizure
+http://purl.obolibrary.org/obo/SYMP_0000523 #anorexia
+http://purl.obolibrary.org/obo/SYMP_0000614 #cough
+http://purl.obolibrary.org/obo/SYMP_0000642 #respiratory distress
+http://purl.obolibrary.org/obo/SYMP_0019177 #Fatigue
 
 
 [Top level source term URIs and target direct superclass URIs]
@@ -330,6 +366,18 @@ subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
 #subClassOf http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
 #http://purl.obolibrary.org/obo/SYMP_0000462 #symptom
 #subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0000064 #Joint pain
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0000124 #Seizure
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0000523 #anorexia
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0000614 #cough
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0000642 #respiratory distress
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
+http://purl.obolibrary.org/obo/SYMP_0019177 #Fatigue
+subClassOf http://purl.obolibrary.org/obo/HP_0000118 #Phenotypic abnormality
 
 
 [Source term retrieval setting]
@@ -365,72 +413,5 @@ includeNoIntermediates
 [Source annotation URIs]
 http://www.w3.org/2000/01/rdf-schema#label
 http://purl.obolibrary.org/obo/IAO_0000115
-
-
-############################################################
-#[Source ontology]
-#comment here
-#IDOMAL
-#
-#[Low level source term URIs]
-#http://purl.obolibrary.org/obo/IDOMAL_0001052 #malaria
-#http://purl.obolibrary.org/obo/IDOMAL_0001051 #infectous disease
-#
-#[Top level source term URIs and target direct superclass URIs]
-#http://purl.obolibrary.org/obo/IDOMAL_0001052 #malaria
-#subClassOf http://purl.obolibrary.org/obo/IDOMAL_0001051 #infectous disease
-#http://purl.obolibrary.org/obo/IDOMAL_0001051 #infectous disease
-#subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-#
-#
-#[Source term retrieval setting]
-#includeNoIntermediates
-#
-#[Source annotation URIs]
-#http://www.w3.org/2000/01/rdf-schema#label
-#http://purl.obolibrary.org/obo/IAO_0000115
-############################################################
-############################################################
-#[Source ontology]
-#move to HP_input_option2 file
-#HP
-#
-#[Low level source term URIs]
-#http://purl.obolibrary.org/obo/HP_0000952 #Jaundice
-#http://purl.obolibrary.org/obo/HP_0001943 #hypoglycemia
-############################################################
-############################################################
-#[Source ontology]
-#move to DOID_input.txt
-#DOID
-
-#[Low level source term URIs]
-#http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-#http://purl.obolibrary.org/obo/DOID_12365 #malaria
-#http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
-#http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
-#http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
-#http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-
-#[Top level source term URIs and target direct superclass URIs]
-#http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-#subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-#http://purl.obolibrary.org/obo/DOID_12365 #malaria
-#subClassOf http://purl.obolibrary.org/obo/DOID_0050117 #disease by infectious agent
-#http://purl.obolibrary.org/obo/DOID_14069 #cerebral malaria
-#subClassOf http://purl.obolibrary.org/obo/DOID_12365 #malaria
-#http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-#subClassOf http://purl.obolibrary.org/obo/OGMS_0000031 #disease
-#http://purl.obolibrary.org/obo/DOID_9993 #hypoglycemia
-#subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-#http://purl.obolibrary.org/obo/DOID_11162 #respiratory failure
-#subClassOf http://purl.obolibrary.org/obo/DOID_7 #disease of anatomical entity
-#
-#[Source term retrieval setting]
-#includeNoIntermediates
-#
-#[Source annotation URIs]
-#http://www.w3.org/2000/01/rdf-schema#label
-#http://purl.obolibrary.org/obo/IAO_0000115
 
 
