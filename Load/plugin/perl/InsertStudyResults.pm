@@ -201,6 +201,9 @@ sub addResults {
   elsif ($protocolName =~ /MetaboliteProfiles/) {
     $tableString = "Results::CompoundMassSpec";
   } 
+  elsif ($protocolName =~ /HostResponse/) {
+    $tableString = "Results::NAFeatureHostResponse";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
