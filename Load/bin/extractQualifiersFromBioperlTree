@@ -24,13 +24,15 @@ my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
 
-my ($help, $bioperlTreeFile, $qualifierList, $outputDir);
+my ($help, $bioperlTreeFile, $qualifierList, $outputDir, $db, $taxonId);
 
 &GetOptions(
             'help|h' => \$help,
             'bioperlTreeFile=s' => \$bioperlTreeFile,
 	    'qualifierList=s' => \$qualifierList,
 	    'outputDir=s' => \$outputDir,
+	    'db=s' => \$db,
+	    'taxonId=s' => \$taxonId,
            );
 
 &usage() if($help);
@@ -53,13 +55,18 @@ foreach my $list (@lists) {
   $list =~ s/\s+$//;
 
   if ($list =~ /\w+/) {
+    $list = "GO" if ($list =~ /^GO/);
+
     $outputFile = $list.".txt";
 
     $outputFiles{$list} = ($outputDir) ? "$outputDir\/$outputFile" : "$outputFile";
 
-    $outputFhs{$list} = FileHandle->new();
-    $outputFhs{$list}->open(">$outputFiles{$list}") || die "can not open $outputFiles{$list} to write\n";
   }
+}
+
+foreach my $k (sort keys %outputFiles) {
+    $outputFhs{$k} = FileHandle->new();
+    $outputFhs{$k}->open(">$outputFiles{$k}") || die "can not open $outputFiles{$k} to write\n";
 }
 
 my ($key, %gene);
@@ -78,7 +85,6 @@ while (<IN>) {
     my $value = $2;
     my (@values, @dbxrefValues);
     if ($qual =~ /product/i) {  ## multiple products separated by ",term="
-      #@values = split (/\,term=/, $value);
       @values = split (/\,[term=|rank=1;]/, $value);
       foreach my $i (0..$#values) {
 	my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/);
@@ -94,32 +100,31 @@ while (<IN>) {
 	$values[$i] =~ s/,rank=1$//;
 	$values[$i] .= "\ttrue" if ($isPreferred == 1);
       }
-      #push @values, $value;  ## push everything in one line to test
     } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
       push @values, $value;
-    #} elsif ($qual =~ /literature/i) { ## pmid separated by '.'
-    #  @values = split (/\./, $value);
     } elsif ($qual =~ /Dbxref/i || $qual =~ /db_xref/i ) { ## special need for dbxref
-      #my $cValue = $value;
-      #($qual, $value) = split (/\:/, $cValue);
       ($qual, $value) = split (/\:/, $value);
       $qual = "dbxref_".$qual;
       push @values, $value;
       $dbxrefFiles{$qual} = $qual.".txt";
-      #print STDERR "$qual\t$value\n";
     } elsif ($qual =~ /literature/i) { ## for literature
       $value =~ s/\,/ /g;
       @values = split (/\s+/, $value);
       foreach my $i (0..$#values) {
 	$values[$i] =~ s/^PMID://;
       }
+
+    } elsif ($qual =~ /^GO/) { ## for GO
+      $value = $qual.": ".$value;
+      push @values, $value;
+      $qual = "GO";
+
     } else {
       @values = split (/\,/, $value);
     }
 
     foreach my $v (@values) {
       $v =~ s/;current=false$//; ## for synonym, previous_systematic_id
-      #$v =~ s/^term=//; ## for product
       $v =~ s/^PMID://; ## for pmid in literature
       push @{$gene{$key}{$qual}}, $v;
     }
@@ -135,19 +140,129 @@ foreach my $k (sort keys %dbxrefFiles) {
 
 foreach my $k (sort keys %gene) {
   foreach my $kk (sort keys %{$gene{$k}}) {
-    #print STDERR "\$k = $k; \$kk = $kk\n";
-    #print STDERR "$k; $kk; $gene{$k}{$kk}\n" if ($outputFiles{$kk});
     if ($outputFiles{$kk} || $dbxrefFiles{$kk} ) {
       foreach my $i (0..$#{$gene{$k}{$kk}}) {
-	$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
+	if ($kk =~ /^GO/) {
+	  &printGOFile($outputFhs{$kk}, $k, $gene{$k}{$kk}[$i]);
+	} else {
+	  $outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
+	}
       }
     }
-    #$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}\n") if ($outputFiles{$kk});
   }
 }
 
 foreach my $k (sort keys %outputFhs) {
   $outputFhs{$k}->close();
+}
+
+############
+sub printGOFile {
+  my ($fileH, $sourceId, $line) = @_;
+  my ($aspect, $goId, $dbrefs, $evidenceCode, $withOrFrom, $product, $synonym, $sourceIdType);
+
+  if ($line =~ /^GO_component/ || $line =~ /^GO_function/ || $line =~ /^GO_process/) {
+    ($aspect) = split (/\:/,$line);
+    if ($line =~ /(GO_\w+?): (GO:\d+?) - (.+?);ev_code=(\w+?)$/) {
+      $aspect = &getAspectForGo ($1);
+      $goId = $2;
+      $product = $3;
+      $evidenceCode = $4;
+    }
+  }
+
+  my @items;
+  $items[0] = $db;
+  $items[1] = $sourceId."-p1";  ## use protein sourceID
+  $items[2] = $sourceId;
+  $items[3] = $sourceId;  ## Qualifier, 0 or greater
+  $items[4] = $goId;
+  $items[5] = "";  ## DB:Reference, eg PMID:2676709;
+  $items[6] = $evidenceCode;
+  $items[7] = "";  ## With or From
+  $items[8] = $aspect;
+  $items[9] = $product;  ## db object name, 0 or 1
+  $items[10] = ""; ## db object synonym, 0 or greater
+  $items[11] = "protein"; ## db object type
+  $items[12] = $taxonId; ## eg taxon:9606
+  $items[13] = $date;  ## eg 20150817
+  $items[14] = $db;  ## Assigned By
+
+  foreach my $i (0..14) {
+    ($i == 14) ? $fileH->print ("$items[$i]\n") : $fileH->print ("$items[$i]\t");
+  }
+
+  return $fileH;
+}
+
+sub getAspectForGo {
+  my ($line) = @_;
+  my $aspect;
+
+  if ($line =~ /[C|F|P]/) {
+    $aspect = $line; 
+  } elsif (lc($line) =~ /component/) {
+    $aspect = 'C';
+  } elsif (lc($line) =~ /function/) {
+    $aspect = 'F';
+  } elsif (lc($line) =~ /process/) {
+    $aspect = 'P';
+  } else {
+    $aspect = '';
+  }
+  return $aspect;
+}
+
+sub getGoEvidenceCode {
+  my ($string) = @_;
+
+  if ($string =~ /INFERRED FROM ELECTRONIC ANNOTATION/i) {
+    return "IEA";
+  } elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/i) {
+    return "ISO";
+  } elsif ($string =~ /NOT RECORDED/i) {
+    return "NR";
+  } elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
+    return "IDA";
+  } elsif ($string =~ /No biological Data available/i) {
+    return "ND";
+  } elsif ($string =~ /INFERRED FROM SEQUENCE OR STRUCTURAL SIMILARITY/i) {
+    return "ISS";
+  } elsif ($string =~ /Inferred from Sequence Alignment/i) {
+    return "ISA";
+  } elsif ($string =~ /Inferred from Sequence Model/i) {
+    return "ISM";
+  } elsif ($string =~ /Inferred from Genomic Context/i) {
+    return "IGC";
+  } elsif ($string =~ /Inferred from Biological aspect of Ancestor/i) {
+    return "IBA";
+  } elsif ($string =~ /Inferred from Biological aspect of Descendant/i) {
+    return "IBD";
+  } elsif ($string =~ /Inferred from Key Residues/i) {
+    return "IKR";
+  } elsif ($string =~ /Inferred from Rapid Divergence /i) {
+    return "IRD";
+  } elsif ($string =~ /inferred from Reviewed Computational Analysis/i) {
+    return "RCA";
+  } elsif ($string =~ /Inferred from Experiment/i) {
+    return "EXP";
+  } elsif ($string =~ /Inferred from Physical Interaction/i) {
+    return "IPI";
+  } elsif ($string =~ /Inferred from Mutant Phenotype/i) {
+    return "IMP";
+  } elsif ($string =~ /Inferred from Genetic Interaction/i) {
+    return "IGI";
+  } elsif ($string =~ /Inferred from Expression Pattern/i) {
+    return "IEP";
+  } elsif ($string =~ /Traceable Author Statement/i) {
+    return "TAS";
+  } elsif ($string =~ /Non-traceable Author Statement/i) {
+    return "NAS";
+  } elsif ($string =~ /Inferred by Curator/i) {
+    return "IC";
+  } else {
+    return $string;
+  }
 }
 
 ############
@@ -161,8 +276,10 @@ Usage:  extractQualifiersFromBioperlTree --bioperlTreeFile --qualifierList [--ou
 
 where
   --qualifierList:	Required, a semi-colon seperated list of qualifiers that want to extract
-  --bioperlTreeFile:	bioperlTree file that generated by ISF. The default is the file 'isftest/bioperlTree.out.save'
-  --outputDir:          an existing file dir that the output files will write. The default is the dir '../extractQualifiers'
+  --bioperlTreeFile:	The bioperlTree file that generated by ISF. The default is the file 'isftest/bioperlTree.out.save'
+  --outputDir:          An file dir that the output files will write to. The default is the dir '../extractQualifiers'
+  --db:                 Required if extract GO, eg. GenBank, GeneDB, EupathDB
+  --taxonId:            Required if extract GO, the NCBI taxon ID
 
 ";
 }
