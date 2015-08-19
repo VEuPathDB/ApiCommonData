@@ -390,7 +390,7 @@ create table RESULTS.NAFeatureHostResponse
     ROW_PROJECT_ID        number(4) not null,
     ROW_ALG_INVOCATION_ID number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    foreign key (NA_FEATURE_ID) references DoTS.NAFeature,
+    foreign key (NA_FEATURE_ID) references DoTS.NAFeatureImp,
     primary key (NA_FEATURE_HOST_RESPONSE_ID)
   );
 
