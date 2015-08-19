@@ -23,4 +23,10 @@ Drop table chebi.default_structures;
 Drop table chebi.autogen_structures;
 
 Drop table chebi.compounds;
+
+-- this foreign key must be added here because the chebi schema install is done later than other installs
+alter table Results.CompoundMassSpec drop foreign key fk_cpdms_cid;
+
+delete core.tableinfo where database_id in (select database_id from core.databaseinfo where name = 'chEBI')
+
 exit;

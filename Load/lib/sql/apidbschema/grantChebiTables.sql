@@ -1,6 +1,13 @@
 GRANT INSERT, SELECT, UPDATE, DELETE ON chebi.compounds  TO gus_w;
 GRANT SELECT ON chebi.compounds  TO gus_r;
 
+
+-- This has to be here because
+GRANT REFERENCES ON chEBI.Compounds to Results;
+alter table Results.CompoundMassSpec 
+ADD CONSTRAINT fk_cpdms_cid
+foreign key (compound_ID) references chEBI.compound (id);
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable,
