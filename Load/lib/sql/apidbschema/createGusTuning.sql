@@ -103,10 +103,6 @@ create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
 create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
 create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 
-create index rad.anlrslt_ix
-on rad.analysisResultImp
-   (subclass_view, analysis_id, row_id, float1, float2, float3, float4, number1, table_id, analysis_result_id)
-tablespace indx;
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
@@ -447,7 +443,7 @@ create table Results.CompoundMassSpec
     ROW_PROJECT_ID        number(4) not null,
     ROW_ALG_INVOCATION_ID number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    foreign key (REPORTER_ID) references PLATFORM.REPORTER,
+    foreign key (compound_ID) references chEBI.compound (id),
     primary key (REPORTER_INTENSITY_ID)
   );
 
