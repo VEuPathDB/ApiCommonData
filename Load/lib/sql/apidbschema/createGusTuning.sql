@@ -389,7 +389,7 @@ create table Results.CompoundMassSpec
     ROW_PROJECT_ID        number(4) not null,
     ROW_ALG_INVOCATION_ID number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    primary key (REPORTER_INTENSITY_ID)
+    primary key (compound_mass_spec_ID)
   );
 
 
