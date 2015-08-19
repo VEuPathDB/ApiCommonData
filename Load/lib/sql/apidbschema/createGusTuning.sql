@@ -59,9 +59,6 @@ create index dots.rfe_rnaexix
   on dots.RnaFeatureExon (rna_feature_id, exon_feature_id)
   tablespace indx;
 
-create index sres.RefIx
-  on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
-  tablespace indx;
 
 -- for the tuning manager, which decides whether an input table has changed
 -- by finding its record count and max(modification_date)
