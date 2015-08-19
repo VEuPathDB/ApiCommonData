@@ -91,6 +91,7 @@ sub cleanAttr {
   $attribute =~ s/ /_/g;
   $attribute =~ s/-/_/; 
   $attribute =~ s/\W+/_/g;
+  $attribute =~ s/_+/_/g;
   
   # my $old_parent_id_string = "parent_id";
   # my $parent_id_string = "parent_id";

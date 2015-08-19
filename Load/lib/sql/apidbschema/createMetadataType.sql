@@ -1,23 +1,23 @@
 CREATE TABLE apidb.Metadatatype (
-METADATA_TYPE_ID             NOT NULL NUMBER(12),    
-ONTOLOGY_TERM_ID             NOT NULL NUMBER(12),   
+METADATA_TYPE_ID             NUMBER(12) NOT NULL,    
+ONTOLOGY_TERM_ID             NUMBER(12) NOT NULL,   
 NAME                                  VARCHAR2(255), 
 DISPLAY_DESCRIPTION                   VARCHAR2(4000),
 ORDER_NUM                             VARCHAR2(20),
 EXTERNAL_DATABASE_RELEASE_ID          NUMBER(12),    
 VARIABLE_TYPE                         VARCHAR2(20),  
 UNITS                                 VARCHAR2(50),
-MODIFICATION_DATE            NOT NULL DATE,          
-USER_READ                    NOT NULL NUMBER(1),     
-USER_WRITE                   NOT NULL NUMBER(1),     
-GROUP_READ                   NOT NULL NUMBER(1),     
-GROUP_WRITE                  NOT NULL NUMBER(1),     
-OTHER_READ                   NOT NULL NUMBER(1),     
-OTHER_WRITE                  NOT NULL NUMBER(1),     
-ROW_USER_ID                  NOT NULL NUMBER(12),    
-ROW_GROUP_ID                 NOT NULL NUMBER(3),     
-ROW_PROJECT_ID               NOT NULL NUMBER(4),     
-ROW_ALG_INVOCATION_ID        NOT NULL NUMBER(12)
+MODIFICATION_DATE            DATE NOT NULL,          
+USER_READ                    NUMBER(1) NOT NULL,     
+USER_WRITE                   NUMBER(1) NOT NULL,     
+GROUP_READ                   NUMBER(1) NOT NULL,     
+GROUP_WRITE                  NUMBER(1) NOT NULL,     
+OTHER_READ                   NUMBER(1) NOT NULL,     
+OTHER_WRITE                  NUMBER(1) NOT NULL,     
+ROW_USER_ID                  NUMBER(12) NOT NULL,    
+ROW_GROUP_ID                 NUMBER(3) NOT NULL,     
+ROW_PROJECT_ID               NUMBER(4) NOT NULL,     
+ROW_ALG_INVOCATION_ID        NUMBER(12) NOT NULL
 );
 
 ALTER TABLE apidb.Metadatatype

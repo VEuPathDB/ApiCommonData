@@ -306,13 +306,13 @@ sub parseHeader {
     $colMap->{"Input"} = $i if ($Header[$i] =~ /Input/i);
     $colMap->{"Output"} = $i if $Header[$i] =~ /Output/i;
     $colMap->{"Date"} = $i if $Header[$i] =~ /\[DATE\]/i;
-    if ($Header[$i] =~ /Characteristics\s*\[\w+\]/i) {
+    my $field  = $Header[$i];
+    if ($Header[$i] =~ /Characteristics\s*\[\w*.*\w*\]/i) {
       my $bareChar = $Header[$i];
       $bareChar =~ s/.*\[//i;
       $bareChar =~ s/\]//i;
       $bareChar = lc($bareChar);
       my $display_term = $bareChar;
-
       my $charHash = {characteristic=>$bareChar,
                                     column=>$i,
                                    };
@@ -377,7 +377,6 @@ sub parseCharacteristics {
       
       my $lower_value = lc($value); 
       my $lower_characteristic = lc($characteristic);
-
       $lower_value =~ s/\'/\'\'/g;
       $lower_characteristic =~ s/\'/\'\'/g;
       next unless (defined $lower_value && $lower_value=~/\w/);
