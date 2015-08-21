@@ -24,7 +24,9 @@ die "USAGE: $0 --experimentType <experimentType> --inBamFile <input_bam_file> --
 
 my $bwFile = $outDir . 'results.bw';
 
-if ($experimentType eq 'histonemod') {
+# As of Aug 21, 2015, we have assessed the HOMER coverage plot feature only for histonemod and mnase single-end experiments (and, for mnase data, DANPOS2 was deemed preferable). As more types of experiments are assessed, the resulting HOMER cvg plots should be examined to determine whether the software is doing a good job on those. If not, other sections should be added to this script to deal with those cases.
+
+if ($experimentType ne 'mnase') {
     my $samFile = $inBamFile;
     $samFile =~ s/bam$/sam/;
     my $samtoolsCmd = "samtools view $inBamFile > $samFile";
@@ -57,7 +59,7 @@ if ($experimentType eq 'histonemod') {
 #    unlink($outDir . 'results.bedgraph.gz'); 
 }
 
-if ($experimentType eq 'mnase') {
+else {
     # danpos2 -o option doesn't work nicely re output path and names#
 #    chdir $outDir;
     my $dposCmd = "danpos.py dpos $inBamFile -o $outDir";
