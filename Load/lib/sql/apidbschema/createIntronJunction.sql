@@ -32,7 +32,7 @@ GRANT select ON apidb.IntronJunction TO gus_r;
 GRANT select ON apidb.IntronJunction_sq TO gus_w;
 
 CREATE INDEX apidb.rif_rls_ix
-ON apidb.RumIntronFeature
+ON apidb.IntronJunction
    (external_database_release_id, na_sequence_id, sample_name, mapping_start, 
     mapping_end, intron_junction_id, score, is_reversed, unique_reads, nu_reads
 );
