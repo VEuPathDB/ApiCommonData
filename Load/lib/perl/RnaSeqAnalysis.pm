@@ -104,10 +104,12 @@ sub makeProfiles {
   
   my $protocolName = $quantificationType eq 'cuff' ? 'Cufflinks' : 'HTSeq';
 
-  $profile->setProtocolName("GSNAP/$protocolName");
+  $profile->setProtocolName("rnaseq");
   
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
+  $profile->addProtocolParamValue('QuantificationType', $protocolName);
+
   if ($protocolName eq 'HTSeq') {
       $quantificationType =~ /^htseq-(.+)$/;
       my $mode = $1;

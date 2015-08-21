@@ -1,9 +1,8 @@
-package ApiCommonData::Load::AntibodyMicroarrayAnalysis;
+package ApiCommonData::Load::QuantitativeProteomicsAnalysis;
 use base qw(CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles);
 
 sub getProtocol {
-  return "Antibody Microarray";
+  return "Quantitative Proteomics";
 }
 
 1;
-
