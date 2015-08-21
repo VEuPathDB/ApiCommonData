@@ -12,5 +12,5 @@ drop user SRES cascade;
 drop user SRESVER cascade;
 drop user STUDY cascade;
 drop user STUDYVER cascade;
-
+drop user CHEBI cascade;
 exit
