@@ -271,7 +271,9 @@ sub getProtocolAppNodeId {
   }
 
   my $study = $self->{_study};
-  my $pan = GUS::Model::Study::ProtocolAppNode->new({name => $strain });
+  my $panName = "$strain (Sequence Variations)";
+
+  my $pan = GUS::Model::Study::ProtocolAppNode->new({name => $panName });
   my $link = GUS::Model::Study::StudyLink->new();
 
   $link->setParent($study);

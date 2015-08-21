@@ -45,10 +45,7 @@ use GUS::Model::ApiDB::MassSpecSummary; # MassSpecResults??
 use GUS::Model::DoTS::PostTranslationalModFeature;
 use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyLink;
-use GUS::Model::Study::Protocol;
 use GUS::Model::Study::ProtocolAppNode;
-use GUS::Model::Study::ProtocolApp;
-use GUS::Model::Study::Output;
 
 # utility
 use Bio::Location::Split;
@@ -93,14 +90,6 @@ sub run {
   my $studyName = "Mass Spec Peptides from $extDbSpec";
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $self->{extDbRlsId}});
-  my $protocol = GUS::Model::Study::Protocol->new({name => ref($self) });
-  $protocol->retrieveFromDB();
-
-  my $protocolType = 'mass spectrometry analysis';
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $protocolType});
-  unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required Ontology Term $protocolType not found in database");
-  }
 
   opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
 
@@ -116,14 +105,6 @@ sub run {
     $studyLink->setParent($protocolAppNode);
     $studyLink->setParent($study);
 
-    my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
-    $protocolApp->setParent($protocol);
-    $study->addToSubmitList($protocolApp);
-
-    my $output = GUS::Model::Study::Output->new();
-    $output->setParent($protocolApp);
-    $output->setParent($protocolAppNode);
-        
     $nodeNumber++;
   }
   closedir INDIR;
@@ -1319,10 +1300,8 @@ sub undoTables {
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    Study.Output
     Study.StudyLink
     Study.ProtocolAppNode
-    Study.ProtocolApp
     Study.Study
     );
 }
