@@ -21,6 +21,7 @@ sub preprocess {
       
       if($bioperlFeatureTree->score()){
 	  $bioperlFeatureTree->add_tag_value('primary_score',$bioperlFeatureTree->score());
+	  $bioperlFeatureTree->remove_tag('score');
       }
 
     }
