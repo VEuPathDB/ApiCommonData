@@ -236,8 +236,8 @@ select pn.pathway_node_id
     , ot.name
     , c.chebi_accession as identifier
     , cn.compound_id as alternative_identifier
-    , cn.name as name
-    , c.name as alternative_name
+    , c.name as name
+    , cn.name as alternative_name
 from sres.pathway p
     , sres.pathwaynode pn
         LEFT OUTER JOIN chebi.compounds c on pn.row_id = c.id
