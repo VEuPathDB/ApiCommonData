@@ -104,7 +104,7 @@ sub makeProfiles {
   
   my $protocolName = $quantificationType eq 'cuff' ? 'Cufflinks' : 'HTSeq';
 
-  $profile->setProtocolName("rnaseq");
+  $profile->setProtocolName("GSNAP/$protocolName");
   
   $profile->addProtocolParamValue('Strand', $strand);
   $profile->addProtocolParamValue('FeatureType', $featureType);
