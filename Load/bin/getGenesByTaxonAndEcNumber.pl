@@ -27,7 +27,7 @@ my $sth = $dbh->prepare($sql);
 $sth->execute;
 
 open OUT, ">GenesByTaxon_summary.txt";
-print OUT "[Gene ID] [EC Numbers]  [Ortholog count]  [Paralog count] [Ortholog Group]\n";
+print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
 while (my $row = $sth -> fetchrow_arrayref) {
   my ($source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name) = @$row;
   print OUT "$source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name\n";
@@ -48,7 +48,7 @@ AND asec.evidence_code != 'OrthoMCLDerived'
 order by ga.source_id
 EOL
 
-print OUT "[Gene ID] [EC Numbers]  [Ortholog count]  [Paralog count] [Ortholog Group]\n";
+print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
 
 $sth = $dbh->prepare($sql);
 $sth->execute;
