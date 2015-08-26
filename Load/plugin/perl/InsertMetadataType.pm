@@ -180,7 +180,6 @@ sub run {
       $is_hidden = ( $row->[5] =~/false|0/i) ? 0 : 1;
       my $state = $row->[5];
     }
-    exit if $lowerTerm=~/dob/;
     my $metadataType = GUS::Model::ApiDB::MetadataType->
       new({name => $term,
            ontology_term_id => $ont_term_id,
