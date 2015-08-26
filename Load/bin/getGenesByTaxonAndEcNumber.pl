@@ -6,10 +6,12 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile, $verbose);
+my ($gusConfigFile, $outputGenesByTaxon, $outputGenesByEcNumber, $verbose);
 
-&GetOptions("gusConfigFile=s" => \$gusConfigFile,
-            "verbose!"        => \$verbose );
+&GetOptions("gusConfigFile=s"         => \$gusConfigFile,
+            "outputGenesByTaxon=s"    => \$outputGenesByTaxon,
+            "outputGenesByEcNumber=s" => \$outputGenesByEcNumber,
+            "verbose!"                => \$verbose );
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -26,7 +28,7 @@ my $sql = "select source_id, ec_numbers,ortholog_number, paralog_number, orthomc
 my $sth = $dbh->prepare($sql);
 $sth->execute;
 
-open OUT, ">GenesByTaxon_summary.txt";
+open OUT, ">$outputGenesByTaxon";
 print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
 while (my $row = $sth -> fetchrow_arrayref) {
   my ($source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name) = @$row;
@@ -36,7 +38,7 @@ while (my $row = $sth -> fetchrow_arrayref) {
 $sth->finish;
 close OUT;
 
-open OUT, ">GenesByEcNumber_summary.txt";
+open OUT, ">$outputGenesByEcNumber";
 
 $sql =<<EOL;
 SELECT DISTINCT ga.source_id, ec_numbers,ortholog_number, paralog_number, orthomcl_name
