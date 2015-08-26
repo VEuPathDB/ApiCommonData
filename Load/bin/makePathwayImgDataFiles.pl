@@ -318,6 +318,7 @@ sub getOrganismsQuery {
 
 sub getEdgesQuery {
     my $pathwayId = shift;
+
     return ("select n.pathway_node_id as source
      , a.pathway_node_id as target
      , decode(r.is_reversible, 1, 'Reversible', 0, 'Irreversible', 'Unknown') as direction

@@ -22,87 +22,73 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
+use File::Basename;
+use XML::Simple;
+
 use Getopt::Long qw(GetOptions);
+use File::Basename;
 
-my ($login, $password, $tuningMgrMgrPwd, $svn, $script, $skipInstances);
+my ($propfile, $regex, $script, $list, $help);
+my $password;
 
-# parse command line
-GetOptions("login=s" => \$login,
-           "password=s" => \$password,
-           "svn=s" => \$svn,
+GetOptions("propfile=s" => \$propfile,
+           "regex=s" => \$regex,
            "script=s" => \$script,
-           "skipInstances=s" => \$skipInstances,
-           "tuningMgrMgrPwd=s" => \$tuningMgrMgrPwd,
+           "list!" => \$list,
+           "help!" => \$help,
 	  );
 
-if (!$password || !$svn || !$script) {
-  usage();
-  die;
+if ($help) {
+  &usage;
+  exit;
 }
 
-$tuningMgrMgrPwd = $password if !$tuningMgrMgrPwd;
+if ($script) {
+  die "\$script parameter requires \$propfile"
+    unless $propfile;
 
-# store blacklist, if supplied
-my %blacklist;
-foreach my $blacklistedInstance (split(/,/, $skipInstances)) {
-  $blacklist{$blacklistedInstance} = 1;
-}
-
-$login = "apidb" if !$login;
-
-my $instanceCount = 0;
-foreach my $reportLine (`tuningMgrMgr list -password $tuningMgrMgrPwd |tail -n +3|cut -c26-77`) {
-  if ($reportLine =~ /^(\S*)\s.*$svn/) {
-    my $instance = $1;
-    next if $blacklist{$instance};
-    print "\n\npatching instance $instance with SQL script ${script}.sql at " . `date` . "\n";
-    my $commandLine = "sqlplus $login/$password\@$instance \@$script";
-    my $returnCode = system($commandLine);
-
-    if ($returnCode) {
-      die "trying to run command line \"$commandLine\"\n";
-    }
-    $instanceCount++;
+  my $simple = XML::Simple->new();
+  my $props = $simple->XMLin($propfile);
+  $password = $props->{password};;
   }
+
+if (!$list && !$script) {
+  &usage;
+  die "either -list or -script parameter must be supplied";
 }
 
-print "updated $instanceCount instances.\n";
+my $instances = `apiTnsSummary | cut -c61- | sed 's/,.*\$//' `;
+foreach my $instance (split /\n/, $instances) {
+  if ($regex) {
+    next unless $instance =~ /$regex/;
+  }
 
-###############################################################################
+  print "instance: " . $instance . "\n";
+  if ($script) {
+    print `sqlplus apidb/$password\@$instance \@$script`;
+  }
+
+}
 
 sub usage {
-  print
-q{
-Script to run an SQL script on each database instance with a given Subversion URL
 
-Usage:
+  my $scriptname = basename($0);
+  print STDERR <<USAGE;
 
-apiPatchInstances -svn <branch> [ -login <Oracle_login> ] -password <password>
-                  -script <scriptName> [ -skipInstances <blacklist> ]
-                  [ -tuningMgrMgrPwd <tuning_manager_password> ]
+Run an SQL script in multiple instances. Uses apiTnsSummary to find instances.
+
+usage:
+$scriptname [ -list ]
+                  [ -regex <expression> ]
+                  [ -propfile <file> [ -script <file without .sql suffix> ] ]
+                  [ -help ]
 
 options:
-  svn             a string (such as "trunk" or "api-build-10") which occurs in
-                  the Subversion URL of database instances which should be included
-  login           Oracle username (or "schema" in Oracle parlance) to log in as
-  password        database login password
-  tuningMgrMgrPwd database login password needed by "tuningMgrMgr" script (if
-                  different from "password" option value
-  script          SQL script to be run on each matching database instance. The
-                  script should end with an "exit" command. The script name should
-                  end in ".sql"; this suffix should be omitted on the command line
-  skipInstances   comma-separated list of instances to skip
+ list     list instances that match regex (or all instances if no regex is supplied)
+ regex    regular expression for instance names
+ propfile tuning-manager-style property XML file
+ script   SQL script (without .sql extension). The script must end with an sqlplus "exit" command.
+ help     print this usage message
 
-This script finds instances to opearate on by querying the tuning manager
-registry (apidb_r.TuningInstance and apidb_r.TuningFamily, which are replicated
-in the apicomm instances). If you aren't sure which instances are on a given
-branch, try the "tuningMgrMgr list" command, or test on an innocuous script,
-such as "select * from apidb.InstanceMetaInfo" or
-"select sys_context ('USERENV', 'SERVICE_NAME') from dual".
-
-Note that the script should end with "exit", lest sqlplus wait for console input
-on each instance after the commands are finished.
-};
+USAGE
 }
-
-

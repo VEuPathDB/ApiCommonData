@@ -97,24 +97,25 @@ $mst->readFile();
 $mst->writeFile();
 
 
+
 sub usage {
   print "usage:  parseSimpleMassSpec.pl -data_file <INPUT> -output_file <OUTPUT> -config_file <CONFIG> [-debug]\n\n";
 
   print "SAMPLE PROP FILE:
 
-# required 
-skipLines=2
+# required column is 0 based
+skipLines=2   skip lines at beginning of input file that are not header or data
 headerRegex=TriTrypDB accession number
 
 # required but prompted 
-proteinIdColumn=
-geneSourceIdColumn=
+proteinIdColumn= column # for actual protein ids or ,if no protein ids, column for gene ids (same as geneSourceIdColumn if gene Ids) 
+geneSourceIdColumn= 
 peptideSequenceColumn=
 peptideSpectrumColumn=
 peptideIonScoreColumn=
 
 # override defaults only if needed
-class=
+class=  appropriate package in ApiCommonData::Load::MassSpecTransform
 delimiter=
 trimPeptideRegex=
 

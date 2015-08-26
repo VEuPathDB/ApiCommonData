@@ -30,7 +30,6 @@ use Data::Dumper;
 
 use Getopt::Long;
 
-
 my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName, $makeSourceIdMap);
 
 &GetOptions("inputVariantsFile=s"=> \$inputVariantsFile,
@@ -42,6 +41,7 @@ my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName
     );
 
 die "Variants file '$inputVariantsFile' does not exist\n" unless -e $inputVariantsFile;
+
 die "Varscan dir '$varscanDir' does not exist\n" if($varscanDir && !(-d $varscanDir));
 
 die "Target dir '$targetDir' does not exist\n" unless -d $targetDir;
@@ -63,6 +63,7 @@ my $strainCount = 1;
   print STRAINMAP "$strainCount\t$refStrainName\n";  
   open(REF, ">$readFreqDir/$strainCount");   
   close REF;
+
 
 my @strainNames;
 
