@@ -178,7 +178,7 @@ sub run {
     my $is_hidden = 0;
     if (scalar(@$row)>5 && defined $row->[5]) {
       $is_hidden = 1  if $row->[5] != 0 && $row->[5] !~/false/i;
-
+    }
 
     my $metadataType = GUS::Model::ApiDB::MetadataType->
       new({name => $term,
