@@ -175,7 +175,9 @@ sub run {
     my $order_num = undef;
     $order_num = $row->[4]  if scalar(@$row)>4 && defined $row->[4] ;
 
-
+    my $is_hidden = 0;
+    if (scalar(@$row)>5 && defined $row->[5]) {
+      $is_hidden = 1  if $row->[5] != 0 && $row->[5] !~/false/i;
 
 
     my $metadataType = GUS::Model::ApiDB::MetadataType->
@@ -184,6 +186,7 @@ sub run {
            variable_type => $variable_type,
            display_description => $display_description,
            order_num => $order_num,
+           is_hidden => $is_hidden,
            external_database_release_id => $extDbRlsId,
            units => $units,
           });
