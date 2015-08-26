@@ -176,12 +176,9 @@ sub run {
     $order_num = $row->[4]  if scalar(@$row)>4 && defined $row->[4] ;
 
     my $is_hidden = 0;
-    print STDERR Dumper $row;
     if (scalar(@$row)>5 && defined $row->[5]) {
       $is_hidden = ( $row->[5] =~/false|0/i) ? 0 : 1;
       my $state = $row->[5];
-      print STDERR "my state is $state\n";
-      print STDERR "is hidden status $is_hidden";
     }
     exit if $lowerTerm=~/dob/;
     my $metadataType = GUS::Model::ApiDB::MetadataType->
