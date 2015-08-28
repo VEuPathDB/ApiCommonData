@@ -18,7 +18,7 @@ die "USAGE: $0 --workflowDir < workflow_dir> --experimentType <experimentType> -
     if (!$workflowDir || !$experimentType || !$experimentName || !$experimentDataDir);
 
 # Currently peak calls are only made for histone modification data with input/control.
-# If in the future this will be extended to peak calls for TF binding, the values passed to the -style argument of the homerCmd (stored in $style) needs to be set appropriately. Moreover the name of the output file from HOMER is different, so $homerOutput as to be defined accordingly (see documnetation at http://homer.salk.edu/homer/ngs/peaks.html).
+# If in the future this will be extended to peak calls for TF binding, the value passed to the -style argument of the homerCmd (stored in $style) needs to be set appropriately. Moreover the name of the output file from HOMER is different, so $homerOutput has to be defined accordingly (see documnetation at http://homer.salk.edu/homer/ngs/peaks.html).
 
 my $style;
 my $homerOutput;
