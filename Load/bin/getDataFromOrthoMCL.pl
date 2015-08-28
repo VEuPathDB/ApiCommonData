@@ -25,7 +25,7 @@ my $xml = XML::Simple->new;
 my $ref = $xml->XMLin($response->content);
 
 open OUT, ">$outputAllOrthoGrps";
-print OUT "[Group] [# Sequences] [Average % Connectivity]  [Average % Identity]  [EC Numbers]\n";
+print OUT "[Group]\t[# Sequences]\t[Average % Connectivity]\t[Average % Identity]\t[EC Numbers]\n";
 
 while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
   my $ec_numbers        = $v->{field}->{ec_numbers}->{content};
@@ -42,13 +42,13 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
      }
   }
 
-  print OUT "$og, $number_of_members, $avg_pct_identity, $avg_connectivity, $ec_numbers\n";
+  print OUT "$og\t$number_of_members\t$avg_pct_identity\t$avg_connectivity\t$ec_numbers\n";
 }
 
 close OUT;
 
 open OUT, ">$outputOrthoSeqsWithECs";
-print OUT "[Accession] [Source ID] [EC Numbers] [Group] [Group Size]\n";
+print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
 foreach my $ec (keys %hash) {
   $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcNumber.xml?ec_number_type_ahead=$ec&o-fields=primary_key,source_id,ec_numbers,group_name,group_size";
@@ -70,7 +70,7 @@ foreach my $ec (keys %hash) {
     next unless ($ec_numbers && $group_name);
     next unless (!exists $uniq{$source_id});
     $uniq{$source_id} = 1;
-    print OUT "$k, $source_id, $ec_numbers, $group_name, $group_size\n";
+    print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
   }
 }
 
