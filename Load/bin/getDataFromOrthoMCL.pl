@@ -6,6 +6,7 @@ use XML::Simple;;
 use Getopt::Long;
 
 my %hash;
+my %uniq;
 my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 
 
@@ -67,6 +68,8 @@ foreach my $ec (keys %hash) {
     my $group_size = $v->{field}->{group_size}->{content};
 
     next unless ($ec_numbers && $group_name);
+    next unless (!exists $uniq{$source_id});
+    $uniq{$source_id} = 1;
     print OUT "$k, $source_id, $ec_numbers, $group_name, $group_size\n";
   }
 }
