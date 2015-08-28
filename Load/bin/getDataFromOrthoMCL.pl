@@ -46,7 +46,7 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
 
 close OUT;
 
-open OUT, ">OrthoSeqsWithECs.txt";
+open OUT, ">$outputOrthoSeqsWithECs";
 print OUT "[Accession] [Source ID] [EC Numbers] [Group] [Group Size]\n";
 
 foreach my $ec (keys %hash) {
