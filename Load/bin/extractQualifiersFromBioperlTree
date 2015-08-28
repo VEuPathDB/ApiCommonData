@@ -104,6 +104,7 @@ while (<IN>) {
       push @values, $value;
     } elsif ($qual =~ /Dbxref/i || $qual =~ /db_xref/i ) { ## special need for dbxref
       ($qual, $value) = split (/\:/, $value);
+      $qual =~ s/(\/.*$)//;
       $qual = "dbxref_".$qual;
       push @values, $value;
       $dbxrefFiles{$qual} = $qual.".txt";
