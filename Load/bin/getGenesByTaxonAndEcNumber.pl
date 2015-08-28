@@ -29,10 +29,10 @@ my $sth = $dbh->prepare($sql);
 $sth->execute;
 
 open OUT, ">$outputGenesByTaxon";
-print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
+print OUT "[Gene ID]\t[EC Numbers]\t[Ortholog count]\t[Paralog count]\t[Ortholog Group]\n";
 while (my $row = $sth -> fetchrow_arrayref) {
   my ($source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name) = @$row;
-  print OUT "$source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name\n";
+  print OUT "$source_id\t$ec\t$ortholog_number\t$paralog_number\t$orthomcl_name\n";
 }
 
 $sth->finish;
@@ -50,14 +50,14 @@ AND asec.evidence_code != 'OrthoMCLDerived'
 order by ga.source_id
 EOL
 
-print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
+print OUT "[Gene ID]\t[EC Numbers]\t[Ortholog count]\t[Paralog count]\t[Ortholog Group]\n";
 
 $sth = $dbh->prepare($sql);
 $sth->execute;
 
 while (my $row = $sth -> fetchrow_arrayref) {
   my ($source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name) = @$row;
-  print OUT "$source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name\n";
+  print OUT "$source_id\t$ec\t$ortholog_number\t$paralog_number\t$orthomcl_name\n";
 }
 
 $dbh->disconnect; 
