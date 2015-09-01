@@ -104,7 +104,9 @@ sub run {
     next unless($file=~m/$fileNameRegex/);
     push(@inputFiles, $file);
 
-    my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $file, node_order_num => $nodeNumber, type_id => $ontologyTerm->getId()});
+    my $protocolAppNodeName = "$file (MS Summary)";
+
+    my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $protocolAppNodeName, node_order_num => $nodeNumber, type_id => $ontologyTerm->getId()});
     $self->{_protocol_app_nodes}->{$file} = $protocolAppNode;
 
     my $studyLink = GUS::Model::Study::StudyLink->new();
