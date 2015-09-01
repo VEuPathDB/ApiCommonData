@@ -12,7 +12,6 @@ use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::ProtocolApp;
 use GUS::Model::Study::ProtocolAppParam;
-use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 
 use GUS::Model::SRes::OntologyTerm;
@@ -35,7 +34,7 @@ my $argsDeclaration =
 	    descr          => 'Describes the profiles being loaded',
 	    reqd           => 1,
 	    mustExist      => 1,
-	    format         => 'Tab file with no header and these columns: file_base_name, profile_name, profile_descrip, source_id_type, skip_second_row, load_profile_element.  The source_id_type must be one of: oligo, gene, none. The skip_second_row is 1 if second row in file is unneeded header, and load_profile_element is 1 if we want to load the expression data into the profileElement table.',
+	    format         => 'Tab file with header.',
 	    constraintFunc => undef,
 	    isList         => 0, }),
 
@@ -123,8 +122,6 @@ sub run {
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
-
-
   my $header = <CONFIG>;
 
   my $investigation = $self->makeStudy($self->getArg('studyName'));
@@ -133,7 +130,7 @@ sub run {
 
   while(<CONFIG>) {
     chomp;
-    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
+    my ($nodeName, $file, $sourceIdType, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
     my $study = $self->makeStudy($studyName);
     $study->setParent($investigation);
@@ -141,23 +138,22 @@ sub run {
     my @studyLinks = $study->getChildren('Study::StudyLink', 1);
     my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $investigation);
+    my $appNodeType;
+    if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
+      $appNodeType = "differential expression analysis data transformation";
+    }
+    else {
+      $appNodeType = "data transformation";
+    }
 
-    my $protocol = $self->makeProtocol($protocolName);
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType, $investigation);
+
+    my $protocol = $self->makeProtocol($appNodeType);
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
     $investigation->addToSubmitList($protocolApp);
-
-    foreach my $inputAppNode (@$inputAppNodes) {
-      my $input = GUS::Model::Study::Input->new();
-      $input->setParent($protocolApp);
-      $input->setParent($inputAppNode);
-
-      $self->linkAppNodeToStudy($study, $inputAppNode); 
-    }
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
@@ -339,37 +335,6 @@ sub lookupIdFromSourceId {
 }
 
 
-sub getInputAppNodes {
-  my ($self, $inputNames, $existingAppNodes, $study, $nodeOrderNum) = @_;
-
-  my @inputNames = split(';', $inputNames);
-
-  my @rv;
-
-  foreach my $input (@inputNames) {
-    my $found;
-    foreach my $existing (@$existingAppNodes) {
-      if($existing->getName eq $input) {
-        push @rv, $existing;
-        $found++;
-      }
-    }
-
-    next if($found);
-
-    my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
-
-    push @$existingAppNodes, $newInput;
-    push @rv, $newInput;
-  }
-
-  unless(scalar @inputNames == scalar @rv) {
-    my $foundNames = join(";",  map { $_->getName() } @rv);
-    $self->log("Could not match Input Names $inputNames.  Found:   $foundNames");
-  }
-
-  return \@rv;
-}
 
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
@@ -407,19 +372,12 @@ sub retrieveAppNodesForStudy {
 
 
 sub makeProtocolAppNode {
-  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $protocolName, $study) = @_;
+  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType, $study) = @_;
 
-  my $oe;
-  if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
-    $oe = "differential expression analysis data transformation";
-  }
-  else {
-    $oe = "data transformation";
-  }
 
-  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $oe});
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
   unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required Ontology Term $oe not found in database");
+    $self->error("Required Ontology Term $appNodeType not found in database");
   }
 
   foreach my $e (@$existingAppNodes) {
@@ -502,7 +460,6 @@ sub undoTables {
   my ($self) = @_;
 
   return ( 
-    'Study.Input',
     'Study.Output',
     'Study.StudyLink',
     'Results.NAFeatureExpression',
