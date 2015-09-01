@@ -12,6 +12,7 @@ use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::ProtocolApp;
 use GUS::Model::Study::ProtocolAppParam;
+use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 
 use GUS::Model::SRes::OntologyTerm;
@@ -34,7 +35,7 @@ my $argsDeclaration =
 	    descr          => 'Describes the profiles being loaded',
 	    reqd           => 1,
 	    mustExist      => 1,
-	    format         => 'Tab file with header.',
+	    format         => 'Tab file with header',
 	    constraintFunc => undef,
 	    isList         => 0, }),
 
@@ -122,6 +123,8 @@ sub run {
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
+
+
   my $header = <CONFIG>;
 
   my $investigation = $self->makeStudy($self->getArg('studyName'));
@@ -130,7 +133,7 @@ sub run {
 
   while(<CONFIG>) {
     chomp;
-    my ($nodeName, $file, $sourceIdType, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
+    my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
     my $study = $self->makeStudy($studyName);
     $study->setParent($investigation);
@@ -138,6 +141,7 @@ sub run {
     my @studyLinks = $study->getChildren('Study::StudyLink', 1);
     my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
 
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
 
     my $appNodeType;
     if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
@@ -154,6 +158,14 @@ sub run {
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
     $investigation->addToSubmitList($protocolApp);
+
+    foreach my $inputAppNode (@$inputAppNodes) {
+      my $input = GUS::Model::Study::Input->new();
+      $input->setParent($protocolApp);
+      $input->setParent($inputAppNode);
+
+      $self->linkAppNodeToStudy($study, $inputAppNode); 
+    }
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
@@ -335,6 +347,37 @@ sub lookupIdFromSourceId {
 }
 
 
+sub getInputAppNodes {
+  my ($self, $inputNames, $existingAppNodes, $study, $nodeOrderNum) = @_;
+
+  my @inputNames = split(';', $inputNames);
+
+  my @rv;
+
+  foreach my $input (@inputNames) {
+    my $found;
+    foreach my $existing (@$existingAppNodes) {
+      if($existing->getName eq $input) {
+        push @rv, $existing;
+        $found++;
+      }
+    }
+
+    next if($found);
+
+    my $newInput = GUS::Model::Study::ProtocolAppNode->new({name => $input, node_order_num => $nodeOrderNum});
+
+    push @$existingAppNodes, $newInput;
+    push @rv, $newInput;
+  }
+
+  unless(scalar @inputNames == scalar @rv) {
+    my $foundNames = join(";",  map { $_->getName() } @rv);
+    $self->log("Could not match Input Names $inputNames.  Found:   $foundNames");
+  }
+
+  return \@rv;
+}
 
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
@@ -373,7 +416,6 @@ sub retrieveAppNodesForStudy {
 
 sub makeProtocolAppNode {
   my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType, $study) = @_;
-
 
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
   unless($ontologyTerm->retrieveFromDB()) {
@@ -460,6 +502,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ( 
+    'Study.Input',
     'Study.Output',
     'Study.StudyLink',
     'Results.NAFeatureExpression',
