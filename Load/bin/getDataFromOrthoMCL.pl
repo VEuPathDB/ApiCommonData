@@ -70,7 +70,12 @@ foreach my $ec (keys %hash) {
     next unless ($ec_numbers && $group_name);
     next unless (!exists $uniq{$source_id});
     $uniq{$source_id} = 1;
-    print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
+
+    $ec_numbers =~ s/\s+//g;
+    my @ecArray = split /,/, $ec_numbers;
+    foreach my $ec (@ecArray) {
+      print OUT "$k\t$source_id\t$ec\t$group_name\t$group_size\n";
+    }
   }
 }
 
