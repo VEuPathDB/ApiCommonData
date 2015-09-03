@@ -301,9 +301,11 @@ sub traverseSeqFeatures {
 		    if(defined $CDSLocation){
 			my $codonStart = 0;
 
-			for my $qualifier ($subFeature->get_all_tags()) {
+#			for my $qualifier ($subFeature->get_all_tags()) {
+			for my $qualifier ($transcript->get_all_tags()) {  ## using transcript since codon_start is not in exon anymore
 			    if($qualifier eq 'codon_start'){
-				foreach my $value ($subFeature->get_tag_values($qualifier)){
+#				foreach my $value ($subFeature->get_tag_values($qualifier)){
+				foreach my $value ($transcript->get_tag_values($qualifier)){  ## using transcript instead of subFeature here
 				    $codonStart = $value - 1;
 				}
 			    }
