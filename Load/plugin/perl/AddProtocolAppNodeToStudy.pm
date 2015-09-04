@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
+package ApiCommonData::Load::Plugin::AddProtocolAppNodeToStudy;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
