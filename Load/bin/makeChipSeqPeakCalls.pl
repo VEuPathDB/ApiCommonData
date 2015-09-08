@@ -5,6 +5,7 @@
 
 use strict;
 use Getopt::Long;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 
 my ($workflowDir, $experimentType, $experimentName, $experimentDataDir);
