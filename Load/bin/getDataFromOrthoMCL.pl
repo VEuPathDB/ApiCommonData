@@ -41,8 +41,10 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
        $hash{$ec} = $ec;
      }
   }
+  
+  $ec_numbers = 'null' unless $ec_numbers;
 
-  print OUT "$og\t$number_of_members\t$avg_pct_identity\t$avg_connectivity\t$ec_numbers\n";
+  print OUT "$og\t$number_of_members\t$avg_connectivity\t$avg_pct_identity\t$ec_numbers\n";
 }
 
 close OUT;
@@ -71,11 +73,10 @@ foreach my $ec (keys %hash) {
     next unless (!exists $uniq{$source_id});
     $uniq{$source_id} = 1;
 
-    $ec_numbers =~ s/\s+//g;
-    my @ecArray = split /,/, $ec_numbers;
-    foreach my $ec (@ecArray) {
-      print OUT "$k\t$source_id\t$ec\t$group_name\t$group_size\n";
-    }
+    $group_name = 'null' unless $group_name;
+    $group_size = 'null' unless $group_size;
+
+    print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
   }
 }
 
