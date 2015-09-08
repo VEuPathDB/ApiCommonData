@@ -210,7 +210,7 @@ sub addResults {
     $tableString = "Results::CompoundMassSpec";
   } 
   elsif ($protocolName =~ /Antibody Microarray/) {
-    $tableString = "Results::NAFeatureHostResponse";
+    $tableString = "Results::NaFeatureHostResponse";
   } 
   else {
     $tableString = "Results::NAFeatureExpression";
