@@ -31,8 +31,6 @@ sub preprocess {
 
     my ($geneFeature, $source);
     my  $primerPair = '';
-#   my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
-#   $unflattener->unflatten_seq(-seq=>$bioperlSeq,-use_magic=>1);
 
     my @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
 
@@ -181,14 +179,6 @@ sub traverseSeqFeatures {
              )
         ) {
 
-	   #print STDERR "-----------------$type----------------------\n";
-
-	    # if($type eq 'ncRNA'){
-	    # 	if($RNA->has_tag('ncRNA_class')){
-	    # 	    ($type) = $RNA->get_tag_values('ncRNA_class');
-	    # 	    $RNA->remove_tag('ncRNA_class');
-	    # 	}
-	    # }
 
         if ($type eq 'srpRNA' || $type eq 'SRP.RNA') {
           $type = "SRP_RNA";
@@ -204,7 +194,7 @@ sub traverseSeqFeatures {
 		$type = 'coding';
 
 	    }
-	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
+
 	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);    ## for gene use transcript location instead of gene location
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
@@ -238,13 +228,11 @@ sub traverseSeqFeatures {
 	    }
 	    $codonStart -= 1 if $codonStart > 0;
 
-	    #my (@exons, @codingStart, @codingEnd);
 	    my (@exons, @codingStartAndEndPairs);
 
 	    my $CDSctr =0;
 	    my $prevPhase =0;
 
-	    #my($codingStart,$codingEnd);
 
 	    my $CDSLocation;
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
@@ -261,23 +249,14 @@ sub traverseSeqFeatures {
 		  my $cdsFrame = $subFeature->frame();
 
 		    if($subFeature->location->strand == -1){
-			#$codingStart = $subFeature->location->end;
-			#$codingEnd = $subFeature->location->start;
-			#$codingStart -= $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->end);
 		        my $cdsCodingStart = $subFeature->location->end;
 			my $cdsCodingEnd = $subFeature->location->start;
 			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }else{
-			#$codingStart = $subFeature->location->start;
-			#$codingEnd = $subFeature->location->end;
-			#$codingStart += $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->start);
 		        my $cdsCodingStart = $subFeature->location->start;
 			my $cdsCodingEnd = $subFeature->location->end;
 			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }
-
-		    #push(@codingStart,$codingStart);
-		    #push(@codingEnd,$codingEnd);
 
 		    $CDSctr++;
 		}
@@ -289,11 +268,6 @@ sub traverseSeqFeatures {
 		    push(@UTRs,$UTR);
 		}
 	    }
-
-	    #$codingStart[$#codingStart] = $codingStart;
-
-	    #$codingStart = shift(@codingStart);
-	    #$codingEnd = shift(@codingEnd);
 
 	    ## deal with codonStart, use the frame of the 1st CDS
 	    foreach my $j (0..$#codingStartAndEndPairs) {
@@ -317,8 +291,6 @@ sub traverseSeqFeatures {
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
 
-		    #$codingStart = shift(@codingStart);
-		    #$codingEnd = shift(@codingEnd);
 		    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 
 		} elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start) 
@@ -402,7 +374,6 @@ sub copyQualifiers {
       my @uniqVals = grep {!$seen{$_}++} 
                        $bioperlFeatureTree->remove_tag($qualifier), 
                        $geneFeature->get_tag_values($qualifier);
-                       
       $bioperlFeatureTree->add_tag_value(
                              $qualifier, 
                              @uniqVals
@@ -413,7 +384,6 @@ sub copyQualifiers {
                              $geneFeature->get_tag_values($qualifier)
                            );
     }
-     
   }
   return $bioperlFeatureTree;
 }
