@@ -33,6 +33,8 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
   my $avg_connectivity  = $v->{field}->{avg_connectivity}->{content};
   my $avg_pct_identity  = $v->{field}->{avg_percent_identity}->{content};
 
+  $ec_numbers = 'null' unless $ec_numbers;
+  print OUT "$og\t$number_of_members\t$avg_connectivity\t$avg_pct_identity\t$ec_numbers\n";
   if($ec_numbers) {
      $ec_numbers =~ s/\s+//g;
      my @ecArray = split /,/, $ec_numbers;
@@ -40,11 +42,7 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
        $ec =~ s/\(\d+\)$//;
        $hash{$ec} = $ec;
      }
-  }
-  
-  $ec_numbers = 'null' unless $ec_numbers;
-
-  print OUT "$og\t$number_of_members\t$avg_connectivity\t$avg_pct_identity\t$ec_numbers\n";
+  } 
 }
 
 close OUT;
