@@ -32,6 +32,7 @@ open OUT, ">$outputGenesByTaxon";
 print OUT "[Gene ID]\t[EC Numbers]\t[Ortholog count]\t[Paralog count]\t[Ortholog Group]\n";
 while (my $row = $sth -> fetchrow_arrayref) {
   my ($source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name) = @$row;
+  $ec = 'null' unless $ec;
   print OUT "$source_id\t$ec\t$ortholog_number\t$paralog_number\t$orthomcl_name\n";
 }
 
