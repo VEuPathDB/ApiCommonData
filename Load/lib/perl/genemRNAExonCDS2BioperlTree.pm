@@ -189,44 +189,44 @@ sub traverseSeqFeatures {
             $type = 'coding';
         }
 
+	if($type eq 'mRNA'){
+	  $type = 'coding';
+	}
 
-	    if($type eq 'mRNA'){
-		$type = 'coding';
+	my($geneID) = $geneFeature->get_tag_values('ID');
+	if (!$gene) {    ## only create one gene for multiple transcript
+	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
+	  $gene->add_tag_value("ID",$geneID);
+	  $gene = &copyQualifiers($geneFeature, $gene);
+	}
 
-	    }
+	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	my ($rnaID) = ($RNA->get_tag_values('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing rna gene id for $geneID\n";
 
-	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);    ## for gene use transcript location instead of gene location
-	    my($geneID) = $geneFeature->get_tag_values('ID');
+	$transcript->add_tag_value("ID", $rnaID);
+	$transcript = &copyQualifiers($RNA, $transcript);
 
-  	    if($transcriptCount > 1){
-	      $geneID = $geneID."\.$ctr";
-	      $ctr++;
-	    }
+	## add is_pseudo and is_partial to transcript
+	if ($gene->has_tag('Pseudo') || $gene->has_tag('pseudo')) {
+	  $transcript->add_tag_value('pseudo', '') if (!$transcript->has_tag('Pseudo') && !$transcript->has_tag('pseudo'));
+	}
+
+	if ($gene->has_tag('Partial') || $gene->has_tag('partial')) {
+	  $transcript->add_tag_value('partial', '') if (!$transcript->has_tag('Partial') && !$transcript->has_tag('partial'));
+	}
 
 
-	    #print "ID:$geneID\n";
-	    $gene->add_tag_value("ID",$geneID);
-	    $gene = &copyQualifiers($geneFeature, $gene);
+	my @containedSubFeatures = $RNA->get_SeqFeatures;
 
-	## add transcript_id to gene feature
-	my ($transId) = $RNA->get_tag_values('ID');
-	$gene->add_tag_value("transcript_id", $transId);
+	my $codonStart = 0;
 
-        $gene = &copyQualifiers($RNA,$gene);
+#	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
-  	    #$transcript = &copyQualifiers($RNA,$transcript);
-
-	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-	    
-	    my $codonStart = 0;
-	    
-	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 	    if($gene->has_tag('selenocysteine')){
 		$gene->remove_tag('selenocysteine');
 		$gene->add_tag_value('selenocysteine','selenocysteine');
 	    }
-	    $codonStart -= 1 if $codonStart > 0;
+#	    $codonStart -= 1 if $codonStart > 0;
 
 	    my (@exons, @codingStartAndEndPairs);
 
@@ -237,7 +237,7 @@ sub traverseSeqFeatures {
 	    my $CDSLocation;
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
-	      $codonStart = $subFeature->frame();
+#	      $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
 		    push(@exons,$exon);
