@@ -354,7 +354,7 @@ sub makeCharacteristic {
   $oe = GUS::Model::Study::OntologyEntry->new({ontology_entry_id => $oe_id,});
   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({value => $value});
 
-  $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
+  $oe->retrieveFromDB();
   $characteristic->setParent($oe);
 
   return $characteristic;
