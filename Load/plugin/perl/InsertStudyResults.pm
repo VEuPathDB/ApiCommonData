@@ -488,11 +488,17 @@ sub makeProtocolAppParams {
 sub makeStudy {
   my ($self, $studyName) = @_;
 
+  if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
+    return $cachedStudy;
+  }
+
   my $extDbSpec = $self->getArg('extDbSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $extDbRlsId});
   $study->retrieveFromDB();
+
+  $self->{_study_names}->{$studyName} = $study;
 
   return $study;
 }
