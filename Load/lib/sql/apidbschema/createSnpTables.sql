@@ -44,6 +44,7 @@ create table apidb.SequenceVariation (
     coverage                     number(12),
     quality                      number(12),
     ref_na_sequence_id           number(10) not null,
+    protocol_app_node_id         NUMBER(10) NOT NULL,
     modification_date            date
 );
 
