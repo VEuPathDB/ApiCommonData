@@ -74,6 +74,8 @@ sub preprocess {
 	      $gene = &copyQualifiers($geneFeature, $gene);
 
               my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+	      my $transcriptID = $geneID.".$type";
+	      $transcript->add_tag_value("ID", $transcriptID);
 
 	      my @exonLocs = $geneLoc->each_Location();
 	      foreach my $exonLoc (@exonLocs){
