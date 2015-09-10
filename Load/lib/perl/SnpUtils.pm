@@ -30,7 +30,7 @@ sub locationIndex { return 1 }
 sub strainIndex { return 2 }
 sub allelePercentIndex { return 5 }
 
-# DON"T CHANGE THESE UNLESS YOU KNOW WHAT YOU ARE DOING
+# DON"T CHANGE THESE UNLESS YOU KNOW WHAT YOU ARE DOING.  
 sub variationFileColumnNames {
   my @columnNames = 
       ('sequence_source_id',
@@ -49,7 +49,8 @@ sub variationFileColumnNames {
        'position_in_protein',
        'na_sequence_id',
        'ref_na_sequence_id',
-       'snp_external_database_release_id'
+       'snp_external_database_release_id',
+       'protocol_app_node_id'
       );
 
   return wantarray ? @columnNames : \@columnNames;

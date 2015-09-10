@@ -140,7 +140,7 @@ my $strainVarscanFileHandles = &openVarscanFiles($varscanDirectory, $isLegacyVar
 my @allStrains = keys %{$strainVarscanFileHandles};
 print STDERR "STRAINS=" . join(",", @allStrains) . "\n" if($debug);
 
-my $strainExtDbRlsIds = &queryExtDbRlsIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
+my $strainExtDbRlsAndProtocolAppNodeIds = &queryExtDbRlsAndProtocolAppNodeIdsForStrains(\@allStrains, $dbh, $organismAbbrev);
 
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
@@ -226,6 +226,8 @@ while($merger->hasNext()) {
 
     $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $referenceAllele) if($positionInCds);
 
+    my $referenceProtocolAppNodeId = &queryProtocolAppNodeIdFromExtDbRlsId($dbh, $thisExtDbRlsId);
+
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
                            'external_database_release_id' => $transcriptExtDbRlsId,
@@ -240,7 +242,7 @@ while($merger->hasNext()) {
                            'ref_na_sequence_id' => $naSequenceId,
                            'snp_external_database_release_id' => $thisExtDbRlsId,
                            'snp_source_id' => $variations->[0]->{snp_source_id},
-
+                           'protocol_app_node_id' => $referenceProtocolAppNodeId,
     };
     push @$variations, $referenceVariation;
   }
@@ -269,9 +271,10 @@ while($merger->hasNext()) {
 
     my $strain = $variation->{strain};
 
-    my $extDbRlsId;
+    my ($protocolAppNodeId, $extDbRlsId);
     if($strain ne $referenceStrain) {
-      $extDbRlsId = $strainExtDbRlsIds->{$strain}; # this will be null if skip_coverage is turned on
+      $extDbRlsId = $strainExtDbRlsAndProtocolAppNodeIds->{$strain}->{ext_db_rls_id}; # this will be null if skip_coverage is turned on
+      $protocolAppNodeId = $strainExtDbRlsAndProtocolAppNodeIds->{$strain}->{protocol_app_node_id}; # this will be null if skip_coverage is turned on
     }
 
     if(my $cachedExtDbRlsId = $variation->{external_database_release_id}) {
@@ -321,7 +324,8 @@ while($merger->hasNext()) {
 
     $variation->{external_database_release_id} = $extDbRlsId;
     $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
-    
+    $variation->{protocol_app_node_id} = $protocolAppNodeId;
+
     &printVariation($variation, $cacheFh);
   }
 
@@ -739,7 +743,7 @@ sub closeVarscanFiles {
 }
 
 
-sub queryExtDbRlsIdsForStrains {
+sub queryExtDbRlsAndProtocolAppNodeIdsForStrains {
   my ($strains, $dbh, $organismAbbrev) = @_;
 
   my $sql = "select d.name, d.external_database_name, d.version
@@ -763,7 +767,9 @@ and d.name like ?
       my $spec = "$extDbName|$extDbVersion";
       my $extDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $spec);
 
-      $rv{$strain} = $extDbRlsId;
+      $rv{$strain}->{ext_db_rls_id} = $extDbRlsId;
+      my $protocolAppNodeId = &queryProtocolAppNodeIdFromExtDbRlsId($dbh, $extDbRlsId);
+      $rv{$strain}->{protocol_app_node_id} = $protocolAppNodeId;
       $ct++;
     }
 
@@ -835,6 +841,22 @@ and d.name || '|' || r.version = '$extDbRlsSpec'";
 
   return $extDbRlsId;
 }
+
+sub queryProtocolAppNodeIdFromExtDbRlsId {
+  my ($dbh, $extDbRlsId) = @_;
+
+  my $sql = "select protocol_app_node_id from study.protocolappnode where external_database_release_id = $extDbRlsId";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my ($panId) = $sh->fetchrow_array();
+
+  $sh->finish();
+
+  return $panId;
+}
+
 
 sub lookupByLocation {
   my ($sequenceId, $l, $geneLocs) = @_;
