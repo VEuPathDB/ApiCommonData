@@ -9,11 +9,13 @@ my $bamFile;
 my $window;
 my $outputFile;
 my $samtoolsIndex;
+my $outputDir;
 
 &GetOptions("bamFile|b=s" => \$bamFile,
             "window|w=i" => \$window,
-            "outputFile|o=s" => \$outputFile,
-            "samtoolsIndex|s=s" => \$samtoolsIndex
+            "outputFile=s" => \$outputFile,
+            "samtoolsIndex|s=s" => \$samtoolsIndex,
+            "outputDir=s" => \$outputDir
             );
 
 if (! -e $bamFile || ! -e $samtoolsIndex){
@@ -27,7 +29,7 @@ endOfUsage
     # Creates BED file from indexed genome using given window size
     sub createBed {
         my ($index, $winLen) = @_;
-        my $bedfile = (split /\./, $index)[0]."_$winLen.bed";
+        my $bedfile = "$outputDir/".(split /\//, (split /\./, $index)[0])[-1]."_$winLen.bed";
         open (OUT, ">$bedfile") or die "Cannot write to temporary file\n$!\n";
         open (IN, "$index") or die "Cannot open .fai index file for reading\n$!\n";
         while (<IN>) {
