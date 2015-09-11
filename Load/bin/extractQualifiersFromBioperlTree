@@ -110,6 +110,7 @@ while (<IN>) {
       $dbxrefFiles{$qual} = $qual.".txt";
     } elsif ($qual =~ /literature/i) { ## for literature
       $value =~ s/\,/ /g;
+      $value =~ s/\./ /g;
       @values = split (/\s+/, $value);
       foreach my $i (0..$#values) {
 	$values[$i] =~ s/^PMID://;
