@@ -119,6 +119,8 @@ sub makeProfiles {
 
   $profile->setDisplaySuffix(" - $quantificationType - $strand");
 
+  $profile->setTechnologyType($self->getTechnologyType());
+
   $profile->munge();
 
   return($outputFile);
