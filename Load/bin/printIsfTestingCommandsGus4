@@ -69,7 +69,7 @@ if ($format =~ /gff/i) {
   print "cp transcriptIds ../../final/transcriptInfoAndIds\n\n";
 
   print "\n## for loading\n";
-  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir ../whole_genome.gff --inputFileExtension gff  --fileFormat gff3 --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --validationLog validation.log --bioperlTreeOutput bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence --chromosomeMapFile ../../final/chromosomeMap.txt --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
+  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gff  --fileFormat gff3 --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --validationLog validation.log --bioperlTreeOutput bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence --chromosomeMapFile ../../final/chromosomeMap.txt --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
 
 } elsif ($format =~ /genbank/i) {
   $inputFileOrDir = "../whole_genome.gbf" if (!$inputFileOrDir);
