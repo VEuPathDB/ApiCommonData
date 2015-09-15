@@ -40,6 +40,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="reason4rescue" ignore="true"/>
     <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
     <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
@@ -47,12 +48,14 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="transcript">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_eAED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="date" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
     <qualifier name="partial"     handler="api"    method="setPartial"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
@@ -271,19 +274,21 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="three_prime_utr" table="DoTS::UTRFeature" so="three_prime_UTR">
     <qualifier name="ID" column="source_id"/>
    	<qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="note"       ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="score"   ignore="true"/>
+    <qualifier name="timelastmodified" ignore="true"/>
   </feature>
 
   <feature name="five_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="note"       ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="score"   ignore="true"/>
+    <qualifier name="timelastmodified" ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
