@@ -203,7 +203,7 @@ sub traverseSeqFeatures {
 	}
 
 	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
-	my ($rnaID) = ($RNA->get_tag_values('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing rna gene id for $geneID\n";
+	my ($rnaID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for gene: $geneID\n";
 
 	$transcript->add_tag_value("ID", $rnaID);
 	$transcript = &copyQualifiers($RNA, $transcript);
@@ -334,10 +334,10 @@ sub traverseSeqFeatures {
 	    }
 
 	    $gene->add_SeqFeature($transcript);
-            push(@genes, $gene);
 
 	}
     }
+    push(@genes, $gene);
     return (\@genes ,\@UTRs);
 }
 
