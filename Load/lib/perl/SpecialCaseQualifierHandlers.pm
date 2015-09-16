@@ -1471,6 +1471,8 @@ sub validateGene {
 
 	    if($aaSeq->get('sequence') eq ''){
 
+	        ## automatically generate translation (protein) sequence if it is not in annotation file
+	        ## by calling getSequence method in TranslatedAASequence object
 
 		$aaSeq->setSequence($aaSeq->getSequence()) ;
 
