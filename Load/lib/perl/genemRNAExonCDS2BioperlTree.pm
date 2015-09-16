@@ -378,12 +378,13 @@ sub checkGeneStructure {
       my @RNAs = $gene->get_SeqFeatures;
       foreach my $RNA (sort {$a->location->start <=> $b->location->start
 			       || $a->location->end <=> $b->location->end} @RNAs){
-	die "gene and rna are not on the same strand \n" if ($gene->location->strand != $RNA->location->strand);
+	my ($rID) = $RNA->get_tag_values('ID');
+	die "gene and rna are not on the same strand: $rID \n" if ($gene->location->strand != $RNA->location->strand);
 	my @exons= $RNA->get_SeqFeatures;
 	foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
 	  if ( ($gene->location->strand != $exon->location->strand)
 	       || ($RNA->location->strand != $exon->location->strand ) ) {
-	    die "gene, rna, and exon are not on the same strand\n";
+	    die "gene, rna, and exon are not on the same strand: $rID\n";
 	  }
 	}
       }
