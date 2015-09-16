@@ -154,6 +154,7 @@ while(my ($k, $v) = each %hash) {
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
+  $isolate_id  =~ s/\W+$//g;
   $isolate_id  =~ s/\s/_/g;
 
   # in case of duplicate isolate ids
