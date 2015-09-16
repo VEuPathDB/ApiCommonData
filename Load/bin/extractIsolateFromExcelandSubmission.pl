@@ -381,6 +381,7 @@ while(my ($k, $v) = each %hash) {
   $country    .= ", $county" if $county;
   $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
+  $symptoms    =~ s/\W+$//g;
 
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
