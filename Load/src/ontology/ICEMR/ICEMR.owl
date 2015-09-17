@@ -8,7 +8,6 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/icemr.owl">
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/temp.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/PRISM_values.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/PRISM_variables.owl"/>
     </owl:Ontology>
     
@@ -25,30 +24,15 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000052 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000052">
-        <rdfs:label xml:lang="en">EuPathDB alternative term</rdfs:label>
-        <obo:IAO_0000115>Label used in EuPathDB</obo:IAO_0000115>
-        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
-    </owl:AnnotationProperty>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000112 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000112">
-        <rdfs:label xml:lang="en">EuPathDB definition</rdfs:label>
-        <obo:IAO_0000115>definition shown on EuPathDB website</obo:IAO_0000115>
-        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
-    </owl:AnnotationProperty>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
 
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
         <rdfs:label>definition</rdfs:label>
+        <rdfs:comment>This is the description of terms used for all ICEMR projects and display on the website.
+
+The description of term used by the first ICEMR project will be treated as the ICEMR preferred description to display on the website. Current the order is:
+PRISM description
+Amazoina description (when PRISM ones is not available)</rdfs:comment>
     </rdf:Description>
     
 
@@ -78,21 +62,11 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/ICEMR_0000031 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000031">
-        <rdfs:label xml:lang="en">ICEMR preferred label</rdfs:label>
-        <rdfs:comment>Preferred label used for all ICEMR projects</rdfs:comment>
-        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
-    </owl:AnnotationProperty>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/ICEMR_0000032 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000032">
-        <rdfs:label xml:lang="en">PRISM proferred label (en)</rdfs:label>
-        <rdfs:comment>English label used in Prism project</rdfs:comment>
+        <rdfs:label xml:lang="en">PRISM preferred label (en)</rdfs:label>
+        <rdfs:comment>English label used in Prism project for display on the website</rdfs:comment>
         <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
     </owl:AnnotationProperty>
     
@@ -102,7 +76,7 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000033">
         <rdfs:label xml:lang="en">Amazonia preferred label (en)</rdfs:label>
-        <rdfs:comment>English label used in Amazonia project</rdfs:comment>
+        <rdfs:comment>English label used in Amazonia project for display on the website</rdfs:comment>
         <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
     </owl:AnnotationProperty>
     
@@ -112,7 +86,7 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000034">
         <rdfs:label xml:lang="en">Amazonia preferred label (es)</rdfs:label>
-        <rdfs:comment>Spanish label used in Amazonia project</rdfs:comment>
+        <rdfs:comment>Spanish label used in Amazonia project for display on the website</rdfs:comment>
         <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
     </owl:AnnotationProperty>
     
@@ -134,7 +108,10 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000036">
         <rdfs:label xml:lang="en">ontological label</rdfs:label>
-        <rdfs:comment>label of term used in the ontology</rdfs:comment>
+        <rdfs:comment>label of term used in the ontology
+
+It is only available if the term has a mapped ontology term.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
     </owl:AnnotationProperty>
     
 
@@ -144,6 +121,7 @@
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000037">
         <rdfs:label xml:lang="en">PRISM description</rdfs:label>
         <rdfs:comment>Term description provided by PRISM group</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
     </owl:AnnotationProperty>
     
 
@@ -151,9 +129,54 @@
     <!-- http://purl.obolibrary.org/obo/ICEMR_0000038 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000038">
-        <rdfs:label xml:lang="en">PRISM name</rdfs:label>
-        <rdfs:comment>Label of terms used in PRISM data dictionary including &apos;controlled vocabulary&apos; provided</rdfs:comment>
+        <rdfs:label xml:lang="en">PRISM data dictionary label (en)</rdfs:label>
+        <rdfs:comment>Label of terms used in PRISM data dictionary. It is in English.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
     </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0000167 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000167">
+        <rdfs:label xml:lang="en">Amazonia data dictionary label (es)</rdfs:label>
+        <rdfs:comment>Label of terms used in Amazonia data dictionary. It is in Spanish.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0000168 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000168">
+        <rdfs:label xml:lang="en">Amazonia description</rdfs:label>
+        <rdfs:comment>Term description provided by Amazonia group</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0000169 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000169">
+        <rdfs:label xml:lang="en">ontological definition</rdfs:label>
+        <rdfs:comment>Definition of term in the ontology</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#label -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label">
+        <rdfs:comment>This is the label used for all ICEMR projects and display on the website.
+
+We can compare the hierarchy with the website. It should be exactly same.
+
+The preferred label of the first ICEMR project that used for a term will be treated as the ICEMR preferred label to display on the website. Current the order is:
+PRISM preferred label
+Amazoina preferred label (when PRISM ones is not available)</rdfs:comment>
+    </rdf:Description>
     
 
 
@@ -172,6 +195,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000001">
         <rdfs:label xml:lang="en">Dwelling</rdfs:label>
+        <obo:ICEMR_0000032 xml:lang="en">Dwelling</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -181,6 +205,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000002">
         <rdfs:label xml:lang="en">Participant</rdfs:label>
+        <obo:ICEMR_0000032 xml:lang="en">Participant</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -190,6 +215,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000003">
         <rdfs:label xml:lang="en">Visit</rdfs:label>
+        <obo:ICEMR_0000032 xml:lang="en">Visit</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -200,6 +226,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000004">
         <rdfs:label xml:lang="en">Facilities</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
+        <obo:ICEMR_0000032 xml:lang="en">Facilities</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -211,6 +238,7 @@
         <rdfs:label xml:lang="en">Location Attributes</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Location Attributes</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -220,6 +248,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000006">
         <rdfs:label xml:lang="en">Physical Characteristics</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
+        <obo:ICEMR_0000032 xml:lang="en">Physical Characteristics</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -230,7 +259,9 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000007">
         <rdfs:label xml:lang="en">Socioeconomic Factors</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
+        <obo:ICEMR_0000032 xml:lang="en">Socioeconomic Factors</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <rdfs:comment>Proposed to rename to &apos;household&quot;. So, we can put dangling &apos;household ID&apos; and all household terms under this category, including all &apos;Socioeconomic Factors&apos; and its subclasses.</rdfs:comment>
     </owl:Class>
     
 
@@ -241,6 +272,7 @@
         <rdfs:label xml:lang="en">Assets</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000007"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Assets</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -250,6 +282,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000009">
         <rdfs:label xml:lang="en">Entomological Measurements</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
+        <obo:ICEMR_0000032 xml:lang="en">Entomological Measurements</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -261,6 +294,7 @@
         <rdfs:label xml:lang="en">Anopheles gambiae sl</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000009"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Anopheles gambiae sl</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -270,6 +304,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000011">
         <rdfs:label xml:lang="en">Anopheles funestus</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000009"/>
+        <obo:ICEMR_0000032 xml:lang="en">Anopheles funestus</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -281,6 +316,7 @@
         <rdfs:label xml:lang="en">Sporozoite Testing</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000009"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Sporozoite Testing</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -290,6 +326,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000013">
         <rdfs:label xml:lang="en">Mosquito Parity</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000009"/>
+        <obo:ICEMR_0000032 xml:lang="en">Mosquito Parity</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -300,6 +337,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000014">
         <rdfs:label xml:lang="en">Participant Study Details</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <obo:ICEMR_0000032 xml:lang="en">Participant Study Details</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
         <obo:IAO_0000116>relabeled from Study details</obo:IAO_0000116>
     </owl:Class>
@@ -313,6 +351,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
         <rdfs:comment>relabeled David proposed &apos;study details&apos; by Shon</rdfs:comment>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Participant Details</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -322,6 +361,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000016">
         <rdfs:label xml:lang="en">Participant Genotype</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000015"/>
+        <obo:ICEMR_0000032 xml:lang="en">Participant Genotype</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -333,6 +373,7 @@
         <rdfs:label xml:lang="en">Visit Details</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Visit Details</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -342,6 +383,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000018">
         <rdfs:label xml:lang="en">Reason for Visit</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <obo:ICEMR_0000032 xml:lang="en">Reason for Visit</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
         <rdfs:comment>Current it is subClassOf &apos;Symptoms&apos; in the PRISM website</rdfs:comment>
     </owl:Class>
@@ -352,8 +394,10 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000019">
         <rdfs:label xml:lang="en">Symptoms</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <rdfs:comment>Proposed to be sibling of &apos;Reason for Visit&apos; because it is not always true that patients come to clinic for symptoms they have </rdfs:comment>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Symptoms</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -363,6 +407,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000020">
         <rdfs:label xml:lang="en">Diagnosis</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <obo:ICEMR_0000032 xml:lang="en">Diagnosis</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -373,6 +418,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000021">
         <rdfs:label xml:lang="en">Malaria Status</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000020"/>
+        <obo:ICEMR_0000032 xml:lang="en">Malaria Status</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -384,6 +430,7 @@
         <rdfs:label xml:lang="en">Other diagnoses</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000020"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Other diagnoses</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -394,6 +441,7 @@
         <rdfs:label xml:lang="en">Laboratory Readings</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
+        <obo:ICEMR_0000032 xml:lang="en">Laboratory Readings</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -403,6 +451,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000024">
         <rdfs:label xml:lang="en">Medication</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <obo:ICEMR_0000032 xml:lang="en">Medication</obo:ICEMR_0000032>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
     </owl:Class>
     
@@ -437,16 +486,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000015"/>
         <rdfs:comment>added by Shon</rdfs:comment>
         <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_0000029 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000029">
-        <rdfs:label xml:lang="en">Household</rdfs:label>
-        <obo:ICEMR_0000035>category</obo:ICEMR_0000035>
-        <rdfs:comment>Proposed by Jie, current &apos;household ID&apos; is a dangling term in the PRISM website and it makes more sense to move &apos;Socioeconomic Factors&apos; from Dwelling to here.</rdfs:comment>
+        <obo:ICEMR_0000032 xml:lang="en">Participant Death Details</obo:ICEMR_0000032>
     </owl:Class>
     
 
@@ -455,9 +495,29 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0000030">
         <rdfs:label xml:lang="en">household ID</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000029"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000001"/>
         <obo:ICEMR_0000035>variable</obo:ICEMR_0000035>
     </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000117">
+        <rdfs:comment>not shown in the website</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000218">
+        <rdfs:comment>not shown in the website</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#deprecated">
+        <rdfs:comment>used to indicate whether the term shown on the website</rdfs:comment>
+    </rdf:Description>
 </rdf:RDF>
 
 
