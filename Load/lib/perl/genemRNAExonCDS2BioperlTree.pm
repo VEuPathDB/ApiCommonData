@@ -64,7 +64,7 @@ sub preprocess {
 	    }
 
 	    ## for tRNA and rRNA that do not have gene as parent
-	    if($type eq 'tRNA' || $type eq 'rRNA') {
+	    if($type eq 'tRNA' || $type eq 'rRNA' || $type eq 'snRNA' || $type eq 'snoRNA') {
 	      $geneFeature = $bioperlFeatureTree;
 
 	      my $geneLoc = $geneFeature->location();
