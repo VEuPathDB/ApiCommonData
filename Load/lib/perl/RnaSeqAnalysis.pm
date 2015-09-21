@@ -76,7 +76,7 @@ sub makeProfiles {
 
   my $samples = $self->getSamples();
 
-  my $profileSetName = $self->getProfileSetName();
+  my $profileSetName = $self->getProfileSetName() . " - $featureType - $strand";
 
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
