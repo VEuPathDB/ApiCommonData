@@ -348,7 +348,7 @@ $dbh->disconnect;
 
 sub get_submitter_id {
   my $email = shift;
-  my $sql = "select user_id, email from userlogins3.users where lower(email) = ?";
+  my $sql = "select user_id, email from userlogins5.users where lower(email) = ?";
   my $sth = $userDb->prepare($sql);
   $sth->execute(lc($email));
 
