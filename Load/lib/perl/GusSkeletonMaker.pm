@@ -477,16 +477,15 @@ sub setTranscriptIds{
   my $geneId = $gusGene->getSourceId();
   my @gusTranscripts = $gusGene->getChildren('DoTS::Transcript', 1);
   foreach my $gusTranscript (@gusTranscripts) {
-    #my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence', 1);
-    #my $transcriptSeq = $splicedNaSeq->getSequence();
-    my $transcriptSeq = $gusTranscript->getFeatureSequence();
-    my @gusExonFeatures = sort {$a->order_number <=> $b->order_number} $gusTranscript->getExons();
-    my @ePaths;
 
-    foreach my $gusExonFeat (@gusExonFeatures) {
+    my $transcriptSeq = $gusTranscript->getFeatureSequence();
+
+    ## get exonPath
+    my @ePaths;
+    foreach my $gusExonFeat ($gusTranscript->getExons()) {
       push @ePaths, $gusExonFeat->getOrderNumber();
     }
-    my $exonFeatPath = join (",", @paths);
+    my $exonFeatPath = join (",", sort {$a <=> $b} @ePaths);
 
     my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq}->{$exonFeatPath};
     if ($transcriptId) { ## set transcript ID in gus object
