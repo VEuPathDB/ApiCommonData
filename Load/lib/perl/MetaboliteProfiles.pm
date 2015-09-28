@@ -1,4 +1,4 @@
-package ApiCommonData::Load::MetaboloteProfiles;
+package ApiCommonData::Load::MetaboliteProfiles;
 use base qw(CBIL::TranscriptExpression::DataMunger::Profiles);
 
 use strict;
