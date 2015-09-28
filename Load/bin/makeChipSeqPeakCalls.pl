@@ -57,8 +57,11 @@ if ($experimentType eq 'histonemod') {
 	    }
 	    print STDERR $homerCmd . "\n";
 	    system($homerCmd) == 0 or die "system $homerCmd failed: $?";
-	    
-	    my $peaksFile =  "$workflowDir/$experimentDataDir/peaks/peaks_$sampleName.txt";
+
+            my $peaksFileBasename = "peaks_$sampleName.txt";
+	    my $peaksFile =  "$workflowDir/$experimentDataDir/peaks/$peaksFileBasename";
+
+
 	    open (WFH2, ">$peaksFile") || die "Cannot open $peaksFile for writing\n";
 	    print WFH2 "sequence_source_id\tsegment_start\tsegment_end\tscore1\tscore2\tp_value\n";
 	    open (RFH, "<$workflowDir/$experimentDataDir/analyze_$sampleName/master/mainresult/downstream/$homerOutput") || die "Cannot open $workflowDir/$experimentDataDir/analyze_$sampleName/master/mainresult/downstream/$homerOutput for reading.\n";
@@ -74,7 +77,7 @@ if ($experimentType eq 'histonemod') {
 	    close(WFH2);
 	    close(RFH);
 	    
-	    print WFH1 $sampleName. "_peaks (ChIP-Seq)\t$peaksFile\tsegment\t\tHOMER peak calls\tstyle|histone;fdr|0.001\t$experimentName\n";
+	    print WFH1 $sampleName. "_peaks (ChIP-Seq)\t$peaksFileBasename\tsegment\t\tHOMER peak calls\tstyle|histone;fdr|0.001\t$experimentName\n";
 	}
     }
     close(WFH1);
