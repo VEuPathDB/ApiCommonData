@@ -135,6 +135,8 @@ sub run {
     chomp;
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
+    $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
+
     my $study = $self->makeStudy($studyName);
     $study->setParent($investigation);
 
