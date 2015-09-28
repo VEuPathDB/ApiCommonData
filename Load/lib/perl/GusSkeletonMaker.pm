@@ -468,7 +468,7 @@ sub setTranscriptIds{
       chomp;
       my ($geneId, $transcriptSeq, $exonPath, $exonLocations, $transcriptId) = split(/\t/);
       die "Invalid line in file $postprocessDir/transcriptInfoAndIds:\n$_\n" unless $geneId && $transcriptSeq && $transcriptId;
-      $postprocessDataStore->{$geneId}->{$transcriptSeq} = $transcriptId;
+      $postprocessDataStore->{$geneId}->{$transcriptSeq}->{$exonPath} = $transcriptId;
     }
     $fh->close();
   }
@@ -480,8 +480,15 @@ sub setTranscriptIds{
     #my $splicedNaSeq = $gusTranscript->getParent('DoTS::SplicedNASequence', 1);
     #my $transcriptSeq = $splicedNaSeq->getSequence();
     my $transcriptSeq = $gusTranscript->getFeatureSequence();
+    my @gusExonFeatures = sort {$a->order_number <=> $b->order_number} $gusTranscript->getExons();
+    my @ePaths;
 
-    my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq};
+    foreach my $gusExonFeat (@gusExonFeatures) {
+      push @ePaths, $gusExonFeat->getOrderNumber();
+    }
+    my $exonFeatPath = join (",", @paths);
+
+    my $transcriptId = $postprocessDataStore->{$geneId}->{$transcriptSeq}->{$exonFeatPath};
     if ($transcriptId) { ## set transcript ID in gus object
       $gusTranscript->setSourceId($transcriptId);
     } else {
