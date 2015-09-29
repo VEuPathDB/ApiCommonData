@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = $ARGV[0];
+my $printXML = $ARGV[1];
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initOrthomclAnalysis($propertiesFile, $printXML);
+
+&copyPipelineDirToComputeCluster($mgr);
+
+##############################################################################
+########   Pipeline to map proteomes to existing orthoMCL groups      ########
+##############################################################################
+
+######note: gus.config should point to current orthoMCL instance so that pipe can extract proteins #######
+
+##### params for the ncbi blastp : proteomes to be mapped  vs the orthoMCL proteome set #####
+
+my $blastParams = "-F 'm S' -v 100000 -b 100000 -z 1300000 -e 1e-5";
+
+my $minLength = 10;
+my $maxStopCodonPercent = 20;
+my $fetchSql = "select ot.three_letter_abbrev || '|' || x.source_id,sequence from dots.externalaasequence x, apidb.orthomcltaxon ot where ot.taxon_id = x.taxon_id";
+### copy file of proteomes to be mapped to seqfiles dir from location specified by property =  proteomePath
+&copyProteomeFile($mgr);
+
+&documentBlast($mgr, 'BLASTP', "Protein sequences", "Protein sequences", $blastParams);
+
+### Proteome = proteomes to be mapped, ProteinSeqs = proteins used for existing orthoMCL build 
+&createSimilarityDir($mgr,"Proteome","ProteinSeqs","(\\S+)","$blastParams","blastp", "ncbi", "printSimSeqs");
+
+&createSimilarityDir($mgr,"Proteome","Proteome","(\\S+)","$blastParams","blastp", "ncbi", "printSimSeqs");
+
+####extract proteins from dots.ExternalAASequence table in current orthoMCL instance
+#####&extractProteinSeqs($mgr, "ProteinSeqs", $fetchSql, $minLength, $maxStopCodonPercent);
+
+####copy protein file from the orthoMCL build, extracting was taking far too long
+&copyOrthoMCLProteinsFile($mgr);
+
+&copyFilesToComputeCluster($mgr,"Proteome-ProteinSeqs", "similarity");
+
+&copyFilesToComputeCluster($mgr,"Proteome-Proteome", "similarity");
+
+&copyFilesToComputeCluster($mgr,"ProteinSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"Proteome.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"Proteome","ProteinSeqs","normal");
+
+&startProteinBlastOnComputeCluster($mgr,"Proteome","Proteome","normal");
+
+$mgr->waitForCluster("Proteome-ProteinSeqs blast similarity", "waitProteome-ProteinSeqs");
+
+$mgr->waitForCluster("Proteome-Proteome blast similarity", "waitProteome-Proteome");
+
+&copyFilesFromComputeCluster($mgr,"Proteome-ProteinSeqs", "similarity");
+
+&copyFilesFromComputeCluster($mgr,"Proteome-Proteome", "similarity");
+
+&mapProteomeToGroups($mgr);
+
+&addIdsToGroupsFile($mgr);
+
+&addParalogGroups($mgr);
+
+$mgr->goodbye("Pipeline complete!\n");
+
