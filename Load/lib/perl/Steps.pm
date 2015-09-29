@@ -1000,8 +1000,10 @@ sub copyPipelineDirToComputeCluster {
 
   return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipeline/primary",
-			  "$clusterProjectDir");
+  #system("ssh -2 consign.pmacs.upenn.edu '/bin/bash -login -c | mkdir -p ($clusterReleaseDir/analysis_pipeline/primary/)'");
+  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipeline/primary","$clusterProjectDir");
+
+  #system("ssh -2 consign.pmacs.upenn.edu '/bin/bash -login -c | ln -s $clusterReleaseDir/analysis_pipeline/primary/logs $clusterReleaseDir/analysis_pipeline/primary/data'");
 
   $mgr->{cluster}->runCmdOnCluster("ln -s $clusterReleaseDir/analysis_pipeline/primary/logs $clusterReleaseDir/analysis_pipeline/primary/data");
 
@@ -4494,8 +4496,8 @@ sub startProteinBlastOnComputeCluster {
   return if $mgr->startStep("Starting $name blast on cluster", $signal);
 
   $mgr->endStep($signal);
-
-  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue $ppn";
+  my $clusterCmdMsg = "bsub $ENV{GUS_HOME}/bin/distribjobSubmit $mgr->{clusterDataDir}/logs/${queryFile}-${subjectFile}.log --numNodes NUMBER_OF_NODES --runTime 0 --propFile $mgr->{clusterDataDir}/similarity/${queryFile}-${subjectFile}/input/controller.prop --parallelInit 4 --mpn 8 --q normal 1";
+ # my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue $ppn";
 
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
