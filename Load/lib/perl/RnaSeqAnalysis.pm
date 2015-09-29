@@ -76,7 +76,7 @@ sub makeProfiles {
 
   my $samples = $self->getSamples();
 
-  my $profileSetName = $self->getProfileSetName() . " - $featureType - $strand";
+  my $profileSetName = $self->getProfileSetName() . " [$quantificationType - $strand - $valueType]";
 
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
@@ -84,6 +84,7 @@ sub makeProfiles {
   my $featureTypeSuffix = ".$featureType";
   my $quantificationTypeSuffix = ".$quantificationType";
   my $valueTypeSuffix = ".$valueType";
+
 
 
   my $outputFile = $OUTPUT_FILE_BASE.$featureTypeSuffix.$quantificationTypeSuffix.$strandSuffix.$valueTypeSuffix;
@@ -117,7 +118,7 @@ sub makeProfiles {
   }
   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
 
-  $profile->setDisplaySuffix(" - $quantificationType - $strand");
+  $profile->setDisplaySuffix(" [$quantificationType - $strand - $valueType]");
 
   $profile->setTechnologyType($self->getTechnologyType());
 
