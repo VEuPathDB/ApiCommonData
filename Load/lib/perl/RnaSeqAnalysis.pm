@@ -76,7 +76,7 @@ sub makeProfiles {
 
   my $samples = $self->getSamples();
 
-  my $profileSetName = $self->getProfileSetName() . " [$quantificationType - $strand - $valueType]";
+  my $profileSetName = $self->getProfileSetName();
 
   my $isStrandSpecific = $self->getIsStrandSpecific() ? $self->getIsStrandSpecific() : 'FALSE';
 
