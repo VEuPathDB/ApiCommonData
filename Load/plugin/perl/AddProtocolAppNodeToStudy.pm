@@ -176,4 +176,11 @@ sub run {
   return("Inserted one row in Study::ProtocolAppNode");
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('Study.ProtocolAppNode',
+	 );
+}
+
 1;
