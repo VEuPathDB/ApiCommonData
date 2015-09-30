@@ -5,18 +5,18 @@ use DBI;
 use Getopt::Long;
 
 my %sites = ( 
-              AmoebaDB        => 'amoeba.b25',
-              CryptoDB        => 'cryptodb.b25',
-              PlasmoDB        => 'plasmo.b25',
-              ToxoDB          => 'toxo.b25',
-              TriTrypDB       => 'tritrypdb.b25',
-              FungiDB         => 'fungidb.b25',
-              PiroplasmaDB    => 'piro.b25',
-              MicrosporidiaDB => 'micro.b25',
-              GiardiaDB       => 'giardiadb.b25',
-              TrichDB         => 'trichdb.b25',
-              SchistoDB       => 'schisto.b25',
-              HostDB          => 'hostdb.b25', 
+              AmoebaDB        => 'amoeba.b26',
+              CryptoDB        => 'cryptodb.b26',
+              PlasmoDB        => 'plasmo.b26',
+              ToxoDB          => 'toxo.b26',
+              TriTrypDB       => 'tritrypdb.b26',
+              FungiDB         => 'fungidb.b26',
+              PiroplasmaDB    => 'piro.b26',
+              MicrosporidiaDB => 'micro.b26',
+              GiardiaDB       => 'giardiadb.b26',
+              TrichDB         => 'trichdb.b26',
+              SchistoDB       => 'schisto.b26',
+              HostDB          => 'hostdb.b26', 
             );
 
 
