@@ -19,7 +19,9 @@ if ($prevTranscriptInfoAndIdsFile) {
     my ($geneId, $seq, $pathStr, $locations, $transcriptId) = @t;
     $oldGenes{$geneId} = [] unless $oldGenes{$geneId};
     push(@{$oldGenes{$geneId}}, (seq=>$seq, pathStr=>$pathStr, loc=>$locations));
-    $oldSeq2TransId{$geneId}->{$seq} = $transcriptId;
+
+    ## use array in case there are same transcript seqs for gene, such as E. falciformis
+    push (@{$oldSeq2TransId{$geneId}->{$seq}}, $transcriptId);
     $oldPath2TransId{$geneId}->{$pathStr} = $transcriptId;
   }
   close(OLD);
@@ -31,7 +33,7 @@ my %newGenes;
 while(<NEW>) {
   chomp;
   my @t = split/\t/;
-  die "Invalid line in transcript info file '$transcriptInfoFile':\n$_\n" unless scalar(@t) == 4;
+  die "Invalid line in transcript info file '$transcriptInfoFile':\n$_\n" unless scalar(@t) >= 4;
   my ($geneId, $seq, $pathStr, $locations) = @t;
   my @path = split(/,\s*/, $pathStr);
   $newGenes{$geneId} = [] unless $newGenes{$geneId};
@@ -55,7 +57,10 @@ foreach my $geneId (keys(%newGenes)) {
 
     # first try by seq identity
     foreach my $transcript (@sortedTrans) {
-      my $id = $oldSeq2TransId{$geneId}->{$transcript->{seq}};
+
+      ## use oldSeq2TransId to get transcript ID. In case there are more than one oldSeq2TransId, use oldPath2TransId
+      my $id = (scalar(@{$oldSeq2TransId{$geneId}->{$transcript->{seq}}}) == 1) ? 
+	$oldSeq2TransId{$geneId}->{$transcript->{seq}}[0] : $oldPath2TransId{$geneId}->{$transcript->{pathStr}};
       if ($id) {
 	$transcript->{id} = $id;
 	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
