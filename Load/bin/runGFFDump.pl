@@ -4,38 +4,60 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my %sites = ( 
-              AmoebaDB        => 'amoeba.b26',
-              CryptoDB        => 'cryptodb.b26',
-              PlasmoDB        => 'plasmo.b26',
-              ToxoDB          => 'toxo.b26',
-              TriTrypDB       => 'tritrypdb.b26',
-              FungiDB         => 'fungidb.b26',
-              PiroplasmaDB    => 'piro.b26',
-              MicrosporidiaDB => 'micro.b26',
-              GiardiaDB       => 'giardiadb.b26',
-              TrichDB         => 'trichdb.b26',
-              SchistoDB       => 'schisto.b26',
-              HostDB          => 'hostdb.b26', 
-            );
-
-
-my ($user, $pass, $commit);
+my ($user, $pass, $project, $version, $commit);
 
 my $usage =<<EOL;
-to test: runGFFDump.pl -u username -p password
-to run:  runGFFDump.pl -u username -p password -commit 
+to test: runGFFDump.pl -u username -p password -c project -v release_version
+to run:  runGFFDump.pl -u username -p password -c project -v release_version -commit 
+
+example: runGFFDump.pl -u username -p password -c ToxoDB -v 26 -commit
+         runGFFDump.pl -u username -p password -c ToxoDB,PlasmoDB,FungiDB -v 26 -commit
+         runGFFDump.pl -u username -p password -c ALL -v 26 -commit 
+
+note: 1. need username and password since they will replace the ones from model-config
+      2. release version will be number only, such as 26 
 EOL
 
 &GetOptions( 'u=s'      => \$user,
              'p=s'      => \$pass,
+             'c=s'      => \$project,
+             'v=s'      => \$version,
              'commit!'  => \$commit
            );
 
-die $usage unless $user && $pass;
+die $usage unless $user && $pass && $project && $version;
 
+my %all_sites = ( 
+              AmoebaDB        => "amoeba.b$version",
+              CryptoDB        => "cryptodb.b$version",
+              PlasmoDB        => "plasmo.b$version",
+              ToxoDB          => "toxo.b$version",
+              TriTrypDB       => "tritrypdb.b$version",
+              FungiDB         => "fungidb.b$version",
+              PiroplasmaDB    => "piro.b$version",
+              MicrosporidiaDB => "micro.b$version",
+              GiardiaDB       => "giardiadb.b$version",
+              TrichDB         => "trichdb.b$version",
+              SchistoDB       => "schisto.b$version",
+              HostDB          => "hostdb.b$version", 
+            );
+
+my %sites;
 my %dbs; 
 my %workflowVersion;
+
+if($project =~ /all/i) {
+  %sites = %all_sites;
+} else {
+  foreach my $p (split /,/, $project) {
+    if(!exists $all_sites{$p}) {
+      print "Error: no $p, please check the project name.\n" and exit;
+    } else {
+      $sites{$p} = $all_sites{$p};
+      print "You're going to run gffDump on $p\n";
+    }
+  }
+}
 
 # step 1: copy lastest configs from oak.pcbi.upenn.edu, e.g. /var/www/FungiDB/fungidb.b25/gus_home/config/FungiDB/
 
