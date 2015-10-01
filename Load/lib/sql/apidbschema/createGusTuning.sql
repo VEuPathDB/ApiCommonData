@@ -376,6 +376,7 @@ create table Results.CompoundMassSpec
     PROTOCOL_APP_NODE_ID   number(10) not null,
     compound_id            number(12) not null,
     value                  float(126),
+    STANDARD_ERROR         float(126),
     isotopomer            varchar2(100),
     MODIFICATION_DATE     date not null,
     USER_READ             number(1) not null,
