@@ -7,6 +7,7 @@ use Getopt::Long;
 my ($user, $pass, $project, $version, $commit);
 
 my $usage =<<EOL;
+** need to bld ApiCommonWebsite and other related projects first **
 to test: runGFFDump.pl -u username -p password -c project -v release_version
 to run:  runGFFDump.pl -u username -p password -c project -v release_version -commit 
 
@@ -64,6 +65,7 @@ if($project =~ /all/i) {
 while(my ($db, $bld) = each %sites) {
 
   my $cmd = "scp oak.pcbi.upenn.edu:/var/www/$db/$bld/gus_home/config/$db/* $ENV{GUS_HOME}/config/$db";
+  print "running $cmd\n";
   system($cmd) if $commit;
 }
 
@@ -155,5 +157,6 @@ while(my ($site, $db) = each %dbs) {
   $dbh->disconnect;
 
   my $cmd = "gffDumpMgr --configFile $site.config >$site.out 2>$site.err";
+  print "running $cmd\n";
   system($cmd) if $commit;
 }
