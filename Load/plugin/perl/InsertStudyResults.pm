@@ -205,7 +205,7 @@ sub addResults {
   elsif ($protocolName =~ /cghArrayQuantification/ ) {
     $tableString = "Results::ReporterIntensity";
   }
-  elsif ($protocolName =~ /chipChipSmoothed/ || $protocolName =~ /chipChipPeaks/) {
+  elsif ($protocolName =~ /chipChipSmoothed/ || $protocolName =~ /chipChipPeaks/ || $protocolName =~ /HOMER peak calls/) {
     $tableString = "Results::SegmentResult";
   } 
   elsif ($protocolName =~ /MetaboliteProfiles/) {
