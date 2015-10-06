@@ -286,7 +286,8 @@ sub traverseSeqFeatures {
 
 	    $transcript->add_tag_value("ID", $rnaID);
 	    $transcript = &copyQualifiers($RNA, $transcript);
-
+	    $transcript->add_tag_value("pseudo", "") if ($geneFeature->has_tag("pseudo"));
+	    $transcript->add_tag_value("partial", "") if ($geneFeature->has_tag("fiveEndPartial") || $geneFeature->has_tag("threeEndPartial"));
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 	    my $codonStart = 0;
