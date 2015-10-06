@@ -173,6 +173,8 @@ sub run {
   $studyLink->setParent($gusStudy);
   $studyLink->setParent($pan);
 
+  $pan->submit();
+
   return("Inserted one row in Study::ProtocolAppNode");
 }
 
