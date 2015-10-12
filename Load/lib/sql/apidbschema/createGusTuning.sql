@@ -24,9 +24,6 @@ alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(
 
 -- indexes on GUS tables
 
-create index dots.AaSeq_source_ix
-  on dots.AaSequenceImp (lower(source_id)) tablespace INDX;
-
 --create index dots.NaFeat_alleles_ix
 --  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
 --  tablespace INDX;
