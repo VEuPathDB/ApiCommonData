@@ -638,6 +638,9 @@ sub validateCodingSequenceLength {
 
 		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
 		    $warning = "***WARNING********* ";
+		    if ($translatedAAFeat->{bioperlTranscript}->has_tag('stop_codon_redefined_as_selenocysteine') ) {
+		      $warning .= "selenoprotein ";
+		    }
 		    if ($transcript->getIsPartial()){
 		      $warning .= "Partial transcript ";
 		    }
@@ -742,7 +745,9 @@ sub validateGene {
 
 	    if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
 	      $warning = "***WARNING********* ";
-	      $warning .= "selenoprotein " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
+	      $warning .= "selenoprotein " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') 
+					      || $translatedAAFeat->{bioperlTranscript}->has_tag('stop_codon_redefined_as_selenocysteine') );
+
 	      $warning .= "Pseudo " if ($transcript->getIsPseudo());
 	      $warning .= "Partial " if ($transcript->getIsPartial());
 
