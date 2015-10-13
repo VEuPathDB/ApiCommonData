@@ -917,11 +917,12 @@ So, several values are kind of routine visit</rdfs:comment>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000120">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at time of enrollment</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
         <obo:ICEMR_0000028 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2.2.1</obo:ICEMR_0000028>
         <obo:EUPATH_0000112 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of study participant&apos;s birth</obo:EUPATH_0000112>
         <obo:ICEMR_0000037 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of study participant&apos;s birth</obo:ICEMR_0000037>
         <obo:ICEMR_0000035 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:ICEMR_0000035>
+        <rdfs:comment>move sex from &quot;Participant Details&quot;, proposed by Brian</rdfs:comment>
         <obo:ICEMR_0000032 xml:lang="e">Age at time of enrollment</obo:ICEMR_0000032>
         <obo:ICEMR_0000038 xml:lang="e">age</obo:ICEMR_0000038>
     </owl:Class>
@@ -2635,10 +2636,11 @@ values can only be yes or no.</rdfs:comment>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
         <obo:ICEMR_0000028 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2.2.3</obo:ICEMR_0000028>
         <obo:ICEMR_0000036 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">biological sex</obo:ICEMR_0000036>
         <obo:ICEMR_0000035 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:ICEMR_0000035>
+        <rdfs:comment>move sex from &quot;Participant Details&quot;, proposed by Brian</rdfs:comment>
         <obo:ICEMR_0000032 xml:lang="e">Sex</obo:ICEMR_0000032>
         <obo:ICEMR_0000038 xml:lang="e">gender</obo:ICEMR_0000038>
     </owl:Class>
@@ -2725,9 +2727,10 @@ values can only be yes or no.</rdfs:comment>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/TEMP_00001">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria diagnosis</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000021"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_10000"/>
         <obo:ICEMR_0000028 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3.3.1.2</obo:ICEMR_0000028>
         <obo:ICEMR_0000035 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:ICEMR_0000035>
+        <rdfs:comment>Malaria Status and Medication derived from this variable</rdfs:comment>
         <obo:ICEMR_0000032 xml:lang="e">Malaria diagnosis</obo:ICEMR_0000032>
         <obo:ICEMR_0000038 xml:lang="e">malaria</obo:ICEMR_0000038>
     </owl:Class>
@@ -2738,11 +2741,12 @@ values can only be yes or no.</rdfs:comment>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/TEMP_00002">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood smear status</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000023"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_10000"/>
         <obo:ICEMR_0000028 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3.4.3</obo:ICEMR_0000028>
         <obo:EUPATH_0000112 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria cat</obo:EUPATH_0000112>
         <obo:ICEMR_0000037 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria cat</obo:ICEMR_0000037>
         <obo:ICEMR_0000035 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:ICEMR_0000035>
+        <rdfs:comment>Malaria status and Blood smear reading (+/-) derived from this variable</rdfs:comment>
         <obo:ICEMR_0000032 xml:lang="e">Blood smear status</obo:ICEMR_0000032>
         <obo:ICEMR_0000038 xml:lang="e">malariacat</obo:ICEMR_0000038>
     </owl:Class>
@@ -2793,6 +2797,16 @@ values can only be yes or no.</rdfs:comment>
         <obo:ICEMR_0000035 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:ICEMR_0000035>
         <obo:ICEMR_0000032 xml:lang="e">Admitting hospital</obo:ICEMR_0000032>
         <obo:ICEMR_0000038 xml:lang="e">admitting hospital</obo:ICEMR_0000038>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TEMP_10000 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/TEMP_10000">
+        <rdfs:label xml:lang="en">obsolete variables</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <rdfs:comment>PRISM variable under this category contains values of mixed types. Several new variables derived from the PRISM one. So, the PRISM variable can be used to validate query results. They can be considered to remove.</rdfs:comment>
     </owl:Class>
     
 
