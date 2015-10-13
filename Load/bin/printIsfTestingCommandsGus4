@@ -99,7 +99,7 @@ if ($format =~ /gff/i) {
 ## print post load validation
 print "postLoadIsfQA --organismAbbrev $organismAbbrev --extDbName $dbName --extDbRlsVer $dbVer > postLoadQA.txt 2>&1 &\n\n";
 
-print "createGenbankTableFile --organismAbbrev $organismAbbrev --extDbName $dbName --extDbRlsVer $dbVer\n\n";
+print "gus4CreateGenbankTableFile --organismAbbrev $organismAbbrev --extDbName $dbName --extDbRlsVer $dbVer\n\n";
 print "tbl2asn -p $organismAbbrev -t ~/template.sbt -V v -Z $organismAbbrev/discrep\n\n";
 
 
