@@ -195,7 +195,8 @@ sub readGenBankFile {
         next if ($title eq "" || $title =~ /Direct Submission/i);
 
         my $location = $value->location;
-        my ($pmid) = $location =~ /PUBMED\s+(\d+)/;
+        #my ($pmid) = $location =~ /PUBMED\s+(\d+)/;
+        my ($pmid) = $value->pubmed;
         if($pmid) {
           push @{$studyHash{$title}{pmid}}, $pmid; 
         }
