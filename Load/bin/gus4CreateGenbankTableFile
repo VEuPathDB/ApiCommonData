@@ -234,25 +234,25 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	}
 	print TBL "\t\t\tlocus_tag\t$gSourceId\n";
 
-	## print product info for CDS
-	($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
+	if ($tIsPseudo != 1) {
+	  ## print product info for CDS
+	  ($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
 
-	## get transl_table info
-	print TBL "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
+	  ## get transl_table info
+	  print TBL "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
 
-	## need to print condon_start if $prefix5
-	print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
+	  ## need to print condon_start if $prefix5
+	  print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
 
-	## add protein sequence if mRNA
-	my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
+	  ## add protein sequence if mRNA
+	  my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
  (select aa_sequence_id from DOTS.translatedaafeature where na_feature_id in
  (select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId ) )";
-	my $proteinSeqRef = readFromDatabase($dbh, $sqlProteinSeq);
+	  my $proteinSeqRef = readFromDatabase($dbh, $sqlProteinSeq);
 
-	## only take the 1st translatedaaseqeunce 
-	## TODO -- find an example in genbank file that have more than one translation for one transcript
-	my $proteinSeq = $proteinSeqRef->[0];
-	if ($tIsPseudo != 1) {
+	  ## only take the 1st translatedaaseqeunce 
+	  ## TODO -- find an example in genbank file that have more than one translation for one transcript
+	  my $proteinSeq = $proteinSeqRef->[0];
 	  ($proteinSeq) ? print TBL "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
 	}
 
@@ -323,7 +323,7 @@ sub usage {
   die
 "
 A script to create genbank feature table file, .tbl
-Usage:  perl createGenbankTableFile --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
+Usage:  gus4CreateGenbankTableFile --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
 
 NOTE: the output is a set of files ending with .fsa and .tbl,
       So it is better to run it in a subdirectory.
