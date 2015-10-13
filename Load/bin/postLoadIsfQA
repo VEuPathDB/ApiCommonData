@@ -329,7 +329,7 @@ while (my ($sourceId) = $stmt->fetchrow_array()) {
   my %exonLocations;
 
 my $sqll = <<SQL;
-  select t.source_id, ef.source_id, nl.start_min, nl.end_max
+  select t.source_id, ef.source_id, nl.start_min, nl.end_max, t.IS_PSEUDO 
 from Dots.transcript t, DOTS.rnafeatureexon rfe, DOTS.exonfeature ef, DOTS.nalocation nl 
 where t.na_feature_id=rfe.rna_feature_id and rfe.exon_feature_id=ef.na_feature_id 
 and nl.na_feature_id=ef.na_feature_id and t.external_database_release_id=$extDbRlsId and t.source_id like '$sourceId' 
@@ -339,8 +339,10 @@ SQL
   my $stmtt = $dbh->prepare($sqll);
   $stmtt->execute();
 
-  while (my ($tSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
+  my $tIsPseudo;
+  while (my ($tSourceId, $efSourceId, $nlStartMin, $nlEndMax, $isPseudo) = $stmtt->fetchrow_array() ) {
     $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax" if ($nlStartMin && $nlEndMax && $efSourceId && $tSourceId);
+    $tIsPseudo = $isPseudo;
   }
   $stmtt->finish();
   $c++;
@@ -355,7 +357,10 @@ SQL
 	  $preStartMin = $start;
 	  $preEndMax = $end;
 	} else {
-	  print STDERR "ERROR... overlapped exons found.\ndouble check the transcript '$k', exon '$kk' ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	  my $ems = "ERROR... overlapped exons found.\ndouble check ";
+	  $ems .= "Pseudo " if ($tIsPseudo == 1);
+	  $ems .= "transcript '$k', exon '$kk' ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	  print STDERR $ems;
 	}
       } else {
 	$preExonId = $kk;
