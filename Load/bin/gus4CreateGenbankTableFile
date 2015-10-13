@@ -1,0 +1,337 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+use Getopt::Long;
+
+use Data::Dumper;
+use FileHandle;
+use HTTP::Date;
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
+
+my ($date, ) = split(" ", HTTP::Date::time2iso());
+$date = join("",split(/-/,$date));
+
+my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer);
+
+&GetOptions('help|h' => \$help,
+            'organismAbbrev=s' => \$organismAbbrev,
+            'extDbName=s' => \$extDbName,
+            'extDbRlsVer=s' => \$extDbRlsVer,
+           );
+
+&usage() if($help);
+
+&usage("Missing a Required Argument") unless (defined $organismAbbrev);
+&usage("Missing Required Argument") unless (defined ($extDbName && $extDbRlsVer) );
+
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+my $u = $gusconfig->{props}->{databaseLogin}; 
+my $pw = $gusconfig->{props}->{databasePassword}; 
+my $dsn = $gusconfig->{props}->{dbiDsn}; 
+my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+$dbh->{RaiseError} = 1;
+$dbh->{LongTruncOk} = 1;
+$dbh->{LongReadLen} = 512 * 512 * 1024;
+
+## get the extDbRlsId
+my $extDbRlsId;
+my $sqlExtDbRlsId = "
+select edr.external_database_release_id from sres.externaldatabase ed, sres.externaldatabaserelease edr 
+where ed.external_database_id=edr.external_database_id and ed.name like '$extDbName' and edr.version='$extDbRlsVer'
+";
+my $extDbRlsIdRef = readFromDatabase($dbh, $sqlExtDbRlsId);
+$extDbRlsId = $extDbRlsIdRef->[0];
+print STDERR "For $organismAbbrev, get extDbRlsId=$extDbRlsId\n";
+
+## get the sequence info
+my (%sSequences, %sChrs, %sChrOrders, %taxonIds, %sLengths, %naSeqIds);
+my $sqlSeqsInfo = "select na_sequence_id, taxon_id, source_id, chromosome, chromosome_order_num, length, sequence
+ from DOTS.externalnasequence where external_database_release_id=$extDbRlsId
+";
+my $seqsInfoRef = readFromDatabase($dbh, $sqlSeqsInfo);
+foreach my $i (0..$#$seqsInfoRef) {
+  my ($naSeqId, $taxonId, $sSeqId, $sChr, $sChrOrder, $sLength, $sSeq) = split(/\t/, $seqsInfoRef->[$i]);
+  if ($naSeqId && $sSeqId && $sSeq) {
+    $sSequences{$sSeqId} = $sSeq;
+    $sChrs{$sSeqId} = $sChr;
+    $sChrOrders{$sSeqId} = $sChrOrder;
+    $taxonIds{$sSeqId} = $taxonId;
+    $sLengths{$sSeqId} = $sLength;
+    $naSeqIds{$sSeqId} = $naSeqId;
+  }
+}
+
+## for each sequence
+foreach my $k (sort keys %naSeqIds) {
+
+  ## print the sequence file
+  my $faFile = $k.".fsa";
+  open (FA, ">$faFile") || die "can not open $faFile to write\n";
+  my $defline = ">$k";
+  my $sqlOrganism = "select t.ncbi_tax_id, tn.name from SRES.taxon t, SRES.taxonname tn 
+where t.taxon_id=tn.taxon_id and t.taxon_id=$taxonIds{$k}";
+  my $organismRef = readFromDatabase($dbh, $sqlOrganism);
+  my ($ncbiTaxId, $organism) = split(/\t/, $organismRef->[0]);
+
+  $defline .= " [organism=$organism]" if ($organism);
+  $defline .= " [chromosome=$sChrs{$k}]" if ($sChrs{$k});
+  $defline .= " \n";
+  print FA "$defline";
+  print FA "$sSequences{$k}\n";
+  close FA;
+
+
+  ## print the tbl file
+  my $tblFile = $k.".tbl";
+  open (TBL, ">$tblFile") || die "can not open $tblFile to write\n";
+  print TBL "\>Feature\t$k\n";
+
+  ## print source -- this is optional
+  print TBL "1\t$sLengths{$k}\tsource\t\t\n";
+  print TBL "\t\t\torganism\t$organism\n";
+  print TBL "\t\t\tdb_xref\ttaxon:$ncbiTaxId\n";
+
+  ## if genbank submission, need grep more info here, such as 
+
+  ## get the genes in the sequence
+  my $sqlGene = "select gf.source_id, gf.na_feature_id, gf.name, nl.start_min, nl.end_max, nl.is_reversed
+from dots.genefeature gf, DOTS.nalocation nl
+where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqIds{$k}
+and gf.external_database_release_id=$extDbRlsId order by nl.start_min
+";
+
+  my $geneRef = readFromDatabase($dbh, $sqlGene);
+  foreach my $j (0..$#$geneRef) {
+    my ($gSourceId, $gNaFeatureId, $gType, $gStart, $gEnd, $gStrand) = split(/\t/, $geneRef->[$j]);
+    $gType =~ s/\_gene//g;
+    $gType = "mRNA" if ($gType !~ /RNA/i);   ## in the case of coding_gene or pseudo_gene
+
+    ## FOR GENE
+    ## get if partial info
+    my (%prefix5, %prefix3);
+    if ($gType eq 'mRNA') {
+
+      ## get the spliced na sequence
+#      my $sqlSplicedNaSeq = "select sequence from DOTS.splicednasequence where na_sequence_id in (
+#select na_sequence_id from dots.transcript where parent_id=$gNaFeatureId)";
+      my $sqlSplicedNaSeq = "select t.SOURCE_ID, t.na_feature_id, sns.sequence 
+from dots.transcript t, DOTS.splicednasequence sns 
+where t.na_sequence_id = sns.NA_SEQUENCE_ID and t.PARENT_ID=$gNaFeatureId
+";
+      my $splicedNaSeqRef = readFromDatabase($dbh, $sqlSplicedNaSeq);
+
+      foreach my $j (0..$#$splicedNaSeqRef) {
+	my ($tSourceId, $tNaFeatureId, $splicedNaSeq) = split (/\t/, $splicedNaSeqRef->[$j]);
+
+	## get translation_start and translation_end
+	my $sqlTranslatLoc = "select taf.translation_start, taf.translation_stop 
+from DOTS.translatedaafeature taf, dots.transcript t 
+where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
+";
+
+	my $translatLocRef = readFromDatabase($dbh, $sqlTranslatLoc);
+	my ($trsltStart, $trsltEnd) = split(/\t/, $translatLocRef->[0]);
+
+	## the sequences in dots.splicednasequence, the reversed strands have been upcased and reversed & complement
+	## so do not need to deal with strand here
+	my @codons;
+	for (my $j=$trsltStart-1; $j<$trsltEnd-1; $j+=3) {
+	  push @codons, substr($splicedNaSeq, $j, 3);
+	}
+	my $first_codon = shift(@codons);
+	$prefix5{$gNaFeatureId} = "<" if ($first_codon ne 'ATG');
+	$prefix5{$tNaFeatureId} = "<" if ($first_codon ne 'ATG');
+
+	my $last_codon = pop @codons;
+	$prefix3{$gNaFeatureId} = ">" if ( !($last_codon eq 'TAA' || $last_codon eq 'TAG' || $last_codon eq 'TGA') );
+	$prefix3{$tNaFeatureId} = ">" if ( !($last_codon eq 'TAA' || $last_codon eq 'TAG' || $last_codon eq 'TGA') );
+
+	#print STDERR "$gSourceId\t$first_codon\t$last_codon\n" if ($gSourceId eq 'EAH_00051170');
+      }
+    }
+
+    ## print gene
+    ($gStart, $gEnd) = addLocPrefix($gStrand, $gStart, $gEnd, $prefix5{$gNaFeatureId}, $prefix3{$gNaFeatureId});
+
+    ($gStrand != 1) ? print TBL "$gStart\t$gEnd\tgene\t\t\n" : print TBL "$gEnd\t$gStart\tgene\t\t\n";
+    print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+
+
+    ## FOR TRANSCRIPT
+    ## get the codon_start
+    my $codonStart = 1;
+    my (@cdsPairs, $cdsPairsString);
+
+    my $sqlTranscriptRef = "select na_feature_id, source_id, is_pseudo, TRANSL_TABLE from dots.transcript where PARENT_ID=$gNaFeatureId";
+    my $transcriptRef = readFromDatabase($dbh, $sqlTranscriptRef);
+    foreach my $m (0..$#$transcriptRef) {
+      my ($tNaFeatureId, $tSourceId, $tIsPseudo, $tTranslTable) = split(/\t/, $transcriptRef->[$m]);
+
+      ## get product info
+      my $sqlProduct = "select product from APIDB.genefeatureproduct where na_feature_id=$tNaFeatureId";
+      my $productRef = readFromDatabase($dbh, $sqlProduct);
+      my $product = $productRef->[0];
+
+      ## get the transcript position from coding_start and coding_end in dots.aaFeatureExon table
+      my $sqlExonLocRef = "select rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END
+from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.AAFEATUREEXON afe, DOTS.TRANSLATEDAAFEATURE taf, DOTS.NALOCATION nl
+where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
+and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_FEATURE_ID=afe.AA_FEATURE_ID and afe.EXON_FEATURE_ID=ef.NA_FEATURE_ID
+and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
+
+      my $exonLocRef = readFromDatabase($dbh, $sqlExonLocRef);
+      my $cdsCtr = 0;
+      foreach my $i (0..$#$exonLocRef) {
+	my ($order, $tStart, $tEnd, $cStart, $cEnd) = split(/\t/, $exonLocRef->[$i]);
+
+	## deal with codonStart and CDS
+	if ($cStart && $cEnd) {
+	  my $shift = 0;
+	  if ($gStrand == 0) {
+	    $shift = abs($tStart - $cStart);
+	  } else {
+	    $shift = abs($tEnd - $cStart);
+	  }
+	  if ($shift > 0 && $shift < 3 && $cdsCtr == 0 && $prefix5{$tNaFeatureId}) {
+	    $codonStart += $shift;
+	    $cStart = ($gStrand == 0) ? ($cStart - $shift) : ($cStart + $shift);
+	  }
+	  $cdsPairsString = "$order\t$cStart\t$cEnd";
+	  push (@cdsPairs, $cdsPairsString);
+	  $cdsCtr++;
+	  #print "after, $tStart, $tEnd, $cStart, $cEnd, $shift, $codonStart\n" if ($gNaFeatureId eq "45637516" || $gNaFeatureId eq "45647687");
+	}
+
+	## need to add start and end seperately
+	($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, $prefix5{$tNaFeatureId}, '') if ($i == 0 && $prefix5{$tNaFeatureId});
+	($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, '', $prefix3{$tNaFeatureId}) if ($i == $#$exonLocRef && $prefix3{$tNaFeatureId});
+
+	if ($i == 0) {
+	  ($gStrand != 1) ? print TBL "$tStart\t$tEnd\t$gType\t\t\n" : print TBL "$tEnd\t$tStart\t$gType\t\t\n";
+	} else {
+	  ($gStrand != 1) ? print TBL "$tStart\t$tEnd\t\t\t\n" : print TBL "$tEnd\t$tStart\t\t\t\n";
+	}
+	print TBL "\t\t\tlocus_tag\t$gSourceId\n" if ($i == $#$exonLocRef);
+
+      }
+
+      if ($gType =~ /mRNA/) {
+
+	## print CDS
+	foreach my $i (0..$#cdsPairs) {
+	  my ($order, $cStart, $cEnd) = split(/\t/, $cdsPairs[$i]);
+	  $cStart = $prefix5{$tNaFeatureId}.$cStart if ($i == 0 && $prefix5{$tNaFeatureId});
+	  $cEnd = $prefix3{$tNaFeatureId}.$cEnd if ($i == $#cdsPairs && $prefix3{$tNaFeatureId});
+	  ($i == 0) ? print TBL "$cStart\t$cEnd\tCDS\t\t\n" : print TBL "$cStart\t$cEnd\t\t\t\n";
+	}
+	print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+
+	## print product info for CDS
+	($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
+
+	## get transl_table info
+	print TBL "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
+
+	## need to print condon_start if $prefix5
+	print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
+
+	## add protein sequence if mRNA
+	my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
+ (select aa_sequence_id from DOTS.translatedaafeature where na_feature_id in
+ (select na_feature_id from DOTS.transcript where parent_id=$gNaFeatureId ) )";
+	my $proteinSeqRef = readFromDatabase($dbh, $sqlProteinSeq);
+
+	## only take the 1st translatedaaseqeunce 
+	## TODO -- find an example in genbank file that have more than one translation for one transcript
+	my $proteinSeq = $proteinSeqRef->[0];
+	if ($tIsPseudo != 1) {
+	  ($proteinSeq) ? print TBL "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
+	}
+
+      } else {
+
+	my $ncRNA_class;
+	if ($gType =~ /ncRNA/) {
+	  ($ncRNA_class) ? print TBL "\t\t\tncRNA_class\t$ncRNA_class\n" : print TBL "\t\t\tncRNA_class\tother\n";
+	}
+
+	## print exon if not mRNA
+	foreach my $i (0..$#$exonLocRef) {
+	  foreach my $m (0..$#$exonLocRef) {
+	    my ($eOrder, $eStart, $eEnd) = split(/\t/, $exonLocRef->[$m]);
+	    $eStart = $prefix5{$tNaFeatureId}.$eStart if ($m == 0);
+	    $eEnd = $prefix3{$tNaFeatureId}.$eEnd if ($m == $#$exonLocRef);
+	    if ($m == 0) {
+	      ($gStrand != 1) ? print TBL "$eStart\t$eEnd\texon\t\t\n" : print TBL "$eEnd\t$eStart\texon\t\t\n";
+	    }else{
+	      ($gStrand != 1) ? print TBL "$eStart\t$eEnd\t\t\t\n" : print TBL "$eEnd\t$eStart\t\t\t\n";
+	    }
+	  }
+	}
+	print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+
+	## print product info for non mRNA 
+	($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
+
+      }
+
+      ## print is_pseudo info
+      print TBL "\t\t\tpseudo\n" if ($tIsPseudo == 1);
+    }
+  }
+  close TBL;
+  print STDERR "done $k\n";
+} ## end of foreach sequence
+
+
+#####################
+
+sub readFromDatabase {
+  my ($dbh, $sql) = @_;
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute;
+  my (@arrays);
+  while (my @fetchs = $stmt->fetchrow_array()) {
+    my $oneline= $fetchs[0];
+    foreach my $i (1..$#fetchs) {
+      $oneline .= "\t$fetchs[$i]";
+    }
+    push @arrays, $oneline;
+  }
+  $stmt->finish();
+  return \@arrays;
+}
+
+sub addLocPrefix {
+  my ($strand, $start, $end, $prefix5, $prefix3) = @_;
+  if ($strand == 1) {
+    return "$prefix3".$start, "$prefix5".$end;
+  } else {
+    return "$prefix5".$start, "$prefix3".$end;
+  }
+}
+
+sub usage {
+  die
+"
+A script to create genbank feature table file, .tbl
+Usage:  perl createGenbankTableFile --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
+
+NOTE: the output is a set of files ending with .fsa and .tbl,
+      So it is better to run it in a subdirectory.
+NOTE: the GUS_HOME should point to the instance that the annotation has been loaded
+
+where
+  --organismAbbrev: the organism Abbrev in the table apidb.organism
+  --extDbName: the external database name for loading genome and annoation
+  --extDbRlsVer: the external database release version for loading genome and annotation
+";
+}
