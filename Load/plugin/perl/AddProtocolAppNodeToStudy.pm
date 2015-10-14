@@ -181,7 +181,8 @@ sub run {
 sub undoTables {
   my ($self) = @_;
 
-  return ('Study.ProtocolAppNode',
+  return ('Study.StudyLink',
+          'Study.ProtocolAppNode',
 	 );
 }
 
