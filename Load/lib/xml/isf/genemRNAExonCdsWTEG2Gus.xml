@@ -11,13 +11,12 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Dbxref"         ignore="true"/>
     <qualifier name="LocusTag"         ignore="true"/>
     <qualifier name="WebId"         ignore="true"/>
@@ -28,15 +27,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="isPseudo"      ignore="true"/>
+    <qualifier name="isPartial"     ignore="true"/>
   </feature>
 
   <feature name="repeated_gene" so="repeat_region">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Dbxref"         ignore="true"/>
     <qualifier name="LocusTag"         ignore="true"/>
     <qualifier name="WebId"         ignore="true"/>
@@ -47,15 +45,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="isPseudo"      ignore="true"/>
+    <qualifier name="isPartial"     ignore="true"/>
   </feature>
 
   <feature name="transposable_element_gene" so="transposable_element_gene">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Dbxref"         ignore="true"/>
     <qualifier name="LocusTag"         ignore="true"/>
     <qualifier name="WebId"         ignore="true"/>
@@ -66,12 +63,18 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="product" ignore="true"/>
     <qualifier name="description" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="isPseudo"      ignore="true"/>
+    <qualifier name="isPartial"     ignore="true"/>
   </feature>
 
   <feature name="transcript">
+    <qualifier name="ID"           column="source_id"/>
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
@@ -86,7 +89,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref"         ignore="true"/>
@@ -100,7 +103,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref"         ignore="true"/>
@@ -114,7 +117,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
@@ -124,7 +127,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
@@ -134,7 +137,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
  
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
@@ -144,7 +147,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
@@ -153,7 +156,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="misc_RNA_gene" so="misc_RNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
