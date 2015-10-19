@@ -312,7 +312,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: duplicated exons found.\n  $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
+  print STDERR "ERROR: duplicated exons found on $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
 }
 $stmt->finish();
 
@@ -357,16 +357,17 @@ SQL
 	  $preStartMin = $start;
 	  $preEndMax = $end;
 	} else {
-	  my $ems = "ERROR... overlapped exons found.\ndouble check ";
+	  my $ems = "ERROR... overlapped exons found on ";
 	  $ems .= "Pseudo " if ($tIsPseudo == 1);
-	  $ems .= "transcript '$k', exon '$kk' ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+	  $ems .= "transcript $k, exon $kk ($start..$end) and $preExonId ($preStartMin..$preEndMax)\n";
 	  print STDERR $ems;
 	}
-      } else {
+      }
+# else {
 	$preExonId = $kk;
 	$preStartMin = $start;
 	$preEndMax = $end;
-      }
+#      }
     }
   }
 }
