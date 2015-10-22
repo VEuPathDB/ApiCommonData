@@ -517,6 +517,7 @@ sub undoTables {
     'Results.NAFeatureDiffResult',
     'Results.ReporterIntensity',
     'Results.SegmentResult',
+    'Results.NAFeatureHostResponse',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
