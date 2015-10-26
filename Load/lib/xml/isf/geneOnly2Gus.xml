@@ -1,0 +1,336 @@
+<!--
+The feature and qualifier names to use here follow those set by BioPerl's
+tree structure and any reshaping/renaming done by bioperlSeqPreprocessor, not
+necessarily by what's defined in the input (eg. Genbank) file
+-->
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::geneOnly2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
+
+  <!-- genbank feature CDS reshaped to coding_gene -->
+  <feature name="coding_gene" so="protein_coding">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="desciption" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="orf_classification"         ignore="true"/>
+    <qualifier name="parentID"          ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="Scaff" ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="Type" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+
+  <feature name="transcript">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    ignore="true"/>
+    <qualifier name="CodingEnd"      ignore="true"/>
+    <qualifier name="OrderNumber"    ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="ID" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+  </feature>
+
+  <feature name="tRNA_gene" so="tRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="rRNA_gene" so="rRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+ 
+  <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="ncRNA_gene" so="ncRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="lincRNA_gene" so="ncRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="miRNA_gene" so="miRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+ 
+  <feature name="misc_RNA_gene" so="misc_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="three_prime_utr" table="DoTS::UTRFeature" so="three_prime_UTR">
+    <qualifier name="ID" column="source_id"/>
+   	<qualifier name="controlled_curation" ignore="true"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="note"       ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="score"   ignore="true"/>
+    <qualifier name="timelastmodified" ignore="true"/>
+  </feature>
+
+  <feature name="five_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
+    <qualifier name="ID" column="source_id"/>
+    <qualifier name="controlled_curation" ignore="true"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="note"       ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="score"   ignore="true"/>
+    <qualifier name="timelastmodified" ignore="true"/>
+  </feature>
+
+  <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
+    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Alias"              ignore="true"/>
+    <qualifier name="Name"              ignore="true"/>
+    <qualifier name="Note"              ignore="true"/>
+    <qualifier name="note"              ignore="true"/>
+    <qualifier name="curation"          ignore="true"/>
+    <qualifier name="rpt_family"        column="rpt_family"/>
+    <qualifier name="rpt_type"          handler="api" method="rptType"/>
+    <qualifier name="rpt_unit_seq"      handler="api" method="rptUnit"/>
+    <qualifier name="comment_Nterm"     handler="api" method="commentNterm"/>
+    <qualifier name="blastn_file"            ignore="true"/>
+    <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="fasta_file"             ignore="true"/>
+    <qualifier name="FEAT_NAME"              ignore="true"/>
+    <qualifier name="satellite"              ignore="true"/>
+  </feature> 
+
+</mapping>
