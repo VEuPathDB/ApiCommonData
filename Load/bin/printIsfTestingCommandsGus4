@@ -77,20 +77,28 @@ if ($format =~ /gff/i) {
 
   print STDERR "format = $format\n";
 
-  print "\n## for transcriptInfo\n";
+  print "## for transcriptInfo\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
 
   print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
-  print "\n## for loading\n";
+  print "## for loading\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
 
 } elsif ($format =~ /embl/i) {
   $inputFileOrDir = "../whole_genome.embl" if (!$inputFileOrDir);
+  $mappingFile = "\$PROJECT_HOME/ApiCommonData/Load/lib/xml/isf/geneDBembl2Gus.xml" if (!$mappingFile);
 
   print STDERR "format = $format\n";
 
-  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile \$trunk/project_home/ApiCommonData/Load/lib/xml/isf/$mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soCvsVersion 1.45 --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMap ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --commit > isf.log 2>&1 &\n\n";
+  print "##  for transcriptInfo\n";
+
+  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
+
+  print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
+
+  print "## for loading\n";
+  print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
 
 } else {
   print STDERR "format has not been configured\n";
