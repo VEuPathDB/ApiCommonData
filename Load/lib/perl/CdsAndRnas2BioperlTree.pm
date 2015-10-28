@@ -58,7 +58,7 @@ sub preprocess {
       my @exonLocations = $geneLoc->each_Location();
       my $codonStart = 0;
 
-      $codonStart = $bioperlFeatureTree->get_tag_values("codon_start") if $bioperlFeatureTree->has_tag("codon_start");
+      ($codonStart) = $bioperlFeatureTree->get_tag_values("codon_start") if $bioperlFeatureTree->has_tag("codon_start");
       my $CDSLength = 0;
       my $CDSLocation = $geneLoc;
 
@@ -75,7 +75,7 @@ sub preprocess {
 	    $codingEnd = $exon->location->start;
 
 	    if($codingStart eq $CDSLocation->end && $codonStart > 0){
-	      $codingStart -= $codonStart;
+	      $codingStart -= $codonStart-1;
 	    }
 	    $exon->add_tag_value('CodingStart',$codingStart);
 	    $exon->add_tag_value('CodingEnd',$codingEnd);
@@ -86,7 +86,7 @@ sub preprocess {
 	    $codingEnd = $exon->location->end;
 
 	    if($codingStart eq $CDSLocation->start && $codonStart > 0){
-	      $codingStart += $codonStart;
+	      $codingStart += $codonStart-1;
 	    }
 	    $exon->add_tag_value('CodingStart',$codingStart);
 	    $exon->add_tag_value('CodingEnd',$codingEnd);
