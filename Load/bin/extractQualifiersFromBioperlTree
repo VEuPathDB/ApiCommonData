@@ -147,6 +147,7 @@ foreach my $k (sort keys %gene) {
       foreach my $i (0..$#{$gene{$k}{$kk}}) {
 	if ($kk =~ /^GO/) {    ## print GO
 	  &printGOFile($outputFhs{$kk}, $k, $gene{$k}{$kk}[$i]);
+	  #$outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");  ## for testing
 	} else {
 	  $outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
 	}
@@ -162,7 +163,9 @@ foreach my $k (sort keys %outputFhs) {
 ############
 sub printGOFile {
   my ($fileH, $sourceId, $line) = @_;
-  my ($aspect, $goId, $dbrefs, $evidenceCode, $withOrFrom, $product, $synonym, $sourceIdType);
+  my ($aspect, $goId, $dbxref, $evidenceCode, $withOrFrom, $product, $synonym, $sourceIdType);
+
+  $evidenceCode = "IEA";  ## default value
 
   if ($line =~ /^GO_component/ || $line =~ /^GO_function/ || $line =~ /^GO_process/) {
     ($aspect) = split (/\:/,$line);
@@ -172,25 +175,40 @@ sub printGOFile {
       $product = $3;
       $evidenceCode = $4;
     }
+  } else {
+    my @facts = split (/\;/, $line);
+    foreach my $fact (@facts) {
+      my ($f, $v) = split (/\=/, $fact);
+      if ($f eq "aspect") {
+	$v =~ s/GO:\s+//;
+	$aspect = $v;
+      } elsif ($f eq "GOid" ) {
+	$goId = $v;
+	$goId =~ s/GO://;
+      } elsif ($f eq "term" ) {
+	$product = $v;
+      } elsif ($f eq "evidence") {
+	$evidenceCode = $v;
+      }
+    }
   }
 
   my @items;
   $items[0] = $db;
-  $items[1] = $sourceId."-p1";  ## use protein sourceID
-  $items[2] = $sourceId;
-  $items[3] = $sourceId;  ## Qualifier, 0 or greater
+  $items[1] = $sourceId;
+  $items[2] = $sourceId;                 ## DB Object Symbol, eg geneName
+  $items[3] = "";                        ## Qualifier, 0 or greater
   $items[4] = $goId;
-  $items[5] = "";  ## DB:Reference, eg PMID:2676709;
+  $items[5] = $dbxref;                   ## DB:Reference, eg PMID:2676709;
   $items[6] = $evidenceCode;
-  $items[7] = "";  ## With or From
+  $items[7] = $withOrFrom;               ## With or From
   $items[8] = $aspect;
-  $items[9] = $product;  ## db object name, 0 or 1
-  $items[10] = ""; ## db object synonym, 0 or greater
-  $items[11] = "protein"; ## db object type
-  $items[12] = $taxonId; ## eg taxon:9606
-  $items[13] = $date;  ## eg 20150817
-  $items[14] = $db;  ## Assigned By
-
+  $items[9] = $product;                  ## db object name, 0 or 1
+  $items[10] = $synonym;                 ## db object synonym, 0 or greater
+  $items[11] = "transcript";             ## db object type
+  $items[12] = "taxon:".$taxonId;        ## eg taxon:9606
+  $items[13] = $date;                    ## eg 20150817
+  $items[14] = $db;                      ## Assigned By
   foreach my $i (0..14) {
     ($i == 14) ? $fileH->print ("$items[$i]\n") : $fileH->print ("$items[$i]\t");
   }
