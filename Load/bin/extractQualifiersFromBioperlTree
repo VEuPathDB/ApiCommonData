@@ -67,6 +67,7 @@ foreach my $list (@lists) {
 foreach my $k (sort keys %outputFiles) {
     $outputFhs{$k} = FileHandle->new();
     $outputFhs{$k}->open(">$outputFiles{$k}") || die "can not open $outputFiles{$k} to write\n";
+
 }
 
 my ($key, %gene);
@@ -146,8 +147,6 @@ foreach my $k (sort keys %gene) {
       foreach my $i (0..$#{$gene{$k}{$kk}}) {
 	if ($kk =~ /^GO/) {    ## print GO
 	  &printGOFile($outputFhs{$kk}, $k, $gene{$k}{$kk}[$i]);
-	} elsif ($kk =~ /^EC/) {    ## print EC
-	  $outputFhs{$kk}->print("$k\-p1\t$gene{$k}{$kk}[$i]\n");   ## print protein ID
 	} else {
 	  $outputFhs{$kk}->print("$k\t$gene{$k}{$kk}[$i]\n");
 	}
