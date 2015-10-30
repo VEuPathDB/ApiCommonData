@@ -85,7 +85,8 @@ while (<IN>) {
     my $qual = $1;
     my $value = $2;
     my (@values, @dbxrefValues);
-    if ($qual =~ /product/i) {  ## multiple products separated by ",term="
+    if ($qual =~ /product/i || $qual =~ /description/i) {  ## multiple products separated by ",term="
+                                                           ## in some cases description also represents product
       @values = split (/\,[term=|rank=1;]/, $value);
       foreach my $i (0..$#values) {
 	my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/i);
