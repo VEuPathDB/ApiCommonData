@@ -123,8 +123,9 @@ sub preprocess {
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
-			    #$transcript->add_tag_value("Locus_tag",($geneFeature->get_tag_values("Locus_tag") ) );
 			    $transcript->add_tag_value("locus_tag",($geneFeature->get_tag_values("locus_tag") ) );
+			    $transcript = &copyQualifiers($geneFeature,$transcript);
+
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
