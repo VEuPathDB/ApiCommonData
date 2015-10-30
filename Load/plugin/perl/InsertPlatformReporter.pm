@@ -92,9 +92,14 @@ sub run {
 
   my $extDbSpec = $self->getArg('extDbSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
+  my $version;
+  if ($extDbSpec =~ /(.+)\|(.+)/) {
+      $version = $2
+  }
 
   my $arrayDesign = GUS::Model::Platform::ArrayDesign->new({name => $arrayDesignName,
-                                                           external_database_release_id => $extDbRlsId});  
+                                                            version => $version,
+                                                            external_database_release_id => $extDbRlsId});  
   $arrayDesign->retrieveFromDB();
 
   my $fsa  = Bio::SeqIO->new(-file => $fsaFile,
