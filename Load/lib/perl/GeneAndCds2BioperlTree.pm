@@ -66,6 +66,12 @@ sub preprocess {
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 
+	    if($type eq 'pseudogene'){
+	      $bioperlFeatureTree->primary_tag('gene');
+	      $bioperlFeatureTree->add_tag_value("pseudo","");
+	      $type = 'gene';
+	    }
+
 	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
 		#if($bioperlFeatureTree->has_tag("satellite")){
 		#    $bioperlFeatureTree->primary_tag("microsatellite");
