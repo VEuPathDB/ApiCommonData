@@ -21,7 +21,8 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## usage: extractOrDeleteFilesFromGenbank --genbankFile tequWA_genome.gbf --listFile chrList.txt --ifExtract > ../final/genome.gbf
-
+##        extractOrDeleteFilesFromGenbank --ifDelete --genbankFile ../fromProvider/enut_genome.gbf --recordLists AGBL01000000 > ../final/genome.gbf
+ 
 use Getopt::Long;
 use strict;
 
@@ -92,7 +93,7 @@ close GB;
 sub usage {
   die
 "
-Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile 
+Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile[--recordLists]
 
 where
   --genbankFile:  the name of genbank format input file
