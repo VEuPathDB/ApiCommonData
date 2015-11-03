@@ -34,6 +34,8 @@ if (defined $mapFile){
   foreach my $line (<MAP>) {
     $line =~s/[\n|\r]+//g;
     my ($header,$old_value,$new_value) = split("\t",$line);
+    $header= lc($header);
+    $old_value = lc($old_value);
     $mapHash->{$header}->{$old_value}=$new_value;
   }
   $functionArgs->{map_hash}=$mapHash;

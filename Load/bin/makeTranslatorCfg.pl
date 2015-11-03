@@ -183,12 +183,12 @@ sub parseHeaderConfig {
     $header_hash->{$key}->{exclude} = $exclude;
   }
 
-  unless (exists $header_hash->{$dateFieldName}) {
-    unshift (@death_knell, "date field, $dateFieldName not found, please check that you have provided the correct date field name");
-  }
-  unless (exists $header_hash->{$idFieldName}) {
-    unshift (@death_knell, "id field, $idFieldName not found, please check that you have provided the correct id field name");
-  }
+  # unless (exists $header_hash->{$dateFieldName}) {
+  #   unshift (@death_knell, "date field, $dateFieldName not found, please check that you have provided the correct date field name");
+  # }
+  # unless (exists $header_hash->{$idFieldName}) {
+  #   unshift (@death_knell, "id field, $idFieldName not found, please check that you have provided the correct id field name");
+  # }
   if (scalar @death_knell) {
     my $fail_string = join ("\n",@death_knell);
     die "\n\n$fail_string\n";
@@ -205,8 +205,9 @@ sub processFieldValue {
   my $function = $header_hash->{$key}->{function};
   my $new_header = $header_hash->{$key}->{new_header};
 
-  unless ($old_header =~ /^$idFieldName$|^$dateFieldName$/) {
-    unless  (defined $parentIdFieldName && $old_header =~ /^$parentIdFieldName/) {
+  unless ($old_header =~ /^$idFieldName$|^$dateFieldName$/i) {
+    unless  (defined $parentIdFieldName && $old_header =~ /^$parentIdFieldName/i) {
+      print STDERR "my old_header = $old_header, id field = $idFieldName, parent id field = $parentIdFieldName;\n\n";
       $new_header = "Characteristics [$new_header]"  ;
     }
   }
