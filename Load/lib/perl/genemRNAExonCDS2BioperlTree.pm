@@ -115,9 +115,19 @@ sub preprocess {
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    $transcript->add_tag_value("pseudo","");
+
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                                if ($exonLoc->strand == -1){
+				  $exon->add_tag_value('CodingStart', $exonLoc->end());
+				  $exon->add_tag_value('CodingEnd', $exonLoc->start());
+				} else {
+				  $exon->add_tag_value('CodingStart', $exonLoc->start());
+				  $exon->add_tag_value('CodingEnd', $exonLoc->end());
+				}
+
 				$transcript->add_SeqFeature($exon);
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
@@ -337,7 +347,7 @@ sub traverseSeqFeatures {
 
 	}
     }
-    push(@genes, $gene);
+    push(@genes, $gene) if ($gene);
     return (\@genes ,\@UTRs);
 }
 
