@@ -91,13 +91,13 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
-		if(!($geneFeature->has_tag("ID"))){
-		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
-		}
 
-		if (($geneFeature->has_tag("ID"))){
-			my ($cID) = $geneFeature->get_tag_values("ID");
-			print STDERR "processing $cID...\n";
+		my $gID;
+		if(!($geneFeature->has_tag("ID"))){
+		    die "Feature $type does not have tag: ID\n";
+		} else {
+		  ($gID) = $geneFeature->get_tag_values("ID");
+		  print STDERR "processing $gID...\n";
 		}
 
 		if($geneFeature->has_tag("Note")){
@@ -115,6 +115,7 @@ sub preprocess {
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
 			    my @exonLocs = $geneLoc->each_Location();
