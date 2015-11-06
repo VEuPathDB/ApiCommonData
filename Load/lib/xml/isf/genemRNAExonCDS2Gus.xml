@@ -18,7 +18,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
-    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="protein"      ignore="true"/>
     <qualifier name="_AED" ignore="true"/>
     <qualifier name="_QI" ignore="true"/>
     <qualifier name="_eAED" ignore="true"/>
@@ -43,8 +43,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="score" ignore="true"/>
-    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
-    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="partial"      ignore="true"/>
   </feature>
 
 
