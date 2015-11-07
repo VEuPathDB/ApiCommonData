@@ -93,7 +93,15 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
-		
+
+		my $gID;
+		if(!($geneFeature->has_tag("locus_tag"))){
+		  die "Feature $type does not have tag: locus_tag\n";
+		} else {
+		  ($gID) = $geneFeature->get_tag_values("locus_tag");
+		  print STDERR "processing $gID...\n";
+		}
+
 		## for $geneFeature that only have gene feature, but do not have subFeature, such as mRNA and exon, 
 		## and have a note as "nonfunction" and "frameshift", set them as pseudogene,
 		## such as gene SLOPH_2171 in ATCN01000028
@@ -103,22 +111,10 @@ sub preprocess {
 		    ($note =~ /frameshift/i || $note =~ /frame shift/i || $note =~ /intron/i ) ) {
 		    $geneFeature->add_tag_value("pseudo", "") if (!$geneFeature->has_tag("pseudo") );
 		  }
-		  ## print for reference
-		  #foreach my $tag ($geneFeature->get_all_tags) {
-		  #  my ($evalue) = $geneFeature->get_tag_values($tag);
-		  #  print STDERR "$evalue\n";
-		  #}
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
-		if (($geneFeature->has_tag("locus_tag"))){
-			my ($cID) = $geneFeature->get_tag_values("locus_tag");
-			print STDERR "processing $cID...\n";
-		}
 
-		if(!($geneFeature->has_tag("locus_tag"))){
-		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
-		}      
 		for my $tag ($geneFeature->get_all_tags) {    
 
 		    if($tag eq 'pseudo'){
