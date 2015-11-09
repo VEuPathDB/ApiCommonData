@@ -286,7 +286,9 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
       ## print is_pseudo info
       print TBL "\t\t\tpseudo\n" if ($tIsPseudo == 1);
 
-      ## initial cdsPairs array for each transcript
+      ## initial cdsPairs array, codonStart and cdsPairsString for each transcript
+      $codonStart = 1;
+      $cdsPairsString = "";
       @cdsPairs = ();
     }
   }
