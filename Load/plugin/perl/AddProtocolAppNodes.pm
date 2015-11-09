@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::AddProtocolAppNodes;
 
 use strict;
 use GUS::Community::Plugin::AddToStudy;
+use GUS::Model::SRes::OntologyTerm;
 use Data::Dumper;
 
  sub new {
@@ -27,7 +28,14 @@ use Data::Dumper;
 sub handleExistingProtocolAppNode {
   my ($self,$protocolAppNode) = @_;
   my $source_id = $protocolAppNode->findvalue('./source_id');
-  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $source_id});
+  my $type = $protocolAppNode->findvalue('./type');
+  my $type_ext_db_rls_id = $protocolAppNode->findvalue('./ext_db_rls');
+  my $typeTerm = GUS::Model::SRes::OntologyTerm->new({name => $type,
+                                                           external_database_release_id => $type_ext_db_rls_id});
+   $self->userError("Input Type $type is not in the database for external database release id $type_ext_db_rls_id, please make sure that all input protocoal app nodes have been loaded") unless $typeTerm->retrieveFromDB();
+  my $type_id = $typeTerm->getId();
+  my $protocolAppNode = GUS::Model::Study::ProtocolAppNode->new({name => $source_id,
+                                                                 type_id => $type_id});
 
    $self->userError("Input ProtocolAppNode $source_id is not in the database, please make sure that all input protocoal app nodes have been loaded") unless $protocolAppNode->retrieveFromDB();
   my $id = $protocolAppNode->getId();

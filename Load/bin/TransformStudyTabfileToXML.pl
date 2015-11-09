@@ -28,7 +28,8 @@ use GUS::Model::Study::Study;
 
 use Date::Parse;
 
-my ($inFile, $configFile, $outFile, $help);
+my ($inFile, $configFile, $outFile, $help, );
+my $type_ext_db_rls_spec = 'PRISM Data Dictionary|Apr_2014';
 
 &GetOptions('help|h' => \$help,
             'configFile=s' => \$configFile,
@@ -52,7 +53,7 @@ my $validHeader = 2;
 
 my $mapHash = {};
 
-my ($studyName,$db_id,$protocol,$entity_type,$header_regexp,$input_lookup,$external_database_release_spec);
+my ($studyName,$db_id,$protocol,$entity_type,$parent_entity_type,$header_regexp,$input_lookup,$external_database_release_spec);
 open (CONFIG, $configFile) || die "Can't open $configFile for reading : $!\n";
 foreach my $line (<CONFIG>){
   chomp $line;
@@ -69,13 +70,21 @@ foreach my $line (<CONFIG>){
     $protocol = $line;
     $protocol =~ s/protocol://;
   }
-  elsif ($line =~ /entity_type/) {
+  elsif ($line =~ /^entity_type/) {
     $entity_type = $line;
     $entity_type =~ s/^\w*://;
   }
-  elsif ($line =~ /external_database_release_spec/) {
+  elsif ($line =~ /^external_database_release_spec/) {
     $external_database_release_spec = $line;
     $external_database_release_spec =~ s/external_database_release_spec://;
+  }
+  elsif ($line =~ /parent_entity_type/) {
+    $parent_entity_type = $line;
+    $parent_entity_type =~ s/^\w*://;
+  }
+  elsif ($line =~ /type_external_database_release_spec/) {
+    $type_ext_db_rls_spec = $line;
+    $type_ext_db_rls_spec =~ s/type_external_database_release_spec://;
   }
   elsif ($line =~ /input_file/) {
     $inFile = $line;
@@ -123,11 +132,22 @@ my $ext_db_sql = "select ex.external_database_release_id
                      and ex.version = '$ext_db_version'
                      and lower(e.name) = '$lower_ext_db_name'";
 
-my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+ @tokens = split(/\|/,$type_ext_db_rls_spec);
+my $type_ext_db_name = $tokens[0];
+my $type_ext_db_version = $tokens[1];
+my $lower_type_ext_db_name = lc($type_ext_db_name);
+my $type_ext_db_sql = "select ex.external_database_release_id
+                    from sres.externaldatabaserelease ex, sres.externaldatabase e
+                   where e.external_database_id = ex.external_database_id
+                     and ex.version = '$type_ext_db_version'
+                     and lower(e.name) = '$lower_type_ext_db_name'";
 
+
+my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+  
 my @properties = ();
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
-
+  
 my $u = $gusconfig->{props}->{databaseLogin};
 my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
@@ -137,6 +157,13 @@ my $sh = $dbh->prepare($ext_db_sql);
 $sh->execute();
 
 my $ext_db_rls_id = $sh->fetchrow_array();
+
+$sh->finish();
+
+$sh = $dbh->prepare($type_ext_db_sql);
+$sh->execute();
+
+my $type_ext_db_rls_id = $sh->fetchrow_array();
 
 $sh->finish();
 
@@ -186,11 +213,11 @@ foreach my $row (<INFILE>){
   if (defined $input){  
     $inputNode = qq(
    <protocol_app_node addition="" id="$pan_id">
-      <type></type>
+      <type>$parent_entity_type</type>
       <subtype></subtype>
       <name>$input</name>
       <description></description>
-      <ext_db_rls></ext_db_rls>
+      <ext_db_rls>$type_ext_db_rls_id</ext_db_rls>
       <source_id>$input</source_id>
       <subtype></subtype>
       <uri></uri>
@@ -293,6 +320,10 @@ my @uniqSkippedInputs = uniq(@$SkippedInputs);
 print STDERR Dumper (\@uniqSkippedInputs);
 
 
+sub lookupType {
+  
+  
+}
 
 sub parseHeader {
 
