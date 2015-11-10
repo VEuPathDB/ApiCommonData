@@ -44,6 +44,12 @@ sub preprocess {
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 
+            if($type eq 'pseudogene'){
+              $bioperlFeatureTree->primary_tag('gene');
+              $bioperlFeatureTree->add_tag_value("pseudo","");
+              $type = 'gene';
+            }
+
 	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
 	        if ($type eq 'assembly_gap'){
 		  $bioperlFeatureTree->primary_tag("gap");
@@ -64,6 +70,14 @@ sub preprocess {
 
 		$geneFeature = $bioperlFeatureTree; 
 
+                my $gID;
+                if(!($geneFeature->has_tag("gene"))){
+                  die "Feature $type does not have tag: gene\n";
+                } else {
+                  ($gID) = $geneFeature->get_tag_values("gene");
+                  print STDERR "processing $gID...\n";
+                }
+
 		## for $geneFeature that only have gene feature, but do not have subFeature (such as mRNA and/or exon)
 		## and have a note as "nonfunction" and "frameshift", set them as pseudogene,
 		## such as gene SLOPH_2171 in ATCN01000028
@@ -77,14 +91,6 @@ sub preprocess {
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
-		if (($geneFeature->has_tag("gene"))){
-			my ($cID) = $geneFeature->get_tag_values("gene");
-			print STDERR "processing $cID...\n";
-		}
-
-		if(!($geneFeature->has_tag("gene"))){
-		    $geneFeature->add_tag_value("gene",$bioperlSeq->accession());
-		}
 
 		## for pseudogene
 		for my $tag ($geneFeature->get_all_tags) {
