@@ -6,6 +6,7 @@ use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
 use Bio::SeqFeature::Tools::Unflattener;
+use ApiCommonData::Load::Unflattener;
 
 
 #input:
@@ -31,7 +32,8 @@ sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
     my ($geneFeature, $source);
     my  $primerPair = '';
-    my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
+#    my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
+    my $unflattener = ApiCommonData::Load::Unflattener->new;
 
     if(!($bioperlSeq->molecule =~ /rna/i)){
 	$unflattener->error_threshold(1);   
