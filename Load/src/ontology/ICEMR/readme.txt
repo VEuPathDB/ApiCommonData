@@ -27,11 +27,10 @@ ICEMR terminology loading files
 1. term file, list all terms in the ICEMR terminology including following content:
     a. term ID (ontology ID)
     b. ontological label
-    c. ontological definition
-    d. display definition (community preferred definition/description of term)
-    e. term URI
-    f. term type (indicate whether it is used in term organization or in data dictionary)
-    g. ontology version
+    c. display definition (community preferred definition/description of term)
+    d. term URI
+    e. term type (indicate whether it is used in term organization or in data dictionary)
+    f. ontology version
 2. is_a relation file
     a. term ID
     b. relation: subClassOf
@@ -42,4 +41,5 @@ ICEMR terminology loading files
     c. Data dictionary version
 4. synonym file
      a. term ID
-     b. preferred label 
+     b. display label
+     
