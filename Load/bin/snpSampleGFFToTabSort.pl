@@ -64,4 +64,6 @@ while (my $feature = $gffIO->next_feature()) {
 }
 close OUT;
 $gffIO->close();
-die "$outFile is empty" if (-z $outFile);
+if (-z $outFile){
+	die "$outFile is empty" unless (-z $snpGff);
+}
