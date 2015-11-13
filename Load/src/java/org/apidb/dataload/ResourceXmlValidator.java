@@ -7,19 +7,20 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.digester.Digester;
 import org.gusdb.fgputil.CliUtil;
+import org.gusdb.fgputil.runtime.GusHome;
 import org.gusdb.fgputil.xml.XmlParser;
+import org.xml.sax.SAXException;
 
 public class ResourceXmlValidator extends XmlParser {
 
-  public ResourceXmlValidator() {
-    super("lib/rng/resources.rng");
+  public ResourceXmlValidator() throws SAXException, IOException {
+    configureValidator(GusHome.getGusHome() + "/lib/rng/resources.rng");
   }
 
-  public void validateResourcesXml(String xmlFileName) throws IOException, Exception {
-    configure();
+  public void validateResourcesXml(String xmlFileName) throws Exception {
 
     // construct urls to model file, prop file, and config file
-    URL modelURL = makeURL(xmlFileName);
+    URL modelURL = makeURL(GusHome.getGusHome() + "/" + xmlFileName);
 
     if (!validate(modelURL))
       throw new Exception("validation failed.");
