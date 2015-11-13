@@ -1,29 +1,27 @@
 package org.apidb.dataload;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.digester.Digester;
 import org.gusdb.fgputil.CliUtil;
 import org.gusdb.fgputil.runtime.GusHome;
 import org.gusdb.fgputil.xml.XmlParser;
+import org.gusdb.fgputil.xml.XmlValidator;
 import org.xml.sax.SAXException;
 
 public class ResourceXmlValidator extends XmlParser {
 
+  private final XmlValidator _validator;
+  
   public ResourceXmlValidator() throws SAXException, IOException {
-    configureValidator(GusHome.getGusHome() + "/lib/rng/resources.rng");
+    _validator = new XmlValidator(GusHome.getGusHome() + "/lib/rng/resources.rng");
   }
 
   public void validateResourcesXml(String xmlFileName) throws Exception {
-
-    // construct urls to model file, prop file, and config file
-    URL modelURL = makeURL(GusHome.getGusHome() + "/" + xmlFileName);
-
-    if (!validate(modelURL))
+    if (!_validator.validate(GusHome.getGusHome() + "/" + xmlFileName)) {
       throw new Exception("validation failed.");
+    }
   }
 
   public static void main(String[] args) throws Exception {
@@ -45,10 +43,4 @@ public class ResourceXmlValidator extends XmlParser {
     CliUtil.addOption(options, "f", "", true);
     return options;
   }
-
-  @Override
-  protected Digester configureDigester() {
-    return null;
-  }
-
 }
