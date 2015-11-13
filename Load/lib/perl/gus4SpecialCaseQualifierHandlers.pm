@@ -467,6 +467,65 @@ sub _undoNote{
   return $self->{standardSCQH}->_undoNote();
 }
 
+################ Product ################################
+
+# only keep the first /product qualifier
+# cascade product name to transcript, translation and AA sequence:
+sub product {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+ # print $bioperlFeature->primary_tag()."\n";
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  if($tagValues[0] =~ />>/){
+        my(@s) = split(/>>/,$tagValues[0]);
+        $s[1] =~ s/\s+//g;
+        $tagValues[0] = $s[1];
+      }
+
+  if($tagValues[0] =~ /;evidence=/){
+        my(@s) = split(/;evidence=/,$tagValues[0]);
+        $s[1] =~ s/^\s+//g;
+        $tagValues[0] = $s[0];
+        $feature->set("evidence",$s[1]);
+      }
+
+
+#  print STDERR Dumper $feature->getSourceId();
+
+#  print STDERR "Feature Info:\n";
+#  print STDERR Dumper $feature;
+  $feature->setProduct($tagValues[0]);
+
+  # cascade product name to transcript, translation and AA sequence:
+
+  my @transcripts;
+  if($bioperlFeature->primary_tag() =~ /gene/){
+      @transcripts = $feature->getChildren("DoTS::Transcript");
+    }else{
+      push(@transcripts,$feature);
+    }
+  foreach my $transcript (@transcripts) {
+    $transcript->setProduct($tagValues[0]);
+    my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+    if ($translatedAAFeat) {
+      $translatedAAFeat->setDescription($tagValues[0]);
+      my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+      if ($aaSeq) {
+        $aaSeq->setDescription($tagValues[0]);
+      }
+    }
+  }
+
+  return [];
+}
+
+# nothing special to do
+sub _undoProduct{
+  my ($self) = @_;
+}
+
+
+
 ################ rpt_unit ################################
 
 # create a comma delimited list of rpt_units
