@@ -2,7 +2,7 @@
 http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl
 
 ############################################################
-# BFO, CHEBI, DRON, OBI, OGMS, STATO, IDOMAL, PCO, OBIB, HP, SYMP, IAO
+# BFO, CHEBI, DRON, OBI, OGMS, STATO, IDO, IDOMAL, PCO, OBIB, HP, SYMP, IAO, UO
 ############################################################
 ############################################################
 [Source ontology]
@@ -127,6 +127,10 @@ http://purl.obolibrary.org/obo/OBI_0000655 #blood specimen
 http://purl.obolibrary.org/obo/OBI_0000953 #processed specimen
 http://purl.obolibrary.org/obo/OBI_0000844 #hospital
 http://purl.obolibrary.org/obo/OBI_0400065 #light source
+http://purl.obolibrary.org/obo/OBI_0000181 #population
+http://purl.obolibrary.org/obo/OBI_0000852 #record of missing knowledge
+http://purl.obolibrary.org/obo/OBI_0001554 #rate measurement datum
+http://purl.obolibrary.org/obo/OBI_0001171 #half life datum (t 1/2)
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/OBI_0001876 #cell culture
@@ -155,6 +159,15 @@ http://purl.obolibrary.org/obo/OBI_0000844 #hospital
 subClassOf http://purl.obolibrary.org/obo/OBI_0000245 #organization
 http://purl.obolibrary.org/obo/OBI_0400065 #light source
 subClassOf http://purl.obolibrary.org/obo/OBI_0000968 #device
+http://purl.obolibrary.org/obo/OBI_0000181 #population
+subClassOf http://purl.obolibrary.org/obo/BFO_0000040
+http://purl.obolibrary.org/obo/OBI_0000852 #record of missing knowledge
+subClassOf http://purl.obolibrary.org/obo/IAO_0000030
+http://purl.obolibrary.org/obo/OBI_0001554 #rate measurement datum
+subClassOf http://purl.obolibrary.org/obo/IAO_0000032
+http://purl.obolibrary.org/obo/OBI_0001171 #half life datum (t 1/2)
+subClassOf http://purl.obolibrary.org/obo/IAO_0000416
+
 
 
 [Source term retrieval setting]
@@ -178,6 +191,7 @@ http://purl.obolibrary.org/obo/OGMS_0000090 #treatment
 http://purl.obolibrary.org/obo/OGMS_0000018 #laboratory finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
 http://purl.obolibrary.org/obo/OGMS_0000015 #clinical history
+http://purl.obolibrary.org/obo/OGMS_0000027 #clinical phenotype
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/OGMS_0000073 #diagnosis
@@ -193,7 +207,9 @@ subClassOf http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 http://purl.obolibrary.org/obo/OGMS_0000015 #clinical history
 subClassOf http://purl.obolibrary.org/obo/OGMS_0000014 #clinical finding
 http://purl.obolibrary.org/obo/OGMS_0000056 #laboratory test
-subClassOf http://purl.obolibrary.org/obo/OBI_0000070 #assay 
+subClassOf http://purl.obolibrary.org/obo/OBI_0000070 #assay
+http://purl.obolibrary.org/obo/OGMS_0000027 #clinical phenotype
+subClassOf http://purl.obolibrary.org/obo/HP_0000118
 
 [Source term retrieval setting]
 includeNoIntermediates
@@ -416,5 +432,48 @@ includeNoIntermediates
 [Source annotation URIs]
 http://www.w3.org/2000/01/rdf-schema#label
 http://purl.obolibrary.org/obo/IAO_0000115
+
+############################################################
+[Source ontology]
+#comment here
+IDO
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/IDO_0000566 #primary infection
+http://purl.obolibrary.org/obo/IDO_0000586 #infection
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/IDO_0000566 #primary infection
+subClassOf http://purl.obolibrary.org/obo/IDO_0000586
+http://purl.obolibrary.org/obo/IDO_0000586 #infection
+subClassOf http://purl.obolibrary.org/obo/BFO_0000040
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
+############################################################
+[Source ontology]
+#comment here
+UO
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/UO_0000036 #year
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/UO_0000036 #year
+subClassOf http://purl.obolibrary.org/obo/UO_0000003
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
 
 
