@@ -74,7 +74,7 @@ my ($key, %gene);
 open (IN, $bioperlTreeFile) || die "can not open bioperlFile to read\n";
 while (<IN>) {
   chomp;
-  if ($_ =~ /^\</) {
+  if ($_ =~ /^\s*\</) {
     $key = "";
   } elsif ($_ =~ /gus source_id: (\S+)/) {
     $key = $1;
