@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+
+## finds foreign-key constraints on unindexed columns
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my $gusConfigFile;
+
+&GetOptions("gusConfigFile=s" => \$gusConfigFile);
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					$gusconfig->getReadOnlyDatabaseLogin(),
+					$gusconfig->getReadOnlyDatabasePassword,
+					0, 0, 1,
+					$gusconfig->getCoreSchemaName,
+					$gusconfig->getOracleDefaultRollbackSegment());
+
+my $dbh = $db->getQueryHandle();
+
+my $stmt = $dbh->prepare(<<SQL);
+     select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23)
+             || '_revix' || mod(rownum, 10) ||' on ' || acc.owner || '.'
+             || acc.table_name || ' (' || acc.column_name || ', '
+             || nvl(pks.column_name, '??PK??') || ') tablespace indx; -- constraint '
+             || ac.owner || '.' || ac.constraint_name
+             as create_index
+      from all_cons_columns acc, all_constraints ac,
+           (select accp.owner || '.' || accp.table_name as tab, accp.column_name
+            from all_constraints acp, all_cons_columns accp
+            where acp.constraint_name = accp.constraint_name
+              and constraint_type = 'P') pks
+      where ac.constraint_name = acc.constraint_name
+        and ac.owner = acc.owner
+        and ac.constraint_type = 'R'
+        and acc.position = 1
+        and acc.owner || '.' || acc.table_name = pks.tab(+)
+        and acc.owner in (select upper(name) from core.DatabaseInfo)
+        and acc.owner || '.' || acc.table_name || '.' || acc.column_name
+            not in (select table_owner || '.' || table_name || '.' || column_name
+                    from all_ind_columns
+                    where column_position = 1)
+SQL
+
+$stmt->execute();
+my $foundRows;
+my $createIndex;
+while(my ($createIndex) = $stmt->fetchrow_array()){
+  print STDERR "ERROR: unindexed columns with foreign-key constraints found. See example CREATE INDEX statements below.\n\n"
+    unless $foundRows;
+
+  $foundRows = 1;
+
+  print STDERR "$createIndex\n";
+}
+
+die "one or more unindexed columns with foreign-key constraints found"
+  if $foundRows;
