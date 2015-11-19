@@ -190,7 +190,7 @@ sub getSeqsFromGenbank {
 				     -file => $inputFile);
   while (my $seq = $bioperlSeqIO->next_seq() ) {
     my $sId = ($seq->id) ? ($seq->id) : ($seq->accession());
-    $seqs{$sId} = $seq->alphabet if ($sId && $seq->alphabet);
+    $seqs{$sId} = uc($seq->seq()) if ($sId && $seq->seq());
   }
   return (\%seqs);
 }
