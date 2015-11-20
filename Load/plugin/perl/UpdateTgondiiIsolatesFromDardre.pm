@@ -9,7 +9,7 @@ package ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre;
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
   # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | broken
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
   # GUS4_STATUS | DeprecatedTables               | auto   | absent
   # GUS4_STATUS | Pathway                        | auto   | absent
   # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -98,7 +97,7 @@ sub new {
   my $self = {};
   bless($self, $class);
 
-  $self->initialize({ requiredDbVersion => 3.6,
+  $self->initialize({ requiredDbVersion => 4.0,
 		      cvsRevision       => '$Revision: 29209 $',
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
