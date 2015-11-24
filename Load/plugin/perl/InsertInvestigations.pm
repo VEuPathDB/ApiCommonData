@@ -20,6 +20,8 @@ use GUS::Model::SRes::OntologyTerm;
 
 use CBIL::ISA::Investigation;
 
+use Scalar::Util qw(blessed);
+
 use Data::Dumper;
 
 my $argsDeclaration =
@@ -95,17 +97,18 @@ sub run {
     $investigation->parse();
 
     my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
+    $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
 
-    # TODO:  This should return a mapping to the found ontology term ids so I can use them later
-    $self->checkOntologyTermsExist($iOntologyTermAccessions);
 
-    $self->checkProtocols($study->getProtocols());
 
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
       my %foundDatasets;
 
+      $self->checkProtocolsAndSetIds($study->getProtocols());
+
       my $studyAssays = $study->getStudyAssays();
+
       foreach my $studyAssay (@$studyAssays) {
         my $comments = $studyAssay->getComments();
         foreach my $comment (@$comments) {
@@ -116,49 +119,57 @@ sub run {
           }
         }
       }
-      $self->checkExistingDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
-      $self->checkExistingProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
+      $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
+      $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
 
       $self->loadNodesAndEdges($study);
     }
   }
 }
 
-sub checkProtocols {
+sub checkProtocolsAndSetIds {
   my ($self, $protocols) = @_;
 
-  # check protocols easy
-  # check no protocol series eash
-
-  my $sql = "select name from study.protocol";
+  my $sql = "select name, protocol_id from study.protocol";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my %protocols;
-  while(my ($protocol) = $sh->fetchrow_array()) {
-    $protocols{$protocol} = 1;
+  while(my ($protocol, $protocolId) = $sh->fetchrow_array()) {
+    $protocols{$protocol} = $protocolId;
   }
   $sh->finish();
 
-  foreach(@$protocols) {
-    $self->logOrError("Protocol $_ Not found in the database") unless($protocols{$_};
+  foreach my $protocol (@$protocols) {
+    my $protocolName = $protocol->getProtocolName();
+
+    if($protocols{$protocolName}) {
+      $protocol->{_PROTOCOL_ID} = $protocols{$protocolName};
+    }
+    else {
+      $self->log("WARNING:  Protocol [$protocolName] Not found in the database ... adding") ;
+    }
   }
 }
 
 sub loadNodesAndEdges {
   my ($self, $study) = @_;
 
-  $self->loadNodes($study->getNodes());
-  $self->loadEdges($study->getEdges());
+  my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
+  my $panNameToIdMap = $self->loadNodes($study->getNodes());
+  $self->loadEdges($study->getEdges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap);
 }
 
 
 sub loadNodes {
   my ($self, $nodes) = @_;
 
+  my %rv;
+
   foreach my $node (@$nodes) {
     my $pan;
+
     if(my $panId = $node->{_PROTOCOL_APP_NODE_ID}) {
       $pan = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $panId});
       unless($pan->retrieveFromDB()) {
@@ -169,28 +180,238 @@ sub loadNodes {
       $pan = GUS::Model::Study::ProtocolAppNode->new({name => $node->getValue()});
     }
 
-    # TODO: if Material entity need to get type, else set to "data transformation" ?
+    if($node->hasAttribute("Material Type")) {
+      my $materialTypeOntologyTerm = $node->getMaterialType();
+      my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm);
+      my $ontologyTermId = $gusOntologyTerm->getId();
+      $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
+    }
 
     my $characteristics = $node->getCharacteristics();
     foreach my $characteristic (@$characteristics) {
-      # TODO: Make new CHaracteristic and set parent
-      # Deal w/ OntologyTerm Correctly
+      my $charOntologyTerm = $self->getOntologyTermGusObj($characteristic);
+
+      my $gusChar = GUS::Model::Study::Characteristic->new();
+      $gusChar->setParent($pan);
+      $gusChar->setOntologyTermId($charOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+
+      if($characteristic->getUnit()) {
+        my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit());
+        $gusChar->setUnitId($unitOntologyTerm->getId());
+      }
+
+      # if no accession number then the qualifier was the ontologyterm.  Set the value
+      unless($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+        $gusChar->setValue($characteristic->getTerm());
+      }
     }
+    $pan->submit();
+    $rv{$pan->getName()} = $pan->getId();
+  }
+  return \%rv;
+}
+
+sub getOntologyTermGusObj {
+    my ($self, $ontologyTerm) = @_;
+
+    my $ontologyTermTerm = $ontologyTerm->getTerm();
+    my $ontologyTermClass = blessed($ontologyTerm);
+    my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber();
+    my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef();
+
+    my $ontologyTermId;
+    if($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
+      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
+    }
+    elsif($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic') {
+      my $qualifier = $ontologyTerm->getQualifier();
+      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{CHARACTERISTIC_QUALIFIER}->{$qualifier};
+    }
+    else {
+      $self->logOrError("OntologyTerm of class $ontologyTermClass and value [$ontologyTermTerm] must provide accession&source OR a qualifier in the case of Characteristics must map to an ontologyterm");
+    }
+
+
+    if(my $gusObj = $self->{_gus_ontologyterm_objects}->{$ontologyTermId}) {
+      return $gusObj;
+    }
+
+    my $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
+    unless($gusOntologyTerm->retrieveFromDB()) {
+      $self->error("ERROR:  OntologyTerm ID=$ontologyTermId not found in the database");
+    }
+
+    $self->{_gus_ontologyterm_objects}->{$ontologyTermId} = $gusOntologyTerm;
+    return $gusOntologyTerm;
+}
+
+
+sub loadProtocols {
+  my ($self, $protocols) = @_;
+
+
+  my $ppNameToId = {};
+  my $pNameToId = {};
+
+  foreach my $protocol (@$protocols) {
+    my $protocolId = $protocol->{_PROTOCOL_ID};
+    my $gusProtocol;
+
+    my $protocolName = $protocol->getProtocolName();
+
+    if($protocolId) {
+      $gusProtocol = GUS::Model::Study::Protocol->new({protocol_id => $protocolId});
+      unless($gusProtocol->retrieveFromDB()) {
+        $self->error("Could not retrieve Study.Protocol w/ protoocl id [$protocolId]");
+      }
+    }
+    else {
+      my $protocolDescription = $protocol->getProtocolDescription();
+      $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName, description => $protocolDescription});
+
+      if($protocol->getProtocolType()) {
+        my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType());
+        $gusProtocol->setParent($gusProtocolType);
+      }
+    }
+
+    my @gusProtocolParams = $gusProtocol->getChildren("Study::ProtocolParam", 1);
+    my $protocolParams = $protocol->getProtocolParameters();
+
+    foreach my $protocolParam (@$protocolParams) {
+      my $found;
+
+      foreach my $gusProtocolParam (@gusProtocolParams) {
+        if($gusProtocolParam->getName() eq $protocolParam->getTerm()) {
+          $found = 1;
+          last;
+        }
+      }
+
+      unless($found) {
+        my $gusProtocolParam = GUS::Model::Study::ProtocolParam->new({name => $protocolParam->getTerm()});
+        $gusProtocolParam->setParent($gusProtocol);
+      }
+    }
+
+    $gusProtocol->submit();
+    $pNameToId->{$protocolName} = $gusProtocol->getId();
+
+    foreach my $pp ($gusProtocol->getChildren("Study::ProtocolParam")) { # no need to retrieve here
+      my $ppName = $pp->getName();
+      my $ppId = $pp->getId();
+      $ppNameToId->{$protocolName}->{$ppName} = $ppId;
+    }
+  }
+  return($ppNameToId, $pNameToId);
+}
+
+
+sub loadEdges {
+  my ($self, $edges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap) = @_;
+
+  foreach my $edge (@$edges) {
+    my $databaseStatus = $edge->{_DATABASE_STATUS};
+    my $protocolAppId = $edge->{_PROTOCOL_APP_ID};
+
+    my $gusProtocolApp;
+    my $protocolCount = 1;
+
+    if($protocolAppId) {
+      $gusProtocolApp = GUS::Model::Study::ProtocolApp->new({protocol_app_id => $protocolAppId});
+      unless($gusProtocolApp->retrieveFromDB()) {
+        $self->error("Could not retrieve Study.protocolApp w/ protocol_ap_id [$protocolAppId]");
+      }
+    }
+    else {
+      $gusProtocolApp = GUS::Model::Study::ProtocolApp->new();
+
+      $protocolCount = scalar @{$edge->getProtocolApplications()};
+
+      my $protocolName;
+
+      my $gusProtocol;
+      if($protocolCount > 1) {
+        my @protocolNames = map { $_->getProtocol()->getProtocolName() } @{$edge->getProtocolApplications()};
+
+        $protocolName = join("; ", @protocolNames);
+        $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName});
+      }
+      else {
+        $protocolName = $edge->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
+        my $gusProtocolId = $protocolNamesToIdMap->{$protocolName};
+        $gusProtocol = GUS::Model::Study::Protocol->new({protocol_id => $gusProtocolId});
+        unless($gusProtocol->retrieveFromDB()) {
+          $self->error("Could not retrieve protocol w/ protocol id of [$gusProtocolId]");
+        }
+      }
+
+      $gusProtocolApp->setParent($gusProtocol);
+    }
+
+    if($databaseStatus) {
+      $self->error("Edge DATABASE_STATUS set but missing protocol_app_id") unless($gusProtocolApp);
+    }
+
+    foreach my $output (@{$edge->getOutputs()}) {
+      next if($databaseStatus);
+
+      my $gusOutput = GUS::Model::Study::Output->new();
+
+      my $outputName = $output->getValue();
+      my $outputId = $panNameToIdMap->{$outputName};
+      unless($outputId) {
+        $self->error("No protocol app node id found for output $outputName");
+      }
+      $output->setProtocolAppNodeId($outputId);
+    }
+
+    foreach my $input (@{$edge->getInputs()}) {
+      next if($databaseStatus eq 'FOUND_OUTPUTS_AND_INPUTS');
+
+      my $gusInput = GUS::Model::Study::Input->new();
+
+      my $inputName = $input->getValue();
+      my $inputId = $panNameToIdMap->{$inputName};
+      unless($inputId) {
+        $self->error("No protocol app node id for input $inputName");
+      }
+      $input->setProtocolAppNodeId($inputId);
+    }
+
+    my %existingProtocolAppParam;
+    my @gusProtocolAppParams = $gusProtocolApp->getChildren("Study::ProtocolAppParam", 1); # go to the database and get all the children
+    foreach my $gusProtocolAppParam (@gusProtocolAppParams) {
+      my $gusProtocolParam = $gusProtocolAppParam->getParent("Study::ProtocolParam", 1);
+      $existingProtocolAppParam{$gusProtocolParam->getName()} = 1;
+    }
+
+    # in the database we have one row in protocolapp w/ pointer to a protocol
+    foreach my $protocolApp (@{$edge->getProtocolApplications()}) {
+      my $protocol = $protocolApp->getProtocol();
+      my $protocolName = $protocol->getProtocolName();
+
+      foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
+        my $ppValue = $parameterValue->getTerm();
+        my $ppName = $parameterValue->getQualifier();
+
+        next if($existingProtocolAppParam{$ppName}); #NOTE:  This is a bit easier because we don't deal w/ protocol series for existing protocolapps
+        my $gusProtocolParamId = $protocolParamsToIdMap->{$protocolName}->{$ppName};
+        unless($gusProtocolParamId) {
+          $self->error("Could not find protocol param id for protocol [$protocolName] and protocolParam name [$ppName]");
+        }
+
+        my $gusProtocolAppParam = GUS::Model::Study::ProtocolAppParam->new({protocol_param_id => $gusProtocolParamId, value => $ppValue});
+        $gusProtocolAppParam->setParent($gusProtocolApp);
+      }
+    }
+    $gusProtocolApp->submit();
   }
 }
 
-sub loadEdges {
-  my ($self, $edges) = @_;
-
-  # TODO:  check _DATABASE_STATUS for each node (does it have outputs, inputs and outputs or neither
-  # if it has both ... should add parametervalues/params if they don't already exist
-  # if only has outputs ... add inputs and paramvalues/params
-  #if neither, need to make/get the protocol, params, paramvalues, protocolapp, inputs and outputs
-}
 
 
-
-sub checkExistingProtocolApplicationsAreHandledAndMark {
+sub checkDatabaseProtocolApplicationsAreHandledAndMark {
   my ($self, $foundDatasets, $edges) = @_;
 
   my $sql = "select * from (
@@ -252,7 +473,7 @@ where dataset = ? ";
       my @databaseOutputs = sort @{$databaseEdges->{$databaseProtocol}->{$protocolAppId}->{output}};
 
       unless(scalar @databaseOutputs > 0) {
-        $self->logOrError("ProtocolApp [$protocolAppId] is missing Outputs");
+        $self->logOrError("ERROR: ProtocolApp [$protocolAppId] is missing Outputs");
       }
 
       my $found;
@@ -277,20 +498,24 @@ where dataset = ? ";
           my @databaseInputs = sort @{$databaseEdges->{$databaseProtocol}->{$protocolAppId}->{input}};
           my @inputs = sort map {$_->getValue()} @{$edge->getInputs()};
 
-          $self->logOrError("Inputs found for ProtocolApp [$protocolApp] but they do not match the Inputs defined for this Edge in the ISA Tab File") unless(join(".", @inputs) eq join(".", @databaseInputs));
-          $edge->{_DATABASE_STATUS} = 'FOUND_OUTPUTS_AND_INPUTS';
+          if(join(".", @inputs) eq join(".", @databaseInputs)) {
+            $edge->{_DATABASE_STATUS} = 'FOUND_OUTPUTS_AND_INPUTS';
+          } 
+          else {
+            $self->logOrError("ISATAB_ERROR:  Inputs found for ProtocolApp [$protocolApp] but they do not match the Inputs defined for this Edge in the ISA Tab File");
+          }
         }
       }
-      $self->logOrError("ProtocolApp [$protocolAppId] could not be matched to Edges in the ISA Tab file") unless($found);
+      $self->logOrError("ISATAB_ERROR:  ProtocolApp [$protocolAppId] could not be matched to Edges in the ISA Tab file") unless($found);
     }
   }
 }
 
 
-sub checkOntologyTermsExist {
+sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
-  my $sql = "select d.name, ot.source_id
+  my $sql = "select d.name, ot.source_id, ot.ontology_term_id id
 from sres.ontologyterm ot
    , sres.externaldatabaserelease r
    , sres.externaldatabase d
@@ -299,7 +524,7 @@ and lower(ot.source_id) not like 'ncbitaxon%'
 and ot.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
 and r.EXTERNAL_DATABASE_ID = d.EXTERNAL_DATABASE_ID
 UNION
-select 'NCBITaxon', 'NCBITaxon_' || ncbi_tax_id
+select 'NCBITaxon', 'NCBITaxon_' || ncbi_tax_id, taxon_id id
 from sres.taxon 
 where 'NCBITaxon_' || ncbi_tax_id = ?
 and lower(?) like  'ncbitaxon%'
@@ -308,47 +533,74 @@ and lower(?) like  'ncbitaxon%'
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
 
+  my $rv = {};
+
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
       $sh->execute($accessionOrName, $accessionOrName, $accessionOrName, $accessionOrName);
 
       my %foundIn;
-      while(my ($os, $sourceId) = $sh->fetchrow_array()) {
-        $foundIn{$os} = $sourceId;
+      while(my ($dName, $sourceId, $id) = $sh->fetchrow_array()) {
+        $foundIn{$dName} = [$sourceId, $id];
       }
 
-      unless(scalar keys %foundIn > 0) {
-        $self->logOrError("ERROR:  Neither OntologyTerm Accession nor Name [$accessionOrName] was not found in the database");
+      if(scalar keys %foundIn < 1) {
+        $self->logOrError("ERROR:  Neither OntologyTerm Accession nor Name [$accessionOrName] was found in the database");
+        next;
       }
+      elsif(scalar keys %foundIn == 1) {
+        my @values = values %foundIn;
+        $rv->{$os}->{$ota} = $values[0]->[1];
+      }
+      else {
 
-      if(scalar keys %foundIn > 1) {
+        my $state = 1000; # really large number
 
-        my $found;
         foreach my $extDbName (keys %foundIn) {
-          my $accession = $foundIn{$extDbName};
+          my $accession = $foundIn{$extDbName}->[0];
+          my $identifier = $foundIn{$extDbName}->[1];
 
           my $lcOs = lc $os;
-          $found++ if($extDbName =~ /_${lcOs}_/);
 
           my @splitAccession = split(/_/, $accession);
           my $lcSplitAccession = lc($splitAccession[0]);
-          $found++ if($extDbName =~ /_${lcSplitAccession}_/);
+
+
+          # always use the eupath ontology if there is one
+          if($extDbName eq 'OntologyTerm_EuPath_RSRC') {
+            $rv->{$os}->{$ota} = $identifier;
+            $state = 1;
+          }
+
+          # If not eupath and there is a direct match to the source extdbrls then use that 
+          if($state > 1 && $extDbName =~ /_${lcOs}_/) {
+            $rv->{$os}->{$ota} = $identifier;
+            $state = 2;
+          }
+
+          # Split the accession by _ and try to match the prefix of the ontology term to the extdbrls name
+          if($state > 2 && $extDbName =~ /_${lcSplitAccession}_/) {
+            $rv->{$os}->{$ota} = $identifier;
+            $state = 3;
+          }
         }
 
-        unless($found) {
+        unless(defined $rv->{$os}->{$ota}) {
           $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were found multiple times in the database but none for source $os and none where the loaded source matches the prefix of the accession");
         }
       }
     }
   }
+
+  $self->{_ontology_term_to_identifiers} = $rv;
 }
 
-sub checkExistingDatabaseNodesAreHandled {
+sub checkDatabaseNodesAreHandled {
   my ($self, $foundDatasets, $nodes) = @_;
 
   unless(scalar keys %$foundDatasets > 0) {
-    $self->logOrError("ERROR:  Required Comment[dataset_name] for assay not found");
+    $self->logOrError("ISATAB_ERROR:  Required Comment[dataset_name] for assay not found");
   }
 
   my $sql = "select pan.name, pan.protocol_app_node_id
@@ -390,7 +642,11 @@ where ds.name = ?
     $sh->execute($datasetName, $datasetName);
 
     while(my ($pan, $panId) = $sh->fetchrow_array()) {
-      push @{$studyNodes{$pan}}, $panId;
+      if($studyNodes{$pan}) {
+        $self->logOrError("DATABASE_ERROR:  Existing ProtocolAppNode name $pan not unique w/in a study");
+      }
+
+      $studyNodes{$pan} = 1;
 
       my $found = 0;
       foreach my $node (@$nodes) {
@@ -401,17 +657,11 @@ where ds.name = ?
       }
 
       unless($found == 1) {
-        $self->logOrError("ERROR:  ProtocolAppNode named $pan for dataset $datasetName was not handled in the ISATab file.  Found it $found times.");
+        $self->logOrError("ISATAB_ERROR:  ProtocolAppNode named $pan for dataset $datasetName was not handled in the ISATab file.  Found it $found times.");
       }
     }
     $sh->finish();
   }
-
-  foreach my $pan (keys %studyNodes) {
-    $self->logOrError("ProtocolAppNode name $pan not unique w/in a study") if(scalar @{$studyNodes{$pan}} > 1);
-  }
-
-  return \%studyNodes
 }
 
 sub logOrError {
