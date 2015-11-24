@@ -122,7 +122,7 @@ sub run {
       $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
       $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
 
-      $self->loadNodesAndEdges($study);
+      $self->loadStudy($study);
     }
   }
 }
@@ -153,17 +153,25 @@ sub checkProtocolsAndSetIds {
   }
 }
 
-sub loadNodesAndEdges {
+sub loadStudy {
   my ($self, $study) = @_;
 
+  my $identifier = $study->getIdentifier();
+  my $title = $study->getTitle();
+  $title = $identifier unless($title);
+  my $description = $study->getDescription();
+
+  my $gusStudy = GUS::Model::Study::Study({name => $title, $description => $description, source_id => $identifier});
+  $gusStudy->submit();
+
+  my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
-  my $panNameToIdMap = $self->loadNodes($study->getNodes());
   $self->loadEdges($study->getEdges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap);
 }
 
 
 sub loadNodes {
-  my ($self, $nodes) = @_;
+  my ($self, $nodes, $gusStudy) = @_;
 
   my %rv;
 
@@ -179,6 +187,10 @@ sub loadNodes {
     else {
       $pan = GUS::Model::Study::ProtocolAppNode->new({name => $node->getValue()});
     }
+
+    my $gusStudyLink = GUS::Model::Study::StudyLink();
+    $gusStudyLink->setParent($gusStudy);
+    $gusStudyLink->setParent($pan);
 
     if($node->hasAttribute("Material Type")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
