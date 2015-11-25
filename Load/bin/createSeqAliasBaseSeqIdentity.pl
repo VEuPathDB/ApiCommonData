@@ -52,7 +52,7 @@ sub getSeqsFromFile {
     open (IN, "$inputFile") || die "can not open inputFile to read\n";
     while (<IN>) {
       chomp;
-      if ($_ =~ /^>(\S+?)\s+/) {
+      if ($_ =~ /^>(\S+)/) {
 	$sId = $1;
 	print STDERR "duplicated sourceId $sId in the file $inputFile\n" if ($seqs{$sId});
       } else {
