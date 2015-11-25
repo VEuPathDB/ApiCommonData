@@ -67,6 +67,12 @@ close IN;
 #}
 
 my $outputFile = "mapping.out";
+if ($ifAlias) {
+  $outputFile = "aliases_". $outputFile;
+} elsif ($ifReused) {
+  $outputFile = "reused_gene_". $outputFile;
+}
+
 open (OUT, ">$outputFile") || die "can not open output file to write\n";
 
 foreach my $k (sort keys %{$newGeneStart}) {
