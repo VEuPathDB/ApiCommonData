@@ -10,11 +10,14 @@ use File::Basename;
 
 use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::ProtocolApp;
+use GUS::Model::Study::ProtocolAppParam;
 use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 use GUS::Model::Study::Protocol;
+use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::Characteristic;
 use GUS::Model::Study::StudyLink;
+use GUS::Model::Study::Study;
 
 use GUS::Model::SRes::OntologyTerm;
 
@@ -90,16 +93,17 @@ sub run {
     @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
   }
 
+  my $investigationCount;
   foreach my $investigation (@investigationFiles) {
     my $dirname = dirname $investigation;
     my $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
 
     $investigation->parse();
 
+    $self->checkAllOntologyTerms($investigation->getOntologyTerms());
+
     my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
     $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
-
-
 
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
@@ -119,10 +123,51 @@ sub run {
           }
         }
       }
+
+      $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
       $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
       $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
 
       $self->loadStudy($study);
+    }
+
+    $investigationCount++;
+  }
+
+  my $errorCount = $self->{_has_errors};
+  if($errorCount) {
+    $self->error("FOUND $errorCount ERRORS!");
+  }
+
+  $self->logRowsInserted() if($self->getArg('commit'));
+
+  return("Processed $investigationCount Investigations.");
+}
+
+sub checkAllOntologyTerms {
+  my ($self, $ontologyTerms) = @_;
+
+  foreach my $ontologyTerm (@$ontologyTerms) {
+    my $accession = $ontologyTerm->getTermAccessionNumber();
+    my $source = $ontologyTerm->getTermSourceRef();
+    my $term = $ontologyTerm->getTerm();
+
+
+    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameterValue') {
+      $self->logOrError("OntologyTerm $term is required to have accession and source.");
+    }
+  }
+}
+
+
+sub checkMaterialEntitiesHaveMaterialType {
+  my ($self, $nodes) = @_;
+
+  foreach my $node (@$nodes) {
+    my $value = $node->getValue();
+    if($node->hasAttribute("Material Type")) {
+      my $materialTypeOntologyTerm = $node->getMaterialType();
+      $self->logOrError("Material Entitiy $value is required to have a [Material Type]");
     }
   }
 }
@@ -161,7 +206,7 @@ sub loadStudy {
   $title = $identifier unless($title);
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study({name => $title, $description => $description, source_id => $identifier});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier});
   $gusStudy->submit();
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
@@ -188,35 +233,43 @@ sub loadNodes {
       $pan = GUS::Model::Study::ProtocolAppNode->new({name => $node->getValue()});
     }
 
-    my $gusStudyLink = GUS::Model::Study::StudyLink();
+    my $gusStudyLink = GUS::Model::Study::StudyLink->new();
     $gusStudyLink->setParent($gusStudy);
     $gusStudyLink->setParent($pan);
 
-    if($node->hasAttribute("Material Type")) {
+    if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
       my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
+
+      my $characteristics = $node->getCharacteristics();
+      foreach my $characteristic (@$characteristics) {
+        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+       
+          my $taxonId = $self->{_ontology_term_to_identifiers}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+          $pan->setTaxonId($taxonId);
+        }
+        else {
+          my $gusChar = GUS::Model::Study::Characteristic->new();
+          $gusChar->setParent($pan);
+
+          my $charOntologyTerm = $self->getOntologyTermGusObj($characteristic);
+          $gusChar->setOntologyTermId($charOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+
+          if($characteristic->getUnit()) {
+            my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit());
+            $gusChar->setUnitId($unitOntologyTerm->getId());
+          }
+
+          # if no accession number then the qualifier was the ontologyterm.  Set the value
+          unless($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+            $gusChar->setValue($characteristic->getTerm());
+          }
+        }
+      }
     }
 
-    my $characteristics = $node->getCharacteristics();
-    foreach my $characteristic (@$characteristics) {
-      my $charOntologyTerm = $self->getOntologyTermGusObj($characteristic);
-
-      my $gusChar = GUS::Model::Study::Characteristic->new();
-      $gusChar->setParent($pan);
-      $gusChar->setOntologyTermId($charOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
-
-      if($characteristic->getUnit()) {
-        my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit());
-        $gusChar->setUnitId($unitOntologyTerm->getId());
-      }
-
-      # if no accession number then the qualifier was the ontologyterm.  Set the value
-      unless($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-        $gusChar->setValue($characteristic->getTerm());
-      }
-    }
     $pan->submit();
     $rv{$pan->getName()} = $pan->getId();
   }
@@ -230,6 +283,8 @@ sub getOntologyTermGusObj {
     my $ontologyTermClass = blessed($ontologyTerm);
     my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber();
     my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef();
+
+    $self->logDebug("OntologyTerm=$ontologyTermTerm\tClass=$ontologyTermClass\tAccession=$ontologyTermAccessionNumber\tSource=$ontologyTermSourceRef\n");
 
     my $ontologyTermId;
     if($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
@@ -679,6 +734,8 @@ where ds.name = ?
 sub logOrError {
   my ($self, $msg) = @_;
 
+  $self->{_has_errors}++;
+
   if($self->getArg('commit')) {
     $self->userError($msg);
   }
@@ -697,6 +754,10 @@ sub undoTables {
     'Study.Characteristic',
     'Study.ProtocolAppNode',
     'Study.ProtocolApp',
+    'Study.ProtocolParam',
+    'Study.ProtocolAppParam',
+    'Study.StudyLink',
+    'Study.Study',
      );
 }
 
