@@ -162,8 +162,8 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
 
     $tcount++;
     ## set up a temporary transcript id 
-    my $transcSourceId = $tagValues[0]."-T".$tcount;
-    $transcript->setSourceId("$transcSourceId");
+    #my $transcSourceId = $tagValues[0]."-T".$tcount;
+    #$transcript->setSourceId("$transcSourceId");
 
     # now do the exons and transcript seq
     my ($transcriptMin, $transcriptMax, @exons, $isReversed);
