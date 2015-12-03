@@ -350,10 +350,10 @@ sub traverseSeqFeatures {
         }
 
         $gene->add_SeqFeature($transcript);
-        push(@genes, $gene);
 
+      }
     }
-    }
+    push(@genes, $gene);
     return (\@genes ,\@UTRs);
 }
 
