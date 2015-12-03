@@ -99,12 +99,7 @@ sub preprocess {
 
             $geneFeature = $bioperlFeatureTree; 
             if(!($geneFeature->has_tag("ID"))){
-                $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
-		print STDERR "missing ID at ";
-		foreach my $tag ($geneFeature->get_all_tags) {
-		  print STDERR "$tag\t";
-		}
-		die "missing ID \n";
+	      die "Feature $type does not have tag: ID\n";
             } else {
 	      my ($cID) = $geneFeature->get_tag_values("ID");
 	      print STDERR "processing $cID...\n";
