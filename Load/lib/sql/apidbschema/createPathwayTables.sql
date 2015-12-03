@@ -77,6 +77,12 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayReaction TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayReactionRel TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayReactionXRef TO gus_w;
 
+GRANT SELECT ON ApiDB.PathwayReaction_SQ TO gus_r;
+GRANT SELECT ON ApiDB.PathwayReaction_SQ tO gus_w;
+GRANT SELECT ON ApiDB.PathwayReactionRel_SQ TO gus_r;
+GRANT SELECT ON ApiDB.PathwayReactionRel_SQ TO gus_w;
+GRANT SELECT ON ApiDB.PathwayReactionXRef_SQ TO gus_r;
+GRANT SELECT ON ApiDB.PathwayReactionXRef_SQ TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
