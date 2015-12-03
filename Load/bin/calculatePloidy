@@ -36,7 +36,7 @@ die "File of FPKM values $fpkm not found\n" unless (-e $fpkm);
 my $chrPloidies = calculateChrPloidies ($fpkm, $ploidy);
 
 open (OUT, ">$outputDir/$sampleName\_Ploidy.txt") or die "Cannot open $outputDir/$sampleName\_Ploidy.tsv for writing\n$!\n";
-printf OUT "Id_ref\tint_value\n";
+printf OUT "na_sequence_id\tchr_copy_number\n";
 foreach my $chr (keys %{$chrPloidies}) {
     printf OUT "%s\t%d\n", $chr, $chrPloidies->{$chr};
 }
