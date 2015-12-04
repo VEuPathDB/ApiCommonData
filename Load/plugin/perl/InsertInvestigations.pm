@@ -443,7 +443,7 @@ sub loadEdges {
         $self->error("No protocol app node id found for output $outputName");
       }
       $gusOutput->setProtocolAppNodeId($outputId);
-      $gusProtocolApp->addToSubmitList($output);
+      $gusProtocolApp->addToSubmitList($gusOutput);
     }
 
     foreach my $input (@{$edge->getInputs()}) {
@@ -457,7 +457,7 @@ sub loadEdges {
         $self->error("No protocol app node id for input $inputName");
       }
       $gusInput->setProtocolAppNodeId($inputId);
-      $gusProtocolApp->addToSubmitList($input);
+      $gusProtocolApp->addToSubmitList($gusInput);
     }
 
     my %existingProtocolAppParam;
