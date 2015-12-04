@@ -211,6 +211,7 @@ sub loadStudy {
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
+
   $self->loadEdges($study->getEdges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap);
 }
 
@@ -272,6 +273,9 @@ sub loadNodes {
 
     $pan->submit();
     $rv{$pan->getName()} = $pan->getId();
+
+    $self->undefPointerCache();
+
   }
   return \%rv;
 }
@@ -398,21 +402,29 @@ sub loadEdges {
       my $protocolName;
 
       my $gusProtocol;
+
       if($protocolCount > 1) {
         my @protocolNames = map { $_->getProtocol()->getProtocolName() } @{$edge->getProtocolApplications()};
 
         $protocolName = join("; ", @protocolNames);
-        $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName});
       }
       else {
         $protocolName = $edge->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
-        my $gusProtocolId = $protocolNamesToIdMap->{$protocolName};
+      }
+
+      if(my $gusProtocolId = $protocolNamesToIdMap->{$protocolName}) {
         $gusProtocol = GUS::Model::Study::Protocol->new({protocol_id => $gusProtocolId});
         unless($gusProtocol->retrieveFromDB()) {
           $self->error("Could not retrieve protocol w/ protocol id of [$gusProtocolId]");
         }
       }
+      else {
+        $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName});
 
+        $gusProtocol->submit();
+        $protocolNamesToIdMap->{$protocolName} = $gusProtocol->getId();        
+      }
+      
       $gusProtocolApp->setParent($gusProtocol);
     }
 
@@ -430,7 +442,7 @@ sub loadEdges {
       unless($outputId) {
         $self->error("No protocol app node id found for output $outputName");
       }
-      $output->setProtocolAppNodeId($outputId);
+      $gusOutput->setProtocolAppNodeId($outputId);
     }
 
     foreach my $input (@{$edge->getInputs()}) {
@@ -443,7 +455,7 @@ sub loadEdges {
       unless($inputId) {
         $self->error("No protocol app node id for input $inputName");
       }
-      $input->setProtocolAppNodeId($inputId);
+      $gusInput->setProtocolAppNodeId($inputId);
     }
 
     my %existingProtocolAppParam;
@@ -473,6 +485,7 @@ sub loadEdges {
       }
     }
     $gusProtocolApp->submit();
+    $self->undefPointerCache();
   }
 }
 
