@@ -443,6 +443,7 @@ sub loadEdges {
         $self->error("No protocol app node id found for output $outputName");
       }
       $gusOutput->setProtocolAppNodeId($outputId);
+      $gusProtocolApp->addToSubmitList($output);
     }
 
     foreach my $input (@{$edge->getInputs()}) {
@@ -456,6 +457,7 @@ sub loadEdges {
         $self->error("No protocol app node id for input $inputName");
       }
       $gusInput->setProtocolAppNodeId($inputId);
+      $gusProtocolApp->addToSubmitList($input);
     }
 
     my %existingProtocolAppParam;
@@ -765,11 +767,11 @@ sub undoTables {
     'Study.Input',
     'Study.Output',
     'Study.Characteristic',
+    'Study.StudyLink',
     'Study.ProtocolAppNode',
+    'Study.ProtocolAppParam',
     'Study.ProtocolApp',
     'Study.ProtocolParam',
-    'Study.ProtocolAppParam',
-    'Study.StudyLink',
     'Study.Study',
      );
 }
