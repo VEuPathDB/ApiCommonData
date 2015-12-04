@@ -47,16 +47,20 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="transcript">
-    <qualifier name="ID"           column="source_id"/>
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
     <qualifier name="Index" ignore="true"/>
     <qualifier name="Name"         ignore="true"/>
     <qualifier name="Note"         ignore="true"/>
     <qualifier name="product"         ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
     <qualifier name="partial"     handler="api"    method="setPartial"/>
@@ -102,6 +106,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="translation"            ignore="true"/>
     <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
@@ -210,8 +215,9 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="UTR" table="DoTS::UTRFeature" so="">
     <qualifier name="ID" column="source_id"/>
-    <qualifier name="Parent" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="Parent" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
   </feature>
 
 </mapping>
