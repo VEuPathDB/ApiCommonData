@@ -420,6 +420,7 @@ sub loadEdges {
       }
       else {
         $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName});
+        $gusProtocol->retrieveFromDB(); # try to retrieve it
 
         $gusProtocol->submit();
         $protocolNamesToIdMap->{$protocolName} = $gusProtocol->getId();        
