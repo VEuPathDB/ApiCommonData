@@ -175,6 +175,10 @@ sub printGOFile {
       $goId = $2;
       $product = $3;
       $evidenceCode = $4;
+    } elsif ($line =~ /GO:(\d+) - (.+)$/) {
+      $goId = $1;
+      $product = $2;
+      $aspect = &getAspectForGo ($line);
     }
   } else {
     my @facts = split (/\;/, $line);
