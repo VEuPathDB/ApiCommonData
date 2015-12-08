@@ -74,6 +74,13 @@ sub preprocess {
 	      $type = 'gene';
 	    }
 
+	    ## can not use the if ($type eq 'tRNA') statement here since this is for general case
+	    ## for the case that tRNA does not have gene as parent, please use GeneAndCdsWithtRNAwoParent2BioperlTree.pm
+
+	    #if($type eq 'tRNA'){
+	    #  $bioperlFeatureTree->primary_tag('tRNA_gene');
+	    #}
+
 	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
 		#if($bioperlFeatureTree->has_tag("satellite")){
 		#    $bioperlFeatureTree->primary_tag("microsatellite");
