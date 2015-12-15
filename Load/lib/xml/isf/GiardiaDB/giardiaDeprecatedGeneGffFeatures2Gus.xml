@@ -11,7 +11,6 @@
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"      handler="api" method="validateGene"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
-    <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="Note"           ignore="true"/>
     <qualifier name="Pseudogene"     ignore="true"/>
     <qualifier name="Pseudo"         ignore="true"/>
@@ -20,6 +19,10 @@
   </feature>
 
   <feature name="transcript" so="transcript">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
