@@ -354,7 +354,7 @@ sub makeCharacteristic {
   $oe = GUS::Model::Study::OntologyEntry->new({ontology_entry_id => $oe_id,});
   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({value => $value});
 
-  $oe->retrieveFromDB();
+  $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
   $characteristic->setParent($oe);
 
   return $characteristic;
@@ -365,8 +365,8 @@ sub makeCharacteristic {
 sub parseRow {
   my ($self, $header, $row) = @_;
 
-  my @keys = split(/\t/, $header);
-  my @values = split(/\t/, $row);
+  my @keys = split(/\t/, $header,-1);
+  my @values = split(/\t/, $row,-1);
 
   unless(scalar @keys == scalar @values) {
     $self->error("Mismatched number of headers and data columns");
