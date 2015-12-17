@@ -213,6 +213,12 @@ sub addResults {
   } 
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
+  }
+  elsif ($protocolName =~ /Ploidy/) {
+    $tableString = "ApiDB::ChrCopyNumber";
+  }
+  elsif ($protocolName =~ /geneCNV/) {
+    $tableString = "ApiDB::GeneCopyNumber";
   } 
   else {
     $tableString = "Results::NAFeatureExpression";
@@ -238,14 +244,20 @@ sub addResults {
     my @a = split(/\t/, $_);
 
     my ($hash, $start);
-    if ($sourceIdType =~ /segment/) {
+    if ($sourceIdType =~ /segment/ || $sourceIdType =~ /NASequence/) {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-        $hash = { na_sequence_id => $naSequenceId,
-                  segment_start => $a[1],
-                  segment_end => $a[2]
-                };
-        $start = 3;
+        $hash = { na_sequence_id => $naSequenceId};
+        $start = 1;
+        if ($sourceIdType =~ /segment/ ) {
+    #        $hash { segment_start => $a[1],
+    #                segment_end => $a[2]
+    #              };
+            $hash->{'segment_start'} = $a[1];
+            $hash->{'segment_end'} = $a[2];
+            $start = 3;
+        }
     }
+
     elsif ($sourceIdType =~ /reporter/) {
         my $reporterId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
         $hash = { reporter_id => $reporterId };
@@ -312,7 +324,7 @@ sub lookupIdFromSourceId {
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
   }
-  elsif ($sourceIdType eq 'segment') {
+  elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
   }
   elsif ($sourceIdType eq 'reporter') {
@@ -518,6 +530,8 @@ sub undoTables {
     'Results.ReporterIntensity',
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
+    'ApiDB.GeneCopyNumber',
+    'ApiDB.ChrCopyNumber',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
