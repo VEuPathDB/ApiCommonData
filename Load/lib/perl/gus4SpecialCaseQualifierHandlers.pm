@@ -784,7 +784,7 @@ sub validateGene {
 #		last;
 	    }else{
                my $transl_table = $transcript->getTranslTable();
-               my $codonTable = ($transl_table) ? ($transl_table - 1) : 0;
+               my $codonTable = ($transl_table) ? ($transl_table) : 1;
 
 	       if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)){
 		 $msg = "***ERROR********* ";
