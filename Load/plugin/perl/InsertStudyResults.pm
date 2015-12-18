@@ -530,6 +530,7 @@ sub undoTables {
     'Results.ReporterIntensity',
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
+    'Results.CompoundMassSpec',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'Study.ProtocolAppNode',
