@@ -130,6 +130,8 @@ while (<IN>) {
     foreach my $v (@values) {
       $v =~ s/;current=false$//; ## for synonym, previous_systematic_id
       $v =~ s/^PMID://; ## for pmid in literature
+      $v =~ s/^\s+//;
+      $v =~ s/\s+$//;
       push @{$gene{$key}{$qual}}, $v;
     }
   }
