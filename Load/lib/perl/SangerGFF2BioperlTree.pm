@@ -332,21 +332,23 @@ sub traverseSeqFeatures {
 	      $transcript->add_tag_value('Partial', '') if (!$transcript->has_tag('Partial') && !$transcript->has_tag('partial'));
 	    }
 
+	    ## For the gff3 file got from geneDB, do not need to deal with pseudo in product or comment
 	    ## some of gene have pseudogene or partial info in product tag 
-	    if($RNA->has_tag("product")){
-	      my($prod) = $RNA->get_tag_values("product");
-	      if($prod =~ /pseudogene/i && !$transcript->has_tag('pseudo')){
-		$transcript->add_tag_value("pseudo",'');
-	      }
-	    }
+	    #if($RNA->has_tag("product")){
+	    #  my($prod) = $RNA->get_tag_values("product");
+	    #  if($prod =~ /pseudogene/i && !$transcript->has_tag('pseudo')){
+	    #     $transcript->add_tag_value("pseudo",'');
+	    #  }
+	    #}
 
 	    ## some of gene have pseudogene or partial info in comment tag
-	    if ($RNA->has_tag('comment') ) {
-	      my ($comment_val) = $RNA->get_tag_values("comment");
-	      if ($comment_val =~ /pseudogene/i && !$transcript->has_tag('pseudo') && !$transcript->has_tag('Pseudo')) {
-		$transcript->add_tag_value("pseudo", '');
-	      }
-	    }
+	    ## based on lmajFriedlin, this should be comment out
+	    #if ($RNA->has_tag('comment') ) {
+	    #  my ($comment_val) = $RNA->get_tag_values("comment");
+	    #  if ($comment_val =~ /pseudogene/i && !$transcript->has_tag('pseudo') && !$transcript->has_tag('Pseudo')) {
+		#$transcript->add_tag_value("pseudo", '');
+	    #  }
+	    #}
 
 	    $codonStart -= 1 if $codonStart > 0;
 
