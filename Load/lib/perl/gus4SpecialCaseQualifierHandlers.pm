@@ -297,6 +297,31 @@ sub _undoSetParent {
 }
 
 
+################ For UTRFeature, set transcript as Parent ######################
+
+sub setUtrParent{
+  my ($self, $tag, $bioperlFeature, $utrFeature) = @_;
+
+  # tagValue here is the value of Parent tag in bioperlFeature
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  $tagValues[0] =~ s/^\s+//;
+  $tagValues[0] =~ s/\s+$//;
+
+  my $transcript = GUS::Model::DoTS::Transcript->new({source_id => $tagValues[0]});
+
+  if ($transcript->retrieveFromDB()) {
+    $utrFeature->setParent($transcript);
+  }
+
+  return [];
+}
+
+sub _undoSetUtrParent {
+  my ($self) = @_;
+
+}
+
+
 ################ Translation#############################
 
 sub setProvidedTranslation {
