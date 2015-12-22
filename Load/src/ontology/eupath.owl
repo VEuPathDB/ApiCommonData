@@ -159,6 +159,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000274 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000274">
+        <rdfs:label xml:lang="en">display order</rdfs:label>
+        <rdfs:comment>annotation used for specifing the order of terms displayed on the EuPathDB website  </rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/IAO_0000111 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000111"/>
@@ -471,14 +480,14 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DRON_00021246">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
-                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000061"/>
+                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_3638"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000115>A drug product in solution form for injection that has the chemical ingredient chloroquine and used in the treatment or prevention of malaria.</obo:IAO_0000115>
@@ -1361,6 +1370,12 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DRON_00000005"/>
         <rdfs:subClassOf>
             <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00017631"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000060"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
@@ -1369,12 +1384,6 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00019223"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
-                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DRON_00017631"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <obo:IAO_0000119>http://en.wikipedia.org/wiki/Artemether/lumefantrine</obo:IAO_0000119>
