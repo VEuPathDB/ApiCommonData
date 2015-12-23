@@ -295,7 +295,6 @@ sub getOntologyTermGusObj {
 
     $self->logDebug("OntologyTerm=$ontologyTermTerm\tClass=$ontologyTermClass\tAccession=$ontologyTermAccessionNumber\tSource=$ontologyTermSourceRef\n");
 
-    print STDERR "getOntol\n";
     my $ontologyTermId;
     if($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic' && $isCharQualifier) {
       my $qualifier = $ontologyTerm->getQualifier();
