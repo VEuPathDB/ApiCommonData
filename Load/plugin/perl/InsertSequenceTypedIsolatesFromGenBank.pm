@@ -266,8 +266,7 @@ sub loadIsolates {
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
         my $characteristic = GUS::Model::Study::Characteristic->new();
         $characteristic->setValue($value);
-
-        $characteristic->setParent($categoryOntologyObj);
+        $characteristic->setQualifierId($categoryOntologyObj->getId());
         $characteristic->setParent($node);
       } # end load terms
 
