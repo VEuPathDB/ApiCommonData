@@ -266,7 +266,8 @@ sub loadNodes {
 
 
           if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-            my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+            my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
+            $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
           }
           else {
             $gusChar->setValue($characteristic->getTerm());
