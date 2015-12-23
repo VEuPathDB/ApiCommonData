@@ -240,7 +240,7 @@ sub loadNodes {
 
     if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
-      my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm);
+      my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
 
@@ -255,18 +255,23 @@ sub loadNodes {
           my $gusChar = GUS::Model::Study::Characteristic->new();
           $gusChar->setParent($pan);
 
-          my $charOntologyTerm = $self->getOntologyTermGusObj($characteristic);
-          $gusChar->setOntologyTermId($charOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+          # ALWAYS Set the qualifier_id
+          my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+          $gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
 
           if($characteristic->getUnit()) {
-            my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit());
+            my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
             $gusChar->setUnitId($unitOntologyTerm->getId());
           }
 
-          # if no accession number then the qualifier was the ontologyterm.  Set the value
-          unless($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+
+          if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+            my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+          }
+          else {
             $gusChar->setValue($characteristic->getTerm());
           }
+
         }
       }
     }
@@ -281,7 +286,7 @@ sub loadNodes {
 }
 
 sub getOntologyTermGusObj {
-    my ($self, $ontologyTerm) = @_;
+    my ($self, $ontologyTerm, $isCharQualifier) = @_;
 
     my $ontologyTermTerm = $ontologyTerm->getTerm();
     my $ontologyTermClass = blessed($ontologyTerm);
@@ -290,13 +295,15 @@ sub getOntologyTermGusObj {
 
     $self->logDebug("OntologyTerm=$ontologyTermTerm\tClass=$ontologyTermClass\tAccession=$ontologyTermAccessionNumber\tSource=$ontologyTermSourceRef\n");
 
+    print STDERR "getOntol\n";
     my $ontologyTermId;
-    if($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
-      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
-    }
-    elsif($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic') {
+    if($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic' && $isCharQualifier) {
       my $qualifier = $ontologyTerm->getQualifier();
       $ontologyTermId = $self->{_ontology_term_to_identifiers}->{CHARACTERISTIC_QUALIFIER}->{$qualifier};
+      $self->userError("No ontology entry found for qualifier [$qualifier]") unless($ontologyTermId);
+    }
+    elsif($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
+      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
     }
     else {
       $self->logOrError("OntologyTerm of class $ontologyTermClass and value [$ontologyTermTerm] must provide accession&source OR a qualifier in the case of Characteristics must map to an ontologyterm");
@@ -341,7 +348,7 @@ sub loadProtocols {
       $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName, description => $protocolDescription});
 
       if($protocol->getProtocolType()) {
-        my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType());
+        my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType(), 0);
         $gusProtocol->setParent($gusProtocolType);
       }
     }
@@ -620,6 +627,9 @@ and lower(?) like  'ncbitaxon%'
   my $sh = $dbh->prepare($sql);
 
   my $rv = {};
+
+  print STDERR Dumper $iOntologyTermAccessionsHash;
+
 
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
