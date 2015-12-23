@@ -628,9 +628,6 @@ and lower(?) like  'ncbitaxon%'
 
   my $rv = {};
 
-  print STDERR Dumper $iOntologyTermAccessionsHash;
-
-
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
