@@ -13,6 +13,10 @@ my ($outFile, $sampleName, $inputName, $fragmentLength);
 die "USAGE: $0 --outFile <out_file> --sampleName <sample_name> --inputName <input_name> [--fragmentLength i]\n"    if (!$outFile || !$sampleName || !$inputName);
 
 open(FILE, ">$outFile") || die "Couldn't open $outFile for writing\n";
+
+$inputName='' if (lc($inputName) eq 'none');
+
 print FILE "sampleName=$sampleName\ninputName=$inputName\nfragLength=$fragmentLength\n";
+
 close(FILE);
 
