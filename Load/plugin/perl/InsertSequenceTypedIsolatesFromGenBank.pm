@@ -357,8 +357,8 @@ sub undoTables {
             'Study.StudyLink',
             'Study.Characteristic',
             'Study.ProtocolAppNode',
-
             'Study.Study',
+            'SRes.OntologyTerm',
          );
 
 }
