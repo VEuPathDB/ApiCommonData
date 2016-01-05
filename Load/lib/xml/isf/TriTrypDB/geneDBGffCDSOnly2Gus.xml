@@ -15,107 +15,30 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
 
-  <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"      handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
-    <qualifier name="parentID"  ignore="true"/>
+    <qualifier name="eupathdb_uc"      ignore="true"/>
+    <qualifier name="feature_id"          ignore="true"/>
+    <qualifier name="isObsolete"	ignore="true"/>
+    <qualifier name="internalGap" 	ignore="true"/>
+    <qualifier name="literature" 	ignore="true"/>
     <qualifier name="Name"          ignore="true"/>
-    <qualifier name="synonym"          ignore="true"/>
-    <qualifier name="product_synonym"          ignore="true"/>
-    <qualifier name="feature_id"    ignore="true"/>
-    <qualifier name="phase" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
-    <qualifier name="seq_id" ignore="true"/>
-    <qualifier name="source" ignore="true"/>
-    <qualifier name="colour" ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"               ignore="true"/>
-    <qualifier name="literature"        ignore="true"/>
-    <qualifier name="Dbxref"               ignore="true"/>
-    <qualifier name="note"                  ignore="true"/>
-    <qualifier name="Note"                  ignore="true"/>
-    <qualifier name="product"               ignore="true"/>
-    <qualifier name="curation"          ignore="true"/>
-    <qualifier name="controlled_curation"          ignore="true"/>
-    <qualifier name="comment"           ignore="true"/>
-    <qualifier name="eC_number"         ignore="true"/>
-    <qualifier name="previous_systematic_id"  ignore="true"/>
-    <qualifier name="protein_id"            method="transcriptProteinId"/>
-    <qualifier name="transl_except"       handler="api"  method="transcriptTranslExcept"/>
-    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
-    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
-    <qualifier name="GO_component" ignore="true"/>
-    <qualifier name="GO_process" ignore="true"/>
-    <qualifier name="GO_function" ignore="true"/>
-    <qualifier name="gO"          ignore="true"/>
-    <qualifier name="fasta_file"             ignore="true"/>
-    <!-- from mRNA records -->
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="function" ignore="true"/>
-    <qualifier name="standard_name" ignore="true"/>
-    <qualifier name="orthologous_to" ignore="true"/>
-    <qualifier name="paralogous_to" ignore="true"/>
-    <qualifier name="private" ignore="true"/>
-    <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="added"    ignore="true"/>
-    <qualifier name="confirmed"    ignore="true"/>
-    <qualifier name="query"    ignore="true"/>
-    <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
-    <!-- from gene records -->
-    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
-    <qualifier name="blast_file"             ignore="true"/>
-    <qualifier name="blastp+go_file"         ignore="true"/>
-    <qualifier name="blastp_file"            ignore="true"/>
-    <qualifier name="blastn_file"            ignore="true"/>
-    <qualifier name="blastx_file"            ignore="true"/>
-    <qualifier name="gPI_anchor_cleavage_site"            ignore="true"/>
-    <qualifier name="membrane_structure"            ignore="true"/>
-    <qualifier name="non_cytoplasmic_polypeptide_region"            ignore="true"/>
-    <qualifier name="cytoplasmic_polypeptide_region"            ignore="true"/>
-    <qualifier name="polypeptide_domain"            ignore="true"/>
-    <qualifier name="signal_peptide"            ignore="true"/>
-    <qualifier name="transmembrane_polypeptide_region"            ignore="true"/>
-    <qualifier name="history"    ignore="true"/>
-    <qualifier name="blastp" ignore="true"/>
-    <qualifier name="isFmaxPartial" ignore="true"/>
-    <qualifier name="isFminPartial" ignore="true"/>
-  </feature>
-
-  <feature name="pseudo_gene" so="protein_coding">
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="orthologous_to"          ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
-    <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"               ignore="true"/>
-    <qualifier name="note"                  ignore="true"/>
-    <qualifier name="product"               ignore="true"/>
-    <qualifier name="curation"          ignore="true"/>
-    <qualifier name="EC_number"             ignore="true"/>
-    <qualifier name="protein_id"            method="transcriptProteinId"/>
-    <qualifier name="transl_except"    handler="api"     method="transcriptTranslExcept"/>
-    <qualifier name="translation"     handler="api"      method="setProvidedTranslation"/>
-    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
-   <qualifier name="GO_component" ignore="true"/>
-    <qualifier name="GO_process" ignore="true"/>
-    <qualifier name="GO_function" ignore="true"/>
-    <!-- from mRNA records -->
-    <qualifier name="gene" ignore="true"/>
-    <qualifier name="function" ignore="true"/>
-    <qualifier name="standard_name" ignore="true"/>
-    <qualifier name="history"    ignore="true"/>
-    <!-- from gene records -->
-    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
-  </feature>
-
-  <!-- genebank gene feature qualifiers reshaped into new coding_gene created
-       from cds/rna, so ignore this feature -->
-  <feature name="gene" ignore="true">
-    <qualifier name="gene"/>
-    <qualifier name="ID"/>
-    <qualifier name="note"/>
+    <qualifier name="previous_systematic_id"      ignore="true"/>
+    <qualifier name="product_synonym"      ignore="true"/>
+    <qualifier name="synonym"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
+    <qualifier name="Start_range"      ignore="true"/>
+    <qualifier name="End_range"        ignore="true"/>
+    <qualifier name="isFmaxPartial"      ignore="true"/>
+    <qualifier name="isFminPartial"      ignore="true"/>
+    <qualifier name="timelastmodified"      ignore="true"/>
+    <qualifier name="threeEndPartial"      ignore="true"/>  <!-- load at transcript in gus4 -->
+    <qualifier name="fiveEndPartial"      ignore="true"/>  <!-- load at transcript in gus4 -->
+    <qualifier name="pseudo"      ignore="true"/>  <!-- ignore in gene since load in RNA level -->
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
@@ -123,13 +46,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
-   <qualifier name="Dbxref"               ignore="true"/> 
-   <qualifier name="comment"                  ignore="true"/>
-   <qualifier name="Note"                  ignore="true"/>
-   <qualifier name="Name"          ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/> 
+    <qualifier name="comment"                  ignore="true"/>
+    <qualifier name="Note"                  ignore="true"/>
+    <qualifier name="Name"          ignore="true"/>
     <qualifier name="previous_systematic_id"  ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
-   <qualifier name="synonym"          ignore="true"/>
+    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -141,28 +64,43 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="pseudo"      ignore="true"/>
   </feature>
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
-   <qualifier name="parentID"  ignore="true"/> 
+    <qualifier name="parentID"  ignore="true"/> 
     <qualifier name="note"                  ignore="true"/>
-   <qualifier name="Name"          ignore="true"/>
+    <qualifier name="Name"          ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
-   <qualifier name="Dbxref"               ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="previous_systematic_id"  ignore="true"/>
-   <qualifier name="synonym"          ignore="true"/>
+    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
     <qualifier name="ID" column="source_id"/>
-     <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
+    <qualifier name="note" handler="api" method="note"/>
+    <qualifier name="Note" handler="api" method="note"/>
     <qualifier name="rpt_family"/>
     <qualifier name="rpt_type"/>
     <qualifier name="rpt_unit_seq" handler="api" method="rptUnit"/>
@@ -229,6 +167,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
    <qualifier name="Name"         column="standard_name"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       handler="api"   method="setPseudo"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
   </feature>
 
   <feature name="deletion" table="DoTS::Miscellaneous" so="direct_repeat">
@@ -289,6 +231,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="feature_id"        ignore="true"/>
     <qualifier name="isObsolete"        ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
+    <qualifier name="Ontology_term"        ignore="true"/>
     <qualifier name="timelastmodified"        ignore="true"/>
   </feature>
 
@@ -298,10 +241,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
-   <qualifier name="Dbxref"               ignore="true"/> 
-  <qualifier name="Name"          ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/> 
+    <qualifier name="Name"          ignore="true"/>
     <qualifier name="previous_systematic_id"  ignore="true"/>
-   <qualifier name="synonym"          ignore="true"/>
+    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -313,6 +256,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
 
@@ -322,10 +272,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
-   <qualifier name="Dbxref"               ignore="true"/>
-   <qualifier name="Name"          ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/>
+    <qualifier name="Name"          ignore="true"/>
     <qualifier name="previous_systematic_id"  ignore="true"/>
-   <qualifier name="synonym"          ignore="true"/>
+    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -338,6 +288,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
@@ -346,10 +303,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
-   <qualifier name="Dbxref"               ignore="true"/>
-   <qualifier name="Name"          ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/>
+    <qualifier name="Name"          ignore="true"/>
     <qualifier name="previous_systematic_id"  ignore="true"/>
-   <qualifier name="synonym"          ignore="true"/>
+    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -362,6 +319,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="non_protein_coding">
@@ -391,6 +355,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastx_file" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
+    <qualifier name="Start_range"    ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -442,6 +413,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="private" ignore="true"/>
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="Partial"      handler="api"    method="setPartial"/>
+    <qualifier name="fiveEndPartial"      ignore="true"/>
+    <qualifier name="threeEndPartial"     ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="Partial"      ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true">
@@ -461,8 +440,58 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="transcript">
-  <!-- created by the reshaper -->
-  <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="previous_systematic_id"               ignore="true"/>
+    <qualifier name="Name"               ignore="true"/>
+    <qualifier name="Note"               ignore="true"/>
+    <qualifier name="Dbxref"               ignore="true"/>
+    <qualifier name="blastp"               ignore="true"/>
+    <qualifier name="blastx_file"               ignore="true"/>
+    <qualifier name="colour"               ignore="true"/>
+    <qualifier name="comment"               ignore="true"/>
+    <qualifier name="controlled_curation"               ignore="true"/>
+    <qualifier name="curation"               ignore="true"/>
+    <qualifier name="cytoplasmic_polypeptide_region"               ignore="true"/>
+    <qualifier name="eC_number"               ignore="true"/>
+    <qualifier name="End_range"               ignore="true"/>
+    <qualifier name="eupathdb_uc"               ignore="true"/>
+    <qualifier name="fasta_file"               ignore="true"/>
+    <qualifier name="feature_id"               ignore="true"/>
+    <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
+    <qualifier name="history"               ignore="true"/>
+    <qualifier name="isObsolete"               ignore="true"/>
+    <qualifier name="literature"               ignore="true"/>
+    <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
+    <qualifier name="Ontology_term"               ignore="true"/>
+    <qualifier name="paralogous_to"               ignore="true"/>
+    <qualifier name="polypeptide_domain"               ignore="true"/>
+    <qualifier name="orthologous_to"               ignore="true"/>
+    <qualifier name="polypeptide_domain"               ignore="true"/>
+    <qualifier name="Parent"               ignore="true"/>
+    <qualifier name="product"               ignore="true"/>
+    <qualifier name="product_synonym"               ignore="true"/>
+    <qualifier name="query"               ignore="true"/>
+    <qualifier name="signal_peptide"               ignore="true"/>
+    <qualifier name="Start_range"               ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"    ignore="true"/>
+    <qualifier name="synonym"               ignore="true"/>
+    <qualifier name="timelastmodified"               ignore="true"/>
+    <qualifier name="transmembrane_polypeptide_region"               ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="score"      ignore="true"/>
+    <qualifier name="protein_id"            method="transcriptProteinId"/>
+    <qualifier name="transl_except"         handler="api"  method="transcriptTranslExcept"/>
+    <qualifier name="translation"           handler="api" method="setProvidedTranslation"/>
+    <qualifier name="Partial"            handler="api"    method="setPartial"/>
+    <qualifier name="partial"            handler="api"    method="setPartial"/>
+    <qualifier name="isFmaxPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="isFminPartial"      handler="api"    method="setPartial"/>
+    <qualifier name="fiveEndPartial"     handler="api"    method="setPartial"/>
+    <qualifier name="threeEndPartial"    handler="api"    method="setPartial"/>
+    <qualifier name="Pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="region" ignore="true">
@@ -511,28 +540,36 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="paralogous_to" ignore="true"/>
     <qualifier name="isFminPartial" ignore="true"/>
     <qualifier name="isFmaxPartial" ignore="true"/>
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
   </feature>
 
-  <feature name="three_prime_UTR" ignore="true">
+  <feature name="three_prime_UTR" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
    <qualifier name="controlled_curation" ignore="true"/>
+   <qualifier name="literature" ignore="true"/>
    <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="Parent"	handler="api"  method="setUtrParent"/>
     <qualifier name="comment" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="curation" ignore="true"/>
    <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="history" ignore="true"/> 
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
   </feature>
 
-  <feature name="splice_acceptor_site" ignore="true">
+  <feature name="splice_acceptor_site" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
    <qualifier name="controlled_curation" ignore="true"/>
    <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
-   <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="Parent"	handler="api"  method="setUtrParent"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="isObsolete" ignore="true"/>
    <qualifier name="comment" ignore="true"/>
@@ -540,13 +577,13 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
 
-  <feature name="five_prime_UTR" ignore="true">
+  <feature name="five_prime_UTR" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
-   <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="Parent"	handler="api"  method="setUtrParent"/>
    <qualifier name="comment" ignore="true"/>
    <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="curation" ignore="true"/>
@@ -554,15 +591,17 @@ necessarily by what's defined in the input (eg. Genbank) file
   <qualifier name="private" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="literature" ignore="true"/>
+    <qualifier name="Start_range" ignore="true"/>
+    <qualifier name="End_range" ignore="true"/>
 
   </feature>
 
-  <feature name="splice_site" ignore="true">
+  <feature name="splice_site" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
    <qualifier name="controlled_curation" ignore="true"/>
    <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
-   <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="Parent"	handler="api"  method="setUtrParent"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="isObsolete" ignore="true"/>
    <qualifier name="comment" ignore="true"/>
@@ -615,6 +654,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="comment"              handler="api" method="note"/>
     <qualifier name="estimated_length"  handler="api" method="gapLength"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="gap_type" ignore="true"/>
      <qualifier name="Parent" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
