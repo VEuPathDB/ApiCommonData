@@ -433,7 +433,7 @@ sub makeProtocolAppNode {
 
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
   unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required Ontology Term $appNodeType not found in database");
+    $self->error("Required Ontology Term $appNodeType is either not found in the database or returns more than one row from the database");
   }
 
   foreach my $e (@$existingAppNodes) {
