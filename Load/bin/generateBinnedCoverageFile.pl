@@ -69,9 +69,6 @@ endOfUsage
     sub getCoverage {
         my ($bed, $bam, $out) = @_;
         my @coverageBed = split(/\n/, runCmd("bedtools coverage -counts -a $bed -b $bam"));
-        foreach my $line (@coverageBed) {
-            print $line;
-        }
         my $totalMapped = runCmd("samtools view -c -F 4 $bam");
         open (OUT, ">$out") or die "Cannot write output file\n$!\n";
         foreach (@coverageBed){
