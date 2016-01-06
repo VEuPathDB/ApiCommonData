@@ -23,7 +23,9 @@
 
 use strict;
 use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
+use CBIL::Util::Utils;
 
 my $bamFile;
 my $window;
@@ -66,8 +68,11 @@ endOfUsage
     # gets coverage for each window - uses BAM file of mapped reads and BED file for windows on genome
     sub getCoverage {
         my ($bed, $bam, $out) = @_;
-        my @coverageBed = `bedtools coverage -abam $bam -b $bed`;
-        my $totalMapped = `samtools view -c -F 4 $bam`;
+        my @coverageBed = split(/\n/, runCmd("bedtools coverage -counts -a $bed -b $bam"));
+        foreach my $line (@coverageBed) {
+            print $line;
+        }
+        my $totalMapped = runCmd("samtools view -c -F 4 $bam");
         open (OUT, ">$out") or die "Cannot write output file\n$!\n";
         foreach (@coverageBed){
             my ($chr, $start, $end, $mapped, $numNonZero, $lenB, $propNonZero) = split(/\t/,$_);
