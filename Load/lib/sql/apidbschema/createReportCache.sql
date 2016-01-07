@@ -1,5 +1,6 @@
 create table apidb.TranscriptDetail (
       SOURCE_ID VARCHAR2(100 BYTE),
+      GENE_SOURCE_ID VARCHAR2(100 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
@@ -9,8 +10,8 @@ create table apidb.TranscriptDetail (
 );
 
 CREATE UNIQUE INDEX apidb.transcriptdtl_idx01 ON apidb.TranscriptDetail(source_id, project_id, field_name) tablespace indx;
-CREATE INDEX apidb.transcriptdtl_idx02 ON apidb.TranscriptDetail(field_name, source_id) tablespace indx;
-CREATE INDEX apidb.transcriptdtl_idx03 ON apidb.TranscriptDetail(row_count, source_id) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx02 ON apidb.TranscriptDetail(field_name, source_id, gene_source_id, project_id) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx03 ON apidb.TranscriptDetail(row_count, source_id, gene_source_id, project_id) tablespace indx;
 
 CREATE INDEX apidb.transcript_text_ix on apidb.TranscriptDetail(content)
 indextype is ctxsys.context
