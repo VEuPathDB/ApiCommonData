@@ -499,7 +499,7 @@ sub setTranscriptIds{
     $splicedNaSeq->setSequence($transcriptSeq);
 
     if ($gusGene->getName() eq 'coding_gene' || $gusGene->getName() eq 'pseudo_gene') {
-      my @translatedAaFeatures = $gusTranscript->getChildren('DoTS::TranslatedAAFeature');
+      my @translatedAaFeatures = $gusTranscript->getChildren('DoTS::TranslatedAAFeature', 1);
       my $aaCount = 0;
       foreach my $translatedAaFeature (sort {$a->translation_stop <=> $b->translation_stop} @translatedAaFeatures) {
 	$aaCount++;
