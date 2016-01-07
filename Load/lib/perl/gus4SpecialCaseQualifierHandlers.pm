@@ -158,7 +158,14 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
   my $tcount = 0;
   my $aaCount = 0;
 
-  foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
+  my @transcripts = $geneFeature->getChildren('DoTS::Transcript');
+  my @transcriptsSorted = map { $_->[0] }
+  sort { $a->[3] ? ($b->[1] <=> $a->[1] || $b->[2] <=> $a->[2]) : ($a->[1] <=> $b->[1] || $a->[2] <=> $b->[2])}
+  map { [ $_, $_->getFeatureLocation ]}
+  @transcripts;
+
+#  foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
+  foreach my $transcript (@transcriptsSorted) {
 
     $tcount++;
     ## set up a temporary transcript id 
