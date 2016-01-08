@@ -266,7 +266,10 @@ sub loadIsolates {
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
         my $characteristic = GUS::Model::Study::Characteristic->new();
         $characteristic->setValue($value);
-        $characteristic->setQualifierId($categoryOntologyObj->getId());
+        my $qualifierId = $categoryOntologyObj->getId();
+        $self->error("Failed to find (or create) an OntologyTerm for term: $term") unless($qualifierId);
+
+        $characteristic->setQualifierId($qualifierId);
         $characteristic->setParent($node);
       } # end load terms
 
@@ -329,6 +332,7 @@ sub makeOntologyTerm {
 
     unless  ($termObj->retrieveFromDB ){ 
       $termObj->setExternalDatabaseReleaseId($extDbRlsId);
+      $termObj->submit();
     }
 
     $self->addOntologyCategory($termObj);
