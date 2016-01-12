@@ -256,6 +256,7 @@ sub makeBioSample {
     my ($header, $index) = split(/\|/, $key);
 
     my $value = $rowAsHash->{$key};
+    $value =~s/'/''/g;
 
     if($header =~ /source name/i) {
       $sourceName = $value;
@@ -296,6 +297,7 @@ sub makeCharacteristic {
 
   if($header =~ /characteristics \[(.+)\]/i) {
     $category = $1;
+    $category =~s/'/''/g;
     print STDERR "$category\n";
   }
   else {
