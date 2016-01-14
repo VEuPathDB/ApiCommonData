@@ -18,7 +18,6 @@ package ApiCommonData::Load::Plugin::InsertEcNumberGenus;
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
@@ -82,7 +81,7 @@ sub new {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 3.6,
+  $self->initialize({ requiredDbVersion => 4.0,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
