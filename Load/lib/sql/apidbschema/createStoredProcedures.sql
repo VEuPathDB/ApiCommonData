@@ -648,10 +648,13 @@ begin
     linesize := 60;
     delimiter := chr(10);
 
-    maxchunk := ceil(length(seq) / linesize) - 1;
 
-    if maxchunk > 0
+    if length(seq) <= linesize
     then
+      rslt := seq;
+
+    else 
+        maxchunk := ceil(length(seq) / linesize) - 1;
 
         for idx in 0 .. maxchunk
         loop
