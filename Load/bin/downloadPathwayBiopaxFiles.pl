@@ -11,18 +11,27 @@ use URI::Escape;
 my $pathwayXml = shift;
 my $databaseName = shift;
 
-die "Usage: downloadPathwayBiopaxFiles.pl <path to pathway Xml File> <databaseName>\n Database name must be 'TrypanoCyc' or 'LeishCyc'.\n" unless $pathwayXml && $databaseName;
-
+die "Usage: downloadPathwayBiopaxFiles.pl <path to pathway Xml File> <databaseName>\n Database name must be 'TrypanoCyc', 'LeishCyc' or 'MetaCyc'.\n" unless $pathwayXml && $databaseName;
+#TODO: change this to use a switch statement
 my $organism;
 if (lc $databaseName eq 'trypanocyc') {
     $organism = 'TRYPANO'
 } elsif (lc $databaseName eq 'leishcyc') {
     $organism = 'LEISH'
+} elsif (lc $databaseName eq 'metacyc') {
+    $organism = 'META'
 } else {
-    die "Database name must be 'TrypanoCyc' or 'LeishCyc'\n";
+    die "Database name must be 'TrypanoCyc', 'LeishCyc' or 'MetaCyc'\n";
 }
 
-my $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/$organism/pathway-biopax?type=3&object=";
+my $urlBase;
+if ($organism eq 'TRYPANO' || $organism eq 'LEISH') {
+    $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/$organism/";
+} else {
+    $urlBase = "http://metacyc.org/$organism/";
+}
+
+$urlBase .= "pathway-biopax?type=3&object=";
 
 open(XML, "<$pathwayXml") or die "Cannot open pathway xml file $pathwayXml\n$!\n";
 
