@@ -819,6 +819,9 @@ sub validateGene {
                my $codonTable = ($transl_table) ? ($transl_table) : 1;
 
 	       if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)){
+		 my $proSeq = $aaSeq->get('sequence');
+		 my $proSubSeq = substr ($proSeq, 0, length($proSeq) -1 );
+		 if ($proSubSeq ne $translatedAAFeat->translateFeatureSequenceFromNASequence($codonTable)){ 
 		 $msg = "***ERROR********* ";
 		 $msg .= "selenoprotein " if ($translatedAAFeat->{bioperlTranscript}->has_tag('stop_codon_redefined_as_selenocysteine') );
 		 $msg .= "Pseudo " if ($transcript->getIsPseudo());
@@ -831,6 +834,7 @@ sub validateGene {
 			$self->{plugin}->log("$msg\n");
 		    }
 		    #push(@{$self->{plugin}->{validationErrors}},$msg);
+	       }
 	       }
 	    }
 
