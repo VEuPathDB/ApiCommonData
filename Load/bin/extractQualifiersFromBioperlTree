@@ -100,6 +100,7 @@ while (<IN>) {
 	$values[$i] =~ s/^term=//;
 	$values[$i] =~ s/^erm=//;
 	$values[$i] =~ s/,rank=1$//;
+	$values[$i] =~ s/^-//;
 	$values[$i] .= "\ttrue" if ($isPreferred == 1);
       }
     } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
