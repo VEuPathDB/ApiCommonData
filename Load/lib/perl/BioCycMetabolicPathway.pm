@@ -23,6 +23,10 @@ sub makeGusObjects {
     my $reader = $self->getReader();
     my $pathwayHash = $reader->getPathwayHash();
 
+    if ($self->getVerbose()) {
+        print Dumper ($pathwayHash);
+    }
+
     my $typeToTableMap = {compound => 'chEBI::Compounds', enzyme => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
     my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme'};
 
@@ -35,7 +39,9 @@ sub makeGusObjects {
     if ($extDbRlsSpec =~ /TrypanoCyc/ || $extDbRlsSpec =~/LeishCyc/) {
         my $organism = ($extDbRlsSpec =~ /TrypanoCyc/) ? 'TRYPANO' : 'LEISH';
         $url = "http://vm-trypanocyc.toulouse.inra.fr/$organism/NEW-IMAGE?type=PATHWAY&object=$pathwaySourceId";
-        # leaving room for elsif clauses, e.g. for FungiCyc
+        # TODO change to switch statement
+    } elsif ($extDbRlsSpec =~ /MetaCyc/) {
+        $url = "http://metacyc.org/META/NEW-IMAGE?type=PATHWAY&object=$pathwaySourceId";
     }else{
         print STDERR "WARN: Cannot make a URL for pathway $pathwaySourceId";
     }
@@ -89,10 +95,13 @@ sub makeGusObjects {
             #Add reaction
             my $gusReaction = GUS::Model::ApiDB::PathwayReaction->new(
                                                                     {'source_id' => $reaction->{'SourceId'},
-                                                                     'description' => $reaction->{'Description'}#,
                                                                    #  'equation' => $reaction->{'Equation'} remove for now because field not big enough
                                                                     });
             $gusReaction->retrieveFromDB();
+            if (exists $gusReaction->{'description'}) {
+            print STDERR "WARN:  A description has already be defined for reaction $gusReaction->{'source_id'}.  This will be overwritten by the description from the current instance of this reaction\n";
+            } 
+            $gusReaction->{'description'} = $reaction->{'Description'};
             $self->addReaction($gusReaction, $reaction->{'UniqueId'});
         
 
