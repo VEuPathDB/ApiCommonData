@@ -5,7 +5,7 @@ use strict;
 
 
 sub new {
-  my ($class, $file, $ontologyTerms, $tableIds, $rowIds, $extDbRlsId, $extDbRlsSpec) = @_;
+  my ($class, $file, $ontologyTerms, $tableIds, $rowIds, $extDbRlsId, $extDbRlsSpec, $verbose) = @_;
 
   my $self = $class->SUPER::new($file);
 
@@ -14,10 +14,21 @@ sub new {
   $self->setRowIds($rowIds);
   $self->setExtDbRlsId($extDbRlsId);
   $self->setExtDbRlsSpec($extDbRlsSpec);
+  $self->setVerbose($verbose);
 
   $self->{_gus_reactions} = {};
 
   return $self;
+}
+
+sub setVerbose {
+    my ($self, $verbose) = @_;
+    $self->{_verbose} = $verbose;
+}
+
+sub getVerbose {
+    my ($self) = @_;
+    return $self->{_verbose};
 }
 
 sub setOntologyTerms {
