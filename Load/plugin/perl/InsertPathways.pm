@@ -28,12 +28,12 @@ sub getArgsDeclaration {
                enum           => 'KEGG, MPMP, BioCyc'
              }),
         
- stringArg({ name => 'extDbRlsSpec',
-	     descr => 'External Database Release Name|version',
-	     isList    => 0,
-	     reqd  => 1,
-	     constraintFunc => undef,
-	   }),
+     stringArg({ name => 'extDbRlsSpec',
+             descr => 'External Database Release Name|version',
+             isList    => 0,
+             reqd  => 1,
+             constraintFunc => undef,
+           }),
 
 
     ];
@@ -114,6 +114,7 @@ sub run {
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
+  my $verbose = $self->getArg('verbose') ? 1 : 0;
 
   foreach my $file (@pathwayFiles) {
     my $metabolicPathwayClass = "ApiCommonData::Load::${pathwayFormat}MetabolicPathway";
@@ -121,7 +122,7 @@ sub run {
     eval "require $metabolicPathwayClass";
 
     my $metabolicPathway = eval {
-      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids, $extDbRlsId, $extDbRlsSpec);
+      $metabolicPathwayClass->new($file, $ontologyTerms, $tables, $ids, $extDbRlsId, $extDbRlsSpec, $verbose);
     };
 
     if($@) {
@@ -220,7 +221,8 @@ sub undoTables {
 
   return ('ApiDB.PathwayReactionRel',
           'SRes.PathwayRelationship',
-          'ApiDB.PathwayReaction',
+## TODO: Figure out a way to undo rxs re-used across datasets ##
+#          'ApiDB.PathwayReaction',
           'SRes.PathwayNode',
           'SRes.Pathway',
 	 );
