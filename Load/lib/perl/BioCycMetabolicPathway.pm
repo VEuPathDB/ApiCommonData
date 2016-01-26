@@ -23,7 +23,8 @@ sub makeGusObjects {
     my $reader = $self->getReader();
     my $pathwayHash = $reader->getPathwayHash();
 
-    if ($self->getVerbose()) {
+    my $verbose = $self->getVerbose();
+    if ($verbose) {
         print Dumper ($pathwayHash);
     }
 
