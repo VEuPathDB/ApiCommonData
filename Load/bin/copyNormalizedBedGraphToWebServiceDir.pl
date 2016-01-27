@@ -5,6 +5,7 @@ use Getopt::Long;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::Utils;
 
+use Data::Dumper;
 # this script loops through each sample output directory and copy normalized bedgraph files to webService Dir. 
 
 #  ... Su_strand_specific/analyze_lateTroph/master/mainresult/normalized
@@ -15,9 +16,9 @@ use CBIL::Util::Utils;
 my ($inputDir, $outputDir, $analysisConfig); 
 
 &GetOptions("inputDir=s"       => \$inputDir,
-            "outputDir=s"      => \$outputDir,
-            "analysisConfig=s" => \$analysisConfig
-           );
+                     "outputDir=s"      => \$outputDir,
+                     "analysisConfig=s" => \$analysisConfig
+                    );
 
 my $usage =<<endOfUsage;
 Usage:
@@ -66,13 +67,14 @@ if(-e $analysisConfig) {
         next unless /<value>/i;
         $_ =~ /<value>(.*)<\/value>/ ;
         my($sample_display_name, $sample_internal_name) = split /\|/, $1;
-       
-        $sampleOrder{$sample_internal_name} = $count;
+        $sampleOrder{$sample_internal_name} = sprintf("%02d",$count);
+
         $sampleDisplayName{$sample_internal_name} = $sample_display_name;
         $count++;
     }
   }
 }
+
 
 # sort diretory name by the number in the string, e.g. hour2, hour10, hour20...
 foreach my $d (sort @ds) {
@@ -124,8 +126,7 @@ foreach my $d (sort @ds) {
       $display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
     } else {
       $display_order_sample = $sample; 
-    }
-
+    }.
 
     if($f =~ /minus/ || $f =~ /plus/) {
       $meta =<<EOL;
