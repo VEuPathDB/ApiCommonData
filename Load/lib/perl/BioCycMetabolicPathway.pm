@@ -1,4 +1,5 @@
 package ApiCommonData::Load::BioCycMetabolicPathway;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use base qw(ApiCommonData::Load::MetabolicPathway);
 
 use strict;
@@ -62,36 +63,39 @@ sub makeGusObjects {
             #Add reaction node
             my $reactionName = (keys(%{$pathwayHash->{$pathwayStep}->{'Reactions'}}))[0];
             my $reaction = $pathwayHash->{$pathwayStep}->{'Reactions'}->{$reactionName};
-            my $type = $typeToOntologyTerm->{$reaction->{'NodeType'}};
-            my $typeId = $self->mapAndCheck($type, $self->getOntologyTerms());
-
-            my $tableName = $typeToTableMap->{$reaction->{'NodeType'}};
-            my $tableId = $self->mapAndCheck($tableName, $self->getTableIds());
 
             my ($displayLabel, $rowId);
-            if (defined ($reaction->{'ecNumber'})) {
-                $displayLabel = $reaction->{'ecNumber'};
-                $rowId = $self->getRowIds()->{$tableName}->{$reaction->{'ecNumber'}};
-            }elsif (defined ($reaction->{'Description'})) {
-                $displayLabel = $reaction->{'Description'};
-            }else {
-                $displayLabel = $reaction->{'SourceId'};
-            }
-            
-            unless (defined ($rowId)) {
-                print STDERR "WARN:  No EC number defined for reaction $reactionName with BioCyc source ID $reaction->{'SourceId'}\n";
-                $tableId = undef;
-            }
+            foreach my $reactionNode (@{$reaction->{'reactionNodes'}}) {
+                my $type = $typeToOntologyTerm->{$reactionNode->{'NodeType'}};
+                my $typeId = $self->mapAndCheck($type, $self->getOntologyTerms());
+                my $tableName = $typeToTableMap->{$reactionNode->{'NodeType'}};
+                my $tableId = $self->mapAndCheck($tableName, $self->getTableIds());
 
-            my $gusNode = GUS::Model::SRes::PathwayNode->new(
-                                                            {'display_label' => $displayLabel,
-                                                             'pathway_node_type_id' => $typeId,
-                                                             'table_id' => $tableId,
-                                                             'row_id' => $rowId
-                                                            });
-            $gusNode->setParent($pathway);
-            my $uniqueNodeId = $reaction->{'UniqueId'}; 
-            $self->addNode($gusNode, $uniqueNodeId); 
+                if (defined ($reactionNode->{'ecNumber'})) {
+                    $displayLabel = $reactionNode->{'ecNumber'};
+                    $rowId = $self->getRowIds()->{$tableName}->{$reactionNode->{'ecNumber'}};
+                }elsif (defined ($reaction->{'Description'})) {
+                    $displayLabel = $reaction->{'Description'};
+                }else {
+                    $displayLabel = $reaction->{'SourceId'};
+                }
+                
+                unless (defined ($rowId)) {
+                    print STDERR "WARN:  No EC number defined for reaction $reactionName with BioCyc source ID $reaction->{'SourceId'}\n";
+                    $tableId = undef;
+                }
+
+                my $gusNode = GUS::Model::SRes::PathwayNode->new(
+                                                                {'display_label' => $displayLabel,
+                                                                 'pathway_node_type_id' => $typeId,
+                                                                 'table_id' => $tableId,
+                                                                 'row_id' => $rowId
+                                                                });
+                $gusNode->setParent($pathway);
+                my $uniqueNodeId = $reactionNode->{'UniqueId'}; 
+                $self->addNode($gusNode, $uniqueNodeId); 
+
+            }
     
             #Add reaction
             my $gusReaction = GUS::Model::ApiDB::PathwayReaction->new(
