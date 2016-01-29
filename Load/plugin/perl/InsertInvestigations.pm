@@ -30,9 +30,11 @@ use Data::Dumper;
 my $argsDeclaration =
   [
 
-   stringArg({name           => 'metaDataRoot',
+   fileArg({name           => 'metaDataRoot',
             descr          => 'directory where to find directories of isa tab files',
             reqd           => 1,
+	    mustExist      => 1,
+	    format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
