@@ -58,12 +58,12 @@ foreach my $d (sort @ds) {
     $expt = 'unique' if $experimentType eq 'histonemod';
     
     $meta =<<EOL;
-    [$sample/results.bw]
-	:selected    = 1
-	display_name = $sample ($expt)
-	sample       = $sample
-	alignment    = $expt
-	type         = Coverage
+[$sample/results.bw]
+:selected    = 1
+display_name = $sample ($expt)
+sample       = $sample
+alignment    = $expt
+type         = Coverage
 	
 EOL
 	

@@ -166,24 +166,24 @@ foreach my $d (sort @ds) {
 	
 	if($f =~ /firststrand/ || $f =~ /secondstrand/) {
 	    $meta =<<EOL;
-	    [$sample/$f]
-		:selected    = $selected
-		display_name = $display_order_sample ($expt $strand)
-		sample       = $sample
-		alignment    = $expt
-		strand       = $strand
-		type         = Coverage
+[$sample/$f]
+:selected    = $selected
+display_name = $display_order_sample ($expt $strand)
+sample       = $sample
+alignment    = $expt
+strand       = $strand
+type         = Coverage
 		
 EOL
 	} 
 	else {
 	    $meta =<<EOL;
-	    [$sample/$f]
-		:selected    = $selected
-		display_name = $display_order_sample ($expt)
-		sample       = $sample
-		alignment    = $expt
-		type         = Coverage
+[$sample/$f]
+:selected    = $selected
+display_name = $display_order_sample ($expt)
+sample       = $sample
+alignment    = $expt
+type         = Coverage
 		
 EOL
 	}
@@ -237,13 +237,13 @@ EOL
 	}
 	
 	$meta =<<EOL;
-	[$sample/$f]
-	    :selected    = $selected
-	    display_name = $display_order_sample ($expt $strand)
-	    sample       = $sample
-	    alignment    = $expt
-	    strand       = $strand
-	    type         = Coverage
+[$sample/$f]
+:selected    = $selected
+display_name = $display_order_sample ($expt $strand)
+sample       = $sample
+alignment    = $expt
+strand       = $strand
+type         = Coverage
 
 EOL
 
