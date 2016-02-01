@@ -98,6 +98,8 @@ sub run {
   my $investigationCount;
   foreach my $investigation (@investigationFiles) {
     my $dirname = dirname $investigation;
+    $self->log("Processing ISA Directory:  $dirname");
+
     my $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
 
     $investigation->parse();
@@ -610,14 +612,10 @@ where dataset = ? ";
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
-  my $sql = "select d.name, ot.source_id, ot.ontology_term_id id
+  my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id
 from sres.ontologyterm ot
-   , sres.externaldatabaserelease r
-   , sres.externaldatabase d
-where (ot.source_id = ? OR ot.name = ?)
+where (replace(ot.source_id, ':', '_') = ? OR ot.name = ?)
 and lower(ot.source_id) not like 'ncbitaxon%'
-and ot.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
-and r.EXTERNAL_DATABASE_ID = d.EXTERNAL_DATABASE_ID
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || ncbi_tax_id, taxon_id id
 from sres.taxon 
