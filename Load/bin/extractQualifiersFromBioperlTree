@@ -228,7 +228,7 @@ sub getAspectForGo {
   my ($line) = @_;
   my $aspect;
 
-  if ($line =~ /[C|F|P]/) {
+  if ($line eq /[C|F|P]/) {
     $aspect = $line; 
   } elsif (lc($line) =~ /component/) {
     $aspect = 'C';
@@ -239,6 +239,7 @@ sub getAspectForGo {
   } else {
     $aspect = '';
   }
+  #$aspect = $line;
   return $aspect;
 }
 
