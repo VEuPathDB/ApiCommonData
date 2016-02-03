@@ -102,7 +102,12 @@ sub run {
 
     my $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
 
+    eval {
     $investigation->parse();
+    };
+    if($@) {
+      $self->logOrError($@);
+    }
 
     $self->checkAllOntologyTerms($investigation->getOntologyTerms());
 
