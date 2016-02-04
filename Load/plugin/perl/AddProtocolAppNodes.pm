@@ -56,4 +56,21 @@ $extDbSpec = 'OBI|http://purl.obolibrary.org/obo/obi/2012-07-01/obi.owl' unless 
 return $extDbRlsId;
 }
 
+sub getCharacteristicOntologyTerm {
+  my ($self, $source_id, $extDbRlsId) = @_;
+
+  if (!defined $self->{'ontologyTermCache'}->{$source_id}->{$extDbRlsId}) {
+    my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $source_id, external_database_release_id => $extDbRlsId});
+
+    if (!$ontologyTerm->retrieveFromDB()) {
+      $self->userError("Missing entry for source_id=$source_id and ext_db_rls_id=$extDbRlsId in SRes.OntologyTerm");
+    }
+    elsif ($ontologyTerm->getIsObsolete()==1) {
+      $self->userError("source_id $source_id is obsolete in ext_db_rls_id=$extDbRlsId");
+    }
+    $self->{'ontologyTermCache'}->{$source_id}->{$extDbRlsId} = $ontologyTerm;
+  }
+  return($self->{'ontologyTermCache'}->{$source_id}->{$extDbRlsId});
+}
+
 1;
