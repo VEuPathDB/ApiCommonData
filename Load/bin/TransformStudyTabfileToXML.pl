@@ -28,16 +28,15 @@ use GUS::Model::Study::Study;
 
 use Date::Parse;
 
-my ($inFile, $configFile, $outFile, $help, );
+my ($inFile,$configFile, $outFile, $help, );
 my $type_ext_db_rls_spec = 'PRISM Data Dictionary|Apr_2014';
 
 &GetOptions('help|h' => \$help,
             'configFile=s' => \$configFile,
            );
 
-#&usage() if($help);
-#&usage("Input dir containing csv files is required") unless(-e $inDir);
-#&usage("Output file name is required") unless($outFile);
+&usage() if($help);
+&usage("Config File is required") unless(-e $configFile);
 
 die "config file is required " unless $configFile;
 my $isHeader = 1;
@@ -217,7 +216,8 @@ foreach my $row (<INFILE>){
       <subtype></subtype>
       <name>$input</name>
       <description></description>
-      <ext_db_rls>$type_ext_db_rls_id</ext_db_rls>
+      <ext_db_rls>$external_database_release_spec</ext_db_rls>
+      <type_ext_db_rls_id>$type_ext_db_rls_id</type_ext_db_rls_id>
       <source_id>$input</source_id>
       <subtype></subtype>
       <uri></uri>
@@ -251,6 +251,7 @@ foreach my $row (<INFILE>){
       <name>$output</name>
       <description></description>
       <ext_db_rls>$external_database_release_spec</ext_db_rls>
+      <type_ext_db_rls_id>$type_ext_db_rls_id</type_ext_db_rls_id>
       <source_id>$output</source_id>
       <uri></uri>
       <taxon></taxon>
@@ -320,6 +321,22 @@ my @uniqSkippedInputs = uniq(@$SkippedInputs);
 print STDERR Dumper (\@uniqSkippedInputs);
 
 
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl TransformStudyTabfileToXML.pl \\
+--configFile     <location of configuration file> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
 sub lookupType {
   
   
@@ -370,24 +387,13 @@ sub parseCharacteristics {
   my ($characteristics,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$ontologyHash,$dbh) = @_;
   
   my $nodeChars = "Empty";
-  my $controlledVocab = "select category, value from (
-               select pt.name as category, ot.name as value
-                 from SRES.ONTOLOGYTERM ot, SRES.ONTOLOGYTERM pt
+  my $category = "select category from (
+               select ot.source_id as category
+                 from SRES.ONTOLOGYTERM ot
                 where ot.external_database_release_id = $ext_db_rls_id
-                  and ot.ancestor_term_id = pt.ontology_term_id
-                  and lower(pt.name) = ?
                   and lower(ot.name) = ?
                   )";
-  my $cvsh = $dbh->prepare($controlledVocab);
-
-  my  $freeText = "select category, value from (
-               select pt.name as category, ot.name as value
-                 from SRES.ONTOLOGYTERM ot, SRES.ONTOLOGYTERM pt
-                where ot.external_database_release_id = $ext_db_rls_id
-                  and ot.ancestor_term_id = pt.ontology_term_id
-                  and lower(ot.name) = ?
-                  )";
-  my $ftsh = $dbh->prepare($freeText);
+  my $ftsh = $dbh->prepare($category);
 
   my $count =0;
   foreach my $characteristicsHash (@$characteristics) {
@@ -408,6 +414,7 @@ sub parseCharacteristics {
       
       my $lower_value = lc($value); 
       my $lower_characteristic = lc($characteristic);
+
       $lower_value =~ s/\'/\'\'/g;
       $lower_characteristic =~ s/\'/\'\'/g;
       next unless (defined $lower_value && $lower_value=~/\w/);
@@ -418,37 +425,20 @@ sub parseCharacteristics {
       my $db_category = undef;
       my $free_value;
       
-      if (exists $ontologyHash->{"$lower_characteristic:$lower_value"}) {
-        $db_category = $ontologyHash->{"$lower_characteristic:$lower_value"}->{db_category};   
-        $db_ot = $ontologyHash->{"$lower_characteristic:$lower_value"}->{db_ot}; 
-        $free_value = undef;
-      }
-      elsif (exists $ontologyHash->{$lower_characteristic}) {
-        $db_category = $ontologyHash->{$lower_characteristic}->{db_category};   
+      if (exists $ontologyHash->{$lower_characteristic}) {
         $db_ot = $ontologyHash->{$lower_characteristic}->{db_ot}; 
         $free_value = $lower_value
       }
       else {
-        $cvsh->execute($lower_characteristic,$lower_value);
-        ($db_category,$db_value) = $cvsh->fetchrow_array;
-        if (defined $db_value) {
-          $db_ot = $db_value;
-          $free_value = undef;
-          $ontologyHash->{"$db_category:$db_ot"}->{db_category} =$db_category;
-          $ontologyHash->{"$db_category:$db_ot"}->{db_ot} = $db_ot;
-        }
-        else {
-          $ftsh->execute($lower_characteristic);
-          ($db_category,$db_ot) = $ftsh->fetchrow_array;
-          if (defined $db_ot) {
-            $free_value = $lower_value;
-            $ontologyHash->{"$db_ot"}->{db_category} =$db_category;
-            $ontologyHash->{"$db_ot"}->{db_ot} = $db_ot;
-          }
+        $ftsh->execute($lower_characteristic);
+        $db_ot = $ftsh->fetchrow_array;
+        if (defined $db_ot) {
+          $free_value = $lower_value;
+          $ontologyHash->{"$lower_characteristic"}->{db_ot} = $db_ot;
         }
       }
       unless (defined $db_ot) {
-        print STDERR "\n ontology term $characteristic does not match anything in the database for the external database $external_database_release_spec\n";
+        print STDERR "\n ontology term '$characteristic' does not match anything in the database for the external database $external_database_release_spec\n";
         $ontologyHash->{bad_characteristics}->{$characteristic}=1;
         next;
       }
