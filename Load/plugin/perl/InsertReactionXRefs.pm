@@ -92,7 +92,7 @@ sub run {
     open (FILE, $xRefFileName) or die "Cannot open file $xRefFileName for reading\n$!\n";
 
     my $header = <FILE>;
-
+    print Dumper ($reactionHash);
     foreach my $line (<FILE>) {
         chomp $line;
         my (@data) = split('\t', $line);
@@ -108,21 +108,23 @@ sub run {
                 my @secondColumnData = split(',', $data[$j]);
                 foreach my $firstEntry (@firstColumnData) {
                     $firstEntry = cleanEntry($firstEntry);
-                 #   $firstEntry =~ s/\.c.*//;
-                 #   $firstEntry =~ s/^\s+//; #TODO trim white space at both ends
                     foreach my $secondEntry (@secondColumnData) {
-                        $secondEntry =~ s/\.c.*//;
-                        $secondEntry =~ s/^\s+//;
-                        print "$firstEntry : $secondEntry\n";
+                        $secondEntry = cleanEntry($secondEntry);
+    #                    print "$firstEntry : $secondEntry\n";
             
                         if (exists $reactionHash->{$firstEntry} && exists $reactionHash->{$secondEntry}) {
                             my $xRef = GUS::Model::ApiDB::PathwayReactionXRef->new({
                                                                                     pathway_reaction_id => $reactionHash->{$firstEntry},
                                                                                     associated_reaction_id => $reactionHash->{$secondEntry},
-                                                                                    external_database_release_id => $extDbRlsId, #assumes extDb for xrefs
+                                                                                    external_database_release_id => $extDbRlsId,
                                                                                     });
+                            $xRef->retrieveFromDB();
                             $xRef->submit();
                             $self->undefPointerCache();
+                            print "YAY\n";
+                        }
+                        else {
+                            print "Not loaded\n";
                         }
                     }
                 }
@@ -132,7 +134,7 @@ sub run {
 }  
 
 sub cleanEntry {
-    my $entry = @_;
+    my $entry = shift;
     $entry =~ s/\.c.*//;
     $entry =~ s/^\s+//;
     chomp $entry;
@@ -145,7 +147,7 @@ sub getReactions {
     my $dbh = $self->getQueryHandle();
     my $query = 'select source_id, pathway_reaction_id from apidb.pathwayreaction';
     my $sh = $dbh->prepare($query);
-    $sh->execute(); #TODO close this handle
+    $sh->execute();
 
     my $reactionHash = {};
     # Handle entries with >1 source_id delimited by space
@@ -154,5 +156,14 @@ sub getReactions {
             $reactionHash->{$sourceId} = $reactionId;
         }
     }
+    $sh->finish();
     return $reactionHash;
+}
+
+sub undoTables {
+    my ($self) = @_;
+
+    return (
+        'ApiDB.PathwayReactionXref',
+    );
 }
