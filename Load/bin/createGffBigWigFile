@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::Utils;
+use List::Util qw(min max);
+
+use File::Basename;
+
+
+my %hash;
+
+my ($inputDir, $strandSpecific, $topLevelSeqSizeFile); 
+
+&GetOptions("inputDir=s"            => \$inputDir,
+            "chromSizesFile=s" => \$chromSizesFile,
+            "outputDir=s"       => \$outputDir
+           );
+
+my $usage =<<endOfUsage;
+Usage:
+    createGffBigWigFile --inputDir input_diretory --chromSizesFile chrosome_size_file --outputDir output_diretory
+endOfUsage
+
+die $usage unless -e $inputDir;
+die $usage unless -e $chromSizesFile;
+
+my @bedFiles = glob "$inputDir/*.bedgraph";
+
+foreach my $bedFile (@bedFiles) {
+
+    my $baseBed = basename $bedFile;
+
+    my $bwFile = $baseBed;
+
+    $bwFile =~ s/\.bedgraph$/.bw/;
+
+    system("bedGraphToBigWig $inputDir/$baseBed $chromSizesFile $outputDir/$bwFile");
+
+    my $status = $? >> 8;
+
+    die "Failed with bedGraphToBigWig running." if ($status); 
+}
+
+exit;
