@@ -31,7 +31,12 @@ GetOptions("verbose!"=> \$verbose,
 	   "infile=s" => \$inFile,
 	);
 
-open(FILE, $inFile)     || die "$inFile can't be opened for reading\n";
+
+if(-e "$inFile.gz"){
+     open(FILE, "gunzip -c $inFile.gz |") || die "Can't gunzip and read $inFile.gz\n";
+}else{
+    open(FILE, $inFile)     || die "$inFile can't be opened for reading\n";
+}
 open(OUT,  ">$outFile") || die "Can't open $outFile for writing\n";
 
 my %usage;           # to count codons in CDS
