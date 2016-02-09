@@ -91,7 +91,6 @@ sub run {
     open (FILE, $xRefFileName) or die "Cannot open file $xRefFileName for reading\n$!\n";
 
     my $header = <FILE>;
-    print Dumper ($reactionHash);
     foreach my $line (<FILE>) {
         chomp $line;
         my (@data) = split('\t', $line);
