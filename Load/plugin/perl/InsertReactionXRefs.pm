@@ -87,7 +87,6 @@ sub run {
     my $reactionHash = $self->getReactions();
     my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
     my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
-#    print Dumper ($reactionHash);
  
     open (FILE, $xRefFileName) or die "Cannot open file $xRefFileName for reading\n$!\n";
 
@@ -100,7 +99,6 @@ sub run {
         for (my $i=0; $i < scalar(@data); $i++) {
             next unless defined($data[$i]);
             my @firstColumnData = split(',', $data[$i]);
-            # if >1 entry, do we want to xref these?? No
 
             for (my $j=0; $j < scalar(@data); $j++) {
                 next unless defined ($data[$j]);
@@ -110,7 +108,6 @@ sub run {
                     $firstEntry = cleanEntry($firstEntry);
                     foreach my $secondEntry (@secondColumnData) {
                         $secondEntry = cleanEntry($secondEntry);
-    #                    print "$firstEntry : $secondEntry\n";
             
                         if (exists $reactionHash->{$firstEntry} && exists $reactionHash->{$secondEntry}) {
                             my $xRef = GUS::Model::ApiDB::PathwayReactionXRef->new({
@@ -121,10 +118,8 @@ sub run {
                             $xRef->retrieveFromDB();
                             $xRef->submit();
                             $self->undefPointerCache();
-                            print "YAY\n";
-                        }
-                        else {
-                            print "Not loaded\n";
+                        }else {
+                            print STDERR "WARN: Reaction cross-reference $firstEntry : $secondEntry contains a reaction that is not in the reactions table.  This cross-reference entry will not be loaded.\n";
                         }
                     }
                 }
