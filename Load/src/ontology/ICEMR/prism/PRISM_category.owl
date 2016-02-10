@@ -1,14 +1,27 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://purl.obolibrary.org/obo/eupath/icemr/PRISM_category.owl#"
-     xml:base="http://purl.obolibrary.org/obo/eupath/icemr/PRISM_category.owl"
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY obo "http://purl.obolibrary.org/obo/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY icemr "http://purl.obolibrary.org/obo/eupath/icemr.owl#" >
+]>
+
+
+<rdf:RDF xmlns="&obo;eupath/icemr/prism_category.owl#"
+     xml:base="&obo;eupath/icemr/prism_category.owl"
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/icemr/PRISM_category.owl">
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/icemr/PRISM_variables.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/icemr/annotation.owl"/>
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:icemr="&obo;eupath/icemr.owl#">
+    <owl:Ontology rdf:about="&obo;eupath/icemr/prism_category.owl">
+        <owl:imports rdf:resource="&obo;eupath/icemr/annotation.owl"/>
+        <owl:imports rdf:resource="&obo;eupath/icemr/prism_variables.owl"/>
     </owl:Ontology>
     
 
@@ -26,19 +39,37 @@
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000266 -->
 
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000266"/>
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000266"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000267 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000267"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000268 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000268"/>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000271 -->
 
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000271"/>
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000271"/>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000273 -->
 
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000273"/>
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000273"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/eupath/icemr.owl#prism_id -->
+
+    <owl:AnnotationProperty rdf:about="&obo;eupath/icemr.owl#prism_id"/>
     
 
 
@@ -55,298 +86,357 @@
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medication</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that is bearer of a medication role.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">medication material</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000057">
+        <rdfs:label rdf:datatype="&xsd;string">Medication</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A material entity that is bearer of a medication role.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000015</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">medication material</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Medication</obo:EUPATH_0000268>
+        <obo:EUPATH_0000267 xml:lang="en">medcode</obo:EUPATH_0000267>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000093 -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000093">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling</rdfs:label>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity about dwelling.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling information</obo:EUPATH_0000266>
-    </rdf:Description>
+    <owl:Class rdf:about="&obo;EUPATH_0000093">
+        <rdfs:label rdf:datatype="&xsd;string">Dwelling</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">An information content entity about dwelling.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000006</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">dwelling information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Dwelling</obo:EUPATH_0000268>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</rdfs:label>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a participant under investigation.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study participant information</obo:EUPATH_0000266>
-    </rdf:Description>
+    <owl:Class rdf:about="&obo;EUPATH_0000096">
+        <rdfs:label rdf:datatype="&xsd;string">Participant</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">An information content entity which is about features of a participant under investigation.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000017</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">study participant information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Participant</obo:EUPATH_0000268>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000301 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000301">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling Summary</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000093"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">summary information about a dwelling</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000301">
+        <rdfs:label rdf:datatype="&xsd;string">Dwelling Summary</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000007</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">summary information about a dwelling</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Dwelling Summary</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000302 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000302">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Facilities</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000093"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on dwelling facilities</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000302">
+        <rdfs:label rdf:datatype="&xsd;string">Facilities</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000009</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on dwelling facilities</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Facilities</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000303 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000303">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical Characteristics</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000093"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on dwelling physical characteristics</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000303">
+        <rdfs:label rdf:datatype="&xsd;string">Physical Characteristics</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000020</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on dwelling physical characteristics</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Physical Characteristics</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000304 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000304">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Socioeconomic Factors</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000093"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">socioeconomic factor</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000304">
+        <rdfs:label rdf:datatype="&xsd;string">Socioeconomic Factors</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000021</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">socioeconomic factor</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Socioeconomic Factors</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000305 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000305">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aggregated  Visit Details</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated clinical visit information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+    <owl:Class rdf:about="&obo;EUPATH_0000305">
+        <rdfs:label rdf:datatype="&xsd;string">Aggregated  Visit Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000001</icemr:prism_id>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">aggregated clinical visit information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Aggregated  Visit Details</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000306 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000306">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant Genotype</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human genotype information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000306">
+        <rdfs:label rdf:datatype="&xsd;string">Participant Genotype</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000018</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">human genotype information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Participant Genotype</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000307 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000307">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant Study Details</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on participant study details</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000307">
+        <rdfs:label rdf:datatype="&xsd;string">Participant Study Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000019</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on participant study details</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Participant Study Details</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000308 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000308">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hospitalization</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hospitalization information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000308">
+        <rdfs:label rdf:datatype="&xsd;string">Hospitalization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000011</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">hospitalization information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">hospitalization</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000309 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000309">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms and Signs</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">symptom or sign information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000309">
+        <rdfs:label rdf:datatype="&xsd;string">Symptoms</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000024</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">symptom or sign information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Symptoms and Signs</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000310 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000310">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit Details</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on clinical visit details</obo:EUPATH_0000266>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000311 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000311">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit type</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical visit type information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000310">
+        <rdfs:label rdf:datatype="&xsd;string">Visit Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000026</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on clinical visit details</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Visit Details</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000312 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000312">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aggregated Entomological Measurement</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated entomological measurement data</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+    <owl:Class rdf:about="&obo;EUPATH_0000312">
+        <rdfs:label rdf:datatype="&xsd;string">Aggregated Entomological Measurement</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000327"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000002</icemr:prism_id>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">aggregated entomological measurement data</obo:EUPATH_0000266>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Aggregated Entomological Measurement</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000313 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000313">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">individual Entomogical Measurement</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">individual entomological measurement data</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000313">
+        <rdfs:label rdf:datatype="&xsd;string">Individual Entomogical Measurement</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000327"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000012</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">individual entomological measurement data</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">individual Entomogical Measurement</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000316 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000316">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria severity and basis</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malaria severity and basis information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000316">
+        <rdfs:label rdf:datatype="&xsd;string">Malaria severity and basis</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000073"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000014</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">malaria severity and basis information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Malaria severity and basis</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000322 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000322">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles funestus</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles funestus related information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+    <owl:Class rdf:about="&obo;EUPATH_0000322">
+        <rdfs:label rdf:datatype="&xsd;string">Anopheles funestus</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">Anopheles funestus related information</obo:EUPATH_0000266>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000003</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Anopheles funestus</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000323 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000323">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles gambiae sl</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles gambiae sensu lato related information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+    <owl:Class rdf:about="&obo;EUPATH_0000323">
+        <rdfs:label rdf:datatype="&xsd;string">Anopheles gambiae sl</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">Anopheles gambiae sensu lato related information</obo:EUPATH_0000266>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000004</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Anopheles gambiae sl</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000324 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000324">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquito Parity</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mosquito parity information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000324">
+        <rdfs:label rdf:datatype="&xsd;string">Mosquito Parity</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000313"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000016</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">mosquito parity information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Mosquito Parity</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000325 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000325">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sporozoite Testing</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sporozoite testing information</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;EUPATH_0000325">
+        <rdfs:label rdf:datatype="&xsd;string">Sporozoite Testing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000313"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000023</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">sporozoite testing information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Sporozoite Testing</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000326 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000326">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sporozoite Rate</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000312"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated sporozoite testing information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+    <owl:Class rdf:about="&obo;EUPATH_0000326">
+        <rdfs:label rdf:datatype="&xsd;string">Sporozoite Rate</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000312"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000022</icemr:prism_id>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">aggregated sporozoite testing information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Sporozoite Rate</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000327 -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000327">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomological Measurements</rdfs:label>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">entomological measurement data</obo:EUPATH_0000266>
-    </rdf:Description>
+    <owl:Class rdf:about="&obo;EUPATH_0000327">
+        <rdfs:label rdf:datatype="&xsd;string">Entomological Measurements</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000008</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">entomological measurement data</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Entomological Measurements</obo:EUPATH_0000268>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000328 -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000328">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit</rdfs:label>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical visit information</obo:EUPATH_0000266>
-    </rdf:Description>
+    <owl:Class rdf:about="&obo;EUPATH_0000328">
+        <rdfs:label rdf:datatype="&xsd;string">Visit</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000025</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">clinical visit information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Visit</obo:EUPATH_0000268>
+    </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location</rdfs:label>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A reference to a place on the Earth, by its name or by its geographical location.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;GAZ_00000448">
+        <rdfs:label rdf:datatype="&xsd;string">Geographic location</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A reference to a place on the Earth, by its name or by its geographical location.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000010</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">geographic location</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">geographic location</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/OGMS_0000018 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000018">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory Findings</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A representation of a quality of a specimen that is the output of a laboratory test and that can support an inference to an assertion about some quality of the patient.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">laboratory finding</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;OGMS_0000018">
+        <rdfs:label rdf:datatype="&xsd;string">Laboratory Findings</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A representation of a quality of a specimen that is the output of a laboratory test and that can support an inference to an assertion about some quality of the patient.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000013</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">laboratory finding</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Laboratory Findings</obo:EUPATH_0000268>
     </owl:Class>
     
 
 
     <!-- http://purl.obolibrary.org/obo/OGMS_0000073 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000073">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The representation of a conclusion of a diagnostic process.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis</obo:EUPATH_0000266>
+    <owl:Class rdf:about="&obo;OGMS_0000073">
+        <rdfs:label rdf:datatype="&xsd;string">Diagnosis</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000005</icemr:prism_id>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">The representation of a conclusion of a diagnostic process.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">diagnosis</obo:EUPATH_0000266>
+        <obo:EUPATH_0000268 xml:lang="en">Diagnosis</obo:EUPATH_0000268>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000083 -->
+
+    <owl:Class rdf:about="&obo;OGMS_0000083">
+        <rdfs:label rdf:datatype="&xsd;string">Physical Examination</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <icemr:prism_id rdf:datatype="&xsd;string">PRISM_0000027</icemr:prism_id>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000268 xml:lang="en">Physical Examination</obo:EUPATH_0000268>
     </owl:Class>
 </rdf:RDF>
 
