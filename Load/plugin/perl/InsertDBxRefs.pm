@@ -46,6 +46,7 @@ use GUS::Supported::Util;
 use GUS::Model::SRes::DbRef;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::DbRefNAFeature;
 use GUS::Model::DoTS::DbRefAAFeature;
 use GUS::Model::DoTS::DbRefNASequence;
@@ -241,6 +242,23 @@ sub getMapping {
     my  %dbRef;
 
     $dbRef{'external_database_release_id'} = $dbRls;
+
+    ## skip the mapping if the alias is a source_id of DoTS::GeneFeature or DoTS::Transcript view
+    if ($self->getArg('extDbName') =~ /aliases/i) {
+      $vals[1] =~ s/^\s+//;
+      $vals[1] =~ s/\s+$//;
+      my $checkGeneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[1]});
+      if ($checkGeneFeature->retrieveFromDB() ) {
+	$self->log("Skipping: $vals[1] to $sourceId mapping since it is a source_id in geneFeature view.\n");
+	next;
+      }
+
+      my $checkTranscript = GUS::Model::DoTS::Transcript->new({source_id => $vals[1]});
+      if ($checkTranscript->retrieveFromDB() ) {
+	$self->log("Skipping: $vals[1] to $sourceId mapping since it is a source_id in transcript view.\n");
+	next;
+      }
+    }
 
     for (my $i=0;$i<@{$cols};$i++) {
       next if (! (defined $vals[$i+1]));
