@@ -306,7 +306,17 @@ sub traverseSeqFeatures {
 		    $CDSLocation  = $subFeature->location;
 		}
 		if($subFeature->primary_tag eq 'exon'){
-		    my $exon = $subFeature;
+#		    my $exon = $subFeature;
+		  my $exon;
+		  if ($subFeature->has_tag("CodingStart") && $subFeature->has_tag("CodingEnd") ) {
+		    ## create a new exon if an exon has already been assigned by previous transcript
+		    $exon = &makeBioperlFeature("exon", $subFeature->location, $bioperlSeq);
+		    my ($eId) = $subFeature->get_tag_values('locus_tag') if ($subFeature->has_tag('locus_tag'));
+		    $exon->add_tag_value('locus_tag', $eId);
+		  }else {
+		    $exon = $subFeature;
+		  }
+
 		    my $codingStart = $exon->location->start;
 		    my $codingEnd = $exon->location->end;
 
