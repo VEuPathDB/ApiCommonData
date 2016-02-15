@@ -5,17 +5,17 @@ use Getopt::Long;
 use strict;
 
 
-my ($help, $ifAlias, $oldSequenceFile, $oldSequenceFormat, $newSequenceFile, $newSequenceFormat);
+my ($help, $oldSequenceFile, $oldSequenceFormat, $newSequenceFile, $newSequenceFormat);
 
 &GetOptions('help|h' => \$help,
             'oldSequenceFile=s' => \$oldSequenceFile,
             'oldSequenceFormat=s' => \$oldSequenceFormat,
             'newSequenceFile=s' => \$newSequenceFile,
             'newSequenceFormat=s' => \$newSequenceFormat,
-            'ifAlias' => \$ifAlias,
            );
 
 &usage() if($help);
+&usage("Missing a Required Argument") unless (defined ($oldSequenceFile && $oldSequenceFormat && $newSequenceFile && $newSequenceFormat ));
 
 my ($oldSeq, $newSeq);
 
@@ -81,7 +81,6 @@ Usage: perl createSeqAliasBaseSeqIdentity.pl --oldSequenceFile pre.genome.gbf --
                                              --newSequenceFile current.genome.gbf --newSequenceFormat genbank
 
 where
-            --ifAlias: optional, either ifAlias or ifReused
             --oldSequenceFile: old sequence file name
             --oldSequenceFormat: old sequence file format
             --newSequenceFile: new sequence file name
