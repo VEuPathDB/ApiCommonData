@@ -1,53 +1,41 @@
 package org.apidb.dataload;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.digester.Digester;
 import org.gusdb.fgputil.CliUtil;
-import org.gusdb.fgputil.xml.XmlParser;
+import org.gusdb.fgputil.xml.XmlValidator;
+import org.xml.sax.SAXException;
 
-public class ResourceXmlValidator extends XmlParser {
+public class ResourceXmlValidator {
 
-  public ResourceXmlValidator() {
-    super("lib/rng/resources.rng");
+  /**
+   * Validates a resources XML file against the RNG schema
+   * 
+   * @param args should be a single-item array where the one item is the path to an XML file
+   * @throws IOException if unable to read schema or XML files
+   * @throws SAXException if input files are not valid XML
+   */
+  public static void main(String[] args) throws IOException, SAXException {
+      XmlValidator validator = new XmlValidator("lib/rng/resources.rng");
+      validator.validate(getFilenameFromArgs(args));
   }
 
-  public void validateResourcesXml(String xmlFileName) throws IOException, Exception {
-    configure();
-
-    // construct urls to model file, prop file, and config file
-    URL modelURL = makeURL(xmlFileName);
-
-    if (!validate(modelURL))
-      throw new Exception("validation failed.");
-  }
-
-  public static void main(String[] args) throws Exception {
-    String cmdName = System.getProperty("cmdName");
-
-    // process args
-    Options options = declareOptions();
-    String cmdlineSyntax = cmdName + " -f resources_xml_file";
-    String cmdDescrip = "Validate a resources XML file against the RNG schema.";
-    CommandLine cmdLine = CliUtil.parseOptions(cmdlineSyntax, cmdDescrip, "", options, args);
-    String xmlFileName = cmdLine.getOptionValue("f");
-
-    ResourceXmlValidator validator = new ResourceXmlValidator();
-    validator.validateResourcesXml(xmlFileName);
-  }
-
-  private static Options declareOptions() {
+  /**
+   * Parse and validate command line arguments and extract passed filename
+   * 
+   * @param args command line arguments
+   * @return filename input by user
+   * @throws
+   */
+  private static String getFilenameFromArgs(String[] args) {
     Options options = new Options();
     CliUtil.addOption(options, "f", "", true);
-    return options;
+    String cmdlineSyntax = System.getProperty("cmdName") + " -f resources_xml_file";
+    String cmdDescrip = "Validate a resources XML file against the RNG schema.";
+    CommandLine cmdLine = CliUtil.parseOptions(cmdlineSyntax, cmdDescrip, "", options, args);
+    if (cmdLine == null) System.exit(1);
+    return cmdLine.getOptionValue("f");
   }
-
-  @Override
-  protected Digester configureDigester() {
-    return null;
-  }
-
 }
