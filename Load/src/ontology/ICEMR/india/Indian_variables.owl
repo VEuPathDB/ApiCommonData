@@ -453,12 +453,15 @@
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census Form ID: The first project done at all three sites (Chennai, Nadiad, Raurkela) was to perform a Census of a sampling of  local households, collecting physical and socioeconomic data about each household and its occupants.  That data went into the Census project for each site.  CrossSectional subjects were (mostly...see &#39;cen_onsite&#39;) chosen from households that provided Census data.  This field relates the CrossSectional subjectID (sid) to the Census ID (cen_fid = census form ID) for the household.  So in a sense it is...metadata?   Not sure where to categorize it.</obo:EUPATH_0000331>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Form ID</obo:EUPATH_0000331>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100045</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100045-2</icemr:indian_id>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household identifier</obo:EUPATH_0000266>
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">cen_fid</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">fid</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -582,6 +585,7 @@
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100032</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100032-2</icemr:indian_id>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age since birth at time of enrollment</obo:EUPATH_0000266>
@@ -589,6 +593,22 @@
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">age</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">age_en</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity about items that a household owns such as a car, funiture, etc.</obo:EUPATH_0000273>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100148</icemr:indian_id>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">electricity_yn</indian:values>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household asset information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">Assets</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -960,316 +980,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010104 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010104">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Falcivax RDT</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Pf | 2, Pv | 3, Negative | 4, Not done / blank</indian:values>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100104</icemr:indian_id>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT - Falcivax</obo:EUPATH_0000331>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_fv_chk</indian:label_alternative>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">rdt_falc_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010105 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010105">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Optimal RDT</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Pf | 2, Pan | 3, Negative | 4, Not done / blank</indian:values>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Nadiad</indian:study_type>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Raurkela</indian:study_type_alternative>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100105</icemr:indian_id>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT - Optimal</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_op_chk</indian:label_alternative>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">rdt_opt_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010106 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010106">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal repellent</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Coils | 2, Vapor/liquidizer | 3, Cream/spray | 4, Mat | 5, None | 6, Unknown</indian:values>
-        <indian:values_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, None | 2, Coils | 3, Vapor/liquidizer | 4, Cream/spray | 5, Mat | 6, Can&#39;t remember | 7, Fastcard</indian:values_alternative>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100106</icemr:indian_id>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal repellent in use</obo:EUPATH_0000331>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">repellent_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010107 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010107">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Permanent | 2, Temporary</indian:values>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100107</icemr:indian_id>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">resident_status_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010111 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010111">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in last 12 months</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Indoor | 2, Outdoor | 3, No | 4, Unknown | 5, N/A</indian:values>
-        <indian:values_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, No / Not applicable | 2, Indoor | 3, Outdoor | 4, Can&#39;t remember</indian:values_alternative>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100111</icemr:indian_id>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in last 12 months</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">sprayed_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010112 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010112">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State of birth</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100112</icemr:indian_id>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
-        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State of birth</obo:EUPATH_0000331>
-        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">state_birth</indian:label_alternative>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">stateofbirth</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010114 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010114">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Take fever suppressant?</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100114</icemr:indian_id>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Is taking fever suppressant now</obo:EUPATH_0000331>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yesno</indian:field_type>
-        <obo:EUPATH_0000329 xml:lang="en">suppressant_now_yn</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010133 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010133">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taluk</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100133</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taluk/Tehsil,A division more or less equivalent to &#39;district&#39; or &#39;group of villages&#39;.</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">taluk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010135 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010135">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visted country</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</obo:EUPATH_0000331>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100135</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_country</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010136 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010136">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visted district</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">District</obo:EUPATH_0000331>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100136</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_district</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010137 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010137">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visted state</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100137</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_state</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010138 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010138">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visted taluk</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">City/Taluk/Tehsil</obo:EUPATH_0000331>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100138</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_taluk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010139 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010139">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visted village</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100139</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village/Nagar</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_village</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010140 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010140">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Travel in last 14 days?</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100140</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Travel in last 14 days?</obo:EUPATH_0000331>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yesno</indian:field_type>
-        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_yn</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010143 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010143">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Heathcare type</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Public | 2, Private</indian:values>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100143</icemr:indian_id>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Typical healthcare</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">typical_healthcare_chk</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010144 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010144">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100144</icemr:indian_id>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village/Nagar</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">village</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/ICEMR_01010147 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_01010147">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone #</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
-        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100147</icemr:indian_id>
-        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone #</obo:EUPATH_0000331>
-        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000329 xml:lang="en">zone</obo:EUPATH_0000329>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/ICEMR_0101031 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101031">
@@ -1346,12 +1056,14 @@
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100037</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100037-2</icemr:indian_id>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
         <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bednet_chk</indian:label_alternative>
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">bednet</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">bednet_chk</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -1581,12 +1293,14 @@
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Education</obo:EUPATH_0000331>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100056</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100056-2</icemr:indian_id>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
         <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">education_rad</indian:label_alternative>
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">radio</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">education</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">education_rad</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -1841,6 +1555,7 @@
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100086</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100086-2</icemr:indian_id>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Occupation</obo:EUPATH_0000331>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
@@ -1848,6 +1563,7 @@
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">radio</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">occupation</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">occupation_rad</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -1916,6 +1632,7 @@
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100090</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100090-2</icemr:indian_id>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treated with antimalarial drugs</obo:EUPATH_0000331>
@@ -1923,6 +1640,7 @@
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">radio</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">pastyear_treat_rad</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">pastyear_treated_rad</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -2029,6 +1747,7 @@
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100096</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100096-2</icemr:indian_id>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PHC/CHC, primary health center&#39;.  The name of the public health clinic/hospital that the subject normally uses (for non malaria illness).  I believe this field was virtually always empty.</obo:EUPATH_0000331>
         <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
@@ -2036,6 +1755,7 @@
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">phc</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">phc_chc</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -2071,6 +1791,322 @@
         <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">radio</indian:field_type>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">No illness</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101104 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101104">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Falcivax RDT</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Pf | 2, Pv | 3, Negative | 4, Not done / blank</indian:values>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100104</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100104-2</icemr:indian_id>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT - Falcivax</obo:EUPATH_0000331>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_fv_chk</indian:label_alternative>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">rdt_falc_chk</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">rdt_fv_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101105 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101105">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Optimal RDT</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Pf | 2, Pan | 3, Negative | 4, Not done / blank</indian:values>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Nadiad</indian:study_type>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Raurkela</indian:study_type_alternative>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100105</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100105-2</icemr:indian_id>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT - Optimal</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_op_chk</indian:label_alternative>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">rdt_op_chk</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">rdt_opt_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101106 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101106">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal repellent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Coils | 2, Vapor/liquidizer | 3, Cream/spray | 4, Mat | 5, None | 6, Unknown</indian:values>
+        <indian:values_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, None | 2, Coils | 3, Vapor/liquidizer | 4, Cream/spray | 5, Mat | 6, Can&#39;t remember | 7, Fastcard</indian:values_alternative>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100106</icemr:indian_id>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal repellent in use</obo:EUPATH_0000331>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">repellent_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101107 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101107">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Permanent | 2, Temporary</indian:values>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100107</icemr:indian_id>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">resident_status_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101111 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101111">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in last 12 months</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000003"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Indoor | 2, Outdoor | 3, No | 4, Unknown | 5, N/A</indian:values>
+        <indian:values_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, No / Not applicable | 2, Indoor | 3, Outdoor | 4, Can&#39;t remember</indian:values_alternative>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100111</icemr:indian_id>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in last 12 months</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">sprayed_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101112 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101112">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State of birth</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100112</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100112-2</icemr:indian_id>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
+        <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State of birth</obo:EUPATH_0000331>
+        <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">state_birth</indian:label_alternative>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">state_birth</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">stateofbirth</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101114 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101114">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Take fever suppressant?</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100114</icemr:indian_id>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Is taking fever suppressant now</obo:EUPATH_0000331>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yesno</indian:field_type>
+        <obo:EUPATH_0000329 xml:lang="en">suppressant_now_yn</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101133 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101133">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taluk</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100133</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taluk/Tehsil,A division more or less equivalent to &#39;district&#39; or &#39;group of villages&#39;.</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">taluk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101135 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101135">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited country</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</obo:EUPATH_0000331>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100135</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_country</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101136 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101136">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited district</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">District</obo:EUPATH_0000331>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100136</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_district</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101137 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101137">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited state</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100137</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_state</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101138 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101138">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited taluk</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">City/Taluk/Tehsil</obo:EUPATH_0000331>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100138</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_taluk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101139 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101139">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited village</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100139</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village/Nagar</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_village</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101140 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101140">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Travel in last 14 days?</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ICEMR_0000002"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100140</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Travel in last 14 days?</obo:EUPATH_0000331>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yesno</indian:field_type>
+        <obo:EUPATH_0000329 xml:lang="en">travel_2wk_yn</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101143 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101143">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Healthcare type</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <indian:values rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Public | 2, Private</indian:values>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100143</icemr:indian_id>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Typical healthcare</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">checkbox</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">typical_healthcare_chk</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101144 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101144">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100144</icemr:indian_id>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village/Nagar</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">village</obo:EUPATH_0000329>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ICEMR_0101147 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ICEMR_0101147">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone #</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <indian:study_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Census</indian:study_type>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100147</icemr:indian_id>
+        <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone #</obo:EUPATH_0000331>
+        <indian:field_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</indian:field_type>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000329 xml:lang="en">zone</obo:EUPATH_0000329>
     </owl:Class>
     
 
@@ -2170,6 +2206,7 @@
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CrossSectional_Chennai,Nadiad,Raurkela</indian:study_type_alternative>
         <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100109</icemr:indian_id>
+        <icemr:indian_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">INDIAN_0100109-2</icemr:indian_id>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal</indian:study_type_alternative>
         <indian:study_type_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ReactiveCaseDetection</indian:study_type_alternative>
         <obo:EUPATH_0000331 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</obo:EUPATH_0000331>
@@ -2178,6 +2215,7 @@
         <indian:label_alternative rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex_rad</indian:label_alternative>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000329 xml:lang="en">sex</obo:EUPATH_0000329>
+        <obo:EUPATH_0000329 xml:lang="en">sex_rad</obo:EUPATH_0000329>
     </owl:Class>
     
 
