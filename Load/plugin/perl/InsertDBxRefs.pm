@@ -320,7 +320,6 @@ sub getMapping {
 
     my $methodName = $$tables{$tableName}->{getId};
     my $method = "GUS::Supported::Util::$methodName";
-
     my $featId;
 
     ###comment out this part because it caused failures when "viewName" is "Transcript"
@@ -339,8 +338,7 @@ sub getMapping {
     else{
       $featId = &$method($self, $sourceId);
     }
-
-    unless($featId){
+    if(scalar @{$featId} < 1){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
       next;
     }
@@ -359,7 +357,7 @@ sub getMapping {
 }
 
 sub makeDbXRef {
-  my ($self, $featId, $dbRef, $column, $tableName) = @_;
+  my ($self, $featIdList, $dbRef, $column, $tableName) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
@@ -369,12 +367,13 @@ sub makeDbXRef {
 
   my $tableName = "GUS::Model::DoTS::${tableName}";
   eval "require $tableName";
-  my $dbXref = $tableName->new({
-				$column => $featId,
-				db_ref_id => $dbRefId,
-			       });
+  foreach my $featId (@$featIdList) {
+      my $dbXref = $tableName->new({
+                   $column => $featId,
+                   db_ref_id => $dbRefId,
+                   });
   $dbXref->submit() unless $dbXref->retrieveFromDB();
-
+ }
 }
 
 sub getTableParams{
@@ -384,19 +383,24 @@ sub getTableParams{
   if ($viewName eq "GeneFeature"){
     $tables{'DbRefNAFeature'} = ({getId => "getGeneFeatureId",
                                   idColumn => "na_feature_id"});
+    $tables{'DbRefAAFeature'} = ({getId => "getTranslatedAAFeatureIdListFromGeneSourceId",
+				                  idColumn => "aa_feature_id"});
   }
   if ($viewName eq "Transcript"){
     $tables{'DbRefNAFeature'} = ({getId => "getNaFeatureIdsFromSourceId",
                                   idColumn => "na_feature_id"});
   }
-  $tables{'DbRefAAFeature'} = ({getId => "getAAFeatureId",
-				idColumn => "aa_feature_id"});
+
+  if ($viewName eq "TranslatedAAFeature"){  
+    $tables{'DbRefAAFeature'} = ({getId => "getAAFeatureId",
+                idColumn => "aa_feature_id"});
+  }
 
   $tables{'DbRefNASequence'} = ({getId => "getNASequenceId",
-				 idColumn => "na_sequence_id"});
+                 idColumn => "na_sequence_id"});
 
   $tables{'AASequenceDbRef'} = ({getId => "getAASequenceId",
-				 idColumn => "aa_sequence_id"});
+                 idColumn => "aa_sequence_id"});
 
   return \%tables;
 }
