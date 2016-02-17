@@ -306,6 +306,10 @@ sub traverseSeqFeatures {
 		$gene->remove_tag('selenocysteine');
 		$gene->add_tag_value('selenocysteine','selenocysteine');
 	    }
+	    if($gene->has_tag('stop_codon_redefined_as_selenocysteine')){
+		$gene->remove_tag('stop_codon_redefined_as_selenocysteine');
+		$gene->add_tag_value('stop_codon_redefined_as_selenocysteine','stop_codon_redefined_as_selenocysteine');
+	    }
 
 	    ## for some of them that have partial in the comment qualifier
 	    if ($gene->has_tag('comment')){
