@@ -26,8 +26,8 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
-
 use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NAFeatureComment;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
@@ -152,6 +152,7 @@ sub run {
       my ($sourceId, $comment, $comment_date) = split(/\t/,$_);
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
+      my $transcript  = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
 
       if($geneFeature->retrieveFromDB()){
 
@@ -161,14 +162,20 @@ sub run {
   
 	  $processed++;
 
-      }else{
+      } elsif($transcript->retrieveFromDB()) { 
+
+	      my $nafeatureId = $transcript->getNaFeatureId();
+	      $self->makeNaFeatComment($nafeatureId,$comment, $comment_date);
+  
+	      $processed++; 
+   } else{
 	  $self->log("WARNING","Gene Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
       }
      $self->undefPointerCache();
 
   }
 
-
+  die and print "There is NO row loaded!!! Check the data!" unless ($processed > 0);
 
   return "$processed na feature comments parsed and loaded";
 }
