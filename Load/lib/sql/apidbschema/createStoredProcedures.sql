@@ -677,5 +677,29 @@ GRANT execute ON apidb.wrap TO gus_r;
 GRANT execute ON apidb.wrap TO gus_w;
 
 -------------------------------------------------------------------------------
+create or replace function apidb.display_function (function_name string, x number)
+return number
+is
+    idx       number;
+
+begin
+    if lower(function_name) = 'arcsinh'
+        then return ln( (1+(50*x)) + sqrt(power(1+(x*50), 2) + 1));
+    elsif lower(function_name) = 'log2'
+        then return power(2, x);
+    else
+        raise_application_error(-20222,
+                                'Unrecognized function name "'|| function_name || '" ');
+    end if;
+
+end display_function;
+/
+
+show errors;
+
+GRANT execute ON apidb.display_function TO gus_r;
+GRANT execute ON apidb.display_function TO gus_w;
+
+-------------------------------------------------------------------------------
 
 exit
