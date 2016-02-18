@@ -103,10 +103,10 @@ sub makeGusObjects {
                                                                    #  'equation' => $reaction->{'Equation'} remove for now because field not big enough
                                                                     });
             $gusReaction->retrieveFromDB();
-            if (exists $gusReaction->{'description'}) {
-            print STDERR "WARN:  A description has already be defined for reaction $gusReaction->{'source_id'}.  This will be overwritten by the description from the current instance of this reaction\n";
+            # Add description if reaction not already in DB or if DB entry does not have description
+            unless (defined($gusReaction->getDescription())) {
+                $gusReaction->setDescription($reaction->{'Description'});
             } 
-            $gusReaction->{'description'} = $reaction->{'Description'};
             $self->addReaction($gusReaction, $reaction->{'UniqueId'});
         
 
