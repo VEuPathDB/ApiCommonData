@@ -169,7 +169,7 @@ sub run {
   
 	      $processed++; 
    } else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
+	  $self->log("WARNING","Gene/Transcript Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
       }
      $self->undefPointerCache();
 
