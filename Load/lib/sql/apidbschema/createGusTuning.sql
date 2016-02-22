@@ -97,61 +97,6 @@ create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
 create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
 create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 
--- unique constraints in the Results schema
-create unique index results.uqCompoundMassSpec
-      on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id);
-
-create unique index results.uqEditingEvent
-      on results.EditingEvent (na_sequence_id, event_start, event_end, protocol_app_node_id);
-
-create unique index results.uqFamilyDiffResult
-      on results.FamilyDiffResult (family_id, protocol_app_node_id);
-
-create unique index results.uqFamilyExpression
-      on results.FamilyExpression (family_id, protocol_app_node_id);
-
-create unique index results.uqGeneDiffResult
-      on results.GeneDiffResult (gene_id, protocol_app_node_id);
-
-create unique index results.uqGeneExpression
-      on results.GeneExpression (gene_id, protocol_app_node_id);
-
-create unique index results.uqGeneSimilarity
-      on results.GeneSimilarity (gene1_id, gene2_id, protocol_app_node_id);
-
-create unique index results.uqNAFeatureDiffResult
-      on results.NAFeatureDiffResult (na_feature_id, protocol_app_node_id);
-
-create unique index results.uqNaFeatureExpression
-      on results.NaFeatureExpression (na_feature_id, protocol_app_node_id);
-
-create unique index results.uqNaFeatureHostResponse
-      on results.NaFeatureHostResponse (na_feature_id, protocol_app_node_id);
-
-create unique index results.uqNaFeaturePhenotypeComp
-      on results.NaFeaturePhenotypeComp (na_feature_id, phenotype_composition_id, protocol_app_node_id);
-
-create unique index results.uqReporterDiffResult
-      on results.ReporterDiffResult (reporter_id, protocol_app_node_id);
-
-create unique index results.uqReporterExpression
-      on results.ReporterExpression (reporter_id, protocol_app_node_id);
-
-create unique index results.uqReporterIntensity
-      on results.ReporterIntensity (reporter_id, protocol_app_node_id);
-
-create unique index results.uqRnaDiffResult
-      on results.RnaDiffResult (rna_id, protocol_app_node_id);
-
-create unique index results.uqRnaExpression
-      on results.RnaExpression (rna_id, protocol_app_node_id);
-
-create unique index results.uqSegmentDiffResult
-      on results.SegmentDiffResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
-
-create unique index results.uqSegmentResult
-      on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
-
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
@@ -519,10 +464,62 @@ FROM dual,
 WHERE 'nafeaturehostresponse' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
-
 --------------------------------------------------------------------------------
 
+-- unique constraints in the Results schema
+create unique index results.uqCompoundMassSpec
+      on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id);
 
+create unique index results.uqEditingEvent
+      on results.EditingEvent (na_sequence_id, event_start, event_end, protocol_app_node_id);
+
+create unique index results.uqFamilyDiffResult
+      on results.FamilyDiffResult (family_id, protocol_app_node_id);
+
+create unique index results.uqFamilyExpression
+      on results.FamilyExpression (family_id, protocol_app_node_id);
+
+create unique index results.uqGeneDiffResult
+      on results.GeneDiffResult (gene_id, protocol_app_node_id);
+
+create unique index results.uqGeneExpression
+      on results.GeneExpression (gene_id, protocol_app_node_id);
+
+create unique index results.uqGeneSimilarity
+      on results.GeneSimilarity (gene1_id, gene2_id, protocol_app_node_id);
+
+create unique index results.uqNAFeatureDiffResult
+      on results.NAFeatureDiffResult (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeatureExpression
+      on results.NaFeatureExpression (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeatureHostResponse
+      on results.NaFeatureHostResponse (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeaturePhenotypeComp
+      on results.NaFeaturePhenotypeComp (na_feature_id, phenotype_composition_id, protocol_app_node_id);
+
+create unique index results.uqReporterDiffResult
+      on results.ReporterDiffResult (reporter_id, protocol_app_node_id);
+
+create unique index results.uqReporterExpression
+      on results.ReporterExpression (reporter_id, protocol_app_node_id);
+
+create unique index results.uqReporterIntensity
+      on results.ReporterIntensity (reporter_id, protocol_app_node_id);
+
+create unique index results.uqRnaDiffResult
+      on results.RnaDiffResult (rna_id, protocol_app_node_id);
+
+create unique index results.uqRnaExpression
+      on results.RnaExpression (rna_id, protocol_app_node_id);
+
+create unique index results.uqSegmentDiffResult
+      on results.SegmentDiffResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
+
+create unique index results.uqSegmentResult
+      on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
 
 --------------------------------------------------------------------------------
 
