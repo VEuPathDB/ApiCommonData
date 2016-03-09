@@ -29,7 +29,6 @@ use GUS::Model::Study::Study;
 use Date::Parse;
 
 my ($inFile,$configFile, $outFile, $help, );
-my $type_ext_db_rls_spec = 'PRISM Data Dictionary|Apr_2014';
 
 &GetOptions('help|h' => \$help,
             'configFile=s' => \$configFile,
@@ -52,7 +51,7 @@ my $validHeader = 2;
 
 my $mapHash = {};
 
-my ($studyName,$db_id,$protocol,$entity_type,$parent_entity_type,$header_regexp,$input_lookup,$external_database_release_spec);
+my ($studyName,$db_id,$protocol,$entity_type,$parent_entity_type,$header_regexp,$input_lookup,$dd_ext_db_rls_spec,$type_ext_db_rls_spec,$pan_ext_db_rls_spec);
 open (CONFIG, $configFile) || die "Can't open $configFile for reading : $!\n";
 foreach my $line (<CONFIG>){
   chomp $line;
@@ -73,9 +72,9 @@ foreach my $line (<CONFIG>){
     $entity_type = $line;
     $entity_type =~ s/^\w*://;
   }
-  elsif ($line =~ /^external_database_release_spec/) {
-    $external_database_release_spec = $line;
-    $external_database_release_spec =~ s/external_database_release_spec://;
+  elsif ($line =~ /^dd_external_database_release_spec/) {
+    $dd_ext_db_rls_spec = $line;
+    $dd_ext_db_rls_spec =~ s/dd_external_database_release_spec://;
   }
   elsif ($line =~ /parent_entity_type/) {
     $parent_entity_type = $line;
@@ -84,6 +83,10 @@ foreach my $line (<CONFIG>){
   elsif ($line =~ /type_external_database_release_spec/) {
     $type_ext_db_rls_spec = $line;
     $type_ext_db_rls_spec =~ s/type_external_database_release_spec://;
+  }
+  elsif ($line =~ /pan_external_database_release_spec/) {
+    $pan_ext_db_rls_spec = $line;
+    $pan_ext_db_rls_spec =~ s/pan_external_database_release_spec://;
   }
   elsif ($line =~ /input_file/) {
     $inFile = $line;
@@ -120,51 +123,21 @@ open (TEMP, ">$temp") || die "Can't open $outFile for reading\n";
 print TEMP "<idf>\n".$xmlObj->XMLout([$studyHash])."</idf>\n";
 print TEMP "<sdrf>\n";
 
-my @tokens = split(/\|/,$external_database_release_spec);
-
-my $ext_db_name = $tokens[0];
-my $ext_db_version = $tokens[1];
-my $lower_ext_db_name = lc($ext_db_name);
-my $ext_db_sql = "select ex.external_database_release_id
-                    from sres.externaldatabaserelease ex, sres.externaldatabase e
-                   where e.external_database_id = ex.external_database_id
-                     and ex.version = '$ext_db_version'
-                     and lower(e.name) = '$lower_ext_db_name'";
-
- @tokens = split(/\|/,$type_ext_db_rls_spec);
-my $type_ext_db_name = $tokens[0];
-my $type_ext_db_version = $tokens[1];
-my $lower_type_ext_db_name = lc($type_ext_db_name);
-my $type_ext_db_sql = "select ex.external_database_release_id
-                    from sres.externaldatabaserelease ex, sres.externaldatabase e
-                   where e.external_database_id = ex.external_database_id
-                     and ex.version = '$type_ext_db_version'
-                     and lower(e.name) = '$lower_type_ext_db_name'";
-
-
 my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-  
+
 my @properties = ();
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
-  
+
 my $u = $gusconfig->{props}->{databaseLogin};
 my $pw = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
 my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 
-my $sh = $dbh->prepare($ext_db_sql);
-$sh->execute();
+my $dd_ext_db_rls_id = getExtDbRlsIdSql($dbh,$dd_ext_db_rls_spec);
 
-my $ext_db_rls_id = $sh->fetchrow_array();
+my $type_ext_db_rls_id = getExtDbRlsIdSql($dbh,$type_ext_db_rls_spec);
 
-$sh->finish();
-
-$sh = $dbh->prepare($type_ext_db_sql);
-$sh->execute();
-
-my $type_ext_db_rls_id = $sh->fetchrow_array();
-
-$sh->finish();
+my $pan_ext_db_rls_id = getExtDbRlsIdSql($dbh,$pan_ext_db_rls_spec);
 
 open (INFILE, $inFile) || die "Can't open $inFile for reading : $!\n";
 my $protocolAppNodes = [];
@@ -197,7 +170,7 @@ foreach my $row (<INFILE>){
   my $outputCol = $ColumnMap->{"Output"};
   my $dateCol = $ColumnMap->{"Date"};
   my $chars =  $ColumnMap->{"characteristics"};
-  my $nodeChars = parseCharacteristics($chars,$ext_db_rls_id,$external_database_release_spec,$values,$mapHash,$ontologyHash,$dbh);
+  my $nodeChars = parseCharacteristics($chars,$dd_ext_db_rls_id,$dd_ext_db_rls_spec,$values,$mapHash,$ontologyHash,$dbh);
   my $panHash = {};
   my $paHash = {};
   my $input;
@@ -216,7 +189,7 @@ foreach my $row (<INFILE>){
       <subtype></subtype>
       <name>$input</name>
       <description></description>
-      <ext_db_rls>$external_database_release_spec</ext_db_rls>
+      <ext_db_rls>$pan_ext_db_rls_spec</ext_db_rls>
       <type_ext_db_rls_id>$type_ext_db_rls_id</type_ext_db_rls_id>
       <source_id>$input</source_id>
       <subtype></subtype>
@@ -250,7 +223,7 @@ foreach my $row (<INFILE>){
       <subtype></subtype>
       <name>$output</name>
       <description></description>
-      <ext_db_rls>$external_database_release_spec</ext_db_rls>
+      <ext_db_rls>$pan_ext_db_rls_spec</ext_db_rls>
       <type_ext_db_rls_id>$type_ext_db_rls_id</type_ext_db_rls_id>
       <source_id>$output</source_id>
       <uri></uri>
@@ -294,9 +267,6 @@ foreach my $row (<INFILE>){
 }
 
 close INFILE;
-
-
-
 
 print TEMP $xmlObj->XMLout($protocolApps)."</sdrf>\n";
 #print TEMP $xmlObj->XMLout($protocolApps);
@@ -380,6 +350,27 @@ sub parseHeader {
   $colMap->{"paramValues"} = $paramValues;
   $colMap->{"Input"} = undef unless  (defined $colMap->{"Input"});
   return $colMap;
+}
+
+sub getExtDbRlsIdSql {
+  my ($dbh,$ext_db_rls_spec) = @_;
+  my @tokens = split(/\|/,$ext_db_rls_spec);
+  my $ext_db_name = $tokens[0];
+  my $ext_db_version = $tokens[1];
+  my $lower_ext_db_name = lc($ext_db_name);
+  my $ext_db_sql = "select ex.external_database_release_id
+                                    from sres.externaldatabaserelease ex, sres.externaldatabase e
+                                  where e.external_database_id = ex.external_database_id
+                                      and ex.version = '$ext_db_version'
+                                      and lower(e.name) = '$lower_ext_db_name'";
+
+  my $sh = $dbh->prepare($ext_db_sql);
+  $sh->execute();
+
+  my $ext_db_rls_id = $sh->fetchrow_array();
+
+  $sh->finish();
+  return $ext_db_rls_id;
 }
 
 sub parseCharacteristics {
