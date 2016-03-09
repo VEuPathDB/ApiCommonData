@@ -1,31 +1,32 @@
 CREATE TABLE apidb.Metadatatype (
-METADATA_TYPE_ID             NUMBER(12) NOT NULL,    
-ONTOLOGY_TERM_ID             NUMBER(12) NOT NULL,   
-NAME                                  VARCHAR2(255), 
-DISPLAY_DESCRIPTION                   VARCHAR2(4000),
-ORDER_NUM                             VARCHAR2(20),
-IS_HIDDEN                             NUMBER(1),
-EXTERNAL_DATABASE_RELEASE_ID          NUMBER(12),    
-VARIABLE_TYPE                         VARCHAR2(20),  
-UNITS                                 VARCHAR2(50),
-MODIFICATION_DATE            DATE NOT NULL,          
-USER_READ                    NUMBER(1) NOT NULL,     
-USER_WRITE                   NUMBER(1) NOT NULL,     
-GROUP_READ                   NUMBER(1) NOT NULL,     
-GROUP_WRITE                  NUMBER(1) NOT NULL,     
-OTHER_READ                   NUMBER(1) NOT NULL,     
-OTHER_WRITE                  NUMBER(1) NOT NULL,     
-ROW_USER_ID                  NUMBER(12) NOT NULL,    
-ROW_GROUP_ID                 NUMBER(3) NOT NULL,     
-ROW_PROJECT_ID               NUMBER(4) NOT NULL,     
-ROW_ALG_INVOCATION_ID        NUMBER(12) NOT NULL
+METADATA_TYPE_ID                NUMBER(12) NOT NULL,    
+ONTOLOGY_TERM_ID                NUMBER(12) NOT NULL,   
+NAME                            VARCHAR2(255),
+SOURCE_ID,                      VARCHAR2(255),         
+DISPLAY_DESCRIPTION             VARCHAR2(4000),
+ORDER_NUM                       VARCHAR2(20),
+IS_HIDDEN                       NUMBER(1),
+EXTERNAL_DATABASE_RELEASE_ID    NUMBER(12),    
+VARIABLE_TYPE                   VARCHAR2(20),  
+UNITS                           VARCHAR2(50),
+MODIFICATION_DATE               DATE NOT NULL,          
+USER_READ                       NUMBER(1) NOT NULL,     
+USER_WRITE                      NUMBER(1) NOT NULL,     
+GROUP_READ                      NUMBER(1) NOT NULL,     
+GROUP_WRITE                     NUMBER(1) NOT NULL,     
+OTHER_READ                      NUMBER(1) NOT NULL,     
+OTHER_WRITE                     NUMBER(1) NOT NULL,     
+ROW_USER_ID                     NUMBER(12) NOT NULL,    
+ROW_GROUP_ID                    NUMBER(3) NOT NULL,     
+ROW_PROJECT_ID                  NUMBER(4) NOT NULL,     
+ROW_ALG_INVOCATION_ID           NUMBER(12) NOT NULL
 );
 
 ALTER TABLE apidb.Metadatatype
 ADD CONSTRAINT mdt_pk PRIMARY KEY (metadata_type_id);
 
 ALTER TABLE apidb.Metadatatype
-ADD CONSTRAINT mss_fk2 FOREIGN KEY (external_database_release_id)
+ADD CONSTRAINT mdt_fk2 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Metadatatype TO gus_w;

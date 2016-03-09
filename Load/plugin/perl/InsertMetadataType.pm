@@ -124,17 +124,17 @@ sub run {
   my $lineNum = 0 ;
   my $specHash = {};
 
-  my $sqlCheck = "Select name,ontology_term_id 
+  my $sqlCheck = "Select name, source_id, ontology_term_id 
                          from sres.ontologyTerm
-                         where lower(name) = ? 
+                         where source_id = ?
                            and external_database_release_id = ?
                            ";
 
   my $dbh        = $self->getQueryHandle();
-  my $sth        = $dbh->prepare($sqlCheck);
-
+  my $sth        = $dbh->prepare($sqlCheck) ;
   my @metadataTypes;
 
+  open my $fh, '>', '/home/jcade/test.txt' or die $!;
   open(FILE,$file);
 
   foreach my $line (<FILE>) {
@@ -148,13 +148,22 @@ sub run {
     $lineNum = $lineNum + 1;
     my ($type,$filter);
     my $row = [split( "\t", $line )];
-    my $term = $row ->[0];
+    my $term = $row ->[1];
+    my $source_id = $row ->[0];
     my $lowerTerm = lc($term);
 
     my $external_database = $self->getArg('extDbRlsSpec');
-    $sth->execute($lowerTerm,$extDbRlsId);
-    my ($term,$ont_term_id) = $sth->fetchrow_array() or $self->error("no term $term in the db for external database release id $external_database"); 
-    my $variable_type = $row->[1];
+    $sth->execute($source_id,$extDbRlsId);
+
+    my ($term,$source_id,$ont_term_id) = $sth->fetchrow_array()  or $self->error("no term $term in the db for external database release id $external_database
+                       Select name,source_id,ontology_term_id
+                         from sres.ontologyTerm
+                       where source_id = $source_id
+                           and external_database_release_id = $extDbRlsId
+
+:
+"); 
+    my $variable_type = $row->[2];
     unless ( $variable_type =~ /^boolean$/i ||
              $variable_type =~/^date$/i ||
              $variable_type =~/^number$/i ||
@@ -167,22 +176,23 @@ sub run {
     }
     
     my $units = undef;
-    $units = $row->[2] if scalar(@$row)>2 && defined $row->[2];
+    $units = $row->[3] if scalar(@$row)>3 && defined $row->[3];
     
     my $display_description = undef;
-    $display_description = $row->[3]  if scalar(@$row)>3 && defined $row->[3] ;
+    $display_description = $row->[4]  if scalar(@$row)>4 && defined $row->[4] ;
 
     my $order_num = undef;
-    $order_num = $row->[4]  if scalar(@$row)>4 && defined $row->[4] ;
+    $order_num = $row->[5]  if scalar(@$row)>5 && defined $row->[5] ;
 
     my $is_hidden = 0;
-    if (scalar(@$row)>5 && defined $row->[5]) {
-      $is_hidden = ( $row->[5] =~/false|0/i) ? 0 : 1;
-      my $state = $row->[5];
+    if (scalar(@$row)>6 && defined $row->[6]) {
+      $is_hidden = ( $row->[6] =~/false|0/i) ? 0 : 1;
+      my $state = $row->[6];
     }
     my $metadataType = GUS::Model::ApiDB::MetadataType->
       new({name => $term,
            ontology_term_id => $ont_term_id,
+           source_id => $source_id,
            variable_type => $variable_type,
            display_description => $display_description,
            order_num => $order_num,
