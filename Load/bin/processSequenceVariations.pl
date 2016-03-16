@@ -203,7 +203,17 @@ while($merger->hasNext()) {
     &cleanCdsCache($transcriptSummary, $prevTranscripts);
   }
 
+  if($isLegacyVariations && $cleanCache) {
+    foreach my $lv (@$variations) {
+      if($lv->{strain} eq $referenceStrain) {
+        $lv->{strain} = $lv->{strain} . "_reference_reads";
+      }
+    }
+  }
+  
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
+
+
 
   # for the refereence, get   positionInCds, positionInProtein, product, codon?
   if($cachedReferenceVariation && !$isLegacyVariations) {
@@ -248,7 +258,7 @@ while($merger->hasNext()) {
   }
 
   # No need to continue if there is no variation at this point:  Important for when we undo!!
-  unless(&hasVariation($variations)) {
+  if(!&hasVariation($variations) && !$isLegacyVariations) {
     print STDERR  "NO VARIATION FOR STRAINS:  " . join(",", map { $_->{strain}} @$variations) . "\n" if($debug);
     next;
   }
@@ -268,7 +278,6 @@ while($merger->hasNext()) {
   # loop through variations and print
   foreach my $variation (@$variations) {
 
-
     my $strain = $variation->{strain};
 
     my ($protocolAppNodeId, $extDbRlsId);
@@ -285,6 +294,8 @@ while($merger->hasNext()) {
       die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
 
       $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
+
+
 
       if(!$forcePositionCompute || $strain eq $referenceStrain) {
         &printVariation($variation, $cacheFh);
@@ -327,8 +338,9 @@ while($merger->hasNext()) {
     $variation->{protocol_app_node_id} = $protocolAppNodeId;
 
     &printVariation($variation, $cacheFh);
-  }
 
+
+  }
   my $snp = &makeSNPFeatureFromVariations($variations, $referenceVariation, $geneNaFeatureId, $thisExtDbRlsId);
   &printSNP($snp, $snpFh);
 
