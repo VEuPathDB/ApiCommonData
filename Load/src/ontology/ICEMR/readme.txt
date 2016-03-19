@@ -16,8 +16,8 @@ Controlled vocabulary of data dictionary
 - If no mapped ontology term found for any controlled vocabulary, we will generate internal temporary terms with ICEMR domain IDs.
 
 Notes: 
-- The mapping between Data dictionary and Controlled vocabulary to ontology terms should be one to one. If more than one controlled vocabulary mapped to one ontology term, the ontology term will be addes as related 'Related Synonym', the controlled vocabulary may have same label in this case. 
-- It is not necessary make all controlled vacabulary available in ontologies. But it is crucial to use Controlled vocabulary consistently across multiple ICEMR projects.
+- The mapping between Data dictionary and Controlled vocabulary to ontology terms should be one to one. If more than one controlled vocabulary mapped to one ontology term, the ontology term will be added as related 'Related Synonym', the controlled vocabulary may have same label in this case. 
+- It is not necessary make all controlled vocabulary available in ontologies. But it is crucial to use Controlled vocabulary consistently across multiple ICEMR projects.
 
 Temporary terms
 	The temporary terms will only have label and ID. Meanwhile, contact corresponding ontologies or prepare to add them in the EuPath ontology. The temporary terms will be deprecated when the terms are available in the ontology. Based on the need, we can decide whether we deprecate the temporary terms following OBO Foundry/OBI deprecation policy.
