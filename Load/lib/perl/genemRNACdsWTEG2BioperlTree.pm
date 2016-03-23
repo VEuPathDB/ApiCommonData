@@ -83,14 +83,27 @@ sub preprocess {
 
 	      #my @exonLocs = $geneLoc->each_Location();
 	      #foreach my $exonLoc (@exonLocs){
+	      my $exon;
 	      my @exonSubFeatures = $geneFeature->get_SeqFeatures;
 	      foreach my $exonSubFeature (sort {$a->location->start <=> $b->location->start} @exonSubFeatures){
-		my $exonLoc = $exonSubFeature->location;
-		my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-		$exon->add_tag_value('CodingStart', '');
-		$exon->add_tag_value('CodingEnd', '');
-		$transcript->add_SeqFeature($exon);
+		if ($exonSubFeature->primary_tag eq 'noncoding_exon') {
+		  my $exonLoc = $exonSubFeature->location;
+		  $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+		  $exon->add_tag_value('CodingStart', '');
+		  $exon->add_tag_value('CodingEnd', '');
+		  $transcript->add_SeqFeature($exon);
+		}
 	      }
+	      if (!$exon) {
+		my @exonLocs = $geneLoc->each_Location();
+		foreach my $exonLoc (@exonLocs){
+		  $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+		  $exon->add_tag_value('CodingStart', '');
+		  $exon->add_tag_value('CodingEnd', '');
+		  $transcript->add_SeqFeature($exon);
+		}
+	      }
+
 	      $gene->add_SeqFeature($transcript);
 	      $bioperlSeq->add_SeqFeature($gene); 
 	    }  ## end of $type eq tRNA or rRNA
