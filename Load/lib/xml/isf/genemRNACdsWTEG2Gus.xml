@@ -369,6 +369,27 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="partial"      handler="api"    method="setPartial"/>
   </feature>
 
+  <feature name="telomerase_RNA_gene" so="telomerase_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="Alias"          ignore="true"/>
+    <qualifier name="dbxref"          ignore="true"/>
+    <qualifier name="display"          ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
   <feature name="three_prime_utr" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
    	<qualifier name="controlled_curation" ignore="true"/>
@@ -408,6 +429,20 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature> 
 
   <feature name="centromere" table="DoTS::Miscellaneous" so="centromere">
+    <qualifier name="ID"                column="source_id"/>
+    <qualifier name="Alias"        ignore="true"/>
+    <qualifier name="dbxref"        ignore="true"/>
+    <qualifier name="display"        ignore="true"/>
+    <qualifier name="feature_id"        ignore="true"/>
+    <qualifier name="gene"        ignore="true"/>
+    <qualifier name="isObsolete"        ignore="true"/>
+    <qualifier name="literature"        ignore="true"/>
+    <qualifier name="Name"        ignore="true"/>
+    <qualifier name="Note"        ignore="true"/>
+    <qualifier name="timelastmodified"        ignore="true"/>
+  </feature>
+
+  <feature name="telomere" table="DoTS::Miscellaneous" so="telomere">
     <qualifier name="ID"                column="source_id"/>
     <qualifier name="Alias"        ignore="true"/>
     <qualifier name="dbxref"        ignore="true"/>
