@@ -64,9 +64,9 @@ sub preprocess {
 	    }
 
 	    ## for tRNA and rRNA that do not have gene as parent
-	    if($type eq 'tRNA' || $type eq 'rRNA' || $type eq 'snRNA' || $type eq 'snoRNA'
+	    if($type eq 'tRNA' || $type eq 'rRNA' || $type eq 'snRNA' || $type eq 'snoRNA' || $type eq 'ncRNA'
 	       || $type eq 'tRNA_gene' || $type eq 'rRNA_gene' || $type eq 'snRNA_gene'
-	       || $type eq 'snoRNA_gene' || $type eq 'ncRNA_gene') {
+	       || $type eq 'snoRNA_gene' || $type eq 'ncRNA_gene' || $type eq 'telomerase_RNA_gene') {
 
 	      $geneFeature = $bioperlFeatureTree;
 	      $type =~ s/_gene$//;
@@ -81,8 +81,11 @@ sub preprocess {
 	      my $transcriptID = $geneID.".$type";
 	      $transcript->add_tag_value("ID", $transcriptID);
 
-	      my @exonLocs = $geneLoc->each_Location();
-	      foreach my $exonLoc (@exonLocs){
+	      #my @exonLocs = $geneLoc->each_Location();
+	      #foreach my $exonLoc (@exonLocs){
+	      my @exonSubFeatures = $geneFeature->get_SeqFeatures;
+	      foreach my $exonSubFeature (sort {$a->location->start <=> $b->location->start} @exonSubFeatures){
+		my $exonLoc = $exonSubFeature->location;
 		my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
 		$exon->add_tag_value('CodingStart', '');
 		$exon->add_tag_value('CodingEnd', '');
