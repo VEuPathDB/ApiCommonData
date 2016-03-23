@@ -199,7 +199,8 @@ sub parseHeaderConfig {
 sub processFieldValue {
   my ($field,$header_hash,$hasCompId,$required,$idFieldName,$dateFieldName,$parentIdFieldName) = @_;
   my $old_header = $header_hash->{$field}->{old_header};
-  my $inputElement = "       <col header_val='$old_header' req='$required' name='$old_header'/>" unless ($hasCompId && $field =~ $idFieldName);
+
+  my $inputElement = "       <col header_val='$old_header' req='$required' name='$old_header'/>" unless ($hasCompId && $field =~ /^$idFieldName$/);
   my $outputElement;
   my $key = lc($field);
   my $function = $header_hash->{$key}->{function};
@@ -207,7 +208,7 @@ sub processFieldValue {
 
   unless ($old_header =~ /^$idFieldName$|^$dateFieldName$/i) {
     unless  (defined $parentIdFieldName && $old_header =~ /^$parentIdFieldName/i) {
-      print STDERR "my old_header = $old_header, id field = $idFieldName, parent id field = $parentIdFieldName;\n\n";
+     # print STDERR "my old_header = $old_header, id field = $idFieldName, parent id field = $parentIdFieldName;\n\n";
       $new_header = "Characteristics [$new_header]"  ;
     }
   }
