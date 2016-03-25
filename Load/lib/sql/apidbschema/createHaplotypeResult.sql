@@ -1,6 +1,6 @@
-CREATE TABLE apidb.NAFeatureHaplotype (
- na_feature_haplotype_id         NUMBER(12) NOT NULL,
- na_feature_id               NUMBER(12) NOT NULL,
+CREATE TABLE apidb.HaplotypeResult (
+ haplotype_result_id         NUMBER(12) NOT NULL,
+ na_feature_id               NUMBER(12) NOT NULL, -- na_feature id for the haploblock
  protocol_app_node_id         NUMBER(10) NOT NULL,
  value              varchar2(5),
  modification_date            date NOT NULL,
@@ -16,18 +16,18 @@ CREATE TABLE apidb.NAFeatureHaplotype (
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (na_feature_id) REFERENCES Dots.NAFeatureImp,
  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
- PRIMARY KEY (na_feature_haplotype_id)
+ PRIMARY KEY (haplotype_result_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.NAFeatureHaplotype TO gus_w;
-GRANT SELECT ON apidb.NAFeatureHaplotype TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Haplotyperesult TO gus_w;
+GRANT SELECT ON apidb.Haplotyperesult TO gus_r;
 
 ------------------------------------------------------------------------------
 
-CREATE SEQUENCE apidb.nafeaturehaplotype_sq;
+CREATE SEQUENCE apidb.haplotyperesult_sq;
 
-GRANT SELECT ON apidb.nafeaturehaplotype_sq TO gus_r;
-GRANT SELECT ON apidb.nafeaturehaplotype_sq TO gus_w;
+GRANT SELECT ON apidb.haplotyperesult_sq TO gus_r;
+GRANT SELECT ON apidb.haplotyperesult_sq TO gus_w;
 
 ------------------------------------------------------------------------------
 
@@ -37,14 +37,14 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'NAFeatureHaplotype',
+SELECT core.tableinfo_sq.nextval, 'HaplotypeResult',
        'Standard', 'na_feature_haplotype_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'nafeaturehaplotype' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'haplotyperesult' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
