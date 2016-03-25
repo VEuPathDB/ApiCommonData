@@ -223,6 +223,9 @@ sub addResults {
   elsif ($protocolName =~ /simple_ontology_term_results/) {
     $tableString = "ApiDB::OntologyTermResult";
   } 
+  elsif ($protocolName =~ /haplotype/) {
+    $tableString = "ApiDB::HaplotypeResult";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -283,7 +286,6 @@ sub addResults {
       };
       $start = 1;
     }
-
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -365,6 +367,15 @@ sub lookupIdFromSourceId {
     }
  
     $rv = @compoundIds[0];
+  }
+
+  # USES Name instead of source_id here
+  elsif ($sourceIdType eq 'haploblock') {
+    my @naFeatureIds = $self->sqlAsArray(Sql => "select na_feature_id from dots.ChromosomeElementFeature where name = '$sourceId'");
+    unless (scalar @naFeatureIds == 1) {
+        die "Number of naFeatureIds should be 1 for term $sourceId\n";
+    }
+    $rv = @naFeatureIds[0];
   }
 
   else {
