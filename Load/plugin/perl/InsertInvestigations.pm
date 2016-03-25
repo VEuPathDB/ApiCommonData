@@ -107,6 +107,7 @@ sub run {
     };
     if($@) {
       $self->logOrError($@);
+      next;
     }
 
     $self->checkAllOntologyTerms($investigation->getOntologyTerms());

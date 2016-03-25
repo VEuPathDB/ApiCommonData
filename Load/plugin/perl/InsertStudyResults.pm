@@ -220,6 +220,9 @@ sub addResults {
   elsif ($protocolName =~ /geneCNV/) {
     $tableString = "ApiDB::GeneCopyNumber";
   } 
+  elsif ($protocolName =~ /simple_ontology_term_results/) {
+    $tableString = "ApiDB::OntologyTermResult";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -264,6 +267,11 @@ sub addResults {
         $start = 1;
     }
 
+    elsif ($sourceIdType =~ /ontology_term/) {
+        my $ontologyTermId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+        $hash = { ontology_term_id => $ontologyTermId };
+        $start = 1;
+    }
 
     elsif ($sourceIdType =~ /compound/) {
 
@@ -341,6 +349,13 @@ sub lookupIdFromSourceId {
     $rv = @reporterIds[0];
   }
 
+  elsif ($sourceIdType eq 'ontology_term') {
+    my @ontologyTermIds = $self->sqlAsArray(Sql => "select ontology_term_id from sres.ontologyterm where name = '$sourceId'");
+    unless (scalar @ontologyTermIds == 1) {
+        die "Number of ontologyTermIds should be 1 for term $sourceId\n";
+    }
+    $rv = @ontologyTermIds[0];
+  }
 
   elsif ($sourceIdType eq 'compound') {
     my @compoundIds = $self->sqlAsArray(Sql => "select id from chebi.compounds where chebi_accession = '$sourceId'");
@@ -351,7 +366,6 @@ sub lookupIdFromSourceId {
  
     $rv = @compoundIds[0];
   }
-
 
   else {
     $self->error("Unsupported sourceId Type:  $sourceIdType");
