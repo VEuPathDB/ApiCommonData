@@ -2,7 +2,7 @@ CREATE TABLE apidb.NAFeatureHaplotype (
  na_feature_haplotype_id         NUMBER(12) NOT NULL,
  na_feature_id               NUMBER(12) NOT NULL,
  protocol_app_node_id         NUMBER(10) NOT NULL,
- haplotype              varchar2(5),
+ value              varchar2(5),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
