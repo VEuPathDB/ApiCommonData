@@ -2,7 +2,7 @@
 CREATE TABLE apidb.IntronJunction (
 intron_junction_id       NUMBER(10),
  external_database_release_id NUMBER(10) NOT NULL,
- sample_name                  VARCHAR2(100) NOT NULL,
+ protocol_app_node_id         NUMBER(10) NOT NULL,
  na_sequence_id               NUMBER(10) NOT NULL,
  mapping_start                     NUMBER(10) NOT NULL,
  mapping_end                     NUMBER(10) NOT NULL,
@@ -22,6 +22,7 @@ intron_junction_id       NUMBER(10),
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
  FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
+ FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
  PRIMARY KEY (intron_junction_id)
 );
 
@@ -33,7 +34,7 @@ GRANT select ON apidb.IntronJunction_sq TO gus_w;
 
 CREATE INDEX apidb.rif_rls_ix
 ON apidb.IntronJunction
-   (external_database_release_id, na_sequence_id, sample_name, mapping_start, 
+   (external_database_release_id, na_sequence_id, protocol_app_node_id, mapping_start, 
     mapping_end, intron_junction_id, score, is_reversed, unique_reads, nu_reads
 );
 
