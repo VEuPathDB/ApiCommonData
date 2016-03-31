@@ -153,7 +153,7 @@ sub run {
       $appNodeType = "data transformation";
     }
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType, $investigation);
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType);
 
     my $protocol = $self->makeProtocol($appNodeType);
 
@@ -167,6 +167,7 @@ sub run {
       $input->setParent($inputAppNode);
 
       $self->linkAppNodeToStudy($study, $inputAppNode); 
+      $self->linkAppNodeToStudy($investigation, $inputAppNode); 
     }
 
     my $output = GUS::Model::Study::Output->new();
@@ -174,6 +175,7 @@ sub run {
     $output->setParent($protocolAppNode);
 
     $self->linkAppNodeToStudy($study, $protocolAppNode); 
+    $self->linkAppNodeToStudy($investigation, $protocolAppNode); 
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
@@ -454,7 +456,7 @@ sub retrieveAppNodesForStudy {
 
 
 sub makeProtocolAppNode {
-  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType, $study) = @_;
+  my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType) = @_;
 
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
   unless($ontologyTerm->retrieveFromDB()) {
