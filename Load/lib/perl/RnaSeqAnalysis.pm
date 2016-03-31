@@ -26,6 +26,10 @@ use strict;
 use CBIL::TranscriptExpression::Error;
 use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
 
+use ApiCommonData::Load::IntronJunctions;
+
+use Data::Dumper;
+
 
 my $OUTPUT_FILE_BASE = "profiles";
 
@@ -59,6 +63,23 @@ sub munge {
     my $valueType = 'fpkm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
+
+    my $samplesHash = $self->groupListHashRef($self->getSamples());
+    my $profileSetName = $self->getProfileSetName();
+
+    foreach my $sampleName (keys %$samplesHash) {
+      my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
+                                                                      inputs => $samplesHash->{$sampleName},
+                                                                       mainDirectory => $self->getMainDirectory,
+                                                                       profileSetName => $profileSetName,
+                                                                       samplesHash => $samplesHash,
+                                                                      suffix => '_junctions.tab'});
+      $intronJunctions->setProtocolName("GSNAP/Junctions");
+      $intronJunctions->setDisplaySuffix(" [junctions]");
+      $intronJunctions->setTechnologyType($self->getTechnologyType());
+
+      $intronJunctions->munge();
+    }
     
     foreach my $quantificationType ('cuff', 'htseq-union', 'htseq-intersection-nonempty', 'htseq-intersection-strict') {
 	if($isStrandSpecific) {
