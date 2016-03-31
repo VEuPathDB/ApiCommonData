@@ -65,7 +65,7 @@ sub munge {
     close INPUT;
   }
 
-
+  print OUT "sequence_source_id\tsegment_start\tsegment_end\tis_reversed\tunique_reads\tnu_reads\n";
   foreach my $key (keys %data) {
     my $averageUnique = CBIL::Util::V::average(@{$data{$key}->{unique}});
     my $averageNonUnique = CBIL::Util::V::average(@{$data{$key}->{nonunique}});
