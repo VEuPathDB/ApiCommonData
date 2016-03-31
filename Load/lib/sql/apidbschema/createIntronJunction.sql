@@ -4,10 +4,9 @@ intron_junction_id       NUMBER(10),
  external_database_release_id NUMBER(10) NOT NULL,
  protocol_app_node_id         NUMBER(10) NOT NULL,
  na_sequence_id               NUMBER(10) NOT NULL,
- mapping_start                     NUMBER(10) NOT NULL,
- mapping_end                     NUMBER(10) NOT NULL,
+ segment_start                     NUMBER(10) NOT NULL,
+ segment_end                     NUMBER(10) NOT NULL,
  is_reversed                number(1),
- score                    NUMBER(10),
  unique_reads                    NUMBER(10),
  nu_reads                    NUMBER(10),
  MODIFICATION_DATE            DATE,
@@ -34,8 +33,8 @@ GRANT select ON apidb.IntronJunction_sq TO gus_w;
 
 CREATE INDEX apidb.rif_rls_ix
 ON apidb.IntronJunction
-   (external_database_release_id, na_sequence_id, protocol_app_node_id, mapping_start, 
-    mapping_end, intron_junction_id, score, is_reversed, unique_reads, nu_reads
+   (external_database_release_id, na_sequence_id, protocol_app_node_id, segment_start, 
+    segment_end, intron_junction_id, is_reversed, unique_reads, nu_reads
 );
 
 
