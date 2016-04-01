@@ -47,6 +47,7 @@ sub preprocess {
                                     -resolver_method=>sub {
                                       my $self = shift;
                                       my ($sf, @candidates) = @_;
+				      my @cids = $sf->get_tag_values('locus_tag');
                                       if ($sf->has_tag('product')) {
                                         my ($product) = $sf->get_tag_values('product');
                                         my @container = grep { my ($prod) = 
@@ -56,12 +57,12 @@ sub preprocess {
                                                                $product eq $prod;
                                                              } @candidates;
                                         if (@container == 0) {
-                                          $self->throw("UNRESOLVABLE");
+                                          $self->throw("UNRESOLVABLE at $cids[0]");
                                         } elsif (@container == 1 ) {
                                           # we got it
                                           return $container[0];
                                         } else {
-                                          $self->throw("AMBIGUOUS");
+                                          $self->throw("AMBIGUOUS at $cids[0]");
                                         }
                                       }
                                     },
