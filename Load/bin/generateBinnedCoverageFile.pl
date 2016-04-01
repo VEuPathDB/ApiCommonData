@@ -68,7 +68,7 @@ endOfUsage
     # gets coverage for each window - uses BAM file of mapped reads and BED file for windows on genome
     sub getCoverage {
         my ($bed, $bam, $out) = @_;
-        my @coverageBed = split(/\n/, runCmd("bedtools coverage -counts -a $bed -b $bam"));
+        my @coverageBed = split(/\n/, runCmd("bedtools coverage -counts -sorted -a $bed -b $bam"));
         my $totalMapped = runCmd("samtools view -c -F 4 $bam");
         open (OUT, ">$out") or die "Cannot write output file\n$!\n";
         foreach (@coverageBed){
