@@ -19,6 +19,10 @@ create table apidb.Snp (
     minor_product                varchar(1),
     distinct_strain_count        number(3), 
     distinct_allele_count        number(3),
+    is_coding                number(1),
+    positions_in_cds_full varchar2(2500),
+    positions_in_protein_full varchar2(2500),
+    reference_aa_full varchar2(2500),
     modification_date            date
 );
 
@@ -45,6 +49,8 @@ create table apidb.SequenceVariation (
     quality                      number(12),
     ref_na_sequence_id           number(10) not null,
     protocol_app_node_id         NUMBER(10) NOT NULL,
+    products_full  varchar2(2500),
+    diff_from_adjacent_snp number(1),
     modification_date            date
 );
 
