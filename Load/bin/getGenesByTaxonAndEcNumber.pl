@@ -111,17 +111,19 @@ $sth->finish;
 # get all data out
 open OUT, ">$outputGenesByTaxon";
 open OUT_EC, ">$outputGenesByEcNumber";
-print OUT "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
-print OUT_EC "[Gene ID] [EC Numbers] [Ortholog count] [Paralog count] [Ortholog Group]\n";
+print OUT "[Gene ID]\t[EC Numbers]\t[Ortholog count]\t[Paralog count]\t[Ortholog Group]\n";
+print OUT_EC "[Gene ID]\t[EC Numbers]\t[Ortholog count]\t[Paralog count]\t[Ortholog Group]\n";
 
 while(my ($k, $v) = each %hash) {
   my $source_id = $k;
   my $ec = $hash{$k}->{ec};
+  $ec = 'null' unless $ec;
   my $ortholog_number = $hash{$k}->{ortholog_number};
-  my $paralog_number = $hash{$k}->{paralog_number};
-  my $orthomcl_name = $hash{$k}->{orthomcl_name};
-  print OUT "$source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name\n";
-  print OUT_EC "$source_id, $ec, $ortholog_number, $paralog_number, $orthomcl_name\n" if $ec; 
+  my $paralog_number  = $hash{$k}->{paralog_number};
+  my $orthomcl_name   = $hash{$k}->{orthomcl_name};
+
+  print OUT "$source_id\t$ec\t$ortholog_number\t$paralog_number\t$orthomcl_name\n";
+  print OUT_EC "$source_id\t$ec\t$ortholog_number\t$paralog_number\t$orthomcl_name\n" if $ec ne 'null';
 }
 
 $dbh->disconnect; 
