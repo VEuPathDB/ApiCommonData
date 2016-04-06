@@ -50,7 +50,11 @@ sub variationFileColumnNames {
        'na_sequence_id',
        'ref_na_sequence_id',
        'snp_external_database_release_id',
-       'protocol_app_node_id'
+       'protocol_app_node_id',
+       'positions_in_cds',
+       'positions_in_protein',
+       'products',
+       'diff_from_adjacent',
       );
 
   return wantarray ? @columnNames : \@columnNames;
@@ -76,7 +80,11 @@ sub snpFileColumnNames {
                      "major_product",
                      "minor_product",
                      "distinct_strain_count",
-                     "distinct_allele_count"
+                     "distinct_allele_count",
+                     'is_coding',
+                     "positions_in_cds",
+                     "positions_in_protein",
+                     "reference_aa_full"
       );
 
   return \@columnNames;

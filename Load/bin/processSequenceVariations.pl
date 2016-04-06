@@ -145,7 +145,9 @@ my $strainExtDbRlsAndProtocolAppNodeIds = &queryExtDbRlsAndProtocolAppNodeIdsFor
 my $transcriptExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $transcriptExtDbRlsSpec);
 my $thisExtDbRlsId = &queryExtDbRlsIdFromSpec($dbh, $extDbRlsSpec);
 
-my $agpMap = GUS::Community::GeneModelLocations::queryForAgpMap($dbh);
+
+my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $transcriptExtDbRlsId, 1);
+my $agpMap = $geneModelLocations->getAgpMap();
 
 # NOTE:  The key in this hash is actually the aa_feature_id in dots.translatedaafeature because we are interested in cds coords
 my $transcriptSummary = &getTranscriptLocations($dbh, $transcriptExtDbRlsId, $agpMap);
@@ -172,15 +174,19 @@ my ($prevSequenceId, $prevTranscriptMaxEnd, $prevTranscripts, $counter);
 while($merger->hasNext()) {
   my $variations = $merger->nextSNP();
 
+
+
+  
   # sanity check and get the location and seq id
   my ($sequenceId, $location) = &snpLocationFromVariations($variations);
+
   print STDERR "SEQUENCEID=$sequenceId\tLOCATION=$location\n" if($debug);
 
   my $naSequenceId = $naSequenceIds->{$sequenceId};
   die "Could not find na_sequence_id for sequence source id: $sequenceId" unless($naSequenceId);
 
   # some variables are needed to store attributes of the SNP
-  my ($referenceAllele, $positionInCds, $referenceProduct, $positionInProtein, $referenceVariation, $isCoding);
+  my ($referenceAllele, $positionsInCds, $positionsInProtein, $referenceVariation, $isCoding);
 
   my $geneLocation = &lookupByLocation($sequenceId, $location, $geneLocations);
 
@@ -213,15 +219,12 @@ while($merger->hasNext()) {
   
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
 
-
-
-  # for the refereence, get   positionInCds, positionInProtein, product, codon?
+  # for the refereence, get   positionsInCds, positionsInProtein, product, codon?
   if($cachedReferenceVariation && !$isLegacyVariations) {
     print STDERR "HAS_CACHED REFERENCE VARIATION\n" if($debug);
     $referenceVariation = $cachedReferenceVariation;
-    $referenceProduct = $cachedReferenceVariation->{product};
-    $positionInCds = $cachedReferenceVariation->{position_in_cds};
-    $positionInProtein = &calculateAminoAcidPosition($positionInCds, $positionInCds);
+    $positionsInCds = &makeHashRefFromString($cachedReferenceVariation->{positions_in_cds}) if($cachedReferenceVariation->{positions_in_cds});
+    $positionsInProtein = &makeHashRefFromString($cachedReferenceVariation->{positions_in_protein}) if($cachedReferenceVariation->{positions_in_protein});
     $referenceAllele = $cachedReferenceVariation->{base};
     $isCoding = $cachedReferenceVariation->{is_coding};
   }
@@ -230,13 +233,20 @@ while($merger->hasNext()) {
     $referenceAllele = &querySequenceSubstring($dbh, $sequenceId, $location, $location);
 
     # These 3 are only calculated for the reference; IsCoding is set to true if the snp is contained w/in any coding transcript
-    ($isCoding, $positionInCds, $positionInProtein) = &calculateCdsPosition($transcripts, $transcriptSummary, $sequenceId, $location);
+    ($isCoding, $positionsInCds, $positionsInProtein) = &calculateCdsPosition($transcripts, $transcriptSummary, $sequenceId, $location);
 
-    print STDERR "ISCODING=$isCoding, POSITIONINCDS=$positionInCds, POSITIONINPROTEIN=$positionInProtein\n" if($debug);
+    my ($referenceProducts, $adjacentSnpCausesProductDifference) = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionsInCds, $referenceAllele, $transcriptExtDbRlsId, $sequenceId) if(keys %$positionsInCds);
 
-    $referenceProduct = &variationProduct($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $referenceAllele) if($positionInCds);
+    my $positionInCds = &uniqueValueFromHashRef($positionsInCds);
+    my $positionInProtein = &uniqueValueFromHashRef($positionsInProtein);
+    my $product =  &uniqueValueFromHashRef($referenceProducts);
 
     my $referenceProtocolAppNodeId = &queryProtocolAppNodeIdFromExtDbRlsId($dbh, $thisExtDbRlsId);
+
+
+    my $positionsInCdsString = &hashRefToString($positionsInCds);
+    my $positionsInProteinString = &hashRefToString($positionsInProtein);
+    my $referenceProductsString = &hashRefToString($referenceProducts);
 
     # add a variation for the reference
     $referenceVariation = {'base' => $referenceAllele,
@@ -244,16 +254,22 @@ while($merger->hasNext()) {
                            'location' => $location,
                            'sequence_source_id' => $sequenceId,
                            'matches_reference' => 1,
-                           'position_in_cds' => $positionInCds,
+                           'positions_in_cds' => $positionsInCdsString,
                            'strain' => $referenceStrain,
-                           'product' => $referenceProduct,
-                           'position_in_protein' => $positionInProtein,
+                           'products' => $referenceProductsString,
+                           'positions_in_protein' => $positionsInProteinString,
                            'na_sequence_id' => $naSequenceId,
                            'ref_na_sequence_id' => $naSequenceId,
                            'snp_external_database_release_id' => $thisExtDbRlsId,
                            'snp_source_id' => $variations->[0]->{snp_source_id},
                            'protocol_app_node_id' => $referenceProtocolAppNodeId,
+                           'is_coding' => $isCoding,
+                           'position_in_cds' => $positionInCds,
+                           'position_in_protein' => $positionInProtein,
+                           'product' => $product,
+                           'diff_from_adjacent' => $adjacentSnpCausesProductDifference,
     };
+
     push @$variations, $referenceVariation;
   }
 
@@ -265,7 +281,7 @@ while($merger->hasNext()) {
 
  # loop over all strains  add coverage vars
   my @variationStrains = map { $_->{strain} } @$variations;
-  print STDERR "HAS VARIATIONS FOR THE FOLLWING:  " . join(",", @variationStrains) . "\n" if($debug);
+  print STDERR "HAS VARIATIONS FOR THE FOLLOWING:  " . join(",", @variationStrains) . "\n" if($debug);
 
   unless($isLegacyVariations) {
     my $coverageVariations = &makeCoverageVariations(\@allStrains, \@variationStrains, $strainVarscanFileHandles, $referenceVariation);
@@ -291,7 +307,11 @@ while($merger->hasNext()) {
       die "cachedExtDbRlsId did not match" if($strain ne $referenceStrain && $extDbRlsId != $cachedExtDbRlsId);
 
       my $cachedNaSequenceId = $variation->{ref_na_sequence_id};
-      die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" if($naSequenceId != $cachedNaSequenceId);
+
+      if($naSequenceId != $cachedNaSequenceId) {
+        print Dumper $variations;
+        die "cachedNaSequenceId [$cachedNaSequenceId] did not match [$naSequenceId]" ;
+      }
 
       $variation->{snp_external_database_release_id} = $thisExtDbRlsId;
 
@@ -323,14 +343,14 @@ while($merger->hasNext()) {
       $variation->{matches_reference} = 0;
     }
 
-    if($positionInCds) {
+    if(keys %$positionsInCds) {
       my $strainSequenceSourceId = $isLegacyVariations ? $sequenceId : $sequenceId . "." . $strain;
 
-      my $p = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionInCds, $allele);
-      
-      $variation->{product} = $p;
-      $variation->{position_in_cds} = $positionInCds; #got this from the refernece
-      $variation->{position_in_protein} = $positionInProtein; #got this from the reference
+      my ($p, $pd) = &variationProduct($extDbRlsId, $transcripts, $transcriptSummary, $strainSequenceSourceId, $location, $positionsInCds, $allele, $transcriptExtDbRlsId, $sequenceId);
+
+      $variation->{products} = &hashRefToString($p);
+      $variation->{product} = &uniqueValueFromHashRef($p);;
+      $variation->{diff_from_adjacent} = $pd;
     }
 
     $variation->{external_database_release_id} = $extDbRlsId;
@@ -338,8 +358,6 @@ while($merger->hasNext()) {
     $variation->{protocol_app_node_id} = $protocolAppNodeId;
 
     &printVariation($variation, $cacheFh);
-
-
   }
   my $snp = &makeSNPFeatureFromVariations($variations, $referenceVariation, $geneNaFeatureId, $thisExtDbRlsId);
   &printSNP($snp, $snpFh);
@@ -388,6 +406,35 @@ print STDERR "Total Time:  $totalTime Seconds\n";
 #--------------------------------------------------------------------------------
 # BEGIN SUBROUTINES
 #--------------------------------------------------------------------------------
+
+
+sub uniqueValueFromHashRef {
+  my ($hashRef) = @_;
+  my %seen = ();
+  my @unique = grep { ! $seen{$_} ++ } values %$hashRef;
+
+  if(scalar @unique == 1) {
+    return $unique[0];
+  }
+  return undef;
+}
+
+sub makeHashRefFromString {
+  my ($string) = @_;
+
+  return unless($string);
+
+  my $rv = eval $string;
+
+  if($@) {
+    die "Error evaluating string: $@";
+  }
+
+  unless(ref($rv) eq 'HASH') {
+    die "Error evaluating string [$string]to hash";
+  }
+  return $rv;
+}
 
 
 sub queryNaSequenceIds {
@@ -453,26 +500,16 @@ sub calculateCdsPosition {
     my $cdsPos = $map->start;
 
     if($cdsPos && $cdsPos > 1) {
-      my $positionInProtein = &calculateAminoAcidPosition($cdsPos, $cdsPos);
+      my $positionsInProtein = &calculateAminoAcidPosition($cdsPos);
 
-      $cdsPositions{$cdsPos}++;
-      $proteinPositions{$positionInProtein}++;
+      $cdsPositions{$transcript} = $cdsPos;
+      $proteinPositions{$transcript} = $positionsInProtein;
 
       $isCoding = 1;
     }
   }
 
-  my $rvPositionInCds;
-  my $rvPositionInProtein;
-
-  if(scalar keys %cdsPositions == 1) {
-    $rvPositionInCds = (keys %cdsPositions)[0];
-  }
-  if(scalar keys %proteinPositions == 1) {
-    $rvPositionInProtein = (keys %proteinPositions)[0] ;
-  }
-
-  return($isCoding, $rvPositionInCds, $rvPositionInProtein);
+  return($isCoding, \%cdsPositions, \%proteinPositions);
 }
 
 
@@ -568,9 +605,28 @@ sub makeSNPFeatureFromVariations {
            "minor_product" => $minorProduct,
            "distinct_strain_count" => $distinctStrainCount,
            "distinct_allele_count" => $distinctAlleleCount,
+           "is_coding" => $referenceVariation->{is_coding},
+           "positions_in_cds" => $referenceVariation->{positions_in_cds},
+           "positions_in_protein" => $referenceVariation->{positions_in_protein},
+           "reference_aa_full" => $referenceVariation->{products},
+
   };
 
 }
+
+sub hashRefToString {
+  my ($hashRef) = @_;
+
+  return unless(keys %$hashRef);
+
+  my @a;
+  while(my ($key, $value) = each %$hashRef) {
+    push @a, "'$key'=>'$value'";
+  }
+
+  return "{" . join(",", @a) . "}";
+}
+
 
 sub makeCoverageVariations {
   my ($allStrains, $variationStrains, $strainVarscanFileHandles, $referenceVariation) = @_;
@@ -684,34 +740,53 @@ sub querySequenceSubstring {
 }
 
 sub variationProduct {
-  my ($transcriptExtDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionInCds, $allele) = @_;
+  my ($extDbRlsId, $transcripts, $transcriptSummary, $sequenceId, $location, $positionsInCds, $allele, $refExtDbRlsId, $refSequenceId) = @_;
 
   my %products;
+  my %refProducts;
+
+  my $adjacentSnpCausesProductDifference = 0;
 
   foreach my $transcript (@$transcripts) {
 
     my $consensusCodingSequence;
-    if($transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds}) {
-      $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds};
+    if($transcriptSummary->{$transcript}->{cache}->{$extDbRlsId}->{consensus_cds}) {
+      $consensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$extDbRlsId}->{consensus_cds};
     }
     else { # first time through for this transcript
-      $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $transcriptExtDbRlsId);
-      $transcriptSummary->{$transcript}->{cache}->{$transcriptExtDbRlsId}->{consensus_cds} = $consensusCodingSequence;
+      $consensusCodingSequence = &getCodingSequence($dbh, $sequenceId, $transcriptSummary, $transcript, $location, $location, $extDbRlsId);
+      $transcriptSummary->{$transcript}->{cache}->{$extDbRlsId}->{consensus_cds} = $consensusCodingSequence;
+    }
+
+
+    my $refConsensusCodingSequence;
+    if($transcriptSummary->{$transcript}->{cache}->{$refExtDbRlsId}->{consensus_cds}) {
+      $refConsensusCodingSequence = $transcriptSummary->{$transcript}->{cache}->{$refExtDbRlsId}->{consensus_cds};
+    }
+    else { # first time through for this transcript
+      $refConsensusCodingSequence = &getCodingSequence($dbh, $refSequenceId, $transcriptSummary, $transcript, $location, $location, $refExtDbRlsId);
+      $transcriptSummary->{$transcript}->{cache}->{$refExtDbRlsId}->{consensus_cds} = $refConsensusCodingSequence;
     }
 
     my $strand = $transcriptSummary->{$transcript}->{cds_strand};
 
+    my $positionInCds = $positionsInCds->{$transcript};
+
+    next unless($positionInCds);
+
     next if($positionInCds > length $consensusCodingSequence);
+
     my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele, $strand);
-    $products{$product}++;
+    my $refProduct = &getAminoAcidSequenceOfSnp($refConsensusCodingSequence, $positionInCds, $allele, $strand);
+
+    if($product ne $refProduct) {
+      $adjacentSnpCausesProductDifference = 1;
+    }
+
+    $products{$transcript} = $product;
   }
 
-  my $rvProduct;
-  if(scalar keys %products == 1) {
-    $rvProduct = (keys %products)[0];
-  }
-
-  return($rvProduct);
+  return(\%products, $adjacentSnpCausesProductDifference);
 }
 
 sub cachedReferenceVariation {
@@ -959,7 +1034,7 @@ sub getTranscriptLocations {
 
   my %transcriptSummary;
 
-my $sql = "select listagg(taf.aa_feature_id, ',') WITHIN GROUP (ORDER BY taf.aa_feature_id) as transcripts,
+my $sql = "select listagg(taf.source_id, ',') WITHIN GROUP (ORDER BY taf.aa_feature_id) as transcripts,
        s.source_id, 
        tf.parent_id as gene_na_feature_id, 
        el.start_min as exon_start, 
