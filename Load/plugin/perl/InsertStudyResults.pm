@@ -228,6 +228,9 @@ sub addResults {
   elsif ($protocolName =~ /haplotype/) {
     $tableString = "ApiDB::HaplotypeResult";
   } 
+  elsif ($protocolName eq 'GSNAP/Junctions') {
+    $tableString = "ApiDB::IntronJunction";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
