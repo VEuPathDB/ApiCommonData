@@ -229,6 +229,10 @@ sub load {
                                                       minor_allele_count => $snpAttributes->{minor_allele_count},
                                                       major_allele_count => $snpAttributes->{major_allele_count},
                                                       has_nonsynonymous_allele => $snpAttributes->{has_nonsynonymous_allele},
+                                                      is_coding => $snpAttributes->{is_coding},
+                                                      positions_in_cds_full => $snpAttributes->{positions_in_cds},
+                                                      positions_in_protein_full => $snpAttributes->{positions_in_protein},
+                                                      reference_aa_full => $snpAttributes->{reference_aa_full},
                                                      });
 
 
@@ -248,9 +252,11 @@ sub load {
                                                             sequence_ontology_id => $variationOntologyTermId, 
                                                             strain => $variation->{strain},
                                                             product => $variation->{product},
+                                                            products_full => $variation->{products},
                                                             allele => $variation->{base},
                                                             matches_reference => $variation->{matches_reference},
-                                                            protocol_app_node_id => $protocolAppNodeId
+                                                            protocol_app_node_id => $protocolAppNodeId,
+                                                            diff_from_adjacent_snp => $variation->{diff_from_adjacent},
                                                            });
 
 
