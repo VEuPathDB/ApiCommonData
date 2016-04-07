@@ -426,7 +426,7 @@ sub getInputAppNodes {
 sub linkAppNodeToStudy {
   my ($self, $study, $protocolAppNode) = @_;
 
-  my @studyLinks = $study->getChildren('Study::StudyLink', 1);
+  my @studyLinks = $study->getChildren('Study::StudyLink');
 
   foreach my $sl (@studyLinks) {
     my $linkParent = $sl->getParent("Study::ProtocolAppNode", 1);
@@ -541,6 +541,8 @@ sub makeStudy {
 
   my $study = GUS::Model::Study::Study->new({name => $studyName, external_database_release_id => $extDbRlsId});
   $study->retrieveFromDB();
+
+  $study->getChildren("Study::StudyLink", 1);
 
   $self->{_study_names}->{$studyName} = $study;
 
