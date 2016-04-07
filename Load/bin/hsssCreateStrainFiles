@@ -59,16 +59,15 @@ my %allStrains;
 open(STRAINMAP, ">$readFreqDir/strainIdToName.dat") || die "Can't open file '$readFreqDir/strainIdToName.dat' for writing\n";
 my $strainCount = 1;
 
-  # Print a row for the reference (also write file)
-  print STRAINMAP "$strainCount\t$refStrainName\n";  
   open(REF, ">$readFreqDir/$strainCount");   
   close REF;
-
 
 my @strainNames;
 
 if($varscanDir) {
   # zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
+
+  push @strainNames, $refStrainName; # add row for reference
 
   opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
   
