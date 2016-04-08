@@ -178,6 +178,7 @@ sub traverseSeqFeatures {
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
              'mRNA',
+             'transcript',
              'misc_RNA',
              'rRNA',
              'snRNA',
@@ -202,7 +203,7 @@ sub traverseSeqFeatures {
             $type = 'coding';
         }
 
-	if($type eq 'mRNA'){
+	if($type eq 'mRNA' || $type eq 'transcript'){
 	  $type = 'coding';
 	}
 
