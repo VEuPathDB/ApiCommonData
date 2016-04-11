@@ -16,7 +16,7 @@ while (<GFF>) {
   my @items = split (/\t/, $_);
 
   if ($items[2] eq "gene") {
-    if ($items[8] =~ /ID=(\S+?)\;.+\;locus_tag=(\S+?)(\;|$)/) {
+    if ($items[8] =~ /ID=(\S+?)\;.+\;locus_tag=(\S+?)(\;|;$|$)/) {
       my $cGene = $1;
       $cLocusId{$cGene} = $2;
       $count{$cGene} = 1;
@@ -27,13 +27,17 @@ while (<GFF>) {
 
       $items[8] =~ s/ID=(\S+?)\;/ID=$cLocusId{$cGene}\;/;
     }
-  } elsif ($items[2] eq "mRNA" || $items[2] eq "tRNA" || $items[2] eq "rRNA") {
+  } elsif ($items[2] eq "mRNA" || $items[2] eq "tRNA"
+#	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA"
+	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA" ) {
     if ($items[2] eq "mRNA" ) {
       $rnaType = "mRNA";
     } elsif ($items[2] eq "tRNA") {
       $rnaType = "tRNA";
     } elsif ($items[2] eq "rRNA") {
       $rnaType = "rRNA";
+    } elsif ($items[2] eq "ncRNA") {
+      $rnaType = "ncRNA";
     } else {
       print STDERR "RNA type has not been assigned yet\n";
     }
