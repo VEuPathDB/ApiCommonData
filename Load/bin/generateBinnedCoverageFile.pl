@@ -68,8 +68,9 @@ endOfUsage
     # gets coverage for each window - uses BAM file of mapped reads and BED file for windows on genome
     sub getCoverage {
         my ($bed, $bam, $out) = @_;
-        my @coverageBed = split(/\n/, runCmd("bedtools coverage -counts -sorted -a $bed -b $bam"));
-        my $totalMapped = runCmd("samtools view -c -F 4 $bam");
+        my $genomeFile = &getGenomeFile ($bam);
+        my @coverageBed = split(/\n/, &runCmd("bedtools coverage -counts -sorted -g $genomeFile -a $bed -b $bam"));
+        my $totalMapped = &runCmd("samtools view -c -F 4 $bam");
         open (OUT, ">$out") or die "Cannot write output file\n$!\n";
         foreach (@coverageBed){
             my ($chr, $start, $end, $mapped, $numNonZero, $lenB, $propNonZero) = split(/\t/,$_);
@@ -78,6 +79,22 @@ endOfUsage
             printf OUT "%s\t%d\t%d\t%g\n", $chr, $start, $end, $mapped;
         }
         close OUT;
+    }
+
+    sub getGenomeFile {
+        my ($bam) = @_;
+        my $genomeFile = (split/\./, $bam)[0]."_genome.txt";
+        open (G, ">$genomeFile") or die "Cannot open genome file $genomeFile for writing\n";
+        my @header = split(/\n/, &runCmd("samtools view -H $bam"));
+        foreach my $line (@header) {
+            if ($line =~ m/\@SQ\tSN:/) {
+                $line =~ s/\@SQ\tSN://;
+                $line =~ s/\tLN:/\t/;
+                print G "$line\n";
+            }
+        }
+        close G;
+        return $genomeFile;
     }
 
 
