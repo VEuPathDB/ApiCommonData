@@ -21,7 +21,8 @@ while (<IN>) {
 
   $items[2] = "pseudogenic_transcript" if ($items[2] eq "pseudogene" && $items[8] =~ /;Parent "/);
   $items[2] = "gene"
-    if ($items[2] eq "rRNA_gene" || $items[2] eq "snRNA_gene" || $items[2] eq "snoRNA_gene"
+    if ($items[2] eq "rRNA_gene" || $items[2] eq "snRNA_gene"
+	|| $items[2] eq "snoRNA_gene" || $items[2] eq "ncRNA_gene"
 	|| $items[2] eq "tRNA_gene" || $items[2] eq "miRNA_gene" );
   $items[2] = "tRNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"tRNA/);
   if ($items[2] eq "pseudogenic_tRNA") {$items[2] = "gene"; $items[8] .= "pseudo;"; }
