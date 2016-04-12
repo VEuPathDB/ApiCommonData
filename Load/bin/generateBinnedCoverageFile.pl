@@ -67,8 +67,8 @@ endOfUsage
 
     # gets coverage for each window - uses BAM file of mapped reads and BED file for windows on genome
     sub getCoverage {
-        my ($bed, $bam, $out) = @_;
-        my $genomeFile = &getGenomeFile ($bam);
+        my ($bed, $bam, $out, $genomeFile) = @_;
+        $genomeFile = &getGenomeFile ($bam, $genomeFile);
         my @coverageBed = split(/\n/, &runCmd("bedtools coverage -counts -sorted -g $genomeFile -a $bed -b $bam"));
         my $totalMapped = &runCmd("samtools view -c -F 4 $bam");
         open (OUT, ">$out") or die "Cannot write output file\n$!\n";
@@ -82,8 +82,7 @@ endOfUsage
     }
 
     sub getGenomeFile {
-        my ($bam) = @_;
-        my $genomeFile = (split/\./, $bam)[0]."_genome.txt";
+        my ($bam, $genomeFile) = @_;
         open (G, ">$genomeFile") or die "Cannot open genome file $genomeFile for writing\n";
         my @header = split(/\n/, &runCmd("samtools view -H $bam"));
         foreach my $line (@header) {
@@ -103,7 +102,9 @@ endOfUsage
         die "Bedfile was not successfully created\n";
     }
 
-    my $coverage = getCoverage($bedfile, $bamFile, $outputFile);
+    my $genomeFile = (split/\./, $bamFile)[0]."_genome.txt";
+    my $coverage = getCoverage($bedfile, $bamFile, $outputFile, $genomeFile);
         
-    system ("rm $bedfile");
+    &runCmd("rm $bedfile");
+    &runCmd("rm $genomeFile");
 exit;
