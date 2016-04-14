@@ -542,7 +542,7 @@ sub InsertExternalDatabase{
     $extDbId = $sth->fetchrow_array();
 
     if ($extDbId){
-	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
+	print STDERR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
     }
 
     else {
@@ -551,7 +551,7 @@ sub InsertExternalDatabase{
 	   });
 	$newDatabase->submit();
 	$extDbId = $newDatabase->getId();
-	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+	print STDERR "created new entry for database $dbName with primary key $extDbId\n";
     }
     return $extDbId;
 }
