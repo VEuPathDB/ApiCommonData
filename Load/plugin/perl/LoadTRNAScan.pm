@@ -208,7 +208,7 @@ sub run {
 sub fetchSequenceOntologyId {
   my ($self, $name) = @_;
 
-  my $soExternalDatabaseSpec=i$self->getArg('soExternalDatabaseSpec');
+  my $soExternalDatabaseSpec=$self->getArg('soExternalDatabaseSpec');
 
   my $soDbRlsId = 
       $self->getExtDbRlsId($soExternalDatabaseSpec);
