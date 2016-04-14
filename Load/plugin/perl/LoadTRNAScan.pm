@@ -1,10 +1,10 @@
 package ApiCommonData::Load::Plugin::LoadTRNAScan;
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
   # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | fixed
   # GUS4_STATUS | RAD.SageTag                    | auto   | absent
   # GUS4_STATUS | RAD.Analysis                   | auto   | absent
   # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
@@ -17,8 +17,7 @@ package ApiCommonData::Load::Plugin::LoadTRNAScan;
   # GUS4_STATUS | Simple Rename                  | auto   | absent
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -34,7 +33,7 @@ use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::RNAType;
-use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GeneFeatureProduct;
@@ -79,8 +78,8 @@ sub getArgsDeclaration {
 		 reqd  => 1,
 		 isList => 0
 	       }),
-     stringArg({ name => 'soVersion',
-		 descr => 'version of Sequence Ontology to use',
+     stringArg({ name => 'soExternalDatabaseSpec',
+		 descr => 'externaldatabase spec of Sequence Ontology to use',
 		 constraintFunc => undef,
 		 reqd => 1,
 		 isList => 0,
@@ -165,7 +164,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
 			cvsRevision => '$Revision$',
 			name => ref($self),
 			argsDeclaration => $args,
@@ -185,13 +184,13 @@ sub run {
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
 						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
 
-  my $rnaId = $self->getSoId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
+  my $rnaId = $self->fetchSequenceOntologyId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
 
-  my $primTransc = $self->getSoId("transcript") || $self->error ("Can't retrieve so_id for transcript");
+  my $primTransc = $self->fetchSequenceOntologyId("transcript") || $self->error ("Can't retrieve so_id for transcript");
 
-  my $exon = $self->getSoId("exon") || $self->error ("Can't retrieve so_id for exon");
+  my $exon = $self->fetchSequenceOntologyId("exon") || $self->error ("Can't retrieve so_id for exon");
 
-  my $procTransc = $self->getSoId("mature_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
+  my $procTransc = $self->fetchSequenceOntologyId("mature_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
 
   my %soIds = ('geneFeat' => $rnaId,
 	       'transcript' => $primTransc,
@@ -206,21 +205,29 @@ sub run {
   return "$result tRNAScan results parsed and loaded";
 }
 
-sub getSoId {
-  my ($self,$termName) = @_;
+sub fetchSequenceOntologyId {
+  my ($self, $name) = @_;
 
-  my $soVersion = $self->getArg('soVersion');
+  my $soExternalDatabaseSpec=i$self->getArg('soExternalDatabaseSpec');
 
-  my $so =  GUS::Model::SRes::SequenceOntology->new({'term_name' => $termName,
-						     'so_version' => $soVersion });
-  $so->retrieveFromDB();
+  my $soDbRlsId = 
+      $self->getExtDbRlsId($soExternalDatabaseSpec);
 
-  my $soId = $so->getId();
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name,'external_database_release_id' => $soDbRlsId});
+
+  $SOTerm->retrieveFromDB;
+
+  my $soId = $SOTerm->getId();
 
   $self->undefPointerCache();
 
   return $soId;
+
+  if (! $SOTerm->getId()) {
+    warn "Error: Can't find SO term '$name' in database.";
+  }
 }
+
 
 sub parseFile {
   my ($self) = @_;
@@ -328,9 +335,7 @@ sub getGeneFeat {
 						     'sequence_ontology_id' => $soIds->{'geneFeat'},
 						     'external_database_release_id' => $scanReleaseId,
 						     'source_id' => $sourceId,
-						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'},
-						     'is_pseudo' => $isPseudo,
-						     'product' => ""});
+						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'}});
 
   $geneFeat->retrieveFromDB();
 
