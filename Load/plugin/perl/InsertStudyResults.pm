@@ -123,25 +123,26 @@ sub run {
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
-
-
   my $header = <CONFIG>;
-
-  my $investigation = $self->makeStudy($self->getArg('studyName'));
 
   my $nodeOrderNum = 1;
 
   while(<CONFIG>) {
     chomp;
+
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
+
+    my $investigation = $self->makeStudy($self->getArg('studyName'));
 
     $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
 
     my $study = $self->makeStudy($studyName);
+
     $study->setParent($investigation);
 
-    my @studyLinks = $study->getChildren('Study::StudyLink', 1);
-    my $existingAppNodes = $self->retrieveAppNodesForStudy($investigation, \@studyLinks);
+    my @studyLinks = $study->getChildren('Study::StudyLink');
+
+    my $existingAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
 
@@ -179,12 +180,9 @@ sub run {
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
-    $investigation->submit();
-
-    $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
+    $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file, $investigation);
 
     $nodeOrderNum++;
-
   }
 
   close CONFIG;
@@ -194,7 +192,7 @@ sub run {
 
 
 sub addResults {
-  my ($self, $protocolAppNode, $sourceIdType, $protocolName, $file) = @_;
+  my ($self, $protocolAppNode, $sourceIdType, $protocolName, $file, $investigation) = @_;
 
   my $inputDir = $self->getArg('inputDir');
   my $fullFilePath = "$inputDir/$file";
@@ -317,7 +315,8 @@ sub addResults {
     }
 
     $result->setParent($protocolAppNode);
-    $result->submit();
+
+    $investigation->submit();
 
     $self->undefPointerCache();
   }
@@ -444,7 +443,7 @@ sub linkAppNodeToStudy {
 }
 
 sub retrieveAppNodesForStudy {
-  my ($self, $study, $studyLinks) = @_;
+  my ($self, $studyLinks) = @_;
 
   my @appNodes;
 
@@ -532,9 +531,9 @@ sub makeProtocolAppParams {
 sub makeStudy {
   my ($self, $studyName) = @_;
 
-  if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
-    return $cachedStudy;
-  }
+  # if(my $cachedStudy = $self->{_study_names}->{$studyName}) {
+  #   return $cachedStudy;
+  # }
 
   my $extDbSpec = $self->getArg('extDbSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbSpec);
@@ -544,7 +543,7 @@ sub makeStudy {
 
   $study->getChildren("Study::StudyLink", 1);
 
-  $self->{_study_names}->{$studyName} = $study;
+#  $self->{_study_names}->{$studyName} = $study;
 
   return $study;
 }
