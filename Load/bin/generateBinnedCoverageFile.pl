@@ -55,10 +55,14 @@ endOfUsage
         while (<IN>) {
             my ($chr, $length, $cumulative, $lineLength, $lineBLength) = split(/\t/,$_);
             die "Chromosome and length are not defined for line $. in $index. [$chr,$length]\n" unless(defined($chr) && defined($length));
-            for (my $i=1; $i+$winLen<$length; $i+=$winLen){
-                printf OUT "%s\t%d\t%d\t\n", $chr, $i, $i+$winLen-1;
+            for (my $i=1; $i+$winLen<=$length; $i+=$winLen){
+                if ($i+$winLen == $length) {
+                    printf OUT "%s\t%d\t%d\t\n", $chr, $i, $length;
+                }else {
+                    printf OUT "%s\t%d\t%d\t\n", $chr, $i, $i+$winLen-1;
+                }
             }
-            printf OUT "%s\t%d\t%d\n", $chr, $length-($length % $winLen)+1, $length unless ($length % $winLen ==0);
+            printf OUT "%s\t%d\t%d\n", $chr, $length-($length % $winLen)+1, $length unless ($length % $winLen <=1 );
         }
     close(IN);
     close(OUT);
