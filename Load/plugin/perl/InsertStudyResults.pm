@@ -180,7 +180,9 @@ sub run {
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
-    $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file, $investigation);
+    $investigation->submit();
+
+    $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
 
     $nodeOrderNum++;
   }
@@ -192,7 +194,7 @@ sub run {
 
 
 sub addResults {
-  my ($self, $protocolAppNode, $sourceIdType, $protocolName, $file, $investigation) = @_;
+  my ($self, $protocolAppNode, $sourceIdType, $protocolName, $file) = @_;
 
   my $inputDir = $self->getArg('inputDir');
   my $fullFilePath = "$inputDir/$file";
@@ -316,7 +318,7 @@ sub addResults {
 
     $result->setParent($protocolAppNode);
 
-    $investigation->submit();
+    $result->submit();
 
     $self->undefPointerCache();
   }
