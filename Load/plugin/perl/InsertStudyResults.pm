@@ -566,6 +566,7 @@ sub undoTables {
     'Results.CompoundMassSpec',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
+    'ApiDB.ONTOLOGYTERMRESULT',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
