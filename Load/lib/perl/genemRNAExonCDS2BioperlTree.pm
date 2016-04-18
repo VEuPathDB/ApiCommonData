@@ -190,6 +190,8 @@ sub traverseSeqFeatures {
              'scRNA',
              'srpRNA',
              'SRP.RNA',
+             'RNase_MRP_RNA',
+             'SRP_RNA',
              )
         ) {
 
