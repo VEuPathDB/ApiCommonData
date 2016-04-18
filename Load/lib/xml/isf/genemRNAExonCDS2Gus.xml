@@ -237,6 +237,39 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="partial"      handler="api"    method="setPartial"/>
   </feature>
 
+  <feature name="RNase_MRP_RNA_gene" so="RNase_MRP_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="annot" ignore="true"/>
+    <qualifier name="anticodon" ignore="true"/>
+    <qualifier name="covescore" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="product_source" ignore="true"/>
+    <qualifier name="product_evidence" ignore="true"/>
+    <qualifier name="product_transfer_confi" ignore="true"/>
+    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
@@ -388,6 +421,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="misc_RNA_gene" so="misc_RNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="biotype"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
