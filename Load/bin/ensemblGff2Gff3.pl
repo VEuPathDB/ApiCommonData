@@ -24,7 +24,12 @@ while (<IN>) {
     if ($items[2] eq "rRNA_gene" || $items[2] eq "snRNA_gene"
 	|| $items[2] eq "snoRNA_gene" || $items[2] eq "ncRNA_gene"
 	|| $items[2] eq "tRNA_gene" || $items[2] eq "miRNA_gene" );
+
   $items[2] = "tRNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"tRNA/);
+  $items[2] = "misc_RNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"misc_RNA/);
+  $items[2] = "SRP_RNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"SRP_RNA/);
+  $items[2] = "RNase_MRP_RNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"RNase_MRP_RNA/);
+
   if ($items[2] eq "pseudogenic_tRNA") {$items[2] = "gene"; $items[8] .= "pseudo;"; }
 
   if ($items[8] =~ /\"transcript:(\S+?)\"/) {
