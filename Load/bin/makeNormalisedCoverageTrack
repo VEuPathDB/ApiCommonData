@@ -65,7 +65,7 @@ while (<COV>) {
     }
 }
 
-my $constant = getConstant($ploidy, $coverageValues);
+my $constant = &getConstant($ploidy, $coverageValues);
 
 #make bed output
 open (BED, ">$outputDir/$sampleName.unsrt.bed") or die "Cannot open bedgraph file $outputDir/$sampleName.unsrt.bed for writing\n$!\n";
