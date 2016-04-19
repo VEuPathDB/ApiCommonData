@@ -81,20 +81,27 @@ sub geneCopyNumberCalc {
             die "Error: Chromosome and FPKM values are missing in line $line\n" unless (defined($chr) && defined($fpkm));
 
             if (exists $chrs->{$chr}) {
+                my $orthoMclId;
+                if (exists $geneOrthoMclIds->{$geneId}) {
+                    $orthoMclId = $geneOrthoMclIds->{$geneId};
+                } else {
+                    $orthoMclId = "UNK_.$geneId";
+                }
+
                 if ($chrMedians->{$chr}==0){
                     print STDERR "Error: Bad median for chromosome $chr.  No copy number calculation for $transId\n";
                     next;
                 }
+                if ($chrPloidies->{$chr}==0) {
+                    print STDERR "Chromosome $chr has a predicted ploidy of 0. The copy number for gene $transId on chromosome $chr will therefore also be predicted to be 0";
+                    my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, 0, $fpkm, $coverage];
+                    push(@{$allGenesData}, $geneData);
+                } else {
 
-                my $rawCN = $fpkm/($chrMedians->{$chr}/$chrPloidies->{$chr});
-                my $orthoMclId;
-                if (exists $geneOrthoMclIds->{$geneId}) {
-                    $orthoMclId = $geneOrthoMclIds->{$geneId};
-                }else{
-                    $orthoMclId = "UNK_.$geneId";
+                    my $rawCN = $fpkm/($chrMedians->{$chr}/$chrPloidies->{$chr});
+                    my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage];
+                    push (@{$allGenesData}, $geneData);
                 }
-                my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage];
-                push (@{$allGenesData}, $geneData);
             }
         }
     }
