@@ -514,7 +514,7 @@ sub getTranscriptSeq{
                                               external_database_release_id => $scanReleaseId
                                              });
 
-  my $transcriptSeq = GUS::Supported::Util::getCodingSequenceFromExons($exonFeats);
+  my $transcriptSeq = GUS::Supported::Util::getTranscriptSeqFromExons($exonFeats);
 
 
   $transcriptNaSeq->setSequence($transcriptSeq);
