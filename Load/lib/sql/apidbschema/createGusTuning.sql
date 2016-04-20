@@ -12,6 +12,8 @@
 --alter table sres.ExternalDatabase modify (name varchar2(150));
 --alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
+
+
 alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(12) );
 
 
@@ -302,7 +304,8 @@ GRANT INSERT, UPDATE, DELETE ON DOTS.MASSSPECFEATURE TO gus_w;
 
 
 
-
+alter table STUDY.PROTOCOLAPPNODE 
+add ISA_Type varchar2(50);
 alter table study.protocolappnode add (node_order_num number(10));
 
 alter table results.FamilyExpression add (percentile_channel1 FLOAT(126));
