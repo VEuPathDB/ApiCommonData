@@ -51,6 +51,11 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 1, }),
 
+stringArg({name           => 'extDbRlsSpec',
+            descr          => 'external database release spec',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
   ];
 
 my $documentation = { purpose          => "",
@@ -81,7 +86,8 @@ sub new {
 
 sub run {
   my ($self) = @_;
-
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -116,7 +122,7 @@ sub run {
    
    
     $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
-    my $investigationId = $self->loadInvestigation($investigation);
+    my $investigationId = $self->loadInvestigation($investigation,$extDbRlsId);
 
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
@@ -141,7 +147,7 @@ sub run {
       $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
       $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
 
-      $self->loadStudy($study,$investigationId);
+      $self->loadStudy($study,$investigationId,$extDbRlsId);
     }
 
     $investigationCount++;
@@ -212,14 +218,14 @@ sub checkProtocolsAndSetIds {
 }
 
 sub loadStudy {
-  my ($self, $study, $investigationId) = @_;
+  my ($self, $study, $investigationId, $extDbRlsId) = @_;
 
   my $identifier = $study->getIdentifier();
   my $title = $study->getTitle();
   $title = $identifier unless($title);
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, investigation_id =>$investigationId});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
   $gusStudy->submit();
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
@@ -254,6 +260,11 @@ sub loadNodes {
     my $gusStudyLink = GUS::Model::Study::StudyLink->new();
     $gusStudyLink->setParent($gusStudy);
     $gusStudyLink->setParent($pan);
+
+    my $gusInvestigationLink = GUS::Model::Study::StudyLink->new();
+    $gusInvestigationLink->setStudyId($gusStudy->getInvestigationId());
+    $gusInvestigationLink->setParent($pan);
+
 
     if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
@@ -756,13 +767,13 @@ sub logOrError {
 }
 
 sub loadInvestigation{
-  my ($self, $study) = @_;
+  my ($self, $study,$extDbRlsId) = @_;
   my $identifier = $study->getIdentifier();
   my $title = $study->getTitle();
   $title = $identifier unless($title);
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, external_database_release_id =>$extDbRlsId});
   $gusStudy->submit();
   return $gusStudy->getId();
 
