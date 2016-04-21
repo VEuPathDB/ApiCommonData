@@ -6,5 +6,5 @@ use strict;
 
 # I don't load anything.  I am a reporter
 sub loadStudy {}
-
+sub loadInvestigation{}
 1;
