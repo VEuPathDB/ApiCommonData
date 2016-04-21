@@ -116,6 +116,7 @@ sub run {
    
    
     $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
+    my $investigationId = $self->loadInvestigation($investigation);
 
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
@@ -140,7 +141,7 @@ sub run {
       $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
       $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
 
-      $self->loadStudy($study);
+      $self->loadStudy($study,$investigationId);
     }
 
     $investigationCount++;
@@ -211,14 +212,14 @@ sub checkProtocolsAndSetIds {
 }
 
 sub loadStudy {
-  my ($self, $study) = @_;
+  my ($self, $study, $investigationId) = @_;
 
   my $identifier = $study->getIdentifier();
   my $title = $study->getTitle();
   $title = $identifier unless($title);
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, investigation_id =>$investigationId});
   $gusStudy->submit();
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
@@ -244,15 +245,15 @@ sub loadNodes {
     }
     else {
       $pan = GUS::Model::Study::ProtocolAppNode->new({name => $node->getValue()});
+      my $isaClassName = ref($node);
+      my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
+      $pan->setIsaType($isaType);
+      
     }
 
     my $gusStudyLink = GUS::Model::Study::StudyLink->new();
     $gusStudyLink->setParent($gusStudy);
     $gusStudyLink->setParent($pan);
-
-    my $isaClassName = ref($node);
-    my ($isaType) = $node =~ /\:\:(\w+)$/;
-    $pan->setIsaType($isaType);
 
     if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
@@ -754,7 +755,18 @@ sub logOrError {
   }
 }
 
+sub loadInvestigation{
+  my ($self, $study) = @_;
+  my $identifier = $study->getIdentifier();
+  my $title = $study->getTitle();
+  $title = $identifier unless($title);
+  my $description = $study->getDescription();
 
+  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier});
+  $gusStudy->submit();
+  return $gusStudy->getId();
+
+}
 sub undoTables {
   my ($self) = @_;
 
