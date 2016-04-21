@@ -6,6 +6,7 @@ use XML::Simple;;
 use Getopt::Long;
 
 my %hash;
+my %uniq;
 my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 
 
@@ -24,7 +25,7 @@ my $xml = XML::Simple->new;
 my $ref = $xml->XMLin($response->content);
 
 open OUT, ">$outputAllOrthoGrps";
-print OUT "[Group] [# Sequences] [Average % Connectivity]  [Average % Identity]  [EC Numbers]\n";
+print OUT "[Group]\t[# Sequences]\t[Average % Connectivity]\t[Average % Identity]\t[EC Numbers]\n";
 
 while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
   my $ec_numbers        = $v->{field}->{ec_numbers}->{content};
@@ -32,6 +33,8 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
   my $avg_connectivity  = $v->{field}->{avg_connectivity}->{content};
   my $avg_pct_identity  = $v->{field}->{avg_percent_identity}->{content};
 
+  $ec_numbers = 'null' unless $ec_numbers;
+  print OUT "$og\t$number_of_members\t$avg_connectivity\t$avg_pct_identity\t$ec_numbers\n";
   if($ec_numbers) {
      $ec_numbers =~ s/\s+//g;
      my @ecArray = split /,/, $ec_numbers;
@@ -39,15 +42,13 @@ while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
        $ec =~ s/\(\d+\)$//;
        $hash{$ec} = $ec;
      }
-  }
-
-  print OUT "$og, $number_of_members, $avg_pct_identity, $avg_connectivity, $ec_numbers\n";
+  } 
 }
 
 close OUT;
 
-open OUT, ">OrthoSeqsWithECs.txt";
-print OUT "[Accession] [Source ID] [EC Numbers] [Group] [Group Size]\n";
+open OUT, ">$outputOrthoSeqsWithECs";
+print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
 foreach my $ec (keys %hash) {
   $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcNumber.xml?ec_number_type_ahead=$ec&o-fields=primary_key,source_id,ec_numbers,group_name,group_size";
@@ -67,7 +68,13 @@ foreach my $ec (keys %hash) {
     my $group_size = $v->{field}->{group_size}->{content};
 
     next unless ($ec_numbers && $group_name);
-    print OUT "$k, $source_id, $ec_numbers, $group_name, $group_size\n";
+    next unless (!exists $uniq{$source_id});
+    $uniq{$source_id} = 1;
+
+    $group_name = 'null' unless $group_name;
+    $group_size = 'null' unless $group_size;
+
+    print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
   }
 }
 
