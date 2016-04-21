@@ -113,6 +113,8 @@ sub run {
     $self->checkAllOntologyTerms($investigation->getOntologyTerms());
 
     my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
+   
+   
     $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
 
     my $studies = $investigation->getStudies();
@@ -248,13 +250,19 @@ sub loadNodes {
     $gusStudyLink->setParent($gusStudy);
     $gusStudyLink->setParent($pan);
 
+    my $isaClassName = ref($node);
+    my ($isaType) = $node =~ /\:\:(\w+)$/;
+    $pan->setIsaType($isaType);
+
     if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
       my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
 
-      my $characteristics = $node->getCharacteristics();
+my $characteristics = $node->getCharacteristics();
+      
+
       foreach my $characteristic (@$characteristics) {
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
        
@@ -517,6 +525,7 @@ sub loadEdges {
 sub checkDatabaseProtocolApplicationsAreHandledAndMark {
   my ($self, $foundDatasets, $edges) = @_;
 
+
   my $sql = "select * from (
 select d.name dataset, p.name protocol, pa.PROTOCOL_APP_ID, pan.name, pan.protocol_app_node_id, 'input' as io
 from study.protocolapp pa
@@ -605,10 +614,13 @@ where dataset = ? ";
             $edge->{_DATABASE_STATUS} = 'FOUND_OUTPUTS_AND_INPUTS';
           } 
           else {
+
+
             $self->logOrError("ISATAB_ERROR:  Inputs found for ProtocolApp [$protocolApp] but they do not match the Inputs defined for this Edge in the ISA Tab File");
           }
         }
       }
+
       $self->logOrError("ISATAB_ERROR:  ProtocolApp [$protocolAppId] could not be matched to Edges in the ISA Tab file") unless($found);
     }
   }
@@ -617,7 +629,7 @@ where dataset = ? ";
 
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
-
+  
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id
 from sres.ontologyterm ot
 where (replace(ot.source_id, ':', '_') = ? OR ot.name = ?)
@@ -628,70 +640,36 @@ from sres.taxon
 where 'NCBITaxon_' || ncbi_tax_id = ?
 and lower(?) like  'ncbitaxon%'
 ";
-
+  
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
-
+  
   my $rv = {};
-
+  
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
+    
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
       $sh->execute($accessionOrName, $accessionOrName, $accessionOrName, $accessionOrName);
-
-      my %foundIn;
+      my $count=0;   
+      my $ontologyTermId;
       while(my ($dName, $sourceId, $id) = $sh->fetchrow_array()) {
-        $foundIn{$dName} = [$sourceId, $id];
+        $ontologyTermId = $id;
+	$count++;
       }
-
-      if(scalar keys %foundIn < 1) {
-        $self->logOrError("ERROR:  Neither OntologyTerm Accession nor Name [$accessionOrName] was found in the database");
-        next;
-      }
-      elsif(scalar keys %foundIn == 1) {
-        my @values = values %foundIn;
-        $rv->{$os}->{$ota} = $values[0]->[1];
+      $sh->finish();
+      if($count == 1) {
+        $rv->{$os}->{$ota} = $ontologyTermId;
+        
+        
       }
       else {
-
-        my $state = 1000; # really large number
-
-        foreach my $extDbName (keys %foundIn) {
-          my $accession = $foundIn{$extDbName}->[0];
-          my $identifier = $foundIn{$extDbName}->[1];
-
-          my $lcOs = lc $os;
-
-          my @splitAccession = split(/_/, $accession);
-          my $lcSplitAccession = lc($splitAccession[0]);
-
-
-          # always use the eupath ontology if there is one
-          if($extDbName eq 'OntologyTerm_EuPath_RSRC') {
-            $rv->{$os}->{$ota} = $identifier;
-            $state = 1;
-          }
-
-          # If not eupath and there is a direct match to the source extdbrls then use that 
-          if($state > 1 && $extDbName =~ /_${lcOs}_/) {
-            $rv->{$os}->{$ota} = $identifier;
-            $state = 2;
-          }
-
-          # Split the accession by _ and try to match the prefix of the ontology term to the extdbrls name
-          if($state > 2 && $extDbName =~ /_${lcSplitAccession}_/) {
-            $rv->{$os}->{$ota} = $identifier;
-            $state = 3;
-          }
-        }
-
-        unless(defined $rv->{$os}->{$ota}) {
-          $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were found multiple times in the database but none for source $os and none where the loaded source matches the prefix of the accession");
-        }
+        $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found or were not found uniquely in the database");
+        
       }
     }
   }
-
+  
   $self->{_ontology_term_to_identifiers} = $rv;
 }
 
