@@ -221,11 +221,11 @@ sub loadStudy {
   my ($self, $study, $investigationId, $extDbRlsId) = @_;
 
   my $identifier = $study->getIdentifier();
-  my $title = $study->getTitle();
-  $title = $identifier unless($title);
+#  my $title = $study->getTitle();
+ 
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, description => $description, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
   $gusStudy->submit();
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
@@ -769,11 +769,11 @@ sub logOrError {
 sub loadInvestigation{
   my ($self, $study,$extDbRlsId) = @_;
   my $identifier = $study->getIdentifier();
-  my $title = $study->getTitle();
-  $title = $identifier unless($title);
+ # my $title = $study->getTitle();
+
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $title, description => $description, source_id => $identifier, external_database_release_id =>$extDbRlsId});
+  my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, description => $description, source_id => $identifier, external_database_release_id =>$extDbRlsId});
   $gusStudy->submit();
   return $gusStudy->getId();
 
