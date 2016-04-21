@@ -30,7 +30,7 @@ while (<IN>) {
   $items[2] = "SRP_RNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"SRP_RNA/);
   $items[2] = "RNase_MRP_RNA" if ($items[2] eq "transcript" && $items[8] =~ /biotype \"RNase_MRP_RNA/);
 
-  if ($items[2] eq "pseudogenic_tRNA") {$items[2] = "gene"; $items[8] .= "pseudo;"; }
+  if ($items[2] eq "pseudogenic_tRNA") {$items[2] = "gene"; $items[8] .= "pseudo \"\";"; }
 
   if ($items[8] =~ /\"transcript:(\S+?)\"/) {
     my $ctId = $1;
@@ -43,7 +43,7 @@ while (<IN>) {
 
   ## for transcript that has tag biotype=nontranslating_CDS, set them as pseudo
   if ($items[2] eq "transcript" && $items[8] =~ /biotype \"nontranslating_/) {
-    $items[8] .= "pseudo;";
+    $items[8] .= "pseudo \"\";";
   }
 
   &printGff3Column (\@items);
