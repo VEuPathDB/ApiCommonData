@@ -41,6 +41,11 @@ while (<IN>) {
     }
   }
 
+  ## for transcript that has tag biotype=nontranslating_CDS, set them as pseudo
+  if ($items[2] eq "transcript" && $items[8] =~ /biotype \"nontranslating_/) {
+    $items[8] .= "pseudo;";
+  }
+
   &printGff3Column (\@items);
 }
 close IN;
