@@ -18,6 +18,8 @@ my $browser = LWP::UserAgent->new;
 
 my $url = 'http://orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=1000000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity';
 
+print STDERR "\ngetting all ortholog group $url\n";
+
 my $response = $browser->get($url);
 die 'Error getting $url' unless defined $response;
 
@@ -53,6 +55,7 @@ print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 foreach my $ec (keys %hash) {
   $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcNumber.xml?ec_number_type_ahead=$ec&o-fields=primary_key,source_id,ec_numbers,group_name,group_size";
 
+  print STDERR "\ngetting seq by EC $url\n";
   $response = $browser->get($url);
   die 'Error getting $url' unless defined $response;
 
