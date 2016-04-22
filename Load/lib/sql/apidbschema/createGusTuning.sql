@@ -135,6 +135,10 @@ create index sres.lwrRefSec_ix
 on sres.DbRef(lower(secondary_identifier), db_ref_id, external_database_release_id)
 tablespace indx;
 
+create index sres.lwrRefRmk_ix
+on sres.DbRef(lower(remark), db_ref_id, external_database_release_id)
+tablespace indx;
+
 -- constrain NaSequence source_ids to be unique
 alter table dots.NaSequenceImp
 add constraint source_id_uniq
