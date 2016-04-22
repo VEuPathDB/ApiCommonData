@@ -9,6 +9,7 @@ use File::Basename;
 
 my ($propfile, $regex, $script, $list, $help);
 my $password;
+my $schema;
 
 GetOptions("propfile=s" => \$propfile,
            "regex=s" => \$regex,
@@ -28,7 +29,8 @@ if ($script) {
 
   my $simple = XML::Simple->new();
   my $props = $simple->XMLin($propfile);
-  $password = $props->{password};;
+  $password = $props->{password};
+  $schema = $props->{schema} || "apidb";
   }
 
 if (!$list && !$script) {
@@ -44,7 +46,7 @@ foreach my $instance (split /\n/, $instances) {
 
   print "instance: " . $instance . "\n";
   if ($script) {
-    print `sqlplus apidb/$password\@$instance \@$script`;
+    print `sqlplus $schema/$password\@$instance \@$script`;
   }
 
 }
