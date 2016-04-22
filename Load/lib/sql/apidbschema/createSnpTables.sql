@@ -28,6 +28,9 @@ create table apidb.Snp (
 
 create sequence apidb.Snp_sq;
 
+-- no indexes created in this file for this table.  they are created by addConstraintsAndIndexesToSnpTables.sql instead, to be run at the end of workflow
+
+
 grant select on apidb.Snp to gus_r;
 grant insert, select, update, delete on apidb.Snp to gus_w;
 grant select ON apidb.Snp_sq TO gus_w;
@@ -55,6 +58,8 @@ create table apidb.SequenceVariation (
 );
 
 create sequence apidb.SequenceVariation_sq;
+
+-- no indexes created in this file for this table.  they are created by addConstraintsAndIndexesToSnpTables.sql instead, to be run at the end of workflow
 
 grant select on apidb.SequenceVariation to gus_r;
 grant insert, select, update, delete on apidb.SequenceVariation to gus_w;
