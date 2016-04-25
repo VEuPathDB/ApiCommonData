@@ -377,9 +377,9 @@ sub lookupIdFromSourceId {
 
   # USES Name instead of source_id here
   elsif ($sourceIdType eq 'haploblock') {
-    my @naFeatureIds = $self->sqlAsArray(Sql => "select na_feature_id from dots.ChromosomeElementFeature where name = '$sourceId'");
+    my @naFeatureIds = $self->sqlAsArray(Sql => "select na_feature_id from dots.ChromosomeElementFeature where source_id = '$sourceId'");
     unless (scalar @naFeatureIds == 1) {
-        die "Number of naFeatureIds should be 1 for term $sourceId\n";
+        die "Number of naFeatureIds should be 1 for source_id $sourceId\n";
     }
     $rv = @naFeatureIds[0];
   }
