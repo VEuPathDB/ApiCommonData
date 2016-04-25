@@ -568,6 +568,7 @@ sub undoTables {
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
     'ApiDB.INTRONJUNCTION',
+    'ApiDB.HAPLOTYPERESULT',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
