@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 use strict;
-use LWP::Simple;
 use XML::Simple;;
 use Getopt::Long;
 
@@ -9,22 +8,19 @@ my %hash;
 my %uniq;
 my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 
-
 &GetOptions( "outputAllOrthoGrps=s"     => \$outputAllOrthoGrps,
              "outputOrthoSeqsWithECs=s" => \$outputOrthoSeqsWithECs );
 
 die "cannot open output files\n" unless ($outputAllOrthoGrps && $outputOrthoSeqsWithECs);
-my $browser = LWP::UserAgent->new;
 
-my $url = 'http://orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=1000000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity';
+my $url = "http://orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
+print STDERR "\nwget $url\n";
 
-print STDERR "\ngetting all ortholog group $url\n";
+my $cmd = qq(wget "$url" -qO- > $outputAllOrthoGrps.tmp);
 
-my $response = $browser->get($url);
-die 'Error getting $url' unless defined $response;
+system($cmd);
 
-my $xml = XML::Simple->new;
-my $ref = $xml->XMLin($response->content);
+my $ref = XMLin("$outputAllOrthoGrps.tmp");
 
 open OUT, ">$outputAllOrthoGrps";
 print OUT "[Group]\t[# Sequences]\t[Average % Connectivity]\t[Average % Identity]\t[EC Numbers]\n";
@@ -55,12 +51,11 @@ print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 foreach my $ec (keys %hash) {
   $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcNumber.xml?ec_number_type_ahead=$ec&o-fields=primary_key,source_id,ec_numbers,group_name,group_size";
 
-  print STDERR "\ngetting seq by EC $url\n";
-  $response = $browser->get($url);
-  die 'Error getting $url' unless defined $response;
+  my $cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
+  system($cmd);
+  my $ref = XMLin("$outputOrthoSeqsWithECs.tmp");
 
-  $xml = XML::Simple->new;
-  $ref = $xml->XMLin($response->content);
+  print STDERR "\nwget $url\n";
 
   while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
     next if $k eq 'id'; # count is 1, e.g. ec number is 6.2.1.30
