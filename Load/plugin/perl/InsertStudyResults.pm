@@ -146,17 +146,19 @@ sub run {
 
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
 
-    my $appNodeType;
+    my $protocolType;
     if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
-      $appNodeType = "differential expression analysis data transformation";
+      $protocolType = "differential expression analysis data transformation";
     }
     else {
-      $appNodeType = "data transformation";
+      $protocolType = "data transformation";
     }
+
+    my $appNodeType = "data item";
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType);
 
-    my $protocol = $self->makeProtocol($appNodeType);
+   my $protocol = $self->makeProtocol($protocolType);
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
