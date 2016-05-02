@@ -474,15 +474,10 @@ sub makeExonFeat {
 
   $seqSourceId = "${seqSourceId}-$orderNum";
 
-  my $codingStart = $isReversed ? $end : $start;
-  my $codingEnd = $isReversed ? $start : $end;
-
   my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon",
 						 'source_id' => $seqSourceId,
 						 'sequence_ontology_id' => $soIds->{'exonFeat'},
 						 'order_number' => $orderNum,
-						 'coding_start' => $codingStart,
-						 'coding_end' => $codingEnd,
 						 'external_database_release_id' => $scanReleaseId});
 
   my $naLoc = $self->getNaLocation($start,$end,$isReversed);
