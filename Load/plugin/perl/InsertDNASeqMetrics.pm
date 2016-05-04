@@ -176,6 +176,7 @@ sub run {
     my $coverageCharacteristic = GUS::Model::Study::Characteristic->new({value => $coverage});
     $coverageCharacteristic->setQualifierId($coverageOntologyTermId);
     $coverageCharacteristic->setParent($assayProtocolAppNode);
+    $study->addToSubmitList($coverageCharacteristic);
 
 
     my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'proportion mapped reads',
@@ -189,7 +190,7 @@ sub run {
     my $mappedReadCharacteristic = GUS::Model::Study::Characteristic->new({value => $mappedReadPercentage});
     $mappedReadCharacteristic->setQualifierId($mappedReadOntologyTermId);
     $mappedReadCharacteristic->setParent($assayProtocolAppNode);
-
+    $study->addToSubmitList($mappedReadCharacteristic);
 
     my $studyProtocolApp = GUS::Model::Study::ProtocolApp->new();
     $studyProtocolApp->setParent($gusVariationProtocol);
