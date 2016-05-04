@@ -219,7 +219,7 @@ sub undoTables {
   return ( 
     'Study.Input',
     'Study.Output',
-    'Study.StudyCharacteristic',
+    'Study.Characteristic',
     'Study.StudyLink',
     'Study.ProtocolAppNode',
     'Study.ProtocolApp',
