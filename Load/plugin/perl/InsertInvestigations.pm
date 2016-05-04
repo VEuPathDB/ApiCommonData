@@ -254,6 +254,10 @@ sub loadNodes {
       my $isaClassName = ref($node);
       my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
       $pan->setIsaType($isaType);
+
+      if($node->hasAttribute("Description")) {
+        $pan->setDescription($node->getDescription());
+      }
       
     }
 
