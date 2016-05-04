@@ -162,7 +162,7 @@ sub run {
     my $studyLink = GUS::Model::Study::StudyLink->new();
     $studyLink->setParent($gusStudy);
     $studyLink->setParent($assayProtocolAppNode);
-    $study->addToSubmitList($studyLink);
+    #$study->addToSubmitList($studyLink);
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
@@ -176,7 +176,7 @@ sub run {
     my $coverageCharacteristic = GUS::Model::Study::Characteristic->new({value => $coverage});
     $coverageCharacteristic->setQualifierId($coverageOntologyTermId);
     $coverageCharacteristic->setParent($assayProtocolAppNode);
-    $study->addToSubmitList($coverageCharacteristic);
+    $gusStudy->addToSubmitList($coverageCharacteristic);
 
 
     my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'proportion mapped reads',
@@ -190,7 +190,7 @@ sub run {
     my $mappedReadCharacteristic = GUS::Model::Study::Characteristic->new({value => $mappedReadPercentage});
     $mappedReadCharacteristic->setQualifierId($mappedReadOntologyTermId);
     $mappedReadCharacteristic->setParent($assayProtocolAppNode);
-    $study->addToSubmitList($mappedReadCharacteristic);
+    $gusStudy->addToSubmitList($mappedReadCharacteristic);
 
     my $studyProtocolApp = GUS::Model::Study::ProtocolApp->new();
     $studyProtocolApp->setParent($gusVariationProtocol);
