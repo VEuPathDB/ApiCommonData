@@ -130,7 +130,6 @@ sub run {
     my ($self) = @_;
 
     my $analysisDir = $self->getArg('analysisDir');
-    print Dumper $analysisDir;
     my $bamFile = "$analysisDir/result.bam";
     my $coverage = sprintf (<%.2f>, ApiCommonData::Load::DnaSeqMetrics::getCoverage($analysisDir, $bamFile));
     my $mappedReadPercentage = sprintf (<%.4f>, ApiCommonData::Load::DnaSeqMetrics::getMappedReads($bamFile));
@@ -163,6 +162,7 @@ sub run {
     my $studyLink = GUS::Model::Study::StudyLink->new();
     $studyLink->setParent($gusStudy);
     $studyLink->setParent($assayProtocolAppNode);
+    $study->addToSubmitList($studyLink);
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
