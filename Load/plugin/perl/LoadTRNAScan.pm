@@ -84,6 +84,12 @@ sub getArgsDeclaration {
 		 reqd => 1,
 		 isList => 0,
 	       }),
+     stringArg({ name => 'prefix',
+                 descr => 'prefix needed to construct source_id, prefix_trna_xxxx',
+                 constraintFunc => undef,
+                 reqd => 1,
+                 isList => 0,
+               }),
      stringArg({ name => 'seqTable',
 		 descr => 'table where we can find the na sequences to map the tRNA predictions to',
 		 constraintFunc => undef,
@@ -238,7 +244,9 @@ sub parseFile {
 
   my %tRNAs;
 
-  my %num;
+  ###my %num;
+
+  my $number = 1000;
 
   while(<FILE>){
     chomp;
@@ -272,11 +280,11 @@ sub parseFile {
 
     my $isReversed = ($line[2] > $line[3]) ? 1 : 0;
 
-    $num{$seqSourceId}{$tRNAType}++;
+    ###$num{$seqSourceId}{$tRNAType}++;
 
-    my $number = $num{$seqSourceId}{$tRNAType};
-
-    $tRNAs{$seqSourceId}{"$tRNAType$number"}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed};
+    ###my $number = $num{$seqSourceId}{$tRNAType};
+    $number++;
+    $tRNAs{$seqSourceId}{$tRNAType}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed,'number'=>$number};
   }
 
   return \%tRNAs;
@@ -321,13 +329,17 @@ sub getExtNASeq {
 sub getGeneFeat {
   my ($self,$scanReleaseId,$soIds,$seqSourceId,$tRNA,$tRNAs,$extNaSeq) = @_;
 
+  my $prefix = $self->getArg('prefix');
+
   my $isPseudo = ($tRNA =~ /Pseudo/) ? 1 : 0;
 
   my $product = $tRNA;
 
+  my $number = $tRNAs->{$seqSourceId}->{$tRNA}->{'number'};
+
   $product =~ s/\d//g;
 
-  my $sourceId = "${seqSourceId}_tRNA_$tRNA";
+  my $sourceId = "${prefix}_tRNA_$number";
 
   $sourceId =~ s/\s//g;
 
@@ -362,7 +374,9 @@ sub getGeneFeat {
 sub getTranscript {
   my ($self,$seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId, $geneFeat) = @_;
 
-  $sourceId .= "-1";
+  my $transcriptSourceId = $sourceId;
+
+  $transcriptSourceId .= "_1";
 
   my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
@@ -379,7 +393,7 @@ sub getTranscript {
 
   $transcript->addChild($rnaType);
 
-  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq);
+  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq, $sourceId);
 
   foreach my $exon (@{$exonFeats}) {
     my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
@@ -432,7 +446,7 @@ sub getRNAType {
 }
 
 sub getExonFeats {
-  my ($self,$soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq) = @_;
+  my ($self,$soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq, $sourceId) = @_;
 
   my $exon;
   my $orderNum;
@@ -442,7 +456,7 @@ sub getExonFeats {
   if ($tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'}) {
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
@@ -450,7 +464,7 @@ sub getExonFeats {
 
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 1 : 2;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
@@ -459,7 +473,7 @@ sub getExonFeats {
   else {
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
@@ -470,12 +484,11 @@ sub getExonFeats {
 }
 
 sub makeExonFeat {
-  my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
+  my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed,$sourceId) = @_;
 
-  $seqSourceId = "${seqSourceId}-$orderNum";
 
   my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon",
-						 'source_id' => $seqSourceId,
+						 'source_id' => $sourceId,
 						 'sequence_ontology_id' => $soIds->{'exonFeat'},
 						 'order_number' => $orderNum,
 						 'external_database_release_id' => $scanReleaseId});
