@@ -381,7 +381,7 @@ sub getTranscript {
   my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
 						      'external_database_release_id' => $scanReleaseId,
-						      'source_id' => $sourceId,
+						      'source_id' => $transcriptSourceId,
 						      'is_pseudo' => $isPseudo,
 						      'product' => "tRNA $product"});
 
