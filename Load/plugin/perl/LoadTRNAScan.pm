@@ -376,7 +376,7 @@ sub getTranscript {
 
   my $transcriptSourceId = $sourceId;
 
-  $transcriptSourceId .= "_1";
+  $transcriptSourceId .= "-t_1";
 
   my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
@@ -471,7 +471,7 @@ sub getExonFeats {
     push (@exons,$exon);
   }
   else {
-    $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
+    $orderNum = 1;
 
     $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
