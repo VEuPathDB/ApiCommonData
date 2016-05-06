@@ -6,6 +6,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use CBIL::Util::PropertySet;
+use CBIL::Util::Utils;
 use Statistics::Descriptive;
 use List::MoreUtils qw { any };
 
@@ -76,9 +77,9 @@ foreach my $coverageLine (@{$coverages}) {
 close (BED);
 
 #convert to bigwig for GBrowse
-system ("sort -k1,1 -k2,2n $outputDir/$sampleName.unsrt.bed > $outputDir/$sampleName.srt.bed") == 0 or die "Sort bedfile failed\n$?\n";
-system ("bedGraphToBigWig $outputDir/$sampleName.srt.bed $chromSizesFile $outputDir/$sampleName.bw") == 0 or die "Convert to bigwig failed\n$?\n";
+&runCmd ("sort -k1,1 -k2,2n $outputDir/$sampleName.unsrt.bed > $outputDir/$sampleName.srt.bed") == 0 or die "Sort bedfile failed\n$?\n";
+&runCmd ("bedGraphToBigWig $outputDir/$sampleName.srt.bed $chromSizesFile $outputDir/$sampleName.bw") == 0 or die "Convert to bigwig failed\n$?\n";
 # clean up files that are not needed
-system ("rm -f $outputDir/$sampleName.unsrt.bed $outputDir/$sampleName.srt.bed") == 0 or die "Cleanup failed\n$?\n";
+&runCmd ("rm -f $outputDir/$sampleName.unsrt.bed $outputDir/$sampleName.srt.bed") == 0 or die "Cleanup failed\n$?\n";
 
 exit;
