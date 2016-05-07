@@ -284,7 +284,7 @@ sub parseFile {
 
     ###my $number = $num{$seqSourceId}{$tRNAType};
     $number++;
-    $tRNAs{$seqSourceId}{$tRNAType}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed,'number'=>$number};
+    $tRNAs{$seqSourceId}{"$tRNAType$number"}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed,'number'=>$number};
   }
 
   return \%tRNAs;
