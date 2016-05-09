@@ -324,6 +324,7 @@ sub getOntologyTermGusObj {
     my ($self, $ontologyTerm, $isCharQualifier) = @_;
 
     $self->log("ontologyTerm: $ontologyTerm");
+    $self->log(Dumper($ontologyTerm));
     my $ontologyTermTerm = $ontologyTerm->getTerm();
     my $ontologyTermClass = blessed($ontologyTerm);
     my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber();
