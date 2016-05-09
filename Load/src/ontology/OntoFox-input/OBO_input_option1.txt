@@ -2,7 +2,7 @@
 http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl
 
 ############################################################
-# BFO, CHEBI, DRON, OBI, OGMS, STATO, IDO, IDOMAL, PCO, OBIB, HP, SYMP, IAO, UO
+# BFO, CHEBI, DRON, OBI, OGMS, STATO, IDO, IDOMAL, PCO, OBIB, HP, SYMP, IAO, UO, OMRSE
 ############################################################
 ############################################################
 [Source ontology]
@@ -26,18 +26,41 @@ http://purl.obolibrary.org/obo/IAO_0000115
 
 ############################################################
 [Source ontology]
+OMRSE
+
+[Low level source term URIs]
+http://purl.obolibrary.org/obo/OMRSE_00000001
+
+[Top level source term URIs and target direct superclass URIs]
+http://purl.obolibrary.org/obo/OMRSE_00000001 #human social role
+subClassOf http://purl.obolibrary.org/obo/BFO_0000023 #role
+
+[Source term retrieval setting]
+includeNoIntermediates
+
+[Source annotation URIs]
+http://www.w3.org/2000/01/rdf-schema#label
+http://purl.obolibrary.org/obo/IAO_0000115
+
+
+
+############################################################
+[Source ontology]
 #comment here
 IAO
 
 [Low level source term URIs]
 http://purl.obolibrary.org/obo/IAO_0000414 #mass measurement datum
 http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
+http://purl.obolibrary.org/obo/IAO_0000401 #one dimensional cartesian spatial coordinate datum
 
 [Top level source term URIs and target direct superclass URIs]
 http://purl.obolibrary.org/obo/IAO_0000414 #mass measurement datum
 subClassOf http://purl.obolibrary.org/obo/IAO_0000032 #scalar measurement datum
 http://purl.obolibrary.org/obo/IAO_0000408 #length measurement datum
 subClassOf http://purl.obolibrary.org/obo/IAO_0000032 #scalar measurement datum
+http://purl.obolibrary.org/obo/IAO_0000401 #one dimensional cartesian spatial coordinate datum
+subClassOf http://purl.obolibrary.org/obo/IAO_0000027 #data item
 
 [Source term retrieval setting]
 includeNoIntermediates
