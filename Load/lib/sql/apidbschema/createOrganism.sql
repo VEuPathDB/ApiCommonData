@@ -2,7 +2,7 @@ CREATE TABLE apidb.Organism (
  organism_id                  NUMBER(12) NOT NULL,
  taxon_id                     number(12) not null,
  project_name                 VARCHAR2(20) NOT NULL,
- abbrev                       VARCHAR2(20) NOT NULL,
+ abbrev                       VARCHAR2(30) NOT NULL,
  public_abbrev                VARCHAR2(20) NOT NULL,
  name_for_filenames           VARCHAR2(50) NOT NULL,
  genome_source                VARCHAR2(50) NOT NULL,
