@@ -6,20 +6,18 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use CBIL::Util::PropertySet;
-#use List::MoreUtils qw { any };
+use CBIL::Util::Utils;
 
 use Data::Dumper;
 
-my ($gusConfigFile, $snpSampleExtDbRlsId, $sampleName, $experimentName, $organismAbbrev, $projectName);
+my ($gusConfigFile, $snpSampleExtDbRlsId, $sampleName, $sampleAnalysisDir);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
             "snpSampleExtDbRlsId=i" => \$snpSampleExtDbRlsId,
             "sampleName=s" => \$sampleName,
-            "experimentName=s" => \$experimentName,
-            "organismAbbrev=s" => \$organismAbbrev,
-            "projectName=s" => \$projectName);
+            "sampleAnalysisDir=s" => \$sampleAnalysisDir);
 
-if (!$snpSampleExtDbRlsId || !$sampleName || !$experimentName || !$organismAbbrev || !$projectName){
-    die "usage: cnvWorkflowCheckpoint --snpSampleExtDbRlsId <External database release id for the SNP sample> --sampleName <Name of sample> --experimentName <Experiment Name> --organismAbbrev <organismabbreviation> --projectName <Project name , e.g., PlasmoDB (--gusConfigFile(only required if not default)\n";
+if (!$snpSampleExtDbRlsId || !$sampleName || !$sampleAnalysisDir){
+    die "usage: cnvWorkflowCheckpoint --snpSampleExtDbRlsId <External database release id for the SNP sample> --sampleName <Name of sample> --sampleAnalysisDir <directory for analysis of this sample> (--gusConfigFile(only required if not default)\n";
 }
 
 
@@ -56,7 +54,8 @@ if (scalar @{$coverage} >1) {
 
 my $averageCoverage = $coverage->[0];
 if ($averageCoverage < 6) {
-    die "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nSamples with less than 6x coverage will produce nonsensical data in the CNV workflow and may cause the workflow to fail.\n\n***Please undo the CNV workflow for sample $sampleName back to the beginning of the sample graph (step $organismAbbrev"."_copyNumberVariations_$experimentName.doCnvMapping.$sampleName"."_cnvSample) and remove the 'copyNumberVariationSamples' datasetclass for $sampleName from EuPathDatasets/Datasets/lib/xml/datasets/$projectName/$organismAbbrev/$experimentName.xml***\n";
+    &runCmd("touch $sampleAnalysisDir/doNotDoAnalysis");
+    print STDERR "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nSamples with less than 6x coverage will produce nonsensical data in the CNV workflow and may cause the workflow to fail.\n\nThe CNV sample graph will not be run for sample $sampleName.\n";
 } else {
     print "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nThis sample will be run in the CNV workflow.\n";
 }
