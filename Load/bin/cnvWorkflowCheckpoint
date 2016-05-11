@@ -10,14 +10,14 @@ use CBIL::Util::Utils;
 
 use Data::Dumper;
 
-my ($gusConfigFile, $snpSampleExtDbRlsId, $sampleName, $sampleAnalysisDir);
+my ($gusConfigFile, $snpSampleExtDbRlsId, $sampleName, $outputSkipIfFile);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
             "snpSampleExtDbRlsId=i" => \$snpSampleExtDbRlsId,
             "sampleName=s" => \$sampleName,
-            "sampleAnalysisDir=s" => \$sampleAnalysisDir);
+            "outputSkipIfFile=s" => \$outputSkipIfFile);
 
-if (!$snpSampleExtDbRlsId || !$sampleName || !$sampleAnalysisDir){
-    die "usage: cnvWorkflowCheckpoint --snpSampleExtDbRlsId <External database release id for the SNP sample> --sampleName <Name of sample> --sampleAnalysisDir <directory for analysis of this sample> (--gusConfigFile(only required if not default)\n";
+if (!$snpSampleExtDbRlsId || !$sampleName || !$outputSkipIfFile){
+    die "usage: cnvWorkflowCheckpoint --snpSampleExtDbRlsId <External database release id for the SNP sample> --sampleName <Name of sample> --outputSkipIfFile <File to touch if CNV will not be run> (--gusConfigFile(only required if not default)\n";
 }
 
 
@@ -54,7 +54,7 @@ if (scalar @{$coverage} >1) {
 
 my $averageCoverage = $coverage->[0];
 if ($averageCoverage < 6) {
-    &runCmd("touch $sampleAnalysisDir/doNotDoAnalysis");
+    &runCmd("touch $outputSkipIfFile");
     print STDERR "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nSamples with less than 6x coverage will produce nonsensical data in the CNV workflow and may cause the workflow to fail.\n\nThe CNV sample graph will not be run for sample $sampleName.\n";
 } else {
     print "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nThis sample will be run in the CNV workflow.\n";
