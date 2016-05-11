@@ -133,6 +133,8 @@ sub run {
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
     my $investigation = $self->makeStudy($self->getArg('studyName'));
+    
+    my @investigationLinks = $investigation->getChildren('Study::StudyLink');
 
     $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
 
@@ -142,9 +144,10 @@ sub run {
 
     my @studyLinks = $study->getChildren('Study::StudyLink');
 
-    my $existingAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
+    my $existingInvestigationAppNodes = $self->retrieveAppNodesForStudy(\@investigationLinks);
+    my $existingStudyAppNodes = $self->retrieveAppNodesForStudy(\@studyLinks);
 
-    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingAppNodes, $investigation, $nodeOrderNum);
+    my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
 
     my $protocolType;
     if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
@@ -156,7 +159,7 @@ sub run {
 
     my $appNodeType = "data item";
 
-    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType);
+    my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingStudyAppNodes, $nodeOrderNum, $appNodeType);
 
    my $protocol = $self->makeProtocol($protocolType);
 
@@ -404,11 +407,14 @@ sub getInputAppNodes {
   foreach my $input (@inputNames) {
     my $found;
     foreach my $existing (@$existingAppNodes) {
+
       if($existing->getName eq $input) {
         push @rv, $existing;
         $found++;
       }
     }
+
+    $self->error("Found multiple app nodes named $input in Investigation.  App nodes used as Inputs must be unique w/in an investigation.") if($found > 1);
 
     next if($found);
 
@@ -437,7 +443,6 @@ sub linkAppNodeToStudy {
     # already Linked
     return $sl if($linkParent->getName() eq $protocolAppNode->getName());
   }
-
 
   my $studyLink = GUS::Model::Study::StudyLink->new();
   $studyLink->setParent($study);
@@ -546,8 +551,6 @@ sub makeStudy {
   $study->retrieveFromDB();
 
   $study->getChildren("Study::StudyLink", 1);
-
-#  $self->{_study_names}->{$studyName} = $study;
 
   return $study;
 }
