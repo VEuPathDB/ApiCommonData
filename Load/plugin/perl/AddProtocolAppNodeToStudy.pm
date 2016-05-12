@@ -169,6 +169,9 @@ sub run {
   $pan->setSubtypeId($subtypeId) if($subtypeId);
   $pan->setTaxonId($taxonId) if($taxonId);
 
+  # Try to retrieve from DB
+  $pan->retrieveFromDB();
+
   my $studyLink = GUS::Model::Study::StudyLink->new();
   $studyLink->setParent($gusStudy);
   $studyLink->setParent($pan);
