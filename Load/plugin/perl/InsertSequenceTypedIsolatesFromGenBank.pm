@@ -229,7 +229,7 @@ sub loadIsolates {
   while(my ($title, $v) = each %$studyHash) {
 
     my $study = GUS::Model::Study::Study->new();
-    $study->setName($title);
+    $study->setName("$title ($extDbRlsId)");
     $study->setExternalDatabaseReleaseId($extDbRlsId);
 
     foreach my $id ( @{$v->{ids}} ) {  # id is each isolate accession
@@ -296,6 +296,8 @@ sub loadIsolates {
 
       my $ref = GUS::Model::SRes::BibliographicReference->new();
       $ref->setTitle($title);
+      $ref->retrieveFromDB();
+
       $ref->setAuthors($authors);
       $ref->setPublication($publication);
 
