@@ -24,13 +24,14 @@ while (<IN>) {
 
       foreach my $i (0..$#cdsArray) {
 	my ($s, $e) = split (/\.\./, $cdsArray[$i]);
-	if ($s <= $pEnd+1) {
+	if ($s <= $pEnd+1 && $pEnd) {
 	  $pEnd = $e;
 	  next;
+	} else {
+	  push (@newCdsStringArray, "$pStart..$pEnd")if ($pStart && $pEnd);
+	  $pStart =$s;
+	  $pEnd = $e;
 	}
-	push (@newCdsStringArray, "$pStart..$pEnd")if ($pStart && $pEnd);
-	$pStart = $s;
-	$pEnd = $e;
       }
       push (@newCdsStringArray, "$pStart..$pEnd");  ## add the last pair
       my $newCdsString = join (",", @newCdsStringArray);
