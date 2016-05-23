@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.IsolateGPS (
  isolate_gps_id        NUMBER(10)   NOT NULL,
- gazetteer_id          NUMBER(10)   NOT NULL,
+ gazetteer_id          VARCHAR(250) NOT NULL,
  country               VARCHAR(250) NOT NULL,
  lat                   FLOAT        NOT NULL,
  lng                   FLOAT        NOT NULL,
