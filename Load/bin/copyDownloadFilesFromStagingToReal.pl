@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ##to be used to copy the files from apiSiteFilesStaging to the appropriate directories in apiSiteFiles. Also it needs to replace CURRENT with the actual build number.
 ## both sourceDir and targetDir must be full paths to these directories
@@ -29,11 +49,20 @@ system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
 chdir $targetDir or die "Can't chdir to $targetDir\n";
 &loopDir($targetDir);
+
 print STDERR "Creating Build_number file under $targetDir\n"; 
 my $filename = "$targetDir/Build_number";
 open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
 print $fh "$buildNumber\n";
 close $fh;
+
+print STDERR "Moving pathway files to /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles\n";
+system ("mv /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
+print "failed to execute: $!\n" if ($? == -1);
+system ("mv  ${targetDir}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles");
+print "failed to execute: $!\n" if ($? == -1);
+system ("rm -fr /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
+
 
 sub loopDir {
    my($dir) = @_;
