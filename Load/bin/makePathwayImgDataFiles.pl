@@ -9,18 +9,21 @@ use Getopt::Long;
 use XML::Writer;
 use IO::File;
 
-my ($outDir, $pathwayList, $extDbRlsId,
+my ($outDir, $extDbRlsId,
     $gusConfigFile, $debug, $verbose, $projectId);
+#my $pathwayList;
 
 &GetOptions("outputDir=s" => \$outDir,
-            "pathwayList=s" => \$pathwayList,
+           # "pathwayList=s" => \$pathwayList,
             "verbose!" => \$verbose,
             "extDbRlsId=i" => \$extDbRlsId,
             "gusConfigFile=s" => \$gusConfigFile,
 	   );
 
-if (!$outDir || (!$pathwayList && !$extDbRlsId) || ($pathwayList && $extDbRlsId)) {
-  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> [-pathwayList=s]  (required when extDbRlsId not specified)"'
+#if (!$outDir || (!$pathwayList && !$extDbRlsId) || ($pathwayList && $extDbRlsId)) {
+if (!$outDir || !$extDbRlsId) {
+#  die ' USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir> [-pathwayList=s]  (required when extDbRlsId not specified)"'
+    die "USAGE: makePathwayImgDataFiles.pl -outputDir <outputDir>"  
       .  "[--extDbRlsId=i] (required when pathwayList not specified)"
       . " [--verbose] [--debug]"
       . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
@@ -51,16 +54,16 @@ $dbh->{AutoCommit} = 0;
 
 my @pids; # pathway IDs
 my $validFlag = 0;
-if ($pathwayList eq 'ALL') {
-  @pids =&getPathwayIds();
-}
-elsif($pathwayList) {
-    @pids = split(",", $pathwayList);
-}
-else {
+#if ($pathwayList eq 'ALL') {
+#  @pids =&getPathwayIds();
+#}
+#elsif($pathwayList) {
+#    @pids = split(",", $pathwayList);
+#}
+#else {
     die "an external database release id must be provided\n" unless defined ($extDbRlsId);
     @pids = &getPathwayIdsFromSource($extDbRlsId);
-}
+#}
 
 print "Size of array of Pathway IDs is ".( $#pids +1)  . "\n\n" if $verbose;
 
@@ -106,7 +109,9 @@ foreach my $pathwayId (@pids) {
       $edge{$source. $target}->{dir} = $direction;
   }
 
-  my $output = IO::File->new("> ".$outDir ."/".  $pathwayId . ".xgmml");
+  my $sourceId = &getPathwaySourceFromId($pathwayId);
+
+  my $output = IO::File->new("> ".$outDir ."/".  $sourceId . ".xgmml");
   my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
 
   if ($validFlag ) {
@@ -200,7 +205,7 @@ $dbh->disconnect;
 
 # get ALL the pathway Ids
 sub getPathwayIds {
-  my $sql = "SELECT source_id FROM sres.pathway";
+  my $sql = "SELECT pathway_id FROM sres.pathway";
   my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
   $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
@@ -214,7 +219,7 @@ sub getPathwayIds {
 #gets all pathway ids by extDbRlsId
 sub getPathwayIdsFromSource {
     my $extDbRlsId = shift;
-    my $sql = "SELECT source_id FROM sres.pathway WHERE external_database_release_id = $extDbRlsId";
+    my $sql = "SELECT pathway_id FROM sres.pathway WHERE external_database_release_id = $extDbRlsId";
     my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
     $sth->execute() || die "Couldn't execute statement: " . $sth->errstr;
 
@@ -223,6 +228,22 @@ sub getPathwayIdsFromSource {
         push (@ids, $id);
     }
     return @ids;
+}
+
+sub getPathwaySourceFromId {
+    my $pathwayId = shift;
+    my $sql = "
+        select p.source_id
+        from sres.pathway p
+        where p.pathway_id = $pathwayId";
+    my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+    $sth->execute() || die "Couldn't execute statement: " . $sth->errstr;
+    my @sourceIds;
+    while (my $sourceId = $sth->fetchrow_array()) {
+        push (@sourceIds, $sourceId);
+    }
+    die "One source id should be returned for each pathway id.  For pathway with id $pathwayId, " . scalar(@sourceIds) . " source ids were returned\n" unless scalar(@sourceIds) == 1;
+    return @sourceIds[0];
 }
 
 # getNodes query with cpd_name AND gene_orgs
@@ -247,7 +268,7 @@ from sres.pathway p
                                 and n.type = 'IUPAC NAME'
                                 group by n.compound_id) cn on pn.row_id = cn.compound_id
     , sres.ontologyterm ot
-where p.source_id = '$pathwayId'
+where p.pathway_id = '$pathwayId'
 and p.pathway_id = pn.pathway_id
 and pn.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'molecular entity'
@@ -264,7 +285,7 @@ select n.pathway_node_id
 from sres.pathway p
     , sres.pathwaynode n LEFT OUTER JOIN sres.enzymeclass ec on n.row_id = ec.enzyme_class_id
     , sres.ontologyterm ot
-where p.source_id = '$pathwayId'
+where p.pathway_id = '$pathwayId'
 and p.pathway_id = n.pathway_id
 and n.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'enzyme'
@@ -281,7 +302,7 @@ select n.pathway_node_id
 from sres.pathway p
     , sres.pathwaynode n LEFT OUTER JOIN sres.pathway m on n.display_label = m.source_id
     ,sres.ontologyterm ot
-where p.source_id = '$pathwayId'
+where p.pathway_id = '$pathwayId'
 and p.pathway_id = n.pathway_id
 and n.pathway_node_type_id = ot.ontology_term_id
 and ot.name = 'metabolic process'
@@ -330,7 +351,7 @@ where r.node_id = n.pathway_node_id
 and r.associated_node_id = a.pathway_node_id
 and a.pathway_id = p.pathway_id
 and n.pathway_id = p.pathway_id
-and p.source_id = '$pathwayId'
+and p.pathway_id = '$pathwayId'
 ");
 }
 
