@@ -25,7 +25,7 @@ use Getopt::Long;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::Utils;
 use List::Util qw(min max);
-
+use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use File::Basename;
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
@@ -60,35 +60,90 @@ die $usage unless -e $topLevelSeqSizeFile;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
+# pull display name and base name for any with replciation
+my $analysis_config_display;
+my %sampleHash;
+foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
+    %sampleHash = displayAndBaseName($analysis_config);	
+}    
+
+my %dealingWithReps;
+
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-  my $sum_coverage = &get_sum_coverage($exp_dir);
-  $hash{$exp_dir} = $sum_coverage;
+    foreach my $keys (keys %sampleHash) { 
+	if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
+	    my $fileBaseName = $sampleHash{$keys};
+	    if (exists $dealingWithReps{$fileBaseName}) {
+		push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+	    }
+	    else {
+		push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+	    }
+	}
+	else {
+	    my $sum_coverage = &get_sum_coverage($exp_dir);
+	    $hash{$exp_dir} = $sum_coverage;
+	}
+    }
 }
 
+foreach my $expWithReps (keys %dealingWithReps) {
+    my $count = 0;
+    my %scoreHash;
+    my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
+    my $cmd = "mkdir $exp_dir";
+    &runCmd($cmd);
+    my $cmd = "mkdir $exp_dir/master";
+    &runCmd($cmd);
+    my $cmd = "mkdir $exp_dir/master/mainresult";
+    &runCmd($cmd);
+    $exp_dir = "$exp_dir/master/mainresult";
+     my $listOfRepBwFiles;
+    foreach my $replicate (@{$dealingWithReps{$expWithReps}}) {
+#	print "$replicate\n";
+	foreach	my $file_to_open (glob "$replicate/*.cov") {
+	    my $baseBed = basename $file_to_open;
+	    my $bwFile = $baseBed;
+	    $bwFile =~ s/\.cov$/.bw/;
+	    &runCmd("bedGraphToBigWig $replicate/$baseBed $topLevelSeqSizeFile $replicate/$bwFile"); 
+	    $listOfRepBwFiles.= "$replicate/$bwFile ";
+	}
+	
+    }
+#here i want to do the merging of the bigwigs bigWigMerge -max to make a bedfile in the new $exp_dir
+    
+    my $cmd = "bigWigMerge -max $listOfRepBwFiles $exp_dir/combinedReps.cov";
+    #   print $cmd."\n";
+    &runCmd($cmd);
+    my $sum_coverage = &get_sum_coverage($exp_dir);
+    $hash{$exp_dir} = $sum_coverage;
+    
+    
+
+}
 
 update_coverage(\%hash);
 
 merge_normalized_coverage(\%hash);
 
 sub merge_normalized_coverage {
-  my $hash = shift;
-  while(my ($k, $v) = each %$hash) {  # $k is exp directory; $v is sum_coverage
-    my $dir = "$k/normalized";
-    if(!-e "$dir/final") {
-      &runCmd("mkdir $k/normalized/final");
+    my $hash = shift;
+    while(my ($k, $v) = each %$hash) {  # $k is exp directory; $v is sum_coverage
+	my $dir = "$k/normalized";
+	if(!-e "$dir/final") {
+	    &runCmd("mkdir $k/normalized/final");
+	}
+	
+	my @bedFiles = glob "$k/normalized/*.cov";
+	
+	foreach my $bedFile (@bedFiles) {
+	    my $baseBed = basename $bedFile;
+	    my $bwFile = $baseBed;
+	    $bwFile =~ s/\.cov$/.bw/;
+	    
+	    &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
+	}
     }
-
-    my @bedFiles = glob "$k/normalized/*.cov";
-
-    foreach my $bedFile (@bedFiles) {
-      my $baseBed = basename $bedFile;
-
-      my $bwFile = $baseBed;
-      $bwFile =~ s/\.cov$/.bw/;
-
-      &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
-    }
-  }
 }
 
 # updates coverage file - score * normalization_ratio
