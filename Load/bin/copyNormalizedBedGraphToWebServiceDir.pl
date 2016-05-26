@@ -24,7 +24,7 @@ use strict;
 use Getopt::Long;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::Utils;
-
+use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
 # this script loops through each sample output directory and copy normalized bedgraph files to webService Dir. 
 
@@ -87,37 +87,86 @@ my %altSubOrder = ( 'results.secondstrand.Unique.bw'  => 1,
 
 my %sampleOrder;
 my %sampleDisplayName;
-if(-e $analysisConfig) {
-  open(F, $analysisConfig);
-  my $count = 1;
+my %sampleHash;
+my %acRepCheck;
 
-  while(<F>) {
-    chomp;
-    next if /^\s+$/;
-    #if( $_ =~ /<prop name="sampleName">(.*)<\/prop>/) {
-    if(  /<property name="samples">/i .. /<\/property>/i  ) {
-        next unless /<value>/i;
-        $_ =~ /<value>(.*)<\/value>/ ;
-        my($sample_display_name, $sample_internal_name) = split /\|/, $1;
-       
-        $sampleOrder{$sample_internal_name} = $count;
-        $sampleDisplayName{$sample_internal_name} = $sample_display_name;
-        $count++;
+if(-e $analysisConfig) {
+    %sampleHash = displayAndBaseName($analysisConfig);
+#    foreach my $test (keys %sampleHash) {
+#	print "$test"."la\n\n\n\n\n";
+#    }
+    open(F, $analysisConfig);
+    my $count = 1;
+    
+    while(<F>) {
+	chomp;
+	next if /^\s+$/;
+	#if( $_ =~ /<prop name="sampleName">(.*)<\/prop>/) {
+	if(  /<property name="samples">/i .. /<\/property>/i  ) {
+	    next unless /<value>/i;
+	    $_ =~ /<value>(.*)<\/value>/ ;
+	    my($sample_display_name, $sample_internal_name) = split /\|/, $1;
+
+	    if (exists $sampleHash{$sample_display_name} ) {
+
+		$sample_internal_name = $sampleHash{$sample_display_name}."_combined";
+		if (exists $acRepCheck{$sample_display_name} ) {
+		    next;
+		}
+		else {
+
+		    $sampleOrder{$sample_internal_name} = $count;
+		    $sampleDisplayName{$sample_internal_name} = $sample_display_name;
+		    $count++;
+		    $acRepCheck{$sample_display_name} = 1;
+		}
+	    }
+	    else {
+		$sampleOrder{$sample_internal_name} = $count;
+		$sampleDisplayName{$sample_internal_name} = $sample_display_name;
+		$count++;
+	    }
+	}
     }
-  }
+}
+    my %reps;
+foreach my $exp (keys %sampleDisplayName) {
+#    print "$exp\n";
+    if ($exp =~ /(.+)_combined/) {
+	my $base_name = $1;
+#	print $base_name."\n\n\n\n";
+	$reps{$base_name}= 1;
+    }
+    else {
+#	"print $exp has no combined data\n\n\n\n";
+    }
+
 }
 
+
+
 # sort directory name by the number in the string, e.g. hour2, hour10, hour20...
-foreach my $d (sort @ds) {
+OUTER: foreach my $d (sort @ds) {
 #foreach my $d (map  { $_->[0] }
 #               sort { $a->[1] <=> $b->[1] }
 #               map  { [$_, $_=~/(\d+)/] } @ds) {
     
     next unless $d =~ /^analyze_(\S+)/;
+#    print "directory: $d\n";
     my $sample = $1;
+    
+    foreach my $keys (keys %reps) {
+	
+	if (($d =~ $keys) && ($d !~ /combined/)) {
+
+	    next OUTER;
+	}
+	else {
+	    next;
+	}
+    }
     $inputDir =~ s/\/$//;
     my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
-    
     my $output = $outputDir."/$sample"; 
     system ("mkdir $output");
     my $status = $? >>8;
