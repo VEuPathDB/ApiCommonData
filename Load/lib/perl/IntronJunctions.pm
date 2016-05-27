@@ -49,7 +49,7 @@ sub munge {
   foreach my $input (@$inputs) {
     my $inputFile = $input . $suffix;
 
-    open(INPUT, $inputFile) or die "Cannot open input file for reading:$!";
+    open(INPUT, $inputFile) or die "Cannot open input file $inputFile for reading:$!";
 
     <INPUT>; #rm header
     while(<INPUT>) {
