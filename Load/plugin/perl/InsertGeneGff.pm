@@ -92,7 +92,7 @@ sub run {
     while (<GFF>) {
 
       # check for gene record
-      if (/\tgene\t.*ID (\S*) /) {
+      if (/\tgene\t.*\sID "*(\S*)"* /) {
 
 	# write record for previous gene (if any)
 	if ($currentGene) {
