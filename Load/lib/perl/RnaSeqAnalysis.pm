@@ -80,8 +80,9 @@ sub munge {
 
       $intronJunctions->munge();
     }
-    
-    foreach my $quantificationType ('cuff', 'htseq-union', 'htseq-intersection-nonempty', 'htseq-intersection-strict') {
+
+    foreach my $quantificationType ('htseq-union') {    
+#    foreach my $quantificationType ('cuff', 'htseq-union', 'htseq-intersection-nonempty', 'htseq-intersection-strict') {
 	if($isStrandSpecific) {
 	    $self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
 	    $self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
