@@ -145,6 +145,8 @@ sub run {
 
   my $processed;
 
+  my $totalNum;
+
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   while(<FILE>){
@@ -152,6 +154,8 @@ sub run {
       chomp();
 
       next if (/^\s*$/);
+
+      $totalNum++;
 
       my ($sourceId, $product, $preferred) = split(/\t/,$_);
       if ($preferred =~ /true/i || $preferred == 1) {
@@ -182,6 +186,8 @@ sub run {
       }
       $self->undefPointerCache();
   }
+
+  die "Less than half of the products were parsed and loaded\n" if ($processed/$totalNum < 0.5);
 
   return "$processed gene feature products parsed and loaded";
 }
