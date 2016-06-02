@@ -87,7 +87,7 @@ sub run {
 
     open(GFF, "<", $gffFile) or die "Cannot open file $gffFile for reading: $!";
     my ($currentGene, $currentContent, $lineCount, $insertCount);
-    $self->getDb()->manageTransaction(0,'begin');
+    $self->getDb()->manageTransaction(0, 'begin');
 
     while (<GFF>) {
 
@@ -106,8 +106,9 @@ sub run {
 					      });
 	  $geneGff->submit();
 	  if ($insertCount++ % 1000 == 0) {
-	    $self->getDb()->manageTransaction(0,'commit');
-	    $self->getDb()->manageTransaction(0,'begin');
+	    $self->getDb()->manageTransaction(0, 'commit');
+	    $self->getDb()->manageTransaction(0, 'begin');
+	    $self->undefPointerCache();
 	  }
 	}
 
@@ -135,8 +136,8 @@ sub run {
       $insertCount++;
     }
 
-    $self->getDb()->manageTransaction(0,'commit');
-    $self->getDb()->manageTransaction(0,'begin');
+    $self->getDb()->manageTransaction(0, 'commit');
+    $self->getDb()->manageTransaction(0, 'begin');
 
     close GFF;
 
