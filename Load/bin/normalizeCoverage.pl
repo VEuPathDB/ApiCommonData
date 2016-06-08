@@ -64,26 +64,37 @@ my @ds = readdir(DIR);
 my $analysis_config_display;
 my %sampleHash;
 foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
+
     %sampleHash = displayAndBaseName($analysis_config);	
 }    
 
+foreach my $key (keys %sampleHash) {
+
+}
 my %dealingWithReps;
 
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-    foreach my $keys (keys %sampleHash) { 
-	if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
-	    my $fileBaseName = $sampleHash{$keys};
-	    if (exists $dealingWithReps{$fileBaseName}) {
-		push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+    if (keys %sampleHash >=1) {
+	foreach my $keys (keys %sampleHash) { 
+	    if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
+		my $fileBaseName = $sampleHash{$keys};
+		if (exists $dealingWithReps{$fileBaseName}) {
+		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+		}
+		else {
+		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+		}
 	    }
 	    else {
-		push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+		my $sum_coverage = &get_sum_coverage($exp_dir);
+		$hash{$exp_dir} = $sum_coverage;
 	    }
 	}
-	else {
-	    my $sum_coverage = &get_sum_coverage($exp_dir);
-	    $hash{$exp_dir} = $sum_coverage;
-	}
+    }
+    else {
+
+	my $sum_coverage = &get_sum_coverage($exp_dir);
+	$hash{$exp_dir} = $sum_coverage;
     }
 }
 
