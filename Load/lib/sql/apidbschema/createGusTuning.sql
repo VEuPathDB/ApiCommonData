@@ -322,6 +322,9 @@ alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
 alter table results.nafeaturediffresult add (confidence FLOAT(126));
 
+alter table dots.GoAssocInstEvidCode add reference varchar2(500);
+alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(400);
+
 create table RESULTS.REPORTERINTENSITY
   (
     REPORTER_INTENSITY_ID number(12) not null,
