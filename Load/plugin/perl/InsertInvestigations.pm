@@ -120,7 +120,6 @@ sub run {
 
     my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
    
-   
     $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
     my $investigationId = $self->loadInvestigation($investigation,$extDbRlsId);
 
@@ -542,7 +541,7 @@ sub checkDatabaseProtocolApplicationsAreHandledAndMark {
   my ($self, $foundDatasets, $edges) = @_;
 
 
-  my $sql = "select * from (
+  my $sql = "select distinct * from (
 select d.name dataset, p.name protocol, pa.PROTOCOL_APP_ID, pan.name, pan.protocol_app_node_id, 'input' as io
 from study.protocolapp pa
    , study.protocol p
@@ -558,8 +557,7 @@ and pa.PROTOCOL_APP_ID = i.PROTOCOL_APP_ID
 and i.PROTOCOL_APP_NODE_ID = pan.PROTOCOL_APP_NODE_ID
 and pan.PROTOCOL_APP_NODE_ID = sl.PROTOCOL_APP_NODE_ID
 and sl.STUDY_ID = s.study_id
-and s.INVESTIGATION_ID = i.STUDY_ID
-and i.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
+and s.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
 and r.EXTERNAL_DATABASE_ID = d.external_database_id
 union
 select d.name dataset, p.name protocol, pa.PROTOCOL_APP_ID, pan.name, pan.protocol_app_node_id, 'output' as io
@@ -577,8 +575,7 @@ and pa.PROTOCOL_APP_ID = i.PROTOCOL_APP_ID
 and i.PROTOCOL_APP_NODE_ID = pan.PROTOCOL_APP_NODE_ID
 and pan.PROTOCOL_APP_NODE_ID = sl.PROTOCOL_APP_NODE_ID
 and sl.STUDY_ID = s.study_id
-and s.INVESTIGATION_ID = i.STUDY_ID
-and i.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
+and s.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
 and r.EXTERNAL_DATABASE_ID = d.external_database_id
 ) 
 where dataset = ? ";
@@ -587,6 +584,7 @@ where dataset = ? ";
   my $sh = $dbh->prepare($sql);
 
   my $databaseEdges = {};
+
   foreach my $datasetName(keys %$foundDatasets) {
     $sh->execute($datasetName);
     while(my ($dataset, $protocol, $protocolAppId, $pan, $panId, $io) = $sh->fetchrow_array()) {
@@ -637,7 +635,7 @@ where dataset = ? ";
         }
       }
 
-      $self->logOrError("ISATAB_ERROR:  ProtocolApp [$protocolAppId] could not be matched to Edges in the ISA Tab file") unless($found);
+#      $self->logOrError("ISATAB_ERROR:  ProtocolApp [$protocolAppId] could not be matched to Edges in the ISA Tab file") unless($found);
     }
   }
 }
@@ -735,11 +733,11 @@ where ds.name = ?
     $sh->execute($datasetName, $datasetName);
 
     while(my ($pan, $panId) = $sh->fetchrow_array()) {
-      if($studyNodes{$pan}) {
+      if($studyNodes{$datasetName}->{$pan}) {
         $self->logOrError("DATABASE_ERROR:  Existing ProtocolAppNode name $pan not unique w/in a study");
       }
 
-      $studyNodes{$pan} = 1;
+      $studyNodes{$datasetName}->{$pan} = 1;
 
       my $found = 0;
       foreach my $node (@$nodes) {
@@ -749,9 +747,10 @@ where ds.name = ?
         }
       }
 
-      unless($found == 1) {
-        $self->logOrError("ISATAB_ERROR:  ProtocolAppNode named $pan for dataset $datasetName was not handled in the ISATab file.  Found it $found times.");
-      }
+# no longer need to handle all database nodes
+#      unless($found == 1) {
+#        $self->logOrError("ISATAB_ERROR:  ProtocolAppNode named $pan for dataset $datasetName was not handled in the ISATab file.  Found it $found times.");
+#      }
     }
     $sh->finish();
   }
