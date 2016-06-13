@@ -203,41 +203,6 @@ CREATE SEQUENCE apidb.geneGff_pkseq;
 GRANT SELECT ON apidb.geneGff_pkseq TO gus_w;
 
 ------------------------------------------------------------------------------
--- TranscriptGff holds data used for the GFF download
-
-CREATE TABLE apidb.TranscriptGff (
- wdk_table_id number(10) not null,
- source_id  VARCHAR2(50),
- project_id  VARCHAR2(50),
- table_name VARCHAR2(80),
- row_count  NUMBER(4),
- content    CLOB,
- primary key (wdk_table_id),
- modification_date date
-);
-
-CREATE INDEX apidb.gtab_ix
-       ON apidb.TranscriptGff (source_id, table_name, row_count);
-CREATE INDEX apidb.gtab_name_ix
-       ON apidb.TranscriptGff (table_name, source_id, row_count);
-
-GRANT insert, select, update, delete ON ApiDB.TranscriptGff TO gus_w;
-GRANT select ON ApiDB.TranscriptGff TO gus_r;
-
-CREATE OR REPLACE TRIGGER apidb.TranscriptGff_md_tg
-before update or insert on apidb.TranscriptGff
-for each row
-begin
-  :new.modification_date := sysdate;
-end;
-/
-
-------------------------------------------------------------------------------
-CREATE SEQUENCE apidb.transcriptGff_pkseq;
-
-GRANT SELECT ON apidb.transcriptGff_pkseq TO gus_w;
-
-------------------------------------------------------------------------------
 
 create table apidb.CompoundDetail (
       SOURCE_ID VARCHAR2(50 BYTE),
