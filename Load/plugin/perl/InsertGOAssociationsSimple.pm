@@ -34,7 +34,7 @@ use FileHandle;
 use Carp;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
-
+use Data::Dumper;
 my $purposeBrief = <<PURPOSEBRIEF;
 Insert GO associations from a standard GO Associations file.
 PURPOSEBRIEF
@@ -233,14 +233,18 @@ sub run {
 	my $inputAssoc = CBIL::Bio::GeneAssocParser::Assoc->new($_);
 
 	my $sourceId = $self->getSourceId($inputAssoc);
+#		 print "source id is $sourceId\n";
 
+	my $dbreference = $self->getDBReference($inputAssoc);
+	my $with = $self->getWith($inputAssoc);
 	my $rowId = $self->getTargetRowId($sourceId);
 
+#	print "ref is $dbreference and evcodepara is $with\n\n";
 	next if $self->targetNotFound($rowId, $sourceId, $inputAssoc);
 
 	my $assocId = $self->findAssociationId($rowId,$inputAssoc,$goDbRlsId);
 
-	$self->addAssociationInstance($assocId, $inputAssoc, $goEvidenceCodeDbRlsId);
+	$self->addAssociationInstance($assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $dbreference, $with);
 
 	$self->log("processing $sourceId; processed $count lines")
 	    if ($logFrequency && ($count % $logFrequency == 0));
@@ -269,6 +273,16 @@ sub getSourceId {
   return $inputAssoc->getDBObjectId() if $idCol eq 'id';
   return $inputAssoc->getDBObjectSymbol() if $idCol eq 'symbol';
   return $inputAssoc->getDBObjectName() if $idCol eq 'name';
+}
+
+sub getDBReference{
+    my ($self, $inputAssoc) = @_;
+    return $inputAssoc->getDBReference();
+}
+
+sub getWith{
+    my ($self, $inputAssoc) = @_;
+    return $inputAssoc->getWith();
 }
 
 sub getTargetRowId {
@@ -350,46 +364,58 @@ sub findAssociationId {
 sub getGoTermId {
   my ($self, $goId, $goDbRlsId) = @_;
 
+
   if (!$self->{goTermIds}) {
-    my $sql = "SELECT ontology_term_id, source_id FROM SRes.OntologyTerm WHERE external_database_release_id = $goDbRlsId";
 
-    my $stmt = $self->prepareAndExecute($sql);
-    while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
-      $self->{goTermIds}->{$go_id} = $go_term_id;
-    }
-
-    # also collect SRes.OntologySynonym's:
-    $sql = <<EOSQL;
+ my $sql = <<EOSQL;
 
  SELECT g.ontology_term_id, s.source_id
   FROM   SRes.OntologyTerm g,
          SRes.OntologySynonym s
   WHERE  g.ontology_term_id = s.ontology_term_id
     AND  s.source_id IS NOT NULL
-    AND  g.external_database_release_id = $goDbRlsId
+AND s.source_id like 'GO%'
 EOSQL
+
+    my $stmt = $self->prepareAndExecute($sql);
+    while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
+  $go_id =~ s/_/\:/g;
+      $self->{goTermIds}->{$go_id} = $go_term_id;
+
+    }
+
+    # also collect SRes.OntologySynonym's: #JP edit: swapped sql so it looks for synonyms first and then the ontology term. 
+     $sql = "SELECT ontology_term_id, source_id FROM SRes.OntologyTerm WHERE source_id like 'GO%'";
+
 
     $stmt = $self->prepareAndExecute($sql);
     while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
+  $go_id =~ s/_/\:/g;
+
       $self->{goTermIds}->{$go_id} = $go_term_id;
+
     }
 
   }
+  #print Dumper $self->{goTermIds};
 
-  my $goTermId = $self->{goTermIds}->{$goId};
-
+my $goTermId = $self->{goTermIds}->{$goId};
+  print "gotermId is $goTermId\n\n\n";
   unless ($goTermId) {
+      print "gotermId doesnt exists\n\n";
     if (my $file = $self->getArg('skipBadGOTerms')) {
       $self->log("Skipping bad GO term: $goId\n");
       open(FILE2, ">>$file") or die $!;
       print FILE2 "$goId\n";
       close(FILE2);
+   
     } else {
       $self->userError("Can't find GoTerm in database for GO Id: $goId");
     }
   }
 
   return $goTermId;
+
 }
 
 sub getPriorAssociations {
@@ -406,7 +432,7 @@ SELECT row_id, go_term_id, is_not, go_association_id from DoTS.GOAssociation WHE
 }
 
 sub addAssociationInstance {
-  my ($self, $assocId, $inputAssoc, $goEvidenceCodeDbRlsId) = @_;
+  my ($self, $assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $DBRef, $with) = @_;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
@@ -420,12 +446,17 @@ sub addAssociationInstance {
   $instance->setExternalDatabaseReleaseId($extDbRlsId);
 
   my $evidenceId = $self->getEvidenceId($inputAssoc->getEvidence(),$goEvidenceCodeDbRlsId);
+# think i need to edit this bit . 
+
 
   my $link = GUS::Model::DoTS::GOAssocInstEvidCode->new();
   $link->setGoEvidenceCodeId($evidenceId);
+  $link->setReference($DBRef);
+  $link->setEvidenceCodeParameter($with);
   $instance->addChild($link);
   $instance->submit();
   $self->{instanceCount}++;
+  print $link->toString();
 }
 
 sub getLoeId {
