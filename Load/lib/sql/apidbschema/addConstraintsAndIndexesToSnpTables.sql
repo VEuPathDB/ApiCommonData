@@ -70,4 +70,8 @@ create index apidb.SeqVarRevFkIx2
 on apidb.SequenceVariation (snp_ext_db_rls_id, sequence_variation_id)
 tablespace indx;
 
+create index apidb.SeqDateIx
+on apidb.SequenceVariation (modification_date, sequence_variation_id)
+tablespace indx;
+
 exit;
