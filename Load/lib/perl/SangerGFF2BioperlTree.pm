@@ -289,7 +289,10 @@ sub traverseSeqFeatures {
 	    }
 
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+#	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	    my $transType = $type;
+	    $transType = "mRNA" if ($transType eq "coding");
+	    my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
 	    my ($rnaID) = ($RNA->get_tag_values('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing rna gene id for $geneID\n";
 
 	    $transcript->add_tag_value("ID", $rnaID);
