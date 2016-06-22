@@ -128,7 +128,7 @@ sub parseInputFile {
      if ($seq_source=~/genbank/i) {
 
        $gb_ids->{$seq_source_id} =1;
-       next unless ((scalar(keys (%$gb_ids))) % 10000 == 0);
+       next unless ((scalar(keys (%$gb_ids))) % 1000 == 0);
        my $id_list = join(',',keys(%$gb_ids));
        my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
        system($cmd);
