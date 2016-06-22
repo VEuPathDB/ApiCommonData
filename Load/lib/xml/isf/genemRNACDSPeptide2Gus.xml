@@ -71,7 +71,82 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPartial"     ignore="true"/>
   </feature>
 
-  <feature name="transcript">
+  <feature name="mRNA" so="mRNA">
+    <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"     ignore="true"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="tRNA" so="tRNA">
+    <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"     ignore="true"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="rRNA" so="rRNA">
+    <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"     ignore="true"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="snRNA" so="snRNA">
+    <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"     ignore="true"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="snoRNA" so="snoRNA">
+    <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
+    <qualifier name="stop_codon_redefined_as_selenocysteine"     ignore="true"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPartial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="ncRNA" so="ncRNA">
     <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
