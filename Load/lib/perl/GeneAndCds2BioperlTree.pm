@@ -286,7 +286,11 @@ sub traverseSeqFeatures {
 	    }
             #$gene = &copyQualifiers($RNA,$gene);
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+#	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	    my $transType = $type;
+	    $transType = "mRNA" if ($transType eq "coding");
+	    my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
+
 	    $transcript = &copyQualifiers($RNA,$transcript);
 	    $transcript = &copyQualifiers($geneFeature,$transcript);
 	    my ($rnaId) = ($transcript->has_tag('locus_tag')) ? $transcript->get_tag_values('locus_tag') : die "transcript does not have tag locus_tag\n";
