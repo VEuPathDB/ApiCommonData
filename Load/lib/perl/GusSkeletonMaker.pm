@@ -57,6 +57,21 @@ my $soTerms = { 'coding_gene'=>'protein_coding',
 		'exon' => 'exon',
 		'ORF' => 'ORF',
 		'miRNA_gene' => 'miRNA_encoding',
+		'mRNA' => 'mRNA',
+		'miRNA' => 'miRNA',
+		'misc_RNA' => 'ncRNA',  ## coding for ncRNA since misc_RNA is not in ONTOLOGYTERM table yet
+		'ncRNA' => 'ncRNA',
+		'rRNA' => 'rRNA',
+		'RNase_MRP_RNA' => 'RNase_MRP_RNA',
+		'RNase_P_RNA' => 'RNase_P_RNA',
+		'scRNA' => 'scRNA',
+		'snRNA' => 'snRNA',
+		'snoRNA' => 'snoRNA',
+		'SRP_RNA' => 'SRP_RNA',
+		'tRNA' => 'tRNA',
+		'telomerase_RNA' => 'telomerase_RNA',
+		'tmRNA' => 'tmRNA',
+		'transcript' => 'transcript',
 	      };
 
 #--------------------------------------------------------------------------------
@@ -95,9 +110,10 @@ sub makeGeneSkeleton{
 
     } else {
       $gusTranscript = $distinctTranscripts{$transcriptKey};
+      print STDERR "Duplicated transcript found at $transcriptKey\n";
     }
-    $bioperlTranscript->{gusFeature} = $gusTranscript;
-    push (@{$gusTranscript->{bioperlFeature}}, $bioperlTranscript);
+    $bioperlTranscript->{gusFeature} = $gusTranscript;  ## bioperlTranscript to gusTranscript is many to one
+    push (@{$gusTranscript->{bioperlFeature}}, $bioperlTranscript);  ## gusTransscript to bioperlTranscript is one to many
 
     my @gusExonsAndCodingLocations;
 
@@ -150,7 +166,14 @@ sub makeGeneSkeleton{
     }
 
     ## make translatedAAFeat and translatedAASeq for coding gene
-    if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene' || $bioperlGene->primary_tag() eq 'transposable_element_gene') {
+    ## only for $bioperlGene->primary_tag() eq coding_gene and $bioperlTranscript->primary_tag() eq mRNA
+    if ( ($bioperlGene->primary_tag() eq 'coding_gene'
+	  || $bioperlGene->primary_tag() eq 'repeated_gene'
+	  || $bioperlGene->primary_tag() eq 'pseudo_gene'
+	  || $bioperlGene->primary_tag() eq 'transposable_element_gene')
+	 && $bioperlTranscript->primary_tag() eq 'mRNA'
+
+       ) {
 
       my $translatedAAFeat = &makeTranslatedAAFeat($plugin, $dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
@@ -264,8 +287,8 @@ sub makeGusTranscript {
 
   my $type = $bioperlTranscript->primary_tag();
 
-  $plugin->error("Expected a transcript, got: '$type'")
-    unless ($type eq 'transcript');
+  $plugin->error("Expected a transcript, including all kinds of RNA, got: '$type'")
+    unless ($type eq 'transcript' || $type =~ /RNA/);
 
   my $gusTranscript =
     $plugin->makeSkeletalGusFeature($bioperlTranscript,
@@ -500,7 +523,13 @@ sub setTranscriptIds{
     $splicedNaSeq->setSourceId($transcriptId);  ## set sourceId for splicedNaSequence
     $splicedNaSeq->setSequence($transcriptSeq);
 
-    if ($gusGene->getName() eq 'coding_gene' || $gusGene->getName() eq 'pseudo_gene') {
+    if ( ($gusGene->getName() eq 'coding_gene'
+	  || $gusGene->getName() eq 'pseudo_gene'
+	  || $gusGene->getName() eq 'repeated_gene'
+	  || $gusGene->getName() eq 'transposable_element_gene')
+
+	 && $gusTranscript->getName() eq 'mRNA') {
+
       my @translatedAaFeatures = $gusTranscript->getChildren('DoTS::TranslatedAAFeature', 1);
       my $aaCount = 0;
       foreach my $translatedAaFeature (sort {$a->translation_stop <=> $b->translation_stop} @translatedAaFeatures) {
