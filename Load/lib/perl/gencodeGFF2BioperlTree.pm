@@ -186,6 +186,8 @@ sub traverseSeqFeatures {
 
     my (@genes, $gene, @UTRs);
 
+    my %transciptCheck;
+
     my @RNAs = $geneFeature->get_SeqFeatures;
 
     foreach my $RNA ( sort {$a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end} @RNAs){ 
@@ -199,7 +201,6 @@ sub traverseSeqFeatures {
              'miRNA',
              'ncRNA',
              'rRNA',
-             'scRNA',
              'snRNA',
              'snoRNA',
              'tRNA',
@@ -207,14 +208,14 @@ sub traverseSeqFeatures {
              )
         ) {
 
-	  my ($geneType, $transType);
+	  my ($geneType, $transType, $needPseudo);
 
-#	  if($type eq 'transcript' || $type eq 'mRNA'){
-            ($geneType) = $geneFeature->get_tag_values("gene_type") if ($geneFeature->has_tag("gene_type"));
-            ($transType) = $RNA->get_tag_values("transcript_type") if ($RNA->has_tag("transcript_type"));
-            $geneType = &getTypeOfGeneOrTrans($geneType) if ($geneType);
-            $transType = &getTypeOfGeneOrTrans($transType) if ($transType);
-#	  }
+	  ($geneType) = $geneFeature->get_tag_values("gene_type") if ($geneFeature->has_tag("gene_type"));
+	  ($transType) = $RNA->get_tag_values("transcript_type") if ($RNA->has_tag("transcript_type"));
+	  $needPseudo = 1 if ($transType =~ /pseudo/i);
+
+	  $geneType = &getTypeOfGeneOrTrans($geneType) if ($geneType);
+	  $transType = &getTypeOfGeneOrTrans($transType) if ($transType);
 
 	  $type = $geneType;
 	  $type = 'coding' if ($geneType =~ /pseudo/i);
@@ -235,9 +236,9 @@ sub traverseSeqFeatures {
 	    $gene = &copyQualifiers($geneFeature, $gene);
 	  }
 
-	  my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
-#	  $transType = "mRNA" if ($transType eq "coding" || $transType eq "pseudo");
-#	  my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
+#	  my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	  $transType = "mRNA" if ($transType eq "coding" || $transType eq "pseudo");
+	  my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
 	  my ($rnaID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for gene: $geneID\n";
 	  print "for testing trancript is $rnaID\n";
 
@@ -246,7 +247,7 @@ sub traverseSeqFeatures {
 	  $transcript = &copyQualifiers($RNA, $transcript);
 
 	  ## add pseudo tag for all kind of pseudogene
-	  if ($transType =~ /pseudo/i) {
+	  if ($needPseudo == 1) {
 	    $transcript->add_tag_value('pseudo', '') if (!$transcript->has_tag('Pseudo') && !$transcript->has_tag('pseudo'));
 	  }
 
@@ -326,6 +327,25 @@ sub traverseSeqFeatures {
 	    }
 	  }
 
+
+	  ## for testing
+	  my @exonLocationsForCheck;
+	  foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
+	    my $exonStart = $exon->location->start;
+	    my $exonEnd = $exon->location->end;
+	    push (@exonLocationsForCheck, $exonStart, $exonEnd);
+	  }
+	  my $sortExonLocationStr = join (",", @exonLocationsForCheck); 
+	  my @sortCodingStartAndEndPairs = sort {$a <=> $b} @codingStartAndEndPairs;
+	  my $sortCodingLocationStr = join (",", @sortCodingStartAndEndPairs);
+	  my $transCheckKey = $sortExonLocationStr. ",", $sortCodingLocationStr;
+	  if ($transciptCheck{$transCheckKey}) {
+	    print "Duplication found for $rnaID\n";
+	    next;  ## skip the transcript if all exon and CDS are same
+	  } else {
+	    $transciptCheck{$transCheckKey}++;
+	  }
+
 	  ## add codingStart and codingEnd
 	  my ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 	  foreach my $exon (@exons){
@@ -386,6 +406,7 @@ sub traverseSeqFeatures {
             $gene->location->end($transcript->location->end);
 	  }
 
+	  print "for testing, add transcript $rnaID\n";
 	  $gene->add_SeqFeature($transcript);
 	}
     }
@@ -454,7 +475,6 @@ sub getTypeOfGeneOrTrans {
         tRNA => 'tRNA',
         tRNAscan => 'tRNA',
         snRNA => 'snRNA',
-        scRNA => 'scRNA',
         snoRNA => 'snoRNA',
         miRNA => 'miRNA',
         misc_RNA => 'misc_RNA',
@@ -468,6 +488,7 @@ sub getTypeOfGeneOrTrans {
         ribozyme => 'ncRNA',
         retained_intron => 'ncRNA',
         sRNA => 'ncRNA',
+        scRNA => 'ncRNA',
         vaultRNA => 'ncRNA',
         antisense => 'misc_RNA',
         misc_RNA => 'misc_RNA',
