@@ -182,13 +182,8 @@ sub readGenBankFile {
     while(my $seq = $seq_io->next_seq) {
       $seq_count++;
       my $source_id = $seq->accession_number;
+    
       my $desc = $seq->desc; 
-   
-
-      if ($seq->molecule =~/^prt$/i) {
-        next;
-      }
-
 
       $nodeHash{$source_id}{desc} = $desc;
       $nodeHash{$source_id}{seq}  = $seq->seq;
@@ -211,13 +206,14 @@ sub readGenBankFile {
           
         } # end foreach tag
 
-      } # end foreach feat
+      }# end foreach feat
 
-      $seq_io->close;
     }# end while seq
-  }#end while file
+    $seq_io->close;
+
+  } #end while file
+ 
   closedir $gb_dir_handle;
-    
   return (\%nodeHash);
 }
 
@@ -229,17 +225,17 @@ sub loadSequences {
 
   my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'rRNA_16S' });
   $self->error("cannot find ontology term 'rRNA_16S'") unless $ontologyObj->retrieveFromDB;
-  print STDERR scalar keys %$nodeHash;
-  print STDERR " elements in node hash\n";
-  exit;
+
+
+
   while (my ($seq_source_id, $hash) = each %$nodeHash) {
     my $seq = $hash->{seq};
     my $source_id = $source_ids->{$seq_source_id};
     my $extNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId);
-    
+
     my $ncbi_taxon_id = $hash->{ncbi_taxon_id};
     my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbi_taxon_id });
-    
+
     if($taxonObj->retrieveFromDB()) {
       $extNASeq->setParent($taxonObj);
     }
