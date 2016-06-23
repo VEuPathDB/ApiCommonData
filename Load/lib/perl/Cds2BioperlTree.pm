@@ -66,7 +66,8 @@ sub preprocess {
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
       $gene->add_tag_value("parentID",$parentID);
-      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+#      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+      my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
       $gene->add_SeqFeature($transcript);
       my @exonLocations = $geneLoc->each_Location();
       my $codonStart = 0;
