@@ -240,7 +240,7 @@ sub traverseSeqFeatures {
 	  $transType = "mRNA" if ($transType eq "coding" || $transType eq "pseudo");
 	  my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
 	  my ($rnaID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for gene: $geneID\n";
-	  print "for testing trancript is $rnaID\n";
+	  #print "for testing trancript is $rnaID\n";
 
 	  $transcript->add_tag_value("ID", $rnaID);
 
@@ -265,7 +265,7 @@ sub traverseSeqFeatures {
 	  my $exonCtr = 0;
 	  my $prevPhase =0;
 
-	  print "for testing the lenght of subFeature is $#containedSubFeatures\n";
+	  #print "for testing the lenght of subFeature is $#containedSubFeatures\n";
 	  foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
             if($subFeature->primary_tag eq 'exon'){
@@ -406,7 +406,7 @@ sub traverseSeqFeatures {
             $gene->location->end($transcript->location->end);
 	  }
 
-	  print "for testing, add transcript $rnaID\n";
+	  #print "for testing, add transcript $rnaID\n";
 	  $gene->add_SeqFeature($transcript);
 	}
     }
