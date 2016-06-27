@@ -13,6 +13,7 @@ use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::ApiDB::Reference16S;
 
+use List::Util 'first';  
 use File::Basename;
 use Data::Dumper;
 
@@ -28,7 +29,7 @@ Insert GenBank sequence data from a greengenes assignment file.
 PURPOSE
 
 my $tablesAffected = [
-                      ['ApidbReference16SrRNA',     'One row inserted per isolate .ProtocolAppNode row'] 
+                      ['ApidbReference16S',     'One row inserted per isolate .ProtocolAppNode row'] 
                      ];
 
 my $tablesDependedOn = [
@@ -107,6 +108,7 @@ sub run {
   mkdir($gb_dir) unless (-d $inputDir."/gb");
   my $id_map_hash = $self->parseInputFile($inputFile, $gb_file_basename);
   my $genbank_ids = $id_map_hash->{Genbank};
+  my $nodes = scalar(keys %$genbank_ids);
   my ($nodeHash, $termHash) = $self->readGenBankFile($gb_dir, $extDbRlsId);
   
   my $count = $self->loadRows($nodeHash,$genbank_ids, $extDbRlsId);
@@ -126,42 +128,42 @@ sub parseInputFile {
   while(my $line = <GGFILE>){
     $line=~s/\n|\r//g;
     my ($source_id, $seq_source, $seq_source_id) = split( /\t/, $line);
-    if ($seq_source=~/genbank/i) {
+   #  if ($seq_source=~/genbank/i) {
       
-      $gb_ids->{$seq_source_id} =1;
-      next unless ((scalar(keys (%$gb_ids))) % 500 == 0);
-      my $id_list = join(',',keys(%$gb_ids));
-      my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
-      system($cmd);
-       if ($? == -1) {
-         print "failed to execute: $!\n";
-       }
-      elsif ($? & 127) {
-        printf "child died with signal %d, %s coredump\n",
-          ($? & 127),  ($? & 128) ? 'with' : 'without';
-      }
-      else {
-         printf "child exited with value %d\n", $? >> 8;
-       }
-      $gb_ids = {};
-      $count = $count+1;
-    }
-    
+    #   $gb_ids->{$seq_source_id} =1;
+    #   next unless ((scalar(keys (%$gb_ids))) % 500 == 0);
+    #   my $id_list = join(',',keys(%$gb_ids));
+    #   my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
+    #   system($cmd);
+    #    if ($? == -1) {
+    #      print "failed to execute: $!\n";
+    #    }
+    #   elsif ($? & 127) {
+    #     printf "child died with signal %d, %s coredump\n",
+    #       ($? & 127),  ($? & 128) ? 'with' : 'without';
+    #   }
+    #   else {
+    #      printf "child exited with value %d\n", $? >> 8;
+    #    }
+     #  $gb_ids = {};
+    #   $count = $count+1;
+    # }
+    $seq_source_id =~s/\.\d+$//;
     $inputHash->{$seq_source}->{$seq_source_id}->{source_id}=$source_id;
   }
-  my $id_list = join(',',keys(%$gb_ids));
-  my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list";
-  system($cmd);
-  if ($? == -1) {
-    print "failed to execute: $!\n";
-  }
-  elsif ($? & 127) {
-    printf "child died with signal %d, %s coredump\n",
-      ($? & 127),  ($? & 128) ? 'with' : 'without';
-  }
-  else {
-    printf "child exited with value %d\n", $? >> 8;
-  }
+  # my $id_list = join(',',keys(%$gb_ids));
+  # my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list";
+  # system($cmd);
+  # if ($? == -1) {
+  #   print "failed to execute: $!\n";
+  # }
+  # elsif ($? & 127) {
+  #   printf "child died with signal %d, %s coredump\n",
+  #     ($? & 127),  ($? & 128) ? 'with' : 'without';
+  # }
+  # else {
+  #   printf "child exited with value %d\n", $? >> 8;
+  # }
   return $inputHash;
 }
 
@@ -190,30 +192,41 @@ sub readGenBankFile {
       $nodeHash{$source_id}{seq}  = $seq->seq;
       
       # process source modifiers, extract ncbi_taxon_id
-      foreach my $feat ($seq->get_SeqFeatures) {
-        
-        my $primary_tag = $feat->primary_tag;
-        next unless $primary_tag =~ /source/i;
-        foreach my $tag ($feat->get_all_tags) {
-          next unless $tag =~ /db_xref/i;
 
-          foreach my $value ($feat->get_tag_values($tag)) {
-            next unless $value =~ /taxon:/i;
-            my $ncbi_taxon_id = $value;
-            $ncbi_taxon_id =~ s/^taxon://i;
-            
-            $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
-          } # end foreach value
-          
-        } # end foreach tag
+      my @sourceTags = map {$_->primary_tag =~/source/ && 
+                                                   $_->has_tag('db_xref') ? $_->get_tag_values('db_xref') : ()
+                                                  } $seq->get_SeqFeatures;
+      my $ncbi_taxon_id  = first {/taxon:/i} @sourceTags;
+      $ncbi_taxon_id =~ s/^taxon://i;
+      #     print STDERR $ncbi_taxon_id;
+      $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
+      # exit;
+      # foreach my $feat ($seq->get_SeqFeatures) {
         
-      }# end foreach feat
+        
+      #   my $primary_tag = $feat->primary_tag;
+      #   next unless $primary_tag =~ /source/i;
+      #   foreach my $tag ($feat->get_all_tags) {
+      #     next unless $tag =~ /db_xref/i;
+
+      #     foreach my $value ($feat->get_tag_values($tag)) {
+      #       next unless $value =~ /taxon:/i;
+      #       my $ncbi_taxon_id = $value;
+      #       $ncbi_taxon_id =~ s/^taxon://i;
+            
+      #       $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
+      #    } # end foreach value
+          
+      #  } # end foreach tag
+        
+      # }# end foreach feat
       
     }# end while seq
     $seq_io->close;
+
     
   } #end while file
- 
+
   closedir $gb_dir_handle;
   return (\%nodeHash);
 }
@@ -231,14 +244,20 @@ sub loadRows {
 
   while (my ($seq_source_id, $hash) = each %$nodeHash) {
     my $seq = $hash->{seq};
-    my $source_id = $source_ids->{$seq_source_id};
-#    my $extNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId);
+    
 
-    my $ref16s = GUS::Model::ApiDB::Reference16S->new( {source_id => $source_id,
-                                                                                                          external_database_release_id => $extDbRlsId,
-                                                                                                          sequence_source_id => $seq_source_id,
 
-                                                                                                         });
+    my $source_id = $source_ids->{$seq_source_id}->{source_id};
+    unless ($source_id) { 
+      $self->log("$seq_source_id has is not in the greenGenes dataset at line $count ");
+      next;
+    }                       
+    #    my $extNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId);
+    
+    my $ref16s = GUS::Model::ApiDB::Reference16S->new();
+        $ref16s->setSourceId($source_id);
+        $ref16s->setExternalDatabaseReleaseId($extDbRlsId);
+        $ref16s->setSequenceSourceId($seq_source_id);
 
     my $ncbi_taxon_id = $hash->{ncbi_taxon_id};
     my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbi_taxon_id });
@@ -250,7 +269,7 @@ sub loadRows {
       $self->log("No Row in SRes::Taxon for ncbi tax id $ncbi_taxon_id");
     }
 
-    $ref16s->submit;
+    $ref16s->submit();
     $self->undefPointerCache() if $count++ % 500 == 0;
   }
 
@@ -274,7 +293,7 @@ sub undoTables {
   my ($self) = @_;
   return ( 
                'DoTS.ExternalNASequence',
-               'ApiDB.Reference16SrRNA'               
+               'ApiDB.Reference16S'               
              );
 
 }
