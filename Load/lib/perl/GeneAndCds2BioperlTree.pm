@@ -260,6 +260,7 @@ sub traverseSeqFeatures {
              'snRNA',
              'snoRNA',
              'tRNA',
+             'tmRNA',
              'ncRNA',
              )
         ) {
