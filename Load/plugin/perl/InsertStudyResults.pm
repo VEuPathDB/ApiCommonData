@@ -221,6 +221,9 @@ sub addResults {
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
   }
+  elsif ($protocolName =~ /otu_analysis/) {
+    $tableString = "Results::TaxonAbundance";
+  }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
   }
@@ -286,6 +289,14 @@ sub addResults {
         $start = 1;
     }
 
+    elsif ($sourceIdType =~ /16s_rrna/) {
+
+      my $reference16sId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+      next unless $reference16sId;
+      $hash = { reference_16s_id => $reference16sId, };
+      $start = 1;
+    }
+
     elsif ($sourceIdType =~ /compound/) {
 
       my ($chebi, $isotopomer) = split(/\|/, $a[0]);
@@ -296,6 +307,8 @@ sub addResults {
       };
       $start = 1;
     }
+
+
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -375,9 +388,19 @@ sub lookupIdFromSourceId {
 
     unless (scalar @compoundIds == 1) {
         die "Number of compounds returned should be 1\n";
-    }
+      }
  
     $rv = @compoundIds[0];
+  }
+
+  elsif ($sourceIdType eq '16s_rrna') {
+    my @reference16sIds = $self->sqlAsArray(Sql => "select reference_16s_id from apidb.reference16s where source_id = '$sourceId'");
+
+    unless (scalar @reference16sIds > 0) {
+       $reference16sIds[0] = undef;
+    }
+ 
+    $rv = @reference16sIds[0];
   }
 
   # USES Name instead of source_id here
@@ -464,7 +487,6 @@ sub retrieveAppNodesForStudy {
 
   return \@appNodes;
 }
-
 
 sub makeProtocolAppNode {
   my ($self, $nodeName, $existingAppNodes, $nodeOrderNum, $appNodeType) = @_;
