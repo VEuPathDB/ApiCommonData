@@ -288,7 +288,7 @@ sub makeGusTranscript {
   my $type = $bioperlTranscript->primary_tag();
 
   $plugin->error("Expected a transcript, including all kinds of RNA, got: '$type'")
-    unless ($type eq 'transcript' || $type =~ /RNA/);
+    unless ($type =~ /transcript/ || $type =~ /RNA/);
 
   my $gusTranscript =
     $plugin->makeSkeletalGusFeature($bioperlTranscript,
