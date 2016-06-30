@@ -171,7 +171,8 @@ sub makeGeneSkeleton{
 	  || $bioperlGene->primary_tag() eq 'repeated_gene'
 	  || $bioperlGene->primary_tag() eq 'pseudo_gene'
 	  || $bioperlGene->primary_tag() eq 'transposable_element_gene')
-	 && $bioperlTranscript->primary_tag() eq 'mRNA'
+	 && ($bioperlTranscript->primary_tag() eq 'mRNA'
+	     || $bioperlTranscript->primary_tag() eq 'pseudogenic_transcript')
 
        ) {
 
