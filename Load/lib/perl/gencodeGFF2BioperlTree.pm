@@ -389,7 +389,15 @@ sub traverseSeqFeatures {
             foreach my $exonLoc (@exonLocs){
                 my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
                 $transcript->add_SeqFeature($exon);
-                if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
+		if($gene->primary_tag eq 'coding_gene' || $gene->primary_tag eq 'pseudo_gene' ){
+		  if ($exonLoc->strand == -1) {
+		    $exon->add_tag_value('CodingStart', $exonLoc->end());
+		    $exon->add_tag_value('CodingEnd', $exonLoc->start());
+		  } else {
+		    $exon->add_tag_value('CodingStart', $exonLoc->start());
+		    $exon->add_tag_value('CodingEnd', $exonLoc->end());
+		  }
+		} else {
                     $exon->add_tag_value('CodingStart', '');
                     $exon->add_tag_value('CodingEnd', '');  
                 }
