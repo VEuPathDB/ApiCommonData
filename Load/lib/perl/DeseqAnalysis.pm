@@ -50,9 +50,9 @@ sub munge {
     
     my @inputs;
     
-#  print "$reference\n";
-    # print "$comparator\n\n";
-    # print "\\n main dir is $mainDirectory\n sample name is $sampleName\n\n\n\n ";
+#  print "deseq $reference\n";
+#   print "deseq $comparator\n\n";
+#     print "\\n dwseq  main dir is $mainDirectory\n sample name is $sampleName\n\n\n\n ";
     my %samplesHash = %{$samplesHashref};
     # foreach my $keys (keys %samplesHash) { 
 #      print "sample hash: key is  $keys \t sample is $samplesHash{$keys}\n\n\n";
@@ -158,6 +158,7 @@ $self->getProtocolParamsHash();
 $self->addProtocolParamValue('reference',$reference);
 $self->addProtocolParamValue('comparator',$comparator);
  $self->createConfigFile();
+    print "config file ref is $reference comp is $comparator\n\n\n\n";
 }
 
 

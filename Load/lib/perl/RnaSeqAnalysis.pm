@@ -140,8 +140,8 @@ sub munge {
 	    my @temps = split "_vs_" , $key;
 	    my $sampleNameClean = $key;
 	    $sampleNameClean =~ s/_/ /g;
-	    my $reference = $temps[0];
-	    my $comparator = $temps[1];
+	    my $reference = $temps[1];
+	    my $comparator = $temps[0];
 	    my %dataframeHash;
 	    my $ref = $reference; 
 	    $ref =~ s/_/ /g;
@@ -151,7 +151,7 @@ sub munge {
 	    $dataframeHash{$comparator} = $samplesHash->{$comp};
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 
-		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed....skipping\n";
+#		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed....skipping\n";
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
@@ -160,6 +160,8 @@ sub munge {
 #	    print Dumper $ref;
 #	    print Dumper "comparator is";
 #	    print Dumper $comp;
+#		print Dumper "expname is";
+#		print Dumper $sampleNameClean;
 #	    print Dumper "\n dataframe hash\n";
 #	    print Dumper %dataframeHash;
 
