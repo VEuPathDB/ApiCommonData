@@ -37,7 +37,7 @@ sub preprocess {
     ## check if gene, rna, exon or CDS are on the same strand
     &checkGeneStructure (\@topSeqFeatures);
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+    OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
 
@@ -114,7 +114,7 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("pseudogenic_transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
@@ -133,6 +133,7 @@ sub preprocess {
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 		    }
 		}

@@ -65,7 +65,7 @@ sub preprocess {
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
 	$bioperlSeq->remove_SeqFeatures;
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+	OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 
 	    if($type eq 'pseudogene'){
@@ -133,7 +133,7 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("pseudogenic_transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("locus_tag",($geneFeature->get_tag_values("locus_tag") ) );
 			    $transcript = &copyQualifiers($geneFeature,$transcript);
 
@@ -151,6 +151,7 @@ sub preprocess {
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 			
 		    }
