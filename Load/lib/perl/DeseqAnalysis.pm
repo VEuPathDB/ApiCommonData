@@ -2,7 +2,7 @@
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 use CBIL::Util::Utils;
 use strict;
-#uses DESeq.r 
+#uses DESeq.r script 
 
 sub getSampleName {$_[0]->{sampleName}}
 sub getSamplesHash {$_[0]->{samplesHash}}
@@ -13,7 +13,6 @@ sub getComparator {$_[0]->{comparator}}
 
 
 sub new {
-#print  "gets into deseqanalysis sub new\n\n"; 
     my ($class, $args) = @_;
     
     my $requiredParams = [
@@ -25,7 +24,7 @@ sub new {
     
     
     my $cleanSampleName = $self->getSampleName();
-    
+    $cleanSampleName =~ s/ /_/g;
     $self->setOutputFile($cleanSampleName .'_DESeq2Analysis');
     
     
@@ -33,13 +32,11 @@ sub new {
 }
 
 sub munge {
-    
-#    print  "gets into deseqanalysis sub munge\n";
     my ($self) = @_;
-    
     my $samplesHashref = $self->getSamplesHash();
     my $suffix = $self->getSuffix();
     my $sampleName = $self->getSampleName();
+    $sampleName =~ s/_vs_/ vs /;
     my $mainDirectory=$self->getMainDirectory();
     my $outputFile = $self->getOutputFile();
     my $reference = $self->getReference();
@@ -50,21 +47,8 @@ sub munge {
     $self->setFileNames([$fileName]);    
     my @inputs;
     
-#  print "deseq $reference\n";
-#   print "deseq $comparator\n\n";
-#     print "\\n dwseq  main dir is $mainDirectory\n sample name is $sampleName\n\n\n\n ";
     my %samplesHash = %{$samplesHashref};
-    # foreach my $keys (keys %samplesHash) { 
-#      print "sample hash: key is  $keys \t sample is $samplesHash{$keys}\n\n\n";
-    # }
-    
-#  open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing:$!";
-    
-#ok so here I need to make my dataframes and pass this to the R code. 
-    
-#and then pull back the results from R inorder to create the configFile etc. 
-    
-########################################################### below ive simply copied my script this all needs editing. 
+
     opendir(DIR, $mainDirectory);
     my @ds = readdir(DIR);
     my %ref;
@@ -76,7 +60,6 @@ sub munge {
     foreach my $d (sort @ds) {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	next unless $d !~ /combined/;
-#       print "directory: $d\n";
 	my $sample = $1;
 #	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
 	my $refKey = $reference;
@@ -98,11 +81,9 @@ sub munge {
 	}
     }
 	foreach my $rep (keys %ref) {
-#	    print "REF $rep\t\t\t\t$ref{$rep}\n\n\n";
 	    print $dataframe $rep."\t".$ref{$rep}."\treference\n";
 	}
 	foreach my $rep (keys %comp) {
-#	    print "COMP $rep\t\t\t\t$comp{$rep}\n\n\n";
 	    print $dataframe $rep."\t".$comp{$rep}."\tcomparator\n";
 	}
     
@@ -111,13 +92,8 @@ sub munge {
 
   close($dataframe);
 
- # my $cmd = "echo \'inputDir = \"$mainDirectory\";dataFrame=\"$dataframeFile\";outputDir=\"$mainDirectory\"\' \|cat - DESeq.r \| R --no-save";
-#print "command is $cmd\n";
-#    my $cmd= "awk \'\{ FS\ = \"\,\" \} \;\{print \$1\"\\t\"\$3\"\\t\"\$6\"\\t\"\$7\}\' $mainDirectory$outputFile ";
- # system ($cmd);
     $outputFile =~ s/ /_/g;
  &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile");
-#    print "filename is $fileName\n\n\n";
     open(my $OUT, ">$mainDirectory$fileName");
     print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
     open( my $IN, "$mainDirectory$outputFile");
@@ -150,7 +126,6 @@ sub munge {
     close($OUT);
 
 ####################################################################################################
-#  close OUT;
 my $input_list = \@inputs;
   $self->setSourceIdType('gene');
   $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
@@ -158,7 +133,6 @@ $self->getProtocolParamsHash();
 $self->addProtocolParamValue('reference',$reference);
 $self->addProtocolParamValue('comparator',$comparator);
  $self->createConfigFile();
-#    print "config file ref is $reference comp is $comparator\n\n\n\n";
 }
 
 

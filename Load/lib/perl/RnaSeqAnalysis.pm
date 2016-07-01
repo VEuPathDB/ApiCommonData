@@ -69,7 +69,7 @@ sub munge {
     
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
-#    print Dumper $samplesHash;
+
     foreach my $sampleName (keys %$samplesHash) {
 	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
 									 inputs => $samplesHash->{$sampleName},
@@ -82,8 +82,6 @@ sub munge {
 	$intronJunctions->setTechnologyType($self->getTechnologyType());
 	
 	$intronJunctions->munge();
-#print Dumper "intronJunctions is\n";
-#print Dumper $intronJunctions;    
     }
     
     foreach my $quantificationType ('htseq-union') {    
@@ -98,9 +96,7 @@ sub munge {
 	}
     }
 
-
-    
-#print Dumper "gets to start\n";
+#DESeq2 Analysis starts here  
     
     if (keys %{$samplesHash} <2) {
 	print Dumper  "note: there are less than two conditions DESeq2 analysis can not be done\n";
@@ -110,67 +106,42 @@ sub munge {
 	my @array1;
 	my @array2;
 	my %pairHash;
-# here i need to add a check on the number of reps 
+# check on the number of reps 
 	foreach my $key (keys %{$samplesHash}) {
 		push @array1 , $key;
 		push @array2, $key;
 	}
        
-#	print Dumper "arrays";
-#	print Dumper @array1;
-#	print Dumper @array2;
-	
 	foreach my $element (@array1) {
 	    foreach my $second (@array2) {  
 		if ($element eq $second) {
 		    
 		}
 		else {
-#		    print Dumper "gets to creating pairs\n";
 		    my $pair = $element."_vs_".$second;
-		    $pair =~ s/ /_/g;
 		    $pairHash{$pair} =1;
 		}
 	    }
 	}
-#	print Dumper "pair hash is\n";
-#	print Dumper %pairHash;
 	foreach my $key (keys %pairHash) {
 
 	    my @temps = split "_vs_" , $key;
 	    my $sampleNameClean = $key;
-	    $sampleNameClean =~ s/_/ /g;
 	    my $reference = $temps[1];
 	    my $comparator = $temps[0];
 	    my %dataframeHash;
 	    my $ref = $reference; 
-	    $ref =~ s/_/ /g;
 	    my $comp = $comparator;
-	    $comp =~ s/_/ /g;
-#	    print Dumper "reference is\n";
-#	    print Dumper $ref;
-#	    print Dumper "comparator is\n";
-#	    print Dumper $comp;
 	    $dataframeHash{$reference} = $samplesHash->{$ref};
 	    $dataframeHash{$comparator} = $samplesHash->{$comp};
-#	    print Dumper "dataframeHash is \n";
-#	    print Dumper %dataframeHash;
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 
-		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed....skipping\n";
+		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....skipping\n";
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
 		my $dataframeHashref = \%dataframeHash;
-#	    print Dumper "reference is";
-#	    print Dumper $ref;
-#	    print Dumper "comparator is";
-#	    print Dumper $comp;
-#		print Dumper "expname is";
-#		print Dumper $sampleNameClean;
-#	    print Dumper "\n dataframe hash\n";
-#	    print Dumper %dataframeHash;
-
+#making new DESeq object
 		my $DeseqAnalysis = ApiCommonData::Load::DeseqAnalysis->new({sampleName => $sampleNameClean,
 									     mainDirectory => $self->getMainDirectory,
 									     samplesHash => $dataframeHashref,
@@ -182,8 +153,6 @@ sub munge {
 		$DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis]');
 		$DeseqAnalysis->setTechnologyType($self->getTechnologyType());
 		$DeseqAnalysis->munge();
-#	    print Dumper "deseqanalysis object is";
-#	    print Dumper $DeseqAnalysis;
 	    }
 	}
     }
@@ -234,12 +203,6 @@ sub makeProfiles {
 	my $mode = $1;
 	$profile->addProtocolParamValue('Mode', $mode);
     }
-
-#    if($protocolName eq 'DESeq2Analysis') {
-#	$profile->addProtocolParamValue('reference' , $DeseqAnalysis->{reference});
-#	$profile ->addProtocolParamValue('comparator', $DeseqAnalysis->{comparator});
- #   $profile->addProtocolParamValue('IsStrandSpecific', $isStrandSpecific);
- #   }
 
     $profile->setDisplaySuffix(" [$quantificationType - $strand - $valueType]");
     
