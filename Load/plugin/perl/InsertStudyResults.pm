@@ -222,7 +222,7 @@ sub addResults {
     $tableString = "Results::NaFeatureHostResponse";
   }
   elsif ($protocolName =~ /otu_analysis/) {
-    $tableString = "Results::TaxonAbundance";
+    $tableString = "Results::OtuAbundance";
   }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
@@ -591,6 +591,7 @@ sub undoTables {
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
     'Results.CompoundMassSpec',
+    'Results.OtuAbundance',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
