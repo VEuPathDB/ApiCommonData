@@ -46,8 +46,8 @@ sub munge {
     my $comparator = $self->getComparator();
     $self->setNames([$sampleName]);
     my $fileName = $outputFile."_formatted";
-    $self->setFileNames([$fileName]);
-    
+    $fileName =~ s/ /_/g;
+    $self->setFileNames([$fileName]);    
     my @inputs;
     
 #  print "deseq $reference\n";
@@ -117,7 +117,7 @@ sub munge {
  # system ($cmd);
     $outputFile =~ s/ /_/g;
  &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile");
-    $fileName =~ s/ /_/g;
+#    print "filename is $fileName\n\n\n";
     open(my $OUT, ">$mainDirectory$fileName");
     print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
     open( my $IN, "$mainDirectory$outputFile");
@@ -158,7 +158,7 @@ $self->getProtocolParamsHash();
 $self->addProtocolParamValue('reference',$reference);
 $self->addProtocolParamValue('comparator',$comparator);
  $self->createConfigFile();
-    print "config file ref is $reference comp is $comparator\n\n\n\n";
+#    print "config file ref is $reference comp is $comparator\n\n\n\n";
 }
 
 

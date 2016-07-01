@@ -147,11 +147,17 @@ sub munge {
 	    $ref =~ s/_/ /g;
 	    my $comp = $comparator;
 	    $comp =~ s/_/ /g;
+#	    print Dumper "reference is\n";
+#	    print Dumper $ref;
+#	    print Dumper "comparator is\n";
+#	    print Dumper $comp;
 	    $dataframeHash{$reference} = $samplesHash->{$ref};
 	    $dataframeHash{$comparator} = $samplesHash->{$comp};
+#	    print Dumper "dataframeHash is \n";
+#	    print Dumper %dataframeHash;
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 
-#		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed....skipping\n";
+		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed....skipping\n";
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
