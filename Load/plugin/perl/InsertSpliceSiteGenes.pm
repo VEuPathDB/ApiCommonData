@@ -35,6 +35,13 @@ use Data::Dumper;
 		 isList => 0,
 	       }),
 
+     stringArg({ name => 'extDbRlsSpec',
+		 descr => 'ExtDbRls spec for the splice site dataset',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+
     ];
 
 
@@ -107,13 +114,17 @@ sub run {
   my $genomeExtDbRlsSpec = $self->getArg('genomeExtDbRlsSpec');
   my $genomeExtDbRlsId = $self->getExtDbRlsId($genomeExtDbRlsSpec);
 
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
+
   my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, undef, undef, 1);
 
   my $sh = $dbh->prepare("select sequence from dots.splicednasequence where source_id = ?");
 
   my $genomicSeqSh = $dbh->prepare("select substr(s.sequence, ?, ?) as base from dots.nasequence s where s.source_id = ?");
 
-  my $spliceSiteCollections = $self->makeSpliceSiteCollections();
+  my $spliceSiteCollections = $self->makeSpliceSiteCollections($extDbRlsId);
 
   $self->log("Mapping Splice Sites to Transcripts...\n") if($verbose);
 
@@ -395,13 +406,13 @@ sub sortHashKeysByStrand {
 
 
 sub makeSpliceSiteCollections {
-  my ($self) = @_;
+  my ($self, $extDbRlsId) = @_;
 
   my $dbh = $self->getQueryHandle();
   my $verbose = $self->getArg('verbose');
 
 
-  my $spliceSiteFeatureSh = $dbh->prepare("select ssf.type, ssf.splice_site_feature_id, ssf.na_sequence_id, ssf.segment_start, ssf.strand, ssf.count_per_million, ssf.protocol_app_node_id, ssf.is_unique from apidb.splicesiteFeature");
+  my $spliceSiteFeatureSh = $dbh->prepare("select ssf.type, ssf.splice_site_feature_id, ssf.na_sequence_id, ssf.segment_start, ssf.strand, ssf.count_per_million, ssf.protocol_app_node_id, ssf.is_unique from apidb.splicesiteFeature ssf where external_database_release_id = $extDbRlsId");
   $spliceSiteFeatureSh->execute();
 
   my %spliceSites;
