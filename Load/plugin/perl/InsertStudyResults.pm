@@ -236,6 +236,9 @@ sub addResults {
   elsif ($protocolName eq 'GSNAP/Junctions') {
     $tableString = "ApiDB::IntronJunction";
   } 
+  elsif ($protocolName eq 'Splice Site Features') {
+    $tableString = "ApiDB::SpliceSiteFeature";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
