@@ -106,14 +106,14 @@ sub munge {
   }
   close (FILE);
 
-  $self->insertSpliceSiteFeatures($all_uniq_counts);
+  $self->writeSpliceSiteFeatures($all_uniq_counts);
 
   $self->createConfigFile();
 
 }
 
 
-sub insertSpliceSiteFeatures {
+sub writeSpliceSiteFeatures {
   my ($self, $all_uniq_counts) = @_;
 
   my $outputFile = $self->getOutputFile();
