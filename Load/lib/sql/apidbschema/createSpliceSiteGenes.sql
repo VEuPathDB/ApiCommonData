@@ -1,24 +1,11 @@
 /* table for SpliceSite sites */
-
 CREATE TABLE apidb.SpliceSiteGenes (
   splice_site_gene_id       NUMBER(10) not  null,
   splice_site_feature_id        NUMBER(10) not null,
-  location                      NUMBER(10) not null,
-  strand                        CHAR(1), 
+   protocol_app_node_id         NUMBER(10) NOT NULL,
   source_id                     VARCHAR2(50),
-  dist_to_cds                   NUMBER(10) not null,
-  within_cds                    NUMBER(1),
-  sample_name                   VARCHAR2(100),
-  count                         NUMBER(10),
-  count_per_million             FLOAT(126), 
-  avg_mismatches                FLOAT(126), 
-  is_unique                     NUMBER(1),
-  type                          VARCHAR2(50),
-  na_sequence_id                NUMBER(10),
-  external_database_release_id  NUMBER(10),
   is_dominant                   NUMBER(1), 
   percent_fraction              NUMBER(3), 
-  diff_to_next                  NUMBER(3), 
   first_atg_location            NUMBER(10),
   dist_to_first_atg             NUMBER(10),
   MODIFICATION_DATE            DATE,
@@ -32,6 +19,7 @@ CREATE TABLE apidb.SpliceSiteGenes (
   ROW_GROUP_ID                 NUMBER(3),
   ROW_PROJECT_ID               NUMBER(4),
   ROW_ALG_INVOCATION_ID        NUMBER(12),
+   FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
   FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
   PRIMARY KEY (splice_site_gene_id)
 );
@@ -41,12 +29,9 @@ CREATE SEQUENCE apidb.SpliceSiteGenes_sq;
 grant select on Apidb.SpliceSiteGenes to gus_r;
 grant insert, select, update, delete on Apidb.SpliceSiteGenes to gus_w;
 
-create index apidb.splicesitegenes_loc_idx
-ON Apidb.SpliceSiteGenes (source_id, na_sequence_id, location, type)
-tablespace indx;
 
 create index apidb.splicesitegenes_data_idx
-ON Apidb.SpliceSiteGenes (splice_site_feature_id, count_per_million, sample_name, source_id)
+ON Apidb.SpliceSiteGenes (splice_site_feature_id, protocol_app_node_id, source_id)
 tablespace indx;
 
 INSERT INTO core.TableInfo
@@ -65,4 +50,4 @@ FROM dual,
 WHERE 'SpliceSiteGenes' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-quit;
+exit;

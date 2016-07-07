@@ -1,12 +1,11 @@
-
 CREATE TABLE apidb.SpliceSiteFeature (
  splice_site_feature_id       NUMBER(10),
- external_database_release_id NUMBER(10) NOT NULL,
- type                         VARCHAR2(20) NOT NULL,
+ protocol_app_node_id         NUMBER(10) NOT NULL,
  na_sequence_id               NUMBER(10) NOT NULL,
- location                     NUMBER(10) NOT NULL,
+ segment_start                NUMBER(10) NOT NULL,
+ segment_end                  NUMBER(10) NOT NULL,
+ type                         VARCHAR2(20) NOT NULL,
  strand                       CHAR(1) NOT NULL,
- sample_name                  VARCHAR2(100) NOT NULL,
  count                        NUMBER(10) NOT NULL,
  is_unique                    NUMBER(1) NOT NULL,
  avg_mismatches               FLOAT,
@@ -22,12 +21,13 @@ CREATE TABLE apidb.SpliceSiteFeature (
  ROW_GROUP_ID                 NUMBER(3),
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
- FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
+ FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
+ FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequenceimp,
  PRIMARY KEY (splice_site_feature_id)
 );
 
 CREATE INDEX apidb.ssf_revfk_ix
-  ON apidb.SpliceSiteFeature (external_database_release_id, splice_site_feature_id)
+  ON apidb.SpliceSiteFeature (type, na_sequence_id, is_unique, splice_site_feature_id)
 tablespace indx;
 
 CREATE SEQUENCE apidb.SpliceSiteFeature_sq;
@@ -53,4 +53,5 @@ WHERE 'SpliceSiteFeature' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 ------------------------------------------------------------------------------
+
 exit;
