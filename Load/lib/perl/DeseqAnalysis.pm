@@ -10,7 +10,8 @@ sub getSuffix {$_[0]->{suffix}}
 sub getMainDirectory {$_[0]->{mainDirectory}}
 sub getReference {$_[0]->{reference}}
 sub getComparator {$_[0]->{comparator}}
-
+sub getRefCheck {$_[0]->{referenceCheck}}
+sub getCompCheck {$_[0]->{comparatorCheck}}
 
 sub new {
     my ($class, $args) = @_;
@@ -41,6 +42,8 @@ sub munge {
     my $outputFile = $self->getOutputFile();
     my $reference = $self->getReference();
     my $comparator = $self->getComparator();
+    my $refCheck = $self->getRefCheck();
+    my $compCheck = $self->getCompCheck();
     $self->setNames([$sampleName]);
     my $fileName = $outputFile."_formatted";
     $fileName =~ s/ /_/g;
@@ -61,18 +64,18 @@ sub munge {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	next unless $d !~ /combined/;
 	my $sample = $1;
-#	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
-	my $refKey = $reference;
-	$refKey =~ s/ /_/g;
-#	print "ref to check is $refKey";
-	my $compKey = $comparator;
-	$compKey =~ s/ /_/g;
-#	print "comp to check is $compKey";
-	if ($sample =~ /$refKey/) {
+	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
+#	my $refKey = $reference;
+#	$refKey =~ s/ /_/g;
+#	print "ref to check is $refCheck";
+#	my $compKey = $comparator;
+#	$compKey =~ s/ /_/g;
+#	print "comp to check is $compCheck";
+	if ($sample =~ /^$refCheck/) {
 	    $ref{$sample} = $d;
 	    push @inputs, $sample;
 	}
-	elsif ($sample =~ /$compKey/) {
+	elsif ($sample =~ /^$compCheck/) {
 	    $comp{$sample} = $d;
 	    push @inputs, $sample;
 	}
@@ -94,11 +97,13 @@ sub munge {
 
     $outputFile =~ s/ /_/g;
  &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile");
-    open(my $OUT, ">$mainDirectory$fileName");
+    open(my $OUT, ">$mainDirectory\/$fileName");
     print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
-    open( my $IN, "$mainDirectory$outputFile");
+    open( my $IN, "$mainDirectory\/$outputFile");
+
     while (my $line = <$IN>) {
 	chomp $line;
+#	print "gettting to the printing of the formatted file\n\n\n\n\n ";
 	if ($line =~/baseMean/) {
 	    #skip header
 	    next;

@@ -85,7 +85,7 @@ sub munge {
     }
     
     foreach my $quantificationType ('htseq-union') {    
-	foreach my $quantificationType ('cuff', 'htseq-union', 'htseq-intersection-nonempty', 'htseq-intersection-strict') {
+	
 	    if($isStrandSpecific) {
 		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
 		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
@@ -93,11 +93,12 @@ sub munge {
 	    else {
 		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
 	    }
-	}
+	
     }
-
-#DESeq2 Analysis starts here  
     
+#DESeq2 Analysis starts here  
+#print Dumper "SamplesHash is\n";
+#print Dumper %{$samplesHash};    
     if (keys %{$samplesHash} <2) {
 	print Dumper  "note: there are less than two conditions DESeq2 analysis can not be done\n";
 	next;
@@ -123,6 +124,9 @@ sub munge {
 		}
 	    }
 	}
+
+#	print Dumper "\n\npairHash is \n\n\n\n\n";
+#	print Dumper %pairHash;
 	foreach my $key (keys %pairHash) {
 
 	    my @temps = split "_vs_" , $key;
@@ -132,8 +136,51 @@ sub munge {
 	    my %dataframeHash;
 	    my $ref = $reference; 
 	    my $comp = $comparator;
+	    print Dumper "\n\nREF is \n";
+	    print Dumper $ref;
+	    print Dumper "\n\n COMP is \n";
+	    print Dumper $comp;
 	    $dataframeHash{$reference} = $samplesHash->{$ref};
 	    $dataframeHash{$comparator} = $samplesHash->{$comp};
+	    print Dumper "\n\ndataframeHash is \n";
+	    print Dumper %dataframeHash;
+
+##### trying to workout ref checks etc to deal with display names not matching sample names 
+	    my $Rrep1 = $dataframeHash{$reference}[0];
+	    my $Rrep2 = $dataframeHash{$reference}[1];
+	    my @Rbase1 = split "", $Rrep1;
+	    my @Rbase2 = split"", $Rrep2;
+	    my $RrepBaseName;
+	    my $CrepBaseName;
+	    for (my $i=0; $i <= @Rbase1; $i++) {
+		if ($Rbase1[$i] eq $Rbase2[$i]) {
+		    $RrepBaseName.= $Rbase1[$i];
+		}
+		else {
+		    last;
+		}
+	    }
+	    my $refCheck = $RrepBaseName;
+
+	    my $Crep1 = $dataframeHash{$comparator}[0];
+	    my $Crep2 = $dataframeHash{$comparator}[1];
+	    my @Cbase1 = split "", $Crep1;
+	    my @Cbase2 = split"", $Crep2;
+	    for (my $i=0; $i <= @Cbase1; $i++) {
+		if ($Cbase1[$i] eq $Cbase2[$i]) {
+		    $CrepBaseName.= $Cbase1[$i];
+		}
+		else {
+		    last;
+		}
+	    }
+	    my $compCheck = $CrepBaseName;
+#	    print Dumper "refcheck is\n";
+#	    print Dumper $refCheck;
+#	    print Dumper "compcheck is \n";
+#	    print Dumper $compCheck;
+
+
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 
 		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....skipping\n";
@@ -146,7 +193,9 @@ sub munge {
 									     mainDirectory => $self->getMainDirectory,
 									     samplesHash => $dataframeHashref,
 									     reference => $ref,
+									     referenceCheck => $refCheck,
 									     comparator => $comp,
+									     comparatorCheck => $compCheck,
 									     suffix => 'DESeq2Analysis',
 									     profileSetName => $profileSetName});
 		$DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
