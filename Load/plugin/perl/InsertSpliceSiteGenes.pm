@@ -1,25 +1,4 @@
 package ApiCommonData::Load::Plugin::InsertSpliceSiteGenes;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
-  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -30,8 +9,18 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::SpliceSiteGenes;
 
+use GUS::Community::GeneModelLocations;
 
+use Bio::Location::Simple;
+use Bio::SeqFeature::Collection;
+use Bio::SeqFeature::Generic;
 
+use CBIL::Bio::SequenceUtils;
+
+use GUS::Model::ApiDB::PolyAGenes;
+use GUS::Model::ApiDB::SpliceSiteGenes;
+
+use Data::Dumper;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -39,19 +28,13 @@ use GUS::Model::ApiDB::SpliceSiteGenes;
 
   my $argsDeclaration  =
     [
-     stringArg({ name => 'sampleName',
-		 descr => 'sample names in ApiDB.SpliceSiteFeature',
+     stringArg({ name => 'genomeExtDbRlsSpec',
+		 descr => 'ExtDbRls spec for the genome',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
 	       }),
 
-     stringArg({ name => 'tuningTablePrefix',
-		 descr => 'prefix of organism specific tuning table, example: P2_, 2 is the organism_id from apidb.organism',
-		 constraintFunc=> undef,
-		 reqd  => 0,
-		 isList => 0,
-	       }),
     ];
 
 
@@ -114,187 +97,401 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $sampleName = $self->getArg('sampleName');
-
-  my $tuningTablePrefix;
-
-  $tuningTablePrefix = $self->getArg('tuningTablePrefix') if $self->getArg('tuningTablePrefix');
-
-  my $database = $self->getDb();
-
-  my $algInvocationId = $database->getDefaultAlgoInvoId();
-
-  my $tempTableCreateHSql = "CREATE TABLE apidb.SSGCoor_$algInvocationId AS
-  SELECT na_sequence_id, source_id, alpha, beta, gamma, delta, strand FROM (
-  --CASE A:  1st gene on forward strand
-   SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
-    CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
-   FROM apidbTuning.${tuningTablePrefix}geneAttributes ga,
-  (select min(coding_start) as coding_start_min, na_sequence_id from apidbTuning.${tuningTablePrefix}geneAttributes
-   where gene_type='protein coding'
-   group by na_sequence_id)  sub,
-  (select min(nxt.coding_start) as delta, ga.source_id
-   from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes nxt
-   where ga.na_sequence_id = nxt.na_sequence_id
-   and nxt.gene_type='protein coding'
-   and nxt.coding_start > ga.coding_start  group by ga.source_id) sub3,
-  (select min(nxt.coding_end) as delta, ga.source_id
-   from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes nxt
-   where ga.na_sequence_id = nxt.na_sequence_id
-   and nxt.gene_type='protein coding' 
-   and nxt.coding_end > ga.coding_end group by ga.source_id) sub4
-  WHERE ga.na_sequence_id = sub.na_sequence_id
-  AND ga.source_id = sub3.source_id and ga.source_id = sub4.source_id
-  AND ga.coding_start = sub.coding_start_min
-  AND ga.gene_type='protein coding' and is_reversed=0
-  UNION
-  -- CASE B: other genes on forward strand
-  SELECT ga.na_sequence_id , ga.source_id,
-   CASE WHEN (sub1.alpha > sub2.alpha) THEN sub1.alpha ELSE sub2.alpha END AS alpha,
-   ga.coding_start as beta, ga.end_max as gamma,
-   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
-  FROM apidbTuning.${tuningTablePrefix}geneAttributes ga, 
-   (select max(prev.coding_end) as alpha, ga.source_id
-    from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes prev
-    where ga.na_sequence_id = prev.na_sequence_id
-    and prev.gene_type='protein coding'
-    and prev.coding_end < ga.coding_start  group by ga.source_id) sub1,
-   (select max(prev.coding_start) as alpha, ga.source_id
-    from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes prev
-    where ga.na_sequence_id = prev.na_sequence_id
-    and prev.gene_type='protein coding'
-    and prev.coding_start < ga.coding_start group by ga.source_id) sub2,
-   (select min(nxt.coding_start) as delta, ga.source_id
-    from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes nxt
-    where ga.na_sequence_id = nxt.na_sequence_id
-    and nxt.gene_type='protein coding'
-    and nxt.coding_start > ga.coding_start  group by ga.source_id) sub3,
-   (select min(nxt.coding_end) as delta, ga.source_id
-    from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes nxt
-    where ga.na_sequence_id = nxt.na_sequence_id
-    and nxt.gene_type='protein coding'
-    and nxt.coding_end > ga.coding_end group by ga.source_id) sub4
-  WHERE ga.source_id = sub1.source_id  and ga.source_id = sub2.source_id
-  AND ga.source_id = sub3.source_id  and ga.source_id = sub4.source_id
-  AND ga.gene_type='protein coding' and ga.is_reversed=0
-  UNION
-  --CASE C:  last gene on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta, sa.length as gamma,
-   CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
-  FROM apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}SequenceAttributes sa,
-    (select max(end_max) as max_end_max, na_sequence_id from apidbTuning.${tuningTablePrefix}geneAttributes
-     where gene_type='protein coding'
-     group by na_sequence_id)  sub,
-    (select max(nxt.coding_start) as delta, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes  nxt
-     where ga.na_sequence_id = nxt.na_sequence_id
-     and nxt.gene_type='protein coding'
-     and nxt.coding_start < ga.coding_end  group by ga.source_id) sub3,
-    (select max(nxt.coding_end) as delta, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes  nxt
-     where ga.na_sequence_id = nxt.na_sequence_id
-     and nxt.gene_type='protein coding'
-     and nxt.coding_end < ga.coding_start group by ga.source_id) sub4
-  WHERE ga.na_sequence_id = sub.na_sequence_id
-  AND ga.source_id = sub3.source_id  and ga.source_id = sub4.source_id
-  AND sa.na_sequence_id = ga.na_sequence_id
-  AND ga.end_max = sub.max_end_max and ga.is_reversed=1
-  UNION
-  --CASE D: other genes on reverse strand
-  SELECT ga.na_sequence_id , ga.source_id, ga.coding_end as alpha, ga.coding_start as beta,
-  CASE WHEN (sub1.gamma < sub2.gamma) THEN sub1.gamma ELSE sub2.gamma END AS gamma,
-  CASE WHEN (sub3.delta < sub4.delta) THEN sub3.delta ELSE sub4.delta END AS delta, ga.strand
-  FROM apidbTuning.${tuningTablePrefix}geneAttributes ga,
-    (select min(prev.coding_end) as gamma, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes  prev
-     where ga.na_sequence_id = prev.na_sequence_id
-     and prev.gene_type='protein coding'
-     and prev.coding_end > ga.coding_end  group by ga.source_id) sub1,
-    (select min(prev.coding_start) as gamma, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes  prev
-     where ga.na_sequence_id = prev.na_sequence_id
-     and prev.gene_type='protein coding'
-     and prev.coding_start > ga.coding_start group by ga.source_id) sub2,
-    (select max(nxt.coding_start) as delta, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes  nxt
-     where ga.na_sequence_id = nxt.na_sequence_id
-     and nxt.gene_type='protein coding'
-     and nxt.coding_start < ga.coding_end  group by ga.source_id) sub3,
-    (select max(nxt.coding_end) as delta, ga.source_id
-     from apidbTuning.${tuningTablePrefix}geneAttributes ga, apidbTuning.${tuningTablePrefix}geneAttributes nxt
-     where ga.na_sequence_id = nxt.na_sequence_id
-     and nxt.gene_type='protein coding'
-     and nxt.coding_end < ga.coding_start group by ga.source_id) sub4
-  WHERE ga.source_id = sub1.source_id and ga.source_id = sub2.source_id
-  AND ga.source_id = sub3.source_id and ga.source_id = sub4.source_id
-  AND ga.gene_type='protein coding' and ga.is_reversed=1
-  )
- WHERE na_sequence_id in 
-  (SELECT distinct na_sequence_id FROM apidb.splicesitefeature where type = 'Splice Site' and sample_name='$sampleName')
- ORDER BY na_sequence_id, alpha";
+  my $totalTime;
+  my $totalTimeStart = time();
 
   my $dbh = $self->getQueryHandle();
 
-  my $tempTableCreateH = $dbh->prepare($tempTableCreateHSql);
+  my $verbose = $self->getArg('verbose');
 
-  $tempTableCreateH->execute() or die $dbh->errstr;
+  my $genomeExtDbRlsSpec = $self->getArg('genomeExtDbRlsSpec');
+  my $genomeExtDbRlsId = $self->getExtDbRlsId($genomeExtDbRlsSpec);
 
-  $tempTableCreateH->finish();
+  my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, undef, undef, 1);
 
-  my $sql ="select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
-  CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
-  ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
-  ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
-  where ga.na_sequence_id = ssf.na_sequence_id
-  and ga.strand='forward'
-  and ssf.strand ='+' and ssf.type='Splice Site'
-  and ssf.location<= ga.gamma and ssf.location>= ga.alpha
-  and ssf.sample_name='$sampleName'
-  UNION
-  select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
-  CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
-  ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
-  ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SSGCoor_$algInvocationId ga
-  where ga.na_sequence_id = ssf.na_sequence_id
-  and ga.strand='reverse'
-  and ssf.sample_name='$sampleName'
-  and ssf.strand ='-' and ssf.type='Splice Site'
-  and ssf.location<= ga.gamma and ssf.location>= ga.alpha";
+  my $sh = $dbh->prepare("select sequence from dots.splicednasequence where source_id = ?");
 
-  my $sth = $self->prepareAndExecute($sql);
-  my $numRow=0;
-  while (my @row = $sth->fetchrow_array()){ 
-        my $spliceSiteGenes =  GUS::Model::ApiDB::SpliceSiteGenes->new({'splice_site_feature_id' => $row[0],
-						    'location' => $row[1],
-						    'strand' => $row[2],
-                                                    'source_id' => $row[3],
-						    'dist_to_cds' => $row[4],
-						    'within_cds' => $row[5],	
-						    'sample_name' => $row[6],
-						    'count' => $row[7],
-						    'count_per_million' => $row[8],
-						    'avg_mismatches' => $row[9],
-                                                    'is_unique' => $row[10],
-						    'type' => $row[11],
-						    'na_sequence_id' => $row[12],
-						    'external_database_release_id' => $row[13],							    
-						   });
-   $spliceSiteGenes->submit() unless $spliceSiteGenes->retrieveFromDB();
-   $numRow++;
-    if ($numRow % 100 == 0){
-      $self->log("$numRow rows added to apidb.SpliceSiteGenes.");
+  my $genomicSeqSh = $dbh->prepare("select substr(s.sequence, ?, ?) as base from dots.nasequence s where s.source_id = ?");
+
+  my $spliceSiteCollections = $self->makeSpliceSiteCollections();
+
+  $self->log("Mapping Splice Sites to Transcripts...\n") if($verbose);
+
+  my $codonLength = 3;
+  my $logCount = 0;
+
+  foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+    my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
+
+    my $strand = $geneHash->{strand};
+    my $sequenceSourceId = $geneHash->{sequence_source_id};
+    my $naSequenceId = $geneHash->{na_sequence_id};
+
+    my $lastGeneEndOrSeqStart = $geneHash->{last_gene_end_or_seq_start};
+    my $nextGeneStartOrSeqEnd = $geneHash->{next_gene_start_or_seq_end};
+
+    next unless($nextGeneStartOrSeqEnd > $lastGeneEndOrSeqStart); # SKIP where several genes overlap
+
+    my $collection = $spliceSiteCollections->{$naSequenceId};
+    my @subset = $collection->features_in_range(-start => $lastGeneEndOrSeqStart,
+                                                -end => $nextGeneStartOrSeqEnd,
+                                                -strand => $strand,
+                                                -contain => 1);
+    
+    my (%atgLocations, %stopLocations);
+
+    foreach my $transcriptSourceId (@{$geneModelLocations->getTranscriptIdsFromGeneSourceId($geneSourceId)}) {
+      $sh->execute($transcriptSourceId);
+      my ($transcriptSequence) = $sh->fetchrow_array();
+      $sh->finish();
+      next unless $transcriptSequence;
+
+      my $transcriptSequenceLength = length($transcriptSequence);
+
+      my $offset = 0;
+
+      my $proteinIds = $geneModelLocations->getProteinIdsFromTranscriptSourceId($transcriptSourceId);
+      if(scalar @$proteinIds > 0) {
+
+        my $proteinSourceId = $proteinIds->[0]; # I can just take the first one because I'm only interested in the transcript
+        
+        my $transcriptToGenomicMapper = $geneModelLocations->getTranscriptToGenomicCoordMapper($proteinSourceId);      
+        my $cdsToGenomicMapper = $geneModelLocations->getCdsToGenomicCoordMapper($proteinSourceId);      
+        my $genomicToTranscriptMapper = $geneModelLocations->getGenomicToTranscriptCoordMapper($proteinSourceId);
+
+        my $cdsGenomicLocation = $cdsToGenomicMapper->cds();
+        my $cdsEndPos = $strand == -1 ? $cdsGenomicLocation->start : $cdsGenomicLocation->end;
+
+        $stopLocations{$cdsEndPos}++;
+
+        # CDS end is my starting position
+        my $cdsEndPosLoc = Bio::Location::Simple->new(
+          -start => $cdsEndPos, 
+          -end => $cdsEndPos,
+          -strand => 1);
+
+        # calc cds end in transcript coords
+        my $threePrimeUtrLength = $transcriptSequenceLength - $genomicToTranscriptMapper->map($cdsEndPosLoc)->start(); # start and end are equal for cdsEndPosLoc
+        $offset = $offset - $threePrimeUtrLength;
+
+        while(length($transcriptSequence) + $offset > 0) {
+          my $transcriptCursorEnd = length($transcriptSequence) + $offset;
+          my $transcriptCursorStart = $transcriptCursorEnd - $codonLength + 1;
+
+          $offset = $offset - $codonLength;
+
+          my $codon = substr($transcriptSequence, $offset, $codonLength);
+
+          if(lc($codon) eq 'atg') {
+
+            my $transcriptCursorLoc = Bio::Location::Simple->new(
+              -start => $transcriptCursorStart, 
+              -end => $transcriptCursorEnd,
+              -strand => 1);
+            
+            my $cursorGenomicLoc = $transcriptToGenomicMapper->map($transcriptCursorLoc);
+
+
+            if($strand == -1) {
+              $atgLocations{$cursorGenomicLoc->end()}++;
+            }
+            else {
+              $atgLocations{$cursorGenomicLoc->start()}++;
+            }
+          }
+        }
+
+        my $transcriptGenomicLocation = $transcriptToGenomicMapper->cds();
+
+        my ($genomicSeqStart, $genomicSeqLength);
+        if($strand == -1) {
+          $genomicSeqStart = $transcriptGenomicLocation->end() + 1;
+          $genomicSeqLength = $nextGeneStartOrSeqEnd - $transcriptGenomicLocation->end() - 1; # subtract 1 here because I don't want to include either the last or the first
+        }
+        else {
+          $genomicSeqStart = $lastGeneEndOrSeqStart +1;
+          $genomicSeqLength = $transcriptGenomicLocation->start - $lastGeneEndOrSeqStart - 1; # subtract 1 here because I don't want to include either the last or the first
+        }
+
+        next unless($genomicSeqLength > 0); # SKIP overlapping genes
+
+        $genomicSeqSh->execute($genomicSeqStart, $genomicSeqLength, $sequenceSourceId);
+        my ($genomicSequence) = $genomicSeqSh->fetchrow_array();
+        $genomicSeqSh->finish();
+
+        unless($genomicSequence) {
+          print STDERR Dumper $geneHash;
+          $self->error("Could not retrieve genomicSequence for $sequenceSourceId w/ start=$genomicSeqStart and length=$genomicSeqLength");
+        }
+
+        if($strand == -1) {
+          $genomicSequence = CBIL::Bio::SequenceUtils::reverseComplementSequence($genomicSequence);
+        }
+
+        # reset offset
+        $offset = 0;
+
+        while(length($genomicSequence) + $offset > 0) {
+          my ($genomicSequenceCursorEnd, $genomicSequenceCursorStart);
+
+          if($strand == -1) {
+            $genomicSequenceCursorStart = $genomicSeqStart - $offset;
+            $genomicSequenceCursorEnd = $genomicSequenceCursorStart + $codonLength - 1;
+          }
+          else {
+            $genomicSequenceCursorEnd = length($genomicSequence) + $offset;
+            $genomicSequenceCursorStart = $genomicSequenceCursorEnd - $codonLength + 1;
+          }
+
+          $offset = $offset - $codonLength;
+
+          my $codon = substr($genomicSequence, $offset, $codonLength);
+
+          if(lc($codon) eq 'atg') {
+
+            my $genomicSequenceLoc = Bio::Location::Simple->new(
+              -start => $genomicSequenceCursorStart,
+              -end => $genomicSequenceCursorEnd,
+              -strand => 1);
+
+
+            if($strand == -1) {
+              $atgLocations{$genomicSequenceCursorEnd}++;
+            }
+            else {
+              $atgLocations{$genomicSequenceCursorStart}++;
+            }
+          }
+        }
+      } 
+    }
+
+
+    my $atgLocations = &sortHashKeysByStrand(\%atgLocations, $strand);
+    my $stopLocations = &sortHashKeysByStrand(\%stopLocations, $strand);
+
+
+    my (%maxCounts, %totalCounts);
+    foreach my $feature (@subset) {
+      my ($sample) = $feature->get_tag_values('sample');
+      my $count = $feature->score();
+
+      my $spliceSiteType = $feature->primary();
+
+      $maxCounts{$spliceSiteType}{$sample} = $count if($count > $maxCounts{$spliceSiteType}{$sample});
+      $totalCounts{$spliceSiteType}{$sample} += $count;
+    }
+
+#--------------------------------------------------------------------------------
+# Finally we can associate the sl and polyA w/ the Gene
+#--------------------------------------------------------------------------------
+
+    foreach my $feature (@subset) {
+      my $spliceSiteType = $feature->primary();
+
+      my ($sample) = $feature->get_tag_values('sample');
+      my ($spliceSiteFeatureId) = $feature->get_tag_values('splice_site_feature_id');
+
+      my $count = $feature->score();
+
+      my $isDominant;
+      if($maxCounts{$spliceSiteType}{$sample} == $count) {
+        $isDominant = 1;
+      }
+      my $percentFraction = ($count / $totalCounts{$spliceSiteType}{$sample}) * 100;
+
+
+      if($spliceSiteType eq 'Splice Site') {
+        my ($firstAtgLoc, $distToAtg) = &findFirstAtgLoc($feature->start(), $atgLocations , $strand);
+
+        my $gusSS = GUS::Model::ApiDB::SpliceSiteGenes->new({source_id => $geneSourceId,
+                                                             protocol_app_node_id => $sample,
+                                                             splice_site_feature_id => $spliceSiteFeatureId,
+                                                             is_dominant => $isDominant,
+                                                             percent_fraction => $percentFraction,
+                                                             first_atg_location => $firstAtgLoc,
+                                                             dist_to_first_atg => $distToAtg
+                                                            });
+
+        $gusSS->submit();
+      }
+
+      if($spliceSiteType eq 'Poly A') {
+        my ($distanceToStops, $hasPositiveDist) = &findStopDistances($feature->start(), $stopLocations, $strand);
+
+        foreach my $distance (@$distanceToStops) {
+          next if($distance <= 0 && $hasPositiveDist);
+
+          my $withinCds = $distance > 0 ? 0 : 1;
+
+          my $gusSS = GUS::Model::ApiDB::PolyAGenes->new({source_id => $geneSourceId,
+                                                          protocol_app_node_id => $sample,
+                                                          splice_site_feature_id => $spliceSiteFeatureId,
+                                                          is_dominant => $isDominant,
+                                                          percent_fraction => $percentFraction,
+                                                          within_cds => $withinCds,
+                                                          dist_to_cds => $distance,
+                                                         });
+          $gusSS->submit();
+        }
+      }
+    }
+
+
+    if($logCount++ % 1000 == 0) {
+      my $runTime = time() - $totalTimeStart;
+      $self->log("Processed $logCount genes in $runTime seconds\n") ;
       $self->undefPointerCache();
     }
   }
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SSGCoor_$algInvocationId");
-  $tempTableDropH->execute() or die $dbh->errstr;
-  $tempTableDropH->finish();
+
+}
+
+
+sub findStopDistances {
+  my ($loc, $stopLocations, $strand) = @_;
+
+  return [] unless(scalar @$stopLocations > 0);
+
+  my @distances;
+  my $hasPositiveDistance;
+
+  foreach my $stop (@$stopLocations) {
+    my $dist;
+
+    if($strand == -1) {
+      $dist = $stop - $loc + 1;
+      push @distances, $dist;
+
+    }
+    else {
+      $dist = $loc - $stop + 1;
+      push @distances, $dist;
+    }
+
+    if($dist > 0) {
+      $hasPositiveDistance++;
+    }
+  }
+  return(\@distances, $hasPositiveDistance);
+
+}
+
+sub sortHashKeysByStrand {
+  my ($hash, $strand) = @_;
+
+  my @rv = sort { 
+    if($strand == -1) { 
+      $b <=> $a;
+    }
+    else {
+      $a <=> $b;
+    }
+  } keys %$hash;
+
+  return \@rv;
 }
 
 
 
+sub makeSpliceSiteCollections {
+  my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+  my $verbose = $self->getArg('verbose');
+
+
+  my $spliceSiteFeatureSh = $dbh->prepare("select ssf.type, ssf.splice_site_feature_id, ssf.na_sequence_id, ssf.segment_start, ssf.strand, ssf.count_per_million, ssf.protocol_app_node_id, ssf.is_unique from apidb.splicesiteFeature");
+  $spliceSiteFeatureSh->execute();
+
+  my %spliceSites;
+  my %spliceSiteCollections;
+
+  $self->log("Reading splice site features from database ...\n") if($verbose);
+
+
+  while(my ($ssType, $ssId, $ssNaSequenceId, $ssLoc, $ssStrand, $ssCount, $ssSample, $isUnique) = $spliceSiteFeatureSh->fetchrow_array()) {
+    my $feature = Bio::SeqFeature::Generic->new(-start => $ssLoc, 
+                                                -end => $ssLoc, 
+                                                -strand => $ssStrand, 
+                                                -primary => $ssType, 
+                                                -seq_id => $ssNaSequenceId, 
+                                                -score => $ssCount, 
+                                                -tag => {'sample' => $ssSample, 'is_unique' => $isUnique, 'splice_site_feature_id' => $ssId}
+        );
+
+    push @{$spliceSites{$ssNaSequenceId}}, $feature;
+  }
+
+  $spliceSiteFeatureSh->finish();
+
+  $self->log("Building Collection object ...\n") if($verbose);
+  foreach my $naSequenceId (keys %spliceSites) {
+    my $collection = Bio::SeqFeature::Collection->new();
+    $collection->add_features($spliceSites{$naSequenceId});
+
+    $spliceSiteCollections{$naSequenceId} = $collection;
+  }
+
+  my @naSequenceIds = keys %spliceSiteCollections;
+
+  return \%spliceSiteCollections;
+}
+
+
+
+sub findFirstAtgLoc {
+  my ($loc, $atgLocations, $strand) = @_;
+
+  return unless(scalar @$atgLocations > 0);
+
+  foreach my $atg (@$atgLocations) {
+    if($strand == -1) {
+      if($atg < $loc) {
+        my $dist = $loc - $atg + 1;
+        return $atg, $dist;
+      }
+    }
+    else {
+      if($atg > $loc) {
+        my $dist = $atg - $loc + 1;
+        return $atg, $dist;
+      }
+    }
+  }
+}
+
+
+sub getExtDbRlsIdFromSpec {
+  my ($dbh, $genomeExtDbRlsSpec) = @_;
+
+  my ($name, $version) = split(/\|/, $genomeExtDbRlsSpec);
+
+  my $sql = "select r.external_database_release_id 
+from sres.externaldatabase d
+   , sres.externaldatabaserelease r
+where d.EXTERNAL_DATABASE_ID = r.EXTERNAL_DATABASE_ID
+and d.name = ?
+and r.version = ?";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($name, $version);
+
+  my ($count, $rv);
+
+  while(my ($id) = $sh->fetchrow_array()) {
+    $rv =  $id;
+    $count++;
+  }
+
+  $sh->finish();
+
+  if($count != 1) {
+    die "Could not find an external database release id for the spec $genomeExtDbRlsSpec";
+  }
+
+  return $rv;
+}
 
 
 sub undoTables {
