@@ -332,6 +332,13 @@ sub getMapping {
     else{
       $featId = &$method($self, $sourceId);
     }
+unless ($featId) {
+      $self->log("Skipping: source_id '$sourceId' not found in database.");
+      next;
+};
+unless (ref $featId eq 'ARRAY'){
+$featId = [$featId];
+}
     if(scalar @{$featId} < 1){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
       next;
