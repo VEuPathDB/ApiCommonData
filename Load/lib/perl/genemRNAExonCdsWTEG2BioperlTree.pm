@@ -37,7 +37,7 @@ sub preprocess {
     ## check if gene, rna, exon or CDS are on the same strand
     &checkGeneStructure (\@topSeqFeatures);
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+	OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
 
@@ -114,7 +114,7 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("ID", $gID.".mRNA");
 			    $transcript->add_tag_value("pseudo","");
 
@@ -133,6 +133,7 @@ sub preprocess {
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 		    }
 		}
@@ -220,7 +221,9 @@ sub traverseSeqFeatures {
 	  $gene = &copyQualifiers($geneFeature, $gene);
 	}
 
-	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	my $transcriptType = $type;
+	$transcriptType = "mRNA" if ($transcriptType eq "coding");
+	my $transcript = &makeBioperlFeature("$transcriptType", $RNA->location, $bioperlSeq);
 	my ($rnaID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for gene: $geneID\n";
 
 	$transcript->add_tag_value("ID", $rnaID);
