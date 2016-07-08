@@ -43,7 +43,7 @@ sub preprocess {
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
 	$bioperlSeq->remove_SeqFeatures;
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+	OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 
             if($type eq 'pseudogene'){
@@ -102,7 +102,7 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript->add_tag_value("gene",($geneFeature->get_tag_values("gene") ) );
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
@@ -118,6 +118,7 @@ sub preprocess {
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 		    }
 		}
@@ -239,7 +240,9 @@ sub traverseSeqFeatures {
 		$gene = &copyQualifiers($geneFeature, $gene);
 	    }
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	    my $transcriptType = $type;
+	    $transcriptType = "mRNA" if ($transcriptType eq "coding");
+	    my $transcript = &makeBioperlFeature("$transcriptType", $RNA->location, $bioperlSeq);
 	    $transcript = &copyQualifiers($RNA,$transcript);
 	    $transcript = &copyQualifiers($geneFeature,$transcript);
 	    my ($rnaId) = ($transcript->has_tag('gene')) ? $transcript->get_tag_values('gene') : die "transcript does not have tag gene\n";
