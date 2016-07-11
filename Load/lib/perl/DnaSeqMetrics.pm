@@ -28,6 +28,21 @@ sub getMappedReads {
     return ($mappedReads/$totalReads);
 }
 
+sub getNumberMappedReads {
+    my $bamFile = shift;
+    my $mappedReads = &runCmd("samtools view -F 0x04 -c $bamFile");
+    return $mappedReads;
+}
+
+### also want in here 
+## sub GetUniqueMapped {
+#}
+
+
+## sub GetNonUniqueMapped {
+#}
+
+
 sub getGenomeFile {
     my ($bamFile, $workingDir) = @_;
     open (G, ">$workingDir/genome.txt") or die "Cannot open genome file $workingDir/genome.txt for writing\n";

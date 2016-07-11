@@ -64,7 +64,7 @@ sub munge {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	next unless $d !~ /combined/;
 	my $sample = $1;
-	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
+#	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
 #	my $refKey = $reference;
 #	$refKey =~ s/ /_/g;
 #	print "ref to check is $refCheck";
@@ -112,6 +112,7 @@ sub munge {
 	    my @temps = split ",", $line;
 	    my $reportedFC;
 	    my $id = $temps[0];
+	    $id =~ s/"//g;
 	    my $log2fc = $temps[2];
 	    my $foldchange = 2**$log2fc;
 	    if ($foldchange >1 ) {
