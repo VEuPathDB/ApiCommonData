@@ -128,42 +128,42 @@ sub parseInputFile {
   while(my $line = <GGFILE>){
     $line=~s/\n|\r//g;
     my ($source_id, $seq_source, $seq_source_id) = split( /\t/, $line);
-   #  if ($seq_source=~/genbank/i) {
-      
-    #   $gb_ids->{$seq_source_id} =1;
-    #   next unless ((scalar(keys (%$gb_ids))) % 500 == 0);
-    #   my $id_list = join(',',keys(%$gb_ids));
-    #   my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
-    #   system($cmd);
-    #    if ($? == -1) {
-    #      print "failed to execute: $!\n";
-    #    }
-    #   elsif ($? & 127) {
-    #     printf "child died with signal %d, %s coredump\n",
-    #       ($? & 127),  ($? & 128) ? 'with' : 'without';
-    #   }
-    #   else {
-    #      printf "child exited with value %d\n", $? >> 8;
-    #    }
-     #  $gb_ids = {};
-    #   $count = $count+1;
-    # }
+    if ($seq_source=~/genbank/i) {
+
+      $gb_ids->{$seq_source_id} =1;
+      next unless ((scalar(keys (%$gb_ids))) % 500 == 0);
+      my $id_list = join(',',keys(%$gb_ids));
+      my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
+      system($cmd);
+      if ($? == -1) {
+        print "failed to execute: $!\n";
+      }
+      elsif ($? & 127) {
+         printf "child died with signal %d, %s coredump\n",
+           ($? & 127),  ($? & 128) ? 'with' : 'without';
+       }
+      else {
+        printf "child exited with value %d\n", $? >> 8;
+      }
+      $gb_ids = {};
+      $count = $count+1;
+    }
     $seq_source_id =~s/\.\d+$//;
     $inputHash->{$seq_source}->{$seq_source_id}->{source_id}=$source_id;
   }
-  # my $id_list = join(',',keys(%$gb_ids));
-  # my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list";
-  # system($cmd);
-  # if ($? == -1) {
-  #   print "failed to execute: $!\n";
-  # }
-  # elsif ($? & 127) {
-  #   printf "child died with signal %d, %s coredump\n",
-  #     ($? & 127),  ($? & 128) ? 'with' : 'without';
-  # }
-  # else {
-  #   printf "child exited with value %d\n", $? >> 8;
-  # }
+  my $id_list = join(',',keys(%$gb_ids));
+  my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list";
+  system($cmd);
+  if ($? == -1) {
+    print "failed to execute: $!\n";
+   }
+  elsif ($? & 127) {
+    printf "child died with signal %d, %s coredump\n",
+      ($? & 127),  ($? & 128) ? 'with' : 'without';
+  }
+  else {
+    printf "child exited with value %d\n", $? >> 8;
+  }
   return $inputHash;
 }
 
@@ -184,6 +184,7 @@ sub readGenBankFile {
     
     while(my $seq = $seq_io->next_seq) {
       $seq_count++;
+
       my $source_id = $seq->accession_number;
     
       my $desc = $seq->desc; 
@@ -198,29 +199,8 @@ sub readGenBankFile {
                                                   } $seq->get_SeqFeatures;
       my $ncbi_taxon_id  = first {/taxon:/i} @sourceTags;
       $ncbi_taxon_id =~ s/^taxon://i;
-      #     print STDERR $ncbi_taxon_id;
-      $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
-      # exit;
-      # foreach my $feat ($seq->get_SeqFeatures) {
-        
-        
-      #   my $primary_tag = $feat->primary_tag;
-      #   next unless $primary_tag =~ /source/i;
-      #   foreach my $tag ($feat->get_all_tags) {
-      #     next unless $tag =~ /db_xref/i;
 
-      #     foreach my $value ($feat->get_tag_values($tag)) {
-      #       next unless $value =~ /taxon:/i;
-      #       my $ncbi_taxon_id = $value;
-      #       $ncbi_taxon_id =~ s/^taxon://i;
-            
-      #       $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
-      #    } # end foreach value
-          
-      #  } # end foreach tag
-        
-      # }# end foreach feat
-      
+      $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
     }# end while seq
     $seq_io->close;
 
@@ -274,19 +254,6 @@ sub loadRows {
   }
 
   return $count;
-}
-
-sub buildSequence {
-  my ($self, $seq, $source_id, $extDbRlsId) = @_;
-
-  my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
-
-  $extNASeq->setExternalDatabaseReleaseId($extDbRlsId);
-  $extNASeq->setSequence($seq);
-  $extNASeq->setSourceId($source_id);
-  $extNASeq->setSequenceVersion(1);
-
-  return $extNASeq;
 }
 
 sub undoTables {

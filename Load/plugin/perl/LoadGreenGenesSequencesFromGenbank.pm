@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::LoadGreenGenesSequencesFromGenbank;
+package ApiCommonData::Load::Plugin::LoadGreenGenesTaxonFromGenbank;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -11,6 +11,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::OntologyTerm;
+use GUS::Model::ApiDB::Reference16S;
 
 use File::Basename;
 use Data::Dumper;
@@ -27,7 +28,7 @@ Insert GenBank sequence data from a greengenes assignment file.
 PURPOSE
 
 my $tablesAffected = [
-  ['DoTS.ExternalNASequence',     'One row inserted per isolate .ProtocolAppNode row'] 
+  ['ApidbReference16SrRNA',     'One row inserted per isolate .ProtocolAppNode row'] 
 ];
 
 my $tablesDependedOn = [
@@ -201,7 +202,7 @@ sub readGenBankFile {
             my $ncbi_taxon_id = $value;
             $ncbi_taxon_id =~ s/^taxon://i;
 
-            $nodeHash{source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
+            $nodeHash{$source_id}{ncbi_taxon_id}=$ncbi_taxon_id;
           } # end foreach value
           
         } # end foreach tag
@@ -217,33 +218,39 @@ sub readGenBankFile {
   return (\%nodeHash);
 }
 
-sub loadSequences {
+sub loadRows {
 
   my($self, $nodeHash, $source_ids, $extDbRlsId) = @_;
 
   my $count = 0;
 
-  my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'rRNA_16S' });
-  $self->error("cannot find ontology term 'rRNA_16S'") unless $ontologyObj->retrieveFromDB;
+#  my $ontologyObj = GUS::Model::SRes::OntologyTerm->new({ name => 'rRNA_16S' });
+#  $self->error("cannot find ontology term 'rRNA_16S'") unless $ontologyObj->retrieveFromDB;
 
 
 
   while (my ($seq_source_id, $hash) = each %$nodeHash) {
     my $seq = $hash->{seq};
     my $source_id = $source_ids->{$seq_source_id};
-    my $extNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId);
+#    my $extNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId);
+
+    my $ref16s = GUS::Model::ApiDB::Reference16S->new( {source_id => $source_id,
+                                                                                                          external_database_release_id => $extDbRlsId,
+                                                                                                          sequence_source_id => $seq_source_id,
+
+                                                                                                         });
 
     my $ncbi_taxon_id = $hash->{ncbi_taxon_id};
     my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbi_taxon_id });
 
     if($taxonObj->retrieveFromDB()) {
-      $extNASeq->setParent($taxonObj);
+      $ref16s->setParent($taxonObj);
     }
     else {
       $self->log("No Row in SRes::Taxon for ncbi tax id $ncbi_taxon_id");
     }
-    
-    $extNASeq->submit;
+
+    $ref16s->submit;
     $self->undefPointerCache() if $count++ % 500 == 0;
   }
 
@@ -267,6 +274,7 @@ sub undoTables {
   my ($self) = @_;
   return ( 
                'DoTS.ExternalNASequence',
+               'ApiDB.Reference16SrRNA'               
              );
 
 }

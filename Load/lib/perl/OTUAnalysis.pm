@@ -43,14 +43,18 @@ sub munge {
     ($dataFile,$mappingFile) = parseBiomFile($self->mappingFile); 
   }
 
-  $self->setProtocolName('otu_analysis');
+  $self->setProtocolName('metagenomics analysis');
   my ($samples, $fileNames) = $self->parseOtuFile($dataFile);
     
+
   $self->setNames($samples);
   $self->setFileNames($fileNames);
-  my $samplesHash = $self->groupListHashRef($samples);
 
-  $self->setInputProtocolAppNodesHash($samplesHash);
+  my $emptyArrayRef = [];
+ my %samplesHash =  map { $_ => $emptyArrayRef } @$samples;
+ # my $samplesHash = $self->groupListHashRef($samples);
+
+  $self->setInputProtocolAppNodesHash(\%samplesHash);
 
   $self->createConfigFile(); 
 }
@@ -88,13 +92,16 @@ RString
 
 sub parseOtuFile {
   my ($self, $dataFile) = @_;
-
+  
   open (OTU, "<$dataFile");
   
   my $header = <OTU>;
+  $header=~s/\n|\r//g;
   my @samples = split("\t",$header);
   shift @samples;
-  
+
+  @samples = map{ $_ . " (OTU)" }@samples;
+
   my $dataHash = {};
   my $totalCounts = {};
   my $gg_id = [];
@@ -111,7 +118,7 @@ sub parseOtuFile {
       $i++;
     }
   }
-  
+
   my $outputFile = $self->getOutputFile();
   my $ordered_samples = [];
   my $ordered_file_names = [];
@@ -130,7 +137,6 @@ sub parseOtuFile {
       my $relative_abundance = $abundance / ($totalCounts->{$sample_id});
       print OUT "$gg_id\t$abundance\t$relative_abundance\n";
     }
-
   }
   return ($ordered_samples, $ordered_file_names);
 }

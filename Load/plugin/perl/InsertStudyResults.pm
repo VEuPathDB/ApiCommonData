@@ -221,7 +221,7 @@ sub addResults {
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
   }
-  elsif ($protocolName =~ /otu_analysis/) {
+  elsif ($protocolName =~ /metagenomics analysis/) {
     $tableString = "Results::OtuAbundance";
   }
   elsif ($protocolName =~ /Ploidy/) {
