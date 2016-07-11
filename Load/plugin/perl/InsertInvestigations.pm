@@ -695,15 +695,13 @@ sub checkDatabaseNodesAreHandled {
   }
 
   my $sql = "select pan.name, pan.protocol_app_node_id
-from apidb.datasource ds
-   , SRES.EXTERNALDATABASE d
+from SRES.EXTERNALDATABASE d
    , SRES.EXTERNALDATABASERELEASE r
    , study.study i
    , study.study ps
    , study.studylink sl
    , STUDY.PROTOCOLAPPNODE pan
-where ds.name = ?
- and ds.EXTERNAL_DATABASE_NAME = d.name
+where d.name = ?
  and d.EXTERNAL_DATABASE_ID = r.EXTERNAL_DATABASE_ID
  and r.EXTERNAL_DATABASE_RELEASE_ID = i.EXTERNAL_DATABASE_RELEASE_ID
  and i.STUDY_ID = ps.INVESTIGATION_ID
@@ -711,14 +709,12 @@ where ds.name = ?
  and sl.PROTOCOL_APP_NODE_ID = pan.PROTOCOL_APP_NODE_ID
  UNION
 select pan.name, pan.protocol_app_node_id
-from apidb.datasource ds
-   , SRES.EXTERNALDATABASE d
+from SRES.EXTERNALDATABASE d
    , SRES.EXTERNALDATABASERELEASE r
    , study.study i
     , study.studylink sl
    , STUDY.PROTOCOLAPPNODE pan
-where ds.name = ?
- and ds.EXTERNAL_DATABASE_NAME = d.name
+where d.name = ?
  and d.EXTERNAL_DATABASE_ID = r.EXTERNAL_DATABASE_ID
  and r.EXTERNAL_DATABASE_RELEASE_ID = i.EXTERNAL_DATABASE_RELEASE_ID
  and i.STUDY_ID = sl.study_id
