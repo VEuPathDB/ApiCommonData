@@ -239,6 +239,12 @@ sub addResults {
   elsif ($protocolName eq 'Splice Site Features') {
     $tableString = "ApiDB::SpliceSiteFeature";
   } 
+  elsif ($protocolName eq 'RFLPGenotype') {
+    $tableString = "ApiDB::RflpGenotype";
+  }
+  elsif ($protocolName eq 'RFLPGenotypeNumber') {
+    $tableString = "ApiDB::RflpGenotypeNumber";
+  }
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -569,6 +575,8 @@ sub undoTables {
     'ApiDB.ONTOLOGYTERMRESULT',
     'ApiDB.INTRONJUNCTION',
     'ApiDB.HAPLOTYPERESULT',
+    'ApiDB.RflpGenotype',
+    'ApiDB.RflpGenotypeNumber',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
