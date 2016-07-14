@@ -247,7 +247,6 @@ sub loadIsolates {
 
       # loop each source modifiers, e.g. isolate => cp2; host => cow
       while(my ($term, $value) = each %{$nodeHash->{$id}->{terms}}) {  
-
         if($term eq 'db_xref' && $value =~ /taxon\:(\d+)/i) {
 
           $term = 'ncbi_taxon';
@@ -265,6 +264,11 @@ sub loadIsolates {
 
         my $categoryOntologyObj = $self->findOntologyTermByCategory($term);
         my $characteristic = GUS::Model::Study::Characteristic->new();
+     
+        if (length($value)>2000){
+           my $subLength = substr($value,0,1999);
+           $value=$subLength;
+        }
         $characteristic->setValue($value);
         my $qualifierId = $categoryOntologyObj->getId();
         $self->error("Failed to find (or create) an OntologyTerm for term: $term") unless($qualifierId);
