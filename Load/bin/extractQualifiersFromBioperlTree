@@ -89,6 +89,8 @@ while (<IN>) {
                                                            ## in some cases description also represents product
       @values = split (/\,[term=|rank=1;]/, $value);
       foreach my $i (0..$#values) {
+	$values[$i] =~ s/\t/,/g;
+	$values[$i] =~ s/^,+//;
 	my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/i);
 	if ($values[$i] =~ /.*term=(.+?);.*/) {
 	  $values[$i]= $1;
