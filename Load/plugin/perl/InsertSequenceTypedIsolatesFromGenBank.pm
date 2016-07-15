@@ -363,7 +363,6 @@ sub undoTables {
   return (  'Results.SegmentResult',
             'DoTS.ExternalNASequence',
             'Study.StudyBibRef', 
-            'SRes.BibliographicReference', 
             'Study.StudyLink',
             'Study.Characteristic',
             'Study.ProtocolAppNode',
