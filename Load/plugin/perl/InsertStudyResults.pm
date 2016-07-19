@@ -273,6 +273,11 @@ sub addResults {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
         $hash = { na_sequence_id => $naSequenceId};
         $start = 1;
+        if ($sourceIdType =~ /segment/) {
+            $hash->{'segment_start'} = $a[1];
+            $hash->{'segment_end'} = $a[2];
+            $start = 3;
+        }
     }
 
     elsif ($sourceIdType =~ /reporter/) {
