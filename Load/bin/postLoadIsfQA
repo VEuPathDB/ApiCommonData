@@ -352,7 +352,8 @@ SQL
     foreach my $kk (sort keys %{$exonLocations{$k}}) {
       my ($start, $end) = split (/\,/, $exonLocations{$k}{$kk});
       if ($preStartMin ) {
-	if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+	if ( ( ($start > $preEndMax+1) && ($end > $preEndMax+1) ) || ( ($start < $preStartMin-1) && ($end < $preStartMin-1 ) )){
+	#if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
 	  $preExonId = $k;
 	  $preStartMin = $start;
 	  $preEndMax = $end;
@@ -369,6 +370,54 @@ SQL
 	$preEndMax = $end;
 #      }
     }
+  }
+}
+$stmt->finish();
+
+## OOO. check if there is internal UTR
+my $sql = <<SQL;
+  select source_id from DOTS.transcript where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+while (my ($sourceId) = $stmt->fetchrow_array()) {
+
+#  my %exonLocations;
+my (@exonArrays, @cdsArrays, $cdsCount);
+
+my $sqll = <<SQL;
+  select t.SOURCE_ID, rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END, nl.IS_REVERSED 
+from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.AAFEATUREEXON afe, DOTS.TRANSLATEDAAFEATURE taf, DOTS.NALOCATION nl
+where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
+and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_FEATURE_ID=afe.AA_FEATURE_ID and afe.EXON_FEATURE_ID=ef.NA_FEATURE_ID
+and t.SOURCE_ID like '$sourceId' 
+order by rfe.order_number
+SQL
+
+  my $stmtt = $dbh->prepare($sqll);
+  $stmtt->execute();
+
+  while (my ($tSourceId, $exonOrder, $nlStartMin, $nlEndMax, $cdsStart, $cdsEnd, $isReversed) = $stmtt->fetchrow_array() ) {
+#    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax" if ($nlStartMin && $nlEndMax && $efSourceId && $tSourceId);
+    if ($cdsStart && $cdsEnd) {
+      $cdsCount++;
+      push (@cdsArrays, "$cdsStart,$cdsEnd");
+    }
+    push (@exonArrays, "$tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed");
+  }
+  $stmtt->finish();
+
+  foreach my $i (0..$#exonArrays) {
+    my ($tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed) = split (/\,\s*/, $exonArrays[$i]);
+    if ($cdsCount > 1 && $cdsCount < ($#cdsArrays+1) ) {
+      if ($isReversed == 1) {
+	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsEnd || $nlEndMax != $cdsStart);
+      } else {
+	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsStart || $nlEndMax != $cdsEnd);
+      }
+    }
+    print "$tSourceId has $exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed\n" if ($tSourceId =~ /CNC02040-t26/);
   }
 }
 $stmt->finish();
