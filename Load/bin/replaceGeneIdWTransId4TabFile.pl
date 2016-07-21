@@ -4,8 +4,7 @@ use strict;
 use Getopt::Long;
 
 ## usage: replaceGeneIdWTransId4TabFile.pl --gene2TransFile geneToTranscriptId.txt --inputTabFile products.txt --fileType productName > ../final/products.txt
-## only for genes that do not have alternative splicing
- 
+
 
 my ($gene2TransFile, $inputTabFile, $fileType, $help);
 
@@ -24,31 +23,47 @@ while (<GT>) {
   chomp;
   my @items = split (/\s+/, $_);
   $items[0] =~ s/^>//;
-  $gene2Trans{$items[0]} = $items[1] if ($items[0] && $items[1]);
+  push (@{$gene2Trans{$items[0]}}, $items[1]) if ($items[0] && $items[1]);
 }
 close GT;
 
 #foreach my $k (sort keys %gene2Trans) {
-#  print "$k, $gene2Trans{$k}\n";
+#  foreach my $i (0..$#{$gene2Trans{$k}}) {
+#    print "$k, $gene2Trans{$k}[$i]\n";
+#  }
 #}
 
 open (IN, $inputTabFile) || die "can not open input file to read.\n";
 while (<IN>) {
   chomp;
   my @vals = split (/\t/, $_);
+  my @newVals = @vals;
 
   if ($fileType =~ /go/i ) {  ## for GO
-    $vals[1] = $gene2Trans{$vals[1]} if ($gene2Trans{$vals[1]});
-    $vals[2] = $gene2Trans{$vals[2]} if ($gene2Trans{$vals[2]});
+    if ($gene2Trans{$vals[1]}) {
+      foreach my $i (0..$#{$gene2Trans{$vals[1]}}) {
+	$newVals[1] = $gene2Trans{$vals[1]}[$i];
+	$newVals[2] = $gene2Trans{$vals[2]}[$i];
+	&printTabColumn (\@newVals);
+      }
+    }
+#    $vals[1] = $gene2Trans{$vals[1]} if ($gene2Trans{$vals[1]});
+#    $vals[2] = $gene2Trans{$vals[2]} if ($gene2Trans{$vals[2]});
 
   } elsif ($fileType =~ /product/i) {  ## for product
-    $vals[0] = $gene2Trans{$vals[0]} if ($gene2Trans{$vals[0]});
+    if ($gene2Trans{$vals[0]}) {
+      foreach my $i (0..$#{$gene2Trans{$vals[0]}}) {
+	$newVals[0] = $gene2Trans{$vals[0]}[$i];
+	&printTabColumn (\@newVals);
+      }
+    }
+    #$vals[0] = $gene2Trans{$vals[0]} if ($gene2Trans{$vals[0]});
 
   } else {
     print "file Type has not been coded yet\n";
   }
 
-  &printTabColumn (\@vals);
+#  &printTabColumn (\@vals);
 
 }
 close IN;
