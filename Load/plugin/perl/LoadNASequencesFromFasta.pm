@@ -30,7 +30,7 @@ use GUS::Model::SRes::OntologyTerm;
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 
-
+use Data::Dumper;
 
 my $argsDeclaration =[];
 my $purposeBrief = 'Insert NA sequences from a FASTA file.';
@@ -172,7 +172,7 @@ sub processFile{
     if ($line =~ /^\>/) {                ##have a defline....need to process!
 
       $self->undefPointerCache();
-
+ 
       if ($seq) {
         $self->process($source_id,$secondary_id,$taxon_id,$seq,$seqLength,$desc);
       }
@@ -186,7 +186,7 @@ sub processFile{
       $seq = "";
     }
     else {
-      $seq .= $_;
+      $seq .= $line;
       $seq =~ s/\s//g;
       $seqLength = length($seq);
     }
@@ -209,7 +209,9 @@ sub process {
 
   my $total = $self->{totalCount} + $self->{skippedCount};
 
-  $self->log("processed sourceId: $source_id  and total processed: $total");
+  if ($total % 10000 == 0){
+    $self->log("total processed: $total");
+  }
 }
 
 sub createNewExternalSequence {
@@ -218,6 +220,7 @@ sub createNewExternalSequence {
   my $nas = GUS::Model::DoTS::ExternalNASequence->
     new({'external_database_release_id' => $self->{external_database_release_id},
 	 'source_id' => $source_id,
+         'sequence_version' => 1,
 	 'sequence_ontology_id' => $self->{sequenceOntologyId} });
 
   my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $taxon_id });
