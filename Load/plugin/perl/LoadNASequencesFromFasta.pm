@@ -311,4 +311,13 @@ sub fetchSequenceOntologyId {
 
 }
 
+sub undoTables {
+  my ($self) = @_;
+  return (
+               'ApiDB.Reference16S',
+               'DoTS.ExternalNASequence',
+             );
+
+}
+
 1;
