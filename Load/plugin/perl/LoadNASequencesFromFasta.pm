@@ -170,7 +170,7 @@ sub processFile{
   
   while (my $line = <F>) {
     if ($line =~ /^\>/) {                ##have a defline....need to process!
-        
+
       $self->undefPointerCache();
 
       if ($seq) {
@@ -179,8 +179,9 @@ sub processFile{
       
       ##now get the ids etc for this defline...
       $secondary_id = ""; $desc = "";##in case can't parse out of this defline...
-      ($source_id, $secondary_id, $taxon_id, $desc) = split('|',$line);
-      
+      ($source_id, $secondary_id, $taxon_id, $desc) = split(/\|/,$line);
+      $source_id =~ s/^>//;
+      $self->log($source_id."\n");
       ##reset the sequence..
       $seq = "";
     }
@@ -199,7 +200,6 @@ sub process {
   my($self,$source_id,$secondary_id,$taxon_id,$seq,$seqLength,$description) = @_;
 
   my $nas = $self->createNewExternalSequence($source_id,$secondary_id,$seq,$taxon_id,$description);
-
 
   $nas->submit();
 
@@ -314,7 +314,6 @@ sub fetchSequenceOntologyId {
 sub undoTables {
   my ($self) = @_;
   return (
-               'ApiDB.Reference16S',
                'DoTS.ExternalNASequence',
              );
 
