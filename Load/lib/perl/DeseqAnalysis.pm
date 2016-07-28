@@ -41,7 +41,9 @@ sub munge {
     my $mainDirectory=$self->getMainDirectory();
     my $outputFile = $self->getOutputFile();
     my $reference = $self->getReference();
+    print "reference brought in from rnasew to desseq is $reference\n";
     my $comparator = $self->getComparator();
+    print "comparator brought in from rnasew to desseq is $comparator\n";
     my $refCheck = $self->getRefCheck();
     my $compCheck = $self->getCompCheck();
     $self->setNames([$sampleName]);
