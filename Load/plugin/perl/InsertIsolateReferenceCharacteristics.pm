@@ -7,7 +7,7 @@ use GUS::PluginMgr::Plugin;
 
 
 use GUS::Model::Study::Characteristic;
-use SRes::OntologyTerm;
+use GUS::Model::SRes::OntologyTerm;
 
 use GUS::Supported::Util;
 
@@ -121,4 +121,4 @@ sub run {
 					     });
     $characteristic->submit();
   }
-
+}
