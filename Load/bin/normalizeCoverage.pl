@@ -44,7 +44,7 @@ my ($inputDir, $strandSpecific, $topLevelSeqSizeFile, $isPairedEnd);
 &GetOptions("inputDir=s"            => \$inputDir,
             "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
             "strandSpecific!"       => \$strandSpecific,
-	    "pairedEnd!" => \$isPairedEnd
+	    "isPairedEnd!" => \$isPairedEnd
  );
 
 my $usage =<<endOfUsage;
@@ -219,6 +219,8 @@ sub update_coverage {
 	    $bamfile =~ s/\.bed$/.bam/;
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
+	    print Dumper %hash2;
+	    print "file to look for is $bamfile\n";
 	    my $coverage = $hash2{$k}{$bamfile};
 	    <F>;
 	    while(<F>) {
