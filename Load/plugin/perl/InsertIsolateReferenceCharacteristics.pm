@@ -86,7 +86,7 @@ sub run {
 
   my $sql =
     "SELECT protocol_app_node_id, name
-     FROM Study.protocoAppNode
+     FROM Study.protocolAppNode
      WHERE external_database_release_id = $extDbRlsId";
 
   my %popsets;
@@ -95,7 +95,7 @@ sub run {
   $sh->execute();
 
   while (my ($id,$name) = $sh->fetchrow_array()){
-    $popsets{name} = $id;
+    $popsets{$name} = $id;
   }
 
 
