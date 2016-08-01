@@ -51,7 +51,11 @@ sub preprocess {
       my $geneLoc = $gene->location();
       $gene->add_tag_value("ID",$geneID) if (!$bioperlFeatureTree->has_tag('ID'));
 
-      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+#      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+      my $transType = $type;
+      $transType = "mRNA" if ($transType eq "coding");
+      my $transcript = &makeBioperlFeature("$transType", $geneLoc, $bioperlSeq);
+
       $transcript = &copyQualifiers($bioperlFeatureTree, $transcript);
       $gene->add_SeqFeature($transcript);
 

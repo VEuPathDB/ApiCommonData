@@ -27,7 +27,8 @@ use CBIL::Util::Utils;
 use List::Util qw(min max);
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use File::Basename;
-
+use CBIL::TranscriptExpression::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
+use Data::Dumper;
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
 #
@@ -38,20 +39,22 @@ use File::Basename;
 
 my %hash;
 
-my ($inputDir, $strandSpecific, $topLevelSeqSizeFile); 
+my ($inputDir, $strandSpecific, $topLevelSeqSizeFile, $isPairedEnd); 
 
 &GetOptions("inputDir=s"            => \$inputDir,
             "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
-            "strandSpecific!"       => \$strandSpecific
-           );
+            "strandSpecific!"       => \$strandSpecific,
+	    "isPairedEnd!" => \$isPairedEnd
+ );
 
 my $usage =<<endOfUsage;
 Usage:
-  normalizeCoverage.pl --inputDir input_diretory --topLevelSeqSizeFile chrosome_size_file --strandSpecific 
+  normalizeCoverage.pl --inputDir input_diretory --topLevelSeqSizeFile chrosome_size_file --strandSpecific --isPairedEnd
 
     intpuDir: top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     topLevelSeqSizeFile: chromosome size text file e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/topLevelSeqSizes.txt
     strandSpecific: required if the experiement is strand specific
+  isPairedEnd: required if the experiment is paired end 
 endOfUsage
 
 die $usage unless -e $inputDir;
@@ -71,67 +74,99 @@ foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
 foreach my $key (keys %sampleHash) {
 
 }
+
+#print %sampleHash;
+
 my %dealingWithReps;
 
-foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-    if (keys %sampleHash >=1) {
-	foreach my $keys (keys %sampleHash) { 
-	    if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
-		my $fileBaseName = $sampleHash{$keys};
-		if (exists $dealingWithReps{$fileBaseName}) {
-		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
-		}
-		else {
-		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
-		}
-	    }
-	    else {
-		my $sum_coverage = &get_sum_coverage($exp_dir);
-		$hash{$exp_dir} = $sum_coverage;
-	    }
-	}
-    }
-    else {
 
-	my $sum_coverage = &get_sum_coverage($exp_dir);
-	$hash{$exp_dir} = $sum_coverage;
+foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
+    my %file_hash;
+    foreach my $files (glob "$exp_dir/*") {
+	$file_hash{$files} = 1;
+    }
+    
+    if (( /bed$/ ~~ %file_hash)  && (/unique/ ~~ %file_hash)){
+	next;
+   }
+    else {
+	print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
+	my $splitExpDir = splitBamUniqueNonUnique($exp_dir,$strandSpecific, $isPairedEnd );
+	
     }
 }
+
+
+
+foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
+    my %fileSpecificCoverage;
+    if (keys %sampleHash >=1) {
+ 	foreach my $keys (keys %sampleHash) { 
+
+ 	    if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
+ 		my $fileBaseName = $sampleHash{$keys};
+ 		if (exists $dealingWithReps{$fileBaseName}) {
+ 		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+ 		}
+ 		else {
+ 		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
+ 		}
+ 	    }
+ 	    else {
+		%fileSpecificCoverage = &getCountHash($exp_dir);
+ 		$hash{$exp_dir} = \%fileSpecificCoverage;
+ 	    }
+ 	}
+    }
+    else {
+	%fileSpecificCoverage = &getCountHash($exp_dir);
+	$hash{$exp_dir} = \%fileSpecificCoverage;
+    }
+    foreach my $element (keys %fileSpecificCoverage) {
+#	print "FSC $element and val $fileSpecificCoverage{$element}\n\n\n";
+    }
+    
+}
+
 
 foreach my $expWithReps (keys %dealingWithReps) {
     my $count = 0;
     my %scoreHash;
     my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
     my $cmd = "mkdir $exp_dir";
-    &runCmd($cmd);
-    my $cmd = "mkdir $exp_dir/master";
-    &runCmd($cmd);
-    my $cmd = "mkdir $exp_dir/master/mainresult";
-    &runCmd($cmd);
+     &runCmd($cmd);
+     my $cmd = "mkdir $exp_dir/master";
+     &runCmd($cmd);
+     my $cmd = "mkdir $exp_dir/master/mainresult";
+     &runCmd($cmd);
     $exp_dir = "$exp_dir/master/mainresult";
-     my $listOfRepBwFiles;
+    my $listOfUniqueRepBwFiles;
+    my $listOfNonUniqueRepBwFiles;
+    &makeMappingFile($inputDir, $expWithReps, $exp_dir);
+    
     foreach my $replicate (@{$dealingWithReps{$expWithReps}}) {
-#	print "$replicate\n";
-	foreach	my $file_to_open (glob "$replicate/*.cov") {
-	    my $baseBed = basename $file_to_open;
-	    my $bwFile = $baseBed;
-	    $bwFile =~ s/\.cov$/.bw/;
+ 	foreach	my $file_to_open (glob "$replicate/*.bed") {
+ 	    my $baseBed = basename $file_to_open;
+ 	    my $bwFile = $baseBed;
+ 	    $bwFile =~ s/\.bed$/.bw/;
 	    &runCmd("bedGraphToBigWig $replicate/$baseBed $topLevelSeqSizeFile $replicate/$bwFile"); 
-	    $listOfRepBwFiles.= "$replicate/$bwFile ";
-	}
+	    if ($baseBed =~ /^unique/) {
+		$listOfUniqueRepBwFiles.= "$replicate/$bwFile ";
+	    }
+	    elsif ($baseBed =~ /^non_unique/) {
+		$listOfNonUniqueRepBwFiles.= "$replicate/$bwFile ";
+	    }
+ 	}
 	
     }
-#here i want to do the merging of the bigwigs bigWigMerge -max to make a bedfile in the new $exp_dir
-    
-    my $cmd = "bigWigMerge -max $listOfRepBwFiles $exp_dir/combinedReps.cov";
-    #   print $cmd."\n";
-    &runCmd($cmd);
-    my $sum_coverage = &get_sum_coverage($exp_dir);
-    $hash{$exp_dir} = $sum_coverage;
-    
-    
-
+       my $cmd = "bigWigMerge -max $listOfUniqueRepBwFiles $exp_dir/uniqueCombinedReps.bed";
+       &runCmd($cmd);
+    my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
+     &runCmd($cmd);
+    my %fileSpecificCoverage = &getCountHash($exp_dir);
+    $hash{$exp_dir} = \%fileSpecificCoverage;
 }
+
 
 update_coverage(\%hash);
 
@@ -139,98 +174,146 @@ merge_normalized_coverage(\%hash);
 
 sub merge_normalized_coverage {
     my $hash = shift;
-    while(my ($k, $v) = each %$hash) {  # $k is exp directory; $v is sum_coverage
-	my $dir = "$k/normalized";
-	if(!-e "$dir/final") {
-	    &runCmd("mkdir $k/normalized/final");
-	}
+    while(my ($k, $v) = each %$hash) {  # $k is exp directory; %v is sum_coverage
+ 	my $dir = "$k/normalized";
+ 	if(!-e "$dir/final") {
+ 	    &runCmd("mkdir $k/normalized/final");
+ 	}
 	
-	my @bedFiles = glob "$k/normalized/*.cov";
+ 	my @bedFiles = glob "$k/normalized/*.bed";
 	
-	foreach my $bedFile (@bedFiles) {
-	    my $baseBed = basename $bedFile;
-	    my $bwFile = $baseBed;
-	    $bwFile =~ s/\.cov$/.bw/;
+ 	foreach my $bedFile (@bedFiles) {
+ 	    my $baseBed = basename $bedFile;
+ 	    my $bwFile = $baseBed;
+ 	    $bwFile =~ s/\.bed$/.bw/;
 	    
-	    &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
+ 	    &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
+ 	}
+     }
+ }
+
+# # updates coverage file - score * normalization_ratio
+# # save updated coverage file to the new 'normalized' directory
+sub update_coverage {
+    my $hash = shift;
+    my %hash2 = %$hash;
+    foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
+	my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
+	my $max_sum_coverage = pop @sorted;
+	opendir(D, $k);
+	my @fs = readdir(D);
+	
+	my $cmd = "mkdir $k/normalized";
+	if(!-e "$k/normalized") {
+	    &runCmd($cmd);
+	}
+	
+	my $out_dir = "$k/normalized";
+	
+	foreach my $f (@fs) {
+	    next if $f !~ /\.bed/i;
+	    open(F, "$k/$f");
+	    open OUT, ">$out_dir/$f";
+	    my $outputFile = $f;
+	    my $bamfile = $f;
+	    $bamfile =~ s/\.bed$/.bam/;
+	    $outputFile =~ s/\.bed$/_unlogged.bed/;
+	    open OUTUNLOGGED, ">$out_dir/$outputFile";
+	    print Dumper %hash2;
+	    print "file to look for is $bamfile\n";
+	    my $coverage = $hash2{$k}{$bamfile};
+	    <F>;
+	    while(<F>) {
+		my($chr, $start, $stop, $score) = split /\t/, $_;
+		
+		next unless ($chr && $start && $stop && $score);
+		
+		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
+		print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score\n";
+		my $normalized_score_logged = sprintf ("%.2f", ((log($normalized_score))/(log(2))));
+		print OUT "$chr\t$start\t$stop\t$normalized_score_logged\n";
+		
+	    }
+	    close F;
+	    close OUT;
+	    close OUTUNLOGGED;
 	}
     }
 }
 
-# updates coverage file - score * normalization_ratio
-# save updated coverage file to the new 'normalized' directory
-sub update_coverage {
-  my $hash = shift;
-
-  my $max_sum_coverage = get_max_sum_coverage($hash);
-
-  while(my ($k, $v) = each %$hash) {  # $k is exp directory; $v is sum_coverage
-    opendir(D, $k);
-    my @fs = readdir(D);
-
-    my $cmd = "mkdir $k/normalized";
-    if(!-e "$k/normalized") {
-      &runCmd($cmd);
+sub getCountHash {
+    
+    my %hash;
+    my $d = shift;
+    open my $IN, "$d/mappingStats.txt" or die "cant find mapping file\n\n\n";
+    while(my $line = <$IN>) {
+	chomp $line;
+	if ($line =~ /file/) {
+	    next;
+	}
+	elsif ($line =~ /^\s*$/) {
+	    next;
+	}
+	else {
+	    my($file, $coverage, $percentage, $count) = split /\t/, $line;
+	    my $shortfile = basename $file;
+	    $hash{$shortfile} = $count;
+	}
     }
-
-    my $out_dir = "$k/normalized";
-
-    foreach my $f (@fs) {
-      next if $f !~ /\.cov/i;
-      open(F, "$k/$f");
-
-      open OUT, ">$out_dir/$f";
-
-      my $outputFile = $f;
-      $outputFile =~ s/\.cov$/_unlogged.cov/;
-
-      open OUTUNLOGGED, ">$out_dir/$outputFile";
-      <F>;
-      while(<F>) {
-        my($chr, $start, $stop, $score) = split /\t/, $_;
-
-        next unless ($chr && $start && $stop && $score);
-
-        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 0) );
-        print OUT "$chr\t$start\t$stop\t$normalized_score\n";
-
-        my $normalized_score_unlogged = sprintf ("%.2f", ($score * $max_sum_coverage / $v ));
-        print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score_unlogged\n";
-
-      }
-      close F;
-      close OUT;
-      close OUTUNLOGGED;
-    }
-  }
+    return %hash;
 }
 
 
-# get sum_coverage under each experiment
-sub get_sum_coverage {
-  my $d = shift; 
-  my $sum_coverage = 0;
-  opendir(D, $d);
-  my @fs = readdir(D);
+sub makeMappingFile{
+    my ($inputDir, $baseName, $comboDir) = @_;
+    my $countReps = 0;
+    my %totals;
+    foreach my $rep (glob "$inputDir/analyze_$baseName*/master/mainresult/mappingStats.txt") {
+	if ($rep =~ /combined/) {
+	    #combined already has a mapping file 
+	    last;
+	}
+	else { 
+	    $countReps ++;
+	    open(R, "$rep");
+	    <R>;
+	    while(<R>) {
+		chomp $_;
+		if ($_ =~ /file/) {
+		    next;
+		}
+		elsif ($_ =~ /^\s*$/) {
+		    next;
+		}
+		else {
+		    my($file, $coverage, $percentage, $count) = split /\t/, $_;
+		    my $shortname = basename $file;
+		    if (exists $totals{$shortname}) {
+			@{$totals{$shortname}}[0] += $coverage;
+			@{$totals{$shortname}}[1] += $percentage;
+			@{$totals{$shortname}}[2] += $count;
+		    }
+		    else {
+			@{$totals{$shortname}} = ($coverage, $percentage, $count);
+		    }
+		    
+		}
+	    }
+	}
 
-  foreach my $f (@fs) {
-    next unless $f =~ /\.cov/;
-    open(F, "$d/$f") or die "Cannot open file $d/$f for reading:  $!";
-    <F>;
-    while(<F>) {
-      chomp;
-      my($chr, $start, $stop, $score) = split /\t/, $_;
-      $sum_coverage += $score;
     }
-    close F;
-  }
-  close D;
-  return $sum_coverage;
-}
-
-sub get_max_sum_coverage {
-  my $hash = shift;
-  my @arr;
-  my @sorted = sort { $a <=> $b } values %$hash;
-  return pop @sorted;
+    my $mapping = $comboDir."/mappingStats.txt";
+    open (M, ">$mapping");
+    print M "file\tcoverage\tpercentageMapped\treadsMapped\n";
+    foreach my $key (keys %totals) {
+	my $finalFile = $key;
+	$finalFile =~ s/_results_sorted.bam/CombinedReps.bam/;
+	my $finalCoverage= ($totals{$key}->[0] / $countReps);
+	my $finalPercentage= ($totals{$key}->[1]/ $countReps);
+	my $finalCount = ($totals{$key}->[2] / $countReps) ;
+	print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\n";
+	
+    }
+    close M;
+    return "finished";
 }

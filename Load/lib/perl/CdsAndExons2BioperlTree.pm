@@ -54,7 +54,10 @@ sub preprocess {
       }
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
-      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+      my $transcriptType = $type;
+      $transcriptType =~ s/\_gene//;
+      $transcriptType = "mRNA" if ($transcriptType eq "coding");
+      my $transcript = &makeBioperlFeature("$transcriptType", $geneLoc, $bioperlSeq);
       my @exons = $gene->get_SeqFeatures();
       foreach my $exon (@exons) {
 	my $t = $exon->primary_tag();

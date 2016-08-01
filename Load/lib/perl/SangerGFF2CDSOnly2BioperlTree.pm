@@ -142,7 +142,7 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
 			    $transcript = &copyQualifiers($geneFeature, $transcript);
 
 			    my @exonLocs = $geneLoc->each_Location();
@@ -292,7 +292,11 @@ sub traverseSeqFeatures {
 	      $gene = &copyQualifiers($geneFeature, $gene);
 	    }
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+#	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	    my $transType = $type;
+	    $transType = "mRNA" if ($transType eq "coding");
+	    my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
+
 	    my ($rnaID) = ($RNA->get_tag_values('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing rna gene id for $geneID\n";
 	    my $rnaParentID;
 	    if($RNA->get_tag_values('Parent')) {

@@ -244,19 +244,13 @@ sub getMapping {
 
     $dbRef{'external_database_release_id'} = $dbRls;
 
-    ## skip the mapping if the alias is a source_id of DoTS::GeneFeature or DoTS::Transcript view
+    ## skip the mapping if the alias is a source_id of DoTS::GeneFeature view
     if ($self->getArg('extDbName') =~ /aliases/i) {
       $vals[1] =~ s/^\s+//;
       $vals[1] =~ s/\s+$//;
       my $checkGeneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[1]});
       if ($checkGeneFeature->retrieveFromDB() ) {
 	$self->log("Skipping: $vals[1] to $sourceId mapping since it is a source_id in geneFeature view.\n");
-	next;
-      }
-
-      my $checkTranscript = GUS::Model::DoTS::Transcript->new({source_id => $vals[1]});
-      if ($checkTranscript->retrieveFromDB() ) {
-	$self->log("Skipping: $vals[1] to $sourceId mapping since it is a source_id in transcript view.\n");
 	next;
       }
     }
@@ -338,6 +332,13 @@ sub getMapping {
     else{
       $featId = &$method($self, $sourceId);
     }
+unless ($featId) {
+      $self->log("Skipping: source_id '$sourceId' not found in database.");
+      next;
+};
+unless (ref $featId eq 'ARRAY'){
+$featId = [$featId];
+}
     if(scalar @{$featId} < 1){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
       next;

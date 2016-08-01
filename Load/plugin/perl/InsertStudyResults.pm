@@ -52,7 +52,7 @@ my $argsDeclaration =
 	      reqd  => 1,
 	      isList => 0
 	     }),
-    
+
     stringArg({name => 'platformExtDbSpec',
 	      descr => 'External database spec for probeset',
 	      constraintFunc=> undef,
@@ -133,7 +133,7 @@ sub run {
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
 
     my $investigation = $self->makeStudy($self->getArg('studyName'));
-    
+
     my @investigationLinks = $investigation->getChildren('Study::StudyLink');
 
     $self->userError("Study name $investigation provided on command line cannot be the same as the profilesetname from the config file") if($investigation eq $studyName);
@@ -150,7 +150,7 @@ sub run {
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
 
     my $protocolType;
-    if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
+    if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ ) {
       $protocolType = "differential expression analysis data transformation";
     }
     else {
@@ -172,16 +172,16 @@ sub run {
       $input->setParent($protocolApp);
       $input->setParent($inputAppNode);
 
-      $self->linkAppNodeToStudy($study, $inputAppNode); 
-      $self->linkAppNodeToStudy($investigation, $inputAppNode); 
+      $self->linkAppNodeToStudy($study, $inputAppNode);
+      $self->linkAppNodeToStudy($investigation, $inputAppNode);
     }
 
     my $output = GUS::Model::Study::Output->new();
     $output->setParent($protocolApp);
     $output->setParent($protocolAppNode);
 
-    $self->linkAppNodeToStudy($study, $protocolAppNode); 
-    $self->linkAppNodeToStudy($investigation, $protocolAppNode); 
+    $self->linkAppNodeToStudy($study, $protocolAppNode);
+    $self->linkAppNodeToStudy($investigation, $protocolAppNode);
 
     my @appParams = $self->makeProtocolAppParams($protocolApp, $protocol, $protocolParamValues);
 
@@ -206,7 +206,7 @@ sub addResults {
 
 
   my $tableString;
-  if($protocolName =~ /RNASeqFishers/ || $protocolName =~ /PaGE/ ) {
+  if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ ) {
     $tableString = "Results::NAFeatureDiffResult";
   }
   elsif ($protocolName =~ /cghArrayQuantification/ ) {
@@ -214,10 +214,10 @@ sub addResults {
   }
   elsif ($protocolName =~ /chipChipSmoothed/ || $protocolName =~ /chipChipPeaks/ || $protocolName =~ /HOMER peak calls/) {
     $tableString = "Results::SegmentResult";
-  } 
+  }
   elsif ($protocolName =~ /MetaboliteProfiles/) {
     $tableString = "Results::CompoundMassSpec";
-  } 
+  }
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
   }
@@ -229,16 +229,25 @@ sub addResults {
   }
   elsif ($protocolName =~ /geneCNV/) {
     $tableString = "ApiDB::GeneCopyNumber";
-  } 
+  }
   elsif ($protocolName =~ /simple_ontology_term_results/) {
     $tableString = "ApiDB::OntologyTermResult";
-  } 
+  }
   elsif ($protocolName =~ /haplotype/) {
     $tableString = "ApiDB::HaplotypeResult";
-  } 
+  }
   elsif ($protocolName eq 'GSNAP/Junctions') {
     $tableString = "ApiDB::IntronJunction";
-  } 
+  }
+  elsif ($protocolName eq 'Splice Site Features') {
+    $tableString = "ApiDB::SpliceSiteFeature";
+  }
+  elsif ($protocolName eq 'RFLPGenotype') {
+    $tableString = "ApiDB::RflpGenotype";
+  }
+  elsif ($protocolName eq 'RFLPGenotypeNumber') {
+    $tableString = "ApiDB::RflpGenotypeNumber";
+  }
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -267,10 +276,7 @@ sub addResults {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
         $hash = { na_sequence_id => $naSequenceId};
         $start = 1;
-        if ($sourceIdType =~ /segment/ ) {
-    #        $hash { segment_start => $a[1],
-    #                segment_end => $a[2]
-    #              };
+        if ($sourceIdType =~ /segment/) {
             $hash->{'segment_start'} = $a[1];
             $hash->{'segment_end'} = $a[2];
             $start = 3;
@@ -308,7 +314,8 @@ sub addResults {
       $start = 1;
     }
 
-
+    elsif ($sourceIdType =~ /literal/) {
+    }
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -371,7 +378,7 @@ sub lookupIdFromSourceId {
     unless (scalar @reporterIds == 1) {
         die "Number of probes returned should be 1\n";
     }
- 
+
     $rv = @reporterIds[0];
   }
 
@@ -389,7 +396,7 @@ sub lookupIdFromSourceId {
     unless (scalar @compoundIds == 1) {
         die "Number of compounds returned should be 1\n";
       }
- 
+
     $rv = @compoundIds[0];
   }
 
@@ -493,7 +500,7 @@ sub makeProtocolAppNode {
 
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $appNodeType});
   unless($ontologyTerm->retrieveFromDB()) {
-    $self->error("Required Ontology Term $appNodeType is either not found in the database or returns more than one row from the database");
+    $self->error("Required ontology term \"$appNodeType\" either is not found in the database or returns more than one row from the database");
   }
 
   foreach my $e (@$existingAppNodes) {
@@ -581,7 +588,7 @@ sub makeStudy {
 sub undoTables {
   my ($self) = @_;
 
-  return ( 
+  return (
     'Study.Input',
     'Study.Output',
     'Study.StudyLink',
@@ -597,6 +604,8 @@ sub undoTables {
     'ApiDB.ONTOLOGYTERMRESULT',
     'ApiDB.INTRONJUNCTION',
     'ApiDB.HAPLOTYPERESULT',
+    'ApiDB.RflpGenotype',
+    'ApiDB.RflpGenotypeNumber',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',

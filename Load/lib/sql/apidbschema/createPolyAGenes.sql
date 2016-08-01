@@ -3,22 +3,12 @@
 CREATE TABLE apidb.PolyAGenes (
   poly_a_gene_id       NUMBER(10) not  null,
   splice_site_feature_id        NUMBER(10) not null,
-  location                      NUMBER(10) not null,
-  strand                        CHAR(1), 
+   protocol_app_node_id         NUMBER(10) NOT NULL,
   source_id                     VARCHAR2(50),
   dist_to_cds                   NUMBER(10) not null,
   within_cds                    NUMBER(1),
-  sample_name                   VARCHAR2(100),
-  count                         NUMBER(10),
-  count_per_million             FLOAT(126), 
-  avg_mismatches                FLOAT(126), 
-  is_unique                     NUMBER(1),
-  type                          VARCHAR2(50),
-  na_sequence_id                NUMBER(10),
-  external_database_release_id  NUMBER(10),
   is_dominant                   NUMBER(1), 
   percent_fraction              NUMBER(3), 
-  diff_to_next                  NUMBER(3),
   MODIFICATION_DATE            DATE,
   USER_READ                    NUMBER(1),
   USER_WRITE                   NUMBER(1),
@@ -30,6 +20,7 @@ CREATE TABLE apidb.PolyAGenes (
   ROW_GROUP_ID                 NUMBER(3),
   ROW_PROJECT_ID               NUMBER(4),
   ROW_ALG_INVOCATION_ID        NUMBER(12),
+   FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
   FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
   PRIMARY KEY (poly_a_gene_id)	
 );
@@ -39,12 +30,9 @@ grant insert, select, update, delete on Apidb.PolyAGenes to gus_w;
 
 CREATE SEQUENCE apidb.PolyAGenes_sq;
 
-create index apidb.polyagenes_loc_idx
-ON Apidb.PolyAGenes (source_id, na_sequence_id, location, type)
-tablespace indx;
 
 create index apidb.polyagenes_data_idx
-ON Apidb.PolyAGenes (splice_site_feature_id, count_per_million, sample_name, source_id)
+ON Apidb.PolyAGenes (splice_site_feature_id, protocol_app_node_id, source_id)
 tablespace indx;
 
 create index apidb.polyagenes_revfk_idx
@@ -68,4 +56,5 @@ FROM dual,
 WHERE 'PolyAGenes' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-quit;
+
+exit;

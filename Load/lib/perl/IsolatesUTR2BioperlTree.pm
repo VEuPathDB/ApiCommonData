@@ -244,7 +244,9 @@ sub preprocess {
       }
       
       $transcriptLoc->seq_id($geneLoc->seq_id);
-      my $transcript = &makeBioperlFeature("transcript", $transcriptLoc, $bioperlSeq);
+      my $transcriptType = $type;
+      $transcriptType = "mRNA" if ($transcriptType eq "coding");
+      my $transcript = &makeBioperlFeature("$transcriptType", $transcriptLoc, $bioperlSeq);
 
 
      foreach my $tag (@geneTags){
