@@ -24,7 +24,7 @@ sub new {
   $cleanSampleName =~ s/\s/_/g; 
   $cleanSampleName=~ s/[\(\)]//g;
 
-  $self->setOutputFile($cleanSampleName . $self->getSuffix());
+  $self->setOutputFile($cleanSampleName . "_results" . $self->getSuffix());
 
 
   return $self;
@@ -41,8 +41,6 @@ sub munge {
 
   $self->setNames([$sampleName]);
   $self->setFileNames([$outputFile]);
-
-  open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing:$!";
 
   my %data;
 
@@ -64,6 +62,8 @@ sub munge {
 
     close INPUT;
   }
+
+  open(OUT, "> $outputFile") or die "Cannot open output file $outputFile for writing:$!";
 
   print OUT "sequence_source_id\tsegment_start\tsegment_end\tis_reversed\tunique_reads\tnu_reads\n";
   foreach my $key (keys %data) {
