@@ -15,12 +15,214 @@ my ($verbose, $help, $inputFile, $outputControl);
 
 die "missing a required argument" unless(defined $inputFile && $outputControl);
 
-open(IN,"$inputFile");
-open(CONTROL,">$outputControl");
+open(IN, "$inputFile");
+open(CONTROL, ">$outputControl");
+open(ISATAB_S, ">s_study.txt");
+open(ISATAB_A, ">a_RFLP_genotyping.txt");
 
 my %isolateList;
 my @productList;
 my @chromosomeList;
+
+my %geoUriMap = (
+"African Country", "http://purl.obolibrary.org/obo/GAZ_00000457",
+"Argentina", "http://purl.obolibrary.org/obo/GAZ_00002928",
+"Australia", "http://purl.obolibrary.org/obo/GAZ_00000463",
+"Belgium", "http://purl.obolibrary.org/obo/GAZ_00002938",
+"Brazil", "http://purl.obolibrary.org/obo/GAZ_00002828",
+"Burkina Faso", "http://purl.obolibrary.org/obo/GAZ_00000905",
+"Cameroon", "http://purl.obolibrary.org/obo/GAZ_00001093",
+"Canada", "http://purl.obolibrary.org/obo/GAZ_00002560",
+"Chile", "http://purl.obolibrary.org/obo/GAZ_00002825",
+"China", "http://purl.obolibrary.org/obo/GAZ_00002845",
+"Colombia", "http://purl.obolibrary.org/obo/GAZ_00002929",
+"Costa Rica", "http://purl.obolibrary.org/obo/GAZ_00002901",
+"Egypt", "http://purl.obolibrary.org/obo/GAZ_00003934",
+"Gabon", "http://purl.obolibrary.org/obo/GAZ_00001092",
+"Germany", "http://purl.obolibrary.org/obo/GAZ_00002646",
+"Ghana", "http://purl.obolibrary.org/obo/GAZ_00000908",
+"Grenada", "http://purl.obolibrary.org/obo/GAZ_02000573",
+"Guatemala", "http://purl.obolibrary.org/obo/GAZ_00002936",
+"Guyana", "http://purl.obolibrary.org/obo/GAZ_00002522",
+"Indonesia", "http://purl.obolibrary.org/obo/GAZ_00003727",
+"Italy", "http://purl.obolibrary.org/obo/GAZ_00002650",
+"Japan", "http://purl.obolibrary.org/obo/GAZ_00002747",
+"Kenya", "http://purl.obolibrary.org/obo/GAZ_00001101",
+"Mali", "http://purl.obolibrary.org/obo/GAZ_00000584",
+"Mexico", "http://purl.obolibrary.org/obo/GAZ_00002852",
+"Nicaragua", "http://purl.obolibrary.org/obo/GAZ_00002978",
+"Nigeria", "http://purl.obolibrary.org/obo/GAZ_00000912",
+"Panama", "http://purl.obolibrary.org/obo/GAZ_00002892",
+"Peru", "http://purl.obolibrary.org/obo/GAZ_00002932",
+"Poland", "http://purl.obolibrary.org/obo/GAZ_00002939",
+"Puerto Rico", "http://purl.obolibrary.org/obo/GAZ_00002822",
+"Sri Lanka", "http://purl.obolibrary.org/obo/GAZ_00003924",
+"Turkey", "http://purl.obolibrary.org/obo/GAZ_00000558",
+"Uruguay", "http://purl.obolibrary.org/obo/GAZ_00002930",
+"Venezuela", "http://purl.obolibrary.org/obo/GAZ_00002931",
+"Barbados", "http://purl.obolibrary.org/obo/GAZ_00001251",
+"Congo", "http://purl.obolibrary.org/obo/GAZ_00001086",
+"Costa Rica", "http://purl.obolibrary.org/obo/GAZ_00002901",
+"France", "http://purl.obolibrary.org/obo/GAZ_00002940",
+"French Guiana", "http://purl.obolibrary.org/obo/GAZ_00268753",
+"Guadeloupe Island", "http://purl.obolibrary.org/obo/GAZ_00003946",
+"Netherlands", "http://purl.obolibrary.org/obo/GAZ_00001549",
+"Qatar", "http://purl.obolibrary.org/obo/GAZ_00005286",
+"Reunion Island", "http://purl.obolibrary.org/obo/GAZ_00003945",
+"St. Kitts", "http://purl.obolibrary.org/obo/GAZ_00006908",
+"Svalbard", "http://purl.obolibrary.org/obo/GAZ_00005396",
+"UK", "http://purl.obolibrary.org/obo/GAZ_00002637",
+"USA", "http://purl.obolibrary.org/obo/GAZ_00002459",
+"United Arab Emirates", "http://purl.obolibrary.org/obo/GAZ_00005282",
+"Vietnam", "http://purl.obolibrary.org/obo/GAZ_00003756",
+"Yugoslavia", "http://purl.obolibrary.org/obo/GAZ_00052663",
+   );
+
+my %geoNameMap = (
+"African Country", "Africa",
+"Barbados", "Barbados",
+"Congo", "Democratic Republic of the Congo",
+"Costa Rica", "Costa Rica",
+"France", "French Republic",
+"French Guiana", "French",
+"Guadeloupe Island", "Guadeloupe Archipelago",
+"Netherlands", "Kingdom of the Netherlands",
+"Qatar", "Qatar",
+"Reunion Island", "Reunion Island",
+"St. Kitts", "Saint Kitts",
+"Svalbard", "Svalbard Archipelago",
+"UK", "United Kingdom",
+"USA", "United States of America",
+"United Arab Emirates", "United Arab Emirates",
+"Vietnam", "Viet Nam",
+"Yugoslavia", "[Former] Yugoslavia",
+		     );
+
+my %taxonNameMap = (
+"Bear, Alaska Black ", "Ursus americanus",
+"Bear, Black", "Ursus americanus",
+"Bear, Brown", "Ursus arctos",
+"Bear", "Ursus sp.",
+"Black Bear", "Ursus americanus",
+"Bobcat", "Lynx rufus",
+"Capybara", "Hydrochoerus hydrochaeris",
+"Cat", "Felis catus",
+"Chicken", "Gallus gallus",
+"Cougar", "Puma concolor",
+"Cow", "Bos taurus",
+"Coyote", "Canis latrans",
+"Crow, Hawaiian", "Corvus hawaiiensis",
+"Deer, White-Tailed", "Odocoileus virginianus",
+"Dog?", "Canis lupus familiaris",
+"Dog", "Canis lupus familiaris",
+"Dolphin, Bottlenose", "Tursiops truncatus",
+"Dolphin, Striped", "Stenella coeruleoalba",
+"Dove", "Columbidae",
+"Eagle, Bald", "Haliaeetus leucocephalus",
+"Fox, Arctic", "Vulpes lagopus",
+"Fox, Red", "Vulpes vulpes",
+"Goat", "Capra hircus",
+"Goose", "Anser sp.",
+"Guinea Fowl", "Numididae",
+"Hawk, Ferruginous", "Buteo regalis",
+"Hawk, Red-Tailed", "Buteo jamaicensis",
+"Hawk, Rough-Legged", "Buteo lagopus",
+"Hawk, Swainson's ", "Buteo swainsoni",
+"Hawk, Swainson's", "Buteo swainsoni",
+"Human", "Homo sapiens",
+"human congenital ", "Homo sapiens",
+"Human congenital", "Homo sapiens",
+"Jaguar", "Panthera onca",
+"Jaguarundi", "Puma yagouaroundi",
+"Kestrel, American", "Falco sparverius",
+"Monkey", "Cercopithecidae",
+"Monkey", "Platyrrhini",
+"Monkey, Red-Handed Howler ", "Alouatta belcebul",
+"Moue, White-Footed", "Peromyscus leucopus",
+"Mouse", "Mus",
+"Opossum", "Didelphidae",
+"Opposum, Black-Eared ", "Didelphis marsupialis",
+"Owl, Barn", "Tyto alba",
+"Pigeon", "Columbidae",
+"Pig", "Sus scrofa",
+"Rabbit", "Oryctolagus cuniculus",
+"Raccoon", "Procyon lotor",
+"Rat", "Rattus",
+"Rat, Wood", "Neotoma",
+"Rodent", "Rodentia",
+"Sand Cat", "Felis catus",
+"Sand Cat", "Felis margarita",
+"Sea Otter", "Enhydra lutris",
+"Sheep", "Ovis aries",
+"Skunk", "Mephitidae",
+"Skunk, Striped", "Mephitis mephitis",
+"Sparrow, Tree", "Passer montanus",
+"Starling, European", "Sturnus vulgaris",
+"Toucan", "Ramphastidae",
+"Turkey", "Meleagris gallopavo",
+"Wallaby", "Macropus",
+"Wolf", "Canis lupus",
+);
+
+my %taxonIdMap = (
+"Alouatta belcebul", "30590",
+"Anser sp.", "8847",
+"Bos taurus", "9913",
+"Buteo jamaicensis", "56263",
+"Buteo lagopus", "115229",
+"Buteo regalis", "223441",
+"Buteo swainsoni", "156757",
+"Canis latrans", "9614",
+"Canis lupus", "9612",
+"Canis lupus familiaris", "9612",
+"Canis lupus familiaris", "9615",
+"Capra hircus", "9925",
+"Cercopithecidae", "9527",
+"Columbidae", "8930",
+"Corvus hawaiiensis", "134902",
+"Didelphidae", "9265",
+"Didelphis marsupialis", "9268",
+"Enhydra lutris", "34882",
+"Falco sparverius", "56350",
+"Felis catus", "9685",
+"Felis margarita", "61378",
+"Gallus gallus", "9031",
+"Haliaeetus leucocephalus", "52644",
+"Homo sapiens", "9606",
+"Hydrochoerus hydrochaeris", "10149",
+"Lynx rufus", "61384",
+"Macropus", "9312",
+"Meleagris gallopavo", "9103",
+"Mephitidae", "119825",
+"Mephitis mephitis", "30548",
+"Mus", "10088",
+"Mus", "862507",
+"Neotoma", "42407",
+"Numididae", "8990",
+"Odocoileus virginianus", "9874",
+"Oryctolagus cuniculus", "9986",
+"Ovis aries", "9940",
+"Panthera onca", "9690",
+"Passer montanus", "9160",
+"Peromyscus leucopus", "10041",
+"Platyrrhini", "9479",
+"Procyon lotor", "9654",
+"Puma concolor", "9696",
+"Puma yagouaroundi", "1608482",
+"Ramphastidae", "57381",
+"Rattus", "10114",
+"Rodentia", "9989",
+"Stenella coeruleoalba", "9737",
+"Sturnus vulgaris", "9172",
+"Sus scrofa", "9823",
+"Tursiops truncatus", "9739",
+"Tyto alba", "56313",
+"Ursus americanus", "9643",
+"Ursus arctos", "9644",
+"Ursus sp.", "9641",
+"Vulpes lagopus", "494514",
+"Vulpes vulpes", "9627",
+);
 
 foreach my $line (<IN>){
 	chomp($line);
@@ -30,6 +232,11 @@ foreach my $line (<IN>){
 	if($line =~ /^Country/){
 	    @productList = @cols[8..18];
 	    print CONTROL "Name\tFile\tSource ID Type\tInput ProtocolAppNodes\tProtocol\tProtocol Params\tStudy Name\n";
+
+	    print ISATAB_S "Source Name\tMaterial Type\tTerm Source Ref\tTerm Accession Number\tCharacteristics[GAZ_00000448]\tTerm Source Ref\tTerm Accession Number\tCharacteristics[OBI_0100026]\tTerm Source Ref\tTerm Accession Number\tProtocol Ref\tSample Name\tDescription\tMaterial Type\tTerm Source Ref\tTerm Accession Number\tProtocol Ref\tExtract Name\tMaterial Type\tTerm Source Ref\tTerm Accession Number\tCharacteristics[PATO_0001034]\tCharacteristics[OPL_0000232]\n";
+
+	    print ISATAB_A "Extract Name\tProtocol Ref\tAssay Name\tProtocol Ref\tData Transformation Name\n";
+
 	}elsif($line =~ /^Chromosome/){
 	    @chromosomeList = @cols[8..18];
 	}else{
@@ -75,6 +282,7 @@ foreach my $line (<IN>){
 	}
 	    my @isolates = split(/,/,$cols[19]);
 
+	    my $sampleNumber;
 	    foreach my $isolate (@isolates){
 
 		# strip leading and trailing whitespace
@@ -87,15 +295,37 @@ foreach my $line (<IN>){
                 # pre-GUS 4 version:
 		# print GFF "$isolate\tChunlei Su RFLP Data\tsource\t0\t0\t.\t+\t.\tlocus_tag \"${isolate}-1\" ; host \"$cols[1]\" ; collection_date \"$cols[3]\" ; country \"$cols[0]\"; note \"$cols[4]\" ; isolation_source \"$cols[5]\" ; " ;
 
-		my $genotypeNumberFile = $isolate . "RflpGenotypeNumber.tab";
-		print CONTROL "$isolate\t$genotypeNumberFile\tliteral\t\tRFLPGenotypeNumber\t\tChunlei Su RFLP Data\n";
-		open(GENONUMFILE, ">$genotypeNumberFile");
-		print GENONUMFILE "genotype_number\n";
-		print GENONUMFILE "$cols[6]\n";
-		close(GENONUMFILE);
+                # for ISA-Tab file
+		my $country = $cols[0];
+		$country =~ s/\s+$//g;
+		my $countryUri = $geoUriMap{$country};
+
+		die "unknown country \"$country\""
+		  unless $countryUri;
+
+		$country = $geoNameMap{$country}
+		  if $geoNameMap{$country};
+
+		my $hostName = $taxonNameMap{$cols[1]};
+                die "unknown host $cols[1]" unless $hostName;
+
+		my $hostTaxonId = $taxonIdMap{$hostName};
+		die "no NCBI taxon ID for host $hostName" unless $hostTaxonId;
+		my $hostTaxonUri = "http://purl.obolibrary.org/obo/NCBITaxon_" . $hostTaxonId;
+
+		$sampleNumber++;
+		my $sourceName = "Subject $sampleNumber";
+                my $sampleName = "EUSTDY0040-1.$sampleNumber";
+		my $protocol = "DNA extract";
+                my $extractName = "$isolate ($protocol)";
+
+		print ISATAB_S "$sourceName\thost organism\tGO\tGO_0018995\t$country\tGAZ\t$countryUri\t$hostName\tNCBITAXON\t$hostTaxonUri\tsample collection\t$sampleName\t$extractName\tblood specimen\tOBI\tOBI_0000655\tDNA extraction\t$extractName\tDNA extract\tOBI\tOBI_0001051\t$isolate\tToxoplasma gondii\n";
+
+		# header: print ISATAB_A "Extract Name\tProtocol Ref\tAssay Name\tProtocol Ref\tData Transformation Name\n";
+		print ISATAB_A "$extractName\tRFLP assay\t$isolate (RFLP assay)\tdata transformation\t$isolate (RFLPGenotype)\n";
 
 		my $genotypeFile = $isolate . "RflpGenotype.tab";
-		print CONTROL "$isolate\t$genotypeFile\tliteral\t\tRFLPGenotype\t\tChunlei Su RFLP Data\n";
+		print CONTROL "$isolate (RFLPGenotype)\t$genotypeFile\tliteral\t\tRFLPGenotype\t\tChunlei Su RFLP Data\n";
 		open(GENOFILE, ">$genotypeFile");
 		print GENOFILE "locus_tag\tgenotype\n";
 
@@ -126,6 +356,13 @@ foreach my $line (<IN>){
 		    print GENOFILE "$productList[$i-1]\t$cols[$i+7]\n";
 		}
 		close(GENOFILE);
+
+		my $genotypeNumberFile = $isolate . "RflpGenotypeNumber.tab";
+		print CONTROL "$isolate (RFLPGenotypeNumber)\t$genotypeNumberFile\tliteral\t$isolate (RFLPGenotype)\tRFLPGenotypeNumber\t\tChunlei Su RFLP Data\n";
+		open(GENONUMFILE, ">$genotypeNumberFile");
+		print GENONUMFILE "genotype_number\n";
+		print GENONUMFILE "$cols[6]\n";
+		close(GENONUMFILE);
 	    }
 
 	}
@@ -133,3 +370,5 @@ foreach my $line (<IN>){
 
 close(IN);
 close(CONTROL);
+close(ISATAB_S);
+close(ISATAB_A);
