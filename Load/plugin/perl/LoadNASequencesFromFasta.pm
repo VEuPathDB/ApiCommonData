@@ -181,7 +181,7 @@ sub processFile{
       $secondary_id = ""; $desc = "";##in case can't parse out of this defline...
       ($source_id, $secondary_id, $taxon_id, $desc) = split(/\|/,$line);
       $source_id =~ s/^>//;
-      $self->log($source_id."\n");
+      #$self->log($source_id."\n");
       ##reset the sequence..
       $seq = "";
     }
