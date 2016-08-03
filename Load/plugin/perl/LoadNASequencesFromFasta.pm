@@ -172,8 +172,8 @@ sub processFile{
     if ($line =~ /^\>/) {                ##have a defline....need to process!
 
       $self->undefPointerCache();
- 
-      if ($seq) {
+
+      if (defined $seq && $seq =~ /^[acgt]+$/i) {
         $self->process($source_id,$secondary_id,$taxon_id,$seq,$seqLength,$desc);
       }
       
