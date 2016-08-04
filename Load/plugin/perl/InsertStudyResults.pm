@@ -248,6 +248,9 @@ sub addResults {
   elsif ($protocolName eq 'RFLPGenotypeNumber') {
     $tableString = "ApiDB::RflpGenotypeNumber";
   }
+  elsif ($protocolName eq 'Splice Site Features') {
+    $tableString = "ApiDB::SpliceSiteFeature";
+  } 
   else {
     $tableString = "Results::NAFeatureExpression";
   }
@@ -276,11 +279,6 @@ sub addResults {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
         $hash = { na_sequence_id => $naSequenceId};
         $start = 1;
-        if ($sourceIdType =~ /segment/) {
-            $hash->{'segment_start'} = $a[1];
-            $hash->{'segment_end'} = $a[2];
-            $start = 3;
-        }
     }
 
     elsif ($sourceIdType =~ /reporter/) {
@@ -297,9 +295,9 @@ sub addResults {
 
     elsif ($sourceIdType =~ /16s_rrna/) {
 
-      my $reference16sId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-      next unless $reference16sId;
-      $hash = { reference_16s_id => $reference16sId, };
+      my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+      next unless $naSequenceId;
+      $hash = { na_sequence_id => $naSequenceId, };
       $start = 1;
     }
 
@@ -401,7 +399,9 @@ sub lookupIdFromSourceId {
   }
 
   elsif ($sourceIdType eq '16s_rrna') {
-    my @reference16sIds = $self->sqlAsArray(Sql => "select reference_16s_id from apidb.reference16s where source_id = '$sourceId'");
+    my @reference16sIds = $self->sqlAsArray(Sql => "select seq.na_sequence_id from dots.externalNASequence seq, SRES.ONTOLOGYTERM ot where seq.source_id = '$sourceId'
+                                                                                            and seq.sequence_ontology_id = ot.ONTOLOGY_TERM_ID
+                                                                                            and lower(ot.name) = 'rrna_16s'");
 
     unless (scalar @reference16sIds > 0) {
        $reference16sIds[0] = undef;
