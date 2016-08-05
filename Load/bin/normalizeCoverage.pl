@@ -86,7 +86,6 @@ foreach my $check_for_old_dirs (glob "$inputDir/analyze_*_combined") {
     print Dumper "deleting old combined rep folder $check_for_old_dirs from last run \n";
 }
 
-exit;
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
     my %file_hash;
     foreach my $files (glob "$exp_dir/*") {
