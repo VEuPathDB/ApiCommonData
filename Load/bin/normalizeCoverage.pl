@@ -87,12 +87,12 @@ foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
     }
     else {
       print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
-      my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd);
+      my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
     }
   }
   else {
     print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
-    my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd);
+    my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
   }
 }
 
