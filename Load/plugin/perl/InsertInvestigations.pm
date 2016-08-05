@@ -116,16 +116,9 @@ sub run {
       next;
     }
 
-    $self->checkAllOntologyTerms($investigation->getOntologyTerms());
-
-    my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
-   
-    $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
-    my $investigationId = $self->loadInvestigation($investigation,$extDbRlsId);
-
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
-      my %foundDatasets;
+      my %isatabDatasets;
 
       $self->checkProtocolsAndSetIds($study->getProtocols());
 
@@ -137,18 +130,31 @@ sub run {
           next unless($comment->getQualifier() eq 'dataset_names');
           my @datasetNames = split(/;/, $comment->getValue());
           foreach my $datasetName (@datasetNames) {
-            $foundDatasets{$datasetName}++;
+            $isatabDatasets{$datasetName}++;
           }
         }
       }
 
+      my $datasetsMatchedInDbCount = $self->checkLoadedDatasets(\%isatabDatasets);
+
+      next if($datasetsMatchedInDbCount < 1);
+
+      $self->checkAllOntologyTerms($investigation->getOntologyTerms());
+
+      my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
+   
+      $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
+
+      my $investigationId = $self->loadInvestigation($investigation,$extDbRlsId);
+
+
       $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-      $self->checkDatabaseNodesAreHandled(\%foundDatasets, $study->getNodes());
-      $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%foundDatasets, $study->getEdges());
+      $self->checkDatabaseNodesAreHandled(\%isatabDatasets, $study->getNodes());
+      $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%isatabDatasets, $study->getEdges());
 
       $self->loadStudy($study,$investigationId,$extDbRlsId);
     }
-
+    
     $investigationCount++;
   }
 
@@ -160,6 +166,23 @@ sub run {
   $self->logRowsInserted() if($self->getArg('commit'));
 
   return("Processed $investigationCount Investigations.");
+}
+
+
+
+sub checkLoadedDatasets {
+  my ($self, $isatabDatasets) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $rv;
+  
+  foreach my $dataset (keys %$isatabDatasets) {
+    my ($count) = $dbh->selectrow_array("select count(*) from apidb.datasource where name = '$dataset'");
+    $rv++ if($count == 1);
+  }
+
+  return $rv;
 }
 
 sub checkAllOntologyTerms {
