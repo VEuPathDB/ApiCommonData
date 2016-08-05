@@ -65,58 +65,46 @@ my @ds = readdir(DIR);
 
 # pull display name and base name for any with replciation
 my $analysis_config_display;
-my %sampleHash;
+my %samplesWithRepsHash;
 foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
-
-    %sampleHash = displayAndBaseName($analysis_config);	
+    %samplesWithRepsHash = displayAndBaseName($analysis_config);	
 }    
-
-foreach my $key (keys %sampleHash) {
-
-}
-
-#print %sampleHash;
 
 my %dealingWithReps;
 
-foreach my $check_for_old_dirs (glob "$inputDir/analyze_*_combined") {
-    my $cmd = "rm -r $check_for_old_dirs";
-#    print Dumper $cmd;
-    &runCmd ($cmd);
-    print Dumper "deleting old combined rep folder $check_for_old_dirs from last run \n";
-}
+
+my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-    my %file_hash;
-    foreach my $files (glob "$exp_dir/*") {
-	$file_hash{$files} = 1;
-    }
-    
-    if (( /bed$/ ~~ %file_hash)  && (/unique/ ~~ %file_hash)){
-	next;
-   }
-    else {
-	print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
-	my $splitExpDir = splitBamUniqueNonUnique($exp_dir,$strandSpecific, $isPairedEnd );
-	
-    }
-}
+  my $mappingStats = "$exp_dir/$mappingStatsBasename";
 
+
+  if(-e $mappingStats) {
+    my $statsString = `cat $mappingStats`;
+    if($statsString =~ /DONE STATS/) {
+      next;
+
+    }
+    else {
+      print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
+      my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd);
+    }
+  }
+  else {
+    print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
+    my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd);
+  }
+}
 
 
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
     my %fileSpecificCoverage;
-    if (keys %sampleHash >=1) {
- 	foreach my $keys (keys %sampleHash) { 
+    if (keys %samplesWithRepsHash >=1) {
+ 	foreach my $keys (keys %samplesWithRepsHash) { 
 
- 	    if ($exp_dir =~ /$sampleHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
- 		my $fileBaseName = $sampleHash{$keys};
- 		if (exists $dealingWithReps{$fileBaseName}) {
- 		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
- 		}
- 		else {
- 		    push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
- 		}
+ 	    if ($exp_dir =~ /$samplesWithRepsHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
+ 		my $fileBaseName = $samplesWithRepsHash{$keys};
+                push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
  	    }
  	    else {
 		%fileSpecificCoverage = &getCountHash($exp_dir);
@@ -128,10 +116,6 @@ foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
 	%fileSpecificCoverage = &getCountHash($exp_dir);
 	$hash{$exp_dir} = \%fileSpecificCoverage;
     }
-    foreach my $element (keys %fileSpecificCoverage) {
-#	print "FSC $element and val $fileSpecificCoverage{$element}\n\n\n";
-    }
-    
 }
 
 
