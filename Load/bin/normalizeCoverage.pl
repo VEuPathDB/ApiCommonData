@@ -79,7 +79,14 @@ foreach my $key (keys %sampleHash) {
 
 my %dealingWithReps;
 
+foreach my $check_for_old_dirs (glob "$inputDir/analyze_*_combined") {
+    my $cmd = "rm -r $check_for_old_dirs";
+#    print Dumper $cmd;
+    &runCmd ($cmd);
+    print Dumper "deleting old combined rep folder $check_for_old_dirs from last run \n";
+}
 
+exit;
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
     my %file_hash;
     foreach my $files (glob "$exp_dir/*") {
@@ -219,8 +226,8 @@ sub update_coverage {
 	    $bamfile =~ s/\.bed$/.bam/;
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-	    print Dumper %hash2;
-	    print "file to look for is $bamfile\n";
+	    #print Dumper %hash2;
+	    #print "file to look for is $bamfile\n";
 	    my $coverage = $hash2{$k}{$bamfile};
 	    <F>;
 	    while(<F>) {
