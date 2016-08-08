@@ -1,3 +1,65 @@
+
+will work on it
+===============
+
+Requirements of ICEMR data submission
+
+Following information associated with ICEMR data are need to be submitted with the data.
+
+1. Data dictionary used by the data
+
+The data dictionary should include variable name, description, preferred name for display on PlasmoDB if any (optional), and the controlled vocabulary used for the variable.
+
+If the data dictionary in language other than English, please provide all the required information in English as well.
+
+Here are two examples:
+- age
+	name: age
+	description: age of participant when he/she at enrollment
+	display name: age at enrollment
+	value: number in year
+- roof material
+	name: MMROOF
+	description:Main material of the roof.
+	display name: roof material  
+	value: thatched, mud, wood, iron sheets, tin, other
+
+2. Column names of the data set
+	List all column names used in the submitted data
+
+3. Mapping of column names to the data dictionary
+	List the column name used corresponding to the data dictionary variables or values
+
+Here are two examples:
+- age
+	variable in data dictionary: age
+	column name: age_en
+- symptom
+	variable in data dictionary: symptom
+	value of ‘symptom’: abdomen pain, fever, …
+	column name: abdomen pain, fever, … 	
+
+4. Mapping of values used in the data to data dictionary variable controlled vocabulary
+
+For examples, the controlled vacabulary of roof material are thatched, mud, wood, iron sheets, tin, other. The values used in the data are 1 - 7. The mapping is:
+	thatched	1
+	mud		2
+	wood		3
+	iron		4
+	sheets		5
+	tin		6
+	other		7
+
+
+
+
+——————————————
+2. We need to know 
+- how column names mapped to data dictionary (could be variable could be controlled vocabulary)
+in the data corresponding to dictionary variables
+and the values of variables for controlled vocabulary of data dictionary variables
+
+
 Terminology used for ICEMR project
 -------------------------------------
 
