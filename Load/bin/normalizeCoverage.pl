@@ -75,26 +75,37 @@ my %dealingWithReps;
 
 my $mappingStatsBasename = "mappingStats.txt";
 
-foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-  my $mappingStats = "$exp_dir/$mappingStatsBasename";
-
-
-  if(-e $mappingStats) {
-    my $statsString = `cat $mappingStats`;
-    if($statsString =~ /DONE STATS/) {
-      next;
-
-    }
-    else {
-      print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
-      my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
-    }
-  }
-  else {
-    print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
-    my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
-  }
+foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
+	my $cmd = "rm -r $old_dir";
+	print Dumper "command is $cmd\n";
+	&runCmd($cmd);
+	print Dumper "trying to delete folder $old_dir\n";
+	
 }
+   
+
+
+foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
+	my $mappingStats = "$exp_dir/$mappingStatsBasename";
+	if(-e $mappingStats) {
+	    my $statsString = `cat $mappingStats`;
+	    if($statsString =~ /DONE STATS/) {
+		next;
+	
+	    }
+	    else {
+		print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
+		my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
+	    }
+	}
+	else {
+	    print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
+	    my $splitExpDir = splitBamUniqueNonUnique($exp_dir, $strandSpecific, $isPairedEnd, "$exp_dir/results_sorted.bam");
+	}
+}
+
+
+
 
 
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
@@ -209,9 +220,10 @@ sub update_coverage {
 	    $bamfile =~ s/\.bed$/.bam/;
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-	    #print Dumper %hash2;
-	    #print "file to look for is $bamfile\n";
+#	    print Dumper %hash2;
+#	    print "file to look for is $bamfile\n";
 	    my $coverage = $hash2{$k}{$bamfile};
+#	    print "coverage is $coverage";
 	    <F>;
 	    while(<F>) {
 		my($chr, $start, $stop, $score) = split /\t/, $_;
