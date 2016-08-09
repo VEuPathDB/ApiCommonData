@@ -89,6 +89,7 @@ my $tableName;
 foreach my $key ( keys(%$appNodeCategories) ) {
   my $categories = $appNodeCategories->{$key}->{'clean'};
   my $rawCategories = $appNodeCategories->{$key}->{'raw'};
+  my $ot_source_ids = $appNodeCategories->{$key}->{'ot_source_id'};
   my $categoryCount = scalar @$categories;
     $attributeColumnSql = undef;
     my $currentAttribute = $key;
@@ -111,7 +112,7 @@ foreach my $key ( keys(%$appNodeCategories) ) {
 
   for (my $i=0; $i<$categoryCount; $i++) {
     my $columnName = $categories->[$i];
-    my $attribute = $rawCategories->[$i];
+    my $attribute = $ot_source_ids->[$i];
     $descRow->execute($attribute);
     my $desc = $descRow->fetchrow_array();
     $typeRow->execute($attribute);
