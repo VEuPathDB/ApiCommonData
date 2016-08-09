@@ -61,28 +61,28 @@ die $usage unless -e $outputDir;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-my %subOrder = ( 'results.firststrand.Unique.bw'  => 1,
-                 'results.firststrand.NU.bw'      => 2, 
-                 'results.secondstrand.Unique.bw' => 3, 
-                 'results.secondstrand.NU.bw'     => 4,
-                 'results.unstranded.Unique.bw'       => 1,
-                 'results.unstranded.NU.bw'           => 2,
-                 'results.firststrand.Unique_unlogged.bw'  => 1,
-                 'results.firststrand.NU_unlogged.bw'      => 2, 
-                 'results.secondstrand.Unique_unlogged.bw' => 3, 
-                 'results.secondstrand.NU_unlogged.bw'     => 4,
-                 'results.unstranded.Unique_unlogged.bw'       => 1,
-                 'results.unstranded.NU_unlogged.bw'           => 2
+my %subOrder = ( 'unique_results_sorted.firststrand.bw'  => 1,
+                 'non_unique_results_sorted.firststrand.bw'      => 2, 
+                 'unique_results_sorted.secondstrand.bw' => 3, 
+                 'non_unique_results_sorted.secondstrand.bw'     => 4,
+                 'unique_results_sorted.bw'       => 1,
+                 'non_unique_results_sorted.bw'           => 2,
+                 'unique_results_sorted.firststrand_unlogged.bw'  => 1,
+                 'non_unique_results_sorted.firststrand_unlogged.bw'      => 2, 
+                 'unique_results_sorted.secondstrand_unlogged.bw' => 3, 
+                 'non_unique_results_sorted.secondstrand_unlogged.bw'     => 4,
+                 'unique_results_sorted_unlogged.bw'       => 1,
+                 'non_unique_results_unlogged.bw'           => 2
                 );
 
-my %altSubOrder = ( 'results.secondstrand.Unique.bw'  => 1,
-		    'results.secondstrand.NU.bw'      => 2, 
-		    'results.firststrand.Unique.bw' => 3, 
-		    'results.firststrand.NU.bw'     => 4,
-		    'results.secondstrand.Unique_unlogged.bw'  => 1,
-		    'results.secondstrand.NU_unlogged.bw'      => 2, 
-		    'results.firststrand.Unique_unlogged.bw' => 3, 
-		    'results.firststrand.NU_unlogged.bw'     => 4
+my %altSubOrder = ( 'unique_results_sorted.secondstrand.bw'  => 1,
+		    'non_unique_results_sorted.secondstrand.bw'      => 2, 
+		    'unique_results_sorted.firststrand.bw' => 3, 
+		    'non_unique_results_sorted.firststrand.bw'     => 4,
+		    'unique_results_sorted.secondstrand_unlogged.bw'  => 1,
+		    'non_unique_results_sorted.secondstrand_unlogged.bw'      => 2, 
+		    'unique_results_sorted.firststrand_unlogged.bw' => 3, 
+		    'non_unique_results_sorted.firststrand_unlogged.bw'     => 4
                   );
 
 my %sampleOrder;
@@ -171,11 +171,16 @@ OUTER: foreach my $d (sort @ds) {
     system ("mkdir $output");
     my $status = $? >>8;
     die "Error.  Failed making $outputDir with status '$status': $!\n\n" if ($status);
-    my $cmd = "cp $exp_dir/*.bw $output";
+    my $cmd = "cp $exp_dir/unique*.bw $output";
     system ($cmd); 
     $status = $? >>8;
     die "Error.  Failed $cmd with status '$status': $!\n\n" if ($status);
-    
+    my $cmd = "cp $exp_dir/non_unique*.bw $output";
+    system ($cmd);
+    $status = $? >>8;
+    die "Error.  Failed $cmd with status '$status': $!\n\n" if ($status);
+
+
     # create a metadata text file for better organizing gbrowse subtracks
     open(META, ">>$outputDir/metadata");
     open(METAUNLOGGED, ">>$outputDir/metadata_unlogged");
@@ -192,29 +197,30 @@ OUTER: foreach my $d (sort @ds) {
     # redmine refs #15678
     foreach my $f(sort { $subOrder{$a} <=> $subOrder{$b} } @fs) {
 	next if $f !~ /\.bw$/;
-	$count++;
-	$expt = 'non-unique' if $f =~ /NU/;
-	$expt = 'unique' if $f =~ /Unique/;
-	$selected = 1 if $f =~ /Unique/;
-	$selected = 0 if $f =~ /NU/;
-	$selected = 0 if $count > 15;
-	$isStrandSpecific = 1 if $f =~ /firststrand/;
-	$strand = 'reverse' if $f =~ /secondstrand/;
-	$strand = 'forward' if $f =~ /firststrand/;
-	
-	my $order = $subOrder{$f} % 5;
-	
-	my $display_order_sample = "";
-	
-	if(-e $analysisConfig) {
-	    $display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
-	} else {
-	    $display_order_sample = $sample; 
-	}
-	
-	
-	if($f =~ /firststrand/ || $f =~ /secondstrand/) {
-	    $meta =<<EOL;
+	if (($f =~ /^unique/) || ($f =~ /^non_unique/)) {
+	    $count++;
+	    $expt = 'non-unique' if $f =~ /^non_unique/;
+	    $expt = 'unique' if $f =~ /^unique/;
+	    $selected = 1 if $f =~ /^unique/;
+	    $selected = 0 if $f =~ /^non_unique/;
+	    $selected = 0 if $count > 15;
+	    $isStrandSpecific = 1 if $f =~ /firststrand/;
+	    $strand = 'reverse' if $f =~ /secondstrand/;
+	    $strand = 'forward' if $f =~ /firststrand/;
+	    
+	    my $order = $subOrder{$f} % 5;
+	    
+	    my $display_order_sample = "";
+	    
+	    if(-e $analysisConfig) {
+		$display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
+	    } else {
+		$display_order_sample = $sample; 
+	    }
+	    
+	    
+	    if($f =~ /firststrand/ || $f =~ /secondstrand/) {
+$meta =<<EOL;
 [$sample/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt $strand)
@@ -222,35 +228,38 @@ sample       = $sample
 alignment    = $expt
 strand       = $strand
 type         = Coverage
-		
+		    
 EOL
-	} 
-	else {
-	    $meta =<<EOL;
+	    } 
+	    else {
+$meta =<<EOL;
 [$sample/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt)
 sample       = $sample
 alignment    = $expt
 type         = Coverage
-		
+		    
 EOL
-	}
-	
-	if($f !~ /unlogged/) {
-	    print META $meta;
+	    }
+	    
+	    if($f !~ /unlogged/) {
+		print META $meta;
+	    }
+	    else {
+		print METAUNLOGGED $meta;
+	    }
 	}
 	else {
-	    print METAUNLOGGED $meta;
+	    next;
 	}
-	
-    } # end foreach loop
+   } # end foreach loop
     
     closedir(D);
     close(META);
     close(METAUNLOGGED);
     
-
+    
     next unless $isStrandSpecific;
     # For strand specific data, create alternate tracks in case first and second strands need to be swapped
     open(ALTMETA, ">>$outputDir/metadata_alt");
@@ -266,26 +275,27 @@ EOL
     
     foreach my $f(sort { $altSubOrder{$a} <=> $altSubOrder{$b} } @fs) {
 	next if $f !~ /\.bw$/ || $f =~ /unstranded/;
-	$count++;
-	$expt = 'non-unique' if $f =~ /NU/;
-	$expt = 'unique' if $f =~ /Unique/;
-	$selected = 1 if $f =~ /Unique/;
-	$selected = 0 if $f =~ /NU/;
-	$selected = 0 if $count > 15;
-	$strand = 'reverse' if $f =~ /firststrand/;
-	$strand = 'forward' if $f =~ /secondstrand/;
-	
-	my $order = $altSubOrder{$f} % 5;
-	
-	my $display_order_sample = "";
-	
-	if(-e $analysisConfig) {
-	    $display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
-	} else {
-	    $display_order_sample = $sample; 
-	}
-	
-	$meta =<<EOL;
+	if ($f =~ /^unique/ || $f =~ /^non_unique/) {
+	    $count++;
+	    $expt = 'non-unique' if $f =~ /^non_unique/;
+	    $expt = 'unique' if $f =~ /^unique/;
+	    $selected = 1 if $f =~ /^unique/;
+	    $selected = 0 if $f =~ /^non_unique/;
+	    $selected = 0 if $count > 15;
+	    $strand = 'reverse' if $f =~ /firststrand/;
+	    $strand = 'forward' if $f =~ /secondstrand/;
+	    
+	    my $order = $altSubOrder{$f} % 5;
+	    
+	    my $display_order_sample = "";
+	    
+	    if(-e $analysisConfig) {
+		$display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
+	    } else {
+		$display_order_sample = $sample; 
+	    }
+	    
+$meta =<<EOL;
 [$sample/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt $strand)
@@ -293,19 +303,23 @@ sample       = $sample
 alignment    = $expt
 strand       = $strand
 type         = Coverage
-
+		
 EOL
-
-      if($f !~ /unlogged/) {
-		print ALTMETA $meta;
-	} 
-	else {
-	    print ALTMETAUNLOGGED $meta;
+		
+		if($f !~ /unlogged/) {
+		    print ALTMETA $meta;
+	    } 
+	    else {
+		print ALTMETAUNLOGGED $meta;
+	    }
 	}
-	
+	else {
+	    next;
+	}
    } # end foreach loop
     
     closedir(D);
     close(ALTMETA);
     close(ALTMETAUNLOGGED);
 }
+
