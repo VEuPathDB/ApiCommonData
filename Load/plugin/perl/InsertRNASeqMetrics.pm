@@ -144,7 +144,9 @@ sub run {
       my $termSourceId = $a->[1];
 
       my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $termName, source_id => $termSourceId});
-      $ontologyTerm->retrieveFromDB();
+      unless($ontologyTerm->retrieveFromDB()) {
+        $self->error("Ontology Term $termName not found in database"):
+      }
 
       $ontologyTerms{$termName} = $ontologyTerm;
     }
