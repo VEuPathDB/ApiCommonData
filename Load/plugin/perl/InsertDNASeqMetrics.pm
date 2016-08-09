@@ -12,15 +12,13 @@ use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyLink;
 use GUS::Model::Study::Characteristic;
 use GUS::Model::Study::Protocol;
-#use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::ProtocolApp;
-#use GUS::Model::Study::ProtocolAppParam;
 use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 use GUS::Model::SRes::OntologyTerm;
 
-use ApiCommonData::Load::DnaSeqMetrics;
+use CBIL::Util::DnaSeqMetrics;
 
 use Data::Dumper;
 
@@ -70,7 +68,6 @@ my $argsDeclaration = [
           isList => 0
          }),
 ];
-#TODO fill these out
 my $purpose = <<PURPOSE;
 Insert quality metrics (average coverage and percentage mapped reads) from DNAseq datasets
 PURPOSE
@@ -131,8 +128,9 @@ sub run {
 
     my $analysisDir = $self->getArg('analysisDir');
     my $bamFile = "$analysisDir/result.bam";
-    my $coverage = sprintf (<%.2f>, ApiCommonData::Load::DnaSeqMetrics::getCoverage($analysisDir, $bamFile));
-    my $mappedReadPercentage = sprintf (<%.4f>, ApiCommonData::Load::DnaSeqMetrics::getMappedReads($bamFile));
+    my $coverage = sprintf(<%.2f>, CBIL::Util::DnaSeqMetrics::getCoverage($analysisDir, $bamFile));
+    my $stats = CBIL::Util::DnaSeqMetrics::runSamtoolsStats($bamFile);
+    my $mappedReadPercentage = sprintf(<%.4f>, $stats->{'reads mapped'}/$stats->{'raw total sequences'});
  
     my $studyName = $self->getArg('studyName');
     my $gusStudy = GUS::Model::Study::Study->new({name => $studyName});
@@ -162,7 +160,6 @@ sub run {
     my $studyLink = GUS::Model::Study::StudyLink->new();
     $studyLink->setParent($gusStudy);
     $studyLink->setParent($assayProtocolAppNode);
-    #$study->addToSubmitList($studyLink);
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
@@ -205,8 +202,6 @@ sub run {
     $studyOutput->setParent($studyProtocolApp);
     $studyOutput->setParent($variationProtocolAppNode);
 
-    #TODO
-    #submit - figure out how this would work.  probably assay node.
     $gusStudy->addToSubmitList($studyProtocolApp);
     $gusStudy->submit();
     
