@@ -235,6 +235,13 @@ sub run {
 }
 
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ( 
+    'Study.Characteristic',
+     );
+}
 
 
 1;
