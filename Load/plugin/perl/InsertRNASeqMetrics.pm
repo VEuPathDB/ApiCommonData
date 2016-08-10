@@ -83,7 +83,7 @@ sub new {
 sub run {
     my ($self) = @_;
 
-    my $charCount;
+    my $charCount=0;
 
     my $studyExtDbRlsSpec = $self->getArg('studyExtDbRlsSpec');
     my $studyExtDbRlsId = $self->getExtDbRlsId($studyExtDbRlsSpec);
@@ -145,7 +145,7 @@ sub run {
 
       my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $termName, source_id => $termSourceId});
       unless($ontologyTerm->retrieveFromDB()) {
-        $self->error("Ontology Term $termName not found in database"):
+        $self->error("Ontology Term $termName not found in database");
       }
 
       $ontologyTerms{$termName} = $ontologyTerm;
