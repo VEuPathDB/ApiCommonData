@@ -4,6 +4,8 @@ use warnings;
 
 use CBIL::TranscriptExpression::XmlParser;
 
+use Data::Dumper;
+
 use Tie::IxHash;
 
 use Exporter qw(import);
@@ -17,7 +19,7 @@ sub displayAndBaseName {
   my $xmlParser = CBIL::TranscriptExpression::XmlParser->new($analysisConfig);
   my $nodes = $xmlParser->parse();
 
-  my $order = 1;
+  my $order = 0;
 
   my $nodeCount = 1;
 
@@ -25,9 +27,17 @@ sub displayAndBaseName {
   tie %rv, "Tie::IxHash";
 
   foreach my $node (@$nodes) {
+    my $class = $node->{class};
+
+    next unless($class eq 'ApiCommonData::Load::RnaSeqAnalysis');
+
     my $args = $node->{arguments};
 
     my $samples = $args->{samples};
+    my $profileSetName = $args->{profileSetName};
+
+    my ($suffix) = $profileSetName =~ /( - .+)$/;
+
     next unless($samples);
 
     my $sampleCount = 1;
@@ -38,13 +48,15 @@ sub displayAndBaseName {
       my $key = "${nodeCount}_${group}";
       $key =~ s/\s/_/g;
 
-      $rv{$key}->{displayName} = $group;
+      $order++ unless($rv{$key});
+
+      $rv{$key}->{displayName} = $group . $suffix;
 
       $rv{$key}->{orderNum} = $order;
+
       push @{$rv{$key}->{samples}}, $sample;
 
       $sampleCount++;
-      $order++
     }
     $nodeCount++;
   }
