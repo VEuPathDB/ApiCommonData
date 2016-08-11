@@ -69,12 +69,16 @@ my %subOrder = ( 'unique_results_sorted.firststrand.bw'  => 1,
                  'non_unique_results_sorted.secondstrand.bw'     => 4,
                  'unique_results_sorted.bw'       => 1,
                  'non_unique_results_sorted.bw'           => 2,
+                 'uniqueCombinedReps.bw' => 1,
+                 'non_uniqueCombinedReps.bw' => 2,
                  'unique_results_sorted.firststrand_unlogged.bw'  => 1,
                  'non_unique_results_sorted.firststrand_unlogged.bw'      => 2, 
                  'unique_results_sorted.secondstrand_unlogged.bw' => 3, 
                  'non_unique_results_sorted.secondstrand_unlogged.bw'     => 4,
                  'unique_results_sorted_unlogged.bw'       => 1,
-                 'non_unique_results_unlogged.bw'           => 2
+                 'non_unique_results_unlogged.bw'           => 2,
+                 'uniqueCombinedReps_unlogged.bw' => 1,
+                 'non_uniqueCombinedReps_unlogged.bw' => 2
                 );
 
 my %altSubOrder = ( 'unique_results_sorted.secondstrand.bw'  => 1,
