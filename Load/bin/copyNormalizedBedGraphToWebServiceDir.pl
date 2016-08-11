@@ -26,6 +26,8 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::Utils;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
+use Data::Dumper;
+
 # this script loops through each sample output directory and copy normalized bedgraph files to webService Dir. 
 
 #  ... Su_strand_specific/analyze_lateTroph/master/mainresult/normalized
@@ -58,8 +60,8 @@ endOfUsage
 die $usage unless -e $inputDir;
 die $usage unless -e $outputDir;
 
-opendir(DIR, $inputDir);
-my @ds = readdir(DIR);
+#opendir(DIR, $inputDir);
+#my @ds = readdir(DIR);
 
 my %subOrder = ( 'unique_results_sorted.firststrand.bw'  => 1,
                  'non_unique_results_sorted.firststrand.bw'      => 2, 
@@ -85,89 +87,34 @@ my %altSubOrder = ( 'unique_results_sorted.secondstrand.bw'  => 1,
 		    'non_unique_results_sorted.firststrand_unlogged.bw'     => 4
                   );
 
-my %sampleOrder;
-my %sampleDisplayName;
-my %sampleHash;
-my %acRepCheck;
+my $sampleHash;
 
 if(-e $analysisConfig) {
-    %sampleHash = displayAndBaseName($analysisConfig);
-#    foreach my $test (keys %sampleHash) {
-#	print "$test"."la\n\n\n\n\n";
-#    }
-    open(F, $analysisConfig);
-    my $count = 1;
-    
-    while(<F>) {
-	chomp;
-	next if /^\s+$/;
-	#if( $_ =~ /<prop name="sampleName">(.*)<\/prop>/) {
-	if(  /<property name="samples">/i .. /<\/property>/i  ) {
-	    next unless /<value>/i;
-	    $_ =~ /<value>(.*)<\/value>/ ;
-	    my($sample_display_name, $sample_internal_name) = split /\|/, $1;
-
-	    if (exists $sampleHash{$sample_display_name} ) {
-
-		$sample_internal_name = $sampleHash{$sample_display_name}."_combined";
-		if (exists $acRepCheck{$sample_display_name} ) {
-		    next;
-		}
-		else {
-
-		    $sampleOrder{$sample_internal_name} = $count;
-		    $sampleDisplayName{$sample_internal_name} = $sample_display_name;
-		    $count++;
-		    $acRepCheck{$sample_display_name} = 1;
-		}
-	    }
-	    else {
-		$sampleOrder{$sample_internal_name} = $count;
-		$sampleDisplayName{$sample_internal_name} = $sample_display_name;
-		$count++;
-	    }
-	}
-    }
-}
-    my %reps;
-foreach my $exp (keys %sampleDisplayName) {
-#    print "$exp\n";
-    if ($exp =~ /(.+)_combined/) {
-	my $base_name = $1;
-#	print $base_name."\n\n\n\n";
-	$reps{$base_name}= 1;
-    }
-    else {
-#	"print $exp has no combined data\n\n\n\n";
-    }
-
+    $sampleHash = displayAndBaseName($analysisConfig);
 }
 
 
 
-# sort directory name by the number in the string, e.g. hour2, hour10, hour20...
-OUTER: foreach my $d (sort @ds) {
-#foreach my $d (map  { $_->[0] }
-#               sort { $a->[1] <=> $b->[1] }
-#               map  { [$_, $_=~/(\d+)/] } @ds) {
-    
-    next unless $d =~ /^analyze_(\S+)/;
-#    print "directory: $d\n";
-    my $sample = $1;
-    
-    foreach my $keys (keys %reps) {
-	
-	if (($d =~ $keys) && ($d !~ /combined/)) {
+foreach my $key (keys %$sampleHash) {
+  my $samples = $sampleHash->{$key}->{samples};
 
-	    next OUTER;
-	}
-	else {
-	    next;
-	}
-    }
+  my $sampleDirName;
+  if(scalar @$samples > 1) {
+    $sampleDirName = $key . "_combined";
+  }
+  elsif(scalar @$samples == 1) {
+    $sampleDirName = $samples->[0];
+  }
+  else {
+    die "no samples found for key $key";
+  }
+
+
+  my $d = "$inputDir/analyze_$sampleDirName/master/mainresult";
+
     $inputDir =~ s/\/$//;
-    my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
-    my $output = $outputDir."/$sample"; 
+    my $exp_dir = "$d/normalized/final";
+    my $output = $outputDir."/$key"; 
     system ("mkdir $output");
     my $status = $? >>8;
     die "Error.  Failed making $outputDir with status '$status': $!\n\n" if ($status);
@@ -213,18 +160,18 @@ OUTER: foreach my $d (sort @ds) {
 	    my $display_order_sample = "";
 	    
 	    if(-e $analysisConfig) {
-		$display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
+		$display_order_sample = $sampleHash->{$key}->{orderNum} .  ".$order - ".  $sampleHash->{$key}->{displayName};
 	    } else {
-		$display_order_sample = $sample; 
+		$display_order_sample = $key; 
 	    }
 	    
 	    
 	    if($f =~ /firststrand/ || $f =~ /secondstrand/) {
 $meta =<<EOL;
-[$sample/$f]
+[$key/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt $strand)
-sample       = $sample
+sample       = $key
 alignment    = $expt
 strand       = $strand
 type         = Coverage
@@ -233,10 +180,10 @@ EOL
 	    } 
 	    else {
 $meta =<<EOL;
-[$sample/$f]
+[$key/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt)
-sample       = $sample
+sample       = $key
 alignment    = $expt
 type         = Coverage
 		    
@@ -290,16 +237,16 @@ EOL
 	    my $display_order_sample = "";
 	    
 	    if(-e $analysisConfig) {
-		$display_order_sample = "$sampleOrder{$sample}.$order - ".  $sampleDisplayName{$sample};
+		$display_order_sample = $sampleHash->{$key}->{orderNum} .  ".$order - ".  $sampleHash->{$key}->{displayName};
 	    } else {
-		$display_order_sample = $sample; 
+		$display_order_sample = $key; 
 	    }
 	    
 $meta =<<EOL;
-[$sample/$f]
+[$key/$f]
 :selected    = $selected
 display_name = $display_order_sample ($expt $strand)
-sample       = $sample
+sample       = $key
 alignment    = $expt
 strand       = $strand
 type         = Coverage

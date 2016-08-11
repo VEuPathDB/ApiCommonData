@@ -65,13 +65,13 @@ my @ds = readdir(DIR);
 
 # pull display name and base name for any with replciation
 my $analysis_config_display;
-my %samplesWithRepsHash;
+my $samplesHash;
 foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
-    %samplesWithRepsHash = displayAndBaseName($analysis_config);	
+    $samplesHash = displayAndBaseName($analysis_config);	
+
 }    
 
 my %dealingWithReps;
-
 
 my $mappingStatsBasename = "mappingStats.txt";
 
@@ -80,18 +80,14 @@ foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
 	print Dumper "command is $cmd\n";
 	&runCmd($cmd);
 	print Dumper "trying to delete folder $old_dir\n";
-	
 }
    
-
-
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
 	my $mappingStats = "$exp_dir/$mappingStatsBasename";
 	if(-e $mappingStats) {
 	    my $statsString = `cat $mappingStats`;
 	    if($statsString =~ /DONE STATS/) {
 		next;
-	
 	    }
 	    else {
 		print "data set $exp_dir has not been split on unique non unique mapping. doing this now ...\n";
@@ -104,31 +100,17 @@ foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
 	}
 }
 
+foreach my $groupKey (keys %$samplesHash) {
+  my @samples = @{$samplesHash->{$groupKey}->{samples}};
+  my @mappingStatsFiles = map {"$inputDir/analyze_${_}/master/mainresult"} @samples;
 
-
-
-
-foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
-    my %fileSpecificCoverage;
-    if (keys %samplesWithRepsHash >=1) {
- 	foreach my $keys (keys %samplesWithRepsHash) { 
-
- 	    if ($exp_dir =~ /$samplesWithRepsHash{$keys}/) { # this pulls out any files that are replicates to deal with the seperately. 
- 		my $fileBaseName = $samplesWithRepsHash{$keys};
-                push @{$dealingWithReps{$fileBaseName}}, $exp_dir;
- 	    }
- 	    else {
-		%fileSpecificCoverage = &getCountHash($exp_dir);
- 		$hash{$exp_dir} = \%fileSpecificCoverage;
- 	    }
- 	}
-    }
-    else {
-	%fileSpecificCoverage = &getCountHash($exp_dir);
-	$hash{$exp_dir} = \%fileSpecificCoverage;
-    }
+  if(scalar @mappingStatsFiles > 1) {
+    push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;
+  }
+  else {
+    $hash{$mappingStatsFiles[0]} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
+  }
 }
-
 
 foreach my $expWithReps (keys %dealingWithReps) {
     my $count = 0;
@@ -143,19 +125,22 @@ foreach my $expWithReps (keys %dealingWithReps) {
     $exp_dir = "$exp_dir/master/mainresult";
     my $listOfUniqueRepBwFiles;
     my $listOfNonUniqueRepBwFiles;
-    &makeMappingFile($inputDir, $expWithReps, $exp_dir);
+
+    &makeMappingFile($dealingWithReps{$expWithReps}, $exp_dir, $mappingStatsBasename);
     
-    foreach my $replicate (@{$dealingWithReps{$expWithReps}}) {
- 	foreach	my $file_to_open (glob "$replicate/*.bed") {
+    foreach my $replicateDir (@{$dealingWithReps{$expWithReps}}) {
+ 	foreach	my $file_to_open (glob "$replicateDir/*.bed") {
  	    my $baseBed = basename $file_to_open;
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
-	    &runCmd("bedGraphToBigWig $replicate/$baseBed $topLevelSeqSizeFile $replicate/$bwFile"); 
+
+
+	    &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 	    if ($baseBed =~ /^unique/) {
-		$listOfUniqueRepBwFiles.= "$replicate/$bwFile ";
+		$listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
 	    }
 	    elsif ($baseBed =~ /^non_unique/) {
-		$listOfNonUniqueRepBwFiles.= "$replicate/$bwFile ";
+		$listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
 	    }
  	}
 	
@@ -163,11 +148,9 @@ foreach my $expWithReps (keys %dealingWithReps) {
        my $cmd = "bigWigMerge -max $listOfUniqueRepBwFiles $exp_dir/uniqueCombinedReps.bed";
        &runCmd($cmd);
     my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
-     &runCmd($cmd);
-    my %fileSpecificCoverage = &getCountHash($exp_dir);
-    $hash{$exp_dir} = \%fileSpecificCoverage;
+    &runCmd($cmd);
+    $hash{$exp_dir} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
-
 
 update_coverage(\%hash);
 
@@ -198,6 +181,7 @@ sub merge_normalized_coverage {
 sub update_coverage {
     my $hash = shift;
     my %hash2 = %$hash;
+
     foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
 	my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
 	my $max_sum_coverage = pop @sorted;
@@ -220,10 +204,9 @@ sub update_coverage {
 	    $bamfile =~ s/\.bed$/.bam/;
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-#	    print Dumper %hash2;
-#	    print "file to look for is $bamfile\n";
+
 	    my $coverage = $hash2{$k}{$bamfile};
-#	    print "coverage is $coverage";
+
 	    <F>;
 	    while(<F>) {
 		my($chr, $start, $stop, $score) = split /\t/, $_;
@@ -247,7 +230,8 @@ sub getCountHash {
     
     my %hash;
     my $d = shift;
-    open my $IN, "$d/mappingStats.txt" or die "cant find mapping file\n\n\n";
+    my $f = shift;
+    open my $IN, "$d/$f" or die "cant find mapping file $d/$f\n\n\n";
     while(my $line = <$IN>) {
 	chomp $line;
 	if ($line =~ /file/) {
@@ -256,64 +240,67 @@ sub getCountHash {
 	elsif ($line =~ /^\s*$/) {
 	    next;
 	}
+	elsif ($line =~ /DONE STATS/) {
+	    next;
+	}
 	else {
 	    my($file, $coverage, $percentage, $count) = split /\t/, $line;
 	    my $shortfile = basename $file;
 	    $hash{$shortfile} = $count;
 	}
     }
-    return %hash;
+    return \%hash;
 }
 
 
 sub makeMappingFile{
-    my ($inputDir, $baseName, $comboDir) = @_;
+    my ($repFiles, $comboDir, $mappingStatsBase) = @_;
+
     my $countReps = 0;
     my %totals;
-    foreach my $rep (glob "$inputDir/analyze_$baseName*/master/mainresult/mappingStats.txt") {
-	if ($rep =~ /combined/) {
-	    #combined already has a mapping file 
-	    last;
-	}
-	else { 
-	    $countReps ++;
-	    open(R, "$rep");
-	    <R>;
-	    while(<R>) {
-		chomp $_;
-		if ($_ =~ /file/) {
-		    next;
-		}
-		elsif ($_ =~ /^\s*$/) {
-		    next;
-		}
-		else {
-		    my($file, $coverage, $percentage, $count) = split /\t/, $_;
-		    my $shortname = basename $file;
-		    if (exists $totals{$shortname}) {
-			@{$totals{$shortname}}[0] += $coverage;
-			@{$totals{$shortname}}[1] += $percentage;
-			@{$totals{$shortname}}[2] += $count;
-		    }
-		    else {
-			@{$totals{$shortname}} = ($coverage, $percentage, $count);
-		    }
+    foreach my $rep (@$repFiles) {
+            $countReps ++;
+            open(R, "$rep/$mappingStatsBase") or die "Cannot open file $rep/$mappingStatsBase for reading:$!";;
+            <R>;
+            while(<R>) {
+        	chomp $_;
+        	if ($_ =~ /file/) {
+        	    next;
+        	}
+        	elsif ($_ =~ /^\s*$/) {
+        	    next;
+        	}
+        	elsif ($_ =~ /DONE STATS/) {
+        	    next;
+        	}
+        	else {
+        	    my($file, $coverage, $percentage, $count) = split /\t/, $_;
+        	    my $shortname = basename $file;
+        	    if (exists $totals{$shortname}) {
+        		@{$totals{$shortname}}[0] += $coverage;
+        		@{$totals{$shortname}}[1] += $percentage;
+        		@{$totals{$shortname}}[2] += $count;
+        	    }
+        	    else {
+        		@{$totals{$shortname}} = ($coverage, $percentage, $count);
+        	    }
 		    
-		}
-	    }
-	}
+        	}
+            }
+
 
     }
     my $mapping = $comboDir."/mappingStats.txt";
-    open (M, ">$mapping");
+    open (M, ">$mapping") or die "Could not open file $mapping for writing: $!";;
     print M "file\tcoverage\tpercentageMapped\treadsMapped\n";
+
     foreach my $key (keys %totals) {
-	my $finalFile = $key;
-	$finalFile =~ s/_results_sorted.bam/CombinedReps.bam/;
-	my $finalCoverage= ($totals{$key}->[0] / $countReps);
-	my $finalPercentage= ($totals{$key}->[1]/ $countReps);
-	my $finalCount = ($totals{$key}->[2] / $countReps) ;
-	print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\n";
+        my $finalFile = $key;
+        $finalFile =~ s/_results_sorted.bam/CombinedReps.bam/;
+        my $finalCoverage= ($totals{$key}->[0] / $countReps);
+        my $finalPercentage= ($totals{$key}->[1]/ $countReps);
+        my $finalCount = ($totals{$key}->[2] / $countReps) ;
+        print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\n";
 	
     }
     close M;
