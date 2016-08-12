@@ -77,7 +77,7 @@ my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
 	my $cmd = "rm -r $old_dir";
-	print Dumper "command is $cmd\n";
+#	print Dumper "command is $cmd\n";
 	&runCmd($cmd);
 	print Dumper "trying to delete folder $old_dir\n";
 }
@@ -111,7 +111,11 @@ foreach my $groupKey (keys %$samplesHash) {
     $hash{$mappingStatsFiles[0]} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
   }
 }
+#print Dumper %$samplesHash;
 
+#print Dumper "rep hash is \n";
+#print Dumper %dealingWithReps;
+ 
 foreach my $expWithReps (keys %dealingWithReps) {
     my $count = 0;
     my %scoreHash;
@@ -125,32 +129,66 @@ foreach my $expWithReps (keys %dealingWithReps) {
     $exp_dir = "$exp_dir/master/mainresult";
     my $listOfUniqueRepBwFiles;
     my $listOfNonUniqueRepBwFiles;
-
+    my $listOfUniqueFirstStrandFiles;
+    my $listOfUniqueSecondStrandFiles;
+    my $listOfNonUniqueFirstStrandFiles;
+    my $listOfNonUniqueSecondStrandFiles;
+    my @FileSets;
     &makeMappingFile($dealingWithReps{$expWithReps}, $exp_dir, $mappingStatsBasename);
-    
+#need to add here dealing with the stand etc.     
     foreach my $replicateDir (@{$dealingWithReps{$expWithReps}}) {
  	foreach	my $file_to_open (glob "$replicateDir/*.bed") {
  	    my $baseBed = basename $file_to_open;
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
-
-
 	    &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 	    if ($baseBed =~ /^unique/) {
-		$listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+		if ($baseBed =~/firststrand/)  {
+		    $listOfUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
+		}
+		elsif ($baseBed =~/secondstrand/) {
+		    $listOfUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
+		}
+		else{
+		    $listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+		}
 	    }
 	    elsif ($baseBed =~ /^non_unique/) {
-		$listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+		if ($baseBed =~/firststrand/)  {
+		    $listOfNonUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
+		}
+		elsif ($baseBed =~/secondstrand/) {
+		    $listOfNonUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
+		}
+		else{
+		    $listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+		}
+		
+	
 	    }
  	}
 	
     }
-       my $cmd = "bigWigMerge -max $listOfUniqueRepBwFiles $exp_dir/uniqueCombinedReps.bed";
-       &runCmd($cmd);
-    my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
-    &runCmd($cmd);
-    $hash{$exp_dir} = &getCountHash($exp_dir, $mappingStatsBasename);
+    push @FileSets , ($listOfUniqueFirstStrandFiles, $listOfUniqueSecondStrandFiles, $listOfUniqueRepBwFiles, $listOfNonUniqueFirstStrandFiles, $listOfNonUniqueSecondStrandFiles, $listOfNonUniqueRepBwFiles);
+ #   print Dumper @FileSets;
+    
+    foreach my $set (@FileSets) {
+	next unless (defined $set);
+	my @temps = split  " ", $set;
+	my $fileToUse = $temps[0];
+#	print Dumper $fileToUse;
+	my $base = basename $fileToUse;
+	$base =~ s/\.bw//;
+	my $cmd = "bigWigMerge -max $set $exp_dir/${base}CombinedReps.bed";
+#	print Dumper "command now for the reps is $cmd\n";
+	&runCmd($cmd);
+  #  my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
+  #  &runCmd($cmd);
+    }
+	$hash{$exp_dir} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
+
+
 
 update_coverage(\%hash);
 
@@ -202,9 +240,10 @@ sub update_coverage {
 	    my $outputFile = $f;
 	    my $bamfile = $f;
 	    $bamfile =~ s/\.bed$/.bam/;
+#	    print Dumper "trying to match $bamfile";
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-
+#	    print Dumper %hash2;
 	    my $coverage = $hash2{$k}{$bamfile};
 
 	    <F>;
@@ -296,7 +335,8 @@ sub makeMappingFile{
 
     foreach my $key (keys %totals) {
         my $finalFile = $key;
-        $finalFile =~ s/_results_sorted.bam/CombinedReps.bam/;
+        $finalFile =~ s/_results_sorted.bam/_results_sortedCombinedReps.bam/;
+	$finalFile =~ s/results.bam/resultsCombinedReps.bam/;
         my $finalCoverage= ($totals{$key}->[0] / $countReps);
         my $finalPercentage= ($totals{$key}->[1]/ $countReps);
         my $finalCount = ($totals{$key}->[2] / $countReps) ;
