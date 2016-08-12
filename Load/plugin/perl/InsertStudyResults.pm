@@ -268,6 +268,10 @@ sub addResults {
 
     my @a = split(/\t/, $_);
 
+    # this is specifically for spliced leader bt files which have a row for * (unclear what it is but we want to skip it)
+    next if($a[0] eq '*');
+
+
     my ($hash, $start);
     if ($sourceIdType =~ /segment/ || $sourceIdType =~ /NASequence/) {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
