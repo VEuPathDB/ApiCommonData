@@ -585,6 +585,7 @@ sub undoTables {
     'ApiDB.HAPLOTYPERESULT',
     'ApiDB.RflpGenotype',
     'ApiDB.RflpGenotypeNumber',
+    'ApiDB.SpliceSiteFeature',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
