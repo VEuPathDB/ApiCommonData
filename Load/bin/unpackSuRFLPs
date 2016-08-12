@@ -224,6 +224,7 @@ my %taxonIdMap = (
 "Vulpes vulpes", "9627",
 );
 
+my $sampleNumber;
 foreach my $line (<IN>){
 	chomp($line);
 	$line =~ s/\cM//g;
@@ -282,7 +283,6 @@ foreach my $line (<IN>){
 	}
 	    my @isolates = split(/,/,$cols[19]);
 
-	    my $sampleNumber;
 	    foreach my $isolate (@isolates){
 
 		# strip leading and trailing whitespace
