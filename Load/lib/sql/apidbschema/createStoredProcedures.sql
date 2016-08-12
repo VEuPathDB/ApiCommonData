@@ -84,6 +84,36 @@ GRANT execute ON apidb.tab_to_string TO gus_r;
 GRANT execute ON apidb.tab_to_string TO gus_w;
 
 -------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION
+apidb.tab_to_clob (p_clob_tab IN apidb.varchartab,
+                     p_delimiter IN  VARCHAR2 DEFAULT ',')
+RETURN CLOB IS
+l_string     CLOB;
+BEGIN
+
+  IF p_clob_tab.FIRST IS NULL THEN
+    RETURN null;
+  END IF;
+
+  FOR i IN p_clob_tab.FIRST .. p_clob_tab.LAST LOOP
+    IF i != p_clob_tab.FIRST THEN
+      l_string := l_string || p_delimiter;
+    END IF;
+
+    l_string := l_string || p_clob_tab(i);
+
+  END LOOP;
+
+  RETURN l_string;
+
+END tab_to_clob;
+/
+
+show errors;
+
+GRANT execute ON apidb.tab_to_clob TO gus_r;
+GRANT execute ON apidb.tab_to_clob TO gus_w;
+-------------------------------------------------------------------------------
 create or replace procedure apidb.analyze (schema_name IN varchar2, table_name IN varchar2)
 authid current_user -- run with the privileges of the database user who calls it, not the owner (which is apidb)
 is
