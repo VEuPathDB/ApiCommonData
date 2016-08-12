@@ -76,6 +76,8 @@ sub munge {
 
     my ($query, $bitwise, $naSeqId, $location, $mapQ, $cigar, $mateRef, $mateLoc, $fragmentLength, $seq, $qualities, @tags) = split("\t", $_);
 
+    next if($naSeqId eq '*');
+
     my $seqLen = length($seq);
 
     # bowtie2 results have 1-based offset
