@@ -319,13 +319,13 @@ foreach my $line (<IN>){
 		my $protocol = "DNA extract";
                 my $extractName = "$isolate ($protocol)";
 
-		print ISATAB_S "$sourceName\thost organism\tGO\tGO_0018995\t$country\tGAZ\t$countryUri\t$hostName\tNCBITAXON\t$hostTaxonUri\tsample collection\t$sampleName\t$extractName\tblood specimen\tOBI\tOBI_0000655\tDNA extraction\t$extractName\tDNA extract\tOBI\tOBI_0001051\t$isolate\tToxoplasma gondii\n";
+		print ISATAB_S "$sourceName\thost organism\tGO\tGO_0018995\t$country\tGAZ\t$countryUri\t$hostName\tNCBITAXON\t$hostTaxonUri\tsample collection\t$sampleName\t$isolate\tblood specimen\tOBI\tOBI_0000655\tDNA extraction\t$extractName\tDNA extract\tOBI\tOBI_0001051\t$isolate\tToxoplasma gondii\n";
 
 		# header: print ISATAB_A "Extract Name\tProtocol Ref\tAssay Name\tProtocol Ref\tData Transformation Name\n";
 		print ISATAB_A "$extractName\tRFLP assay\t$isolate (RFLP assay)\tdata transformation\t$isolate (RFLPGenotype)\n";
 
 		my $genotypeFile = $isolate . "RflpGenotype.tab";
-		print CONTROL "$isolate (RFLPGenotype)\t$genotypeFile\tliteral\t\tRFLPGenotype\t\tChunlei Su RFLP Data\n";
+		print CONTROL "$isolate (RFLPGenotype)\t$genotypeFile\tliteral\t\tRFLPGenotype\t\tChunlei Su RFLP Genotype Data\n";
 		open(GENOFILE, ">$genotypeFile");
 		print GENOFILE "locus_tag\tgenotype\n";
 
@@ -358,7 +358,7 @@ foreach my $line (<IN>){
 		close(GENOFILE);
 
 		my $genotypeNumberFile = $isolate . "RflpGenotypeNumber.tab";
-		print CONTROL "$isolate (RFLPGenotypeNumber)\t$genotypeNumberFile\tliteral\t$isolate (RFLPGenotype)\tRFLPGenotypeNumber\t\tChunlei Su RFLP Data\n";
+		print CONTROL "$isolate (RFLPGenotypeNumber)\t$genotypeNumberFile\tliteral\t$isolate (RFLPGenotype)\tRFLPGenotypeNumber\t\tChunlei Su RFLP Genotype Number Data\n";
 		open(GENONUMFILE, ">$genotypeNumberFile");
 		print GENONUMFILE "genotype_number\n";
 		print GENONUMFILE "$cols[6]\n";
