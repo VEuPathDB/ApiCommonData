@@ -25,6 +25,7 @@ CREATE TABLE apidb.SpliceSiteGenes (
 );
 
 CREATE SEQUENCE apidb.SpliceSiteGenes_sq;
+GRANT select ON apidb.SpliceSiteGenes_sq TO gus_w;
 
 grant select on Apidb.SpliceSiteGenes to gus_r;
 grant insert, select, update, delete on Apidb.SpliceSiteGenes to gus_w;
