@@ -124,6 +124,7 @@ sub run {
 
   my $genomicSeqSh = $dbh->prepare("select substr(s.sequence, ?, ?) as base from dots.nasequence s where s.source_id = ?");
 
+  print STDERR "MAKESPLICESITECOLLECITONS\n";
   my $spliceSiteCollections = $self->makeSpliceSiteCollections($extDbRlsId);
 
   $self->log("Mapping Splice Sites to Transcripts...\n") if($verbose);
@@ -144,6 +145,8 @@ sub run {
     next unless($nextGeneStartOrSeqEnd > $lastGeneEndOrSeqStart); # SKIP where several genes overlap
 
     my $collection = $spliceSiteCollections->{$naSequenceId};
+    next unless($collection);
+
     my @subset = $collection->features_in_range(-start => $lastGeneEndOrSeqStart,
                                                 -end => $nextGeneStartOrSeqEnd,
                                                 -strand => $strand,
@@ -285,9 +288,9 @@ sub run {
     my (%maxCounts, %totalCounts);
     foreach my $feature (@subset) {
       my ($sample) = $feature->get_tag_values('sample');
-      my $count = $feature->score();
+      my ($count) = $feature->get_tag_values('count_per_million');
 
-      my $spliceSiteType = $feature->primary();
+      my $spliceSiteType = $feature->primary_tag();
 
       $maxCounts{$spliceSiteType}{$sample} = $count if($count > $maxCounts{$spliceSiteType}{$sample});
       $totalCounts{$spliceSiteType}{$sample} += $count;
@@ -298,12 +301,12 @@ sub run {
 #--------------------------------------------------------------------------------
 
     foreach my $feature (@subset) {
-      my $spliceSiteType = $feature->primary();
+      my $spliceSiteType = $feature->primary_tag();
 
       my ($sample) = $feature->get_tag_values('sample');
       my ($spliceSiteFeatureId) = $feature->get_tag_values('splice_site_feature_id');
 
-      my $count = $feature->score();
+      my ($count) = $feature->get_tag_values('count_per_million');
 
       my $isDominant;
       if($maxCounts{$spliceSiteType}{$sample} == $count) {
@@ -411,8 +414,21 @@ sub makeSpliceSiteCollections {
   my $dbh = $self->getQueryHandle();
   my $verbose = $self->getArg('verbose');
 
+  my $spliceSiteFeatureSh = $dbh->prepare("select distinct ssf.type
+, ssf.splice_site_feature_id
+, ssf.na_sequence_id
+, ssf.segment_start
+, ssf.strand
+, ssf.count_per_million
+, ssf.protocol_app_node_id
+, ssf.is_unique 
+from apidb.splicesitefeature ssf 
+ , study.studylink sl
+ , study.study s
+where s.external_database_release_id = $extDbRlsId
+and s.study_id = sl.study_id
+and sl.protocol_app_node_id = ssf.protocol_app_node_id");
 
-  my $spliceSiteFeatureSh = $dbh->prepare("select ssf.type, ssf.splice_site_feature_id, ssf.na_sequence_id, ssf.segment_start, ssf.strand, ssf.count_per_million, ssf.protocol_app_node_id, ssf.is_unique from apidb.splicesiteFeature ssf where external_database_release_id = $extDbRlsId");
   $spliceSiteFeatureSh->execute();
 
   my %spliceSites;
@@ -425,10 +441,9 @@ sub makeSpliceSiteCollections {
     my $feature = Bio::SeqFeature::Generic->new(-start => $ssLoc, 
                                                 -end => $ssLoc, 
                                                 -strand => $ssStrand, 
-                                                -primary => $ssType, 
+                                                -primary_tag => $ssType, 
                                                 -seq_id => $ssNaSequenceId, 
-                                                -score => $ssCount, 
-                                                -tag => {'sample' => $ssSample, 'is_unique' => $isUnique, 'splice_site_feature_id' => $ssId}
+                                                -tag => {'sample' => $ssSample, 'is_unique' => $isUnique, 'splice_site_feature_id' => $ssId, 'count_per_million' => $ssCount}
         );
 
     push @{$spliceSites{$ssNaSequenceId}}, $feature;
@@ -445,6 +460,9 @@ sub makeSpliceSiteCollections {
   }
 
   my @naSequenceIds = keys %spliceSiteCollections;
+
+  print Dumper \@naSequenceIds;
+
 
   return \%spliceSiteCollections;
 }
