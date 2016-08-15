@@ -123,7 +123,7 @@ sub run {
 
   my $genomicSeqSh = $dbh->prepare("select substr(s.sequence, ?, ?) as base from dots.nasequence s where s.source_id = ?");
 
-  my $spliceSiteCollections = $self->makeSpliceSiteCollections($extDbRlsId);
+  my ($spliceSiteCollections, $experimentType) = $self->makeSpliceSiteCollections($extDbRlsId);
 
   $self->log("Mapping Splice Sites to Transcripts...\n") if($verbose);
 
@@ -134,6 +134,9 @@ sub run {
     my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
 
     my $strand = $geneHash->{strand};
+    my $geneStart = $geneHash->{start};
+    my $geneEnd = $geneHash->{end};
+
     my $sequenceSourceId = $geneHash->{sequence_source_id};
     my $naSequenceId = $geneHash->{na_sequence_id};
 
@@ -145,9 +148,12 @@ sub run {
     my $collection = $spliceSiteCollections->{$naSequenceId};
     next unless($collection);
 
-    my @subset = $collection->features_in_range(-start => $lastGeneEndOrSeqStart,
-                                                -end => $nextGeneStartOrSeqEnd,
+    my ($subsetStart, $subsetEnd) = &findSubsetLocs($strand, $experimentType, $geneStart, $geneEnd, $lastGeneEndOrSeqStart, $nextGeneStartOrSeqEnd);
+
+    my @subset = $collection->features_in_range(-start => $subsetStart,
+                                                -end => $subsetEnd,
                                                 -strand => $strand,
+                                                -strandmatch => 'strong', #only match features on the same strand
                                                 -contain => 1);
     
     my (%atgLocations, %stopLocations);
@@ -360,6 +366,30 @@ sub run {
 }
 
 
+sub findSubsetLocs {
+  my ($strand, $experimentType, $geneStart, $geneEnd, $lastGeneEndOrSeqStart,$nextGeneStartOrSeqEnd ) = @_;
+
+  if($strand == -1) {
+    if($experimentType eq 'Splice Site') {
+      return($geneStart, $nextGeneStartOrSeqEnd);
+    }
+    else {
+      return($lastGeneEndOrSeqStart, $geneStart);
+    }
+  }
+  else {
+    if($experimentType eq 'Splice Site') {
+      return($lastGeneEndOrSeqStart, $geneEnd);
+    }
+    else {
+      return($geneEnd, $nextGeneStartOrSeqEnd);
+    }
+
+  }
+}
+
+
+
 sub findStopDistances {
   my ($loc, $stopLocations, $strand) = @_;
 
@@ -434,6 +464,7 @@ and sl.protocol_app_node_id = ssf.protocol_app_node_id");
 
   $self->log("Reading splice site features from database ...\n") if($verbose);
 
+  my %experimentTypes;
 
   while(my ($ssType, $ssId, $ssNaSequenceId, $ssLoc, $ssStrand, $ssCount, $ssSample, $isUnique) = $spliceSiteFeatureSh->fetchrow_array()) {
     my $feature = Bio::SeqFeature::Generic->new(-start => $ssLoc, 
@@ -445,6 +476,7 @@ and sl.protocol_app_node_id = ssf.protocol_app_node_id");
         );
 
     push @{$spliceSites{$ssNaSequenceId}}, $feature;
+    $experimentTypes{$ssType}++;
   }
 
   $spliceSiteFeatureSh->finish();
@@ -457,7 +489,10 @@ and sl.protocol_app_node_id = ssf.protocol_app_node_id");
     $spliceSiteCollections{$naSequenceId} = $collection;
   }
 
-  return \%spliceSiteCollections;
+  my @distinctExperimentTypes = keys %experimentTypes;
+  $self->error("Cannot have more than one experiment type for this external_database_release_id ($extDbRlsId)") if(scalar(@distinctExperimentTypes) > 1);
+
+  return(\%spliceSiteCollections, $distinctExperimentTypes[0]);
 }
 
 
