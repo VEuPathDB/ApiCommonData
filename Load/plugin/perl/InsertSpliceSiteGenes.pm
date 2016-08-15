@@ -2,7 +2,6 @@ package ApiCommonData::Load::Plugin::InsertSpliceSiteGenes;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
-use warnings;
 
 use lib "$ENV{GUS_HOME}/lib/perl";
 
@@ -124,7 +123,6 @@ sub run {
 
   my $genomicSeqSh = $dbh->prepare("select substr(s.sequence, ?, ?) as base from dots.nasequence s where s.source_id = ?");
 
-  print STDERR "MAKESPLICESITECOLLECITONS\n";
   my $spliceSiteCollections = $self->makeSpliceSiteCollections($extDbRlsId);
 
   $self->log("Mapping Splice Sites to Transcripts...\n") if($verbose);
@@ -458,11 +456,6 @@ and sl.protocol_app_node_id = ssf.protocol_app_node_id");
 
     $spliceSiteCollections{$naSequenceId} = $collection;
   }
-
-  my @naSequenceIds = keys %spliceSiteCollections;
-
-  print Dumper \@naSequenceIds;
-
 
   return \%spliceSiteCollections;
 }
