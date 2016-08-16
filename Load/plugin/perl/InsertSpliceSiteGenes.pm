@@ -103,6 +103,10 @@ sub new {
 sub run {
   my ($self) = @_;
 
+my %stopCodons = (TAG => 1,
+                  TAA => 1,
+                  TGA => 1);
+
   my $totalTime;
   my $totalTimeStart = time();
 
@@ -217,6 +221,7 @@ sub run {
               $atgLocations{$cursorGenomicLoc->start()}++;
             }
           }
+
         }
 
         my $transcriptGenomicLocation = $transcriptToGenomicMapper->cds();
@@ -249,7 +254,7 @@ sub run {
         # reset offset
         $offset = 0;
 
-        while(length($genomicSequence) + $offset > 0) {
+        GS: while(length($genomicSequence) + $offset > 0) {
           my ($genomicSequenceCursorEnd, $genomicSequenceCursorStart);
 
           if($strand == -1) {
@@ -265,14 +270,10 @@ sub run {
 
           my $codon = substr($genomicSequence, $offset, $codonLength);
 
+          last if($stopCodons{$codon});
+
+
           if(lc($codon) eq 'atg') {
-
-            my $genomicSequenceLoc = Bio::Location::Simple->new(
-              -start => $genomicSequenceCursorStart,
-              -end => $genomicSequenceCursorEnd,
-              -strand => 1);
-
-
             if($strand == -1) {
               $atgLocations{$genomicSequenceCursorEnd}++;
             }
@@ -281,9 +282,8 @@ sub run {
             }
           }
         }
-      } 
+      }
     }
-
 
     my $atgLocations = &sortHashKeysByStrand(\%atgLocations, $strand);
     my $stopLocations = &sortHashKeysByStrand(\%stopLocations, $strand);
@@ -505,13 +505,13 @@ sub findFirstAtgLoc {
   foreach my $atg (@$atgLocations) {
     if($strand == -1) {
       if($atg < $loc) {
-        my $dist = $loc - $atg + 1;
+        my $dist = $loc - $atg;
         return $atg, $dist;
       }
     }
     else {
       if($atg > $loc) {
-        my $dist = $atg - $loc + 1;
+        my $dist = $atg - $loc;
         return $atg, $dist;
       }
     }
