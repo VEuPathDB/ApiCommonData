@@ -8,6 +8,8 @@ CREATE TABLE apidb.SpliceSiteGenes (
   percent_fraction              NUMBER(3), 
   first_atg_location            NUMBER(10),
   dist_to_first_atg             NUMBER(10),
+  annot_atg_location            NUMBER(10),
+  dist_to_annot_atg             NUMBER(10),
   MODIFICATION_DATE            DATE,
   USER_READ                    NUMBER(1),
   USER_WRITE                   NUMBER(1),
