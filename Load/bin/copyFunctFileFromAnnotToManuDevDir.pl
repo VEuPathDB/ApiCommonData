@@ -7,10 +7,11 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use strict;
 
-my ($fileToCopy, $help);
+my ($fileToCopy, $help, $preVersion);
 
 &GetOptions(
 	    "fileToCopy=s" => \$fileToCopy,
+	    "preVersion=s" => \$preVersion,
             "help|h" => \$help,
            );
 
@@ -46,7 +47,8 @@ if ($fileToCopy) {
 
     ## for testing
     my $processedEcFile = "ec.txt.addProteinId";
-    my $cmd4ec = "replaceTransIdWithProteinId.pl --organismAbbrev $orgAbbrev --extDbRlsVer $version --ecFile $fileToCopy > $processedEcFile";
+    $preVersion = $version if (!$preVersion);
+    my $cmd4ec = "replaceTransIdWithProteinId.pl --organismAbbrev $orgAbbrev --extDbRlsVer $preVersion --ecFile $fileToCopy > $processedEcFile";
     system($cmd4ec) if ($cmd4ec);
     $fileToCopy = $processedEcFile;
 
@@ -149,6 +151,8 @@ Usage: copyFunctFileFromAnnotToManuDevDir.pl --fileToCopy product.txt
 
 where
   --fileToCopy: the file name that need to copy
+  --$preVersion: optional, only need when do the functional annotation update,
+                 we use the previous version of external_database_version to run the isf testing
 
 ";
 }
