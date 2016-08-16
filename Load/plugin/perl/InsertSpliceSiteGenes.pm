@@ -147,13 +147,15 @@ my %stopCodons = (TAG => 1,
     my $lastGeneEndOrSeqStart = $geneHash->{last_gene_end_or_seq_start};
     my $nextGeneStartOrSeqEnd = $geneHash->{next_gene_start_or_seq_end};
 
-    next unless($nextGeneStartOrSeqEnd > $lastGeneEndOrSeqStart); # SKIP where several genes overlap
+    my $biggestTranscript = {source_id => '', length => 0, atgloc => ''};
+
+    next unless($geneEnd < $nextGeneStartOrSeqEnd && $geneStart > $lastGeneEndOrSeqStart); # SKIP where several genes overlap
 
     my $collection = $spliceSiteCollections->{$naSequenceId};
     next unless($collection);
 
     my ($subsetStart, $subsetEnd) = &findSubsetLocs($strand, $experimentType, $geneStart, $geneEnd, $lastGeneEndOrSeqStart, $nextGeneStartOrSeqEnd);
-
+    
     my @subset = $collection->features_in_range(-start => $subsetStart,
                                                 -end => $subsetEnd,
                                                 -strand => $strand,
@@ -169,6 +171,7 @@ my %stopCodons = (TAG => 1,
       next unless $transcriptSequence;
 
       my $transcriptSequenceLength = length($transcriptSequence);
+      
 
       my $offset = 0;
 
@@ -183,6 +186,7 @@ my %stopCodons = (TAG => 1,
 
         my $cdsGenomicLocation = $cdsToGenomicMapper->cds();
         my $cdsEndPos = $strand == -1 ? $cdsGenomicLocation->start : $cdsGenomicLocation->end;
+        my $cdsStartPos = $strand == -1 ? $cdsGenomicLocation->end : $cdsGenomicLocation->start;
 
         $stopLocations{$cdsEndPos}++;
 
@@ -192,7 +196,12 @@ my %stopCodons = (TAG => 1,
           -end => $cdsEndPos,
           -strand => 1);
 
-        # calc cds end in transcript coords
+
+        if($biggestTranscript->{length} < $transcriptSequenceLength) {
+          $biggestTranscript = {source_id => $transcriptSourceId, length => $transcriptSequenceLength, atgloc => $cdsStartPos};
+        }
+
+
         my $threePrimeUtrLength = $transcriptSequenceLength - $genomicToTranscriptMapper->map($cdsEndPosLoc)->start(); # start and end are equal for cdsEndPosLoc
         $offset = $offset - $threePrimeUtrLength;
 
@@ -285,6 +294,7 @@ my %stopCodons = (TAG => 1,
       }
     }
 
+
     my $atgLocations = &sortHashKeysByStrand(\%atgLocations, $strand);
     my $stopLocations = &sortHashKeysByStrand(\%stopLocations, $strand);
 
@@ -322,13 +332,18 @@ my %stopCodons = (TAG => 1,
       if($spliceSiteType eq 'Splice Site') {
         my ($firstAtgLoc, $distToAtg) = &findFirstAtgLoc($feature->start(), $atgLocations , $strand);
 
+        my ($annotAtgLoc, $distToAnnotAtg) = &findFirstAtgLoc($feature->start(), [$biggestTranscript->{atgloc}], $strand);
+
+
         my $gusSS = GUS::Model::ApiDB::SpliceSiteGenes->new({source_id => $geneSourceId,
                                                              protocol_app_node_id => $sample,
                                                              splice_site_feature_id => $spliceSiteFeatureId,
                                                              is_dominant => $isDominant,
                                                              percent_fraction => $percentFraction,
                                                              first_atg_location => $firstAtgLoc,
-                                                             dist_to_first_atg => $distToAtg
+                                                             dist_to_first_atg => $distToAtg,
+                                                             annot_atg_location => $annotAtgLoc,
+                                                             dist_to_annot_atg => $distToAnnotAtg,
                                                             });
 
         $gusSS->submit();
