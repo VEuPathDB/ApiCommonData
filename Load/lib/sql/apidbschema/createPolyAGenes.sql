@@ -29,7 +29,7 @@ grant select on Apidb.PolyAGenes to gus_r;
 grant insert, select, update, delete on Apidb.PolyAGenes to gus_w;
 
 CREATE SEQUENCE apidb.PolyAGenes_sq;
-
+GRANT select ON apidb.PolyAGenes_sq TO gus_w;
 
 create index apidb.polyagenes_data_idx
 ON Apidb.PolyAGenes (splice_site_feature_id, protocol_app_node_id, source_id)
