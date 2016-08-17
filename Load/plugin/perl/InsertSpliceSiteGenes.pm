@@ -368,8 +368,9 @@ my %stopCodons = (TAG => 1,
           $gusSS->submit();
         }
       }
-    }
 
+      $self->undefPointerCache();
+    }
 
     if($logCount++ % 1000 == 0) {
       my $runTime = time() - $totalTimeStart;
