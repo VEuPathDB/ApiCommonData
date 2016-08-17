@@ -29,7 +29,7 @@ sub displayAndBaseName {
   foreach my $node (@$nodes) {
     my $class = $node->{class};
 
-    next unless($class eq 'ApiCommonData::Load::RnaSeqAnalysis');
+    next unless($class eq 'ApiCommonData::Load::RnaSeqAnalysis' || $class eq 'ApiCommonData::Load::SpliceSiteAnalysis');
 
     my $args = $node->{arguments};
 
