@@ -568,6 +568,7 @@ and r.version = ?";
 
 
 sub undoTables {
-  return qw(ApiDB.SpliceSiteGenes
+  return ('ApiDB.SpliceSiteGenes', 
+          'ApiDB.PolyAGenes',
            );
 }
