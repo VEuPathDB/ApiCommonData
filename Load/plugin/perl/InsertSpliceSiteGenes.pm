@@ -299,7 +299,7 @@ my %stopCodons = (TAG => 1,
     my $stopLocations = &sortHashKeysByStrand(\%stopLocations, $strand);
 
 
-    my (%maxCounts, %totalCounts);
+    my (%maxCounts, %totalCounts, %countCounts);
     foreach my $feature (@subset) {
       my ($sample) = $feature->get_tag_values('sample');
       my ($count) = $feature->get_tag_values('count_per_million');
@@ -308,6 +308,7 @@ my %stopCodons = (TAG => 1,
 
       $maxCounts{$spliceSiteType}{$sample} = $count if($count > $maxCounts{$spliceSiteType}{$sample});
       $totalCounts{$spliceSiteType}{$sample} += $count;
+      $countCounts{$spliceSiteType}{$sample}{$count}++;
     }
 
 #--------------------------------------------------------------------------------
@@ -323,7 +324,7 @@ my %stopCodons = (TAG => 1,
       my ($count) = $feature->get_tag_values('count_per_million');
 
       my $isDominant;
-      if($maxCounts{$spliceSiteType}{$sample} == $count) {
+      if($maxCounts{$spliceSiteType}{$sample} == $count && $countCounts{$spliceSiteType}{$sample}{$count} == 1) {
         $isDominant = 1;
       }
       my $percentFraction = ($count / $totalCounts{$spliceSiteType}{$sample}) * 100;
@@ -365,6 +366,7 @@ my %stopCodons = (TAG => 1,
                                                           within_cds => $withinCds,
                                                           dist_to_cds => $distance,
                                                          });
+
           $gusSS->submit();
         }
       }
