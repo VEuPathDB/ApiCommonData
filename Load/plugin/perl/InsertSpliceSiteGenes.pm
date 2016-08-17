@@ -420,12 +420,12 @@ sub findStopDistances {
     my $dist;
 
     if($strand == -1) {
-      $dist = $stop - $loc + 1;
+      $dist = $stop - $loc;
       push @distances, $dist;
 
     }
     else {
-      $dist = $loc - $stop + 1;
+      $dist = $loc - $stop;
       push @distances, $dist;
     }
 
