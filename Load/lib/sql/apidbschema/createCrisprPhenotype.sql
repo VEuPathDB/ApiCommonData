@@ -1,6 +1,7 @@
 create table ApiDB.CrisprPhenotype (
  crispr_phenotype_id                       number(10) ,
  protocol_app_node_id         NUMBER(10) NOT NULL,
+ na_feature_id               NUMBER(12) NOT NULL,
  mean_phenotype  float(126),
  STANDARD_ERROR  float(126),
  gene_fdr float(126),
@@ -17,6 +18,7 @@ create table ApiDB.CrisprPhenotype (
  ROW_GROUP_ID                 NUMBER(3),
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
+ FOREIGN KEY (na_feature_id) REFERENCES Dots.NAFeatureImp,
  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
  PRIMARY KEY (crispr_phenotype_id)
 );
