@@ -240,10 +240,10 @@ sub update_coverage {
 	    my $outputFile = $f;
 	    my $bamfile = $f;
 	    $bamfile =~ s/\.bed$/.bam/;
-#	    print Dumper "trying to match $bamfile";
+	    print Dumper "trying to match $bamfile in $k";
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-#	    print Dumper %hash2;
+	    print Dumper %hash2;
 	    my $coverage = $hash2{$k}{$bamfile};
 
 	    <F>;
