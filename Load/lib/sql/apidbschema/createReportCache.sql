@@ -1,5 +1,6 @@
-create table apidb.GeneDetail (
+create table apidb.TranscriptDetail (
       SOURCE_ID VARCHAR2(100 BYTE),
+      GENE_SOURCE_ID VARCHAR2(100 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
@@ -8,24 +9,24 @@ create table apidb.GeneDetail (
       MODIFICATION_DATE DATE
 );
 
-CREATE UNIQUE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name) tablespace indx;
-CREATE INDEX apidb.genedtl_idx02 ON apidb.GeneDetail(field_name, source_id) tablespace indx;
-CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id) tablespace indx;
+CREATE UNIQUE INDEX apidb.transcriptdtl_idx01 ON apidb.TranscriptDetail(source_id, project_id, field_name) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx02 ON apidb.TranscriptDetail(field_name, source_id, gene_source_id, project_id) tablespace indx;
+CREATE INDEX apidb.transcriptdtl_idx03 ON apidb.TranscriptDetail(row_count, source_id, gene_source_id, project_id) tablespace indx;
 
-CREATE INDEX apidb.gene_text_ix on apidb.GeneDetail(content)
+CREATE INDEX apidb.transcript_text_ix on apidb.TranscriptDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
 
-CREATE TRIGGER apidb.GeneDtl_md_tg
-BEFORE UPDATE OR INSERT ON apidb.GeneDetail
+CREATE TRIGGER apidb.TranscriptDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.TranscriptDetail
 FOR EACH ROW
 BEGIN
   :new.modification_date := sysdate;
 END;
 /
 
-GRANT insert, select, update, delete ON apidb.GeneDetail TO gus_w;
-GRANT select ON apidb.GeneDetail TO gus_r;
+GRANT insert, select, update, delete ON apidb.TranscriptDetail TO gus_w;
+GRANT select ON apidb.TranscriptDetail TO gus_r;
 
 ------------------------------------------------------------------------------
 
@@ -148,13 +149,25 @@ CREATE TABLE apidb.GeneGff (
  table_name VARCHAR2(80),
  row_count  NUMBER(4),
  content    CLOB,
- primary key (wdk_table_id),
- modification_date date
+ modification_date date,
+ USER_READ             NUMBER(1),
+ USER_WRITE            NUMBER(1),
+ GROUP_READ            NUMBER(1),
+ GROUP_WRITE           NUMBER(1),
+ OTHER_READ            NUMBER(1),
+ OTHER_WRITE           NUMBER(1),
+ ROW_USER_ID           NUMBER(12),
+ ROW_GROUP_ID          NUMBER(3),
+ ROW_PROJECT_ID        NUMBER(4),
+ ROW_ALG_INVOCATION_ID NUMBER(12),
+ primary key (wdk_table_id)
 );
 
-CREATE INDEX apidb.gtab_ix
+CREATE SEQUENCE ApiDB.GeneGff_sq;
+
+CREATE INDEX apidb.ggff_ix
        ON apidb.GeneGff (source_id, table_name, row_count);
-CREATE INDEX apidb.gtab_name_ix
+CREATE INDEX apidb.ggff_name_ix
        ON apidb.GeneGff (table_name, source_id, row_count);
 
 GRANT insert, select, update, delete ON ApiDB.GeneGff TO gus_w;
@@ -167,6 +180,22 @@ begin
   :new.modification_date := sysdate;
 end;
 /
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'GeneGff',
+       'Standard', 'WDK_TABLE_ID',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+WHERE 'genegff' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where database_id = d.database_id);
 
 ------------------------------------------------------------------------------
 CREATE SEQUENCE apidb.geneGff_pkseq;

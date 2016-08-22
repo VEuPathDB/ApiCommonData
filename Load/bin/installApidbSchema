@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -73,38 +93,28 @@ my $password = $gusconfig->getDatabasePassword();
 #       so that if needed, the create can be manually reversed
 
 my @create = qw(
-               insertGusVersion.sql
                removeNullConstraintsFromSimilarityTables.sql
                createGusTuning.sql
-               modifySeqVariation.sql
                createApidbTuningSchema.sql
                createTestTuningSchema.sql
                createApidbSchema.sql
+               createChebiSchema.sql
 	       createAnalysisMethodInvocation.sql
-	       createChromosome6Orthology.sql
 	       createDatasource.sql
 	       createDbLinks.sql
-         createSnpTables.sql
-	       createExpressionProfileTables.sql
+               createSnpTables.sql
 	       createGeneInteractionTables.sql
-	       createGeneMappingView.sql
 	       createGeneFeatureProduct.sql
 	       createGeneFeatureName.sql
-	       createIsolateVocabulary.sql
-	       createIsolateGPS.sql
-	       createMassSpecSummary.sql
 	       createOrthologGroup.sql
 	       createPhylogeneticProfile.sql
 	       createPhylogeneticTree.sql
 	       createRelatedNaFeature.sql
 	       createReportCache.sql
-	       createRodentChrColors.sql
 	       createSequenceAttributeTables.sql
 	       createOrganism.sql
 	       createStoredProcedures.sql
 	       createSyntenyTables.sql
-	       createToxodbGenesView.sql
-	       createTransmembraneTable.sql
 	       createSpliceSiteFeature.sql
 	       createPubChemSubstance.sql
 	       createPubChemCompound.sql
@@ -112,33 +122,30 @@ my @create = qw(
 	       createOldAnnotation.sql
 	       createOldCodingSequence.sql
 	       createTuningManager.sql
-	       createContinents.sql
 	       createWorkflow.sql
-	       createsiRNA.sql
-	       createNextGenSeqCoverage.sql
-	       createNextGenSeq_Align.sql
-	       createPlasmoPfalLocations.sql
-	       createPlasmoMapp.sql
-	       createGeneGenomicSequence_Split.sql
-	       createIsolateMapping.sql
-	       createRUMIntronFeature.sql
-	       createGeneLodScoresTable.sql
+	       createIntronJunction.sql
+	       createNAFeatureHaploblock.sql
                createBlatProteinAlignment.sql
-	       createPhenotypeFeature.sql
 	       createGFF3Table.sql
 	       createEcNumberGenus.sql
-               createNetworkTables.sql	
-               createPathwayTables.sql	
 	       createSpliceSiteGenes.sql
 	       createPolyAGenes.sql
-               createVocabularyBiomaterial.sql
+               createMassSpecSummary.sql
+               createPathwayTables.sql
+               createTranscriptProduct.sql
+               createIsolateGPS.sql
+               createPhenotype.sql
+               createHaplotypeResult.sql
+               createOntologyTermResult.sql
+               createCNVTables.sql
+               createRflpTables.sql
+               createNAFeatureImage.sql
 	     );
 
 # drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
 # need to be reversed.  The trick here is to order these to avoid failures
-my @delete = qw( deleteGusVersion.sql
-                 restoreNullConstraintsFromSimilarityTables.sql
+my @delete = qw( restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
       	         dropDbLinks.sql
                  dropTestTuningSchema.sql

@@ -1,0 +1,514 @@
+#!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
+
+#########################################################################################
+##
+##  extract gene name, synonym, alias, comment, and etc. data from annotation
+##  which are loaded in gene level
+##  the source Id is gene ID
+##
+#########################################################################################
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+use Bio::SeqFeature::Tools::Unflattener;
+use Bio::Tools::GFF;
+use Bio::Seq::RichSeq;
+use GUS::Supported::SequenceIterator;
+use Bio::DB::GFF::Aggregator;
+use Getopt::Long;
+
+use Data::Dumper;
+use FileHandle;
+use HTTP::Date;
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
+my ($date, ) = split(" ", HTTP::Date::time2iso());
+$date = join("",split(/-/,$date));
+
+my %done;
+
+my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
+	$db, $taxonId, $extDbRelId,
+	$outputDir, $config);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'format=s' => \$format,
+            'fileOrDir=s' => \$fileOrDir,
+	    'config=s' => \$config,
+	    'outputDir=s' => \$outputDir,
+            'unflatten' => \$unflatten,
+            'gff2GroupTag=s' => \$gff2GroupTag
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless (defined $format && $fileOrDir && $config);
+&usage("gff2 files require gff2GroupTag argument") if ($format eq 'gff2' && !($gff2GroupTag));
+
+die "File or directory '$fileOrDir' does not exist\n" unless -e $fileOrDir;
+
+my %idsInDb;
+
+
+
+my @files;
+if (-d $fileOrDir) {
+	opendir(DIR, $fileOrDir) || die "Can't open directory '$fileOrDir'\n";
+	my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
+ 	@files = map { "$fileOrDir/$_" } @noDotFiles;
+} else {
+	$files[0] = $fileOrDir;
+}
+
+my $unflattener = Bio::SeqFeature::Tools::Unflattener->new();
+
+my ($featureHash, $qualifierHash) = &getConfig($config);
+print "\$config = $config\n";
+
+print "print features: \n";
+foreach my $k (sort keys %$featureHash) {
+	print "\t$k, $$featureHash{$k}\n";
+}
+
+print "print qualifiers: \n";
+foreach my $k (sort keys %$qualifierHash) {
+	print "\t$k, $$qualifierHash{$k}\n";
+}
+
+my @sourceIdQualifiers = grep { $$qualifierHash{$_} eq 'sourceId' } keys %$qualifierHash;
+my $sourceIdQualifier = $sourceIdQualifiers[0];
+print "\$sourceIdQualifier = $sourceIdQualifier\n";
+
+my (%outputHash, %funcFhHash, %dbxrefOutput, %dbxrefFhHash);
+foreach my $k (sort keys %$qualifierHash) {
+	my $output;
+	if ($outputDir) {
+		$output = "$outputDir\/$$qualifierHash{$k}.txt.gene";
+	} else {
+		$output = "$$qualifierHash{$k}.txt.gene";
+	}
+	$outputHash{$k} = $output;
+}
+
+
+foreach my $k (sort keys %outputHash) {
+	#print "Inside outputHash, $k, $outputHash{$k}\n";
+	if ($outputHash{$k} !~ /sourceId/ && $outputHash{$k} !~ /dbxref/) {
+		$funcFhHash{$k} = FileHandle->new();
+		$funcFhHash{$k}->open(">$outputHash{$k}") || die "Can not open file $outputHash{$k} to write.\n";
+	}
+}
+
+foreach my $file (@files) {
+	my $bioperlSeqIO;
+
+	if ($format =~ m/^gff([2|3])$/i) {
+    		$bioperlSeqIO = &convertGFFStreamToSeqIO($file,$1,$gff2GroupTag);
+	}else {
+		$bioperlSeqIO = Bio::SeqIO->new(-format => $format,   -file   => $file);
+	}
+
+	while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
+		if ($unflatten &&  ( ($format eq 'genbank') || ($format eq 'embl') ) )  {
+			$unflattener->unflatten_seq(-seq => $bioperlSeq,
+								-use_magic => 1);
+		}
+		foreach my $bioperlFeature ($bioperlSeq->get_SeqFeatures()) {
+			&processFeature($bioperlFeature, "root");
+		}
+	}
+}
+
+foreach my $k (sort keys %dbxrefFhHash) {
+	$dbxrefFhHash{$k}->close();
+}
+
+foreach my $k (sort keys %funcFhHash) {
+	$funcFhHash{$k}->close();
+}
+
+
+#############################
+sub processFeature {
+	my ($bioperlFeature, $parent) = @_;
+
+	my $sourceId;
+	my $type = $bioperlFeature->primary_tag();
+	if ($$featureHash{$type}) {
+		if ($bioperlFeature->has_tag("$sourceIdQualifier")) {
+			($sourceId) = $bioperlFeature->get_tag_values("$sourceIdQualifier");
+			($sourceId) = $bioperlFeature->get_tag_values("Parent") if ($bioperlFeature->has_tag("Parent") );
+		}else {
+			my $eStart = $bioperlFeature->location->start();
+			my $eEnd = $bioperlFeature->location->end();
+			print "No sourceId value available for $sourceIdQualifier in $type at $eStart\.\.$eEnd\n";
+		}
+		foreach my $qualifier ($bioperlFeature->get_all_tags()) {
+			if ($outputHash{$qualifier}) {
+					my @values = $bioperlFeature->get_tag_values($qualifier);
+					foreach my $value (@values) {
+						$sourceId = &trimIds($sourceId);
+						$value = &trimValue($value);
+						if ($outputHash{$qualifier} =~ /dbxref/) {
+							my ($dbxrefType, $dbxrefId) = split (/:/, $value);
+							$dbxrefType =~ s/\//\_/;
+							if (!$dbxrefOutput{lc($dbxrefType)}) {
+								if ($outputDir) {
+									$dbxrefOutput{lc($dbxrefType)} = "$outputDir\/dbxref_".lc($dbxrefType).".txt";
+								} else {
+									$dbxrefOutput{lc($dbxrefType)} = "dbxref_".lc($dbxrefType).".txt";
+								}
+
+								print "dbxref output file is $dbxrefOutput{lc($dbxrefType)}\n";	
+								$dbxrefFhHash{lc($dbxrefType)} = FileHandle->new();
+								$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
+										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
+							}
+							if ($sourceId && $dbxrefId) {
+							  if (! $idsInDb{$sourceId} ) {
+							    $dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
+							  } else {
+							    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+							      $dbxrefFhHash{lc($dbxrefType)}->print("$idsInDb{$sourceId}[$i]\t$dbxrefId\n");
+							    }
+							  }
+							}
+						} elsif ($outputHash{$qualifier} =~ /alias/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
+							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
+																	## and synonyms by "," in Tbrucei927
+							foreach my $alias (@aliases) {
+								$alias = &trimValue($alias);
+								$alias =~ s/;current=false$//;
+								if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias}) {
+								  if (!$idsInDb{$sourceId}) {
+								    $funcFhHash{$qualifier}->print("$sourceId\t$alias\n") if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias});
+								  } else {
+								    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+								      $funcFhHash{$qualifier}->print("$idsInDb{$sourceId}[$i]\t$alias\n");
+								    }
+								  }
+								}
+								$done{$sourceId}{$alias} = "done";
+							}
+						} else {
+							if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value}) {
+							  if (!$idsInDb{$sourceId} ) {
+							    $funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$qualifier}{$value});
+							  } else {
+							    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+							      $funcFhHash{$qualifier}->print("$idsInDb{$sourceId}[$i]\t$value\n")
+							    }
+							  }
+							}
+							$done{$sourceId}{$qualifier}{$value} = "done";
+						}
+					}
+				}
+		}
+	}
+	for my $subFeature ($bioperlFeature->get_SeqFeatures()) {
+		processFeature($subFeature, $type);
+	}
+}
+
+sub getConfig {
+	my ($config) = @_;
+	my (%features, %qualifiers);
+
+	open (CONFIG, "$config") || die "can not open file $config to read.\n";
+	while (<CONFIG>) {
+		my $line = $_;
+		if ($line =~ /ignore/) {
+			#print "$line\n";
+		} elsif ($line =~ /feature name\=\"(\w+)\"/) {
+			$features{$1} = $1;
+		} elsif ($line =~ /qualifier name\=\"(\w+)\".*method\=\"(\w+)\"/ ) { ##&& $line !~ /method\=\"sourceId\"/) {
+			$qualifiers{$1} = $2;
+			#print "\$2 = $2\n";
+		} else {}
+	}
+	close CONFIG;
+	return (\%features, \%qualifiers);
+}
+
+
+sub trim($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	return $string;
+}
+
+sub trimValue($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	return $string;
+}
+
+sub trimIds($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/:pep.*$//g;
+	$string =~ s/:mRNA.*$//g;
+	$string =~ s/:pseudogenic_transcript.*$//g;
+	$string =~ s/;current=false*$//g;
+	$string =~ s/\.\d$//;  
+	#$string =~ s/(\S+\.\d)\.\d$/$1/;  ## temp fix for ldonBPK282A1 in TriTryp, comment out the previous line and add this line to deal with the IDs
+	#$string =~ s/\.\d$// if ($string =~ /TcCLB\.\d+\.\d+\.\d+/);  ## temp fix for all T.cruzi genomes in TriTryp, comment out the previous line and add this line to deal with some IDs
+
+	return $string;
+}
+
+sub usage {
+  die
+"
+Extract function data from annotation as well as alias, dbxref, and comments
+Function data includes product, go association, ec_number, and gene name
+
+Usage:  extractQualifiersFromAnnotation --format --fileOrDir --config [--outputDir --db --taxonId]
+
+where
+  --format:	embl, genbank, gff2, gff3, tigr (or any format supported by bioperl's SeqIO)
+  --fileOrDir:	a seq/feature file, or a directory containing a set of them
+  --config:	an xml config file, can be generated by createConfig4ExtractFunction script 
+		with --xmloutput arg. Assign the relationship according the file format.
+  --outputDir:  an existing file dir that the output file should be. default is the current dir
+
+  --unflatten  if present, use bioperl's unflattener (only applicable to genbank and embl)
+  --gff2Group  if present, specify gff2 group tag (only applicable to gff2)
+";
+}
+
+sub convertGFFStreamToSeqIO {
+
+  my ($inputFile, $gffVersion, $gff2GroupTag) = @_;
+
+  # convert a GFF "features-referring-to-sequence" stream into a
+  # "sequences-with-features" stream; also aggregate grouped features.
+
+  die("For now, gff formats only support a single file") if (-d $inputFile);
+
+  my @aggregators = &makeAggregators($inputFile,$gffVersion,$gff2GroupTag);
+
+  my $gffIO = Bio::Tools::GFF->new(-file => $inputFile,
+				   -gff_format => $gffVersion
+				  );
+
+  my %seqs; my @seqs;
+  while (my $feature = $gffIO->next_feature()) {
+    push @{$seqs{$feature->seq_id}}, $feature;
+  }
+
+  while (my ($seq_id, $features) = each %seqs) {
+    my $seq = Bio::Seq::RichSeq->new( -alphabet => 'dna',
+                             -molecule => 'dna',
+                             -molecule => 'dna',
+			     -display_id => $seq_id,
+			     -accession_number => $seq_id,
+			   );
+
+    if ($gffVersion < 3) {
+      # GFF2 - use group aggregators to re-nest subfeatures
+      for my $aggregator (@aggregators) {
+	$aggregator->aggregate($features);
+      }
+    } else {
+      # GFF3 - use explicit ID/Parent hierarchy to re-nest
+      # subfeatures
+
+      my %top;      # associative list of top-level features: $id => $feature
+      my %children; # mapping of parents to children:
+                    # $parent_id => [ [$child_id, $child],
+                    #                 [$child_id, $child],
+                    #               ]
+      my @keep;     # list of features to replace flat feature list.
+
+      # first, fill the datastructures we'll use to rebuild
+      for my $feature (@$features) {
+	my $id = 0;
+	($id) = $feature->each_tag_value("ID")
+	  if $feature->has_tag("ID");
+
+	if ($feature->has_tag("Parent")) {
+	  for my $parent ($feature->each_tag_value("Parent")) {
+	    push @{$children{$parent}}, [$id, $feature];
+	  }
+	}  elsif ($feature->has_tag("Derives_from")) {
+	  for my $parent ($feature->each_tag_value("Derives_from")) {
+	    push @{$children{$parent}}, [$id, $feature];
+	  }
+	} else {
+	  push @keep, $feature;
+	  $top{$id} = $feature if $id; # only features with IDs can
+	                               # have children
+	}
+      }
+
+      while (my ($id, $feature) = each %top) {
+	# build a stack of children to be associated with their
+	# parent feature:
+	# [$child_id, $child_feature, $parent_feature]
+	my @children;
+	if($children{$id}){
+	
+	  foreach my $col (@{$children{$id}}){
+
+
+	    push @children ,[@$col,$feature];
+
+	      
+	  }
+	}
+	delete($children{$id});
+
+	# now iterate over the stack until empty:
+        foreach my $child (@children) {
+
+	  my ($child_id, $child, $parent) = @$child;
+	  # make the association:
+	  if($parent->location->start() > $child->location->start()){
+	      warn "Child feature $child_id does not lie within parent boundaries.\n";
+
+	      $parent->location->start($child->location->start());
+	  }
+
+	  if($parent->location->end() < $child->location->end()){
+	      warn "Child feature $child_id does not lie within parent boundaries.\n";
+
+	      $parent->location->end($child->location->end());
+	  }
+
+	  $parent->add_SeqFeature($child);
+
+	  # add to the stack any nested children of this child
+	  if($children{$child_id}){
+	
+
+	    foreach my $col (@{$children{$child_id}}){
+
+	      push @children ,[@$col,$child];
+	      
+	    }
+	  }
+	  delete($children{$child_id});
+	}
+      }
+
+      # the entire contents of %children should now have been
+      # processed:
+      if (keys %children) {
+	warn "Unassociated children features (missing parents):\n  ";
+	warn join("  \n", keys %children), "\n";
+      }
+
+      # replace original feature list with new nested versions:
+      @$features = @keep;
+    }
+
+    $seq->add_SeqFeature($_) for @$features;
+    push @seqs, $seq;
+  }
+
+  return GUS::Supported::SequenceIterator->new(\@seqs);
+}
+
+sub makeAggregators {
+  my ($inputFile, $gffVersion,$gff2GroupTag) = @_;
+
+  return undef if ($gffVersion != 2);
+
+  die("Must supply --gff2GroupTag if using GFF2 format") unless $gff2GroupTag;
+
+  # a list of "standard" feature aggregator types for GFF2 support;
+  # only "processed_transcript" for now, but leaving room for others
+  # if necessary.
+  my @aggregators = qw(Bio::DB::GFF::Aggregator::processed_transcript Bio::DB::GFF::Aggregator::transcript);
+
+  # build Feature::Aggregator objects for each aggregator type:
+  @aggregators =
+    map {
+      Feature::Aggregator->new($_, $gff2GroupTag);
+    } @aggregators;
+  return @aggregators;
+}
+
+
+#############################################################################################################
+#############################################################################################################
+## 
+##  Sample of config file
+##
+##  <feature name="CDS"   method="">
+##    <qualifier name="EC_number"	method="ec"/>
+##    <qualifier name="GO_component"    method="associationsC"/>
+##    <qualifier name="GO_function"     method="associationsF"/>
+##    <qualifier name="GO_process"      method="associationsP"/>
+##    <qualifier name="citation"  	ignore="true"/>
+##    <qualifier name="codon_start"	ignore="true"/>
+##    <qualifier name="db_xref"   	method="dbxref"/>
+##    <qualifier name="function"  	ignore="true"/>
+##    <qualifier name="gene"      	method="geneName"/>
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="note"      	method="comments"/>
+##    <qualifier name="product"   	method="products"/>
+##    <qualifier name="protein_id"      method="aliases"/>
+##    <qualifier name="transl_table"    ignore="true"/>
+##    <qualifier name="translation"     ignore="true"/>
+##  </feature>
+##
+##  <feature name="rRNA"  method="">
+##    <qualifier name="citation"  	ignore="true"/>
+##    <qualifier name="db_xref"   	method="dbxref"/>
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="note"      	method="comments"/>
+##    <qualifier name="product"   	method="products"/>
+##  </feature>
+##
+##  <feature name="tRNA"  method="">
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="product"   	method="products"/>
+##  </feature>
+##
+##  <feature name="repeat_region" ignore="true">
+##    <qualifier name="citation"	ignore="true"/>
+##    <qualifier name="rpt_type"	ignore="true"/>
+##  </feature>
+##
+##
+##
+## Note:
+##  1. For the feature that includes qualifier need to be extracted, make it as method=""
+##     For the feature that does not include qualifier need to be extracted, make it as ignore="true"
+##  2. For the qualifier that need to be extracted, assign the method, such as method="products"
+##     For the qualifier that does not need to be extracted, make it as ignore="true"
+##
+################################################################################################################
+################################################################################################################
+
+

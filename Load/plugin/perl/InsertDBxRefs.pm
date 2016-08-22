@@ -1,11 +1,34 @@
 ######################################################################
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
+######################################################################
 ##                 InsertDBxRefs.pm
 ##
 ## Creates new entries in the tables SRes.DbRef and DoTS.DbRefNAFeature
-## or DoTS.DbRefAAFeature (a non-standard GUS table) to represent
+## ,DoTS.DbRefAAFeature,DoTS.DbRefNASequence, or DoTS.AASequenceDbRef  to represent
 ## mappings to external resources that are found in a tab delimited
-## file of the form gene_id, DbRef_pk, DbRef remark
-## $Id$
+## file with the first column being source_id of the DoTS.NAFeature, DoTS.AAFeature,
+## DoTS.NASequence, or DoTS.AASequence tables, followed by values taht will be mapoped 
+##to columns in the SRES.DbRef table
+## 
 ##
 #######################################################################
 
@@ -23,7 +46,11 @@ use GUS::Supported::Util;
 use GUS::Model::SRes::DbRef;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::DbRefNAFeature;
+use GUS::Model::DoTS::DbRefAAFeature;
+use GUS::Model::DoTS::DbRefNASequence;
+use GUS::Model::DoTS::AASequenceDbRef;
 use GUS::Model::SRes::ExternalDatabase;
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -106,7 +133,7 @@ my $argsDeclaration =
 	     }),
 
    stringArg({name => 'idType',
-	      descr => 'the identifier type for external dabase links',
+	      descr => 'the identifier type for external database links',
 	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -120,12 +147,18 @@ my $argsDeclaration =
 	     }),
 
    enumArg({name => 'tableName',
-	    descr => 'The name of the mapping table for the sequences we are loading DBxRefs for. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
+	    descr => 'The name of the mapping table that links the sres.dbref to the sequence or feature table. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
-	    reqd  => 0,
+	    reqd  => 1,
 	    isList => 0,
 	    enum => "DbRefNAFeature,DbRefNASequence,DbRefAAFeature,AASequenceDbRef",
-	    default => "DbRefNAFeature",
+	   }),
+   enumArg({name => 'viewName',
+	    descr => 'The subclass_view of the table ',
+	    constraintFunc=> undef,
+	    reqd  => 1,
+	    isList => 0,
+	    enum => "GeneFeature,Transcript,TranslatedAAFeature,ExternalAASequence,TranslatedAASequence,ExternalNASequence,VirtualSequence",
 	   }),
 
   ];
@@ -137,7 +170,8 @@ sub new {
     bless($self,$class);
 
 
-    $self->initialize({requiredDbVersion => 3.6,
+
+    $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
@@ -152,7 +186,9 @@ sub run {
 
   my $mappingFile = $self->getArg('DbRefMappingFile');
 
-  my $tables = getTableParams();
+  my $viewName = $self->getArg('viewName');
+
+  my $tables = $self->getTableParams($viewName);
 
   my $msg = $self->getMapping($mappingFile, $tables);
 
@@ -186,7 +222,7 @@ sub getMapping {
       $self->updateIdType($dbRls,$idType);
   }
 
-
+  my $viewName = $self->getArg('viewName'); 
 
 
   open (XREFMAP, "$mappingFile") ||
@@ -207,6 +243,17 @@ sub getMapping {
     my  %dbRef;
 
     $dbRef{'external_database_release_id'} = $dbRls;
+
+    ## skip the mapping if the alias is a source_id of DoTS::GeneFeature view
+    if ($self->getArg('extDbName') =~ /aliases/i) {
+      $vals[1] =~ s/^\s+//;
+      $vals[1] =~ s/\s+$//;
+      my $checkGeneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $vals[1]});
+      if ($checkGeneFeature->retrieveFromDB() ) {
+	$self->log("Skipping: $vals[1] to $sourceId mapping since it is a source_id in geneFeature view.\n");
+	next;
+      }
+    }
 
     for (my $i=0;$i<@{$cols};$i++) {
       next if (! (defined $vals[$i+1]));
@@ -267,19 +314,32 @@ sub getMapping {
 
     my $methodName = $$tables{$tableName}->{getId};
     my $method = "GUS::Supported::Util::$methodName";
-
     my $featId;
 
-    if ($self->getArg('organismAbbrev')){
+    ###comment out this part because it caused failures when "viewName" is "Transcript"
+    #if ($self->getArg('organismAbbrev')){
 
-	$featId = &$method($self, $sourceId, $geneExtDbRlsId, $self->getArg('organismAbbrev'));
+    #	$featId = &$method($self, $sourceId, $geneExtDbRlsId, $self->getArg('organismAbbrev'));
+    #}
+
+    if($viewName eq 'Transcript'){
+      $featId = &$method($self, $sourceId, $viewName);
+    }
+    elsif($viewName eq 'GeneFeature'){
+
+      $featId = &$method($self, $sourceId, $geneExtDbRlsId);
     }
     else{
-
-	$featId = &$method($self, $sourceId, $geneExtDbRlsId);
+      $featId = &$method($self, $sourceId);
     }
-
-    unless($featId){
+unless ($featId) {
+      $self->log("Skipping: source_id '$sourceId' not found in database.");
+      next;
+};
+unless (ref $featId eq 'ARRAY'){
+$featId = [$featId];
+}
+    if(scalar @{$featId} < 1){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
       next;
     }
@@ -298,7 +358,7 @@ sub getMapping {
 }
 
 sub makeDbXRef {
-  my ($self, $featId, $dbRef, $column, $tableName) = @_;
+  my ($self, $featIdList, $dbRef, $column, $tableName) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
@@ -308,31 +368,40 @@ sub makeDbXRef {
 
   my $tableName = "GUS::Model::DoTS::${tableName}";
   eval "require $tableName";
-
-  my $dbXref = $tableName->new({
-				$column => $featId,
-				db_ref_id => $dbRefId,
-			       });
-
+  foreach my $featId (@$featIdList) {
+      my $dbXref = $tableName->new({
+                   $column => $featId,
+                   db_ref_id => $dbRefId,
+                   });
   $dbXref->submit() unless $dbXref->retrieveFromDB();
-
+ }
 }
 
 sub getTableParams{
-  my ($self) = @_;
+  my ($self, $viewName) = @_;
   my %tables;
 
-  $tables{'DbRefNAFeature'} = ({getId => "getGeneFeatureId",
-			      idColumn => "na_feature_id"});
+  if ($viewName eq "GeneFeature"){
+    $tables{'DbRefNAFeature'} = ({getId => "getGeneFeatureId",
+                                  idColumn => "na_feature_id"});
+    $tables{'DbRefAAFeature'} = ({getId => "getTranslatedAAFeatureIdListFromGeneSourceId",
+				                  idColumn => "aa_feature_id"});
+  }
+  if ($viewName eq "Transcript"){
+    $tables{'DbRefNAFeature'} = ({getId => "getNaFeatureIdsFromSourceId",
+                                  idColumn => "na_feature_id"});
+  }
 
-  $tables{'DbRefAAFeature'} = ({getId => "getTranslatedAAFeatureIdFromGeneSourceId",
-				idColumn => "aa_feature_id"});
+  if ($viewName eq "TranslatedAAFeature"){  
+    $tables{'DbRefAAFeature'} = ({getId => "getAAFeatureId",
+                idColumn => "aa_feature_id"});
+  }
 
   $tables{'DbRefNASequence'} = ({getId => "getNASequenceId",
-				 idColumn => "na_sequence_id"});
+                 idColumn => "na_sequence_id"});
 
   $tables{'AASequenceDbRef'} = ({getId => "getAASequenceId",
-				 idColumn => "aa_sequence_id"});
+                 idColumn => "aa_sequence_id"});
 
   return \%tables;
 }

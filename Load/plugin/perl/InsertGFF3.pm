@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertGFF3;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -7,10 +27,6 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
 
-use GUS::Model::DoTS::NASequence;
-use GUS::Model::SRes::SequenceOntology;
-use GUS::Model::SRes::ExternalDatabase;
-use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GFF3;
 use GUS::Model::ApiDB::GFF3AttributeKey;
 use GUS::Model::ApiDB::GFF3Attributes;
@@ -56,8 +72,16 @@ sub getArgsDeclaration {
        reqd  => 1,
        isList => 0
       }),
+
      stringArg({name => 'seqExtDbRlsVer',
-       descr => 'Version of external database where sequences can be found',
+       descr => 'Version of the seq ext db',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
+     stringArg({name => 'soExtDbSpec',
+       descr => 'sequence ontology external database spec',
        constraintFunc=> undef,
        reqd  => 1,
        isList => 0
@@ -95,7 +119,7 @@ ApiDB.GFF3, ApiDB.GFF3AttributeKey, ApiDB.Attributes
 AFFECT
 
   my $tablesDependedOn = <<TABD;
-DoTS.NASequence, SRes.ExternalDatabaseRelease, Sres.SequenceOntology 
+DoTS.NASequence, SRes.ExternalDatabaseRelease, Sres.OntologyTerm
 TABD
 
   my $howToRestart = <<RESTART;
@@ -128,8 +152,8 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 45916 $',
+  my $configuration = { requiredDbVersion => 4.0,
+                        cvsRevision => '$Revision: 67740 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -144,11 +168,21 @@ sub new {
 
 sub run {
   my $self = shift;
+  
 
   my $gff3ExtDbReleaseId = $self->getExtDbRlsId($self->getArg('gff3DbName'),
              $self->getArg('gff3DbVer')) || $self->error("Can't find external_database_release_id for gff3 data source");
 
+  # getting na_sequence_ids and so_term_ids as hashrefs of name:id rather than making and storing GUS objects saves time
   my $genomeDbRlsId = $self->getExtDbRlsId($self->getArg('seqExtDbName'),$self->getArg('seqExtDbRlsVer')) || $self->error("Can't find external_database_release_id for genome sequence");
+  my $seqHash = $self->sqlAsDictionary(Sql => "select source_id, na_sequence_id
+                                               from dots.externalnasequence
+                                               where external_database_release_id = $genomeDbRlsId");
+
+  my $soExtDbRlsId = $self->getExtDbRlsId($self->getArg('soExtDbSpec')) || $self->error("Can't find external_database_release_id for sequence ontology");
+  my $soHash = $self->sqlAsDictionary(Sql => "select name, ontology_term_id
+                                              from sres.ontologyterm
+                                              where external_database_release_id = $soExtDbRlsId");
  
   my $processed;
 
@@ -156,63 +190,42 @@ sub run {
                                    -gff_version => $self->getArg('gffFormat'),
                                   );
 
+  $self->getDb()->manageTransaction(0,'begin');
+
   while (my $feature = $gffIO->next_feature()) {
-     $self->insertGFF3($feature, $gff3ExtDbReleaseId, $genomeDbRlsId);
+     $self->insertGFF3($feature, $gff3ExtDbReleaseId, $seqHash, $soHash);
      $processed++;
+
+     if ($processed % 1000 == 0) {
+        $self->getDb()->manageTransaction(0,'commit');
+        $self->getDb()->manageTransaction(0,'begin');
+    }
      $self->undefPointerCache();
   }
-
+  $self->getDb()->manageTransaction(0,'commit');
   return "$processed gff3 lines parsed and loaded";
 
 }
 
 
 sub getNaSequencefromSourceId {
-   my ($self, $seqid, $genomeDbRlsId) = @_;
-   if(my $found = $self->{nasequences}->{$seqid}) {
-     return $found;
-   }
-   
-   my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid,
-                                                  external_database_release_id => $genomeDbRlsId});
-   unless ($naSeq->retrieveFromDB) {
-      $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
-   } 
-   $self->{nasequences}->{$seqid} = $naSeq;
-   return $naSeq;
+    my ($self, $seqid, $seqHash) = @_;
+    my $naSeqId = $seqHash->{$seqid};
+    unless (defined $naSeqId) {
+        $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
+    }
+    return $naSeqId;
 }
-
 
 
 sub getSOfromSoTerm {
-   my ($self, $soterm) = @_;
-   if(my $found = $self->{soids}->{$soterm}) {
-     return $found;
-   }
-   
-   my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $soterm });
-   unless($SOTerm->retrieveFromDB){
-      $self->error("Can't find sequence onotology id for term $soterm");
-   }
-   $self->{soids}->{$soterm} = $SOTerm;
-   return $SOTerm;
+    my ($self, $soterm, $soHash) = @_;
+    my $soTermId = $soHash->{$soterm};
+    unless (defined $soTermId) {
+        $self->error("Can't find so_term_id for $soterm");
+    }
+    return $soTermId;
 }
-
-
-
-sub getGFF3AttributeKeys{
- my ($self, $key) = @_;
-   if(my $found = $self->{attr_keys}->{$key}) {
-     return $found;
-   }
-   
-   my $attrKey = GUS::Model::ApiDB::GFF3AttributeKeys->new({'name' => $key });
-   unless($attrKey->retrieveFromDB){
-     print 'key $key added to GFF3AttributeKeys'; 
-     $attrKey->submit();
-   }
-}
-
 
 
 sub getGFF3AttributeKey{
@@ -223,7 +236,6 @@ sub getGFF3AttributeKey{
    
    my $attrKey = GUS::Model::ApiDB::GFF3AttributeKey->new({'name' => $key });
    unless($attrKey->retrieveFromDB){
-     print "key $key added to GFF3AttributeKey"; 
      $attrKey->submit();
 
    }
@@ -234,22 +246,24 @@ sub getGFF3AttributeKey{
 sub createGff3AttrObj{
   my ($self,$key,$value) = @_;
   my $attrKey = $self->getGFF3AttributeKey($key);
-  my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
-  $attr->setParent($attrKey);
+
+  my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value ,
+                                                    gff3_attribute_key_id => $attrKey->getId() });
+#  $attr->setParent($attrKey);
+
   return $attr
 }
 
 sub insertGFF3{
-  my ($self,$feature, $gff3ExtDbReleaseId, $genomeDbRlsId) = @_;
+  my ($self,$feature, $gff3ExtDbReleaseId, $seqHash, $soHash) = @_;
 
   my $seqid = $feature->seq_id;
-  my $naSeq = $self->getNaSequencefromSourceId($seqid, $genomeDbRlsId);
-  die "can't find na_sequence_id for '$seqid'" unless $naSeq;
-  my $soterm = $feature->primary_tag;
-  my $sotermObj = $self->getSOfromSoTerm($soterm);
+  my $naSeqId = $self->getNaSequencefromSourceId($seqid, $seqHash);
+  die "Can't find na_sequence_id for $seqid\n" unless defined $naSeqId;
 
-  my $naSeqId = $naSeq->getNaSequenceId();
-  my $soId = $sotermObj->getSequenceOntologyId();
+  my $soterm = $feature->primary_tag;
+  my $soId = $self->getSOfromSoTerm($soterm, $soHash);
+  die "Can't find ontology_term_id for $soterm\n" unless defined $soId;
 
   my $snpStart = $feature->location()->start();
   my $snpEnd = $feature->location()->end();
@@ -262,6 +276,7 @@ sub insertGFF3{
   my $attr = '';
   my $parent = '';
   my $id = '';
+
   my @tags = $feature->get_all_tags();
   my @attr;
 
@@ -273,7 +288,6 @@ sub insertGFF3{
         $self->userError("Only one parent allowed");
       }
       $parent = $parents[0];
-      print $parent
     }
     elsif (uc($tag) eq "ID"){
       my @ids = $feature->get_tag_values($tag);
@@ -285,7 +299,6 @@ sub insertGFF3{
     else {
       my @values = $feature->get_tag_values($tag);
       my $value = $values[0];
-      print "SeqID = $seqid : $tag : $value";
       $attr .= $tag. '='. join(',', @values) . ';';
       foreach my $value(@values){
         my $gff3Attr = $self->createGff3AttrObj($tag,$value);
@@ -316,7 +329,7 @@ sub insertGFF3{
     $attribute->setParent($gff3);
     }
 
-  $gff3->submit();
+  $gff3->submit(0,1);
 }
 
 

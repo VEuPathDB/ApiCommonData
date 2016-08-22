@@ -1,8 +1,5 @@
 
 ----------------------------------------------------------------------------
-
-grant references on SRes.ExternalDatabaseRelease to ApiDB;
-
 create table ApiDB.ProfileSet (
  profile_set_id        NUMBER(10),
  external_database_release_id NUMBER(10),
@@ -60,7 +57,7 @@ WHERE 'ProfileSet' NOT IN (SELECT name FROM core.TableInfo
 ----------------------------------------------------------------------------
 
 
-grant references on dots.nafeatureimp to ApiDB;
+
 
 create table ApiDB.Profile (
  profile_id            NUMBER(10),
@@ -228,7 +225,6 @@ WHERE 'ProfileElement' NOT IN (SELECT name FROM core.TableInfo
 
 ----------------------------------------------------------------------------
 
-grant references on dots.nafeatureimp to ApiDB;
 
 create table ApiDB.GeneProfileCorrelation (
  gene_profile_correlation_id NUMBER(10),

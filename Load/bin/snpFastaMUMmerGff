@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 
@@ -59,11 +79,10 @@ my ($fn, $verbose, $help, $gffFormat, $log, $gffFn, $makeFastaFile, $out, $refer
 my $gffIO = Bio::Tools::GFF->new(-file => $gffFn,
                                  -gff_format => $gffFormat,
                                 );
-
-my $geneFeatures = &_parseGff($gffIO);
+my $gffFeatures = &_parseGff($gffIO);
 
 if($makeFastaFile && $referenceStrain) {
-  &_makeFastaFile($geneFeatures, $referenceStrain, $makeFastaFile, $out);
+  &_makeFastaFile($gffFeatures, $referenceStrain, $makeFastaFile, $out);
   exit();
 }
 
@@ -83,7 +102,7 @@ while(<FILE>) {
   }
 
   else {
-    my $featureHash = $geneFeatures->{$uniqueId};
+    my $featureHash = $gffFeatures->{$uniqueId};
     my $feature = $featureHash->{feature};
 
     my ($fivePrimeFlank) = $feature->get_tag_values('FivePrimeFlank');
@@ -110,8 +129,8 @@ while(<FILE>) {
   print STDERR "Processed $count lines of mummer file\n" if($count % 1000 == 0 && $verbose);
 }
 
-&_printGff($geneFeatures, $out);
-&_printErrorReport($geneFeatures, $log);
+&_printGff($gffFeatures, $out);
+&_printErrorReport($gffFeatures, $log);
 
 
 #-------------------------------------------------------------------------------
@@ -205,15 +224,15 @@ sub _findReferenceAllele {
 #-------------------------------------------------------------------------------
 
 sub _printErrorReport {
-  my ($geneFeatures, $log) = @_;
+  my ($gffFeatures, $log) = @_;
 
   open(LOG, "> $log") || die "Cannot open file $log for writing: $!";
 
   print LOG "External_Identifier\tAllele\tChromosome\texpected_start\texpeced_end\tsequence\tmessage\n";
 
-  foreach my $id (keys %$geneFeatures) {
+  foreach my $id (keys %$gffFeatures) {
     my $message;
-    my $featureHash = $geneFeatures->{$id};
+    my $featureHash = $gffFeatures->{$id};
     my $feature = $featureHash->{feature};
 
     if($featureHash->{multiple_matches} && !$featureHash->{is_exact_match}) {
@@ -247,12 +266,12 @@ sub _printErrorReport {
 #-------------------------------------------------------------------------------
 
 sub _printGff {
-  my ($geneFeatures, $out) = @_;
+  my ($gffFeatures, $out) = @_;
 
   open(GFF, ">> $out") || die "Cannot open file $out for writing: $!";
 
-  foreach my $id (keys %$geneFeatures) {
-    my $featureHash = $geneFeatures->{$id};
+  foreach my $id (keys %$gffFeatures) {
+    my $featureHash = $gffFeatures->{$id};
 
     next if(!$featureHash->{is_within_chromosome});
     next if ($featureHash->{multiple_matches} && !$featureHash->{is_exact_match});

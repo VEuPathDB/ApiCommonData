@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertPubChemSubstances;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -12,6 +32,7 @@ use warnings;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemSubstance;
+use GUS::Model::ApiDB::PubChemSubstanceProperty;
 
 
 my %subst;
@@ -66,7 +87,7 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Substances data (compound_id or synonymns) into ApiDB.PubChemSubstance, and to create a file of PubChem compounds IDs (ithat were in the data file).
+Plugin to load PubChem Substances data (compound_id into ApiDB.PubChemSubstance and  synonymns in ApiDB.PubChemSubstanceProperty), and to create a file of PubChem compounds IDs (ithat were in the data file).
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -82,6 +103,7 @@ NOTES
 
   my $tablesAffected = <<AFFECT;
 ApiDB.PubChemSubstance
+ApiDB.PubChemSubstanceProperty
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -115,7 +137,7 @@ sub new {
 
   my $documentation = &getDocumentation();
   my $args = &getArgsDeclaration();
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
                         cvsRevision => '$Revision$',
                         name => ref($self),
                         argsDeclaration => $args,
@@ -167,15 +189,15 @@ sub parseFile {
 
 # get SIDs of already_loaded PubChem structures
 sub getExistingSids {
-  my ($self) = @_;
+  my ($self, $prop) = @_;
   my %sidHash;
+  my $sql;
 
-  my $sql = <<EOSQL;
-  SELECT distinct substance_id 
-  FROM ApiDB.PubChemSubstance 
-  WHERE property= '$property'
-EOSQL
-
+  if ($prop eq 'CID'){
+    $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance";
+  } else {
+    $sql = "SELECT  substance_id FROM ApiDB.PubChemSubstance s, ApiDB.PubChemSubstanceProperty p WHERE p.pubchem_substance_id = s.pubchem_substance_id";
+  }
   my $dbh = $self->getQueryHandle();
   my $sth = $dbh->prepareAndExecute($sql);
 
@@ -192,7 +214,7 @@ sub insertPubChemSubstance {
   my $count;
 
   # get list (as hash) of substance (IDs) that are already in the database
-  my $hashRef=$self->getExistingSids();
+  my $hashRef=$self->getExistingSids($property);
   my %loadedSids = %$hashRef;
 
   # process array of hashes (of hashes) for each substance
@@ -205,26 +227,33 @@ sub insertPubChemSubstance {
     } else {
 
       my %y = %{$subst{$sid}};
-      my @props = keys(%y);   # keys of inner hash are various properties for each substance
 
-      foreach my $p (@props) {
-	if($p eq 'Synonym') {
-	  my @syns = @{ $subst{$sid}{Synonym} };
-	  foreach my $s (@syns) {
-	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-									  property     => $p,
-									  value        => $s
-									});
-	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
-	  }
-	} elsif ($p eq 'CID' && $subst{$sid}{$p}){
-	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-									property     => $p,
-									value        => $subst{$sid}{$p}
+      if ($property eq 'CID') {
+	  my $cid = ($subst{$sid}{ 'CID'})? $subst{$sid}{ 'CID'} : '';
+	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ 
+								       substance_id => $sid,
+								       compound_id     => $cid
 								      });
 	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+
+	} else {
+	  my @syns = @{ $subst{$sid}{'Synonym'} };
+	  foreach my $s (@syns) {
+	    # make an entry in PubChemSubstance, if not there
+	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ 
+									 substance_id => $sid 
+									});
+	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+	    my $pubchem_substance_id = $pubChemSubst->getPubchemSubstanceId();
+
+	    my $pubChemSubstProperty = GUS::Model::ApiDB::PubChemSubstanceProperty->new({
+											 pubchem_substance_id => $pubchem_substance_id,
+											 property     => 'Synonym',
+											 value        => $s
+											});
+	    $pubChemSubstProperty->submit();
+	  }
 	}
-      }
       $count++;
       $self->undefPointerCache() if $count % 100 == 0;
 
@@ -245,8 +274,10 @@ sub makeCidFile {
 
   foreach my $sid (@data) {
     my $cid = $subst{$sid}{CID};
-    $self->log("sid is $sid AND cid is $cid");
-    print FILE "$cid\n";
+    if ($cid) {
+        $self->log("sid is $sid AND cid is $cid"); 
+	print FILE "$cid\n";
+    }
   }
   close(FILE);
 }
@@ -255,7 +286,10 @@ sub makeCidFile {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.PubChemSubstance');
+  return (
+	  'ApiDB.PubChemSubstanceProperty',
+	  'ApiDB.PubChemSubstance'
+	 );
 }
 
 

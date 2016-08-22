@@ -1,32 +1,66 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## usage: extractOrDeleteFilesFromGenbank --genbankFile tequWA_genome.gbf --listFile chrList.txt --ifExtract > ../final/genome.gbf
-
+##        extractOrDeleteFilesFromGenbank --ifDelete --genbankFile ../fromProvider/enut_genome.gbf --recordLists AGBL01000000 > ../final/genome.gbf
+ 
 use Getopt::Long;
 use strict;
 
-my ($ifExtract, $ifDelete, $genbankFile, $listFile, $help);
+my ($ifExtract, $ifDelete, $genbankFile, $listFile, $recordLists, $help);
 
 &GetOptions('ifExtract' => \$ifExtract,
 	    'ifDelete' => \$ifDelete,
             'help|h' => \$help,
             'genbankFile=s' => \$genbankFile,
 	    'listFile=s' => \$listFile,
+	    'recordLists=s' => \$recordLists,
            );
 
 &usage() if($help);
-&usage("Missing a Required Argument") unless(defined $genbankFile && $listFile && ($ifExtract || $ifDelete) );
+&usage("Missing a Required Argument") unless(defined $genbankFile && ($listFile || $recordLists) && ($ifExtract || $ifDelete) );
 
 my %skipIds;
-print STDERR "\$listFile = $listFile\n";
-open (LIST, $listFile) || die "can not open list file to read.\n";
-while (<LIST>) {
-  chomp;
-  my $curr = $_;
-  $curr =~ s/\s+//g;
-  $skipIds{$curr} = $curr;
+
+if ($recordLists) {
+  my @items = split (/\;/, $recordLists);
+  foreach my $i (0..$#items) {
+    $items[$i] =~ s/^\s+//;
+    $items[$i] =~ s/\s+$//;
+    $skipIds{$items[$i]} = $items[$i];
+  }
+} elsif ($listFile) {
+  print STDERR "\$listFile = $listFile\n";
+  open (LIST, $listFile) || die "can not open list file to read.\n";
+  while (<LIST>) {
+    chomp;
+    my $curr = $_;
+    $curr =~ s/\s+//g;
+    $skipIds{$curr} = $curr;
+  }
+  close LIST;
+} else {
+  print STDERR "missing required argument listFile or recordLists\n";
 }
-close LIST;
 
 foreach my $k (sort keys %skipIds) {
   print STDERR "$k\t$skipIds{$k}\n";
@@ -59,11 +93,12 @@ close GB;
 sub usage {
   die
 "
-Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile 
+Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile[--recordLists]
 
 where
   --genbankFile:  the name of genbank format input file
   --listFile:    the list of LOCUS IDs that need to be extracted or deleted from genbank file, one ID per line
+  --recordLists:   semicolon delimited list of records that want to delete or extract
   --ifExtract:   if present, extract the records in the listFile from the genbank file
   --ifDelete:    if present, delete the records in the listFile from the genbank file 
 ";

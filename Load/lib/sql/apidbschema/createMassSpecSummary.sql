@@ -1,18 +1,13 @@
 CREATE TABLE apidb.MassSpecSummary (
  mass_spec_summary_id         NUMBER(12) NOT NULL,
  aa_sequence_id               NUMBER(12) NOT NULL,
+ protocol_app_node_id         NUMBER(10) NOT NULL,
  prediction_algorithm_id      NUMBER(12),
  external_database_release_id NUMBER(12),
- developmental_stage          VARCHAR2(20),
- is_expressed                 NUMBER(1),
  number_of_spans              NUMBER(12),
  sequence_count               NUMBER(12),
  spectrum_count               NUMBER(12),
  aa_seq_percent_covered       FLOAT(126),
- aa_seq_length                NUMBER(12),
- aa_seq_molecular_weight      NUMBER(12),
- aa_seq_pi                    FLOAT(126),
- sample_file                  VARCHAR2(128),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -33,16 +28,21 @@ ALTER TABLE apidb.MassSpecSummary
 ADD CONSTRAINT mss_fk1 FOREIGN KEY (aa_sequence_id)
 REFERENCES dots.AASequenceImp (aa_sequence_id);
 
+
 ALTER TABLE apidb.MassSpecSummary
 ADD CONSTRAINT mss_fk2 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
+ALTER TABLE apidb.MassSpecSummary
+ADD CONSTRAINT mss_fk3 FOREIGN KEY (protocol_app_node_id)
+REFERENCES study.protocolappnode (protocol_app_node_id);
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.MassSpecSummary TO gus_w;
 GRANT SELECT ON apidb.MassSpecSummary TO gus_r;
 
-CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_database_release_id,number_of_spans,spectrum_count);
-CREATE INDEX apiDB.massspecsumm_devstage_idx ON apiDB.Massspecsummary(developmental_stage,number_of_spans,spectrum_count);
+CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_database_release_id,number_of_spans,spectrum_count, mass_spec_summary_id);
 CREATE INDEX apiDB.massspecsumm_aaseqid_idx ON apiDB.Massspecsummary(aa_sequence_id);
+CREATE INDEX apiDB.massspecsumm_protAppNd_idx ON apiDB.Massspecsummary(protocol_app_node_id);
 
 ------------------------------------------------------------------------------
 

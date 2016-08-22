@@ -1,0 +1,148 @@
+#!/usr/bin/perl
+
+use strict;
+use Data::Dumper;
+
+my ($buildNumber, $transcriptInfoFile, $prevTranscriptInfoAndIdsFile) = @ARGV;
+
+usage() unless $buildNumber && $transcriptInfoFile;
+
+my (%oldGenes, %oldSeq2TransId, %oldPath2TransId);
+
+# parse old file into three hashes
+if ($prevTranscriptInfoAndIdsFile) {
+  open(OLD, $prevTranscriptInfoAndIdsFile) || die "Can't open prevTranscriptInfoAndIdsFile '$prevTranscriptInfoAndIdsFile'\n";
+  while (<OLD>) {
+    chomp;
+    my @t = split/\t/;
+    die "Invalid line in transcript info file '$transcriptInfoFile':\n$_\n" unless scalar(@t) == 5;
+    my ($geneId, $seq, $pathStr, $locations, $transcriptId) = @t;
+    $oldGenes{$geneId} = [] unless $oldGenes{$geneId};
+    push(@{$oldGenes{$geneId}}, (seq=>$seq, pathStr=>$pathStr, loc=>$locations));
+
+    ## use array in case there are same transcript seqs for gene, such as E. falciformis
+    push (@{$oldSeq2TransId{$geneId}->{$seq}}, $transcriptId);
+    $oldPath2TransId{$geneId}->{$pathStr} = $transcriptId;
+  }
+  close(OLD);
+}
+
+open(NEW, $transcriptInfoFile) || die "Can't open transcriptInfoFile '$transcriptInfoFile'\n";
+
+my %newGenes;
+while(<NEW>) {
+  chomp;
+  my @t = split/\t/;
+  die "Invalid line in transcript info file '$transcriptInfoFile':\n$_\n" unless scalar(@t) >= 4;
+  my ($geneId, $seq, $pathStr, $locations) = @t;
+  my @path = split(/,\s*/, $pathStr);
+  $newGenes{$geneId} = [] unless $newGenes{$geneId};
+  push(@{$newGenes{$geneId}}, {seq=>$seq, pathStr=>$pathStr, path=>\@path, loc=>$locations});
+}
+close(NEW);
+
+foreach my $geneId (keys(%newGenes)) {
+  my @transcripts = @{$newGenes{$geneId}};
+  my @sortedTrans = sortGeneTranscripts(\@transcripts);
+
+  # we want a gene to have a set of consective transcript indexes.
+  # make an arry of all of these, to track which have been used in an ID (claimed)
+  my @unclaimedIndexes;
+  for (my $i=0; $i<scalar(@transcripts); $i++) {
+    push(@unclaimedIndexes, $i+1);
+  }
+
+  # if old IDs, transfer where possible
+  if ($prevTranscriptInfoAndIdsFile) {
+
+    # first try by seq identity
+    foreach my $transcript (@sortedTrans) {
+
+      ## use oldSeq2TransId to get transcript ID. In case there are more than one oldSeq2TransId, use oldPath2TransId
+      my $id = (scalar(@{$oldSeq2TransId{$geneId}->{$transcript->{seq}}}) == 1) ? 
+	$oldSeq2TransId{$geneId}->{$transcript->{seq}}[0] : $oldPath2TransId{$geneId}->{$transcript->{pathStr}};
+      if ($id) {
+	$transcript->{id} = $id;
+	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
+	$transcript->{index} = $1;
+	splice(@unclaimedIndexes, $transcript->{index}-1, 1);
+      }
+    }
+
+    # for those not thus assigned, try exon path (but, since not a seq match, use current bld number)
+    foreach my $transcript (@sortedTrans) {
+      next if $transcript->{id};
+      my $id = $oldPath2TransId{$geneId}->{$transcript->{pathStr}};
+      if ($id) {
+	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
+	$transcript->{index} = $1;
+	$transcript->{id} = "$geneId-t${buildNumber}_$transcript->{index}";
+	splice(@unclaimedIndexes, $transcript->{index}-1, 1);
+      }
+    }
+  }
+
+  # assign remaining available indexes, and print all transcripts
+  my $nextIndex;
+
+  foreach my $transcript (@sortedTrans) {
+    if (!$transcript->{id}) {
+      $transcript->{index} = shift(@unclaimedIndexes);
+      $transcript->{id} = "$geneId-t${buildNumber}_$transcript->{index}";
+    }
+  }
+
+  # for legibility, sort by index.  print!
+  my @sortedByIndex = sort { $a->{index} <=> $b->{index}} @sortedTrans;
+  foreach my $transcript (@sortedByIndex) {
+    print STDOUT "$geneId\t$transcript->{seq}\t$transcript->{pathStr}\t$transcript->{loc}\t$transcript->{id}\n";
+  }
+}
+
+sub sortGeneTranscripts {
+  my ($transcripts) = @_;
+
+  return sort { compareTwoExonPaths($a->{path}, $b->{path}); } @$transcripts;
+}
+
+sub compareTwoExonPaths {
+  my ($t1, $t2) = @_;
+
+  my $len = scalar(@$t1);
+  $len = scalar(@$t2) if scalar(@$t2) < $len;
+
+  for (my $i=0; $i<$len; $i++) {
+    return -1 if ($t1->[$i] < $t2->[$i]);
+    return 1 if ($t2->[$i] < $t1->[$i]);
+  }
+  return scalar(@$t1) - scalar(@$t2);
+}
+
+sub usage {
+
+die "
+Generate transcript IDs.  If a previous set of IDs is available, reuse them if possible.
+
+Usage:  apiGenerateTranscriptIds buildNumber transcriptInfoFile [prevTranscriptInfoAndIdsFile]
+
+Where:
+  - buidNumber: the EuPathDB build number, eg 23
+  - transcriptInfoFile: tab file with columns: geneId, transcriptSeq, exonPath (eg: 1,2,3,5), exonLocations (eg: 10-25,34-89).
+  - prevTranscriptInfoAndIdsFile.  optional.  Transcript IDs from previous version of this genome.  Same format as transcriptInfoFile, but with additional final column containing transcript ID.
+
+Output:
+  - a revised transcriptInfoFile, with transcript ID added as last column.  On STDOUT
+
+APPROACH - NEW IDs
+If no prevTranscriptInfoAndIdsFile is provided, it means we are generating brand new IDs.  For this, we form an ID like geneId-t23_1 where 23 is the build number and 1 is the transcript index.  The transcript index is given based on the sort order of this gene's transcripts.  They are sorted by the exon path.
+
+APPROACH - TRANSFERRING IDs
+For each transcript in the transcriptInfoFile, try to find a corresponding transcript in the prevTranscriptInfoAndIdsFile.
+
+If we find a transcript with sequence identity, transfer the ID.
+
+Otherwise, give this transcript the new build number.  From among the IDs not yet transferred, try to transfer the index based on exon path.  If a gene has transcripts still with no ID, randomly choose an available index (max = # of transcripts)
+
+";
+
+}

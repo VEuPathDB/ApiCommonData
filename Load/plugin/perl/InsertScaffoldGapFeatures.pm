@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertScaffoldGapFeatures;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -8,8 +28,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::ScaffoldGapFeature;
 use GUS::Model::DoTS::NALocation;
-use GUS::Model::SRes::SequenceOntology;
-
+use GUS::Model::SRes::OntologyTerm;
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -28,6 +47,13 @@ stringArg({name => 'extDbRlsVer',
        reqd  => 1,
        isList => 1
       }),
+
+stringArg({name => 'SOExtDbRlsSpec',
+	   descr => 'The extDbRlsName of the Sequence Ontology to use',
+	   reqd => 1,
+	   constraintFunc => undef,
+	   isList => 0
+	  }),
 
 stringArg({name => 'SOTerm',
        descr => 'SO term for the gap',
@@ -93,7 +119,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = {requiredDbVersion => 3.6,
+  my $configuration = {requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision: 24153 $',
 		       cvsTag => '$Name$',
 		       name => ref($self),
@@ -111,7 +137,11 @@ sub run {
   my $self = shift;
 
   my $SOTermArg = $self->getArg("SOTerm");
-  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({ term_name => $SOTermArg });
+  my $extDbRlsSpec = $self->getArg('SOExtDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $SOTermArg ,
+                                                    external_database_release_id => $extDbRlsId
+                                                   });
   unless($SOTerm->retrieveFromDB()) {
     die "SO Term $SOTerm not found in database.\n";
   }

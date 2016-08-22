@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertPubChemCompounds;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -12,6 +32,7 @@ use warnings;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemCompound;
+use GUS::Model::ApiDB::PubChemCompoundProperty;
 
 
 my %cmpd;
@@ -50,7 +71,7 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Compounds out of a single XML file, into ApiDB.PubChemCompound
+Plugin to load PubChem Compounds out of a single XML file, into ApiDB.PubChemCompound and ApiDB.PubChemCompoundProperty
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -66,6 +87,7 @@ NOTES
 
   my $tablesAffected = <<AFFECT;
 ApiDB.PubChemCompound
+ApiDB.PubChemCompoundProperty
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -99,7 +121,7 @@ sub new {
 
   my $documentation = &getDocumentation();
   my $args = &getArgsDeclaration();
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
                         cvsRevision => '$Revision$',
                         name => ref($self),
                         argsDeclaration => $args,
@@ -113,6 +135,9 @@ sub new {
 
 sub run {
   my $self = shift;
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   my $fileCount = 0;
   my $fileDir = $self->getArg('fileDir');
   my @fileArray = @{$self->getArg('fileNames')};
@@ -171,7 +196,7 @@ sub getExistingCids {
   my ($self) = @_;
   my %cidHash;
 
-  my $sql = "SELECT distinct compound_id from ApiDB.PubChemCompound";
+  my $sql = "SELECT compound_id from ApiDB.PubChemCompound";
 
   my $dbh = $self->getQueryHandle();
   my $sth = $dbh->prepareAndExecute($sql);
@@ -200,32 +225,44 @@ sub insertPubChemCompound {
     if ($loadedCids{$cid}) {
       $self->log("Ignoring CID $cid; it is already present in ApiDB.PubChemCompound.");
     } else {
-
       my %y = %{$cmpd{$cid}};
       my @props = keys(%y);   # keys are inner various properties for each compound
+
+      my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({
+								 compound_id => $cid,
+								 MolecularWeight   => $cmpd{$cid}{'MolecularWeight'},
+								 MolecularFormula  => $cmpd{$cid}{'MolecularFormula'},
+								 IUPACName   => $cmpd{$cid}{'IUPACName'},
+								 InChI   => $cmpd{$cid}{'InChI'},
+								 InChIKey  => $cmpd{$cid}{'InChIKey'},
+								 IsomericSmiles   => $cmpd{$cid}{'IsomericSmiles'},
+								 CanonicalSmiles   => $cmpd{$cid}{'CanonicalSmiles'},
+								});
+      if (!$pubChemCmpd->retrieveFromDB()) {
+	$pubChemCmpd->submit()  ;
+	$count++;
+      }
+      my $pubchem_compound_id = $pubChemCmpd->getPubchemCompoundId($cid);
 
       foreach my $p (@props) {
 	if($p eq 'Synonym' || $p eq  'Name') {
 	  my @lst = @{$cmpd{$cid}{$p}};
 	  foreach my $l (@lst) {
-	    my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-									property    => $p,
-									value       => $l->{content}
-								      });
-	    $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
+	    my $pubChemCmpdProperty = GUS::Model::ApiDB::PubChemCompoundProperty->new({ 
+									       pubchem_compound_id => $pubchem_compound_id,
+									       property    => $p,
+									       value       => $l->{content}
+									      });
+            if (!$pubChemCmpdProperty->retrieveFromDB()) {
+              $pubChemCmpdProperty->submit()  ;
+            }
 	  }
-	} else {
-	  my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-								      property    => $p,
-								      value       => $cmpd{$cid}{$p}
-								    });
-	  $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
 	}
-      }
-      $count++;
-      if ($count % 100 == 0) {
-	$self->undefPointerCache();
-	$self->log("Inserted entries for $count PubChem Compounds.");
+
+        if ($count % 1000 == 0) {
+          $self->undefPointerCache();
+          $self->log("Inserted entries for $count PubChem Compounds.");
+        }
       }
     }
   }
@@ -235,7 +272,10 @@ sub insertPubChemCompound {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.PubChemCompound');
+  return (
+	  'ApiDB.PubChemCompoundProperty',
+	  'ApiDB.PubChemCompound'
+	 );
 }
 
 

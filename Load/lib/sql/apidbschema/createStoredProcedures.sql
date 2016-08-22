@@ -1,22 +1,4 @@
 -------------------------------------------------------------------------------
-
-/**** check if string is numeric ****/
- CREATE FUNCTION apidb.is_number (p_string IN VARCHAR2)
-   RETURN number
-IS
-   v_new_num NUMBER;
-BEGIN
-   v_new_num := TO_NUMBER(p_string);
-   RETURN 1;
-EXCEPTION
-WHEN VALUE_ERROR THEN
-   RETURN 0;
-END is_number;
-/
-
-grant execute on apidb.is_number to public;
-
--------------------------------------------------------------------------------
 create or replace function apidb.reverse_complement_clob (seq clob)
 return clob
 is
@@ -101,6 +83,36 @@ show errors;
 GRANT execute ON apidb.tab_to_string TO gus_r;
 GRANT execute ON apidb.tab_to_string TO gus_w;
 
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION
+apidb.tab_to_clob (p_clob_tab IN apidb.varchartab,
+                     p_delimiter IN  VARCHAR2 DEFAULT ',')
+RETURN CLOB IS
+l_string     CLOB;
+BEGIN
+
+  IF p_clob_tab.FIRST IS NULL THEN
+    RETURN null;
+  END IF;
+
+  FOR i IN p_clob_tab.FIRST .. p_clob_tab.LAST LOOP
+    IF i != p_clob_tab.FIRST THEN
+      l_string := l_string || p_delimiter;
+    END IF;
+
+    l_string := l_string || p_clob_tab(i);
+
+  END LOOP;
+
+  RETURN l_string;
+
+END tab_to_clob;
+/
+
+show errors;
+
+GRANT execute ON apidb.tab_to_clob TO gus_r;
+GRANT execute ON apidb.tab_to_clob TO gus_w;
 -------------------------------------------------------------------------------
 create or replace procedure apidb.analyze (schema_name IN varchar2, table_name IN varchar2)
 authid current_user -- run with the privileges of the database user who calls it, not the owner (which is apidb)
@@ -621,10 +633,11 @@ GRANT execute ON apidb.compute_end TO gus_r;
 GRANT execute ON apidb.compute_end TO gus_w;
 
 -------------------------------------------------------------------------------
-create or replace procedure apidb.deletifySeqVarExtDbRls (extDbRlsId in number)
+
+create or replace procedure apidb.deleteNaFeatureByAlgInv (rowAlgInvId in number)
 as
   cursor c1 is
-      select rowid from dots.SeqVariation where external_database_release_id = extDbRlsId;
+      select rowid from dots.NaFeature where row_alg_invocation_id = rowAlgInvId;
 
   my_rowid urowid;
   recordCount number;
@@ -635,14 +648,13 @@ begin
     fetch c1 into my_rowid;
     exit when c1%notfound;
 
-    update dots.SeqVariation
-    set subclass_view = 'deleteSeqVariation'
+    delete from dots.NaFeature
     where rowid = my_rowid;
 
     recordCount := recordCount + 1;
-    if mod(recordCount, 1000) = 0 then
+    if mod(recordCount, 100000) = 0 then
         commit;
-        -- dbms_output.put_line( recordCount || ' SeqVariations deletified for external_database_release_id ' || extDbRlsId);
+        -- dbms_output.put_line( recordCount || ' NaFeature rows deleted ' || extDbRlsId);
     end if;
   end loop;
 end;
@@ -650,21 +662,74 @@ end;
 
 show errors
 
-grant execute on apidb.deletifySeqVarExtDbRls to gus_r;
-grant execute on apidb.deletifySeqVarExtDbRls to gus_w;
+grant execute on apidb.deleteNaFeatureByAlgInv to gus_r;
+grant execute on apidb.deleteNaFeatureByAlgInv to gus_w;
 -------------------------------------------------------------------------------
-create or replace function apidb.arcsinh (x number)
-return number
+create or replace function apidb.wrap (seq clob)
+return clob
 is
+    rslt      clob;
+    maxchunk  number;
+    linesize  number;
+    idx       number;
+    delimiter char;
+
 begin
-    return ln( (1+(50*x)) + sqrt(power(1+(x*50), 2) + 1));
-end arcsinh;
+    linesize := 60;
+    delimiter := chr(10);
+
+
+    if length(seq) <= linesize
+    then
+      rslt := seq;
+
+    else 
+        maxchunk := ceil(length(seq) / linesize) - 1;
+
+        for idx in 0 .. maxchunk
+        loop
+            if idx > 0
+            then
+                rslt := rslt || delimiter;
+            end if;
+
+            rslt := rslt || dbms_lob.substr(seq, linesize, idx * linesize + 1);
+        end loop;
+    end if;
+
+    return rslt;
+end wrap;
 /
 
 show errors;
 
-GRANT execute ON apidb.arcsinh TO gus_r;
-GRANT execute ON apidb.arcsinh TO gus_w;
+GRANT execute ON apidb.wrap TO gus_r;
+GRANT execute ON apidb.wrap TO gus_w;
+
+-------------------------------------------------------------------------------
+create or replace function apidb.display_function (function_name string, x number)
+return number
+is
+    idx       number;
+
+begin
+    if lower(function_name) = 'arcsinh'
+        then return ln( (1+(50*x)) + sqrt(power(1+(x*50), 2) + 1));
+    elsif lower(function_name) = 'log2'
+        then return power(2, x);
+    else
+        raise_application_error(-20222,
+                                'Unrecognized function name "'|| function_name || '" ');
+    end if;
+
+end display_function;
+/
+
+show errors;
+
+GRANT execute ON apidb.display_function TO gus_r;
+GRANT execute ON apidb.display_function TO gus_w;
+
 -------------------------------------------------------------------------------
 
 exit

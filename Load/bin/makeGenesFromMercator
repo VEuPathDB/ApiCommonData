@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ## identifies toxo genes for the three strains by walking through each gene for each 
 ## strain and determining any genes from the other strains that overlap with this gene.
@@ -62,8 +82,10 @@ my %seqGenes;
 my %tmpSeqGenes;
 
 my $gffLocations = {};
+
+print STDERR "GFFVERSION=$gffVersion\n";
 foreach my $gffFile (@gffFiles) {
-  GUS::Supported::Util::addGffFeatures($gffLocations, $gffFile, $gffVersion);
+  &addGffFeatures($gffLocations, $gffFile, $gffVersion);
 }
 
 
@@ -167,6 +189,35 @@ sub getOverlapping {
   }
   return @genes;
 }
+
+
+sub addGffFeatures {
+  my ($allFeatureLocations, $gffFile, $gffVersion) = @_;
+
+  die "HASHREF expected but not found" unless(ref($allFeatureLocations) eq 'HASH');
+
+  my $gffIO = Bio::Tools::GFF->new('-gff_version' => $gffVersion,
+                                   -file => $gffFile
+                                  );
+
+  while (my $feature = $gffIO->next_feature()) {
+    next unless ($feature->primary_tag() eq 'gene');
+
+    my $seqId = $feature->seq_id();
+    my ($gene) = $feature->get_tag_values('ID');
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+    my $strand = $location->strand();
+
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{$strand}}, $start;
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{$strand}}, $end;
+  }
+
+  $gffIO->close();
+}
+
 
 $db->logout();
 $dbh->disconnect();

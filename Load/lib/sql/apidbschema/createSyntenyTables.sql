@@ -1,5 +1,3 @@
-GRANT references ON DoTS.NaSequenceImp TO ApiDB;
-GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
 
 ------------------------------------------------------------------------------
 

@@ -1,36 +1,34 @@
 -- schema changes for GUS tables
 
-alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
-alter table sres.EnzymeClass modify (description varchar2(200));
 
-alter table sres.GoEvidenceCode modify (name varchar2(20));
+-- not in gus4
+--alter table sres.GoEvidenceCode modify (name varchar2(20));
+--alter table sres.Reference modify (author varchar2(2000));
+-- gus4 change
+--alter table sres.DbRef modify (secondary_identifier varchar2(150));
+--alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
+--alter table dots.Est modify (accession varchar2(50));
+--alter table sres.ExternalDatabase modify (name varchar2(150));
+--alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
-alter table sres.DbRef modify (secondary_identifier varchar2(150));
-alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
 
-alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
 
-alter table dots.NaFeatureImp modify (name varchar2(80));
+alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(12) );
 
-alter table dots.Est modify (accession varchar2(50));
 
-alter table sres.ExternalDatabase modify (name varchar2(150));
-
-alter table sres.Reference modify (author varchar2(2000));
-
-alter table sres.dbref modify (secondary_identifier varchar2(200));
-
-alter table dots.Library modify (stage varchar2(150));
+-- added to XML
+-- alter table sres.EnzymeClass modify (description varchar2(200));
+-- alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
+-- alter table dots.NaFeatureImp modify (name varchar2(80));
+-- alter table sres.dbref modify (secondary_identifier varchar2(200));
+-- alter table dots.Library modify (stage varchar2(150));
 
 -- indexes on GUS tables
 
-create index dots.AaSeq_source_ix
-  on dots.AaSequenceImp (lower(source_id)) tablespace INDX;
-
-create index dots.NaFeat_alleles_ix
-  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
-  tablespace INDX;
+--create index dots.NaFeat_alleles_ix
+--  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
+--  tablespace INDX;
 
 create index dots.AaSequenceImp_string2_ix
   on dots.AaSequenceImp (string2, aa_sequence_id)
@@ -44,25 +42,22 @@ create index dots.nasequenceimp_string1_ix
   on dots.NaSequenceImp (string1, na_sequence_id)
   tablespace INDX;
 
-create index dots.ExonOrder_ix
-  on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id)
-  tablespace INDX; 
+-- create index dots.ExonOrder_ix
+--   on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id)
+--   tablespace INDX; 
 
-create index dots.SeqvarStrain_ix
-  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
-  tablespace INDX; 
+-- create index dots.SeqvarStrain_ix
+--   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id) -- string9 = strain
+--   tablespace INDX; 
 
-create index dots.FeatLocIx
-  on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
-  tablespace INDX; 
+-- create index dots.FeatLocIx
+--   on dots.NaLocation (na_feature_id, start_min, end_max, is_reversed)
+--   tablespace INDX; 
 
 create index dots.rfe_rnaexix
   on dots.RnaFeatureExon (rna_feature_id, exon_feature_id)
   tablespace indx;
 
-create index sres.RefIx
-  on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
-  tablespace indx;
 
 -- for the tuning manager, which decides whether an input table has changed
 -- by finding its record count and max(modification_date)
@@ -78,14 +73,6 @@ create index dots.ns_submod_ix
 create index dots.as_submod_ix
   on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id);
 
-create index rad.ar_submod_ix
-  on rad.AnalysisResultImp (subclass_view, modification_date, analysis_result_id);
-
-create index rad.ce_submod_ix
-  on rad.CompositeElementImp (subclass_view, modification_date, composite_element_id);
-
-create index rad.cer_submod_ix
-  on rad.CompositeElementResultImp (subclass_view, modification_date, composite_element_result_id);
 
 create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id);
 create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id);
@@ -107,15 +94,11 @@ create index dots.sim_mod_ix on dots.similarity (modification_date, similarity_i
 create index dots.simspan_mod_ix on dots.similarityspan (modification_date, similarity_span_id);
 
 create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
-create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
-create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
+--create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
+--create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
 create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
 create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 
-create index rad.anlrslt_ix
-on rad.analysisResultImp
-   (subclass_view, analysis_id, row_id, float1, float2, float3, float4, number1, table_id, analysis_result_id)
-tablespace indx;
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
@@ -133,10 +116,6 @@ tablespace indx;
 
 create index sres.lwrRefSec_ix
 on sres.DbRef(lower(secondary_identifier), db_ref_id, external_database_release_id)
-tablespace indx;
-
-create index sres.lwrRefRmk_ix
-on sres.DbRef(lower(remark), db_ref_id, external_database_release_id)
 tablespace indx;
 
 -- constrain NaSequence source_ids to be unique
@@ -232,11 +211,9 @@ GRANT SELECT ANY DICTIONARY to GUS_W;
 -- GRANTs required for CTXSYS
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to core;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to dots;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to rad;
+
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to study;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
 
 -- for v$ selects, which are needed by org.gusdb.fgputil.db.ConnectionWrapper to
 -- check for uncommitted transactions before returning connections to the pool.
@@ -285,36 +262,6 @@ UNIQUE (executable, cvs_revision);
 -- add columns to a GUS view
 -- drop first, because this view already exists from GUS install
 -- (and don't drop in dropGusTuning.sql)
-DROP VIEW rad.DifferentialExpression;
-CREATE VIEW rad.DifferentialExpression AS
-SELECT
-   analysis_result_id,
-   subclass_view,
-   analysis_id,
-   table_id,
-   row_id,
-   float1 as fold_change,
-   float2 as confidence,
-   float3 as pvalue_mant,
-   number1 as pvalue_exp,
-   float4 as false_discovery_rate,
-   modification_date,
-   user_read,
-   user_write,
-   group_read,
-   group_write,
-   other_read,
-   other_write,
-   row_user_id,
-   row_group_id,
-   row_project_id,
-   row_alg_invocation_id
-FROM RAD.AnalysisResultImp
-WHERE subclass_view = 'DifferentialExpression'
-WITH CHECK OPTION;
-
-GRANT SELECT ON rad.DifferentialExpression TO gus_r;
-GRANT INSERT, UPDATE, DELETE ON rad.DifferentialExpression TO gus_w;
 
 
 
@@ -357,6 +304,258 @@ GRANT INSERT, UPDATE, DELETE ON DOTS.MASSSPECFEATURE TO gus_w;
 
 
 
+alter table STUDY.PROTOCOLAPPNODE 
+add ISA_Type varchar2(50);
+alter table study.protocolappnode add (node_order_num number(10));
+
+alter table results.FamilyExpression add (percentile_channel1 FLOAT(126));
+alter table results.GeneExpression add (percentile_channel1 FLOAT(126));
+alter table results.NaFeatureExpression add (percentile_channel1 FLOAT(126));
+alter table results.ReporterExpression add (percentile_channel1 FLOAT(126));
+alter table results.RnaExpression add (percentile_channel1 FLOAT(126));
+
+alter table results.FamilyExpression add (percentile_channel2 FLOAT(126));
+alter table results.GeneExpression add (percentile_channel2 FLOAT(126));
+alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
+alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
+alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
+
+alter table results.nafeaturediffresult add (confidence FLOAT(126));
+
+alter table dots.GoAssocInstEvidCode add reference varchar2(500);
+alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(400);
+
+create table RESULTS.REPORTERINTENSITY
+  (
+    REPORTER_INTENSITY_ID number(12) not null,
+    PROTOCOL_APP_NODE_ID   number(10) not null,
+    REPORTER_ID            number(12) not null,
+    value float(126),
+    CONFIDENCE float(126),
+    STANDARD_ERROR float(126),
+    CATEGORICAL_VALUE     varchar2(100),
+    MODIFICATION_DATE     date not null,
+    USER_READ             number(1) not null,
+    USER_WRITE            number(1) not null,
+    GROUP_READ            number(1) not null,
+    GROUP_WRITE           number(1) not null,
+    OTHER_READ            number(1) not null,
+    OTHER_WRITE           number(1) not null,
+    ROW_USER_ID           number(12) not null,
+    ROW_GROUP_ID          number(4) not null,
+    ROW_PROJECT_ID        number(4) not null,
+    ROW_ALG_INVOCATION_ID number(12) not null,
+    foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
+    foreign key (REPORTER_ID) references PLATFORM.REPORTER,
+    primary key (REPORTER_INTENSITY_ID)
+  );
 
 
+create sequence RESULTS.REPORTERINTENSITY_SQ;
+
+GRANT insert, select, update, delete ON  RESULTS.REPORTERINTENSITY TO gus_w;
+GRANT select ON RESULTS.REPORTERINTENSITY TO gus_r;
+GRANT select ON RESULTS.REPORTERINTENSITY_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     ROW_ALG_INVOCATION_ID)
+select CORE.TABLEINFO_SQ.NEXTVAL, 'ReporterIntensity',
+       'Standard', 'reporter_intensity_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
+WHERE 'reporterintensity' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where DATABASE_ID = D.DATABASE_ID);
+
+
+--------------------------------------------------------------------------------
+create table Results.CompoundMassSpec
+  (
+    compound_mass_spec_id number(12) not null,
+    PROTOCOL_APP_NODE_ID   number(10) not null,
+    compound_id            number(12) not null,
+    value                  float(126),
+    STANDARD_ERROR         float(126),
+    isotopomer            varchar2(100),
+    MODIFICATION_DATE     date not null,
+    USER_READ             number(1) not null,
+    USER_WRITE            number(1) not null,
+    GROUP_READ            number(1) not null,
+    GROUP_WRITE           number(1) not null,
+    OTHER_READ            number(1) not null,
+    OTHER_WRITE           number(1) not null,
+    ROW_USER_ID           number(12) not null,
+    ROW_GROUP_ID          number(4) not null,
+    ROW_PROJECT_ID        number(4) not null,
+    ROW_ALG_INVOCATION_ID number(12) not null,
+    foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
+    primary key (compound_mass_spec_ID)
+  );
+
+
+create sequence RESULTS.CompoundMassSpec_SQ;
+
+GRANT insert, select, update, delete ON  RESULTS.CompoundMassSpec TO gus_w;
+GRANT select ON RESULTS.CompoundMassSpec TO gus_r;
+GRANT select ON RESULTS.CompoundMassSpec_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     ROW_ALG_INVOCATION_ID)
+select CORE.TABLEINFO_SQ.NEXTVAL, 'CompoundMassSpec',
+       'Standard', 'compound_mass_spec_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
+WHERE 'compoundmassspec' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where DATABASE_ID = D.DATABASE_ID);
+
+
+
+-----------------------------------------------------------------------------
+
+create table RESULTS.NAFeatureHostResponse
+  (
+    NA_FEATURE_HOST_RESPONSE_ID number(12) not null,
+    PROTOCOL_APP_NODE_ID   number(10) not null,
+    na_feature_ID            number(12) not null,
+    value float(126),
+    MODIFICATION_DATE     date not null,
+    USER_READ             number(1) not null,
+    USER_WRITE            number(1) not null,
+    GROUP_READ            number(1) not null,
+    GROUP_WRITE           number(1) not null,
+    OTHER_READ            number(1) not null,
+    OTHER_WRITE           number(1) not null,
+    ROW_USER_ID           number(12) not null,
+    ROW_GROUP_ID          number(4) not null,
+    ROW_PROJECT_ID        number(4) not null,
+    ROW_ALG_INVOCATION_ID number(12) not null,
+    foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
+    foreign key (NA_FEATURE_ID) references DoTS.NAFeatureImp,
+    primary key (NA_FEATURE_HOST_RESPONSE_ID)
+  );
+
+
+create sequence RESULTS.NAFEATUREHOSTRESPONSE_SQ;
+
+GRANT insert, select, update, delete ON  RESULTS.NAFEATUREHOSTRESPONSE TO gus_w;
+GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE TO gus_r;
+GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     ROW_ALG_INVOCATION_ID)
+select CORE.TABLEINFO_SQ.NEXTVAL, 'NaFeatureHostResponse',
+       'Standard', 'na_feature_host_response_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
+WHERE 'nafeaturehostresponse' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where DATABASE_ID = D.DATABASE_ID);
+
+--------------------------------------------------------------------------------
+
+-- unique constraints in the Results schema
+create unique index results.uqCompoundMassSpec
+      on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id);
+
+create unique index results.uqEditingEvent
+      on results.EditingEvent (na_sequence_id, event_start, event_end, protocol_app_node_id);
+
+create unique index results.uqFamilyDiffResult
+      on results.FamilyDiffResult (family_id, protocol_app_node_id);
+
+create unique index results.uqFamilyExpression
+      on results.FamilyExpression (family_id, protocol_app_node_id);
+
+create unique index results.uqGeneDiffResult
+      on results.GeneDiffResult (gene_id, protocol_app_node_id);
+
+create unique index results.uqGeneExpression
+      on results.GeneExpression (gene_id, protocol_app_node_id);
+
+create unique index results.uqGeneSimilarity
+      on results.GeneSimilarity (gene1_id, gene2_id, protocol_app_node_id);
+
+create unique index results.uqNAFeatureDiffResult
+      on results.NAFeatureDiffResult (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeatureExpression
+      on results.NaFeatureExpression (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeatureHostResponse
+      on results.NaFeatureHostResponse (na_feature_id, protocol_app_node_id);
+
+create unique index results.uqNaFeaturePhenotypeComp
+      on results.NaFeaturePhenotypeComp (na_feature_id, phenotype_composition_id, protocol_app_node_id);
+
+create unique index results.uqReporterDiffResult
+      on results.ReporterDiffResult (reporter_id, protocol_app_node_id);
+
+create unique index results.uqReporterExpression
+      on results.ReporterExpression (reporter_id, protocol_app_node_id);
+
+create unique index results.uqReporterIntensity
+      on results.ReporterIntensity (reporter_id, protocol_app_node_id);
+
+create unique index results.uqRnaDiffResult
+      on results.RnaDiffResult (rna_id, protocol_app_node_id);
+
+create unique index results.uqRnaExpression
+      on results.RnaExpression (rna_id, protocol_app_node_id);
+
+create unique index results.uqSegmentDiffResult
+      on results.SegmentDiffResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
+
+create unique index results.uqSegmentResult
+      on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
+
+--------------------------------------------------------------------------------
+
+alter table Sres.PathwayNode add (cellular_location varchar2(200));
+alter table Sres.PathwayRelationship add (is_reversible number(1));
+
+--------------------------------------------------------------------------------
+-- The ALTER USER statemtents below fixed errors of the form "ORA-01950: no privileges on tablespace 'INDX'"
+-- Adding them here, commented out, in case we have this problem again.
+
+-- They were generated by this query:
+-- select 'ALTER USER ' || name || ' QUOTA UNLIMITED ON INDX;' as alters from core.DatabaseInfo;
+
+-- ALTER USER Core QUOTA UNLIMITED ON INDX;
+-- ALTER USER CoreVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER DoTS QUOTA UNLIMITED ON INDX;
+-- ALTER USER DoTSVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER Model QUOTA UNLIMITED ON INDX;
+-- ALTER USER ModelVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER Platform QUOTA UNLIMITED ON INDX;
+-- ALTER USER PlatformVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER Results QUOTA UNLIMITED ON INDX;
+-- ALTER USER ResultsVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER SRes QUOTA UNLIMITED ON INDX;
+-- ALTER USER SResVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER Study QUOTA UNLIMITED ON INDX;
+-- ALTER USER StudyVer QUOTA UNLIMITED ON INDX;
+-- ALTER USER ApidbTuning QUOTA UNLIMITED ON INDX;
+-- ALTER USER TestTuning QUOTA UNLIMITED ON INDX;
+-- ALTER USER ApiDB QUOTA UNLIMITED ON INDX;
+-- ALTER USER chEBI QUOTA UNLIMITED ON INDX;
+--------------------------------------------------------------------------------
 exit

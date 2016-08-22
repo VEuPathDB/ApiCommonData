@@ -44,6 +44,7 @@ alter table apidb.sequencevariation add primary key (sequence_variation_id);
 alter table apidb.sequencevariation add foreign key (external_database_release_id) references sres.ExternalDatabaseRelease (external_database_release_id);
 alter table apidb.sequencevariation add foreign key (snp_ext_db_rls_id) references sres.ExternalDatabaseRelease (external_database_release_id);
 alter table apidb.sequencevariation add foreign key (ref_na_sequence_id, location) references apidb.Snp (na_sequence_id, location);
+ALTER TABLE apidb.sequencevariation add FOREIGN KEY (protocol_app_node_id) REFERENCES study.protocolappnode (protocol_app_node_id);
 
 create index apidb.SeqVarLocIx
 on apidb.SequenceVariation (na_sequence_id, location, strain, allele, sequence_variation_id) tablespace indx;
@@ -61,8 +62,16 @@ create index apidb.SeqVarRevFkIx1
 on apidb.SequenceVariation (external_database_release_id, sequence_variation_id)
 tablespace indx;
 
+create index apidb.SeqVarRevFkIx3
+on apidb.SequenceVariation (protocol_app_node_id, sequence_variation_id)
+tablespace indx;
+
 create index apidb.SeqVarRevFkIx2
 on apidb.SequenceVariation (snp_ext_db_rls_id, sequence_variation_id)
+tablespace indx;
+
+create index apidb.SeqDateIx
+on apidb.SequenceVariation (modification_date, sequence_variation_id)
 tablespace indx;
 
 exit;

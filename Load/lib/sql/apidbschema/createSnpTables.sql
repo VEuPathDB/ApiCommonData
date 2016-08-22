@@ -19,10 +19,17 @@ create table apidb.Snp (
     minor_product                varchar(1),
     distinct_strain_count        number(3), 
     distinct_allele_count        number(3),
+    is_coding                number(1),
+    positions_in_cds_full varchar2(2500),
+    positions_in_protein_full varchar2(2500),
+    reference_aa_full varchar2(2500),
     modification_date            date
 );
 
 create sequence apidb.Snp_sq;
+
+-- no indexes created in this file for this table.  they are created by addConstraintsAndIndexesToSnpTables.sql instead, to be run at the end of workflow
+
 
 grant select on apidb.Snp to gus_r;
 grant insert, select, update, delete on apidb.Snp to gus_w;
@@ -44,10 +51,15 @@ create table apidb.SequenceVariation (
     coverage                     number(12),
     quality                      number(12),
     ref_na_sequence_id           number(10) not null,
+    protocol_app_node_id         NUMBER(10) NOT NULL,
+    products_full  varchar2(2500),
+    diff_from_adjacent_snp number(1),
     modification_date            date
 );
 
 create sequence apidb.SequenceVariation_sq;
+
+-- no indexes created in this file for this table.  they are created by addConstraintsAndIndexesToSnpTables.sql instead, to be run at the end of workflow
 
 grant select on apidb.SequenceVariation to gus_r;
 grant insert, select, update, delete on apidb.SequenceVariation to gus_w;

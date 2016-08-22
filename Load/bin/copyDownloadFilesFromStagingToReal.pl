@@ -18,6 +18,7 @@
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
+die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 ##to be used to copy the files from apiSiteFilesStaging to the appropriate directories in apiSiteFiles. Also it needs to replace CURRENT with the actual build number.
@@ -49,20 +50,11 @@ system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
 chdir $targetDir or die "Can't chdir to $targetDir\n";
 &loopDir($targetDir);
-
 print STDERR "Creating Build_number file under $targetDir\n"; 
 my $filename = "$targetDir/Build_number";
 open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
 print $fh "$buildNumber\n";
 close $fh;
-
-print STDERR "Moving pathway files to /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles\n";
-system ("mv /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
-print "failed to execute: $!\n" if ($? == -1);
-system ("mv  ${targetDir}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles");
-print "failed to execute: $!\n" if ($? == -1);
-system ("rm -fr /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
-
 
 sub loopDir {
    my($dir) = @_;

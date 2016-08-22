@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use CBIL::Util::PropertySet;
+use CBIL::Util::Utils;
+
+use Data::Dumper;
+
+my ($gusConfigFile, $snpSampleExtDbRlsId, $sampleName, $outputSkipIfFile);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+            "snpSampleExtDbRlsId=i" => \$snpSampleExtDbRlsId,
+            "sampleName=s" => \$sampleName,
+            "outputSkipIfFile=s" => \$outputSkipIfFile);
+
+if (!$snpSampleExtDbRlsId || !$sampleName || !$outputSkipIfFile){
+    die "usage: cnvWorkflowCheckpoint --snpSampleExtDbRlsId <External database release id for the SNP sample> --sampleName <Name of sample> --outputSkipIfFile <File to touch if CNV will not be run> (--gusConfigFile(only required if not default)\n";
+}
+
+
+if (!$gusConfigFile) {
+    $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config"; 
+}
+
+my @properties = ();
+
+die "Config file $gusConfigFile does not exist. " unless -e $gusConfigFile;
+
+my $gusConfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->{props}->{dbiDsn},
+                                        $gusConfig->{props}->{databaseLogin},
+                                        $gusConfig->{props}->{databasePassword},
+                                        0,0,1,
+                                        $gusConfig->{props}->{coreSchemaName},
+                                        );
+
+my $dbh = $db->getQueryHandle();
+my $sql = "select c.value from study.protocolappnode pan, study.characteristic c, sres.ontologyterm ot
+           where pan.external_database_release_id = $snpSampleExtDbRlsId
+           and c.protocol_app_node_id = pan.protocol_app_node_id
+           and ot.name = 'average mapping coverage'
+           and c.qualifier_id = ot.ontology_term_id";
+my $stmt = $dbh->prepare($sql);
+my $coverage = $dbh->selectrow_arrayref($stmt);
+$stmt->finish();
+
+if (scalar @{$coverage} >1) {
+    die "More than one coverage metric was returned for sample $sampleName\n";
+}
+
+my $averageCoverage = $coverage->[0];
+if ($averageCoverage < 6) {
+    &runCmd("touch $outputSkipIfFile");
+    print STDERR "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nSamples with less than 6x coverage will produce nonsensical data in the CNV workflow and may cause the workflow to fail.\n\nThe CNV sample graph will not be run for sample $sampleName.\n";
+} else {
+    print "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nThis sample will be run in the CNV workflow.\n";
+}
+
+exit;

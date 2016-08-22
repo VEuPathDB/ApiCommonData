@@ -11,12 +11,12 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
-    <qualifier name="Name"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="parentID" handler="api" method="setParent"/>
     <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="orthologue"         ignore="true"/>
@@ -33,9 +33,9 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
     <qualifier name="reading_frame"  column="reading_frame"/>
-    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
-    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
-    <qualifier name="OrderNumber"    column="order_number"/>
+    <qualifier name="CodingStart"    ignore="true"/>
+    <qualifier name="CodingEnd"      ignore="true"/>
+    <qualifier name="OrderNumber"    ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" ignore="true"/>

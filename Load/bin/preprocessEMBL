@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 use Getopt::Long;
@@ -53,7 +73,15 @@ if(-d $inputFileOrDir){
 		    #$line =~ s/SV/SV 1/;   ## comment this line out when process files for tevaSTIB805 in TriTryp
                     $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump
                     print OUTEMBL "$line";
-		}elsif($line =~ /^[XDORAK]/){
+
+			## if there is no AC line in the file, need this if statement. Otherwise can comment out
+			## Bio::SeqIO->accession() reads AC line, which is the primary sequence ID in ISF plugin
+			## If do not have AC line, then ID line will be read as display_id() for sequence ID
+			if ($line =~ /^ID\s+(\S+?)(\s+standard|);/) {
+			  print OUTEMBL "AC   $1;\n";
+			}
+		}elsif($line =~ /^[XDORK]/){
+#		}elsif($line =~ /^[XDORKA]/){   ## if do not want to load the id in AC line as sequence ID, need include A here
                   next;
 		}else{
 		    print OUTEMBL "$line";
@@ -72,7 +100,15 @@ if(-d $inputFileOrDir){
 		    $line =~ s/^(ID\s+\S+);/$1  standard;/;
                     $line =~ s/SV ; ; ; ; ;/SV 1; linear; genomic DNA; HTG; /;  ## use this for embl from Chado dump
                     print OUTEMBL "$line";
-		}elsif($line =~ /^[XDORAK]/){
+
+			## if there is no AC line in the file, need this if statement. Otherwise can comment out
+			## Bio::SeqIO->accession() reads AC line, which is the primary sequence ID in ISF plugin
+			## If do not have AC line, then ID line will be read as display_id() for sequence ID
+			if ($line =~ /^ID\s+(\S+?)(\s+standard|);/) {
+			  print OUTEMBL "AC   $1;\n";
+			}
+		}elsif($line =~ /^[XDORK]/){
+#		}elsif($line =~ /^[XDORKA]/){   ## if do not want to load the id in AC line as sequence ID, need include A here
                   next;
 		}else{
 		    print OUTEMBL "$line";

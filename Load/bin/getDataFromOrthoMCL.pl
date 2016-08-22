@@ -48,32 +48,28 @@ close OUT;
 open OUT, ">$outputOrthoSeqsWithECs";
 print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
-foreach my $ec (keys %hash) {
-  $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcNumber.xml?ec_number_type_ahead=$ec&o-fields=primary_key,source_id,ec_numbers,group_name,group_size";
+$url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,group_size"; 
 
-  my $cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
-  system($cmd);
-  my $ref = XMLin("$outputOrthoSeqsWithECs.tmp");
+$cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
+print STDERR "$cmd\n";
+system($cmd);
+$ref = XMLin("$outputOrthoSeqsWithECs.tmp");
 
-  print STDERR "\nwget $url\n";
+while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
 
-  while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
-    next if $k eq 'id'; # count is 1, e.g. ec number is 6.2.1.30
+  my $source_id  = $v->{field}->{source_id}->{content};
+  my $ec_numbers = $v->{field}->{ec_numbers}->{content};
+  my $group_name = $v->{field}->{group_name}->{content};
+  my $group_size = $v->{field}->{group_size}->{content};
 
-    my $source_id  = $v->{field}->{source_id}->{content};
-    my $ec_numbers = $v->{field}->{ec_numbers}->{content};
-    my $group_name = $v->{field}->{group_name}->{content};
-    my $group_size = $v->{field}->{group_size}->{content};
+  next unless ($ec_numbers && $group_name);
+  next unless (!exists $uniq{$source_id});
+  $uniq{$source_id} = 1;
 
-    next unless ($ec_numbers && $group_name);
-    next unless (!exists $uniq{$source_id});
-    $uniq{$source_id} = 1;
+  $group_name = 'null' unless $group_name;
+  $group_size = 'null' unless $group_size;
 
-    $group_name = 'null' unless $group_name;
-    $group_size = 'null' unless $group_size;
-
-    print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
-  }
+  print OUT "$k\t$source_id\t$ec_numbers\t$group_name\t$group_size\n";
 }
 
 close OUT;

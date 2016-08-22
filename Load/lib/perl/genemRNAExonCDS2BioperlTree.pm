@@ -1,7 +1,5 @@
 package ApiCommonData::Load::genemRNAExonCDS2BioperlTree;
 
-# Remove existing gene features, promote CDS, tRNA, etc to gene
-
 use strict;
 use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
@@ -13,6 +11,7 @@ use Data::Dumper;
 #
 # gene  [folded into CDS]
 # mRNA  (optional)  [discarded]
+# Exon
 # CDS
 #
 #output: standard api tree: gene->transcript->exons
@@ -21,12 +20,10 @@ use Data::Dumper;
 # (1) copy old gene qualifiers to cds/rna feature
 # (2) retype CDS into Gene
 # (3) remember its join locations
-# (4) create transcript, give it a copy of the gene's location
+# (4) create transcript
 # (5) add to gene
 # (6) create exons from sublocations
 # (7) add to transcript
-
-#Need to check if codon_start qualifier (reading frame) in Genbank files for CDS is relative to the CDS positions. This code assumes 
 
 
 sub preprocess {
@@ -34,18 +31,16 @@ sub preprocess {
 
     my ($geneFeature, $source);
     my  $primerPair = '';
-#   my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
-#   $unflattener->unflatten_seq(-seq=>$bioperlSeq,-use_magic=>1);
 
     my @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
 
     ## check if gene, rna, exon or CDS are on the same strand
     &checkGeneStructure (\@topSeqFeatures);
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+    OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
-	    
+
 	    if($type eq 'pseudogene'){
 		$bioperlFeatureTree->primary_tag('gene');
 		$bioperlFeatureTree->add_tag_value("pseudo","");
@@ -68,7 +63,8 @@ sub preprocess {
 		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 
-	    if($type eq 'tRNA' || $type eq 'rRNA') {
+	    ## for tRNA and rRNA that do not have gene as parent
+	    if($type eq 'tRNA' || $type eq 'rRNA' || $type eq 'snRNA' || $type eq 'snoRNA') {
 	      $geneFeature = $bioperlFeatureTree;
 
 	      my $geneLoc = $geneFeature->location();
@@ -77,7 +73,9 @@ sub preprocess {
 	      $gene->add_tag_value("ID",$geneID);
 	      $gene = &copyQualifiers($geneFeature, $gene);
 
-              my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+              my $transcript = &makeBioperlFeature("$type", $geneLoc, $bioperlSeq);
+	      my $transcriptID = $geneID.".$type";
+	      $transcript->add_tag_value("ID", $transcriptID);
 
 	      my @exonLocs = $geneLoc->each_Location();
 	      foreach my $exonLoc (@exonLocs){
@@ -93,13 +91,13 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
-		if(!($geneFeature->has_tag("ID"))){
-		    $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
-		}
 
-		if (($geneFeature->has_tag("ID"))){
-			my ($cID) = $geneFeature->get_tag_values("ID");
-			print STDERR "processing $cID...\n";
+		my $gID;
+		if(!($geneFeature->has_tag("ID"))){
+		    die "Feature $type does not have tag: ID\n";
+		} else {
+		  ($gID) = $geneFeature->get_tag_values("ID");
+		  print STDERR "processing $gID...\n";
 		}
 
 		if($geneFeature->has_tag("Note")){
@@ -116,14 +114,26 @@ sub preprocess {
 			}else{
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    my $transcript = &makeBioperlFeature("mRNA", $geneLoc, $bioperlSeq);
+			    $transcript->add_tag_value("ID", $gID.".mRNA");
+			    $transcript->add_tag_value("pseudo","");
+
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                                if ($exonLoc->strand == -1){
+				  $exon->add_tag_value('CodingStart', $exonLoc->end());
+				  $exon->add_tag_value('CodingEnd', $exonLoc->start());
+				} else {
+				  $exon->add_tag_value('CodingStart', $exonLoc->start());
+				  $exon->add_tag_value('CodingEnd', $exonLoc->end());
+				}
+
 				$transcript->add_SeqFeature($exon);
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 		    }
 		}
@@ -169,6 +179,7 @@ sub traverseSeqFeatures {
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
              'mRNA',
+             'transcript',
              'misc_RNA',
              'rRNA',
              'snRNA',
@@ -180,17 +191,11 @@ sub traverseSeqFeatures {
              'scRNA',
              'srpRNA',
              'SRP.RNA',
+             'RNase_MRP_RNA',
+             'SRP_RNA',
              )
         ) {
 
-	   #print STDERR "-----------------$type----------------------\n";
-
-	    # if($type eq 'ncRNA'){
-	    # 	if($RNA->has_tag('ncRNA_class')){
-	    # 	    ($type) = $RNA->get_tag_values('ncRNA_class');
-	    # 	    $RNA->remove_tag('ncRNA_class');
-	    # 	}
-	    # }
 
         if ($type eq 'srpRNA' || $type eq 'SRP.RNA') {
           $type = "SRP_RNA";
@@ -201,57 +206,59 @@ sub traverseSeqFeatures {
             $type = 'coding';
         }
 
+	if($type eq 'mRNA' || $type eq 'transcript'){
+	  $type = 'coding';
+	}
 
-	    if($type eq 'mRNA'){
-		$type = 'coding';
+	my($geneID) = $geneFeature->get_tag_values('ID');
+	if (!$gene) {    ## only create one gene for multiple transcript
+	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
+	  $gene->add_tag_value("ID",$geneID);
+	  $gene = &copyQualifiers($geneFeature, $gene);
+	}
 
-	    }
-	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
-	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);    ## for gene use transcript location instead of gene location
-	    my($geneID) = $geneFeature->get_tag_values('ID');
+#	my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	my $transType = $type;
+	$transType = "mRNA" if ($transType eq "coding");
+	my $transcript = &makeBioperlFeature("$transType", $RNA->location, $bioperlSeq);
 
-  	    if($transcriptCount > 1){
-	      $geneID = $geneID."\.$ctr";
-	      $ctr++;
-	    }
+	my ($rnaID) = ($RNA->has_tag('ID')) ? $RNA->get_tag_values('ID') : die "ERROR: missing RNA id for gene: $geneID\n";
+
+	$transcript->add_tag_value("ID", $rnaID);
+	$transcript = &copyQualifiers($RNA, $transcript);
+
+	## add is_pseudo and is_partial to transcript
+	if ($gene->has_tag('Pseudo') || $gene->has_tag('pseudo')) {
+	  $transcript->add_tag_value('pseudo', '') if (!$transcript->has_tag('Pseudo') && !$transcript->has_tag('pseudo'));
+	}
+
+	if ($gene->has_tag('Partial') || $gene->has_tag('partial')) {
+	  $transcript->add_tag_value('partial', '') if (!$transcript->has_tag('Partial') && !$transcript->has_tag('partial'));
+	}
 
 
-	    #print "ID:$geneID\n";
-	    $gene->add_tag_value("ID",$geneID);
-	    $gene = &copyQualifiers($geneFeature, $gene);
+	my @containedSubFeatures = $RNA->get_SeqFeatures;
 
-	## add transcript_id to gene feature
-	my ($transId) = $RNA->get_tag_values('ID');
-	$gene->add_tag_value("transcript_id", $transId);
+	my $codonStart = 0;
 
-        $gene = &copyQualifiers($RNA,$gene);
+#	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 
-	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
-  	    #$transcript = &copyQualifiers($RNA,$transcript);
-
-	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-	    
-	    my $codonStart = 0;
-	    
-	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 	    if($gene->has_tag('selenocysteine')){
 		$gene->remove_tag('selenocysteine');
 		$gene->add_tag_value('selenocysteine','selenocysteine');
 	    }
-	    $codonStart -= 1 if $codonStart > 0;
+#	    $codonStart -= 1 if $codonStart > 0;
 
-	    #my (@exons, @codingStart, @codingEnd);
 	    my (@exons, @codingStartAndEndPairs);
 
 	    my $CDSctr =0;
 	    my $prevPhase =0;
 
-	    #my($codingStart,$codingEnd);
 
 	    my $CDSLocation;
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
-	      $codonStart = $subFeature->frame();
+#	      $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
 		    push(@exons,$exon);
@@ -263,23 +270,14 @@ sub traverseSeqFeatures {
 		  my $cdsFrame = $subFeature->frame();
 
 		    if($subFeature->location->strand == -1){
-			#$codingStart = $subFeature->location->end;
-			#$codingEnd = $subFeature->location->start;
-			#$codingStart -= $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->end);
 		        my $cdsCodingStart = $subFeature->location->end;
 			my $cdsCodingEnd = $subFeature->location->start;
 			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }else{
-			#$codingStart = $subFeature->location->start;
-			#$codingEnd = $subFeature->location->end;
-			#$codingStart += $codonStart if ($codonStart > 0 && $codingStart == $CDSLocation->start);
 		        my $cdsCodingStart = $subFeature->location->start;
 			my $cdsCodingEnd = $subFeature->location->end;
 			push (@codingStartAndEndPairs, "$cdsCodingStart\t$cdsCodingEnd\t$cdsStrand\t$cdsFrame");
 		    }
-
-		    #push(@codingStart,$codingStart);
-		    #push(@codingEnd,$codingEnd);
 
 		    $CDSctr++;
 		}
@@ -291,11 +289,6 @@ sub traverseSeqFeatures {
 		    push(@UTRs,$UTR);
 		}
 	    }
-
-	    #$codingStart[$#codingStart] = $codingStart;
-
-	    #$codingStart = shift(@codingStart);
-	    #$codingEnd = shift(@codingEnd);
 
 	    ## deal with codonStart, use the frame of the 1st CDS
 	    foreach my $j (0..$#codingStartAndEndPairs) {
@@ -319,8 +312,6 @@ sub traverseSeqFeatures {
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
 
-		    #$codingStart = shift(@codingStart);
-		    #$codingEnd = shift(@codingEnd);
 		    ($codingStart, $codingEnd) = split(/\t/, shift(@codingStartAndEndPairs) );
 
 		} elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start) 
@@ -343,7 +334,15 @@ sub traverseSeqFeatures {
 		foreach my $exonLoc (@exonLocs){
 		    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
 		    $transcript->add_SeqFeature($exon);
-		    if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
+		    if($gene->primary_tag eq 'coding_gene' || $gene->primary_tag eq 'pseudo_gene' ){
+		      if ($exonLoc->strand == -1) {
+			$exon->add_tag_value('CodingStart', $exonLoc->end());
+			$exon->add_tag_value('CodingEnd', $exonLoc->start());
+		      } else {
+			$exon->add_tag_value('CodingStart', $exonLoc->start());
+			$exon->add_tag_value('CodingEnd', $exonLoc->end());
+		      }
+		    } else {
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');	
 		    }
@@ -362,10 +361,10 @@ sub traverseSeqFeatures {
 	    }
 
 	    $gene->add_SeqFeature($transcript);
-            push(@genes, $gene);
 
 	}
     }
+    push(@genes, $gene) if ($gene);
     return (\@genes ,\@UTRs);
 }
 
@@ -404,7 +403,6 @@ sub copyQualifiers {
       my @uniqVals = grep {!$seen{$_}++} 
                        $bioperlFeatureTree->remove_tag($qualifier), 
                        $geneFeature->get_tag_values($qualifier);
-                       
       $bioperlFeatureTree->add_tag_value(
                              $qualifier, 
                              @uniqVals
@@ -415,7 +413,6 @@ sub copyQualifiers {
                              $geneFeature->get_tag_values($qualifier)
                            );
     }
-     
   }
   return $bioperlFeatureTree;
 }

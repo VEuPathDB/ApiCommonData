@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="resources">
+      <oneOrMore>
+        <element name="resource">
+          <attribute name="resource"/>
+          <attribute name="version"/>
+          <attribute name="plugin"/>
+          <optional>
+            <attribute name="parentResource"/>
+          </optional>
+          <optional>
+            <attribute name="publicUrl"/>
+          </optional>
+          <choice>
+            <element name="wgetArgs">
+              <attribute name="url"/>
+              <text/>
+            </element>
+            <element name="manualGet">
+              <attribute name="fileOrDir"/>
+            </element>
+          </choice>
+          <zeroOrMore>
+            <element name="unpack">
+               <text/>
+            </element>
+          </zeroOrMore>
+          <zeroOrMore>
+            <element name="getAndUnpackOutput">
+              <choice>
+                <attribute name="dir"/>
+                <attribute name="file"/>
+              </choice>
+            </element>
+          </zeroOrMore>
+          <element name="pluginArgs">
+            <text/>
+          </element>
+          <element name="info">
+            <attribute name="displayName"/>
+            <attribute name="category"/>
+            <attribute name="project"/>
+            <attribute name="organisms"/>
+            <attribute name="contact"/>
+            <attribute name="email"/>
+            <attribute name="institution"/>
+            <attribute name="publicUrl"/>
+            <element name="description">
+              <text/>
+            </element>
+            <zeroOrMore>
+              <element name="publication">
+                <optional>
+                  <attribute name="pmid"/>
+                </optional>
+                <optional>
+                  <attribute name="doi"/>
+                </optional>
+              </element>
+            </zeroOrMore>
+            <zeroOrMore>
+              <element name="reference">
+                  <attribute name="recordClass"/>
+                  <attribute name="type"/>
+                  <attribute name="name"/>
+              </element>
+            </zeroOrMore>
+          </element>
+        </element>
+      </oneOrMore>
+    </element>
+  </start>
+</grammar>

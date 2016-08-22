@@ -1,6 +1,3 @@
-GRANT references ON DoTS.NaFeatureImp TO ApiDB;
-GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
---GRANT references ON Sres.SequenceOntology TO ApiDB;
 ------------------------------------------------------------------------------
 
 CREATE TABLE ApiDB.NAFeatureImage (

@@ -1,12 +1,33 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
-## script that uses Bio::Perl to retrieve sequences (accessions or GI numbers passed in a file on stdin) from genpept
+## script that uses webservices to retrieve sequences (accessions or GI numbers passed in a file on stdin) from genpept
 
 # input file is expected to have some header lines, each of which must include the word "Accession."  these are removed.
 # then each remaining line is expected to be tab delimited, with the first column holding the accession to submit to genpept
 
 use strict;
-use Bio::Perl;
+use LWP::Simple;
+use Bio::SeqIO; 
 use Getopt::Long;
 
 my($inFile,$outFile,$help);
@@ -20,8 +41,8 @@ die "Usage: getGBSeqs --inFile <FILE> --outFile <FILE>\n" if $help;
 die "Cannot find file '$inFile'" unless (-e $inFile);
 die "Must provide an output file" unless ($outFile);
 
-#make a db object
-my $db = Bio::DB::GenPept->new();
+##use webservices to access all info at genbank
+my $baseUrl = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&rettype=fasta&id=";
 
 open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!\n";
 open (OUT, "> $outFile") or die "Cannot open file '$outFile' for writing: $!\n";
@@ -39,10 +60,17 @@ while (<IDS>) {
 
   $seen{$accession} = 1;
 
-  my $seq = $db->get_Seq_by_acc($accession);
-  if ($seq) {
-    print OUT ">".$accession." ".$seq->desc()." length=".$seq->length()."\n".&breakSequence($seq->seq());
-    $foundSeq++;
+  my $fetch = $baseUrl . $accession;
+  my $fasta = get($fetch);
+
+  #next unless($fasta);
+
+  if ($fasta) {
+       my $seqio = Bio::SeqIO->new(-string => $fasta, -format => "Fasta");
+       while(my $seq = $seqio->next_seq()) {
+	   print OUT ">".$accession." ".$seq->desc()." length=".$seq->length()."\n".&breakSequence($seq->seq());
+	   $foundSeq++;
+       } 
   } else {
     print STDERR "Cannot find entry in Protein for accession number '$accession'\n";
   }

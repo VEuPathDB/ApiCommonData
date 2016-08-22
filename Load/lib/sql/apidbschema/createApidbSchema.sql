@@ -2,6 +2,7 @@ CREATE USER ApiDB
 IDENTIFIED BY VALUES '8362207F0DC5BC14'  -- encoding of standard password
 QUOTA UNLIMITED ON users 
 QUOTA UNLIMITED ON gus
+QUOTA UNLIMITED ON indx
 DEFAULT TABLESPACE users
 TEMPORARY TABLESPACE temp;
 
@@ -15,8 +16,6 @@ GRANT CREATE SESSION TO ApiDB;
 GRANT CREATE ANY INDEX TO ApiDB;
 GRANT CREATE TRIGGER TO ApiDB;
 GRANT CREATE ANY TRIGGER TO ApiDB;
-GRANT CREATE PUBLIC DATABASE LINK TO apidb;
-GRANT DROP PUBLIC DATABASE LINK TO apidb;
 
 GRANT REFERENCES ON core.TableInfo to ApiDB;
 GRANT REFERENCES ON dots.AaSequenceImp TO ApiDB;
@@ -27,14 +26,23 @@ GRANT REFERENCES ON dots.NaFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
-GRANT REFERENCES ON study.Biomaterial TO ApiDB;
-GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
+GRANT REFERENCES ON study.protocolappnode TO ApiDB;
+
+GRANT REFERENCES ON sres.PathwayRelationship TO ApiDB;
+GRANT REFERENCES ON sres.Pathway TO ApiDB;
+
+GRANT references ON dots.nafeatureimp TO apidb;
+GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
+GRANT references ON Sres.OntologyTerm TO ApiDB;
+GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
+GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
+
+
 
 -- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;
 GRANT SELECT ON sres.TaxonName to ApiDB;
 GRANT SELECT ON sres.Taxon to ApiDB;
-GRANT SELECT, UPDATE ON dots.SeqVariation to ApiDB;
 GRANT SELECT, DELETE ON dots.NaFeatureImp TO PUBLIC;
 
 INSERT INTO core.DatabaseInfo

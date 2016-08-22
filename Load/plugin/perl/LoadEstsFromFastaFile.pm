@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::LoadEstsFromFastaFile;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent # leaving Sres.Contact
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use strict;
@@ -9,7 +29,7 @@ use GUS::Model::DoTS::EST;
 use GUS::Model::DoTS::Library;
 use GUS::Model::SRes::Contact;
 use GUS::Model::SRes::Taxon;
-use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::OntologyTerm;
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 use GUS::Model::SRes::TaxonName;
@@ -27,7 +47,7 @@ my $tablesAffected =
   ];
 
 my $tablesDependedOn =
-  [['SRES::Taxon','taxon_id required for library and externalnasequence tables'],['SRes::SequenceOntology',  'SequenceOntology term for EST']
+  [['SRES::Taxon','taxon_id required for library and externalnasequence tables'],['SRes::OntologyTerm',  'OntologyTerm term for EST']
   ];
 
   my $howToRestart = "Get the total number of ESTs processed from log file, second column, that number plus one for startAt argument"; 
@@ -133,11 +153,19 @@ stringArg({ name            => 'checkSQL',
 	     constraintFunc  => undef,
 	     isList          => 0 }),
 
- stringArg({  name           => 'SOTermName',
-	      descr          => 'The Sequence Ontology term for the sequence type',
-	      reqd           => 1,
-	      constraintFunc => undef,
-	      isList         => 0 }),
+     stringArg({name => 'SOTermName',
+		descr => 'The extDbRlsName of the Sequence Ontology to use',
+		reqd => 1,
+		constraintFunc => undef,
+		isList => 0
+	       }),
+
+     stringArg({name => 'SOExtDbRlsSpec',
+		descr => 'The extDbRlsName of the Sequence Ontology to use',
+		reqd => 1,
+		constraintFunc => undef,
+		isList => 0
+	       }),
 
  integerArg({  name           => 'ncbiTaxId',
 	       descr          => 'The taxon id from NCBI for these sequences.',
@@ -266,7 +294,7 @@ sub new() {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({requiredDbVersion => 3.6,
+  $self->initialize({requiredDbVersion => 4.0,
 		     cvsRevision => '$Revision$', # cvs fills this in!
 		     name => ref($self),
 		     argsDeclaration   => $argsDeclaration,
@@ -290,9 +318,7 @@ sub run {
 
   $self->log("loading sequences with external database release id $self->{external_database_release_id}");
 
-  if ($self->getArg('SOTermName')) {
-    $self->fetchSequenceOntologyId();
-  }
+  $self->fetchSequenceOntologyId();
 
   if ($self->getArg('ncbiTaxId')) {
     $self->fetchTaxonId();
@@ -663,9 +689,14 @@ sub getMonomerCount{
 sub fetchSequenceOntologyId {
   my ($self) = @_;
 
-  my $name = $self->getArg('SOTermName');
 
-  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $name });
+  my $name = $self->getArg('SOTermName');
+  my $extDbRlsSpec = $self->getArg('SOExtDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name ,
+                                                    external_database_release_id => $extDbRlsId
+                                                   });
 
   $SOTerm->retrieveFromDB;
 
@@ -709,7 +740,6 @@ sub undoTables {
     DoTS.EST
     DoTS.ExternalNASequence
     DoTS.Library
-    SRes.Contact
     );
 }
 

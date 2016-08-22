@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::LoadTRNAScan;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | fixed
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | reviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -13,7 +33,7 @@ use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::RNAType;
-use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GeneFeatureProduct;
@@ -58,12 +78,18 @@ sub getArgsDeclaration {
 		 reqd  => 1,
 		 isList => 0
 	       }),
-     stringArg({ name => 'soVersion',
-		 descr => 'version of Sequence Ontology to use',
+     stringArg({ name => 'soExternalDatabaseSpec',
+		 descr => 'externaldatabase spec of Sequence Ontology to use',
 		 constraintFunc => undef,
 		 reqd => 1,
 		 isList => 0,
 	       }),
+     stringArg({ name => 'prefix',
+                 descr => 'prefix needed to construct source_id, prefix_trna_xxxx',
+                 constraintFunc => undef,
+                 reqd => 1,
+                 isList => 0,
+               }),
      stringArg({ name => 'seqTable',
 		 descr => 'table where we can find the na sequences to map the tRNA predictions to',
 		 constraintFunc => undef,
@@ -144,7 +170,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
 			cvsRevision => '$Revision$',
 			name => ref($self),
 			argsDeclaration => $args,
@@ -164,13 +190,13 @@ sub run {
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
 						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
 
-  my $rnaId = $self->getSoId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
+  my $rnaId = $self->fetchSequenceOntologyId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
 
-  my $primTransc = $self->getSoId("transcript") || $self->error ("Can't retrieve so_id for transcript");
+  my $primTransc = $self->fetchSequenceOntologyId("transcript") || $self->error ("Can't retrieve so_id for transcript");
 
-  my $exon = $self->getSoId("exon") || $self->error ("Can't retrieve so_id for exon");
+  my $exon = $self->fetchSequenceOntologyId("exon") || $self->error ("Can't retrieve so_id for exon");
 
-  my $procTransc = $self->getSoId("mature_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
+  my $procTransc = $self->fetchSequenceOntologyId("mature_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
 
   my %soIds = ('geneFeat' => $rnaId,
 	       'transcript' => $primTransc,
@@ -185,21 +211,29 @@ sub run {
   return "$result tRNAScan results parsed and loaded";
 }
 
-sub getSoId {
-  my ($self,$termName) = @_;
+sub fetchSequenceOntologyId {
+  my ($self, $name) = @_;
 
-  my $soVersion = $self->getArg('soVersion');
+  my $soExternalDatabaseSpec=$self->getArg('soExternalDatabaseSpec');
 
-  my $so =  GUS::Model::SRes::SequenceOntology->new({'term_name' => $termName,
-						     'so_version' => $soVersion });
-  $so->retrieveFromDB();
+  my $soDbRlsId = 
+      $self->getExtDbRlsId($soExternalDatabaseSpec);
 
-  my $soId = $so->getId();
+  my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name,'external_database_release_id' => $soDbRlsId});
+
+  $SOTerm->retrieveFromDB;
+
+  my $soId = $SOTerm->getId();
 
   $self->undefPointerCache();
 
   return $soId;
+
+  if (! $SOTerm->getId()) {
+    warn "Error: Can't find SO term '$name' in database.";
+  }
 }
+
 
 sub parseFile {
   my ($self) = @_;
@@ -210,7 +244,9 @@ sub parseFile {
 
   my %tRNAs;
 
-  my %num;
+  ###my %num;
+
+  my $number = 1000;
 
   while(<FILE>){
     chomp;
@@ -244,11 +280,11 @@ sub parseFile {
 
     my $isReversed = ($line[2] > $line[3]) ? 1 : 0;
 
-    $num{$seqSourceId}{$tRNAType}++;
+    ###$num{$seqSourceId}{$tRNAType}++;
 
-    my $number = $num{$seqSourceId}{$tRNAType};
-
-    $tRNAs{$seqSourceId}{"$tRNAType$number"}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed};
+    ###my $number = $num{$seqSourceId}{$tRNAType};
+    $number++;
+    $tRNAs{$seqSourceId}{"$tRNAType$number"}={'start'=>$start,'end'=>$end,'intronStart'=>$intronStart,'intronEnd'=>$intronEnd,'score'=>$score,'anticodon'=>$anticodon,'isReversed'=>$isReversed,'number'=>$number};
   }
 
   return \%tRNAs;
@@ -293,13 +329,17 @@ sub getExtNASeq {
 sub getGeneFeat {
   my ($self,$scanReleaseId,$soIds,$seqSourceId,$tRNA,$tRNAs,$extNaSeq) = @_;
 
+  my $prefix = $self->getArg('prefix');
+
   my $isPseudo = ($tRNA =~ /Pseudo/) ? 1 : 0;
 
   my $product = $tRNA;
 
+  my $number = $tRNAs->{$seqSourceId}->{$tRNA}->{'number'};
+
   $product =~ s/\d//g;
 
-  my $sourceId = "${seqSourceId}_tRNA_$tRNA";
+  my $sourceId = "${prefix}_tRNA_$number";
 
   $sourceId =~ s/\s//g;
 
@@ -307,9 +347,7 @@ sub getGeneFeat {
 						     'sequence_ontology_id' => $soIds->{'geneFeat'},
 						     'external_database_release_id' => $scanReleaseId,
 						     'source_id' => $sourceId,
-						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'},
-						     'is_pseudo' => $isPseudo,
-						     'product' => ""});
+						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'}});
 
   $geneFeat->retrieveFromDB();
 
@@ -336,12 +374,14 @@ sub getGeneFeat {
 sub getTranscript {
   my ($self,$seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId, $geneFeat) = @_;
 
-  $sourceId .= "-1";
+  my $transcriptSourceId = $sourceId;
+
+  $transcriptSourceId .= "-t_1";
 
   my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
 						      'external_database_release_id' => $scanReleaseId,
-						      'source_id' => $sourceId,
+						      'source_id' => $transcriptSourceId,
 						      'is_pseudo' => $isPseudo,
 						      'product' => "tRNA $product"});
 
@@ -353,7 +393,7 @@ sub getTranscript {
 
   $transcript->addChild($rnaType);
 
-  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq);
+  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq, $sourceId);
 
   foreach my $exon (@{$exonFeats}) {
     my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
@@ -406,7 +446,7 @@ sub getRNAType {
 }
 
 sub getExonFeats {
-  my ($self,$soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq) = @_;
+  my ($self,$soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq, $sourceId) = @_;
 
   my $exon;
   my $orderNum;
@@ -416,7 +456,7 @@ sub getExonFeats {
   if ($tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'}) {
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
@@ -424,16 +464,16 @@ sub getExonFeats {
 
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 1 : 2;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
     push (@exons,$exon);
   }
   else {
-    $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
+    $orderNum = 1;
 
-    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'}, "${sourceId}-E${orderNum}");
 
     $extNaSeq->addChild($exon);
 
@@ -444,19 +484,13 @@ sub getExonFeats {
 }
 
 sub makeExonFeat {
-  my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
+  my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed,$sourceId) = @_;
 
-  $seqSourceId = "${seqSourceId}-$orderNum";
-
-  my $codingStart = $isReversed ? $end : $start;
-  my $codingEnd = $isReversed ? $start : $end;
 
   my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon",
-						 'source_id' => $seqSourceId,
+						 'source_id' => $sourceId,
 						 'sequence_ontology_id' => $soIds->{'exonFeat'},
 						 'order_number' => $orderNum,
-						 'coding_start' => $codingStart,
-						 'coding_end' => $codingEnd,
 						 'external_database_release_id' => $scanReleaseId});
 
   my $naLoc = $self->getNaLocation($start,$end,$isReversed);
@@ -488,7 +522,7 @@ sub getTranscriptSeq{
                                               external_database_release_id => $scanReleaseId
                                              });
 
-  my $transcriptSeq = GUS::Supported::Util::getCodingSequenceFromExons($exonFeats);
+  my $transcriptSeq = GUS::Supported::Util::getTranscriptSeqFromExons($exonFeats);
 
 
   $transcriptNaSeq->setSequence($transcriptSeq);
@@ -516,7 +550,7 @@ sub InsertExternalDatabase{
     $extDbId = $sth->fetchrow_array();
 
     if ($extDbId){
-	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
+	print STDERR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
     }
 
     else {
@@ -525,7 +559,7 @@ sub InsertExternalDatabase{
 	   });
 	$newDatabase->submit();
 	$extDbId = $newDatabase->getId();
-	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+	print STDERR "created new entry for database $dbName with primary key $extDbId\n";
     }
     return $extDbId;
 }

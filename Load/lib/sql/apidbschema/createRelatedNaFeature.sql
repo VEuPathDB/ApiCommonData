@@ -1,5 +1,3 @@
-GRANT references ON dots.nafeatureimp TO apidb;
-
 ------------------------------------------------------------------------------
 
 CREATE TABLE apidb.RelatedNaFeature (

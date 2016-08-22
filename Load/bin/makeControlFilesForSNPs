@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 
@@ -42,6 +62,7 @@ open(SNP, ">$snpCtl") or die "Cannot open file $snpCtl for writing: $!";
       read_percent,
       quality,
       p_value,
+      snp_source_id FILLER,
       external_database_release_id,
       matches_reference,
       product,
@@ -50,6 +71,11 @@ open(SNP, ">$snpCtl") or die "Cannot open file $snpCtl for writing: $!";
       na_sequence_id,
       ref_na_sequence_id,
       snp_ext_db_rls_id,
+      protocol_app_node_id,
+      positions_in_cds FILLER,
+      positions_in_protein FILLER,
+      products_full,
+      diff_from_adjacent_snp,
       sequence_variation_id SEQUENCE(MAX,1), 
       modification_date "SYSDATE"
      )
@@ -82,6 +108,10 @@ my $sString = <<SSTRING;
               minor_product,
               distinct_strain_count,
               distinct_allele_count,
+              is_coding,
+              positions_in_cds_full,
+              positions_in_protein_full,
+              reference_aa_full,
               snp_id SEQUENCE(MAX,1), 
               modification_date "SYSDATE"
      )

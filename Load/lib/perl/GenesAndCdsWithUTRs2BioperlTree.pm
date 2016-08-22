@@ -1,4 +1,25 @@
 package ApiCommonData::Load::GenesAndCdsWithUTRs2BioperlTree;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -331,15 +352,6 @@ sub traverseSeqFeatures {
 		}
 		if($subFeature->primary_tag eq 'exon' && $exonType ne 'UTR'){
 		    #print STDERR "In loop: 1: $exonType\n";
-
-		  ## check if gene, mRNA, and CDS are on the same strand
-		  if ( ($geneFeature->location->strand != $RNA->location->strand)
-		       || ($geneFeature->location->strand != $subFeature->location->strand)
-		       || ($RNA->location->strand != $subFeature->location->strand) ) {
-		    die "gene, rna, and exon are not on the same strand\n";
-		  }
-
-
 		    $exonType = 'exon';
 		    my $prevType = '';
 		    if($prevExon){

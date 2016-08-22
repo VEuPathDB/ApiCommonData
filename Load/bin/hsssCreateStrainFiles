@@ -1,20 +1,51 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
+
 use lib "$ENV{GUS_HOME}/lib/perl"; 
+
 use strict;
 
 use ApiCommonData::Load::VariationFileReader;
 
 use Data::Dumper;
 
-my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName, $strainsFile) = @ARGV;
+use Getopt::Long;
 
-usage() unless scalar(@ARGV) == 5 || scalar(@ARGV) == 6;
+my ($inputVariantsFile, $varscanDir, $targetDir, $readFreqCutoff, $refStrainName, $makeSourceIdMap);
+
+&GetOptions("inputVariantsFile=s"=> \$inputVariantsFile,
+	    "varscanDir=s" => \$varscanDir,
+	    "targetDir=s" => \$targetDir,
+	    "readFreqCutoff=i" => \$readFreqCutoff,
+	    "refStrainName=s" => \$refStrainName,
+	    "makeSourceIdMap" => \$makeSourceIdMap,
+    );
 
 die "Variants file '$inputVariantsFile' does not exist\n" unless -e $inputVariantsFile;
-die "Varscan dir '$varscanDir' does not exist\n" unless ($varscanDir =~/^NA$/ || -d $varscanDir);
-die "strainsFile $strainsFile does not exist\n" unless ( -d $varscanDir || $varscanDir =~/^NA$/  && -e $strainsFile);
+
+die "Varscan dir '$varscanDir' does not exist\n" if($varscanDir && !(-d $varscanDir));
+
 die "Target dir '$targetDir' does not exist\n" unless -d $targetDir;
-die "Read freq cutoff must be a multiple of five less than 100\n" unless $readFreqCutoff =~ /\d0/ || $readFreqCutoff =~ /\d5/;
+die "Read freq cutoff must be a multiple of five less than 100\n" unless($readFreqCutoff <= 100 && $readFreqCutoff >= 0 && $readFreqCutoff =~ /\d?[05]/);
 
 my %ALLELE_HASH = ('a'=>1, 'c'=>2, 'g'=>3, 't'=>4,
                    'A'=>1, 'C'=>2, 'G'=>3, 'T'=>4);
@@ -28,15 +59,15 @@ my %allStrains;
 open(STRAINMAP, ">$readFreqDir/strainIdToName.dat") || die "Can't open file '$readFreqDir/strainIdToName.dat' for writing\n";
 my $strainCount = 1;
 
-  # Print a row for the reference (also write file)
-  print STRAINMAP "$strainCount\t$refStrainName\n";  
   open(REF, ">$readFreqDir/$strainCount");   
   close REF;
 
 my @strainNames;
 
-unless (-e $strainsFile) {
+if($varscanDir) {
   # zip through varscan dir, reading each strain name.  make a file mapping them to integer indexes.  also open an output file for each one
+
+  push @strainNames, $refStrainName; # add row for reference
 
   opendir(my $dirhandle, $varscanDir) || die "Can't open varscan dir '$varscanDir'\n";
   
@@ -48,12 +79,15 @@ unless (-e $strainsFile) {
 }
 
 else {
-  open (STRAINS, "<$strainsFile") or die "Could not open file $strainsFile for reading: $!\n";
-  foreach my $strain (<STRAINS>) {
-    $strain=~s/\s*$//;
+    my $distinctStrains = `cut -f 3 $inputVariantsFile |sort -u`;
+    my @distinctStrains = split(/\n/, $distinctStrains);
+
+
+  foreach my $strain (@distinctStrains) {
     push (@strainNames, $strain);
   }
 }
+
 
 foreach my $strainName (@strainNames) {
   $strainCount++;

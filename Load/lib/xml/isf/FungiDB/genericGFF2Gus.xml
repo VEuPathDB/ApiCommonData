@@ -3,7 +3,7 @@ Last modified: edliaw 2013-07-18 -->
 <mapping>
   <bioperlSeqPreprocessor class="ApiCommonData::Load::BroadGFFReshaper"/>
   <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker" method="makeGeneSkeleton"/>
-  <specialCaseQualifierHandler name="api" class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+  <specialCaseQualifierHandler name="api" class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
@@ -21,7 +21,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -68,7 +68,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="synonym" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="transl_except" handler="api" method="transcriptTranslExcept"/>
-    <qualifier name="transl_table" ignore="true"/>
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
     <qualifier name="transmembrane_polypeptide_region" ignore="true"/>
     <qualifier name="type" ignore="true"/>
@@ -77,7 +77,7 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
   
   <feature name="miRNA_gene" so="miRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="constitutive" ignore="true"/>
@@ -97,7 +97,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -116,7 +116,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="pseudo" handler="api" method="setPseudo"/>
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="transl_except" handler="api" method="transcriptTranslExcept"/>
-    <qualifier name="transl_table" ignore="true"/>
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
   </feature>
 
@@ -131,7 +131,7 @@ Last modified: edliaw 2013-07-18 -->
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -142,7 +142,6 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="private" ignore="true"/>
@@ -155,17 +154,13 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="type" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
-    <qualifier name="biotype" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="external_name" ignore="true"/>
-    <qualifier name="logic_name" ignore="true"/>
   </feature>
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
@@ -336,7 +331,7 @@ Last modified: edliaw 2013-07-18 -->
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -346,9 +341,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="private" ignore="true"/>
@@ -368,7 +361,7 @@ Last modified: edliaw 2013-07-18 -->
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -378,9 +371,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="private" ignore="true"/>
@@ -400,7 +391,7 @@ Last modified: edliaw 2013-07-18 -->
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -410,9 +401,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="private" ignore="true"/>
@@ -428,7 +417,7 @@ Last modified: edliaw 2013-07-18 -->
   <feature name="ncRNA_gene" so="non_protein_coding">
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -442,7 +431,6 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="feature_relationship_rank" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="private" ignore="true"/>
@@ -455,10 +443,6 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="type" ignore="true"/>
     <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
-    <qualifier name="biotype" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="external_name" ignore="true"/>
-    <qualifier name="logic_name" ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -487,7 +471,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Gene" ignore="true"/>
-    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Note" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
@@ -498,10 +482,8 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Gene" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="orf_classification" ignore="true"/>
     <qualifier name="partial" handler="api" method="setPartial"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>

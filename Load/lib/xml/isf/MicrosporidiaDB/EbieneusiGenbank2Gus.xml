@@ -6,14 +6,14 @@
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
 
 
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="locus_tag"    handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"    handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="translation"      handler="api" method="setProvidedTranslation"/>
     <qualifier name="pseudo"           handler="api" method="setPseudo"/>
     <qualifier name="partial"           handler="api" method="setPseudo"/>
@@ -80,7 +80,7 @@
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="gene"             		ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
@@ -104,7 +104,7 @@
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="previous_systematic_id"		ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="curation"             ignore="true"/>
@@ -117,7 +117,7 @@
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="pseudo"           handler="api" method="setPseudo"/>
     <qualifier name="product"				ignore="true"/>
     <qualifier name="anticodon"         	ignore="true"/>
@@ -149,10 +149,10 @@
 
    <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
     <qualifier name="reading_frame"  column="reading_frame"/>
-    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
-    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
+    <qualifier name="CodingStart"    ignore="true"/>
+    <qualifier name="CodingEnd"      ignore="true"/>
     <qualifier name="GenePrediction" column="source_id"/>
-    <qualifier name="OrderNumber"    column="order_number"/>
+    <qualifier name="OrderNumber"    ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Parent" ignore="true"/>
@@ -209,8 +209,8 @@
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="note"                   ignore="true"/>
     <qualifier name="domain"                 ignore="true"/>
     <qualifier name="controlled_curation"    ignore="true"/>

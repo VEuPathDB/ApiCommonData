@@ -1,6 +1,3 @@
-GRANT references ON DoTS.NaSequenceImp TO ApiDB;
-GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
-GRANT references ON Sres.SequenceOntology TO ApiDB;
 ------------------------------------------------------------------------------
 
 CREATE TABLE ApiDB.GFF3 (
@@ -29,7 +26,7 @@ CREATE TABLE ApiDB.GFF3 (
  ROW_PROJECT_ID        NUMBER(4),
  ROW_ALG_INVOCATION_ID NUMBER(12),
  FOREIGN KEY (na_sequence_id) REFERENCES DoTS.NaSequenceImp (na_sequence_id),
- FOREIGN KEY (sequence_ontology_id) REFERENCES Sres.SequenceOntology (sequence_ontology_id),
+ FOREIGN KEY (sequence_ontology_id) REFERENCES Sres.OntologyTerm (ontology_term_id),
  FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease (external_database_release_id),
  PRIMARY KEY (gff3_feature_id)
 );

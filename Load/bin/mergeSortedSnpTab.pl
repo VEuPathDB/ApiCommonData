@@ -1,14 +1,37 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
+
 use lib "$ENV{GUS_HOME}/lib/perl";
+
 use strict;
 use Getopt::Long;
 use ApiCommonData::Load::MergeSortedSeqVariations;
 
-my ($inputFile, $cacheFile, $undoneStrainsFile);
+my ($inputFile, $cacheFile, $undoneStrainsFile, $doNotTruncateInputFile);
 
 &GetOptions("inputFile=s"=> \$inputFile,
             "cacheFile=s" => \$cacheFile,
             "undoneStrainsFile=s" => \$undoneStrainsFile,
+            "doNotTruncateInputFile" => \$doNotTruncateInputFile, # The main use case ("NGS SNPs" ) we need to truncate the input file;  Chip Snp we do not
     );
 
 unless(-e $inputFile) {
@@ -49,8 +72,10 @@ close OUT;
 
 unlink $cacheTmp;
 
-open(TRUNCATE, ">$inputFile") or die "Cannot open file $inputFile for writing: $!";
-close(TRUNCATE);
+unless($doNotTruncateInputFile) {
+  open(TRUNCATE, ">$inputFile") or die "Cannot open file $inputFile for writing: $!";
+  close(TRUNCATE);
+}
 
 open(TRUNCATE, ">$undoneStrainsFile") or die "Cannot open file $undoneStrainsFile for writing: $!";
 close(TRUNCATE);

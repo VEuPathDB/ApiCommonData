@@ -1,4 +1,25 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | broken
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | fixed
+#die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -124,7 +145,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeq) = $stmt->fetchrow_array();
-print STDERR "The total number of sequence that have been loaded = $totalSeq\n";
+print STDERR "The number of sequences that have been loaded = $totalSeq\n";
 $stmt->finish();
 
 ## D. check the total sequence length
@@ -134,7 +155,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($totalSeqLength) = $stmt->fetchrow_array();
-print STDERR "The total sequence length = $totalSeqLength\n";
+print STDERR "The length of sequences that have been loaded = $totalSeqLength\n";
 $stmt->finish();
 
 ## E. check the gene number that has been loaded
@@ -144,12 +165,12 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($geneCount) = $stmt->fetchrow_array();
-print STDERR "The total gene number that have been loaded = $geneCount\n";
+print STDERR "The number of genes that have been loaded = $geneCount\n";
 $stmt->finish();
 
 ## F. check the gene number that has been loaded in different categories 
 my $sql = <<SQL;
-  select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name
+  select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name order by name
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -158,27 +179,55 @@ while (my ($geneType, $geneTypeCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## G. check the pseudogene
+## E-2. check the transcript number that has been loaded
 my $sql = <<SQL;
-  select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_pseudo
+  select count(*) from DOTS.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "For coding_gene, check if it is pseudogene...\n";
+my ($codingGeneCount) = $stmt->fetchrow_array();
+$stmt->finish();
+
+my $sql = <<SQL;
+  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId)
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($codingTransCount) = $stmt->fetchrow_array();
+$stmt->finish();
+
+my $sqlp = <<SQL;
+  select count(taf.SOURCE_ID) from dots.genefeature gf, dots.transcript t, DOTS.TRANSLATEDAAFEATURE taf where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and gf.name like 'coding_gene' and gf.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+SQL
+my $stmtp = $dbh->prepare($sqlp);
+$stmtp->execute();
+my ($codingProtCount) = $stmtp->fetchrow_array();
+$stmtp->finish();
+
+print STDERR "The number of coding_gene loaded = $codingGeneCount\nFor these coding_genes, transcript loaded = $codingTransCount, translatedAAFeature loaded = $codingProtCount\n" if ($codingGeneCount && $codingTransCount);
+
+## G. check the pseudogene
+my $sql = <<SQL;
+  select distinct t.is_pseudo, count(*) from dots.genefeature gf, dots.transcript t 
+where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_pseudo
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+print STDERR "  check if pseudo...\n";
 while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
-  ($if == 1 )? print STDERR "  is pseudogene = $psdCount\n" : print STDERR "  not pseudogene = $psdCount\n";
+  ($if == 1 )? print STDERR "    is pseudogene = $psdCount\n" : print STDERR "    is not pseudogene = $psdCount\n";
 }
 $stmt->finish();
 
 ## H. check if is_partial
 my $sql = <<SQL;
-  select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_partial
+  select distinct t.is_partial, count(*) from dots.genefeature gf, dots.transcript t where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_partial
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-print STDERR "For coding_gene, check if it is partial gene...\n";
+print STDERR "  check if partial...\n";
 while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
-  ($if == 1 )? print STDERR "  is partial gene = $ptlCount\n" : print STDERR "  not partial gene = $ptlCount\n";
+  ($if == 1 )? print STDERR "    is partial = $ptlCount\n" : print STDERR "    is not partial = $ptlCount\n";
 }
 $stmt->finish();
 
@@ -200,21 +249,13 @@ $stmt->finish();
 
 ## J. check the seq # in translatedaaSequence table and translatedaaFeature table
 my $sql = <<SQL;
-  select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene'
-SQL
-my $stmt = $dbh->prepare($sql);
-$stmt->execute();
-my ($codingGene) = $stmt->fetchrow_array();
-$stmt->finish();
-
-my $sql = <<SQL;
   select count(*) from dots.translatedaasequence where external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaSeq) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the translated aa sequence = $tranAaSeq, which is not equal to coding_gene = $codingGene\n" unless ($tranAaSeq == $codingGene);
+print STDERR "ERROR: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaSeq == $codingTransCount);
 
 my $sql = <<SQL;
   select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
@@ -223,7 +264,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaFeat) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR... the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
+print STDERR "ERROR... the number of translatedAAFeature, $tranAaFeat, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaFeat == $codingTransCount);
 
 
 ## K. check the translatedAaFeature table, translation_start or translation_stop can not be null or < 0
@@ -242,8 +283,9 @@ SQL
 }
 
 ## L. for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
+## this is not necessary in gus4 because the coding_start and coding_end in dots.exonfeature are always null
 my $sql = <<SQL;
-  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and gf.name not like 'kinetoplast_gene' and ef.coding_end is not null
+  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null and gf.external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -263,20 +305,20 @@ while (my ($gfSourceId, $nlStartMin, $nlEndMax, $seqSourceId, $seqLength) = $stm
 }
 $stmt->finish();
 
-## N. check if there is any duplicated exons since it happens in TriTryp
+## N. check if there is any duplicated exons since it happens in TriTryp, This also can be a check for alternative splicing coding of distinct exons.
 my $sql = <<SQL;
-  select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and nl.na_feature_id=rfe.exon_feature_id and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
+  select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, dots.exonfeature ef, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and ef.NA_FEATURE_ID=rfe.EXON_FEATURE_ID and nl.NA_FEATURE_ID=ef.NA_FEATURE_ID and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: duplicated exons found.\n  $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
+  print STDERR "ERROR: duplicated exons found on $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
 }
 $stmt->finish();
 
-## O. check if overlap exons which happen in TriTrypDB
+## O. check if there is any overlap exon, check by each transcript in case of alternative splicing
 my $sql = <<SQL;
-  select source_id from DOTS.genefeature where external_database_release_id=$extDbRlsId
+  select source_id from DOTS.transcript where external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -287,38 +329,95 @@ while (my ($sourceId) = $stmt->fetchrow_array()) {
   my %exonLocations;
 
 my $sqll = <<SQL;
-  select gf.source_id, ef.source_id, nl.start_min, nl.end_max
-from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
-where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
-and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId' 
-order by nl.start_min
+  select t.source_id, ef.source_id, nl.start_min, nl.end_max, t.IS_PSEUDO 
+from Dots.transcript t, DOTS.rnafeatureexon rfe, DOTS.exonfeature ef, DOTS.nalocation nl 
+where t.na_feature_id=rfe.rna_feature_id and rfe.exon_feature_id=ef.na_feature_id 
+and nl.na_feature_id=ef.na_feature_id and t.external_database_release_id=$extDbRlsId and t.source_id like '$sourceId' 
+order by t.source_id, nl.start_min
 SQL
 
   my $stmtt = $dbh->prepare($sqll);
   $stmtt->execute();
 
-  while (my ($gfSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
-    $exonLocations{$efSourceId} = "$nlStartMin,$nlEndMax,$gfSourceId" if ($efSourceId && $nlStartMin && $nlEndMax && $gfSourceId);
+  my $tIsPseudo;
+  while (my ($tSourceId, $efSourceId, $nlStartMin, $nlEndMax, $isPseudo) = $stmtt->fetchrow_array() ) {
+    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax" if ($nlStartMin && $nlEndMax && $efSourceId && $tSourceId);
+    $tIsPseudo = $isPseudo;
   }
   $stmtt->finish();
   $c++;
 
-  my ($preExonId, $preStartMin, $preEndMax);
   foreach my $k (sort keys %exonLocations) {
-    my ($start, $end, $gid) = split (/\,/, $exonLocations{$k});
-    if ($preStartMin ) {
-      if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
-	$preExonId = $k;
-        $preStartMin = $start;
-        $preEndMax = $end;
-      } else {
-        print STDERR "ERROR... overlapped exons found.\ndouble check the gene $gid, exon $k ($start..$end) and $preExonId ($preStartMin..$preEndMax) are overlapped\n";
+    my ($preExonId, $preStartMin, $preEndMax);
+    foreach my $kk (sort keys %{$exonLocations{$k}}) {
+      my ($start, $end) = split (/\,/, $exonLocations{$k}{$kk});
+      if ($preStartMin ) {
+	if ( ( ($start > $preEndMax+1) && ($end > $preEndMax+1) ) || ( ($start < $preStartMin-1) && ($end < $preStartMin-1 ) )){
+	#if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+	  $preExonId = $k;
+	  $preStartMin = $start;
+	  $preEndMax = $end;
+	} else {
+	  my $ems = "ERROR need to correct at gus4... overlapped exons found on ";
+	  $ems .= "Pseudo " if ($tIsPseudo == 1);
+	  $ems .= "transcript $k, exon $kk ($start..$end) and $preExonId ($preStartMin..$preEndMax)\n";
+	  print STDERR $ems;
+	}
       }
-    } else {
-      $preExonId = $k;
-      $preStartMin = $start;
-      $preEndMax = $end;
+# else {
+	$preExonId = $kk;
+	$preStartMin = $start;
+	$preEndMax = $end;
+#      }
     }
+  }
+}
+$stmt->finish();
+
+## OOO. check if there is internal UTR
+my $sql = <<SQL;
+  select source_id from DOTS.transcript where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+while (my ($sourceId) = $stmt->fetchrow_array()) {
+
+#  my %exonLocations;
+my (@exonArrays, @cdsArrays, $cdsCount);
+
+my $sqll = <<SQL;
+  select t.SOURCE_ID, rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END, nl.IS_REVERSED 
+from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.AAFEATUREEXON afe, DOTS.TRANSLATEDAAFEATURE taf, DOTS.NALOCATION nl
+where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
+and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_FEATURE_ID=afe.AA_FEATURE_ID and afe.EXON_FEATURE_ID=ef.NA_FEATURE_ID
+and t.SOURCE_ID like '$sourceId' 
+order by rfe.order_number
+SQL
+
+  my $stmtt = $dbh->prepare($sqll);
+  $stmtt->execute();
+
+  while (my ($tSourceId, $exonOrder, $nlStartMin, $nlEndMax, $cdsStart, $cdsEnd, $isReversed) = $stmtt->fetchrow_array() ) {
+#    $exonLocations{$tSourceId}{$efSourceId} = "$nlStartMin,$nlEndMax" if ($nlStartMin && $nlEndMax && $efSourceId && $tSourceId);
+    if ($cdsStart && $cdsEnd) {
+      $cdsCount++;
+      push (@cdsArrays, "$cdsStart,$cdsEnd");
+    }
+    push (@exonArrays, "$tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed");
+  }
+  $stmtt->finish();
+
+  foreach my $i (0..$#exonArrays) {
+    my ($tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed) = split (/\,\s*/, $exonArrays[$i]);
+    if ($cdsCount > 1 && $cdsCount < ($#cdsArrays+1) ) {
+      if ($isReversed == 1) {
+	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsEnd || $nlEndMax != $cdsStart);
+      } else {
+	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsStart || $nlEndMax != $cdsEnd);
+      }
+    }
+    print "$tSourceId has $exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed\n" if ($tSourceId =~ /CNC02040-t26/);
   }
 }
 $stmt->finish();
@@ -352,34 +451,31 @@ where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by 
 }
 $stmt->finish();
 
-## MM. check if the length of the gene is shorter than the sum of the exons' length, Bug #14407 
-my (%gSourceIds, %gLengths);
-my $sql = "select gf.na_feature_id, gf.source_id, nl.start_min, nl.end_max, nl.is_reversed 
-from dots.genefeature gf, dots.nalocation nl
-where nl.na_feature_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId";
+## MM. check the length of transcript is not shorter than the sum of the exons's length, Bug #14407 
+my (%tSourceIds, %tLengths);
+my $sql = "select t.na_feature_id, t.source_id, nl.start_min, nl.end_max, nl.is_reversed 
+from dots.transcript t, dots.nalocation nl
+where nl.na_feature_id=t.na_feature_id and t.external_database_release_id=$extDbRlsId";
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-while (my ($gNaFeatureId, $gSourceId, $gStart, $gEnd, $ifReversed) = $stmt->fetchrow_array() ) {
-    $gSourceIds{$gNaFeatureId} = $gSourceId;
-    $gLengths{$gNaFeatureId} = abs($gStart-$gEnd) + 1;
+while (my ($tNaFeatureId, $tSourceId, $tStart, $tEnd, $ifTrasReversed) = $stmt->fetchrow_array() ) {
+  $tSourceIds{$tNaFeatureId} = $tSourceId;
+  $tLengths{$tNaFeatureId} = abs($tStart-$tEnd) + 1;
 }
 $stmt->finish();
 
-foreach my $kk (sort keys %gSourceIds) {
- 
-my $sql = "select start_min, end_max, is_reversed from dots.nalocation where na_feature_id in (
-select na_feature_id from dots.exonfeature where parent_id=?)"; 
-
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute($kk);
-    my $exonLength = 0;
-    while (my ($eStart, $eEnd, $eIfRev) = $stmt->fetchrow_array() ) {
-        $exonLength += abs($eStart-$eEnd)+1;
-    }
-    $stmt->finish();
-    print STDERR "ERROR... the gene $gSourceIds{$kk} found with the gene length $gLengths{$kk} < sum of exons length $exonLength, need to contact the data provider to make sure the gene coordinates are correct\n" if ($gLengths{$kk} < $exonLength);
-    #print ".";
+foreach my $kk (sort keys %tSourceIds) {
+  my $sql = "select nl.start_min, nl.end_max, nl.is_reversed from DOTS.rnafeatureexon rfe, dots.exonfeature ef, DOTS.nalocation nl where rfe.exon_feature_id=ef.na_feature_id and ef.na_feature_id=nl.na_feature_id and rfe.rna_feature_id=?";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute($kk);
+  my $exonLength = 0;
+  while (my ($eStart, $eEnd, $eIfRev) = $stmt->fetchrow_array() ) {
+    $exonLength += abs($eStart-$eEnd)+1;
+  }
+  $stmt->finish();
+  print STDERR "ERROR... the transcript $tSourceIds{$kk} found with the transcript length $tLengths{$kk} < sum of exons length $exonLength , need to contact the data provider to make sure the gene coordinates are correct\n" if ($tLengths{$kk} < $exonLength);
 }
+
 
 ## P. check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;

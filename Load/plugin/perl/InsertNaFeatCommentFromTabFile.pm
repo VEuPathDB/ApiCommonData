@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -6,8 +26,8 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
-
 use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NAFeatureComment;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
@@ -98,7 +118,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
 			cvsRevision => '$Revision$',
 			name => ref($self),
 			argsDeclaration => $args,
@@ -132,6 +152,7 @@ sub run {
       my ($sourceId, $comment, $comment_date) = split(/\t/,$_);
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
+      my $transcript  = GUS::Model::DoTS::Transcript->new({source_id => $sourceId, row_project_id => $projectId});
 
       if($geneFeature->retrieveFromDB()){
 
@@ -141,14 +162,20 @@ sub run {
   
 	  $processed++;
 
-      }else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
+      } elsif($transcript->retrieveFromDB()) { 
+
+	      my $nafeatureId = $transcript->getNaFeatureId();
+	      $self->makeNaFeatComment($nafeatureId,$comment, $comment_date);
+  
+	      $processed++; 
+   } else{
+	  $self->log("WARNING","Gene/Transcript Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
       }
      $self->undefPointerCache();
 
   }
 
-
+  die and print "There is NO row loaded!!! Check the data!" unless ($processed > 0);
 
   return "$processed na feature comments parsed and loaded";
 }

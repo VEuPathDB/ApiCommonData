@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | fixed
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -13,7 +33,7 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::VirtualSequence;
 use GUS::Model::DoTS::SequencePiece;
-use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::Taxon;
 
 use Bio::PrimarySeq;
@@ -173,7 +193,7 @@ dots.nasequence
 AFFECT
 
 my $tablesDependedOn = <<TABD;
-sres.sequenceontology
+sres.OntologyTerm
 dots.externalnasequence
 TABD
 
@@ -204,7 +224,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = {requiredDbVersion => 3.6,
+  my $configuration = {requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$',
 		       cvsTag => '$Name$',
 		       name => ref($self),
@@ -600,15 +620,20 @@ sub getSOTermId {
 
   my $soExtDbRlsName = $self->getArg('soExtDbRlsName');
 
-  my $soVer =  GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $soExtDbRlsName);
+  my $soExtDbRlsVer =  GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $soExtDbRlsName);
 
-  my $SO = GUS::Model::SRes::SequenceOntology->new({'term_name' => $SOTerm,'so_version' => $soVer});
+  my $soExternalDatabaseSpec=$soExtDbRlsName."|".$soExtDbRlsVer;
+
+  my $soDbRlsId = 
+      $self->getExtDbRlsId($soExternalDatabaseSpec);
+
+  my $SO = GUS::Model::SRes::OntologyTerm->new({'name' => $SOTerm,'external_database_release_id' => $soDbRlsId});
 
   unless($SO->retrieveFromDB()) {
-    die "SO Term $SOTerm not found in sres.sequenceontology.term_name.\n";
+    die "SO Term $SOTerm not found in sres.OntologyTerm.name.\n";
   }
 
-  my $SOId = $SO->getId();
+  my $SOId = $SO->getOntologyTermId();
 
   return $SOId;
 }

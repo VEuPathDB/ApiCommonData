@@ -11,219 +11,323 @@ necessarily by what's defined in the input (eg. Genbank) file
                     method="makeGeneSkeleton"/>
 
   <specialCaseQualifierHandler name="api" 
-           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent" handler="api" method="setParent"/>
-    <qualifier name="transcript_id"         ignore="true"/>
-    <qualifier name="orthologue"         ignore="true"/>
-    <qualifier name="product"         ignore="true"/>
-    <qualifier name="note"         ignore="true"/>
-    <qualifier name="Name"         ignore="true"/>
-    <qualifier name="description"         ignore="true"/>
-    <qualifier name="size"         ignore="true"/>
-    <qualifier name="Index"         ignore="true"/>
-    <qualifier name="score"         ignore="true"/>
+    <qualifier name="Alias"         ignore="true"/>
     <qualifier name="contains_gap"         ignore="true"/>
+    <qualifier name="description" ignore="true"/>
     <qualifier name="fiveutr_Sample"         ignore="true"/>
     <qualifier name="FiveUTR_Sample"         ignore="true"/>
     <qualifier name="fiveutr_Score"         ignore="true"/>
     <qualifier name="FiveUTR_Score"         ignore="true"/>
-    <qualifier name="threeutr_Sample"         ignore="true"/>
-    <qualifier name="ThreeUTR_Sample"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
     <qualifier name="threeutr_Score"         ignore="true"/>
     <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="partial"                ignore="true"/>
+    <qualifier name="pseudo"                 ignore="true"/>
+  </feature>
+
+  <feature name="mRNA" so="mRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
     <qualifier name="partial"     handler="api"    method="setPartial"/>
     <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
-
-  <feature name="transcript">
+  <feature name="tRNA" so="tRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="rRNA" so="rRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="snRNA" so="snRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="snoRNA" so="snoRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="scRNA" so="ncRNA">
+    <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="FiveUTR_Sample" ignore="true"/>
+    <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="Index" ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
+    <qualifier name="ThreeUTR_Sample" ignore="true"/>
+    <qualifier name="ThreeUTR_Score" ignore="true"/>
+    <qualifier name="web_id" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
-    <qualifier name="reading_frame"  column="reading_frame"/>
-    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
-    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
-    <qualifier name="OrderNumber"    column="order_number"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="description" ignore="true"/>
-    <qualifier name="size" ignore="true"/>
-    <qualifier name="score" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    ignore="true"/>
+    <qualifier name="CodingEnd"      ignore="true"/>
+    <qualifier name="description"      ignore="true"/>
+    <qualifier name="OrderNumber"    ignore="true"/>
+    <qualifier name="type" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="exonType" ignore="true"/>
-  </feature>
-  
-  <feature name="UTR" table="DoTS::UTRFeature" so="">
-    <qualifier name="ID" column="source_id"/>
-    <qualifier name="Parent" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="size" ignore="true"/>
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Parent"          ignore="true"/>
-    <qualifier name="exon_id"         ignore="true"/>
-    <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
-    <qualifier name="product_evidence" ignore="true"/>
-    <qualifier name="product_transfer_confi" ignore="true"/>
-    <qualifier name="reason4removal" ignore="true"/>
-    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Alias"         ignore="true"/>
+    <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
+    <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
     <qualifier name="size" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
+    <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Parent"          ignore="true"/>
-    <qualifier name="exon_id"         ignore="true"/>
-    <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
-    <qualifier name="product_evidence" ignore="true"/>
-    <qualifier name="product_transfer_confi" ignore="true"/>
-    <qualifier name="reason4removal" ignore="true"/>
-    <qualifier name="reason4rescue" ignore="true"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Alias"         ignore="true"/>
+    <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
+    <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
     <qualifier name="size" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
+    <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Parent"          ignore="true"/>
-    <qualifier name="exon_id"         ignore="true"/>
-    <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
-    <qualifier name="product_evidence" ignore="true"/>
-    <qualifier name="product_transfer_confi" ignore="true"/>
-    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Alias"         ignore="true"/>
+    <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
+    <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
     <qualifier name="size" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
+    <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
-    <qualifier name="reason4rescue" ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Parent"          ignore="true"/>
-    <qualifier name="exon_id"         ignore="true"/>
-    <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
-    <qualifier name="product_evidence" ignore="true"/>
-    <qualifier name="product_transfer_confi" ignore="true"/>
-    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Alias"         ignore="true"/>
+    <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
+    <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
     <qualifier name="size" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
+    <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
-    <qualifier name="reason4rescue" ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Parent"          ignore="true"/>
-    <qualifier name="exon_id"         ignore="true"/>
-    <qualifier name="exon_number"         ignore="true"/>
-    <qualifier name="gene_biotype"         ignore="true"/>
-    <qualifier name="gene_id" ignore="true"/>
-    <qualifier name="gene_name" ignore="true"/>
-    <qualifier name="transcript_id" ignore="true"/>
-    <qualifier name="transcript_name" ignore="true"/>
-    <qualifier name="Alias" ignore="true"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="type" ignore="true"/>
-    <qualifier name="annot" ignore="true"/>
-    <qualifier name="anticodon" ignore="true"/>
-    <qualifier name="covescore" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
-    <qualifier name="product_source" ignore="true"/>
-    <qualifier name="product_evidence" ignore="true"/>
-    <qualifier name="product_transfer_confi" ignore="true"/>
-    <qualifier name="reason4removal" ignore="true"/>
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Alias"         ignore="true"/>
+    <qualifier name="contains_gap"         ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="fiveutr_Sample"         ignore="true"/>
+    <qualifier name="FiveUTR_Sample"         ignore="true"/>
+    <qualifier name="fiveutr_Score"         ignore="true"/>
+    <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="locus_tag"         ignore="true"/>
+    <qualifier name="product"         ignore="true"/>
+    <qualifier name="Name"         ignore="true"/>
+    <qualifier name="note"         ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
+    <qualifier name="orthologue"         ignore="true"/>
+    <qualifier name="score"         ignore="true"/>
     <qualifier name="size" ignore="true"/>
-    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="threeutr_Sample"        ignore="true"/>
+    <qualifier name="ThreeUTR_Sample"        ignore="true"/>
+    <qualifier name="threeutr_Score"         ignore="true"/>
+    <qualifier name="ThreeUTR_Score"         ignore="true"/>
+    <qualifier name="translation"            ignore="true"/>
+    <qualifier name="transcript_id"         ignore="true"/>
     <qualifier name="web_id" ignore="true"/>
-    <qualifier name="reason4rescue" ignore="true"/>
   </feature>
 
-  <feature name="three_prime_utr" table="DoTS::UTRFeature" so="three_prime_UTR">
+  <feature name="UTR" table="DoTS::UTRFeature" ignore="true">
     <qualifier name="ID" column="source_id"/>
-   	<qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
-    <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Parent"	handler="api"  method="setUtrParent"/>
+    <qualifier name="score" ignore="true"/>
   </feature>
 
-  <feature name="five_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
-    <qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       ignore="true"/>
-    <qualifier name="timelastmodified" ignore="true"/>
-    <qualifier name="feature_id" ignore="true"/>
-    <qualifier name="Parent"   ignore="true"/>
+  <feature name="five_prime_UTR" table="DoTS::UTRFeature" ignore="true">
+  </feature>
+
+  <feature name="three_prime_UTR" table="DoTS::UTRFeature" ignore="true">
   </feature>
 
 </mapping>

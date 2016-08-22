@@ -1,4 +1,25 @@
 #!/usr/bin/perl
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 use strict;
 
 # read isolate submission Excel file - 2000-2007 version?
@@ -154,7 +175,6 @@ while(my ($k, $v) = each %hash) {
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
-  $isolate_id  =~ s/\W+$//g;
   $isolate_id  =~ s/\s/_/g;
 
   # in case of duplicate isolate ids
@@ -342,47 +362,46 @@ while(my ($k, $v) = each %hash) {
   $seq16_primer_seqs =~ s/\s+//g;
   $seq17_primer_seqs =~ s/\s+//g;
 
-  my @seq1_primer_name = split /;|,/, $seq1_primer_names;
-  my @seq2_primer_name = split /;|,/, $seq2_primer_names;
-  my @seq3_primer_name = split /;|,/, $seq3_primer_names;
-  my @seq4_primer_name = split /;|,/, $seq4_primer_names;
-  my @seq5_primer_name = split /;|,/, $seq5_primer_names;
-  my @seq6_primer_name = split /;|,/, $seq6_primer_names;
-  my @seq7_primer_name = split /;|,/, $seq7_primer_names;
-  my @seq8_primer_name = split /;|,/, $seq8_primer_names;
-  my @seq9_primer_name = split /;|,/, $seq9_primer_names;
-  my @seq10_primer_name = split /;|,/, $seq10_primer_names;
-  my @seq11_primer_name = split /;|,/, $seq11_primer_names;
-  my @seq12_primer_name = split /;|,/, $seq12_primer_names;
-  my @seq13_primer_name = split /;|,/, $seq13_primer_names;
-  my @seq14_primer_name = split /;|,/, $seq14_primer_names;
-  my @seq15_primer_name = split /;|,/, $seq15_primer_names;
-  my @seq16_primer_name = split /;|,/, $seq16_primer_names;
-  my @seq17_primer_name = split /;|,/, $seq17_primer_names;
+  my @seq1_primer_name = split /;/, $seq1_primer_names;
+  my @seq2_primer_name = split /;/, $seq2_primer_names;
+  my @seq3_primer_name = split /;/, $seq3_primer_names;
+  my @seq4_primer_name = split /;/, $seq4_primer_names;
+  my @seq5_primer_name = split /;/, $seq5_primer_names;
+  my @seq6_primer_name = split /;/, $seq6_primer_names;
+  my @seq7_primer_name = split /;/, $seq7_primer_names;
+  my @seq8_primer_name = split /;/, $seq8_primer_names;
+  my @seq9_primer_name = split /;/, $seq9_primer_names;
+  my @seq10_primer_name = split /;/, $seq10_primer_names;
+  my @seq11_primer_name = split /;/, $seq11_primer_names;
+  my @seq12_primer_name = split /;/, $seq12_primer_names;
+  my @seq13_primer_name = split /;/, $seq13_primer_names;
+  my @seq14_primer_name = split /;/, $seq14_primer_names;
+  my @seq15_primer_name = split /;/, $seq15_primer_names;
+  my @seq16_primer_name = split /;/, $seq16_primer_names;
+  my @seq17_primer_name = split /;/, $seq17_primer_names;
 
-  my @seq1_primer_seq = split /;|,/, $seq1_primer_seqs;
-  my @seq2_primer_seq = split /;|,/, $seq2_primer_seqs;
-  my @seq3_primer_seq = split /;|,/, $seq3_primer_seqs;
-  my @seq4_primer_seq = split /;|,/, $seq4_primer_seqs;
-  my @seq5_primer_seq = split /;|,/, $seq5_primer_seqs;
-  my @seq6_primer_seq = split /;|,/, $seq6_primer_seqs;
-  my @seq7_primer_seq = split /;|,/, $seq7_primer_seqs;
-  my @seq8_primer_seq = split /;|,/, $seq8_primer_seqs;
-  my @seq9_primer_seq = split /;|,/, $seq9_primer_seqs;
-  my @seq10_primer_seq = split /;|,/, $seq10_primer_seqs;
-  my @seq11_primer_seq = split /;|,/, $seq11_primer_seqs;
-  my @seq12_primer_seq = split /;|,/, $seq12_primer_seqs;
-  my @seq13_primer_seq = split /;|,/, $seq13_primer_seqs;
-  my @seq14_primer_seq = split /;|,/, $seq14_primer_seqs;
-  my @seq15_primer_seq = split /;|,/, $seq15_primer_seqs;
-  my @seq16_primer_seq = split /;|,/, $seq16_primer_seqs;
-  my @seq17_primer_seq = split /;|,/, $seq17_primer_seqs;
+  my @seq1_primer_seq = split /;/, $seq1_primer_seqs;
+  my @seq2_primer_seq = split /;/, $seq2_primer_seqs;
+  my @seq3_primer_seq = split /;/, $seq3_primer_seqs;
+  my @seq4_primer_seq = split /;/, $seq4_primer_seqs;
+  my @seq5_primer_seq = split /;/, $seq5_primer_seqs;
+  my @seq6_primer_seq = split /;/, $seq6_primer_seqs;
+  my @seq7_primer_seq = split /;/, $seq7_primer_seqs;
+  my @seq8_primer_seq = split /;/, $seq8_primer_seqs;
+  my @seq9_primer_seq = split /;/, $seq9_primer_seqs;
+  my @seq10_primer_seq = split /;/, $seq10_primer_seqs;
+  my @seq11_primer_seq = split /;/, $seq11_primer_seqs;
+  my @seq12_primer_seq = split /;/, $seq12_primer_seqs;
+  my @seq13_primer_seq = split /;/, $seq13_primer_seqs;
+  my @seq14_primer_seq = split /;/, $seq14_primer_seqs;
+  my @seq15_primer_seq = split /;/, $seq15_primer_seqs;
+  my @seq16_primer_seq = split /;/, $seq16_primer_seqs;
+  my @seq17_primer_seq = split /;/, $seq17_primer_seqs;
 
   $country    .= ": $city" if $city;
   $country    .= ", $county" if $county;
   $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
-  $symptoms    =~ s/\W+$//g;
 
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;

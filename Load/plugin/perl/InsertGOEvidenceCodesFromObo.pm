@@ -1,4 +1,24 @@
 #######################################################################
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | fixed
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | absent
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 ##                 InsertGOEvidenceCodesFromObo.pm
 ##
 ## Creates a new entry in table SRes.GOEvidenceCode to represent
@@ -15,7 +35,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
-use GUS::Model::SRes::GOEvidenceCode;
+use GUS::Model::SRes::OntologyTerm;
 
 use Text::Balanced qw(extract_quotelike);
 
@@ -31,18 +51,26 @@ my $argsDeclaration =
 	     constraintFunc => undef,
 	     isList         => 0,
 	   }),
+
+     stringArg({name => 'extDbRlsSpec',
+       descr => 'Sres externaldatabase name and version',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
   ];
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Creates new entries in table SRes.GOEvidenceCode to represent GO evidence codes in GUS.
+Creates new entries in table SRes.OntologyTerm to represent GO evidence codes in GUS.
 PURPOSEBRIEF
     
 my $purpose = <<PLUGIN_PURPOSE;
-Creates new entries in table SRes.GOEvidenceCode to represent GO evidence codes in GUS.
+Creates new entries in table SRes.OntologyTerm to represent GO evidence codes in GUS.
 PLUGIN_PURPOSE
 
 my $tablesAffected = 
-	[['SRes.GOEvidenceCode', 'The entry representing the new evidence code is created here']];
+	[['SRes.OntologyTerm', 'The entry representing the new evidence code is created here']];
 
 my $tablesDependedOn = [];
 
@@ -72,7 +100,7 @@ sub new {
     my $self = {};
     bless($self,$class);
 
-    $self->initialize({requiredDbVersion => 3.6,
+    $self->initialize({requiredDbVersion => 4.0,
 		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
@@ -89,6 +117,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
   my $oboFile = $self->getArg('oboFile');
   open(OBO, "<$oboFile") or $self->error("Couldn't open '$oboFile': $!\n");
 
@@ -96,12 +127,12 @@ sub run {
 
   my %seen;
 
-  $self->_parseTerms(\*OBO, \%seen);
+  $self->_parseTerms(\*OBO, \%seen, $extDbRlsId);
 
   close(OBO);
   
   for my $missing (grep { !$seen{$_} } @missingCodes) {
-    my $evidenceCode = GUS::Model::SRes::GOEvidenceCode->new({name => $missing});
+    my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $missing, source_id => $missing, external_database_release_id => $extDbRlsId});
     $evidenceCode->submit();
   }
 
@@ -109,12 +140,12 @@ sub run {
 }
 
 sub _parseTerms {
-  my ($self, $fh, $seen) = @_;
+  my ($self, $fh, $seen, $extDbRlsId) = @_;
 
   my $block = "";
   while (<$fh>) {
     if (m/^\[ ([^\]]+) \]/x) {
-      $self->_processBlock($block, $seen)
+      $self->_processBlock($block, $seen, $extDbRlsId)
 	if $block =~ m/\A\[Term\]/; # the very first block will be the
                                     # header, and so should not get
                                     # processed; also, some blocks may
@@ -125,7 +156,7 @@ sub _parseTerms {
     $block .= $_;
   }
 
-  $self->_processBlock($block, $seen)
+  $self->_processBlock($block, $seen, $extDbRlsId)
     if $block =~ m/\A\[Term\]/; # the very first block will be the
                                 # header, and so should not get
                                 # processed; also, some blocks may be
@@ -133,7 +164,7 @@ sub _parseTerms {
 }
 
 sub _processBlock {
-  my ($self, $block, $seen) = @_;
+  my ($self, $block, $seen, $extDbRlsId) = @_;
 
   my @evidCodes = keys (%$seen);
 
@@ -144,7 +175,7 @@ sub _processBlock {
 
   return unless ($name && $name =~ m/^\w+$/);
 
-  my $evidenceCode = GUS::Model::SRes::GOEvidenceCode->new({name => $name, description => $def});
+  my $evidenceCode = GUS::Model::SRes::OntologyTerm->new({name => $name, definition => $def, source_id => $name, external_database_release_id => $extDbRlsId});
   $evidenceCode->submit();
 
   $seen->{$name}++;
@@ -187,7 +218,7 @@ sub _parseBlock {
 sub undoTables {
   my ($self) = @_;
 
-  return ('SRes.GOEvidenceCode');
+  return ('SRes.OntologyTerm');
 }
 
 1;

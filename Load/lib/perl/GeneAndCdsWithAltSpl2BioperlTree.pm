@@ -1,4 +1,25 @@
 package ApiCommonData::Load::GeneAndCdsWithAltSpl2BioperlTree;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -7,6 +28,7 @@ use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
 use Bio::SeqFeature::Tools::Unflattener;
+use ApiCommonData::Load::Unflattener;
 
 
 #input:
@@ -32,7 +54,8 @@ sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
     my ($geneFeature, $source);
     my  $primerPair = '';
-    my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
+#    my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
+    my $unflattener = ApiCommonData::Load::Unflattener->new;
 
     if(!($bioperlSeq->molecule =~ /rna/i)){
 	$unflattener->error_threshold(1);   
@@ -66,7 +89,7 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
-
+		
 		## for $geneFeature that only have gene feature, but do not have subFeature, such as mRNA and exon, 
 		## and have a note as "nonfunction" and "frameshift", set them as pseudogene,
 		## such as gene SLOPH_2171 in ATCN01000028
@@ -84,14 +107,10 @@ sub preprocess {
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
-		if (($geneFeature->has_tag("locus_tag"))){
-			my ($cID) = $geneFeature->get_tag_values("locus_tag");
-			print STDERR "processing $type: $cID...\n";
-		}
-
 		if(!($geneFeature->has_tag("locus_tag"))){
 		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}      
+
 		for my $tag ($geneFeature->get_all_tags) {    
 
 		    if($tag eq 'pseudo'){
@@ -110,16 +129,21 @@ sub preprocess {
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
 			}
+			
 		    }
-		}
-
+		}       
+		#my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
 		my $geneArrayRef = &traverseSeqFeatures($geneFeature, $bioperlSeq);
-
-		foreach my $gene (@{$geneArrayRef}){
+        my @genes = @{$geneArrayRef};
+      
+		#if($gene){
+		foreach my $gene (@genes){
 
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
+		
 
+	    
 	    }else{
     if ($type eq 'source'){
 	$source = $bioperlFeatureTree;
@@ -157,7 +181,9 @@ sub preprocess {
 
 	}
 
+
 		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+		
 
 	    }
 	}
@@ -194,19 +220,20 @@ sub preprocess {
 sub traverseSeqFeatures {
     my ($geneFeature, $bioperlSeq) = @_;
     
-    my ($gene, @genes);
+    #my $gene;
+    my (@genes, $gene);
     my @RNAs = $geneFeature->get_SeqFeatures;
-
-
-    my $totalTranscript = scalar @RNAs;
-    my $transcriptCtr = 0;
 
     # This will accept genes of type misc_feature (e.g. cgd4_1050 of GI:46229367)
     # because it will have a geneFeature but not standalone misc_feature 
     # as found in GI:32456060.
     # And will accept transcripts that do not have 'gene' parents (e.g. tRNA
     # in GI:32456060)
-    foreach my $RNA ( sort { $a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end } @RNAs){ 
+
+    my $transcriptCount = scalar @RNAs;
+    my $ctr = 1;
+
+    foreach my $RNA (@RNAs){ 
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
              'mRNA',
@@ -219,7 +246,6 @@ sub traverseSeqFeatures {
              )
         ) {
 
-	  $transcriptCtr++;
 	    my $CDSLocation;
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){
@@ -235,24 +261,32 @@ sub traverseSeqFeatures {
 	    }
 	    #$gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
 	    $gene = &makeBioperlFeature("${type}_gene", $RNA->location, $bioperlSeq);  ## for gene use transcript location instead of gene location
+
+
+        my ($geneId) = $geneFeature->get_tag_values('locus_tag');
+        $gene->add_tag_value('locus_tag', $geneId);
+
+        if ($transcriptCount > 1) {
+          my ($rnaId) = $RNA->get_tag_values('locus_tag');
+          if ($rnaId eq $geneId) {
+            $geneId = $geneId."\_$ctr";
+          } else {
+            $geneId = $rnaId;
+          }
+          $gene->remove_tag('locus_tag');
+          $gene->add_tag_value('locus_tag', $geneId);
+
+          $ctr++;
+        }
+
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
-
-
-	    my ($geneId) = $geneFeature->get_tag_values("locus_tag") if $geneFeature->has_tag("locus_tag");
-	    if ($totalTranscript > 1) {
-	      $geneId = $geneId. "\.$transcriptCtr";
-	      print STDERR "altSplic $geneId......\n";
-	    }
-	    $gene->remove_tag("locus_tag") if ($gene->has_tag("locus_tag"));
-	    $gene->add_tag_value("locus_tag", $geneId);
-
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
 	    $transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-
-	    my $CDSLength = 0;
+		
+			my $CDSLength = 0;
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $gene = &copyQualifiers($subFeature, $gene);
@@ -308,9 +342,9 @@ sub traverseSeqFeatures {
 		    }
 		    $transcript->add_SeqFeature($exon);
 		}
-
+		
 	    }
-	    $transcript->add_tag_value("CDSLength", $CDSLength);
+				$transcript->add_tag_value("CDSLength", $CDSLength);
 
 	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
@@ -325,11 +359,11 @@ sub traverseSeqFeatures {
 		}
 	    }
 	    $gene->add_SeqFeature($transcript);
-	    push (@genes, $gene);
-
+        push (@genes, $gene);
 
 	}
     }
+    #return $gene;
     return (\@genes);
 }
 

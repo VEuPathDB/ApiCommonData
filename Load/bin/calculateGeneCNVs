@@ -7,26 +7,29 @@ use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use CBIL::Util::PropertySet;
 use ApiCommonData::Load::CalculationsForCNVs;
+use Data::Dumper;
 
 our @ISA = qw(ApiCommonData::Load::CalculationsForCNVs);
 
-my ($gusConfigFile, $chrPloidyFile, $fpkmFile, $outputDir, $sampleName, $sql);
+my ($gusConfigFile, $chrPloidyFile, $fpkmFile, $outputDir, $sampleName, $sql, $taxonId);
 my $ploidy = 2;
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
             "fpkmFile=s" => \$fpkmFile,
             "ploidy=i" => \$ploidy,
             "outputDir=s" => \$outputDir,
             "sampleName=s" => \$sampleName,
-            "sql=s" => \$sql
+            "sql=s" => \$sql,
+            "taxonId=i"=> \$taxonId
             );
  
-&usage() unless ($fpkmFile && $outputDir && $sampleName && $sql);
+&usage() unless ($fpkmFile && $outputDir && $sampleName && $sql && $taxonId);
 
 #get hashrefs of chromosome data
-my $chrValues = ApiCommonData::Load::CalculationsForCNVs::getChrFPKMVals($fpkmFile);
-my $chrMedians = ApiCommonData::Load::CalculationsForCNVs::getChrMedians($chrValues);
-my $allChrMedian = ApiCommonData::Load::CalculationsForCNVs::getMedianAcrossChrs($chrValues);
-my $chrPloidies = ApiCommonData::Load::CalculationsForCNVs::getChrPloidies($chrMedians, $allChrMedian, $ploidy);
+my $chrs = ApiCommonData::Load::CalculationsForCNVs::getChrsForCalcs($taxonId);
+my $chrValues = ApiCommonData::Load::CalculationsForCNVs::getChrFPKMVals($fpkmFile, $chrs);
+my $chrMedians = ApiCommonData::Load::CalculationsForCNVs::getChrMedians($chrValues, $chrs);
+my $allChrMedian = ApiCommonData::Load::CalculationsForCNVs::getMedianAcrossChrs($chrValues, $chrs);
+my $chrPloidies = ApiCommonData::Load::CalculationsForCNVs::getChrPloidies($chrMedians, $allChrMedian, $ploidy, $chrs);
 
 # get OrthoMCL IDs from DB
 if (!$gusConfigFile) {
@@ -50,12 +53,13 @@ my $geneOrthoMclIds = {};
 while (my @row = $orthoMclStmt->fetchrow_array()){
     $geneOrthoMclIds->{$row[0]} = $row[1];
 }           
+$dbh->disconnect();
 
-my $allGenesData = geneCopyNumberCalc($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds);
-calcCnvForOrthologGroups($allGenesData, $chrPloidies, $outputDir, $sampleName);
+my $allGenesData = &geneCopyNumberCalc($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds, $chrs);
+&calcCnvForOrthologGroups($allGenesData, $chrPloidies, $outputDir, $sampleName);
  
 sub geneCopyNumberCalc {
-    my ($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds) = @_;
+    my ($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds, $chrs) = @_;
     my $allGenesData = [];
     open (IN, $fpkmFile) or die "Cannot read FPKM file $fpkmFile\n$!\n";
 
@@ -76,19 +80,29 @@ sub geneCopyNumberCalc {
         
             die "Error: Chromosome and FPKM values are missing in line $line\n" unless (defined($chr) && defined($fpkm));
 
-            if ($chrMedians->{$chr}==0){
-                print STDERR "Error: Bad median for chromosome $chr.  No copy number calculation for $transId\n";
-                next;
+            if (exists $chrs->{$chr}) {
+                my $orthoMclId;
+                if (exists $geneOrthoMclIds->{$geneId}) {
+                    $orthoMclId = $geneOrthoMclIds->{$geneId};
+                } else {
+                    $orthoMclId = "UNK_.$geneId";
+                }
+
+                if ($chrMedians->{$chr}==0){
+                    print STDERR "Error: Bad median for chromosome $chr.  No copy number calculation for $transId\n";
+                    next;
+                }
+                if ($chrPloidies->{$chr}==0) {
+                    print STDERR "Chromosome $chr has a predicted ploidy of 0. The copy number for gene $transId on chromosome $chr will therefore also be predicted to be 0";
+                    my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, 0, $fpkm, $coverage];
+                    push(@{$allGenesData}, $geneData);
+                } else {
+
+                    my $rawCN = $fpkm/($chrMedians->{$chr}/$chrPloidies->{$chr});
+                    my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage];
+                    push (@{$allGenesData}, $geneData);
+                }
             }
-            my $rawCN = $fpkm/($chrMedians->{$chr}/$chrPloidies->{$chr});
-            my $orthoMclId;
-            if (exists $geneOrthoMclIds->{$geneId}) {
-                $orthoMclId = $geneOrthoMclIds->{$geneId};
-            }else{
-                $orthoMclId = "UNK_.$geneId";
-            }
-            my $geneData = [$orthoMclId, $geneId, $chr, $start, $end, $rawCN, $fpkm, $coverage];
-            push (@{$allGenesData}, $geneData);
         }
     }
     return $allGenesData;
@@ -115,7 +129,7 @@ sub calcCnvForOrthologGroups {
 
     # Print header lines in both files
     print TSV "OrthoMclId\tChromosome\tPloidy\tRegion Start\tRegion End\tGenes In Ref\tTotal CN\tHaploid Number\tGene Dose\tGene List\n";
-    print TXT "ID_ref\tfloat_value\tint_value\n";
+    print TXT "na_feature_id\thaploid_number\tref_copy_number\n";
 
     # calculate values for clusters
     foreach my $cluster (keys %clusterData) {

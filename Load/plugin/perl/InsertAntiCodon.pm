@@ -1,4 +1,24 @@
 package ApiCommonData::Load::Plugin::InsertAntiCodon;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | fixed
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -6,6 +26,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
+use GUS::Supported::Util;
 
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::RNAType;
@@ -106,7 +127,7 @@ sub new {
 
   my $args = &getArgsDeclaration();
 
-  my $configuration = { requiredDbVersion => 3.6,
+  my $configuration = { requiredDbVersion => 4.0,
 			cvsRevision => '$Revision$',
 			name => ref($self),
 			argsDeclaration => $args,
@@ -150,13 +171,11 @@ sub parseFile {
 
     my @line = split(/\t/,$_);
 
-    my $transcriptSourceId = $line[0] || $self->error("File is missing a source_id or is not formatted properly");
+    my $geneSourceId = $line[0] || $self->error("File is missing a source_id or is not formatted properly");
 
-    my $anticodon = $line[1] || $self->error("File is missing an anticodon for $transcriptSourceId or is not formatted properly");
+    my $anticodon = $line[1] || $self->error("File is missing an anticodon for $geneSourceId or is not formatted properly");
 
-    $transcriptSourceId .= "-1";
-
-    $tRNAs{$transcriptSourceId} = $anticodon;
+    $tRNAs{$geneSourceId} = $anticodon;
   }
 
   return \%tRNAs;
@@ -167,34 +186,27 @@ sub  insertAnticodon {
 
   my $processed;
 
-  foreach my $transcriptSourceId (keys %{$tRNAs}) {
-    my $transcript = $self->getTranscript($genomeReleaseId,$transcriptSourceId);
+  foreach my $geneSourceId (keys %{$tRNAs}) {
 
-    next if (!$transcript);
+    my $transcriptIds = GUS::Supported::Util::getTranscriptIdsFromGeneId($self, $geneSourceId, $genomeReleaseId);
 
-    my $rnaType = $self->getRNAType($tRNAs->{$transcriptSourceId});
+    next if (scalar @$transcriptIds == 0);
 
-    $transcript->addChild($rnaType);
+    my $rnaType = $self->getRNAType($tRNAs->{$geneSourceId});
 
-    $transcript->submit();
+    foreach my $transcriptId (@$transcriptIds) {
+      my $transcript =  GUS::Model::DoTS::Transcript->new({'na_feature_id' => $transcriptId});
+      my $exist = $transcript->retrieveFromDB() || $self->error("No transcript row exists for $geneSourceId and db_rel_id = $genomeReleaseId");
 
-    $self->undefPointerCache();
-
-    $processed++;
+      $transcript->addChild($rnaType);
+      $transcript->submit();
+      $self->undefPointerCache();
+      $processed++;
+    }
   }
-
   return $processed;
 }
 
-sub getTranscript {
-  my ($self,$genomeReleaseId,$transcriptSourceId) = @_;
-
-  my $transcript =  GUS::Model::DoTS::Transcript->new({'external_database_release_id' => $genomeReleaseId,
-					     'source_id' => $transcriptSourceId });
-  my $exist = $transcript->retrieveFromDB() || $self->log("No transcript row exists for $transcriptSourceId and db_rel_id = $genomeReleaseId");
-
-  return $transcript if ($exist);
-}
 
 sub getRNAType {
   my ($self,$anticodon) = @_;

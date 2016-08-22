@@ -1,4 +1,25 @@
 package ApiCommonData::Load::GenemRNACDSexonUTR2BioperlTree;
+#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
+  # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
+  # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
+  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
+  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
+  # GUS4_STATUS | RAD.SageTag                    | auto   | absent
+  # GUS4_STATUS | RAD.Analysis                   | auto   | absent
+  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
+  # GUS4_STATUS | Study.Study                    | auto   | absent
+  # GUS4_STATUS | Dots.Isolate                   | auto   | absent
+  # GUS4_STATUS | DeprecatedTables               | auto   | absent
+  # GUS4_STATUS | Pathway                        | auto   | absent
+  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
+  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
+  # GUS4_STATUS | Simple Rename                  | auto   | absent
+  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
+  # GUS4_STATUS | Rethink                        | auto   | absent
+  # GUS4_STATUS | dots.gene                      | manual | unreviewed
+die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
+#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -281,13 +302,6 @@ sub traverseSeqFeatures {
 
 	    foreach my $exon (@exons){
 
-              ## check if gene, mRNA, and CDS are on the same strand
-              if ( ($geneFeature->location->strand != $RNA->location->strand)
-                   || ($geneFeature->location->strand != $exon->location->strand)
-                   || ($RNA->location->strand != $exon->location->strand) ) {
-                die "gene, rna, and exon are not on the same strand\n";
-              }
-
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 		    $exon->add_tag_value('CodingStart',$codingStart);
 		    $exon->add_tag_value('CodingEnd',$codingEnd);
@@ -305,7 +319,15 @@ sub traverseSeqFeatures {
 		foreach my $exonLoc (@exonLocs){
 		    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
 		    $transcript->add_SeqFeature($exon);
-		    if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
+		    if($gene->primary_tag eq 'coding_gene' || $gene->primary_tag eq 'pseudo_gene' ){
+		      if ($exonLoc->strand == -1) {
+			$exon->add_tag_value('CodingStart', $exonLoc->end());
+			$exon->add_tag_value('CodingEnd', $exonLoc->start());
+		      } else {
+			$exon->add_tag_value('CodingStart', $exonLoc->start());
+			$exon->add_tag_value('CodingEnd', $exonLoc->end());
+		      }
+		    } else {
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');	
 		    }
