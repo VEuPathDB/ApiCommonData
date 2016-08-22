@@ -245,6 +245,9 @@ sub addResults {
   elsif ($protocolName eq 'RFLPGenotypeNumber') {
     $tableString = "ApiDB::RflpGenotypeNumber";
   }
+  elsif ($protocolName eq 'crispr_phenotype') {
+    $tableString = "ApiDB::CrisprPhenotype";
+  }
   else {
     $tableString = "Results::NAFeatureExpression";
   }
