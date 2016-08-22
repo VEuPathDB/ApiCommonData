@@ -15,7 +15,7 @@ open (IN, $inputFile) || die "can not open input file to read.\n";
 
 while (<IN>) {
 
-  if ($format !~ /gff/i) {
+  if ($format =~ /embl/i) {
     if ($_ =~ /^FT   CDS   .+\((\d+.+\d+?)\).*/) {
 
       my @cdsArray = split (/\,/, $1);
@@ -38,7 +38,33 @@ while (<IN>) {
       $_ =~ s/\((\d+.+\d+?)\)/\($newCdsString\)/;
     }
     print "$_";
-  } else {
+
+  } elsif ($format =~ /genbank/i || $format =~ /gbf/i) {
+    ## genbank format not finish with partial coordinate, such as < and >
+    if ($_ =~ /^\s+CDS\s+.*join\((\d+.+\d+?)\)/) {
+
+      my @cdsArray = split (/\,/, $1);
+
+      my ($pStart, $pEnd, @newCdsStringArray);
+
+      foreach my $i (0..$#cdsArray) {
+	my ($s, $e) = split (/\.\./, $cdsArray[$i]);
+	if ($s <= $pEnd+1 && $pEnd) {
+	  $pEnd = $e;
+	  next;
+	} else {
+	  push (@newCdsStringArray, "$pStart..$pEnd")if ($pStart && $pEnd);
+	  $pStart =$s;
+	  $pEnd = $e;
+	}
+      }
+      push (@newCdsStringArray, "$pStart..$pEnd");  ## add the last pair
+      my $newCdsString = join (",", @newCdsStringArray);
+      $_ =~ s/\((\d+.+\d+?)\)/\($newCdsString\)/;
+    }
+    print "$_";
+
+  } elsif ($format =~ /gff/i) {
     chomp;
     my @items = split (/\t/, $_);
 
@@ -69,12 +95,15 @@ while (<IN>) {
 
     @preArray = @items;
     $preLine = join ("\t", @preArray);
+
+  } else {
+    print STDERR "format not coded yet\n";
   }
 
 }
 close IN;
 
-print "$preLine\n" if ($preLine); ## print the last line
+print "$preLine\n" if ($preLine); ## print the last line for gff3 file
 
 #&printTabColumn (\@preArray);
 
