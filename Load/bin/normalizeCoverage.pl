@@ -240,6 +240,7 @@ sub update_coverage {
 	    my $outputFile = $f;
 	    my $bamfile = $f;
 	    $bamfile =~ s/\.bed$/.bam/;
+	    $bamfile =~ s/CombinedReps//;
 	    print Dumper "trying to match $bamfile in $k";
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
