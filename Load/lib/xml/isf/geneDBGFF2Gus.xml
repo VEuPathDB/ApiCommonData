@@ -19,6 +19,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <validator name="validateGene"      handler="api" method="validateGene"/>
     <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="eupathdb_uc"      ignore="true"/>
     <qualifier name="feature_id"          ignore="true"/>
     <qualifier name="isObsolete"	ignore="true"/>
@@ -43,6 +44,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
@@ -76,6 +78,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/> 
     <qualifier name="note"                  ignore="true"/>
     <qualifier name="Name"          ignore="true"/>
@@ -237,6 +240,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
@@ -268,6 +272,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
@@ -299,6 +304,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
@@ -330,6 +336,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="ncRNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="embl_qualifier"                  ignore="true"/>
@@ -390,6 +397,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA_gene" so="tRNA_encoding">
  
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
@@ -436,6 +444,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="mRNA" so="mRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -490,6 +499,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA" so="rRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -544,6 +554,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="tRNA" so="tRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -598,6 +609,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="ncRNA" so="ncRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -652,6 +664,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snRNA" so="snRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -706,6 +719,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snoRNA" so="snoRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -814,6 +828,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="scRNA" so="scRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="alias"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
