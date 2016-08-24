@@ -111,6 +111,8 @@ foreach my $groupKey (keys %$samplesHash) {
       my $directory_short = $mappingStatsFiles[0];
       $directory_short=~ s/$inputDir//;
     $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
+#      print Dumper "directory short";
+#      print Dumper $directory_short;
   }
 }
 #print Dumper %$samplesHash;
@@ -192,7 +194,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
 	$hash{$direct} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
 
-#print Dumper %hash;
+# print Dumper %hash;
 
 update_coverage(\%hash);
 
@@ -280,7 +282,7 @@ sub getCountHash {
     open my $IN, "$d/$f" or die "cant find mapping file $d/$f\n\n\n";
     while(my $line = <$IN>) {
 	chomp $line;
-	if ($line =~ /file/) {
+	if ($line =~ /^file/) {
 	    next;
 	}
 	elsif ($line =~ /^\s*$/) {
@@ -290,12 +292,15 @@ sub getCountHash {
 	    next;
 	}
 	else {
+#	    print Dumper "getting to reading mapping stat";
 	    my($file, $coverage, $percentage, $count) = split /\t/, $line;
 	    my $shortfile = basename $file;
 	    $hash{$shortfile} = $count;
 	}
     }
     return \%hash;
+#    print Dumper "count hash";
+#    print Dumper %hash;
 }
 
 
