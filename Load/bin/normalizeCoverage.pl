@@ -79,7 +79,7 @@ foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
 	my $cmd = "rm -r $old_dir";
 #	print Dumper "command is $cmd\n";
 	&runCmd($cmd);
-	print Dumper "trying to delete folder $old_dir\n";
+	print Dumper "deleting existing combined rep folder $old_dir\n";
 }
    
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
@@ -108,7 +108,9 @@ foreach my $groupKey (keys %$samplesHash) {
     push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;
   }
   else {
-    $hash{$mappingStatsFiles[0]} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
+      my $directory_short = $mappingStatsFiles[0];
+      $directory_short=~ s/$inputDir//;
+    $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
   }
 }
 #print Dumper %$samplesHash;
@@ -185,10 +187,12 @@ foreach my $expWithReps (keys %dealingWithReps) {
   #  my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
   #  &runCmd($cmd);
     }
-	$hash{$exp_dir} = &getCountHash($exp_dir, $mappingStatsBasename);
+    my $direct= $exp_dir;
+    $direct = s/$inputDir//;
+	$hash{$direct} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
 
-
+#print Dumper %hash;
 
 update_coverage(\%hash);
 
@@ -197,19 +201,19 @@ merge_normalized_coverage(\%hash);
 sub merge_normalized_coverage {
     my $hash = shift;
     while(my ($k, $v) = each %$hash) {  # $k is exp directory; %v is sum_coverage
- 	my $dir = "$k/normalized";
+ 	my $dir = "$inputDir/$k/normalized";
  	if(!-e "$dir/final") {
- 	    &runCmd("mkdir $k/normalized/final");
+ 	    &runCmd("mkdir $dir/final");
  	}
 	
- 	my @bedFiles = glob "$k/normalized/*.bed";
-	
+ 	my @bedFiles = glob "$inputDir/$k/normalized/*.bed";
+#print Dumper @bedFiles;	
  	foreach my $bedFile (@bedFiles) {
  	    my $baseBed = basename $bedFile;
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
 	    
- 	    &runCmd("bedGraphToBigWig $k/normalized/$baseBed $topLevelSeqSizeFile $k/normalized/final/$bwFile"); 
+ 	    &runCmd("bedGraphToBigWig $inputDir/$k/normalized/$baseBed $topLevelSeqSizeFile $inputDir/$k/normalized/final/$bwFile"); 
  	}
      }
  }
@@ -223,19 +227,21 @@ sub update_coverage {
     foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
 	my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
 	my $max_sum_coverage = pop @sorted;
-	opendir(D, $k);
+	my $dir_open = $inputDir."/".$k;
+#	print Dumper $dir_open;
+	opendir(D, $dir_open);
 	my @fs = readdir(D);
-	
-	my $cmd = "mkdir $k/normalized";
-	if(!-e "$k/normalized") {
+#print Dumper @fs;	
+	my $cmd = "mkdir $inputDir/$k/normalized";
+	if(!-e "$inputDir/$k/normalized") {
 	    &runCmd($cmd);
 	}
 	
-	my $out_dir = "$k/normalized";
+	my $out_dir = "$inputDir/$k/normalized";
 	
 	foreach my $f (@fs) {
 	    next if $f !~ /\.bed/i;
-	    open(F, "$k/$f");
+	    open(F, "$inputDir/$k/$f");
 	    open OUT, ">$out_dir/$f";
 	    my $outputFile = $f;
 	    my $bamfile = $f;
