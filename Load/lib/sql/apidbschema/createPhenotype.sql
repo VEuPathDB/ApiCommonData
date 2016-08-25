@@ -60,6 +60,7 @@ create table ApiDB.PhenotypeResult (
  phenotype_post_composition           clob,
  phenotype_comment           varchar2(2000),
  chebi_annotation_extension           varchar2(15), 
+ protein_annotation_extension	      varchar2(100),
 evidence_term_id                    NUMBER(10),
  MODIFICATION_DATE            DATE,
  USER_READ                    NUMBER(1),
@@ -77,6 +78,7 @@ evidence_term_id                    NUMBER(10),
  FOREIGN KEY (phenotype_entity_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (life_cycle_stage_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (evidence_term_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (protein_annotation_extension) REFERENCES dots.nafeatureimp,
  PRIMARY KEY (phenotype_result_id)
 );
 
