@@ -78,7 +78,8 @@ evidence_term_id                    NUMBER(10),
  FOREIGN KEY (phenotype_entity_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (life_cycle_stage_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (evidence_term_id) REFERENCES sres.ontologyterm,
-FOREIGN KEY (protein_annotation_extension) REFERENCES dots.nafeatureimp,
+ FOREIGN KEY (chebi_annotation_extension) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (protein_annotation_extension) REFERENCES dots.nafeatureimp,
  PRIMARY KEY (phenotype_result_id)
 );
 
