@@ -109,18 +109,17 @@ sub run {
     my $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
 
     eval {
-    $investigation->parse();
+    $investigation->parseInvestigation();
     };
     if($@) {
       $self->logOrError($@);
       next;
     }
 
+    my $investigationId = $investigation->getIdentifier();
     my $studies = $investigation->getStudies();
     foreach my $study (@$studies) {
       my %isatabDatasets;
-
-      $self->checkProtocolsAndSetIds($study->getProtocols());
 
       my $studyAssays = $study->getStudyAssays();
 
@@ -137,7 +136,24 @@ sub run {
 
       my $datasetsMatchedInDbCount = $self->checkLoadedDatasets(\%isatabDatasets);
 
-      next if($datasetsMatchedInDbCount < 1);
+      if($datasetsMatchedInDbCount < 1) {
+        $self->log("Skipping Investigation $investigationId.  No matching datasets in database");
+        next;
+      }
+
+
+      eval {
+        $investigation->parseStudies();
+      };
+      if($@) {
+        $self->logOrError($@);
+        next;
+      }
+
+      foreach my $study (@$studies) {
+        $self->checkProtocolsAndSetIds($study->getProtocols());
+      }
+
 
       $self->checkAllOntologyTerms($investigation->getOntologyTerms());
 
@@ -194,7 +210,7 @@ sub checkAllOntologyTerms {
     my $term = $ontologyTerm->getTerm();
 
 
-    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameterValue') {
+    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameteValue') {
       $self->logOrError("OntologyTerm $term is required to have accession and source.");
     }
   }
