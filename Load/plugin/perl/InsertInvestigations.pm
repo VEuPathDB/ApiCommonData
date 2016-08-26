@@ -56,6 +56,33 @@ stringArg({name           => 'extDbRlsSpec',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
+
+
+
+   booleanArg({name => 'isSimpleConfiguration',
+	      descr => 'if true, use CBIL::ISA::InvestigationSimple',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
+
+   fileArg({name           => 'ontologyMappingFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+	    mustExist      => 1,
+	    format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+   fileArg({name           => 'ontologyMappingOverrideFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+	    mustExist      => 1,
+	    format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+
   ];
 
 my $documentation = { purpose          => "",
@@ -102,11 +129,21 @@ sub run {
   }
 
   my $investigationCount;
-  foreach my $investigation (@investigationFiles) {
-    my $dirname = dirname $investigation;
+  foreach my $investigationFile (@investigationFiles) {
+    my $dirname = dirname $investigationFile;
     $self->log("Processing ISA Directory:  $dirname");
 
-    my $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
+
+    my $investigation;
+    if($self->getArg('isSimpleConfiguration')) {
+      my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
+      my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFile');
+
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile);
+    }
+    else {
+      $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
+    }
 
     eval {
     $investigation->parseInvestigation();
