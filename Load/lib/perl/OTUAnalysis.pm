@@ -47,11 +47,14 @@ sub munge {
   mkdir($output_dir) unless -d $output_dir;
 
   if ($inputFile =~/.biom$/) {
-    ($dataFile,$mappingFile) = parseBiomFile($output_dir, $self->mappingFile); 
+    $dataFile=$inputFile;
+    $dataFile=~s/.biom$/.tab/;
+    my $rFile = $self->parseBiomFile($inputFile, $dataFile);
+    $self->runR($rFile);
   }
 
   $self->setProtocolName('metagenomics analysis');
-  
+
   my ($samples, $fileNames, $dataHash,  $totalCounts) = $self->parseOtuFile($dataFile, $output_dir);
 
   $self->setNames($samples);
@@ -84,33 +87,42 @@ sub munge {
 
 
 sub parseBiomFile {
-  my ($self,$biomFile) =@_;
+  my ($self,$biomFile,$dataFile) =@_;
 
   my $mainDir = $self->getMainDirectory();
   my $inputFile = $self->getInputFile;
   my $outputFile = $mainDir."/".$self->getOutputFile;
  $outputFile =~s/\/\//\//;
 
-  my $mappingFile = $self->getMappingFile;
-  my $data_file;
+  my ($fh, $rFile) = tempfile(DIR => "/tmp/", suffix=>".R");
+ 
+
+  open(RCODE, "> $rFile") or die "Cannot open $rFile for writing:$!";
+
   my $rString = <<RString;
 
 file_input = "$inputFile";
+file_output = "$dataFile";
 source("$ENV{GUS_HOME}/lib/R/TranscriptExpression/parse_biom.R");
 
 biom.obj = read_hdf5_biom(file_input);
 
-
-ids <- unlist(lapply(biom.obj\$rows, "[[", "id"));
-md <- as.list(lapply(lapply(biom.obj\$rows, "[[", "metadata"),"[[", "taxonomy"));
-md <- lapply(md, paste, collapse="|")
-df <- do.call(rbind, Map(data.frame, id=as.list(ids), taxon=md));
-write.table(df, "$mappingFile, sep="\t", quote=FALSE, row.names=FALSE);
-
 otu=data.frame(biom.obj\$data);
+otu=t(otu);
+ID <- unlist(lapply(biom.obj\$rows, "[[", "id"));
+otu = cbind(ID,otu)
+write.table(otu, file=file_output, quote = FALSE, sep ="\t", row.names=FALSE);
+
 
 
 RString
+  print RCODE $rString;
+
+  close RCODE;
+
+  return $rFile;
+
+
 }
 
 sub parseOtuFile {
