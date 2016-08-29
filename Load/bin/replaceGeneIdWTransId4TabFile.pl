@@ -4,6 +4,8 @@ use strict;
 use Getopt::Long;
 
 ## usage: replaceGeneIdWTransId4TabFile.pl --gene2TransFile geneToTranscriptId.txt --inputTabFile products.txt --fileType productName > ../final/products.txt
+## only for genes that do not have alternative splicing
+ 
 
 
 my ($gene2TransFile, $inputTabFile, $fileType, $help);

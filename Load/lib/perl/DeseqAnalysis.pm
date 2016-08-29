@@ -41,9 +41,7 @@ sub munge {
     my $mainDirectory=$self->getMainDirectory();
     my $outputFile = $self->getOutputFile();
     my $reference = $self->getReference();
-#    print "reference brought in from rnasew to desseq is $reference\n";
     my $comparator = $self->getComparator();
-#    print "comparator brought in from rnasew to desseq is $comparator\n";
     my $refCheck = $self->getRefCheck();
     my $compCheck = $self->getCompCheck();
     $self->setNames([$sampleName]);
@@ -66,6 +64,13 @@ sub munge {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	next unless $d !~ /combined/;
 	my $sample = $1;
+#	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
+#	my $refKey = $reference;
+#	$refKey =~ s/ /_/g;
+#	print "ref to check is $refCheck";
+#	my $compKey = $comparator;
+#	$compKey =~ s/ /_/g;
+#	print "comp to check is $compCheck";
 	if ($sample =~ /^$refCheck/) {
 	    $ref{$sample} = $d;
 	    push @inputs, $sample;
