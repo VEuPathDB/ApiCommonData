@@ -221,6 +221,9 @@ sub addResults {
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
   }
+  elsif ($protocolName =~ /taxonomic_diversity_assessment_by_targeted_gene_survey/) {
+    $tableString = "Results::OtuAbundance";
+  }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
   }
@@ -283,10 +286,17 @@ sub addResults {
         }
     }
 
+    elsif ($sourceIdType =~ /16s_rrna/) {
+      my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+      next unless $naSequenceId;
+      $hash = { na_sequence_id => $naSequenceId, };
+      $start = 1;
+    }
+
     elsif ($sourceIdType =~ /reporter/) {
-        my $reporterId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-        $hash = { reporter_id => $reporterId };
-        $start = 1;
+      my $reporterId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+      $hash = { reporter_id => $reporterId };
+      $start = 1;
     }
 
     elsif ($sourceIdType =~ /ontology_term/) {
@@ -308,6 +318,9 @@ sub addResults {
 
     elsif ($sourceIdType =~ /literal/) {
     }
+
+
+
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -360,6 +373,17 @@ sub lookupIdFromSourceId {
   elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
   }
+
+  elsif ($sourceIdType eq '16s_rrna') {
+    my @reference16sIds = $self->sqlAsArray(Sql => "select seq.na_sequence_id from dots.externalNASequence seq, SRES.ONTOLOGYTERM ot where seq.source_id = '$sourceId'
+                                                                                             and seq.sequence_ontology_id = ot.ONTOLOGY_TERM_ID
+                                                                                             and lower(ot.name) = 'rrna_16s'");
+    unless (scalar @reference16sIds > 0) {
+      $reference16sIds[0] = undef;
+    }
+    $rv = @reference16sIds[0];
+  }
+
   elsif ($sourceIdType eq 'reporter') {
     my $probeExtDbRlsSpec = $self->getArg('platformExtDbSpec');
     my $probeExtDbRlsId = $self->getExtDbRlsId($probeExtDbRlsSpec);
@@ -581,6 +605,7 @@ sub undoTables {
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
     'Results.CompoundMassSpec',
+    'Results.OtuAbundance',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
