@@ -53,7 +53,7 @@ sub munge {
     $self->runR($rFile);
   }
 
-  $self->setProtocolName('metagenomics analysis');
+  $self->setProtocolName('taxonomic_diversity_assessment_by_targeted_gene_survey');
 
   my ($samples, $fileNames, $dataHash,  $totalCounts) = $self->parseOtuFile($dataFile, $output_dir);
 

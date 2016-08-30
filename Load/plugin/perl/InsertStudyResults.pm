@@ -188,7 +188,7 @@ sub run {
     $investigation->submit();
 
     $self->addResults($protocolAppNode, $sourceIdType, $protocolName, $file);
-
+    $self->undefPointerCache();
     $nodeOrderNum++;
   }
 
