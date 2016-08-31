@@ -224,6 +224,9 @@ sub addResults {
   elsif ($protocolName =~ /taxonomic_diversity_assessment_by_targeted_gene_survey/) {
     $tableString = "Results::OtuAbundance";
   }
+  elsif ($protocolName =~ /alpha_diversity/ ) {
+    $tableString = "Results::AlphaDiversity";
+  }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
   }
@@ -375,13 +378,13 @@ sub lookupIdFromSourceId {
   }
 
   elsif ($sourceIdType eq '16s_rrna') {
-    my @reference16sIds = $self->sqlAsArray(Sql => "select seq.na_sequence_id from dots.externalNASequence seq, SRES.ONTOLOGYTERM ot where seq.source_id = '$sourceId'
+    my @naSequenceIds = $self->sqlAsArray(Sql => "select seq.na_sequence_id from dots.externalNASequence seq, SRES.ONTOLOGYTERM ot where seq.source_id = '$sourceId'
                                                                                              and seq.sequence_ontology_id = ot.ONTOLOGY_TERM_ID
                                                                                              and lower(ot.name) = 'rrna_16s'");
-    unless (scalar @reference16sIds > 0) {
-      $reference16sIds[0] = undef;
+    unless (scalar @naSequenceIds > 0) {
+      $naSequenceIds[0] = undef;
     }
-    $rv = @reference16sIds[0];
+    $rv = @naSequenceIds[0];
   }
 
   elsif ($sourceIdType eq 'reporter') {
@@ -606,6 +609,7 @@ sub undoTables {
     'Results.NAFeatureHostResponse',
     'Results.CompoundMassSpec',
     'Results.OtuAbundance',
+    'Results.AlphaDiversity',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
