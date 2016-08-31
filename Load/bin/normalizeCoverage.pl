@@ -77,7 +77,7 @@ my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
 	my $cmd = "rm -r $old_dir";
-#	print Dumper "command is $cmd\n";
+	print Dumper "command is $cmd\n";
 	&runCmd($cmd);
 	print Dumper "deleting existing combined rep folder $old_dir\n";
 }
@@ -116,7 +116,7 @@ foreach my $groupKey (keys %$samplesHash) {
   }
 }
 #print Dumper %$samplesHash;
-
+#print Dumper %hash;
 #print Dumper "rep hash is \n";
 #print Dumper %dealingWithReps;
  
@@ -190,7 +190,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
   #  &runCmd($cmd);
     }
     my $direct= $exp_dir;
-    $direct = s/$inputDir//;
+    $direct =~ s/$inputDir//;
 	$hash{$direct} = &getCountHash($exp_dir, $mappingStatsBasename);
 }
 
@@ -202,8 +202,10 @@ merge_normalized_coverage(\%hash);
 
 sub merge_normalized_coverage {
     my $hash = shift;
+#   print Dumper $hash;
     while(my ($k, $v) = each %$hash) {  # $k is exp directory; %v is sum_coverage
  	my $dir = "$inputDir/$k/normalized";
+#	print Dumper "merge is trying to make the folder $dir\n";
  	if(!-e "$dir/final") {
  	    &runCmd("mkdir $dir/final");
  	}
@@ -235,6 +237,7 @@ sub update_coverage {
 	my @fs = readdir(D);
 #print Dumper @fs;	
 	my $cmd = "mkdir $inputDir/$k/normalized";
+#	print Dumper $cmd;
 	if(!-e "$inputDir/$k/normalized") {
 	    &runCmd($cmd);
 	}
@@ -248,7 +251,7 @@ sub update_coverage {
 	    my $outputFile = $f;
 	    my $bamfile = $f;
 	    $bamfile =~ s/\.bed$/.bam/;
-	    $bamfile =~ s/CombinedReps//;
+#	    $bamfile =~ s/CombinedReps//;
 	    print Dumper "trying to match $bamfile in $k";
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
@@ -355,6 +358,7 @@ sub makeMappingFile{
         print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\n";
 	
     }
+    print M "DONE STATS";
     close M;
     return "finished";
 }
