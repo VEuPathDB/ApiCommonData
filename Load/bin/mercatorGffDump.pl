@@ -68,7 +68,7 @@ my $GFFString = new  Bio::Tools::GFF(-file => ">$GFFFile",  -gff_version => 3);
 
 
 foreach my $extDbRlsId (@$extDbRlsIds) {
-  my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $extDbRlsId);
+  my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $extDbRlsId, 1);
 
   foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
     my $features = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
