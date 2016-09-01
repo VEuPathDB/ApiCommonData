@@ -22,6 +22,7 @@ use GUS::Model::Study::Study;
 use GUS::Model::SRes::OntologyTerm;
 
 use CBIL::ISA::Investigation;
+use CBIL::ISA::InvestigationSimple;
 
 use Scalar::Util qw(blessed);
 
