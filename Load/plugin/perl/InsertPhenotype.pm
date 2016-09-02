@@ -107,7 +107,7 @@ sub run {
   my $file = $self->getArg('inputFile');
 
   my $ontologyTermIds = $self->queryForOntologyTermIds();
-
+  my $chebiTermIds = $self->queryForChebiTermIds();
   open(FILE, $file) or die "Cannot open file $file for reading: $!";
 
   my $count;
@@ -133,9 +133,14 @@ sub run {
     my $phenotypeString = $a[11];
     my $evidenceTerm = $a[12];
     my $note = $a[13];
+    my $experimentType = $a[14];
+    my $allele = $a[15];
+    my $chebiAnnotationExtension= $a[16];
+    my $proteinAnnotationExtension = $a[17];
+
 
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
-
+#    my $ontologyProteinExtensionNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $proteinAnnotationExtension, 0, $self->getArg('organismAbbrev')) ;
     my $phenotypeModel = $self->lookupModel($modelSourceId, $naFeatureId, $pubmedId);
 
     unless($phenotypeModel) {
@@ -147,15 +152,17 @@ sub run {
                                                                 modification_type => $modType,
                                                                 is_successful => $isSuccessful,
                                                                 organism => $organism,
+								experiment_type => $experimentType,
+								allele => $allele,
                                                                });
 
       push @{$self->{_models}}, $phenotypeModel;
     }
 
-    my ($qualityTermId, $entityTermId, $lifeCycleTermId, $evidenceTermId);
+    my ($qualityTermId, $entityTermId, $lifeCycleTermId, $evidenceTermId, $chebiTermId, $proteinTermId);
     if($qualityTerm) {
       $qualityTermId = $ontologyTermIds->{$qualityTerm};
-      $self->userError("quality Term $qualityTerm specified but not found in database") unless($qualityTermId);
+      $self->userError("quality Term ${qualityTerm} specified but not found in database") unless($qualityTermId);
     }
     if($entityTerm) {
       $entityTermId = $ontologyTermIds->{$entityTerm};
@@ -169,6 +176,12 @@ sub run {
       $evidenceTermId = $ontologyTermIds->{$evidenceTerm};
       $self->userError("evidence Term $evidenceTerm specified but not found in database") unless($evidenceTermId);
     }
+#check against chebi table - seperate hash  
+   if($chebiAnnotationExtension) {
+      $chebiTermId = $chebiTermIds->{$chebiAnnotationExtension};
+      $self->userError("chebi annotation extension id  $chebiAnnotationExtension specified but not found in database") unless($chebiTermId);
+    }
+    
 
     my $phenotypeResult = GUS::Model::ApiDB::PhenotypeResult->new({phenotype_quality_term_id => $qualityTermId,
                                                                    phenotype_entity_term_id => $entityTermId,
@@ -177,6 +190,8 @@ sub run {
                                                                    phenotype_post_composition => $phenotypeString,
                                                                    phenotype_comment => $note,
                                                                    evidence_term_id => $evidenceTermId,
+								   chebi_annotation_extension => $chebiTermId,
+								   protein_annotation_extension => $proteinAnnotationExtension,
                                                                   });
 
     $phenotypeResult->setParent($phenotypeModel);
@@ -207,7 +222,7 @@ sub lookupModel {
 }
 
 
-sub queryForOntologyTermIds {
+ sub queryForOntologyTermIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
@@ -219,6 +234,23 @@ sub queryForOntologyTermIds {
   my %terms;
   while(my ($id, $sourceId) = $sh->fetchrow_array()) {
     $terms{$sourceId} = $id;
+  }
+  $sh->finish();
+
+  return \%terms;
+}
+ sub queryForChebiTermIds {
+  my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+  my $query = "select chebi_accession from chebi.compounds";
+
+  my $sh = $dbh->prepare($query);
+  $sh->execute();
+
+  my %terms;
+  while(my ($id) = $sh->fetchrow_array()) {
+      $terms{$id} = $id;
   }
   $sh->finish();
 
