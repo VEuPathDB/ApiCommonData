@@ -466,29 +466,38 @@ sub loadProtocols {
     my @gusProtocolParams = $gusProtocol->getChildren("Study::ProtocolParam", 1);
     my $protocolParams = $protocol->getProtocolParameters();
 
+    next if (scalar (@$protocolParams) == 0);
 
-    print Dumper \@gusProtocolParams;
-    print Dumper $protocolParams;
+
     foreach my $protocolParam (@$protocolParams) {
       my $found;
+      my $protocolParamSourceId = $protocolParam->getTermAccessionNumber();
+      my $protocolParamTerm = $protocolParam->getTerm();
+
+      unless ($self->{_protocol_param_source_id_to_name}->{$protocolParamSourceId}) {
+        my $protocolParamOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id=> $protocolParamSourceId, });
+        unless($protocolParamOntologyTerm->retrieveFromDB()) {
+          $self->error("Could not retrieve Sres.OntologyTerm for protocolParam $protocolParamSourceId");
+        }
+        $self->{_protocol_param_source_id_to_name}->{$protocolParamSourceId} = $protocolParamOntologyTerm->getName();
+      }
 
       foreach my $gusProtocolParam (@gusProtocolParams) {
-     #   my $gusProtocolParamOTID = 
-        if($gusProtocolParam->getName() eq $protocolParam->getTerm()) {
+        if($gusProtocolParam->getName() eq $self->{_protocol_param_source_id_to_name}->{$protocolParamSourceId}) {
           $found = 1;
           last;
         }
       }
 
       unless($found) {
-        my $gusProtocolParam = GUS::Model::Study::ProtocolParam->new({name => $protocolParam->getTerm()});
+        my $gusProtocolParam = GUS::Model::Study::ProtocolParam->new({name => $self->{_protocol_param_source_id_to_name}->{$protocolParam->getTermAccessionNumber()}});
         $gusProtocolParam->setParent($gusProtocol);
       }
     }
 
     $gusProtocol->submit();
     $pNameToId->{$protocolName} = $gusProtocol->getId();
-
+    
     foreach my $pp ($gusProtocol->getChildren("Study::ProtocolParam")) { # no need to retrieve here
       my $ppName = $pp->getName();
       my $ppId = $pp->getId();
@@ -599,7 +608,7 @@ sub loadEdges {
 
       foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
         my $ppValue = $parameterValue->getTerm();
-        my $ppName = $parameterValue->getQualifier();
+        my $ppName = $self->{_protocol_param_source_id_to_name}->{$parameterValue->getQualifier()};
 
         next if($existingProtocolAppParam{$ppName}); #NOTE:  This is a bit easier because we don't deal w/ protocol series for existing protocolapps
         my $gusProtocolParamId = $protocolParamsToIdMap->{$protocolName}->{$ppName};
