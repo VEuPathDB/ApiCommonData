@@ -248,7 +248,7 @@ sub checkAllOntologyTerms {
     my $term = $ontologyTerm->getTerm();
 
 
-    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameteValue') {
+    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameterValue') {
       $self->logOrError("OntologyTerm $term is required to have accession and source.");
     }
   }
@@ -466,10 +466,15 @@ sub loadProtocols {
     my @gusProtocolParams = $gusProtocol->getChildren("Study::ProtocolParam", 1);
     my $protocolParams = $protocol->getProtocolParameters();
 
+
+    print Dumper \@gusProtocolParams;
+    print Dumper $protocolParams;
+    exit;
     foreach my $protocolParam (@$protocolParams) {
       my $found;
 
       foreach my $gusProtocolParam (@gusProtocolParams) {
+     #   my $gusProtocolParamOTID = 
         if($gusProtocolParam->getName() eq $protocolParam->getTerm()) {
           $found = 1;
           last;
