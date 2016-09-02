@@ -469,7 +469,6 @@ sub loadProtocols {
 
     print Dumper \@gusProtocolParams;
     print Dumper $protocolParams;
-    exit;
     foreach my $protocolParam (@$protocolParams) {
       my $found;
 
