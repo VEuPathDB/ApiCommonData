@@ -71,12 +71,12 @@ sub munge {
   my $simpson = 1 - sum( map { $_ * $_ }  @relativeAbundances);
   
   open(OUT, ">$outputFile") or die "Cannot open output file $outputFile for writing:$!";
-  print OUT "ID\tObserved_OTUs\tChao_1\tShannon\tSimpson\n";
-  print OUT "$sampleName\t$observed_otus\t$chao_1\t$shannon\t$simpson\n";
+  print OUT "Observed_OTUs\tChao_1\tShannon\tSimpson\n";
+  print OUT "$observed_otus\t$chao_1\t$shannon\t$simpson\n";
   
   close OUT;
   
-  $self->setSourceIdType('16s_rrna');
+  $self->setSourceIdType('literal');
   $self->setInputProtocolAppNodesHash({$sampleName => $inputs});
 
   $self->createConfigFile();

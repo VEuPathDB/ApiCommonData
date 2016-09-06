@@ -64,6 +64,10 @@ sub munge {
   my $emptyArrayRef = [];
   my %samplesHash =  map { $_ => $emptyArrayRef } @$samples;
   # my $samplesHash = $self->groupListHashRef($samples);
+
+  $self->setInputProtocolAppNodesHash(\%samplesHash);
+  $self->createConfigFile();
+
   foreach my $sampleName (keys %samplesHash) {
 
     my $alphaDiversityStats = ApiCommonData::Load::AlphaDiversityStats->new({sampleName => $sampleName,
@@ -80,9 +84,7 @@ sub munge {
 	
     $alphaDiversityStats->munge();
   }
-  $self->setInputProtocolAppNodesHash(\%samplesHash);
 
-  $self->createConfigFile(); 
 }
 
 
