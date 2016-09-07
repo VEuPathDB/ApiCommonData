@@ -107,7 +107,7 @@ sub run {
   my $file = $self->getArg('inputFile');
 
   my $ontologyTermIds = $self->queryForOntologyTermIds();
-  my $chebiTermIds = $self->queryForChebiTermIds();
+#  my $chebiTermIds = $self->queryForChebiTermIds();
   open(FILE, $file) or die "Cannot open file $file for reading: $!";
 
   my $count;
@@ -177,10 +177,10 @@ sub run {
       $self->userError("evidence Term $evidenceTerm specified but not found in database") unless($evidenceTermId);
     }
 #check against chebi table - seperate hash  
-   if($chebiAnnotationExtension) {
-      $chebiTermId = $chebiTermIds->{$chebiAnnotationExtension};
-      $self->userError("chebi annotation extension id  $chebiAnnotationExtension specified but not found in database") unless($chebiTermId);
-    }
+ #  if($chebiAnnotationExtension) {
+  #    $chebiTermId = $chebiTermIds->{$chebiAnnotationExtension};
+   #   $self->userError("chebi annotation extension id  $chebiAnnotationExtension specified but not found in database") unless($chebiTermId);
+   # }
     
 
     my $phenotypeResult = GUS::Model::ApiDB::PhenotypeResult->new({phenotype_quality_term_id => $qualityTermId,
@@ -190,7 +190,7 @@ sub run {
                                                                    phenotype_post_composition => $phenotypeString,
                                                                    phenotype_comment => $note,
                                                                    evidence_term_id => $evidenceTermId,
-								   chebi_annotation_extension => $chebiTermId,
+								   chebi_annotation_extension => $chebiAnnotationExtension,
 								   protein_annotation_extension => $proteinAnnotationExtension,
                                                                   });
 
@@ -239,23 +239,23 @@ sub lookupModel {
 
   return \%terms;
 }
- sub queryForChebiTermIds {
-  my ($self) = @_;
+# sub queryForChebiTermIds {
+#  my ($self) = @_;
 
-  my $dbh = $self->getQueryHandle();
-  my $query = "select chebi_accession from chebi.compounds";
+#  my $dbh = $self->getQueryHandle();
+#  my $query = "select chebi_accession from chebi.compounds";
 
-  my $sh = $dbh->prepare($query);
-  $sh->execute();
+#  my $sh = $dbh->prepare($query);
+#  $sh->execute();
 
-  my %terms;
-  while(my ($id) = $sh->fetchrow_array()) {
-      $terms{$id} = $id;
-  }
-  $sh->finish();
+#  my %terms;
+#  while(my ($id) = $sh->fetchrow_array()) {
+#      $terms{$id} = $id;
+#  }
+#  $sh->finish();
 
-  return \%terms;
-}
+#  return \%terms;
+#}
 
 sub undoTables {
   my ($self) = @_;
