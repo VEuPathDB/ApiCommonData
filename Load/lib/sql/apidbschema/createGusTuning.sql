@@ -541,7 +541,7 @@ create table Results.AlphaDiversity
     ROW_ALG_INVOCATION_ID   number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
     foreign key (na_sequence_id) references DOTS.NASEQUENCEIMP,
-    primary key (otu_abundance_id)
+    primary key (alpha_diversity_id)
   );
 
 create sequence RESULTS.AlphaDiversity_SQ;
