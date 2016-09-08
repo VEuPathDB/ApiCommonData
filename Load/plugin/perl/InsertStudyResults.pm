@@ -118,11 +118,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $dbiDb = $self->getDb();
-  $dbiDb->setMaximumNumberOfObjects(100000);
+  $self->setPointerCacheSize(100000);
 
   my $configFile = $self->getArg('configFile');
-
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
