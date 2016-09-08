@@ -514,7 +514,7 @@ select CORE.TABLEINFO_SQ.NEXTVAL, 'OtuAbundance',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
-WHERE 'OtuAbundance' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'otuabundance' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
 --------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ select CORE.TABLEINFO_SQ.NEXTVAL, 'AlphaDiversity',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
-WHERE 'AlphaDiversity' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'alphadiversity' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
 -------------------------------------------------------------------------------------------
