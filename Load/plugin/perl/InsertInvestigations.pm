@@ -5,6 +5,7 @@ use GUS::PluginMgr::Plugin;
 use strict;
 
 use CBIL::ISA::Investigation;
+use CBIL::ISA::InvestigationSimple;
 
 use File::Basename;
 
@@ -686,11 +687,9 @@ where dataset = ? ";
   foreach my $databaseProtocol (keys %$databaseEdges) {
     foreach my $protocolAppId (keys %{$databaseEdges->{$databaseProtocol}}) {
 
-      my @databaseOutputs = sort @{$databaseEdges->{$databaseProtocol}->{$protocolAppId}->{output}};
+      next unless($databaseEdges->{$databaseProtocol}->{$protocolAppId}->{output});
 
-      unless(scalar @databaseOutputs > 0) {
-        $self->logOrError("ERROR: ProtocolApp [$protocolAppId] is missing Outputs");
-      }
+      my @databaseOutputs = sort @{$databaseEdges->{$databaseProtocol}->{$protocolAppId}->{output}};
 
       my $found;
 
