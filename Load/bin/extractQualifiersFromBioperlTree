@@ -182,7 +182,7 @@ sub printGOFile {
       $product = $3;
       $evidenceCode = $4;
     } elsif ($line =~ /GO:(\d+) - (.+)$/) {
-      $goId = $1;
+      $goId = "GO:".$1;
       $product = $2;
       $aspect = &getAspectForGo ($line);
     }
