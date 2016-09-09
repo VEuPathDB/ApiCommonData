@@ -30,6 +30,8 @@ use GUS::Model::DoTS::GOAssociation;
 use GUS::Model::DoTS::GOAssocInstEvidCode;
 use GUS::Supported::Util;
 
+use GUS::Supported::Utility::GOAnnotater;
+
 use FileHandle;
 use Carp;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -255,6 +257,12 @@ sub run {
     my $msg = "Processed $count input associations.  Found $totalAssocCount distinct Associations, of which $self->{newAssocCount} were new (not in db already).  Created $self->{instanceCount} instances.  $self->{skipCount} associations were ignored ($self->{distinctSkipCount} distinct) because their sequence could not be found in the database";
 
     return $msg;
+}
+
+sub undoPreprocess {
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+
+  GUS::Supported::Utility::GOAnnotater::undoPreprocess($dbh, $rowAlgInvocationList);  
 }
 
 sub undoTables {

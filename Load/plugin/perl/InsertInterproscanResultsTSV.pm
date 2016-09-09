@@ -520,6 +520,14 @@ sub testRowsLoaded {
 }
 
 
+
+
+sub undoPreprocess {
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+
+  GUS::Supported::Utility::GOAnnotater::undoPreprocess($dbh, $rowAlgInvocationList);  
+}
+
 sub undoTables {
   my ($self) = @_;
 
