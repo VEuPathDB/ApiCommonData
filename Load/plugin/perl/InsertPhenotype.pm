@@ -1,3 +1,4 @@
+
 package ApiCommonData::Load::Plugin::InsertPhenotype;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -6,7 +7,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::PhenotypeModel;
 use GUS::Model::ApiDB::PhenotypeResult;
-
+use GUS::Model::SRes::OntologyTerm;
 sub getArgsDeclaration {
 my $argsDeclaration  =
 [
@@ -104,8 +105,11 @@ sub run {
   my $extDbReleaseId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbVer'))
     || $self->error("Cannot find external_database_release_id for the data source");
 
-  my $file = $self->getArg('inputFile');
 
+  my $file = $self->getArg('inputFile');
+  my $notOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name=>'NOT',source_id=>'EuPathUserDefined_NOT'});
+  $notOntologyTerm->retrieveFromDB();
+  $notOntologyTerm->submit();
   my $ontologyTermIds = $self->queryForOntologyTermIds();
 #  my $chebiTermIds = $self->queryForChebiTermIds();
   open(FILE, $file) or die "Cannot open file $file for reading: $!";
