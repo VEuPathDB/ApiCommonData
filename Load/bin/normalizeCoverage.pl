@@ -350,8 +350,7 @@ sub makeMappingFile{
 
     foreach my $key (keys %totals) {
         my $finalFile = $key;
-        $finalFile =~ s/_results_sorted.bam/_results_sortedCombinedReps.bam/;
-	$finalFile =~ s/results.bam/resultsCombinedReps.bam/;
+        $finalFile =~ s/.bam/CombinedReps.bam/;
         my $finalCoverage= ($totals{$key}->[0] / $countReps);
         my $finalPercentage= ($totals{$key}->[1]/ $countReps);
         my $finalCount = ($totals{$key}->[2] / $countReps) ;
