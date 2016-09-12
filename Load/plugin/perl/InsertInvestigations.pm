@@ -114,8 +114,6 @@ sub new {
 
 sub run {
   my ($self) = @_;
-  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -200,14 +198,14 @@ sub run {
    
       $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
 
-      my $investigationId = $self->loadInvestigation($investigation,$extDbRlsId);
+      my $investigationId = $self->loadInvestigation($investigation);
 
 
       $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
       $self->checkDatabaseNodesAreHandled(\%isatabDatasets, $study->getNodes());
       $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%isatabDatasets, $study->getEdges());
 
-      $self->loadStudy($study,$investigationId,$extDbRlsId);
+      $self->loadStudy($study,$investigationId);
     }
     
     $investigationCount++;
@@ -295,7 +293,9 @@ sub checkProtocolsAndSetIds {
 }
 
 sub loadStudy {
-  my ($self, $study, $investigationId, $extDbRlsId) = @_;
+  my ($self, $study, $investigationId) = @_;
+
+  my $extDbRlsId = $self->{_external_database_release_id};
 
   my $identifier = $study->getIdentifier();
 #  my $title = $study->getTitle();
@@ -855,7 +855,13 @@ sub logOrError {
 }
 
 sub loadInvestigation{
-  my ($self, $study,$extDbRlsId) = @_;
+  my ($self, $study) = @_;
+
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+
+  $self->{_external_database_release_id} = $extDbRlsId;
+
   my $identifier = $study->getIdentifier();
  # my $title = $study->getTitle();
 
