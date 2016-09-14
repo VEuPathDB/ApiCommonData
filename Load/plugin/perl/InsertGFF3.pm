@@ -174,10 +174,16 @@ sub run {
              $self->getArg('gff3DbVer')) || $self->error("Can't find external_database_release_id for gff3 data source");
 
   # getting na_sequence_ids and so_term_ids as hashrefs of name:id rather than making and storing GUS objects saves time
-  my $genomeDbRlsId = $self->getExtDbRlsId($self->getArg('seqExtDbName'),$self->getArg('seqExtDbRlsVer')) || $self->error("Can't find external_database_release_id for genome sequence");
-  my $seqHash = $self->sqlAsDictionary(Sql => "select source_id, na_sequence_id
-                                               from dots.externalnasequence
-                                               where external_database_release_id = $genomeDbRlsId");
+
+  my $seqextDbName = $self->getArg('seqExtDbName');
+  my $seqHash = $self->sqlAsDictionary(Sql => "SELECT ns.source_id, ns.na_sequence_id
+  from dots.nasequence ns
+     , sres.ontologyterm oterm 
+     , apidb.datasource ds
+  where ns.sequence_ontology_id = oterm.ontology_term_id
+    and ds.name = '$seqextDbName'     
+    and ds.taxon_id = ns.taxon_id
+    and oterm.name in ('random_sequence', 'contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')");
 
   my $soExtDbRlsId = $self->getExtDbRlsId($self->getArg('soExtDbSpec')) || $self->error("Can't find external_database_release_id for sequence ontology");
   my $soHash = $self->sqlAsDictionary(Sql => "select name, ontology_term_id
