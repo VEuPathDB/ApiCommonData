@@ -74,9 +74,9 @@ sub getArgsDeclaration {
       }),
 
      stringArg({name => 'seqExtDbRlsVer',
-       descr => 'Version of the seq ext db',
+       descr => 'Version of the seq ext db (deprecated)',
        constraintFunc=> undef,
-       reqd  => 1,
+       reqd  => 0,
        isList => 0
       }),
 
