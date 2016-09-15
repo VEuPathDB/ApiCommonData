@@ -868,7 +868,7 @@ sub loadInvestigation{
   my $description = $study->getDescription();
 
   my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, description => $description, source_id => $identifier, external_database_release_id =>$extDbRlsId});
-  $gusStudy->submit();
+  $gusStudy->submit() unless($gusStudy->retrieveFromDB());
   return $gusStudy->getId();
 
 }
