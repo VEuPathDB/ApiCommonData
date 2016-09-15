@@ -187,10 +187,7 @@ sub run {
         next;
       }
 
-      foreach my $study (@$studies) {
-        $self->checkProtocolsAndSetIds($study->getProtocols());
-      }
-
+      $self->checkProtocolsAndSetIds($study->getProtocols());
 
       $self->checkAllOntologyTerms($investigation->getOntologyTerms());
 
