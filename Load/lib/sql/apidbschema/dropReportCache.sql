@@ -1,4 +1,4 @@
-drop table apidb.TranscriptDetail
+drop table apidb.GeneDetail
 drop table apidb.IsolateDetail;
 drop table apidb.SequenceDetail;
 drop table apidb.OrthomclSequenceDetail;

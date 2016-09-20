@@ -1,6 +1,5 @@
-create table apidb.TranscriptDetail (
+create table apidb.GeneDetail (
       SOURCE_ID VARCHAR2(100 BYTE),
-      GENE_SOURCE_ID VARCHAR2(100 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
@@ -9,24 +8,25 @@ create table apidb.TranscriptDetail (
       MODIFICATION_DATE DATE
 );
 
-CREATE UNIQUE INDEX apidb.transcriptdtl_idx01 ON apidb.TranscriptDetail(source_id, project_id, field_name) tablespace indx;
-CREATE INDEX apidb.transcriptdtl_idx02 ON apidb.TranscriptDetail(field_name, source_id, gene_source_id, project_id) tablespace indx;
-CREATE INDEX apidb.transcriptdtl_idx03 ON apidb.TranscriptDetail(row_count, source_id, gene_source_id, project_id) tablespace indx;
+CREATE UNIQUE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name) tablespace indx;
+CREATE INDEX apidb.genedtl_idx02 ON apidb.GeneDetail(field_name, source_id) tablespace indx;
+CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id) tablespace indx;
 
-CREATE INDEX apidb.transcript_text_ix on apidb.TranscriptDetail(content)
+CREATE INDEX apidb.gene_text_ix on apidb.GeneDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
 
-CREATE TRIGGER apidb.TranscriptDtl_md_tg
-BEFORE UPDATE OR INSERT ON apidb.TranscriptDetail
+CREATE TRIGGER apidb.GeneDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.GeneDetail
 FOR EACH ROW
 BEGIN
   :new.modification_date := sysdate;
 END;
 /
 
-GRANT insert, select, update, delete ON apidb.TranscriptDetail TO gus_w;
-GRANT select ON apidb.TranscriptDetail TO gus_r;
+GRANT insert, select, update, delete ON apidb.GeneDetail TO gus_w;
+GRANT select ON apidb.GeneDetail TO gus_r;
+
 
 ------------------------------------------------------------------------------
 
