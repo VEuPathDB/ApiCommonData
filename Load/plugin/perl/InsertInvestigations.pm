@@ -135,6 +135,9 @@ sub run {
 
     my $investigation;
     if($self->getArg('isSimpleConfiguration')) {
+
+
+
       my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
       my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
       my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName;
@@ -155,6 +158,9 @@ sub run {
 
     my $investigationId = $investigation->getIdentifier();
     my $studies = $investigation->getStudies();
+
+    my $hasDatasets;
+
     foreach my $study (@$studies) {
       my %isatabDatasets;
 
@@ -173,19 +179,30 @@ sub run {
 
       my $datasetsMatchedInDbCount = $self->checkLoadedDatasets(\%isatabDatasets);
 
-      if($datasetsMatchedInDbCount < 1) {
-        $self->log("Skipping Investigation $investigationId.  No matching datasets in database");
-        next;
+      if($datasetsMatchedInDbCount > 0) {
+        $hasDatasets++;
       }
+      $study->{_insert_investigations_datasets} = \%isatabDatasets;
+    }
 
+    unless($hasDatasets) {
+      $self->log("Skipping Investigation $investigationId.  No matching datasets in database");
+      next;
+    }
 
-      eval {
-        $investigation->parseStudies();
-      };
-      if($@) {
-        $self->logOrError($@);
-        next;
-      }
+    eval {
+      $investigation->parseStudies();
+    };
+    if($@) {
+      $self->logOrError($@);
+      next;
+    }
+
+    my $parsedStudies = $investigation->getStudies();
+
+    foreach my $study (@$parsedStudies) {
+
+      my $isatabDatasets = $study->{_insert_investigations_datasets};
 
       $self->checkProtocolsAndSetIds($study->getProtocols());
 
@@ -199,8 +216,8 @@ sub run {
 
 
       $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-      $self->checkDatabaseNodesAreHandled(\%isatabDatasets, $study->getNodes());
-      $self->checkDatabaseProtocolApplicationsAreHandledAndMark(\%isatabDatasets, $study->getEdges());
+      $self->checkDatabaseNodesAreHandled($isatabDatasets, $study->getNodes());
+      $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
 
       $self->loadStudy($study,$investigationId);
     }
