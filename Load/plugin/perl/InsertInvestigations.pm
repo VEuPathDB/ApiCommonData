@@ -351,37 +351,33 @@ sub loadNodes {
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
 
 my $characteristics = $node->getCharacteristics();
-      
 
       foreach my $characteristic (@$characteristics) {
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
-       
           my $taxonId = $self->{_ontology_term_to_identifiers}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
           $pan->setTaxonId($taxonId);
         }
-        else {
-          my $gusChar = GUS::Model::Study::Characteristic->new();
-          $gusChar->setParent($pan);
 
-          # ALWAYS Set the qualifier_id
-          my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
-          $gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+	my $gusChar = GUS::Model::Study::Characteristic->new();
+	$gusChar->setParent($pan);
 
-          if($characteristic->getUnit()) {
-            my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
-            $gusChar->setUnitId($unitOntologyTerm->getId());
-          }
+	# ALWAYS Set the qualifier_id
+	my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+	$gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
 
+	if($characteristic->getUnit()) {
+	  my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
+	  $gusChar->setUnitId($unitOntologyTerm->getId());
+	}
 
-          if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-            my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
-            $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
-          }
-          else {
-            $gusChar->setValue($characteristic->getTerm());
-          }
+	if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+	  my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
+	  $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
+	}
+	else {
+	  $gusChar->setValue($characteristic->getTerm());
+	}
 
-        }
       }
     }
 
