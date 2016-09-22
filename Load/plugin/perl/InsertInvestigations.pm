@@ -387,7 +387,11 @@ my $characteristics = $node->getCharacteristics();
 	  $gusChar->setUnitId($unitOntologyTerm->getId());
 	}
 
-	if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+          my $value = $self->{_ontology_term_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+	  $gusChar->setValue($value);
+        }
+	elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
 	  my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
 	  $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
 	}
@@ -743,21 +747,25 @@ where dataset = ? ";
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
   
-  my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id
+  my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where (replace(ot.source_id, ':', '_') = ? OR ot.name = ?)
 and lower(ot.source_id) not like 'ncbitaxon%'
 UNION
-select 'NCBITaxon', 'NCBITaxon_' || ncbi_tax_id, taxon_id id
-from sres.taxon 
-where 'NCBITaxon_' || ncbi_tax_id = ?
+select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
+from sres.taxon t, sres.taxonname tn
+where 'NCBITaxon_' || t.ncbi_tax_id = ?
 and lower(?) like  'ncbitaxon%'
+and t.taxon_id = tn.taxon_id
+and tn.name_class = 'scientific name'
 ";
   
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   
   my $rv = {};
+  my $oeToName = {};
+
   
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
     
@@ -765,15 +773,17 @@ and lower(?) like  'ncbitaxon%'
       my $accessionOrName = basename $ota;
       $sh->execute($accessionOrName, $accessionOrName, $accessionOrName, $accessionOrName);
       my $count=0;   
-      my $ontologyTermId;
-      while(my ($dName, $sourceId, $id) = $sh->fetchrow_array()) {
+      my ($ontologyTermId, $ontologyTermName);
+      while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
         $ontologyTermId = $id;
+        $ontologyTermName = $name;
 	$count++;
       }
       $sh->finish();
       if($count == 1) {
         $rv->{$os}->{$ota} = $ontologyTermId;
-        
+
+        $oeToName->{$os}->{$ota} = $ontologyTermName;
         
       }
       else {
@@ -784,6 +794,7 @@ and lower(?) like  'ncbitaxon%'
   }
   
   $self->{_ontology_term_to_identifiers} = $rv;
+  $self->{_ontology_term_to_names} = $oeToName;
 }
 
 sub checkDatabaseNodesAreHandled {
