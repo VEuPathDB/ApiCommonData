@@ -679,7 +679,7 @@ begin
     delimiter := chr(10);
 
 
-    if length(seq) <= linesize
+    if seq is null or length(seq) <= linesize
     then
       rslt := seq;
 
