@@ -24,7 +24,7 @@ my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
 
-my ($help, $bioperlTreeFile, $qualifierList, $outputDir, $db, $taxonId);
+my ($help, $bioperlTreeFile, $qualifierList, $outputDir, $db, $taxonId, $ifGeneDB);
 
 &GetOptions(
             'help|h' => \$help,
@@ -33,10 +33,11 @@ my ($help, $bioperlTreeFile, $qualifierList, $outputDir, $db, $taxonId);
 	    'outputDir=s' => \$outputDir,
 	    'db=s' => \$db,
 	    'taxonId=s' => \$taxonId,
+	    'ifGeneDB=s' => \$ifGeneDB,
            );
 
 &usage() if($help);
-&usage("Missing a Required Argument") unless (defined $qualifierList);
+&usage("Missing a Required Argument") unless (defined $qualifierList && $ifGeneDB);
 
 ## set default value
 $bioperlTreeFile = "isfTest/bioperlTree.out.save" if (!$bioperlTreeFile);
@@ -87,24 +88,31 @@ while (<IN>) {
     my (@values, @dbxrefValues);
     if ($qual =~ /product/i || $qual =~ /description/i) {  ## multiple products separated by ",term="
                                                            ## in some cases description also represents product
-      @values = split (/\,[term=|rank=1;]/, $value);
-      foreach my $i (0..$#values) {
-	$values[$i] =~ s/\t/,/g;
-	$values[$i] =~ s/^,+//;
-	my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/i);
-	if ($values[$i] =~ /.*term=(.+?);.*/) {
-	  $values[$i]= $1;
-	} elsif ($values[$i] =~ /term=(.+)/i ) {
-	  $values[$i] = $1;
-	} elsif ($values[$i] =~ /(.*?);.*/) {
-	  $values[$i] = $1;
+      if ($ifGeneDB =~ /^y/i || $ifGeneDB == 1) {
+
+	print STDERR "For product name from GeneDB, run extractProductFromGeneDBGff3 to parse correctly\n";
+
+      } else {
+	@values = split (/\,[term=|rank=1;]/, $value);
+	foreach my $i (0..$#values) {
+	  $values[$i] =~ s/\t/,/g;
+	  $values[$i] =~ s/^,+//;
+	  my $isPreferred=1 if ($values[$i] =~ /is_preferred=true/i);
+	  if ($values[$i] =~ /.*term=(.+?);.*/) {
+	    $values[$i]= $1;
+	  } elsif ($values[$i] =~ /term=(.+)/i ) {
+	    $values[$i] = $1;
+	  } elsif ($values[$i] =~ /(.*?);.*/) {
+	    $values[$i] = $1;
+	  }
+	  $values[$i] =~ s/^term=//;
+	  $values[$i] =~ s/^erm=//;
+	  $values[$i] =~ s/,rank=1$//;
+	  $values[$i] =~ s/^-//;
+	  $values[$i] .= "\ttrue" if ($isPreferred == 1);
 	}
-	$values[$i] =~ s/^term=//;
-	$values[$i] =~ s/^erm=//;
-	$values[$i] =~ s/,rank=1$//;
-	$values[$i] =~ s/^-//;
-	$values[$i] .= "\ttrue" if ($isPreferred == 1);
-      }
+      } ## end of product
+
     } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
       $value =~ s/\t/ /g;
       push @values, $value;
@@ -305,7 +313,7 @@ sub usage {
 Extract function data from bioperlTree output file
 Function data includes product, go, ec_number, gene name, and synonym
 
-Usage:  extractQualifiersFromBioperlTree --bioperlTreeFile --qualifierList [--outputDir]
+Usage:  extractQualifiersFromBioperlTree --bioperlTreeFile --qualifierList [--outputDir] --ifGeneDB
 
 where
   --qualifierList:	Required, a semi-colon seperated list of qualifiers that want to extract
@@ -313,6 +321,7 @@ where
   --outputDir:          An file dir that the output files will write to. The default is the dir '../extractQualifiers'
   --db:                 Required if extract GO, eg. GenBank, GeneDB, EupathDB
   --taxonId:            Required if extract GO, the NCBI taxon ID
+  --ifGeneDB:           Required, if annotation from GeneDB, set y, yes, YES or 1, otherwise n, no, NO or 0
 
 ";
 }
