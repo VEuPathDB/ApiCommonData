@@ -69,14 +69,14 @@ my $fn;
 foreach $fn (keys %annotated){
 
     print FILE "org=" . $fn . "|" . $annotated{$fn} . "\n" 
-. "type=Gene detailTable=apidb.GeneDetail fields=all otherSql=0 dir=" . $fn . "\n"
-. "type=Sequence detailTable=apidb.SequenceDetail fields=all dir=" . $fn . "\n";
+. "type=Gene detailTable=apidb.GeneDetail fields=all otherSql=0 dir=" . $fn . "\n";
+### . "type=Sequence detailTable=apidb.SequenceDetail fields=all dir=" . $fn . "\n";
 }
 foreach $fn (keys %unannotated){
 
-    print FILE "org=" . $fn . "|" . $unannotated{$fn} . "\n"
-. "type=Sequence detailTable=apidb.SequenceDetail fields=all dir=" . $fn . "\n";
-}
+###    print FILE "org=" . $fn . "|" . $unannotated{$fn} . "\n"
+###. "type=Sequence detailTable=apidb.SequenceDetail fields=all dir=" . $fn . "\n";
+###}
 
 print FILE "//\n";
 
