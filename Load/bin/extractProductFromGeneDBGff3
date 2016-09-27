@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+
+## usage: extractProductFromGeneDBGff3 --geneDBGffFile PfalciparumIT.noseq.gff3 --outputFile testProduct.txt
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+use Bio::SeqFeature::Tools::Unflattener;
+use Bio::Tools::GFF;
+use Bio::Seq::RichSeq;
+use GUS::Supported::SequenceIterator;
+use Bio::DB::GFF::Aggregator;
+use Getopt::Long;
+
+use Data::Dumper;
+use FileHandle;
+use HTTP::Date;
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
+my ($date, ) = split(" ", HTTP::Date::time2iso());
+$date = join("",split(/-/,$date));
+
+
+my ($help, $geneDBGffFile, $outputFile);
+
+&GetOptions(
+            'help|h' => \$help,
+            'geneDBGffFile=s' => \$geneDBGffFile,
+	    'outputFile=s' => \$outputFile,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless (defined $geneDBGffFile && $outputFile);
+
+
+open (OUT, ">$outputFile") || die "can not open outputFile to write\n"; 
+
+open (IN, $geneDBGffFile) || die "can not open geneDBGffFile to read\n";
+while (<IN>) {
+  chomp;
+  my %keyValue;
+  my @items = split (/\t/, $_);
+  if ($items[2] eq "polypeptide" || ($items[2] =~ /RNA$/ && $items[2] ne "mRNA") ) {
+    my @pairs = split (/\;/, $items[8]);
+    foreach my $i (0..$#pairs) {
+      my ($key, $value) = split (/\=/, $pairs[$i]);
+      if ($items[2] eq "polypeptide" && $key eq "Derives_from" ) {
+	$keyValue{transID} = $value;
+      }
+      if ( $items[2] =~ /RNA$/ && $key eq "ID") {
+	$keyValue{transID} = $value;
+      }
+      if ($key eq "product") {
+	$keyValue{product} = $value;
+      }
+    }
+    if ($keyValue{transID} && $keyValue{product}) {
+      my @mulProd = split (/\,/, $keyValue{product});
+      foreach my $j (0..$#mulProd) {
+	my $inValue;
+	my %prodKeyValue;
+	my @prodPairs = split (/%3B/, $mulProd[$j]);  ## separate by /\;/
+	foreach my $m (0..$#prodPairs) {
+	  my ($prodKey, $prodValue) = split (/%3D/, $prodPairs[$m]);  ## separate by /\=/
+	  $prodValue =~ s/%2C/\,/g; ## replace %2C with \, after separate by /\=/
+	  $prodValue =~ s/%26/\&/g; ## replace %26 with \&
+
+	  if ($prodKey eq "term") {
+	    $prodKeyValue{term} = $prodValue;
+	  } elsif ($prodKey eq "is_preferred") {
+	    $prodKeyValue{is_preferred} = 1;
+	  }
+	  if ($prodKey && !$prodValue) { ## if only one value but no key-value pair
+	    $prodKeyValue{term} = $prodKey; ## then the only value is the value of product
+	  }
+	}
+	if ($prodKeyValue{is_preferred}) {
+	  $prodKeyValue{term} .= "\ttrue";
+	}
+	print OUT "$keyValue{transID}\t$prodKeyValue{term}\n";
+      }
+    }
+  }
+
+}
+close IN;
+close OUT;
+
+
+############
+sub usage {
+  die
+"
+Extract product name from GeneDB GFF3 file when GFF3-encoded
+
+Usage:  extractQualifiersFromBioperlTree --geneDBGffFile --outputFile
+
+where
+  --geneDBGffFile:	geneDB GFF3 file name
+  --outputFile:         output product name file name
+
+";
+}
+
+
+
