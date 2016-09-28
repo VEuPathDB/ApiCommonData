@@ -932,7 +932,7 @@ and d.name || '|' || r.version = '$extDbRlsSpec'";
 sub queryProtocolAppNodeIdFromExtDbRlsId {
   my ($dbh, $extDbRlsId) = @_;
 
-  my $sql = "select protocol_app_node_id from study.protocolappnode where external_database_release_id = $extDbRlsId";
+  my $sql = "select protocol_app_node_id from study.protocolappnode where external_database_release_id = $extDbRlsId and name like '%Sequence Variation%'";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
