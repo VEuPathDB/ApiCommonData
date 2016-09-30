@@ -138,30 +138,44 @@ my %stopCodons = (TAG => 1,
     my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
 
     my $strand = $geneHash->{strand};
-    my $geneStart = $geneHash->{start};
-    my $geneEnd = $geneHash->{end};
+
+    my $minStart = defined $geneHash->{cds_min_start} ? $geneHash->{cds_min_start} : $geneHash->{start};
+    my $maxEnd = defined $geneHash->{cds_max_end} ? $geneHash->{cds_max_end} : $geneHash->{end};
 
     my $sequenceSourceId = $geneHash->{sequence_source_id};
     my $naSequenceId = $geneHash->{na_sequence_id};
 
-    my $lastGeneEndOrSeqStart = $geneHash->{last_gene_end_or_seq_start};
-    my $nextGeneStartOrSeqEnd = $geneHash->{next_gene_start_or_seq_end};
+    my $lastEndMaxOrSeqStart = defined $geneHash->{last_cds_end_or_seq_start} ? $geneHash->{last_cds_end_or_seq_start} : $geneHash->{last_gene_end_or_seq_start};
+    my $nextStartMinOrSeqEnd = defined $geneHash->{next_cds_start_or_seq_end} ? $geneHash->{next_cds_start_or_seq_end} : $geneHash->{next_gene_start_or_seq_end};
 
     my $biggestTranscript = {source_id => '', length => 0, atgloc => ''};
 
-    next unless($geneEnd < $nextGeneStartOrSeqEnd && $geneStart > $lastGeneEndOrSeqStart); # SKIP where several genes overlap
+    next unless($maxEnd < $nextStartMinOrSeqEnd && $minStart > $lastEndMaxOrSeqStart); # SKIP where several genes overlap
 
     my $collection = $spliceSiteCollections->{$naSequenceId};
     next unless($collection);
 
-    my ($subsetStart, $subsetEnd) = &findSubsetLocs($strand, $experimentType, $geneStart, $geneEnd, $lastGeneEndOrSeqStart, $nextGeneStartOrSeqEnd);
+
     
+
+    my ($subsetStart, $subsetEnd) = &findSubsetLocs($strand, $experimentType, $minStart, $maxEnd, $lastEndMaxOrSeqStart, $nextStartMinOrSeqEnd);
+
+
+    my $collectionStrand;
+    if($experimentType eq 'Splice Site') { # Spliced Leader
+      $collectionStrand = $strand;
+    }
+    else {
+      $collectionStrand = $strand * -1;
+    }
+
     my @subset = $collection->features_in_range(-start => $subsetStart,
                                                 -end => $subsetEnd,
-                                                -strand => $strand,
+                                                -strand => $collectionStrand,
                                                 -strandmatch => 'strong', #only match features on the same strand
                                                 -contain => 1);
-    
+
+
     my (%atgLocations, %stopLocations);
 
     foreach my $transcriptSourceId (@{$geneModelLocations->getTranscriptIdsFromGeneSourceId($geneSourceId)}) {
@@ -238,11 +252,11 @@ my %stopCodons = (TAG => 1,
         my ($genomicSeqStart, $genomicSeqLength);
         if($strand == -1) {
           $genomicSeqStart = $transcriptGenomicLocation->end() + 1;
-          $genomicSeqLength = $nextGeneStartOrSeqEnd - $transcriptGenomicLocation->end() - 1; # subtract 1 here because I don't want to include either the last or the first
+          $genomicSeqLength = $nextStartMinOrSeqEnd - $transcriptGenomicLocation->end() - 1; # subtract 1 here because I don't want to include either the last or the first
         }
         else {
-          $genomicSeqStart = $lastGeneEndOrSeqStart +1;
-          $genomicSeqLength = $transcriptGenomicLocation->start - $lastGeneEndOrSeqStart - 1; # subtract 1 here because I don't want to include either the last or the first
+          $genomicSeqStart = $lastEndMaxOrSeqStart +1;
+          $genomicSeqLength = $transcriptGenomicLocation->start - $lastEndMaxOrSeqStart - 1; # subtract 1 here because I don't want to include either the last or the first
         }
 
         next unless($genomicSeqLength > 0); # SKIP overlapping genes
@@ -347,6 +361,7 @@ my %stopCodons = (TAG => 1,
                                                              dist_to_annot_atg => $distToAnnotAtg,
                                                             });
 
+
         $gusSS->submit();
       }
 
@@ -366,6 +381,7 @@ my %stopCodons = (TAG => 1,
                                                           within_cds => $withinCds,
                                                           dist_to_cds => $distance,
                                                          });
+
 
           $gusSS->submit();
         }
