@@ -135,12 +135,13 @@ my %stopCodons = (TAG => 1,
   my $logCount = 0;
 
   foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
+
     my $geneHash = $geneModelLocations->getGeneModelHashFromGeneSourceId($geneSourceId);
 
     my $strand = $geneHash->{strand};
 
-    my $minStart = defined $geneHash->{cds_min_start} ? $geneHash->{cds_min_start} : $geneHash->{start};
-    my $maxEnd = defined $geneHash->{cds_max_end} ? $geneHash->{cds_max_end} : $geneHash->{end};
+    my $minStart = defined $geneHash->{min_cds_start} ? $geneHash->{min_cds_start} : $geneHash->{start};
+    my $maxEnd = defined $geneHash->{max_cds_end} ? $geneHash->{max_cds_end} : $geneHash->{end};
 
     my $sequenceSourceId = $geneHash->{sequence_source_id};
     my $naSequenceId = $geneHash->{na_sequence_id};
@@ -400,7 +401,7 @@ my %stopCodons = (TAG => 1,
 }
 
 
-sub findSubsetLocs {
+sub findSubsetLocs{
   my ($strand, $experimentType, $geneStart, $geneEnd, $lastGeneEndOrSeqStart,$nextGeneStartOrSeqEnd ) = @_;
 
   if($strand == -1) {
