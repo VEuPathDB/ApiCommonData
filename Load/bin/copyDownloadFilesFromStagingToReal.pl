@@ -54,14 +54,14 @@ open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
 print $fh "$buildNumber\n";
 close $fh;
 
-print STDERR "Moving pathway files to /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles\n";
-if ( -d "/eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles"){
-	system ("mv /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
-	print "failed to execute: $!\n" if ($? == -1);
-}
-system ("mv  ${targetDir}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles");
-print "failed to execute: $!\n" if ($? == -1);
-system ("rm -fr /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save") if ( -d "/eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
+#print STDERR "Moving pathway files to /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles\n";
+#if ( -d "/eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles"){
+#	system ("mv /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
+#	print "failed to execute: $!\n" if ($? == -1);
+#}
+#system ("mv  ${targetDir}/pathwayFiles /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles");
+#print "failed to execute: $!\n" if ($? == -1);
+#system ("rm -fr /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save") if ( -d "/eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles.save");
 
 
 sub loopDir {
