@@ -10,6 +10,8 @@ use Getopt::Long;
 use CBIL::Util::PropertySet;
 use GUS::Community::GeneModelLocations;
 
+use Bio::Tools::GFF;
+
 # Possible TODO is to add the fasta sequence for transcript, cds, protein (wdkReportMaker includes options for these BUT we are not planning on using the wdkReportMaker for GUS4)
 
 my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $tuningTablePrefix);
@@ -45,7 +47,7 @@ my $transcriptAnnotations = {};
 my $ncbiTaxId;
 my $sequenceLengths = {};
 
-my $sql = "select s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process 
+my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process 
                    from apidbtuning.${tuningTablePrefix}transcriptattributes t, dots.nasequence s, sres.externaldatabaserelease r, sres.externaldatabase d
                    where t.na_sequence_id = s.na_sequence_id
                     and r.external_database_release_id = ?
@@ -54,17 +56,22 @@ my $sql = "select s.source_id as sequence_source_id, s.length, t.gene_source_id,
                     and d.name = t.external_db_name";
 my $sh = $dbh->prepare($sql);
 $sh->execute($extDbRlsId);
-while(my ($sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
+while(my ($soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
   $ncbiTaxId = $ncbi if($ncbi);
+
+
 
   $geneAnnotations->{$geneSourceId} = {gene_product => $geneProduct,
                                        ncbi_tax_id => $ncbiTaxId,
   };
 
   $transcriptAnnotations->{$transcriptSourceId} = {transcript_product => $transcriptProduct,
+                                   so_term_name => $soTermName,
                                    ec_numbers => $ecNumbers,
-                                   go_ids => join(",",  grep(defined, @goIds))
+                                   go_ids => join(",",  grep {defined $_ } @goIds)
   };
+
+
   $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
 }
 
@@ -85,27 +92,55 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
   foreach my $feature (@$features) {
     $feature->source_tag("EuPathDB");
-    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID") {
+    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "SEQUENCE_IS_PIECE") {
       $feature->remove_tag($extraTag) if($feature->has_tag($extraTag));
     }
+
+    foreach($feature->get_all_tags()) {
+      if($_ eq 'ID') { }
+      elsif($_ eq 'PARENT') {
+        $feature->add_tag_value('Parent', $feature->remove_tag($_));
+      }
+      else {
+        $feature->add_tag_value(lc($_), $feature->remove_tag($_));
+      }
+    }
+
+
+
 
     if($feature->primary_tag eq 'gene') {
       $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
     }
 
-    if($feature->primary_tag eq 'mRNA') {
+    if($feature->primary_tag eq 'transcript') {
+
+
       my ($transcriptId) = $feature->get_tag_values("ID");
 
       my $product = $transcriptAnnotations->{$transcriptId}->{transcript_product};
       my $ecNumbers = $transcriptAnnotations->{$transcriptId}->{ec_numbers};
       my $goIds = $transcriptAnnotations->{$transcriptId}->{go_ids};
 
+      my $soTermName = $transcriptAnnotations->{$transcriptId}->{so_term_name};
+
+      $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
+      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
+
+      $feature->primary_tag($soTermName);
+
       $feature->add_tag_value("description", $product) if($product);
       $feature->add_tag_value("Note", $ecNumbers) if($ecNumbers);
-      $feature->add_tag_value("Ontology_term", $goIds) if($goIds);
+
+      my @goIds = split(/\s?,\s?/, $goIds);
+
+      foreach(grep {defined } @goIds) {
+        $feature->add_tag_value("Ontology_term", $_);
+      }
     }
 
-    print GFF $feature->gff_string . "\n";
+  $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
+  print GFF $feature->gff_string . "\n";
   }
 }
 
