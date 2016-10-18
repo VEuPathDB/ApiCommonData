@@ -1,0 +1,2066 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY obo "http://purl.obolibrary.org/obo/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY amazonia "http://purl.obolibrary.org/obo/amazonia.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://w&obo;eupath/amazonia_merged.owl#"
+     xml:base="http://w&obo;eupath/amazonia_merged.owl"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:amazonia="&obo;amazonia.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://w&obo;eupath/amazonia_merged.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000112 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000112">
+        <rdfs:label xml:lang="en">EuPathDB definition</rdfs:label>
+        <obo:IAO_0000115>definition shown on EuPathDB website</obo:IAO_0000115>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000263 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000263">
+        <rdfs:label xml:lang="en">Amazonia data dictionary label (es)</rdfs:label>
+        <rdfs:comment>Label of terms used in Amazonia data dictionary. It is in Spanish.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000264 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000264">
+        <rdfs:label xml:lang="en">Amazonia preferred label (en)</rdfs:label>
+        <rdfs:comment>English label used in Amazonia project for display on the website</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000265 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000265">
+        <rdfs:label xml:lang="en">Amazonia preferred label (es)</rdfs:label>
+        <rdfs:comment>Spanish label used in Amazonia project for display on the website</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000266 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000266">
+        <rdfs:label xml:lang="en">ontological label</rdfs:label>
+        <rdfs:comment>label of term used in the ontology</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000267 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000267">
+        <rdfs:label xml:lang="en">PRISM data dictionary label (en)</rdfs:label>
+        <rdfs:comment>Label of terms used in PRISM data dictionary. It is in English.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000268 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000268">
+        <rdfs:label xml:lang="en">PRISM preferred label (en)</rdfs:label>
+        <rdfs:comment>English label used in Prism project for display on the website</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000118"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000269 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000269">
+        <rdfs:label xml:lang="en">Amazonia description</rdfs:label>
+        <rdfs:comment>Term description provided by Amazonia group</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000270 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000270">
+        <rdfs:label xml:lang="en">PRISM description</rdfs:label>
+        <rdfs:comment>Term description provided by PRISM group</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000271 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000271">
+        <rdfs:label xml:lang="en">term type</rdfs:label>
+        <rdfs:comment>Three options of term type:
+- category: used for organize the filter in the website, not ontology term
+- variable: term in the data dictionary of project. Should have mapped ontology term associate with it
+- value: controlled vocubulary used for annotation of variable in the data dictionary. Should have mapped ontology term associate with it</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000272 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000272">
+        <rdfs:label xml:lang="en">resource ID</rdfs:label>
+        <rdfs:comment>specify ICEMR term original from which database</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000273 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000273">
+        <rdfs:label xml:lang="en">ontological definition</rdfs:label>
+        <rdfs:comment>definition of term in ontology</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&obo;IAO_0000115"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000274 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;EUPATH_0000274">
+        <rdfs:label xml:lang="en">display order</rdfs:label>
+        <rdfs:comment>annotation used for specifing the order of terms displayed on the EuPathDB website  </rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;IAO_0000115">
+        <rdfs:label xml:lang="en">definition</rdfs:label>
+        <obo:IAO_0000115 xml:lang="en">The official definition, explaining the meaning of a class or property. Shall be Aristotelian, formalized and normalized. Can be augmented with colloquial definitions.</obo:IAO_0000115>
+        <rdfs:isDefinedBy rdf:resource="&obo;iao.owl"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000116 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;IAO_0000116">
+        <rdfs:label xml:lang="en">editor note</rdfs:label>
+        <obo:IAO_0000115 xml:lang="en">An administrative note intended for its editor. It may not be included in the publication version of the ontology, so it should contain nothing necessary for end users to understand the ontology.</obo:IAO_0000115>
+        <rdfs:isDefinedBy rdf:resource="&obo;iao.owl"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000117 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;IAO_0000117">
+        <rdfs:label xml:lang="en">term editor</rdfs:label>
+        <obo:IAO_0000115 xml:lang="en">Name of editor entering the term in the file. The term editor is a point of contact for information regarding the term. The term editor may be, but is not always, the author of the definition, which may have been worked upon by several people</obo:IAO_0000115>
+        <rdfs:isDefinedBy rdf:resource="&obo;iao.owl"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000118 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;IAO_0000118">
+        <rdfs:label xml:lang="en">alternative term</rdfs:label>
+        <obo:IAO_0000115 xml:lang="en">An alternative name for a class or property which means the same thing as the preferred name (semantically equivalent)</obo:IAO_0000115>
+        <rdfs:isDefinedBy rdf:resource="&obo;iao.owl"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000119 -->
+
+    <owl:AnnotationProperty rdf:about="&obo;IAO_0000119">
+        <rdfs:label xml:lang="en">definition source</rdfs:label>
+        <obo:IAO_0000115 xml:lang="en">formal citation, e.g. identifier in external database to indicate / attribute source(s) for the definition. Free text indicate / attribute source(s) for the definition. EXAMPLE: Author Name, URI, MeSH Term C04, PUBMED ID, Wiki uri on 31.01.2007</obo:IAO_0000115>
+        <rdfs:isDefinedBy rdf:resource="&obo;iao.owl"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#allow_values -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#allow_values"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#file_name_in_box_net -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#file_name_in_box_net"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#form -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#form"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#quest_num_in_forms -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#quest_num_in_forms"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#table -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#table"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#var_name_in_spreadsheets -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#var_name_in_spreadsheets"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/amazonia.owl#webprotege_name -->
+
+    <owl:AnnotationProperty rdf:about="&obo;amazonia.owl#webprotege_name"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000001 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000001">
+        <rdfs:label rdf:datatype="&xsd;string">Study location</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;GAZ_00000448"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">1</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Area del estudio</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House location</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Study Area</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Study location</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">areest</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000002 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000002">
+        <rdfs:label rdf:datatype="&xsd;string">Enrollment date</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">2</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Enrollment date</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Enrollment date</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Fecha de entrevista</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">House location</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">fecha</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000003 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000003">
+        <rdfs:label rdf:datatype="&xsd;string">Community</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;GAZ_00000448"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">3.1</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Codmunidad</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Community</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Community</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Comunidad</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House location</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text encoded, categorical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000004 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000004">
+        <rdfs:label rdf:datatype="&xsd;string">Date of Birth</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">15</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Date of Birth</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Date of Birth</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Fecha de Nacimiento</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">fec_naci</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000005 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000005">
+        <rdfs:label rdf:datatype="&xsd;string">Age at time of enrollment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">16</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Age at time of enrollment</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Age at time of enrollment</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Edad</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">edad</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000006 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000006">
+        <rdfs:label rdf:datatype="&xsd;string">Sex</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">17.1</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Sex</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Sex</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Sexo</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">sexo</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000007 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000007">
+        <rdfs:label rdf:datatype="&xsd;string">Pregnant</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">17.2</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Gestante</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Pregnant</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Pregnant</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">gestante</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000008 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000008">
+        <rdfs:label rdf:datatype="&xsd;string">Marital status</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">18</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">EstCiv</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Estado civil</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Marital status</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Marital status</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000009 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000009">
+        <rdfs:label rdf:datatype="&xsd;string">Time living in the community (in years)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">19</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">TieCom</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tiempo en la comunidad</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Time In Community</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Time living in the community (in years)</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000010 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000010">
+        <rdfs:label rdf:datatype="&xsd;string">Time in home</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">20</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">TieHog</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tiempo en el hogar</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Time in home</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Time in home</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000011 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000011">
+        <rdfs:label rdf:datatype="&xsd;string">Relationship head of house</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">21</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">RelJeFam</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Relacion Jefe de Familia</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Relationship head of house</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Relationship head of house</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000012 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000012">
+        <rdfs:label rdf:datatype="&xsd;string">Educational level</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">22.1</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Educational level</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Educational level</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Grado de instrucciÃ³n</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Instruc</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000013 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000013">
+        <rdfs:label rdf:datatype="&xsd;string">Plan to move</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000307"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">22.2</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Piensa mudarse</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Plan to move</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Plan to move</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">Population</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">mud</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000014 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000014">
+        <rdfs:label rdf:datatype="&xsd;string">Number of infections with P. vivax in lifetime</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000277"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">23</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">MalViv</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of infections with P. vivax in lifetime</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmero de infecciones con P. vivax en toda su vida</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">infections w/ p. viv</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/77=not remember)</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000015 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000015">
+        <rdfs:label rdf:datatype="&xsd;string">Number of infections with P. vivax in the last year</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000277"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">24</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">MalVivano</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of infections with P. vivax in the last year</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmero de infecciones con P. vivax en el Ãºltimo a?o</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">infections w/ p. viv (year)</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/77=not remember)</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000016 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000016">
+        <rdfs:label rdf:datatype="&xsd;string">Number of infections with P. falciparum in lifetime</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000277"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">25</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">MalFal</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of infections with P. falciparum in lifetime</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmero de infecciones con P. falciparum en toda su vida</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">infections w/ p.fal</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/77=not remember)</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000017 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000017">
+        <rdfs:label rdf:datatype="&xsd;string">Number of infections with P. falciparum in the last year</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000277"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">26</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">MalFalano</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of infections with P. falciparum in the last year</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmero de infecciones con P. falciparum en el Ãºltimo a?o</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">infections w/ p.fal (year)</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/77=not remember)</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000018 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000018">
+        <rdfs:label rdf:datatype="&xsd;string">Traveled before malaria</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000278"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">27</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Antes de enfermear de malaria viajÃ³</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Traveled before malaria</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000019 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000019">
+        <rdfs:label rdf:datatype="&xsd;string">Travel in the last month (more than 10 km away from the community)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000278"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">28</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Travel in the last month (more than 10 km away from the community)</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Viaje en el Ãºltimo mes (mÃ¡s de 10km de la comunidad)</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Viaultimes</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Viaultimes</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000020 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000020">
+        <rdfs:label rdf:datatype="&xsd;string">Days of Travel</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000278"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">29</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Days of Travel</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Duracion de cada viaje en dÃ­as</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000021 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000021">
+        <rdfs:label rdf:datatype="&xsd;string">Travel by ship</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000278"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">30</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">RÃ­o por el cual navegÃ³ en cada viaje</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Travel by ship</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000022 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000022">
+        <rdfs:label rdf:datatype="&xsd;string">Travel destination</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000278"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">31</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Lugar o comunidad visitada en cada viaje</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">Malaria</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Travel destination</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000023 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000023">
+        <rdfs:label rdf:datatype="&xsd;string">Type of occuaption</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">32</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tipo de trabajo</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Type of occuaption</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-6</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">employment status</amazonia:webprotege_name>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">trabaj</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000024 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000024">
+        <rdfs:label rdf:datatype="&xsd;string">Job description</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">33</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">DescripciÃ³n de trabajo</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Job description</obo:EUPATH_0000264>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Last Job</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">destra</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text/99=NA</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000025 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000025">
+        <rdfs:label rdf:datatype="&xsd;string">Primary economic activity</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">34</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Primary economic activity</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Principal actividad econÃ³mica</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-14/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">primary occupation</amazonia:webprotege_name>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">traprin</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000026 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000026">
+        <rdfs:label rdf:datatype="&xsd;string">Number of days per week at job</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">35</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dias por semana de trabajo</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of days per week at job</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">days worked per week (primary)</amazonia:webprotege_name>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">diassemp</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/99=NA</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000027 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000027">
+        <rdfs:label rdf:datatype="&xsd;string">Number of hours per day at job</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">36</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Horas por dia de trabajo</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Hordiap</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of hours per day at job</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Work Hours/Day (Primary)</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/99=NA</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000028 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000028">
+        <rdfs:label rdf:datatype="&xsd;string">Received payment (primary activity)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">38</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Received payment (primary activity)</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Recibe un pago por su actividad principal</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Recpagp</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">received payment (primary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000029 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000029">
+        <rdfs:label rdf:datatype="&xsd;string">Salary in soles (primary activity)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">39</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Cantip</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Ingresos en soles</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Salary in soles (primary activity)</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/99=NA</amazonia:allow_values>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">salary in soles (primary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000030 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000030">
+        <rdfs:label rdf:datatype="&xsd;string">Pay period (primary activity)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">40</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Frecuencia de pago</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Frepagp</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Pay period (primary activity)</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">pay period (primary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000031 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000031">
+        <rdfs:label rdf:datatype="&xsd;string">Other job in the last month</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">41</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Other job in the last month</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Otrlab</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Otro trabajo en el Ãºltimo mes</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">otrlab</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000032 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000032">
+        <rdfs:label rdf:datatype="&xsd;string">Other job description</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">42</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Especificar otro trabajo</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Other job description</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-14/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">lab</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">other work</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000033 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000033">
+        <rdfs:label rdf:datatype="&xsd;string">Other job description</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">42.14</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Especificar otro trabajo (opcion 14)</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Other job description</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">labotr</amazonia:webprotege_name>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">labotr</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000034 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000034">
+        <rdfs:label rdf:datatype="&xsd;string">Number of days per week at other job</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">43</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dias por semana de otro trabajo</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of days per week at other job</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">days worked per week (secodary)</amazonia:webprotege_name>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">diasseml</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000035 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000035">
+        <rdfs:label rdf:datatype="&xsd;string">Number of hours per day at other job</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">44</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Horas por dia de otro trabajo</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Hordial</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of hours per day at other job</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Work Hours/Day (Secondary)</amazonia:webprotege_name>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/99=NA</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000036 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000036">
+        <rdfs:label rdf:datatype="&xsd;string">Received payment (Other job)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">46</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Received payment (Other job)</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Recibe un pago por el otro trabajo</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Recpagl</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">received payment (secondary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000037 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000037">
+        <rdfs:label rdf:datatype="&xsd;string">Salary in soles (Other job)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">47</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Cantidad en soles del otro trabajo</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Cantil</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Salary in soles (Other job)</obo:EUPATH_0000264>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical/99=NA</amazonia:allow_values>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">salary in soles (secondary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000038 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000038">
+        <rdfs:label rdf:datatype="&xsd;string">Pay period (Other job)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000279"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">48</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Frecuencia de pago del otro trabajo</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Frepagl</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">Labor</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Pay period (Other job)</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">pay period (secondary)</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000039 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000039">
+        <rdfs:label rdf:datatype="&xsd;string">Total Area (m2)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">49</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Area total</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Total Area</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Total Area (m2)</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">area</amazonia:var_name_in_spreadsheets>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000040 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000040">
+        <rdfs:label rdf:datatype="&xsd;string">Covered Area (m2)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">50</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Area techada</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Covered Area (m2)</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Covered Area (m2)</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">areate</amazonia:var_name_in_spreadsheets>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000041 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000041">
+        <rdfs:label rdf:datatype="&xsd;string">Number of sleeping places</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string"># bedrooms</amazonia:webprotege_name>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">51</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of sleeping places</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmeros de cuartos usados solo para dormir</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">cuardor</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000042 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000042">
+        <rdfs:label rdf:datatype="&xsd;string">Number of common areas</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string"># Common Areas</amazonia:webprotege_name>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">52</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of common areas</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">NÃºmeros de cuartos comunes</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">cuacom</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000043 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000043">
+        <rdfs:label rdf:datatype="&xsd;string">Location of kitchen</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">53</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Kitchen</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Location of kitchen</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Lugar de la Cocina</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">coci</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000044 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000044">
+        <rdfs:label rdf:datatype="&xsd;string">Electricity supply</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000302"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">54</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Electricity</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Electricity supply</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tiene InstalaciÃ³n elÃ©ctrica</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">elec</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000045 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000045">
+        <rdfs:label rdf:datatype="&xsd;string">Drinking water source</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000302"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">56</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Drinking water source</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Drinking water source</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Fuente de agua</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-10</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">fueagu</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000046 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000046">
+        <rdfs:label rdf:datatype="&xsd;string">Type of housing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000304"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">57</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Rent Or Own</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tipo de vivienda</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Type of housing</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">tencas</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000047 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000047">
+        <rdfs:label rdf:datatype="&xsd;string">Wall material</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">58</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Material de Paredes</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Wall material</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Wall material</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-10</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">pared_ext,pared_int</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000048 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000048">
+        <rdfs:label rdf:datatype="&xsd;string">Roof material</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">59</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Material de Techo</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Roof material</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Roof material</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-4</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">techo</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000049 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000049">
+        <rdfs:label rdf:datatype="&xsd;string">Floor material</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">60</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Floor material</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Floor material</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Mateial de Piso</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Piso</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-7</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000050 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000050">
+        <rdfs:label rdf:datatype="&xsd;string">Date of last fumigation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000276"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">61</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Date of last fumigation</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Fecha de Ãºltima fumigaciÃ³n</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">date</amazonia:allow_values>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">fumi</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">last fumigation date</amazonia:webprotege_name>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000051 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000051">
+        <rdfs:label rdf:datatype="&xsd;string">Garbage disposal</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000302"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">62</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">EliminaciÃ³n de basura</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Garbage disposal</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Garbage disposal</obo:EUPATH_0000264>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">basu</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-6</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000052 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000052">
+        <rdfs:label rdf:datatype="&xsd;string">Cooking fuel</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000302"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">63</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Combustible para cocinar</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Cooking fuel</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Cooking fuel</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">combus</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000053 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000053">
+        <rdfs:label rdf:datatype="&xsd;string">Excreta disposal</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000302"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">64</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">EliminaciÃ³n de excretas</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Excreta disposal</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Toilet fixture</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-7</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">excre</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000054 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000054">
+        <rdfs:label rdf:datatype="&xsd;string">Number of beds in household</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000303"/>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string"># sleeping places</amazonia:webprotege_name>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">65</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Number of beds in household</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Numero de camas en la vivienda</obo:EUPATH_0000265>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">numcam</amazonia:var_name_in_spreadsheets>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numerical</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000055 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000055">
+        <rdfs:label rdf:datatype="&xsd;string">Bed Net Material</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000276"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">67</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Bed Net Material</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Bed Net Material</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Principal material mosquitero</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-4</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">matmos</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000056 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000056">
+        <rdfs:label rdf:datatype="&xsd;string">Bednets Last Treated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000276"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">68</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Bednets Last Treated</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Bednets Last Treated</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Ultima impregnaciÃ³n de mosquitero</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-6</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">ultimpr</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000057 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000057">
+        <rdfs:label rdf:datatype="&xsd;string">Responsible of treated bednets</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000276"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">69</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Last Treated Bednets</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Responsible of treated bednets</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-4/99=NA</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">imprmo</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 xml:lang="es">QuiÃ©n impregnÃ³ el mosquitero</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000058 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000058">
+        <rdfs:label rdf:datatype="&xsd;string">Assets</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000304"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">70</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Assets</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Assets</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Posesiones</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">silla,sillon,telefono,camas,armarios,roperos,mesa,refrigeradora,congeladora,licuadora,cocelec,cocgas,cockero,coccar,radio,TV_BN,TV_COL,DVD,Min</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000059 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000059">
+        <rdfs:label rdf:datatype="&xsd;string">Animals on the property</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">71</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Animales que viven en la casa</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Animals</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Animals on the property</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">F1</amazonia:form>
+        <amazonia:table rdf:datatype="&xsd;string">House</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">censo_exel_proy1.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">vacas,cabras,pollos,gallinas,gallos,pavo,patos,pericos,loro,mono,chancho,conejo,perros,gatos,tortuga.</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000060 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000060">
+        <rdfs:label rdf:datatype="&xsd;string">Month</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000281"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">2.1</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Mes</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Mes</obo:EUPATH_0000265>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Month</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Month</obo:EUPATH_0000264>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000061 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000061">
+        <rdfs:label rdf:datatype="&xsd;string">Year</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000281"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">2.2</amazonia:quest_num_in_forms>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">A?o</obo:EUPATH_0000265>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Anho</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Year</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Year</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000062 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000062">
+        <rdfs:label rdf:datatype="&xsd;string">Day</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000281"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">2.3</amazonia:quest_num_in_forms>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Day</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Day</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Dias</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dias del 1 al 31</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">text</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000063 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000063">
+        <rdfs:label rdf:datatype="&xsd;string">Participant status at visit</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000310"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">3</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">3_PRESENCIA</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Participant status at visit</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Presencia</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Present</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-7</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000064 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000064">
+        <rdfs:label rdf:datatype="&xsd;string">Fever (subjective)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">4</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">4_Fiebre</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Fever (subjective)</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Fever (subjective)</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Fiebre</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000065 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000065">
+        <rdfs:label rdf:datatype="&xsd;string">Chill</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">5</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">5_Escalofrios</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Chill</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Chill</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Esccalofrios</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000066 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000066">
+        <rdfs:label rdf:datatype="&xsd;string">Headache</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">6</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">6_Dolor de cabeza</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dolor de cabeza</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Headache</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Headache</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000067 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000067">
+        <rdfs:label rdf:datatype="&xsd;string">Abdominal pain</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">7</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">7_Dolor abdominal</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Abdominal pain</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Abdominal pain</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dolor abdominal</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000068 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000068">
+        <rdfs:label rdf:datatype="&xsd;string">Back pain</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">8</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">8_Dolor de espalda</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Back pain</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Back pain</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Dolor de espalda</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000069 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000069">
+        <rdfs:label rdf:datatype="&xsd;string">Rash/eruption</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">9</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">9_Rash/ErupciÃ³n</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Rash/Erupcion</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Rash/eruption</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Rash/eruption</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000070 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000070">
+        <rdfs:label rdf:datatype="&xsd;string">Nausea</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">10</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">10_Nauseas</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Nausea</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Nausea</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Nauseas</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000071 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000071">
+        <rdfs:label rdf:datatype="&xsd;string">Vomiting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">11</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">11_Vomitos</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Vomiting</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Vomiting</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">VÃ³mitos</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000072 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000072">
+        <rdfs:label rdf:datatype="&xsd;string">Anorexia</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">12</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">12_Anorexia</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Anorexia</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Anorexia</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Anorexia</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000073 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000073">
+        <rdfs:label rdf:datatype="&xsd;string">Dizziness/vertigo</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">13</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">13_Mareos</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Dizziness/vertigo</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Dizziness/vertigo</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Mareos</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000074 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000074">
+        <rdfs:label rdf:datatype="&xsd;string">Diarrhea</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">14</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">14_Diarrea</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Diarrea</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Diarrhea</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Diarrhea</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000075 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000075">
+        <rdfs:label rdf:datatype="&xsd;string">Cough</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000309"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">15</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">15_Tos</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Cough</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Cough</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">tos</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000076 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000076">
+        <rdfs:label rdf:datatype="&xsd;string">Temperature at visit</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">17</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Temperatura</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Temperature at visit</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Temperature at visit</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numeric</amazonia:allow_values>
+        <amazonia:table rdf:datatype="&xsd;string">tbltemperatura</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">temperatura</amazonia:var_name_in_spreadsheets>
+        <rdfs:comment>JZ: should it be &apos;Laboratory Findings&apos; or &apos;Symptoms and Signs&apos;?</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000077 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000077">
+        <rdfs:label rdf:datatype="&xsd;string">blood sample was collected for blood smear</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000280"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">18</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">18_GOTA GRUESA</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Blood smear reading (+/-)</amazonia:webprotege_name>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">TomÃ³ gota gruesa?</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">blood sample was collected for blood smear</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000078 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000078">
+        <rdfs:label rdf:datatype="&xsd;string">Thick Smear result</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">19</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">19_FROTIS</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Frotis</obo:EUPATH_0000265>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Thick Smear</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Thick Smear result</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical,N/F/V/M</amazonia:allow_values>
+        <rdfs:comment>JZ: what is it different from &apos;Blood Smear&apos;? Both refer to same variable in the WebProtege</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000079 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000079">
+        <rdfs:label rdf:datatype="&xsd;string">blood sample was collected in filter paper</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000280"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">20</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">20_FILTRO</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Filter</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">TomÃ³ papel filtro</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">blood sample was collected in filter paper</obo:EUPATH_0000264>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000080 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000080">
+        <rdfs:label rdf:datatype="&xsd;string">Malaria Medication (Yes/No)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000057"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">21.1</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">21_1_Medicamento</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Malaria Medication (Yes/No)</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Malaria Medication (Yes/No)</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tomo Medicamento</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2/-1=no data</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000081 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000081">
+        <rdfs:label rdf:datatype="&xsd;string">Malaria Medication (First Line)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000057"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">21.2</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">21_2_Medicamento</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Malaria Medication (First Line)</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Malaria Medication (First Line)</obo:EUPATH_0000264>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tomo Medicamento</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical,C/P/A/M/Q/L</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000082 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000082">
+        <rdfs:label rdf:datatype="&xsd;string">Malaria Medication (Second Line)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000057"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">21.3</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">21_3_Medicamento</amazonia:var_name_in_spreadsheets>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Malaria Medication (Second Line)</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Malaria Medication (Second Line)</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Tomo Medicamento</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical,C/P/A/M/Q/L</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000083 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000083">
+        <rdfs:label rdf:datatype="&xsd;string">Contact W/ Malaria</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">22</amazonia:quest_num_in_forms>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">22_Contacto malaria</amazonia:var_name_in_spreadsheets>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Contact W/ Malaria</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Contact W/ Malaria</obo:EUPATH_0000264>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Contacto con Malaria</obo:EUPATH_0000265>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-2</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000084 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000084">
+        <rdfs:label rdf:datatype="&xsd;string">Type of visit</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000310"/>
+        <amazonia:quest_num_in_forms rdf:datatype="&xsd;string">25.3</amazonia:quest_num_in_forms>
+        <amazonia:form rdf:datatype="&xsd;string">F2</amazonia:form>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx</amazonia:file_name_in_box_net>
+        <amazonia:table rdf:datatype="&xsd;string">PresenciaSintomasTratamiento</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">Razon</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">RazÃ³n de la visita</obo:EUPATH_0000265>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Type of visit</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Visit type</amazonia:webprotege_name>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical,1-3</amazonia:allow_values>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000085 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000085">
+        <rdfs:label rdf:datatype="&xsd;string">Blood Smear</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Blood Smear</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Blood Smear</obo:EUPATH_0000264>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Resultado de Gota Gruesa</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5</amazonia:allow_values>
+        <amazonia:table rdf:datatype="&xsd;string">f5_result_smear</amazonia:table>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">gg_result</amazonia:var_name_in_spreadsheets>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <rdfs:comment>JZ: what is it different from &apos;Thick Smear result&apos;? Both refer to same variable in the WebProtege</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000086 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000086">
+        <rdfs:label rdf:datatype="&xsd;string">Parasite Detection By PCR</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">Parasite Detection By PCR</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">Parasite Detection By PCR</amazonia:webprotege_name>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">Resultado de PCR</obo:EUPATH_0000265>
+        <amazonia:allow_values rdf:datatype="&xsd;string">categorical, 1-5</amazonia:allow_values>
+        <amazonia:table rdf:datatype="&xsd;string">f6_result_pcr</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">pcr_result</amazonia:var_name_in_spreadsheets>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000087 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000087">
+        <rdfs:label rdf:datatype="&xsd;string">PCR Copies/reaction P. Fal</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">PCR Copies/reaction P. Fal</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">PCR Copies/reaction P. Fal</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">f6_result_pcr</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numeric</amazonia:allow_values>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">qtf_crx_f</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">quantificacion copia por reaccion falciparum</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000088 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000088">
+        <rdfs:label rdf:datatype="&xsd;string">PCR Copies/reaction P. Viv</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">PCR Copies/reaction P. Viv</obo:EUPATH_0000264>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">PCR Copies/reaction P. Viv</amazonia:webprotege_name>
+        <amazonia:table rdf:datatype="&xsd;string">f6_result_pcr</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numeric</amazonia:allow_values>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">qtf_crx_v</amazonia:var_name_in_spreadsheets>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">quantificacion copia por reaccion vivax</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000089 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000089">
+        <rdfs:label rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Fal</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Fal</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Fal</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">ct_f</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">f6_result_pcr</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numeric</amazonia:allow_values>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">valor de ct de P.falciparum</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/AMAZONIA_0000090 -->
+
+    <owl:Class rdf:about="&obo;AMAZONIA_0000090">
+        <rdfs:label rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Viv</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;OGMS_0000018"/>
+        <amazonia:form rdf:datatype="&xsd;string">MANICHO</amazonia:form>
+        <amazonia:webprotege_name rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Viv</amazonia:webprotege_name>
+        <obo:EUPATH_0000264 rdf:datatype="&xsd;string">PCR Threshold Cycle - P. Viv</obo:EUPATH_0000264>
+        <amazonia:var_name_in_spreadsheets rdf:datatype="&xsd;string">ct_v</amazonia:var_name_in_spreadsheets>
+        <amazonia:table rdf:datatype="&xsd;string">f6_result_pcr</amazonia:table>
+        <amazonia:file_name_in_box_net rdf:datatype="&xsd;string">not uploaded</amazonia:file_name_in_box_net>
+        <amazonia:allow_values rdf:datatype="&xsd;string">numeric</amazonia:allow_values>
+        <obo:EUPATH_0000265 rdf:datatype="&xsd;string">valor de ct de P.vivax</obo:EUPATH_0000265>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000057">
+        <rdfs:label rdf:datatype="&xsd;string">Medication</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A material entity that is bearer of a medication role.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">medication material</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000093 -->
+
+    <rdf:Description rdf:about="&obo;EUPATH_0000093">
+        <rdfs:label rdf:datatype="&xsd;string">Dwelling</rdfs:label>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">An information content entity about dwelling.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">dwelling information</obo:EUPATH_0000266>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
+
+    <rdf:Description rdf:about="&obo;EUPATH_0000096">
+        <rdfs:label rdf:datatype="&xsd;string">Participant</rdfs:label>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">An information content entity which is about features of a participant under investigation.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">study participant information</obo:EUPATH_0000266>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000276 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000276">
+        <rdfs:label xml:lang="en">Vector Intervention</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <rdfs:comment>new category added for the needs of Aamazonia data</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000277 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000277">
+        <rdfs:label xml:lang="en">Previous infections</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <rdfs:comment>new category added for the needs of Aamazonia data</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000278 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000278">
+        <rdfs:label xml:lang="en">Traveling Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <rdfs:comment>new category added for the needs of Aamazonia data</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000279 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000279">
+        <rdfs:label xml:lang="en">Working Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <rdfs:comment>new category added for the needs of Aamazonia data</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000280 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000280">
+        <rdfs:label xml:lang="en">Blood Sampling</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <rdfs:comment>Added by Amazonia group</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000281 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000281">
+        <rdfs:label xml:lang="en">Dates</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000310"/>
+        <rdfs:comment>JZ: should use PRISM: visit date, combine values of its subClasses</rdfs:comment>
+        <rdfs:comment>Added by Amazonia group</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000302 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000302">
+        <rdfs:label rdf:datatype="&xsd;string">Facilities</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on dwelling facilities</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000303 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000303">
+        <rdfs:label rdf:datatype="&xsd;string">Physical Characteristics</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on dwelling physical characteristics</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000304 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000304">
+        <rdfs:label rdf:datatype="&xsd;string">Socioeconomic Factors</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000093"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">socioeconomic factor</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000307 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000307">
+        <rdfs:label rdf:datatype="&xsd;string">Participant Study Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000096"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on participant study details</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000309 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000309">
+        <rdfs:label rdf:datatype="&xsd;string">Symptoms and Signs</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">symptom or sign information</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000310 -->
+
+    <owl:Class rdf:about="&obo;EUPATH_0000310">
+        <rdfs:label rdf:datatype="&xsd;string">Visit Details</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">information on clinical visit details</obo:EUPATH_0000266>
+        <rdfs:comment>JZ: use this one instead of &apos;Visit Information&apos; created by Amazonia group</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000328 -->
+
+    <rdf:Description rdf:about="&obo;EUPATH_0000328">
+        <rdfs:label rdf:datatype="&xsd;string">Visit</rdfs:label>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">clinical visit information</obo:EUPATH_0000266>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
+
+    <owl:Class rdf:about="&obo;GAZ_00000448">
+        <rdfs:label rdf:datatype="&xsd;string">geographic location</rdfs:label>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A reference to a place on the Earth, by its name or by its geographical location.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">geographic location</obo:EUPATH_0000266>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000018 -->
+
+    <owl:Class rdf:about="&obo;OGMS_0000018">
+        <rdfs:label rdf:datatype="&xsd;string">Laboratory Findings</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&obo;EUPATH_0000328"/>
+        <obo:EUPATH_0000273 rdf:datatype="&xsd;string">A representation of a quality of a specimen that is the output of a laboratory test and that can support an inference to an assertion about some quality of the patient.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000271 rdf:datatype="&xsd;string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000266 rdf:datatype="&xsd;string">laboratory finding</obo:EUPATH_0000266>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

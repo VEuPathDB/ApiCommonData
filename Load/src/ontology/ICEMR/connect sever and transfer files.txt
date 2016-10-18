@@ -1,0 +1,39 @@
+ssh jiezheng@spruce.pcbi.upenn.edu
+
+ssh jiezheng@holly.pcbi.upenn.edu
+
+
+
+
+
+copy local parsed ontology terms for loading to the server (need first copy to the directory that I have permission)
+—————————————
+
+// copy to local files my holly ontology directory, first got to local directory
+scp *.txt jiezheng@holly.pcbi.upenn.edu:/home/jiezheng/ontology
+
+// move file to the correct directory
+
+PRISM project:
+mv *.txt /eupath/data/EuPathDB/manualDelivery/PRISM/common/ontology/ICEMR_PRISM/20151118/final
+
+
+Indian project
+mv *.txt /eupath/data/EuPathDB/manualDelivery/ICEMR/common/ontology/ICEMR_India/20160216/fromProvider/ 
+
+(using yes to overwrite the existing file)
+
+// change file permissions
+chmod 766 *.*
+
+
+
+More generally, the scp command will copy a local file to a remote location:
+
+%% scp <local file> <remote user>@<remote machine>:<remote path>
+
+
+or vice versa, a remote file to a local file:
+
+%% scp <remote user>@<remote machine>:<remote path> <local file>
+
