@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+use File::Find;
+use File::Basename;
+
+my ($userDatasetId, $geneListFile) = @ARGV;
+
+usage() unless scalar(@ARGV) == 2;
+
+my $gusconfig = GUS::Supported::GusConfig->new();
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+
+my $dbh = $db->getQueryHandle(0);
+
+my $sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UD_GeneList
+    WHERE user_dataset_id = ?
+EOF
+
+my $sth1 = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.InstalledUserDatasets
+    WHERE user_dataset_id = ?
+EOF
+  $sth->execute($userDatasetId);
+  $sth1->execute($userDatasetId);
+}
+
+$dbh->commit;
+
+sub usage {
+  die "
+
+Uninstall a Gene List user dataset from the user dataset schema.
+
+Usage unistallGeneListUserDataset user_dataset_id
+
+Where:
+  user_dataset_id:  a user dataset id
+";
+}
