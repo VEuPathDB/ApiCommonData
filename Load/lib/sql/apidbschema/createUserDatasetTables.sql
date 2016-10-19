@@ -1,14 +1,28 @@
 
-create table ApiDBUserDataset.InstalledUserDataset(
-user_dataset_id not null number(10),
+create table ApiDBUserDatasets.InstalledUserDataset (
+user_dataset_id number(10) not null,
 primary key (user_dataset_id)
 );
 
+
+---------------------------------------------------------------------------------
+
+create table ApiDBUserDatasets.UD_GeneId (
+USER_DATASET_ID          NUMBER(10),     
+gene_SOURCE_ID                             VARCHAR2(100),  
+FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
+);
+
+CREATE unique INDEX ApiDBUserDatasets.UD_GENEID_idx1 ON ApiDBUserDatasets.UD_geneid (user_dataset_id, gene_source_id) tablespace indx;
+
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UD_GeneId TO gus_w;
+GRANT select ON ApiDBUserDatasets.UD_GeneId TO gus_r;
+
 ----------------------------------------------------------------------------
-create table ApiDBUserDataset.UD_PROTOCOLAPPNODE (
-PROTOCOL_APP_NODE_ID         NOT NULL NUMBER(10),     
+create table ApiDBUserDatasets.UD_PROTOCOLAPPNODE (
+PROTOCOL_APP_NODE_ID         NUMBER(10) not null,     
 TYPE_ID                               NUMBER(10),     
-NAME                         NOT NULL VARCHAR2(200),  
+NAME                         VARCHAR2(200) not null,  
 DESCRIPTION                           VARCHAR2(1000), 
 URI                                   VARCHAR2(300),  
 USER_DATASET_ID          NUMBER(10),     
@@ -17,31 +31,31 @@ SUBTYPE_ID                            NUMBER(10),
 TAXON_ID                              NUMBER(10),     
 NODE_ORDER_NUM                        NUMBER(10),     
 ISA_TYPE                              VARCHAR2(50),   
-MODIFICATION_DATE            NOT NULL DATE           
-USER_READ                    NOT NULL NUMBER(1),      
-USER_WRITE                   NOT NULL NUMBER(1),      
-GROUP_READ                   NOT NULL NUMBER(1),      
-GROUP_WRITE                  NOT NULL NUMBER(1),      
-OTHER_READ                   NOT NULL NUMBER(1),      
-OTHER_WRITE                  NOT NULL NUMBER(1),      
-ROW_USER_ID                  NOT NULL NUMBER(12),     
-ROW_GROUP_ID                 NOT NULL NUMBER(4),      
-ROW_PROJECT_ID               NOT NULL NUMBER(4),      
-ROW_ALG_INVOCATION_ID        NOT NULL NUMBER(12),  
- FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDataset.InstalledUserDataset,
+MODIFICATION_DATE            DATE not null,         
+USER_READ                    NUMBER(1) not null ,      
+USER_WRITE                   NUMBER(1) not null ,      
+GROUP_READ                   NUMBER(1) not null ,      
+GROUP_WRITE                  NUMBER(1) not null ,      
+OTHER_READ                   NUMBER(1) not null ,      
+OTHER_WRITE                  NUMBER(1) not null ,      
+ROW_USER_ID                  NUMBER(12) not null ,     
+ROW_GROUP_ID                 NUMBER(4) not null ,      
+ROW_PROJECT_ID               NUMBER(4) not null ,      
+ROW_ALG_INVOCATION_ID        NUMBER(12) not null ,  
+ FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset,
  PRIMARY KEY (protocol_app_node_id)
 );
 
-CREATE INDEX apiDBUserDataset.UD_PAN_idx1 ON apiDBUserDataset.UD_PROTOCOLAPPNODE (type_id) tablespace indx;
-CREATE INDEX apiDBUserDataset.UD_PAN_idx2 ON apiDBUserDataset.UD_PROTOCOLAPPNODE (user_dataset_id) tablespace indx;
-CREATE INDEX apiDBUserDataset.UD_PAN_idx3 ON apiDBUserDataset.UD_PROTOCOLAPPNODE (subtype_id) tablespace indx;
-CREATE INDEX apiDBUserDataset.UD_PAN_idx4 ON apiDBUserDataset.UD_PROTOCOLAPPNODE (taxon_id, protocol_app_node_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_PAN_idx1 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (type_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_PAN_idx2 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (user_dataset_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_PAN_idx3 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (subtype_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_PAN_idx4 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (taxon_id, protocol_app_node_id) tablespace indx;
 
-create sequence ApiDBUserDataset.UD_ProtocolAppNode_sq;
+create sequence ApiDBUserDatasets.UD_ProtocolAppNode_sq;
 
-GRANT insert, select, update, delete ON ApiDBUserDataset.UD_ProtocolAppNode TO gus_w;
-GRANT select ON ApiDBUserDataset.UD_ProtocolAppNode TO gus_r;
-GRANT select ON ApiDBUserDataset.UD_ProtocolAppNode_sq TO gus_w;
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UD_ProtocolAppNode TO gus_w;
+GRANT select ON ApiDBUserDatasets.UD_ProtocolAppNode TO gus_r;
+GRANT select ON ApiDBUserDatasets.UD_ProtocolAppNode_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -62,40 +76,40 @@ WHERE 'UD_ProtocolAppNode' NOT IN (SELECT name FROM core.TableInfo
 
 -----------------------------------------------------------------------------------------------------
 
-create table ApiDBUserDataset.UD_NaFeatureExpression (
-NA_FEAT_EXPRESSION_ID NOT NULL NUMBER(12),    
-PROTOCOL_APP_NODE_ID  NOT NULL NUMBER(10),    
-NA_FEATURE_ID         NOT NULL NUMBER(10),    
+create table ApiDBUserDatasets.UD_NaFeatureExpression (
+NA_FEAT_EXPRESSION_ID NUMBER(12) NOT NULL,    
+PROTOCOL_APP_NODE_ID  NUMBER(10) NOT NULL,    
+NA_FEATURE_ID         NUMBER(10) NOT NULL,    
 VALUE                          FLOAT(126),    
 CONFIDENCE                     FLOAT(126),    
 STANDARD_ERROR                 FLOAT(126),    
 CATEGORICAL_VALUE              VARCHAR2(100), 
 PERCENTILE_CHANNEL1            FLOAT(126),    
 PERCENTILE_CHANNEL2            FLOAT(126),   
-MODIFICATION_DATE     NOT NULL DATE          
-USER_READ             NOT NULL NUMBER(1),     
-USER_WRITE            NOT NULL NUMBER(1),     
-GROUP_READ            NOT NULL NUMBER(1),     
-GROUP_WRITE           NOT NULL NUMBER(1),     
-OTHER_READ            NOT NULL NUMBER(1),     
-OTHER_WRITE           NOT NULL NUMBER(1),     
-ROW_USER_ID           NOT NULL NUMBER(12),    
-ROW_GROUP_ID          NOT NULL NUMBER(4),     
-ROW_PROJECT_ID        NOT NULL NUMBER(4),     
-ROW_ALG_INVOCATION_ID NOT NULL NUMBER(12),    
- FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES ApiDBUserDataset.UD_PROTOCOLAPPNODE,
+MODIFICATION_DATE     DATE  NOT NULL,         
+USER_READ             NUMBER(1) NOT NULL,     
+USER_WRITE            NUMBER(1) NOT NULL,     
+GROUP_READ            NUMBER(1) NOT NULL,     
+GROUP_WRITE           NUMBER(1) NOT NULL,     
+OTHER_READ            NUMBER(1) NOT NULL,     
+OTHER_WRITE           NUMBER(1) NOT NULL,     
+ROW_USER_ID           NUMBER(12) NOT NULL,    
+ROW_GROUP_ID          NUMBER(4) NOT NULL,     
+ROW_PROJECT_ID        NUMBER(4) NOT NULL,     
+ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL,    
+ FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES ApiDBUserDatasets.UD_PROTOCOLAPPNODE,
  PRIMARY KEY (NA_FEAT_EXPRESSION_ID)
 );
 
-CREATE INDEX apiDBUserDataset.UD_NFE_idx1 ON apiDBUserDataset.UD_NaFeatureExpression (protocol_app_node_id) tablespace indx;
-CREATE INDEX apiDBUserDataset.UD_NFE_idx2 ON apiDBUserDataset.UD_NaFeatureExpression (na_feature_id) tablespace indx;
-CREATE unique INDEX apiDBUserDataset.UD_NFE_idx3 ON apiDBUserDataset.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_NFE_idx2 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id) tablespace indx;
+CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id) tablespace indx;
 
-create sequence ApiDBUserDataset.UD_NaFeatureExpression_sq;
+create sequence ApiDBUserDatasets.UD_NaFeatureExpression_sq;
 
-GRANT insert, select, update, delete ON ApiDBUserDataset.UD_NaFeatureExpression TO gus_w;
-GRANT select ON ApiDBUserDataset.UD_NaFeatureExpression TO gus_r;
-GRANT select ON ApiDBUserDataset.UD_NaFeatureExpression_sq TO gus_w;
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UD_NaFeatureExpression TO gus_w;
+GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression TO gus_r;
+GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -113,19 +127,7 @@ FROM dual,
 WHERE 'UD_NaFeatureExpression' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-
----------------------------------------------------------------------------------
-
-create table ApiDBUserDataset.UD_GeneId (
-USER_DATASET_ID          NUMBER(10),     
-gene_SOURCE_ID                             VARCHAR2(100),  
-FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDataset.InstalledUserDataset,
-);
-
-CREATE unique INDEX apiDBUserDataset.UD_GENEID_idx1 ON apiDBUserDataset.UD_geneid (user_dataset_id, gene_source_id) tablespace indx;
-
-GRANT insert, select, update, delete ON ApiDBUserDataset.UD_GeneId TO gus_w;
-GRANT select ON ApiDBUserDataset.UD_GeneId TO gus_r;
+exit;
 
 
 

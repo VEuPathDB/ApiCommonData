@@ -36,25 +36,14 @@ GRANT references ON Sres.OntologyTerm TO Apidbuserdatasets;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidbuserdatasets;
 GRANT REFERENCES ON core.AlgorithmInvocation TO Apidbuserdatasets;
 
-
-
--- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
-GRANT SELECT ON core.ProjectInfo to Apidbuserdatasets;
-GRANT SELECT ON sres.TaxonName to Apidbuserdatasets;
-GRANT SELECT ON sres.Taxon to Apidbuserdatasets;
-GRANT SELECT, DELETE ON dots.NaFeatureImp TO PUBLIC;
-
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
     group_read, group_write, other_read, other_write, row_user_id,
     row_group_id, row_project_id, row_alg_invocation_id)
-SELECT core.databaseinfo_sq.nextval, 'Apidbuserdatasets',
+SELECT core.databaseinfo_sq.nextval, 'ApidbUserDatasets',
        'Installed User Datasets', sysdate,
        1, 1, 1, 1, 1, 1, 1, 1, p.project_id, 0
 FROM dual, (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p
-WHERE lower('Apidbuserdatasets') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
-
--- GRANTs required for CTXSYS
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to apidbuserdatasets;
+WHERE lower('ApidbUserDatasets') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 
 exit
