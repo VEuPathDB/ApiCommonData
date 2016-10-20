@@ -99,7 +99,13 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
     foreach($feature->get_all_tags()) {
       if($_ eq 'ID') { }
       elsif($_ eq 'PARENT') {
-        $feature->add_tag_value('Parent', $feature->remove_tag($_));
+
+        my ($parent) = $feature->remove_tag($_);
+
+        my @parents = split(",", $parent);
+        foreach(@parents) {
+          $feature->add_tag_value('Parent', $_);
+        }
       }
       else {
         $feature->add_tag_value(lc($_), $feature->remove_tag($_));
@@ -126,6 +132,7 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
       $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
       $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
+      $soTermName =~ s/_encoding$//;
 
       $feature->primary_tag($soTermName);
 
@@ -138,6 +145,16 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
         $feature->add_tag_value("Ontology_term", $_);
       }
     }
+
+
+    if($feature->primary_tag eq 'utr3prime') {
+      $feature->primary_tag('three_prime_UTR');
+    }
+    if($feature->primary_tag eq 'utr5prime') {
+      $feature->primary_tag('five_prime_UTR');
+    }
+
+
 
   $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
   print GFF $feature->gff_string . "\n";
