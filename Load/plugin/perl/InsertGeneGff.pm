@@ -8,6 +8,7 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Model::ApiDB::GeneGff;
 
+use Bio::Tools::GFF;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Populate the GeneGff table from a GFF file
@@ -85,14 +86,24 @@ sub run {
     my $gffFile = $self->getArg('gffFile');
     my $projectName = $self->getArg('projectName');
 
-    open(GFF, "<", $gffFile) or die "Cannot open file $gffFile for reading: $!";
+#    open(GFF, "<", $gffFile) or die "Cannot open file $gffFile for reading: $!";
     my ($currentGene, $currentContent, $lineCount, $insertCount);
     $self->getDb()->manageTransaction(0, 'begin');
 
-    while (<GFF>) {
+
+    my $gffio = Bio::Tools::GFF->new(-file => $gffFile, -gff_version => 3);
+
+
+    while(my $feature = $gffio->next_feature()) {
+      $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
+      my $primary = $feature->primary_tag();
+      my ($id) = $feature->get_tag_values("ID");
 
       # check for gene record
-      if (/\tgene\t.*\sID "*(\S*?)"* /) {
+      if ($primary eq 'gene') {
+
+
+
 
 	# write record for previous gene (if any)
 	if ($currentGene) {
@@ -104,6 +115,9 @@ sub run {
 					       row_count => 1,
 					       content => $currentContent,
 					      });
+
+#          print $geneGff->toString() . "\n";
+
 	  $geneGff->submit();
 	  if ($insertCount++ % 1000 == 0) {
 	    $self->getDb()->manageTransaction(0, 'commit');
@@ -113,12 +127,12 @@ sub run {
 	}
 
 	# reset info for next gene
-	$currentGene = $1;
+	$currentGene = $id;
 	$currentContent = "";
 	$lineCount = 0;
       }
 
-      $currentContent .= $_;
+      $currentContent .= $feature->gff_string() . "\n";
       $lineCount++;
     }
 
@@ -133,13 +147,15 @@ sub run {
 					   content => $currentContent,
 					  });
       $geneGff->submit();
+#          print $geneGff->toString() . "\n";
       $insertCount++;
     }
 
     $self->getDb()->manageTransaction(0, 'commit');
     $self->getDb()->manageTransaction(0, 'begin');
 
-    close GFF;
+
+    $gffio->close();
 
     return "loaded GFF3 records for $insertCount genes";
 }
