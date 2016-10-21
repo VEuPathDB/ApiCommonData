@@ -302,25 +302,24 @@ WHERE subclass_view='MassSpecFeature';
 GRANT SELECT ON DOTS.MASSSPECFEATURE TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON DOTS.MASSSPECFEATURE TO gus_w;
 
-
-
-alter table STUDY.PROTOCOLAPPNODE 
-add ISA_Type varchar2(50);
+alter table study.ProtocolAppNode ADD isa_type VARCHAR2(50);
 alter table study.protocolappnode add (node_order_num number(10));
-
 alter table results.FamilyExpression add (percentile_channel1 FLOAT(126));
 alter table results.GeneExpression add (percentile_channel1 FLOAT(126));
 alter table results.NaFeatureExpression add (percentile_channel1 FLOAT(126));
 alter table results.ReporterExpression add (percentile_channel1 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel1 FLOAT(126));
-
 alter table results.FamilyExpression add (percentile_channel2 FLOAT(126));
 alter table results.GeneExpression add (percentile_channel2 FLOAT(126));
 alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
 alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
-alter table results.nafeaturediffresult add (confidence FLOAT(126));
+ALTER TABLE results.NaFeatureDiffResult
+  ADD (confidence FLOAT(126),
+       z_score FLOAT(12),
+       is_significant NUMBER(1)
+      );
 
 alter table dots.GoAssocInstEvidCode add reference varchar2(500);
 alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(400);
