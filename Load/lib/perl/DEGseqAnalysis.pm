@@ -93,12 +93,12 @@ sub munge {
    while (my $line = <$IN>) {
 	chomp $line;
 #	print "gettting to the printing of the formatted file\n\n\n\n\n ";
-	if ($line =~/GeneNames/) {
+	if (($line =~/GeneNames/) || ($line=~ /^_/)) {
     #skip header
 	    next;
 	}
 	else {
-	    my @temps = split ",", $line;
+	    my @temps = split "\t", $line;
 	    my $reportedFC;
 	    my $id = $temps[0];
 #	    $id =~ s/"//g;
@@ -114,7 +114,14 @@ sub munge {
 	    my $pval = $temps[6];
 	    my $z_score = $temps[5];
 	    my $sig = $temps[9];
-	    print $OUT $id."\t".$foldchange."\t".$pval."\t".$z_score."\t".$sig."\n";
+	    my $boolsig;
+	    if ($sig eq 'TRUE') {
+		 $boolsig = 1;
+	    }
+	    elsif ($sig eq 'FALSE') {
+		$boolsig = 0;
+	    }
+	    print $OUT $id."\t".$foldchange."\t".$pval."\t".$z_score."\t".$boolsig."\n";
 	}
    }
     
