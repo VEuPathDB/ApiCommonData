@@ -31,6 +31,7 @@ use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
 
 use ApiCommonData::Load::IntronJunctions;
 use ApiCommonData::Load::DeseqAnalysis;
+use ApiCommonData::Load::DEGseqAnalysis;
 use Data::Dumper;
 
 
@@ -38,6 +39,7 @@ my $OUTPUT_FILE_BASE = "profiles";
 
 #-------------------------------------------------------------------------------
 
+#print Dumper "editing right file\n";
 sub getProfileSetName          { $_[0]->{profileSetName} }
 sub getSamples                 { $_[0]->{samples} }
 
@@ -70,37 +72,37 @@ sub munge {
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
 
-    foreach my $sampleName (keys %$samplesHash) {
-	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
-									 inputs => $samplesHash->{$sampleName},
-									 mainDirectory => $self->getMainDirectory,
-									 profileSetName => $profileSetName,
-									 samplesHash => $samplesHash,
-									 suffix => '_junctions.tab'});
-	$intronJunctions->setProtocolName("GSNAP/Junctions");
-	$intronJunctions->setDisplaySuffix(" [junctions]");
-	$intronJunctions->setTechnologyType($self->getTechnologyType());
-	
-	$intronJunctions->munge();
-    }
+#    foreach my $sampleName (keys %$samplesHash) {
+#	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
+#									 inputs => $samplesHash->{$sampleName},
+#									 mainDirectory => $self->getMainDirectory,
+#									 profileSetName => $profileSetName,
+#									 samplesHash => $samplesHash,
+#									 suffix => '_junctions.tab'});
+#	$intronJunctions->setProtocolName("GSNAP/Junctions");
+#	$intronJunctions->setDisplaySuffix(" [junctions]");
+#	$intronJunctions->setTechnologyType($self->getTechnologyType());
+#	
+#	$intronJunctions->munge();
+ #   }
     
-    foreach my $quantificationType ('htseq-union') {    
+ #   foreach my $quantificationType ('htseq-union') {    
 	
-	    if($isStrandSpecific) {
-		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
-		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
-	    }
-	    else {
-		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
-	    }
+#	    if($isStrandSpecific) {
+#		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+#		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+#	    }
+#	    else {
+#		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
+#	    }
 	
-    }
+ #   }
     
 #DESeq2 Analysis starts here  
 #print Dumper "SamplesHash is\n";
 #print Dumper %{$samplesHash};    
     if (keys %{$samplesHash} <2) {
-	print Dumper  "note: there are less than two conditions DESeq2 analysis can not be done\n";
+	print Dumper  "note: there are less than two conditions DESeq2 analysis  and or DEGseq analysis can not be done\n";
 	next;
     }
     else { 
@@ -136,14 +138,14 @@ sub munge {
 	    my %dataframeHash;
 	    my $ref = $reference; 
 	    my $comp = $comparator;
-	    print Dumper "\n\nREF is \n";
-	    print Dumper $ref;
-	    print Dumper "\n\n COMP is \n";
-	    print Dumper $comp;
+#	    print Dumper "\n\nREF is \n";
+#	    print Dumper $ref;
+#	    print Dumper "\n\n COMP is \n";
+#	    print Dumper $comp;
 	    $dataframeHash{$reference} = $samplesHash->{$ref};
 	    $dataframeHash{$comparator} = $samplesHash->{$comp};
-	    print Dumper "\n\ndataframeHash is \n";
-	    print Dumper %dataframeHash;
+#	    print Dumper "\n\ndataframeHash is \n";
+#	    print Dumper %dataframeHash;
 
 ##### trying to workout ref checks etc to deal with display names not matching sample names 
 	    my $Rrep1 = $dataframeHash{$reference}[0];
@@ -183,7 +185,22 @@ sub munge {
 
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 
-		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....skipping\n";
+		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
+		my $suffix = 'differentialExpressionDEGseq';
+		my $dataframeHashref = \%dataframeHash;
+#making new DEGseq object
+		my $DEGseqAnalysis = ApiCommonData::Load::DEGseqAnalysis->new({sampleName => $sampleNameClean,
+									     mainDirectory => $self->getMainDirectory,
+									     samplesHash => $dataframeHashref,
+									     reference => $ref,
+									     comparator => $comp,
+									     suffix => 'DEGseqAnalysis',
+									     profileSetName => $profileSetName});
+		$DEGseqAnalysis->setProtocolName("GSNAP/DEGseqAnalysis");
+		$DEGseqAnalysis->setDisplaySuffix( ' [DEGseqAnalysis]');
+		$DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
+		$DEGseqAnalysis->munge();
+
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
