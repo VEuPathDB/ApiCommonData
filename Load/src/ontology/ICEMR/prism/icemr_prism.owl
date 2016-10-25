@@ -644,12 +644,12 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">blood smear reading as positive or negative</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Bsdich</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Asexual parasites present</obo:EUPATH_0000268>
+        <obo:EUPATH_0000268 xml:lang="en">Asexual parasites present (microscopy)</obo:EUPATH_0000268>
         <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asexual parasites in the blood, as determined by microscopy</obo:EUPATH_0000270>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of asexual parasites in blood cells by microscopy using a value of positive or negative.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100016</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asexual parasites present</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asexual parasites present (microscopy)</rdfs:label>
     </owl:Class>
     
 
@@ -721,14 +721,14 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000089">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic parasitemia</obo:EUPATH_0000266>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic patent parasitemia</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">diagnosis of asymptomatic parasitemia</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Asymptomatic parasitemia</obo:EUPATH_0000268>
+        <obo:EUPATH_0000268 xml:lang="en">Asymptomatic patent parasitemia</obo:EUPATH_0000268>
         <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:EUPATH_0000270>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100026</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asymptomatic parasitemia</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asymptomatic patent parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -740,8 +740,9 @@
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of symptomatic malaria</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Malaria</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Symptomatic malaria</obo:EUPATH_0000268>
+        <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">febrile (subjective fever OR temperature&gt;=38) and parasites detected by microscopy (parasite density&gt;0), this should also be accompanied by antimalarial therapy</obo:EUPATH_0000270>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis to indicate whether a person has marlaria or not. It has value yes or no.</obo:EUPATH_0000273>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria based on febrile (subjective fever or temperature&gt;=38) and parasites detected by microscopy (parasite density&gt;0). It should also be accompanied by antimalarial therapy.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100070</icemr:prism_id>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptomatic malaria</rdfs:label>
     </owl:Class>
@@ -2194,15 +2195,81 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000338 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000338">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malaria diagnosis and blood smear information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000267 xml:lang="en">malariacat</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Malaria diagnosis and blood smear</obo:EUPATH_0000268>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about malaria diagnosis or blood smear.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100122</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria diagnosis and blood smear</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000482 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000482">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of parasitemia based on Loop-mediated isothermal amplification</obo:EUPATH_0000266>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">asexual parasites present by loop-mediated isothermal amplification assay</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">LAMP</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Asexual parasites present (LAMP)</obo:EUPATH_0000268>
+        <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of parasitemia based on Loop-mediated isothermal amplification</obo:EUPATH_0000270>
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of asexual parasites in blood cells by loop-mediated isothermal amplification (LAMP) using a value of positive or negative.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100121</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LAMP</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asexual parasites present (LAMP)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000483 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000483">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">asexual parasites present</obo:EUPATH_0000266>
+        <obo:EUPATH_0000267 xml:lang="en">Asexual parasites present</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Asexual parasites present</obo:EUPATH_0000268>
+        <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">either microscopy or LAMP positive</obo:EUPATH_0000270>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates whether asexual parasites presence in blood cells.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100125</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asexual parasites present</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000484 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000484">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic parasitemia</obo:EUPATH_0000266>
+        <obo:EUPATH_0000267 xml:lang="en">Asymptomatic parasitemia</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Asymptomatic parasitemia</obo:EUPATH_0000268>
+        <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">not febrile (no subjective fever and temperature&lt;38) and parasites detected by microscopy (parasite density &gt; 0) OR LAMP positive</obo:EUPATH_0000270>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of febrile (subjective fever and  temperature&gt;=38) and parasites detected by microscopy (parasite density &gt; 0) or LAMP assay (LAMP result is positive).</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100123</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asymptomatic parasitemia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000485 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000485">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of submicroscopic parasitemia</obo:EUPATH_0000266>
+        <obo:EUPATH_0000267 xml:lang="en">Submicroscopic parasitemia</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Submicroscopic parasitemia</obo:EUPATH_0000268>
+        <obo:EUPATH_0000270 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">negative microscopy (parasite density=0) and LAMP positive. I did not include febrile here as it is possible to be febrile and have a positive LAMP test, which was not considered symptomatic parasitemia and therefore not treated with antimalarial drugs.</obo:EUPATH_0000270>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites in blood is negative by microscopy (parasite density=0) but positive by LAMP assay.</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100124</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Submicroscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
