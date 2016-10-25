@@ -130,13 +130,13 @@ sub munge {
 
     &runCmd("rm -r $tempOut Rplots.pdf");
 ####################################################################################################
-#my $input_list = \@inputs;
-#  $self->setSourceIdType('gene');
-#  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
-#$self->getProtocolParamsHash();
-#$self->addProtocolParamValue('reference',$reference);
-#$self->addProtocolParamValue('comparator',$comparator);
-# $self->createConfigFile();
+my $input_list = \@inputs;
+  $self->setSourceIdType('gene');
+  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
+$self->getProtocolParamsHash();
+$self->addProtocolParamValue('reference',$reference);
+$self->addProtocolParamValue('comparator',$comparator);
+ $self->createConfigFile();
    
 }
 
