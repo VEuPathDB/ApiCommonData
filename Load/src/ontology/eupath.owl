@@ -1198,6 +1198,7 @@
         </rdfs:subClassOf>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that indicates the presence of asexual parasites in blood cells by microscopy using a value of positive or negative.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:IAO_0000118>asexual parasites present by microscopy</obo:IAO_0000118>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">blood smear reading as positive or negative</rdfs:label>
@@ -1483,7 +1484,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic parasitemia</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic patent parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -1492,7 +1493,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis to indicate whether a person has marlaria or not. It has value yes or no.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria based on febrile (subjective fever or temperature&gt;=38) and parasites detected by microscopy (parasite density&gt;0). It should also be accompanied by antimalarial therapy.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -4150,9 +4151,40 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000482 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000482">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
+        <obo:IAO_0000115>A categorical measurement datum that indicates the presence of asexual parasites in blood cells by loop-mediated isothermal amplification (LAMP) using a value of positive or negative.</obo:IAO_0000115>
+        <obo:IAO_0000118>asexual parasites present by LAMP</obo:IAO_0000118>
+        <rdfs:label xml:lang="en">asexual parasites present by loop-mediated isothermal amplification assay</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000483 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000483">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
+        <obo:IAO_0000115>A categorical measurement datum that indicates whether asexual parasites presence in blood cells.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">asexual parasites present</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000484 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000484">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000118>diagnosis of parasitemia based on LAMP</obo:IAO_0000118>
-        <rdfs:label xml:lang="en">diagnosis of parasitemia based on Loop-mediated isothermal amplification</rdfs:label>
+        <obo:IAO_0000115>A diagnosis based on presence of asexual parasites by microscopy in the absence of febrile (subjective fever and  temperature&gt;=38) and parasites detected by microscopy (parasite density &gt; 0) or LAMP assay (LAMP result is positive).</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">diagnosis of asymptomatic parasitemia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000485 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000485">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:IAO_0000115>A diagnosis based on presence of asexual parasites in blood is negative by microscopy (parasite density=0) but positive by LAMP assay.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">diagnosis of submicroscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
