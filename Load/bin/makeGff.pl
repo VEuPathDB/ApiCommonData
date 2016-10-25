@@ -155,6 +155,11 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
     }
 
 
+    unless($feature->primary_tag eq 'CDS') {
+      $feature->frame('.');
+    }
+
+
 
   $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
   print GFF $feature->gff_string . "\n";
