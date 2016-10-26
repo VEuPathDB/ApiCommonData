@@ -39,7 +39,7 @@ if (!$list && !$script) {
   die "either -list or -script parameter must be supplied";
 }
 
-my $instances = `apiTnsSummary | cut -c61- | sed 's/,.*\$//' `;
+my $instances = `apiTnsSummary -all | cut -c61- | sed 's/,.*\$//' `;
 foreach my $instance (split /\n/, $instances) {
   if ($regex) {
     next unless $instance =~ /$regex/;
