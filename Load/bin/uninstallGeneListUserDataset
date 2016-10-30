@@ -9,9 +9,9 @@ use GUS::ObjRelP::DbiDatabase;
 use File::Find;
 use File::Basename;
 
-my ($userDatasetId, $geneListFile) = @ARGV;
+my ($userDatasetId) = @ARGV;
 
-usage() unless scalar(@ARGV) == 2;
+usage() unless scalar(@ARGV) == 1;
 
 my $gusconfig = GUS::Supported::GusConfig->new();
 
