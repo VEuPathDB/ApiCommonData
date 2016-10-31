@@ -151,7 +151,7 @@ sub run {
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
 
     my $protocolType;
-    if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ ) {
+    if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/) {
       $protocolType = "differential expression analysis data transformation";
     }
     else {
@@ -328,8 +328,9 @@ sub addResults {
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-	next unless $naFeatureId;
-        $hash = { na_feature_id => $naFeatureId };
+	print Dumper "can not find source ID for $sourceIdType\n" unless $naFeatureId;
+        next unless $naFeature;
+	$hash = { na_feature_id => $naFeatureId };
         $start = 1;
     }
 
