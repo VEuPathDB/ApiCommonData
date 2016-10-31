@@ -18,12 +18,14 @@ my $gusconfig = GUS::Supported::GusConfig->new();
 my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getDatabaseLogin(),
                                         $gusconfig->getDatabasePassword(),
-                                        $verbose,0,1,
+                                        0,0,1,
                                         $gusconfig->getCoreSchemaName());
+
 my $dbh = $db->getQueryHandle(0);
+$dbh->{RaiseError} = 1;
 
 my $sth = $dbh->prepare(<<EOF);
-    INSERT INTO ApiDBUserDatasets.UD_GeneId;
+    INSERT INTO ApiDBUserDatasets.UD_GeneId
     VALUES (?,?)
 EOF
 
@@ -32,7 +34,7 @@ my $count = 0;
 while(<F>) {
   chomp;
   $sth->execute($userDatasetId, $_);
-  if ($count++ % 1000 == 0) $dbh->commit;
+   $dbh->commit if ($count++ % 1000 == 0);
 }
 
 $dbh->commit;
