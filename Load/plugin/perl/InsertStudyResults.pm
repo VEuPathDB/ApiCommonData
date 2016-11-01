@@ -329,7 +329,7 @@ sub addResults {
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
 	print Dumper "can not find source ID for $sourceIdType\n" unless $naFeatureId;
-        next unless $naFeature;
+        next unless $naFeatureId;
 	$hash = { na_feature_id => $naFeatureId };
         $start = 1;
     }
