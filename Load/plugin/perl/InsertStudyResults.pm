@@ -207,7 +207,7 @@ sub addResults {
 
 
   my $tableString;
-  if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ ) {
+  if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/) {
     $tableString = "Results::NAFeatureDiffResult";
   }
   elsif ($protocolName =~ /cghArrayQuantification/ ) {
