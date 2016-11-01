@@ -5,6 +5,24 @@ primary key (user_dataset_id)
 );
 
 
+--------------------------------------------------------------------------------
+
+create table ApiDBUserDatasets.UserDatasetAccessControl (
+user_id number(10) not null,
+user_dataset_id number(10) not null,
+primary key (user_id, user_dataset_id),
+FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
+);
+
+
+---------------------------------------------------------------------------------
+
+create table ApiDBUserDatasets.UserDatasetEvent (
+event_id number(10) not null,
+completed date,
+primary key (event_id)
+);
+
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UD_GeneId (
