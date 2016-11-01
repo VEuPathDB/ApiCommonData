@@ -72,31 +72,31 @@ sub munge {
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
 
-#    foreach my $sampleName (keys %$samplesHash) {
-#	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
-#									 inputs => $samplesHash->{$sampleName},
-#									 mainDirectory => $self->getMainDirectory,
-#									 profileSetName => $profileSetName,
-#									 samplesHash => $samplesHash,
-#									 suffix => '_junctions.tab'});
-#	$intronJunctions->setProtocolName("GSNAP/Junctions");
-#	$intronJunctions->setDisplaySuffix(" [junctions]");
-#	$intronJunctions->setTechnologyType($self->getTechnologyType());
-#	
-#	$intronJunctions->munge();
- #   }
+    foreach my $sampleName (keys %$samplesHash) {
+	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
+									 inputs => $samplesHash->{$sampleName},
+									 mainDirectory => $self->getMainDirectory,
+									 profileSetName => $profileSetName,
+									 samplesHash => $samplesHash,
+									 suffix => '_junctions.tab'});
+	$intronJunctions->setProtocolName("GSNAP/Junctions");
+	$intronJunctions->setDisplaySuffix(" [junctions]");
+	$intronJunctions->setTechnologyType($self->getTechnologyType());
+	
+	$intronJunctions->munge();
+    }
     
- #   foreach my $quantificationType ('htseq-union') {    
+    foreach my $quantificationType ('htseq-union') {    
 	
-#	    if($isStrandSpecific) {
-#		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
-#		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
-#	    }
-#	    else {
-#		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
-#	    }
+	    if($isStrandSpecific) {
+		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+	    }
+	    else {
+		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
+	    }
 	
- #   }
+    }
     
 #DESeq2 Analysis starts here  
 #print Dumper "SamplesHash is\n";

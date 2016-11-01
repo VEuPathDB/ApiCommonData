@@ -87,7 +87,7 @@ sub munge {
 # JB suggested I rename the re formatted file and move it to the doTrans folder and then I can just delete the other folder. 
     
     open(my $OUT, ">$mainDirectory\/$fileName");
-    print $OUT "ID\tlog2fold_change\tp_value\tz_score\tis_significant\n";
+    print $OUT "ID\tfold_change\tp_value\tz_score\tis_significant\n";
     open( my $IN, "$tempOut\/output_score.txt");
     
    while (my $line = <$IN>) {
