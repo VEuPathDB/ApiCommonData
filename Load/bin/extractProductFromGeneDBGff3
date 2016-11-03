@@ -72,12 +72,17 @@ while (<IN>) {
 	    $prodKeyValue{term} = $prodValue;
 	  } elsif ($prodKey eq "is_preferred") {
 	    $prodKeyValue{is_preferred} = 1;
+	  } elsif ($prodKey eq "rank") {
+	    $prodKeyValue{rank} = 1;
 	  }
+
 	  if ($prodKey && !$prodValue) { ## if only one value but no key-value pair
 	    $prodKeyValue{term} = $prodKey; ## then the only value is the value of product
 	  }
 	}
 	if ($prodKeyValue{is_preferred}) {
+	  $prodKeyValue{term} .= "\ttrue";
+	} elsif (!$prodKeyValue{rank}) {
 	  $prodKeyValue{term} .= "\ttrue";
 	}
 	print OUT "$keyValue{transID}\t$prodKeyValue{term}\n";
