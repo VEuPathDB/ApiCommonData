@@ -71,7 +71,7 @@ sub munge {
     
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
-
+    
     foreach my $sampleName (keys %$samplesHash) {
 	my $intronJunctions = ApiCommonData::Load::IntronJunctions->new({sampleName => $sampleName,
 									 inputs => $samplesHash->{$sampleName},
@@ -84,10 +84,10 @@ sub munge {
 	$intronJunctions->setTechnologyType($self->getTechnologyType());
 	
 	$intronJunctions->munge();
-    }
+       }
     
     foreach my $quantificationType ('htseq-union') {    
-	
+    
 	    if($isStrandSpecific) {
 		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
 		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
@@ -95,12 +95,12 @@ sub munge {
 	    else {
 		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
 	    }
-	
-    }
+    
+       }
     
 #DESeq2 Analysis starts here  
-#print Dumper "SamplesHash is\n";
-#print Dumper %{$samplesHash};    
+    print Dumper "SamplesHash is\n";
+    print Dumper %{$samplesHash};    
     if (keys %{$samplesHash} <2) {
 	print Dumper  "note: there are less than two conditions DESeq2 analysis  and or DEGseq analysis can not be done\n";
 	next;
@@ -111,10 +111,10 @@ sub munge {
 	my %pairHash;
 # check on the number of reps 
 	foreach my $key (keys %{$samplesHash}) {
-		push @array1 , $key;
-		push @array2, $key;
+	    push @array1 , $key;
+	    push @array2, $key;
 	}
-       
+	
 	foreach my $element (@array1) {
 	    foreach my $second (@array2) {  
 		if ($element eq $second) {
@@ -126,11 +126,11 @@ sub munge {
 		}
 	    }
 	}
-
+	
 #	print Dumper "\n\npairHash is \n\n\n\n\n";
 #	print Dumper %pairHash;
 	foreach my $key (keys %pairHash) {
-
+	    
 	    my @temps = split "_vs_" , $key;
 	    my $sampleNameClean = $key;
 	    my $reference = $temps[1];
@@ -147,7 +147,7 @@ sub munge {
 #	    print Dumper "\n\ndataframeHash is \n";
 #	    print Dumper %dataframeHash;
 
-##### trying to workout ref checks etc to deal with display names not matching sample names 
+	 ##### trying to workout ref checks etc to deal with display names not matching sample names 
 	    my $Rrep1 = $dataframeHash{$reference}[0];
 	    my $Rrep2 = $dataframeHash{$reference}[1];
 	    my @Rbase1 = split "", $Rrep1;
@@ -163,7 +163,8 @@ sub munge {
 		}
 	    }
 	    my $refCheck = $RrepBaseName;
-
+	    my $degRef = $Rrep1;
+	   
 	    my $Crep1 = $dataframeHash{$comparator}[0];
 	    my $Crep2 = $dataframeHash{$comparator}[1];
 	    my @Cbase1 = split "", $Crep1;
@@ -177,30 +178,34 @@ sub munge {
 		}
 	    }
 	    my $compCheck = $CrepBaseName;
-#	    print Dumper "refcheck is\n";
-#	    print Dumper $refCheck;
-#	    print Dumper "compcheck is \n";
-#	    print Dumper $compCheck;
+	    my $degComp = $Crep1;
 
-
+	    print Dumper "degref $degRef compref $degComp\n";
+   
+	    print Dumper "refcheck is\n";
+	    print Dumper $refCheck;
+	    print Dumper "compcheck is \n";
+	    print Dumper $compCheck;
+	    
+	    
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
-
+		
 		print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
 		my $suffix = 'differentialExpressionDEGseq';
 		my $dataframeHashref = \%dataframeHash;
 #making new DEGseq object
 		my $DEGseqAnalysis = ApiCommonData::Load::DEGseqAnalysis->new({sampleName => $sampleNameClean,
-									     mainDirectory => $self->getMainDirectory,
-									     samplesHash => $dataframeHashref,
-									     reference => $ref,
-									     comparator => $comp,
-									     suffix => 'DEGseqAnalysis',
-									     profileSetName => $profileSetName});
+									       mainDirectory => $self->getMainDirectory,
+									       samplesHash => $dataframeHashref,
+									       reference => $degRef,
+									       comparator => $degComp,
+									       suffix => 'DEGseqAnalysis',
+									       profileSetName => $profileSetName});
 		$DEGseqAnalysis->setProtocolName("GSNAP/DEGseqAnalysis");
 		$DEGseqAnalysis->setDisplaySuffix( ' [DEGseqAnalysis]');
 		$DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
 		$DEGseqAnalysis->munge();
-
+		
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
