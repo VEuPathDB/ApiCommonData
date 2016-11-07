@@ -59,23 +59,32 @@ sub munge {
     my @ds = readdir(DIR);
     my $ref;
     my $comp;
+    my $ref_sample_name;
+    my $comp_sample_name;
     foreach my $d (sort @ds) {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	my $sample = $1;
 #	print Dumper "sample (deseqanalysis.pm) is $sample\n\n\n";
-	if ($sample =~ /$reference/) { 
+	if ($sample =~ $reference) { 
 	    $ref = $d;
+#	    $ref_sample_name = $sample;
+#	    print Dumper "sample is $sample ref_sample_name is $ref_sample_name\n";
 	    push @inputs, $sample;
 	}
 	elsif ($sample =~ /$comparator/) {
 	    $comp = $d;
+	    $comp_sample_name = $sample;
+#	    print Dumper "sample is $sample comp_sample_name is $comp_sample_name\n";
 	    push @inputs, $sample;
 	}
 	else {
 	    
-	    #print Dumper "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+	    print Dumper "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
 	}
     }
+#    print Dumper "samples hash ref = $samplesHash{$reference}\n";
+#    print Dumper "samples hash comp = $samplesHash{$comparator}\n";
+
 
     $outputFile =~ s/ /_/g;
     my $tempOut = "$mainDirectory/DegOut";
