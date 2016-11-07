@@ -1,6 +1,7 @@
 
 create table ApiDBUserDatasets.InstalledUserDataset (
 user_dataset_id number(10) not null,
+name varchar(100) not null,
 primary key (user_dataset_id)
 );
 
