@@ -1481,10 +1481,10 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000089">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:IAO_0000115>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic patent parasitemia</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic microscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -1493,8 +1493,8 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria based on febrile (subjective fever or temperature&gt;=38) and parasites detected by microscopy (parasite density&gt;0). It should also be accompanied by antimalarial therapy.</obo:IAO_0000115>
-        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria based on positive blood smear with subjective fever or elevated temperature resulting in antimalarial treatment.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of symptomatic malaria</rdfs:label>
@@ -1531,7 +1531,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is the number of asexual parasites per ul.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A scalar measurement datum that is the number of asexual parasites per ul in a specimen using microscopy.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -3020,12 +3020,18 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000207 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000207">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
-        <obo:IAO_0000115>A data item indicating whether gametocytes were present in a sample.</obo:IAO_0000115>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000295"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>A categorical measurement datum that indicates whether gametocytes were present in a sample using microscopy.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, David Roos, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label>presence of Plasmodium gametocytes</rdfs:label>
+        <rdfs:label>presence of Plasmodium gametocytes by microscopy</rdfs:label>
     </owl:Class>
     
 
@@ -4148,32 +4154,11 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000482 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000482">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
-        <obo:IAO_0000115>A categorical measurement datum that indicates the presence of asexual parasites in blood cells by loop-mediated isothermal amplification (LAMP) using a value of positive or negative.</obo:IAO_0000115>
-        <obo:IAO_0000118>asexual parasites present by LAMP</obo:IAO_0000118>
-        <rdfs:label xml:lang="en">asexual parasites present by loop-mediated isothermal amplification assay</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000483 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000483">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
-        <obo:IAO_0000115>A categorical measurement datum that indicates whether asexual parasites presence in blood cells.</obo:IAO_0000115>
-        <rdfs:label xml:lang="en">asexual parasites present</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000484 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000484">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000115>A diagnosis based on presence of asexual parasites by microscopy in the absence of febrile (subjective fever and  temperature&gt;=38) and parasites detected by microscopy (parasite density &gt; 0) or LAMP assay (LAMP result is positive).</obo:IAO_0000115>
+        <obo:IAO_0000115>A diagnosis based on parasites detected by microscopy (parasite density &gt; 0) or LAMP assay (LAMP result is positive) in the absence of febrile (subjective fever and  temperature&gt;=38).</obo:IAO_0000115>
         <rdfs:label xml:lang="en">diagnosis of asymptomatic parasitemia</rdfs:label>
     </owl:Class>
     
@@ -4183,8 +4168,64 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000485">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:IAO_0000115>A diagnosis based on presence of asexual parasites in blood is negative by microscopy (parasite density=0) but positive by LAMP assay.</obo:IAO_0000115>
+        <obo:IAO_0000115>A diagnosis based on presence of parasites by LAMP assay when microscopy result was negative in the absence of subjective fever or documented elevated temperature.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person: Grant Dorsey, Jie Zheng</obo:IAO_0000117>
         <rdfs:label xml:lang="en">diagnosis of submicroscopic parasitemia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000487 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000487">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000938"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000295"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
+        <obo:IAO_0000118>presence of submicrosopic parasites by LAMP</obo:IAO_0000118>
+        <obo:IAO_0000119>Penn group</obo:IAO_0000119>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">presence of submicrosopic parasites by loop-mediated isothermal amplification assay</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000488 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000488">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <obo:IAO_0000115>An information content entity is about blood smear not performed.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">information of blood smear not performed</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000489 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000489">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <obo:IAO_0000115>A laboratory finding about parasite present which is negative in both blood smear and LAMP assay.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">negative blood smear and negative LAMP</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000490 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000490">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
+        <obo:IAO_0000115>An information content entity is about parasite status with negative blood smear and LAMP test is not performed.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">information of negative blood smear and LAMP not done</rdfs:label>
     </owl:Class>
     
 
@@ -4696,6 +4737,21 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     <!-- http://purl.obolibrary.org/obo/GAZ_00001102 -->
 
     <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/GAZ_00001102"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000338">
+        <dc:source>PRISM</dc:source>
+        <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
+    </rdf:Description>
 </rdf:RDF>
 
 
