@@ -137,7 +137,7 @@ sub parseInputFile {
       $inputHash->{$seq_source}->{$clean_seq_source_id}->{source_id}=$source_id;
       next unless ((scalar(keys (%$gb_ids))) % 500 == 0);
       my $id_list = join(',',keys(%$gb_ids));
-      my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list/";
+      my $cmd = "wgetFromGenbank --output $gb_file"."_"."$count".".gb  --id_list $id_list";
       system($cmd);
       if ($? == -1) {
         print "failed to execute: $!\n";
@@ -240,10 +240,10 @@ sub loadRows {
     my $ncbi_taxon_id = $hash->{ncbi_taxon_id};
     my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $ncbi_taxon_id });
 
-    my $ref16s = GUS::Model::ApiDB::Reference16S->new( {source_id => $source_id,
-                                                                                                 external_database_release_id => $extDbRlsId,
-                                                                                                 sequence_source_id => $seq_source_id,
-                                                       });
+#    my $ref16s = GUS::Model::ApiDB::Reference16S->new( {source_id => $source_id,
+#                                                                                                 external_database_release_id => $extDbRlsId,
+#                                                                                                 sequence_source_id => $seq_source_id,
+#                                                       });
 
     my $externalNASeq ;
     if (defined $nodeHash->{$seq_source_id}->{seq}){
@@ -253,9 +253,9 @@ sub loadRows {
         $taxonObj = undef;
       }
       $externalNASeq = $self->buildSequence($nodeHash->{$seq_source_id}->{seq}, $source_id, $extDbRlsId, $taxonObj);
-      $ref16s->setParent($externalNASeq) ;
+ $     $ref16s->setParent($externalNASeq) ;
     }
-    $ref16s->submit;
+    $externalNASeq->submit;
     $self->undefPointerCache() if $count++ % 500 == 0;
   }
   return $count;
@@ -279,7 +279,6 @@ sub buildSequence {
 sub undoTables {
   my ($self) = @_;
   return (
-               'ApiDB.Reference16S',
                'DoTS.ExternalNASequence',
              );
 
