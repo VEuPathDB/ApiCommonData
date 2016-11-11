@@ -3,10 +3,12 @@
      xml:base="http://purl.obolibrary.org/obo/eupath_new.owl"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
      xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath.owl">
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_DOID.owl"/>
@@ -14,7 +16,8 @@
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/externalByHand.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/eupath/dev/import_OBO2.owl"/>
-    </owl:Ontology>    
+    </owl:Ontology>
+    
 
 
     <!-- 
@@ -1924,11 +1927,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000114">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
-        <obo:IAO_0000115>An average value of asexual parasites counted per microliter of blood (i.e. malaria parasite density) across mulitiple clinical visits of a participant who was diagnosed with asymptomatic parasitemia.</obo:IAO_0000115>
+        <obo:IAO_0000115>An average value of asexual parasites counted per microliter of blood (i.e. malaria parasite density) across mulitiple clinical visits of a participant who was diagnosed with asymptomatic microscopic parasitemia.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label>average asexual parasite density of a participant with asymptomatic parasitemia</rdfs:label>
+        <rdfs:label>average asexual parasite density of a participant with asymptomatic microscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -2041,11 +2044,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000123">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/STATO_0000047"/>
-        <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with asymptomatic parasitemia</obo:IAO_0000115>
+        <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with asymptomatic microscopic parasitemia.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label>number of clinical visits resulting in an asymptomatic parasitemia diagnosis</rdfs:label>
+        <rdfs:label>number of clinical visits resulting in an asymptomatic microscopic parasitemia diagnosis</rdfs:label>
     </owl:Class>
     
 
@@ -2248,11 +2251,11 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000140">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
-        <obo:IAO_0000115>An average value for the number of clinical visits of a patient with asymptomatic parasitemia based on calendar years</obo:IAO_0000115>
+        <obo:IAO_0000115>An average value for the number of clinical visits of a patient with asymptomatic microscopic parasitemia based on calendar years.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert, Shon cade, Grant Dorsey</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label>average number of clinical visits with asymptomatic parasitemia diagnosis per year</rdfs:label>
+        <rdfs:label>average number of clinical visits with asymptomatic microscopic parasitemia diagnosis per year</rdfs:label>
     </owl:Class>
     
 
@@ -5449,6 +5452,18 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000486 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000486">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/STATO_0000047"/>
+        <obo:IAO_0000115>A data item of the number of clinical visits during which the participant was diagnosed with asymptomatic parasitemia.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person:  Jie Zheng, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">number of clinical visits resulting in an asymptomatic parasitemia diagnosis</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000487 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000487">
@@ -5500,6 +5515,18 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
         <obo:IAO_0000117>Person: Jie Zheng, Grant Dorsey</obo:IAO_0000117>
         <dc:source>PRISM</dc:source>
         <rdfs:label xml:lang="en">information of negative blood smear and LAMP not done</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000491 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000491">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000679"/>
+        <obo:IAO_0000115>An average value for the number of clinical visits of a patient with asymptomatic parasitemia based on calendar years.</obo:IAO_0000115>
+        <obo:IAO_0000117>Person:  Jie Zheng, Shon cade, Grant Dorsey</obo:IAO_0000117>
+        <dc:source>PRISM</dc:source>
+        <rdfs:label xml:lang="en">average number of clinical visits with asymptomatic parasitemia diagnosis per year</rdfs:label>
     </owl:Class>
     
 
