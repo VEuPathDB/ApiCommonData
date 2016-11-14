@@ -5,16 +5,43 @@ name varchar(100) not null,
 primary key (user_dataset_id)
 );
 
-
 --------------------------------------------------------------------------------
 
-create table ApiDBUserDatasets.UserDatasetAccessControl (
+create table ApiDBUserDatasets.UserDatasetOwner (
 user_id number(10) not null,
 user_dataset_id number(10) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
 
+---------------------------------------------------------------------------------
+
+create table ApiDBUserDatasets.UserDatasetSharedWith (
+user_id number(10) not null,
+user_dataset_id number(10) not null,
+primary key (user_id, user_dataset_id),
+FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
+);
+
+---------------------------------------------------------------------------------
+
+create table ApiDBUserDatasets.UserDatasetExternalDataset (
+user_id number(10) not null,
+user_dataset_id number(10) not null,
+primary key (user_id, user_dataset_id),
+FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
+);
+
+---------------------------------------------------------------------------------
+
+create view ApiDBUserDatasets.UserDatasetAccessControl
+as 
+select * from ApiDBUserDatasets.UserDatasetOwner
+union (
+  select * from ApiDBUserDatasets.UserDatasetSharedWith
+  intersect
+  select * from ApiDBUserDatasets.UserDatasetExternalDataset
+);
 
 ---------------------------------------------------------------------------------
 
