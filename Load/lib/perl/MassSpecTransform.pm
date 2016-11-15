@@ -841,6 +841,25 @@ use base qw(ApiCommonData::Load::MassSpecTransform);
 
 1;
 
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLineUbiquitin;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'Ubiquitination_site',
+  };
+}
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePhospo;
 use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 
