@@ -522,7 +522,6 @@ create table Results.AlphaDiversity
   (
     alpha_diversity_id      number(12) not null,
     PROTOCOL_APP_NODE_ID    number(10) not null,
-    na_sequence_id          number(12) not null,
     observed_otus           number(20),
     chao_1                  float(126),
     shannon                 float(126),
