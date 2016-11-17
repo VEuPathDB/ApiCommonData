@@ -148,25 +148,21 @@ sub run {
   while(<inputFile>) {
     chomp;
     next if /^##/;
-    my($gene, $tag, $product, $goterm, @img_uris) = split /\t/, $_;
+    my($gene, $display_order, $image_type, $note, $img_uri) = split /\t/, $_;
+
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, 0) ;
-    my $note = "GO term: $goterm; Gene annotation: $product";
+    print "could not find $gene\n" and next unless $naFeatureId;
 
-    my $image_type = 'GFP';
-    foreach(@img_uris) {
-
-      my $img_uri = $_;
-      $image_type = 'DIC' if $img_uri =~/DIC/;
-      my $naFeatImage = GUS::Model::ApiDB::NAFeatureImage->new({'na_feature_id' => $naFeatureId, 
-                                                                'image_uri'     => $img_uri,
-                                                                'image_type'    => $image_type,
-                                                                'note'          => $note,
-                                                                'external_database_release_id' => $extDbReleaseId
+    my $naFeatImage = GUS::Model::ApiDB::NAFeatureImage->new({'na_feature_id' => $naFeatureId, 
+                                                              'image_uri'     => $img_uri,
+                                                              'image_type'    => $image_type,
+                                                              'note'          => $note,
+                                                              'display_order' => $display_order,
+                                                              'external_database_release_id' => $extDbReleaseId
                                                               });
 
-      $naFeatImage->submit();
-      $processed++;
-    }
+    $naFeatImage->submit();
+    $processed++;
   }
 
   return "$processed data lines parsed and loaded";
