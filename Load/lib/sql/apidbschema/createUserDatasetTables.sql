@@ -4,6 +4,8 @@ user_dataset_id number(10) not null,
 name varchar(100) not null,
 primary key (user_dataset_id)
 );
+GRANT insert, select, update, delete ON ApiDBUserDatasets.InstalledUserDataset TO gus_w;
+GRANT select ON ApiDBUserDatasets.InstalledUserDataset TO gus_r;
 
 --------------------------------------------------------------------------------
 
@@ -13,6 +15,8 @@ user_dataset_id number(10) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetOwner TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetOwner TO gus_r;
 
 ---------------------------------------------------------------------------------
 
@@ -22,6 +26,8 @@ user_dataset_id number(10) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 
 ---------------------------------------------------------------------------------
 
@@ -31,6 +37,8 @@ user_dataset_id number(10) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetExternalDataset TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetExternalDataset TO gus_r;
 
 ---------------------------------------------------------------------------------
 
@@ -42,6 +50,7 @@ union (
   intersect
   select * from ApiDBUserDatasets.UserDatasetExternalDataset
 );
+GRANT select ON ApiDBUserDatasets.UserDatasetAccessControl TO gus_r;
 
 ---------------------------------------------------------------------------------
 
