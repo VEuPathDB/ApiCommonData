@@ -1,4 +1,4 @@
- package ApiCommonData::Load::DEGseqAnalysis;
+package ApiCommonData::Load::DEGseqAnalysis;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 use CBIL::Util::Utils;
 use strict;
@@ -44,12 +44,12 @@ sub munge {
     my $comparator = $self->getComparator();
     #   my $refCheck = $self->getRefCheck();
     #   my $compCheck = $self->getCompCheck();
-    $self->setNames([$sampleName]);
+#    $self->setNames([$sampleName]);
     my $fileName = $outputFile."_formatted";
     $fileName =~ s/ /_/g;
-    $self->setFileNames([$fileName]);    
+#    $self->setFileNames([$fileName]);    
     my @inputs;
-    
+    my @inputs2;
     my %samplesHash = %{$samplesHashref};
     
     
@@ -72,26 +72,33 @@ sub munge {
 	if ($sample =~ /^$reference/) { 
 	    if ($strand =~ /secondstrand/) {
 		$refSecondStrand = $d;
+		my $sample2 = $sample."SecondStrand";
+		    push @inputs2, $sample2;
 	    }
 	    else {
 		$ref = $d;
+		push @inputs, $sample;
 	    }
 	    
 	    $ref_sample_name = $sample;
 	    print Dumper "sample is $sample ref_sample_name is $ref_sample_name\n";
-	    push @inputs, $sample;
+#	    push @inputs, $sample;
 	}
 	elsif ($sample =~ /^$comparator/) {
 	    if ($strand =~ /secondstrand/) {
 		$compSecondStrand = $d;
+		my $sample2 = $sample."SecondStrand";
+		    push @inputs2, $sample2;
+
 	    }
 	    else {
 		$comp = $d;
+	    push @inputs, $sample;
 	    }
 	    
 	    $comp_sample_name = $sample;
 	    print Dumper "sample is $sample comp_sample_name is $comp_sample_name\n";
-	    push @inputs, $sample;
+#	    push @inputs, $sample;
 	}
 	else {
 	    
@@ -100,31 +107,59 @@ sub munge {
     }
 #    print Dumper "samples hash ref = $samplesHash{$reference}\n";
 #    print Dumper "samples hash comp = $samplesHash{$comparator}\n";
-
-    &runDegseq($mainDirectory,$ref,$comp,$reference,$comparator, $fileName);
-    if((defined $refSecondStrand) && (defined $compSecondStrand)) {
-	my $secondOutputFile = $fileName;
-	$secondOutputFile =~ s/_formatted/SecondStrand_formatted/;
-	&runDegseq($mainDirectory,$refSecondStrand,$compSecondStrand, $reference, $comparator,$secondOutputFile);
-    }
-
-
+    my $secondSampleName;
+    &runDegseq($mainDirectory,$ref,$comp,$reference,$comparator, $fileName, $self, $sampleName);
 #make file name in here now 
 ####################################################################################################
 my $input_list = \@inputs;
+    print Dumper "INPUT";
+    print Dumper $input_list;
   $self->setSourceIdType('gene');
-  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
+ $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
 $self->getProtocolParamsHash();
 $self->addProtocolParamValue('reference',$reference);
 $self->addProtocolParamValue('comparator',$comparator);
  $self->createConfigFile();
+
+    if((defined $refSecondStrand) && (defined $compSecondStrand)) {
+	my $secondOutputFile = $fileName;
+	$secondOutputFile =~ s/_formatted/SecondStrand_formatted/;
+	 $secondSampleName = $sampleName."SecondStrand";
+	&runDegseq($mainDirectory,$refSecondStrand,$compSecondStrand, $reference, $comparator,$secondOutputFile, $self, $secondSampleName);
+    }
+
+    if (defined $secondSampleName) {
+my $input_list = \@inputs2;
+    print Dumper "INPUT2";
+    print Dumper $input_list;
+  $self->setSourceIdType('gene');
+ $self->setInputProtocolAppNodesHash({$secondSampleName => $input_list});
+$self->getProtocolParamsHash();
+$self->addProtocolParamValue('reference',$reference);
+$self->addProtocolParamValue('comparator',$comparator);
+ $self->createConfigFile();
+    }
+
+    
+#	my $input_list = \@inputs;
+#	print Dumper "INPUT";
+#	print Dumper $input_list;
+#	$self->setSourceIdType('gene');
+#	$self->setInputProtocolAppNodesHash({$secondSampleName => $input_list});
+#	$self->getProtocolParamsHash();
+#	$self->addProtocolParamValue('reference',$reference);
+#	$self->addProtocolParamValue('comparator',$comparator);
+#	$self->createConfigFile();
+    
    
 }
 
 
 sub runDegseq {
-    my ($mainDirectory,$ref,$comp,$reference,$comparator,$fileName) = @_;
+    my ($mainDirectory,$ref,$comp,$reference,$comparator,$fileName,$self,$sampleName) = @_;
    $fileName =~ s/ /_/g;
+    $self->setFileNames([$fileName]);    
+    $self->setNames([$sampleName]);
     my $tempOut = $mainDirectory."DegOut";
     &runCmd("mkdir $tempOut");
     &runCmd("DEGseq.r $ref $comp $tempOut $reference $comparator");
