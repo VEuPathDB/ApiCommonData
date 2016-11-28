@@ -1066,27 +1066,31 @@ order by s.source_id, el.start_min
 
     my $strand = $isReversed ? -1 : +1;
 
-    my $agp = GUS::Community::GeneModelLocations::findAgpFromPieceLocation($agpMap->{$sequenceSourceId}, $exonStart, $exonEnd, $sequenceSourceId);
+    my $agpArray = $agpMap->{$sequenceSourceId};
 
-    # if this sequence is a PIECE in another sequence... lookup the higher level sequence
-    if($agp) {
-      my $exonMatch = Bio::Location::Simple->
-          new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => $strand );
+    if($agpArray) {
+      my $agp = GUS::Community::GeneModelLocations::findAgpFromPieceLocation($agpArray, $exonStart, $exonEnd, $sequenceSourceId);
 
-      if($cdsStart && $cdsEnd) {
-        my $cdsMatch = Bio::Location::Simple->
-            new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => $strand );
-        my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
-        $cdsStart = $cdsMatchOnVirtual->start();
-        $cdsEnd = $cdsMatchOnVirtual->end();
-      }
+      # if this sequence is a PIECE in another sequence... lookup the higher level sequence
+      if($agp) {
+        my $exonMatch = Bio::Location::Simple->
+            new( -seq_id => 'exon', -start => $exonStart  , -end => $exonEnd , -strand => $strand );
 
-      my $matchOnVirtual = $agp->map( $exonMatch );
+        if($cdsStart && $cdsEnd) {
+          my $cdsMatch = Bio::Location::Simple->
+              new( -seq_id => 'cds', -start => $cdsStart  , -end => $cdsEnd , -strand => $strand );
+          my $cdsMatchOnVirtual = $agp->map( $cdsMatch );
+          $cdsStart = $cdsMatchOnVirtual->start();
+          $cdsEnd = $cdsMatchOnVirtual->end();
+        }
+
+        my $matchOnVirtual = $agp->map( $exonMatch );
      
-      $sequenceSourceId = $matchOnVirtual->seq_id();
-      $exonStart = $matchOnVirtual->start();
-      $exonEnd = $matchOnVirtual->end();
-      $strand = $matchOnVirtual->strand();
+        $sequenceSourceId = $matchOnVirtual->seq_id();
+        $exonStart = $matchOnVirtual->start();
+        $exonEnd = $matchOnVirtual->end();
+        $strand = $matchOnVirtual->strand();
+      }
     }
 
 
