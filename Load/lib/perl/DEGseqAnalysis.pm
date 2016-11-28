@@ -61,20 +61,36 @@ sub munge {
     my $comp;
     my $ref_sample_name;
     my $comp_sample_name;
+    my $refSecondStrand;
+    my $compSecondStrand;
+
     foreach my $d (sort @ds) {
-	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
+	next unless $d =~ /(\S+)\.genes\.htseq-union(.+)counts/;
 	my $sample = $1;
+	my $strand = $2;
 #	print Dumper "sample (deseqanalysis.pm) is $sample\n\n\n";
-	if ($sample =~ $reference) { 
-	    $ref = $d;
-#	    $ref_sample_name = $sample;
-#	    print Dumper "sample is $sample ref_sample_name is $ref_sample_name\n";
+	if ($sample =~ /^$reference/) { 
+	    if ($strand =~ /secondstrand/) {
+		$refSecondStrand = $d;
+	    }
+	    else {
+		$ref = $d;
+	    }
+	    
+	    $ref_sample_name = $sample;
+	    print Dumper "sample is $sample ref_sample_name is $ref_sample_name\n";
 	    push @inputs, $sample;
 	}
-	elsif ($sample =~ /$comparator/) {
-	    $comp = $d;
+	elsif ($sample =~ /^$comparator/) {
+	    if ($strand =~ /secondstrand/) {
+		$compSecondStrand = $d;
+	    }
+	    else {
+		$comp = $d;
+	    }
+	    
 	    $comp_sample_name = $sample;
-#	    print Dumper "sample is $sample comp_sample_name is $comp_sample_name\n";
+	    print Dumper "sample is $sample comp_sample_name is $comp_sample_name\n";
 	    push @inputs, $sample;
 	}
 	else {
@@ -85,13 +101,39 @@ sub munge {
 #    print Dumper "samples hash ref = $samplesHash{$reference}\n";
 #    print Dumper "samples hash comp = $samplesHash{$comparator}\n";
 
+    &runDegseq($mainDirectory,$ref,$comp,$reference,$comparator, $fileName);
+    if((defined $refSecondStrand) && (defined $compSecondStrand)) {
+	my $secondOutputFile = $fileName;
+	$secondOutputFile =~ s/_formatted/SecondStrand_formatted/;
+	&runDegseq($mainDirectory,$refSecondStrand,$compSecondStrand, $reference, $comparator,$secondOutputFile);
+    }
 
-    $outputFile =~ s/ /_/g;
-    my $tempOut = "$mainDirectory/DegOut";
+
+#make file name in here now 
+####################################################################################################
+my $input_list = \@inputs;
+  $self->setSourceIdType('gene');
+  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
+$self->getProtocolParamsHash();
+$self->addProtocolParamValue('reference',$reference);
+$self->addProtocolParamValue('comparator',$comparator);
+ $self->createConfigFile();
+   
+}
+
+
+sub runDegseq {
+    my ($mainDirectory,$ref,$comp,$reference,$comparator,$fileName) = @_;
+   $fileName =~ s/ /_/g;
+    my $tempOut = $mainDirectory."DegOut";
     &runCmd("mkdir $tempOut");
     &runCmd("DEGseq.r $ref $comp $tempOut $reference $comparator");
-        
-    
+    print Dumper 'command is ';
+    print Dumpler $ref;
+    print Dumper $comp;
+    print Dumper $tempOut;
+    print Dumper $reference;
+    print Dumper $comparator;
 #here I need to go into the output folder and format the output file correctly and rename it and remove all the other output files 
 # JB suggested I rename the re formatted file and move it to the doTrans folder and then I can just delete the other folder. 
     
@@ -138,15 +180,6 @@ sub munge {
     close($OUT);
 
     &runCmd("rm -r $tempOut Rplots.pdf");
-####################################################################################################
-my $input_list = \@inputs;
-  $self->setSourceIdType('gene');
-  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
-$self->getProtocolParamsHash();
-$self->addProtocolParamValue('reference',$reference);
-$self->addProtocolParamValue('comparator',$comparator);
- $self->createConfigFile();
-   
 }
 
 
