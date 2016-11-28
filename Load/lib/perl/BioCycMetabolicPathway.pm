@@ -190,6 +190,8 @@ sub makeGusCompound {
         $displayLabel = $compoundHash->{'standardName'};
     }
     
+    my $cellularLocation = $compoundHash->{'CellularLocation'};
+    
     
     unless (defined ($rowId)) {
         print STDERR "WARN: No chEBI id defined for compound $compound with standardName $compoundHash->{'standardName'}\n";
@@ -200,7 +202,8 @@ sub makeGusCompound {
                                                     {'display_label' => $displayLabel,
                                                      'pathway_node_type_id' => $typeId,
                                                      'table_id' => $tableId,
-                                                     'row_id' => $rowId
+                                                     'row_id' => $rowId,
+                                                     'cellular_location' => $cellularLocation
                                                     });
     $gusNode->setParent($pathway);
     my $uniqueNodeId = $compoundHash->{'UniqueId'};
