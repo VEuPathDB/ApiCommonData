@@ -20,13 +20,17 @@ if (lc $databaseName eq 'trypanocyc') {
     $organism = 'LEISH'
 } elsif (lc $databaseName eq 'metacyc') {
     $organism = 'META'
+} elsif (lc $databaseName eq 'fungicyc') {
+    $organism = "NC10"
 } else {
-    die "Database name must be 'TrypanoCyc', 'LeishCyc' or 'MetaCyc'\n";
+    die "Database name must be 'TrypanoCyc', 'LeishCyc', 'FungiCyc' or 'MetaCyc'\n";
 }
 
 my $urlBase;
 if ($organism eq 'TRYPANO' || $organism eq 'LEISH') {
     $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/$organism/";
+} elsif ($organism eq 'NC10') {
+    $urlBase= "http://fungicyc.broadinstitute.org/$organism/";
 } else {
     $urlBase = "http://metacyc.org/$organism/";
 }
