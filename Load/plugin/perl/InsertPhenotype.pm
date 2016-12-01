@@ -141,7 +141,7 @@ sub run {
     my $allele = $a[15];
     my $chebiAnnotationExtension= $a[16];
     my $proteinAnnotationExtension = $a[17];
-
+    my $mutation_desc = $a[18];
 
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
 #    my $ontologyProteinExtensionNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $proteinAnnotationExtension, 0, $self->getArg('organismAbbrev')) ;
@@ -158,6 +158,7 @@ sub run {
                                                                 organism => $organism,
 								experiment_type => $experimentType,
 								allele => $allele,
+								mutation_description => $mutation_desc,
                                                                });
 
       push @{$self->{_models}}, $phenotypeModel;
