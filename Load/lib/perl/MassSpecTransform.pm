@@ -848,7 +848,7 @@ use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
 sub getReportedModificationSymbolMap {
   my ($self) = @_;
 
-  return { '*' => 'Ubiquitination_site',
+  return { '*' => 'binding_site',
   };
 }
 
