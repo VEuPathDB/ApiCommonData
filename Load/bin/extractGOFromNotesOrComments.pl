@@ -34,11 +34,12 @@ while (<IN>) {
   my ($sourceId, $line) = split (/\t/, $_);
   my $sourceIdType = "transcript";
 
-  my @items = split (/\; GO/, $line) if ($line);
+  #my @items = split (/\; GO/, $line) if ($line);
+  my @items = split (/\; /, $line) if ($line);
 
   foreach my $item (@items) {
     my ($aspect, $goid, $product, $evCode, $dbRef);
-    $item = "GO".$item if ($item =~ /^\_/);
+    #$item = "GO".$item if ($item =~ /^\_/);
 
     if ($item =~ /^GO_(\w+)/) {
       $aspect = getAspectForGo ($item);
@@ -52,6 +53,7 @@ while (<IN>) {
       } elsif ($item =~ /(GO:\d+) - (.*)/) {
 	$goid = $1;
 	$product = $2;
+	$product =~ s/(.+)\;.*/$1/;
       }
 
       if ($item =~ /;ev_code=(\w+)/) {
