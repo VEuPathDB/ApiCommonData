@@ -328,7 +328,7 @@ sub addResults {
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-	print Dumper "can not find source ID for $sourceIdType\n" unless $naFeatureId;
+	$self->log("WARN:  No source_id for $sourceIdType with type $sourceIdType") unless $naFeatureId;
         next unless $naFeatureId;
 	$hash = { na_feature_id => $naFeatureId };
         $start = 1;
