@@ -8,6 +8,8 @@ use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::OntologyTerm;
 use Bio::PrimarySeq;
+use Bio::SeqIO;
+use Bio::Seq;
 use Bio::Tools::SeqStats;
 
 use Data::Dumper;
@@ -16,18 +18,18 @@ my $argsDeclaration =[];
 my $purposeBrief = 'Insert NA sequences from a FASTA file.';
 
 my $purpose = <<PLUGIN_PURPOSE;
-Insert or update sequences from a FASTA.  A set of regular expressions provided on the command line extract from the definition lines of the input sequences various information to stuff into the database.
+Insert or update sequences from a FASTA.
 PLUGIN_PURPOSE
 
 my $tablesAffected =
-  [ ['DoTS::ExternalNASequence', 'one row per EST'],['SRES::Contact','one row per library'],['SRES::Library','one row per library']
+  [ ['DoTS::ExternalNASequence', 'one row per Sequence']
   ];
 
 my $tablesDependedOn =
-  [['SRES::Taxon','taxon_id required for library and externalnasequence tables'],['SRes::OntologyTerm',  'OntologyTerm term for sequence type']
+  [['SRES::Taxon','taxon_id for externalnasequence table'],['SRes::OntologyTerm',  'OntologyTerm term for sequence type']
   ];
 
-  my $howToRestart = "Get the total number of ESTs processed from log file, second column, that number plus one for startAt argument"; 
+  my $howToRestart = ""; 
 
   my $failureCases = <<PLUGIN_FAILURE_CASES;
 PLUGIN_FAILURE_CASES
@@ -86,7 +88,7 @@ my $argsDeclaration =
 ];
 
 
-sub new() {
+sub new {
   my ($class) = @_;
   my $self = {};
   bless($self,$class);
@@ -109,11 +111,14 @@ sub run {
   $self->{totalCount} = 0;
   $self->{skippedCount} = 0;
 
+  $self->cacheTaxonNodes();
   $self->{external_database_release_id} = $self->getExtDbRlsId($self->getArg('externalDatabaseName'), $self->getArg('externalDatabaseVersion'));
 
   $self->log("loading sequences with external database release id $self->{external_database_release_id}");
 
   $self->fetchSequenceOntologyId();
+
+  
 
   $self->processFile();
 
@@ -125,61 +130,48 @@ sub run {
 
 }
 
+sub cacheTaxonNodes{
+  my ($self) = @_;
+  
+  my $sql = "select distinct t.ncbi_tax_id, t.taxon_id
+                     from sres.taxon t";
+  
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  while(my ($ncbi_taxon_id, $sres_taxon_id) = $sh->fetchrow_array()) {
+    $self->{_taxon_nodes}->{$ncbi_taxon_id}=$sres_taxon_id;
+  }
+  $sh->finish();
+
+        
+}
+
 sub processFile{
   my ($self) = @_;
   
   my $file = $self->getArg('fastaFile');
   
   $self->logVerbose("loading sequences from $file\n");
-  if ($file =~ /gz$/) {
-    open(F, "gunzip -c $file |") || die "Can't open $file for reading";
-  } else {
-    open(F,"$file") || die "Can't open $file for reading";
+
+  my $seq_count = 1;
+  my $seq_io = Bio::SeqIO->new(-file => $file,
+                                                      -format=>'Fasta');
+  
+  while(my $seq_object = $seq_io->next_seq) {
+    $seq_count++;
+    my $def_line = $seq_object->primary_id;
+    my ($source_id, $secondary_id, $taxon_id, $description);
+    $secondary_id = ""; $description = "";##in case can't parse out of this defline...
+    ($source_id, $secondary_id, $taxon_id, $description) = split(/\|/,$def_line); 
+    $self->process($source_id, $secondary_id, $taxon_id, $seq_object, $description);
   }
-  
-  my $source_id;
-  my $taxon_id;
-  my $secondary_id;
-  my $seq;
-  my $seqLength;
-  my $desc;
-
-  #my $sql = $self->getArg('checkSQL') ? $self->getArg('checkSQL') : "select na_sequence_id from dots.externalnasequence where source_id = ? and external_database_release_id = $self->{external_database_release_id}";
-  
- # my $checkStmt = $self->getAlgInvocation()->getQueryHandle()->prepare($sql);
-  
-  while (my $line = <F>) {
-    if ($line =~ /^\>/) {                ##have a defline....need to process!
-
-      $self->undefPointerCache();
-
-      if (defined $seq) {
-        $self->process($source_id,$secondary_id,$taxon_id,$seq,$seqLength,$desc);
-      }
-      
-      ##now get the ids etc for this defline...
-      $secondary_id = ""; $desc = "";##in case can't parse out of this defline...
-      ($source_id, $secondary_id, $taxon_id, $desc) = split(/\|/,$line);
-      $source_id =~ s/^>//;
-      #$self->log($source_id."\n");
-      ##reset the sequence..
-      $seq = "";
-    }
-    else {
-      $seq .= $line;
-      $seq =~ s/\s//g;
-      $seqLength = length($seq);
-    }
-    
-  }
-  
-  $self->process($source_id, $secondary_id, $taxon_id, $seq, $seqLength, $desc) if ($source_id && $seq);
 }
 
 sub process {
-  my($self,$source_id,$secondary_id,$taxon_id,$seq,$seqLength,$description) = @_;
-
-  my $nas = $self->createNewExternalSequence($source_id,$secondary_id,$seq,$taxon_id,$description);
+  my($self,$source_id,$secondary_id,$taxon_id,$seq_object,$description) = @_;
+  
+  my $nas = $self->createNewExternalSequence($source_id,$secondary_id,$seq_object,$taxon_id,$description);
 
   $nas->submit();
 
@@ -195,7 +187,7 @@ sub process {
 }
 
 sub createNewExternalSequence {
-  my($self, $source_id,$secondary_id,$seq,$taxon_id,$description) = @_;
+  my($self, $source_id,$secondary_id,$seq_object,$taxon_id,$description) = @_;
 
   my $nas = GUS::Model::DoTS::ExternalNASequence->
     new({'external_database_release_id' => $self->{external_database_release_id},
@@ -203,14 +195,16 @@ sub createNewExternalSequence {
          'sequence_version' => 1,
 	 'sequence_ontology_id' => $self->{sequenceOntologyId} });
 
-  my $taxonObj = GUS::Model::SRes::Taxon->new({ ncbi_tax_id => $taxon_id });
+  my $taxonObj = undef;
 
-  unless ($taxonObj->retrieveFromDB()) {
-    $self->log("No Row in SRes::Taxon for ncbi tax id $taxon_id");
-    $taxonObj = undef;
+  $taxonObj = GUS::Model::SRes::Taxon->new({ taxon_id =>  $self->{_taxon_nodes}->{$taxon_id} }) if defined $self->{_taxon_nodes}->{$taxon_id};
+
+  if (defined $taxonObj) {
+    $nas->setParent($taxonObj) ;
   }
-  $nas->setParent($taxonObj) if (defined $taxonObj);
-
+  else {
+    $self->log("Taxon ID : $taxon_id for Sequence Source ID : $source_id not found in Sres.taxon");
+  }
   if ($secondary_id && $nas->isValidAttribute('secondary_identifier')) {
     $nas->setSecondaryIdentifier($secondary_id);
   }
@@ -219,16 +213,18 @@ sub createNewExternalSequence {
     $description =~ s/\"//g; $description =~ s/\'//g;
     $nas->set('description',substr($description,0,255));
   }
+  my $seq = $seq_object->seq();
 
   $nas->setSequence($seq);
 
-  $self->getMonomerCount($nas,$seq);
+  $self->getMonomerCount($nas,$seq_object);
 
   return $nas;
+
 }
 
 sub getMonomerCount{
-  my ($self, $aas, $seq)=@_;
+  my ($self, $nas, $seq_object)=@_;
   my $monomersHash;
   my $countA = 0;
   my $countT = 0;
@@ -236,12 +232,7 @@ sub getMonomerCount{
   my $countG = 0;
   my $countOther = 0;
 
-  $seq =~ s/-//g;
-
-  my $seqobj = Bio::PrimarySeq->new(-seq=>$seq,
-				    -alphabet=>'dna');
-
-  my $seqStats  =  Bio::Tools::SeqStats->new(-seq=>$seqobj);
+  my $seqStats  =  Bio::Tools::SeqStats->new(-seq=>$seq_object);
 
   $monomersHash = $seqStats->count_monomers();
   foreach my $base (keys %$monomersHash) {
@@ -258,15 +249,15 @@ sub getMonomerCount{
       $countG = $$monomersHash{$base};
     }
     else{
-      $countOther = $$monomersHash{$base};
+      $countOther = $countOther + $$monomersHash{$base};
     }
   }
 
-  $aas->setACount($countA);
-  $aas->setTCount($countT);
-  $aas->setCCount($countC);
-  $aas->setGCount($countG);
-  $aas->setOtherCount($countOther);
+  $nas->setACount($countA);
+  $nas->setTCount($countT);
+  $nas->setCCount($countC);
+  $nas->setGCount($countG);
+  $nas->setOtherCount($countOther);
 
   return;
 }
