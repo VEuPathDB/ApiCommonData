@@ -163,7 +163,7 @@ sub processFile{
     my $def_line = $seq_object->primary_id;
     my ($source_id, $secondary_id, $taxon_id, $description);
     $secondary_id = ""; $description = "";##in case can't parse out of this defline...
-    ($source_id, $secondary_id, $taxon_id, $description) = split(/\|/,$def_line); 
+    ($source_id, $secondary_id, $taxon_id, $description) = split(/\|/,$def_line);
     $self->process($source_id, $secondary_id, $taxon_id, $seq_object, $description);
   }
 }
@@ -214,10 +214,10 @@ sub createNewExternalSequence {
     $nas->set('description',substr($description,0,255));
   }
   my $seq = $seq_object->seq();
-
-  $nas->setSequence($seq);
-
-  $self->getMonomerCount($nas,$seq_object);
+  if (defined $seq) {
+    $nas->setSequence($seq);
+    $self->getMonomerCount($nas,$seq_object);
+  }
 
   return $nas;
 
