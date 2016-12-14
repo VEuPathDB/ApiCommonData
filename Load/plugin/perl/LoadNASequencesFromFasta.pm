@@ -214,7 +214,7 @@ sub createNewExternalSequence {
     $nas->set('description',substr($description,0,255));
   }
   my $seq = $seq_object->seq();
-  if (defined $seq) {
+  if ($seq =~/\w/) {
     $nas->setSequence($seq);
     $self->getMonomerCount($nas,$seq_object);
   }

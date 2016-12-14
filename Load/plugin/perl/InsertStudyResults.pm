@@ -375,18 +375,8 @@ sub lookupIdFromSourceId {
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
   }
-  elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
+  elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence'|| $sourceIdType eq '16s_rrna') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
-  }
-
-  elsif ($sourceIdType eq '16s_rrna') {
-    my @naSequenceIds = $self->sqlAsArray(Sql => "select seq.na_sequence_id from dots.externalNASequence seq, SRES.ONTOLOGYTERM ot where seq.source_id = '$sourceId'
-                                                                                             and seq.sequence_ontology_id = ot.ONTOLOGY_TERM_ID
-                                                                                             and lower(ot.name) = 'rrna_16s'");
-    unless (scalar @naSequenceIds > 0) {
-      $naSequenceIds[0] = undef;
-    }
-    $rv = @naSequenceIds[0];
   }
 
   elsif ($sourceIdType eq 'reporter') {
