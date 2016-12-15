@@ -1,6 +1,6 @@
 
 create table ApiDBUserDatasets.InstalledUserDataset (
-user_dataset_id number(10) not null,
+user_dataset_id number(20) not null,
 name varchar(100) not null,
 primary key (user_dataset_id)
 );
@@ -11,18 +11,19 @@ GRANT select ON ApiDBUserDatasets.InstalledUserDataset TO gus_r;
 
 create table ApiDBUserDatasets.UserDatasetOwner (
 user_id number(10) not null,
-user_dataset_id number(10) not null,
+user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetOwner TO gus_w;
 GRANT select ON ApiDBUserDatasets.UserDatasetOwner TO gus_r;
 
+
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetSharedWith (
 user_id number(10) not null,
-user_dataset_id number(10) not null,
+user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
@@ -33,7 +34,7 @@ GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 
 create table ApiDBUserDatasets.UserDatasetExternalDataset (
 user_id number(10) not null,
-user_dataset_id number(10) not null,
+user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
@@ -55,15 +56,17 @@ GRANT select ON ApiDBUserDatasets.UserDatasetAccessControl TO gus_r;
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetEvent (
-event_id number(10) not null,
+event_id number(20) not null,
 completed date,
 primary key (event_id)
 );
+GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetEvent TO gus_w;
+GRANT select ON ApiDBUserDatasets.UserDatasetEvent TO gus_r;
 
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UD_GeneId (
-USER_DATASET_ID          NUMBER(10),     
+USER_DATASET_ID          NUMBER(20),     
 gene_SOURCE_ID                             VARCHAR2(100),  
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
@@ -80,7 +83,7 @@ TYPE_ID                               NUMBER(10),
 NAME                         VARCHAR2(200) not null,  
 DESCRIPTION                           VARCHAR2(1000), 
 URI                                   VARCHAR2(300),  
-USER_DATASET_ID          NUMBER(10),     
+USER_DATASET_ID          NUMBER(20),     
 SOURCE_ID                             VARCHAR2(100),  
 SUBTYPE_ID                            NUMBER(10),     
 TAXON_ID                              NUMBER(10),     
@@ -124,7 +127,7 @@ SELECT core.tableinfo_sq.nextval, 'UD_ProtocolAppNode',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDBUserDatasets') d
 WHERE 'UD_ProtocolAppNode' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
@@ -178,7 +181,7 @@ SELECT core.tableinfo_sq.nextval, 'UD_NaFeatureExpression',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDBUserDatasets') d
 WHERE 'UD_NaFeatureExpression' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
