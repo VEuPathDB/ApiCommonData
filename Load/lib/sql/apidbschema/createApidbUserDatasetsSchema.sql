@@ -1,5 +1,5 @@
 CREATE USER ApiDBUserDatasets
-IDENTIFIED BY VALUES 'BBA8A2E0BB2D7072'  -- encoding of standard password, same as apidbtuning
+IDENTIFIED BY VALUES 'DCB802868A9EF9F9'  -- encoding of standard password, same as apidbtuning
 QUOTA UNLIMITED ON users 
 QUOTA UNLIMITED ON gus
 QUOTA UNLIMITED ON indx
