@@ -15,6 +15,7 @@ create table apidb.Snp (
     minor_allele                 varchar(10) not null,  /* note there could be  more than one but we are only loading first based on sorted list */
     major_allele_count           number(5) not null,
     minor_allele_count           number(5) not null,
+    total_allele_count           number(5),
     major_product                varchar(1),
     minor_product                varchar(1),
     distinct_strain_count        number(3), 
