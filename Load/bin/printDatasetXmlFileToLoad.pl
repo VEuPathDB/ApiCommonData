@@ -28,6 +28,10 @@ my (
     $familyRepOrganismAbbrev,
     $familyNcbiTaxonIds,
     $familyNameForFiles,
+    $haveChromosome,
+    $haveSupercontig,
+    $haveContig,
+
     $help);
 
 &GetOptions(
@@ -79,6 +83,8 @@ while (<EXL>) {
   $count++;
 }
 close;
+$excelInfo{$organismAbbrev}{"publicOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"};
+
 
 print STDERR "\$count = $count\n";
  
@@ -103,7 +109,7 @@ printHeaderLine();
 printRegularLine (\%excelInfo, $organismAbbrev, "organismAbbrev");
 print PO "    <prop name=\"projectName\">\$\$projectName\$\$</prop>\n";
 printRegularLine (\%excelInfo, $organismAbbrev, "ncbiTaxonId");
-printRegularLine (\%excelInfo, $organismAbbrev, "organismAbbrev");
+printRegularLine (\%excelInfo, $organismAbbrev, "publicOrganismAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "organismFullName");
 printRegularLine (\%excelInfo, $organismAbbrev, "organismNameForFiles");
 printRegularLine (\%excelInfo, $organismAbbrev, "speciesNcbiTaxonId");
