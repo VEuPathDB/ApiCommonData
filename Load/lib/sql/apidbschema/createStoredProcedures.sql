@@ -544,9 +544,11 @@ begin
     -- parallel changes in the calling SQL, which checks that the divisor is not zero.
     if syn_is_reversed = 0
     then
-            scaling_factor := (right_ref_loc - left_ref_loc + 1) / (right_syntenic_loc - left_syntenic_loc + 1);
+            scaling_factor := (right_ref_loc - left_ref_loc + 1)
+                              / greatest(right_syntenic_loc - left_syntenic_loc + 1, 0.000001);
     else
-            scaling_factor := (right_ref_loc - left_ref_loc + 1) / (right_syntenic_loc - left_syntenic_loc - 1);
+            scaling_factor := (right_ref_loc - left_ref_loc + 1)
+                              / greatest(right_syntenic_loc - left_syntenic_loc - 1, 0.000001);
     end if;
 
     offset := (syntenic_point - left_syntenic_loc) * scaling_factor;
