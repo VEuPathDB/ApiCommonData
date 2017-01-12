@@ -15,17 +15,37 @@ use Data::Dumper;
 
 use List::MoreUtils qw(uniq first_index indexes);
 
-my ($inDir, $outDir, $cfgDir, $mapFile, $help,);
+my ($inputDirectory, $outputDirectory, $headerConfigDirectory, $mapFile,$externalDatabaseName, $obfuscationFactorFile, $help,);
 
 &GetOptions('help|h' => \$help,
-                      'input_directory=s' => \$inDir,
-                      'header_cfg_directory=s' => \$cfgDir,
-                      'output_directory=s' => \$outDir,
+                      'input_directory=s' => \$inputDirectory,
+                      'header_cfg_directory=s' => \$headerConfigDirectory,
+                      'output_directory=s' => \$outputDirectory,
                       'value_mapping_file=s' =>\$mapFile,
+                      'obfuscation_factor_file=s' => \$obfuscationFactorFile,
            );
 my $functionArgs = {};
 
-mkdir $outDir unless -d $outDir;
+mkdir $outputDirectory unless -d $outputDirectory;
+my $logDirectory = $outputDirectory."/logs";
+mkdir $logDirectory;
+
+unless (defined $obfuscationFactorFile) {
+  die "obfuscation_factor_file or external_database_name must be provided" unless defined $externalDatabaseName;
+}
+
+die "Obfuscation factor file $obfuscationFactorFile does not exists, or cannot be found. Please check you file path
+or run the generateObfuscationFile.pl script to create this file" unless -e $obfuscationFactorFile;
+
+open (OFF, $obfuscationFactorFile) or die "unable to open file $obfuscationFactorFile";
+
+my $obfuscationFactorHash = {};
+foreach my $line (<OFF>) {
+  $line =~s/[\n|\r]+//g;
+  my ($id,$value) = split("\t",$line);
+  $obfuscationFactorHash->{$id} = $value;
+}
+$functionArgs->{obfuscation_factors}=$obfuscationFactorHash;
 
 if (defined $mapFile){
   open (MAP, $mapFile);
@@ -41,28 +61,26 @@ if (defined $mapFile){
   $functionArgs->{map_hash}=$mapHash;
 }
 
-opendir(INDIR, $inDir);
+opendir(INDIR, $inputDirectory);
 my @files = readdir(INDIR);
 closedir(INDIR);
 
 foreach my $dataFile (@files) {
-  next if (-d "$inDir/$dataFile");
+  next if (-d "$inputDirectory/$dataFile");
 
-
-  my $xmlFile = $cfgDir."/".$dataFile.".cfg";
+  my $xmlFile = $headerConfigDirectory."/".$dataFile.".cfg";
   $xmlFile =~s/\/+/\//g;
-  my $logFile = $outDir."/".$dataFile.".log";
-
-  $logFile =~s/\/+/\//;
   
   my $resultFile = fileparse($dataFile);
-  $resultFile = $outDir."/".$resultFile;
   $resultFile =~s/processed$/translated/;
+
+  my $logFile = $logDirectory."/".$resultFile.".log";
+  $logFile =~s/\/+/\//g;
+
+  $resultFile = $outputDirectory."/".$resultFile;
   $resultFile =~s/\/+/\//g;
-
-  my $logFile = $resultFile.".log";
-
-  $dataFile = "$inDir/$dataFile";
+  
+  $dataFile = "$inputDirectory/$dataFile";
   $dataFile =~ s/\/+/\//;
   my $fileTranslator = GUS::Community::FileTranslator->new($xmlFile, $logFile);
   $fileTranslator->translate($functionArgs, $dataFile, $resultFile);

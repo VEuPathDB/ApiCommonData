@@ -161,21 +161,25 @@ foreach my $skipId (keys %{$skipIds}) {
 my ($outputLines,$conflictedCharacteristics,);
 ($outputLines,$conflictedCharacteristics,$skipIds) = mergeFiles($allDataHash,$dataMap,$uniqIds,$skipIds,$lower_idFieldName,$lower_parentIdFieldName,$lower_dateFieldName);
 my $mergedFileText = join("\n",@$outputLines);
-open (OUTPUT, ">$outFile") or die "Unable to open file for writing :$!";
-print OUTPUT $mergedFileText;
-close OUTPUT;
+
 
 
 
 my $reportLines = prepareReport ($uniqIds,$skipIds,$confilctedCharacteristics,);
 my $reportFile = $outFile."_Report";
 if (scalar @$reportLines > 1 ) {
-  print STDERR "Issues were found with you input files, please consult the report file $reportFile for details";
+
   my $reportFileText = join("\n",@$reportLines);
   open (REPORT, ">$reportFile") or die "Unable to open file for writing :$!";
   print REPORT $reportFileText;
   close REPORT;
+  die "Issues were found with you input files, please consult the report file $reportFile for details";
 }
+
+open (OUTPUT, ">$outFile") or die "Unable to open file for writing :$!";
+print OUTPUT $mergedFileText;
+close OUTPUT;
+
 
 
 sub parseHeader {
