@@ -1021,7 +1021,7 @@ sub fetchSequenceOntologyId {
   $res->{sequenceOntologyId} = $SOTerm->getId();
 
   if (! $SOTerm->getId()) {
-    warn "Error: Can't find SO term '$name' in database.";
+    $self->error("Error: Can't find SO term '$name' in database.");
   } 
 }
 
