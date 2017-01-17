@@ -539,21 +539,12 @@ is
     offset number;
     scaling_factor number;
 begin
-    -- It seems wrong that the scaling factor is different when the synteny is
-    -- reversed, but this is how the existing SQL worked. Changes here require
-    -- parallel changes in the calling SQL, which checks that the divisor is not zero.
-    if syn_is_reversed = 0
-    then
-            scaling_factor := (right_ref_loc - left_ref_loc + 1)
-                              / greatest(right_syntenic_loc - left_syntenic_loc + 1, 0.000001);
-    else
-            scaling_factor := (right_ref_loc - left_ref_loc + 1)
-                              / greatest(right_syntenic_loc - left_syntenic_loc - 1, 0.000001);
-    end if;
 
-    offset := (syntenic_point - left_syntenic_loc) * scaling_factor;
-
+    scaling_factor := (right_ref_loc - left_ref_loc + 1)
+                       / (abs(right_syntenic_loc - left_syntenic_loc) + 1);
+    offset := abs(syntenic_point - left_syntenic_loc) * scaling_factor;
     return round(left_ref_loc + offset);
+
 end syntenic_location_mapping;
 /
 
