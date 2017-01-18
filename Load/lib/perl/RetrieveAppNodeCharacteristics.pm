@@ -114,6 +114,7 @@ sub cleanAttr {
   $attribute =~ s/^average_number_of_clinical_visits_with/avg_annual_visits_with_/;
   $attribute =~ s/^number_of_clinical_visits_resulting_in/num_visits_with_/;
   $attribute =~ s/^number_of_/num_/;
+  $attribute =~ s/asymptomatic/asymp/;
 
   # my $old_parent_id_string = "parent_id";
   # my $parent_id_string = "parent_id";
