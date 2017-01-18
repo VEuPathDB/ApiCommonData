@@ -24,6 +24,7 @@
 use strict;
 use IO::File;
 use Getopt::Long;
+use File::Find;
 
 my($workflowVersion,$projectName,$buildNumber,$copyFromPreRelease);
 
@@ -47,6 +48,7 @@ system ("cp -r $sourceDir $targetDir");
 print "failed to execute: $!\n" if ($? == -1);
 chdir $targetDir or die "Can't chdir to $targetDir\n";
 &loopDir($targetDir);
+&deleteEmptyDirs($targetDir);
 
 print STDERR "Creating Build_number file under $targetDir\n"; 
 my $filename = "$targetDir/Build_number";
@@ -88,6 +90,13 @@ sub loopDir {
      }
    }
    closedir(DIR);
+   chdir("..");
+}
+
+sub deleteEmptyDirs {
+   my($dir) = @_;
+   chdir($dir) || die "Cannot chdir to $dir\n";
+   finddepth(sub{rmdir $_ if -d },'.');
    chdir("..");
 }
 
