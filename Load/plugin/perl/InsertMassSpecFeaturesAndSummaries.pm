@@ -987,7 +987,7 @@ sub insertMassSpecFeatures {
 
     ## insert residues data into PostTranslationalModFeature and AALocation
     for my $res (@{$pep->{residues}}) {
-      &fetchSequenceOntologyId($res, $res->{modification_type});
+      $self->fetchSequenceOntologyId($res, $res->{modification_type});
       my $resFeature = GUS::Model::DoTS::PostTranslationalModFeature->new({
                                                             'aa_sequence_id'               => $record->{aaSequenceId},
                                                             'parent_id'                    => $msFeature->getAaFeatureId(),
@@ -1014,7 +1014,7 @@ sub insertMassSpecFeatures {
 }
 
 sub fetchSequenceOntologyId {
-  my ($res, $name) = @_; 
+  my ($self, $res, $name) = @_; 
 
   my $SOTerm = GUS::Model::SRes::OntologyTerm->new({'name' => $name }); 
   $SOTerm->retrieveFromDB;
