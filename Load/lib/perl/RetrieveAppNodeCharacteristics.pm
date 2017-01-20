@@ -46,21 +46,37 @@ SQL
   my $vh = $dbh->prepare($getValuesSql);
   
   my $allValuesHash = {};
+
+  my $getVariableTypeSql =  <<SQL;
+                                                      	Select distinct variable_type
+							from ExtendedMetadataType
+							where category = ?
+SQL
+
+  my $th = $dbh->prepare($getVariableTypeSql);
+  
+  my $allTypesHash = {};
   
 
   while(my ($type, $category, $ot_source_id) = $selectRow->fetchrow_array()) {
     my $valueHash = {};
-    my $cleanCategory = cleanAttr($type,$category);
+    my $cleanCategory = &cleanAttr($type,$category);
+    $th->execute($ot_source_id) or die $dbh->errstr;
+    my $values = [];
+
+    my ($variableType) = $th->fetchrow_array();
 
     if (exists ($appNodeCategories->{$type})) {
       my $categories = $appNodeCategories->{$type}->{'raw'};
       my $ot_source_ids = $appNodeCategories->{$type}->{'ot_source_id'};
+      my $variable_types = $appNodeCategories->{$type}->{'variable_type'};
       unless (grep( /^$category$/, @$categories )) {
         my $cleanCategories = $appNodeCategories->{$type}->{'clean'};
         next unless $cleanCategory=~/\w/;
         push (@$cleanCategories, $cleanCategory);
         push (@$categories,$category);
         push (@$ot_source_ids,$ot_source_id);
+        push (@$variable_types,$variableType);
       }
     }
     else {
@@ -69,7 +85,8 @@ SQL
       print $cleanCategory."clean \n";
       $appNodeCategories->{$type}->{'raw'} = [ $category ];
       $appNodeCategories->{$type}->{'clean'} = [ $cleanCategory ];
-      $appNodeCategories->{$type}->{'ot_source_id'} = [ $ot_source_id ] 
+      $appNodeCategories->{$type}->{'ot_source_id'} = [ $ot_source_id ];
+      $appNodeCategories->{$type}->{'variable_type'} = [ $variableType ];
     }
     $vh->execute($type,$ot_source_id,$category) or die $dbh->errstr;
     my $values = [];
@@ -95,9 +112,9 @@ SQL
 
   $selectRow->finish();
   $vh->finish();
-          #print STDERR Dumper ($appNodeCategories);
+#          print STDERR Dumper ($appNodeCategories);
 
-          #print STDERR Dumper ($allValuesHash);
+#          print STDERR Dumper ($allValuesHash);
   return ($appNodeCategories,$allValuesHash);
 }
 
