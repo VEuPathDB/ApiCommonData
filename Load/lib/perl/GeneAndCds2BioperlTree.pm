@@ -307,6 +307,9 @@ sub traverseSeqFeatures {
 		
 			my $CDSLength = 0;
 	    foreach my $subFeature (@containedSubFeatures){
+	      if ($subFeature->primary_tag eq 'intron'){
+		next;
+	      }
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $transcript = &copyQualifiers($subFeature, $transcript);
 		    $CDSLocation  = $subFeature->location;
