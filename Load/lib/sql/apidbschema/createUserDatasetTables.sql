@@ -10,7 +10,7 @@ GRANT select ON ApiDBUserDatasets.InstalledUserDataset TO gus_r;
 --------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetOwner (
-user_id number(10) not null,
+user_id number(12) not null,
 user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
@@ -22,7 +22,7 @@ GRANT select ON ApiDBUserDatasets.UserDatasetOwner TO gus_r;
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetSharedWith (
-user_id number(10) not null,
+user_id number(12) not null,
 user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
@@ -33,7 +33,7 @@ GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetExternalDataset (
-user_id number(10) not null,
+user_id number(12) not null,
 user_dataset_id number(20) not null,
 primary key (user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
