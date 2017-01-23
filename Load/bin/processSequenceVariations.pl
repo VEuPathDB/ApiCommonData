@@ -83,9 +83,17 @@ $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless(-e $gusConfigFile)
 my $cacheFileExists = -e $cacheFile;
 
 if(!$cacheFileExists || $cleanCache) {
+  print STDERR "Creating empty cache because none exists.\n"
+    if !$cacheFileExists;
+  print STDERR "Creating empty cache because \"--clean_cache\" option was specified.\n"
+    if $cleanCache;
   open(CACHE, ">$cacheFile") or die "Cannot create a cache file: $!";
   close CACHE;
 }
+
+my $initialCacheCount = `cat $cacheFile | wc -l`;
+chomp($initialCacheCount);
+print STDERR "Starting with cache file of $initialCacheCount records\n";
 
 unless(-e $newSampleFile && -e $gusConfigFile) {
   &usage("Required File Missing");
@@ -379,6 +387,12 @@ while($merger->hasNext()) {
 close $cacheFh;
 close $snpFh;
 &closeVarscanFiles($strainVarscanFileHandles);
+
+# compare file sizes of old and new cache file
+my $newCacheCount = `cat $tempCacheFile | wc -l`;
+chomp($newCacheCount);
+die "cache file got smaller"
+  if $newCacheCount < $initialCacheCount;
 
 # Rename the output file to full cache file
 unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
