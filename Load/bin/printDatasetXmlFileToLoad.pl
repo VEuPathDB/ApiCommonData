@@ -83,7 +83,10 @@ while (<EXL>) {
   $count++;
 }
 close;
+
+## add some constant value
 $excelInfo{$organismAbbrev}{"publicOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"};
+$excelInfo{$organismAbbrev}{'projectName'} = $projectName;
 
 
 print STDERR "\$count = $count\n";
@@ -108,6 +111,7 @@ open (PO, ">$projFile") || die "can not open file to write\n";
 printHeaderLine();
 printRegularLine (\%excelInfo, $organismAbbrev, "organismAbbrev");
 print PO "    <prop name=\"projectName\">\$\$projectName\$\$</prop>\n";
+
 printRegularLine (\%excelInfo, $organismAbbrev, "ncbiTaxonId");
 printRegularLine (\%excelInfo, $organismAbbrev, "publicOrganismAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "organismFullName");
@@ -139,7 +143,162 @@ close PO;
 
 
 
-#####################
+
+##########  start print xml file for organism  ##########
+
+open my $ofh, '>', $orgFile || die "can not open organism xml file to write\n";
+print $ofh "<datasets>\n";
+
+printConstantName ($ofh, \%excelInfo, "organismAbbrev");
+printConstantName ($ofh, \%excelInfo, "strainAbbrev");
+printConstantName ($ofh, \%excelInfo, "referenceStrainOrganismAbbrev");
+printConstantName ($ofh, \%excelInfo, "familyRepOrganismAbbrev");
+printConstantName ($ofh, \%excelInfo, "projectName");
+printConstantName ($ofh, \%excelInfo, "ncbiTaxonId");
+printConstantName ($ofh, \%excelInfo, "speciesNcbiTaxonId");
+printConstantName ($ofh, \%excelInfo, "genomeVersion");
+printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
+printConstantName ($ofh, \%excelInfo, "soTerm", "soTerm");  ## not work now, need to add soTerm column to spreadsheet
+printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion");  ## not work now, need to add something
+printConstantName ($ofh, \%excelInfo, "genomeSource");
+print $ofh "\n";
+
+printValidateOrganismInfo($ofh);
+
+printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasProduct'} =~ /^y/i);
+
+printGOClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasGO'} =~ /^y/i);
+
+printECClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasEC'} =~ /^y/i);
+
+printGeneNameClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasName'} =~ /^y/i);
+
+printSynonymClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasSynonym'} =~ /^y/i);
+
+printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^t/i);
+printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^g/i);
+
+print $ofh "</datasets>\n";
+
+close $ofh;
+
+
+
+
+##################### subroutine ###################
+sub printGOClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"GeneOntologyAssociations\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printECClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"EnzymeCommissionAssociations\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printCommentClass {
+  my ($fh, $excelInfoPoint, $geneOrTrans) = @_;
+  print $fh "  <dataset class=\"comments\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  my $commentName = $excelInfoPoint->{$organismAbbrev}->{'genomeSource'} . "_" . $geneOrTrans;
+  printNameWithValue ($fh, 'name', $commentName);
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printGeneNameClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"geneName\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printSynonymClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"dbxref_synonym\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printProductNamesClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"productNames\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
+  printNameWithDollarSign ($fh, 'name', 'source');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printValidateOrganismInfo {
+  my ($fh, $item) = @_;
+  print $fh "  <dataset class=\"validateOrganismInfo\">\n";
+
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'strainAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
+  printNameWithDollarSign ($fh, 'genomeVersion');
+
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+sub printNameWithDollarSign {
+  ## print <prop name="projectName">$$projectName$$</prop>
+  my ($fh, $item, $value) = @_;
+  $value = $item if (!$value);
+  print $fh "    <prop name=\"$item\">\$\$$value\$\$</prop>\n";
+  return 0;
+}
+
+sub printNameWithValue {
+  ## print <prop name="name">GeneDB_transcript</prop>
+  my ($fh, $item, $value) = @_;
+  $value = $item if (!$value);
+  print $fh "    <prop name=\"$item\">$value</prop>\n";
+  return 0;
+}
+
+sub printConstantName {
+  ## print <constant name="strainAbbrev" value="yoelii17X"/>
+  my ($fh, $excelInfoPoint, $item, $value) = @_;
+  $value = $item if (!$value);
+  print $fh "  <constant name=\"$item\" value=\"$excelInfoPoint->{$organismAbbrev}->{$value}\"\/>\n";
+  return 0;
+}
+
 sub printHeaderLine {
   print PO "  <dataset class=\"organism\">\n";
 }
