@@ -8,6 +8,7 @@ use GUS::Supported::Util;
 use GUS::Model::ApiDB::PhenotypeModel;
 use GUS::Model::ApiDB::PhenotypeResult;
 use GUS::Model::SRes::OntologyTerm;
+use Data::Dumper;
 sub getArgsDeclaration {
 my $argsDeclaration  =
 [
@@ -145,8 +146,11 @@ sub run {
 
     my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
 #    my $ontologyProteinExtensionNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $proteinAnnotationExtension, 0, $self->getArg('organismAbbrev')) ;
+#    print Dumper "na feature id\n";
+ #   print Dumper $naFeatureId;
     my $phenotypeModel = $self->lookupModel($modelSourceId, $naFeatureId, $pubmedId);
-
+ #   print Dumper "the model source id is \n";
+ #   print Dumper $modelSourceId;
     unless($phenotypeModel) {
       $phenotypeModel = GUS::Model::ApiDB::PhenotypeModel->new({external_database_release_id => $extDbReleaseId, 
                                                                 na_feature_id => $naFeatureId,
@@ -160,6 +164,12 @@ sub run {
 								allele => $allele,
 								mutation_description => $mutation_desc,
                                                                });
+  #    print Dumper "the stuff in the model is\n";
+  #    print Dumper $naFeatureId;
+  #    print Dumper $modelSourceId;
+  #    print Dumper $name;
+  #   print Dumper $modType;
+  #    print Dumper $mutation_desc;
 
       push @{$self->{_models}}, $phenotypeModel;
     }
@@ -200,6 +210,9 @@ sub run {
                                                                   });
 
     $phenotypeResult->setParent($phenotypeModel);
+   # print Dumper "RESULT\n\n\n";
+   # print Dumper $lifeCycleTermId;
+   # print Dumper $phenotypeString;
 
     $phenotypeResult->submit();
 
@@ -212,15 +225,20 @@ sub run {
 
 sub lookupModel {
   my ($self, $sourceId, $naFeatureId, $pubmed) = @_;
-
+#  print Dumper "getting into look up model\n";
   foreach my $model(@{$self->{_models}}) {
-    if($sourceId && $model->getSourceId() eq $sourceId) {
-      return $model;
+    if(($sourceId && $model->getSourceId() eq $sourceId)&& ($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed)) {
+#	print Dumper "look up model source id model get source if\n";
+#	print Dumper $sourceId;
+#	print Dumper $model->getSourceId();
+	return $model;
     }
 
-    if($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed) {
-      return $model;
-    }
+#   if($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed) {
+#	print Dumper "in second of of look up model";
+ #     return $model;
+
+  #  }
   }
 
   return undef;
