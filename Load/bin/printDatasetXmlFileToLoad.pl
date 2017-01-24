@@ -31,6 +31,8 @@ my (
     $haveChromosome,
     $haveSupercontig,
     $haveContig,
+    $dbxrefVersion,
+    $soTerm,
 
     $help);
 
@@ -54,7 +56,8 @@ my (
 	    'familyRepOrganismAbbrev' => \$familyRepOrganismAbbrev,
 	    'familyNcbiTaxonIds' => \$familyNcbiTaxonIds,
 	    'familyNameForFiles' => \$familyNameForFiles,
-
+	    'dbxrefVersion=s' => \$dbxrefVersion,
+	    'soTerm' => \$soTerm,
 
 	    'help|h' => \$help,
 	    );
@@ -156,11 +159,11 @@ printConstantName ($ofh, \%excelInfo, "familyRepOrganismAbbrev");
 printConstantName ($ofh, \%excelInfo, "projectName");
 printConstantName ($ofh, \%excelInfo, "ncbiTaxonId");
 printConstantName ($ofh, \%excelInfo, "speciesNcbiTaxonId");
+printConstantName ($ofh, \%excelInfo, "soTerm", "soTerm");
+printConstantName ($ofh, \%excelInfo, "genomeSource");
 printConstantName ($ofh, \%excelInfo, "genomeVersion");
 printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
-printConstantName ($ofh, \%excelInfo, "soTerm", "soTerm");  ## not work now, need to add soTerm column to spreadsheet
-printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion");  ## not work now, need to add something
-printConstantName ($ofh, \%excelInfo, "genomeSource");
+printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion");
 print $ofh "\n";
 
 printValidateOrganismInfo($ofh);
@@ -178,6 +181,17 @@ printSynonymClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasSynony
 printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^t/i);
 printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^g/i);
 
+print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
+printGene2Entrez ($ofh, $dbxrefVersion);
+printGene2PubmedFromNcbi ($ofh, $dbxrefVersion);
+printGene2Uniprot ($ofh, $dbxrefVersion);
+printECAssocFromUniprot ($ofh);
+
+printRefStraindbEST ($ofh, \%excelInfo);
+printRefStrainEpitope ($ofh, \%excelInfo);
+printIsolatesFromFamilyRep ($ofh, \%excelInfo);
+
+
 print $ofh "</datasets>\n";
 
 close $ofh;
@@ -186,6 +200,110 @@ close $ofh;
 
 
 ##################### subroutine ###################
+sub printRefStraindbEST {
+  my ($fh, $excelInfoPoint) = @_;
+  if ($excelInfoPoint->{$organismAbbrev}->{'isReferenceStrain'} =~ /^y/i) {
+    print $fh "  <dataset class=\"referenceStrain-dbEST\">\n";
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+
+  print $fh "  <dataset class=\"transcriptsFromReferenceStrain\">\n";
+  printNameWithDollarSign ($fh, 'referenceStrainOrganismAbbrev');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printRefStrainEpitope {
+  my ($fh, $excelInfoPoint) = @_;
+  if ($excelInfoPoint->{$organismAbbrev}->{'isReferenceStrain'} =~ /^y/i) {
+    print $fh "  <dataset class=\"referenceStrain-epitope_sequences_IEDB\">\n";
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
+    printNameWithValue ($fh, 'version', '2.4');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+
+  print $fh "  <dataset class=\"epitopesFromReferenceStrain\">\n";
+  printNameWithDollarSign ($fh, 'referenceStrainOrganismAbbrev');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printIsolatesFromFamilyRep {
+  my ($fh, $excelInfoPoint) = @_;
+  if ($excelInfoPoint->{$organismAbbrev}->{'isFamilyRepresentative'} =~ /^y/i) {
+    print $fh "  <dataset class=\"familyRepresentative-isolatesGenbank\">\n";
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId', 'familyNcbiTaxonIds');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+
+  print $fh "  <dataset class=\"isolatesFromFamilyRepresentative\">\n";
+  printNameWithValue ($fh, 'name', 'genbank');
+  printNameWithDollarSign ($fh, 'familyRepOrganismAbbrev');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printGene2Entrez {
+  my ($fh, $version) = @_;
+  print $fh "  <dataset class=\"dbxref_gene2Entrez\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithValue ($fh, 'version', $version);
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printGene2PubmedFromNcbi {
+  my ($fh, $version) = @_;
+  print $fh "  <dataset class=\"dbxref_gene2PubmedFromNcbi\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithValue ($fh, 'version', $version);
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printGene2Uniprot {
+  my ($fh, $version) = @_;
+  print $fh "  <dataset class=\"dbxref_gene2Uniprot\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithValue ($fh, 'version', $version);
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
+sub printECAssocFromUniprot {
+  my ($fh) = @_;
+  print $fh "  <dataset class=\"ECAssocFromUniprot\">\n";
+  printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithValue ($fh, 'version', "TODAY");
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
 sub printGOClass {
   my ($fh, $excelInfoPoint) = @_;
   print $fh "  <dataset class=\"GeneOntologyAssociations\">\n";
@@ -397,6 +515,7 @@ Usage: ..
 where
   --organismAbbrev:    the organism abbrev
   --organismFullName: organism full name
+  --dbxrefVersion: the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
   --soTerm: contig, supercontig, or chromosome
   --regexSourceId: optional, regExp for sequence source id on the defline of the fasta file, only for gff3 format, default is >(\\S+?)(\\|\\w\+\$|\$)
 
