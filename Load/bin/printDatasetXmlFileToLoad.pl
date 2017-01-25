@@ -509,15 +509,14 @@ sub printLinesBasedProject { ## print several lines based on projectname
 sub usage {
   die
 "
-Usage: ..
+Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
  
 
 where
   --organismAbbrev:    the organism abbrev
-  --organismFullName: organism full name
+  --excelFile:    the excel file in .txt format that has all info of genome
+  --projectName:    project name, such as PlasmoDB, etc. in full name
   --dbxrefVersion: the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
-  --soTerm: contig, supercontig, or chromosome
-  --regexSourceId: optional, regExp for sequence source id on the defline of the fasta file, only for gff3 format, default is >(\\S+?)(\\|\\w\+\$|\$)
 
 ";
 }
