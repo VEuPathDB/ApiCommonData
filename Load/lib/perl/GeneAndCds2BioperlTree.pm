@@ -81,7 +81,8 @@ sub preprocess {
 	    #  $bioperlFeatureTree->primary_tag('tRNA_gene');
 	    #}
 
-	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
+#	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
+	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' || $type eq 'centromere'){
 		#if($bioperlFeatureTree->has_tag("satellite")){
 		#    $bioperlFeatureTree->primary_tag("microsatellite");
 		#}
