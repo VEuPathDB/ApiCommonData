@@ -53,7 +53,7 @@ sub preprocess {
 
     my @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
 
-    foreach my $bioperlFeatureTree (@topSeqFeatures) {
+    OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
         my $type = $bioperlFeatureTree->primary_tag();
         
         if($type eq 'pseudogene'){
@@ -120,6 +120,7 @@ sub preprocess {
                         }
                         $geneFeature->add_SeqFeature($transcript);
                         $bioperlSeq->add_SeqFeature($geneFeature);
+			next OUTER;
                     }
                 }
             }       
