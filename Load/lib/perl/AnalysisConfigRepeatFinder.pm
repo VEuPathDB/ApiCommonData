@@ -19,7 +19,7 @@ sub displayAndBaseName {
   my $xmlParser = CBIL::TranscriptExpression::XmlParser->new($analysisConfig);
   my $nodes = $xmlParser->parse();
 
-  my $order = 0;
+  my $order = "000";
 
   my $nodeCount = 1;
 
