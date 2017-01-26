@@ -159,6 +159,7 @@ printConstantName ($ofh, \%excelInfo, "familyRepOrganismAbbrev");
 printConstantName ($ofh, \%excelInfo, "projectName");
 printConstantName ($ofh, \%excelInfo, "ncbiTaxonId");
 printConstantName ($ofh, \%excelInfo, "speciesNcbiTaxonId");
+printConstantName ($ofh, \%excelInfo, "familyNcbiTaxonIds") if ($excelInfo{$organismAbbrev}{'familyNcbiTaxonIds'} =~ /^\d+/);
 printConstantName ($ofh, \%excelInfo, "soTerm", "soTerm");
 printConstantName ($ofh, \%excelInfo, "genomeSource");
 printConstantName ($ofh, \%excelInfo, "genomeVersion");
