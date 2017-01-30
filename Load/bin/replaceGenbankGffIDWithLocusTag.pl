@@ -4,7 +4,7 @@
 
 use strict;
 
-my $gffFile = $ARGV[0];
+my ($gffFile, $bldNum) = @ARGV;
 
 my (%cLocusId, %cRnaId, $rnaType, %count);
 
@@ -48,7 +48,7 @@ while (<GFF>) {
       print STDERR "no rna count for $cRna and $cGene\n" if (!$count{$cGene});
 
 #      $cRnaId{$cRna} = $cLocusId{$cGene}."\.$rnaType\.".$count{$cGene};
-      $cRnaId{$cRna} = $cLocusId{$cGene}."-t26_".$count{$cGene};  ## only for first time generate, use rnaType is more reasonable
+      $cRnaId{$cRna} = $cLocusId{$cGene}."-t".$bldNum."_".$count{$cGene};  ## only for first time generate, use rnaType and count is more reasonable
 
       $items[8] =~ s/ID=$cRna/ID=$cRnaId{$cRna}/;
       $items[8] =~ s/Parent=$cGene/Parent=$cLocusId{$cGene}/;
