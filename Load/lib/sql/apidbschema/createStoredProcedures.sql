@@ -542,7 +542,9 @@ begin
 
     scaling_factor := (right_ref_loc - left_ref_loc + 1)
                        / (abs(right_syntenic_loc - left_syntenic_loc) + 1);
-    offset := abs(syntenic_point - left_syntenic_loc) * scaling_factor;
+    offset := (syntenic_point - left_syntenic_loc) 
+              * (case when syn_is_reversed = 1 then -1 else 1 end)
+              * scaling_factor;
     return round(left_ref_loc + offset);
 
 end syntenic_location_mapping;
