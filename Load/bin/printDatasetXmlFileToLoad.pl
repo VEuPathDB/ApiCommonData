@@ -90,6 +90,8 @@ close;
 ## add some constant value
 $excelInfo{$organismAbbrev}{"publicOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"};
 $excelInfo{$organismAbbrev}{'projectName'} = $projectName;
+$excelInfo{$organismAbbrev}{"referenceStrainOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"} 
+  if ($excelInfo{$organismAbbrev}{"isReferenceStrain"} =~ /^y/i);
 
 
 print STDERR "\$count = $count\n";
