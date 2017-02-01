@@ -41,7 +41,7 @@ my $x = $dropApiDB + $dropGUS + $create;
 if (!$db || ($x != 1)) {
   die "
 
-Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS.  Or, uinstall them (or uninstall the GUS schemas)
+Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS, or uninstall them (or uninstall the GUS schemas)
 
 usage: installApidbSchema --db database [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
 
@@ -140,6 +140,7 @@ my @create = qw(
                createCNVTables.sql
                createRflpTables.sql
                createNAFeatureImage.sql
+               createSequenceTaxon.sql
 	     );
 
 # drop GUS first, then ApidbTuning, then Apidb (reverse of order they were created in).
