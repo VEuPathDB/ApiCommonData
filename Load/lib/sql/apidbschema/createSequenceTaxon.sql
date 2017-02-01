@@ -30,6 +30,14 @@ CREATE INDEX apidb.seqTx_seq_ix
   ON apidb.SequenceTaxon (na_sequence_id, taxon_id, external_database_release_id)
   TABLESPACE indx;
 
+CREATE INDEX apidb.seqTx_tx_ix
+  ON apidb.SequenceTaxon (taxon_id, na_sequence_id, external_database_release_id)
+  TABLESPACE indx;
+
+CREATE INDEX apidb.seqTx_dbrls_ix
+  ON apidb.SequenceTaxon (external_database_release_id, na_sequence_id, taxon_id)
+  TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable,
