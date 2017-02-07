@@ -29,3 +29,45 @@ show errors;
 GRANT execute ON apidb.project_id TO public;
 
 -------------------------------------------------------------------------------
+create or replace function apidb.wrap (seq clob)
+return clob
+is
+    rslt      clob;
+    maxchunk  number;
+    linesize  number;
+    idx       number;
+    delimiter char;
+
+begin
+    linesize := 60;
+    delimiter := chr(10);
+
+
+    if seq is null or length(seq) <= linesize
+    then
+      rslt := seq;
+
+    else 
+        maxchunk := ceil(length(seq) / linesize) - 1;
+
+        for idx in 0 .. maxchunk
+        loop
+            if idx > 0
+            then
+                rslt := rslt || delimiter;
+            end if;
+
+            rslt := rslt || dbms_lob.substr(seq, linesize, idx * linesize + 1);
+        end loop;
+    end if;
+
+    return rslt;
+end wrap;
+/
+
+show errors;
+
+GRANT execute ON apidb.wrap TO gus_r;
+GRANT execute ON apidb.wrap TO gus_w;
+
+-------------------------------------------------------------------------------
