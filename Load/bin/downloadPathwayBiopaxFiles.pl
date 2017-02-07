@@ -18,24 +18,23 @@ if (lc $databaseName eq 'trypanocyc') {
     $organism = 'TRYPANO'
 } elsif (lc $databaseName eq 'leishcyc') {
     $organism = 'LEISH'
-} elsif (lc $databaseName eq 'metacyc') {
+} elsif (lc $databaseName eq 'metacyc' || lc $databaseName eq 'fungicyc') {
     $organism = 'META'
-} elsif (lc $databaseName eq 'fungicyc') {
-    $organism = "NC10"
 } else {
-    die "Database name must be 'TrypanoCyc', 'LeishCyc', 'FungiCyc' or 'MetaCyc'\n";
+    die "Database name must be 'TrypanoCyc', 'LeishCyc', or 'MetaCyc'\n";
 }
 
 my $urlBase;
 if ($organism eq 'TRYPANO' || $organism eq 'LEISH') {
-    $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/$organism/";
-} elsif ($organism eq 'NC10') {
-    $urlBase= "http://fungicyc.broadinstitute.org/$organism/";
+    $urlBase = "http://vm-trypanocyc.toulouse.inra.fr/";
 } else {
-    $urlBase = "http://metacyc.org/$organism/";
+    $urlBase = "http://metacyc.org/";
 }
 
-$urlBase .= "pathway-biopax?type=3&object=";
+my $urlBiopax = $urlBase."$organism/pathway-biopax?type=3&object=";
+
+my $urlJson;
+$urlJson = $urlBase."cytoscape-js/ovsubset-graph.js?orgid=$organism&pwys=";
 
 open(XML, "<$pathwayXml") or die "Cannot open pathway xml file $pathwayXml\n$!\n";
 
@@ -43,9 +42,12 @@ while (<XML>) {
     chomp;
     /frameid=\"(.+)\"/;
     if ($1) {
-        my $url = $urlBase.uri_escape($1);
+        my $url = $urlBiopax.uri_escape($1);
         my $response = getstore($url, "$1.biopax");
         die "Error: $response when getting from $url\n" unless is_success($response);
+        my $jsonUrl = $urlJson.uri_escape($1);
+        my $response = getstore($jsonUrl, "$1.json");
+        die "Error: $response when getting from $jsonUrl\n" unless is_success($response);
     }
 }
 exit;
