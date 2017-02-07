@@ -89,7 +89,9 @@ sub makeGusObjects {
                                                                 {'display_label' => $displayLabel,
                                                                  'pathway_node_type_id' => $typeId,
                                                                  'table_id' => $tableId,
-                                                                 'row_id' => $rowId
+                                                                 'row_id' => $rowId,
+                                                                 'x' => $reactionNode->{'x'},
+                                                                 'y' => $reactionNode->{'y'},
                                                                 });
                 $gusNode->setParent($pathway);
                 my $uniqueNodeId = $reactionNode->{'UniqueId'}; 
@@ -191,6 +193,9 @@ sub makeGusCompound {
     }
     
     my $cellularLocation = $compoundHash->{'CellularLocation'};
+
+    my $xCoord = (exists($compoundHash->{'x'})) ? $compoundHash->{'x'} : undef;
+    my $yCoord = (exists($compoundHash->{'y'})) ? $compoundHash->{'y'} : undef;
     
     
     unless (defined ($rowId)) {
@@ -203,7 +208,9 @@ sub makeGusCompound {
                                                      'pathway_node_type_id' => $typeId,
                                                      'table_id' => $tableId,
                                                      'row_id' => $rowId,
-                                                     'cellular_location' => $cellularLocation
+                                                     'cellular_location' => $cellularLocation,
+                                                     'x' => $xCoord,
+                                                     'y' => $yCoord,
                                                     });
     $gusNode->setParent($pathway);
     my $uniqueNodeId = $compoundHash->{'UniqueId'};
