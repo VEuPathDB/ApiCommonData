@@ -16,22 +16,45 @@ my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId
 my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getDatabaseLogin(),
                                         $gusconfig->getDatabasePassword(),
-                                        $verbose,0,1,
+                                        0,0,1,
                                         $gusconfig->getCoreSchemaName());
 my $dbh = $db->getQueryHandle(0);
 
 my $sth = $dbh->prepare(<<EOF);
-    DELETE from ApiDBUserDatasets.UD_GeneList
+    DELETE from ApiDBUserDatasets.UD_GeneId
     WHERE user_dataset_id = ?
 EOF
+$sth->execute($userDatasetId);
 
-my $sth1 = $dbh->prepare(<<EOF);
-    DELETE from ApiDBUserDatasets.InstalledUserDatasets
+$sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UD_GeneId
+    WHERE user_dataset_id = ?
+EOF
+$sth->execute($userDatasetId);
+
+$sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UserDatasetExternalDataset
+    WHERE user_dataset_id = ?
+EOF
+$sth->execute($userDatasetId);
+
+$sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UserDatasetOwner
+    WHERE user_dataset_id = ?
+EOF
+$sth->execute($userDatasetId);
+
+$sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UserDatasetSharedWith
+    WHERE user_dataset_id = ?
+EOF
+$sth->execute($userDatasetId);
+
+$sth = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.InstalledUserDataset
     WHERE user_dataset_id = ?
 EOF
   $sth->execute($userDatasetId);
-  $sth1->execute($userDatasetId);
-}
 
 $dbh->commit;
 
