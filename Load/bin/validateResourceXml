@@ -34,4 +34,4 @@ my $args = &FgpUtil::Util::CommandHelper::getJavaArgs(@ARGV);
 
 my $cmd = "java $sysProps -classpath $CLASSPATH org.apidb.dataload.ResourceXmlValidator $args";
 
-system($cmd);
+system($cmd) && exit(1);
