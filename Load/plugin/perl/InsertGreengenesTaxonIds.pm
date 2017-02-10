@@ -66,10 +66,6 @@ sub new {
                       argsDeclaration   => $argsDeclaration,
                       documentation     => $documentation});
 
-  $self->{external_database_release_id} = $self->getExtDbRlsId($self->getArg('dbRlsSpec'));
-
-  # $self->{external_database_release_id} = 1234;
-
   return $self;
 }
 
@@ -78,11 +74,14 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  $self->{external_database_release_id} = $self->getExtDbRlsId($self->getArg('dbRlsSpec'));
+
+  # $self->{external_database_release_id} = 1234;
   my %taxonStringMap;
-  self->setOverrideMapping(\%taxonStringMap);
+  $self->setOverrideMapping(\%taxonStringMap);
 
   my %sequenceIdMap;
-  self->setSequenceIdMapping(\%sequenceIdMap);
+  $self->setSequenceIdMapping(\%sequenceIdMap);
 
   my $dbh = $self->getQueryHandle();
 
@@ -157,18 +156,21 @@ SQL
   while (<$fh>) {
     chomp;
     $count++;
+    unless ($count % 5000) {
+      $self->log("Processed $count records.");
+      $self->undefPointerCache();
+    }
 
     my ($id, $taxonList) = split /\t/;
 
     # find na_sequence_id corresponding to Greengenes ID
     my $na_sequence_id = $sequenceIdMap{$id};
     unless ($na_sequence_id) {
-      $self->log("Can't find Greengenes ID \"$id\" as an NaSequence.source_id");
-      $failFlag = 1;
+      $self->log("WARN: Can't find Greengenes ID \"$id\" as an NaSequence.source_id");
     }
 
     if ($taxonStringMap{$taxonList}) {
-      my $st = GUS::Model::Apidb::SequenceTaxon->
+      my $st = GUS::Model::ApiDB::SequenceTaxon->
 	new({'na_sequence_id' => $na_sequence_id,
 	     'external_database_release_id' => $self->{external_database_release_id},
 	     'taxon_id' => $taxonStringMap{$taxonList}});
@@ -215,7 +217,7 @@ SQL
 	# success: we uniquely identified this taxon
 
 	# store this (sequence-taxon) pair
-	my $st = GUS::Model::Apidb::SequenceTaxon->
+	my $st = GUS::Model::ApiDB::SequenceTaxon->
 	  new({'na_sequence_id' => $na_sequence_id,
 	       'external_database_release_id' => $self->{external_database_release_id},
 	       'taxon_id' => $taxonId});
@@ -248,7 +250,7 @@ SQL
 	    # success: we uniquely identified this taxon
 
 	    # store this (sequence-taxon) pair
-	    my $st = GUS::Model::Apidb::SequenceTaxon->
+	    my $st = GUS::Model::ApiDB::SequenceTaxon->
 	      new({'na_sequence_id' => $na_sequence_id,
 		   'external_database_release_id' => $self->{external_database_release_id},
 		   'taxon_id' => $taxonId});
@@ -263,7 +265,7 @@ SQL
 
 	} # while seeking two-name match
       } else {
-	$self->log("can't find taxon \"$taxon\" of rank \"$rankMapping{$rankCode}\" for taxon string \"$taxonString\"");
+	# $self->log("can't find taxon \"$taxon\" of rank \"$rankMapping{$rankCode}\" for taxon string \"$taxonString\"");
 	if (scalar(@taxa) == 0) {
 	  # multiple taxa matched, and we're out of ancestors to disambiguate them by
 	  $failFlag = 1;
@@ -273,16 +275,11 @@ SQL
 
     } # WHILE seeking one-name match
 
-    unless ($count % 1000) {
-      $self->log("Updated $count sequences.");
-      $self->undefPointerCache();
-    }
-
   } # WHILE looping through file
 
   die "parsing Greengenes taxon strings" if $failFlag;
 
-  my $result = "Run finished; processed $count records";
+  my $result = "Run finished; processed $count records in input file.";
   return $result;
 }
 
@@ -305,8 +302,8 @@ SQL
   foreach my $mapping (@{$overrideMapping->{mapping}}) {
     my $taxonList = $mapping->{taxonList};
     my $ncbiTaxonId = $mapping->{ncbiTaxonId};
-    $taxonIdQ->execute($ncbiTaxonId);
-    my ($taxonId) = $taxonIdQ-fetchrow_array();
+    $taxonIdQ->execute($ncbiTaxonId) or die $dbh->errstr;
+    my ($taxonId) = $taxonIdQ->fetchrow_array() or die $dbh->errstr;
     ${$overrideHashref}{$taxonList} = $taxonId;
     $taxonIdQ->finish();
   }
@@ -326,7 +323,7 @@ sub setSequenceIdMapping {
 SQL
 
   $seqIdQ->execute() or die $dbh->errstr;
-  while (my ($sourceId, $naSequenceId) = $seqIdQ-fetchrow_array()) {
+  while (my ($sourceId, $naSequenceId) = $seqIdQ->fetchrow_array()) {
     ${$sequenceHashref}{$sourceId} = $naSequenceId;
   }
   $seqIdQ->finish();
