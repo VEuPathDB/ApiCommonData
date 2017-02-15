@@ -167,6 +167,7 @@ SQL
     my $na_sequence_id = $sequenceIdMap{$id};
     unless ($na_sequence_id) {
       $self->log("WARN: Can't find Greengenes ID \"$id\" as an NaSequence.source_id");
+      next;
     }
 
     if ($taxonStringMap{$taxonList}) {
