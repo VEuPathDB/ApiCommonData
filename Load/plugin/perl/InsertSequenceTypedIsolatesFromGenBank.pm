@@ -311,6 +311,7 @@ sub loadIsolates {
     }
 
     $study->submit;
+    $self->undefPointerCache();
   }
 
   return $count;
