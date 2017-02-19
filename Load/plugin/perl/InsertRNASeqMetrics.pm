@@ -104,6 +104,7 @@ sub run {
       $pan->retrieveFromDB();
 
       $protocolAppNodes{$panName} = $pan;
+      $self->undefPointerCache();
     }
 
 
