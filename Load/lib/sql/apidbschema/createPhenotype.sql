@@ -1,36 +1,37 @@
 create table ApiDB.PhenotypeModel (
- phenotype_model_id                       number(10) ,
- external_database_release_id      NUMBER(10) NOT NULL,
- na_feature_id                   NUMBER(10),
- source_id                                             varchar(50),
- name                                            varchar(100),
- pubmed_id                                        number(10),
- modification_type                            varchar(100),
- experiment_type                            varchar(100),
- allele                            varchar(100),
- is_successful                                  number(1),
- organism                                          varchar(200),
- MODIFICATION_DATE            DATE,
- USER_READ                    NUMBER(1),
- USER_WRITE                   NUMBER(1),
- GROUP_READ                   NUMBER(1),
- GROUP_WRITE                  NUMBER(1),
- OTHER_READ                   NUMBER(1),
- OTHER_WRITE                  NUMBER(1),
- ROW_USER_ID                  NUMBER(12),
- ROW_GROUP_ID                 NUMBER(3),
- ROW_PROJECT_ID               NUMBER(4),
- ROW_ALG_INVOCATION_ID        NUMBER(12),
- FOREIGN KEY (external_database_release_id) REFERENCES SRes.ExternalDatabaseRelease,
- FOREIGN KEY (na_feature_id) REFERENCES dots.nafeatureimp,
+ phenotype_model_id           NUMBER(10) ,
+ external_database_release_id NUMBER(10) NOT NULL,
+ na_feature_id                NUMBER(10),
+ source_id                    VARCHAR(50),
+ name                         VARCHAR(100),
+ pubmed_id                    NUMBER(10),
+ modification_type            VARCHAR(100),
+ experiment_type              VARCHAR(100),
+ allele                       VARCHAR(100),
+ is_successful                NUMBER(1),
+ organism                     VARCHAR(200),
+ has_multiple_mutations       NUMBER(1)
+ modification_date            DATE,
+ user_read                    NUMBER(1),
+ user_write                   NUMBER(1),
+ group_read                   NUMBER(1),
+ group_write                  NUMBER(1),
+ other_read                   NUMBER(1),
+ other_write                  NUMBER(1),
+ row_user_id                  NUMBER(12),
+ row_group_id                 NUMBER(3),
+ row_project_id               NUMBER(4),
+ row_alg_invocation_id        NUMBER(12),
+ FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
+ FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
  PRIMARY KEY (phenotype_model_id)
 );
 
 CREATE SEQUENCE apidb.PhenotypeModel_sq;
 
-GRANT insert, select, update, delete ON apidb.PhenotypeModel TO gus_w;
-GRANT select ON apidb.PhenotypeModel TO gus_r;
-GRANT select ON apidb.PhenotypeModel_sq TO gus_w;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.PhenotypeModel TO gus_w;
+GRANT SELECT ON apidb.PhenotypeModel TO gus_r;
+GRANT SELECT ON apidb.PhenotypeModel_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -45,39 +46,38 @@ SELECT core.tableinfo_sq.nextval, 'PhenotypeModel',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
-WHERE 'phenotypemodel' NOT IN (SELECT lower(name) FROM core.TableInfo
-                                    WHERE database_id = d.database_id);
-
+WHERE 'phenotypemodel' NOT IN (SELECT LOWER(name) FROM core.TableInfo
+                               WHERE database_id = d.database_id);
  
 
 create table ApiDB.PhenotypeResult (
- phenotype_result_id                  number(10),
- phenotype_model_id                   NUMBER(10),
- phenotype_quality_term_id                   NUMBER(10),
- phenotype_entity_term_id                   NUMBER(10),
- timing           varchar2(50),
- life_cycle_stage_term_id                   NUMBER(10),
- phenotype_post_composition           clob,
- phenotype_comment           varchar2(2000),
- chebi_annotation_extension           varchar2(15), 
- protein_annotation_extension	      varchar2(100),
-evidence_term_id                    NUMBER(10),
- MODIFICATION_DATE            DATE,
- USER_READ                    NUMBER(1),
- USER_WRITE                   NUMBER(1),
- GROUP_READ                   NUMBER(1),
- GROUP_WRITE                  NUMBER(1),
- OTHER_READ                   NUMBER(1),
- OTHER_WRITE                  NUMBER(1),
- ROW_USER_ID                  NUMBER(12),
- ROW_GROUP_ID                 NUMBER(3),
- ROW_PROJECT_ID               NUMBER(4),
- ROW_ALG_INVOCATION_ID        NUMBER(12),
- FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
- FOREIGN KEY (phenotype_quality_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (phenotype_entity_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (life_cycle_stage_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (evidence_term_id) REFERENCES sres.ontologyterm,
+ phenotype_result_id          NUMBER(10),
+ phenotype_model_id           NUMBER(10),
+ phenotype_quality_term_id    NUMBER(10),
+ phenotype_entity_term_id     NUMBER(10),
+ timing                       VARCHAR2(50),
+ life_cycle_stage_term_id     NUMBER(10),
+ phenotype_post_composition   clob,
+ phenotype_comment            VARCHAR2(2000),
+ chebi_annotation_extension   VARCHAR2(15), 
+ protein_annotation_extension VARCHAR2(100),
+ evidence_term_id             NUMBER(10),
+ modification_date            DATE,
+ user_read                    NUMBER(1),
+ user_write                   NUMBER(1),
+ group_read                   NUMBER(1),
+ group_write                  NUMBER(1),
+ other_read                   NUMBER(1),
+ other_write                  NUMBER(1),
+ row_user_id                  NUMBER(12),
+ row_group_id                 NUMBER(3),
+ row_project_id               NUMBER(4),
+ row_alg_invocation_id        NUMBER(12),
+ FOREIGN KEY (phenotype_model_id) REFERENCES apidb.PhenotypeModel,
+ FOREIGN KEY (phenotype_quality_term_id) REFERENCES sres.OntologyTerm,
+ FOREIGN KEY (phenotype_entity_term_id) REFERENCES sres.OntologyTerm,
+ FOREIGN KEY (life_cycle_stage_term_id) REFERENCES sres.OntologyTerm,
+ FOREIGN KEY (evidence_term_id) REFERENCES sres.OntologyTerm,
  PRIMARY KEY (phenotype_result_id)
 );
 
@@ -103,6 +103,19 @@ FROM dual,
 WHERE 'phenotyperesult' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
+
+------------------------------------------------------------------------------
+create table apidb.NaFeaturePhenotypeModel
+      (na_feature_phenotype_model_id NUMBER(10) NOT NULL,
+       phenotype_model_id            NUMBER(10) NOT NULL,
+       na_feature_id                 NUMBER(10),
+       FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
+       FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
+       PRIMARY KEY (na_feature_phenotype_model_id)
+      );
+
+GRANT insert, select, update, delete ON apidb.NaFeaturePhenotypeModel TO gus_w;
+GRANT select ON apidb.NaFeaturePhenotypeModel TO gus_r;
 
 ------------------------------------------------------------------------------
 exit;
