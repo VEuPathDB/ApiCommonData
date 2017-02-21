@@ -10,7 +10,7 @@ create table ApiDB.PhenotypeModel (
  allele                       VARCHAR(100),
  is_successful                NUMBER(1),
  organism                     VARCHAR(200),
- has_multiple_mutations       NUMBER(1)
+ has_multiple_mutations       NUMBER(1),
  modification_date            DATE,
  user_read                    NUMBER(1),
  user_write                   NUMBER(1),
@@ -102,6 +102,15 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'phenotyperesult' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
+
+create table apidb.NAFeaturePhenotypeModel( 
+na_feature_phenotype_model_id		    NUMBER(10) NOT NULL,
+PHENOTYPE_MODEL_ID			    NUMBER(10) NOT NULL,
+na_feature_id				    NUMBER(10),
+FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
+FOREIGN KEY (na_feature_id) REFERENCES dots.nafeatureimp,
+PRIMARY KEY (na_feature_phenotype_model_id)
+);
 
 
 ------------------------------------------------------------------------------
