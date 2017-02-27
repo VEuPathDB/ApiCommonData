@@ -22,9 +22,10 @@ GRANT select ON ApiDBUserDatasets.UserDatasetOwner TO gus_r;
 ---------------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UserDatasetSharedWith (
-user_id number(12) not null,
+owner_user_id number(12) not null,
+recipient_user_id number(12) not null,
 user_dataset_id number(20) not null,
-primary key (user_id, user_dataset_id),
+primary key (owner_user_id, recipient_user_id, user_dataset_id),
 FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 );
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_w;
@@ -32,16 +33,7 @@ GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 
 ---------------------------------------------------------------------------------
 
-create table ApiDBUserDatasets.UserDatasetExternalDataset (
-user_id number(12) not null,
-user_dataset_id number(20) not null,
-primary key (user_id, user_dataset_id),
-FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
-);
-GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetExternalDataset TO gus_w;
-GRANT select ON ApiDBUserDatasets.UserDatasetExternalDataset TO gus_r;
 
----------------------------------------------------------------------------------
 
 create view ApiDBUserDatasets.UserDatasetAccessControl
 as 
