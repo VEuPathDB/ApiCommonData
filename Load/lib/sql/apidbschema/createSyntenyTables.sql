@@ -29,13 +29,16 @@ CREATE TABLE ApiDB.Synteny (
 );
 
 CREATE INDEX apidb.synteny_revix1
-ON apidb.Synteny (b_na_sequence_id, synteny_id);
+ON apidb.Synteny (b_na_sequence_id, synteny_id)
+TABLESPACE INDX;
 
 CREATE INDEX apidb.synteny_revix2
-ON apidb.Synteny (external_database_release_id, synteny_id);
+ON apidb.Synteny (external_database_release_id, synteny_id)
+TABLESPACE INDX;
 
 CREATE INDEX apidb.syn_mod_ix
-ON apidb.Synteny (modification_date, synteny_id);
+ON apidb.Synteny (modification_date, synteny_id)
+TABLESPACE INDX;
 
 CREATE SEQUENCE ApiDB.Synteny_sq;
 
@@ -44,7 +47,12 @@ GRANT select ON ApiDB.Synteny TO gus_r;
 GRANT select ON ApiDB.Synteny_sq TO gus_w;
 
 CREATE INDEX apidb.syn_ix
-ON apidb.Synteny(a_na_sequence_id, a_start, a_end, external_database_release_id);
+ON apidb.Synteny(a_na_sequence_id, a_start, a_end, external_database_release_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.syn_loc_ix
+ON apidb.Synteny(a_na_sequence_id, b_na_sequence_id, a_start, a_end, b_start, b_end)
+TABLESPACE INDX;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -109,8 +117,11 @@ WHERE 'SyntenyAnchor' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 CREATE INDEX apidb.SyntAnch_front_ix
-       ON apidb.SyntenyAnchor (synteny_id, ref_loc, next_ref_loc);
+       ON apidb.SyntenyAnchor (synteny_id, ref_loc, next_ref_loc)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.SyntAnch_back_ix
-       ON apidb.SyntenyAnchor (synteny_id, ref_loc, prev_ref_loc);
+       ON apidb.SyntenyAnchor (synteny_id, ref_loc, prev_ref_loc)
+TABLESPACE INDX;
 ------------------------------------------------------------------------------
 exit;
