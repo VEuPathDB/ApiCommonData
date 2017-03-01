@@ -180,7 +180,7 @@ sub run {
 
         if($bamFile =~ /unique/) {
 
-          if($bamFile =~ /^non_unique/) {
+          if($bamFile =~ /non_unique/) {
             $alignerType = 'non unique';
           }
           else {
