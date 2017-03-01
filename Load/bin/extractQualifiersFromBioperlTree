@@ -119,6 +119,8 @@ while (<IN>) {
 
     } elsif ($qual =~ /comment/i || $qual =~ /note/i) {  ## comment or note do not separate
       $value =~ s/\t/ /g;
+      $value =~ s/3'/3-prime /g;
+      $value =~ s/5'/5-prime /g;
       push @values, $value;
     } elsif ($qual =~ /Dbxref/i || $qual =~ /db_xref/i ) { ## special need for dbxref
       ($qual, $value) = split (/\:/, $value);
