@@ -218,6 +218,8 @@ sub run {
 
           my $charValue = $v[$i];
 
+          next unless($charValue);
+
           my $char = GUS::Model::Study::Characteristic->new({value => $charValue,
                                                              qualifier_id => $qualifierOntologyTerm->getId()});
           $char->setParent($protocolAppNode);
