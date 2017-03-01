@@ -64,43 +64,95 @@ sub munge {
 	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
 	next unless $d !~ /combined/;
 	my $sample = $1;
-#	print  "sample (deseqanalysis.pm) is $sample\n\n\n";
+#	print  "sample (deseqanalysis.pm) is ${sample}";
 #	my $refKey = $reference;
 #	$refKey =~ s/ /_/g;
-#	print "ref to check is $refCheck";
+#	print "ref to check is ${refCheck}";
 #	my $compKey = $comparator;
 #	$compKey =~ s/ /_/g;
-#	print "comp to check is $compCheck";
-	if ($sample =~ /^$refCheck/) {
-	    $ref{$sample} = $d;
-	    push @inputs, $sample;
-	}
-	elsif ($sample =~ /^$compCheck/) {
-	    $comp{$sample} = $d;
-	    push @inputs, $sample;
+#	print " comp to check is ${compCheck}";
+	if (($refCheck =~ /$compCheck/) || ($compCheck =~ /$refCheck/)) { 
+	    if ($refCheck eq $compCheck) {
+		print "WARNING reference and comparator matched strings are the same\n";
+	    }
+	    else {
+		if ($refCheck =~ /$compCheck/) {
+		    #ref is longer 
+		    if ($sample =~ /^$refCheck/) {
+			$ref{$sample} = $d;
+			push @inputs, $sample;
+#			print  "putting $d as the reference with $sample as reference\n";
+			
+		    }
+		    elsif (($sample =~ /^$compCheck/) && ($sample !~ /^$refCheck/)) {
+			$comp{$sample} = $d;
+			push @inputs, $sample;
+#			print  "putting $d as the comparator with $sample as comparator\n";
+		    }
+		    else {
+			print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+		    }
+		}
+		elsif ($compCheck =~ /$refCheck/) {
+		    #comp is longer 
+		   
+                    if ($sample =~ /^$compCheck/) {
+                        $comp{$sample} = $d;
+                        push @inputs, $sample;
+#                        print  "putting $d as the comparator with $sample as comparator\n";
+			
+                    }
+                    elsif (($sample =~ /^$refCheck/) && ($sample !~ /^$compCheck/)) {
+                        $ref{$sample} = $d;
+                        push @inputs, $sample;
+#                        print  "putting $d as the reference  with $sample as reference\n";
+                    }
+                    else {
+                        print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the compara\
+tor\n";
+                    }
+		}
+		else {
+		    print "Something is wrong, the reference and comparator are not being determined. look at DeseqAnalysis.pm line 116";
+		}
+	    }
 	}
 	else {
-	    print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+	    if ($sample =~ /^$refCheck/) {
+		$ref{$sample} = $d;
+		push @inputs, $sample;
+#		print  "putting $d as the reference with $sample as reference\n";
+		
+	    }
+	    elsif ($sample =~ /^$compCheck/) {
+		$comp{$sample} = $d;
+		push @inputs, $sample;
+#		print  "putting $d as the comparator with $sample as comparator\n";
+	    }
+	    else {
+		print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+	    }
 	}
+    }	
+    foreach my $rep (keys %ref) {
+	print $dataframe $rep."\t".$ref{$rep}."\treference\n";
     }
-	foreach my $rep (keys %ref) {
-	    print $dataframe $rep."\t".$ref{$rep}."\treference\n";
-	}
-	foreach my $rep (keys %comp) {
-	    print $dataframe $rep."\t".$comp{$rep}."\tcomparator\n";
-	}
+    foreach my $rep (keys %comp) {
+	print $dataframe $rep."\t".$comp{$rep}."\tcomparator\n";
+    }
+	
     
-    
-    
-
-  close($dataframe);
-
-    $outputFile =~ s/ /_/g;
+	
+	
+	close($dataframe);
+	
+	$outputFile =~ s/ /_/g;
  &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile");
-    open(my $OUT, ">$mainDirectory\/$fileName");
-    print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
-    open( my $IN, "$mainDirectory\/$outputFile");
-
+#	print  "DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile\n\n\n";
+	open(my $OUT, ">$mainDirectory\/$fileName");
+	print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
+	open( my $IN, "$mainDirectory\/$outputFile");
+	
     while (my $line = <$IN>) {
 	chomp $line;
 #	print "gettting to the printing of the formatted file\n\n\n\n\n ";
@@ -126,7 +178,7 @@ sub munge {
 	    my $adjp = $temps[6];
 	    print $OUT $id."\t".$reportedFC."\t".$pval."\t".$adjp."\n";
 	}
-    }
+   }
     
     close ($IN);
     close($OUT);
