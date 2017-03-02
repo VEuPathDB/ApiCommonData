@@ -9,7 +9,7 @@ use DBD::Oracle;
 use CBIL::Util::PropertySet;
 
 my ($organismAbbrev, $format, $dbVer, $mappingFile, $soTerm, $organismFullName,
-     $buildNum, $inputFileOrDir, $sequenceFile, $regexSourceId, $help);
+     $buildNum, $inputFileOrDir, $sequenceFile, $regexSourceId, $ifUpdatedAnnot, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
             'dbVer=s' => \$dbVer,
@@ -21,10 +21,11 @@ my ($organismAbbrev, $format, $dbVer, $mappingFile, $soTerm, $organismFullName,
             'inputFileOrDir=s' => \$inputFileOrDir,
             'sequenceFile=s' => \$sequenceFile,
             'regexSourceId=s' => \$regexSourceId,
+            'ifUpdatedAnnot=s' => \$ifUpdatedAnnot,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
-&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer);
+&usage("Missing a Required Argument") unless(defined $organismAbbrev && $format && $dbVer && $ifUpdatedAnnot);
 
 my $dbName = $organismAbbrev."_primary_genome_RSRC";
 
@@ -110,6 +111,10 @@ print "postLoadIsfQA --organismAbbrev $organismAbbrev --extDbName $dbName --extD
 print "gus4CreateGenbankTableFile --organismAbbrev $organismAbbrev --extDbName $dbName --extDbRlsVer $dbVer\n\n";
 print "tbl2asn -p $organismAbbrev -t ~/template.sbt -V v -Z $organismAbbrev/discrep\n\n";
 
+if ($ifUpdatedAnnot =~ /^Y/) {
+  print "Please make a transcript ID aliases file to load\n";
+  print "apiValidateTranscriptIds --transcriptIdsFile new_transcriptInfoAndIds --prevTranscriptIdsFile old_transcriptInfoAndIds --oldGeneIdsMapFile gene_aliases > aliases.txt\n";
+}
 
 sub usage {
   die
@@ -128,6 +133,7 @@ where
   --inputFileOrDir: input annotation file or dir, default is Genbank: ../whole_genome.gbf, GFF3: ../whole_genome.gff, embl: ../whole_genome.embl
   --sequenceFile: input fasta sequence file name, only for gff3 format, default is ../whole_genome.fasta, 
   --regexSourceId: optional, regExp for sequence source id on the defline of the fasta file, only for gff3 format, default is >(\\S+?)(\\|\\w\+\$|\$)
+  --ifUpdatedAnnot: required, Y/yes, Y/y or No/no, N/n
 
 ";
 }
