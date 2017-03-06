@@ -33,6 +33,8 @@ my (
     $haveContig,
     $dbxrefVersion,
     $soTerm,
+    $format,
+    $secondaryAnnot,
 
     $help);
 
@@ -58,6 +60,8 @@ my (
 	    'familyNameForFiles' => \$familyNameForFiles,
 	    'dbxrefVersion=s' => \$dbxrefVersion,
 	    'soTerm' => \$soTerm,
+	    'format=s' => \$format,
+	    'secondaryAnnot=s' => \$secondaryAnnot,
 
 	    'help|h' => \$help,
 	    );
@@ -171,6 +175,8 @@ print $ofh "\n";
 
 printValidateOrganismInfo($ofh);
 
+printAnnotation($ofh, $format, $secondaryAnnot) if ($format);
+
 printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasProduct'} =~ /^y/i);
 
 printGOClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasGO'} =~ /^y/i);
@@ -203,6 +209,61 @@ close $ofh;
 
 
 ##################### subroutine ###################
+sub printAnnotation {
+  my ($fh, $format, $secondAnnot) = @_;
+
+  if ( $format =~ /genbank/i ) {
+    printGenBankAnnotation ($fh, $format, $secondAnnot);
+  } else {
+    print STDERR "format have not been configured yet\n";
+  }
+
+  return 0;
+}
+
+sub printGenBankAnnotation {
+  my ($fh, $format, $secondAnnot) = @_;
+  my @secondaryAnnotations = split (/\,/, $secondAnnot);
+  print $fh "  <dataset class=\"genbank_primary_genome\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'soTerm');
+  printNameWithValue ($fh, 'mapFile', 'genbankGenbank2Gus.xml');
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+  foreach my $second (@secondaryAnnotations) {
+    $second =~ s/^\s+//;
+    if ($second =~ /^contig/i || $second =~ /^supercontig/i) {
+      print $fh "  <dataset class=\"genbank_secondary_genome\">\n";
+      printNameWithValue ($fh, 'soTerm', $second);
+    } elsif ($second =~ /^api/i ) {
+      print $fh "  <dataset class=\"genbank_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'apicoplast');
+      printNameWithValue ($fh, 'soTerm', 'apicoplast_chromosome');
+    } elsif ($second =~ /^mito/i ) {
+      print $fh "  <dataset class=\"genbank_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'mitochondrion');
+      printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
+    } else {
+      next;
+    }
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
+    printNameWithDollarSign ($fh, 'name', 'genomeSource');
+    printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+    printNameWithValue ($fh, 'mapFile', 'genbankGenbank2Gus.xml');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+  return 0;
+}
+
 sub printRefStraindbEST {
   my ($fh, $excelInfoPoint) = @_;
   if ($excelInfoPoint->{$organismAbbrev}->{'isReferenceStrain'} =~ /^y/i) {
@@ -516,10 +577,12 @@ Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile or
  
 
 where
-  --organismAbbrev:    the organism abbrev
-  --excelFile:    the excel file in .txt format that has all info of genome
-  --projectName:    project name, such as PlasmoDB, etc. in full name
-  --dbxrefVersion: the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
+  --organismAbbrev: required, the organism abbrev
+  --excelFile: required, the excel file in .txt format that has all info of genome
+  --projectName: required, project name, such as PlasmoDB, etc. in full name
+  --dbxrefVersion: required, the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
+  --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
+  --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
 
 ";
 }
