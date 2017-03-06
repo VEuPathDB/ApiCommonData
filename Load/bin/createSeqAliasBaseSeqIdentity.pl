@@ -26,7 +26,7 @@ my $outputFile ="seqAliases.txt";
 open (OUT, ">$outputFile") || die "can not open output file to write\n";
 foreach my $k (sort keys %{$newSeq}) {
   foreach my $kk (sort keys %{$oldSeq}) {
-    if ($oldSeq->{$kk} eq $newSeq->{$k}) {
+    if ($oldSeq->{$kk} eq $newSeq->{$k} || $oldSeq->{$kk} eq reverse_complement($newSeq->{$k}) ) {
       print OUT "$k\t$kk\n";
     }
   }
@@ -69,6 +69,15 @@ sub getSeqsFromFile {
   }
   return (\%seqs);
 }
+
+##########
+sub reverse_complement{
+  my $refStr = $_;
+  $refStr =~ tr/ATGCatgc/TACGtacg/;
+  my $revStr= reverse $refStr;
+  return $revStr;
+}
+
 
 sub usage {
   die
