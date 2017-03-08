@@ -181,7 +181,7 @@ printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasP
 
 printGOClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasGO'} =~ /^y/i);
 
-printECClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasEC'} =~ /^y/i);
+printECClass ($ofh, \%excelInfo, $format) if ($excelInfo{$organismAbbrev}{'hasEC'} =~ /^y/i);
 
 printGeneNameClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasName'} =~ /^y/i);
 
@@ -381,12 +381,12 @@ sub printGOClass {
 }
 
 sub printECClass {
-  my ($fh, $excelInfoPoint) = @_;
+  my ($fh, $excelInfoPoint, $format) = @_;
   print $fh "  <dataset class=\"EnzymeCommissionAssociations\">\n";
   printNameWithDollarSign ($fh, 'projectName');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
-  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  ($format =~ /genbank/i) ? printNameWithValue ($fh, 'name', "gb") : printNameWithDollarSign ($fh, 'name', 'genomeSource');
   print $fh "  </dataset>\n";
   print $fh "\n";
   return 0;
