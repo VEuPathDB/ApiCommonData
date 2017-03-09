@@ -43,7 +43,7 @@ PURPOSEBRIEF
 NOTES
 
   my $tablesAffected = <<AFFECT;
-ApiDB.OrganismProject
+ApiDB.BLATProteinAlignment
 AFFECT
 
   my $tablesDependedOn = <<TABD;
