@@ -35,6 +35,7 @@ my (
     $soTerm,
     $format,
     $secondaryAnnot,
+    $sourceIdRegex,
 
     $help);
 
@@ -62,11 +63,13 @@ my (
 	    'soTerm' => \$soTerm,
 	    'format=s' => \$format,
 	    'secondaryAnnot=s' => \$secondaryAnnot,
+	    'sourceIdRegex=s' => \$sourceIdRegex,
 
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $projectName && $organismAbbrev && $excelFile);
+&usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -214,10 +217,95 @@ sub printAnnotation {
 
   if ( $format =~ /genbank/i ) {
     printGenBankAnnotation ($fh, $format, $secondAnnot);
+  } elsif ( $format =~ /genedb/i) {
+    printGeneDBAnnotation ($fh, $format, $secondAnnot);
   } else {
     print STDERR "format have not been configured yet\n";
   }
 
+  return 0;
+}
+
+sub printGeneDBAnnotation {
+  my ($fh, $format, $secondAnnot) = @_;
+  my @secondaryAnnotations = split (/\,/, $secondAnnot);
+
+  ## print fasta
+  print $fh "  <dataset class=\"fasta_primary_genome_sequence\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'soTerm');
+  printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
+  printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+  ## print GFF
+  print $fh "  <dataset class=\"GeneDB_GFF_primary_genome_features\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'soTerm');
+  printNameWithValue ($fh, 'mapFile', "geneDBGFF2Gus.xml");
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+  foreach my $second (@secondaryAnnotations) {
+    $second =~ s/^\s+//;
+
+    ## print fasta
+    if ($second =~ /^contig/i || $second =~ /^supercontig/i) {
+      print $fh "  <dataset class=\"fasta_secondary_genome\">\n";
+      printNameWithValue ($fh, 'soTerm', $second);
+    } elsif ($second =~ /^api/i ) {
+      print $fh "  <dataset class=\"fasta_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'apicoplast');
+      printNameWithValue ($fh, 'soTerm', 'apicoplast_chromosome');
+    } elsif ($second =~ /^mito/i ) {
+      print $fh "  <dataset class=\"fasta_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'mitochondrion');
+      printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
+    } else {
+      next;
+    }
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
+    printNameWithDollarSign ($fh, 'name', 'genomeSource');
+    printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+    printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
+    printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+
+    ## print GFF
+    if ($second =~ /^contig/i || $second =~ /^supercontig/i) {
+      print $fh "  <dataset class=\"GeneDB_GFF_secondary_genome_features\">\n";
+      printNameWithValue ($fh, 'soTerm', $second);
+    } elsif ($second =~ /^api/i ) {
+      print $fh "  <dataset class=\"GeneDB_GFF_organelle_genome_features\">\n";
+      printNameWithValue ($fh, 'organelle', 'apicoplast');
+      printNameWithValue ($fh, 'soTerm', 'apicoplast_chromosome');
+    } elsif ($second =~ /^mito/i ) {
+      print $fh "  <dataset class=\"GeneDB_GFF_organelle_genome_features\">\n";
+      printNameWithValue ($fh, 'organelle', 'mitochondrion');
+      printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
+    } else {
+      next;
+    }
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
+    printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
   return 0;
 }
 
@@ -583,6 +671,7 @@ where
   --dbxrefVersion: required, the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
   --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
+  --sourceIdRegex: optional, it is required if format is GeneDB or fasta
 
 ";
 }
