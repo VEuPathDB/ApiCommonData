@@ -151,7 +151,7 @@ Usage: copyFunctFileFromAnnotToManuDevDir.pl --fileToCopy product.txt
 
 where
   --fileToCopy: the file name that need to copy
-  --$preVersion: optional, only need when do the functional annotation update,
+  --preVersion: optional, only need when do functional annotation update,
                  we use the previous version of external_database_version to run the isf testing
 
 ";
