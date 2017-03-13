@@ -113,7 +113,7 @@ sub run {
     # and miscellaneous features with the SO term 'orf'
     $self->insertOtherLocations($ncbiTaxonId, $lateFeatures);
   } else {
-    # $self->insertGeneModelLocations($ncbiTaxonId);
+    $self->insertGeneModelLocations($ncbiTaxonId);
     $self->insertOtherLocations($ncbiTaxonId, $lateFeatures);
   }
 
