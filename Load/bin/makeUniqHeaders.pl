@@ -23,7 +23,7 @@ my ($inDir, $outDir, $configFile, $headerFile, $help,);
 $outDir = defined $outDir ? $outDir : $inDir."/ProcessedFiles";
 
 
-$headerFile = defined $headerFile ? $headerFile : $outDir."/UniqHeaders.txt";
+$headerFile = defined $headerFile ? $headerFile : $inDir."/UniqHeaders.txt";
 $headerFile =~ s/\/+/\//g;
 
 my $headerFileSource = defined $headerFile ? $headerFile."_w_source" : $outDir."/UniqHeaders_w_source.txt";

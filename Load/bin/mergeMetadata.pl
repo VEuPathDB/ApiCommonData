@@ -20,7 +20,7 @@ use DBI;
 
 use List::MoreUtils qw(uniq first_index indexes);
 
-my ($inDir, $outFile, $allowNonUnique, $delimiter, $uniqRegex, $masterFiles, $parentFile, $help,);
+my ($inDir, $outFile, $allowNonUnique, $delimiter, $uniqRegex, $masterFiles, $parentFile, $failOnError, $help,);
 
 $delimiter = "\t";
 $uniqRegex = '.\d+';
@@ -33,6 +33,7 @@ $uniqRegex = '.\d+';
                       'delimiter=s' => \$delimiter,
                       'parent_file=s' => \$parentFile,
                       'master_files=s' => \$masterFiles,
+                      'fail_on_error|f' =>\$failOnError,
            );
 
 my $idFieldName ='OUTPUT';
@@ -173,7 +174,7 @@ if (scalar @$reportLines > 1 ) {
   open (REPORT, ">$reportFile") or die "Unable to open file for writing :$!";
   print REPORT $reportFileText;
   close REPORT;
-  die "Issues were found with you input files, please consult the report file $reportFile for details";
+  die "Issues were found with you input files, please consult the report file $reportFile for details" if $failOnError;
 }
 
 open (OUTPUT, ">$outFile") or die "Unable to open file for writing :$!";
