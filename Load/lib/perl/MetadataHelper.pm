@@ -4,6 +4,8 @@ use strict;
 
 use ApiCommonData::Load::MetadataReader;
 
+use Data::Dumper;
+
 sub getReaders { $_[0]->{_readers} }
 sub setReaders { $_[0]->{_readers} = $_[1] }
 
@@ -103,6 +105,8 @@ sub readColExcludeFile {
       my $file = $a[0];
       my $col = $a[1];
 
+      $file = "__ALL__" unless($file);
+
       $hash{$file}->{$col} = 1;
     }
     close FILE;
@@ -125,7 +129,8 @@ sub writeMergedFile {
 
   foreach my $pk (keys %$mergedOutput) {
     my $qualifiersHash = $mergedOutput->{$pk};
-    my $parent = $qualifiersHash->{'__PARENT__'};
+
+    my $parent = &getDistinctLowerCaseValues($qualifiersHash->{'__PARENT__'});
 
     my @qualifierValues = map { &getDistinctLowerCaseValues($qualifiersHash->{$_})  } @qualifiers;
 

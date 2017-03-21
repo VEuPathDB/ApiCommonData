@@ -4,6 +4,8 @@ use strict;
 
 use File::Basename;
 
+use Data::Dumper;
+
 sub getType { $_[0]->{_type} }
 sub setType { $_[0]->{_type} = $_[1] }
 
@@ -68,16 +70,23 @@ sub read {
       my $value = lc($values[$i]);
 
       next if($value eq '[skipped]');
-      next if($colExcludes->{$fileBasename}->{$key});
+      next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
 
       $hash{$key} = $value if($value);
     }
 
     my $primaryKey = $self->makePrimaryKey(\%hash);
     my $parent = $self->makeParent(\%hash);
-    $hash{'__PARENT__'} = $parent;
 
+    my $parentPrefix = $self->getParentPrefix();
+    my $parentWithPrefix = $parentPrefix . $parent;
+
+    $hash{'__PARENT__'} = $parentWithPrefix unless($parentPrefix && $parentWithPrefix eq $parentPrefix);
+
+    next unless($primaryKey); # skip rows that do not have a primary key
     next if($rowExcludes->{$primaryKey});
+
+    $primaryKey = $self->getPrimaryKeyPrefix() . $primaryKey;
 
     $parsedOutput->{$primaryKey} = \%hash;
   }
@@ -94,6 +103,15 @@ sub makePrimaryKey {
 sub makeParent {
   die "SUBCLASS must override makeParent method";
 }
+
+sub getPrimaryKeyPrefix {
+  return undef;
+}
+
+sub getParentPrefix {
+  return undef;
+}
+
 
 1;
 
@@ -112,6 +130,11 @@ sub makePrimaryKey {
   return $hash->{hhid};
 }
 
+sub getPrimaryKeyPrefix {
+  my ($self, $hash) = @_;
+
+  return "HH";
+}
 
 
 1;
@@ -121,14 +144,43 @@ use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
 
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  return $hash->{hhid};
+}
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{id};
+}
+
+sub getParentPrefix {
+  my ($self, $hash) = @_;
+
+  return "HH";
+}
+
 
 1;
 
-package ApiCommonData::Load::MetadataReader::PrismClincalVisitReader;
+package ApiCommonData::Load::MetadataReader::PrismClinicalVisitReader;
 use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
 
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  return $hash->{id};
+}
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{uniqueid};
+}
 
 1;
 
