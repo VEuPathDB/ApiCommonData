@@ -6,8 +6,8 @@ use File::Basename;
 
 use Data::Dumper;
 
-sub getType { $_[0]->{_type} }
-sub setType { $_[0]->{_type} = $_[1] }
+sub getParentMergedFile { $_[0]->{_parent_merged_file} }
+sub setParentMergedFile { $_[0]->{_parent_merged_file} = $_[1] }
 
 sub getMetadataFile { $_[0]->{_metadata_file} }
 sub setMetadataFile { $_[0]->{_metadata_file} = $_[1] }
@@ -21,19 +21,22 @@ sub setColExcludes { $_[0]->{_col_excludes} = $_[1] }
 sub getParsedOutput { $_[0]->{_parsed_output} }
 sub setParsedOutput { $_[0]->{_parsed_output} = $_[1] }
 
+sub getNestedReaders { $_[0]->{_nested_readers} }
+sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
+
 sub getDelimiter { 
   return qr/,|\t/;
 }
 
 sub new {
-  my ($class, $type, $metadataFile, $rowExcludes, $colExcludes) = @_;
+  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentMergedFile) = @_;
 
   my $self = bless {}, $class;
 
   $self->setMetadataFile($metadataFile);
-  $self->setType($type);
   $self->setRowExcludes($rowExcludes);
   $self->setColExcludes($colExcludes);
+  $self->setParentMergedFile($parentMergedFile);
 
   return $self;
 }
@@ -43,6 +46,7 @@ sub read {
   my ($self) = @_;
 
   my $metadataFile = $self->getMetadataFile();
+
   my $delimiter = $self->getDelimiter();
 
   my $colExcludes = $self->getColExcludes();
@@ -70,9 +74,10 @@ sub read {
       my $value = lc($values[$i]);
 
       next if($value eq '[skipped]');
+
       next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
 
-      $hash{$key} = $value if($value);
+      $hash{$key} = $value if(defined $value);
     }
 
     my $primaryKey = $self->makePrimaryKey(\%hash);
@@ -188,11 +193,128 @@ package ApiCommonData::Load::MetadataReader::PrismSampleReader;
 use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
+use ApiCommonData::Load::MetadataReader;
 
-# @override
+use Date::Parse qw/strptime/;
+
+use File::Basename;
+
+sub getClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} }
+sub setClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} = $_[1] }
+
+sub new {
+  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper) = @_;
+
+  my $self = bless {}, $class;
+
+  $self->setMetadataFile($metadataFile);
+  $self->setRowExcludes($rowExcludes);
+  $self->setColExcludes($colExcludes);
+  $self->setParentMergedFile($parentMergedFile);
+
+  unless($clinicalVisitMapper) {
+    my $clinicalVisitsReader = ApiCommonData::Load::MetadataReader::PrismClinicalVisitReader->new($parentMergedFile, {}, {}, undef);
+    $clinicalVisitsReader->read();
+    my $clinicalVisitsParsedOutput = $clinicalVisitsReader->getParsedOutput();
+
+    foreach my $uniqueid (keys %$clinicalVisitsParsedOutput) {
+      my $participant = $clinicalVisitsParsedOutput->{$uniqueid}->{'id'};
+      my $date = $clinicalVisitsParsedOutput->{$uniqueid}->{'date'};
+
+      my $formattedDate = &formatDate($date);
+
+      my $key = "$participant.$formattedDate";
+      
+      $clinicalVisitMapper->{$key} = $uniqueid;
+    }
+  }
+  $self->setClinicalVisitMapper($clinicalVisitMapper);
+
+  return $self;
+}
+
+
 sub read {
+  my ($self) = @_;
+
+  my $metadataFile = $self->getMetadataFile();
+  my $baseMetaDataFile = basename $metadataFile;
+
+  if($baseMetaDataFile eq "Prism_samples.txt" && ref($self) eq "ApiCommonData::Load::MetadataReader::PrismSampleReader") {
+
+    my $colExcludes = $self->getColExcludes();
+    my $rowExcludes = $self->getRowExcludes();
+    my $parentMergedFile = $self->getParentMergedFile();
+    my $clinicalVisitMapper = $self->getClinicalVisitMapper();
+
+    my $fp = ApiCommonData::Load::MetadataReader::PrismSampleReader::FP->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    $fp->read();
+
+    my $bc = ApiCommonData::Load::MetadataReader::PrismSampleReader::BC->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    $bc->read();
+
+    my $p1 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P1->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    $p1->read();
+
+    my $p2 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P2->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    $p2->read();
+
+    $self->setNestedReaders([$fp, $bc, $p1, $p2]);
+  }
+
+  # this will handle tororo file && each call above
+  else{
+    $self->SUPER::read();
+  }
+
+}
 
 
+sub formatDate {
+  my ($string) = @_;
+
+  my  ($junk1,$junk2,$junk3,$day,$month,$year)= strptime($string); 
+  $month++; 
+  $year = $year < 16 ? $year +2000 : $year+1900;
+
+  return "$day-$month-$year";
+}
+
+
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  my $mapper = $self->getClinicalVisitMapper();
+
+  my $metadataFile = $self->getMetadataFile();
+  my $baseMetaDataFile = basename $metadataFile;
+
+  my $date;
+  if($baseMetaDataFile eq "Prism_tororo.txt") {
+    $date = $hash->{aliquotdate};
+  }
+  elsif($baseMetaDataFile eq "Prism_samples.txt") {
+    $date = $hash->{reqdate};
+  }
+  else {
+    die "File $baseMetaDataFile not handled for makeParent Method";
+  }
+
+  my $formattedDate = &formatDate($date);
+
+  my $participant = $hash->{subjectid};
+
+  return $mapper->{"$participant.$formattedDate"};
+}
+
+# Default is for the tororo file
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  my $metadataFile = $self->getMetadataFile();
+  my $baseMetaDataFile = basename $metadataFile;
+
+  return $hash->{randomnumber};
 }
 
 
@@ -204,5 +326,79 @@ use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
 
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{uniqueid};
+}
+
+
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  return $hash->{hhid};
+}
+
+sub getParentPrefix {
+  my ($self, $hash) = @_;
+
+  return "HH";
+}
 
 1;
+
+
+package ApiCommonData::Load::MetadataReader::PrismSampleReader::FP;
+use base qw(ApiCommonData::Load::MetadataReader::PrismSampleReader);
+
+use strict;
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{fp_barcode};
+}
+
+1;
+
+package ApiCommonData::Load::MetadataReader::PrismSampleReader::BC;
+use base qw(ApiCommonData::Load::MetadataReader::PrismSampleReader);
+
+use strict;
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{bc_barcode};
+}
+
+1;
+
+package ApiCommonData::Load::MetadataReader::PrismSampleReader::P1;
+use base qw(ApiCommonData::Load::MetadataReader::PrismSampleReader);
+
+use strict;
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{p1_barcode};
+}
+
+1;
+
+package ApiCommonData::Load::MetadataReader::PrismSampleReader::P2;
+use base qw(ApiCommonData::Load::MetadataReader::PrismSampleReader);
+
+use strict;
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{p2_barcode};
+}
+
+
+1;
+
+
