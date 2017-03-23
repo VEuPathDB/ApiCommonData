@@ -6,8 +6,8 @@ use File::Basename;
 
 use Data::Dumper;
 
-sub getParentMergedFile { $_[0]->{_parent_merged_file} }
-sub setParentMergedFile { $_[0]->{_parent_merged_file} = $_[1] }
+sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
+sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
 
 sub getMetadataFile { $_[0]->{_metadata_file} }
 sub setMetadataFile { $_[0]->{_metadata_file} = $_[1] }
@@ -29,14 +29,14 @@ sub getDelimiter {
 }
 
 sub new {
-  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentMergedFile) = @_;
+  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput) = @_;
 
   my $self = bless {}, $class;
 
   $self->setMetadataFile($metadataFile);
   $self->setRowExcludes($rowExcludes);
   $self->setColExcludes($colExcludes);
-  $self->setParentMergedFile($parentMergedFile);
+  $self->setParentParsedOutput($parentParsedOutput);
 
   return $self;
 }
@@ -75,7 +75,7 @@ sub read {
 
       next if($value eq '[skipped]');
 
-      next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
+
 
       $hash{$key} = $value if(defined $value);
     }
@@ -93,7 +93,13 @@ sub read {
 
     $primaryKey = $self->getPrimaryKeyPrefix() . $primaryKey;
 
-    $parsedOutput->{$primaryKey} = \%hash;
+    my %filteredHash; 
+    foreach my $key (keys %hash) {
+      next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
+      $filteredHash{$key} = $hash{$key};
+    }
+
+    $parsedOutput->{$primaryKey} = \%filteredHash;
   }
 
   close FILE;
@@ -203,20 +209,16 @@ sub getClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} }
 sub setClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} = $_[1] }
 
 sub new {
-  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper) = @_;
+  my ($class, $metadataFile, $rowExcludes, $colExcludes, $clinicalVisitsParsedOutput, $clinicalVisitMapper) = @_;
 
   my $self = bless {}, $class;
 
   $self->setMetadataFile($metadataFile);
   $self->setRowExcludes($rowExcludes);
   $self->setColExcludes($colExcludes);
-  $self->setParentMergedFile($parentMergedFile);
+  $self->setParentParsedOutput($clinicalVisitsParsedOutput);
 
   unless($clinicalVisitMapper) {
-    my $clinicalVisitsReader = ApiCommonData::Load::MetadataReader::PrismClinicalVisitReader->new($parentMergedFile, {}, {}, undef);
-    $clinicalVisitsReader->read();
-    my $clinicalVisitsParsedOutput = $clinicalVisitsReader->getParsedOutput();
-
     foreach my $uniqueid (keys %$clinicalVisitsParsedOutput) {
       my $participant = $clinicalVisitsParsedOutput->{$uniqueid}->{'id'};
       my $date = $clinicalVisitsParsedOutput->{$uniqueid}->{'date'};
@@ -250,20 +252,24 @@ sub read {
 
     my $colExcludes = $self->getColExcludes();
     my $rowExcludes = $self->getRowExcludes();
-    my $parentMergedFile = $self->getParentMergedFile();
+    my $parentParsedOutput = $self->getParentParsedOutput();
     my $clinicalVisitMapper = $self->getClinicalVisitMapper();
 
-    my $fp = ApiCommonData::Load::MetadataReader::PrismSampleReader::FP->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    my $fp = ApiCommonData::Load::MetadataReader::PrismSampleReader::FP->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $clinicalVisitMapper);
     $fp->read();
+    $fp->addSpecimenType();
 
-    my $bc = ApiCommonData::Load::MetadataReader::PrismSampleReader::BC->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    my $bc = ApiCommonData::Load::MetadataReader::PrismSampleReader::BC->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $clinicalVisitMapper);
     $bc->read();
+    $bc->addSpecimenType();
 
-    my $p1 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P1->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    my $p1 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P1->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $clinicalVisitMapper);
     $p1->read();
+    $p1->addSpecimenType();
 
-    my $p2 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P2->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile, $clinicalVisitMapper);
+    my $p2 = ApiCommonData::Load::MetadataReader::PrismSampleReader::P2->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $clinicalVisitMapper);
     $p2->read();
+    $p2->addSpecimenType();
 
     $self->setNestedReaders([$fp, $bc, $p1, $p2]);
   }
@@ -274,6 +280,34 @@ sub read {
   }
 
 }
+
+sub addSpecimenType {
+  my ($self) = @_;
+
+  my $parsedOutput = $self->getParsedOutput();
+
+  my $types = {"3" => "Plasma",
+               "4" => "Filter Paper",
+               "5" => "Pellet",
+               "6" => "Buffy Coat",
+  };
+
+
+  foreach my $pk (keys %$parsedOutput) {
+
+    if($pk =~ /CJ(\d)-/) {
+      my $type = $types->{$1};
+
+      if($type) {
+        $parsedOutput->{$pk}->{specimentype} = $type;
+      }
+      else {
+        die "No Type for sample $pk\n";
+      }
+    }
+  }
+}
+
 
 
 sub formatDate {

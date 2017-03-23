@@ -3,6 +3,7 @@ package ApiCommonData::Load::MetadataHelper;
 use strict;
 
 use ApiCommonData::Load::MetadataReader;
+#use ApiCommonData::Load::MetadataValidator;
 
 use Data::Dumper;
 
@@ -16,19 +17,28 @@ sub getMergedOutput { $_[0]->{_merged_output} }
 sub setMergedOutput { $_[0]->{_merged_output} = $_[1] }
 
 sub new {
-  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile) = @_;
+  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile) = @_;
 
   my $self = bless {}, $class;
 
   my $rowExcludes = &readRowExcludeFile($rowExcludeFile);
   my $colExcludes = &readColExcludeFile($colExcludeFile);
 
+  my $parentReaderClass = "ApiCommonData::Load::MetadataReader::" . $parentType . "Reader";
+  my $parentReader = eval {
+    $parentReaderClass->new($parentMergedFile, {}, {}, undef);
+   };
+  die $@ if $@;
+
+  $parentReader->read();
+  my $parentParsedOutput = $parentReader->getParsedOutput();
+
   my @readers;
   foreach my $metadataFile (@$metadataFiles) {
     my $readerClass = "ApiCommonData::Load::MetadataReader::" . $type . "Reader";
 
    my $reader = eval {
-     $readerClass->new($metadataFile, $rowExcludes, $colExcludes, $parentMergedFile);
+     $readerClass->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput);
    };
     die $@ if $@;
 
