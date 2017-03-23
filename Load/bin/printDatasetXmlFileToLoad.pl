@@ -193,6 +193,8 @@ printSynonymClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasSynony
 printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^t/i);
 printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^g/i);
 
+printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i);
+
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
 printGene2Entrez ($ofh, $dbxrefVersion);
 printGene2PubmedFromNcbi ($ofh, $dbxrefVersion);
@@ -456,6 +458,24 @@ sub printECAssocFromUniprot {
   return 0;
 }
 
+sub printGenbankProteinIdClass {
+  my ($fh, $excelInfoPoint) = @_;
+  print $fh "  <dataset class=\"aliases\">\n";
+  printNameWithValue ($fh, 'name', "gbProteinId");
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithValue ($fh, 'idType', "alternate id");
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithValue ($fh, 'columnSpec', "primary_identifier");
+  printNameWithValue ($fh, 'url', "<![CDATA[http://www.ncbi.nlm.nih.gov/protein/EXTERNAL_ID_HERE]]>");
+  printNameWithEmptyValue ($fh, 'urlUsesSecondaryId');
+  printNameWithValue ($fh, 'target', "NAFeature");
+  printNameWithValue ($fh, 'viewName', "Transcript");
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+  return 0;
+}
+
 sub printGOClass {
   my ($fh, $excelInfoPoint) = @_;
   print $fh "  <dataset class=\"GeneOntologyAssociations\">\n";
@@ -558,6 +578,13 @@ sub printNameWithValue {
   my ($fh, $item, $value) = @_;
   $value = $item if (!$value);
   print $fh "    <prop name=\"$item\">$value</prop>\n";
+  return 0;
+}
+
+sub printNameWithEmptyValue {
+  ## <prop name="urlUsesSecondaryId"></prop> 
+  my ($fh, $item) = @_;
+  print $fh "    <prop name=\"$item\"></prop>\n";
   return 0;
 }
 
