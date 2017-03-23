@@ -195,7 +195,7 @@ use base qw(ApiCommonData::Load::MetadataReader);
 use strict;
 use ApiCommonData::Load::MetadataReader;
 
-use Date::Parse qw/strptime/;
+use Date::Manip qw(Date_Init ParseDate UnixDate);
 
 use File::Basename;
 
@@ -221,11 +221,17 @@ sub new {
       my $participant = $clinicalVisitsParsedOutput->{$uniqueid}->{'id'};
       my $date = $clinicalVisitsParsedOutput->{$uniqueid}->{'date'};
 
-      my $formattedDate = &formatDate($date);
 
-      my $key = "$participant.$formattedDate";
+      if($date) {
+        my $formattedDate = &formatDate($date);
+
+        my $key = "$participant.$formattedDate";
       
-      $clinicalVisitMapper->{$key} = $uniqueid;
+        $clinicalVisitMapper->{$key} = $uniqueid;
+      }
+      else {
+        print STDERR "No Date for Clinical Visit with Participant = $participant\n";
+      }
     }
   }
   $self->setClinicalVisitMapper($clinicalVisitMapper);
@@ -271,14 +277,18 @@ sub read {
 
 
 sub formatDate {
-  my ($string) = @_;
+  my ($date) = @_;
 
-  my  ($junk1,$junk2,$junk3,$day,$month,$year)= strptime($string); 
-  $month++; 
-  $year = $year < 16 ? $year +2000 : $year+1900;
+  Date_Init("DateFormat=non-US"); 
+  my $formattedDate = UnixDate(ParseDate($date), "%Y-%m-%d");
 
-  return "$day-$month-$year";
+  unless($formattedDate) {
+    die "Date Format not supported for $date\n";
+  }
+
+  return $formattedDate;
 }
+
 
 
 sub makeParent {
@@ -291,7 +301,7 @@ sub makeParent {
 
   my $date;
   if($baseMetaDataFile eq "Prism_tororo.txt") {
-    $date = $hash->{aliquotdate};
+    $date = $hash->{date};
   }
   elsif($baseMetaDataFile eq "Prism_samples.txt") {
     $date = $hash->{reqdate};
@@ -300,11 +310,17 @@ sub makeParent {
     die "File $baseMetaDataFile not handled for makeParent Method";
   }
 
-  my $formattedDate = &formatDate($date);
-
   my $participant = $hash->{subjectid};
+  if($date) {
+    my $formattedDate = &formatDate($date);
+    
+    my $key = "$participant.$formattedDate";
+    return $mapper->{$key};
+  }
 
-  return $mapper->{"$participant.$formattedDate"};
+  my $primaryKey = $self->makePrimaryKey($hash);
+  die "No Date found for Sample $primaryKey (Participant ID=$participant)\n";
+
 }
 
 # Default is for the tororo file
