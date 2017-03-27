@@ -162,6 +162,7 @@ sub run {
                                                               });
 
     $naFeatImage->submit();
+    $self->undefPointerCache();
     $processed++;
   }
 
