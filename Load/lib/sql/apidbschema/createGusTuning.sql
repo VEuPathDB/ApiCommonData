@@ -516,6 +516,9 @@ FROM dual,
 WHERE 'otuabundance' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
+CREATE INDEX otuabun_revix1 ON results.OtuAbundance (protocol_app_node_id, otu_abundance_id) TABLESPACE indx;
+CREATE INDEX otuabun_revix2 ON results.OtuAbundance (na_sequence_id, otu_abundance_id) TABLESPACE indx;
+
 --------------------------------------------------------------------------------
 
 create table Results.AlphaDiversity
@@ -563,6 +566,9 @@ FROM dual,
      (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
 WHERE 'alphadiversity' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
+
+CREATE INDEX alphad_revix1 ON results.AlphaDiversity (protocol_app_node_id, alpha_diversity_id) TABLESPACE indx;
+CREATE INDEX alphad_revix2 ON results.AlphaDiversity (na_sequence_id, alpha_diversity_id) TABLESPACE indx;
 
 -------------------------------------------------------------------------------------------
 -- unique constraints in the Results schema
