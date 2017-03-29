@@ -149,8 +149,15 @@ sub run {
     chomp;
     next if /^##/;
     my($gene, $display_order, $image_type, $note, $img_uri) = split /\t/, $_;
+   
+    my $naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, 0);
 
-    my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, 0) ;
+    if( !$naFeatureId && $gene =~ /\.\d$/) { # could be a transcript id
+      $note = "Transcript $gene: $note"; 
+      $gene =~ s/\.\d+$//g;
+      $naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, 0) ;
+    }
+
     print "could not find $gene\n" and next unless $naFeatureId;
 
     my $naFeatImage = GUS::Model::ApiDB::NAFeatureImage->new({'na_feature_id' => $naFeatureId, 
