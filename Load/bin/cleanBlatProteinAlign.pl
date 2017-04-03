@@ -41,11 +41,11 @@ my $dbh = DBI->connect($dbiDsn, $login, $password) or die DBI->errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $locSql = "select distinct ba.target_na_sequence_id from jbrestel.blatproteinalignment ba, apidb.organism o where ba.target_taxon_id = o.taxon_id and o.abbrev = ?";
+my $locSql = "select distinct ba.target_na_sequence_id from apidb.blatproteinalignment ba, apidb.organism o where ba.target_taxon_id = o.taxon_id and o.abbrev = ?";
 my $locSh = $dbh->prepare($locSql);
 $locSh->execute($organismAbbrev);
 
-my $sql = "select blat_protein_alignment_id, target_start, target_end, score, query_bases_aligned  from jbrestel.BLATPROTEINALIGNMENT where TARGET_NA_SEQUENCE_ID = ? order by target_start asc, target_end asc, score desc, query_bases_aligned desc";
+my $sql = "select blat_protein_alignment_id, target_start, target_end, score, query_bases_aligned  from apidb.BLATPROTEINALIGNMENT where TARGET_NA_SEQUENCE_ID = ? order by target_start asc, target_end asc, score desc, query_bases_aligned desc";
 my $sh = $dbh->prepare($sql);
 
 
@@ -158,7 +158,7 @@ while(my ($naSeqId) = $locSh->fetchrow_array()) {
 
       if($deleteCount == 1000) {
         my $deleteIds = join(',', @deletes);
-        my $deleteSql = "delete jbrestel.blatproteinalignment where blat_protein_alignment_id in ($deleteIds)";
+        my $deleteSql = "delete apidb.blatproteinalignment where blat_protein_alignment_id in ($deleteIds)";
         my $deleteSh = $dbh->do($deleteSql);
 
         @deletes = ();
@@ -176,7 +176,7 @@ while(my ($naSeqId) = $locSh->fetchrow_array()) {
 
   if(scalar @deletes > 0) {
     my $deleteIds = join(',', @deletes);
-    my $deleteSql = "delete jbrestel.blatproteinalignment where blat_protein_alignment_id in ($deleteIds)";
+    my $deleteSql = "delete apidb.blatproteinalignment where blat_protein_alignment_id in ($deleteIds)";
     my $deleteSh = $dbh->do($deleteSql);
     $dbh->commit();
   }
