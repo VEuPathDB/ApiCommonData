@@ -6,22 +6,20 @@ use Getopt::Long;
 use lib $ENV{GUS_HOME} . "/lib/perl";
 
 use ApiCommonData::Load::MetadataHelper;
-#use ApiCommonData::Load::MetadataValidator;
 
-use Data::Dumper;
 
 # TODO:  ontologyMappingFile is a validation step in the end
-my ($help, $ontologyMappingXmlFile, $type, @metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile);
-
-
+my ($help, $ontologyMappingXmlFile, $type, @metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $outputFile);
 
 &GetOptions('help|h' => \$help,
 	    'type=s' => \$type,
+	    'parentType=s' => \$parentType,
             'parentMergedFile=s' => \$parentMergedFile,
             'ontologyMappingXmlFile=s' => \$ontologyMappingXmlFile, 
             'metadataFile=s' => \@metadataFiles,
             'rowExcludeFile=s' => \$rowExcludeFile,
             'colExcludeFile=s' => \$colExcludeFile,
+            'outputFile=s' => \$outputFile,
     );
 
 &usage() if($help);
@@ -49,16 +47,26 @@ if($parentMergedFile) {
 }
 
 
-my $metadataHelper = ApiCommonData::Load::MetadataHelper->new($type, \@metadataFiles, $rowExcludeFile, $colExcludeFile);
+my $metadataHelper = ApiCommonData::Load::MetadataHelper->new($type, \@metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile);
+
+#my $validator = ApiCommonData::Load::MetadataValidator->new($parentMergedFile, $ontologyMappingXmlFile);
 
 $metadataHelper->merge();
+if($metadataHelper->isValid()) {
+  $metadataHelper->writeMergedFile($outputFile);
+}
+else {
+  die "ERRORS Found.  Please fix and try again.";
+}
 
+# check each row that has a parent matches in parent merged file
+# check for "USER ERRORS" in any value; keep record of columns and primary keys
+# check that each header/qualifier is handled in the ontologymapping xml.  report new and missing
+#unless($validator->isValidFile($outputFile)) {
+#  open(FILE, ">$outputFile") or die "Cannot open file $outputFile for writing: $!";
+#  close FILE;
+#}
 
-#my $validator = ApiCommonData::Load::MetadataValidator->new($metadataHelper, $parentMergedFile, $ontologyMappingXmlFile);
-
-#$validator->validate();
-
-$metadataHelper->writeMergedFile();
 
 sub usage {
   my $msg = shift;

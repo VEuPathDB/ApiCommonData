@@ -3,7 +3,8 @@ package ApiCommonData::Load::MetadataHelper;
 use strict;
 
 use ApiCommonData::Load::MetadataReader;
-#use ApiCommonData::Load::MetadataValidator;
+
+use XML::Simple;
 
 use Data::Dumper;
 
@@ -16,6 +17,12 @@ sub setDistinctQualifiers { $_[0]->{_distinct_qualifiers} = $_[1] }
 sub getMergedOutput { $_[0]->{_merged_output} }
 sub setMergedOutput { $_[0]->{_merged_output} = $_[1] }
 
+sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
+sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
+
+sub getOntologyMapping { $_[0]->{_ontology_mapping} }
+sub setOntologyMapping { $_[0]->{_ontology_mapping} = $_[1] }
+
 sub new {
   my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile) = @_;
 
@@ -24,14 +31,22 @@ sub new {
   my $rowExcludes = &readRowExcludeFile($rowExcludeFile);
   my $colExcludes = &readColExcludeFile($colExcludeFile);
 
-  my $parentReaderClass = "ApiCommonData::Load::MetadataReader::" . $parentType . "Reader";
-  my $parentReader = eval {
-    $parentReaderClass->new($parentMergedFile, {}, {}, undef);
-   };
-  die $@ if $@;
+  my $ontologyMapping = &readOntologyMappingXmlFile($ontologyMappingXmlFile);
+  $self->setOntologyMapping($ontologyMapping);
 
-  $parentReader->read();
-  my $parentParsedOutput = $parentReader->getParsedOutput();
+  my $parentParsedOutput;
+  if($parentMergedFile) {
+    my $parentReaderClass = "ApiCommonData::Load::MetadataReader::" . $parentType . "Reader";
+    my $parentReader = eval {
+      $parentReaderClass->new($parentMergedFile, {}, {}, undef);
+    };
+    die $@ if $@;
+
+    $parentReader->read();
+
+    $parentParsedOutput = $parentReader->getParsedOutput();
+    $self->setParentParsedOutput($parentParsedOutput);
+  }
 
   my @readers;
   foreach my $metadataFile (@$metadataFiles) {
@@ -89,6 +104,65 @@ sub merge {
 }
 
 
+sub isValid {
+  my ($self) = @_;
+
+  my $mergedOutput = $self->getMergedOutput();
+  my $parentOutput = $self->getParentParsedOutput();
+  my $ontologyMapping = $self->getOntologyMapping();
+
+  my $errors = {};
+  my %errorsDistinctQualifiers;
+
+  my %distinctValues;
+
+  foreach my $pk (keys %$mergedOutput) {
+    if($parentOutput) {
+      my $parentId = $mergedOutput->{$pk}->{"__PARENT__"};
+      die "No Parent Defined for $pk" unless(defined $parentId);
+      die "Parent $parentId not defined as primary key in parent file" unless($parentOutput->{$parentId});
+    }
+    my $qualifiersHash = $mergedOutput->{$pk};
+    foreach my $qualifier (%$qualifiersHash) {
+      my $value = $qualifiersHash->{$qualifier};
+      if($value =~ /USER_ERROR/) {
+
+
+        $errors->{$qualifier}->{"MERGE_ERRORS"} = $errors->{$qualifier}->{"MERGE_ERRORS"} + 1;
+        $errorsDistinctQualifiers{$qualifier} = $errorsDistinctQualifiers{$qualifier} + 1;
+      }
+
+      $distinctValues{$qualifier}->{$value} = 1;
+    }
+  }
+
+  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
+
+  print STDERR "\n-----------------------------------------\n";
+
+  foreach(keys %distinctValues) {
+    my @values = keys %{$distinctValues{$_}};
+    my $valuesCount = scalar @values;
+
+    print STDERR "QUALIFIER=$_ has $valuesCount Distinct Values\n";    
+
+    my $max;
+    if($valuesCount > 10) {
+      print STDERR "Showing 10\n";
+      $max = 10;
+    }
+    else {
+      $max = $valuesCount;
+    }
+    
+    for(my $i = 0; $i < $max; $i++) {
+      print STDERR "   $values[$i]\n";
+    }
+  }
+
+}
+
+
 # this is a one column file (no header) of primary keys to exclude
 sub readRowExcludeFile {
   my $file = shift;
@@ -106,6 +180,32 @@ sub readRowExcludeFile {
     close FILE;
   }
   return \%hash;
+}
+
+
+
+sub readOntologyMappingXmlFile {
+  my ($file) = shift;
+
+  if($file) {
+    my $ontologyMapping = XMLin($file, ForceArray => 1);
+
+    my %ontologyMapping;
+
+    foreach my $ot (@{$ontologyMapping->{ontologyTerm}}) {
+      my $sourceId = $ot->{source_id};
+      $ontologyMapping{lc($sourceId)}->{$ot->{type}} = $ot;
+
+      foreach my $name (@{$ot->{name}}) {
+        $ontologyMapping{lc($name)}->{$ot->{type}} = $ot;
+      }
+
+    }
+
+    return $ontologyMapping;
+
+  }
+
 }
 
 sub readColExcludeFile {
@@ -139,14 +239,22 @@ sub readColExcludeFile {
 sub writeMergedFile {
   my ($self, $outputFile) = @_;
 
-  open(OUT, ">$outputFile") or die "Cannot open file $outputFile for writing:$!";
-
   my $distinctQualifiers = $self->getDistinctQualifiers();
   my $mergedOutput = $self->getMergedOutput();
 
+  open(my $fh, ">$outputFile") or die "Cannot open file $outputFile for writing:$!";
+
+  &write($fh, $distinctQualifiers, $mergedOutput);
+
+  close $fh;
+}
+
+sub write {
+  my ($fh, $distinctQualifiers, $mergedOutput, $summarize) = @_;
+
   my @qualifiers = keys %$distinctQualifiers;
 
-  print OUT "PRIMARY_KEY\tPARENT\t" . join("\t", @qualifiers) . "\n";
+  print $fh "PRIMARY_KEY\tPARENT\t" . join("\t", @qualifiers) . "\n";
 
   foreach my $pk (keys %$mergedOutput) {
     my $qualifiersHash = $mergedOutput->{$pk};
@@ -155,11 +263,8 @@ sub writeMergedFile {
 
     my @qualifierValues = map { &getDistinctLowerCaseValues($qualifiersHash->{$_})  } @qualifiers;
 
-    print OUT "$pk\t$parent\t" . join("\t", @qualifierValues) . "\n";
+    print $fh "$pk\t$parent\t" . join("\t", @qualifierValues) . "\n";
   }
-
-  close OUT;
-
 }
 
 sub getDistinctLowerCaseValues {

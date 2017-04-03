@@ -4,8 +4,6 @@ use strict;
 
 use File::Basename;
 
-use Data::Dumper;
-
 sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
 sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
 
@@ -74,8 +72,6 @@ sub read {
       my $value = lc($values[$i]);
 
       next if($value eq '[skipped]');
-
-
 
       $hash{$key} = $value if(defined $value);
     }
@@ -295,7 +291,7 @@ sub addSpecimenType {
 
   foreach my $pk (keys %$parsedOutput) {
 
-    if($pk =~ /CJ(\d)-/) {
+    if($pk =~ /cj(\d)-/i) {
       my $type = $types->{$1};
 
       if($type) {
