@@ -61,6 +61,8 @@ if ($dbrefExtDbSpec){
 
     $dbrefExtDbRls =~ s/(,)$//g;
 
+    $dbrefExtDbRls =~ s/,$//g;
+
 }elsif ($dbrefExtDbName){
 
     my @dbrefExtDbNameList = split(/,/, $dbrefExtDbName) ;
@@ -72,13 +74,14 @@ if ($dbrefExtDbSpec){
     }
 
     $dbrefExtDbRls =~ s/(,)$//g;
+
+    $dbrefExtDbRls =~ s/,$//g;    
+
 }else{
     
     die "You need to provide either dbrefExtDbSpec or dbrefExtDbName";
 
 }
-
-
 
 my $sql = "select drf.primary_identifier as uniprot_accession,gf.source_id as eupath_source_id, 'http://www.'||'$projectName'||'.org/gene/'||gf.source_id as URL from sres.DBREF drf, DoTS.DbRefNAFeature nf, dots.GENEFEATURE gf where drf.db_ref_id=nf.db_ref_id and gf.na_feature_id=nf.na_feature_id and drf.external_database_release_id in($dbrefExtDbRls)";
 
