@@ -17,7 +17,7 @@ use File::Basename;
 use Data::Dumper;
 
 #use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
-#use ApiCommonShared::Model::pcbiPubmed;
+#use ApiCommonModel::Model::pcbiPubmed;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Insert GenBank sequenece data from a greengenes assignment file. 

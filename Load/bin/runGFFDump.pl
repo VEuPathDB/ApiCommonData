@@ -88,7 +88,7 @@ foreach my $db (keys %sites) {
 }
 
 # step 3: get workflowVersion 
-open F, "$ENV{PROJECT_HOME}/ApiCommonShared/Model/config/stagingDirPaths.tab";
+open F, "$ENV{PROJECT_HOME}/ApiCommonModel/Model/config/stagingDirPaths.tab";
 while(<F>) {
   chomp;
   next if /^#/;

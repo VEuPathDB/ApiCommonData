@@ -19,7 +19,7 @@ use GUS::Model::SRes::BibliographicReference;
 use Data::Dumper;
 
 #use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
-use ApiCommonShared::Model::pcbiPubmed;
+use ApiCommonModel::Model::pcbiPubmed;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Insert GenBank Isolate data from a genbank file (.gbk). 
@@ -294,9 +294,9 @@ sub loadIsolates {
 
     foreach my $pmid (@pmids) { 
 
-      ApiCommonShared::Model::pcbiPubmed::setPubmedID ($pmid);
-      my $publication = ApiCommonShared::Model::pcbiPubmed::fetchPublication(); 
-      my $authors = ApiCommonShared::Model::pcbiPubmed::fetchAuthorListLong();
+      ApiCommonModel::Model::pcbiPubmed::setPubmedID ($pmid);
+      my $publication = ApiCommonModel::Model::pcbiPubmed::fetchPublication(); 
+      my $authors = ApiCommonModel::Model::pcbiPubmed::fetchAuthorListLong();
 
       my $ref = GUS::Model::SRes::BibliographicReference->new();
       $ref->setTitle($title);

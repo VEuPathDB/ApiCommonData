@@ -54,7 +54,7 @@ Usage:
     analysisConfig: use to track sample order and display name. Here is a sample analysis config file - 
         /eupath/data/EuPathDB/manualDelivery/PlasmoDB/pfal3D7/rnaSeq/Su_strand_specific/2011-11-16/final/analysisConfig.xml
 
-    ## datasetXml: dataset xml in order to keep the order of samples e.g. EuPathDatasets/Datasets/lib/xml/datasets/PlasmoDB/pfal3D7/Su_strand_specific.xml. In this case, samples are in the order of lateTroph, schizont, gametocyteII, gametocyteV
+    ## datasetXml: dataset xml in order to keep the order of samples e.g. ApiCommonDatasets/Datasets/lib/xml/datasets/PlasmoDB/pfal3D7/Su_strand_specific.xml. In this case, samples are in the order of lateTroph, schizont, gametocyteII, gametocyteV
 endOfUsage
 
 die $usage unless -e $inputDir;
