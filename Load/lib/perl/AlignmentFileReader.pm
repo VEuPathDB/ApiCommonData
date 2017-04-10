@@ -1,7 +1,21 @@
 package ApiCommonData::Load::AlignmentFileReader;
 use base qw(ApiCommonData::Load::FileReader);
 
+use CBIL::Bio::BLAT::Alignment;
+
 use strict;
+
+# @OVERRIDE
+sub hasDictionary {
+  return 1;
+}
+
+# @OVERRIDE
+sub makeDictionary {
+  my ($self, $lineAsArray) = @_;
+
+  return CBIL::Bio::BLAT::Alignment->new($lineAsArray);
+}
 
 # @OVERRIDE
 sub isSameGroup {
