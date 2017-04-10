@@ -41,6 +41,11 @@ while($reader->hasNext()) {
     # OR if you'd like these as lists; (line split on delimiter)
     #    my @lineArray = $reader->nextLine();
     #    my @peek = $reader->getPeek();
+
+    # OR if your file is sorted in a way that lets you define groups of rows
+    # Array of Arrays is default but you can set dictinaryNames to get array of hashes
+
+    # my $groupOfLines = readNextGroupOfLines(); 
     ...
 }
 
@@ -196,9 +201,14 @@ sub readNextGroupOfLines {
       $isSameGroup = 0;
     }
 
-    my $lineAsDictionary = $self->makeDictionary(\@a);
+    if($self->getDictionaryNames()) {
+      my $lineAsDictionary = $self->makeDictionary(\@a);
+      push @rv, $lineAsDictionary;
+    }
+    else {
+      push @rv, \@a;
+    }
 
-    push @rv, $lineAsDictionary;
   }
   return \@rv;
 
