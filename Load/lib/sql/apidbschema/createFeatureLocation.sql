@@ -32,6 +32,16 @@ CREATE TABLE apidb.FeatureLocation (
  PRIMARY KEY (feature_location_id)
 );
 
+CREATE INDEX apidb.featloc_ix1
+ON apidb.FeatureLocation (na_sequence_id, start_min, end_max, is_reversed,
+                          sequence_ontology_id, na_feature_id, feature_type, parent_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.featloc_ix2
+ON apidb.FeatureLocation (na_feature_id, na_sequence_id, start_min, end_max,
+                          is_reversed, sequence_ontology_id, feature_type, parent_id)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.featloc_revix1
 ON apidb.FeatureLocation (na_sequence_id, feature_location_id)
 TABLESPACE INDX;
@@ -111,6 +121,16 @@ CREATE TABLE apidb.GeneLocation (
  PRIMARY KEY (gene_location_id)
 );
 
+CREATE INDEX apidb.geneloc_ix1
+ON apidb.GeneLocation (na_sequence_id, start_min, end_max, is_reversed,
+                          sequence_ontology_id, na_feature_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.geneloc_ix2
+ON apidb.GeneLocation (na_feature_id, na_sequence_id, start_min, end_max,
+                          is_reversed, sequence_ontology_id)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.geneloc_revix1
 ON apidb.GeneLocation (na_sequence_id, gene_location_id)
 TABLESPACE INDX;
@@ -187,6 +207,16 @@ CREATE TABLE apidb.TranscriptLocation (
  FOREIGN KEY (row_alg_invocation_id) REFERENCES core.AlgorithmInvocation (algorithm_invocation_id),
  PRIMARY KEY (transcript_location_id)
 );
+
+CREATE INDEX apidb.transcriptloc_ix1
+ON apidb.TranscriptLocation (na_sequence_id, start_min, end_max, is_reversed,
+                          sequence_ontology_id, na_feature_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.transcriptloc_ix2
+ON apidb.TranscriptLocation (na_feature_id, na_sequence_id, start_min, end_max,
+                          is_reversed, sequence_ontology_id)
+TABLESPACE INDX;
 
 CREATE INDEX apidb.transcriptloc_revix1
 ON apidb.TranscriptLocation (na_sequence_id, transcript_location_id)
@@ -268,6 +298,16 @@ CREATE TABLE apidb.ExonLocation (
  PRIMARY KEY (exon_location_id)
 );
 
+CREATE INDEX apidb.exonloc_ix1
+ON apidb.ExonLocation (na_sequence_id, start_min, end_max, is_reversed,
+                          sequence_ontology_id, na_feature_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.exonloc_ix2
+ON apidb.ExonLocation (na_feature_id, na_sequence_id, start_min, end_max,
+                          is_reversed, sequence_ontology_id)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.exonloc_revix1
 ON apidb.ExonLocation (na_sequence_id, exon_location_id)
 TABLESPACE INDX;
@@ -345,6 +385,16 @@ CREATE TABLE apidb.CdsLocation (
  PRIMARY KEY (cds_location_id)
 );
 
+CREATE INDEX apidb.cdsloc_ix1
+ON apidb.CdsLocation (na_sequence_id, start_min, end_max, is_reversed,
+                      parent_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.cdsloc_ix2
+ON apidb.CdsLocation (parent_id, na_sequence_id, start_min, end_max,
+                      is_reversed)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.cdsloc_revix1
 ON apidb.CdsLocation (na_sequence_id, cds_location_id)
 TABLESPACE INDX;
@@ -413,6 +463,16 @@ CREATE TABLE apidb.UtrLocation (
  PRIMARY KEY (utr_location_id)
 );
 
+CREATE INDEX apidb.utrloc_ix1
+ON apidb.UtrLocation (na_sequence_id, start_min, end_max, is_reversed,
+                      parent_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.utrloc_ix2
+ON apidb.UtrLocation (parent_id, na_sequence_id, start_min, end_max,
+                          is_reversed)
+TABLESPACE INDX;
+
 CREATE INDEX apidb.utrloc_revix1
 ON apidb.UtrLocation (na_sequence_id, utr_location_id)
 TABLESPACE INDX;
@@ -479,6 +539,16 @@ CREATE TABLE apidb.IntronLocation (
  FOREIGN KEY (row_alg_invocation_id) REFERENCES core.AlgorithmInvocation (algorithm_invocation_id),
  PRIMARY KEY (intron_location_id)
 );
+
+CREATE INDEX apidb.intronloc_ix1
+ON apidb.IntronLocation (na_sequence_id, start_min, end_max, is_reversed,
+                      parent_id)
+TABLESPACE INDX;
+
+CREATE INDEX apidb.intronloc_ix2
+ON apidb.IntronLocation (parent_id, na_sequence_id, start_min, end_max,
+                          is_reversed)
+TABLESPACE INDX;
 
 CREATE INDEX apidb.intronloc_revix1
 ON apidb.IntronLocation (na_sequence_id, intron_location_id)
