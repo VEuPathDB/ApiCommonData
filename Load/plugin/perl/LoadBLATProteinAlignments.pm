@@ -45,6 +45,8 @@ use vars qw( @ISA );
 
 @ISA = qw(GUS::PluginMgr::Plugin); 
 
+use Data::Dumper;
+
 use CBIL::Bio::BLAT::PSL;
 use CBIL::Bio::BLAT::PSLDir;
 use CBIL::Bio::BLAT::Alignment;
@@ -492,8 +494,8 @@ sub compressAlignments {
   my $bAlignCt;
 
   foreach my $align (@$sortedAlignments) {
-    my $start = $align->('t_start');
-    my $end = $align->('t_end');
+    my $start = $align->get('t_start');
+    my $end = $align->get('t_end');
     my $score = $align->getScore();
     my $basesAligned = $align->getAlignedBases();
     
@@ -619,14 +621,14 @@ sub loadAlignments {
       while($reader->hasNext()) {
         my $alignments = $reader->readNextGroupOfLines();
         
-        my $sortedAlignments = sort { 
+        my @sortedAlignments = sort { 
           $a->get('t_start') <=> $b->get('t_start') 
               || $a->get('t_end') <=> $b->get('t_end') 
               || $b->getScore() <=> $a->getScore() 
               || $b->getAlignedBases() <=> $a->getAlignedBases()
         } @$alignments;
 
-        my ($features, $positions) = $self->compressAlignments($sortedAlignments);
+        my ($features, $positions) = $self->compressAlignments(\@sortedAlignments);
 
         $self->flagAlignmentsForKeep($features, $positions);        
 
