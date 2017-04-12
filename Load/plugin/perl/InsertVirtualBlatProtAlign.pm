@@ -22,6 +22,14 @@ use GUS::Model::ApiDB::BLATProteinAlignment;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
+     enumArg({ name => 'mode',
+	       descr => 'insert features created late in the workflow (such as tandem repeats, scaffold gaps, and ORFs) or early',
+	       constraintFunc => undef,
+	       reqd => 0,
+	       isList => 0,
+	       enum => 'early, late, all',
+	       default => 'early'
+	     }),
     ];
 
 # ----------------------------------------------------------
@@ -86,8 +94,13 @@ sub run {
 
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
 
+  if($self->getArg('ncbiTaxonId') eq "late") {
+    my $msg = "no work to do, because run mode is \"late\"";
+    $self->log("$msg");
+    return $msg;
+  }
 
-      my $sql = <<SQL;
+  my $sql = <<SQL;
         select ba.blat_protein_alignment_id, ba.query_aa_sequence_id, ba.target_na_sequence_id,
                ba.query_table_id, ba.query_taxon_id, ba.query_external_db_release_id, 
                ba.target_table_id, ba.target_taxon_id, ba.target_external_db_release_id,
