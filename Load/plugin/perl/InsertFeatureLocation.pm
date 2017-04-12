@@ -30,11 +30,14 @@ my $argsDeclaration  =
 	       reqd  => 1,
 	       isList => 0,
 	     }),
-   booleanArg({name => 'lateFeatures',
-               descr => 'insert features created late in the workflow, such as tandem repeats, scaffold gaps, and ORFs',
-               reqd => 0,
-               isList => 0,
-              }),
+   enumArg({ name => 'mode',
+	     descr => 'insert features created late in the workflow (such as tandem repeats, scaffold gaps, and ORFs) or early',
+	     constraintFunc => undef,
+	     reqd => 0,
+	     isList => 0,
+	     enum => 'early, late, all',
+	     default => 'early'
+	   }),
   ];
 
 # ----------------------------------------------------------
@@ -106,14 +109,14 @@ sub run {
   my ($self) = @_;
 
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
-  my $lateFeatures = $self->getArg('lateFeatures');
-  if ($lateFeatures) {
+  my $mode = $self->getArg('mode');
+  if ($mode eq "late") {
     # late features are ScaffoldGapFeature, TandemRepeatFeature, LowComplexityNAFeature,
     # and miscellaneous features with the SO term 'orf'
-    $self->insertOtherLocations($ncbiTaxonId, $lateFeatures);
+    $self->insertOtherLocations($ncbiTaxonId, $mode);
   } else {
     $self->insertGeneModelLocations($ncbiTaxonId);
-    $self->insertOtherLocations($ncbiTaxonId, $lateFeatures);
+    $self->insertOtherLocations($ncbiTaxonId, $mode);
   }
 
   my $status = "inserted " . $self->{insertCount} . " records";
@@ -395,12 +398,12 @@ SQL
 }
 
 sub insertOtherLocations {
-  my ($self, $ncbiTaxonId, $lateFeatures) = @_;
+  my ($self, $ncbiTaxonId, $mode) = @_;
 
   # get feature locations from NaFeature and NaLocation
 
   my $latePredicate;
-  if ($lateFeatures) {
+  if ($mode eq "late") {
     $latePredicate = <<SQL;
             and nf.subclass_view not in ('ScaffoldGapFeature', 'TandemRepeatFeature', 'LowComplexityNAFeature')
             and (nf.subclass_view != 'Miscellaneous'

@@ -634,6 +634,10 @@ create unique index results.uqSegmentResult
       on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
 
 --------------------------------------------------------------------------------
+-- needed to run pivot() function on NaFeatureExpression
+grant select on results.NaFeatureExpression to public;
+--------------------------------------------------------------------------------
+
 
 alter table Sres.PathwayNode add (cellular_location varchar2(200));
 alter table Sres.PathwayRelationship add (is_reversible number(1));

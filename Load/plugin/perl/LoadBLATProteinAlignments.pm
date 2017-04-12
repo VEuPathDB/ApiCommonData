@@ -45,6 +45,8 @@ use vars qw( @ISA );
 
 @ISA = qw(GUS::PluginMgr::Plugin); 
 
+use Data::Dumper;
+
 use CBIL::Bio::BLAT::PSL;
 use CBIL::Bio::BLAT::PSLDir;
 use CBIL::Bio::BLAT::Alignment;
@@ -53,6 +55,8 @@ use CBIL::Util::TO;
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
+
+use ApiCommonData::Load::AlignmentFileReader;
 
 # ========================================================================
 # --------------------------- Global Variables ---------------------------
@@ -427,6 +431,107 @@ sub run {
 # --------------------------- Support Methods ----------------------------
 # ========================================================================
 
+
+sub flagAlignmentsForKeep {
+  my ($self, $featuresArrayRef, $positions) = @_;
+
+  my @features = @$featuresArrayRef;
+
+  my @sortedPositions = sort {$a <=> $b} keys(%$positions);
+
+  for(my $i = 0; $i < scalar(@sortedPositions)-1; $i++) {
+
+    my $loc = $sortedPositions[$i];
+
+    my $index = 0;
+    my @keep;
+
+    while(1) {
+      last unless($features[$index]);
+
+      if($features[$index]->{start} > $loc) {
+        last;
+      }
+      
+      if($features[$index]->{end} >= $loc) {
+        push @keep, $features[$index];
+      }
+      
+      if($features[$index]->{end} < $loc) {
+        splice(@features, $index, 1);
+      }
+      else {
+        $index++; 
+      }
+    }
+
+    my @expanded;
+    foreach(@keep) {
+      push @expanded, @{$_->{_alignments}};
+    }
+
+    my @sorted = sort {$b->getScore() <=> $a->getScore() || $b->getAlignedBases() <=> $a->getAlignedBases() } @expanded;
+
+    my $count = 1;
+    foreach(@sorted) {
+      $_->{_keep} = 1;
+
+      $count++;
+      last if($count > 10);
+    }
+  }
+
+}
+
+
+sub compressAlignments {
+  my ($self, $sortedAlignments) = @_;
+
+  my @features;
+  my %positions;
+
+  my ($prevStart, $prevEnd, $prevFeature);
+  my $bAlignCt;
+
+  foreach my $align (@$sortedAlignments) {
+    my $start = $align->get('t_start');
+    my $end = $align->get('t_end');
+    my $score = $align->getScore();
+    my $basesAligned = $align->getAlignedBases();
+    
+    next if(($end - $start) > 5000);
+
+    if($start == $prevStart && $end == $prevEnd) {
+      next if($bAlignCt++ > 10);
+
+      push @{$prevFeature->{_alignments}}, $align;
+      next;
+    } 
+
+    $bAlignCt = 1;
+
+    my $feature = {start => $start, 
+                   end => $end,
+    };
+
+    push @{$feature->{_alignments}}, $align;
+
+    push @features, $feature;
+
+    $positions{$start}++;
+    $positions{$end+1}++; # need a +1 on the end position
+
+    $prevStart = $start;
+    $prevEnd = $end;
+    $prevFeature = $feature;
+  }
+
+  return \@features, \%positions;
+}
+
+
+
+
 # ---------------------------- loadAlignments ----------------------------
 
 sub loadAlignments {
@@ -508,41 +613,53 @@ sub loadAlignments {
    foreach my $blatFile (@files) {
       print "LoadBLATProteinAlignments: reading from $blatFile\n";
 
-      my $fh = FileHandle->new();
-      $fh->open($blatFile, "r");
-
       my $nAligns = 0;
       my $nAlignsLoaded = 0;
 
-      while (<$fh>) {
+      my $reader = ApiCommonData::Load::AlignmentFileReader->new($blatFile, undef, "\t");
 
-         next unless /^\d/;
+      while($reader->hasNext()) {
+        my $alignments = $reader->readNextGroupOfLines();
+        
+        my @sortedAlignments = sort { 
+          $a->get('t_start') <=> $b->get('t_start') 
+              || $a->get('t_end') <=> $b->get('t_end') 
+              || $b->getScore() <=> $a->getScore() 
+              || $b->getAlignedBases() <=> $a->getAlignedBases()
+        } @$alignments;
 
-         my $align = CBIL::Bio::BLAT::Alignment->new($_);
+        my ($features, $positions) = $self->compressAlignments(\@sortedAlignments);
 
-         ++$nAligns;
-         ++$nTotalAligns;
+        $self->flagAlignmentsForKeep($features, $positions);        
 
-         my $gapTab = ($gapTabPref ? "${gapTabPref}" . $align->get('t_name') . "_gap" : "");
-         my $nl = $self->loadAlignment($dbh, $gapTab, $insertSql, $sth, $queryTableId, $queryTaxonId,
-                                       $queryExtDbRelId, $targetTableId, $targetTaxonId, $targetExtDbRelId,
-                                       $qIndex, $qualityParams, $alreadyLoaded, $targetIdHash, $align,
-                                       $minQueryPct, $queryTableName);
+        foreach my $align (@$alignments) {
+          next unless($align->{_keep}); #flagAlignmentsForKeep sets this
 
-         $nAlignsLoaded += $nl;
-         $nTotalAlignsLoaded += $nl;
+          ++$nAligns;
+          ++$nTotalAligns;
 
-         $self->progressMessage($reportInterval, $nTotalAligns, 'BLAT alignments processed.');
-         $self->progressMessage($reportInterval, $nTotalAlignsLoaded, 'BLAT alignments loaded.') if ($nl > 0);
+          my $gapTab = ($gapTabPref ? "${gapTabPref}" . $align->get('t_name') . "_gap" : "");
+          my $nl = $self->loadAlignment($dbh, $gapTab, $insertSql, $sth, $queryTableId, $queryTaxonId,
+                                        $queryExtDbRelId, $targetTableId, $targetTaxonId, $targetExtDbRelId,
+                                        $qIndex, $qualityParams, $alreadyLoaded, $targetIdHash, $align,
+                                        $minQueryPct, $queryTableName);
+          
+          $nAlignsLoaded += $nl;
+          $nTotalAlignsLoaded += $nl;
 
-         $dbh->commit() if (($nTotalAlignsLoaded % $commitInterval) == 0 && $self->getArg('commit'));
+          $self->progressMessage($reportInterval, $nTotalAligns, 'BLAT alignments processed.');
+          $self->progressMessage($reportInterval, $nTotalAlignsLoaded, 'BLAT alignments loaded.') if ($nl > 0);
+
+          $dbh->commit() if (($nTotalAlignsLoaded % $commitInterval) == 0 && $self->getArg('commit'));
+        }
       }
+
 
       $dbh->commit() if $self->getArg('commit');
 
       print "LoadBLATProteinAlignments: loaded $nAlignsLoaded/$nAligns BLAT alignments from $blatFile.\n";
 
-      $fh->close();
+
    }
 
    my $summary = "Loaded $nTotalAlignsLoaded/$nTotalAligns BLAT alignments from $nFiles file(s).\n";
