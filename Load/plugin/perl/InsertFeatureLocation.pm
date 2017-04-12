@@ -35,7 +35,7 @@ my $argsDeclaration  =
 	     constraintFunc => undef,
 	     reqd => 0,
 	     isList => 0,
-	     enum => 'early, late, all'
+	     enum => 'early, late, all',
 	     default => 'early'
 	   }),
   ];
