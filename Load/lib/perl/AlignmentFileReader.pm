@@ -5,6 +5,15 @@ use CBIL::Bio::BLAT::Alignment;
 
 use strict;
 
+
+sub new {
+  my ($class, $file, $filters, $delimiter) = @_;
+
+  my $sortFile = "sort -k 14,14 $file|";
+
+  return $class->SUPER::new($sortFile, $filters, $delimiter);
+}
+
 # @OVERRIDE
 sub hasDictionary {
   return 1;
