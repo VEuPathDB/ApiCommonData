@@ -394,8 +394,10 @@ chomp($newCacheCount);
 
 my $skipCount = $merger->getSkipCount();
 
-die "cache file got smaller"
-  if $newCacheCount < ($initialCacheCount - $skipCount);
+print STDERR "NEWCACHECOUNT=$newCacheCount, INITIALCACHECOUNT=$initialCacheCount, SKIPCOUNT=$skipCount\n";
+
+#die "cache file got smaller"
+#  if $newCacheCount < ($initialCacheCount - $skipCount);
 
 # Rename the output file to full cache file
 unlink $cacheFile or warn "Could not unlink $cacheFile: $!";
