@@ -173,11 +173,11 @@ SQL
     my $ba
       = GUS::Model::DoTS::BLATAlignment->
 	new({'query_na_sequence_id' => $query_na_sequence_id,
-	     'virtual_na_sequence_id' => $virtual_na_sequence_id,
+	     'target_na_sequence_id' => $virtual_na_sequence_id,
 	     'query_table_id' => $query_table_id,
 	     'query_taxon_id' => $query_taxon_id,
 	     'query_external_db_release_id' => $query_external_db_release_id,
-	     'virtual_target_table_id' => $virtual_target_table_id,
+	     'target_table_id' => $virtual_target_table_id,
 	     'target_taxon_id' => $target_taxon_id,
 	     'target_external_db_release_id' => $target_external_db_release_id,
 	     'is_consistent' => $is_consistent,
@@ -194,8 +194,8 @@ SQL
 	     'number_of_spans' => $number_of_spans,
 	     'query_start' => $query_start,
 	     'query_end' => $query_end,
-	     'virtual_target_start' => $virtual_target_start,
-	     'virtual_target_end' => $virtual_target_end,
+	     'target_start' => $virtual_target_start,
+	     'target_end' => $virtual_target_end,
 	     'is_reversed' => $is_reversed,
 	     'query_bases_aligned' => $query_bases_aligned,
 	     'repeat_bases_aligned' => $repeat_bases_aligned,
@@ -205,7 +205,7 @@ SQL
 	     'blat_alignment_quality_id' => $blat_alignment_quality_id,
 	     'blocksizes' => $blocksizes,
 	     'qstarts' => $qstarts,
-	     'virtual_tstarts' => $virtual_tstarts,
+	     'tstarts' => $virtual_tstarts,
 	    });
     $ba->submit();
 
