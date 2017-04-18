@@ -391,8 +391,13 @@ close $snpFh;
 # compare file sizes of old and new cache file
 my $newCacheCount = `cat $tempCacheFile | wc -l`;
 chomp($newCacheCount);
-die "cache file got smaller"
-  if $newCacheCount < $initialCacheCount;
+
+my $skipCount = $merger->getSkipCount();
+
+print STDERR "NEWCACHECOUNT=$newCacheCount, INITIALCACHECOUNT=$initialCacheCount, SKIPCOUNT=$skipCount\n";
+
+#die "cache file got smaller"
+#  if $newCacheCount < ($initialCacheCount - $skipCount);
 
 # Rename the output file to full cache file
 unlink $cacheFile or warn "Could not unlink $cacheFile: $!";

@@ -57,6 +57,13 @@ use locale;  # Use this because the input files have been sorted by unix sort (o
 
 use ApiCommonData::Load::SnpUtils  qw(sequenceIndex locationIndex strainIndex variationFileColumnNames isSameSNP);
 
+
+sub getSkipCount {
+  my ($self) = @_;
+
+  return $self->{_skip_count};
+}
+
 sub new {
   my $class = shift;
 
@@ -99,6 +106,8 @@ sub skipLine {
 
   foreach(@$filters) {
     if($lineAsArray->[$strainIndex] eq $_) {
+
+      $self->{_skip_count}++;
       return 1;
     }
   }
