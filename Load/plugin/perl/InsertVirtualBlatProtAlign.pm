@@ -94,7 +94,7 @@ sub run {
 
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
 
-  if($self->getArg('ncbiTaxonId') eq "late") {
+  if($self->getArg('mode') eq "late") {
     my $msg = "no work to do, because run mode is \"late\"";
     $self->log("$msg");
     return $msg;
