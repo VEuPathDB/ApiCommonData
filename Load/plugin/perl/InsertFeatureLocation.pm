@@ -418,8 +418,6 @@ SQL
 SQL
   }
 
-  $latePredicate = " and 1 = 1 ";
-
   my $sqlString = <<SQL;
     select case
               when nf.subclass_view = 'GeneFeature'
