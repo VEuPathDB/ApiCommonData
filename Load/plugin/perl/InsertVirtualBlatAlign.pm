@@ -134,6 +134,7 @@ SQL
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
           and virtualseq.subclass_view = vti.name
           and ba.query_na_sequence_id = queryseq.na_sequence_id
+          and ba.target_taxon_id = (select taxon_id from sres.Taxon where ncbi_tax_id = $ncbiTaxonId)
           $modePredicate
 SQL
 
