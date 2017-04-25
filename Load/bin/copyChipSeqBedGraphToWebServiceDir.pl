@@ -26,7 +26,7 @@ Usage:
     # Currently coverage plots are being generated only for histonemode and mnase
    experimentType: the type of ChipSeq experiment, one of: histonemod, mnase, tfbinding, faire
 
-    ## datasetXml: dataset xml in order to keep the order of samples e.g. EuPathDatasets/Datasets/lib/xml/datasets/PlasmoDB/pfal3D7/Su_strand_specific.xml. In this case, samples are in the order of lateTroph, schizont, gametocyteII, gametocyteV
+    ## datasetXml: dataset xml in order to keep the order of samples e.g. ApiCommonDatasets/Datasets/lib/xml/datasets/PlasmoDB/pfal3D7/Su_strand_specific.xml. In this case, samples are in the order of lateTroph, schizont, gametocyteII, gametocyteV
 endOfUsage
 
 die $usage unless -e $inputDir;
