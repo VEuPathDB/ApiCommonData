@@ -158,7 +158,7 @@ SQL
 	  my $bpa
 	    = GUS::Model::ApiDB::BLATProteinAlignment->
 	      new({'query_aa_sequence_id' => $query_aa_sequence_id,
-		   'target_na_sequence_id' => $target_na_sequence_id,
+		   'target_na_sequence_id' => $virtual_na_sequence_id,
 		   'query_table_id' => $query_table_id,
 		   'query_taxon_id' => $query_taxon_id,
 		   'query_external_db_release_id' => $query_external_db_release_id,
