@@ -34,28 +34,33 @@ while (<IN>) {
   my ($sourceId, $line) = split (/\t/, $_);
   my $sourceIdType = "transcript";
 
-  #my @items = split (/\; GO/, $line) if ($line);
-  my @items = split (/\; /, $line) if ($line);
+  my @items = split (/\; GO/, $line) if ($line);
+  #my @items = split (/\; /, $line) if ($line);
 
   foreach my $item (@items) {
     my ($aspect, $goid, $product, $evCode, $dbRef);
-    #$item = "GO".$item if ($item =~ /^\_/);
+    $item = "GO".$item if ($item =~ /^\_function:/ || $item =~ /^\_process:/ || $item =~ /^\_component:/);
 
     if ($item =~ /^GO_(\w+)/) {
       $aspect = getAspectForGo ($item);
 
       #if ($item =~ /(GO:\d+) - (.*)$/) {  ## this is only for tgonVEG
       #if ($item =~ /(GO:\d+) - (.*?);/) {  ## this is for hhamHH34 only
-      if ($item =~ /(GO:\d+);.* - (.*) \[PMID (\d+)\]/) { # for ntetFGSC2508
+      #if ($item =~ /(GO:\d+);.* - (.*) \[PMID (\d+)\]/) { # for ntetFGSC2508
+      if ($item =~ /(GO:\d+);.* - (.*)/) { # for alucCBS106.47
 	$goid = $1;
 	$product = $2;
-	$dbRef = "PMID:".$3;
+	$product =~ s/ \[PMID (\d+)\]//;
       } elsif ($item =~ /(GO:\d+) - (.*)/) {
 	$goid = $1;
 	$product = $2;
 	$product =~ s/(.+)\;.*/$1/;
+	$product =~ s/ \[PMID (\d+)\]//;
       }
 
+      if ($item =~ /\[PMID (\d+)\]/) {
+	$dbRef = "PMID:".$1;
+      }
       if ($item =~ /;ev_code=(\w+)/) {
 	$evCode = $1;
 	$evCode = uc ($evCode);
