@@ -117,7 +117,8 @@ if(-e $analysisConfig) {
 
 foreach my $key (keys %$sampleHash) {
   my $samples = $sampleHash->{$key}->{samples};
-
+  my $dbid = $key;
+  $dbid =~ s/[\.-]//g;
   my $sampleDirName;
   if(scalar @$samples > 1) {
     $sampleDirName = $key . "_combined";
@@ -153,6 +154,7 @@ foreach my $key (keys %$sampleHash) {
     open(METAUNLOGGED, ">>$outputDir/metadata_unlogged");
     my $meta = "";
     my $expt = "unique";
+    my $exptInternal = $expt;
     my $strand = "forward";
     my $selected = 1;
     my $count = 0;
@@ -168,6 +170,8 @@ foreach my $key (keys %$sampleHash) {
 	    $count++;
 	    $expt = 'non-unique' if $f =~ /^non_unique/;
 	    $expt = 'unique' if $f =~ /^unique/;
+	    $exptInternal = $expt;
+	    $exptInternal =~ s/[\.-]//g;
 	    $selected = 1 if $f =~ /^unique/;
 	    $selected = 0 if $f =~ /^non_unique/;
 	    $selected = 0 if $count > 15;
@@ -190,6 +194,7 @@ foreach my $key (keys %$sampleHash) {
 $meta =<<EOL;
 [$key/$f]
 :selected    = $selected
+:dbid	     = ${dbid}_${exptInternal}_${strand}
 display_name = $display_order_sample ($expt $strand)
 sample       = $key
 alignment    = $expt
@@ -202,6 +207,7 @@ EOL
 $meta =<<EOL;
 [$key/$f]
 :selected    = $selected
+:dbid        = ${dbid}_${exptInternal}
 display_name = $display_order_sample ($expt)
 sample       = $key
 alignment    = $expt
@@ -233,6 +239,7 @@ EOL
     open(ALTMETAUNLOGGED, ">>$outputDir/metadata_unlogged_alt");
     my $meta = "";
     my $expt = "unique";
+    my $exptInternal = $expt;
     my $strand = "forward";
     my $selected = 1;
     my $count = 0;
@@ -246,6 +253,8 @@ EOL
 	    $count++;
 	    $expt = 'non-unique' if $f =~ /^non_unique/;
 	    $expt = 'unique' if $f =~ /^unique/;
+	    $exptInternal = $expt;
+	    $exptInternal =~ s/[\.-]//g;
 	    $selected = 1 if $f =~ /^unique/;
 	    $selected = 0 if $f =~ /^non_unique/;
 	    $selected = 0 if $count > 15;
@@ -265,6 +274,7 @@ EOL
 $meta =<<EOL;
 [$key/$f]
 :selected    = $selected
+:dbid        = ${dbid}_${exptInternal}_${strand}
 display_name = $display_order_sample ($expt $strand)
 sample       = $key
 alignment    = $expt
