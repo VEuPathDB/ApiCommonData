@@ -110,7 +110,10 @@ sub makeGeneSkeleton{
 
     } else {
       $gusTranscript = $distinctTranscripts{$transcriptKey};
-      print STDERR "Duplicated transcript found at $transcriptKey\n";
+
+      ## print duplicated gene ID in case it is represented by ID 
+      my ($errorId) = $bioperlGene->get_tag_values('ID');
+      print STDERR "Duplicated transcript found at $errorId: $transcriptKey\n";
     }
     $bioperlTranscript->{gusFeature} = $gusTranscript;  ## bioperlTranscript to gusTranscript is many to one
     push (@{$gusTranscript->{bioperlFeature}}, $bioperlTranscript);  ## gusTransscript to bioperlTranscript is one to many
