@@ -1669,7 +1669,7 @@ sub makeTranscriptDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
-                ApidbTuning.FeatureLocation fl,
+                apidb.FeatureLocation fl,
                 dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
         AND gf.na_sequence_id = ns.na_sequence_id
@@ -2090,7 +2090,7 @@ sub makeDerivedCdsDownloadFileTransformed {
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM ApidbTuning.FeatureLocation fl,
+           FROM apidb.FeatureLocation fl,
                 ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
@@ -2333,7 +2333,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             taas.length
             as defline,
             taas.sequence
-           FROM ApidbTuning.FeatureLocation fl,
+           FROM apidb.FeatureLocation fl,
                 ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
@@ -2567,7 +2567,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            ApidbTuning.FeatureLocation fl,
+            apidb.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -2634,7 +2634,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            ApidbTuning.FeatureLocation fl,
+            apidb.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id

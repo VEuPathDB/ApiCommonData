@@ -169,7 +169,7 @@ sub GetExonQuery {
   if ($topLevel) {
     $sql = "select least(start_min, end_max)-1 as start_min,
                    greatest(start_min,end_max) as end_max
-            from ApidbTuning.${tuningTablePrefix}FeatureLocation
+            from apidb.FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and feature_type = 'ExonFeature'
@@ -235,7 +235,7 @@ sub GetExonQueryOnCDS {
   if ($topLevel) {
     $sql = "select least(coding_start, coding_end)-1 as start_min,
                    greatest(coding_start, coding_end) as end_max
-            from ApidbTuning.${tuningTablePrefix}FeatureLocation
+            from apidb.FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and coding_start is not null

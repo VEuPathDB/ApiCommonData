@@ -115,7 +115,7 @@ SELECT ga.source_id ,
        ga.ec_numbers,
        ga.name
 FROM   ApidbTuning.GeneAttributes ga, 
-       ApidbTuning.FeatureLocation fl
+       apidb.FeatureLocation fl
 WHERE  fl.na_feature_id = ga.na_feature_id
    AND ga.sequence_id = '$chr'
 ORDER BY fl.start_min
