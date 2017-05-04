@@ -3,6 +3,7 @@
      xml:base="http://purl.obolibrary.org/obo/eupath/dev/import_OBO.owl"
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:efo="http://www.ebi.ac.uk/efo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -29,6 +30,10 @@
     </owl:AnnotationProperty>
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000412">
         <rdfs:label xml:lang="en">imported from</rdfs:label>
+    </owl:AnnotationProperty>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#label">
+        <rdfs:label>label</rdfs:label>
+        <rdfs:label xml:lang="en">label</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -100,6 +105,12 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/BFO_0000020 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/BFO_0000020"/>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/BFO_0000023 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/BFO_0000023"/>
@@ -136,6 +147,17 @@
     <!-- http://purl.obolibrary.org/obo/CHEBI_23367 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_23367"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_33281 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_33281">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">antimicrobial agent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A substance that kills or slows the growth of microorganisms, including bacteria, viruses, fungi and protozoans.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/chebi.owl"/>
+    </owl:Class>
     
 
 
@@ -223,6 +245,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ERO_0002033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ERO_0002033">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">family relationship</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000020"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A relationship between persons related as members of a domestic group, or a number of domestic groups linked through descent from a common ancestor, marriage, or adoption</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/ero.owl"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_00001287 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FOODON_00001287">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mushroom</rdfs:label>
+        <rdfs:label xml:lang="en">mushroom</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/foodon.owl"/>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/HP_0000083 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0000083">
@@ -250,6 +294,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0000421">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epistaxis</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0001892"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epistaxis, or nosebleed, refers to a hemorrhage localized in thenose.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/hp.owl"/>
     </owl:Class>
@@ -337,6 +382,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0002027">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abdominal pain</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0000118"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0012531"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An unpleasant sensation characterized by physical discomfort (such as pricking, throbbing, or aching) and perceived to originate in the abdomen.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/hp.owl"/>
     </owl:Class>
@@ -582,6 +628,12 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0000272 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000272"/>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0000655 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000655">
@@ -814,6 +866,12 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0100026 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100026"/>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0100051 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051"/>
@@ -985,6 +1043,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PCO_0000024">
         <rdfs:label xml:lang="en">household</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <obo:IAO_0000115>A material entity that consists of one or more people who live in the same dwelling and also share at meals or living accommodation, and may consist of a single family or some other grouping of people.
+</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/pco.owl"/>
     </owl:Class>
     
@@ -1121,6 +1181,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/UO_0000033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000033">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">day</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UO_0000003"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A time unit which is equal to 24 hours.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/uo.owl"/>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UO_0000035 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000035">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">month</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UO_0000003"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A time unit which is approximately equal to the length of time of one of cycle of the moon&#39;s phases which in science is taken to be equal to 30 days.</obo:IAO_0000115>
+        <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/uo.owl"/>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/UO_0000036 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000036">
@@ -1128,6 +1210,16 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UO_0000003"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A time unit which is equal to 12 months which is science is taken to be equal to 365.25 days.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/uo.owl"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/efo/EFO_0002755 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/efo/EFO_0002755">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000272"/>
+        <obo:IAO_0000412 rdf:resource="http://www.ebi.ac.uk/efo/efo.owl"/>
     </owl:Class>
 </rdf:RDF>
 
