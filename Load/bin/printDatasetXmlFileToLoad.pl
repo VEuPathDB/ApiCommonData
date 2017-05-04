@@ -36,6 +36,7 @@ my (
     $format,
     $secondaryAnnot,
     $sourceIdRegex,
+    $isfMappingFile,
 
     $help);
 
@@ -64,12 +65,14 @@ my (
 	    'format=s' => \$format,
 	    'secondaryAnnot=s' => \$secondaryAnnot,
 	    'sourceIdRegex=s' => \$sourceIdRegex,
+	    'isfMappingFile=s' => \$isfMappingFile,
 
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $projectName && $organismAbbrev && $excelFile);
 &usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
+&usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -256,7 +259,7 @@ sub printGff3Annotation {
   printNameWithDollarSign ($fh, 'source', 'genomeSource');
   printNameWithDollarSign ($fh, 'version', 'genomeVersion');
   printNameWithDollarSign ($fh, 'soTerm');
-  printNameWithValue ($fh, 'mapFile', "TODO");
+  printNameWithValue ($fh, 'mapFile', "$isfMappingFile");
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -308,7 +311,7 @@ sub printGff3Annotation {
     printNameWithDollarSign ($fh, 'ncbiTaxonId');
     printNameWithDollarSign ($fh, 'version', 'genomeVersion');
     printNameWithDollarSign ($fh, 'name', 'genomeSource');
-    printNameWithValue ($fh, 'mapFile', "TODO");
+    printNameWithValue ($fh, 'mapFile', "$isfMappingFile");
     print $fh "  </dataset>\n";
     print $fh "\n";
   }
@@ -777,6 +780,8 @@ sub usage {
   die
 "
 Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
+       printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-03-06
+                                    --format gff3 --sourceIdRegex '^>(\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
  
 
 where
@@ -787,6 +792,7 @@ where
   --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
   --sourceIdRegex: optional, it is required if format is GeneDB or fasta
+  --isfMappingFile: optional, it is required if format is GeneDB or gff3
 
 ";
 }
