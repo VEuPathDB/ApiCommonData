@@ -111,7 +111,7 @@ print "postLoadIsfQA --organismAbbrev $organismAbbrev --extDbName $dbName --extD
 print "gus4CreateGenbankTableFile --organismAbbrev $organismAbbrev --extDbName $dbName --extDbRlsVer $dbVer\n\n";
 print "tbl2asn -p $organismAbbrev -t ~/template.sbt -V v -Z $organismAbbrev/discrep\n\n";
 
-if ($ifUpdatedAnnot =~ /^Y/) {
+if ($ifUpdatedAnnot =~ /^Y/i) {
   print "Please make a transcript ID aliases file to load\n";
   print "apiValidateTranscriptIds --transcriptIdsFile new_transcriptInfoAndIds --prevTranscriptIdsFile old_transcriptInfoAndIds --oldGeneIdsMapFile gene_aliases > aliases.txt\n";
 }
