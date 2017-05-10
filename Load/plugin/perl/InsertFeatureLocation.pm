@@ -433,12 +433,16 @@ SQL
             least(nl.start_min, nl.end_max) as start_min,
             greatest(nl.start_min, nl.end_max) as end_max,
             nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
-            cast (null as number) as is_top_level, -- ef.coding_start, ef.coding_end,
+            case
+              when sp.sequence_piece_id is null then 1
+              else 0
+            end as is_top_level,
             nf.external_database_release_id
      from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
-          dots.ExonFeature ef, sres.TaxonName tn, sres.Taxon t
+          dots.ExonFeature ef, sres.TaxonName tn, sres.Taxon t, dots.SequencePiece sp
      where nf.na_feature_id = nl.na_feature_id
        and nf.na_sequence_id = ns.na_sequence_id
+       and nf.na_sequence_id = sp.piece_na_sequence_id(+)
        and nl.na_feature_id = ef.na_feature_id(+)
        and ns.taxon_id = tn.taxon_id
        and tn.name_class = 'scientific name'
@@ -473,8 +477,8 @@ SQL
               else nl.is_reversed
             end as is_reversed,
             nf.parent_id, nf.sequence_ontology_id,
-            cast (null as number) as is_top_level,
-             nf.external_database_release_id
+            1 as is_top_level,
+            nf.external_database_release_id
      from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
           dots.SequencePiece sp, dots.NaSequence scaffold, dots.ExonFeature ef,
           sres.TaxonName tn, sres.Taxon t
