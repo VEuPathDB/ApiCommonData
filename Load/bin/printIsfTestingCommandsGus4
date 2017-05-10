@@ -81,7 +81,8 @@ if ($format =~ /gff/i) {
   print "## for transcriptInfo\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
 
-  print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
+  ($ifUpdatedAnnot =~ /^Y/i ) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
+    : print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
   print "## for loading\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension gbf --fileFormat genbank --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
@@ -96,7 +97,8 @@ if ($format =~ /gff/i) {
 
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective PRINT_TRANSCRIPT_INFO --postprocessingDir ./ > isf.log 2>&1 &\n\n";
 
-  print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
+  ($ifUpdatedAnnot =~ /^Y/i) ? print "apiGenerateTranscriptIds $buildNum transcriptInfo OLD_transcriptInfoAndIds > ../../final/transcriptInfoAndIds\n\n"
+    : print "apiGenerateTranscriptIds $buildNum transcriptInfo > ../../final/transcriptInfoAndIds\n\n";
 
   print "## for loading\n";
   print "ga GUS::Supported::Plugin::InsertSequenceFeatures --extDbName $dbName --extDbRlsVer $dbVer --mapFile $mappingFile --inputFileOrDir $inputFileOrDir --inputFileExtension embl --fileFormat embl --soExtDbSpec 'SO_RSRC|%' --organism '$organismFullName' --seqSoTerm $soTerm --chromosomeMapFile ../../final/chromosomeMap.txt --validationLog validation.log --bioperlTreeOutput bioperlTree.out --postprocessingDirective SET_TRANSCRIPT_IDS --postprocessingDir ../../final/ --commit > isf.log 2>&1 &\n\n";
