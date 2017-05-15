@@ -28,7 +28,7 @@ sub getChrsForCalcs {
     my $stmt = $dbh->prepare("select ns.source_id
                               from dots.nasequence ns,
                               sres.ontologyterm ot
-                              where ot.name like '%chromosome%'
+                              where ot.name = 'chromosome'
                               and ot.ontology_term_id = ns.sequence_ontology_id
                               and ns.taxon_id = $taxonId");
     $stmt->execute();
