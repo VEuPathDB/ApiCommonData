@@ -538,7 +538,6 @@ create table Results.AlphaDiversity
     ROW_PROJECT_ID          number(4) not null,
     ROW_ALG_INVOCATION_ID   number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    foreign key (na_sequence_id) references DOTS.NASEQUENCEIMP,
     primary key (alpha_diversity_id)
   );
 
@@ -565,16 +564,12 @@ WHERE 'alphadiversity' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
 CREATE INDEX alphad_revix1 ON results.AlphaDiversity (protocol_app_node_id, alpha_diversity_id) TABLESPACE indx;
-CREATE INDEX alphad_revix2 ON results.AlphaDiversity (na_sequence_id, alpha_diversity_id) TABLESPACE indx;
 
 -------------------------------------------------------------------------------------------
 -- unique constraints in the Results schema
 
 create unique index results.uqOtuAbundance
       on results.OtuAbundance (na_sequence_id, protocol_app_node_id);
-
-create unique index results.uqAlphaDiversity
-      on results.AlphaDiversity (na_sequence_id, protocol_app_node_id);
 
 create unique index results.uqCompoundMassSpec
       on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id);
