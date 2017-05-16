@@ -32,6 +32,7 @@ sub new {
   my $colExcludes = &readColExcludeFile($colExcludeFile);
 
   my $ontologyMapping = &readOntologyMappingXmlFile($ontologyMappingXmlFile);
+
   $self->setOntologyMapping($ontologyMapping);
 
   my $parentParsedOutput;
@@ -45,6 +46,7 @@ sub new {
     $parentReader->read();
 
     $parentParsedOutput = $parentReader->getParsedOutput();
+
     $self->setParentParsedOutput($parentParsedOutput);
   }
 
@@ -90,6 +92,8 @@ sub merge {
         my $qualifiersHash = $parsedOutput->{$pk};
 
         foreach my $qualifier (keys %$qualifiersHash) {
+
+
           my $value = $qualifiersHash->{$qualifier};
 
           push @{$mergedOutput->{$pk}->{$qualifier}}, $value if(defined $value);
@@ -119,32 +123,41 @@ sub isValid {
   foreach my $pk (keys %$mergedOutput) {
     if($parentOutput) {
       my $parentId = $mergedOutput->{$pk}->{"__PARENT__"};
+
+      $parentId = &getDistinctLowerCaseValues($parentId);
       die "No Parent Defined for $pk" unless(defined $parentId);
-      die "Parent $parentId not defined as primary key in parent file" unless($parentOutput->{$parentId});
-    }
-    my $qualifiersHash = $mergedOutput->{$pk};
-    foreach my $qualifier (%$qualifiersHash) {
-      my $value = $qualifiersHash->{$qualifier};
-      if($value =~ /USER_ERROR/) {
-
-
-        $errors->{$qualifier}->{"MERGE_ERRORS"} = $errors->{$qualifier}->{"MERGE_ERRORS"} + 1;
-        $errorsDistinctQualifiers{$qualifier} = $errorsDistinctQualifiers{$qualifier} + 1;
+      unless($parentOutput->{lc $parentId}) {
+        print STDERR "PRIMARY_KEY=$pk\n";
+        print STDERR Dumper $mergedOutput->{$pk};
+        die "Parent $parentId not defined as primary key in parent file" ;
       }
 
-      $distinctValues{$qualifier}->{$value} = 1;
+    }
+    my $qualifiersHash = $mergedOutput->{$pk};
+    foreach my $qualifier (keys %$qualifiersHash) {
+      unless($ontologyMapping->{$qualifier}->{characteristicQualifier}->{source_id}) {
+        $errors->{$qualifier}->{"MISSING_ONTOLOGY_MAPPING"} = 1 unless($qualifier eq '__PARENT__');
+      }
+
+      my $values = $qualifiersHash->{$qualifier};
+      foreach my $value (@$values) {
+        if($value =~ /USER_ERROR/) {
+
+          $errors->{$qualifier}->{"MERGE_ERRORS"} = $errors->{$qualifier}->{"MERGE_ERRORS"} + 1;
+          $errorsDistinctQualifiers{$qualifier} = $errorsDistinctQualifiers{$qualifier} + 1;
+        }
+
+        $distinctValues{$qualifier}->{$value} = 1;
+      }
     }
   }
 
-  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
 
-  print STDERR "\n-----------------------------------------\n";
-
-  foreach(keys %distinctValues) {
-    my @values = keys %{$distinctValues{$_}};
+  foreach my $qualifier (keys %distinctValues) {
+    my @values = keys %{$distinctValues{$qualifier}};
     my $valuesCount = scalar @values;
 
-    print STDERR "QUALIFIER=$_ has $valuesCount Distinct Values\n";    
+    print STDERR "QUALIFIER=$qualifier has $valuesCount Distinct Values\n";    
 
     my $max;
     if($valuesCount > 10) {
@@ -160,6 +173,15 @@ sub isValid {
     }
   }
 
+  if(scalar keys %$errors == 0) {
+    return 1;
+  }
+
+  print STDERR "\n-----------------------------------------\n";
+
+  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
+
+  return 0;
 }
 
 
@@ -188,22 +210,19 @@ sub readOntologyMappingXmlFile {
   my ($file) = shift;
 
   if($file) {
-    my $ontologyMapping = XMLin($file, ForceArray => 1);
+    my $ontologyMappingXML = XMLin($file, ForceArray => 1);
 
     my %ontologyMapping;
 
-    foreach my $ot (@{$ontologyMapping->{ontologyTerm}}) {
+    foreach my $ot (@{$ontologyMappingXML->{ontologyTerm}}) {
       my $sourceId = $ot->{source_id};
-      $ontologyMapping{lc($sourceId)}->{$ot->{type}} = $ot;
 
       foreach my $name (@{$ot->{name}}) {
         $ontologyMapping{lc($name)}->{$ot->{type}} = $ot;
       }
-
     }
 
-    return $ontologyMapping;
-
+    return \%ontologyMapping;
   }
 
 }

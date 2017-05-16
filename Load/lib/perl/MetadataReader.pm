@@ -22,6 +22,8 @@ sub setParsedOutput { $_[0]->{_parsed_output} = $_[1] }
 sub getNestedReaders { $_[0]->{_nested_readers} }
 sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
 
+sub skipIfNoParent { return 0; }
+
 sub getDelimiter { 
   return qr/,|\t/;
 }
@@ -79,6 +81,8 @@ sub read {
     my $primaryKey = $self->makePrimaryKey(\%hash);
     my $parent = $self->makeParent(\%hash);
 
+    next if($self->skipIfNoParent() && !$parent);
+
     my $parentPrefix = $self->getParentPrefix();
     my $parentWithPrefix = $parentPrefix . $parent;
 
@@ -87,7 +91,7 @@ sub read {
     next unless($primaryKey); # skip rows that do not have a primary key
     next if($rowExcludes->{$primaryKey});
 
-    $primaryKey = $self->getPrimaryKeyPrefix() . $primaryKey;
+    $primaryKey = $self->getPrimaryKeyPrefix(\%hash) . $primaryKey;
 
     my %filteredHash; 
     foreach my $key (keys %hash) {
@@ -134,13 +138,20 @@ sub makeParent {
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
+
   return $hash->{hhid};
 }
 
 sub getPrimaryKeyPrefix {
   my ($self, $hash) = @_;
 
-  return "HH";
+  unless($hash->{"primary_key"}) {
+    return "HH";
+  }
+  return "";
 }
 
 
@@ -160,6 +171,10 @@ sub makeParent {
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
+
   return $hash->{id};
 }
 
@@ -175,16 +190,26 @@ sub getParentPrefix {
 package ApiCommonData::Load::MetadataReader::PrismClinicalVisitReader;
 use base qw(ApiCommonData::Load::MetadataReader);
 
+
+
 use strict;
 
 sub makeParent {
   my ($self, $hash) = @_;
 
+  if($hash->{parent}) {
+    return $hash->{parent};
+  }
+  
   return $hash->{id};
 }
 
 sub makePrimaryKey {
   my ($self, $hash) = @_;
+
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
 
   return $hash->{uniqueid};
 }
@@ -195,11 +220,16 @@ package ApiCommonData::Load::MetadataReader::PrismSampleReader;
 use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
+
 use ApiCommonData::Load::MetadataReader;
 
 use Date::Manip qw(Date_Init ParseDate UnixDate);
 
 use File::Basename;
+
+use Data::Dumper;
+
+sub skipIfNoParent { return 1; }
 
 sub getClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} }
 sub setClinicalVisitMapper { $_[0]->{_clinical_visit_mapper} = $_[1] }
@@ -216,22 +246,38 @@ sub new {
 
   unless($clinicalVisitMapper) {
     foreach my $uniqueid (keys %$clinicalVisitsParsedOutput) {
-      my $participant = $clinicalVisitsParsedOutput->{$uniqueid}->{'id'};
-      my $date = $clinicalVisitsParsedOutput->{$uniqueid}->{'date'};
 
+      # not sure why can't just grab the primarykey here??
+#    my $clinicalVisitPrimaryKey = $clinicalVisitsParsedOutput->{$uniqueid}->{'primary_key'} 
+      my $participant = $clinicalVisitsParsedOutput->{$uniqueid}->{'__PARENT__'}; # the parent of the clinical visit is the participant
+      my $date = $clinicalVisitsParsedOutput->{$uniqueid}->{'date'};
+      my $admitdate = $clinicalVisitsParsedOutput->{$uniqueid}->{'admitdate'};
+      my $dischargedate = $clinicalVisitsParsedOutput->{$uniqueid}->{'dischargedate'};
+
+      my $hasDate;
 
       if($date) {
         my $formattedDate = &formatDate($date);
-
         my $key = "$participant.$formattedDate";
-      
+
         $clinicalVisitMapper->{$key} = $uniqueid;
       }
-      else {
-        print STDERR "No Date for Clinical Visit with Participant = $participant\n";
+
+      if($admitdate) {
+        my $formattedDate = &formatDate($admitdate);
+        my $key = "$participant.$formattedDate";
+        $clinicalVisitMapper->{$key} = $uniqueid;
       }
+
+      if($dischargedate) {
+        my $formattedDate = &formatDate($dischargedate);
+        my $key = "$participant.$formattedDate";
+        $clinicalVisitMapper->{$key} = $uniqueid;
+      }
+
     }
   }
+
   $self->setClinicalVisitMapper($clinicalVisitMapper);
 
   return $self;
@@ -359,8 +405,11 @@ sub makePrimaryKey {
 
   my $metadataFile = $self->getMetadataFile();
   my $baseMetaDataFile = basename $metadataFile;
-
-  return $hash->{randomnumber};
+  
+  if($hash->{randomnumber}) {
+    return $hash->{subjectid}  . $hash->{randomnumber};
+  }
+  return undef;
 }
 
 
@@ -401,8 +450,11 @@ use strict;
 
 sub makePrimaryKey {
   my ($self, $hash) = @_;
-
-  return $hash->{fp_barcode};
+  
+  if($hash->{fp_barcode} && $hash->{fp_barcode} !~ /^SKIP/i ) {
+    return $hash->{subjectid}  . $hash->{fp_barcode};
+  }
+  return undef;
 }
 
 1;
@@ -415,7 +467,10 @@ use strict;
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
-  return $hash->{bc_barcode};
+  if($hash->{bc_barcode} && $hash->{bc_barcode} !~ /^SKIP/i ) {
+    return $hash->{subjectid}  . $hash->{bc_barcode};
+  }
+  return undef;
 }
 
 1;
@@ -428,7 +483,10 @@ use strict;
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
-  return $hash->{p1_barcode};
+  if($hash->{p1_barcode} && $hash->{p1_barcode} !~ /^SKIP/i ) {
+    return $hash->{subjectid}  . $hash->{p1_barcode};
+  }
+  return undef;
 }
 
 1;
@@ -441,7 +499,10 @@ use strict;
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
-  return $hash->{p2_barcode};
+  if($hash->{p2_barcode} && $hash->{p2_barcode} !~ /^SKIP/i ) {
+    return $hash->{subjectid}  . $hash->{p2_barcode};
+  }
+  return undef;
 }
 
 
