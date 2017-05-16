@@ -90,6 +90,13 @@ while (<EXL>) {
     }
   } else {
     foreach my $i (0..$#items) { ## get the info of whole spreadsheet
+      ## get rid of the extra characters in () if there is any
+      $items[$i] =~ s/\(.+$//;
+
+      ## get rid of the spaces in both ends
+      $items[$i] =~ s/^\s+//;
+      $items[$i] =~ s/\s+$//;
+
       $excelInfo{$items[$orgAbbrevColumn]}{$excelColumn[$i]} = $items[$i];
     }
   }
