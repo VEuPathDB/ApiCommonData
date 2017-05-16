@@ -130,7 +130,7 @@ SELECT core.tableinfo_sq.nextval, 'NaFeaturePhenotypeModel',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
-WHERE 'NaFeaturePhenotypeModel' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE lower('NaFeaturePhenotypeModel') NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 ------------------------------------------------------------------------------
