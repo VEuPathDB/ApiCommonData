@@ -316,8 +316,7 @@ alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
 ALTER TABLE results.NaFeatureDiffResult
-  ADD (confidence FLOAT(126),
-      );
+  ADD (confidence FLOAT(126));
 
 alter table dots.GoAssocInstEvidCode add reference varchar2(500);
 alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(400);
