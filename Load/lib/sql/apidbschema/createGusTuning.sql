@@ -317,8 +317,6 @@ alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
 ALTER TABLE results.NaFeatureDiffResult
   ADD (confidence FLOAT(126),
-       z_score FLOAT(12),
-       is_significant NUMBER(1)
       );
 
 alter table dots.GoAssocInstEvidCode add reference varchar2(500);
