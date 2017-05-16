@@ -21,6 +21,7 @@ from (select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23
            (select accp.owner || '.' || accp.table_name as tab, accp.column_name
             from all_constraints acp, all_cons_columns accp
             where acp.constraint_name = accp.constraint_name
+              and acp.owner = accp.owner
               and constraint_type = 'P') pks
       where ac.constraint_name = acc.constraint_name
         and ac.owner = acc.owner
