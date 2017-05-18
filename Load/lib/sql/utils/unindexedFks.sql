@@ -10,12 +10,21 @@
 
 -- The output of this query is in the form of the needed CREATE INDEX statement.
 
-select distinct create_index
+-- set linesize big enough that SQL statements don't wrap
+set linesize 500
+
+-- set pagesize big enough to (hopefully) have only one header
+set pagesize 50000
+
+-- turn off "N rows selected" message at the end of the result
+set feedback off
+
+select distinct create_index as "-- create_index"
 from (select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23)
              || '_revix' || mod(rownum, 10) ||' on ' || acc.owner || '.'
              || acc.table_name || ' (' || acc.column_name || ', '
-             || nvl(pks.column_name, '??PK??') || ') tablespace indx; -- constraint '
-             || ac.owner || '.' || ac.constraint_name
+             || nvl(pks.column_name, '??PK??') || ') tablespace indx /* constraint '
+             || ac.owner || '.' || ac.constraint_name || ' */ ;'
              as create_index
       from all_cons_columns acc, all_constraints ac,
            (select accp.owner || '.' || accp.table_name as tab, accp.column_name
@@ -35,3 +44,5 @@ from (select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23
                     where column_position = 1)
      )
 order by create_index;
+
+exit
