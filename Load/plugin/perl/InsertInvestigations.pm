@@ -224,10 +224,8 @@ sub run {
 
         $self->checkProtocolsAndSetIds($study->getProtocols());
 
-        $self->checkAllOntologyTerms($investigation->getOntologyTerms());
-
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
-   
+
         $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
 
         my $investigationId = $self->loadInvestigation($investigation);
@@ -289,20 +287,6 @@ sub checkLoadedDatasets {
   return $rv;
 }
 
-sub checkAllOntologyTerms {
-  my ($self, $ontologyTerms) = @_;
-
-  foreach my $ontologyTerm (@$ontologyTerms) {
-    my $accession = $ontologyTerm->getTermAccessionNumber();
-    my $source = $ontologyTerm->getTermSourceRef();
-    my $term = $ontologyTerm->getTerm();
-
-
-    unless(($accession && $source) || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::Characteristic' || blessed($ontologyTerm) eq 'CBIL::ISA::StudyAssayEntity::ParameterValue') {
-      $self->logOrError("OntologyTerm $term is required to have accession and source.");
-    }
-  }
-}
 
 
 sub checkMaterialEntitiesHaveMaterialType {
@@ -479,6 +463,7 @@ sub getOntologyTermGusObj {
     }
     elsif($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
       $ontologyTermId = $self->{_ontology_term_to_identifiers}->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
+      $self->userError("No ontology entry found for $ontologyTermSourceRef and $ontologyTermAccessionNumber") unless($ontologyTermId);
     }
     else {
       $self->logOrError("OntologyTerm of class $ontologyTermClass and value [$ontologyTermTerm] must provide accession&source OR a qualifier in the case of Characteristics must map to an ontologyterm");
