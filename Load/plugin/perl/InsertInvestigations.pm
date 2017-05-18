@@ -69,6 +69,15 @@ stringArg({name           => 'extDbRlsSpec',
 	     }),
 
 
+   booleanArg({name => 'skipDatasetLookup',
+	      descr => 'do not require existing nodes for datasets listed in isa files',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
+
+
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
@@ -193,41 +202,43 @@ sub run {
       $study->{_insert_investigations_datasets} = \%isatabDatasets;
     }
 
-    unless($hasDatasets) {
+    if(!$hasDatasets && !$self->getArg('skipDatasetLookup')) {
       $self->log("Skipping Investigation $investigationId.  No matching datasets in database");
       next;
     }
 
-    eval {
-      $investigation->parseStudies();
-    };
-    if($@) {
-      $self->logOrError($@);
-      next;
-    }
+    foreach my $study (@$studies) {
 
-    my $parsedStudies = $investigation->getStudies();
+      while($study->hasMoreData()) {
 
-    foreach my $study (@$parsedStudies) {
+        eval {
+          $investigation->parseStudy($study);
+          $investigation->dealWithAllOntologies();
+        };
+        if($@) {
+          $self->logOrError($@);
+          next;
+        }
 
-      my $isatabDatasets = $study->{_insert_investigations_datasets};
+        my $isatabDatasets = $study->{_insert_investigations_datasets};
 
-      $self->checkProtocolsAndSetIds($study->getProtocols());
+        $self->checkProtocolsAndSetIds($study->getProtocols());
 
-      $self->checkAllOntologyTerms($investigation->getOntologyTerms());
+        $self->checkAllOntologyTerms($investigation->getOntologyTerms());
 
-      my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
+        my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
    
-      $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
+        $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
 
-      my $investigationId = $self->loadInvestigation($investigation);
+        my $investigationId = $self->loadInvestigation($investigation);
 
 
-      $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-      $self->checkDatabaseNodesAreHandled($isatabDatasets, $study->getNodes());
-      $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
+        $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
+        $self->checkDatabaseNodesAreHandled($isatabDatasets, $study->getNodes());
+        $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
 
-      $self->loadStudy($study,$investigationId);
+        $self->loadStudy($study,$investigationId);
+      }
     }
     
     $investigationCount++;
@@ -243,6 +254,24 @@ sub run {
   return("Processed $investigationCount Investigations.");
 }
 
+
+sub lookupStudyLinks {
+  my ($self, $studyId) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my %rv;
+
+  my $sql = "select protocol_app_node_id from study.studylink where study_id = $studyId";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  while(my ($panId) = $sh->fetchrow_array()) {
+    $rv{$panId}++;
+  }
+
+  return \%rv;
+}
 
 
 sub checkLoadedDatasets {
@@ -324,8 +353,10 @@ sub loadStudy {
  
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, description => $description, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
-  $gusStudy->submit();
+  my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
+  $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
+
+  $gusStudy->setDescription($description);
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
@@ -339,14 +370,25 @@ sub loadNodes {
 
   my %rv;
 
+  my $gusStudyId = $gusStudy->getId();
+  
+  my $slPanIds = $self->lookupStudyLinks($gusStudyId);
+
   foreach my $node (@$nodes) {
     my $pan;
+
+    my $studyLinksAlreadyExist;
 
     if(my $panId = $node->{_PROTOCOL_APP_NODE_ID}) {
       $pan = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $panId});
       unless($pan->retrieveFromDB()) {
         $self->error("Could not retrieve ProtocolAppNode [$panId] w/ name " . $node->getValue());
       }
+
+      if($slPanIds->{$panId}) {
+        $studyLinksAlreadyExist = 1;
+      }
+
     }
     else {
       $pan = GUS::Model::Study::ProtocolAppNode->new({name => $node->getValue()});
@@ -357,17 +399,17 @@ sub loadNodes {
       if($node->hasAttribute("Description")) {
         $pan->setDescription($node->getDescription());
       }
-      
     }
 
-    my $gusStudyLink = GUS::Model::Study::StudyLink->new();
-    $gusStudyLink->setParent($gusStudy);
-    $gusStudyLink->setParent($pan);
+    unless($studyLinksAlreadyExist) {
+      my $gusStudyLink = GUS::Model::Study::StudyLink->new();
+      $gusStudyLink->setParent($gusStudy);
+      $gusStudyLink->setParent($pan);
 
-    my $gusInvestigationLink = GUS::Model::Study::StudyLink->new();
-    $gusInvestigationLink->setStudyId($gusStudy->getInvestigationId());
-    $gusInvestigationLink->setParent($pan);
-
+      my $gusInvestigationLink = GUS::Model::Study::StudyLink->new();
+      $gusInvestigationLink->setStudyId($gusStudy->getInvestigationId());
+      $gusInvestigationLink->setParent($pan);
+    }
 
     if($node->hasAttribute("MaterialType")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
@@ -375,7 +417,7 @@ sub loadNodes {
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
 
-my $characteristics = $node->getCharacteristics();
+      my $characteristics = $node->getCharacteristics();
 
       foreach my $characteristic (@$characteristics) {
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
