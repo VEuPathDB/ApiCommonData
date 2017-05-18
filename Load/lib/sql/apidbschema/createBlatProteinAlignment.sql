@@ -60,16 +60,26 @@ tablespace gus pctfree 10 initrans 1 maxtrans 255 storage ( initial 64k buffer_p
 create sequence apidb.BlatProteinAlignment_sq;
 grant select, alter on apidb.BlatProteinAlignment_sq to gus_w;
 
-create index apidb.bpa_ix1 on apidb.BlatProteinAlignment (query_table_id, query_aa_sequence_id, query_start, query_end);
-create index apidb.bpa_ix2 on apidb.BlatProteinAlignment (target_table_id, target_na_sequence_id, target_start, target_end);
-create index apidb.bpa_ix3 on apidb.BlatProteinAlignment (query_taxon_id, blat_protein_alignment_id);
-create index apidb.bpa_ix4 on apidb.BlatProteinAlignment (query_external_db_release_id, blat_protein_alignment_id);
-create index apidb.bpa_ix5 on apidb.BlatProteinAlignment (target_taxon_id, blat_protein_alignment_id);
-create index apidb.bpa_ix6 on apidb.BlatProteinAlignment (target_external_db_release_id, blat_protein_alignment_id);
-create index apidb.bpa_ix7 on apidb.BlatProteinAlignment (blat_alignment_quality_id, blat_protein_alignment_id);
-create index apidb.bpa_ix8 on apidb.BlatProteinAlignment (target_na_sequence_id, target_start, target_end, blat_protein_alignment_id);
-create index apidb.bpa_ix9 on apidb.BlatProteinAlignment (query_aa_sequence_id, query_start, query_end, blat_protein_alignment_id);
-create index apidb.bpa_ix0 on apidb.BlatProteinAlignment (modification_date, blat_protein_alignment_id);
+create index apidb.bpa_ix1 on apidb.BlatProteinAlignment (query_table_id, query_aa_sequence_id, query_start, query_end) tablespace indx;
+create index apidb.bpa_ix2 on apidb.BlatProteinAlignment (target_table_id, target_na_sequence_id, target_start, target_end) tablespace indx;
+create index apidb.bpa_ix3 on apidb.BlatProteinAlignment (query_taxon_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix4 on apidb.BlatProteinAlignment (query_external_db_release_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix5 on apidb.BlatProteinAlignment (target_taxon_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix6 on apidb.BlatProteinAlignment (target_external_db_release_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix7 on apidb.BlatProteinAlignment (blat_alignment_quality_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix8 on apidb.BlatProteinAlignment (target_na_sequence_id, target_start, target_end, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix9 on apidb.BlatProteinAlignment (query_aa_sequence_id, query_start, query_end, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_ix0 on apidb.BlatProteinAlignment (modification_date, blat_protein_alignment_id) tablespace indx;
+
+-- index columns with foreign-key constraints, to avoid performance problems when
+-- deleting records or updating the primary-key column in the reerenced tables
+create index apidb.bpa_revix0 on apidb.BlatProteinAlignment (blat_alignment_quality_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix1 on apidb.BlatProteinAlignment (query_aa_sequence_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix2 on apidb.BlatProteinAlignment (query_external_db_release_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix3 on apidb.BlatProteinAlignment (query_table_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix4 on apidb.BlatProteinAlignment (query_taxon_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix5 on apidb.BlatProteinAlignment (target_external_db_release_id, blat_protein_alignment_id) tablespace indx;
+create index apidb.bpa_revix6 on apidb.BlatProteinAlignment (target_table_id, blat_protein_alignment_id) tablespace indx;
 
 grant select on apidb.BlatProteinAlignment to gus_r;
 grant insert, update, delete on apidb.BlatProteinAlignment to gus_w;

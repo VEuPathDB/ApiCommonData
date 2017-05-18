@@ -20,6 +20,9 @@ CREATE TABLE apidb.OntologyTermResult (
  PRIMARY KEY (ontology_term_result_id)
 );
 
+CREATE INDEX apidb.otr_revix0 ON apidb.OntologyTermResult (ontology_term_id, ontology_term_result_id) TABLESPACE indx;
+CREATE INDEX apidb.otr_revix1 ON apidb.OntologyTermResult (protocol_app_node_id, ontology_term_result_id) TABLESPACE indx;
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OntologyTermResult TO gus_w;
 GRANT SELECT ON apidb.OntologyTermResult TO gus_r;
 

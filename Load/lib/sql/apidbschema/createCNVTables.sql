@@ -19,6 +19,8 @@ CREATE TABLE ApiDB.ChrCopyNumber (
   FOREIGN KEY (NA_SEQUENCE_ID) REFERENCES DoTS.NASequenceImp (NA_SEQUENCE_ID)
 );
 
+CREATE INDEX apidb.ccn_revix1 ON apidb.ChrCopyNumber (na_sequence_id, chr_copy_number_id) TABLESPACE indx;
+CREATE INDEX apidb.ccn_revix0 ON apidb.ChrCopyNumber (protocol_app_node_id, chr_copy_number_id) TABLESPACE indx;
 
 CREATE TABLE ApiDB.GeneCopyNumber (
   GENE_COPY_NUMBER_ID            NUMBER(12)  NOT NULL,
@@ -42,6 +44,8 @@ CREATE TABLE ApiDB.GeneCopyNumber (
   FOREIGN KEY (NA_FEATURE_ID) REFERENCES DoTS.NAFeatureImp (NA_FEATURE_ID)
 );
 
+CREATE INDEX apidb.gcn_revix0 ON apidb.GeneCopyNumber (na_feature_id, gene_copy_number_id) TABLESPACE indx;
+CREATE INDEX apidb.gcn_revix1 ON apidb.GeneCopyNumber (PROTOCOL_APP_NODE_ID, GENE_COPY_NUMBER_ID) tablespace indx;
 
 CREATE SEQUENCE ApiDB.ChrCopyNumber_SQ;
 CREATE SEQUENCE ApiDB.GeneCopyNumber_SQ;

@@ -346,6 +346,8 @@ create table RESULTS.REPORTERINTENSITY
     primary key (REPORTER_INTENSITY_ID)
   );
 
+create index results.rptrintsty_revix0
+  on results.ReporterIntensity (protocol_app_node_id, reporter_intensity_id);
 
 create sequence RESULTS.REPORTERINTENSITY_SQ;
 
@@ -394,6 +396,7 @@ create table Results.CompoundMassSpec
     primary key (compound_mass_spec_ID)
   );
 
+CREATE INDEX results.cms_revix0 ON results.CompoundMassSpec (protocol_app_node_id, compound_mass_spec_id) TABLESPACE indx;
 
 create sequence RESULTS.CompoundMassSpec_SQ;
 
@@ -443,12 +446,13 @@ create table RESULTS.NAFeatureHostResponse
     primary key (NA_FEATURE_HOST_RESPONSE_ID)
   );
 
-
 create sequence RESULTS.NAFEATUREHOSTRESPONSE_SQ;
 
 GRANT insert, select, update, delete ON  RESULTS.NAFEATUREHOSTRESPONSE TO gus_w;
 GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE TO gus_r;
 GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE_sq TO gus_w;
+
+CREATE INDEX apidb.nfhr_revix0 ON results.NaFeatureHostResponse (protocol_app_node_id, na_feature_host_response_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

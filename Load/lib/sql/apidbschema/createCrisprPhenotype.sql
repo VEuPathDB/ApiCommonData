@@ -23,6 +23,9 @@ create table ApiDB.CrisprPhenotype (
  PRIMARY KEY (crispr_phenotype_id)
 );
 
+CREATE INDEX apidb.crsprp_revix0 ON apidb.CrisprPhenotype (na_feature_id, crispr_phenotype_id) TABLESPACE indx;
+CREATE INDEX apidb.crsprp_revix1 ON apidb.CrisprPhenotype (protocol_app_node_id, crispr_phenotype_id) TABLESPACE indx;
+
 CREATE SEQUENCE apidb.CrisprPhenotype_sq;
 
 GRANT insert, select, update, delete ON apidb.CrisprPhenotype TO gus_w;

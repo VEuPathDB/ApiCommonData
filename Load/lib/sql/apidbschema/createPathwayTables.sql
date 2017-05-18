@@ -40,6 +40,9 @@ CREATE TABLE ApiDB.PathwayReactionRel (
   FOREIGN KEY (PATHWAY_RELATIONSHIP_ID) REFERENCES SRes.PathwayRelationship (PATHWAY_RELATIONSHIP_ID)
 );
 
+CREATE INDEX apidb.prr_revix0 ON apidb.PathwayReactionRel (pathway_id, pathway_reaction_rel_id) TABLESPACE indx;
+CREATE INDEX apidb.prr_revix1 ON apidb.PathwayReactionRel (pathway_reaction_id, pathway_reaction_rel_id) TABLESPACE indx;
+CREATE INDEX apidb.prr_revix2 ON apidb.PathwayReactionRel (pathway_relationship_id, pathway_reaction_rel_id) TABLESPACE indx;
 
 CREATE TABLE ApiDB.PathwayReactionXRef (
   PATHWAY_REACTION_XREF_ID   		 NUMBER(12)  NOT NULL,
@@ -61,6 +64,9 @@ CREATE TABLE ApiDB.PathwayReactionXRef (
   FOREIGN KEY (PATHWAY_REACTION_ID) REFERENCES ApiDB.PathwayReaction (PATHWAY_REACTION_ID),
   FOREIGN KEY (ASSOCIATED_REACTION_ID) REFERENCES ApiDB.PathwayReaction (PATHWAY_REACTION_ID)
 );
+
+CREATE INDEX apidb.prxr_revix0 ON apidb.PathwayReactionXRef (associated_reaction_id, pathway_reaction_xref_id) TABLESPACE indx;
+CREATE INDEX apidb.prxr_revix1 ON apidb.PathwayReactionXRef (pathway_reaction_id, pathway_reaction_xref_id) TABLESPACE indx;
 
 
 CREATE SEQUENCE ApiDB.PathwayReaction_SQ;

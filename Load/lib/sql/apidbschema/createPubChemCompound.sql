@@ -46,6 +46,7 @@ CREATE TABLE ApiDB.PubChemCompoundProperty (
 
 CREATE INDEX apidb.pcc_mod_ix ON apidb.PubChemCompound (modification_date, pubchem_compound_id);
 CREATE INDEX apidb.pccp_mod_ix ON apidb.PubChemCompoundProperty (modification_date, pubchem_compound_property_id);
+CREATE INDEX apidb.pccp_revix ON apidb.PubChemCompoundProperty (pubchem_compound_id, pubchem_compound_property_id);
 
 
 CREATE SEQUENCE apidb.PubChemCompound_sq;

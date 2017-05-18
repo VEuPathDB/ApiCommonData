@@ -26,9 +26,17 @@ CREATE TABLE apidb.SpliceSiteFeature (
  PRIMARY KEY (splice_site_feature_id)
 );
 
-CREATE INDEX apidb.ssf_revfk_ix
+CREATE INDEX apidb.ssf_ix0
   ON apidb.SpliceSiteFeature (type, na_sequence_id, is_unique, splice_site_feature_id)
-tablespace indx;
+TABLESPACE indx;
+
+CREATE INDEX apidb.ssf_revix0
+  ON apidb.SpliceSiteFeature (na_sequence_id, splice_site_feature_id)
+TABLESPACE indx;
+
+CREATE INDEX apidb.ssf_revix1
+  ON apidb.SpliceSiteFeature (protocol_app_node_id, splice_site_feature_id)
+TABLESPACE indx;
 
 CREATE SEQUENCE apidb.SpliceSiteFeature_sq;
 

@@ -19,8 +19,11 @@ CREATE TABLE apidb.HaplotypeResult (
  PRIMARY KEY (haplotype_result_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Haplotyperesult TO gus_w;
-GRANT SELECT ON apidb.Haplotyperesult TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.HaplotypeResult TO gus_w;
+GRANT SELECT ON apidb.HaplotypeResult TO gus_r;
+
+CREATE INDEX apidb.haprslt_revix0 ON apidb.HaplotypeResult (na_feature_id, haplotype_result_id) TABLESPACE indx;
+CREATE INDEX apidb.haprslt_revix1 ON apidb.HaplotypeResult (protocol_app_node_id, haplotype_result_id) TABLESPACE indx;
 
 ------------------------------------------------------------------------------
 

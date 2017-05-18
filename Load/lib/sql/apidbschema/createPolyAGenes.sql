@@ -20,7 +20,7 @@ CREATE TABLE apidb.PolyAGenes (
   ROW_GROUP_ID                 NUMBER(3),
   ROW_PROJECT_ID               NUMBER(4),
   ROW_ALG_INVOCATION_ID        NUMBER(12),
-   FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
+  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
   FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
   PRIMARY KEY (poly_a_gene_id)	
 );
@@ -38,6 +38,10 @@ tablespace indx;
 create index apidb.polyagenes_revfk_idx
 ON Apidb.PolyAGenes (splice_site_feature_id, poly_a_gene_id)
 tablespace indx;
+
+CREATE INDEX apidb.polyagenes_revfk_ix1
+ON apidb.PolyAGenes (protocol_app_node_id, poly_a_gene_id)
+TABLESPACE indx;
 
 
 INSERT INTO core.TableInfo

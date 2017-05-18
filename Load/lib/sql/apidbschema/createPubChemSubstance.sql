@@ -38,6 +38,7 @@ CREATE TABLE apidb.PubChemSubstanceProperty (
 
 CREATE INDEX apidb.pcs_mod_ix ON apidb.PubChemSubstance (modification_date, pubchem_substance_id);
 CREATE INDEX apidb.pcsp_mod_ix ON apidb.PubChemSubstanceProperty (modification_date, pubchem_substance_property_id);
+CREATE INDEX apidb.pcsp_revix ON apidb.PubChemSubstanceProperty (pubchem_substance_id, pubchem_substance_property_id);
 
 
 CREATE SEQUENCE apidb.PubChemSubstance_sq;

@@ -32,9 +32,10 @@ GRANT select ON apidb.IntronJunction_sq TO gus_w;
 CREATE INDEX apidb.rif_rls_ix
 ON apidb.IntronJunction
    (na_sequence_id, protocol_app_node_id, segment_start, 
-    segment_end, intron_junction_id, is_reversed, unique_reads, nu_reads
-);
+    segment_end, intron_junction_id, is_reversed, unique_reads, nu_reads)
+   TABLESPACE indx;
 
+CREATE INDEX apidb.injun_revix0 ON apidb.IntronJunction (protocol_app_node_id, intron_junction_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

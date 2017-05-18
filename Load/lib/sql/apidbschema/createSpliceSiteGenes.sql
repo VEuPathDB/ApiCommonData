@@ -21,7 +21,7 @@ CREATE TABLE apidb.SpliceSiteGenes (
   ROW_GROUP_ID                 NUMBER(3),
   ROW_PROJECT_ID               NUMBER(4),
   ROW_ALG_INVOCATION_ID        NUMBER(12),
-   FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
+  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
   FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
   PRIMARY KEY (splice_site_gene_id)
 );
@@ -35,6 +35,10 @@ grant insert, select, update, delete on Apidb.SpliceSiteGenes to gus_w;
 
 create index apidb.splicesitegenes_data_idx
 ON Apidb.SpliceSiteGenes (splice_site_feature_id, protocol_app_node_id, source_id)
+tablespace indx;
+
+create index apidb.splicesitegenes_revix1
+ON apidb.SpliceSiteGenes (protocol_app_node_id, splice_site_gene_id)
 tablespace indx;
 
 INSERT INTO core.TableInfo

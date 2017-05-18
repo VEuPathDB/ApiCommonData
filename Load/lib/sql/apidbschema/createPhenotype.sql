@@ -27,6 +27,9 @@ create table ApiDB.PhenotypeModel (
  PRIMARY KEY (phenotype_model_id)
 );
 
+CREATE INDEX apidb.phenmod_revix0 ON apidb.PhenotypeModel (external_database_release_id, phenotype_model_id) TABLESPACE indx;
+CREATE INDEX apidb.phenmod_revix1 ON apidb.PhenotypeModel (na_feature_id, phenotype_model_id) TABLESPACE indx;
+
 CREATE SEQUENCE apidb.PhenotypeModel_sq;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.PhenotypeModel TO gus_w;
@@ -81,6 +84,12 @@ create table ApiDB.PhenotypeResult (
  PRIMARY KEY (phenotype_result_id)
 );
 
+CREATE INDEX apidb.phenres_revix0 ON apidb.PhenotypeResult (evidence_term_id, phenotype_result_id) TABLESPACE indx;
+CREATE INDEX apidb.phenres_revix1 ON apidb.PhenotypeResult (life_cycle_stage_term_id, phenotype_result_id) TABLESPACE indx;
+CREATE INDEX apidb.phenres_revix2 ON apidb.PhenotypeResult (phenotype_entity_term_id, phenotype_result_id) TABLESPACE indx;
+CREATE INDEX apidb.phenres_revix3 ON apidb.PhenotypeResult (phenotype_model_id, phenotype_result_id) TABLESPACE indx;
+CREATE INDEX apidb.phenres_revix4 ON apidb.PhenotypeResult (phenotype_quality_term_id, phenotype_result_id) TABLESPACE indx;
+
 CREATE SEQUENCE apidb.PhenotypeResult_sq;
 
 GRANT insert, select, update, delete ON apidb.PhenotypeResult TO gus_w;
@@ -115,8 +124,12 @@ create table apidb.NaFeaturePhenotypeModel
        PRIMARY KEY (na_feature_phenotype_model_id)
       );
 
+CREATE INDEX apidb.nfpm_revix0 ON apidb.NaFeaturePhenotypeModel (na_feature_id, na_feature_phenotype_model_id) TABLESPACE indx;
+CREATE INDEX apidb.nfpm_revix1 ON apidb.NaFeaturePhenotypeModel (phenotype_model_id, na_feature_phenotype_model_id) TABLESPACE indx;
+
 GRANT insert, select, update, delete ON apidb.NaFeaturePhenotypeModel TO gus_w;
 GRANT select ON apidb.NaFeaturePhenotypeModel TO gus_r;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
