@@ -175,6 +175,7 @@ sub run {
 	    
 	    push @{$self->{_models}}, $phenotypeModel;
 	    undef (@naFeatureArray);
+	    undef (@{$self->{_results}});
 	}
 	
 	my ($qualityTermId, $entityTermId, $lifeCycleTermId, $evidenceTermId, $chebiTermId, $proteinTermId);
@@ -200,8 +201,12 @@ sub run {
 	#   $self->userError("chebi annotation extension id  $chebiAnnotationExtension specified but not found in database") unless($chebiTermId);
 	# }
 	
+	my $phenotypeResult = $self->lookupResult($qualityTermId, $entityTermId, $timing, $lifeCycleTermId, $phenotypeString, $note, $evidenceTermId, $chebiAnnotationExtension, $proteinAnnotationExtension); #removed naFeatureId
+	#   print Dumper "the model source id is \n";
+	#   print Dumper $modelSourceId;
+	unless($phenotypeResult) {
 	
-	my $phenotypeResult = GUS::Model::ApiDB::PhenotypeResult->new({phenotype_quality_term_id => $qualityTermId,
+	 $phenotypeResult = GUS::Model::ApiDB::PhenotypeResult->new({phenotype_quality_term_id => $qualityTermId,
 								       phenotype_entity_term_id => $entityTermId,
 								       timing => $timing,
 								       life_cycle_stage_term_id => $lifeCycleTermId,
@@ -218,7 +223,8 @@ sub run {
 	# print Dumper $phenotypeString;
 	
 	$phenotypeResult->submit();
-	
+	    push @{$self->{_results}}, $phenotypeResult;
+	}
 	my $NAFeaturePhenotypeModel = $self->lookupNaFeatureModel($naFeatureId,@naFeatureArray);
 	#   print Dumper "the model source id is \n";
 	#   print Dumper $modelSourceId;
@@ -254,6 +260,31 @@ sub lookupModel {
 #	print Dumper $sourceId;
 #	print Dumper $model->getSourceId();
 	    return $model;
+	}
+	
+#   if($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed) {
+#	print Dumper "in second of of look up model";
+	#     return $model;
+	
+	#  }
+    }
+    
+    return undef;
+}
+
+sub lookupResult {
+    my ($self,$qualityTermId, $entityTermId, $timing, $lifeCycleTermId, $phenotypeString, $note, $evidenceTermId, $chebiAnnotationExtension, $proteinAnnotationExtension) = @_;
+#  print Dumper "getting into look up model\n";
+#    print Dumper "the models array is";
+#    my @array = @{$self->{_models}};
+#    print Dumper $self->{_models};
+    foreach my $result(@{$self->{_results}}) {
+if(($qualityTermId eq $result->getPhenotypeQualityTermId()) && ($entityTermId eq $result->getPhenotypeEntityTermId()) && ($timing eq $result->getTiming()) && ($lifeCycleTermId eq $result->getLifeCycleStageTermId()) && ($phenotypeString eq $result->getPhenotypePostComposition()) && ($note eq $result->getPhenotypeComment()) && ($evidenceTermId eq $result->getEvidenceTermId()) && ($chebiAnnotationExtension eq $result->getChebiAnnotationExtension()) && ($proteinAnnotationExtension eq $result->getProteinAnnotationExtension())) {#    if(($sourceId && $model->getSourceId() eq $sourceId)&& ($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed)) {
+#	print Dumper "look up model source id model get source if\n";#
+	    
+#	print Dumper $sourceId;
+#	print Dumper $model->getSourceId();
+	    return $result;
 	}
 	
 #   if($model->getNaFeatureId() eq $naFeatureId && $model->getPubmedId() eq $pubmed) {
