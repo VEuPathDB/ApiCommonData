@@ -329,7 +329,7 @@ sub queryForOntologyTermIds {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.PhenotypeResult','ApiDB.PhenotypeModel','ApiDB.NaFeaturePhenotypeModel');
+  return ('ApiDB.NaFeaturePhenotypeModel','ApiDB.PhenotypeResult','ApiDB.PhenotypeModel');
 }
 
 1;
