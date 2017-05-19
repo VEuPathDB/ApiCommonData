@@ -119,6 +119,21 @@ create table apidb.NaFeaturePhenotypeModel
       (na_feature_phenotype_model_id NUMBER(10) NOT NULL,
        phenotype_model_id            NUMBER(10) NOT NULL,
        na_feature_id                 NUMBER(10),
+modification_date            DATE,
+user_read                    NUMBER(1),
+user_write                   NUMBER(1),
+group_read                   NUMBER(1),
+group_write                  NUMBER(1),
+other_read                   NUMBER(1),
+other_write                  NUMBER(1),
+row_user_id                  NUMBER(12),
+row_group_id                 NUMBER(3),
+row_project_id               NUMBER(4),
+row_alg_invocation_id        NUMBER(12),
+       FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
+       FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
+       PRIMARY KEY (na_feature_phenotype_model_id)
+      );
        FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
        FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
        PRIMARY KEY (na_feature_phenotype_model_id)
@@ -127,8 +142,13 @@ create table apidb.NaFeaturePhenotypeModel
 CREATE INDEX apidb.nfpm_revix0 ON apidb.NaFeaturePhenotypeModel (na_feature_id, na_feature_phenotype_model_id) TABLESPACE indx;
 CREATE INDEX apidb.nfpm_revix1 ON apidb.NaFeaturePhenotypeModel (phenotype_model_id, na_feature_phenotype_model_id) TABLESPACE indx;
 
+CREATE SEQUENCE apidb.NaFeaturePhenotypeModel_sq;
+
+
 GRANT insert, select, update, delete ON apidb.NaFeaturePhenotypeModel TO gus_w;
 GRANT select ON apidb.NaFeaturePhenotypeModel TO gus_r;
+GRANT select ON apidb.NaFeaturePhenotypeModel_sq TO gus_w;
+
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
