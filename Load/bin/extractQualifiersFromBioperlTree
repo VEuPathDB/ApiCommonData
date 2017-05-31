@@ -133,7 +133,7 @@ while (<IN>) {
       $value =~ s/\./ /g;
       @values = split (/\s+/, $value);
       foreach my $i (0..$#values) {
-	$values[$i] =~ s/^PMID://;
+	$values[$i] =~ s/^PMID:\D*//;
 	$values[$i] =~ s/\.+//;
 	$values[$i] =~ s/\:+//;
 	die "ERROR.............. The literature is supposed to be all digital.\nIt is not the case for gene $key with \"$values[$i]\"\n" if ($values[$i] !~ /^\d+$/);
