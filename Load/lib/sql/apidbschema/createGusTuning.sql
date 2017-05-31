@@ -452,7 +452,7 @@ GRANT insert, select, update, delete ON  RESULTS.NAFEATUREHOSTRESPONSE TO gus_w;
 GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE TO gus_r;
 GRANT select ON RESULTS.NAFEATUREHOSTRESPONSE_sq TO gus_w;
 
-CREATE INDEX apidb.nfhr_revix0 ON results.NaFeatureHostResponse (protocol_app_node_id, na_feature_host_response_id) TABLESPACE indx;
+CREATE INDEX results.nfhr_revix0 ON results.NaFeatureHostResponse (protocol_app_node_id, na_feature_host_response_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
