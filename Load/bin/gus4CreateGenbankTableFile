@@ -176,7 +176,7 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
       my ($tNaFeatureId, $tSourceId, $tIsPseudo, $tTranslTable) = split(/\t/, $transcriptRef->[$m]);
 
       ## get product info
-      my $sqlProduct = "select product from APIDB.genefeatureproduct where na_feature_id=$tNaFeatureId";
+      my $sqlProduct = "select product from ApiDB.TranscriptProduct where na_feature_id=$tNaFeatureId";
       my $productRef = readFromDatabase($dbh, $sqlProduct);
       my $product = $productRef->[0];
 
