@@ -91,13 +91,13 @@ where t.taxon_id=tn.taxon_id and t.taxon_id=$taxonIds{$k}";
 
   ## print the tbl file
   my $tblFile = $k.".tbl";
-  open (TBL, ">$tblFile") || die "can not open $tblFile to write\n";
-  print TBL "\>Feature\t$k\n";
+  open (my $ofh, ">$tblFile") || die "can not open $tblFile to write\n";
+  print $ofh "\>Feature\t$k\n";
 
   ## print source -- this is optional
-  print TBL "1\t$sLengths{$k}\tsource\t\t\n";
-  print TBL "\t\t\torganism\t$organism\n";
-  print TBL "\t\t\tdb_xref\ttaxon:$ncbiTaxId\n";
+  print $ofh "1\t$sLengths{$k}\tsource\t\t\n";
+  printGenbankTagInfo ($ofh, "organism", $organism);
+  printGenbankTagInfo ($ofh, "db_xref", "taxon:$ncbiTaxId");
 
   ## if genbank submission, need grep more info here, such as 
 
@@ -161,8 +161,9 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
     ## print gene
     ($gStart, $gEnd) = addLocPrefix($gStrand, $gStart, $gEnd, $prefix5{$gNaFeatureId}, $prefix3{$gNaFeatureId});
 
-    ($gStrand != 1) ? print TBL "$gStart\t$gEnd\tgene\t\t\n" : print TBL "$gEnd\t$gStart\tgene\t\t\n";
-    print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+    ($gStrand != 1) ? print $ofh "$gStart\t$gEnd\tgene\t\t\n" : print $ofh "$gEnd\t$gStart\tgene\t\t\n";
+    #print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
+    printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId");
 
 
     ## FOR TRANSCRIPT
@@ -215,12 +216,12 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, '', $prefix3{$tNaFeatureId}) if ($i == $#$exonLocRef && $prefix3{$tNaFeatureId});
 
 	if ($i == 0) {
-	  ($gStrand != 1) ? print TBL "$tStart\t$tEnd\t$gType\t\t\n" : print TBL "$tEnd\t$tStart\t$gType\t\t\n";
+	  ($gStrand != 1) ? print $ofh "$tStart\t$tEnd\t$gType\t\t\n" : print $ofh "$tEnd\t$tStart\t$gType\t\t\n";
 	} else {
-	  ($gStrand != 1) ? print TBL "$tStart\t$tEnd\t\t\t\n" : print TBL "$tEnd\t$tStart\t\t\t\n";
+	  ($gStrand != 1) ? print $ofh "$tStart\t$tEnd\t\t\t\n" : print $ofh "$tEnd\t$tStart\t\t\t\n";
 	}
-	print TBL "\t\t\tlocus_tag\t$gSourceId\n" if ($i == $#$exonLocRef);
-
+	#print $ofh "\t\t\tlocus_tag\t$gSourceId\n" if ($i == $#$exonLocRef);
+	printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId") if ($i == $#$exonLocRef);
       }
 
       if ($gType =~ /mRNA/) {
@@ -230,19 +231,21 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  my ($order, $cStart, $cEnd) = split(/\t/, $cdsPairs[$i]);
 	  $cStart = $prefix5{$tNaFeatureId}.$cStart if ($i == 0 && $prefix5{$tNaFeatureId});
 	  $cEnd = $prefix3{$tNaFeatureId}.$cEnd if ($i == $#cdsPairs && $prefix3{$tNaFeatureId});
-	  ($i == 0) ? print TBL "$cStart\t$cEnd\tCDS\t\t\n" : print TBL "$cStart\t$cEnd\t\t\t\n";
+	  ($i == 0) ? print $ofh "$cStart\t$cEnd\tCDS\t\t\n" : print $ofh "$cStart\t$cEnd\t\t\t\n";
 	}
-	print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+	print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
 
 	if ($tIsPseudo != 1) {
 	  ## print product info for CDS
-	  ($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
+	  ($product) ? printGenbankTagInfo ($ofh, "product", $product) : printGenbankTagInfo ($ofh, "product", "unspecified product");
 
 	  ## get transl_table info
-	  print TBL "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
+	  #print $ofh "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
+	  printGenbankTagInfo ($ofh, "transl_table", $tTranslTable) if ($tTranslTable);  ## only print transl_table if it is not null
 
 	  ## need to print condon_start if $prefix5
-	  print TBL "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
+	  #print $ofh "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
+	  printGenbankTagInfo ($ofh, "codon_start", $codonStart) if ($prefix5{$tNaFeatureId});
 
 	  ## add protein sequence if mRNA
 	  my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
@@ -253,14 +256,14 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  ## only take the 1st translatedaaseqeunce 
 	  ## TODO -- find an example in genbank file that have more than one translation for one transcript
 	  my $proteinSeq = $proteinSeqRef->[0];
-	  ($proteinSeq) ? print TBL "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
+	  ($proteinSeq) ? print $ofh "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
 	}
 
       } else {
 
 	my $ncRNA_class;
 	if ($gType =~ /ncRNA/) {
-	  ($ncRNA_class) ? print TBL "\t\t\tncRNA_class\t$ncRNA_class\n" : print TBL "\t\t\tncRNA_class\tother\n";
+	  ($ncRNA_class) ? print $ofh "\t\t\tncRNA_class\t$ncRNA_class\n" : print $ofh "\t\t\tncRNA_class\tother\n";
 	}
 
 	## print exon if not mRNA
@@ -270,21 +273,23 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	    $eStart = $prefix5{$tNaFeatureId}.$eStart if ($m == 0);
 	    $eEnd = $prefix3{$tNaFeatureId}.$eEnd if ($m == $#$exonLocRef);
 	    if ($m == 0) {
-	      ($gStrand != 1) ? print TBL "$eStart\t$eEnd\texon\t\t\n" : print TBL "$eEnd\t$eStart\texon\t\t\n";
+	      ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\texon\t\t\n" : print $ofh "$eEnd\t$eStart\texon\t\t\n";
 	    }else{
-	      ($gStrand != 1) ? print TBL "$eStart\t$eEnd\t\t\t\n" : print TBL "$eEnd\t$eStart\t\t\t\n";
+	      ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\t\t\t\n" : print $ofh "$eEnd\t$eStart\t\t\t\n";
 	    }
 	  }
 	}
-	print TBL "\t\t\tlocus_tag\t$gSourceId\n";
+	print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
+	printGenbankTagInfo ($ofh, "locus_tag", $gSourceId);
 
 	## print product info for non mRNA 
-	($product) ? print TBL "\t\t\tproduct\t$product\n" : print TBL "\t\t\tproduct\tunspecified product\n";
+	($product) ? printGenbankTagInfo ($ofh, "product", $product) : printGenbankTagInfo ($ofh, "product", "unspecified product");
 
       }
 
       ## print is_pseudo info
-      print TBL "\t\t\tpseudo\n" if ($tIsPseudo == 1);
+      #print $ofh "\t\t\tpseudo\n" if ($tIsPseudo == 1);
+      printGenbankTagInfo ($ofh, "pseudo") if ($tIsPseudo == 1);
 
       ## initial cdsPairs array, codonStart and cdsPairsString for each transcript
       $codonStart = 1;
@@ -292,12 +297,17 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
       @cdsPairs = ();
     }
   }
-  close TBL;
+  close $ofh;
   print STDERR "done $k\n";
 } ## end of foreach sequence
 
 
 #####################
+sub printGenbankTagInfo {
+  my ($fh, $feature, $value) = @_;
+  ($value) ? print $fh "\t\t\t$feature\t$value\n" : print $fh "\t\t\t$feature\n";
+  return 0;
+}
 
 sub readFromDatabase {
   my ($dbh, $sql) = @_;
