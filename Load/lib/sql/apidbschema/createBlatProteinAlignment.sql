@@ -74,10 +74,7 @@ create index apidb.bpa_ix0 on apidb.BlatProteinAlignment (modification_date, bla
 -- index columns with foreign-key constraints, to avoid performance problems when
 -- deleting records or updating the primary-key column in the reerenced tables
 create index apidb.bpa_revix1 on apidb.BlatProteinAlignment (query_aa_sequence_id, blat_protein_alignment_id) tablespace indx;
-create index apidb.bpa_revix2 on apidb.BlatProteinAlignment (query_external_db_release_id, blat_protein_alignment_id) tablespace indx;
 create index apidb.bpa_revix3 on apidb.BlatProteinAlignment (query_table_id, blat_protein_alignment_id) tablespace indx;
-create index apidb.bpa_revix4 on apidb.BlatProteinAlignment (query_taxon_id, blat_protein_alignment_id) tablespace indx;
-create index apidb.bpa_revix5 on apidb.BlatProteinAlignment (target_external_db_release_id, blat_protein_alignment_id) tablespace indx;
 create index apidb.bpa_revix6 on apidb.BlatProteinAlignment (target_table_id, blat_protein_alignment_id) tablespace indx;
 
 grant select on apidb.BlatProteinAlignment to gus_r;
