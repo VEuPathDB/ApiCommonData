@@ -233,7 +233,8 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  $cEnd = $prefix3{$tNaFeatureId}.$cEnd if ($i == $#cdsPairs && $prefix3{$tNaFeatureId});
 	  ($i == 0) ? print $ofh "$cStart\t$cEnd\tCDS\t\t\n" : print $ofh "$cStart\t$cEnd\t\t\t\n";
 	}
-	print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
+	#print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
+	printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId");
 
 	if ($tIsPseudo != 1) {
 	  ## print product info for CDS
@@ -256,35 +257,38 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  ## only take the 1st translatedaaseqeunce 
 	  ## TODO -- find an example in genbank file that have more than one translation for one transcript
 	  my $proteinSeq = $proteinSeqRef->[0];
-	  ($proteinSeq) ? print $ofh "\t\t\ttranslation\t$proteinSeq\n" : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
+	  ($proteinSeq) ? printGenbankTagInfo ($ofh, "translation", $proteinSeq)
+	    : print STDERR "ERROR: for $gNaFeatureId, can not find protein seq\n";
+
 	}
 
       } else {
 
-	my $ncRNA_class;
-	if ($gType =~ /ncRNA/) {
-	  ($ncRNA_class) ? print $ofh "\t\t\tncRNA_class\t$ncRNA_class\n" : print $ofh "\t\t\tncRNA_class\tother\n";
+	## print exon if not mRNA
+	foreach my $m (0..$#$exonLocRef) {
+	  my ($eOrder, $eStart, $eEnd) = split(/\t/, $exonLocRef->[$m]);
+	  $eStart = $prefix5{$tNaFeatureId}.$eStart if ($m == 0);
+	  $eEnd = $prefix3{$tNaFeatureId}.$eEnd if ($m == $#$exonLocRef);
+	  if ($m == 0) {
+	    ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\texon\t\t\n" : print $ofh "$eEnd\t$eStart\texon\t\t\n";
+	  }else{
+	    ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\t\t\t\n" : print $ofh "$eEnd\t$eStart\t\t\t\n";
+	  }
+	  print STDERR "For $gSourceId, \$eStart= $eStart, \$eEnd = $eEnd\n" if ($gSourceId eq "NERG_03011");
 	}
 
-	## print exon if not mRNA
-	foreach my $i (0..$#$exonLocRef) {
-	  foreach my $m (0..$#$exonLocRef) {
-	    my ($eOrder, $eStart, $eEnd) = split(/\t/, $exonLocRef->[$m]);
-	    $eStart = $prefix5{$tNaFeatureId}.$eStart if ($m == 0);
-	    $eEnd = $prefix3{$tNaFeatureId}.$eEnd if ($m == $#$exonLocRef);
-	    if ($m == 0) {
-	      ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\texon\t\t\n" : print $ofh "$eEnd\t$eStart\texon\t\t\n";
-	    }else{
-	      ($gStrand != 1) ? print $ofh "$eStart\t$eEnd\t\t\t\n" : print $ofh "$eEnd\t$eStart\t\t\t\n";
-	    }
-	  }
-	}
-	print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
+	#print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
 	printGenbankTagInfo ($ofh, "locus_tag", $gSourceId);
 
 	## print product info for non mRNA 
 	($product) ? printGenbankTagInfo ($ofh, "product", $product) : printGenbankTagInfo ($ofh, "product", "unspecified product");
 
+	## TODO  ncRNA_class
+	my $ncRNA_class;
+	if ($gType =~ /ncRNA/) {
+	  ($ncRNA_class) ? printGenbankTagInfo ($ofh, "ncRNA_class", $ncRNA_class)
+	    : printGenbankTagInfo ($ofh, "ncRNA_class", "other");
+	}
       }
 
       ## print is_pseudo info
