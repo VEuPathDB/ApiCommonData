@@ -657,8 +657,8 @@ sub loadEdges {
       my $protocolName = $protocol->getProtocolName();
 
       foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
-		my $ppValue = $parameterValue->getTerm();		
-        $ppValue = $parameterValue->getTerm()->[0] if (@$ppValue==1);#NOTE:The value of Study.ProtocolAppParam requires string datatype
+
+        my $ppValue = $parameterValue->getTerm();
         my $ppName = $self->{_protocol_param_source_id_to_name}->{$parameterValue->getQualifier()};
 
         next if($existingProtocolAppParam{$ppName}); #NOTE:  This is a bit easier because we don't deal w/ protocol series for existing protocolapps
