@@ -119,10 +119,18 @@
     
 
 
-    <!-- http://webprotege.stanford.edu/R9tbDLYzO34KrYf2aV7MOyS -->
+    <!-- http://purl.obolibrary.org/obo/GATES_0000200 -->
 
-    <owl:AnnotationProperty rdf:about="http://webprotege.stanford.edu/R9tbDLYzO34KrYf2aV7MOyS">
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/GATES_0000200">
         <rdfs:label>Structur</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000204 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/GATES_0000204">
+        <rdfs:label xml:lang="en">ICEMR Label</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -141,11 +149,11 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000014 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000014">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ANTHRO</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anthropometry</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit</obo:GATES_0000200>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anthropometry</rdfs:label>
     </owl:Class>
     
@@ -154,13 +162,18 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000015">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CE</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical Events</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Use for medical history, for childs AEs and for mothers AEs</obo:GATES_0000010>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per episode</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical Events</rdfs:label>
+        <obo:GATES_0000012>The diagnoses only show when a child diagnosed a specific disease. So, users cannot query that a child without a disease.
+
+Shall we add all available diagnoses as variables (87 distinct disease)? So, users can use Yes or No to choose whether a child have a disease or not have a disease.
+
+Or under each category use Yes or No diagnosis. However, some categories only have one subClass, some of many, shall we add this kind of Yes or No variable only under the disease category which has more than one subClasses?</obo:GATES_0000012>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per episode</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis</rdfs:label>
     </owl:Class>
     
 
@@ -168,13 +181,13 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000016 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000016">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DAILY</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Daily Findings</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Variables in this dataset may also be applied to ANTHRO</obo:GATES_0000010>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per day of monitoring</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Daily Findings</rdfs:label>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per day of monitoring</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Daily findings of child</rdfs:label>
     </owl:Class>
     
 
@@ -182,12 +195,15 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000017 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000017">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GF</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Findings</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per finding</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Findings</rdfs:label>
+        <obo:GATES_0000012>The finding is about &apos;Mucus in Stool&apos; (Column &apos;ftest&apos;).
+
+The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;No&apos;. For consistency, we&apos;d change it to &apos;Positive&apos; or &apos;Negative&apos;.</obo:GATES_0000012>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per finding</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mucus in stool</rdfs:label>
     </owl:Class>
     
 
@@ -195,12 +211,13 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000018 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000018">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LB</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory Test Results</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory Test Results</rdfs:label>
+        <obo:GATES_0000012>The subClass is distinct value of Column &apos;lbtest&apos;</obo:GATES_0000012>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory test</rdfs:label>
     </owl:Class>
     
 
@@ -208,12 +225,13 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000019 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000019">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MB</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology Results</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology Results</rdfs:label>
+        <obo:GATES_0000012>All specimen used for microbiology test is stool. So removed &apos;specimen type&apos; and clarify it in the label</obo:GATES_0000012>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool microbiology test</rdfs:label>
     </owl:Class>
     
 
@@ -221,12 +239,12 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000020 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000020">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PARENTS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parental Data</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parental Data</rdfs:label>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parental information</rdfs:label>
     </owl:Class>
     
 
@@ -234,12 +252,12 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000021 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000021">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PREGHX</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pregnancy History</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per mothers pregnancy</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pregnancy History</rdfs:label>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per mothers pregnancy</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal pregnancy history</rdfs:label>
     </owl:Class>
     
 
@@ -247,13 +265,16 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000022 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000022">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">QS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Questionnaire Results</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Excludes nutrition and SES questionnaires</obo:GATES_0000010>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Questionnaire Results</rdfs:label>
+        <obo:GATES_0000012>Questionnaire Results: all questions are about &apos;Bayley Scales Of Infant And Toddler Development&apos;
+
+Value obtained in Column &apos;qscat&apos;</obo:GATES_0000012>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Scales Of Infant And Toddler Development</rdfs:label>
     </owl:Class>
     
 
@@ -266,35 +287,8 @@
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Investigational Sites</obo:GATES_0000002>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Omit SUBJID variable if sites are known, but assignment of subjects to sites is not knoiwn</obo:GATES_0000010>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per site</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Investigational Sites</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000024 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000024">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject Socioeconomic Status</obo:GATES_0000002>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Structure this vertically, similar to QS</obo:GATES_0000010>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child, per visit, per result</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject Socioeconomic Status</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000025 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000025">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SUBJ</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject Level Data</obo:GATES_0000002>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <webprotege:R9tbDLYzO34KrYf2aV7MOyS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per child</webprotege:R9tbDLYzO34KrYf2aV7MOyS>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject Level Data</rdfs:label>
+        <obo:GATES_0000200 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 row per site</obo:GATES_0000200>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
     </owl:Class>
     
 
@@ -302,18 +296,6 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000026 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000026">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000014"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000016"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000020"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000021"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000023"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">STUDYID</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study ID</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -322,8 +304,10 @@
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">studyid</obo:GATES_0000006>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">studyid</obo:GATES_0000007>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS-1: ki0038874-GEMS-1; GEMS-1A: ki0038874-GEMS-1A; MAL-ED: ki0047075-MAL-ED</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Codes&apos; is Study ID</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study ID</rdfs:label>
+        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Codes&apos; is Study ID
+
+It is as what we do for microbiomedb.org. The study name, such as, GEMS-1, GEMS-1A, MAL-ED, can be used for users to pick the study they are interested in.</obo:GATES_0000012>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dateset</rdfs:label>
     </owl:Class>
     
 
@@ -331,17 +315,7 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000027 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000027">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000014"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000016"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000020"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000021"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SUBJID</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject ID</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -357,16 +331,17 @@
     <!-- http://purl.obolibrary.org/obo/GATES_0000028 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000028">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000014"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
+        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL:  from LB, ANTHRO, CE, DAILY, GF, MB, and QS</obo:GATES_0000004>
         <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000005>
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000006>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000007>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-ANTHRO</rdfs:label>
+        <obo:GATES_0000012>Combine &apos;age since birth at examination&apos; from LB, ANTHRO, CE, DAILY, GF, MB, and QS</obo:GATES_0000012>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</rdfs:label>
     </owl:Class>
     
 
@@ -646,180 +621,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000046 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000046">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000008>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">disease diagnosis for a child at a specific time</obo:GATES_0000010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-CE</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000047 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000047">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CETERM</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reported term</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ceterm</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ceterm</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Verbatim description of event.</obo:GATES_0000008>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reported term</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000048 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000048">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CEDECOD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dictionary-derived term</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cedecod</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cedecod</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See CEPTCD variable</obo:GATES_0000008>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Select from MedDRA dictionary and CEPTCD</obo:GATES_0000010>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label, (87 distinct terms)</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dictionary-derived term</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000049 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000049">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CEPTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preferrred term code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ceptcd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ceptcd</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10000269 = Abscess 10002034 = Anaemia 10003246 = Arthritis 10003399 = Arthropod bite 10003553 = Asthma 10003997 = Bacteraemia 10006448 = Bronchiolitis 10006451 = Bronchitis 10008096 = Cerebral atrophy 10008631 = Cholera 10009260 = Cleft lip and palate 10009269 = Cleft palate 10010741 = Conjunctivitis 10010904 = Convulsion 10011224 = Cough 10012174 = Dehydration 10012431 = Dermatitis 10012735 = Diarrhoea 10014581 = Encephalitis 10015943 = Eye inflammation 10017533 = Fungal infection 10017553 = Furuncle 10017853 = Gastritis 10017888 = Gastroenteritis 10020161 = HIV infection 10020993 = Hypoglycaemia 10021449 = Immunodeficiency common variable 10021531 = Impetigo 10022773 = Intracranial pressure increased 10025487 = Malaria 10027011 = Measles 10027199 = Meningitis 10027534 = Microcephaly 10027627 = Miliaria 10028257 = Mumps 10028810 = Nasopharyngitis 10029117 = Nephritis 10030963 = Oral candidiasis 10033072 = Otitis externa 10033078 = Otitis media 10033079 = Otitis media acute 10033081 = Otitis media chronic 10034835 = Pharyngitis 10035110 = Pityriasis 10035664 = Pneumonia 10037632 = Pyoderma 10037660 = Pyrexia 10037844 = Rash 10038077 = Rectal prolapse 10038687 = Respiratory distress 10039083 = Rhinitis 10039447 = Salmonellosis 10040047 = Sepsis 10040831 = Skin disorder 10040872 = Skin infection 10040882 = Skin lesion 10040952 = Skin warm 10043866 = Tinea capitis 10044755 = Tuberculosis 10045275 = Typhoid fever 10046306 = Upper respiratory tract infection 10046735 = Urticaria 10046980 = Varicella 10047700 = Vomiting 10047780 = Vulvitis 10047794 = Vulvovaginitis 10049612 = Autonomic seizure 10050197 = Diabetes mellitus malnutrition-related 10051402 = Dysentery 10052428 = Wound 10053615 = Thermal burn 10059490 = Mucosal excoriation 10060933 = Adverse event 10060945 = Bacterial infection 10061201 = Helminthic infection 10061273 = Malnutrition 10061355 = Poisoning 10061366 = Soft tissue disorder_</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term ID</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preferrred term code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000050 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000050">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CESOC</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary system organ class</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cesoc</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cesoc</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See CESOCCD variable</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label (high level terms), (14 distinct terms, shall we use it as search filter?)</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary system organ class</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000051 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000051">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CESOCCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary system organ class code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cesoccd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cesoccd</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10005329 = Blood and lymphatic system disorders 10010331 = Congenital, familial and genetic disorders 10015919 = Eye disorders 10017947 = Gastrointestinal disorders 10018065 = General disorders and administration site conditions 10021428 = Immune system disorders 10021881 = Infections and infestations 10022117 = Injury, poisoning and procedural complications 10027433 = Metabolism and nutrition disorders 10028395 = Musculoskeletal and connective tissue disorders 10029205 = Nervous system disorders 10038359 = Renal and urinary disorders 10038738 = Respiratory, thoracic and mediastinal disorders 10040785 = Skin and subcutaneous tissue disorders</obo:GATES_0000008>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term ID (high level terms)</obo:GATES_0000010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary system organ class code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000052 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000052">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBTESTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtestcd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtestcd</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtestcd</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ADEN4041 = Adenovirus 40/41 ADENO = Adenovirus AEROMNS = Aeromonas ASTRO = Astrovirus CAMPCOL = Campylobacter coli CAMPJJN = Campylobacter jejuni CAMPYLB = Campylobacter CRYPTO = Cryptosporidium CULTGRW = Culture growth ECOLI = Eschericia coli isolated ECOLIPCR = E. coli Polymerase Chain Reaction EPEC = Enteropathic E coli GIARDIA = Giardia NORO1 = Norovirus type I NORO2 = Norovirus type II ROTA = Rotavirus SALMENT = Samonella enterica SALMTYP = Salmonella typhi SAPO = Sapovirus SHIG1A = Shigella 1A SHIG1B = Shigella 1B SHIG2A = Shigella 2A SHIG2B = Shigella 2B SHIG3A = Shigella 3A SHIG3B = Shigella 3B SHIG4A = Shigella 4A SHIG4B = Shigella 4B SHIG4C = Shigella 4C SHIG5A = Shigella 5A SHIG5B = Shigella 5B SHIG6 = Shigella 6 SHIGBYD = Shigella boydii SHIGDYS = Shigella dysenteriae SHIGDYS1 = Shigella dysenteriae 1 SHIGFLX = Shigella flexneri SHIGLA = Shigella SHIGSNN = Shigella sonnei SHIGSPP = Shigella spp SHIGX = Shigella X SHIGY = Shigella Y VBRO = Vibrio VCHL = Vibrio cholerae VCHL1 = Vibrio cholerae 01 VCHL139 = Vibrio cholerae 0139 VCHLINB = Vibrio cholerae inaba VCHLOGW = Vibrio cholerae Ogawa VCHLPHEM = Vibrio cholerae parahaemolyticus</obo:GATES_0000008>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AEROHYD = Aeromonas Hydrophila AEROMNS = Aeromonas ASCARIS = Ascaris BCOLI = Balantidium Coli CAMPJJN = Campylobacter jejuni CAMPYLB = Campylobacter CMESNL = Chilomastix mesnili CRYPTO = Cryptosporidium CYCLOS = Cyclospora ECOLI = Eschericia coli ENANA = Endolimax nana ENTAHIST = Entamoeba histolytica EVERMI = Enterobius Vermicularis GIARDIA = Giardia HDMINUTA = Hymenolepis Diminuta HELMHN = Helminth Hymenolepis nana HELMHW = Hookworm HELMSS = Helminth Strongyloides stercoralis IBUTSCH = Iodamoeba butschlii ISOSPORA = Isospora PSSHIGA = Plesiomonas Shigilloides SALMNL = Salmonella SALMPTYP = Salmonella Paratyphi SALMTYP = Salmonella typhi SCHISTMN = Schistosoma SHIGBYD = Shigella boydii SHIGDYS = Shigella dysenteriae SHIGFLX = Shigella flexneri SHIGSNN = Shigella sonnei SHIGSPP = Shigella spp TAENIASP = Taenia Species TRICH = Trichuris trichiura VBRO = Vibrio VCHL139 = Vibrio cholerae 0139 VCHLINB = Vibrio cholerae inaba VCHLOGW = Vibrio cholerae Ogawa VCHLPHEM = Vibrio cholerae parahaemolyticus YRSN = Yersinia</obo:GATES_0000009>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CODELIST=MBTEST</obo:GATES_0000010>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: Column mbtestcd and mbtest are same info, one is code (mbtestcd), the other is full name (mbtest). Code and full name is not 1 to 1 mapping. 47 distinct combination values, which is the type of microbiome detected</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000053 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000053">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBTEST</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtest</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtest</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbtest</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See MBTESTCD variable</obo:GATES_0000008>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CODELIST=MBTEST</obo:GATES_0000010>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: Column mbtestcd and mbtest are same info, one is code (mbtestcd), the other is full name (mbtest). Code and full name is not 1 to 1 mapping. 47 distinct combination values, which is the type of microbiome detected</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000054 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000054">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000007>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-MB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000055 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000055">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBORRES</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Result or finding in original units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mborres</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mborres</obo:GATES_0000006>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: This field contains empty, or E coli pathotype which only apply to ECOLI code. Details see GEMS code list.</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Result or finding in original units-MB</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000056 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000056">
@@ -833,62 +634,11 @@
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbstresc</obo:GATES_0000007>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Negative, Positive</obo:GATES_0000008>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Positive,  Yes</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: colum mbstresc and mbspecn are about same information, one use char, the other use number (0/1). value is either Negative(=0) or Positive(=1)
+        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The values of its subclasses are different kinds of microorganism. 
+
+GEMS: colum mbstresc and mbspecn are about same information, one use char, the other use number (0/1). value is either Negative(=0) or Positive(=1)
 MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Character result/finding in std fmt-MB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000057 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000057">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBSTRESN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbstresn</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbstresn</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: colum mbstresc and mbspecn are about same information, one use char, the other use number (0/1). value is either 0 (=Negative) or 1(=Positive)</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units-MB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000058 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000058">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBSPECN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspecn</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspecn</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspecn</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5 = Stool</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value in the column is: 5 (=Stool), same information as MBSPEC</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type (num)-MB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000059 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000059">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBSPEC</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspec</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspec</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mbspec</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See MBSPECN variable</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value in the column is: Stool (=5)</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type-MB</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test finding</rdfs:label>
     </owl:Class>
     
 
@@ -907,45 +657,7 @@ MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Culture, Immunoassay, PCR</obo:GATES_0000008>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Acid Fast Staining,  Cary Blair Culture,  Concentrate Wet Prep , Culture , Direct Wet Prep , Elisa,  Elisa and Culture</obo:GATES_0000009>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Available values in MAL-ED (different from GEMS Codes): Acid Fast Staining, Cary Blair Culture, Concentrate Wet Prep, Culture, Direct Wet Prep, Elisa, Elisa and Culture</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Method of test</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000061 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000061">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RELTIVEN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relative of child (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reltiven</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0 = Child</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is 0</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relative of child (num)</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000062 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000062">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000019"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RELTIVE</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relative of child</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reltive</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See RELTIVEN variable</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is Child, what does this field mean?</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Relative of child</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology test method</rdfs:label>
     </owl:Class>
     
 
@@ -1058,22 +770,6 @@ MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000070 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000070">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000020"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MMARITN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mothers marital status (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mmaritn</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = Married , 4 = Divorced , 5 = Widowed , 6 = Single, or NA = empty string</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column &apos;mmaritn&apos; and &apos;mmarit&apos; are about same information, &apos;mmaritn&apos; used number and &apos;mmarit&apos; used String, mapping see MAL-ED codes</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mothers marital status (num)</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000071 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000071">
@@ -1116,46 +812,6 @@ MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">feducyrs</obo:GATES_0000007>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Some with value &apos;NA&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Father, years of education</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000074 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000074">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000023"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SITEID</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Investigational Site ID</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">siteid</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">siteid</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">siteid</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1,  2,  3,  4,  5,  6,  7,  8</obo:GATES_0000009>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number sequentially from 1 to num of sites</obo:GATES_0000010>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num can map to ctrycd, country</obo:GATES_0000012>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">used by Subject dataset</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Investigational Site ID</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000075 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000075">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000023"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CTRYCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country of investigative site (code)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ctrycd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ctrycd</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ctrycd</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BGD = BANGLADESH , GMB = GAMBIA,  IND = INDIA,  KEN = KENYA,  MLI = MALI , MOZ = MOZAMBIQUE , PAK = PAKISTAN</obo:GATES_0000008>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BGD = BANGLADESH ; BRA = BRAZIL;  IND = INDIA;  NPL = NEPAL; PAK = PAKISTAN; PER = PERU; TZA = TANZANIA, UNITED REPUBLIC OF ; ZAF = SOUTH AFRICA</obo:GATES_0000009>
-        <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ctrycd (country code), country (country name), all refer to same thing</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country of investigative site (code)</rdfs:label>
     </owl:Class>
     
 
@@ -1241,64 +897,10 @@ MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000081 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000081">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSTESTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstestcd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstestcd</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstestcd</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGLAND = Agricultural land BICYCLE = Bicycle BOATM = Boat (motorized) CAR = Car CART = Cart (animal pulled) CATS = Cats COOKFUEL = Type of cooking fuel COW = Cow DOGS = Dogs ELEC = Electricity FLOOR = Type floor in house FOWL = Fowl FRIG = Refrigerator GOAT = Goats H2OAVAIL = Water availability at water source H2OFREQ = Frequency of water retrieval H2OSRC = Water source H2OSTORE = Drinking stored water H2OTIME = Time to retrieve water H2OTRTP = Method treat drinking water H2OUNTRT = Drinking un-treated water MCYCLE = Motorcycle NCHLDLT5 = Number of children &lt;5 in house NPERSON = Number of persons in house NROOMS = Number rooms in house NSLEEP = Number of persons sleeping in house PHONE = Phone RADIO = Radio RODENTS = Rodents SANCHLD1 = Sanitation method for child (primary) SANITATN = Type of sanitary facility SHEEP = Sheep TV = Television WASHANIM = Wash hands after handling animals WASHCCHD = Wash hands after cleaning child WASHCOOK = Wash hands prior to cooking WASHDEFC = Wash hands after defecation WASHEAT = Wash hands prior to eating WASHNURS = Wash hands prior to nursing WASHNVR = Never wash hands WASHTYPE = Method of hand washing</obo:GATES_0000008>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGLAND = Agricultural land BICYCLE = Bicycle EDUCCRGV = Highest education of caregiver EDUCHH = Highest education head of household ELEC = Electricity FAN = Fan in the home FLOOR = Type floor in house FRIG = Refrigerator H2OSRCP = Source drinking water INCTOT = Total family income MOBILE = Mobile phone NROOMS = Number rooms in house NSLEEP = Number of persons sleeping in house NSLROOM = Number of sleeping rooms RADIO = Radio SANITATN = Type of sanitary facility TV = Television WATCH = Watch in the home</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstestcd and sstest refer to same thing. Can categorize based on ICEMR project, some combined under assets category and others used as filter</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000082 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000082">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSTEST</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question description</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstest</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstest</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sstest</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See SSTESTCD variable</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column sstestcd and sstest refer to same thing. Can categorize based on ICEMR project, some combined under assets category and others used as filter</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question description</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000083 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000083">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEIMPFL</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age is imputed</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS-1</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ageimpfl</obo:GATES_0000005>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</obo:GATES_0000008>
-        <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes</obo:GATES_0000010>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is 0</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age is imputed</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000084 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000084">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1310,98 +912,10 @@ MAL-ED: value is either Positive or Yes. What does Yes mean?</obo:GATES_0000012>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000085 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000085">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSORRES</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Result or finding in original units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssorres</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssorres</obo:GATES_0000006>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssorres, ssstresc, sstresn, all answers for questions, need to add some categories and variables in this dataset</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Result or finding in original units-SS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000086 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000086">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSSTRESC</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Character result/finding in std fmt</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresc</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresc</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresc</obo:GATES_0000007>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssorres, ssstresc, sstresn, all answers for questions, need to add some categories and variables in this dataset, some information lost in this column &apos;ssstresc&apos;, better use column &apos;ssorres&apos;</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Character result/finding in std fmt-SS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000087 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000087">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSSTRESN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresn</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresn</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresn</obo:GATES_0000007>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssorres, ssstresc, sstresn, all answers for questions, need to add some categories and variables in this dataset</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units-SS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000088 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000088">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000024"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSSTRESU</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresu</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresu</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ssstresu</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/week</obo:GATES_0000008>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Indian Rupees , Nepali Rupees,  Rand,  Reals,  Shillings,  Soles,  Taka</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS: only associated with H2OFREQ (Frequency of water retrieval), can consider to change the variable label as &apos;Frequency of water retrieval per week&apos; 
-MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstresn when display on website</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard units-SS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000089 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000089">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEXN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex (numeric)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sexn</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sexn</obo:GATES_0000006>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sexn</obo:GATES_0000007>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = Male , 2 = Female</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human readable text in SEX column, this column can be ignored</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex (numeric)</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000090 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000090">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEX</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -1411,24 +925,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex</obo:GATES_0000007>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See SEXN variable</obo:GATES_0000008>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Male  = 1,  Female =2</obo:GATES_0000012>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000091 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000091">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ARMCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment Arm Code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">armcd</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">armcd</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = CASE,  2 = CONTROL</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= case in ARM column, 2=control in ARM column, can be ignored, just load ARM</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment Arm Code</rdfs:label>
     </owl:Class>
     
 
@@ -1436,7 +934,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000092 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000092">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000205"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ARM</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment Arm</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -1445,6 +943,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">arm</obo:GATES_0000006>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See ARMCD variable</obo:GATES_0000008>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">case=1 in ARMCD column, control=2 in ARMCD column</obo:GATES_0000012>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment Arm</rdfs:label>
     </owl:Class>
     
@@ -1453,7 +952,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000093 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000093">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000205"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CASEID</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject ID of matched case</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1461,25 +960,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">caseid</obo:GATES_0000005>
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">caseid</obo:GATES_0000006>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">For case control studies</obo:GATES_0000010>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value is same as SUBJID column when ARM=&quot;case&quot;, when ARM=&quot;control&quot;, value is subject id of corresponding case.</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject ID of matched case</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000094 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000094">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FEEDINGN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Feeding practice (numeric)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">feedingn</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">feedingn</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS-1: 1 = Exclusively breast fed , 10 = Breast feeding,  90 = Unknown, GEMS-1A: 2 = Exclusively formula fed , 10 = Breast feeding, NA = empty</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">available values, 1,10,90, for GEMS-1 and 2,10, NA for GEMS-1A, human readable text in FEEDING column, this column can be ignored.</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Feeding practice (numeric)</rdfs:label>
     </owl:Class>
     
 
@@ -1487,7 +970,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000095 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000095">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FEEDING</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Feeding practice</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -1496,6 +979,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">feeding</obo:GATES_0000006>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See FEEDINGN variable</obo:GATES_0000008>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">available values, &apos;Exclusively breast fed &apos; (1in FEEDINGN column), &apos;Exclusively formula&apos; fed  (2 in FEEDINGN column), &apos;Breast feeding&apos; (10 in FEEDINGN column), Unknown (90 in FEEDINGN column)</obo:GATES_0000012>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Feeding practice</rdfs:label>
     </owl:Class>
     
@@ -1504,7 +988,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000096">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000206"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDTH</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age on day of death (days)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1513,24 +997,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedth</obo:GATES_0000006>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedth</obo:GATES_0000007>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of death - Date of birth + 1</obo:GATES_0000010>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age on day of death (days)</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000097 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000097">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RESPRELN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respondent&apos;s relationship to child (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000004>
-        <obo:GATES_0000005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">respreln</obo:GATES_0000005>
-        <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">respreln</obo:GATES_0000006>
-        <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = Mother , 2 = Father,  3 = Grandmother , 4 = Grandfather , 5 = Sibling , 9 = Other</obo:GATES_0000008>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">available values, 1,2,3,4,5,9, human readable text in RESPREL column, this column can be ignored.</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respondent&apos;s relationship to child (num)</rdfs:label>
     </owl:Class>
     
 
@@ -1538,7 +1006,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000098 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000098">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000020"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RESPREL</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respondent&apos;s relationship to child</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -1547,37 +1015,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">resprel</obo:GATES_0000006>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See RESPRELN variable</obo:GATES_0000008>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = Mother , 2 = Father,  3 = Grandmother,  4 = Grandfather,  5 = Sibling,  9 = Other</obo:GATES_0000012>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respondent&apos;s relationship to child</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000099 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000099">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SUBJIDO</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Original Subject ID</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">subjido</obo:GATES_0000007>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Original Subject ID</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000100 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000100">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RACEN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Race (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">racen</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3 = Black, 5 = White, 7 = Other race category, or NA = &apos;&apos;</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column racen and race refer to same information, racen is number, race is char, the mapping shown in MAL-ED Codes</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Race (num)</rdfs:label>
     </owl:Class>
     
 
@@ -1585,7 +1024,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000101 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000101">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RACE</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Race</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
@@ -1593,6 +1032,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">race</obo:GATES_0000007>
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See RACEN variable</obo:GATES_0000008>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Available values are: Black, White, or Other race category</obo:GATES_0000009>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Race</rdfs:label>
     </owl:Class>
     
@@ -1601,13 +1041,14 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000102 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000102">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000207"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BIRTHWT</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth weight (gm)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">birthwt</obo:GATES_0000007>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Well-documented birth weight</obo:GATES_0000009>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth weight (gm)</rdfs:label>
     </owl:Class>
     
@@ -1616,12 +1057,13 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000103 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000103">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000207"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BIRTHLEN</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth length (cm)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">birthlen</obo:GATES_0000007>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth length (cm)</rdfs:label>
     </owl:Class>
     
@@ -1630,12 +1072,13 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000104 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000104">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000207"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BIRTHHC</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth head circumference (cm)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">birthhc</obo:GATES_0000007>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth head circumference (cm)</rdfs:label>
     </owl:Class>
     
@@ -1644,7 +1087,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000105 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000105">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000206"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DEAD</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child is dead</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1653,6 +1096,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1</obo:GATES_0000008>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10012735</obo:GATES_0000009>
         <obo:GATES_0000010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">should be, 0=No, 1=Yes</obo:GATES_0000010>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child is dead</rdfs:label>
     </owl:Class>
     
@@ -1661,7 +1105,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000106 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000106">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000208"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IMMBCG</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child received BCG vaccine?</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1669,6 +1113,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">immbcg</obo:GATES_0000007>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1</obo:GATES_0000009>
         <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes</obo:GATES_0000011>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child received BCG vaccine?</rdfs:label>
     </owl:Class>
     
@@ -1677,7 +1122,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000107 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000107">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000025"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000208"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IMMOPV</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child received OPV vaccine?</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
@@ -1686,21 +1131,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1</obo:GATES_0000009>
         <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10018836 (provided in the data dictionary, might be typo)</obo:GATES_0000011>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes</obo:GATES_0000012>
+        <obo:GATES_0000012>data of &apos;SUBJ&apos; (Subject level Data)</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child received OPV vaccine?</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000108 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000108">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000016"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-DAILY</rdfs:label>
     </owl:Class>
     
 
@@ -1708,13 +1140,14 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000109 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000109">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000016"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000203"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEMOS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (months)</obo:GATES_0000002>
         <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
         <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
         <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEMOS = AGEDAYS/(365.25/12).  Recalculated even if AGEMOS is already given.</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (months)-DAILY</rdfs:label>
+        <obo:GATES_0000012>Do we want to show age in both days or months?</obo:GATES_0000012>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">remove? - Age since birth at examination (months)-DAILY</rdfs:label>
     </owl:Class>
     
 
@@ -1781,162 +1214,6 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000114 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000114">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at time of test (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000007>
-        <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at time of test (days)-GF</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000115 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000115">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GFTESTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Finding Test Code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gftestcd</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">STMUCUS = Mucus in Stool</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is STMUCUS</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Finding Test Code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000116 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000116">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GFTEST</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Finding Test</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gftest</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See GFTESTCD variable</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is Mucus in Stool, may change general finding to finding of mucus in stool</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General Finding Test</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000117 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000117">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000017"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GFSTRESC</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Character result/finding in std fmt</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gfstresc</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No, Yes</obo:GATES_0000009>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Character result/finding in std fmt-GF</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000118 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000118">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LBTESTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lab test code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbtestcd</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGP = Alpha-1-Acid Glycoprotein FERRITIN = Ferritin HGB = Hemoglobin I = Iodine PB = Lead RETINOL = Retinol STRF = Soluble Tranferrin Receptor ZN = Zinc</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column lbtestcd and lbtest refer to same information, lbtestch is code, lbtest is full name</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lab test code</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000119 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000119">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LBTEST</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lab test</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbtest</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See LBTESTCD variable</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column lbtestcd and lbtest refer to same information, lbtestch is code, lbtest is full name</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lab test</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000120 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000120">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000007>
-        <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-LB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000121 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000121">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LBSTRESN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbstresn</obo:GATES_0000007>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numerical result of lab test</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units-LT</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000122 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000122">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LBSTRESU</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbstresu</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g/dL,  mg/dL,  ng/mL , ug/L,  ug/dL,  ug/mL</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unit of numerical result of lab test</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard units-LB</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000123 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000123">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LBSPECN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type (num)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbspecn</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 = Blood, 2 = Plasma, 4 = Urine</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column lbspecn and lbspec both refer to sample type, lbspecn is num, lbspec is char, code list shown in MAL-ED Codes</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type (num)-LB</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000124 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000124">
@@ -1948,7 +1225,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbspec</obo:GATES_0000007>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See LBSPECN variable</obo:GATES_0000009>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column lbspecn and lbspec both refer to sample type, lbspecn is num, lbspec is char, code list shown in MAL-ED Codes</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen type-LB</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen used for test</rdfs:label>
     </owl:Class>
     
 
@@ -1980,7 +1257,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
         <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">smokamt</obo:GATES_0000007>
         <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 Cigarettes a Day , 10 Cigarettes a Day,  14 Cigarettes a Day , 15 Cigarettes a Day,  2 Cigarettes a Day,  20 Cigarettes a Day,  24 Cigarettes a Day,  3 Cigarettes a Day,  4 Cigarettes a Day,  40 Cigarettes a Day,  50 Cigarettes a Day , 6 Cigarettes a Day , 9 Cigarettes a Day</obo:GATES_0000009>
         <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Values shown in MAL-ED codes, # &apos;Cigarettes a Day&apos;</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Smoking amount</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal smoking amount</rdfs:label>
     </owl:Class>
     
 
@@ -2076,89 +1353,13 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     
 
 
-    <!-- http://purl.obolibrary.org/obo/GATES_0000133 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000133">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">QSTESTCD</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question code</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">qstestcd</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BALYCOGR = Bayley Cognitive Raw - Raw Score , BALYECMR = Bayley Expressive Comm - Raw Score , BALYFMTR = Bayley Fine Motor - Raw Score , BALYGMTR = Bayley Gross Motor - Raw Score , BALYRLAE = Bayley Receptive Language - Age Equivalent , BALYSER = Bayley Social-Emotional - Raw</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column qstestcd and qstest refer to same thing. qstestcd is code, qstest is full name.</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question code-QS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000134 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000134">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">QSTEST</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question description</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">qstest</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">See QSTESTCD variable</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column qstestcd and qstest refer to same thing. qstestcd is code, qstest is full name.</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Question description-QS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000135 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000135">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">QSCAT</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Category of question</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">char</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">qscat</obo:GATES_0000007>
-        <obo:GATES_0000009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Scales Of Infant And Toddler Development</obo:GATES_0000009>
-        <obo:GATES_0000012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only value is &apos;Bayley Scales Of Infant And Toddler Development&apos;</obo:GATES_0000012>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Category of question</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000136 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000136">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AGEDAYS</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">agedays</obo:GATES_0000007>
-        <obo:GATES_0000011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age since birth at examination (days)-QS</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_0000137 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000137">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
-        <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">QSSTRESN</obo:GATES_0000001>
-        <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units</obo:GATES_0000002>
-        <obo:GATES_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num</obo:GATES_0000003>
-        <obo:GATES_0000004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000004>
-        <obo:GATES_0000007 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">qsstresn</obo:GATES_0000007>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Numeric result/finding in std units-QS</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/GATES_0000138 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000138">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infections and infestations</rdfs:label>
     </owl:Class>
     
@@ -2167,9 +1368,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000139 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000139">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gastrointestinal disorders</rdfs:label>
     </owl:Class>
     
@@ -2178,9 +1380,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000140 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000140">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Metabolism and nutrition disorders</rdfs:label>
     </owl:Class>
     
@@ -2189,9 +1392,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000141 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000141">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Injury, poisoning and procedural complications</rdfs:label>
     </owl:Class>
     
@@ -2200,9 +1404,12 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000142 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000142">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;
+
+The values of this variable in Column &apos;cedecod&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood and lymphatic system disorders</rdfs:label>
     </owl:Class>
     
@@ -2211,9 +1418,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000143 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000143">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">General disorders and administration site conditions</rdfs:label>
     </owl:Class>
     
@@ -2222,9 +1430,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000144 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000144">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Musculoskeletal and connective tissue disorders</rdfs:label>
     </owl:Class>
     
@@ -2233,9 +1442,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000145 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000145">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nervous system disorders</rdfs:label>
     </owl:Class>
     
@@ -2244,9 +1454,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000146 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000146">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin and subcutaneous tissue disorders</rdfs:label>
     </owl:Class>
     
@@ -2255,9 +1466,12 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000147 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000147">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;
+
+The values of this variable in Column &apos;cedecod&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Congenital, familial and genetic disorders</rdfs:label>
     </owl:Class>
     
@@ -2266,9 +1480,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000148 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000148">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory, thoracic and mediastinal disorders</rdfs:label>
     </owl:Class>
     
@@ -2277,9 +1492,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000149 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000149">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Immune system disorders</rdfs:label>
     </owl:Class>
     
@@ -2288,9 +1504,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000150 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000150">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Renal and urinary disorders</rdfs:label>
     </owl:Class>
     
@@ -2299,9 +1516,12 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000151 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000151">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000050"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000015"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">GEMS</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MedDRA term label</obo:GATES_0000002>
+        <obo:GATES_0000012>One value of Column &apos;cesoc&apos;
+
+The values of this variable in Column &apos;cedecod&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eye disorders</rdfs:label>
     </owl:Class>
     
@@ -2310,8 +1530,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000152 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000152">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lbtest</rdfs:label>
     </owl:Class>
     
@@ -2320,8 +1541,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000153 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000153">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha-1-Acid Glycoprotein</rdfs:label>
     </owl:Class>
     
@@ -2330,8 +1552,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000154 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000154">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ferritin</rdfs:label>
     </owl:Class>
     
@@ -2340,8 +1563,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000155 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000155">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soluble Tranferrin Receptor</rdfs:label>
     </owl:Class>
     
@@ -2350,8 +1574,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000156 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000156">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc</rdfs:label>
     </owl:Class>
     
@@ -2360,8 +1585,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000157 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000157">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Retinol</rdfs:label>
     </owl:Class>
     
@@ -2370,8 +1596,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000158 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000158">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iodine</rdfs:label>
     </owl:Class>
     
@@ -2380,8 +1607,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000159 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000159">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemoglobin</rdfs:label>
     </owl:Class>
     
@@ -2390,8 +1618,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000160 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000160">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000119"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000018"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;lbtest&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lead</rdfs:label>
     </owl:Class>
     
@@ -2400,8 +1629,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000161 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000161">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Cognitive Raw - Raw Score</rdfs:label>
     </owl:Class>
     
@@ -2410,8 +1641,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000162 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000162">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Expressive Comm - Raw Score</rdfs:label>
     </owl:Class>
     
@@ -2420,8 +1653,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000163 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000163">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Fine Motor - Raw Score</rdfs:label>
     </owl:Class>
     
@@ -2430,8 +1665,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000164 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000164">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Gross Motor - Raw Score</rdfs:label>
     </owl:Class>
     
@@ -2440,8 +1677,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000165 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000165">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Receptive Language - Age Equivalent</rdfs:label>
     </owl:Class>
     
@@ -2450,8 +1689,10 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000166 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000166">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000135"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000022"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED</obo:GATES_0000001>
+        <obo:GATES_0000012>One value of Column &apos;qstest&apos;
+Score in Column &apos;qsstresn&apos;</obo:GATES_0000012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bayley Social-Emotional - Raw</rdfs:label>
     </owl:Class>
     
@@ -2460,7 +1701,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000167 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000167">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ICEMR category</obo:GATES_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animal Information</rdfs:label>
@@ -2471,7 +1712,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000168 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000168">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ICEMR category</obo:GATES_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Education</rdfs:label>
@@ -2482,7 +1723,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000169">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ICEMR category</obo:GATES_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Facilities</rdfs:label>
@@ -2493,7 +1734,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000170 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000170">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
         <obo:GATES_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ICEMR category</obo:GATES_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hygiene</rdfs:label>
@@ -2504,9 +1745,9 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000171 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000171">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical Characteristics</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling physical characteristics</rdfs:label>
     </owl:Class>
     
 
@@ -2514,7 +1755,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     <!-- http://purl.obolibrary.org/obo/GATES_0000172 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000172">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000082"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000201"/>
         <obo:GATES_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ALL</obo:GATES_0000001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Socioeconomic factor</rdfs:label>
     </owl:Class>
@@ -2771,10 +2012,75 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
     
 
 
+    <!-- http://purl.obolibrary.org/obo/GATES_0000201 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000201">
+        <obo:GATES_0000012>This category contains data in SS.txt (Subject Socioeconomic Status). 
+Values in Column &apos;sstest&apos; are organized by aligning with ICEMR categories under this category.</obo:GATES_0000012>
+        <obo:GATES_0000204 xml:lang="en">Dwelling</obo:GATES_0000204>
+        <rdfs:label>Household</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000202 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000202">
+        <obo:GATES_0000204>Participant</obo:GATES_0000204>
+        <rdfs:label xml:lang="en">Child</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000203 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000203">
+        <rdfs:label xml:lang="en">Visit</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000205 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000205">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
+        <rdfs:label xml:lang="en">Participant of case study</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000206 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000206">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
+        <rdfs:label xml:lang="en">Death information</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000207 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000207">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
+        <rdfs:label xml:lang="en">Birth information</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GATES_0000208 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GATES_0000208">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000202"/>
+        <rdfs:label xml:lang="en">Vaccination information</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://webprotege.stanford.edu/RBCWY885d1NJWCNkCQZuA1p -->
 
     <owl:Class rdf:about="http://webprotege.stanford.edu/RBCWY885d1NJWCNkCQZuA1p">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000056"/>
+        <obo:GATES_0000012>The values of this variable is in the Column &apos;mborres&apos;</obo:GATES_0000012>
         <rdfs:label>Enteropathic E coli</rdfs:label>
     </owl:Class>
     
@@ -2784,6 +2090,7 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
 
     <owl:Class rdf:about="http://webprotege.stanford.edu/RCtol64d5WjFh9TrHMmz89T">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000056"/>
+        <obo:GATES_0000012>The values of this variable is in the Column &apos;mborres&apos;</obo:GATES_0000012>
         <rdfs:label>E Coli PCR</rdfs:label>
     </owl:Class>
     
@@ -2793,7 +2100,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
 
     <owl:Class rdf:about="http://webprotege.stanford.edu/RIHo1oG9IQoaqPGoJquJTD">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000056"/>
-        <rdfs:label>negative result</rdfs:label>
+        <obo:GATES_0000012>The values of this variables are distinct values in Column &apos;mbtest&apos;.</obo:GATES_0000012>
+        <rdfs:label>Microorganism negative</rdfs:label>
     </owl:Class>
     
 
@@ -2802,7 +2110,8 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
 
     <owl:Class rdf:about="http://webprotege.stanford.edu/RjVkAMfjWbyH5fQOvvI2eA">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GATES_0000056"/>
-        <rdfs:label>positive result</rdfs:label>
+        <obo:GATES_0000012>The values of this variables are distinct values in Column &apos;mbtest&apos;.</obo:GATES_0000012>
+        <rdfs:label>microorganism positive</rdfs:label>
     </owl:Class>
     
 
@@ -2822,5 +2131,5 @@ MAL-ED: only apply to INCTOT (Total family income), shall combine it with ssstre
 
 
 
-<!-- Generated by the OWL API (version 4.3.1) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
 
