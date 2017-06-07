@@ -69,7 +69,7 @@ sub munge {
 	my $sample = $1;
 	my $strand = $2;
 #	print Dumper "sample (deseqanalysis.pm) is $sample\n\n\n";
-	if ($sample =~ /^$reference/) { 
+	if ($sample =~ /^$reference$/) { 
 	    if ($strand =~ /secondstrand/) {
 		$refSecondStrand = $d;
 		my $sample2 = $sample."SecondStrand";
@@ -84,7 +84,7 @@ sub munge {
 	    print Dumper "sample is $sample ref_sample_name is $ref_sample_name\n";
 #	    push @inputs, $sample;
 	}
-	elsif ($sample =~ /^$comparator/) {
+	elsif ($sample =~ /^$comparator$/) {
 	    if ($strand =~ /secondstrand/) {
 		$compSecondStrand = $d;
 		my $sample2 = $sample."SecondStrand";
@@ -160,10 +160,11 @@ sub runDegseq {
    $fileName =~ s/ /_/g;
     $self->setFileNames([$fileName]);    
     $self->setNames([$sampleName]);
-    my $tempOut = $mainDirectory."DegOut";
+    my $tempOut = $mainDirectory."\/DegOut";
     &runCmd("mkdir $tempOut");
     &runCmd("DEGseq.r $ref $comp $tempOut $reference $comparator");
     print Dumper 'command is ';
+    print Dumper "DEGseq.r $ref $comp $tempOut $reference $comparator\n\n\n";
     print Dumpler $ref;
     print Dumper $comp;
     print Dumper $tempOut;
