@@ -761,4 +761,37 @@ GRANT execute ON apidb.is_number TO gus_w;
 
 -------------------------------------------------------------------------------
 
+CREATE OR REPLACE FUNCTION apidb.is_date (p_val VARCHAR2)
+   RETURN NUMBER
+IS
+v_val   DATE;
+BEGIN
+   BEGIN
+      -- Dates must have the format mm/dd/yyyy, with a four-digit year
+      -- and one- or two-digit month and day.
+      IF NOT REGEXP_LIKE(p_val, '^\d\d?/\d\d?/\d\d\d\d$')
+      THEN
+         RETURN 0;
+      END IF;
+
+      SELECT TO_DATE(p_val, 'mm/dd/yyyy')
+        INTO v_val
+        FROM DUAL;
+
+      RETURN 1;
+   EXCEPTION
+      WHEN OTHERS
+      THEN
+         RETURN 0;
+   END;
+END;
+/
+
+show errors;
+
+GRANT execute ON apidb.is_date TO gus_r;
+GRANT execute ON apidb.is_date TO gus_w;
+
+-------------------------------------------------------------------------------
+
 exit
