@@ -761,20 +761,21 @@ GRANT execute ON apidb.is_number TO gus_w;
 
 -------------------------------------------------------------------------------
 
+-- is the given string a valid date with the format 'yyyy-mm-dd'?
 CREATE OR REPLACE FUNCTION apidb.is_date (p_val VARCHAR2)
    RETURN NUMBER
 IS
 v_val   DATE;
 BEGIN
    BEGIN
-      -- Dates must have the format mm/dd/yyyy, with a four-digit year
+      -- Dates must have the format yyyy-mm-dd, with a four-digit year
       -- and one- or two-digit month and day.
-      IF NOT REGEXP_LIKE(p_val, '^\d\d?/\d\d?/\d\d\d\d$')
+      IF NOT REGEXP_LIKE(p_val, '^\d\d\d\d-\d\d?-\d\d?$')
       THEN
          RETURN 0;
       END IF;
 
-      SELECT TO_DATE(p_val, 'mm/dd/yyyy')
+      SELECT TO_DATE(p_val, 'yyyy-mm-dd')
         INTO v_val
         FROM DUAL;
 
@@ -791,6 +792,26 @@ show errors;
 
 GRANT execute ON apidb.is_date TO gus_r;
 GRANT execute ON apidb.is_date TO gus_w;
+
+-------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION apidb.parse_date (p_val VARCHAR2)
+   RETURN date
+IS
+v_val   DATE;
+BEGIN
+   SELECT TO_DATE(p_val, 'yyyy-mm-dd')
+     INTO v_val
+     FROM DUAL;
+
+   RETURN v_val;
+END;
+/
+
+show errors;
+
+GRANT execute ON apidb.parse_date TO gus_r;
+GRANT execute ON apidb.parse_date TO gus_w;
 
 -------------------------------------------------------------------------------
 
