@@ -17,12 +17,14 @@ use CBIL::Util::PropertySet;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer);
+my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $optionalTaxonId, $optionalFunctAnnot);
 
 &GetOptions('help|h' => \$help,
             'organismAbbrev=s' => \$organismAbbrev,
             'extDbName=s' => \$extDbName,
             'extDbRlsVer=s' => \$extDbRlsVer,
+            'optionalTaxonId=s' => \$optionalTaxonId,
+            'optionalFunctAnnot=s' => \$optionalFunctAnnot,
            );
 
 &usage() if($help);
@@ -69,8 +71,36 @@ foreach my $i (0..$#$seqsInfoRef) {
   }
 }
 
+## which functional annotation that want to output
+my (%functAnnot, $geneNameRef, $geneSynonymRef, $transECRef, $transGORef, $transNoteRef, $genePmidRef);
+
+my @functAnnots = split(/\,/, $optionalFunctAnnot);
+foreach my $i (0..$#functAnnots) {
+  if ($functAnnots[$i] =~ /genename/i) {
+    $functAnnot{'geneName'} = 1;
+    $geneNameRef = getGeneNames ($dbh, $extDbRlsId);
+  } elsif ($functAnnots[$i] =~ /synonym/i) {
+    $functAnnot{'synonym'} =1;
+    $geneSynonymRef = getGeneSynonyms ($dbh, $extDbRlsId);
+  } elsif ($functAnnots[$i] =~ /ec/i) {
+    $functAnnot{'EC'} =1;
+    $transECRef = getTransECs ($dbh, $extDbRlsId);
+  } elsif ($functAnnots[$i] =~ /go/i) {
+    $functAnnot{'GO'} =1;
+    $transGORef = getTransGOs ($dbh, $extDbRlsId);
+  } elsif ($functAnnots[$i] =~ /note/i) {
+    $functAnnot{'note'} =1;
+    $transNoteRef = getTransNotes ($dbh, $extDbRlsId);
+  } elsif ($functAnnots[$i] =~ /pmid/i) {
+    $functAnnot{'pmid'} =1;
+    $genePmidRef = getGeneAndTransPmids ($dbh, $extDbRlsId);
+  }
+}
+
+
 ## for each sequence
 foreach my $k (sort keys %naSeqIds) {
+#  if ($k eq "KB909916") {
 
   ## print the sequence file
   my $faFile = $k.".fsa";
@@ -80,6 +110,7 @@ foreach my $k (sort keys %naSeqIds) {
 where t.taxon_id=tn.taxon_id and t.taxon_id=$taxonIds{$k}";
   my $organismRef = readFromDatabase($dbh, $sqlOrganism);
   my ($ncbiTaxId, $organism) = split(/\t/, $organismRef->[0]);
+  $ncbiTaxId = $optionalTaxonId if ($optionalTaxonId);
 
   $defline .= " [organism=$organism]" if ($organism);
   $defline .= " [chromosome=$sChrs{$k}]" if ($sChrs{$k});
@@ -120,8 +151,6 @@ and gf.external_database_release_id=$extDbRlsId order by nl.start_min
     if ($gType eq 'mRNA') {
 
       ## get the spliced na sequence
-#      my $sqlSplicedNaSeq = "select sequence from DOTS.splicednasequence where na_sequence_id in (
-#select na_sequence_id from dots.transcript where parent_id=$gNaFeatureId)";
       my $sqlSplicedNaSeq = "select t.SOURCE_ID, t.na_feature_id, sns.sequence 
 from dots.transcript t, DOTS.splicednasequence sns 
 where t.na_sequence_id = sns.NA_SEQUENCE_ID and t.PARENT_ID=$gNaFeatureId
@@ -162,8 +191,11 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
     ($gStart, $gEnd) = addLocPrefix($gStrand, $gStart, $gEnd, $prefix5{$gNaFeatureId}, $prefix3{$gNaFeatureId});
 
     ($gStrand != 1) ? print $ofh "$gStart\t$gEnd\tgene\t\t\n" : print $ofh "$gEnd\t$gStart\tgene\t\t\n";
-    #print $ofh "\t\t\tlocus_tag\t$gSourceId\n";
     printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId");
+
+    ## print functional annotation data
+    printGeneNameTbl ($ofh, $gSourceId, $geneNameRef) if ($functAnnot{'geneName'});
+    printSynonymTbl ($ofh, $gSourceId, $geneSynonymRef) if ($functAnnot{'synonym'});
 
 
     ## FOR TRANSCRIPT
@@ -179,7 +211,7 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
       ## get product info
       my $sqlProduct = "select product from ApiDB.TranscriptProduct where na_feature_id=$tNaFeatureId";
       my $productRef = readFromDatabase($dbh, $sqlProduct);
-      my $product = $productRef->[0];
+      my $product = $productRef->[0];  ## need to make an array in case there are more than one product
 
       ## get the transcript position from coding_start and coding_end in dots.aaFeatureExon table
       my $sqlExonLocRef = "select rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END
@@ -220,8 +252,8 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	} else {
 	  ($gStrand != 1) ? print $ofh "$tStart\t$tEnd\t\t\t\n" : print $ofh "$tEnd\t$tStart\t\t\t\n";
 	}
-	#print $ofh "\t\t\tlocus_tag\t$gSourceId\n" if ($i == $#$exonLocRef);
 	printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId") if ($i == $#$exonLocRef);
+
       }
 
       if ($gType =~ /mRNA/) {
@@ -247,6 +279,12 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  ## need to print condon_start if $prefix5
 	  #print $ofh "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
 	  printGenbankTagInfo ($ofh, "codon_start", $codonStart) if ($prefix5{$tNaFeatureId});
+
+	  ## print functional annotation data for transcript
+	  printEcTbl ($ofh, $tSourceId, $transECRef) if ($functAnnot{'EC'});
+	  printGoTbl ($ofh, $tSourceId, $transGORef) if ($functAnnot{'GO'});
+	  printPmidTbl ($ofh, $gSourceId, $tSourceId, $genePmidRef) if ($functAnnot{'pmid'});
+	  printNoteTbl ($ofh, $tSourceId, $transNoteRef) if ($functAnnot{'note'});
 
 	  ## add protein sequence if mRNA
 	  my $sqlProteinSeq = "select sequence from DOTS.translatedaasequence where aa_sequence_id in
@@ -303,10 +341,161 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
   }
   close $ofh;
   print STDERR "done $k\n";
+#}
 } ## end of foreach sequence
 
-
 #####################
+sub getGeneNames {
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %geneNameSub;
+  my $sqlSub = "
+select gf.SOURCE_ID, gfn.NAME from ApiDB.GeneFeatureName gfn, dots.genefeature gf
+where gf.NA_FEATURE_ID=gfn.NA_FEATURE_ID and gfn.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $name) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$geneNameSub{$sourceId}},$name) if ($sourceId && $name );
+    #print STDERR "In getGeneNames, $sourceId, $name##\n" if ($sourceId eq "NBO_1009g0003");
+  }
+  return \%geneNameSub;
+}
+
+sub getGeneSynonyms {
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %geneSynonymSub;
+  my $edName = $organismAbbrev."_dbxref_%_synonym_RSRC";
+  my $sqlSub = "
+select gf.SOURCE_ID, df.PRIMARY_IDENTIFIER 
+from DoTS.DbRefNAFeature dnf, SRes.DbRef df, dots.genefeature gf, SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr 
+where gf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID 
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID and ed.name like '$edName'
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$geneSynonymSub{$sourceId}}, $value) if ($sourceId && $value);
+    #print STDERR "In getGeneNames, $sourceId, $name##\n" if ($sourceId eq "TGME49_217560");
+  }
+  return \%geneSynonymSub;
+}
+
+sub getTransECs {
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %transECSub;
+  my $sqlSub = "
+select t.SOURCE_ID, ec.EC_NUMBER from DoTS.AASequenceEnzymeClass aec, SRES.ENZYMECLASS ec, 
+DOTS.TRANSLATEDAASEQUENCE tas, DOTS.TRANSLATEDAAFEATURE taf, DOTS.TRANSCRIPT t
+where aec.ENZYME_CLASS_ID=ec.ENZYME_CLASS_ID and aec.AA_SEQUENCE_ID=tas.AA_SEQUENCE_ID 
+and tas.AA_SEQUENCE_ID=taf.AA_SEQUENCE_ID and taf.NA_FEATURE_ID=t.NA_FEATURE_ID
+and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$transECSub{$sourceId}}, $value) if ($sourceId && $value);
+    #print STDERR "In getTransECs, $sourceId, $value##\n" if ($sourceId eq "NBO_1009g0003");
+  }
+  return \%transECSub;
+}
+
+sub getTransNotes {
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %transNoteSub;
+  my $sqlSub = "
+select t.SOURCE_ID, nfc.COMMENT_STRING from DOTS.NAFEATURECOMMENT nfc, DOTS.TRANSCRIPT t
+where t.NA_FEATURE_ID=nfc.NA_FEATURE_ID and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$transNoteSub{$sourceId}}, $value) if ($sourceId && $value);
+  }
+  return \%transNoteSub;
+}
+
+sub getGeneAndTransPmids{  ## get pmid in both gene and transcript
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %genePmidSub;
+  my $edName = $organismAbbrev."_dbxref_pmid_%_RSRC";
+  my $sqlSub = "
+select t.SOURCE_ID, df.PRIMARY_IDENTIFIER
+from DoTS.DbRefNAFeature dnf, SRes.DbRef df, DOTS.TRANSCRIPT t, SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr
+where t.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+and ed.name like '$edName'
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$genePmidSub{$sourceId}}, $value) if ($sourceId && $value);
+  }
+
+  my $edName2 = $organismAbbrev."_dbxref_gene2PubmedFromNcbi_RSRC";
+  my $sqlSub2 = "
+select gf.SOURCE_ID, df.PRIMARY_IDENTIFIER 
+from DoTS.DbRefNAFeature dnf, SRes.DbRef df, dots.genefeature gf, SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr 
+where gf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID 
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID 
+and ed.name like '$edName2'
+";
+  my $sqlRefSub2 = readFromDatabase($dbhSub, $sqlSub2);
+  foreach my $i (0..$#$sqlRefSub2) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub2->[$i]);
+    push (@{$genePmidSub{$sourceId}}, $value) if ($sourceId && $value);
+  }
+  return \%genePmidSub;
+}
+
+sub printGeneNameTbl {
+  my ($fh, $sourceId, $geneNameRef) = @_;
+  foreach my $value (@{$geneNameRef->{$sourceId}}) {
+    printGenbankTagInfo ($fh, "gene", $value);
+  }
+  return 0;
+}
+
+sub printSynonymTbl {
+  my ($fh, $sourceId, $geneSynonymRef) = @_;
+  foreach my $value (@{$geneSynonymRef->{$sourceId}}) {
+    printGenbankTagInfo ($fh, "synonym", $value);
+  }
+  return 0;
+}
+
+sub printEcTbl {
+  my ($fh, $tId, $transECRef) = @_;
+  foreach my $value (@{$transECRef->{$tId}}) {
+    printGenbankTagInfo ($fh, "EC_number", $value);
+  }
+  print STDERR "printEcTbl, $tId, $transECRef->{$tId}[0]\n" if ($tId eq "TGME49_226010-t26_1");
+  return 0;
+}
+
+sub printPmidTbl {
+  my ($fh, $id, $tId, $genePmidRef) = @_;
+  foreach my $value (@{$genePmidRef->{$id}}) {  ## print these in gene
+    printGenbankTagInfo ($fh, "PMID", $value);
+  }
+  foreach my $value (@{$genePmidRef->{$tId}}) {  ## print these in transcript
+    printGenbankTagInfo ($fh, "PMID", $value);
+  }
+  return 0;
+}
+
+sub printGoTbl {
+  my ($fh, $feature, $value) = @_;
+  return 0;
+}
+
+sub printNoteTbl {
+  my ($fh, $tId, $transNoteRef) = @_;
+  foreach my $value (@{$transNoteRef->{$tId}}) {
+    printGenbankTagInfo ($fh, "Note", $value);
+  }
+  return 0;
+}
+
 sub printGenbankTagInfo {
   my ($fh, $feature, $value) = @_;
   ($value) ? print $fh "\t\t\t$feature\t$value\n" : print $fh "\t\t\t$feature\n";
@@ -352,5 +541,8 @@ where
   --organismAbbrev: the organism Abbrev in the table apidb.organism
   --extDbName: the external database name for loading genome and annoation
   --extDbRlsVer: the external database release version for loading genome and annotation
+  --optionalTaxonId: only required in case the taxonId is not available in ncbi Taxonomy
+  --optionalFunctAnnot: comma delimited functional annotation that want to be included in the output file
+                        for example, 'geneName, synonym, GO, EC'
 ";
 }
