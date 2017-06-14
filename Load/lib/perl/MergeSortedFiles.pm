@@ -97,7 +97,7 @@ sub new {
   my ($file2Line, $file2LineAsArray) = $self->readNextLine($file2Fh);
 
   unless($file1Line || $file2Line) {
-    die "One of the 2 input files must contain at least one row.";
+    print STDERR "WARN:  Neither of the 2 input files contain any rows.\n";
   }
 
   $self->setFirstLine($file1Line);
