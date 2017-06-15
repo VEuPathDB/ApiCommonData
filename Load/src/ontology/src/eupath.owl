@@ -997,7 +997,7 @@
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of rooms</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of rooms in a dwelling</rdfs:label>
     </owl:Class>
     
 
@@ -1358,6 +1358,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <obo:IAO_0000118>human study subject</obo:IAO_0000118>
         <rdfs:label xml:lang="en">human participant under investigation</rdfs:label>
     </owl:Class>
     
@@ -1714,7 +1715,13 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a participant under investigation.</obo:IAO_0000115>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a human participant under investigation.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -4156,7 +4163,7 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000345">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about the highest level of schooling that a person has reached.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">education level information</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">educational level information</rdfs:label>
     </owl:Class>
     
 
