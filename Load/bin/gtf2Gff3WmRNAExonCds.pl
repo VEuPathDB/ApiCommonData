@@ -24,7 +24,7 @@ while (<IN>) {
     $geneIds{$1} = $gIdPrefix."_".$1;
     $transKey = $1."-".$2;
     $transIds{$transKey} = $geneIds{$1}.".".$2;
-    $transIds{$transKey} =~ s/\.(.+?)_transcript_/\./;
+    $transIds{$transKey} =~ s/_transcript_/\_/;
   } else {
     die "Can not find either gene_id or transcript_id at the line $lineCtr\n";
   }
@@ -40,7 +40,9 @@ foreach my $kk (sort keys %transIds) {
 }
 };
 
-my (%geneStarts, %geneEnds, %geneSeqId, %geneSource, %geneStrand, %ctrs);
+my (%geneStarts, %geneEnds, %geneSeqId, %geneSource, %geneStrand, %ctrs, 
+    %hasTransLine, %transStarts, %transEnds, %transSeqId, %transSource, %transStrand);
+
 open (INN, $input) || die "can not open input file to read.\n";
 while (<INN>) {
   chomp;
@@ -60,8 +62,17 @@ while (<INN>) {
     if ($elems[2] =~ /mRNA/) {
       $id = $transIds{$curTransKey};   ## the transcript ID 
       $parent  = $geneIds{$currentGeneId};   ## the gene ID
-      print STDERR "\$id = $id, \$parent = $parent\n";
+#      print STDERR "\$id = $id, \$parent = $parent\n";
 
+      $hasTransLine{$curTransKey} = 1;  ## assign if there is a transcript line in the file 
+    } else {
+      $ctrs{$curTransKey}{$elems[2]}++;
+      $id = $transIds{$curTransKey}.":".$elems[2].":".$ctrs{$curTransKey}{$elems[2]};
+      $parent = $transIds{$curTransKey};
+    }
+
+    ## grep gene and transcript info in the case there is no gene or transcript line in the annotation
+    if ($elems[2] =~ /exon/) {
       ## geneStart and geneEnd
       $geneStarts{$currentGeneId} = ($geneStarts{$currentGeneId}) ? 
 	getMin ($elems[3], $elems[4], $geneStarts{$currentGeneId}) : getMin($elems[3], $elems[4]);
@@ -73,10 +84,16 @@ while (<INN>) {
       $geneSource{$currentGeneId} = $elems[1];
       $geneStrand{$currentGeneId} = $elems[6];
 
-    } else {
-      $ctrs{$curTransKey}{$elems[2]}++;
-      $id = $transIds{$curTransKey}.":".$elems[2].":".$ctrs{$curTransKey}{$elems[2]};
-      $parent = $transIds{$curTransKey};
+      ## transStart and transEnd
+      $transStarts{$curTransKey} = ($transStarts{$curTransKey}) ? 
+	getMin ($elems[3], $elems[4], $transStarts{$curTransKey}) : getMin($elems[3], $elems[4]);
+      $transEnds{$curTransKey} = ($transEnds{$curTransKey}) ? 
+	getMax($elems[3], $elems[4], $transEnds{$curTransKey}) : getMax($elems[3], $elems[4]);
+
+      ## other trans info
+      $transSeqId{$curTransKey} = $elems[0];
+      $transSource{$curTransKey} = $elems[1];
+      $transStrand{$curTransKey} = $elems[6];
     }
 
     $elems[8] = "ID \"$id\"; Parent \"$parent\"; ".$elems[8];
@@ -100,6 +117,25 @@ foreach my $k (sort keys %geneIds) {
   $items[7] = ".";
   $items[8] = "ID \"$geneIds{$k}\";";
   &printGff3Column (\@items);
+}
+
+## print the transcript line if it is not in the file
+foreach my $k (sort keys %transIds) {
+  if (!$hasTransLine{$k}) {
+    my @items;
+    $items[0] = $transSeqId{$k};
+    $items[1] = $transSource{$k};
+    $items[2] = "mRNA";
+    $items[3] = $transStarts{$k};
+    $items[4] = $transEnds{$k};
+    $items[5] = "100";
+    $items[6] = $transStrand{$k};
+    $items[7] = ".";
+    my $key4gene = $k;
+    $key4gene =~ s/\-.+$//;
+    $items[8] = "ID \"$transIds{$k}\"; Parent \"$geneIds{$key4gene}\";";
+    &printGff3Column (\@items);
+  }
 }
 
 ##################
