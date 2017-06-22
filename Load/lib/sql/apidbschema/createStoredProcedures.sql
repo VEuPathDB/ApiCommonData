@@ -728,6 +728,10 @@ GRANT execute ON apidb.display_function TO gus_w;
 -------------------------------------------------------------------------------
 
 -- determine whether the value of a string can be converted to a number
+--
+-- remove any commas first (under the assumption they're American-style group separators,
+-- rather than European-style decimal points
+--
 -- return 0 or 1
 
 CREATE OR REPLACE FUNCTION apidb.is_number (p_val VARCHAR2)
@@ -741,7 +745,7 @@ BEGIN
          RETURN 0;
       END IF;
 
-      SELECT TO_NUMBER (p_val)
+      SELECT TO_NUMBER (REPLACE(p_val, ',', ''))
         INTO v_val
         FROM DUAL;
 
@@ -758,6 +762,33 @@ show errors;
 
 GRANT execute ON apidb.is_number TO gus_r;
 GRANT execute ON apidb.is_number TO gus_w;
+-------------------------------------------------------------------------------
+
+-- convert a string to a number
+--
+-- remove any commas first (under the assumption they're American-style group separators,
+-- rather than European-style decimal points
+--
+-- return the numeric value
+
+CREATE OR REPLACE FUNCTION apidb.parse_number (p_val VARCHAR2)
+   RETURN NUMBER
+IS
+v_val   NUMBER;
+BEGIN
+
+   SELECT TO_NUMBER (REPLACE(p_val, ',', ''))
+     INTO v_val
+     FROM DUAL;
+
+   RETURN v_val;
+END;
+/
+
+show errors;
+
+GRANT execute ON apidb.parse_number TO gus_r;
+GRANT execute ON apidb.parse_number TO gus_w;
 
 -------------------------------------------------------------------------------
 
