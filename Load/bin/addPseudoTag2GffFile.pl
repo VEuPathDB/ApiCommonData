@@ -1,4 +1,4 @@
-#!/usr/bin/perl5.8.0
+#!/usr/bin/perl
 
 ### usage: addPseudoTag2GffFile.pl whole_genome.gff.woPseudo internalStopCodonGeneList.txt > whole_genome.gff
 
