@@ -12,8 +12,9 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath_merged.owl">
         <rdfs:comment xml:lang="en">A subset of OBI contains all terms representing NIAID GSCID/BRC Project, Sample and Sequencing Assay Core Standards, This OBI view contains NIAID GSCID and BRC community preferred labels and field IDs assigned by NIAID metadata working group. The details of NIAID GSCID and BRC metadata standards are available on: http://www.niaid.nih.gov/labsandresources/resources/dmid/metadata/Pages/default.aspx.</rdfs:comment>
-        <owl:versionInfo>merged Eupath ontology of SVN Revision: 81532</owl:versionInfo>
+        <owl:versionInfo>Revision: 82512</owl:versionInfo>
         <rdfs:comment xml:lang="en">The view was generated from OBI release version 20150413 using ontoDog.</rdfs:comment>
+        <rdfs:comment>merged file generated on 2017-06-23</rdfs:comment>
     </owl:Ontology>
     
 
@@ -307,7 +308,11 @@ We also have the outstanding issue of how to aim different definitions to differ
         <obo:IAO_0000117 xml:lang="en">PERSON:Daniel Schober</obo:IAO_0000117>
         <obo:IAO_0000119 xml:lang="en">GROUP:OBI:&lt;http://purl.obolibrary.org/obo/obi&gt;</obo:IAO_0000119>
         <rdfs:isDefinedBy rdf:resource="http://purl.obolibrary.org/obo/iao.owl"/>
+        <rdfs:label>definition</rdfs:label>
         <rdfs:label xml:lang="en">definition</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition</rdfs:label>
+        <rdfs:label>textual definition</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">textual definition</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -4774,7 +4779,7 @@ resulting from the influence of human beings on nature.</obo:IAO_0000115>
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of rooms</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of rooms in a dwelling</rdfs:label>
     </owl:Class>
     
 
@@ -5135,6 +5140,7 @@ resulting from the influence of human beings on nature.</obo:IAO_0000115>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <obo:IAO_0000118>human study subject</obo:IAO_0000118>
         <rdfs:label xml:lang="en">human participant under investigation</rdfs:label>
     </owl:Class>
     
@@ -5491,7 +5497,13 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a participant under investigation.</obo:IAO_0000115>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000136"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a human participant under investigation.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
@@ -7933,7 +7945,7 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000345">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000030"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about the highest level of schooling that a person has reached.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">education level information</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">educational level information</rdfs:label>
     </owl:Class>
     
 
@@ -9434,6 +9446,7 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
         <obo:IAO_0000115>A region of the 16S rRNA gene that was PCR amplified and sequenced.</obo:IAO_0000115>
         <obo:IAO_0000117>Person: Daniel Beiting, Jie Zheng</obo:IAO_0000117>
         <dc:source>microbiome</dc:source>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</rdfs:comment>
         <rdfs:label xml:lang="en">16S rRNA gene region for sequencing</rdfs:label>
         <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
@@ -10291,6 +10304,16 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000578 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000578">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000032"/>
+        <obo:IAO_0000115>A measurement datum of vertical distance below local surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">vertical distance below a surface measurement datum</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000579 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000579">
@@ -10498,15 +10521,6 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000595">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/STATO_0000047"/>
         <rdfs:label xml:lang="en">number of child occupants in a dwelling</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000596 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/STATO_0000047"/>
-        <rdfs:label xml:lang="en">number of human occupants in a dwelling</rdfs:label>
     </owl:Class>
     
 
