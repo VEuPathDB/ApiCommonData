@@ -192,6 +192,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_00002297 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00002297">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
+        <obo:IAO_0000115>Environmental feature level includes geographic environmental features. Compared to biome, feature is a descriptor of the more local environment. Examples include: harbor, cliff, or lake. EnvO (v 2013-06-14) terms can be found via the link: www.environmentontology.org</obo:IAO_0000115>
+        <obo:MICRO_0000539>env_feature</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">environment (feature)</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/ENVO_00010483 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00010483">
@@ -229,6 +240,18 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000019 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000019">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
+        <obo:MICRO_0000539>number_residents_human</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># Residents in dwelling</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000087 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000087">
@@ -236,6 +259,21 @@
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household information</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000452 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000452">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The geographical origin of the sample as defined by the country or sea name followed by specific region name. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html), or the GAZ ontology (v 1.512)  (http://purl.bioontology.org/ontology/GAZ)</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
+        <common_name xml:lang="geneban">geo_loc_name</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_geo_loc_name</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location (country and/or sea,region)</rdfs:label>
     </owl:Class>
     
 
@@ -307,17 +345,12 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000542 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000578 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000542">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000578">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The geographical origin of the sample as defined by the country or sea name followed by specific region name. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html), or the GAZ ontology (v 1.512)  (http://purl.bioontology.org/ontology/GAZ)</obo:IAO_0000115>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
-        <common_name xml:lang="geneban">geo_loc_name</common_name>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_geo_loc_name</micro_ID>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location (country and/or sea,region)</rdfs:label>
+        <obo:IAO_0000115>depth is defined as the vertical distance below local surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly. Depth can be reported as an interval for subsurface samples</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">depth</rdfs:label>
     </owl:Class>
     
 
@@ -531,18 +564,6 @@
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of child occupants</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000596 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
-        <obo:MICRO_0000539>number_residents_human</obo:MICRO_0000539>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <term_type>variable</term_type>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of human occupants</rdfs:label>
     </owl:Class>
     
 
@@ -1308,6 +1329,15 @@
         <term_type>variable</term_type>
         <rdfs:comment>study name</rdfs:comment>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">title</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0001627 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:label xml:lang="en">country</rdfs:label>
     </owl:Class>
     
 
