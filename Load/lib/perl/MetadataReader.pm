@@ -4,6 +4,8 @@ use strict;
 
 use File::Basename;
 
+use Data::Dumper;
+
 sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
 sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
 
@@ -25,7 +27,18 @@ sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
 sub skipIfNoParent { return 0; }
 
 sub getDelimiter { 
-  return qr/,|\t/;
+  my ($self, $header) = @_;
+
+  if($header) {
+    if($header =~ /\t/) {
+      return qr/\t/;
+    }
+    else {
+      return qr/,/;
+    }
+  }
+
+  die "Must provide header row to determine the delimiter OR override this function";
 }
 
 sub new {
@@ -47,7 +60,7 @@ sub read {
 
   my $metadataFile = $self->getMetadataFile();
 
-  my $delimiter = $self->getDelimiter();
+
 
   my $colExcludes = $self->getColExcludes();
   my $rowExcludes = $self->getRowExcludes();
@@ -58,6 +71,8 @@ sub read {
 
   my $header = <FILE>;
   $header =~s/\n|\r//g;
+
+  my $delimiter = $self->getDelimiter($header);
 
   my @headers = split($delimiter, $header);
 
