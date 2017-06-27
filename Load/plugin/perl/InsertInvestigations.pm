@@ -785,7 +785,7 @@ sub checkOntologyTermsAndSetIds {
   
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
-where ot.name = ?
+where ot.source_id = ?
 and lower(ot.source_id) not like 'ncbitaxon%'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
