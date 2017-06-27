@@ -785,7 +785,7 @@ sub checkOntologyTermsAndSetIds {
   
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
-where (replace(ot.source_id, ':', '_') = ? OR ot.name = ?)
+where ot.name = ?
 and lower(ot.source_id) not like 'ncbitaxon%'
 UNION
 select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
@@ -807,7 +807,7 @@ and tn.name_class = 'scientific name'
     
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
-      $sh->execute($accessionOrName, $accessionOrName, $accessionOrName, $accessionOrName);
+      $sh->execute($accessionOrName, $accessionOrName, $accessionOrName);
       my $count=0;   
       my ($ontologyTermId, $ontologyTermName);
       while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
