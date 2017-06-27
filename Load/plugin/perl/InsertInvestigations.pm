@@ -113,6 +113,9 @@ my $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
+sub getIsReportMode { }
+
+# ----------------------------------------------------------------------
 
 sub new {
   my ($class) = @_;
@@ -134,6 +137,8 @@ sub run {
   my ($self) = @_;
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
+
+  my $isReportMode = $self->getIsReportMode();
 
   my @investigationFiles;
 
@@ -159,7 +164,7 @@ sub run {
       my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
       my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName;
 
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, $isReportMode);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
