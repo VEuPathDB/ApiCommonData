@@ -740,11 +740,6 @@ IS
 v_val   NUMBER;
 BEGIN
    BEGIN
-      IF p_val IS NULL OR TRIM (p_val) = ''
-      THEN
-         RETURN 0;
-      END IF;
-
       SELECT TO_NUMBER (REPLACE(p_val, ',', ''))
         INTO v_val
         FROM DUAL;
