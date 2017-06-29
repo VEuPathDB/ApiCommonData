@@ -43,12 +43,26 @@ while(<DATA>) {
 #data format projectName|workflowVersion|organism|buildNumber
 
 __DATA__
-PlasmoDB|26|PbergheiANKA|32
-PlasmoDB|26|PovalecurtisiGH01|32
-PlasmoDB|26|Pgallinaceum8A|32
-CryptoDB|29|ChominisTU502_2012|32
-PiroplasmaDB|29|BmicrotiRI|32
-TriTrypDB|29|TcruziSylvioX10-1|32
+FungiDB|29|AbrasiliensisCBS101740|33
+FungiDB|29|AfumigatusA1163|33
+FungiDB|29|AglaucusCBS516.65|33
+FungiDB|29|AluchuensisCBS106.47|33
+FungiDB|29|AsydowiiCBS593.65|33
+FungiDB|29|AtubingensisCBS134.48|33
+FungiDB|29|AversicolorCBS583.65|33
+FungiDB|29|AwentiiDTO134E9|33
+FungiDB|29|AzonataCBS506.65|33
+MicrosporidiaDB|29|NausubeliERTm2|33
+MicrosporidiaDB|29|NausubeliERTm6|33
+FungiDB|29|AaculeatusATCC16872|33
+FungiDB|29|AcarbonariusITEM5010|33
+#
+#PlasmoDB|26|PbergheiANKA|32
+#PlasmoDB|26|PovalecurtisiGH01|32
+#PlasmoDB|26|Pgallinaceum8A|32
+#CryptoDB|29|ChominisTU502_2012|32
+#PiroplasmaDB|29|BmicrotiRI|32
+#TriTrypDB|29|TcruziSylvioX10-1|32
 #
 #FungiDB|29|FgraminearumPH-1|30
 #ToxoDB|27|CcayetanensisCHN_HEN01|30
