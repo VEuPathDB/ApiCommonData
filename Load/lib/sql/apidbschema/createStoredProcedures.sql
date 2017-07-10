@@ -759,14 +759,14 @@ GRANT execute ON apidb.is_number TO gus_r;
 GRANT execute ON apidb.is_number TO gus_w;
 -------------------------------------------------------------------------------
 
--- convert a string to a number
+-- convert a string to a number, then if its absolute value is greater than 0.01,
+--    round to 2 places
 --
 -- remove any commas first (under the assumption they're American-style group separators,
 -- rather than European-style decimal points
 --
--- return the numeric value
 
-CREATE OR REPLACE FUNCTION apidb.parse_number (p_val VARCHAR2)
+CREATE OR REPLACE FUNCTION apidb.parse_and_round_number (p_val VARCHAR2)
    RETURN NUMBER
 IS
 v_val   NUMBER;
@@ -776,7 +776,7 @@ BEGIN
      INTO v_val
      FROM DUAL;
 
-   IF v_val >= 0.01
+   IF ABS(v_val) >= 0.01
    THEN
       RETURN ROUND(v_val, 2);
    END IF;
@@ -787,8 +787,8 @@ END;
 
 show errors;
 
-GRANT execute ON apidb.parse_number TO gus_r;
-GRANT execute ON apidb.parse_number TO gus_w;
+GRANT execute ON apidb.parse_and_round_number TO gus_r;
+GRANT execute ON apidb.parse_and_round_number TO gus_w;
 
 -------------------------------------------------------------------------------
 
