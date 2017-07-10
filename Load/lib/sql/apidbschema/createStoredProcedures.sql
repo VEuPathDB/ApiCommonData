@@ -776,6 +776,11 @@ BEGIN
      INTO v_val
      FROM DUAL;
 
+   IF v_val >= 0.01
+   THEN
+      RETURN ROUND(v_val, 2);
+   END IF;
+
    RETURN v_val;
 END;
 /
