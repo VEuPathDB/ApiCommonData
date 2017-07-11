@@ -375,7 +375,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000060 -->
 
     <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000060">
-        <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:domain rdf:resource="http://purl.obolibrary.org/obo/OBIB_0000029"/>
         <obo:IAO_0000115>A relation between a medication material and a disease or symptom that it may treat.</obo:IAO_0000115>
         <rdfs:label xml:lang="en">may treat</rdfs:label>
     </owl:ObjectProperty>
@@ -977,7 +977,7 @@
         <obo:IAO_0000119>PRISM</obo:IAO_0000119>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
         <dc:source>PRISM</dc:source>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lighting material</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">obsolete_lighting material</rdfs:label>
         <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
@@ -1106,9 +1106,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000032 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000032">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000416"/>
+        <obo:IAO_0000116>replaced by EFO_0004950: date of birth</obo:IAO_0000116>
         <oboInOwl:inSubset>ICEMR protein array</oboInOwl:inSubset>
-        <rdfs:label xml:lang="en">date of birth</rdfs:label>
+        <rdfs:label xml:lang="en">obsolete_date of birth</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -1431,23 +1432,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
-                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000056"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
         <obo:IAO_0000112>quinine used in malaria medication 
 blood used in transfusion for replacement blood lost during surgery or due to a serious injury.</obo:IAO_0000112>
         <obo:IAO_0000115>A material entity that is bearer of a medication role.</obo:IAO_0000115>
+        <obo:IAO_0000116>replaced by OBIB_0000029:medication material</obo:IAO_0000116>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
-        <rdfs:label xml:lang="en">medication material</rdfs:label>
+        <rdfs:label xml:lang="en">obsolete_medication material</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -1461,7 +1453,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
                 <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_12365"/>
             </owl:Restriction>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBIB_0000029"/>
         <obo:IAO_0000115>A medication material intended to prevent or treat malaria.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -1473,7 +1465,7 @@ blood used in transfusion for replacement blood lost during surgery or due to a 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000059 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000059">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBIB_0000029"/>
         <obo:IAO_0000115>A medication material intended to prevent or treat a disease other than malaria.</obo:IAO_0000115>
         <obo:IAO_0000117>Person:  Jie Zheng, Chris Stoeckert</obo:IAO_0000117>
         <obo:IAO_0000119>Penn Group</obo:IAO_0000119>
@@ -5650,10 +5642,11 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000498">
         <obo:IAO_0000115>A region of the 16S rRNA gene that was PCR amplified and sequenced.</obo:IAO_0000115>
+        <obo:IAO_0000116>replaced by: SO_0001000: rRNA_16S</obo:IAO_0000116>
         <obo:IAO_0000117>Person: Daniel Beiting, Jie Zheng</obo:IAO_0000117>
         <dc:source>microbiome</dc:source>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</rdfs:comment>
-        <rdfs:label xml:lang="en">16S rRNA gene region for sequencing</rdfs:label>
+        <rdfs:label xml:lang="en">obsolete_16S rRNA gene region for sequencing</rdfs:label>
         <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
@@ -6562,7 +6555,7 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBIB_0000029"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000087"/>
                         <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_33281"/>
@@ -6570,7 +6563,7 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBIB_0000029"/>
         <obo:IAO_0000115>A medication material that is used in the treatment and prevention of bacterial infections. It may either kill or inhibit the growth of bacteria.</obo:IAO_0000115>
         <obo:IAO_0000119>https://en.wikipedia.org/wiki/Antibiotics</obo:IAO_0000119>
         <rdfs:label xml:lang="en">antibiotics</rdfs:label>
@@ -7243,6 +7236,12 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBIB_0000029 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBIB_0000029"/>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0000011 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000011"/>
@@ -7839,6 +7838,9 @@ Term need for annotation NIH-10K experiment, treatment outcome</obo:IAO_0000116>
         <oboInOwl:inSubset>ICEMR protein array</oboInOwl:inSubset>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/UBERON_0009097">
+        <oboInOwl:inSubset>ICEMR protein array</oboInOwl:inSubset>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.ebi.ac.uk/efo/EFO_0004950">
         <oboInOwl:inSubset>ICEMR protein array</oboInOwl:inSubset>
     </rdf:Description>
 </rdf:RDF>
