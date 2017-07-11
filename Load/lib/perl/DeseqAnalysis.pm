@@ -1,7 +1,8 @@
- package ApiCommonData::Load::DeseqAnalysis;
+package ApiCommonData::Load::DeseqAnalysis;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 use CBIL::Util::Utils;
 use strict;
+use Data::Dumper;
 #uses DESeq.r script 
 
 sub getSampleName {$_[0]->{sampleName}}
@@ -51,7 +52,9 @@ sub munge {
     my @inputs;
     
     my %samplesHash = %{$samplesHashref};
-
+    
+    print Dumper %samplesHash;
+    
     opendir(DIR, $mainDirectory);
     my @ds = readdir(DIR);
     my %ref;
@@ -71,68 +74,98 @@ sub munge {
 #	my $compKey = $comparator;
 #	$compKey =~ s/ /_/g;
 #	print " comp to check is ${compCheck}";
-	if (($refCheck =~ /$compCheck/) || ($compCheck =~ /$refCheck/)) { 
-	    if ($refCheck eq $compCheck) {
-		print "WARNING reference and comparator matched strings are the same\n";
-	    }
-	    else {
-		if ($refCheck =~ /$compCheck/) {
-		    #ref is longer 
-		    if ($sample =~ /^$refCheck/) {
-			$ref{$sample} = $d;
-			push @inputs, $sample;
-#			print  "putting $d as the reference with $sample as reference\n";
-			
-		    }
-		    elsif (($sample =~ /^$compCheck/) && ($sample !~ /^$refCheck/)) {
-			$comp{$sample} = $d;
-			push @inputs, $sample;
-#			print  "putting $d as the comparator with $sample as comparator\n";
-		    }
-		    else {
-			print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
-		    }
-		}
-		elsif ($compCheck =~ /$refCheck/) {
-		    #comp is longer 
-		   
-                    if ($sample =~ /^$compCheck/) {
-                        $comp{$sample} = $d;
-                        push @inputs, $sample;
-#                        print  "putting $d as the comparator with $sample as comparator\n";
-			
-                    }
-                    elsif (($sample =~ /^$refCheck/) && ($sample !~ /^$compCheck/)) {
-                        $ref{$sample} = $d;
-                        push @inputs, $sample;
-#                        print  "putting $d as the reference  with $sample as reference\n";
-                    }
-                    else {
-                        print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the compara\
-tor\n";
-                    }
-		}
-		else {
-		    print "Something is wrong, the reference and comparator are not being determined. look at DeseqAnalysis.pm line 116";
-		}
-	    }
-	}
-	else {
-	    if ($sample =~ /^$refCheck/) {
+#	print "reference is $reference";
+#	print "comparator is $comparator";
+	
+	my @referenceArray = @{$samplesHash{$reference}};
+	my @comparatorArray= @{$samplesHash{$comparator}};
+	
+	foreach my $element(@referenceArray) {
+	    if ($sample eq $element) {
 		$ref{$sample} = $d;
 		push @inputs, $sample;
-#		print  "putting $d as the reference with $sample as reference\n";
-		
-	    }
-	    elsif ($sample =~ /^$compCheck/) {
-		$comp{$sample} = $d;
-		push @inputs, $sample;
-#		print  "putting $d as the comparator with $sample as comparator\n";
+		print  "putting $d as the reference with $sample as reference\n";
 	    }
 	    else {
-		print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+		next;
 	    }
 	}
+	foreach my $element(@comparatorArray) {
+	    if ($sample eq $element) {
+		$comp{$sample} = $d;
+		push @inputs, $sample;
+		print  "putting $d as the comparator with $sample as comparator\n";
+	    }
+	    else {
+		next;
+	    }
+	}
+	
+
+	
+# 	if (($refCheck =~ /$compCheck/) || ($compCheck =~ /$refCheck/)) { 
+# 	    if ($refCheck eq $compCheck) {
+	
+# 		die "WARNING reference and comparator matched strings are the same\n";
+# 	    }
+# 	    else {
+# 		if ($refCheck =~ /$compCheck/) {
+# 		    #ref is longer 
+# 		    if ($sample =~ /^$refCheck/) {
+# 			$ref{$sample} = $d;
+# 			push @inputs, $sample;
+# #			print  "putting $d as the reference with $sample as reference\n";
+			
+# 		    }
+# 		    elsif (($sample =~ /^$compCheck/) && ($sample !~ /^$refCheck/)) {
+# 			$comp{$sample} = $d;
+# 			push @inputs, $sample;
+# #			print  "putting $d as the comparator with $sample as comparator\n";
+# 		    }
+# 		    else {
+# 			print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+# 		    }
+# 		}
+# 		elsif ($compCheck =~ /$refCheck/) {
+# 		    #comp is longer 
+		   
+#                     if ($sample =~ /^$compCheck/) {
+#                         $comp{$sample} = $d;
+#                         push @inputs, $sample;
+# #                        print  "putting $d as the comparator with $sample as comparator\n";
+			
+#                     }
+#                     elsif (($sample =~ /^$refCheck/) && ($sample !~ /^$compCheck/)) {
+#                         $ref{$sample} = $d;
+#                         push @inputs, $sample;
+# #                        print  "putting $d as the reference  with $sample as reference\n";
+#                     }
+#                     else {
+#                         print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the compara\
+# tor\n";
+#                     }
+# 		}
+# 		else {
+# 		    print "Something is wrong, the reference and comparator are not being determined. look at DeseqAnalysis.pm line 116";
+# 		}
+# 	    }
+# 	}
+# 	else {
+# 	    if ($sample =~ /^$refCheck/) {
+# 		$ref{$sample} = $d;
+# 		push @inputs, $sample;
+# #		print  "putting $d as the reference with $sample as reference\n";
+		
+# 	    }
+# 	    elsif ($sample =~ /^$compCheck/) {
+# 		$comp{$sample} = $d;
+# 		push @inputs, $sample;
+# #		print  "putting $d as the comparator with $sample as comparator\n";
+# 	    }
+# 	    else {
+# 		print "sample:: $sample ::  in deseqanalysis.pm sub munge creating ref and comp hashes doesnt match the reference or the comparator\n";
+# 	    }
+# 	}
     }	
     foreach my $rep (keys %ref) {
 	print $dataframe $rep."\t".$ref{$rep}."\treference\n";
