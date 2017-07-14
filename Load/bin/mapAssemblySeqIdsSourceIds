@@ -27,15 +27,17 @@ use GUS::Supported::GusConfig;
 use File::Temp qw/ tempfile /;
 use Bio::SeqIO;
 use Data::Dumper;
-my ($verbose,$queryFile,$blatFile,$gusConfigFile);
+my ($verbose,$queryFile,$blatFile,$mappedQueryFile,$mappedBlatFile,$gusConfigFile);
 &GetOptions("verbose!"=> \$verbose,
             "queryFile=s"=> \$queryFile,
             "blatFile=s"=> \$blatFile,
+	    "queryOut=s" =>\$mappedQueryFile,
+	    "blatOut=s" =>\$mappedBlatFile,
             "gusConfigFile=s" => \$gusConfigFile);
-
-
-die "usage: mapAssemblySeqIdsSourceIds --queryFile --blatFile --verbose --gusConfigFile [\$GUS_CONFIG_FILE]\n"
-unless ($queryFile, $blatFile);
+if (!defined($queryFile) ||!defined($blatFile) || !defined($mappedQueryFile)  || !defined($mappedBlatFile) || !(-e $queryFile) || !(-e $blatFile)) {
+    die "usage: mapAssemblySeqIdsSourceIds --queryFile --blatFile --queryOut --blatOut --verbose --gusConfigFile [\$GUS_CONFIG_FILE]\n"
+}
+#unless ($queryFile, $blatFile);
 
 print STDERR "Establishing dbi login\n" if $verbose;
 
@@ -53,8 +55,8 @@ my $dbh = $db->getQueryHandle();
 #print STDERR "idSQL: $idSQL\n" if $verbose;
 
 # for UniDB here we need to create two new files (queryFile and blatFile) from a mapping of source ids from the component site query file. These need to be temp files though
-my ($mappedQueryFH, $mappedQueryFile) = tempfile();
-my ($mappedBlatFH, $mappedBlatFile) = tempfile();
+#my ($mappedQueryFH, $mappedQueryFile) = tempfile();
+#my ($mappedBlatFH, $mappedBlatFile) = tempfile();
 
     my %sourceIdHash;
 #print Dumper "dbh is $dbh\n";
@@ -161,7 +163,7 @@ while (my $line = <IN>) {
     }
 }
 
-print "$mappedQueryFile,$mappedBlatFile";
+#print "$mappedQueryFile,$mappedBlatFile";
 
 
  
