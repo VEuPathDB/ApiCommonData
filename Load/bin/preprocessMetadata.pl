@@ -9,7 +9,7 @@ use ApiCommonData::Load::MetadataHelper;
 
 
 # TODO:  ontologyMappingFile is a validation step in the end
-my ($help, $ontologyMappingXmlFile, $type, @metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $outputFile);
+my ($help, $ontologyMappingXmlFile, $type, @metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $outputFile, $ancillaryInputFile);
 
 &GetOptions('help|h' => \$help,
 	    'type=s' => \$type,
@@ -20,6 +20,7 @@ my ($help, $ontologyMappingXmlFile, $type, @metadataFiles, $rowExcludeFile, $col
             'rowExcludeFile=s' => \$rowExcludeFile,
             'colExcludeFile=s' => \$colExcludeFile,
             'outputFile=s' => \$outputFile,
+            'ancillaryInputFile=s' => \$ancillaryInputFile,
     );
 
 &usage() if($help);
@@ -47,7 +48,7 @@ if($parentMergedFile) {
 }
 
 
-my $metadataHelper = ApiCommonData::Load::MetadataHelper->new($type, \@metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile);
+my $metadataHelper = ApiCommonData::Load::MetadataHelper->new($type, \@metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile, $ancillaryInputFile);
 
 #my $validator = ApiCommonData::Load::MetadataValidator->new($parentMergedFile, $ontologyMappingXmlFile);
 

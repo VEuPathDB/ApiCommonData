@@ -24,6 +24,33 @@ sub setParsedOutput { $_[0]->{_parsed_output} = $_[1] }
 sub getNestedReaders { $_[0]->{_nested_readers} }
 sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
 
+sub getAncillaryData { $_[0]->{_ancillary_data} }
+sub setAncillaryData { $_[0]->{_ancillary_data} = $_[1] }
+
+
+sub readAncillaryInputFile {
+  die "Ancillary File provided bun no method implemented to read it.";
+}
+
+sub clean {
+  my ($self, $ar) = @_;
+
+  for(my $i = 0; $i < scalar @$ar; $i++) {
+    my $v = $ar->[$i];
+
+    if($v =~ /^(\")(.*)(\")$/ || $v =~ /^(\')(.*)(\')$/) {
+      $ar->[$i] = $2;
+    }
+  }
+  return $ar;
+}
+
+sub adjustHeaderArray { 
+  my ($self, $ha) = @_;
+
+  return $ha;
+}
+
 sub skipIfNoParent { return 0; }
 
 sub getDelimiter { 
@@ -41,8 +68,9 @@ sub getDelimiter {
   die "Must provide header row to determine the delimiter OR override this function";
 }
 
+
 sub new {
-  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput) = @_;
+  my ($class, $metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $ancillaryInputFile) = @_;
 
   my $self = bless {}, $class;
 
@@ -50,6 +78,11 @@ sub new {
   $self->setRowExcludes($rowExcludes);
   $self->setColExcludes($colExcludes);
   $self->setParentParsedOutput($parentParsedOutput);
+
+  if(-e $ancillaryInputFile) {
+    my $ancillaryData = $self->readAncillaryInputFile($ancillaryInputFile);
+    $self->setAncillaryData($ancillaryData);
+  }
 
   return $self;
 }
@@ -59,8 +92,6 @@ sub read {
   my ($self) = @_;
 
   my $metadataFile = $self->getMetadataFile();
-
-
 
   my $colExcludes = $self->getColExcludes();
   my $rowExcludes = $self->getRowExcludes();
@@ -76,17 +107,21 @@ sub read {
 
   my @headers = split($delimiter, $header);
 
+  my $headersAr = $self->adjustHeaderArray(\@headers);
+  $headersAr = $self->clean($headersAr);
+
   my $parsedOutput = {};
 
   while(<FILE>) {
     $_ =~ s/\n|\r//g;
 
     my @values = split($delimiter, $_);
+    my $valuesAr = $self->clean(\@values);
 
     my %hash;
-    for(my $i = 0; $i < scalar @headers; $i++) {
-      my $key = lc($headers[$i]);
-      my $value = lc($values[$i]);
+    for(my $i = 0; $i < scalar @$headersAr; $i++) {
+      my $key = lc($headersAr->[$i]);
+      my $value = lc($valuesAr->[$i]);
 
       next if($value eq '[skipped]');
 
@@ -520,7 +555,107 @@ sub makePrimaryKey {
   return undef;
 }
 
+1;
+
+
+package ApiCommonData::Load::MetadataReader::HbgdReader;
+use base qw(ApiCommonData::Load::MetadataReader);
+
+use strict;
+
+
+
+sub adjustHeaderArray { 
+  my ($self, $ha) = @_;
+
+  my @headers = map { $_ =~ s/\"//g; $_;} @$ha;
+
+  unshift @headers, "R_PRIMARY_KEY";
+
+  return \@headers;
+}
+
+
+package ApiCommonData::Load::MetadataReader::HbgdDwellingReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
+
+use strict;
+
+sub readAncillaryInputFile {
+  my ($self, $file) = @_;
+
+  # TODO:
+}
+
+
+sub makeParent {
+  return undef;
+}
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
+
+  return $hash->{hhid};
+}
+
 
 1;
+
+
+
+package ApiCommonData::Load::MetadataReader::HbgdParticipantReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
+
+use strict;
+
+
+
+sub getParentPrefix {
+  my ($self, $hash) = @_;
+
+  return "HBGDHH_";
+}
+
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  if($hash->{parent}) {
+    return $hash->{parent};
+  }
+
+  return $hash->{subjid};
+}
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+
+
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
+
+
+  return $hash->{subjid};
+}
+
+sub getPrimaryKeyPrefix {
+  my ($self, $hash) = @_;
+
+  unless($hash->{"primary_key"}) {
+    return "HBGDP_";
+  }
+  return "";
+}
+
+
+
+
+1;
+
 
 

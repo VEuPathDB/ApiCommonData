@@ -24,7 +24,7 @@ sub getOntologyMapping { $_[0]->{_ontology_mapping} }
 sub setOntologyMapping { $_[0]->{_ontology_mapping} = $_[1] }
 
 sub new {
-  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile) = @_;
+  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile, $ancillaryInputFile) = @_;
 
   my $self = bless {}, $class;
 
@@ -55,7 +55,7 @@ sub new {
     my $readerClass = "ApiCommonData::Load::MetadataReader::" . $type . "Reader";
 
    my $reader = eval {
-     $readerClass->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput);
+     $readerClass->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $ancillaryInputFile);
    };
     die $@ if $@;
 
@@ -135,8 +135,10 @@ sub isValid {
     }
     my $qualifiersHash = $mergedOutput->{$pk};
     foreach my $qualifier (keys %$qualifiersHash) {
-      unless($ontologyMapping->{$qualifier}->{characteristicQualifier}->{source_id}) {
-        $errors->{$qualifier}->{"MISSING_ONTOLOGY_MAPPING"} = 1 unless($qualifier eq '__PARENT__');
+      if($ontologyMapping) {
+        unless($ontologyMapping->{$qualifier}->{characteristicQualifier}->{source_id}) {
+          $errors->{$qualifier}->{"MISSING_ONTOLOGY_MAPPING"} = 1 unless($qualifier eq '__PARENT__');
+        }
       }
 
       my $values = $qualifiersHash->{$qualifier};
@@ -179,7 +181,11 @@ sub isValid {
 
   print STDERR "\n-----------------------------------------\n";
 
-  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
+  print STDERR "Errors found:\n";
+  print STDERR Dumper $errors;
+
+
+#  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
 
   return 0;
 }
