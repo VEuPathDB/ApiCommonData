@@ -34,12 +34,15 @@ my ($verbose,$queryFile,$blatFile,$mappedQueryFile,$mappedBlatFile,$gusConfigFil
 	    "queryOut=s" =>\$mappedQueryFile,
 	    "blatOut=s" =>\$mappedBlatFile,
             "gusConfigFile=s" => \$gusConfigFile);
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
 if (!defined($queryFile) ||!defined($blatFile) || !defined($mappedQueryFile)  || !defined($mappedBlatFile) || !(-e $queryFile) || !(-e $blatFile)) {
-    die "usage: mapAssemblySeqIdsSourceIds --queryFile --blatFile --queryOut --blatOut --verbose --gusConfigFile [\$GUS_CONFIG_FILE]\n"
+    die "usage: mapAssemblySeqIdsSourceIds --queryFile --blatFile --queryOut --blatOut --verbose [--gusConfigFile gusconfigfile]\n"
 }
 #unless ($queryFile, $blatFile);
 
 print STDERR "Establishing dbi login\n" if $verbose;
+
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
