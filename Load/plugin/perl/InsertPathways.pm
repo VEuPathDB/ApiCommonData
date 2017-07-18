@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::InsertPathways;
 use strict;
 use warnings;
 
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Data::Dumper;
 use GUS::PluginMgr::Plugin;
 
@@ -42,9 +43,9 @@ sub getArgsDeclaration {
 }
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts pathways from a set of KGML, XGMML (MPMP) or biopax (BioCyc) files into Pathway schema.";
+  my $purposeBrief = "Inserts pathways from a set of KGML, JSON (MPMP) or biopax (BioCyc) files into Pathway schema.";
 
-  my $purpose =  "Inserts pathways from a set of KGML, XGMML (MPMP) or biopax (BioCyc) files into Pathway schema.";
+  my $purpose =  "Inserts pathways from a set of KGML, JSON  (MPMP) or biopax (BioCyc) files into Pathway schema.";
 
   #TODO
   my $tablesAffected = [[]];
@@ -99,7 +100,7 @@ sub run {
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
   my $pathwayFormat = $self->getArg('format');
-  my $extension = ($pathwayFormat eq 'MPMP') ? 'xgmml' 
+  my $extension = ($pathwayFormat eq 'MPMP') ? 'json' 
                 : ($pathwayFormat eq 'BioCyc') ? 'biopax'
                 : 'xml';
 
