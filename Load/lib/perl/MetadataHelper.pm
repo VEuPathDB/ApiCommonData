@@ -246,8 +246,8 @@ sub readColExcludeFile {
 
       my @a = split(/\t/, $_);
 
-      my $file = $a[0];
-      my $col = lc($a[1]);
+      my $file = $a[1];
+      my $col = lc($a[0]);
 
       $file = "__ALL__" unless($file);
 

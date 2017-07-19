@@ -27,6 +27,7 @@ sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
 sub getAncillaryData { $_[0]->{_ancillary_data} }
 sub setAncillaryData { $_[0]->{_ancillary_data} = $_[1] }
 
+sub addDerivedData {}
 
 sub readAncillaryInputFile {
   die "Ancillary File provided bun no method implemented to read it.";
@@ -142,6 +143,8 @@ sub read {
     next if($rowExcludes->{$primaryKey});
 
     $primaryKey = $self->getPrimaryKeyPrefix(\%hash) . $primaryKey;
+
+    $self->addDerivedData(\%hash);
 
     my %filteredHash; 
     foreach my $key (keys %hash) {
@@ -263,6 +266,42 @@ sub makePrimaryKey {
 
   return $hash->{uniqueid};
 }
+
+
+sub addDerivedData {
+  my ($self, $hash) = @_;
+
+  if($hash->{malariacat} eq "negative blood smear") {
+    if($hash->{lamp} eq 'positive') {
+      $hash->{malariacat} = "Sub-microscopic parasitemia";    
+    }
+    elsif($hash->{lamp} eq "negative") {
+      $hash->{malariacat} = "Negative blood smear and negative LAMP";    
+    }
+    else {
+      $hash->{malariacat} = "Negative blood smear and LAMP not done";
+    }
+  }
+
+  foreach my $key (keys %$hash) {
+    if($key =~ /^med\d*code$/) {
+
+      # these 3 are the malaria ones
+      if($hash->{$key} eq '40' || $hash->{$key} eq '41' || $hash->{$key} eq '50') {
+
+        my $newKey = $key . "_malaria";
+
+        $hash->{$newKey} = $hash->{$key};
+
+        delete $hash->{$key};
+      }
+    }
+  }
+
+
+
+}
+
 
 1;
 
@@ -648,6 +687,48 @@ sub getPrimaryKeyPrefix {
 
   unless($hash->{"primary_key"}) {
     return "HBGDP_";
+  }
+  return "";
+}
+
+
+package ApiCommonData::Load::MetadataReader::HbgdClinicalVisitReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
+
+use strict;
+
+sub getParentPrefix {
+  my ($self, $hash) = @_;
+
+  return "HBGDP_";
+}
+
+sub makeParent {
+  my ($self, $hash) = @_;
+
+  if($hash->{parent}) {
+    return $hash->{parent};
+  }
+
+  return $hash->{subjid};
+}
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  if($hash->{"primary_key"}) {
+    return $hash->{"primary_key"};
+  }
+
+
+  return $hash->{subjid} . "_" . $hash->{agedays};
+}
+
+sub getPrimaryKeyPrefix {
+  my ($self, $hash) = @_;
+
+  unless($hash->{"primary_key"}) {
+    return "HBGDV_";
   }
   return "";
 }
