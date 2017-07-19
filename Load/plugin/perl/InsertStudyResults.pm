@@ -120,6 +120,9 @@ sub run {
 
   $self->setPointerCacheSize(100000);
 
+  my $dbiDatabase = $self->getDb();
+  $dbiDatabase->setDoNotUpdateAlgoInvoId(1);
+
   my $configFile = $self->getArg('configFile');
 
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
