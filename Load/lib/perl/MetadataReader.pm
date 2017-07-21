@@ -33,6 +33,11 @@ sub readAncillaryInputFile {
   die "Ancillary File provided bun no method implemented to read it.";
 }
 
+sub applyAncillaryData {
+  die "Ancillary File provided bun no method implemented to use it.";
+}
+
+
 sub clean {
   my ($self, $ar) = @_;
 
@@ -81,7 +86,9 @@ sub new {
   $self->setParentParsedOutput($parentParsedOutput);
 
   if(-e $ancillaryInputFile) {
+
     my $ancillaryData = $self->readAncillaryInputFile($ancillaryInputFile);
+
     $self->setAncillaryData($ancillaryData);
   }
 
@@ -109,7 +116,10 @@ sub read {
   my @headers = split($delimiter, $header);
 
   my $headersAr = $self->adjustHeaderArray(\@headers);
+
   $headersAr = $self->clean($headersAr);
+
+
 
   my $parsedOutput = {};
 
@@ -134,7 +144,7 @@ sub read {
 
     next if($self->skipIfNoParent() && !$parent);
 
-    my $parentPrefix = $self->getParentPrefix();
+    my $parentPrefix = $self->getParentPrefix(\%hash);
     my $parentWithPrefix = $parentPrefix . $parent;
 
     $hash{'__PARENT__'} = $parentWithPrefix unless($parentPrefix && $parentWithPrefix eq $parentPrefix);
@@ -153,6 +163,7 @@ sub read {
     }
 
     $parsedOutput->{$primaryKey} = \%filteredHash;
+
   }
 
   close FILE;
@@ -603,29 +614,40 @@ use base qw(ApiCommonData::Load::MetadataReader);
 use strict;
 
 
-
 sub adjustHeaderArray { 
   my ($self, $ha) = @_;
 
   my @headers = map { $_ =~ s/\"//g; $_;} @$ha;
 
-  unshift @headers, "R_PRIMARY_KEY";
-
+  unless($headers[0] eq "PRIMARY_KEY") {
+    unshift @headers, "R_PRIMARY_KEY";
+  }
   return \@headers;
 }
 
+1;
+
+package ApiCommonData::Load::MetadataReader::HbgdSitesReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
+
+use strict;
+
+
+sub makePrimaryKey {
+  my ($self, $hash) = @_;
+
+  return $hash->{siteid};
+}
+
+sub makeParent {}
+
+
+1;
 
 package ApiCommonData::Load::MetadataReader::HbgdDwellingReader;
 use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
-
-sub readAncillaryInputFile {
-  my ($self, $file) = @_;
-
-  # TODO:
-}
-
 
 sub makeParent {
   return undef;
@@ -635,10 +657,144 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
   if($hash->{"primary_key"}) {
-    return $hash->{"primary_key"};
+    return uc($hash->{"primary_key"});
   }
 
-  return $hash->{hhid};
+  return $hash->{subjid};
+}
+
+sub getPrimaryKeyPrefix {
+  my ($self, $hash) = @_;
+
+  unless($hash->{"primary_key"}) {
+    return "HBGDHH_";
+  }
+
+  return "";
+}
+
+1;
+
+
+
+package ApiCommonData::Load::MetadataReader::HbgdSSReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdDwellingReader);
+
+use strict;
+
+use ApiCommonData::Load::MetadataReader;
+
+use Data::Dumper;
+
+
+sub readAncillaryInputFile {
+  my ($self, $file) = @_;
+
+  my %rv;
+
+  open(FILE, $file) or die "Cannot open file $file for reading:$!";
+
+  my $header = <FILE>;
+  $header =~s/\n|\r//g;
+
+  my $delimiter = $self->getDelimiter($header);
+  my @headers = split($delimiter, $header);
+  my $headersAr = $self->adjustHeaderArray(\@headers);
+  $headersAr = $self->clean($headersAr);
+
+  my ($prevSubjid, %firstAgedays);
+
+  while(<FILE>) {
+    $_ =~ s/\n|\r//g;
+
+    my @values = split($delimiter, $_);
+    my $valuesAr = $self->clean(\@values);
+
+    my %hash;
+    for(my $i = 0; $i < scalar @$headersAr; $i++) {
+      my $header = $headersAr->[$i];
+      my $value = $valuesAr->[$i];
+
+      $hash{$header} = $value;
+    }
+
+    my $subjid = $hash{subjid};
+    my $agedays = $hash{agedays};
+
+    # newsubjid
+    if($subjid ne $prevSubjid) {
+      $firstAgedays{$subjid} = $agedays;
+    }
+
+    if($firstAgedays{$subjid} == $agedays) {
+      if($hash{ssstresc} ne "") {
+        $rv{$subjid}->{$hash{sstestcd}} = $hash{ssstresc};
+      }
+      else {
+        $rv{$subjid}->{$hash{sstestcd}} = $hash{ssstresn};
+        $rv{$subjid}->{$hash{sstestcd}} .= " " . $hash{ssstresu} if($hash{ssstresu});
+      }
+    }
+    $prevSubjid = $subjid;
+  }
+
+  return \%rv;
+}
+
+
+sub addDerivedData {
+  my ($self, $hash) = @_;
+
+  my $ancillaryData = $self->getAncillaryData();
+
+  my $subjid = $hash->{subjid};
+
+  my $ssData = $ancillaryData->{$subjid};
+
+  foreach my $key(keys %$ssData) {
+    next if($key eq '__PARENT__' || $key eq 'primary_key');
+
+    my $value = $ssData->{$key};
+
+    $hash->{$key} = $value;
+  }
+}
+
+
+
+1;
+
+package ApiCommonData::Load::MetadataReader::HbgdParticipantSitesReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdDwellingReader);
+
+use strict;
+
+use ApiCommonData::Load::MetadataReader;
+
+sub readAncillaryInputFile {
+  my ($self, $file) = @_;
+
+  my $sitesReader = ApiCommonData::Load::MetadataReader::HbgdSitesReader->new($file, undef, undef, undef, undef);  
+  return $sitesReader->read();
+}
+
+
+
+sub addDerivedData {
+  my ($self, $hash) = @_;
+
+  my $ancillaryData = $self->getAncillaryData();
+
+  my $siteid = $hash->{siteid};
+
+  my $site = $ancillaryData->{$siteid};
+  foreach my $key(keys %$site) {
+    next if($key eq '__PARENT__' || $key eq 'primary_key');
+
+    my $value = $site->{$key};
+
+    $hash->{$key} = $value;
+  }
 }
 
 
@@ -651,12 +807,17 @@ use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
 
-
+use Data::Dumper;
 
 sub getParentPrefix {
   my ($self, $hash) = @_;
 
-  return "HBGDHH_";
+  unless($hash->{"parent"}) {
+    return "HBGDHH_";
+  }
+  return "";
+
+
 }
 
 sub makeParent {
@@ -673,11 +834,9 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
 
-
   if($hash->{"primary_key"}) {
     return $hash->{"primary_key"};
   }
-
 
   return $hash->{subjid};
 }
@@ -685,14 +844,18 @@ sub makePrimaryKey {
 sub getPrimaryKeyPrefix {
   my ($self, $hash) = @_;
 
+
   unless($hash->{"primary_key"}) {
     return "HBGDP_";
   }
+
   return "";
 }
 
 
-package ApiCommonData::Load::MetadataReader::HbgdClinicalVisitReader;
+1;
+
+package ApiCommonData::Load::MetadataReader::HbgdEventReader;
 use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
@@ -700,7 +863,10 @@ use strict;
 sub getParentPrefix {
   my ($self, $hash) = @_;
 
-  return "HBGDP_";
+  unless($hash->{"parent"}) {
+    return "HBGDP_";
+  }
+  return "";
 }
 
 sub makeParent {
@@ -719,7 +885,6 @@ sub makePrimaryKey {
   if($hash->{"primary_key"}) {
     return $hash->{"primary_key"};
   }
-
 
   return $hash->{subjid} . "_" . $hash->{agedays};
 }
@@ -728,7 +893,7 @@ sub getPrimaryKeyPrefix {
   my ($self, $hash) = @_;
 
   unless($hash->{"primary_key"}) {
-    return "HBGDV_";
+    return "HBGDE_";
   }
   return "";
 }
@@ -737,6 +902,121 @@ sub getPrimaryKeyPrefix {
 
 
 1;
+
+
+package ApiCommonData::Load::MetadataReader::HbgdDailyReader;
+use base qw(ApiCommonData::Load::MetadataReader::HbgdEventReader);
+
+use strict;
+use ApiCommonData::Load::MetadataReader;
+
+use Data::Dumper;
+
+sub read {
+  my ($self) = @_;
+
+  my $metadataFile = $self->getMetadataFile();
+
+  open(FILE, $metadataFile) or die "Cannot open file $metadataFile for reading: $!";
+
+  my $rv = {};
+
+  my $header = <FILE>;
+  $header =~s/\n|\r//g;
+
+  my $delimiter = $self->getDelimiter($header);
+  my @headers = split($delimiter, $header);
+  my $headersAr = $self->adjustHeaderArray(\@headers);
+  $headersAr = $self->clean($headersAr);
+
+  my $parsedOutput = {};
+
+  my ($prevSubjid, $prevDay, %episode);
+
+  while(<FILE>) {
+    $_ =~ s/\n|\r//g;
+
+    my @values = split($delimiter, $_);
+    my $valuesAr = $self->clean(\@values);
+
+    my %hash;
+    for(my $i = 0; $i < scalar @$headersAr; $i++) {
+      my $key = lc($headersAr->[$i]);
+      my $value = lc($valuesAr->[$i]);
+
+      $hash{$key} = $value;
+    }
+
+    my $diarfl = $hash{diarfl};
+
+    if($hash{subjid} ne $prevSubjid || !$diarfl) {
+      if($prevDay) {
+
+        my $primaryKeyPrefix = $self->getPrimaryKeyPrefix(\%episode);
+        my $primaryKey = $self->makePrimaryKey(\%episode);
+
+        $primaryKey = $primaryKeyPrefix . $primaryKey;
+
+        my %episodeCopy = %episode;
+        $episodeCopy{bldstlfl} = 0 unless($episodeCopy{bldstlfl});
+        $episodeCopy{numls} = 0 unless($episodeCopy{numls});
+        $episodeCopy{avg_numls} = 0 unless($episodeCopy{avg_numls});
+        
+        $rv->{$primaryKey} = \%episodeCopy;
+      }
+
+      %episode = ();
+    }
+
+    if($diarfl) {
+
+      if(!$prevDay) {
+        $episode{agedays} = $hash{agedays};
+        $episode{subjid} = $hash{subjid};
+      }
+
+
+      $episode{duration}++;
+      $episode{bldstl}++ if($hash{bldstlfl});
+      $episode{numls} = $episode{numls} + $hash{numls};
+      $episode{avg_numls} = $episode{numls} / $episode{duration};
+    }
+
+#          'subjid' => '1',
+#          'agedays' => '20',
+#          'diarfl' => '0',
+#         'bldstlfl' => '0',
+#          'numls' => '0'
+
+
+
+    $prevDay = $hash{diarfl};
+    $prevSubjid = $hash{subjid};
+  }
+
+  if($prevDay) {
+    my $primaryKeyPrefix = $self->getPrimaryKeyPrefix(\%episode);
+    my $primaryKey = $self->makePrimaryKey(\%episode);
+
+    $primaryKey = $primaryKeyPrefix . $primaryKey;
+
+    my %episodeCopy = %episode;
+    $episodeCopy{bldstlfl} = 0 unless($episodeCopy{bldstlfl});
+    $episodeCopy{numls} = 0 unless($episodeCopy{numls});
+    $episodeCopy{avg_numls} = 0 unless($episodeCopy{avg_numls});
+
+    $rv->{$primaryKey} = \%episodeCopy;
+  }
+
+  $self->setParsedOutput($rv);
+}
+
+
+
+
+1;
+
+
 
 
 
