@@ -4,7 +4,6 @@ use strict;
 
 use File::Basename;
 
-use Data::Dumper;
 
 sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
 sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
@@ -327,7 +326,6 @@ use Date::Manip qw(Date_Init ParseDate UnixDate);
 
 use File::Basename;
 
-use Data::Dumper;
 
 sub skipIfNoParent { return 1; }
 
@@ -684,8 +682,6 @@ use strict;
 
 use ApiCommonData::Load::MetadataReader;
 
-use Data::Dumper;
-
 
 sub readAncillaryInputFile {
   my ($self, $file) = @_;
@@ -807,7 +803,6 @@ use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
 
-use Data::Dumper;
 
 sub getParentPrefix {
   my ($self, $hash) = @_;
@@ -835,7 +830,7 @@ sub makePrimaryKey {
 
 
   if($hash->{"primary_key"}) {
-    return $hash->{"primary_key"};
+    return uc($hash->{"primary_key"});
   }
 
   return $hash->{subjid};
@@ -860,6 +855,64 @@ use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
 
+use File::Basename;
+
+sub eventType {
+  my ($self) = @_;
+
+
+  if($self->{_event_type}) {
+    return $self->{_event_type};
+  }
+
+  my $rv;
+
+  my $metadataFile = $self->getMetadataFile();
+
+  my $baseMetaDataFile = basename $metadataFile;
+
+
+  if($baseMetaDataFile eq 'episodes.txt' || $baseMetaDataFile eq 'DAILY.txt') {
+    $rv = "HBGD_DE_";
+  }
+  elsif($baseMetaDataFile eq 'ANTHRO.txt') {
+    $rv = "HBGD_CV_";
+  }
+  else {
+    $rv = "HBGD_TR_";
+  }
+
+  $self->{_event_type} = $rv;
+
+  return $rv;
+}
+
+
+
+sub addDerivedData {
+  my ($self, $hash) = @_;
+
+  # MB File
+  if($hash->{mbstresc}) {
+    my $value = $hash->{mbstresc};
+    my $key = $hash->{mbtestcd};
+
+    $hash->{$key} = $value;
+  }
+
+  # LB File
+  if($hash->{lbstresn}) {
+    my $value = $hash->{lbstresn};
+    my $key = $hash->{lbtestcd};
+
+    $hash->{$key} = $value;
+  }
+
+
+
+}
+
+
 sub getParentPrefix {
   my ($self, $hash) = @_;
 
@@ -883,8 +936,10 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
   if($hash->{"primary_key"}) {
-    return $hash->{"primary_key"};
+    return uc($hash->{"primary_key"});
   }
+
+
 
   return $hash->{subjid} . "_" . $hash->{agedays};
 }
@@ -893,12 +948,10 @@ sub getPrimaryKeyPrefix {
   my ($self, $hash) = @_;
 
   unless($hash->{"primary_key"}) {
-    return "HBGDE_";
+    return $self->eventType();
   }
   return "";
 }
-
-
 
 
 1;
@@ -910,7 +963,6 @@ use base qw(ApiCommonData::Load::MetadataReader::HbgdEventReader);
 use strict;
 use ApiCommonData::Load::MetadataReader;
 
-use Data::Dumper;
 
 sub read {
   my ($self) = @_;
@@ -977,7 +1029,7 @@ sub read {
 
 
       $episode{duration}++;
-      $episode{bldstl}++ if($hash{bldstlfl});
+      $episode{bldstlfl}++ if($hash{bldstlfl});
       $episode{numls} = $episode{numls} + $hash{numls};
       $episode{avg_numls} = $episode{numls} / $episode{duration};
     }

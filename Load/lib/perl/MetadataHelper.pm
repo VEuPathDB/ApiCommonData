@@ -126,7 +126,8 @@ sub isValid {
 
       $parentId = &getDistinctLowerCaseValues($parentId);
       die "No Parent Defined for $pk" unless(defined $parentId);
-      unless($parentOutput->{lc $parentId}) {
+
+      unless($parentOutput->{$parentId}) {
         print STDERR "PRIMARY_KEY=$pk\n";
         print STDERR Dumper $mergedOutput->{$pk};
         die "Parent $parentId not defined as primary key in parent file" ;
