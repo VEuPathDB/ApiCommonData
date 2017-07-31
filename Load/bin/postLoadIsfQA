@@ -403,6 +403,8 @@ SQL
     if ($cdsStart && $cdsEnd) {
       $cdsCount++;
       push (@cdsArrays, "$cdsStart,$cdsEnd");
+    } else { ## for exons that located after stop codon
+      $cdsCount = 0;
     }
     push (@exonArrays, "$tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed");
   }
@@ -412,12 +414,25 @@ SQL
     my ($tSourceId,$exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed) = split (/\,\s*/, $exonArrays[$i]);
     if ($cdsCount > 1 && $cdsCount < ($#cdsArrays+1) ) {
       if ($isReversed == 1) {
-	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsEnd || $nlEndMax != $cdsStart);
+	print "WARNING: Case 1 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsEnd || $nlEndMax != $cdsStart);
       } else {
-	print "WARNING: internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsStart || $nlEndMax != $cdsEnd);
+	print "WARNING: Case 2 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsStart || $nlEndMax != $cdsEnd);
+      }
+    } elsif ($cdsCount == 1 && $#cdsArrays > 0) {
+      if ($isReversed == 1) {
+	print "WARNING: Case 3 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsEnd);
+      } else {
+	print "WARNING: Case 4 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlEndMax != $cdsEnd);
+      }
+    } elsif ($cdsCount == ($#cdsArrays+1) && $#cdsArrays > 0) {
+      if ($isReversed == 1) {
+	print "WARNING: Case 5 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlEndMax != $cdsStart);
+      } else {
+	print "WARNING: Case 6 internal UTR found, $tSourceId at exon $exonOrder\n" if ($nlStartMin != $cdsStart);
       }
     }
-    print "$tSourceId has $exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed\n" if ($tSourceId =~ /CNC02040-t26/);
+
+    print "$tSourceId has $exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed\n" if ($tSourceId =~ /MACM_54953.C1orf27_transcript_01/);
   }
 }
 $stmt->finish();
@@ -528,6 +543,8 @@ my ($transposableCount) = $stmt->fetchrow_array();
 print STDERR "the number of transposableElement = $transposableCount\n" if ($repeatsCount);
 $stmt->finish();
 
+## print the end of checking message
+print "Done all checks\n";
 
 sub usage {
   die
