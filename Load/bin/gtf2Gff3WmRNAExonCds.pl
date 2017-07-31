@@ -24,7 +24,7 @@ while (<IN>) {
     $geneIds{$1} = $gIdPrefix."_".$1;
     $transKey = $1."-".$2;
     $transIds{$transKey} = $geneIds{$1}.".".$2;
-    $transIds{$transKey} =~ s/_transcript_/\_/;
+#    $transIds{$transKey} =~ s/_transcript_/\_/;
   } else {
     die "Can not find either gene_id or transcript_id at the line $lineCtr\n";
   }
@@ -94,6 +94,8 @@ while (<INN>) {
       $transSeqId{$curTransKey} = $elems[0];
       $transSource{$curTransKey} = $elems[1];
       $transStrand{$curTransKey} = $elems[6];
+      print STDERR "Wrong strand for $currentGeneId in $currentTransId\n" unless ($elems[6] eq $geneStrand{$currentGeneId});
+#      print STDERR "Wrong strand for $currentGeneId in $currentTransId\n" if ($transIds{$curTransKey} eq "MMUL_10313.RTN3_01");
     }
 
     $elems[8] = "ID \"$id\"; Parent \"$parent\"; ".$elems[8];
