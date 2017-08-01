@@ -4,6 +4,7 @@ use strict;
 
 use File::Basename;
 
+use Data::Dumper;
 
 sub getParentParsedOutput { $_[0]->{_parent_parsed_output} }
 sub setParentParsedOutput { $_[0]->{_parent_parsed_output} = $_[1] }
@@ -34,6 +35,15 @@ sub readAncillaryInputFile {
 
 sub applyAncillaryData {
   die "Ancillary File provided bun no method implemented to use it.";
+}
+
+sub seen {
+  my ($ar, $v) = @_;
+
+  foreach(@$ar) {
+    return 1 if($_ eq $v);
+  }
+  return 0;
 }
 
 
@@ -155,19 +165,43 @@ sub read {
 
     $self->addDerivedData(\%hash);
 
-    my %filteredHash; 
     foreach my $key (keys %hash) {
       next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
-      $filteredHash{$key} = $hash{$key};
+      next unless $hash{$key}; # skip undef values
+
+      next if(&seen($parsedOutput->{$primaryKey}->{$key}, $hash{$key}));
+
+      push @{$parsedOutput->{$primaryKey}->{$key}}, $hash{$key};
     }
-
-    $parsedOutput->{$primaryKey} = \%filteredHash;
-
   }
 
   close FILE;
 
-  $self->setParsedOutput($parsedOutput);
+  my $rv = {};
+
+  foreach my $primaryKey (keys %$parsedOutput) {
+
+    foreach my $key (keys %{$parsedOutput->{$primaryKey}}) {
+
+      my @values = @{$parsedOutput->{$primaryKey}->{$key}};
+
+
+      if($key eq 'agedays' && scalar @values > 1) {
+        print Dumper $parsedOutput->{$primaryKey};
+        exit;
+      }
+
+      for(my $i = 0; $i < scalar @values; $i++) {
+        my $value = $values[$i];
+
+        my $newKey = $i == 0 ? $key : "${key}_$i";
+        $rv->{$primaryKey}->{$newKey} = $values[$i];
+      }
+    }
+  }
+
+
+  $self->setParsedOutput($rv);
 }
 
 
@@ -612,6 +646,25 @@ use base qw(ApiCommonData::Load::MetadataReader);
 use strict;
 
 
+use Data::Dumper;
+
+sub clean {
+  my ($self, $ar) = @_;
+
+  my $clean = $self->SUPER::clean($ar);
+
+  for(my $i = 0; $i < scalar @$clean; $i++) {
+
+    my $v = $clean->[$i];
+
+    if(lc($v) eq 'na') {
+      $clean->[$i] = undef;
+    }
+  }
+  return $clean;
+
+}
+
 sub adjustHeaderArray { 
   my ($self, $ha) = @_;
 
@@ -857,6 +910,7 @@ use strict;
 
 use File::Basename;
 
+
 sub eventType {
   my ($self) = @_;
 
@@ -873,13 +927,13 @@ sub eventType {
 
 
   if($baseMetaDataFile eq 'episodes.txt' || $baseMetaDataFile eq 'DAILY.txt') {
-    $rv = "HBGD_DE_";
+    $rv = "DE";
   }
   elsif($baseMetaDataFile eq 'ANTHRO.txt') {
-    $rv = "HBGD_CV_";
+    $rv = "V";
   }
   else {
-    $rv = "HBGD_TR_";
+    $rv = "TR";
   }
 
   $self->{_event_type} = $rv;
@@ -892,12 +946,31 @@ sub eventType {
 sub addDerivedData {
   my ($self, $hash) = @_;
 
+  my $eventType = $self->eventType();
+
+  my %eventTypes = ( "DE" => "Diarrhea Episode",
+                     "V" => "Visit",
+                     "TR" => "Test Result",
+      );
+
+  # Event Type
+  $hash->{event_type} = $eventTypes{$eventType};
+
   # MB File
   if($hash->{mbstresc}) {
     my $value = $hash->{mbstresc};
     my $key = $hash->{mbtestcd};
 
+    if($value eq 'positive') {
+      $value = 'yes';
+    }
+
     $hash->{$key} = $value;
+
+
+
+#    $hash->{$key."_mbspec"} = $hash->{mbspec};
+#    $hash->{$key."_mbmethod"} = $hash->{mbmethod};
   }
 
   # LB File
@@ -905,10 +978,20 @@ sub addDerivedData {
     my $value = $hash->{lbstresn};
     my $key = $hash->{lbtestcd};
 
+
+    if($hash->{'lbspec'} eq 'plasma') {
+      $hash->{'lbspec'} = 'blood';
+    }
+
     $hash->{$key} = $value;
+#    $hash->{$key."_lbspec"} = $hash->{lbspec};
   }
 
 
+  # GF File
+  if($hash->{gfstresc}) {
+    $hash->{'specimentype'} = 'stool';
+  }
 
 }
 
@@ -939,7 +1022,8 @@ sub makePrimaryKey {
     return uc($hash->{"primary_key"});
   }
 
-
+  # no events after 2 years
+  return undef if($hash->{agedays} > 745);
 
   return $hash->{subjid} . "_" . $hash->{agedays};
 }
@@ -948,7 +1032,7 @@ sub getPrimaryKeyPrefix {
   my ($self, $hash) = @_;
 
   unless($hash->{"primary_key"}) {
-    return $self->eventType();
+    return "HBGD_" . $self->eventType() . "_";
   }
   return "";
 }
@@ -999,7 +1083,7 @@ sub read {
       $hash{$key} = $value;
     }
 
-    my $diarfl = $hash{diarfl};
+    my $diarfl = $hash{"diarfl"};
 
     if($hash{subjid} ne $prevSubjid || !$diarfl) {
       if($prevDay) {
