@@ -185,12 +185,6 @@ sub read {
 
       my @values = @{$parsedOutput->{$primaryKey}->{$key}};
 
-
-      if($key eq 'agedays' && scalar @values > 1) {
-        print Dumper $parsedOutput->{$primaryKey};
-        exit;
-      }
-
       for(my $i = 0; $i < scalar @values; $i++) {
         my $value = $values[$i];
 
@@ -949,8 +943,8 @@ sub addDerivedData {
   my $eventType = $self->eventType();
 
   my %eventTypes = ( "DE" => "Diarrhea Episode",
-                     "V" => "Visit",
-                     "TR" => "Test Result",
+                     "V" => "Anthropometry",
+                     "TR" => "Laboratory Test",
       );
 
   # Event Type
