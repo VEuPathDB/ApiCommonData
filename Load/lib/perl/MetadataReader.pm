@@ -173,6 +173,7 @@ sub read {
 
       push @{$parsedOutput->{$primaryKey}->{$key}}, $hash{$key};
     }
+
   }
 
   close FILE;
@@ -547,6 +548,21 @@ use base qw(ApiCommonData::Load::MetadataReader);
 
 use strict;
 
+use Data::Dumper;
+
+
+sub addDerivedData {
+  my ($self, $hash) = @_;
+
+  if($hash->{date}) {
+    $hash->{collectiondate} = $hash->{date};
+  }
+  else {
+    $hash->{collectiondate} = $hash->{collectionmonthyear};
+  }
+}
+
+
 sub makePrimaryKey {
   my ($self, $hash) = @_;
 
@@ -702,7 +718,7 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
   if($hash->{"primary_key"}) {
-    return uc($hash->{"primary_key"});
+    return $hash->{"primary_key"};
   }
 
   return $hash->{subjid};
@@ -877,7 +893,7 @@ sub makePrimaryKey {
 
 
   if($hash->{"primary_key"}) {
-    return uc($hash->{"primary_key"});
+    return $hash->{"primary_key"};
   }
 
   return $hash->{subjid};
@@ -1013,7 +1029,7 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
   if($hash->{"primary_key"}) {
-    return uc($hash->{"primary_key"});
+    return $hash->{"primary_key"};
   }
 
   # no events after 2 years
