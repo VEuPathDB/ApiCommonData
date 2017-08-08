@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertGreengenesTaxonIds;
+package ApiCommonData::Load::Plugin::InsertSequenceTaxon;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use GUS::PluginMgr::Plugin;
@@ -13,16 +13,16 @@ use Data::Dumper;
 my $argsDeclaration =
   [
 
- fileArg({   name           => 'greengenesFile',
-	     descr          => 'The Greengenes taxonomy file',
+ fileArg({   name           => 'sequenceToTaxonHierarchyFile',
+	     descr          => 'The file that maps an otu identifier to a string specifying a path through the taxonomy',
 	     reqd           => 1,
 	     constraintFunc => undef,
              mustExist      => 1,
-             format         => "<Greengenes ID><tab><taxon string>",
+             format         => "<OTU ID><tab><taxon string>",
              isList         => 0 }),
 
  fileArg({   name           => 'taxonMappingFile',
-	     descr          => 'The XML file of taxonomy string to NCBI taxon ID mapping overrides',
+	     descr          => 'The XML file of override mappings from taxon hierarchy strings to NCBI taxon ID mapping overrides',
 	     reqd           => 1,
 	     constraintFunc => undef,
              mustExist      => 1,
