@@ -68,22 +68,22 @@ sub munge {
   $self->setInputProtocolAppNodesHash(\%samplesHash);
   $self->createConfigFile();
 
-  foreach my $sampleName (keys %samplesHash) {
+  # foreach my $sampleName (keys %samplesHash) {
 
-    my $alphaDiversityStats = ApiCommonData::Load::AlphaDiversityStats->new({sampleName => $sampleName,
-                                                                             inputs => [$sampleName],
-                                                                             dataHash => $dataHash->{$sampleName},
-                                                                             rawCount => $totalCounts->{$sampleName},
-                                                                             mainDirectory => $self->getMainDirectory,
-                                                                             profileSetName => $self->getProfileSetName(),
-                                                                             samplesHash => \%samplesHash,
-                                                                             suffix => '_alpha_diversity.tab'});
-    $alphaDiversityStats->setProtocolName("alpha_diversity");
-    $alphaDiversityStats->setDisplaySuffix(" [alpha_diversity]");
-    $alphaDiversityStats->setTechnologyType($self->getTechnologyType());
+  #   my $alphaDiversityStats = ApiCommonData::Load::AlphaDiversityStats->new({sampleName => $sampleName,
+  #                                                                            inputs => [$sampleName],
+  #                                                                            dataHash => $dataHash->{$sampleName},
+  #                                                                            rawCount => $totalCounts->{$sampleName},
+  #                                                                            mainDirectory => $self->getMainDirectory,
+  #                                                                            profileSetName => $self->getProfileSetName(),
+  #                                                                            samplesHash => \%samplesHash,
+  #                                                                            suffix => '_alpha_diversity.tab'});
+  #   $alphaDiversityStats->setProtocolName("alpha_diversity");
+  #   $alphaDiversityStats->setDisplaySuffix(" [alpha_diversity]");
+  #   $alphaDiversityStats->setTechnologyType($self->getTechnologyType());
 	
-    $alphaDiversityStats->munge();
-  }
+  #   $alphaDiversityStats->munge();
+  # }
 
 }
 
