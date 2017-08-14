@@ -9,8 +9,8 @@
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:microbiome="http://purl.obolibrary.org/obo/microbiome.owl#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/20170623/microbiome.owl"/>
-        <owl:versionInfo>Revision: 82514</owl:versionInfo>
+        <owl:versionInfo>2017-08-11</owl:versionInfo>
+        <rdfs:comment>SVN revision: 83786</rdfs:comment>
     </owl:Ontology>
     
 
@@ -201,6 +201,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
         <obo:IAO_0000115>Environmental feature level includes geographic environmental features. Compared to biome, feature is a descriptor of the more local environment. Examples include: harbor, cliff, or lake. EnvO (v 2013-06-14) terms can be found via the link: www.environmentontology.org</obo:IAO_0000115>
         <obo:MICRO_0000539>env_feature</obo:MICRO_0000539>
+        <term_type>variable</term_type>
         <rdfs:label xml:lang="en">environment (feature)</rdfs:label>
     </owl:Class>
     
@@ -221,7 +222,7 @@
         <common_name xml:lang="geneban">env_material</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_env_material</micro_ID>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental material</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environment (material)</rdfs:label>
     </owl:Class>
     
 
@@ -251,6 +252,17 @@
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># Residents in dwelling</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000049 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000049">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115>Visit 1-3 (pretreatment, treated, post treatment)</obo:IAO_0000115>
+        <obo:MICRO_0000539>Timepoint</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">Visit type</rdfs:label>
     </owl:Class>
     
 
@@ -353,6 +365,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000578">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
         <obo:IAO_0000115>depth is defined as the vertical distance below local surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly. Depth can be reported as an interval for subsurface samples</obo:IAO_0000115>
+        <term_type>variable</term_type>
         <rdfs:label xml:lang="en">depth</rdfs:label>
     </owl:Class>
     
@@ -757,7 +770,7 @@
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
-        <rdfs:label>Sample source information</rdfs:label>
+        <rdfs:label>Source information</rdfs:label>
     </owl:Class>
     
 
@@ -1172,6 +1185,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000747 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000747">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:IAO_0000115>Describes when the DNA was extracted</obo:IAO_0000115>
+        <obo:MICRO_0000539>ExtractionDate</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">DNA extraction date</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -1304,6 +1328,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:MICRO_0000539>#SampleID, SampleID</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">Sample ID</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
@@ -1340,6 +1374,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <term_type>variable</term_type>
         <rdfs:label xml:lang="en">country</rdfs:label>
     </owl:Class>
     
@@ -1433,6 +1468,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115>A processual entity whose completion is hypothesized (by a healthcare provider) to alleviate the signs and symptoms associated with a disorder</obo:IAO_0000115>
+        <term_type>category</term_type>
         <rdfs:label xml:lang="en">treatment</rdfs:label>
     </owl:Class>
     
@@ -1556,6 +1592,16 @@
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sebaceous, Dry, Moist</obo:MICRO_0000560>
         <term_type>variable</term_type>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">skin type</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UO_0000196 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000196">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:MICRO_0000539>pH</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">pH</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
