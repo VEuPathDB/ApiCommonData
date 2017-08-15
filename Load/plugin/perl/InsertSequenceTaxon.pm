@@ -140,7 +140,7 @@ SQL
     from summary
 SQL
 
-  my $filename = $self->getArg('greengenesFile');
+  my $filename = $self->getArg('sequenceToTaxonHierarchyFile');
   open (my $fh, "<", $filename) or die "can't open file \"$filename\"";
 
   my $failFlag;
