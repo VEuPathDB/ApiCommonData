@@ -17,7 +17,7 @@ use CBIL::Util::PropertySet;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $optionalTaxonId, $optionalFunctAnnot);
+my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $optionalTaxonId, $optionalFunctAnnot, $project);
 
 &GetOptions('help|h' => \$help,
             'organismAbbrev=s' => \$organismAbbrev,
@@ -25,6 +25,7 @@ my ($verbose, $help, $organismAbbrev, $extDbName, $extDbRlsVer, $optionalTaxonId
             'extDbRlsVer=s' => \$extDbRlsVer,
             'optionalTaxonId=s' => \$optionalTaxonId,
             'optionalFunctAnnot=s' => \$optionalFunctAnnot,
+            'project=s' => \$project,
            );
 
 &usage() if($help);
@@ -197,6 +198,8 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
     printGeneNameTbl ($ofh, $gSourceId, $geneNameRef) if ($functAnnot{'geneName'});
     printSynonymTbl ($ofh, $gSourceId, $geneSynonymRef) if ($functAnnot{'synonym'});
 
+    ## print a dbxref link to EuPathDB
+    printDbxRef2EuPathDB ($ofh, $gSourceId, $project);
 
     ## FOR TRANSCRIPT
     ## get the codon_start
@@ -279,6 +282,9 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  ## need to print condon_start if $prefix5
 	  #print $ofh "\t\t\tcodon_start\t$codonStart\n" if ($prefix5{$tNaFeatureId});
 	  printGenbankTagInfo ($ofh, "codon_start", $codonStart) if ($prefix5{$tNaFeatureId});
+
+	  ## print a dbxref link to EuPathDB
+	  printDbxRef2EuPathDB ($ofh, $tSourceId, $project);
 
 	  ## print functional annotation data for transcript
 	  printEcTbl ($ofh, $tSourceId, $transECRef) if ($functAnnot{'EC'});
@@ -527,6 +533,13 @@ sub printNoteTbl {
   return 0;
 }
 
+sub printDbxRef2EuPathDB {
+  my ($fh, $tId, $project) = @_;
+  my $inValue = "ApiDB_" . $project . ":" . $tId;
+  printGenbankTagInfo ($fh, "db_xref", $inValue);
+  return 0;
+}
+
 sub printGenbankTagInfo {
   my ($fh, $feature, $value) = @_;
   ($value) ? print $fh "\t\t\t$feature\t$value\n" : print $fh "\t\t\t$feature\n";
@@ -562,7 +575,12 @@ sub usage {
   die
 "
 A script to create genbank feature table file, .tbl
-Usage:  gus4CreateGenbankTableFile --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
+Usage:
+  for ISF testing:
+          gus4CreateGenbankTableFile --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01
+  for genbank submission:
+          gus4CreateGenbankTableFile --organismAbbrev pberANKA --extDbName pberANKA_primary_genome_RSRC --extDbRlsVer 2017-01-09
+                                     --optionalFunctAnnot 'geneName, synonym, GO, EC, PMID' --project 'PlasmoDB'
 
 NOTE: the output is a set of files ending with .fsa and .tbl,
       So it is better to run it in a subdirectory.
@@ -574,6 +592,7 @@ where
   --extDbRlsVer: the external database release version for loading genome and annotation
   --optionalTaxonId: only required in case the taxonId is not available in ncbi Taxonomy
   --optionalFunctAnnot: comma delimited functional annotation that want to be included in the output file
-                        for example, 'geneName, synonym, GO, EC'
+                        for example, 'geneName, synonym, GO, EC, PMID'
+  --project: required for dbxref, for example 'PlasmoDB', 'CryptoDB', 'ToxoDB' ......
 ";
 }
