@@ -411,7 +411,7 @@ sub getTransGOs {
 
   ## use apidbtuning.GoTermSummary table to get GO info
   my $sqlSub = "
-select TRANSCRIPT_SOURCE_ID, GO_ID, GO_TERM_NAME, EVIDENCE_CODE, 
+select TRANSCRIPT_SOURCE_ID, GO_ID, GO_TERM_NAME, EVIDENCE_CODE, REFERENCE,
 decode(ontology, 'Biological Process', 'GO_process',
                  'Molecular Function', 'GO_function',
                  'Cellular Component', 'GO_component', ontology) 
@@ -419,8 +419,19 @@ from apidbtuning.GoTermSummary
 ";
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
   foreach my $i (0..$#$sqlRefSub) {
-    my ($tSourceId, $goId, $goTermName, $evidenceCode, $ontology) = split(/\t/, $sqlRefSub->[$i]);
-    my $value = $ontology . ": ". $goId . " - " . $goTermName . ";ev_code=" . $evidenceCode;
+    my ($tSourceId, $goId, $goTermName, $evidenceCode, $reference, $ontology) = split(/\t/, $sqlRefSub->[$i]);
+
+    ## remove the prefix GO: and GO_
+    $goId =~ s/GO[:|_]//;  ## remove the prefix GO: and GO_
+
+    ## remove the prefix PMID:
+    if ($reference =~ /PMID:/i) {
+      $reference =~ s/PMID://i;
+    } else {
+      $reference = "";
+    }
+
+    my $value = join ('|', $ontology, $goTermName, $goId, $reference, $evidenceCode);
     push (@{$transGOSub{$tSourceId}}, $value) if ($tSourceId && $value);
   }
   return \%transGOSub;
@@ -512,14 +523,15 @@ sub printPmidTbl {
 
 sub printGoTbl {
   my ($fh, $tId, $transGORef) = @_;
-  my $inValue;
+  my ($tag, $inValue, @values);
   foreach my $value (@{$transGORef->{$tId}}) {
-    $inValue .= $value. ";";
+    @values = split (/\|/, $value);
+    $tag = shift (@values);
+    $inValue = join ('|', @values);
+    @values = ();
   }
-  $inValue =~ s/\;$//;
 
-  ## use "Note" tag to print GO info
-  printGenbankTagInfo ($fh, "Note", $inValue);
+  printGenbankTagInfo ($fh, $tag, $inValue) if ($tag eq "GO_process" || $tag eq "GO_function" || $tag eq "GO_component" );
 
   #print STDERR "printGoTbl, $tId, $transGORef->{$tId}[0]\n" if ($tId eq "PBANKA_0100600.1");
   return 0;
