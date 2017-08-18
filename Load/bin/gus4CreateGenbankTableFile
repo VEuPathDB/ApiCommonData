@@ -72,6 +72,9 @@ foreach my $i (0..$#$seqsInfoRef) {
   }
 }
 
+## get product info
+my $productRef = getProductNames ($dbh, $extDbRlsId);
+
 ## which functional annotation that want to output
 my (%functAnnot, $geneNameRef, $geneSynonymRef, $transECRef, $transGORef, $transNoteRef, $genePmidRef);
 
@@ -146,6 +149,8 @@ and gf.external_database_release_id=$extDbRlsId order by nl.start_min
     $gType =~ s/\_gene//g;
     $gType = "mRNA" if ($gType !~ /RNA/i);   ## in the case of coding_gene or pseudo_gene
 
+    print STDERR "print gene: $gSourceId\n";
+
     ## FOR GENE
     ## get if partial info
     my (%prefix5, %prefix3);
@@ -211,17 +216,20 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
     foreach my $m (0..$#$transcriptRef) {
       my ($tNaFeatureId, $tSourceId, $tIsPseudo, $tTranslTable) = split(/\t/, $transcriptRef->[$m]);
 
-      ## get product info
-      my $sqlProduct = "select product from ApiDB.TranscriptProduct where na_feature_id=$tNaFeatureId";
-      my $productRef = readFromDatabase($dbh, $sqlProduct);
-      my $product = $productRef->[0];  ## need to make an array in case there are more than one product
-
       ## get the transcript position from coding_start and coding_end in dots.aaFeatureExon table
-      my $sqlExonLocRef = "select rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END
+      my $sqlExonLocRef;
+      if ($gType eq "mRNA") {
+	$sqlExonLocRef = "select rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX, afe.CODING_START, afe.CODING_END
 from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.AAFEATUREEXON afe, DOTS.TRANSLATEDAAFEATURE taf, DOTS.NALOCATION nl
 where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
 and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_FEATURE_ID=afe.AA_FEATURE_ID and afe.EXON_FEATURE_ID=ef.NA_FEATURE_ID
 and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
+      } else {
+	$sqlExonLocRef = "select rfe.ORDER_NUMBER, nl.START_MIN, nl.END_MAX
+from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.NALOCATION nl
+where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
+and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
+      }
 
       my $exonLocRef = readFromDatabase($dbh, $sqlExonLocRef);
       my $cdsCtr = 0;
@@ -250,13 +258,24 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, $prefix5{$tNaFeatureId}, '') if ($i == 0 && $prefix5{$tNaFeatureId});
 	($tStart, $tEnd) = addLocPrefix($gStrand, $tStart, $tEnd, '', $prefix3{$tNaFeatureId}) if ($i == $#$exonLocRef && $prefix3{$tNaFeatureId});
 
+	## print transcript location
 	if ($i == 0) {
 	  ($gStrand != 1) ? print $ofh "$tStart\t$tEnd\t$gType\t\t\n" : print $ofh "$tEnd\t$tStart\t$gType\t\t\n";
 	} else {
 	  ($gStrand != 1) ? print $ofh "$tStart\t$tEnd\t\t\t\n" : print $ofh "$tEnd\t$tStart\t\t\t\n";
 	}
-	printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId") if ($i == $#$exonLocRef);
 
+	## print transcript info 
+	if ($i == $#$exonLocRef) {
+	  printGenbankTagInfo ($ofh, "locus_tag", "$gSourceId") if ($i == $#$exonLocRef);
+
+	  ## TODO  ncRNA_class
+	  my $ncRNA_class;
+	  if ($gType =~ /ncRNA/) {
+	    ($ncRNA_class) ? printGenbankTagInfo ($ofh, "ncRNA_class", $ncRNA_class)
+	      : printGenbankTagInfo ($ofh, "ncRNA_class", "other");
+	  }
+	}
       }
 
       if ($gType =~ /mRNA/) {
@@ -273,7 +292,7 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 
 	if ($tIsPseudo != 1) {
 	  ## print product info for CDS
-	  ($product) ? printGenbankTagInfo ($ofh, "product", $product) : printGenbankTagInfo ($ofh, "product", "unspecified product");
+	  printProductTbl ($ofh, $tSourceId, $productRef);
 
 	  ## get transl_table info
 	  #print $ofh "\t\t\ttransl_table\t$tTranslTable\n" if ($tTranslTable);  ## only print transl_table if it is not null
@@ -308,7 +327,7 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 
       } else {
 
-	## print exon if not mRNA
+	## print exon if not mRNA, maybe this is unnecessary
 	foreach my $m (0..$#$exonLocRef) {
 	  my ($eOrder, $eStart, $eEnd) = split(/\t/, $exonLocRef->[$m]);
 	  $eStart = $prefix5{$tNaFeatureId}.$eStart if ($m == 0);
@@ -325,14 +344,8 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	printGenbankTagInfo ($ofh, "locus_tag", $gSourceId);
 
 	## print product info for non mRNA 
-	($product) ? printGenbankTagInfo ($ofh, "product", $product) : printGenbankTagInfo ($ofh, "product", "unspecified product");
+	printProductTbl ($ofh, $tSourceId, $productRef);
 
-	## TODO  ncRNA_class
-	my $ncRNA_class;
-	if ($gType =~ /ncRNA/) {
-	  ($ncRNA_class) ? printGenbankTagInfo ($ofh, "ncRNA_class", $ncRNA_class)
-	    : printGenbankTagInfo ($ofh, "ncRNA_class", "other");
-	}
       }
 
       ## print is_pseudo info
@@ -435,6 +448,21 @@ from apidbtuning.GoTermSummary
     push (@{$transGOSub{$tSourceId}}, $value) if ($tSourceId && $value);
   }
   return \%transGOSub;
+}
+
+sub getProductNames {
+  my ($dbhSub, $extDbRlsId) = @_;
+  my %productNameSub;
+  my $sqlSub = "
+select t.SOURCE_ID, tp.PRODUCT from DOTS.TRANSCRIPT t, ApiDB.TranscriptProduct tp
+where t.NA_FEATURE_ID=tp.NA_FEATURE_ID and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+";
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($sourceId, $value) = split(/\t/, $sqlRefSub->[$i]);
+    push (@{$productNameSub{$sourceId}}, $value) if ($sourceId && $value);
+  }
+  return \%productNameSub;
 }
 
 sub getTransNotes {
@@ -549,6 +577,24 @@ sub printDbxRef2EuPathDB {
   my ($fh, $tId, $project) = @_;
   my $inValue = "ApiDB_" . $project . ":" . $tId;
   printGenbankTagInfo ($fh, "db_xref", $inValue);
+  return 0;
+}
+
+sub printProductTbl {
+  my ($fh, $tId, $productNameRef) = @_;
+  my $productName;
+
+  if ($productNameRef->{$tId}) {
+    $productName = join ('/', @{$productNameRef->{$tId}});
+  } else {
+    $productName = "unspecified product";
+  }
+  printGenbankTagInfo ($fh, "product", $productName);
+
+  ## if there are more than one product name, print a note with bifunctional
+  if ($productNameRef->{$tId} && scalar @{$productNameRef->{$tId}} > 1) {
+    printGenbankTagInfo ($fh, "note", "bifunctional");
+  }
   return 0;
 }
 
