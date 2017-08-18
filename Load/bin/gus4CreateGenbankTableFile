@@ -149,8 +149,6 @@ and gf.external_database_release_id=$extDbRlsId order by nl.start_min
     $gType =~ s/\_gene//g;
     $gType = "mRNA" if ($gType !~ /RNA/i);   ## in the case of coding_gene or pseudo_gene
 
-    print STDERR "print gene: $gSourceId\n";
-
     ## FOR GENE
     ## get if partial info
     my (%prefix5, %prefix3);
