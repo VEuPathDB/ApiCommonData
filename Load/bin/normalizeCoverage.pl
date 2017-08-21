@@ -186,6 +186,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
 	my $cmd = "bigWigMerge -max $set $exp_dir/${base}CombinedReps.bed";
 #	print Dumper "command now for the reps is $cmd\n";
 	&runCmd($cmd);
+#	my $cmd = "LC_COLLATE=C sort -k1,1 -k2,2n $exp_dir/${base}CombinedRepsNotSorted.bed >$exp_dir/${base}CombinedReps.bed";
   #  my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
   #  &runCmd($cmd);
     }
@@ -264,9 +265,10 @@ sub update_coverage {
 		
 		next unless ($chr && $start && $stop && $score);
 		
-		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
+#		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
+		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score / ($coverage /1000000) * (($stop - $start)/1000) ));
 		print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score\n";
-		my $normalized_score_logged = sprintf ("%.2f", ((log($normalized_score))/(log(2))));
+		my $normalized_score_logged = $normalized_score == 0 ? 0 :sprintf ("%.2f", ((log($normalized_score))/(log(2))));
 		print OUT "$chr\t$start\t$stop\t$normalized_score_logged\n";
 		
 	    }
