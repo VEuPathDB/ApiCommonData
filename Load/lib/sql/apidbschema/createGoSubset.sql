@@ -1,7 +1,7 @@
 create table apidb.GoSubset(
 go_subset_id NUMBER(10) NOT NULL,
 go_subset_term VARCHAR(500) NOT NULL,
-ontology_term_id VARCHAR(500) NOT NULL,
+ontology_term_id NUMBER(12)  NOT NULL,
 external_database_release_id NUMBER(12) NOT NULL,
 foreign key (ontology_term_id) REFERENCES sres.ontologyterm,
 primary key (go_subset_id),
