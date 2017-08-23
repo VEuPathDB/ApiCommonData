@@ -107,11 +107,18 @@
                                             TuningManager-Installation,
                                             GUS-Installation,
                                             DoTS-Installation,
+                                            ApiCommonData-MavenInstallation,
                                             ApiCommonData/Load-Installation">
 
     <ant target="defaultProjectInstall"/>
-  </target>  
-   
+  </target>
+
+  <target name="ApiCommonData-MavenInstallation">
+    <ant target="mavenBuildProject">
+      <property name="project" value="ApiCommonData"/>
+    </ant>
+    <property name="alreadyBuilt" value="true"/>
+  </target>
 
   <!-- oooooooooooooooooo  Installation Postprocess  ooooooooooooooooooooo -->
 
