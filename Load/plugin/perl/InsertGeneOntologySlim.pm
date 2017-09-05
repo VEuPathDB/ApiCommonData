@@ -177,6 +177,7 @@ sub run {
 							  });
 #	  print Dumper $goSubset;
 	  $count2 ++;
+	  $goSubset->submit();
       }
       $self->undefPointerCache() if $count++ % 500 == 0;
 
@@ -245,9 +246,6 @@ sub queryForOntologyTermId {
     $sh->finish();
     
 }
-
-
-
 
 sub undoTables {
   my ($self) = @_;
