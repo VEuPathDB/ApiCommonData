@@ -252,7 +252,10 @@ sub queryForOntologyTermId {
 sub undoTables {
   my ($self) = @_;
 
-  return ('apidb.GoSubset');
+  return ('ApiDB.GoSubset');
 }
+
+
+1;
 
 
