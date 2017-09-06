@@ -58,12 +58,10 @@ my $tablesDependedOn = <<TABLES_DEPENDED_ON;
 sres.OntologyTerm
 TABLES_DEPENDED_ON
 
-###### NOT SURE WHAT THE HowtoREstart WILL BE 
 
 my $howToRestart = <<RESTART;
 RESTART
 
-###### NOT SURE WHAT THE FAILURE CASES WILL BE 
 
 my $failureCases = <<FAIL_CASES;
 FAIL_CASES
@@ -106,8 +104,8 @@ sub run {
   my $extDbRlsName = $self->getArg('extDbRlsName');
   my $extDbRlsVer = $self->getArg('extDbRlsVer');
 
-  #$self->error("extDbRlsVer $extDbRlsVer does not match data-version $dataVersion of the obo file\n")
-  #  unless $dataVersion eq $extDbRlsVer;
+  $self->error("extDbRlsVer $extDbRlsVer does not match data-version $dataVersion of the obo file\n")
+    unless $dataVersion eq $extDbRlsVer;
 
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName, $extDbRlsVer);
 #  my $termsToCheck = $self->queryForOntologyTermIds();
