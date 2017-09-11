@@ -1003,3 +1003,98 @@ sub getIgnoredModificationSymbolMap {
 }
 
 1;
+
+package ApiCommonData::Load::MassSpecTransform::PeptideLineAndProteinLineStartWithSpecCharSqtFromPride;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# a package to parse a sqt file from pride
+# the protein line starts with L
+# the peptide line starts with M
+# in the prop.config file skipLines=0, headerRegex=^H
+# e.g. tgonME49/massSpec/Extracellular_Vesicles
+
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString =~ /^L/) {
+    return 1;
+  }
+  return 0;
+}
+
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString =~ /^M/) {
+    return 1;
+  }
+  return 0;
+}
+
+sub readFile {
+  my ($self) = @_;
+
+  my $file = $self->getInputFile();
+  my $delimiter = $self->getDelimiter();
+
+  open(FILE, $file) or die "Cannot open file $file for reading: $!";
+
+  my $currentPeptideLine;
+  my $peptideCount = 0;
+
+  my $printOnly = $self->hasMissingRequiredColumnInfo();
+  unless(defined $self->getPeptideSpectrumColumn()) {
+    print STDERR "SEVERE WARNING:  YOU DIDN'T PROVIDE A SPECTRUM COUNT COLUMN FOR PEPTIDES!!  FIX AND RERUN IF YOUR INPUT FILE CONTAINS THIS INFORMATION\n";
+  }
+
+  while (my $line = <FILE>) {
+    chomp($line);
+    next unless ($line); ## skip empty lines
+
+    if ($line =~ /^H/) { ## skip header lines
+      print STDERR "Skipping header line: $line\n" if ($self->debug());
+      next
+    }
+
+    my @a = split($delimiter, $line);
+
+    foreach my $i (0..$#a) {
+      $a[$i] =~ s/^\s+//g;
+      $a[$i] =~ s/\s+$//g;
+    }
+
+    if ($printOnly) {
+      $self->printXmlConfig();
+    }
+
+    if ($line =~ /^S/) {
+      ## spectrum match line
+    } elsif ($line =~ /^M/) {  ## peptide line
+      $currentPeptideLine = $line;
+      $currentPeptideLine =~ s/\(.+\)//;  ## remove the value within () and ()
+      $peptideCount++;
+    } elsif ($line =~ /^L/) {  ## protein ID line
+      my $currentProteinId = $a[$self->getProteinIdColumn()];
+      $currentProteinId  =~ s/^Reverse_//;  ## remove the Reverse_ at the begin of proteinId
+
+      my $geneId;
+      if (defined $self->getGeneSourceIdColumn()) {
+	$geneId = $a[$self->getGeneSourceIdColumn()];
+      }
+      $geneId =~ s/^Reverse_//; ## remove the Reverse_ at the begin of geneId
+
+      $self->{data}->{$currentProteinId}->{gene} = $geneId;
+
+      my @pepA = split($delimiter, $currentPeptideLine);
+      $self->addPeptide($currentProteinId, \@pepA);
+
+      last if ($self->debug && $peptideCount == 2);
+
+    } else {
+      print STDERR "Found unusual line: \n$line\n";
+    }
+  }
+  close FILE;
+}
+
+1;
