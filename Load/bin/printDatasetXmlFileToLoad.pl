@@ -126,7 +126,7 @@ foreach my $k (sort keys %excelInfo) {
 my $xmlDir = "xmlFile/";
 mkdir("$xmlDir") unless -e "$xmlDir";
 my $projFile = $xmlDir . $projectName. "_". $organismAbbrev. ".xml";
-my $orgFile = $xmlDir. $organismAbbrev. ".xml";
+my $orgFile = $xmlDir. $organismAbbrev. ".bkp";
 
 open (PO, ">$projFile") || die "can not open file to write\n";
 
