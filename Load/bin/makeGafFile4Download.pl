@@ -29,7 +29,7 @@ if(!$gusConfigFile) {
 }
 
 &usage("Config file $gusConfigFile does not exist.") unless -e $gusConfigFile;
-&usage("Miss required parameter: organismAbbrev.") unless -e $organismAbbrev;
+&usage("Miss required parameter: organismAbbrev.") unless ($organismAbbrev);
 
 my @properties;
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
@@ -69,7 +69,7 @@ sub getGoInfoFromDbs {
 
   ## use apidbtuning.GoTermSummary table to get GO info
   my $sqlSub = "
-select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, 
+select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
 decode(ontology, 'Biological Process', 'P',
                  'Molecular Function', 'F',
                  'Cellular Component', 'C', ontology) 
@@ -77,11 +77,14 @@ from apidbtuning.GoTermSummary
 ";
 
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  print STDERR "the total number of goTermSummary is $#$sqlRefSub\n";
 
   foreach my $i (0..$#$sqlRefSub) {
-    my ($gSourceId, $tSourceId, $goId, $reference, $evidenceCode, $goTermName, $source, $ontology) = split(/\|/, $sqlRefSub->[$i]);
+    my ($gSourceId, $tSourceId, $goId, $reference, $evidenceCode, $goTermName, $source, $eviCodeParameter, $ontology) = split(/\|/, $sqlRefSub->[$i]);
 
     next if (!$idRef->{$gSourceId});  ## continue only when the gSourceId is in the queried organism
+
+    print STDERR "$sqlRefSub->[$i]\n";
     ## remove the prefix GO: and GO_
     $goId =~ s/_/:/;  ## change GO_123456 To GO:123456
 
@@ -90,6 +93,7 @@ from apidbtuning.GoTermSummary
     my $geneName = ($nameRef->{$gSourceId}) ? ($nameRef->{$gSourceId}) : "" ;
     my $product = ($prodRef->{$tSourceId}) ? ($prodRef->{$tSourceId}) : "unspecified product";
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
+    $eviCodeParameter = ($evidenceCode eq "IEA") ? ($eviCodeParameter) : "";  ## it is null if $evidenceCode is not 'IEA'
 
     my @items;
     $items[0] = "EuPathDB";
@@ -99,7 +103,7 @@ from apidbtuning.GoTermSummary
     $items[4] = $goId;                             ## GO ID
     $items[5] = $reference;                        ## DB:Reference
     $items[6] = $evidenceCode;                     ## Evidence Code
-    $items[7] = "";                                ## With (or) From, optional
+    $items[7] = $eviCodeParameter;                 ## With (or) From, optional, Can be evidence_code_parameter in EuPathDB
     $items[8] = $ontology;                         ## Aspect
     $items[9] = $product;                          ## DB Object Name, productName in EuPathDB
     $items[10] = "";                               ## DB Object Synonym, optional
