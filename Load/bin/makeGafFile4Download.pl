@@ -49,10 +49,13 @@ my $extDbRlsId = getPrimaryExtRlsIdFromOrganismAbbrev ($dbh, $organismAbbrev);
 print STDERR "For $organismAbbrev got externalDatabaseRlsId = $extDbRlsId\n";
 
 my $geneIdRef = getGeneIdsForOrganism($dbh, $extDbRlsId);
+my $transcriptTypeRef = getTranscriptTypeForOrganism ($dbh, $extDbRlsId);
+
 my $geneNameRef = getGeneNamesForOrganism ($dbh, $extDbRlsId);
 my $productRef = getProductNamesForOrganism ($dbh, $extDbRlsId);
-my $transcriptTypeRef = getTranscriptTypeForOrganism ($dbh, $extDbRlsId);
-my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $transcriptTypeRef, $date);
+my $synonymRef = getSynonymsForOrganism ($dbh, $organismAbbrev);
+
+my $goRef = getGoInfoFromDbs ($dbh, $extDbRlsId, $ncbiTaxonId, $geneIdRef, $geneNameRef, $productRef, $synonymRef, $transcriptTypeRef, $date);
 
 printGoInfo ($fhl, $goRef);
 
@@ -64,7 +67,7 @@ $dbh->disconnect();
 
 #################
 sub getGoInfoFromDbs {
-  my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $transTypeRef, $date) = @_;
+  my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date) = @_;
   my @goInfos;
 
   ## use apidbtuning.GoTermSummary table to get GO info
@@ -84,7 +87,6 @@ from apidbtuning.GoTermSummary
 
     next if (!$idRef->{$gSourceId});  ## continue only when the gSourceId is in the queried organism
 
-    print STDERR "$sqlRefSub->[$i]\n";
     ## remove the prefix GO: and GO_
     $goId =~ s/_/:/;  ## change GO_123456 To GO:123456
 
@@ -92,6 +94,9 @@ from apidbtuning.GoTermSummary
     $evidenceCode = "IEA" if (!$evidenceCode);  ## default value
     my $geneName = ($nameRef->{$gSourceId}) ? ($nameRef->{$gSourceId}) : "" ;
     my $product = ($prodRef->{$tSourceId}) ? ($prodRef->{$tSourceId}) : "unspecified product";
+    my $synonym = ($synonRef->{$gSourceId}) ? ($synonRef->{$gSourceId}) : "";
+    $synonym =~ s/\,/\|/g;
+
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
     $eviCodeParameter = ($evidenceCode eq "IEA") ? ($eviCodeParameter) : "";  ## it is null if $evidenceCode is not 'IEA'
 
@@ -106,7 +111,7 @@ from apidbtuning.GoTermSummary
     $items[7] = $eviCodeParameter;                 ## With (or) From, optional, Can be evidence_code_parameter in EuPathDB
     $items[8] = $ontology;                         ## Aspect
     $items[9] = $product;                          ## DB Object Name, productName in EuPathDB
-    $items[10] = "";                               ## DB Object Synonym, optional
+    $items[10] = $synonym;                         ## DB Object Synonym, optional
     $items[11] = $transType;                       ## DB Object Type, eg. protein, tRNA, rRNA, ncRNA ...
     $items[12] = "taxon:$taxonId";                 ## Taxon: taxon:9606
     $items[13] = $date;                            ## Date
@@ -156,6 +161,30 @@ where t.NA_FEATURE_ID=tp.NA_FEATURE_ID and tp.IS_PREFERRED=1 and t.EXTERNAL_DATA
   }
   print STDERR "For externalDatabaseReleaseId $extRlsId, can not find the record in apidb.transcriptProduct table\n" if (!$sqlRefSub);
   return \%products;
+}
+
+sub getSynonymsForOrganism {
+  my ($dbhSub, $abbrev) = @_;
+  my %synonyms;
+
+  my $dbName = $abbrev. "_dbxref_%_synonym_RSRC";
+  my $sqlSub = "
+select gf.SOURCE_ID, df.PRIMARY_IDENTIFIER, ed.NAME 
+from dots.genefeature gf, sres.dbref df, dots.dbrefnafeature dfnf, SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr
+where gf.NA_FEATURE_ID=dfnf.NA_FEATURE_ID and dfnf.DB_REF_ID=df.DB_REF_ID 
+and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID 
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID 
+and ed.NAME like '$dbName'
+
+";
+
+  my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
+  foreach my $i (0..$#$sqlRefSub) {
+    my ($id, $name) = split (/\|/, $sqlRefSub->[$i]);
+    $synonyms{$id} = ($synonyms{$id}) ? ($synonyms{$id}.",".$name) : $name;
+  }
+  print STDERR "For $abbrev, can not find records in synonym table\n" if (!$sqlRefSub);
+  return \%synonyms;
 }
 
 sub getTranscriptTypeForOrganism {
