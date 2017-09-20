@@ -265,10 +265,15 @@ sub update_coverage {
 		
 		next unless ($chr && $start && $stop && $score);
 		
-		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
-#		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score / ($coverage /1000000) * (($stop - $start)/1000) ));
+#		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
+		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score / ($coverage /1000000) * (($stop - $start)/1000) ));
+		#we want to set any that have a normalized score to <1 to 0 for only the score. 
+		my $normalized_score_for_log = $normalized_score;
+		if ($normalized_score_for_log < 1) {
+		    $normalized_score_for_log = 0;
+		}
 		print OUTUNLOGGED "$chr\t$start\t$stop\t$normalized_score\n";
-		my $normalized_score_logged = $normalized_score == 0 ? 0 :sprintf ("%.2f", ((log($normalized_score))/(log(2))));
+		my $normalized_score_logged = $normalized_score_for_log == 0 ? 0 :sprintf ("%.2f", ((log($normalized_score_for_log))/(log(2))));
 		print OUT "$chr\t$start\t$stop\t$normalized_score_logged\n";
 		
 	    }
