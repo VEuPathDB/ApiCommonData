@@ -134,10 +134,6 @@ row_alg_invocation_id        NUMBER(12),
        FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
        PRIMARY KEY (na_feature_phenotype_model_id)
       );
-       FOREIGN KEY (phenotype_model_id) REFERENCES apidb.phenotypemodel,
-       FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
-       PRIMARY KEY (na_feature_phenotype_model_id)
-      );
 
 CREATE INDEX apidb.nfpm_revix0 ON apidb.NaFeaturePhenotypeModel (na_feature_id, na_feature_phenotype_model_id) TABLESPACE indx;
 CREATE INDEX apidb.nfpm_revix1 ON apidb.NaFeaturePhenotypeModel (phenotype_model_id, na_feature_phenotype_model_id) TABLESPACE indx;
