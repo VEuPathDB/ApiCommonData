@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://purl.obolibrary.org/obo/eupath/icemr_array.owl#"
-     xml:base="http://purl.obolibrary.org/obo/eupath/icemr_array.owl"
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/eupath/protein_array.owl#"
+     xml:base="http://purl.obolibrary.org/obo/eupath/protein_array.owl"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/icemr_array.owl">
-        <owl:versionInfo>2017-08-18</owl:versionInfo>
-        <rdfs:comment>SVN revision: 83986</rdfs:comment>
-    </owl:Ontology>
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/protein_array.owl"/>
     
 
 
@@ -177,9 +174,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000048">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
-        <obo:IAO_0000115>Results of Microscopy (thin or think smear)</obo:IAO_0000115>
+        <obo:IAO_0000115>blood smear reading as positive or negative at enrollment</obo:IAO_0000115>
         <obo:ICEMR_temp>Microscopy result</obo:ICEMR_temp>
-        <rdfs:label>Microscopy Result</rdfs:label>
+        <rdfs:label>Asexual Parasites Present (Microscopy)</rdfs:label>
     </owl:Class>
     
 
@@ -190,7 +187,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:IAO_0000115>Unique study paticipant ID number</obo:IAO_0000115>
         <obo:ICEMR_temp>Study subject unique ID</obo:ICEMR_temp>
-        <rdfs:label>Subject ID</rdfs:label>
+        <rdfs:label>Participant ID</rdfs:label>
     </owl:Class>
     
 
@@ -198,7 +195,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
-        <rdfs:label xml:lang="en">General Information of Study Subject</rdfs:label>
+        <rdfs:label xml:lang="en">General Information of Participant</rdfs:label>
     </owl:Class>
     
 
@@ -210,8 +207,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
         <obo:IAO_0000115>History of subjective fever</obo:IAO_0000115>
         <obo:ICEMR_temp>fever</obo:ICEMR_temp>
-        <rdfs:label xml:lang="en">Fever</rdfs:label>
-        <rdfs:label>fever</rdfs:label>
+        <rdfs:label xml:lang="en">Febrile</rdfs:label>
     </owl:Class>
     
 
@@ -233,7 +229,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:IAO_0000115>Age of participant in years</obo:IAO_0000115>
         <obo:ICEMR_temp>Age</obo:ICEMR_temp>
-        <rdfs:label>Age</rdfs:label>
+        <rdfs:label>Age at Time of Visit</rdfs:label>
     </owl:Class>
     
 
@@ -255,7 +251,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
         <obo:IAO_0000115>Was the patient hospitalized</obo:IAO_0000115>
         <obo:ICEMR_temp>hospitalized</obo:ICEMR_temp>
-        <rdfs:label>Hospitalized</rdfs:label>
+        <rdfs:label>Hospitalization</rdfs:label>
     </owl:Class>
     
 
@@ -264,7 +260,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000309">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
-        <rdfs:label xml:lang="en">Other Signs/symptoms/diseases</rdfs:label>
+        <rdfs:label xml:lang="en">Symptoms and Signs</rdfs:label>
     </owl:Class>
     
 
@@ -275,7 +271,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000097"/>
         <obo:IAO_0000115>Duration of history of subjective fever in days</obo:IAO_0000115>
         <obo:ICEMR_temp>fever duration</obo:ICEMR_temp>
-        <rdfs:label>Fever Duration</rdfs:label>
+        <rdfs:label>Febrile Duration</rdfs:label>
     </owl:Class>
     
 
@@ -380,7 +376,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000523">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
-        <rdfs:label xml:lang="en">Presenceof parasite species</rdfs:label>
+        <rdfs:label xml:lang="en">Presenceof Parasite Species</rdfs:label>
     </owl:Class>
     
 
@@ -444,7 +440,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
         <obo:IAO_0000115>Method used to detect gametocytes</obo:IAO_0000115>
         <obo:ICEMR_temp>gametocytes detection method</obo:ICEMR_temp>
-        <rdfs:label>Gametocytes detection method</rdfs:label>
+        <rdfs:label>Gametocytes Detection Method</rdfs:label>
     </owl:Class>
     
 
@@ -455,7 +451,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
         <obo:IAO_0000115>Location where the GPS coordinates were taken</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS location</obo:ICEMR_temp>
-        <rdfs:label>GPS location</rdfs:label>
+        <rdfs:label>GPS Location</rdfs:label>
     </owl:Class>
     
 
@@ -509,7 +505,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000535">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:ICEMR_temp>IRB number</obo:ICEMR_temp>
-        <rdfs:label>IRB number</rdfs:label>
+        <rdfs:label>IRB Number</rdfs:label>
     </owl:Class>
     
 
@@ -540,7 +536,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000538">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
-        <rdfs:label xml:lang="en">Parasite detection</rdfs:label>
+        <rdfs:label xml:lang="en">Parasite Detection</rdfs:label>
     </owl:Class>
     
 
@@ -592,7 +588,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000543">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:ICEMR_temp>Sample origin</obo:ICEMR_temp>
-        <rdfs:label>Sample origin</rdfs:label>
+        <rdfs:label>Sample Origin</rdfs:label>
     </owl:Class>
     
 
@@ -675,6 +671,61 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000745 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000745">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Time to Onset</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000748 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000748">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:label xml:lang="en">iPRC Result</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000749 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000749">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">End of Observation Period</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000750 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000750">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
+        <rdfs:label xml:lang="en">Time to First Malaria Diagnosis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000751 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000751">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
+        <rdfs:label xml:lang="en">Time to Reinfection</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000754 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000754">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
+        <obo:IAO_0000115>Weekly blood smear results during observation period.  Each position represents a week,  1 - Positive smear, 2 - Negative smear, 9 - Not done</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">Blood Smear Summary</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -744,7 +795,7 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0000659 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
-        <rdfs:label xml:lang="en">Specimen Collection Information</rdfs:label>
+        <rdfs:label xml:lang="en">Sample Collection</rdfs:label>
     </owl:Class>
     
 
@@ -773,7 +824,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:IAO_0000115>Date sample collected</obo:IAO_0000115>
         <obo:ICEMR_temp>Date sample collected</obo:ICEMR_temp>
-        <rdfs:label>Sample Collection Date</rdfs:label>
+        <rdfs:label>Collection Date</rdfs:label>
     </owl:Class>
     
 
@@ -784,7 +835,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
         <obo:IAO_0000115>GPS coordinates of sample colleciton - longitude in decimal degrees (DD)</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS latitude</obo:ICEMR_temp>
-        <rdfs:label>GPS latitude</rdfs:label>
+        <rdfs:label>Longitude (degrees)</rdfs:label>
     </owl:Class>
     
 
@@ -795,7 +846,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
         <obo:IAO_0000115>GPS coordinates of sample colleciton - latitude in decimal degrees (DD)</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS longitude</obo:ICEMR_temp>
-        <rdfs:label>GPS longitude</rdfs:label>
+        <rdfs:label>Latitude  (degrees)</rdfs:label>
     </owl:Class>
     
 
@@ -817,7 +868,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
         <obo:IAO_0000115>Any other additional comments</obo:IAO_0000115>
         <obo:ICEMR_temp>comments</obo:ICEMR_temp>
-        <rdfs:label>Comments</rdfs:label>
+        <rdfs:label>Notes</rdfs:label>
     </owl:Class>
     
 
@@ -854,7 +905,7 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000018 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000018">
-        <rdfs:label xml:lang="en">Laboratory Methods and Results</rdfs:label>
+        <rdfs:label xml:lang="en">Laboratory Findings</rdfs:label>
     </owl:Class>
     
 
@@ -865,7 +916,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
         <obo:IAO_0000115>Health status at time of physical examination</obo:IAO_0000115>
         <obo:ICEMR_temp>health status</obo:ICEMR_temp>
-        <rdfs:label>Health Status</rdfs:label>
+        <rdfs:label>Diagnosis</rdfs:label>
     </owl:Class>
     
 
@@ -876,7 +927,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:IAO_0000115>Gender</obo:IAO_0000115>
         <obo:ICEMR_temp>Gender</obo:ICEMR_temp>
-        <rdfs:label>Gender</rdfs:label>
+        <rdfs:label>Sex</rdfs:label>
     </owl:Class>
     
 
@@ -909,7 +960,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:IAO_0000115>Date of birth if available and known to be accurate</obo:IAO_0000115>
         <obo:ICEMR_temp>Date of birth</obo:ICEMR_temp>
-        <rdfs:label>Date of birth</rdfs:label>
+        <rdfs:label>Date of Birth</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
