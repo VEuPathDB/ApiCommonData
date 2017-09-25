@@ -628,38 +628,6 @@ GRANT execute ON apidb.compute_end TO gus_r;
 GRANT execute ON apidb.compute_end TO gus_w;
 
 -------------------------------------------------------------------------------
-
-create or replace procedure apidb.deleteNaFeatureByAlgInv (rowAlgInvId in number)
-as
-  cursor c1 is
-      select rowid from dots.NaFeature where row_alg_invocation_id = rowAlgInvId;
-
-  my_rowid urowid;
-  recordCount number;
-begin
-  open c1;
-  recordCount := 0;
-  loop
-    fetch c1 into my_rowid;
-    exit when c1%notfound;
-
-    delete from dots.NaFeature
-    where rowid = my_rowid;
-
-    recordCount := recordCount + 1;
-    if mod(recordCount, 100000) = 0 then
-        commit;
-        -- dbms_output.put_line( recordCount || ' NaFeature rows deleted ' || extDbRlsId);
-    end if;
-  end loop;
-end;
-/
-
-show errors
-
-grant execute on apidb.deleteNaFeatureByAlgInv to gus_r;
-grant execute on apidb.deleteNaFeatureByAlgInv to gus_w;
--------------------------------------------------------------------------------
 create or replace function apidb.wrap (seq clob)
 return clob
 is
