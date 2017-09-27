@@ -226,11 +226,13 @@ while($merger->hasNext()) {
   }
   
   my $cachedReferenceVariation = &cachedReferenceVariation($variations, $referenceStrain);
+  my $referenceProtocolAppNodeId = &queryProtocolAppNodeIdFromExtDbRlsId($dbh, $thisExtDbRlsId);
 
   # for the refereence, get   positionsInCds, positionsInProtein, product, codon?
   if($cachedReferenceVariation && !$isLegacyVariations) {
     print STDERR "HAS_CACHED REFERENCE VARIATION\n" if($debug);
     $referenceVariation = $cachedReferenceVariation;
+    $referenceVariation->{'protocol_app_node_id'} = $referenceProtocolAppNodeId;
     $positionsInCds = &makeHashRefFromString($cachedReferenceVariation->{positions_in_cds}) if($cachedReferenceVariation->{positions_in_cds});
     $positionsInProtein = &makeHashRefFromString($cachedReferenceVariation->{positions_in_protein}) if($cachedReferenceVariation->{positions_in_protein});
     $referenceAllele = $cachedReferenceVariation->{base};
@@ -249,7 +251,7 @@ while($merger->hasNext()) {
     my $positionInProtein = &uniqueValueFromHashRef($positionsInProtein);
     my $product =  &uniqueValueFromHashRef($referenceProducts);
 
-    my $referenceProtocolAppNodeId = &queryProtocolAppNodeIdFromExtDbRlsId($dbh, $thisExtDbRlsId);
+
 
 
     my $positionsInCdsString = &hashRefToString($positionsInCds);
