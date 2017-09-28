@@ -86,19 +86,38 @@ from apidbtuning.GoTermSummary
     my ($gSourceId, $tSourceId, $goId, $reference, $evidenceCode, $goTermName, $source, $eviCodeParameter, $ontology) = split(/\|/, $sqlRefSub->[$i]);
 
     next if (!$idRef->{$gSourceId});  ## continue only when the gSourceId is in the queried organism
+    next if (!$goId);
+    next if (!$ontology);
+    next if ($goId =~ /^BFO:/);  ## skip BFO: for now
 
-    ## remove the prefix GO: and GO_
-    $goId =~ s/_/:/;  ## change GO_123456 To GO:123456
+    ## change GO_123456 To GO:123456
+    $goId =~ s/_/:/g;
 
+    ## remove the prefix GO:
+    $goId =~ s/GO:GO:/GO:/;
 
     $evidenceCode = "IEA" if (!$evidenceCode);  ## default value
-    my $geneName = ($nameRef->{$gSourceId}) ? ($nameRef->{$gSourceId}) : "" ;
+    my $geneName = ($nameRef->{$gSourceId}) ? ($nameRef->{$gSourceId}) : "$gSourceId";   ## if not available use gSourceId because it is required
     my $product = ($prodRef->{$tSourceId}) ? ($prodRef->{$tSourceId}) : "unspecified product";
     my $synonym = ($synonRef->{$gSourceId}) ? ($synonRef->{$gSourceId}) : "";
     $synonym =~ s/\,/\|/g;
 
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
-    $eviCodeParameter = ($evidenceCode eq "IEA") ? ($eviCodeParameter) : "";  ## it is null if $evidenceCode is not 'IEA'
+
+    $reference = "EuPathDB:".$gSourceId if (!$reference);
+    $source = "EuPathDB" if (!$source);
+
+    my $withOrFrom;
+    if ($evidenceCode eq "IEA") {  ## is $eviCodeParameter if $evidenceCode eq "IEA"
+      $withOrFrom = $eviCodeParameter;
+    } elsif ($evidenceCode eq "IPI" || $evidenceCode eq "ISS") {
+      $withOrFrom = $gSourceId;
+    } elsif ($evidenceCode eq "EXP" || $evidenceCode eq "IDA" || $evidenceCode eq "IEP"
+             || $evidenceCode eq "TAS" || $evidenceCode eq "NAS" || $evidenceCode eq "ND") {
+      $withOrFrom = "";
+    } else {
+      $withOrFrom == $eviCodeParameter;
+    }
 
     my @items;
     $items[0] = "EuPathDB";
@@ -108,7 +127,7 @@ from apidbtuning.GoTermSummary
     $items[4] = $goId;                             ## GO ID
     $items[5] = $reference;                        ## DB:Reference
     $items[6] = $evidenceCode;                     ## Evidence Code
-    $items[7] = $eviCodeParameter;                 ## With (or) From, optional, Can be evidence_code_parameter in EuPathDB
+    $items[7] = $withOrFrom;                       ## With (or) From, optional, Can be evidence_code_parameter in EuPathDB
     $items[8] = $ontology;                         ## Aspect
     $items[9] = $product;                          ## DB Object Name, productName in EuPathDB
     $items[10] = $synonym;                         ## DB Object Synonym, optional
