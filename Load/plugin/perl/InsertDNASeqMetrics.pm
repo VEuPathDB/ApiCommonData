@@ -158,8 +158,14 @@ sub run {
                                                                         external_database_release_id => $sampleExtDbRlsId});
    
     my $studyLink = GUS::Model::Study::StudyLink->new();
-    $studyLink->setParent($gusStudy);
-    $studyLink->setParent($assayProtocolAppNode);
+    
+    unless ($studyLink->setParent($gusStudy)) {
+        $self->userError("Study could not be set as parent for study link\n");
+    }
+
+    unless ($studyLink->setParent($assayProtocolAppNode)) {
+        $self->userError("Assay protocol app node could not be set as parent for study link\n");
+    }
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
