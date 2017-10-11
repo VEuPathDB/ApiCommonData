@@ -9,4 +9,8 @@ DROP PUBLIC DATABASE LINK devN.login_comment;
 
 DROP PUBLIC DATABASE LINK rm15873.login_comment;
 
+DROP PUBLIC DATABASE LINK acctdbN.profile;
+Drop PUBLIC DATABASE LINK acctdbS.profile;
+
+
 exit;
