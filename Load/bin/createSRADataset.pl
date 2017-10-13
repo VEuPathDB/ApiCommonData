@@ -4,20 +4,21 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my ($study, $org, $dsname);
+my ($study, $org, $dsname, $profile);
 
-&GetOptions( 'study=s'          => \$study,
-             'orgaism_abbrev=s' => \$org,
-             'dataset_name=s'   => \$dsname );
+&GetOptions( 'study=s'           => \$study,
+             'orgaism_abbrev=s'  => \$org,
+             'dataset_name=s'    => \$dsname,
+             'profileset_name=s' => \$profile );
 
-unless($study && $org && $dsname) {
+unless($study && $org && $dsname && $profile) {
   print <<EOL;
 
 This script creates dataset xml and analsysiConfig.xml for rnaSeq and HTS_SNPs from SRA.
 It takes SRA study id, organism abbreviation and dataset name as input. 
 For instance,
 
-%>createSRADataset.pl --study SRP106638 --orgaism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi
+%>createSRADataset.pl --study SRP106638 --orgaism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi --profileset_name "M mulatta infected with P cynomolgi over 100 days"
 
 Output will be Galinski_Mmulatta_Infected_with_Pcynomolgi.xml and analsysiConfig.xml
 EOL
@@ -32,7 +33,7 @@ print O1 "<datasets>\n";
 print O2 <<EOL;
 <xml>
   <globalReferencable>
-    <property name="profileSetName" value="Profile name ??? TODO"/>   
+    <property name="profileSetName" value="$profile"/>   
     <property name="samples">
 EOL
 
