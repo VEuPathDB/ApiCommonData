@@ -17,7 +17,7 @@ This script creates dataset xml and analsysiConfig.xml for rnaSeq and HTS_SNPs f
 It takes SRA study id, organism abbreviation and dataset name as input. 
 For instance,
 
-%>createSRADataset.pl --study SRP074328 --orgaism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi
+%>createSRADataset.pl --study SRP106638 --orgaism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi
 
 Output will be Galinski_Mmulatta_Infected_with_Pcynomolgi.xml and analsysiConfig.xml
 EOL
