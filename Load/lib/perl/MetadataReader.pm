@@ -27,7 +27,7 @@ sub setNestedReaders { $_[0]->{_nested_readers} = $_[1] }
 sub getAncillaryData { $_[0]->{_ancillary_data} }
 sub setAncillaryData { $_[0]->{_ancillary_data} = $_[1] }
 
-sub addDerivedData {}
+sub cleanAndAddDerivedData {}
 
 sub readAncillaryInputFile {
   die "Ancillary File provided bun no method implemented to read it.";
@@ -69,7 +69,7 @@ sub adjustHeaderArray {
 sub skipIfNoParent { return 0; }
 
 sub getDelimiter { 
-  my ($self, $header) = @_;
+  my ($self, $header, $guessDelimter) = @_;
 
   if($header) {
     if($header =~ /\t/) {
@@ -105,6 +105,15 @@ sub new {
 }
 
 
+sub splitLine {
+  my ($self, $delimiter, $line) = @_;
+
+  my @a = split($delimiter, $line);
+
+  return wantarray ? @a : \@a;
+}
+
+
 sub read {
   my ($self) = @_;
 
@@ -122,7 +131,7 @@ sub read {
 
   my $delimiter = $self->getDelimiter($header);
 
-  my @headers = split($delimiter, $header);
+  my @headers = $self->splitLine($delimiter, $header);
 
   my $headersAr = $self->adjustHeaderArray(\@headers);
 
@@ -135,7 +144,7 @@ sub read {
   while(<FILE>) {
     $_ =~ s/\n|\r//g;
 
-    my @values = split($delimiter, $_);
+    my @values = $self->splitLine($delimiter, $_);
     my $valuesAr = $self->clean(\@values);
 
     my %hash;
@@ -143,6 +152,7 @@ sub read {
       my $key = lc($headersAr->[$i]);
       my $value = lc($valuesAr->[$i]);
 
+      # TODO: move this to PRISM class clean method
       next if($value eq '[skipped]');
 
       $hash{$key} = $value if(defined $value);
@@ -163,11 +173,12 @@ sub read {
 
     $primaryKey = $self->getPrimaryKeyPrefix(\%hash) . $primaryKey;
 
-    $self->addDerivedData(\%hash);
+    $self->cleanAndAddDerivedData(\%hash);
 
     foreach my $key (keys %hash) {
       next if($colExcludes->{$fileBasename}->{$key} || $colExcludes->{'__ALL__'}->{$key});
-      next unless $hash{$key}; # skip undef values
+      next unless defined $hash{$key}; # skip undef values
+      next if($hash{$key} eq '');
 
       next if(&seen($parsedOutput->{$primaryKey}->{$key}, $hash{$key}));
 
@@ -307,7 +318,7 @@ sub makePrimaryKey {
 }
 
 
-sub addDerivedData {
+sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
   if($hash->{malariacat} eq "negative blood smear") {
@@ -551,7 +562,7 @@ use strict;
 use Data::Dumper;
 
 
-sub addDerivedData {
+sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
   if($hash->{date}) {
@@ -710,6 +721,8 @@ use base qw(ApiCommonData::Load::MetadataReader::HbgdReader);
 
 use strict;
 
+use Data::Dumper;
+
 sub makeParent {
   return undef;
 }
@@ -718,7 +731,7 @@ sub makePrimaryKey {
   my ($self, $hash) = @_;
 
   if($hash->{"primary_key"}) {
-    return $hash->{"primary_key"};
+    return uc $hash->{"primary_key"};
   }
 
   return $hash->{subjid};
@@ -733,6 +746,24 @@ sub getPrimaryKeyPrefix {
 
   return "";
 }
+
+
+sub cleanAndAddDerivedData {
+  my ($self, $hash) = @_;
+
+  my $country = $hash->{country};
+  my $citytown = $hash->{citytown};
+
+  if($citytown) {
+    $country = "united republic of tanzania" if($country eq "tanzania, united republic of");
+
+    my $ucCountry = join(" ", map { length($_) > 2 ? ucfirst : $_ } split(/\s+/, $country));
+    my $ucCityTown = join(" ", map { length($_) > 2 ? ucfirst : $_ } split(/\s+/, $citytown)) . ", $ucCountry";
+
+    $hash->{citytown} = $ucCityTown;
+  }
+}
+
 
 1;
 
@@ -801,7 +832,7 @@ sub readAncillaryInputFile {
 }
 
 
-sub addDerivedData {
+sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
   my $ancillaryData = $self->getAncillaryData();
@@ -839,7 +870,7 @@ sub readAncillaryInputFile {
 
 
 
-sub addDerivedData {
+sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
   my $ancillaryData = $self->getAncillaryData();
@@ -953,7 +984,7 @@ sub eventType {
 
 
 
-sub addDerivedData {
+sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
   my $eventType = $self->eventType();

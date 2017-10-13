@@ -24,7 +24,10 @@ sub getOntologyMapping { $_[0]->{_ontology_mapping} }
 sub setOntologyMapping { $_[0]->{_ontology_mapping} = $_[1] }
 
 sub new {
-  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile, $ancillaryInputFile) = @_;
+  my ($class, $type, $metadataFiles, $rowExcludeFile, $colExcludeFile, $parentMergedFile, $parentType, $ontologyMappingXmlFile, $ancillaryInputFile, $packageName) = @_;
+
+  eval "require $packageName";
+  die $@ if $@;  
 
   my $self = bless {}, $class;
 
@@ -37,7 +40,8 @@ sub new {
 
   my $parentParsedOutput;
   if($parentMergedFile) {
-    my $parentReaderClass = "ApiCommonData::Load::MetadataReader::" . $parentType . "Reader";
+    my $parentReaderClass = $packageName . "::" . $parentType . "Reader";
+
     my $parentReader = eval {
       $parentReaderClass->new($parentMergedFile, {}, {}, undef);
     };
@@ -52,7 +56,7 @@ sub new {
 
   my @readers;
   foreach my $metadataFile (@$metadataFiles) {
-    my $readerClass = "ApiCommonData::Load::MetadataReader::" . $type . "Reader";
+    my $readerClass = $packageName. "::" . $type . "Reader";
 
    my $reader = eval {
      $readerClass->new($metadataFile, $rowExcludes, $colExcludes, $parentParsedOutput, $ancillaryInputFile);
@@ -183,7 +187,17 @@ sub isValid {
   print STDERR "\n-----------------------------------------\n";
 
   print STDERR "Errors found:\n";
-  print STDERR Dumper $errors;
+
+
+  foreach my $qualifier (keys %$errors) {
+    foreach my $type (keys %{$errors->{$qualifier}}) {
+      my $v = $errors->{$qualifier}->{$type};
+
+      print "$qualifier\t$type\t$v\n";
+    }
+  }
+
+
 
 
 #  &write(\*STDERR, \%errorsDistinctQualifiers, $errors, undef);
