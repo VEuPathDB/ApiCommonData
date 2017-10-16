@@ -5,6 +5,8 @@ use DBI;
 use Getopt::Long;
 
 my ($study, $org, $dsname, $profile);
+my %hash;
+my $is_paired_end;
 
 &GetOptions( 'study=s'           => \$study,
              'orgaism_abbrev=s'  => \$org,
@@ -50,7 +52,7 @@ if($rv < 0) {
 while(my @row = $sth->fetchrow_array()) {
   my $run_id = $row[0];
   my $sample = $row[1];
-  my $attr   = $row[2];
+  my $attr   = $row[2]; # mixed information, such as strain, isolate etc. can be used as sample name in analysisConfig
 
 print O1 <<EOL;
   <dataset class="rnaSeqSample_QuerySRA">
@@ -69,6 +71,30 @@ EOL
 
 print O1 "</datasets>\n";
 
+$stmt = qq(select library_layout from experiment where study_accession = '$study');
+$sth  = $dbh->prepare($stmt);
+$rv   = $sth->execute or die $DBI::errstr;
+
+while(my @row = $sth->fetchrow_array()) {
+  my $key = $row[0];
+  $hash{$key} = 1;   # store libary layout as a hash key
+}
+
+my $size = keys %hash;
+if($size != 1) {
+  print "ERROR: Library layout error: ". join(', ', keys %hash);
+  die;
+}
+
+if((keys %hash)[0] =~ /PAIRED/i) {
+  $is_paired_end = 1;
+} elsif((keys %hash)[0] =~ /SINGLE/i) {
+  $is_paired_end = 0;
+} else {
+  print "ERROR: Library layout error: $is_paired_end\n";
+  die;
+}
+
 print O2 <<EOL;
     </property>
   </globalReferencable>
@@ -77,7 +103,7 @@ print O2 <<EOL;
     <property name="profileSetName" isReference="1" value="\$globalReferencable->{profileSetName}" />
     <property name="samples" isReference="1" value="\$globalReferencable->{samples}" />
     <property name="isStrandSpecific" value="0"/>
-    <property name="isPairedEnd" value="1"/>
+    <property name="isPairedEnd" value="$is_paired_end"/>
   </step>
 </xml>
 
