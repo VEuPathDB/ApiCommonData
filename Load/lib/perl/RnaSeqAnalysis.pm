@@ -89,11 +89,16 @@ sub munge {
     foreach my $quantificationType ('htseq-union') {    
     
 	    if($isStrandSpecific) {
-		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles);
-		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles);
+		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
+		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
+
+		$self->makeProfiles('firststrand', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
+		$self->makeProfiles('secondstrand', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
+
 	    }
 	    else {
-		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles);
+		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles, 1);
+		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
 	    }
     
        }
@@ -230,7 +235,7 @@ sub munge {
 }
 
 sub makeProfiles {
-    my ($self, $strand, $featureType, $quantificationType, $valueType, $makePercentiles) = @_;
+    my ($self, $strand, $featureType, $quantificationType, $valueType, $makePercentiles, $isUnique) = @_;
     
     my $samples = $self->getSamples();
     
@@ -241,9 +246,16 @@ sub makeProfiles {
     my $strandSuffix = ".$strand";
     my $featureTypeSuffix = ".$featureType";
     my $quantificationTypeSuffix = ".$quantificationType";
+
     my $valueTypeSuffix = ".$valueType";
-    
-    
+
+
+    # cleanup for non unique
+    if(!$isUnique) {
+      $valueTypeSuffix = ".nonunique.$valueType";
+      $profileSetName = $profileSetName .  "- Non Unique";
+      $makePercentiles = 0;
+    }
     
     my $outputFile = $OUTPUT_FILE_BASE.$featureTypeSuffix.$quantificationTypeSuffix.$strandSuffix.$valueTypeSuffix;
     
@@ -275,7 +287,12 @@ sub makeProfiles {
 	$profile->addProtocolParamValue('Mode', $mode);
     }
 
-    $profile->setDisplaySuffix(" [$quantificationType - $strand - $valueType]");
+    if($isUnique) {
+      $profile->setDisplaySuffix(" [$quantificationType - $strand - $valueType - unique]");
+    }
+    else {
+      $profile->setDisplaySuffix(" [$quantificationType - $strand - $valueType - nonunique]");
+    }
     
     $profile->setTechnologyType($self->getTechnologyType());
     
