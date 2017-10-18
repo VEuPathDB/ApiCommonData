@@ -30,6 +30,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="clustalx_file" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
+    <qualifier name="comment" ignore="true"/>
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="curation"                  ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
@@ -57,6 +58,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="systematic_id" ignore="true"/>
     <qualifier name="transcript_id"             ignore="true"/>
+    <qualifier name="transl_except"   ignore="true"/>  <!-- coded in mRNA -->
     <qualifier name="transl_table"   ignore="true"/>  <!-- coded in mRNA -->
     <qualifier name="translation"   ignore="true"/>  <!-- coded in mRNA -->
     <qualifier name="pseudo" ignore="true"/>
@@ -75,6 +77,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="codon_start"                   ignore="true"/>
     <qualifier name="codon_recognized"          ignore="true"/>
     <qualifier name="colour"                   ignore="true"/>
+    <qualifier name="comment"                   ignore="true"/>
     <qualifier name="controlled_curation"                   ignore="true"/>
     <qualifier name="curation"                   ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
@@ -117,6 +120,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="codon_start"                   ignore="true"/>
     <qualifier name="codon_recognized"          ignore="true"/>
     <qualifier name="colour"                   ignore="true"/>
+    <qualifier name="comment"                   ignore="true"/>
     <qualifier name="controlled_curation"                   ignore="true"/>
     <qualifier name="curation"                   ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
@@ -158,6 +162,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="codon_start"                   ignore="true"/>
     <qualifier name="codon_recognized"          ignore="true"/>
     <qualifier name="colour"                   ignore="true"/>
+    <qualifier name="comment"                   ignore="true"/>
     <qualifier name="controlled_curation"                   ignore="true"/>
     <qualifier name="curation"                   ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
@@ -361,10 +366,12 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="inference"                 ignore="true"/>
     <qualifier name="GO"                 ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="comment"                      ignore="true"/>
     <qualifier name="curation"                 ignore="true"/>
     <qualifier name="literature"                 ignore="true"/>
     <qualifier name="anticodon"                 ignore="true"/>
     <qualifier name="previous_systematic_id"                 ignore="true"/>
+    <qualifier name="primary_name"                 ignore="true"/>
     <qualifier name="systematic_id"                 ignore="true"/>
     <qualifier name="pseudo"                    handler="api" method="setPseudo"/>
   </feature>
@@ -377,6 +384,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                      ignore="true"/>
     <qualifier name="gene"                      ignore="true"/>
     <qualifier name="colour"                      ignore="true"/>
+    <qualifier name="comment"                      ignore="true"/>
     <qualifier name="curation"                      ignore="true"/>
     <qualifier name="literature"                 ignore="true"/>
     <qualifier name="previous_systematic_id"                 ignore="true"/>
@@ -510,6 +518,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="mol_type"          ignore="true"/>
     <qualifier name="organism"/>
     <qualifier name="organelle"/>
+    <qualifier name="origid"          ignore="true"/>
     <qualifier name="serotype"/>
     <qualifier name="strain"/>
     <qualifier name="group"   ignore="true"/>
@@ -557,6 +566,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                      ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
     <qualifier name="previous_systematic_id"                   ignore="true"/>
+  </feature>
+
+  <feature name="fasta_record"  ignore="true">
   </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
