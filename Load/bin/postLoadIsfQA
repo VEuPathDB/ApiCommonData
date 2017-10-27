@@ -492,6 +492,36 @@ foreach my $kk (sort keys %tSourceIds) {
 }
 
 
+## MN. For each translatedAAFeature, at least one aaFeatureExon has coding_start and coding_end
+
+my $sql = <<SQL;
+select AA_FEATURE_ID, SOURCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+SQL
+
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+while (my ($aaFeatureId, $sourceId) = $stmt->fetchrow_array() ) {
+
+my $sqlExon = <<SQL;
+select AA_FEATURE_ID, CODING_START, CODING_END from dots.aafeatureexon where AA_FEATURE_ID=$aaFeatureId
+SQL
+
+  my $stmtExon = $dbh->prepare($sqlExon);
+  $stmtExon->execute();
+
+  my $ifCoded = 0;
+  while (my ($aaFeatureId, $codingStart, $codingEnd) = $stmtExon->fetchrow_array() ) {
+    if ($codingStart && $codingEnd) {
+      $ifCoded = 1;
+      last;
+    }
+  }
+  print STDERR "ERROR found at $sourceId, do not have codingStart or codingEnd at dots.aaFeatureExon\n" if ($ifCoded == 0);
+}
+$stmt->finish();
+
+
 ## P. check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;
   select distinct name, count(*) from dots.Miscellaneous where external_database_release_id=$extDbRlsId group by name
@@ -545,6 +575,8 @@ $stmt->finish();
 
 ## print the end of checking message
 print "Done all checks\n";
+
+$dbh->disconnect();
 
 sub usage {
   die
