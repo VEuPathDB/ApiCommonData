@@ -77,9 +77,9 @@ my $mappingStatsBasename = "mappingStats.txt";
 
 foreach my $old_dir (glob "$inputDir/analyze_*_combined") {
 	my $cmd = "rm -r $old_dir";
-	print Dumper "command is $cmd\n";
+	print  "command is $cmd\n";
 	&runCmd($cmd);
-	print Dumper "deleting existing combined rep folder $old_dir\n";
+	print "deleting existing combined rep folder $old_dir\n";
 }
    
 foreach my $exp_dir (glob "$inputDir/analyze_*/master/mainresult") {
@@ -111,8 +111,6 @@ foreach my $groupKey (keys %$samplesHash) {
       my $directory_short = $mappingStatsFiles[0];
       $directory_short=~ s/$inputDir//;
     $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
-#      print Dumper "directory short";
-#      print Dumper $directory_short;
   }
 }
 #print Dumper %$samplesHash;
@@ -253,11 +251,13 @@ sub update_coverage {
 	    my $bamfile = $f;
 	    $bamfile =~ s/\.bed$/.bam/;
 #	    $bamfile =~ s/CombinedReps//;
-	    print Dumper "trying to match $bamfile in $k";
+#	    print  "trying to match $bamfile in $k\n";
 	    $outputFile =~ s/\.bed$/_unlogged.bed/;
 	    open OUTUNLOGGED, ">$out_dir/$outputFile";
-	    print Dumper %hash2;
-	    my $coverage = $hash2{$k}{$bamfile};
+#	    print Dumper \%hash2;
+	    my $coverage = $hash2{$k}{$bamfile}->[0];
+	    my $avgReadLength = $hash2{$k}{$bamfile}->[1];
+
 
 	    <F>;
 	    while(<F>) {
@@ -266,7 +266,7 @@ sub update_coverage {
 		next unless ($chr && $start && $stop && $score);
 		
 #		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
-		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score / ($coverage /1000000) * (($stop - $start)/1000) ));
+		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", (($score * (($stop-$start)/$avgReadLength)) / (($coverage /1000000) * (($stop - $start)/1000))));
 		#we want to set any that have a normalized score to <1 to 0 for only the score. 
 		my $normalized_score_for_log = $normalized_score;
 		if ($normalized_score_for_log < 1) {
@@ -303,9 +303,9 @@ sub getCountHash {
 	}
 	else {
 #	    print Dumper "getting to reading mapping stat";
-	    my($file, $coverage, $percentage, $count) = split /\t/, $line;
+	    my($file, $coverage, $percentage, $count, $avgReadLen) = split /\t/, $line;
 	    my $shortfile = basename $file;
-	    $hash{$shortfile} = $count;
+	    $hash{$shortfile} = [$count, $avgReadLen];
 	}
     }
     return \%hash;
