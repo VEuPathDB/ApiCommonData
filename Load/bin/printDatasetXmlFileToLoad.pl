@@ -233,10 +233,60 @@ sub printAnnotation {
     printGeneDBAnnotation ($fh, $format, $secondAnnot);
   } elsif ( $format =~ /gff3/i) {
     printGff3Annotation ($fh, $format, $secondAnnot);
+  } elsif ( $format =~ /embl/i) {
+    printEmblAnnotation ($fh, $format, $secondAnnot);
   } else {
     print STDERR "format have not been configured yet\n";
   }
 
+  return 0;
+}
+
+sub printEmblAnnotation {
+  my ($fh, $format, $secondAnnot) = @_;
+  my @secondaryAnnotations = split (/\,/, $secondAnnot);
+
+  ## print primary_genome
+  print $fh "  <dataset class=\"embl_primary_genome\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'soTerm');
+  printNameWithValue ($fh, 'mapFile', "$isfMappingFile");
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+
+  foreach my $second (@secondaryAnnotations) {
+    $second =~ s/^\s+//;
+
+    ## print secondary_genome, include mito_ and api_
+    if ($second =~ /^contig/i || $second =~ /^supercontig/i) {
+      print $fh "  <dataset class=\"embl_secondary_genome\">\n";
+      printNameWithValue ($fh, 'soTerm', $second);
+    } elsif ($second =~ /^api/i ) {
+      print $fh "  <dataset class=\"embl_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'apicoplast');
+      printNameWithValue ($fh, 'soTerm', 'apicoplast_chromosome');
+    } elsif ($second =~ /^mito/i ) {
+      print $fh "  <dataset class=\"embl_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'mitochondrion');
+      printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
+    } else {
+      next;
+    }
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
+    printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+    printNameWithDollarSign ($fh, 'name', 'genomeSource');
+    printNameWithValue ($fh, 'mapFile', "$isfMappingFile");
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
   return 0;
 }
 
