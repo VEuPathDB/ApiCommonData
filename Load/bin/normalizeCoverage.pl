@@ -258,7 +258,6 @@ sub update_coverage {
 	    my $coverage = $hash2{$k}{$bamfile}->[0];
 	    my $avgReadLength = $hash2{$k}{$bamfile}->[1];
 
-
 	    <F>;
 	    while(<F>) {
 		my($chr, $start, $stop, $score) = split /\t/, $_;
@@ -335,15 +334,16 @@ sub makeMappingFile{
         	    next;
         	}
         	else {
-        	    my($file, $coverage, $percentage, $count) = split /\t/, $_;
+        	    my($file, $coverage, $percentage, $count, $avgReadLen) = split /\t/, $_;
         	    my $shortname = basename $file;
         	    if (exists $totals{$shortname}) {
         		@{$totals{$shortname}}[0] += $coverage;
         		@{$totals{$shortname}}[1] += $percentage;
         		@{$totals{$shortname}}[2] += $count;
+        		@{$totals{$shortname}}[3] += $avgReadLen;
         	    }
         	    else {
-        		@{$totals{$shortname}} = ($coverage, $percentage, $count);
+        		@{$totals{$shortname}} = ($coverage, $percentage, $count, $avgReadLen);
         	    }
 		    
         	}
@@ -361,7 +361,8 @@ sub makeMappingFile{
         my $finalCoverage= ($totals{$key}->[0] / $countReps);
         my $finalPercentage= ($totals{$key}->[1]/ $countReps);
         my $finalCount = ($totals{$key}->[2] / $countReps) ;
-        print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\n";
+        my $finalAvgReadLen = ($totals{$key}->[3] / $countReps) ;
+        print M "$finalFile\t$finalCoverage\t$finalPercentage\t$finalCount\t$finalAvgReadLen\n";
 	
     }
     print M "DONE STATS";
