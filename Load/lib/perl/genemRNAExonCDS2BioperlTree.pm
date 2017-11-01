@@ -290,6 +290,19 @@ sub traverseSeqFeatures {
 		}
 	    }
 
+	    ## in case protein coding genes do not have CDS info in the annotation
+	    ## take the exon coordinates as CDS coordinates
+	    if ($#codingStartAndEndPairs == -1 && $transType eq "mRNA") {
+	      foreach my $e (@exons) {
+		my $eStrand = $e->location->strand;
+		my $eFrame = $e->frame();
+		my $eCodingStart = ($eStrand == -1) ? $e->location->end : $e->location->start;
+		my $eCodingEnd = ($eStrand == -1) ? $e->location->start : $e->location->end;
+
+		push (@codingStartAndEndPairs, "$eCodingStart\t$eCodingEnd\t$eStrand\t$eFrame");
+	      }
+	    }
+
 	    ## deal with codonStart, use the frame of the 1st CDS
 	    foreach my $j (0..$#codingStartAndEndPairs) {
 	      my ($Start, $End, $strand, $frame) = split(/\t/, $codingStartAndEndPairs[$j]);
