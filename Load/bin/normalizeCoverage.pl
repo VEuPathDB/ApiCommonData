@@ -181,8 +181,8 @@ foreach my $expWithReps (keys %dealingWithReps) {
 #	print Dumper $fileToUse;
 	my $base = basename $fileToUse;
 	$base =~ s/\.bw//;
-	my $cmd = "bigWigMerge -max $set $exp_dir/${base}CombinedReps.bed";
-#	print Dumper "command now for the reps is $cmd\n";
+	my $cmd = "bigWigMerge $set $exp_dir/${base}CombinedReps.bed";
+#	print "command now for the reps is $cmd\n";
 	&runCmd($cmd);
 #	my $cmd = "LC_COLLATE=C sort -k1,1 -k2,2n $exp_dir/${base}CombinedRepsNotSorted.bed >$exp_dir/${base}CombinedReps.bed";
   #  my $cmd = "bigWigMerge -max $listOfNonUniqueRepBwFiles $exp_dir/non_uniqueCombinedReps.bed";
@@ -215,11 +215,11 @@ sub merge_normalized_coverage {
  	    my $baseBed = basename $bedFile;
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
-	    
+
  	    &runCmd("bedGraphToBigWig $inputDir/$k/normalized/$baseBed $topLevelSeqSizeFile $inputDir/$k/normalized/final/$bwFile"); 
  	}
      }
- }
+}
 
 # # updates coverage file - score * normalization_ratio
 # # save updated coverage file to the new 'normalized' directory
@@ -242,6 +242,18 @@ sub update_coverage {
 	}
 	
 	my $out_dir = "$inputDir/$k/normalized";
+
+#        my $normFactor = $isPairedEnd ? 2 : 1;
+        my $normFactor = 1;
+
+        if($k =~ /analyze_(.+)_combined\//) {
+          if($samplesHash->{$1}->{samples}) {
+            $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
+          }
+          else {
+            die "Could not determine number of reps for combined file $k";
+          }
+        }
 	
 	foreach my $f (@fs) {
 	    next if $f !~ /\.bed/i;
@@ -258,6 +270,7 @@ sub update_coverage {
 	    my $coverage = $hash2{$k}{$bamfile}->[0];
 	    my $avgReadLength = $hash2{$k}{$bamfile}->[1];
 
+
 	    <F>;
 	    while(<F>) {
 		my($chr, $start, $stop, $score) = split /\t/, $_;
@@ -265,7 +278,7 @@ sub update_coverage {
 		next unless ($chr && $start && $stop && $score);
 		
 #		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", ($score * $max_sum_coverage / $coverage ));
-		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", (($score * (($stop-$start)/$avgReadLength)) / (($coverage /1000000) * (($stop - $start)/1000))));
+		my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", (($score * (($stop-$start)/$avgReadLength)) / (($coverage /1000000) * (($stop - $start)/1000)))/$normFactor );
 		#we want to set any that have a normalized score to <1 to 0 for only the score. 
 		my $normalized_score_for_log = $normalized_score;
 		if ($normalized_score_for_log < 1) {
