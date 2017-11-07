@@ -43,11 +43,15 @@ while(<DATA>) {
 #data format projectName|workflowVersion|organism|buildNumber
 
 __DATA__
-FungiDB|29|MoryzaeBR32|34
-FungiDB|29|ZtriticiIPO323|34
-FungiDB|29|ClusitaniaeATCC42720|34
-FungiDB|29|Ureesii1704|34
-HostDB|29|Mmulatta17573|34
+FungiDB|29|CgattiiCA1873|35
+FungiDB|29|CgattiiIND107|35
+PlasmoDB|26|PknowlesiMalayanPk1A|35
+#
+#FungiDB|29|MoryzaeBR32|34
+#FungiDB|29|ZtriticiIPO323|34
+#FungiDB|29|ClusitaniaeATCC42720|34
+#FungiDB|29|Ureesii1704|34
+#HostDB|29|Mmulatta17573|34
 #
 #FungiDB|29|AbrasiliensisCBS101740|33
 #FungiDB|29|AfumigatusA1163|33
