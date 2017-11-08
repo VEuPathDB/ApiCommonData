@@ -253,7 +253,6 @@ sub makeProfiles {
     # cleanup for non unique
     if(!$isUnique) {
       $valueTypeSuffix = ".nonunique.$valueType";
-      $profileSetName = $profileSetName .  "- Non Unique";
       $makePercentiles = 0;
     }
     
