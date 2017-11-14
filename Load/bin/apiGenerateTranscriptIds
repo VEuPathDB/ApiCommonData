@@ -59,8 +59,11 @@ foreach my $geneId (keys(%newGenes)) {
     foreach my $transcript (@sortedTrans) {
 
       ## use oldSeq2TransId to get transcript ID. In case there are more than one oldSeq2TransId, use oldPath2TransId
-      my $id = (scalar(@{$oldSeq2TransId{$geneId}->{$transcript->{seq}}}) == 1) ? 
+      my $id;
+      if ($oldSeq2TransId{$geneId}->{$transcript->{seq}}) {
+	$id = (scalar(@{$oldSeq2TransId{$geneId}->{$transcript->{seq}}}) == 1) ? 
 	$oldSeq2TransId{$geneId}->{$transcript->{seq}}[0] : $oldPath2TransId{$geneId}->{$transcript->{pathStr}};
+      }
       if ($id) {
 	$transcript->{id} = $id;
 	$id =~ /_(\d+$)/ || die "can't parse index in transcript id $id";
