@@ -20,12 +20,12 @@ my ($organismFullName,
 
 
 my @items = split (/\s/, $organismFullName);
-my $genus = $items[0];
-my $species = $items[1];
 
-shift @items;
-shift @items;
+my $genus = shift @items;
+my $species = shift @items;
 my $strainAbbrev = join ('', @items);
+$strainAbbrev =~ s/isolate//i;
+$strainAbbrev =~ s/strain//i;
 
 my $organismAbbrev = lc(substr($genus, 0, 1)).substr($species, 0, 3).$strainAbbrev;
 my $organismNameForFiles = substr($genus, 0, 1).$species.$strainAbbrev;
