@@ -57,6 +57,9 @@ sub preprocess {
 #    my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
     my $unflattener = ApiCommonData::Load::Unflattener->new;
 
+
+    my $geneC = 1;  ## only need for LK028575 in bmicRI
+
     if(!($bioperlSeq->molecule =~ /rna/i)){
 	$unflattener->error_threshold(1);   
 	$unflattener->report_problems(\*STDERR);  
@@ -106,7 +109,18 @@ sub preprocess {
 
 		my $gID;
 		if(!($geneFeature->has_tag("locus_tag"))){
-		  die "Feature $type does not have tag: locus_tag\n";
+		  my $seqIdIn = $bioperlSeq->accession();
+		  my $geneLocIn = $geneFeature->location()->start. ", ". $geneFeature->location()->end;
+
+		  if ($bioperlSeq->accession() eq "LK028575" ) {
+		    ## for apicoplast seq LK028575 in bmicRI, generate locus_tag and load
+		    my $generatedId = "BmR1_api". sprintf("%04d", $geneC). "0";
+		    $geneFeature->add_tag_value("locus_tag", $generatedId);
+		    print STDERR "processing gene with generated ID, $generatedId...\n";
+		    $geneC++;
+		  } else {
+		    die "Feature $type does not have tag: locus_tag, at $geneLocIn in $seqIdIn\n";
+		  }
 		} else {
 		  ($gID) = $geneFeature->get_tag_values("locus_tag");
 		  print STDERR "processing $gID...\n";
