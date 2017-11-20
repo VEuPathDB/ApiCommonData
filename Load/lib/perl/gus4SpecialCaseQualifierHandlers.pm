@@ -738,6 +738,7 @@ sub validateCodingSequenceLength {
 		    if($transcript->getIsPseudo()){
 			$warning .= "Pseudo transcript ";
 		    }
+		    $warning .= "partial transcript " if ($transcript->getIsPartial() == 1);
 		    $warning .= "$transcriptSourceId does not have a stop codon\n";
 
 		    ## set is_partial=1 if gene does not have a stop codon
