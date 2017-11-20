@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+
+## usage:  perl batchConvertSqn2gb.pl ../fromProvider/sqn/ gbf
+
+## a script to batch convert genbank submit file *.sqn to genbank format file *.gbf
+## take 2 arguments, the 1st is the input file dir, the 2nd is the output file dir
+
+use strict;
+
+my ($inDir, $outDir) = @ARGV;
+
+die "miss either input dir or output dir\nusage: batchConvertSqn2gb.pl sqnInputDir gbfOutputDir\n" if (!$inDir || !$outDir);
+
+`mkdir $outDir` unless (-e $outDir);
+
+my @inFiles = `ls $inDir`;
+
+foreach my $i (0..$#inFiles) {
+  chomp ($inFiles[$i]);
+#  print "$i, $inFiles[$i]\n";
+}
+
+foreach my $sqnFile (@inFiles) {
+  my $outFile = $sqnFile;
+  $outFile =~ s/(\S+)\.sqn/$1\.gbf/;
+
+  my $convert = "asn2gb -i $inDir/$sqnFile -o $outDir/$outFile";
+  `$convert`;
+
+  print STDERR "done convert $outDir/$sqnFile\n";
+
+}
+
