@@ -44,7 +44,7 @@ sub getProfileSetName          { $_[0]->{profileSetName} }
 sub getSamples                 { $_[0]->{samples} }
 
 sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
-sub getDoDegSeq                { $_[0]->{doDegSeq} }
+#sub getDoDegSeq                { $_[0]->{doDegSeq} }
 #-------------------------------------------------------------------------------
 sub new {
     my ($class, $args) = @_;
@@ -68,7 +68,7 @@ sub munge {
     my $valueType = 'fpkm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
-    my $doDegSeq = $self->getDoDegSeq();
+#    my $doDegSeq = $self->getDoDegSeq();
 #    print Dumper "doDegSeq is $doDegSeq";
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
@@ -195,7 +195,7 @@ sub munge {
 	    
 	    
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
-		if($doDegSeq) {
+	#	if($doDegSeq) {
 		    print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
 		    my $suffix = 'differentialExpressionDEGseq';
 		    my $dataframeHashref = \%dataframeHash;
@@ -212,11 +212,11 @@ sub munge {
 		    $DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
 		    $DEGseqAnalysis->munge();
 		    
-		}
+	#	}
 		
-		else {
-		    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
-		}
+	#	else {
+	#	    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
+	#	}
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
