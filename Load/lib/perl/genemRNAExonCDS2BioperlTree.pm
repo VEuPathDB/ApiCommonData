@@ -264,7 +264,10 @@ sub traverseSeqFeatures {
 		    push(@exons,$exon);
 		}
 
-		if($subFeature->primary_tag eq 'CDS'){
+		if($subFeature->primary_tag eq 'CDS' 
+		   || $subFeature->primary_tag eq 'cds'
+		   || $subFeature->primary_tag eq 'Cds'){
+
 		  $CDSLocation = $subFeature->location;
 		  my $cdsStrand = $subFeature->location->strand;
 		  my $cdsFrame = $subFeature->frame();
