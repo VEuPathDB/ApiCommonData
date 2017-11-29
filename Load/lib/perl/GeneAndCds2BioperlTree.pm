@@ -399,7 +399,7 @@ sub traverseSeqFeatures {
 		my @exonLocs = $RNA->location->each_Location();
 		foreach my $exonLoc (@exonLocs){
 		    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-		    $transcript->add_SeqFeature($exon);
+
 		    if($gene->primary_tag eq 'coding_gene' || $gene->primary_tag eq 'pseudo_gene' ){
 		      if ($exonLoc->strand == -1) {
 			$exon->add_tag_value('CodingStart', $exonLoc->end());
@@ -412,6 +412,7 @@ sub traverseSeqFeatures {
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');	
 		    }
+		    $transcript->add_SeqFeature($exon);
 
 		}
 	    }
