@@ -5,13 +5,21 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$sql,$outFile,$verbose);
+my ($gusConfigFile,$sql,$outFile,$verbose,$outDelimiter);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "sql=s" => \$sql,
 	    "outFile=s" => \$outFile,
+            "outDelimiter=s" => \$outDelimiter,
 	    "verbose!" => \$verbose);
 
 die "makeFileWithSql --sql <sql to be run> --outFile <fullpath of file to be made> {--verbose} {--gusConfigFile <file>}\n" if (!$sql || !$outFile );
+
+if($outDelimiter && $outDelimiter ne '\t' && $outDelimiter ne ',') {
+  die "ERROR:  Only '\\t' and ',' are supported as output delimiters:  user provided '$outDelimiter'\n";
+}
+$outDelimiter = "" unless($outDelimiter);
+$outDelimiter =~ s/\\t/\t/;
+
 
 print STDERR "Establishing dbi login\n";
 
@@ -31,8 +39,8 @@ open (OUT,"> $outFile");
 
 my $sth = $dbh->prepareAndExecute($sql);
 
-while (my ($string) = $sth->fetchrow_array()) {
-  print OUT ("$string\n");
+while (my @a = $sth->fetchrow_array()) {
+  print OUT join($outDelimiter, @a) . "\n";
 }
 
 $sth->finish();
