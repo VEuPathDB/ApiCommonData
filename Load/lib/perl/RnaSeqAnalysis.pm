@@ -44,7 +44,7 @@ sub getProfileSetName          { $_[0]->{profileSetName} }
 sub getSamples                 { $_[0]->{samples} }
 
 sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
-#sub getDoDegSeq                { $_[0]->{doDegSeq} }
+sub getDoDegSeq                { $_[0]->{doDegSeq} }
 #-------------------------------------------------------------------------------
 sub new {
     my ($class, $args) = @_;
@@ -68,7 +68,7 @@ sub munge {
     my $valueType = 'fpkm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
-#    my $doDegSeq = $self->getDoDegSeq();
+    my $doDegSeq = $self->getDoDegSeq();
 #    print Dumper "doDegSeq is $doDegSeq";
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
@@ -105,7 +105,7 @@ sub munge {
        }
     
 #DESeq2 Analysis starts here  
-    print Dumper "SamplesHash is\n";
+#    print Dumper "SamplesHash is\n";
     print Dumper %{$samplesHash};    
     if (keys %{$samplesHash} <2) {
 	print Dumper  "note: there are less than two conditions DESeq2 analysis  and or DEGseq analysis can not be done\n";
@@ -185,17 +185,17 @@ sub munge {
 	    }
 	    my $compCheck = $CrepBaseName;
 	    my $degComp = $Crep1;
-
-	    print Dumper "degref $degRef compref $degComp\n";
+#
+#	    print Dumper "degref $degRef compref $degComp\n";
    
-	    print Dumper "refcheck is\n";
-	    print Dumper $refCheck;
-	    print Dumper "compcheck is \n";
-	    print Dumper $compCheck;
+#	    print Dumper "refcheck is\n";
+#	    print Dumper $refCheck;
+#	    print Dumper "compcheck is \n";
+#	    print Dumper $compCheck;
 	    
 	    
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
-	#	if($doDegSeq) {
+		if($doDegSeq) {
 		    print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
 		    my $suffix = 'differentialExpressionDEGseq';
 		    my $dataframeHashref = \%dataframeHash;
@@ -212,11 +212,11 @@ sub munge {
 		    $DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
 		    $DEGseqAnalysis->munge();
 		    
-	#	}
+		}
 		
-	#	else {
-	#	    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
-	#	}
+		else {
+		    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
+		}
 	    }
 	    else {
 		my $suffix = 'differentialExpression';
@@ -230,6 +230,7 @@ sub munge {
 									     comparator => $comp,
 									     comparatorCheck => $compCheck,
 									     suffix => 'DESeq2Analysis',
+			#						     isStrandSpecific => $isStrandSpecific,
 									     profileSetName => $profileSetName});
 		$DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
 		$DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis]');
