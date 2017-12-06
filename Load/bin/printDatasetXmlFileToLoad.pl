@@ -838,7 +838,7 @@ sub usage {
 "
 Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
        printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-03-06
-                                    --format gff3 --sourceIdRegex '^>(\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
+                                    --format gff3 --sourceIdRegex '^>(\\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
  
 
 where
