@@ -5,11 +5,12 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$sql,$outFile,$verbose,$outDelimiter);
+my ($gusConfigFile,$sql,$outFile,$verbose,$outDelimiter,$includeHeader);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "sql=s" => \$sql,
 	    "outFile=s" => \$outFile,
             "outDelimiter=s" => \$outDelimiter,
+            "includeHeader!" => \$includeHeader,
 	    "verbose!" => \$verbose);
 
 die "makeFileWithSql --sql <sql to be run> --outFile <fullpath of file to be made> {--verbose} {--gusConfigFile <file>}\n" if (!$sql || !$outFile );
@@ -38,6 +39,13 @@ print STDERR "SQL: $sql\n";
 open (OUT,"> $outFile");
 
 my $sth = $dbh->prepareAndExecute($sql);
+
+
+my $fields = $sth->{NAME};
+
+if($includeHeader) {
+  print OUT join($outDelimiter, @$fields) . "\n";
+}
 
 while (my @a = $sth->fetchrow_array()) {
   print OUT join($outDelimiter, @a) . "\n";
