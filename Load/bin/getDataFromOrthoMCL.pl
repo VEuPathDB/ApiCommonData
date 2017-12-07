@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-use XML::Simple;;
+use XML::Simple;
 use Getopt::Long;
 
 my %hash;
@@ -14,9 +14,9 @@ my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 die "cannot open output files\n" unless ($outputAllOrthoGrps && $outputOrthoSeqsWithECs);
 
 my $url = "http://orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
-print STDERR "\nwget $url\n";
 
 my $cmd = qq(wget "$url" -qO- > $outputAllOrthoGrps.tmp);
+print STDERR "\nRunning\n$cmd\n";
 
 system($cmd);
 
@@ -25,7 +25,10 @@ my $ref = XMLin("$outputAllOrthoGrps.tmp");
 open OUT, ">$outputAllOrthoGrps";
 print OUT "[Group]\t[# Sequences]\t[Average % Connectivity]\t[Average % Identity]\t[EC Numbers]\n";
 
-while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
+# update based on the xml format change - Haiming 12/06/2017
+#while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
+foreach my $v (@{$ref->{recordset}->{record}}) {
+  my $og                = $v->{field}->{group_name}->{content};
   my $ec_numbers        = $v->{field}->{ec_numbers}->{content};
   my $number_of_members = $v->{field}->{number_of_members}->{content};
   my $avg_connectivity  = $v->{field}->{avg_connectivity}->{content};
@@ -51,12 +54,15 @@ print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 $url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,group_size"; 
 
 $cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
-print STDERR "$cmd\n";
+print STDERR "Running\n$cmd\n";
 system($cmd);
 $ref = XMLin("$outputOrthoSeqsWithECs.tmp");
 
-while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
+# update based on the xml format change - Haiming 12/06/2017
+#while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
+foreach my $v (@{$ref->{recordset}->{record}}) {
 
+  my $k          = $v->{field}->{primary_key}->{content};
   my $source_id  = $v->{field}->{source_id}->{content};
   my $ec_numbers = $v->{field}->{ec_numbers}->{content};
   my $group_name = $v->{field}->{group_name}->{content};
