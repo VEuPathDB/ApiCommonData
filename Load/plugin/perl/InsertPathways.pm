@@ -100,7 +100,7 @@ sub run {
   die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
   my $pathwayFormat = $self->getArg('format');
-  my $extension = ($pathwayFormat eq 'MPMP') ? 'json' 
+  my $extension = ($pathwayFormat eq 'MPMP') ? 'cyjs' 
                 : ($pathwayFormat eq 'BioCyc') ? 'biopax'
                 : 'xml';
 
@@ -155,7 +155,7 @@ sub queryForOntologyTermIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $query = "select ontology_term_id, name from sres.ontologyterm  where name in ('enzyme', 'molecular entity', 'metabolic process')";
+  my $query = "select ontology_term_id, name from sres.ontologyterm  where name in ('enzyme', 'molecular entity', 'metabolic process', 'gene')";
 
   my $sh = $dbh->prepare($query);
   $sh->execute();
@@ -174,7 +174,12 @@ sub queryForTableIds {
   my ($self) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $query = "select table_id, di.name || '::' || ti.name from core.tableinfo ti, core.databaseinfo di where ti.name in ('EnzymeClass', 'Compounds', 'Pathway') and ti.database_id = di.database_id and di.name != 'DoTS'";
+  my $query = "select table_id
+    , di.name || '::' || ti.name 
+    from core.tableinfo ti
+    , core.databaseinfo di 
+    where ((ti.name in ('EnzymeClass', 'Compounds', 'Pathway') AND di.name != 'DoTS') OR ti.name = 'GeneFeature')
+    and ti.database_id = di.database_id"; 
 
   my $sh = $dbh->prepare($query);
   $sh->execute();
@@ -194,9 +199,11 @@ sub queryForIds {
   my $dbh = $self->getQueryHandle();
   my $sql = "select 'SRes::EnzymeClass' tbl, ec_number as accession, enzyme_class_id as id from sres.enzymeclass
 union
-select 'chEBI::Compounds', chebi_accession, nvl(parent_id, id) from chebi.compounds
-union
 select 'SRes::Pathway', source_id, pathway_id from sres.pathway
+union
+select 'DoTS::GeneFeature', source_id, na_feature_id from dots.genefeature
+union
+select 'chEBI::Compounds', chebi_accession, nvl(parent_id, id) from chebi.compounds
 union
 select 'chEBI::Compounds', da.accession_number as accession, nvl(c.parent_id, c.id)
 from chebi.database_accession da
