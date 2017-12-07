@@ -475,7 +475,7 @@ sub addSpecimenType {
 
   foreach my $pk (keys %$parsedOutput) {
 
-    if($pk =~ /cj(\d)-/i) {
+    if($pk =~ /\w\w(\d)-/i) {
       my $type = $types->{$1};
 
       if($type) {
