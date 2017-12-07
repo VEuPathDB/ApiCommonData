@@ -59,7 +59,8 @@ print "ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName $dbNa
 if ($format =~ /gff/i) {
   $inputFileOrDir = "../whole_genome.gff" if (!$inputFileOrDir);
   $sequenceFile = "../whole_genome.fasta" if (!$sequenceFile);
-  $regexSourceId = ">(\\S+?)(\\|\\w\+\$|\$)" if (!$regexSourceId);
+  $regexSourceId = ">(\\S+)" if (!$regexSourceId);  ## this works for most cases
+#  $regexSourceId = ">(\\S+?)(\\|\\w\+\$|\$)" if (!$regexSourceId);  ## only for some sequences got from geneDB
 
   print STDERR "format = $format\n";
   print "ga GUS::Supported::Plugin::LoadFastaSequences --externalDatabaseName $dbName --externaldatabaseversion $dbVer --ncbitaxid $ncbiTaxId --sequenceFile $sequenceFile --SOTermName $soTerm --SOExtDbRlsSpec 'SO_RSRC|%' --regexSourceId '$regexSourceId' --tableName DoTS::ExternalNASequence --chromosomeMap ../../final/chromosomeMap.txt --commit > fasta.log 2>&1 &\n\n";
