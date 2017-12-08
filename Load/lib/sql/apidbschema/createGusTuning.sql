@@ -1,28 +1,29 @@
 -- schema changes for GUS tables
 
+-- remove quota limits for GUS schemas in the INDX tablespace,
+--  to avert the error "ORA-01950: no privileges on tablespace 'INDX'"
+alter user ApiDB quota unlimited on indx;
+alter user ApidbTuning quota unlimited on indx;
+alter user Core quota unlimited on indx;
+alter user CoreVer quota unlimited on indx;
+alter user DoTS quota unlimited on indx;
+alter user DoTSVer quota unlimited on indx;
+alter user Model quota unlimited on indx;
+alter user ModelVer quota unlimited on indx;
+alter user Platform quota unlimited on indx;
+alter user PlatformVer quota unlimited on indx;
+alter user Results quota unlimited on indx;
+alter user ResultsVer quota unlimited on indx;
+alter user SRes quota unlimited on indx;
+alter user SResVer quota unlimited on indx;
+alter user Study quota unlimited on indx;
+alter user StudyVer quota unlimited on indx;
+alter user TestTuning quota unlimited on indx;
+alter user chEBI quota unlimited on indx;
 
-
--- not in gus4
---alter table sres.GoEvidenceCode modify (name varchar2(20));
---alter table sres.Reference modify (author varchar2(2000));
--- gus4 change
---alter table sres.DbRef modify (secondary_identifier varchar2(150));
---alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
---alter table dots.Est modify (accession varchar2(50));
---alter table sres.ExternalDatabase modify (name varchar2(150));
---alter table dots.NaFeatureImp modify (source_id varchar2(80));
-
-
+--
 
 alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(12) );
-
-
--- added to XML
--- alter table sres.EnzymeClass modify (description varchar2(200));
--- alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
--- alter table dots.NaFeatureImp modify (name varchar2(80));
--- alter table sres.dbref modify (secondary_identifier varchar2(200));
--- alter table dots.Library modify (stage varchar2(150));
 
 -- indexes on GUS tables
 
