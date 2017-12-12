@@ -180,6 +180,7 @@ sub traverseSeqFeatures {
         if($type eq 'ncRNA'){
             if($RNA->has_tag('ncRNA_class')){
                 ($type) = $RNA->get_tag_values('ncRNA_class');
+		$type = ($type =~ /other/i) ? "ncRNA" : $type;
                 $RNA->remove_tag('ncRNA_class');
             }
         }
