@@ -149,14 +149,15 @@ OUTER: foreach my $i (0..$#inLines) {
       } else {
 	$inLines[$i] =~ s/FT\s+\///g;
 	my ($t, $v) = split (/\=/, $inLines[$i]);
+	$v = "\"\"" if ($t =~ /pseudo/i);
 
-	while ($t =~ /product/i
+	while ( ($t =~ /product/i || $t =~ /note/i )
 	       && $inLines[$i] !~ /\"$/
 	       && $inLines[$i+1] !~ /^FT\s+\//
 	      ) {
 	  $i++;
 	  $inLines[$i] =~ s/FT\s+//;
-	  $v .= $inLines[$i];
+	  $v .= " ". $inLines[$i];
 	}
 
 	push (@tagValuePair, "$t $v") if ($t !~ /codon_start/ && $t !~ /estimated_length/);
