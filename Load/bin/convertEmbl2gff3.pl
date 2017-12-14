@@ -87,8 +87,8 @@ OUTER: foreach my $i (0..$#inLines) {
 	  $geneEnd{$geneId} = ($geneEnd{$geneId}) ? getMax($geneEnd{$geneId}, $cols[3], $cols[4]) : getMax($cols[3], $cols[4]);
 
 	  ## set transStart and transEnd
-	  $transStart{$transId} = ($transStart{$geneId}) ? getMin($transStart{$transId}, $cols[3], $cols[4]) : getMin($cols[3], $cols[4]);
-	  $transEnd{$transId} = ($transEnd{$geneId}) ? getMax($transEnd{$transId}, $cols[3], $cols[4]) : getMax($cols[3], $cols[4]);
+	  $transStart{$transId} = ($transStart{$transId}) ? getMin($transStart{$transId}, $cols[3], $cols[4]) : getMin($cols[3], $cols[4]);
+	  $transEnd{$transId} = ($transEnd{$transId}) ? getMax($transEnd{$transId}, $cols[3], $cols[4]) : getMax($cols[3], $cols[4]);
 
 	  ## assign transType
 	  $transType{$transId} = $transType;
