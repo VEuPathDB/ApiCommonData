@@ -34,15 +34,11 @@ GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 ---------------------------------------------------------------------------------
 
 
+create view ApiDBUserDatasets.UserDatasetAccessControl as
+ select USER_ID,USER_DATASET_ID from ApiDBUserDatasets.UserDatasetOwner
+union 
+  select RECIPIENT_USER_ID AS USER_ID,USER_DATASET_ID from ApiDBUserDatasets.UserDatasetSharedWith;
 
-create view ApiDBUserDatasets.UserDatasetAccessControl
-as 
-select * from ApiDBUserDatasets.UserDatasetOwner
-union (
-  select * from ApiDBUserDatasets.UserDatasetSharedWith
-  intersect
-  select * from ApiDBUserDatasets.UserDatasetExternalDataset
-);
 GRANT select ON ApiDBUserDatasets.UserDatasetAccessControl TO gus_r;
 
 ---------------------------------------------------------------------------------
@@ -119,7 +115,7 @@ SELECT core.tableinfo_sq.nextval, 'UD_ProtocolAppNode',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDBUserDatasets') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApidbUserDatasets') d
 WHERE 'UD_ProtocolAppNode' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
@@ -173,7 +169,7 @@ SELECT core.tableinfo_sq.nextval, 'UD_NaFeatureExpression',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDBUserDatasets') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApidbUserDatasets') d
 WHERE 'UD_NaFeatureExpression' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
