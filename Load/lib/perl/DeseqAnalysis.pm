@@ -27,7 +27,8 @@ sub new {
     
     my $cleanSampleName = $self->getSampleName();
     $cleanSampleName =~ s/ /_/g;
-    $self->setOutputFile($cleanSampleName .'_DESeq2Analysis');
+    my $suffix = $self->getSuffix();
+    $self->setOutputFile($cleanSampleName.$suffix);
     
     
     return $self;
@@ -53,18 +54,28 @@ sub munge {
     
     my %samplesHash = %{$samplesHashref};
     
-    print Dumper %samplesHash;
+#    print Dumper %samplesHash;
     
     opendir(DIR, $mainDirectory);
     my @ds = readdir(DIR);
     my %ref;
     my %comp;
-    my $dataframeFile = $sampleName."_dataframe.txt";
+    my $append;
+    if ($suffix =~ /Firststrand/) {
+	$append = ".firststrand";
+    }
+    elsif ($suffix =~ /Secondstrand/) {
+	$append = ".secondstrand";
+    }
+    else {
+	$append = ".unstranded";
+    } 
+    my $dataframeFile = $sampleName.$append."_dataframe.txt";
     $dataframeFile =~ s/ /_/g;
     open(my $dataframe, ">$mainDirectory/$dataframeFile");
     print $dataframe "sample\tfile\tcondition\n";
     foreach my $d (sort @ds) {
-	next unless $d =~ /(\S+)\.genes\.htseq-union.+counts/;
+	next unless $d =~ /(\S+)\.genes\.htseq-union${append}\.counts/;
 	next unless $d !~ /combined/;
 	my $sample = $1;
 #	print  "sample (deseqanalysis.pm) is ${sample}";
