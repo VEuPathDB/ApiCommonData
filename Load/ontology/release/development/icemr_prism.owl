@@ -9,8 +9,7 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/icemr/icemr_prism.owl">
-        <owl:versionInfo>2017-11-30</owl:versionInfo>
-        <rdfs:comment>SVN Revision: 85677</rdfs:comment>
+        <owl:versionInfo>2017-12-21</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -207,6 +206,22 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CD36 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CD36">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household asset information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000267 xml:lang="en">Assets</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Assets</obo:EUPATH_0000268>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity about items that a household owns such as a car, funiture, etc.</obo:EUPATH_0000273>
+        <obo:IAO_0000115>Assets refer to whether the household reported ownership of each of the items listed.</obo:IAO_0000115>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100116</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
+    </owl:Class>
     
 
 
@@ -514,7 +529,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000036 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000036">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000316"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000040"/>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of malaria</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">cmcategory</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Basis of complicated diagnosis</obo:EUPATH_0000268>
@@ -525,26 +540,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000038 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000038">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000316"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of uncomplicated malaria</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">anymalaria</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Uncomplicated malaria</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria without evidence of complicated malaria.</obo:EUPATH_0000273>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis of malaria (no evidence of complicated malaria)</obo:IAO_0000115>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100008</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Uncomplicated malaria</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000040 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000040">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000316"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000090"/>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of complicated malaria</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">complicatedmalaria</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Complicated malaria</obo:EUPATH_0000268>
@@ -560,7 +559,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000046 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000046">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000316"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000036"/>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">severe malaria symptom or sign</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">sevmalcat</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Severe malaria criteria</obo:EUPATH_0000268>
@@ -647,22 +646,6 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non-malaria medication only</obo:IAO_0000115>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100076</icemr:prism_id>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non-malaria medication</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000089 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000089">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic microscopic parasitemia</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">diagnosis of asymptomatic parasitemia</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Asymptomatic microscopic parasitemia</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:EUPATH_0000273>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis based on presence of asexual parasites by microscopy in the absence of subjective fever or documented elevated temperature</obo:IAO_0000115>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100026</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asymptomatic microscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -1100,22 +1083,6 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Top, middle or bottom third of Household Wealth Index scale.</obo:IAO_0000115>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100096</icemr:prism_id>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Categorical household wealth index</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household asset information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">Assets</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Assets</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity about items that a household owns such as a car, funiture, etc.</obo:EUPATH_0000273>
-        <obo:IAO_0000115>Assets refer to whether the household reported ownership of each of the items listed.</obo:IAO_0000115>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100116</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
     </owl:Class>
     
 
@@ -1847,20 +1814,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000316 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000316">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malaria severity and basis information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">Malaria severity and basis</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Malaria severity and basis</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0000014</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria severity and basis</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000317 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000317">
@@ -2112,38 +2065,6 @@
         <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about malaria diagnosis and parasite status testing by blood smear or LAMP.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100122</icemr:prism_id>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria diagnosis and parasite status</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000484 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000484">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of asymptomatic parasitemia</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">Asymptomatic parasitemia</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Asymptomatic parasitemia</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on parasites detected by microscopy (parasite density &gt; 0) or LAMP assay (LAMP result is positive) in the absence of febrile (subjective fever and  temperature&gt;=38).</obo:EUPATH_0000273>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">not febrile (no subjective fever and temperature&lt;38) and parasites detected by microscopy (parasite density &gt; 0) OR LAMP positive</obo:IAO_0000115>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100123</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asymptomatic parasitemia</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000485 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000485">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of submicroscopic parasitemia</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">Submicroscopic parasitemia</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Submicroscopic parasitemia</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis based on presence of parasites by LAMP assay when microscopy result was negative in the absence of subjective fever or documented elevated temperature.</obo:EUPATH_0000273>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">positive LAMP result when microscopy was negative</obo:IAO_0000115>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0100124</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Submicroscopic parasitemia</rdfs:label>
     </owl:Class>
     
 
@@ -2497,7 +2418,7 @@
         <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
         <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of one or more people who live in the same dwelling and also share at meals or living accommodation, and may consist of a single family or some other grouping of people.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0000006</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</rdfs:label>
     </owl:Class>
     
 
