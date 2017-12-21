@@ -197,45 +197,84 @@ sub munge {
 	    if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
 		if($doDegSeq) {
 		    print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
-		    my $suffix = 'differentialExpressionDEGseq';
+#			my $suffix = 'differentialExpressionDEGseq';
 		    my $dataframeHashref = \%dataframeHash;
-#making new DEGseq object
-		    my $DEGseqAnalysis = ApiCommonData::Load::DEGseqAnalysis->new({sampleName => $sampleNameClean,
-										   mainDirectory => $self->getMainDirectory,
-										   samplesHash => $dataframeHashref,
-										   reference => $degRef,
-										   comparator => $degComp,
-										   suffix => 'DEGseqAnalysis',
-										   profileSetName => $profileSetName});
-		    $DEGseqAnalysis->setProtocolName("GSNAP/DEGseqAnalysis");
-		    $DEGseqAnalysis->setDisplaySuffix( ' [DEGseqAnalysis]');
-		    $DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
-		    $DEGseqAnalysis->munge();
 		    
+		    if ($isStrandSpecific) {
+			die, "TO DO - DEGSeq is not currently set to work on strand specific datasets. Please contact dataDev";
+		    }
+		    else {
+			my $DEGseqAnalysis = ApiCommonData::Load::DEGseqAnalysis->new({sampleName => $sampleNameClean,
+										       mainDirectory => $self->getMainDirectory,
+										       samplesHash => $dataframeHashref,
+										       reference => $degRef,
+										       comparator => $degComp,
+										       suffix => 'UnstrandedDEGseqAnalysis',
+										       profileSetName => $profileSetName});
+			$DEGseqAnalysis->setProtocolName("GSNAP/DEGseqAnalysis");
+			$DEGseqAnalysis->setDisplaySuffix( ' [DEGseqAnalysis - unstranded - unique]');
+			$DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
+			$DEGseqAnalysis->munge();
+		    }
 		}
-		
 		else {
 		    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
 		}
 	    }
-	    else {
-		my $suffix = 'differentialExpression';
+	    else { # do it here isntead - run twice change suffix. 
+#		my $suffix = 'differentialExpression';
 		my $dataframeHashref = \%dataframeHash;
 #making new DESeq object
-		my $DeseqAnalysis = ApiCommonData::Load::DeseqAnalysis->new({sampleName => $sampleNameClean,
-									     mainDirectory => $self->getMainDirectory,
-									     samplesHash => $dataframeHashref,
-									     reference => $ref,
-									     referenceCheck => $refCheck,
-									     comparator => $comp,
-									     comparatorCheck => $compCheck,
-									     suffix => 'DESeq2Analysis',
-			#						     isStrandSpecific => $isStrandSpecific,
-									     profileSetName => $profileSetName});
-		$DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
-		$DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis]');
-		$DeseqAnalysis->setTechnologyType($self->getTechnologyType());
-		$DeseqAnalysis->munge();
+		if($isStrandSpecific) {
+		    my $DeseqAnalysis = ApiCommonData::Load::DeseqAnalysis->new({sampleName => $sampleNameClean,
+										 mainDirectory => $self->getMainDirectory,
+										 samplesHash => $dataframeHashref,
+										 reference => $ref,
+										 referenceCheck => $refCheck,
+										 comparator => $comp,
+										 comparatorCheck => $compCheck,
+										 suffix => 'FirststrandDESeq2Analysis',
+										 #						     isStrandSpecific => $isStrandSpecific,
+										 profileSetName => $profileSetName});
+		    $DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
+		    $DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis - firststrand - unique]');
+		    $DeseqAnalysis->setTechnologyType($self->getTechnologyType());
+		    $DeseqAnalysis->munge();
+		    
+		    
+		    my $DeseqAnalysis = ApiCommonData::Load::DeseqAnalysis->new({sampleName => $sampleNameClean,
+										 mainDirectory => $self->getMainDirectory,
+										 samplesHash => $dataframeHashref,
+										 reference => $ref,
+										 referenceCheck => $refCheck,
+										 comparator => $comp,
+										 comparatorCheck => $compCheck,
+										 suffix => 'SecondstrandDESeq2Analysis',
+										 #						     isStrandSpecific => $isStrandSpecific,
+										 profileSetName => $profileSetName});
+		    $DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
+		    $DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis - secondstrand - unique]');
+		    $DeseqAnalysis->setTechnologyType($self->getTechnologyType());
+		    $DeseqAnalysis->munge();
+		    
+		}
+		else {
+		    my $DeseqAnalysis = ApiCommonData::Load::DeseqAnalysis->new({sampleName => $sampleNameClean,
+										 mainDirectory => $self->getMainDirectory,
+										 samplesHash => $dataframeHashref,
+										 reference => $ref,
+										 referenceCheck => $refCheck,
+										 comparator => $comp,
+										 comparatorCheck => $compCheck,
+										 suffix => 'UnstrandedDESeq2Analysis',
+										 #						     isStrandSpecific => $isStrandSpecific,
+										 profileSetName => $profileSetName});
+		    $DeseqAnalysis->setProtocolName("GSNAP/DESeq2Analysis");
+		    $DeseqAnalysis->setDisplaySuffix( ' [DESeq2Analysis - unstranded - unique]');
+		    $DeseqAnalysis->setTechnologyType($self->getTechnologyType());
+		    $DeseqAnalysis->munge();
+		    
+		}
 	    }
 	}
     }
