@@ -19,6 +19,8 @@ set pagesize 50000
 -- turn off "N rows selected" message at the end of the result
 set feedback off
 
+spool fk.out
+
 select distinct create_index as "-- create_index"
 from (select 'create index ' || acc.owner || '.' || substr(acc.table_name, 1, 23)
              || '_revix' || mod(rownum, 10) ||' on ' || acc.owner || '.'
