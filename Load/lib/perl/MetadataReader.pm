@@ -333,6 +333,14 @@ sub cleanAndAddDerivedData {
     }
   }
 
+  if($hash->{anymalaria} != 1) {
+    $hash->{complicatedmalaria} = undef;
+  }
+
+  if($hash->{complicatedmalaria} != 1) {
+    $hash->{cmcategory} = undef;
+  }
+
   foreach my $key (keys %$hash) {
     if($key =~ /^med\d*code$/) {
 
