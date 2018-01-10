@@ -95,6 +95,15 @@ stringArg({name           => 'extDbRlsSpec',
             isList         => 0, }),
 
 
+   fileArg({name           => 'dateObfuscationFile',
+            descr          => 'For InvestigationSimple Reader',
+            reqd           => 0,
+	    mustExist      => 1,
+	    format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
+
    stringArg({name           => 'ontologyMappingOverrideFileBaseName',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
@@ -159,12 +168,13 @@ sub run {
     my $investigation;
     if($self->getArg('isSimpleConfiguration')) {
       my $valueMappingFile = $self->getArg('valueMappingFile');
+      my $dateObfuscationFile = $self->getArg('dateObfuscationFile');
 
       my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
       my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
       my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName;
 
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, $isReportMode);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, $isReportMode, $dateObfuscationFile);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
