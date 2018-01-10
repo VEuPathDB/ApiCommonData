@@ -1,7 +1,4 @@
 #!/usr/bin/perl
-## usage: perl extractGOFromNotesOrComments.pl comments.txt Genbank 432359 > ../final/associations.gas
-## usage: perl extractGOFromNotesOrComments.pl comments.txt Genbank 432359 product.txt > ../final/associations.gas
-##                           give product.txt file if there is no product info in Note or Comment file
 
 use strict;
 use Getopt::Long;
@@ -10,11 +7,20 @@ use HTTP::Date;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
+my ($help, $notesFile, $db, $taxonId, $productFile);
 
-my ($inputFile, $db, $taxonId, $productFile) = @ARGV;
+&GetOptions(
+	    'help|h' => \$help,
+	    'notesFile=s' => \$notesFile,
+	    'productFile=s' => \$productFile,
+	    'database=s' => \$db,
+	    'taxonId=s' => \$taxonId,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless (defined $notesFile && $taxonId && $db);
+
 $taxonId = "taxon:".$taxonId;
-
-print STDERR "inputFile = $inputFile\ndb = $db\ntaxonId = $taxonId\nproductFile = $productFile\n";
 
 my %products;
 
@@ -28,7 +34,7 @@ if ($productFile) {
   close PD;
 }
 
-open (IN, "$inputFile") || die "can not open $inputFile to read\n";
+open (IN, "$notesFile") || die "can not open $notesFile to read\n";
 while (<IN>) {
   chomp;
   my ($sourceId, $line) = split (/\t/, $_);
@@ -72,7 +78,7 @@ while (<IN>) {
     $product = $products{$sourceId} if (!$product);
 
     print "$db\t$sourceId\t$sourceId\t\t$goid\t$dbRef\t$evCode\t\t$aspect\t$product\t$sourceId\t$sourceIdType\t$taxonId\t$date\t$db\n";
-    #print "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy";
+
   }
 }
 close IN;
@@ -123,6 +129,20 @@ sub trimIds($){
 	return $string;
 }
 
+sub usage {
+  die
+"
+Extract GO annotation from comment or note file extracted from genbank annotation file
 
+Usage:  extractGOFromNotesOrComments.pl --notesFile --taxonId --database [--productFile]
+          note: The regExp for GoId may need to change, double check script and select the correct one
 
+where
+  --notesFile:    Required, a tab delimited comment or note file extracted from genbank annotation file
+  --taxonId:      Required, NCBI taxon ID
+  --database:     Required, GenBank, GeneDB, EupathDB ...
+  --productFile:  Optional, give a product.txt file if there is no product info in Note or Comment file
+
+";
+}
 
