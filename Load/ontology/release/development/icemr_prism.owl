@@ -9,7 +9,7 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/icemr/icemr_prism.owl">
-        <owl:versionInfo>2017-12-21</owl:versionInfo>
+        <owl:versionInfo>2018-01-10</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -619,25 +619,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">medication material</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">medcode</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Medication</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that is bearer of a medication role.</obo:EUPATH_0000273>
-        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0000015</icemr:prism_id>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medication</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000059 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000059">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">non-malaria medication</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">non-malaria medication</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Non-malaria medication</obo:EUPATH_0000268>
@@ -2181,6 +2166,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000740 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000740">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
+        <obo:EUPATH_0000266>malaria treatment</obo:EUPATH_0000266>
+        <rdfs:label xml:lang="en">Malaria treatment</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -2390,6 +2385,19 @@
         <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TODO: Define.</obo:EUPATH_0000273>
         <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0000027</icemr:prism_id>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical examination</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000090 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">treatment</obo:EUPATH_0000266>
+        <obo:EUPATH_0000271 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A processual entity whose completion is hypothesized (by a healthcare provider) to alleviate the signs and symptoms associated with a disorder</obo:EUPATH_0000273>
+        <icemr:prism_id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM_0000015</icemr:prism_id>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment</rdfs:label>
     </owl:Class>
     
 
