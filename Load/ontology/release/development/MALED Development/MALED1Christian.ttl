@@ -36,20 +36,15 @@ MALED1:PathogenCategory
   rdfs:label "Pathogen category" ;
   rdfs:subClassOf MALED1:Microbiology ;
 .
-MALED1:QNSCategory
-  rdf:type owl:Class ;
-  rdfs:label "QNS category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
 MALED1:StoolTypeCategory
   rdf:type owl:Class ;
   rdfs:label "Stool Type category" ;
   rdfs:subClassOf MALED1:Microbiology ;
 .
-MALED1:SummaryScoreCategory
+MALED1:SummaryTestResult
   rdf:type owl:Class ;
-  rdfs:label "Summary Score category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
+  rdfs:label "Summary test result" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
 .
 MALED1:Variables
   rdf:type owl:Class ;
@@ -117,7 +112,7 @@ MALED1:toBeDecided
   MALED1:hasSource "CAF/MOA/MOB/MOC" ;
   MALED1:implementsVariable "pid" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "human study subjet identifier" ;
+  rdfs:label "human study subject identifier" ;
 .
 <http://purl.obolibrary.org/obo/EUPATH_0000682>
   rdf:type owl:Class ;
@@ -209,280 +204,315 @@ MALED1:toBeDecided
   rdfs:label "Stool specimen ID" ;
   rdfs:subClassOf MALED1:StoolTypeCategory ;
 .
+<http://purl.obolibrary.org/obo/MALEDC_AmtSuffic>
+  rdf:type owl:Class ;
+  rdfs:label "Amount sufficiency" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
+.
+<http://purl.obolibrary.org/obo/MALEDC_PartChar>
+  rdf:type owl:Class ;
+  rdfs:label "Study participant chararacteristic" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+.
+<http://purl.obolibrary.org/obo/MALEDC_PathPresent>
+  rdf:type owl:Class ;
+  rdfs:label "Presence of pathogens" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
+.
 <http://purl.obolibrary.org/obo/MALEDC_RawTestResult>
   rdf:type owl:Class ;
   rdfs:label "Raw Test Result" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
 .
+<http://purl.obolibrary.org/obo/MALEDC_StatsChars>
+  rdf:type owl:Class ;
+  rdfs:label "Statistical characteristic" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
+.
+<http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar>
+  rdf:type owl:Class ;
+  rdfs:label "Stool sample characteristic" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+.
+<http://purl.obolibrary.org/obo/MALEDC_TestCompletion>
+  rdf:type owl:Class ;
+  rdfs:label "Test completion" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
+.
+<http://purl.obolibrary.org/obo/MALEDC_TestType>
+  rdf:type owl:Class ;
+  rdfs:label "Test type" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+.
 <http://purl.obolibrary.org/obo/MALEDC_aata_aaic>
   rdf:type owl:Class ;
   rdfs:label "Test for AATA and AAIC E.coli virulence genes" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_adeno>
   rdf:type owl:Class ;
   rdfs:label "Test for Adenovirus" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_aeromonas>
   rdf:type owl:Class ;
   rdfs:label "Test for Aeromonas" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_alumb>
   rdf:type owl:Class ;
   rdfs:label "Test for A. lumbricoides" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_astro>
   rdf:type owl:Class ;
   rdfs:label "Test for Astrovirus" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_atric>
   rdf:type owl:Class ;
   rdfs:label "Test for T. trichiura" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_atypicalepec>
   rdf:type owl:Class ;
   rdfs:label "Test for atypical EPEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_bcoli>
   rdf:type owl:Class ;
   rdfs:label "Test for Balantidium coli" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_campy>
   rdf:type owl:Class ;
   rdfs:label "Test for Campylobacter using ELISA" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_campycult>
   rdf:type owl:Class ;
   rdfs:label "Test for Campylobacter using culture" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_cmes>
   rdf:type owl:Class ;
   rdfs:label "Test for C. mesnili" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_crypto>
   rdf:type owl:Class ;
   rdfs:label "Test for cryptosporidium using ELISA" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_cyclo>
   rdf:type owl:Class ;
   rdfs:label "Test for Cyclospora" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_eaec>
   rdf:type owl:Class ;
   rdfs:label "Test for EAEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpaaic>
   rdf:type owl:Class ;
   rdfs:label "Test for aaiC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpaata>
   rdf:type owl:Class ;
   rdfs:label "Test for aatA" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpbfpa>
   rdf:type owl:Class ;
   rdfs:label "Test for bfpA" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpeae>
   rdf:type owl:Class ;
   rdfs:label "Test for eae" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpipah>
   rdf:type owl:Class ;
   rdfs:label "Test for ipaH" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpltentero>
   rdf:type owl:Class ;
   rdfs:label "Test for LT" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpstentero>
   rdf:type owl:Class ;
   rdfs:label "Test for ST" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpstx1>
   rdf:type owl:Class ;
   rdfs:label "Test for stx1" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ecpstx2>
   rdf:type owl:Class ;
   rdfs:label "Test for stx2" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ehist>
   rdf:type owl:Class ;
   rdfs:label "Test for E. histolytica" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_eiec>
   rdf:type owl:Class ;
   rdfs:label "Test for EIEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_enana>
   rdf:type owl:Class ;
   rdfs:label "Test for E. nana" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_epec>
   rdf:type owl:Class ;
   rdfs:label "Test for EPEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_etec>
   rdf:type owl:Class ;
   rdfs:label "Test for ETEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_everm>
   rdf:type owl:Class ;
   rdfs:label "Test for E. vermicularis" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_giard>
   rdf:type owl:Class ;
   rdfs:label "Test for Giardia using ELISA" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_hdim>
   rdf:type owl:Class ;
   rdfs:label "Test for H. diminuta" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_hnana>
   rdf:type owl:Class ;
   rdfs:label "Test for H. nana" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_hook>
   rdf:type owl:Class ;
   rdfs:label "Test for Hookworm" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_ibut>
   rdf:type owl:Class ;
   rdfs:label "Test for I. butschilii" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_isos>
   rdf:type owl:Class ;
   rdfs:label "Test for Isospora" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_lt_etec>
   rdf:type owl:Class ;
   rdfs:label "Test for LT *only*" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_mdfcrypt>
   rdf:type owl:Class ;
   rdfs:label "Test for cryptosporidium using modified acid fast stain" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_mdfecoli>
   rdf:type owl:Class ;
   rdfs:label "Test for Entamoeba coli" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_modother>
   rdf:type owl:Class ;
   rdfs:label "Test for other organisms using modified acid fast stain" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_nrv>
   rdf:type owl:Class ;
   rdfs:label "Test for Norovirus" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1>
   rdf:type owl:Class ;
   rdfs:label "Test for NoV genogroup I" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2>
   rdf:type owl:Class ;
   rdfs:label "Test for NoV genogroup II" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_other>
   rdf:type owl:Class ;
   rdfs:label "Test for other parasites" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_pshigyn>
   rdf:type owl:Class ;
   rdfs:label "Test for Plesiomonas shigilloides" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_rota>
   rdf:type owl:Class ;
   rdfs:label "Test for Rotavirus" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_salmonella>
   rdf:type owl:Class ;
   rdfs:label "Test for Salmonella" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_schist>
   rdf:type owl:Class ;
   rdfs:label "Test for Schistosoma" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_shigella>
   rdf:type owl:Class ;
   rdfs:label "Test for Shigella" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_sstero>
   rdf:type owl:Class ;
   rdfs:label "Test for S. stercoralis" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_st_etec>
   rdf:type owl:Class ;
   rdfs:label "Test for ST *only*" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_stec>
   rdf:type owl:Class ;
   rdfs:label "Test for STEC" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_taenia>
   rdf:type owl:Class ;
   rdfs:label "Test for Taenia sp." ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_vibrio>
   rdf:type owl:Class ;
   rdfs:label "Test for Vibrio" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALEDC_yenteryn>
   rdf:type owl:Class ;
   rdfs:label "Test for Yersinia enterocolitica" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000724> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestType> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000122>
   rdf:type owl:Class ;
@@ -847,7 +877,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpecolipcr" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpecolipcr" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000152>
   rdf:type owl:Class ;
@@ -860,7 +890,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecptesting" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecptesting" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000153>
   rdf:type owl:Class ;
@@ -872,7 +902,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "fvfadenoelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "fvfadenoelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000154>
   rdf:type owl:Class ;
@@ -884,7 +914,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "fvfastroelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "fvfastroelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000155>
   rdf:type owl:Class ;
@@ -896,7 +926,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "fvfrotaelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "fvfrotaelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000156>
   rdf:type owl:Class ;
@@ -909,7 +939,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "fvftesting" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "fvftesting" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000157>
   rdf:type owl:Class ;
@@ -922,7 +952,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfmodstain" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfmodstain" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000158>
   rdf:type owl:Class ;
@@ -934,7 +964,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdftesting" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdftesting" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000159>
   rdf:type owl:Class ;
@@ -947,7 +977,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdftests" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdftests" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000160>
   rdf:type owl:Class ;
@@ -960,7 +990,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfwetprep" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfwetprep" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000161>
   rdf:type owl:Class ;
@@ -973,7 +1003,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "numbertests" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "numbertests" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000162>
   rdf:type owl:Class ;
@@ -985,7 +1015,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvnorortpcr" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvnorortpcr" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000163>
   rdf:type owl:Class ;
@@ -998,7 +1028,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvtesting" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvtesting" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000164>
   rdf:type owl:Class ;
@@ -1010,7 +1040,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pefcryptelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pefcryptelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000165>
   rdf:type owl:Class ;
@@ -1022,7 +1052,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pefehistelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pefehistelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000166>
   rdf:type owl:Class ;
@@ -1034,7 +1064,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pefgiarelisa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pefgiarelisa" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000167>
   rdf:type owl:Class ;
@@ -1047,7 +1077,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "peftesting" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "peftesting" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_TestCompletion> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000169>
   rdf:type owl:Class ;
@@ -1060,6 +1090,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aata_aaic" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aata_aaic" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aata_aaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000170>
@@ -1072,6 +1103,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aata_aaic_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aata_aaic_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aata_aaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000171>
@@ -1084,6 +1116,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aata_aaic_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aata_aaic_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aata_aaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000172>
@@ -1096,6 +1129,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aata_aaic_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aata_aaic_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aata_aaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000173>
@@ -1109,6 +1143,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "adeno" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "adeno" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_adeno> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000174>
@@ -1121,6 +1156,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "adeno_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "adeno_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_adeno> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000175>
@@ -1133,6 +1169,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "adeno_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "adeno_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_adeno> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000176>
@@ -1145,6 +1182,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "adeno_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "adeno_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_adeno> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000177>
@@ -1158,6 +1196,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aeromonas" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aeromonas" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aeromonas> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000178>
@@ -1170,6 +1209,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aeromonas_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aeromonas_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aeromonas> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000179>
@@ -1182,6 +1222,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aeromonas_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aeromonas_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aeromonas> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000180>
@@ -1194,6 +1235,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "aeromonas_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "aeromonas_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_aeromonas> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000181>
@@ -1206,6 +1248,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "alumb" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "alumb" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_alumb> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000182>
@@ -1218,6 +1261,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "alumb_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "alumb_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_alumb> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000183>
@@ -1230,6 +1274,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "alumb_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "alumb_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_alumb> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000184>
@@ -1242,6 +1287,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "alumb_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "alumb_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_alumb> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000185>
@@ -1255,6 +1301,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "astro" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "astro" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_astro> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000186>
@@ -1267,6 +1314,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "astro_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "astro_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_astro> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000187>
@@ -1279,6 +1327,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "astro_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "astro_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_astro> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000188>
@@ -1291,6 +1340,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "astro_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "astro_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_astro> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000189>
@@ -1303,6 +1353,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atric" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atric" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atric> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000190>
@@ -1315,6 +1366,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atric_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atric_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atric> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000191>
@@ -1327,6 +1379,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atric_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atric_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atric> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000192>
@@ -1339,6 +1392,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atric_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atric_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atric> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000193>
@@ -1352,7 +1406,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atypicalepec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atypicalepec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atypicalepec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000194>
   rdf:type owl:Class ;
@@ -1364,6 +1418,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atypicalepec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atypicalepec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atypicalepec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000195>
@@ -1376,6 +1431,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atypicalepec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atypicalepec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atypicalepec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000196>
@@ -1388,6 +1444,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "atypicalepec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "atypicalepec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_atypicalepec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000197>
@@ -1400,6 +1457,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bcoli" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bcoli" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_bcoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000198>
@@ -1412,6 +1470,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bcoli_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bcoli_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_bcoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000199>
@@ -1424,6 +1483,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bcoli_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bcoli_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_bcoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000200>
@@ -1436,6 +1496,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bcoli_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bcoli_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_bcoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000201>
@@ -1552,6 +1613,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campy" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campy" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campy> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000210>
@@ -1564,6 +1626,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campy_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campy_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campy> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000211>
@@ -1576,6 +1639,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campy_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campy_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campy> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000212>
@@ -1588,6 +1652,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campy_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campy_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campy> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000213>
@@ -1601,6 +1666,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campycult" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campycult" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campycult> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000214>
@@ -1613,6 +1679,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campycult_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campycult_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campycult> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000215>
@@ -1625,6 +1692,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campycult_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campycult_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campycult> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000216>
@@ -1637,6 +1705,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "campycult_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campycult_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_campycult> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000217>
@@ -1649,6 +1718,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cmes" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cmes" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cmes> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000218>
@@ -1661,6 +1731,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cmes_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cmes_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cmes> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000219>
@@ -1673,6 +1744,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cmes_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cmes_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cmes> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000220>
@@ -1685,6 +1757,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cmes_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cmes_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cmes> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000221>
@@ -1698,6 +1771,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "crypto" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "crypto" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_crypto> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000222>
@@ -1710,6 +1784,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "crypto_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "crypto_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_crypto> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000223>
@@ -1722,6 +1797,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "crypto_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "crypto_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_crypto> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000224>
@@ -1734,6 +1810,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "crypto_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "crypto_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_crypto> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000225>
@@ -1746,6 +1823,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cyclo" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cyclo" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cyclo> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000226>
@@ -1758,6 +1836,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cyclo_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cyclo_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cyclo> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000227>
@@ -1770,6 +1849,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cyclo_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cyclo_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cyclo> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000228>
@@ -1782,6 +1862,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "cyclo_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "cyclo_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_cyclo> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000229>
@@ -1795,7 +1876,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eaec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eaec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eaec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000230>
   rdf:type owl:Class ;
@@ -1807,6 +1888,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eaec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eaec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eaec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000231>
@@ -1819,6 +1901,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eaec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eaec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eaec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000232>
@@ -1831,6 +1914,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eaec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eaec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eaec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000233>
@@ -1843,6 +1927,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaaic" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaaic" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000234>
@@ -1855,6 +1940,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaaic_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaaic_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000235>
@@ -1867,6 +1953,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaaic_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaaic_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000236>
@@ -1879,6 +1966,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaaic_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaaic_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaaic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000237>
@@ -1891,6 +1979,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaata" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaata" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaata> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000238>
@@ -1903,6 +1992,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaata_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaata_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaata> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000239>
@@ -1915,6 +2005,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaata_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaata_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaata> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000240>
@@ -1927,6 +2018,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpaata_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpaata_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpaata> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000241>
@@ -1939,6 +2031,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpbfpa" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpbfpa" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpbfpa> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000242>
@@ -1951,6 +2044,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpbfpa_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpbfpa_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpbfpa> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000243>
@@ -1963,6 +2057,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpbfpa_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpbfpa_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpbfpa> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000244>
@@ -1975,6 +2070,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpbfpa_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpbfpa_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpbfpa> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000245>
@@ -1987,6 +2083,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpeae" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpeae" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpeae> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000246>
@@ -1999,6 +2096,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpeae_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpeae_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpeae> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000247>
@@ -2011,6 +2109,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpeae_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpeae_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpeae> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000248>
@@ -2023,6 +2122,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpeae_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpeae_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpeae> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000249>
@@ -2035,6 +2135,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpipah" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpipah" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpipah> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000250>
@@ -2047,6 +2148,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpipah_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpipah_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpipah> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000251>
@@ -2059,6 +2161,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpipah_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpipah_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpipah> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000252>
@@ -2071,6 +2174,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpipah_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpipah_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpipah> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000253>
@@ -2083,6 +2187,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpltentero" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpltentero" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpltentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000254>
@@ -2095,6 +2200,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpltentero_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpltentero_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpltentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000255>
@@ -2107,6 +2213,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpltentero_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpltentero_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpltentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000256>
@@ -2119,6 +2226,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpltentero_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpltentero_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpltentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000257>
@@ -2131,6 +2239,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstentero" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstentero" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000258>
@@ -2143,6 +2252,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstentero_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstentero_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000259>
@@ -2155,6 +2265,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstentero_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstentero_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000260>
@@ -2167,6 +2278,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstentero_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstentero_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstentero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000261>
@@ -2179,6 +2291,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx1" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx1" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000262>
@@ -2191,6 +2304,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx1_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx1_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000263>
@@ -2203,6 +2317,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx1_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx1_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000264>
@@ -2215,6 +2330,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx1_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx1_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000265>
@@ -2227,6 +2343,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx2" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx2" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000266>
@@ -2239,6 +2356,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx2_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx2_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000267>
@@ -2251,6 +2369,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx2_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx2_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000268>
@@ -2263,6 +2382,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ecpstx2_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ecpstx2_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ecpstx2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000269>
@@ -2276,6 +2396,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ehist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ehist" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ehist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000270>
@@ -2288,6 +2409,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ehist_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ehist_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ehist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000271>
@@ -2300,6 +2422,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ehist_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ehist_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ehist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000272>
@@ -2312,6 +2435,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ehist_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ehist_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ehist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000273>
@@ -2325,7 +2449,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eiec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eiec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eiec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000274>
   rdf:type owl:Class ;
@@ -2337,6 +2461,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eiec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eiec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eiec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000275>
@@ -2349,6 +2474,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eiec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eiec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eiec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000276>
@@ -2361,6 +2487,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "eiec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "eiec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_eiec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000277>
@@ -2373,6 +2500,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "enana" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "enana" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_enana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000278>
@@ -2385,6 +2513,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "enana_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "enana_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_enana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000279>
@@ -2397,6 +2526,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "enana_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "enana_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_enana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000280>
@@ -2409,6 +2539,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "enana_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "enana_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_enana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000281>
@@ -2422,7 +2553,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "epec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "epec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_epec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000282>
   rdf:type owl:Class ;
@@ -2434,6 +2565,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "epec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "epec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_epec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000283>
@@ -2446,6 +2578,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "epec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "epec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_epec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000284>
@@ -2458,6 +2591,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "epec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "epec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_epec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000285>
@@ -2471,7 +2605,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "etec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "etec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_etec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000286>
   rdf:type owl:Class ;
@@ -2483,6 +2617,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "etec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "etec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000287>
@@ -2495,6 +2630,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "etec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "etec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000288>
@@ -2507,6 +2643,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "etec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "etec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000289>
@@ -2519,6 +2656,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "everm" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "everm" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_everm> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000290>
@@ -2531,6 +2669,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "everm_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "everm_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_everm> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000291>
@@ -2543,6 +2682,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "everm_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "everm_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_everm> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000292>
@@ -2555,6 +2695,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "everm_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "everm_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_everm> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000293>
@@ -2607,7 +2748,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "giard" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "giard" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_giard> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000297>
   rdf:type owl:Class ;
@@ -2619,6 +2760,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "giard_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "giard_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_giard> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000298>
@@ -2631,6 +2773,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "giard_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "giard_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_giard> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000299>
@@ -2643,6 +2786,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "giard_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "giard_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_giard> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000300>
@@ -2655,6 +2799,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hdim" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hdim" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hdim> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000301>
@@ -2667,6 +2812,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hdim_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hdim_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hdim> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000302>
@@ -2679,6 +2825,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hdim_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hdim_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hdim> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000303>
@@ -2691,6 +2838,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hdim_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hdim_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hdim> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000304>
@@ -2703,6 +2851,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hnana" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hnana" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hnana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000305>
@@ -2715,6 +2864,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hnana_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hnana_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hnana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000306>
@@ -2727,6 +2877,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hnana_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hnana_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hnana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000307>
@@ -2739,6 +2890,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hnana_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hnana_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hnana> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000308>
@@ -2751,6 +2903,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hook" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hook" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hook> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000309>
@@ -2763,6 +2916,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hook_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hook_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hook> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000310>
@@ -2775,6 +2929,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hook_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hook_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hook> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000311>
@@ -2787,6 +2942,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "hook_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "hook_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_hook> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000312>
@@ -2799,6 +2955,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ibut" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ibut" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ibut> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000313>
@@ -2811,6 +2968,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ibut_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ibut_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ibut> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000314>
@@ -2823,6 +2981,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ibut_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ibut_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ibut> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000315>
@@ -2835,6 +2994,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "ibut_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ibut_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_ibut> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000316>
@@ -2848,6 +3008,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "isos" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "isos" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_isos> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000317>
@@ -2860,6 +3021,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "isos_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "isos_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_isos> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000318>
@@ -2872,6 +3034,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "isos_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "isos_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_isos> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000319>
@@ -2884,6 +3047,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "isos_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "isos_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_isos> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000320>
@@ -2897,7 +3061,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "lt_etec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "lt_etec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_lt_etec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000321>
   rdf:type owl:Class ;
@@ -2909,6 +3073,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "lt_etec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "lt_etec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_lt_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000322>
@@ -2921,6 +3086,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "lt_etec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "lt_etec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_lt_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000323>
@@ -2933,6 +3099,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "lt_etec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "lt_etec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_lt_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000324>
@@ -2946,6 +3113,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfcrypt" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfcrypt" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfcrypt> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000325>
@@ -2958,6 +3126,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfcrypt_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfcrypt_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfcrypt> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000326>
@@ -2970,6 +3139,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfcrypt_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfcrypt_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfcrypt> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000327>
@@ -2982,6 +3152,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfcrypt_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfcrypt_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfcrypt> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000328>
@@ -2994,6 +3165,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfecoli" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfecoli" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfecoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000329>
@@ -3006,6 +3178,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfecoli_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfecoli_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfecoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000330>
@@ -3018,6 +3191,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfecoli_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfecoli_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfecoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000331>
@@ -3030,6 +3204,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfecoli_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfecoli_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_mdfecoli> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000332>
@@ -3095,6 +3270,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "modother" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modother" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_modother> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000337>
@@ -3107,6 +3283,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "modother_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modother_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_modother> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000338>
@@ -3119,6 +3296,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "modother_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modother_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_modother> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000339>
@@ -3131,6 +3309,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "modother_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modother_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_modother> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000340>
@@ -3144,6 +3323,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "modresult" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modresult" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_modother> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000341>
@@ -3157,6 +3337,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrv" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrv> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000342>
@@ -3169,6 +3350,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrv_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrv_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrv> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000343>
@@ -3181,6 +3363,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrv_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrv_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrv> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000344>
@@ -3193,6 +3376,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrv_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrv_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrv> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000345>
@@ -3205,7 +3389,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno1" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno1" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000346>
   rdf:type owl:Class ;
@@ -3217,6 +3401,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno1_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno1_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000347>
@@ -3229,6 +3414,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno1_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno1_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000348>
@@ -3241,6 +3427,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno1_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno1_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000349>
@@ -3253,7 +3440,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno2" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno2" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000350>
   rdf:type owl:Class ;
@@ -3265,6 +3452,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno2_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno2_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000351>
@@ -3277,6 +3465,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno2_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno2_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000352>
@@ -3289,6 +3478,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvgeno2_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvgeno2_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000353>
@@ -3301,6 +3491,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvnorocycii" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvnorocycii" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno2> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000354>
@@ -3313,6 +3504,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "nrvnorocycle" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvnorocycle" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_nrvgeno1> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000355>
@@ -3339,6 +3531,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "other" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "other" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_other> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000357>
@@ -3351,6 +3544,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "other_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "other_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_other> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000358>
@@ -3363,6 +3557,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "other_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "other_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_other> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000359>
@@ -3375,6 +3570,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "other_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "other_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_other> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000360>
@@ -3426,6 +3622,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pshigyn" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pshigyn" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_pshigyn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000364>
@@ -3438,6 +3635,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pshigyn_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pshigyn_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_pshigyn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000365>
@@ -3450,6 +3648,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pshigyn_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pshigyn_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_pshigyn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000366>
@@ -3462,6 +3661,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pshigyn_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pshigyn_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_pshigyn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000367>
@@ -3475,6 +3675,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "rota" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "rota" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_rota> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000368>
@@ -3487,6 +3688,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "rota_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "rota_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_rota> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000369>
@@ -3499,6 +3701,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "rota_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "rota_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_rota> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000370>
@@ -3511,6 +3714,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "rota_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "rota_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_rota> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000371>
@@ -3524,6 +3728,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "salmonella" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "salmonella" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_salmonella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000372>
@@ -3536,6 +3741,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "salmonella_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "salmonella_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_salmonella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000373>
@@ -3548,6 +3754,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "salmonella_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "salmonella_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_salmonella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000374>
@@ -3560,6 +3767,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "salmonella_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "salmonella_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_salmonella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000375>
@@ -3572,6 +3780,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "schist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "schist" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_schist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000376>
@@ -3584,6 +3793,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "schist_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "schist_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_schist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000377>
@@ -3596,6 +3806,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "schist_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "schist_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_schist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000378>
@@ -3608,6 +3819,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "schist_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "schist_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_schist> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000379>
@@ -3621,6 +3833,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "shigella" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "shigella" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_shigella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000380>
@@ -3633,6 +3846,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "shigella_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "shigella_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_shigella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000381>
@@ -3645,6 +3859,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "shigella_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "shigella_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_shigella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000382>
@@ -3657,6 +3872,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "shigella_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "shigella_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_shigella> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000383>
@@ -3669,6 +3885,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sstero" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sstero" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_sstero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000384>
@@ -3681,6 +3898,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sstero_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sstero_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_sstero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000385>
@@ -3693,6 +3911,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sstero_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sstero_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_sstero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000386>
@@ -3705,6 +3924,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sstero_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sstero_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_sstero> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000387>
@@ -3718,7 +3938,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "st_etec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "st_etec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_st_etec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000388>
   rdf:type owl:Class ;
@@ -3730,6 +3950,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "st_etec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "st_etec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_st_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000389>
@@ -3742,6 +3963,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "st_etec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "st_etec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_st_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000390>
@@ -3754,6 +3976,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "st_etec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "st_etec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_st_etec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000391>
@@ -3767,7 +3990,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "stec" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stec" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_stec> ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000392>
   rdf:type owl:Class ;
@@ -3779,6 +4002,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "stec_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stec_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_stec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000393>
@@ -3791,6 +4015,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "stec_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stec_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_stec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000394>
@@ -3803,6 +4028,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "stec_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stec_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_stec> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000395>
@@ -3815,6 +4041,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "taenia" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "taenia" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_taenia> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000396>
@@ -3827,6 +4054,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "taenia_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "taenia_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_taenia> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000397>
@@ -3839,6 +4067,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "taenia_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "taenia_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_taenia> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000398>
@@ -3851,6 +4080,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "taenia_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "taenia_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_taenia> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000399>
@@ -3864,6 +4094,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "vibrio" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "vibrio" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_vibrio> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000400>
@@ -3876,6 +4107,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "vibrio_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "vibrio_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_vibrio> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000401>
@@ -3888,6 +4120,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "vibrio_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "vibrio_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_vibrio> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000402>
@@ -3900,6 +4133,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "vibrio_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "vibrio_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_vibrio> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000403>
@@ -3912,6 +4146,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "yenteryn" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "yenteryn" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_yenteryn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000404>
@@ -3924,6 +4159,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "yenteryn_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "yenteryn_cum" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_yenteryn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000405>
@@ -3936,6 +4172,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "yenteryn_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "yenteryn_cum_d" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_yenteryn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000406>
@@ -3948,6 +4185,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "yenteryn_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "yenteryn_cum_m" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_yenteryn> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000408>
@@ -3961,8 +4199,9 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnscampelisa" ;
   MALED1:toBeDecided "Decision Requested." ;
+  rdfs:label "Enough to perform Campylobacter ELISA test" ;
   rdfs:label "qnscampelisa" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000409>
   rdf:type owl:Class ;
@@ -3974,8 +4213,8 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnscgelisa" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "qnscgelisa" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:label "Enough to perform Cryptosporidium and Giardia ELISAs test" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000410>
   rdf:type owl:Class ;
@@ -3987,8 +4226,8 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsculturesetup" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "qnsculturesetup" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:label "Enough to set up a culture" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000411>
   rdf:type owl:Class ;
@@ -4000,8 +4239,8 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsehistelisa" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "qnsehistelisa" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:label "Enough to perform E. histolytica ELISA test" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000412>
   rdf:type owl:Class ;
@@ -4013,8 +4252,8 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsnoropcr" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "qnsnoropcr" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:label "Enough to perform Norovirus RT-PCR test" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000413>
   rdf:type owl:Class ;
@@ -4026,8 +4265,9 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsopconc" ;
   MALED1:toBeDecided "Decision Requested." ;
+  rdfs:label "Enough to perform O&P concentrate test" ;
   rdfs:label "qnsopconc" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000414>
   rdf:type owl:Class ;
@@ -4039,8 +4279,8 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsspecarchive" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "qnsspecarchive" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:label "Enough to archive specimen" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000415>
   rdf:type owl:Class ;
@@ -4052,8 +4292,9 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsviraltest" ;
   MALED1:toBeDecided "Decision Requested." ;
+  rdfs:label "Enough to perform viral tests test" ;
   rdfs:label "qnsviraltest" ;
-  rdfs:subClassOf MALED1:QNSCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000417>
   rdf:type owl:Class ;
@@ -4416,7 +4657,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bacteria" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bacteria" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000450>
   rdf:type owl:Class ;
@@ -4429,7 +4671,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bacteria_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bacteria_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000451>
   rdf:type owl:Class ;
@@ -4442,7 +4685,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bacteria_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bacteria_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000452>
   rdf:type owl:Class ;
@@ -4455,7 +4699,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bacteria_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bacteria_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000453>
   rdf:type owl:Class ;
@@ -4468,7 +4713,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bactscore" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bactscore" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000454>
   rdf:type owl:Class ;
@@ -4481,7 +4727,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bactscore_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bactscore_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000455>
   rdf:type owl:Class ;
@@ -4494,7 +4741,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bactscore_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bactscore_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000456>
   rdf:type owl:Class ;
@@ -4507,7 +4755,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasite" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasite" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000457>
   rdf:type owl:Class ;
@@ -4520,7 +4768,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasite_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasite_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000458>
   rdf:type owl:Class ;
@@ -4533,7 +4782,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasite_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasite_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000459>
   rdf:type owl:Class ;
@@ -4546,7 +4796,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasite_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasite_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000460>
   rdf:type owl:Class ;
@@ -4559,7 +4810,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasitescore" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasitescore" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000461>
   rdf:type owl:Class ;
@@ -4572,7 +4824,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasitescore_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasitescore_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000462>
   rdf:type owl:Class ;
@@ -4585,7 +4838,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "parasitescore_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "parasitescore_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000463>
   rdf:type owl:Class ;
@@ -4598,7 +4852,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathogeng" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathogeng" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000464>
   rdf:type owl:Class ;
@@ -4611,20 +4865,21 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathogeng_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathogeng_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000465>
   rdf:type owl:Class ;
   MALED1:belongsToCategory "summary score" ;
   MALED1:belongsToDataset "Microbiology" ;
-  MALED1:hasDescription1 "Average number of pathogens" ;
+  MALED1:hasDescription1 "Average number of pathogens per child" ;
   MALED1:hasDescription2 "continuous numeric" ;
   MALED1:hasNotes "Information from the first monthly stool collected for each month and the first diarrhea stool collected for each diarrhea episode. Complete testing required of stool samples." ;
   MALED1:hasSource "Calculated" ;
   MALED1:implementsVariable "pathscore" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000466>
   rdf:type owl:Class ;
@@ -4637,7 +4892,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathscore_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000467>
   rdf:type owl:Class ;
@@ -4650,7 +4906,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathscore_d_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore_d_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000468>
   rdf:type owl:Class ;
@@ -4663,7 +4920,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathscore_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000469>
   rdf:type owl:Class ;
@@ -4675,7 +4933,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathscore_m_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore_m_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000470>
   rdf:type owl:Class ;
@@ -4688,7 +4947,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "pathscore_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "pathscore_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000471>
   rdf:type owl:Class ;
@@ -4701,7 +4961,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumbacteria" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumbacteria" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000472>
   rdf:type owl:Class ;
@@ -4714,7 +4975,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumbacteria_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumbacteria_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000473>
   rdf:type owl:Class ;
@@ -4727,7 +4989,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumbacteria_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumbacteria_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000474>
   rdf:type owl:Class ;
@@ -4740,7 +5003,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumbacteria_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumbacteria_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000475>
   rdf:type owl:Class ;
@@ -4752,7 +5016,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumparasite" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumparasite" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000476>
   rdf:type owl:Class ;
@@ -4765,7 +5030,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumparasite_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumparasite_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000477>
   rdf:type owl:Class ;
@@ -4778,7 +5044,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumparasite_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumparasite_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000478>
   rdf:type owl:Class ;
@@ -4791,7 +5058,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumparasite_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumparasite_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000479>
   rdf:type owl:Class ;
@@ -4804,7 +5072,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000480>
   rdf:type owl:Class ;
@@ -4817,7 +5086,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000481>
   rdf:type owl:Class ;
@@ -4830,7 +5100,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000482>
   rdf:type owl:Class ;
@@ -4843,7 +5114,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000483>
   rdf:type owl:Class ;
@@ -4856,7 +5128,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000484>
   rdf:type owl:Class ;
@@ -4869,7 +5142,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000485>
   rdf:type owl:Class ;
@@ -4882,7 +5156,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000486>
   rdf:type owl:Class ;
@@ -4895,7 +5170,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_nonrv_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_nonrv_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000487>
   rdf:type owl:Class ;
@@ -4907,7 +5183,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_nonrv_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_nonrv_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000488>
   rdf:type owl:Class ;
@@ -4920,7 +5197,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpath_u_nonrv_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpath_u_nonrv_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000489>
   rdf:type owl:Class ;
@@ -4933,7 +5211,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000490>
   rdf:type owl:Class ;
@@ -4946,7 +5225,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000491>
   rdf:type owl:Class ;
@@ -4959,7 +5239,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000492>
   rdf:type owl:Class ;
@@ -4972,7 +5253,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000493>
   rdf:type owl:Class ;
@@ -4985,7 +5267,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000494>
   rdf:type owl:Class ;
@@ -4998,7 +5281,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_nonrv_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_nonrv_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000495>
   rdf:type owl:Class ;
@@ -5011,7 +5295,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_nonrv_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_nonrv_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000496>
   rdf:type owl:Class ;
@@ -5024,7 +5309,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumpathg_nonrv_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumpathg_nonrv_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000497>
   rdf:type owl:Class ;
@@ -5037,7 +5323,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000498>
   rdf:type owl:Class ;
@@ -5050,7 +5337,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000499>
   rdf:type owl:Class ;
@@ -5063,7 +5351,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000500>
   rdf:type owl:Class ;
@@ -5076,7 +5365,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000501>
   rdf:type owl:Class ;
@@ -5089,7 +5379,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StatsChars> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000502>
   rdf:type owl:Class ;
@@ -5102,7 +5393,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_nonrv_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_nonrv_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000503>
   rdf:type owl:Class ;
@@ -5115,7 +5407,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_nonrv_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_nonrv_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000504>
   rdf:type owl:Class ;
@@ -5128,7 +5421,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "sumvirus_nonrv_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "sumvirus_nonrv_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000505>
   rdf:type owl:Class ;
@@ -5141,7 +5435,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000506>
   rdf:type owl:Class ;
@@ -5154,7 +5448,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000507>
   rdf:type owl:Class ;
@@ -5167,7 +5462,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000508>
   rdf:type owl:Class ;
@@ -5180,7 +5476,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000509>
   rdf:type owl:Class ;
@@ -5193,7 +5490,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000510>
   rdf:type owl:Class ;
@@ -5206,7 +5503,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_nonrv_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_nonrv_cum" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000511>
   rdf:type owl:Class ;
@@ -5219,7 +5517,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_nonrv_cum_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_nonrv_cum_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000512>
   rdf:type owl:Class ;
@@ -5231,7 +5530,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virus_nonrv_cum_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virus_nonrv_cum_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000513>
   rdf:type owl:Class ;
@@ -5244,7 +5544,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore_nonrv" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore_nonrv" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000514>
   rdf:type owl:Class ;
@@ -5257,7 +5558,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore_nonrv_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore_nonrv_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000515>
   rdf:type owl:Class ;
@@ -5269,7 +5571,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore_nonrv_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore_nonrv_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000516>
   rdf:type owl:Class ;
@@ -5282,7 +5585,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000517>
   rdf:type owl:Class ;
@@ -5295,7 +5599,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore_d" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore_d" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000518>
   rdf:type owl:Class ;
@@ -5308,7 +5613,8 @@ MALED1:toBeDecided
   MALED1:implementsVariable "virusscore_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "virusscore_m" ;
-  rdfs:subClassOf MALED1:SummaryScoreCategory ;
+  rdfs:subClassOf MALED1:SummaryTestResult ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PartChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000520>
   rdf:type owl:Class ;
@@ -5320,8 +5626,8 @@ MALED1:toBeDecided
   MALED1:hasSource "Calculated" ;
   MALED1:implementsVariable "acute" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "acute" ;
-  rdfs:subClassOf MALED1:DemographicCategory ;
+  rdfs:label "Acute diarrhea" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000670> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000524>
   rdf:type owl:Class ;
@@ -5333,8 +5639,8 @@ MALED1:toBeDecided
   MALED1:hasSource "PID" ;
   MALED1:implementsVariable "Country_ID" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "Country_ID" ;
-  rdfs:subClassOf MALED1:DemographicCategory ;
+  rdfs:label "Country ID" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/OBI_0001627> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000525>
   rdf:type owl:Class ;
@@ -5358,8 +5664,8 @@ MALED1:toBeDecided
   MALED1:hasSource "Calculated" ;
   MALED1:implementsVariable "persistent" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "persistent" ;
-  rdfs:subClassOf MALED1:DemographicCategory ;
+  rdfs:label "Persistent diarrhea" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000670> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000547>
   rdf:type owl:Class ;
@@ -5371,8 +5677,8 @@ MALED1:toBeDecided
   MALED1:hasSource "Calculated" ;
   MALED1:implementsVariable "prolonged" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "prolonged" ;
-  rdfs:subClassOf MALED1:DemographicCategory ;
+  rdfs:label "Prolonged diarrhea" ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000670> ;
 .
 <http://purl.obolibrary.org/obo/PATO_0000047>
   rdf:type owl:Class ;
