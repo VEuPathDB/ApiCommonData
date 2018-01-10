@@ -118,8 +118,10 @@ foreach my $j (0..$#excelColumn) {
 }
 
 foreach my $k (sort keys %excelInfo) {
-  foreach my $kk (sort keys %{$excelInfo{$k}}) {
-    print STDERR "$k, $kk, $excelInfo{$k}{$kk}\n";
+  if ($k eq $organismAbbrev) {
+    foreach my $kk (sort keys %{$excelInfo{$k}}) {
+      print STDERR "$k, $kk, $excelInfo{$k}{$kk}\n";
+    }
   }
 }
 
