@@ -657,7 +657,7 @@ sub printCommentClass {
   printNameWithDollarSign ($fh, 'organismAbbrev');
   my $commentName = $excelInfoPoint->{$organismAbbrev}->{'genomeSource'} . "_" . $geneOrTrans;
   printNameWithValue ($fh, 'name', $commentName);
-  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'version', 'functAnnotVersion');
   print $fh "  </dataset>\n";
   print $fh "\n";
   return 0;
