@@ -92,18 +92,6 @@
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
     <rdfs:label xml:lang="en">Hospitalization information</rdfs:label>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/MALED_1000044">
-    <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
-    <MALED1:hasNotes>whether child had diarrhea on the day of observation</MALED1:hasNotes>
-    <MALED1:hasDescription2>Binary variable that indicates whether or not child had study-defined diarrhea. Diar=1 if numls&gt;2 or if [safblood==1 and the child had 1 to 2 loose stools]. Days when the study definition is met, but there was an LM test that day or the previous day, were set to 0 (not 'diarrhea' since LM has been found to cause loose stools).</MALED1:hasDescription2>
-    <MALED1:hasSource>calculated</MALED1:hasSource>
-    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>diar</rdfs:label>
-    <MALED1:implementsVariable>diar</MALED1:implementsVariable>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
-    <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
-    <MALED1:hasJieNotes>EUPATH_0000665: information of whether a child had diarrhea (may change label to indicator of a child/person had diarrhea). CC: Note that the MALED concept is very rigorously defined (see has description2), hence may not capture the same meaning as EUPATH_0000665; otherwise, I have no objection against conflating the two.</MALED1:hasJieNotes>
-  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/MALED_1000056">
     <MALED1:hasDescription2>Days since last diarrhea episode ended (missing indicates time from birth until first episode)</MALED1:hasDescription2>
     <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
@@ -455,6 +443,18 @@
     <MALED1:implementsVariable>zwfl</MALED1:implementsVariable>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <rdfs:label>weight for length/height z-score</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000665">
+    <MALED1:hasJieNotes>EUPATH_0000665: information of whether a child had diarrhea (may change label to indicator of a child/person had diarrhea). CC: Note that the MALED concept is very rigorously defined (see has description2), hence may not capture the same meaning as EUPATH_0000665; otherwise, I have no objection against conflating the two.</MALED1:hasJieNotes>
+    <MALED1:hasNotes>whether child had diarrhea on the day of observation</MALED1:hasNotes>
+    <MALED1:hasSource>calculated</MALED1:hasSource>
+    <MALED1:implementsVariable>diar</MALED1:implementsVariable>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
+    <rdfs:label>Whether child had diarrhea on the day of observation</rdfs:label>
+    <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
+    <MALED1:hasDescription2>Binary variable that indicates whether or not child had study-defined diarrhea. Diar=1 if numls&gt;2 or if [safblood==1 and the child had 1 to 2 loose stools]. Days when the study definition is met, but there was an LM test that day or the previous day, were set to 0 (not 'diarrhea' since LM has been found to cause loose stools).</MALED1:hasDescription2>
+    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+    <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/MALED_1000091">
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>

@@ -1535,7 +1535,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bdfecolidetect" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bdfecolidetect" ;
-  rdfs:subClassOf MALED1:PathogenCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_PathPresent> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000205>
   rdf:type owl:Class ;
@@ -1547,7 +1547,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "bdfecolipcr" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bdfecolipcr" ;
-  rdfs:subClassOf MALED1:PathogenCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000206>
   rdf:type owl:Class ;
@@ -3114,7 +3114,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfehist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfehist" ;
-  rdfs:subClassOf MALED1:PathogenCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000333>
   rdf:type owl:Class ;
@@ -3127,7 +3127,7 @@ MALED1:toBeDecided
   MALED1:implementsVariable "mdfgiard" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfgiard" ;
-  rdfs:subClassOf MALED1:PathogenCategory ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_StoolSampleChar> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000334>
   rdf:type owl:Class ;
@@ -4048,7 +4048,6 @@ MALED1:toBeDecided
   MALED1:implementsVariable "qnscampelisa" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "Enough to perform Campylobacter ELISA test" ;
-  rdfs:label "qnscampelisa" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000409>
@@ -4114,7 +4113,6 @@ MALED1:toBeDecided
   MALED1:implementsVariable "qnsopconc" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "Enough to perform O&P concentrate test" ;
-  rdfs:label "qnsopconc" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000414>
@@ -4140,8 +4138,7 @@ MALED1:toBeDecided
   MALED1:hasSource "QNS" ;
   MALED1:implementsVariable "qnsviraltest" ;
   MALED1:toBeDecided "Decision Requested." ;
-  rdfs:label "Enough to perform viral tests test" ;
-  rdfs:label "qnsviraltest" ;
+  rdfs:label "Enough to perform viral tests" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/MALEDC_AmtSuffic> ;
 .
 <http://purl.obolibrary.org/obo/MALED_1000417>
@@ -5424,19 +5421,6 @@ MALED1:toBeDecided
   rdfs:label "Acute diarrhea" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000670> ;
 .
-<http://purl.obolibrary.org/obo/MALED_1000524>
-  rdf:type owl:Class ;
-  MALED1:belongsToCategory "demographic" ;
-  MALED1:belongsToDataset "Microbiology" ;
-  MALED1:hasCSNotes "country name? http://purl.obolibrary.org/obo/OBI_0001627. CC: I prefer representing country as well, as oppposed to working with the mere country name." ;
-  MALED1:hasDescription1 "Country of site" ;
-  MALED1:hasDescription2 "Country" ;
-  MALED1:hasSource "PID" ;
-  MALED1:implementsVariable "Country_ID" ;
-  MALED1:toBeDecided "keep" ;
-  rdfs:label "Country ID" ;
-  rdfs:subClassOf <http://purl.obolibrary.org/obo/OBI_0001627> ;
-.
 <http://purl.obolibrary.org/obo/MALED_1000525>
   rdf:type owl:Class ;
   MALED1:belongsToCategory "demographic" ;
@@ -5474,6 +5458,18 @@ MALED1:toBeDecided
   MALED1:toBeDecided "keep" ;
   rdfs:label "Prolonged diarrhea" ;
   rdfs:subClassOf <http://purl.obolibrary.org/obo/EUPATH_0000670> ;
+.
+<http://purl.obolibrary.org/obo/OBI_0001627>
+  rdf:type owl:Class ;
+  MALED1:belongsToCategory "demographic" ;
+  MALED1:belongsToDataset "Microbiology" ;
+  MALED1:hasCSNotes "country name? http://purl.obolibrary.org/obo/OBI_0001627. CC: For EuPath ontology purposes, I prefer representing country as well, as oppposed to working with the mere country name. CS: This is an example of a variable which is not used (by the UI) as is but rather is transformed. So we need to provide the tranformed variable (by data dev) and associated EuPath ontology URI." ;
+  MALED1:hasDescription1 "Country of site" ;
+  MALED1:hasDescription2 "Country" ;
+  MALED1:hasSource "PID" ;
+  MALED1:implementsVariable "Country_ID" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Country ID" ;
 .
 <http://purl.obolibrary.org/obo/PATO_0000047>
   rdf:type owl:Class ;
