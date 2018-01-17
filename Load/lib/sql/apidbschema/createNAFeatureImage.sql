@@ -8,7 +8,7 @@ CREATE TABLE ApiDB.NAFeatureImage (
   label_type            VARCHAR2(30),  -- GFP labeled
   image_type            VARCHAR2(200), -- GFP, DIC
   magnification         VARCHAR2(20),
-  display_order         NUMBER(2),
+  display_order         NUMBER(3),
   external_database_release_id NUMBER(10) NOT NULL,
   MODIFICATION_DATE     DATE,
   USER_READ             NUMBER(1),
