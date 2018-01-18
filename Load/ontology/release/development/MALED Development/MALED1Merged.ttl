@@ -1,7 +1,8 @@
 # baseURI: http://doesntmatter.org/MALED1Merged
 
-@prefix : <http://doesntmatter.org/MALED1Jie#> .
 @prefix MALED1: <http://doesntmatter.org/MALED1#> .
+@prefix MALED1Jie: <http://doesntmatter.org/MALED1Jie#> .
+@prefix MALED1Shell: <http://doesntmatter.org/MALED1Shell#> .
 @prefix gates: <http://purl.obolibrary.org/obo/gates.owl#> .
 @prefix obo: <http://purl.obolibrary.org/obo/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -114,6 +115,9 @@ MALED1:toBeDecided
 .
 <http://doesntmatter.org/MALED1Merged>
   rdf:type owl:Ontology ;
+.
+<http://doesntmatter.org/MALED1Shell>
+  owl:versionInfo "Created with TopBraid Composer" ;
 .
 obo:BFO_0000015
   rdf:type owl:Class ;
@@ -315,6 +319,11 @@ obo:EUPATH_0000596
   obo:GATES_0000213 "category" ;
   rdfs:label "Sanitation facility" ;
   rdfs:subClassOf obo:EUPATH_0000302 ;
+.
+obo:EUPATH_0000609
+  rdf:type owl:Class ;
+  rdfs:label "Specimen information" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
 .
 obo:EUPATH_0000643
   rdf:type owl:Class ;
@@ -1314,7 +1323,7 @@ obo:EUPATH_0010217
   MALED1:implementsVariable "srfconsist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "Stool consistency" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010226
   rdf:type owl:Class ;
@@ -1326,7 +1335,7 @@ obo:EUPATH_0010226
   MALED1:implementsVariable "srfmbsampid" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "Stool specimen ID" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010238
   rdf:type owl:Class ;
@@ -1416,7 +1425,7 @@ obo:GAZ_00000448
 obo:MALEDC_AmtSuffic
   rdf:type owl:Class ;
   rdfs:label "Amount sufficiency" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALEDC_GIE
   rdf:type owl:Class ;
@@ -1437,7 +1446,7 @@ obo:MALEDC_PartChar
 obo:MALEDC_PathPresent
   rdf:type owl:Class ;
   rdfs:label "Presence of pathogens" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALEDC_PathogenWise
   rdf:type owl:Class ;
@@ -1452,17 +1461,12 @@ obo:MALEDC_RawTestResult
 obo:MALEDC_StatsChars
   rdf:type owl:Class ;
   rdfs:label "Statistical characteristic" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALEDC_StoolRelatedChars
   rdf:type owl:Class ;
   rdfs:label "Stool-related characteristic" ;
   rdfs:subClassOf obo:MALEDC_PartChar ;
-.
-obo:MALEDC_StoolSampleChar
-  rdf:type owl:Class ;
-  rdfs:label "Stool sample characteristic" ;
-  rdfs:subClassOf obo:EUPATH_0000724 ;
 .
 obo:MALEDC_SumALRIEp
   rdf:type owl:Class ;
@@ -1472,7 +1476,7 @@ obo:MALEDC_SumALRIEp
 obo:MALEDC_TestCompletion
   rdf:type owl:Class ;
   rdfs:label "Test completion" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALEDC_TestType
   rdf:type owl:Class ;
@@ -2631,7 +2635,7 @@ obo:MALED_1000122
   MALED1:implementsVariable "flag_archivesample" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_archivesample" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000124
   rdf:type owl:Class ;
@@ -2644,7 +2648,7 @@ obo:MALED_1000124
   MALED1:implementsVariable "flag_diarrhea" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "flag_diarrhea" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000125
   rdf:type owl:Class ;
@@ -2709,7 +2713,7 @@ obo:MALED_1000129
   MALED1:implementsVariable "flag_monthly" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_monthly" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000130
   rdf:type owl:Class ;
@@ -2748,7 +2752,7 @@ obo:MALED_1000132
   MALED1:implementsVariable "flag_qns" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_qns" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:MALEDC_AmtSuffic ;
 .
 obo:MALED_1000133
   rdf:type owl:Class ;
@@ -2761,7 +2765,7 @@ obo:MALED_1000133
   MALED1:implementsVariable "flag_safend" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_safend" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000134
   rdf:type owl:Class ;
@@ -2787,7 +2791,7 @@ obo:MALED_1000135
   MALED1:implementsVariable "flag_timezerost" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_timezerost" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000136
   rdf:type owl:Class ;
@@ -2824,7 +2828,7 @@ obo:MALED_1000139
   MALED1:implementsVariable "bdfcultper" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bdfcultper" ;
-  rdfs:subClassOf obo:MALEDC_TestCompletion ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000140
   rdf:type owl:Class ;
@@ -3643,7 +3647,7 @@ obo:MALED_1000205
   MALED1:implementsVariable "bdfecolipcr" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bdfecolipcr" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000206
   rdf:type owl:Class ;
@@ -5210,7 +5214,7 @@ obo:MALED_1000332
   MALED1:implementsVariable "mdfehist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfehist" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:MALEDC_PathPresent ;
 .
 obo:MALED_1000333
   rdf:type owl:Class ;
@@ -5223,7 +5227,7 @@ obo:MALED_1000333
   MALED1:implementsVariable "mdfgiard" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfgiard" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:MALEDC_PathPresent ;
 .
 obo:MALED_1000334
   rdf:type owl:Class ;
@@ -5471,7 +5475,7 @@ obo:MALED_1000353
   MALED1:implementsVariable "nrvnorocycii" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvnorocycii" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
   rdfs:subClassOf obo:MALEDC_nrvgeno2 ;
 .
 obo:MALED_1000354
@@ -5484,7 +5488,7 @@ obo:MALED_1000354
   MALED1:implementsVariable "nrvnorocycle" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "nrvnorocycle" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
   rdfs:subClassOf obo:MALEDC_nrvgeno1 ;
 .
 obo:MALED_1000355
@@ -6246,7 +6250,7 @@ obo:MALED_1000417
   MALED1:implementsVariable "d_stool" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "d_stool" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000418
   rdf:type owl:Class ;
@@ -6270,7 +6274,7 @@ obo:MALED_1000419
   MALED1:implementsVariable "dstoolnumber" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "dstoolnumber" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000420
   rdf:type owl:Class ;
@@ -6282,7 +6286,7 @@ obo:MALED_1000420
   MALED1:implementsVariable "mstool" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mstool" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000421
   rdf:type owl:Class ;
@@ -6307,7 +6311,7 @@ obo:MALED_1000422
   MALED1:implementsVariable "mstoolnumber" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mstoolnumber" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000423
   rdf:type owl:Class ;
@@ -6320,7 +6324,7 @@ obo:MALED_1000423
   MALED1:implementsVariable "physiologic" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "physiologic" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000424
   rdf:type owl:Class ;
@@ -6333,7 +6337,7 @@ obo:MALED_1000424
   MALED1:implementsVariable "protocol_diar" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "protocol_diar" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000425
   rdf:type owl:Class ;
@@ -6372,7 +6376,7 @@ obo:MALED_1000427
   MALED1:implementsVariable "severe" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "severe" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000428
   rdf:type owl:Class ;
@@ -6397,7 +6401,7 @@ obo:MALED_1000430
   MALED1:implementsVariable "srfdate" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "srfdate" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000431
   rdf:type owl:Class ;
@@ -6409,7 +6413,7 @@ obo:MALED_1000431
   MALED1:implementsVariable "srffrstsid" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "srffrstsid" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000433
   rdf:type owl:Class ;
@@ -6421,7 +6425,7 @@ obo:MALED_1000433
   MALED1:implementsVariable "srfmbsampid_1" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "srfmbsampid_1" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000434
   rdf:type owl:Class ;
@@ -6433,7 +6437,7 @@ obo:MALED_1000434
   MALED1:implementsVariable "srfmbsampid_2" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "srfmbsampid_2" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000435
   rdf:type owl:Class ;
@@ -6445,7 +6449,7 @@ obo:MALED_1000435
   MALED1:implementsVariable "srfmbsampid_3" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "srfmbsampid_3" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000437
   rdf:type owl:Class ;
@@ -6458,7 +6462,7 @@ obo:MALED_1000437
   MALED1:implementsVariable "srfstblood" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "srfstblood" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000438
   rdf:type owl:Class ;
@@ -6483,7 +6487,7 @@ obo:MALED_1000439
   MALED1:implementsVariable "stoolcount_d" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "stoolcount_d" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000440
   rdf:type owl:Class ;
@@ -6508,7 +6512,7 @@ obo:MALED_1000441
   MALED1:implementsVariable "stoolcount_m" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stoolcount_m" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000442
   rdf:type owl:Class ;
@@ -6534,7 +6538,7 @@ obo:MALED_1000443
   MALED1:implementsVariable "stooltype" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "stooltype" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000444
   rdf:type owl:Class ;
@@ -6547,7 +6551,7 @@ obo:MALED_1000444
   MALED1:implementsVariable "stooltype14" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "stooltype14" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000445
   rdf:type owl:Class ;
@@ -6560,7 +6564,7 @@ obo:MALED_1000445
   MALED1:implementsVariable "stooltype28" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "stooltype28" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000446
   rdf:type owl:Class ;
@@ -6573,7 +6577,7 @@ obo:MALED_1000446
   MALED1:implementsVariable "stooltype7" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "stooltype7" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:MALED_1000447
   rdf:type owl:Class ;
@@ -6585,7 +6589,7 @@ obo:MALED_1000447
   MALED1:implementsVariable "stoolwindow" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stoolwindow" ;
-  rdfs:subClassOf obo:MALEDC_StoolSampleChar ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:MALED_1000449
   rdf:type owl:Class ;
@@ -7554,6 +7558,11 @@ obo:MALED_1000547
   MALED1:toBeDecided "keep" ;
   rdfs:label "Prolonged diarrhea" ;
   rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:OBI_0000659
+  rdf:type owl:Class ;
+  rdfs:label "Specimen collection process" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
 .
 obo:OBI_0001620
   rdf:type owl:Class ;
