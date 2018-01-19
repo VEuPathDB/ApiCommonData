@@ -31,3 +31,5 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'phenotypescore' NOT IN (SELECT LOWER(name) FROM core.TableInfo
                                WHERE database_id = d.database_id);
+
+exit;
