@@ -252,6 +252,9 @@ sub addResults {
   elsif ($protocolName eq 'RFLPGenotype') {
     $tableString = "ApiDB::RflpGenotype";
   }
+  elsif ($protocolName eq 'phenotype_score') {
+    $tableString = "ApiDB::PhenotypeScore";
+  }
   elsif ($protocolName eq 'RFLPGenotypeNumber') {
     $tableString = "ApiDB::RflpGenotypeNumber";
   }
