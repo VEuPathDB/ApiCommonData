@@ -27,7 +27,7 @@ SELECT core.tableinfo_sq.nextval, 'PhenotypeScore',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
-     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT MIN(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'phenotypescore' NOT IN (SELECT LOWER(name) FROM core.TableInfo
                                WHERE database_id = d.database_id);
