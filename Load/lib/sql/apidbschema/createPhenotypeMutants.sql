@@ -1,6 +1,7 @@
 create table ApiDB.PhenotypeMutants (
  phenotype_mutants_id           NUMBER(10),
  na_feature_id                  NUMBER(10),
+ protocol_app_node_id           NUMBER(10) NOT NULL,
  fgsc                           VARCHAR(50),
  pubmed                         NUMBER(10),
  mating_type                    VARCHAR(10),
@@ -11,6 +12,7 @@ create table ApiDB.PhenotypeMutants (
  perithecia_production          VARCHAR(50),
  ascospore_production            VARCHAR(50),
  FOREIGN KEY (na_feature_id)    REFERENCES dots.NaFeatureImp,
+ FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
  PRIMARY KEY (phenotype_mutants_id)
 );
 
