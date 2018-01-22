@@ -9,7 +9,7 @@ create table ApiDB.PhenotypeMutants (
  conidia_production             VARCHAR(50),
  protoperithecia_production     VARCHAR(50),
  perithecia_production          VARCHAR(50),
- ascospore_roduction            VARCHAR(50),
+ ascospore_production            VARCHAR(50),
  FOREIGN KEY (na_feature_id)    REFERENCES dots.NaFeatureImp,
  PRIMARY KEY (phenotype_mutants_id)
 );
