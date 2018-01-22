@@ -1,5 +1,6 @@
-package ApiCommonData::Load::PhenotypeScore;
+package ApiCommonData::Load::PhenotypeMutants;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
+
 
 sub new {
   my ($class, $args) = @_;
@@ -13,7 +14,7 @@ sub new {
   $self->setSourceIdType("gene");
   $self->setNames([$args->{profileSetName}]);
   $self->setFileNames([$args->{outputFile}]);
-  $self->setProtocolName("phenotype_score");
+  $self->setProtocolName("phenotype_knockout_mutants");
 
   return $self;
 }
@@ -25,5 +26,6 @@ sub munge {
   $self->createConfigFile();
 
 }
+
 
 1;
