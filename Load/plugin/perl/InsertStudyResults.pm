@@ -154,7 +154,7 @@ sub run {
     my $inputAppNodes = $self->getInputAppNodes($inputProtocolAppNodeNames, $existingInvestigationAppNodes, $investigation, $nodeOrderNum);
 
     my $protocolType;
-    if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/) {
+    if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
       $protocolType = "differential expression analysis data transformation";
     }
     else {
@@ -210,7 +210,7 @@ sub addResults {
 
 
   my $tableString;
-  if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/) {
+  if($protocolName =~ /DESeq2Analysis/ || $protocolName =~ /PaGE/ || $protocolName =~ /DEGseqAnalysis/ || $protocolName eq "differential expression analysis data transformation") {
     $tableString = "Results::NAFeatureDiffResult";
   }
   elsif ($protocolName =~ /cghArrayQuantification/ ) {
