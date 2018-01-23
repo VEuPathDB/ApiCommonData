@@ -255,6 +255,9 @@ sub addResults {
   elsif ($protocolName eq 'phenotype_score') {
     $tableString = "ApiDB::PhenotypeScore";
   }
+  elsif ($protocolName eq 'phenotype_growth_rate') {
+    $tableString = "ApiDB::PhenotypeGrowthRate";
+  }
   elsif ($protocolName eq 'phenotype_knockout_mutants') {
     $tableString = "ApiDB::PhenotypeMutants";
   }
