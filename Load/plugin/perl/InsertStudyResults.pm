@@ -620,6 +620,8 @@ sub undoTables {
     'ApiDB.RflpGenotypeNumber',
     'ApiDB.SpliceSiteFeature',
     'ApiDB.CRISPRPHENOTYPE',
+    'ApiDB.PHENOTYPEMUTANTS',
+    'ApiDB.PHENOTYPESCORE',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
