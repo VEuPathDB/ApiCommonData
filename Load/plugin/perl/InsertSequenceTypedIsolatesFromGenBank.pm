@@ -19,8 +19,8 @@ use GUS::Model::SRes::BibliographicReference;
 use Data::Dumper;
 
 #use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
-use ApiCommonModel::Model::pcbiPubmed;
-
+#use ApiCommonModel::Model::pcbiPubmed;
+use EbrcModelCommon::Model::pcbiPubmed;
 my $purposeBrief = <<PURPOSEBRIEF;
 Insert GenBank Isolate data from a genbank file (.gbk). 
 PURPOSEBRIEF
