@@ -625,6 +625,7 @@ sub undoTables {
     'ApiDB.CRISPRPHENOTYPE',
     'ApiDB.PHENOTYPEMUTANTS',
     'ApiDB.PHENOTYPESCORE',
+    'ApiDB.PhenotypeGrowthRate',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
