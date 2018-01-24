@@ -207,7 +207,6 @@ obo:EUPATH_0000095
   obo:GATES_0000007 "subjid" ;
   obo:GATES_0000213 "variable" ;
   rdfs:label "Subject ID" ;
-  rdfs:label "human study subject identifier" ;
   rdfs:subClassOf obo:EUPATH_0000051 ;
 .
 obo:EUPATH_0000144
@@ -253,7 +252,7 @@ obo:EUPATH_0000319
   MALED1:hasSource "REF" ;
   MALED1:implementsVariable "hosp" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "date of hospital admission" ;
+  rdfs:label "Date of hospital admission" ;
   rdfs:subClassOf obo:EUPATH_0000308 ;
 .
 obo:EUPATH_0000335
@@ -298,8 +297,8 @@ obo:EUPATH_0000579
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "agedays" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "age or age since birth in days" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:label "Age or age since birth in days" ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:EUPATH_0000582
   rdf:type owl:Class ;
@@ -337,7 +336,7 @@ obo:EUPATH_0000643
   obo:GATES_0000010 "Date of death - Date of birth + 1" ;
   obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
   obo:GATES_0000213 "variable" ;
-  rdfs:label "Age on day of death (days)" ;
+  rdfs:label "Age at death (days)" ;
   rdfs:subClassOf obo:EUPATH_0000671 ;
 .
 obo:EUPATH_0000644
@@ -360,7 +359,7 @@ obo:EUPATH_0000644
   obo:GATES_0000012 "Combine 'age since birth at examination' from LB, ANTHRO, CE, DAILY, GF, MB, and QS" ;
   obo:GATES_0000213 "variable" ;
   rdfs:label "Age at observation (days)" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:EUPATH_0000645
   rdf:type owl:Class ;
@@ -552,37 +551,8 @@ obo:EUPATH_0000667
   obo:GATES_0000010 "should be, 0=No, 1=Yes" ;
   obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
   obo:GATES_0000213 "variable" ;
-  rdfs:label "Child Deceased" ;
+  rdfs:label "Deceased" ;
   rdfs:subClassOf obo:EUPATH_0000671 ;
-.
-obo:EUPATH_0000668
-  rdf:type owl:Class ;
-  obo:GATES_0000001 "IMMBCG" ;
-  obo:GATES_0000002 "Child received BCG vaccine?" ;
-  obo:GATES_0000003 "num" ;
-  obo:GATES_0000004 "MAL-ED" ;
-  obo:GATES_0000007 "immbcg" ;
-  obo:GATES_0000009 "0, 1" ;
-  obo:GATES_0000011 "0=No, 1=Yes" ;
-  obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
-  obo:GATES_0000213 "variable" ;
-  rdfs:label "Child received BCG vaccine" ;
-  rdfs:subClassOf obo:EUPATH_0000729 ;
-.
-obo:EUPATH_0000669
-  rdf:type owl:Class ;
-  obo:GATES_0000001 "IMMOPV" ;
-  obo:GATES_0000002 "Child received OPV vaccine?" ;
-  obo:GATES_0000003 "num" ;
-  obo:GATES_0000004 "MAL-ED" ;
-  obo:GATES_0000007 "immopv" ;
-  obo:GATES_0000009 "0, 1" ;
-  obo:GATES_0000011 "10018836 (provided in the data dictionary, might be typo)" ;
-  obo:GATES_0000012 "0=No, 1=Yes" ;
-  obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
-  obo:GATES_0000213 "variable" ;
-  rdfs:label "Child received OPV vaccine" ;
-  rdfs:subClassOf obo:EUPATH_0000729 ;
 .
 obo:EUPATH_0000670
   rdf:type owl:Class ;
@@ -599,7 +569,7 @@ obo:EUPATH_0000671
   rdf:type owl:Class ;
   obo:GATES_0000213 "category" ;
   rdfs:label "Death information"@en ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:subClassOf obo:MALEDC_Demographics ;
 .
 obo:EUPATH_0000672
   rdf:type owl:Class ;
@@ -639,21 +609,6 @@ obo:EUPATH_0000677
   obo:GATES_0000213 "variable" ;
   rdfs:label "Father, years of education" ;
   rdfs:subClassOf obo:EUPATH_0000716 ;
-.
-obo:EUPATH_0000678
-  rdf:type owl:Class ;
-  obo:GATES_0000001 "FEEDING" ;
-  obo:GATES_0000002 "Feeding practice" ;
-  obo:GATES_0000003 "char" ;
-  obo:GATES_0000004 "GEMS" ;
-  obo:GATES_0000005 "feeding" ;
-  obo:GATES_0000006 "feeding" ;
-  obo:GATES_0000008 "See FEEDINGN variable" ;
-  obo:GATES_0000012 "available values, 'Exclusively breast fed ' (1in FEEDINGN column), 'Exclusively formula' fed  (2 in FEEDINGN column), 'Breast feeding' (10 in FEEDINGN column), Unknown (90 in FEEDINGN column)" ;
-  obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
-  obo:GATES_0000213 "variable" ;
-  rdfs:label "Feeding practice" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
 .
 obo:EUPATH_0000679
   rdf:type owl:Class ;
@@ -777,7 +732,7 @@ obo:EUPATH_0000690
   obo:GATES_0000004 "MAL-ED" ;
   obo:GATES_0000007 "mage1st" ;
   obo:GATES_0000213 "variable" ;
-  rdfs:label "Maternal age (yrs) time of 1st delivery" ;
+  rdfs:label "Maternal age at first birth (years)" ;
   rdfs:subClassOf obo:EUPATH_0000696 ;
 .
 obo:EUPATH_0000691
@@ -847,7 +802,7 @@ obo:EUPATH_0000696
   obo:GATES_0000200 "1 row per mothers pregnancy" ;
   obo:GATES_0000213 "category" ;
   rdfs:label "Maternal pregnancy history" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:subClassOf obo:EUPATH_0000716 ;
 .
 obo:EUPATH_0000697
   rdf:type owl:Class ;
@@ -1042,12 +997,6 @@ obo:EUPATH_0000716
   rdfs:label "Parental information" ;
   rdfs:subClassOf obo:EUPATH_0000051 ;
 .
-obo:EUPATH_0000717
-  rdf:type owl:Class ;
-  obo:GATES_0000213 "category" ;
-  rdfs:label "Participant of case study"@en ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
-.
 obo:EUPATH_0000718
   rdf:type owl:Class ;
   obo:GATES_0000001 "INFDTH" ;
@@ -1117,7 +1066,7 @@ obo:EUPATH_0000723
   obo:GATES_0000004 "MAL-ED" ;
   obo:GATES_0000012 "One value of Column 'lbtest'" ;
   obo:GATES_0000213 "variable" ;
-  rdfs:label "Soluble Tranferrin Receptor (ug/ml)" ;
+  rdfs:label "Soluble transferrin receptor (ug/ml)" ;
   rdfs:subClassOf obo:OGMS_0000056 ;
 .
 obo:EUPATH_0000724
@@ -1130,21 +1079,6 @@ obo:EUPATH_0000724
   obo:GATES_0000213 "category" ;
   rdfs:label "Stool microbiology test" ;
   rdfs:subClassOf obo:OGMS_0000056 ;
-.
-obo:EUPATH_0000725
-  rdf:type owl:Class ;
-  obo:GATES_0000001 "CASEID" ;
-  obo:GATES_0000002 "Subject ID of matched case" ;
-  obo:GATES_0000003 "num" ;
-  obo:GATES_0000004 "GEMS" ;
-  obo:GATES_0000005 "caseid" ;
-  obo:GATES_0000006 "caseid" ;
-  obo:GATES_0000010 "For case control studies" ;
-  obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
-  obo:GATES_0000012 "value is same as SUBJID column when ARM=\"case\", when ARM=\"control\", value is subject id of corresponding case." ;
-  obo:GATES_0000213 "variable" ;
-  rdfs:label "Subject ID of matched case" ;
-  rdfs:subClassOf obo:EUPATH_0000717 ;
 .
 obo:EUPATH_0000726
   rdf:type owl:Class ;
@@ -1159,27 +1093,6 @@ obo:EUPATH_0000727
   obo:GATES_0000213 "variable" ;
   rdfs:label "Total family income" ;
   rdfs:subClassOf obo:EUPATH_0000304 ;
-.
-obo:EUPATH_0000728
-  rdf:type owl:Class ;
-  obo:GATES_0000001 "ARM" ;
-  obo:GATES_0000002 "Treatment Arm" ;
-  obo:GATES_0000003 "char" ;
-  obo:GATES_0000004 "GEMS" ;
-  obo:GATES_0000005 "arm" ;
-  obo:GATES_0000006 "arm" ;
-  obo:GATES_0000008 "See ARMCD variable" ;
-  obo:GATES_0000012 "case=1 in ARMCD column, control=2 in ARMCD column" ;
-  obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
-  obo:GATES_0000213 "variable" ;
-  rdfs:label "Treatment Arm" ;
-  rdfs:subClassOf obo:EUPATH_0000717 ;
-.
-obo:EUPATH_0000729
-  rdf:type owl:Class ;
-  obo:GATES_0000213 "category" ;
-  rdfs:label "Vaccination information"@en ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
 .
 obo:EUPATH_0000730
   rdf:type owl:Class ;
@@ -1295,7 +1208,7 @@ obo:EUPATH_0000743
   MALED1:toBeDecided "keep" ;
   rdfs:label "Total # of days of follow-up"@en ;
   rdfs:label "csumsurv" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:subClassOf obo:MALEDC_StudyDetails ;
 .
 obo:EUPATH_0000744
   rdf:type owl:Class ;
@@ -1304,13 +1217,13 @@ obo:EUPATH_0000744
 .
 obo:EUPATH_0000746
   rdf:type owl:Class ;
-  rdfs:label "Summary of Diarrheal Episode"@en ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:label "Summary of diarrheal episode"@en ;
+  rdfs:subClassOf obo:MALEDC_StudyDetails ;
 .
 obo:EUPATH_0010001
   rdf:type owl:Class ;
   rdfs:label "Antibiotic administration"@en ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Treatment ;
 .
 obo:EUPATH_0010217
   rdf:type owl:Class ;
@@ -1345,7 +1258,7 @@ obo:EUPATH_0010238
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "dur" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "duration of diarrheal episode in days" ;
+  rdfs:label "Duration of diarrheal episode in days" ;
   rdfs:subClassOf obo:EUPATH_0000670 ;
 .
 obo:GATES_0000001
@@ -1422,10 +1335,20 @@ obo:GAZ_00000448
   rdfs:label "Geographic location" ;
   rdfs:subClassOf obo:PCO_0000024 ;
 .
+obo:MALEDC_Age
+  rdf:type owl:Class ;
+  rdfs:label "Age" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
 obo:MALEDC_AmtSuffic
   rdf:type owl:Class ;
   rdfs:label "Amount sufficiency" ;
   rdfs:subClassOf obo:EUPATH_0000609 ;
+.
+obo:MALEDC_Demographics
+  rdf:type owl:Class ;
+  rdfs:label "Demographics" ;
+  rdfs:subClassOf obo:EUPATH_0000051 ;
 .
 obo:MALEDC_GIE
   rdf:type owl:Class ;
@@ -1455,7 +1378,7 @@ obo:MALEDC_PathogenWise
 .
 obo:MALEDC_RawTestResult
   rdf:type owl:Class ;
-  rdfs:label "Raw Test Result" ;
+  rdfs:label "Raw test result" ;
   rdfs:subClassOf obo:EUPATH_0000724 ;
 .
 obo:MALEDC_StatsChars
@@ -1468,10 +1391,15 @@ obo:MALEDC_StoolRelatedChars
   rdfs:label "Stool-related characteristic" ;
   rdfs:subClassOf obo:MALEDC_PartChar ;
 .
+obo:MALEDC_StudyDetails
+  rdf:type owl:Class ;
+  rdfs:label "Study details" ;
+  rdfs:subClassOf obo:EUPATH_0000051 ;
+.
 obo:MALEDC_SumALRIEp
   rdf:type owl:Class ;
-  rdfs:label "Summary of ALRI Episode"@en ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:label "Summary of ALRI"@en ;
+  rdfs:subClassOf obo:MALEDC_StudyDetails ;
 .
 obo:MALEDC_TestCompletion
   rdf:type owl:Class ;
@@ -1482,6 +1410,11 @@ obo:MALEDC_TestType
   rdf:type owl:Class ;
   rdfs:label "Test type" ;
   rdfs:subClassOf obo:EUPATH_0000724 ;
+.
+obo:MALEDC_Treatment
+  rdf:type owl:Class ;
+  rdfs:label "Treatment" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
 .
 obo:MALEDC_aata_aaic
   rdf:type owl:Class ;
@@ -1753,6 +1686,31 @@ obo:MALEDC_yenteryn
   rdfs:label "Test for Yersinia enterocolitica" ;
   rdfs:subClassOf obo:MALEDC_TestType ;
 .
+obo:MALEDFV_Culture
+  rdf:type owl:Class ;
+  rdfs:label "Using culture" ;
+  rdfs:subClassOf obo:MALEDC_PathPresent ;
+.
+obo:MALEDFV_ELISA
+  rdf:type owl:Class ;
+  rdfs:label "Using ELISA" ;
+  rdfs:subClassOf obo:MALEDC_PathPresent ;
+.
+obo:MALEDFV_MAFS
+  rdf:type owl:Class ;
+  rdfs:label "Using modified acid-fast stain" ;
+  rdfs:subClassOf obo:MALEDFV_WPMOrMAFS ;
+.
+obo:MALEDFV_WPM
+  rdf:type owl:Class ;
+  rdfs:label "Using wet prep microscopy" ;
+  rdfs:subClassOf obo:MALEDFV_WPMOrMAFS ;
+.
+obo:MALEDFV_WPMOrMAFS
+  rdf:type owl:Class ;
+  rdfs:label "Using wet prep microscopy or modified acid-fast stain" ;
+  rdfs:subClassOf obo:MALEDC_PathPresent ;
+.
 obo:MALED_1000010
   rdf:type owl:Class ;
   MALED1:belongsToDataset "Anthropometry" ;
@@ -1762,7 +1720,7 @@ obo:MALED_1000010
   MALED1:implementsVariable "agemonths" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "agemonths" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:MALED_1000011
   rdf:type owl:Class ;
@@ -1773,7 +1731,7 @@ obo:MALED_1000011
   MALED1:implementsVariable "ageyears" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "ageyears" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:MALED_1000012
   rdf:type owl:Class ;
@@ -1794,7 +1752,7 @@ obo:MALED_1000041
   MALED1:implementsVariable "month_of_age" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "month_of_age" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:MALED_1000042
   rdf:type owl:Class ;
@@ -1804,7 +1762,7 @@ obo:MALED_1000042
   MALED1:implementsVariable "month_ss" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "month_ss" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:MALED_1000045
   rdf:type owl:Class ;
@@ -1891,7 +1849,7 @@ Need check with Brianna, whether it is same as \"Total # of diarrheal episodes\"
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "sumep" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "sumep" ;
+  rdfs:label "Number of diarrheal episodes" ;
   rdfs:subClassOf obo:EUPATH_0000746 ;
 .
 obo:MALED_1000052
@@ -1903,7 +1861,7 @@ obo:MALED_1000052
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "csumep" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "csumep" ;
+  rdfs:label "Cumulative sum diarrhea episodes" ;
   rdfs:subClassOf obo:EUPATH_0000746 ;
 .
 obo:MALED_1000054
@@ -1915,7 +1873,7 @@ obo:MALED_1000054
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "csumdiar" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "csumdiar" ;
+  rdfs:label "Cumulative days of diarrhea" ;
   rdfs:subClassOf obo:EUPATH_0000746 ;
 .
 obo:MALED_1000056
@@ -2183,7 +2141,7 @@ obo:MALED_1000080
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "alri" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "indicator of ALRI" ;
+  rdfs:label "Indicator of ALRI" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000081
@@ -2195,7 +2153,7 @@ obo:MALED_1000081
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "aepi3" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "aepi3" ;
+  rdfs:label "ALRI episode status" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000082
@@ -2207,7 +2165,7 @@ obo:MALED_1000082
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "anum3" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "anum3" ;
+  rdfs:label "ALRI episode #" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000083
@@ -2219,7 +2177,7 @@ obo:MALED_1000083
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "aint3" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "aint3" ;
+  rdfs:label "First day of ALRI episode" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000084
@@ -2231,7 +2189,7 @@ obo:MALED_1000084
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "aprev3" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "aprev3" ;
+  rdfs:label "ALRI episode indicated" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000085
@@ -2243,7 +2201,7 @@ obo:MALED_1000085
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "cumalri" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "cumalri" ;
+  rdfs:label "Cumulative days of ALRI" ;
   rdfs:subClassOf obo:MALEDC_SumALRIEp ;
 .
 obo:MALED_1000086
@@ -2255,7 +2213,7 @@ obo:MALED_1000086
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "sumalri" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "sumalri" ;
+  rdfs:label "Total ALRI days reported" ;
   rdfs:subClassOf obo:MALEDC_SumALRIEp ;
 .
 obo:MALED_1000087
@@ -2267,7 +2225,7 @@ obo:MALED_1000087
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "sumfev" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "sumfev" ;
+  rdfs:label "Maternal report of fever, total (days)" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000088
@@ -2279,7 +2237,7 @@ obo:MALED_1000088
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "csumalrinew" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "csumalrinew" ;
+  rdfs:label "Cumulative number of ALRI episode days (14 day separation)" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000089
@@ -2291,7 +2249,7 @@ obo:MALED_1000089
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "sumalrinew" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "sumalrinew" ;
+  rdfs:label "Number of ALRI episodes (14 day separation)" ;
   rdfs:subClassOf obo:MALEDC_SumALRIEp ;
 .
 obo:MALED_1000090
@@ -2303,7 +2261,7 @@ obo:MALED_1000090
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "csumaep" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "csumaep" ;
+  rdfs:label "Cumulative # ALRI episodes" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000091
@@ -2315,7 +2273,7 @@ obo:MALED_1000091
   MALED1:hasSource "calculated" ;
   MALED1:implementsVariable "sumaep" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "sumaep" ;
+  rdfs:label "Number of ALRI episodes" ;
   rdfs:subClassOf obo:MALEDC_SumALRIEp ;
 .
 obo:MALED_1000092
@@ -2449,7 +2407,7 @@ obo:MALED_1000104
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safab" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safab" ;
+  rdfs:label "Maternal report antibiotic use" ;
   rdfs:subClassOf obo:EUPATH_0010001 ;
 .
 obo:MALED_1000106
@@ -2472,7 +2430,7 @@ obo:MALED_1000107
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safnumls" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safnumls" ;
+  rdfs:label "# of loose stools in day" ;
   rdfs:subClassOf obo:OGMS_0000014 ;
 .
 obo:MALED_1000108
@@ -2507,7 +2465,7 @@ obo:MALED_1000110
   MALED1:implementsVariable "safort" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "safort" ;
-  rdfs:subClassOf obo:EUPATH_0000738 ;
+  rdfs:subClassOf obo:MALEDC_Treatment ;
 .
 obo:MALED_1000111
   rdf:type owl:Class ;
@@ -2550,7 +2508,7 @@ obo:MALED_1000114
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safind" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safind" ;
+  rdfs:label "Fieldworker observed indrawing" ;
   rdfs:subClassOf obo:OGMS_0000014 ;
 .
 obo:MALED_1000115
@@ -2561,7 +2519,7 @@ obo:MALED_1000115
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safrr1" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safrr1" ;
+  rdfs:label "Respiratory rate 1" ;
   rdfs:subClassOf obo:OGMS_0000083 ;
 .
 obo:MALED_1000116
@@ -2572,7 +2530,7 @@ obo:MALED_1000116
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safrr2" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safrr2" ;
+  rdfs:label "Respiratory rate 2" ;
   rdfs:subClassOf obo:OGMS_0000083 ;
 .
 obo:MALED_1000117
@@ -2583,7 +2541,7 @@ obo:MALED_1000117
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "safalri" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "safalri" ;
+  rdfs:label "Fieldworker assessment of ALRI" ;
   rdfs:subClassOf obo:MALED_1000121 ;
 .
 obo:MALED_1000118
@@ -2605,7 +2563,7 @@ obo:MALED_1000119
   MALED1:hasSource "SAF" ;
   MALED1:implementsVariable "saftemp" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "saftemp" ;
+  rdfs:label "Temperature (C)" ;
   rdfs:subClassOf obo:OGMS_0000083 ;
 .
 obo:MALED_1000120
@@ -3689,7 +3647,7 @@ obo:MALED_1000208
   rdfs:subClassOf obo:MALEDC_RawTestResult ;
 .
 obo:MALED_1000209
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_ELISA ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Campylobacter detected using ELISA?" ;
@@ -3699,7 +3657,6 @@ obo:MALED_1000209
   MALED1:implementsVariable "campy" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campy" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
   rdfs:subClassOf obo:MALEDC_campy ;
 .
 obo:MALED_1000210
@@ -3739,7 +3696,7 @@ obo:MALED_1000212
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000213
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_Culture ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Campylobacter detected using culture?" ;
@@ -3749,8 +3706,6 @@ obo:MALED_1000213
   MALED1:implementsVariable "campycult" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "campycult" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
-  rdfs:subClassOf obo:MALEDC_campycult ;
 .
 obo:MALED_1000214
   rdf:type owl:Class ;
@@ -3838,7 +3793,7 @@ obo:MALED_1000220
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000221
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_ELISA ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Was cryptosporidium detected by ELISA (collapsed)?" ;
@@ -3848,7 +3803,6 @@ obo:MALED_1000221
   MALED1:implementsVariable "crypto" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "crypto" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
   rdfs:subClassOf obo:MALEDC_crypto ;
 .
 obo:MALED_1000222
@@ -4761,7 +4715,7 @@ obo:MALED_1000295
   rdfs:subClassOf obo:MALEDC_RawTestResult ;
 .
 obo:MALED_1000296
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_ELISA ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Giardia result using ELISA?" ;
@@ -4771,7 +4725,7 @@ obo:MALED_1000296
   MALED1:implementsVariable "giard" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "giard" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
+  rdfs:subClassOf obo:MALEDC_giard ;
 .
 obo:MALED_1000297
   rdf:type owl:Class ;
@@ -5006,7 +4960,7 @@ obo:MALED_1000315
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000316
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_WPMOrMAFS ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Isospora detected using wet prep microscopy or modified acid fast stain" ;
@@ -5016,8 +4970,6 @@ obo:MALED_1000316
   MALED1:implementsVariable "isos" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "isos" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
-  rdfs:subClassOf obo:MALEDC_isos ;
 .
 obo:MALED_1000317
   rdf:type owl:Class ;
@@ -5105,7 +5057,7 @@ obo:MALED_1000323
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000324
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_MAFS ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "cryptosporidium detected by modified acid fast stain?" ;
@@ -5115,8 +5067,6 @@ obo:MALED_1000324
   MALED1:implementsVariable "mdfcrypt" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfcrypt" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
-  rdfs:subClassOf obo:MALEDC_mdfcrypt ;
 .
 obo:MALED_1000325
   rdf:type owl:Class ;
@@ -5204,7 +5154,7 @@ obo:MALED_1000331
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000332
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_WPM ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "E. histolytica detected using wet prep microscopy?" ;
@@ -5214,10 +5164,9 @@ obo:MALED_1000332
   MALED1:implementsVariable "mdfehist" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfehist" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
 .
 obo:MALED_1000333
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_WPM ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Giardia lamblia detected using wet prep microscopy?" ;
@@ -5227,7 +5176,6 @@ obo:MALED_1000333
   MALED1:implementsVariable "mdfgiard" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "mdfgiard" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
 .
 obo:MALED_1000334
   rdf:type owl:Class ;
@@ -5256,7 +5204,7 @@ obo:MALED_1000335
   rdfs:subClassOf obo:MALEDC_RawTestResult ;
 .
 obo:MALED_1000336
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_MAFS ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Were other organisms detected by modified acid fast stain?" ;
@@ -5266,7 +5214,6 @@ obo:MALED_1000336
   MALED1:implementsVariable "modother" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modother" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
   rdfs:subClassOf obo:MALEDC_modother ;
 .
 obo:MALED_1000337
@@ -5306,7 +5253,7 @@ obo:MALED_1000339
   rdfs:subClassOf obo:MALEDC_PathogenWise ;
 .
 obo:MALED_1000340
-  rdf:type owl:Class ;
+  rdf:type obo:MALEDFV_MAFS ;
   MALED1:belongsToCategory "pathogen" ;
   MALED1:belongsToDataset "Microbiology" ;
   MALED1:hasDescription1 "Were any pathogens detected by modified acid fast stain?" ;
@@ -5316,7 +5263,6 @@ obo:MALED_1000340
   MALED1:implementsVariable "modresult" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "modresult" ;
-  rdfs:subClassOf obo:MALEDC_PathPresent ;
   rdfs:subClassOf obo:MALEDC_modother ;
 .
 obo:MALED_1000341
@@ -6363,7 +6309,7 @@ obo:MALED_1000426
   MALED1:implementsVariable "protocol_sum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "protocol_sum" ;
-  rdfs:subClassOf MALED1:StoolTypeCategory ;
+  rdfs:subClassOf obo:MALEDC_StoolRelatedChars ;
 .
 obo:MALED_1000427
   rdf:type owl:Class ;
@@ -7675,9 +7621,8 @@ obo:PATO_0000047
   obo:GATES_0000012 "Male  = 1,  Female =2" ;
   obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
   obo:GATES_0000213 "variable" ;
-  rdfs:label "Biological sex" ;
-  rdfs:label "biological sex" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:label "Sex" ;
+  rdfs:subClassOf obo:MALEDC_Demographics ;
 .
 obo:PCO_0000024
   rdf:type owl:Class ;
@@ -7703,7 +7648,7 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
   obo:GATES_0000012 "data of 'SUBJ' (Subject level Data)" ;
   obo:GATES_0000213 "variable" ;
   rdfs:label "Race" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:subClassOf obo:MALEDC_Demographics ;
 .
 <http://www.ebi.ac.uk/efo/EFO_0004950>
   rdf:type owl:Class ;
@@ -7712,6 +7657,6 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
   MALED1:hasSource "CAF" ;
   MALED1:implementsVariable "dob" ;
   MALED1:toBeDecided "keep" ;
-  rdfs:label "date of birth" ;
-  rdfs:subClassOf obo:EUPATH_0000051 ;
+  rdfs:label "Date of birth" ;
+  rdfs:subClassOf obo:MALEDC_Demographics ;
 .
