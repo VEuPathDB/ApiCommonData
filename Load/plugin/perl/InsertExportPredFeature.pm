@@ -130,7 +130,7 @@ sub run {
           .*? \s+
           (KLD | RLE)      # type
           \s+
-          (\d+\.\d+)  # score
+          (\d+\.*\d*)  # score - JP changed from \d+\.\d+ as some dont have decimals
           \s+
           (\S+)            # parse
         $/x;
