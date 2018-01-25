@@ -240,6 +240,9 @@ sub addResults {
   elsif ($protocolName =~ /simple_ontology_term_results/) {
     $tableString = "ApiDB::OntologyTermResult";
   }
+  elsif ($protocolName =~ /subject_result/) {
+    $tableString = "ApiDB::SubjectResult";
+  }
   elsif ($protocolName =~ /haplotype/) {
     $tableString = "ApiDB::HaplotypeResult";
   }
