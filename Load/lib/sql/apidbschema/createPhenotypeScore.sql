@@ -2,7 +2,7 @@ create table ApiDB.PhenotypeScore (
  phenotype_score_id           NUMBER(10) ,
  na_feature_id                NUMBER(10),
  protocol_app_node_id         NUMBER(10) NOT NULL,
- score                        NUMBER(10),
+ score                        NUMBER(10,4),
  score_type                   VARCHAR(100),
  modification_date              DATE,
  user_read                      NUMBER(1),

@@ -2,7 +2,7 @@ CREATE TABLE apidb.SubjectResult (
  subject_result_id         NUMBER(12) NOT NULL,
  subject            VARCHAR2(50) NOT NULL,
  protocol_app_node_id         NUMBER(10) NOT NULL,
- value              NUMBER(12),
+ value              FLOAT(126),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
