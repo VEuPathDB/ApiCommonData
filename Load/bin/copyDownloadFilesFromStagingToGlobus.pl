@@ -43,9 +43,31 @@ while(<DATA>) {
 #data format projectName|workflowVersion|organism|buildNumber
 
 __DATA__
-FungiDB|29|CgattiiCA1873|35
-FungiDB|29|CgattiiIND107|35
-PlasmoDB|26|PknowlesiMalayanPk1A|35
+#
+FungiDB|29|PrubensWisconsin54-1255|36
+FungiDB|29|HcapsulatumH88|36
+FungiDB|29|HcapsulatumG217B|36
+FungiDB|29|Foxysporum54006|36
+FungiDB|29|FoxysporumFo47|36
+PlasmoDB|26|PcynomolgiM|36
+PlasmoDB|26|PadleriG01|36
+PlasmoDB|26|PbillcollinsiG01|36
+PlasmoDB|26|PreichenowiG01|36
+PlasmoDB|26|PblacklockiG01|36
+PlasmoDB|26|PgaboniG01|36
+PlasmoDB|26|PpraefalciparumG01|36
+TriTrypDB|29|TcruzicruziDm28c|36
+TriTrypDB|29|TtheileriEdinburgh|36
+TriTrypDB|29|TcruziSylvioX10-1-2012|36
+MicrosporidiaDB|29|NdisplodereJUm2807|36
+CryptoDB|29|Chominis30976|36
+CryptoDB|29|CtyzzeriUGA55|36
+ToxoDB|27|CsuisWienI|36
+PiroplasmaDB|29|BmicrotiRI|36
+#
+#FungiDB|29|CgattiiCA1873|35
+#FungiDB|29|CgattiiIND107|35
+#PlasmoDB|26|PknowlesiMalayanPk1A|35
 #
 #FungiDB|29|MoryzaeBR32|34
 #FungiDB|29|ZtriticiIPO323|34
