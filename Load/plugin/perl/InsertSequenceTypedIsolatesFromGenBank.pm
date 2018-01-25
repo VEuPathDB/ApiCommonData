@@ -294,9 +294,9 @@ sub loadIsolates {
 
     foreach my $pmid (@pmids) { 
 
-      ApiCommonModel::Model::pcbiPubmed::setPubmedID ($pmid);
-      my $publication = ApiCommonModel::Model::pcbiPubmed::fetchPublication(); 
-      my $authors = ApiCommonModel::Model::pcbiPubmed::fetchAuthorListLong();
+      EbrcModelCommon::Model::pcbiPubmed::setPubmedID ($pmid);
+      my $publication = EbrcModelCommon::Model::pcbiPubmed::fetchPublication(); 
+      my $authors = EbrcModelCommon::Model::pcbiPubmed::fetchAuthorListLong();
 
       my $ref = GUS::Model::SRes::BibliographicReference->new();
       $ref->setTitle($title);
