@@ -174,7 +174,7 @@ sub run {
                                                        'NODE_ORDER_NUM' => $orderNum,
                                                       });
 
-    my $sl = GUS::Model::Study::StudyLink({});
+    my $sl = GUS::Model::Study::StudyLink->new({});
     $sl->setParent($pan);
     $sl->setParent($study);
 
