@@ -14,6 +14,8 @@ use GUS::Model::Study::Study;
 
 use GUS::Model::SRes::OntologyTerm;
 
+use GUS::Supported::Util;
+
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
