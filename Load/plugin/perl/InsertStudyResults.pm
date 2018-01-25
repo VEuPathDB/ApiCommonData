@@ -620,6 +620,7 @@ sub undoTables {
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
+    'ApiDB.SUBJECTRESULT',
     'ApiDB.INTRONJUNCTION',
     'ApiDB.HAPLOTYPERESULT',
     'ApiDB.RflpGenotype',
