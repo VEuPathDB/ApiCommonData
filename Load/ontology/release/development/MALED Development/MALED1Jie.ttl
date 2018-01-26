@@ -1,0 +1,1169 @@
+# baseURI: http://doesntmatter.org/MALED1Jie
+# imports: http://purl.obolibrary.org/obo/gates.owl
+
+@prefix : <http://doesntmatter.org/MALED1Jie#> .
+@prefix MALED1: <http://doesntmatter.org/MALED1#> .
+@prefix gates: <http://purl.obolibrary.org/obo/gates.owl#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://doesntmatter.org/MALED1>
+  owl:versionInfo "Created with TopBraid Composer" ;
+.
+MALED1:Anthropometry
+  rdf:type owl:Class ;
+  rdfs:label "Anthropometry dataset" ;
+  rdfs:subClassOf MALED1:Variables ;
+.
+MALED1:IllnessSurveillance
+  rdf:type owl:Class ;
+  rdfs:label "Illness surveillance dataset" ;
+  rdfs:subClassOf MALED1:Variables ;
+.
+MALED1:Variables
+  rdf:type owl:Class ;
+  rdfs:label "MALED1Vars" ;
+  rdfs:subClassOf owl:Thing ;
+.
+MALED1:belongsToCategory
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "belongs to category" ;
+  rdfs:range xsd:string ;
+.
+MALED1:belongsToDataset
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "belongs to dataset" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasCSNotes
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "Chris' notes" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasDescription1
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "has description1" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasDescription2
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "has description2" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasJieNotes
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "Jie's notes" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasNotes
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "has notes" ;
+  rdfs:range xsd:string ;
+.
+MALED1:hasSource
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "has source" ;
+  rdfs:range xsd:string ;
+.
+MALED1:implementsVariable
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "implements variable" ;
+  rdfs:range xsd:string ;
+.
+MALED1:toBeDecided
+  rdf:type owl:AnnotationProperty ;
+  rdfs:label "to be decided" ;
+  rdfs:range xsd:boolean ;
+.
+<http://doesntmatter.org/MALED1Jie>
+  rdf:type owl:Ontology ;
+  owl:imports <http://purl.obolibrary.org/obo/gates.owl> ;
+.
+obo:EUPATH_0000095
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Child ID (original)" ;
+  MALED1:hasSource "CAF/MOA/MOB/MOC" ;
+  MALED1:implementsVariable "pid" ;
+  MALED1:toBeDecided "keep" ;
+.
+obo:EUPATH_0000308
+  rdf:type owl:Class ;
+  rdfs:label "Hospitalization information"@en ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:EUPATH_0000319
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Referral form - diagnoses, hospitalization" ;
+  MALED1:hasDescription2 "REF - child was hospitalized on this day" ;
+  MALED1:hasSource "REF" ;
+  MALED1:implementsVariable "hosp" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Date of hospital admission" ;
+  rdfs:subClassOf obo:EUPATH_0000308 ;
+.
+obo:EUPATH_0000579
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Age in days (continuous numeric)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "agedays" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Age or age since birth in days" ;
+.
+obo:EUPATH_0000582
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasCSNotes "?antibiotics http://purl.obolibrary.org/obo/EUPATH_0000582. CC: It is, indeed, tempting to do a straight mapping to EUPATH_0000582, only this variable (safabt) does not EXACTLY match the meaning of EUPATH_0000582, as its \"values\" are both individual/instances of antibiotic materials, as well as types of antibiotic materials, not to mention free text such as \"unknown\" etc." ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "1=penicillin; 2=cephalosporins; 3=sulfonamides; 4=macrolides; 5=tetracyclines; 6=fluoroquinolones; 7=unknown; 8=metronidazole; 9=other" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safabt" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "antibiotics" ;
+  rdfs:subClassOf obo:EUPATH_0010001 ;
+.
+obo:EUPATH_0000644
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Date" ;
+  MALED1:hasJieNotes "As Brianna said, observation != visit, if so, we may consider to add observation date. CC: Done--see label. May consider giving this a EUPATH IRI." ;
+  MALED1:hasNotes "date of observation/measurement" ;
+  MALED1:hasSource "CAF/MOA/MOB" ;
+  MALED1:implementsVariable "date" ;
+  MALED1:toBeDecided "keep" ;
+.
+obo:EUPATH_0000665
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Binary variable that indicates whether or not child had study-defined diarrhea. Diar=1 if numls>2 or if [safblood==1 and the child had 1 to 2 loose stools]. Days when the study definition is met, but there was an LM test that day or the previous day, were set to 0 (not 'diarrhea' since LM has been found to cause loose stools)." ;
+  MALED1:hasJieNotes "EUPATH_0000665: information of whether a child had diarrhea (may change label to indicator of a child/person had diarrhea). CC: Note that the MALED concept is very rigorously defined (see has description2), hence may not capture the same meaning as EUPATH_0000665; otherwise, I have no objection against conflating the two." ;
+  MALED1:hasNotes "whether child had diarrhea on the day of observation" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "diar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Whether child had diarrhea on the day of observation" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:EUPATH_0000682
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasCSNotes "Check if for age like others. CC: Done, made the requisite changes." ;
+  MALED1:hasDescription2 "Head circumference Z-score" ;
+  MALED1:hasJieNotes "EUPATH_0000682:head circum for age z-score. CC: yep, that's what it is, confirmedw/Brianna. Made the requisite modification (see new IRI)." ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "zhc" ;
+  MALED1:toBeDecided "keep" ;
+.
+obo:EUPATH_0000683
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Head circumference in cm" ;
+  MALED1:hasSource "CAF/MOA/MOB/MOC" ;
+  MALED1:implementsVariable "head" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "head circumference in cm" ;
+.
+obo:EUPATH_0000689
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Length-for-age Z-score" ;
+  MALED1:hasJieNotes "EUPATH_0000689: recumbent length or height for age z-score. CC: made the requisite modification--see EUPATH IRI." ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "zlen" ;
+  MALED1:toBeDecided "keep" ;
+.
+obo:EUPATH_0000719
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Length in cm" ;
+  MALED1:hasNotes "length and height?" ;
+  MALED1:hasSource "CAF/MOA/MOB" ;
+  MALED1:implementsVariable "length" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "recumbent length or height measurement datum in cm" ;
+.
+obo:EUPATH_0000732
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Weight in kg" ;
+  MALED1:hasSource "CAF/MOA/MOB/MOC" ;
+  MALED1:implementsVariable "weight" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "weight measurement datum in kg" ;
+.
+obo:EUPATH_0000733
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Weight-for-age Z-score" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "zwei" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "weight for age z-score" ;
+.
+obo:EUPATH_0000734
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Weight-for-length Z-score" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "zwfl" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "weight for length/height z-score" ;
+.
+obo:EUPATH_0000742
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Total number of days with diarrhea (sum of dprev3)" ;
+  MALED1:hasJieNotes "EUPATH_0000742: can be confirmed by loaded MALED Gates project (only have label no definition). CC: sounds good, only, again, this is a very rigorously defined variable in MAL-ED, so we should be very careful to not dilute its meaning." ;
+  MALED1:hasNotes "new (child of EUPATH_0000742?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumdiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:EUPATH_0000743
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General surveillance characteristics" ;
+  MALED1:hasDescription2 "Cumulative sum of days followed (with surveillance data)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "csumsurv" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "csumsurv" ;
+.
+obo:EUPATH_0010001
+  rdf:type owl:Class ;
+  rdfs:label "Antibiotic administration"@en ;
+.
+obo:EUPATH_0010238
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Duration of episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dur" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Duration of diarrheal episode in days" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALEDC_GIE
+  rdf:type owl:Class ;
+  obo:GATES_0000012 "Not sure whether information only collected one time or every observation. Is it the summary data of Child like \"Total # of days of follow-up\" which we categorized under Child?" ;
+  rdfs:label "General Information of Event"@en ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:MALEDC_MRSymptoms
+  rdf:type owl:Class ;
+  rdfs:label "Symptoms or signs reported by mother"@en ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:MALEDC_SumALRIEp
+  rdf:type owl:Class ;
+  rdfs:label "Summary of ALRI"@en ;
+.
+obo:MALED_1000010
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Age in days/30.44 (continuous numeric)" ;
+  MALED1:hasNotes "age in months (new?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "agemonths" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "agemonths" ;
+.
+obo:MALED_1000011
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Age in days/365.25" ;
+  MALED1:hasNotes "age in years (new?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "ageyears" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ageyears" ;
+.
+obo:MALED_1000012
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "0 - out of window, 1 - in target window, 2 - in extended window" ;
+  MALED1:hasNotes "\"+/-\" 2 day window of data collection; will ask Jessica about extended window; Jessica replied, \"The in target window (1) is +/- 2 days and the extended window (2) then would be +/-3-7 days and then (0) would be data collected greater than 7 days from target date\"" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "window" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "window" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:MALED_1000041
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Month of life, i.e., from day 0 to first month 'birthday' would be month 1" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "month_of_age" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "month_of_age" ;
+.
+obo:MALED_1000042
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Similar to month_ss in other datasets, i.e., assigned to a month of age according to which month 'birthday' the day is closest to. In cases where the day is equidistant from the two mensiversaries, the day is assigned to the earlier age." ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "month_ss" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "month_ss" ;
+.
+obo:MALED_1000045
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "2 at beginning of episode, 1 within episode. Diarrhea episodes are separated by two diarrhea-free days. In this dataset, days when data are missing are thought to be diarrhea-free (so if there are two missing days before a day with diarrhea, the episode starts on the diarrhea day)." ;
+  MALED1:hasNotes "whether day of observation is no diarrhea day (0), first day of diarrhea episode (2) or not first day of diarrhea episode (1)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "depi3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "depi3" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000046
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "All days in episode coded with number of episode" ;
+  MALED1:hasJieNotes "EUPATH_0000741: number of diarrheal episodes. CC: not the same thing. This does not capture the number of diarrheal episodes, but the number of the diarrheal episode this day belongs to." ;
+  MALED1:hasNotes "number of diarrheal episode that this day belongs to" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dnum3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dnum3" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000047
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "1 if first day of episode, 0 if not" ;
+  MALED1:hasNotes "whether this is the first day of some diarrhea episode or not" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dint3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dint3" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000048
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "1 for all days in episode (all days with \"diarrhea\")" ;
+  MALED1:hasNotes "0 if belongs to a diarrhea episode, 0 if does not belong to a diarrhea episode or not known" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dprev3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dprev3" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000049
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Day of diarrheal episode" ;
+  MALED1:hasNotes "no data = not in diarrheal episode, (#) the day of diarrheal episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dayep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dayep" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000050
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Sum of days spent in diarrheal episodes, without including first day of episodes (used to subtract from sumsurv for the incidence denominator – time at risk for a new diarrheal episode)" ;
+  MALED1:hasNotes "new (property of a child)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumdepi3a" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "sumdepi3a" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:MALED_1000051
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Total number of distinct episodes reported (sum of dint3)" ;
+  MALED1:hasJieNotes """EUPATH_0000741: can be confirmed by loaded MALED Gates project (only have label no definition). CC: sounds like a reasonable mapping, though, again, we should make sure we're not losing meaning when doing this type of mapping.
+
+Need check with Brianna, whether it is same as \"Total # of diarrheal episodes\" we used for HBGD MALED data.""" ;
+  MALED1:hasNotes "new (child of EUPATH_0000741?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Number of diarrheal episodes" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:MALED_1000052
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Cumulative sum of diarrhea episodes (dint3) since beginning of follow up" ;
+  MALED1:hasNotes "new (child of EUPATH_0000741?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "csumep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Cumulative sum diarrhea episodes" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:MALED_1000054
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Cumulative sum of diarrhea days (dprev3) since beginning of follow up" ;
+  MALED1:hasNotes "new (child of EUPATH_0000742?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "csumdiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Cumulative days of diarrhea" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:MALED_1000056
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Days since last diarrhea episode ended (missing indicates time from birth until first episode)" ;
+  MALED1:hasNotes "new (property of day of observation)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "lastdiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "lastdiar" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000057
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Days until next diarrhea starts (missing indicates time from last episode to end of follow up (or from birth if no diarrhea))" ;
+  MALED1:hasNotes "new (property of day of observation)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "untildiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "untildiar" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000058
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Date at first follow up for diarrhea" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "entrydiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "entrydiar" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000059
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General diarrhea data (removes LM induced diarrhea)" ;
+  MALED1:hasDescription2 "Date at last follow up for diarrhea" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "exitdiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "exitdiar" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000060
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Sum of days with vomiting during diarrhea episode" ;
+  MALED1:hasNotes "new (child of EUPATH_0000165?)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumvom" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "sumvom" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000061
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "1 if blood was reported by the mother at any time during this episode (safblood==1), 0 if no blood was reported during episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxb" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxb" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000062
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "0 if appetite was normal during episode, 1 if mother reported 'less than normal' appetite" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxsafint" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxsafint" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000063
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Total number of days with decreased appetite during episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumsafint" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "sumsafint" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000064
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Maximum number of loose stools during diarrhea episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxls" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxls" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000065
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Maximum severity of dehydration during diarrhea episode (1=some dehydration, 2=severe dehydration)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxdehyd" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxdehyd" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000066
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Maximum temperature during diarrheal episode" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxtemp" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxtemp" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000067
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "0 if no fever was reported during episode, 1 if mother reported fever" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxfever" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxfever" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000068
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "0 if maximum temperature reported during episode was <37.5, 1 if temperature >37.5 was reported during episode (IMCI fever definintion)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "fever" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "fever" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000069
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Duration of episode score (1: 2-4 days; 2: 5-7 days; 3: 8+ days)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dur_sc" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dur_sc" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000070
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Maximum number of loose stools score (1: <5; 2: 5-7; 3: 8+ loose stools)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "ls_sc" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ls_sc" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000071
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Sum of days with vomiting score (1: 1 day; 2: 2 days; 3: 3+ days with vomiting during diarrhea episode)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "vom_sc" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "vom_sc" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000072
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Maximum dehydration score (2: some dehydration; 3: severe dehydration reported during diarrhea episode)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "dehyd_sc" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dehyd_sc" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000073
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "0 if no fever was reported during episode, 1 if mother reported fever, 2 if fever was confirmed by field worker (defined as >37.5 oC)." ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "fev_sc" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "fev_sc" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000074
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Diarrhea episode characteristics" ;
+  MALED1:hasDescription2 "Sum of dur_sc + ls_sc + vom_sc + dehyd_sc + fev_sc (range 1-14, combination of Vesikari and Clark severity scale based on data available)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "score" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "score" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000075
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General surveillance characteristics" ;
+  MALED1:hasDescription2 "1 if diarrhea data is present, 0 if missing" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "day" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "day" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000076
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General surveillance characteristics" ;
+  MALED1:hasDescription2 "Time followed (exitdiar-entrydiar)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "time" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "time" ;
+  rdfs:subClassOf obo:MALEDC_GIE ;
+.
+obo:MALED_1000077
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General surveillance characteristics" ;
+  MALED1:hasDescription2 "Sum of days with data (where diar~=.)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumsurv" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "sumsurv" ;
+  rdfs:subClassOf obo:EUPATH_0000746 ;
+.
+obo:MALED_1000079
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "General surveillance characteristics" ;
+  MALED1:hasDescription2 "Maximum age followed with SAF data" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "maxage" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "maxage" ;
+  rdfs:subClassOf obo:MALEDC_GIE ;
+.
+obo:MALED_1000080
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "1 if ALRI, 0 if no ALRI. ALRI definition met when 1) Child had cough or shortness of breath (today or yesterday) & 2) Rapid respiration rate today (average of two measurements) as defined by a) >60 when child is <60 days old, b) >50 when child is >60-<365 days of age, and c) >40 when child is >365 days of age. ALRI episodes are separated by 14 ALRI-‘free’ days." ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "alri" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Indicator of ALRI" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000081
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "2 at beginning of episode, 1 within episode. ALRI episodes are separated by 14 ALRI-free days. In this dataset, days when data are missing are thought to be ALRI-free (so if there are 14 missing days before a day with ALRI, the episode starts on the ALRI day)." ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "aepi3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ALRI episode status" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000082
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "All days in episode coded with number of episode" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "anum3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ALRI episode #" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000083
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "1 if first day of episode, 0 if not" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "aint3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "First day of ALRI episode" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000084
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "1 for all days in episode (all days with \"ALRI\")" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "aprev3" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ALRI episode indicated" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000085
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Cumulative number of days when ALRI was identified" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "cumalri" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Cumulative days of ALRI" ;
+  rdfs:subClassOf obo:MALEDC_SumALRIEp ;
+.
+obo:MALED_1000086
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Sum of days when ALRI was identified" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumalri" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Total ALRI days reported" ;
+  rdfs:subClassOf obo:MALEDC_SumALRIEp ;
+.
+obo:MALED_1000087
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Sum of days when fever was reported by the mother" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumfev" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Maternal report of fever, total (days)" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000088
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Cumulative number of days in ALRI episode (episodes separated by 14 ALRI-'free' days)" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "csumalrinew" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Cumulative number of ALRI episode days (14 day separation)" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000089
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Sum of days in ALRI episode (episodes separated by 14 ALRI-'free' days)" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumalrinew" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Number of ALRI episodes (14 day separation)" ;
+  rdfs:subClassOf obo:MALEDC_SumALRIEp ;
+.
+obo:MALED_1000090
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Cumulative number of ALRI episodes" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "csumaep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Cumulative # ALRI episodes" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000091
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Sum of ALRI episodes" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "sumaep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Number of ALRI episodes" ;
+  rdfs:subClassOf obo:MALEDC_SumALRIEp ;
+.
+obo:MALED_1000092
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "ALRI" ;
+  MALED1:hasDescription2 "Day of ALRI episode" ;
+  MALED1:hasNotes "same concepts as diarrhea but with Acute Lower Respiratory Infection" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "adayep" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Days of ALRI episode" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000093
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Illness categorization" ;
+  MALED1:hasDescription2 "Illness variable indicates whether diarrhea episode, cough, fever, or vomiting was present on that day. (1 if dprev3==1, safcough==1, saffev==1, safvom==1) 1=yes; 0 = no" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "ill" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ill" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000094
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Referral form - diagnoses, hospitalization" ;
+  MALED1:hasDescription2 "REF - diagnosis of dehydrating diarrhea by a medical professional" ;
+  MALED1:hasSource "REF" ;
+  MALED1:implementsVariable "ddiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "ddiar" ;
+  rdfs:subClassOf obo:EUPATH_0000308 ;
+.
+obo:MALED_1000095
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Referral form - diagnoses, hospitalization" ;
+  MALED1:hasDescription2 "REF - diagnosis of ALRI by a medical professional" ;
+  MALED1:hasSource "REF" ;
+  MALED1:implementsVariable "dalri" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dalri" ;
+  rdfs:subClassOf obo:EUPATH_0000308 ;
+.
+obo:MALED_1000096
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Referral form - diagnoses, hospitalization" ;
+  MALED1:hasDescription2 "REF - diagnosis of malaria by a medical professional" ;
+  MALED1:hasSource "REF" ;
+  MALED1:implementsVariable "dmal" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "dmal" ;
+  rdfs:subClassOf obo:EUPATH_0000308 ;
+.
+obo:MALED_1000098
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "1=yes; 0=no" ;
+  MALED1:hasDescription2 "GEMS definition of moderate/severe diarrhea episode - Episode accompanied by any of the following: Some or severe dehydration, dysentery (blood reported by mother in stool), hospitalization for diarrhea" ;
+  MALED1:hasNotes "property of day of observation: whether subject had moderate-to-severe diarrhea according to GEMS (0 for no data)" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "gemsdef" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "gemsdef" ;
+  rdfs:subClassOf obo:EUPATH_0000670 ;
+.
+obo:MALED_1000099
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of any illness, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safill" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safill" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000100
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of activity level, 0=normal; 1=sleepy; 2=difficult to awaken" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safact" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safact" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000101
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of appetite, 0=normal; 1=less than normal" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safint" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safint" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000102
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of vomiting, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safvom" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safvom" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000103
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of ear pain/pulling, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safear" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safear" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000104
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of antibiotic use, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safab" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Maternal report antibiotic use" ;
+  rdfs:subClassOf obo:EUPATH_0010001 ;
+.
+obo:MALED_1000106
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal assessment of diarrhea. This was not used in the identification of diarrhea, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safdiar" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safdiar" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000107
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Number of loose stools" ;
+  MALED1:hasNotes "property of day of observation: number of loose stools on that day" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safnumls" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "# of loose stools in day" ;
+  rdfs:subClassOf obo:OGMS_0000014 ;
+.
+obo:MALED_1000108
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Mother reported blood in stool, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safblood" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safblood" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000109
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of dehydration (None=0, Some=1, Severe=2)" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safdehyd" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safdehyd" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000110
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "ORT administrated, 1=yes, 0=no" ;
+  MALED1:hasNotes "ORT = oral rehydration therapy" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safort" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safort" ;
+.
+obo:MALED_1000111
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Sample collected, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safsamp" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safsamp" ;
+  rdfs:subClassOf obo:OGMS_0000056 ;
+.
+obo:MALED_1000112
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of cough, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safcough" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safcough" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000113
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of shortness of breath, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safshb" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safshb" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000114
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Field worker observation of indrawing, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safind" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Fieldworker observed indrawing" ;
+  rdfs:subClassOf obo:OGMS_0000014 ;
+.
+obo:MALED_1000115
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Respiratory rate #1 0-99" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safrr1" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Respiratory rate 1" ;
+  rdfs:subClassOf obo:OGMS_0000083 ;
+.
+obo:MALED_1000116
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Respiratory rate #2 0-99" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safrr2" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Respiratory rate 2" ;
+  rdfs:subClassOf obo:OGMS_0000083 ;
+.
+obo:MALED_1000117
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Fieldworker assessment of ALRI, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safalri" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Fieldworker assessment of ALRI" ;
+  rdfs:subClassOf obo:MALED_1000121 ;
+.
+obo:MALED_1000118
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Maternal report of fever, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "saffev" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "saffev" ;
+  rdfs:subClassOf obo:MALEDC_MRSymptoms ;
+.
+obo:MALED_1000119
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "temperature (oC) as measured by fieldworker, 0-99.9 C" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "saftemp" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Temperature (C)" ;
+  rdfs:subClassOf obo:OGMS_0000083 ;
+.
+obo:MALED_1000120
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "IllnessSurveillance" ;
+  MALED1:hasDescription1 "Original SAF data variables" ;
+  MALED1:hasDescription2 "Referral made by field worker, 1=yes, 0=no" ;
+  MALED1:hasSource "SAF" ;
+  MALED1:implementsVariable "safref" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "safref" ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:MALED_1000121
+  rdf:type owl:Class ;
+  rdfs:label "ALRI episode"@en ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:OGMS_0000014
+  rdf:type owl:Class ;
+  rdfs:label "Clinical finding"@en ;
+  rdfs:subClassOf obo:EUPATH_0000738 ;
+.
+obo:OGMS_0000083
+  rdf:type owl:Class ;
+  rdfs:label "Physical finding"@en ;
+  rdfs:subClassOf obo:OGMS_0000014 ;
+.
+obo:PATO_0000047
+  rdf:type owl:Class ;
+  MALED1:belongsToCategory "demographic" ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:belongsToDataset "Microbiology" ;
+  MALED1:hasDescription1 "Sex" ;
+  MALED1:hasDescription2 "M=1, F=2" ;
+  MALED1:hasDescription2 "Male=01; Female=02" ;
+  MALED1:hasNotes "same as Number 7" ;
+  MALED1:hasSource "CAF" ;
+  MALED1:implementsVariable "cafsex" ;
+  MALED1:implementsVariable "gender" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Sex" ;
+.
+<http://www.ebi.ac.uk/efo/EFO_0004950>
+  rdf:type owl:Class ;
+  MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Date of birth" ;
+  MALED1:hasSource "CAF" ;
+  MALED1:implementsVariable "dob" ;
+  MALED1:toBeDecided "keep" ;
+  rdfs:label "Date of birth" ;
+.
