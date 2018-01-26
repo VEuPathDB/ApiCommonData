@@ -26,6 +26,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="FiveUTR_Sample"         ignore="true"/>
     <qualifier name="fiveutr_Score"         ignore="true"/>
     <qualifier name="FiveUTR_Score"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="locus_tag"         ignore="true"/>
     <qualifier name="old_locus_tag"         ignore="true"/>
     <qualifier name="product"         ignore="true"/>
@@ -49,13 +51,16 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="mRNA" so="mRNA">
     <qualifier name="ID"           column="source_id"/>  <!-- load transcript ID in annotation file-->
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
     <qualifier name="Alias" ignore="true"/>
     <qualifier name="CDSLength" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="estimated_length" ignore="true"/>
     <qualifier name="FiveUTR_Sample" ignore="true"/>
     <qualifier name="FiveUTR_Score" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="geneID" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
@@ -68,6 +73,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"         ignore="true"/>
     <qualifier name="old_locus_tag"         ignore="true"/>
     <qualifier name="product"         ignore="true"/>
+    <qualifier name="protein_id"         ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="size" ignore="true"/>
     <qualifier name="ThreeUTR_Sample" ignore="true"/>
@@ -215,12 +221,16 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CodingStart"    ignore="true"/>
     <qualifier name="CodingEnd"      ignore="true"/>
     <qualifier name="description"      ignore="true"/>
+    <qualifier name="Dbxref"      ignore="true"/>
+    <qualifier name="gbkey"      ignore="true"/>
     <qualifier name="gene_id"      ignore="true"/>
     <qualifier name="locus_tag"      ignore="true"/>
     <qualifier name="old_locus_tag"    ignore="true"/>
     <qualifier name="old_parent_locus"    ignore="true"/>
     <qualifier name="OrderNumber"    ignore="true"/>
     <qualifier name="pseudogene"    ignore="true"/>
+    <qualifier name="product"    ignore="true"/>
+    <qualifier name="protein_id"    ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
@@ -228,6 +238,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="score" ignore="true"/>
     <qualifier name="size" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transl_table" ignore="true"/>
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
