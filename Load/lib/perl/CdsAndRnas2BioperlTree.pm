@@ -40,8 +40,10 @@ sub preprocess {
 
       if($bioperlFeatureTree->has_tag('systematic_id')){
 	  ($geneID) = $bioperlFeatureTree->get_tag_values('systematic_id');
+	  $bioperlFeatureTree->remove_tag('systematic_id');
       }elsif($bioperlFeatureTree->has_tag('locus_tag')){
 	  ($geneID) = $bioperlFeatureTree->get_tag_values('locus_tag');
+	  $bioperlFeatureTree->remove_tag('locus_tag');
       }
       print "processing gene $geneID ...\n";
 
