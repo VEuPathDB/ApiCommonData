@@ -115,6 +115,6 @@ sub printTabColumn {
   return 0;
 }
 
-sub max ($$) { $_[$_[0] < $_[1]] }
+sub max ($$) { $_[$_[0] < $_[1]] }  ## compare 2 values only
 
-sub min ($$) { $_[$_[0] > $_[1]] }
+sub min ($$) { $_[$_[0] > $_[1]] }  ## compare 2 values only
