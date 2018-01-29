@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-## usage: perl replaceGenbankGffIDWithLocusTag.pl whole_genome.gff > replaced_whole_genome.gff
+## usage: replaceGenbankGffIDWithLocusTag.pl whole_genome.gff3 37 > replaced_whole_genome.gff3
 
 use strict;
 
@@ -56,7 +56,16 @@ while (<GFF>) {
       $count{$cGene}++;
     }
   } elsif ($items[2] eq "exon" || $items[2] eq "CDS") {
-    $items[8] =~ s/\;Parent=(\S+?)\;/\;Parent=$cRnaId{$1}\;/;
+    if ($items[8] =~ /\;Parent=(\S+?)\;/) {
+      my $cParent = $1;
+      if ($cRnaId{$cParent}) { # if the parent is rna
+	$items[8] =~ s/\;Parent=(\S+?)\;/\;Parent=$cRnaId{$1}\;/;
+      } elsif ($cLocusId{$cParent}) { # if the parent is gene
+	$items[8] =~ s/\;Parent=(\S+?)\;/\;Parent=$cLocusId{$1}\;/;
+      }
+    } else {
+      print STDERR "no parent found for $items[8]\n";
+    }
   } else {
 
   }
