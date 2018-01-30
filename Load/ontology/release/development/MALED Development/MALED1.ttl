@@ -17,51 +17,6 @@
   owl:imports <http://purl.obolibrary.org/obo/gates.owl> ;
   owl:versionInfo "Created with TopBraid Composer" ;
 .
-MALED1:Anthropometry
-  rdf:type owl:Class ;
-  rdfs:label "Anthropometry dataset" ;
-  rdfs:subClassOf MALED1:Variables ;
-.
-MALED1:DemographicCategory
-  rdf:type owl:Class ;
-  rdfs:label "Demographic category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
-MALED1:FlagCategory
-  rdf:type owl:Class ;
-  rdfs:label "Flag category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
-MALED1:IllnessSurveillance
-  rdf:type owl:Class ;
-  rdfs:label "Illness surveillance dataset" ;
-  rdfs:subClassOf MALED1:Variables ;
-.
-MALED1:Microbiology
-  rdf:type owl:Class ;
-  rdfs:label "Microbiology dataset" ;
-  rdfs:subClassOf MALED1:Variables ;
-.
-MALED1:MicrobiologyTestingCategory
-  rdf:type owl:Class ;
-  rdfs:label "Microbiology Testing category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
-MALED1:PathogenCategory
-  rdf:type owl:Class ;
-  rdfs:label "Pathogen category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
-MALED1:StoolTypeCategory
-  rdf:type owl:Class ;
-  rdfs:label "Stool Type category" ;
-  rdfs:subClassOf MALED1:Microbiology ;
-.
-MALED1:Variables
-  rdf:type owl:Class ;
-  rdfs:label "MALED1Vars" ;
-  rdfs:subClassOf owl:Thing ;
-.
 MALED1:belongsToCategory
   rdf:type owl:AnnotationProperty ;
   rdfs:label "belongs to category" ;
@@ -140,16 +95,6 @@ obo:EUPATH_0000319
   rdfs:label "Date of hospital admission" ;
   rdfs:subClassOf obo:EUPATH_0000308 ;
 .
-obo:EUPATH_0000579
-  rdf:type owl:Class ;
-  MALED1:belongsToDataset "Anthropometry" ;
-  MALED1:hasDescription2 "Age in days (continuous numeric)" ;
-  MALED1:hasSource "calculated" ;
-  MALED1:implementsVariable "agedays" ;
-  MALED1:toBeDecided "keep" ;
-  rdfs:label "Age or age since birth in days" ;
-  rdfs:subClassOf obo:MALEDC_Age ;
-.
 obo:EUPATH_0000582
   rdf:type owl:Class ;
   MALED1:belongsToDataset "IllnessSurveillance" ;
@@ -170,12 +115,16 @@ obo:EUPATH_0000609
 obo:EUPATH_0000644
   rdf:type owl:Class ;
   MALED1:belongsToDataset "Anthropometry" ;
+  MALED1:hasDescription2 "Age in days (continuous numeric)" ;
   MALED1:hasDescription2 "Date" ;
   MALED1:hasJieNotes "As Brianna said, observation != visit, if so, we may consider to add observation date. CC: Done--see label. May consider giving this a EUPATH IRI." ;
   MALED1:hasNotes "date of observation/measurement" ;
   MALED1:hasSource "CAF/MOA/MOB" ;
+  MALED1:hasSource "calculated" ;
+  MALED1:implementsVariable "agedays" ;
   MALED1:implementsVariable "date" ;
   MALED1:toBeDecided "keep" ;
+  rdfs:label "Age or age since birth in days" ;
   rdfs:subClassOf obo:MALEDC_Age ;
 .
 obo:EUPATH_0000665
@@ -1087,7 +1036,7 @@ obo:EUPATH_0010537
   MALED1:implementsVariable "safsamp" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "safsamp" ;
-  rdfs:subClassOf obo:OGMS_0000056 ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:EUPATH_0010538
   rdf:type owl:Class ;
@@ -1238,7 +1187,7 @@ obo:EUPATH_0010552
   MALED1:implementsVariable "flag_ltf_14" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_ltf_14" ;
-  rdfs:subClassOf MALED1:FlagCategory ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:EUPATH_0010553
   rdf:type owl:Class ;
@@ -1251,7 +1200,7 @@ obo:EUPATH_0010553
   MALED1:implementsVariable "flag_ltf_28" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_ltf_28" ;
-  rdfs:subClassOf MALED1:FlagCategory ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:EUPATH_0010554
   rdf:type owl:Class ;
@@ -1264,7 +1213,7 @@ obo:EUPATH_0010554
   MALED1:implementsVariable "flag_ltf_7" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_ltf_7" ;
-  rdfs:subClassOf MALED1:FlagCategory ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:EUPATH_0010555
   rdf:type owl:Class ;
@@ -1303,7 +1252,7 @@ obo:EUPATH_0010557
   MALED1:implementsVariable "flag_nodiar" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_nodiar" ;
-  rdfs:subClassOf MALED1:FlagCategory ;
+  rdfs:subClassOf obo:OBI_0000659 ;
 .
 obo:EUPATH_0010558
   rdf:type owl:Class ;
@@ -1342,7 +1291,7 @@ obo:EUPATH_0010560
   MALED1:implementsVariable "flag_rotachange" ;
   MALED1:toBeDecided "Decision Requested." ;
   rdfs:label "flag_rotachange" ;
-  rdfs:subClassOf MALED1:FlagCategory ;
+  rdfs:subClassOf obo:MALEDC_RawTestResult ;
 .
 obo:EUPATH_0010561
   rdf:type owl:Class ;
@@ -1380,7 +1329,7 @@ obo:EUPATH_0010564
   MALED1:implementsVariable "bdfcbcult" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "bdfcbcult" ;
-  rdfs:subClassOf MALED1:MicrobiologyTestingCategory ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010565
   rdf:type owl:Class ;
@@ -4773,7 +4722,7 @@ obo:EUPATH_0010854
   MALED1:implementsVariable "srfamtstool" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "srfamtstool" ;
-  rdfs:subClassOf MALED1:StoolTypeCategory ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010856
   rdf:type owl:Class ;
@@ -4883,7 +4832,7 @@ obo:EUPATH_0010866
   MALED1:implementsVariable "stoolcount_d_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stoolcount_d_cum" ;
-  rdfs:subClassOf MALED1:StoolTypeCategory ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010867
   rdf:type owl:Class ;
@@ -4909,7 +4858,7 @@ obo:EUPATH_0010868
   MALED1:implementsVariable "stoolcount_m_cum" ;
   MALED1:toBeDecided "keep" ;
   rdfs:label "stoolcount_m_cum" ;
-  rdfs:subClassOf MALED1:StoolTypeCategory ;
+  rdfs:subClassOf obo:EUPATH_0000609 ;
 .
 obo:EUPATH_0010869
   rdf:type owl:Class ;
@@ -5892,18 +5841,6 @@ obo:EUPATH_0010946
   MALED1:toBeDecided "keep" ;
   rdfs:label "Acute diarrhea" ;
   rdfs:subClassOf obo:EUPATH_0000670 ;
-.
-obo:EUPATH_0010951
-  rdf:type owl:Class ;
-  MALED1:belongsToCategory "demographic" ;
-  MALED1:belongsToDataset "Microbiology" ;
-  MALED1:hasDescription1 "Date of illness information" ;
-  MALED1:hasNotes "For those diarrhea stool samples in which no diarrhea occurred the day of stool collection but diarrhea occurred within 2 days of stool collection. This date was used to abstract illness information for this diarrhea stool sample" ;
-  MALED1:hasSource "Calculated" ;
-  MALED1:implementsVariable "datesurv" ;
-  MALED1:toBeDecided "keep" ;
-  rdfs:label "datesurv" ;
-  rdfs:subClassOf MALED1:DemographicCategory ;
 .
 obo:EUPATH_0010971
   rdf:type owl:Class ;
