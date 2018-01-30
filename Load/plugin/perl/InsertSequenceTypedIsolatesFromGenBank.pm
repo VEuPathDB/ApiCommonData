@@ -240,6 +240,12 @@ sub loadIsolates {
       $node->setExternalDatabaseReleaseId($extDbRlsId);
       $node->setParent($ontologyObj);  # type_id 
       
+      # skip loading duplicate isolate - https://redmine.apidb.org/issues/28720
+      if($node->retrieveFromDB()) {
+        print STDERR "\nWarning: found duplicate isolate $id, skip loading this isolate!\n\n";
+        next;
+      }
+
       $study->addToSubmitList($node);
 
       my $extNASeq = $self->buildSequence($nodeHash->{$id}->{seq}, $id, $extDbRlsId);
