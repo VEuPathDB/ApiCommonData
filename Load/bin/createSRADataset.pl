@@ -9,7 +9,7 @@ my %hash;
 my $is_paired_end;
 
 &GetOptions( 'study=s'           => \$study,
-             'orgaism_abbrev=s'  => \$org,
+             'organism_abbrev=s'  => \$org,
              'dataset_name=s'    => \$dsname,
              'profileset_name=s' => \$profile );
 
