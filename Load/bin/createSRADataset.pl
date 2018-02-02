@@ -91,7 +91,7 @@ if((keys %hash)[0] =~ /PAIRED/i) {
 } elsif((keys %hash)[0] =~ /SINGLE/i) {
   $is_paired_end = 0;
 } else {
-  print "ERROR: Library layout error: $is_paired_end\n";
+  print "ERROR: Library layout error\n";
   die;
 }
 
@@ -103,7 +103,6 @@ print O2 <<EOL;
     <property name="profileSetName" isReference="1" value="\$globalReferencable->{profileSetName}" />
     <property name="samples" isReference="1" value="\$globalReferencable->{samples}" />
     <property name="isStrandSpecific" value="0"/>
-    <property name="isPairedEnd" value="$is_paired_end"/>
   </step>
 </xml>
 
