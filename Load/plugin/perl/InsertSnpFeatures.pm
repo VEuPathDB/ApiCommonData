@@ -174,9 +174,13 @@ sub run {
 
     my @a = split(/\t/, $_);
 
-    unless(scalar @a == scalar @$snpColumnNames) {
-      $self->error("Expected number of columns in snpFeature file differes from found");
-    }
+#    unless(scalar @a == scalar @$snpColumnNames) {
+
+#	print Dumper \@a; 
+#	print Dumper \@$snpColumnNames;
+#      $self->error("Expected number of columns in snpFeature file differes from found");
+#    }
+
 
     my %snpAttributes;
 
