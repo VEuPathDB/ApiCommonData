@@ -57,17 +57,19 @@ while (<IN>) {
 	$goid = $1;
 	$product = $2;
 	$product =~ s/ \[PMID (\d+)\]//;
+	$product =~ s/ \[Evidence (\S+?)\]//;
       } elsif ($item =~ /(GO:\d+) - (.*)/) {
 	$goid = $1;
 	$product = $2;
 	$product =~ s/(.+)\;.*/$1/;
 	$product =~ s/ \[PMID (\d+)\]//;
+	$product =~ s/ \[Evidence (\S+?)\]//;
       }
 
       if ($item =~ /\[PMID (\d+)\]/) {
 	$dbRef = "PMID:".$1;
       }
-      if ($item =~ /;ev_code=(\w+)/) {
+      if ($item =~ /;ev_code=(\w+)/ || $item =~ /\[Evidence (\S+?)\]/ ) {
 	$evCode = $1;
 	$evCode = uc ($evCode);
       }
