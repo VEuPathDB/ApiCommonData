@@ -102,7 +102,7 @@ sub munge {
 		$self->makeProfiles('unstranded', $featureType, $quantificationType, $valueType, $makePercentiles, 0);
 	    }
     
-       }
+    }
     
 #DESeq2 Analysis starts here  
 #    print Dumper "SamplesHash is\n";

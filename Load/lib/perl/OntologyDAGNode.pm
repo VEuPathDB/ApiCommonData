@@ -9,6 +9,8 @@ sub format_node {
   my $displayName = $node->{attributes}->{displayName};
   my $isLeaf = $node->{attributes}->{isLeaf};
 
+
+
   if($isLeaf) {
     return $displayName;
   }
@@ -20,5 +22,16 @@ sub format_node {
   return $name;
 }
 
+
+sub node2string {
+  my ($self, $options, $node, $vert_dashes) = @_;
+
+  my $keep = $node->{attributes}->{keep};
+  unless($keep) {
+    return undef;
+  }
+
+  return $self->SUPER::node2string($options, $node, $vert_dashes);
+}
 
 1;

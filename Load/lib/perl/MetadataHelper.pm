@@ -312,7 +312,6 @@ sub readOntologyOwlFile {
   }
   my $classpath = join(':', @jars);
 
-   This will create a file appending ".out" to the inFile 
    my $systemResult = system("java -classpath $classpath org.gusdb.gus.supported.OntologyVisitor $owlFile");
    unless($systemResult / 256 == 0) {
      die "Could not Parse OWL file $owlFile";
@@ -490,7 +489,7 @@ sub writeInvestigationTree {
       my $maxdate = $sorted[scalar(@sorted)];
       my $display = "DATE_RANGE=$mindate-$maxdate";
 
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.1", attributes => {"displayName" => $display, "isLeaf" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.1", attributes => {"displayName" => $display, "isLeaf" => 1, "keep" => 1} })) ;
     }
     elsif($count{"number"} == $count{"total"}) {
       # use stats package to get quantiles and mean
@@ -503,12 +502,12 @@ sub writeInvestigationTree {
       my $max = $stat->quantile(4);
       my $mean = $stat->mean();
 
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.1", attributes => {"displayName" => "MIN=$min", "isLeaf" => 1} })) ;
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.2", attributes => {"displayName" => "MAX=$max", "isLeaf" => 1} })) ;
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.3", attributes => {"displayName" => "MEAN=$mean", "isLeaf" => 1} })) ;
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.4", attributes => {"displayName" => "MEDIAN=$median", "isLeaf" => 1} })) ;
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.5", attributes => {"displayName" => "LOWER_QUARTILE=$firstQuantile", "isLeaf" => 1} })) ;
-      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.6", attributes => {"displayName" => "UPPER_QUARTILE=$thirdQuantile", "isLeaf" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.1", attributes => {"displayName" => "MIN=$min", "isLeaf" => 1, "keep" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.2", attributes => {"displayName" => "MAX=$max", "isLeaf" => 1, "keep" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.3", attributes => {"displayName" => "MEAN=$mean", "isLeaf" => 1, "keep" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.4", attributes => {"displayName" => "MEDIAN=$median", "isLeaf" => 1, "keep" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.5", attributes => {"displayName" => "LOWER_QUARTILE=$firstQuantile", "isLeaf" => 1, "keep" => 1} })) ;
+      $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.6", attributes => {"displayName" => "UPPER_QUARTILE=$thirdQuantile", "isLeaf" => 1, "keep" => 1} })) ;
 
     }
     else {
@@ -519,14 +518,28 @@ sub writeInvestigationTree {
 
       my $ct = 1;
       foreach my $value (sort keys %values) {
-        $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.$ct", attributes => {"displayName" => "$value ($values{$value})", "isLeaf" => 1} })) ;
+        $parentNode->add_daughter(ApiCommonData::Load::OntologyDAGNode->new({name => "$sourceId.$ct", attributes => {"displayName" => "$value ($values{$value})", "isLeaf" => 1, "keep" => 1} })) ;
         $ct++;
       }
     }
+
+    &keepNode($parentNode);
+
   }
 
-  print map("$_\n", @{$treeObjRoot->tree2string({no_attributes => 0})});
+  print map { "$_\n" if($_) } @{$treeObjRoot->tree2string({no_attributes => 0})};
 }
+
+sub keepNode {
+  my ($node) = @_;
+
+  $node->{attributes}->{keep} = 1;
+
+  return if($node->is_root());
+
+  &keepNode($node->mother());
+}
+
 
 sub write {
   my ($fh, $distinctQualifiers, $mergedOutput, $summarize) = @_;
