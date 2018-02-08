@@ -293,7 +293,7 @@ sub getParentPrefix {
 package ApiCommonData::Load::MetadataReader::PrismClinicalVisitReader;
 use base qw(ApiCommonData::Load::MetadataReader);
 
-
+use Data::Dumper;
 
 use strict;
 
@@ -321,17 +321,40 @@ sub makePrimaryKey {
 sub cleanAndAddDerivedData {
   my ($self, $hash) = @_;
 
-  if($hash->{malariacat} eq "negative blood smear") {
-    if($hash->{lamp} eq 'positive') {
-      $hash->{malariacat} = "Sub-microscopic parasitemia";    
-    }
-    elsif($hash->{lamp} eq "negative") {
-      $hash->{malariacat} = "Negative blood smear and negative LAMP";    
-    }
-    else {
-      $hash->{malariacat} = "Negative blood smear and LAMP not done";
-    }
+  # if($hash->{malariacat} eq "negative blood smear") {
+  #   if($hash->{lamp} eq 'positive') {
+  #     $hash->{malariacat} = "Sub-microscopic parasitemia";    
+  #   }
+  #   elsif($hash->{lamp} eq "negative") {
+  #     $hash->{malariacat} = "Negative blood smear and negative LAMP";    
+  #   }
+  #   else {
+  #     $hash->{malariacat} = "Negative blood smear and LAMP not done";
+  #   }
+  # }
+
+  my @symptomsAndSigns = (['abdominalpain', 'apainduration'],
+                          ['anorexia', 'aduration'],
+                          ['cough', 'cduration'],
+                          ['diarrhea', 'dduration'],
+                          ['fatigue', 'fmduration'],
+                          ['fever', 'fduration'],
+                          ['headache', 'hduration'],
+                          ['jaundice', 'jduration'],
+                          ['jointpains', 'djointpains'],
+                          ['muscleaches', 'mduration'],
+                          ['seizure', 'sduration'],
+                          ['vomiting', 'vduration']
+      );
+
+
+  foreach my $ar(@symptomsAndSigns) {
+    my $ss = $ar->[0];
+    my $dur = $ar->[1];
+
+    $hash->{$dur} = '0' if($hash->{$ss} eq '0' || lc($hash->{$ss}) eq 'no');
   }
+
 
   if($hash->{anymalaria} != 1) {
     $hash->{complicatedmalaria} = undef;
