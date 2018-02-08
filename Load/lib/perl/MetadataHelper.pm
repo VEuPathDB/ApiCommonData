@@ -2,6 +2,8 @@ package ApiCommonData::Load::MetadataHelper;
 
 use strict;
 
+use JSON;
+
 use ApiCommonData::Load::MetadataReader;
 
 use Statistics::Descriptive;
@@ -397,10 +399,13 @@ sub makeTreeObjFromOntology {
 sub writeInvestigationTree {
   my ($self, $ontologyMappingFile, $valueMappingFile, $dateObfuscationFile, $ontologyOwlFile, $mergedOutputFile) = @_;
 
-
   my ($treeObjRoot, $nodeLookup) = $self->makeTreeObjFromOntology($ontologyOwlFile);
 
   my $dirname = dirname($mergedOutputFile);
+
+  my $treeStringOutputFile = $mergedOutputFile . ".tree.txt";
+  my $jsonStringOutputFile = $mergedOutputFile . ".tree.json";
+
 
   my $mergedOutputBaseName = basename($mergedOutputFile);
   my $investigationFile = "$dirname/tempInvestigation.xml";
@@ -527,8 +532,23 @@ sub writeInvestigationTree {
 
   }
 
-  print map { "$_\n" if($_) } @{$treeObjRoot->tree2string({no_attributes => 0})};
+
+  open(TREE, ">$treeStringOutputFile") or die "Cannot open file $treeStringOutputFile for writing:$!";
+  open(JSON, ">$jsonStringOutputFile") or die "Cannot open file $jsonStringOutputFile for writing:$!";
+
+  print TREE map { "$_\n" if($_) } @{$treeObjRoot->tree2string({no_attributes => 0})};
+
+  my $treeHashRef = $treeObjRoot->transformToHashRef();
+
+  my $json_text = encode_json($treeHashRef);
+
+  print JSON "$json_text\n";
+
+  close TREE;
+  close JSON;
 }
+
+
 
 sub keepNode {
   my ($node) = @_;

@@ -34,4 +34,23 @@ sub node2string {
   return $self->SUPER::node2string($options, $node, $vert_dashes);
 }
 
+
+sub transformToHashRef {
+  my ($self) = @_;
+
+  my $name = $self->{name};
+  my $displayName = $self->{displayName};
+
+  $displayName = $name unless($displayName);
+
+  my $hashref = {id => $name, display => $displayName};
+
+  foreach my $daughter ($self->daughters()) {
+    my $child = $daughter->transformToHashRef();
+    push @{$hashref->{children}}, $child;
+  }
+
+  return $hashref;
+}
+
 1;
