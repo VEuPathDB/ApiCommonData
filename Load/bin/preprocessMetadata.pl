@@ -120,7 +120,7 @@ else {
   die "ERRORS Found.  Please fix and try again.";
 }
 
-if(-e $ontologyMappingXmlFile && -e $valueMappingFile) {
+if(-e $ontologyMappingXmlFile && -e $valueMappingFile && -e $ontologyOwlFile) {
   $metadataHelper->writeInvestigationTree($ontologyMappingXmlFile, $valueMappingFile, $dateObfuscationFile, $ontologyOwlFile, $outputFile);
 }
 
