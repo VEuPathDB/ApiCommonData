@@ -1,6 +1,7 @@
 package ApiCommonData::Load::OntologyDAGNode;
 use parent 'Tree::DAG_Node';
 
+use Data::Dumper;
 
 sub format_node {
   my ($self, $options, $node) = @_;
@@ -38,8 +39,10 @@ sub node2string {
 sub transformToHashRef {
   my ($self) = @_;
 
+  return unless $self->{attributes}->{keep};
+
   my $name = $self->{name};
-  my $displayName = $self->{displayName};
+  my $displayName = $self->{attributes}->{displayName};
 
   $displayName = $name unless($displayName);
 
@@ -47,7 +50,7 @@ sub transformToHashRef {
 
   foreach my $daughter ($self->daughters()) {
     my $child = $daughter->transformToHashRef();
-    push @{$hashref->{children}}, $child;
+    push @{$hashref->{children}}, $child if($child);
   }
 
   return $hashref;
