@@ -13,7 +13,7 @@ chomp $firstline;
 
 close FILE;
 
-my @headers = split(/\t/, $firstline);
+my @headers = split(/\t|,/, $firstline);
 
 for(my $i = 0; $i < scalar @headers; $i++) {
   if($headers[$i] =~ /$headerName/i) {
