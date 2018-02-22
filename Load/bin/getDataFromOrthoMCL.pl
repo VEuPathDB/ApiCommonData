@@ -25,7 +25,7 @@ my $ref = XMLin("$outputAllOrthoGrps.tmp");
 open OUT, ">$outputAllOrthoGrps";
 print OUT "[Group]\t[# Sequences]\t[Average % Connectivity]\t[Average % Identity]\t[EC Numbers]\n";
 
-while(my ($og, $v) = each %{$ref->{recordset}->{record}}) {
+while(my ($og, $v) = each $ref->{recordset}->{record}) {
   my $ec_numbers        = $v->{field}->{ec_numbers}->{content};
   my $number_of_members = $v->{field}->{number_of_members}->{content};
   my $avg_connectivity  = $v->{field}->{avg_connectivity}->{content};
@@ -55,7 +55,7 @@ print STDERR "$cmd\n";
 system($cmd);
 $ref = XMLin("$outputOrthoSeqsWithECs.tmp");
 
-while(my ($k, $v) = each %{$ref->{recordset}->{record}}) {
+while(my ($k, $v) = each $ref->{recordset}->{record}) {
 
   my $source_id  = $v->{field}->{source_id}->{content};
   my $ec_numbers = $v->{field}->{ec_numbers}->{content};
