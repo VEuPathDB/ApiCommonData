@@ -85,7 +85,7 @@ if($isColorspace && -e "$bowtieIndex.1.ebwt"){
 }elsif( -e "$bowtieIndex.1.bt2"){  
   $cmd = "($bowtie2 --rg-id EuP --rg 'SM:TU114' --rg 'PL:Illumina' ";
   if ($extraBowtieParams){$cmd = $cmd.$extraBowtieParams;}
-  $cmd = $cmd." -x $bowtieIndex ".(-e "$mateB" ? "-1 $mateA -2 $mateB " : "-U $mateA ")." | samtools view -buS - | samtools sort - $workingDir/$tmpOut) >& $workingDir/bowtie.log";
+  $cmd = $cmd." -x $bowtieIndex ".(-e "$mateB" ? "-1 $mateA -2 $mateB " : "-U $mateA ")." | samtools view -buS - | samtools sort -o $workingDir/$tmpOut.bam) >& $workingDir/bowtie.log";
   
   print L &getDate().": $cmd\n";
   if(-e "$workingDir/complete" || -e "$workingDir/$out.bam"){ print L "  succeeded in previous run\n\n";
