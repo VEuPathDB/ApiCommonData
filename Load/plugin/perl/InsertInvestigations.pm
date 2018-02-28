@@ -358,6 +358,7 @@ sub loadStudy {
   $gusStudy->setDescription($description);
 
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
+
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
 
   $self->loadEdges($study->getEdges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap);
@@ -372,6 +373,9 @@ sub loadNodes {
   my $gusStudyId = $gusStudy->getId();
   
   my $slPanIds = $self->lookupStudyLinks($gusStudyId);
+
+  my $nodeCount = 0;
+  $self->getDb()->manageTransaction(0, 'begin');
 
   foreach my $node (@$nodes) {
     my $pan;
@@ -451,12 +455,20 @@ sub loadNodes {
       }
     }
 
-    $pan->submit();
+    $pan->submit(undef, 1);
     $rv{$pan->getName()} = $pan->getId();
 
     $self->undefPointerCache();
 
+    if($nodeCount++ % 1000 == 0) {
+      $self->getDb()->manageTransaction(0, 'commit');
+      $self->getDb()->manageTransaction(0, 'begin');
+    }
+
   }
+
+  $self->getDb()->manageTransaction(0, 'commit');
+
   return \%rv;
 }
 
@@ -576,6 +588,10 @@ sub loadProtocols {
 sub loadEdges {
   my ($self, $edges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap) = @_;
 
+
+  my $edgeCount;
+  $self->getDb()->manageTransaction(0, 'begin');
+
   foreach my $edge (@$edges) {
     my $databaseStatus = $edge->{_DATABASE_STATUS};
     my $protocolAppId = $edge->{_PROTOCOL_APP_ID};
@@ -607,21 +623,26 @@ sub loadEdges {
         $protocolName = $edge->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
       }
 
-      if(my $gusProtocolId = $protocolNamesToIdMap->{$protocolName}) {
-        $gusProtocol = GUS::Model::Study::Protocol->new({protocol_id => $gusProtocolId});
-        unless($gusProtocol->retrieveFromDB()) {
-          $self->error("Could not retrieve protocol w/ protocol id of [$gusProtocolId]");
-        }
+      my $gusProtocolId;
+      if($gusProtocolId = $protocolNamesToIdMap->{$protocolName}) {
+#        $gusProtocol = GUS::Model::Study::Protocol->new({protocol_id => $gusProtocolId});
+#        unless($gusProtocol->retrieveFromDB()) {
+#          $self->error("Could not retrieve protocol w/ protocol id of [$gusProtocolId]");
+#        }
       }
       else {
         $gusProtocol = GUS::Model::Study::Protocol->new({name => $protocolName});
         $gusProtocol->retrieveFromDB(); # try to retrieve it
 
+        $self->getDb()->manageTransaction(0, 'commit');
         $gusProtocol->submit();
-        $protocolNamesToIdMap->{$protocolName} = $gusProtocol->getId();        
+        $self->getDb()->manageTransaction(0, 'begin');
+
+        $gusProtocolId = $gusProtocol->getId();
+        $protocolNamesToIdMap->{$protocolName} = $gusProtocolId;
       }
       
-      $gusProtocolApp->setParent($gusProtocol);
+      $gusProtocolApp->setProtocolId($gusProtocolId);
     }
 
     if($databaseStatus) {
@@ -686,9 +707,17 @@ sub loadEdges {
         $gusProtocolAppParam->setParent($gusProtocolApp);
       }
     }
-    $gusProtocolApp->submit();
+    $gusProtocolApp->submit(undef, 1);
     $self->undefPointerCache();
+
+
+    if($edgeCount++ % 1000 == 0) {
+      $self->getDb()->manageTransaction(0, 'commit');
+      $self->getDb()->manageTransaction(0, 'begin');
+    }
   }
+
+  $self->getDb()->manageTransaction(0, 'commit');
 }
 
 
