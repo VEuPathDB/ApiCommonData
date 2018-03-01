@@ -1,5 +1,5 @@
 CREATE USER hmdb
-IDENTIFIED BY VALUES --'36811EDD93CB4A00' need to populate with correct password
+IDENTIFIED BY VALUES '408790EE7CAB1A05'
 QUOTA UNLIMITED ON users 
 QUOTA UNLIMITED ON gus
 QUOTA UNLIMITED ON indx
@@ -32,7 +32,7 @@ WHERE lower('hmdb') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 -- GRANTs required for CTXSYS
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to hmdb;
 
-
+ALTER USER hmdb ACCOUNT LOCK;
 
 
 
