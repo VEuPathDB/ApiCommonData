@@ -519,6 +519,9 @@ sub getAaSequenceId {
 ##if none are the official annot then get overlapping genes and see if all peptides map
 sub addRecordsToGenes { 
   my ($self, $recordSet) = @_;
+
+  my $proteinMatchCuttoff = 50;
+
   foreach my $record (@{$recordSet}) {
 
     my $wasFound;
@@ -535,7 +538,9 @@ sub addRecordsToGenes {
           next unless($prot->[0] == $aaSeqId);
 
           # ensure that all peptides match on to this protein
-          if($self->checkThatAllPeptidesMatch($record,$prot->[1])) {
+
+          if($self->checkThatPeptidesMatch($record,$prot->[1]) >= $proteinMatchCuttoff) {
+#          if($self->checkThatAllPeptidesMatch($record,$prot->[1])) {
             $wasFound = 1;
             $self->copyRecord($record, $aaSeqId);
           }
@@ -770,6 +775,7 @@ sub checkThatAllPeptidesMatch {
   }
   return 1;
 }
+
 
 sub checkThatPeptidesMatch {
   my($self,$record,$protSeq) = @_;
