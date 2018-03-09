@@ -135,4 +135,8 @@ sub run {
   }
 }
 
+sub undoTables {
+
+  return ('Study.Characteristic', 'SRes.OntologyTerm');
+}
 
