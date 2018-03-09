@@ -122,3 +122,8 @@ sub run {
     $characteristic->submit();
   }
 }
+
+sub undoTables {
+
+  return ('Study.Characteristic', 'SRes.OntologyTerm');
+}
