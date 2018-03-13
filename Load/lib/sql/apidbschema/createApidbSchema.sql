@@ -58,4 +58,6 @@ WHERE lower('ApiDB') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 -- GRANTs required for CTXSYS
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to apidb;
 
+alter user ApiDB quota unlimited on indx;
+
 exit

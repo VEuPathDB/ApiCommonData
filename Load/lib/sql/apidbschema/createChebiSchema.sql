@@ -33,6 +33,7 @@ WHERE lower('chEBI') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to chebi;
 
 
+alter user chebi quota unlimited on indx;
 
 
 

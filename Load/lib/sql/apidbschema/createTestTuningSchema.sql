@@ -36,4 +36,6 @@ SELECT core.databaseinfo_sq.nextval, 'TestTuning',
 FROM dual, (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p
 WHERE lower('TestTuning') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 
+alter user TestTuning quota unlimited on indx;
+
 exit

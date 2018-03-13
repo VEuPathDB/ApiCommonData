@@ -18,8 +18,8 @@ CREATE TABLE apidb.SubjectResult (
  PRIMARY KEY (subject_result_id)
 );
 
-CREATE INDEX apidb.otr_revix0 ON apidb.SubjectResult (subject, subject_result_id) TABLESPACE indx;
-CREATE INDEX apidb.otr_revix1 ON apidb.SubjectResult (protocol_app_node_id, subject_result_id) TABLESPACE indx;
+CREATE INDEX apidb.subjres_revix0 ON apidb.SubjectResult (subject, subject_result_id) TABLESPACE indx;
+CREATE INDEX apidb.subjres_revix1 ON apidb.SubjectResult (protocol_app_node_id, subject_result_id) TABLESPACE indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SubjectResult TO gus_w;
 GRANT SELECT ON apidb.SubjectResult TO gus_r;

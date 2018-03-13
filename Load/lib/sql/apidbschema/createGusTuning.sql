@@ -2,8 +2,8 @@
 
 -- remove quota limits for GUS schemas in the INDX tablespace,
 --  to avert the error "ORA-01950: no privileges on tablespace 'INDX'"
-alter user ApiDB quota unlimited on indx;
-alter user ApidbTuning quota unlimited on indx;
+-- alter user ApiDB quota unlimited on indx;
+-- alter user ApidbTuning quota unlimited on indx;
 alter user Core quota unlimited on indx;
 alter user CoreVer quota unlimited on indx;
 alter user DoTS quota unlimited on indx;
@@ -18,8 +18,8 @@ alter user SRes quota unlimited on indx;
 alter user SResVer quota unlimited on indx;
 alter user Study quota unlimited on indx;
 alter user StudyVer quota unlimited on indx;
-alter user TestTuning quota unlimited on indx;
-alter user chEBI quota unlimited on indx;
+-- alter user TestTuning quota unlimited on indx;
+-- alter user chEBI quota unlimited on indx;
 
 --
 
