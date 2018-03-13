@@ -8,5 +8,7 @@ use strict;
 sub loadStudy {}
 sub loadInvestigation{}
 
+sub loadCharacteristics{}
+
 sub getIsReportMode { return 1;}
 1;

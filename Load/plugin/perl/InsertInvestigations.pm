@@ -27,6 +27,8 @@ use CBIL::ISA::InvestigationSimple;
 
 use Scalar::Util qw(blessed);
 
+use File::Temp qw/ tempfile /;
+
 use Data::Dumper;
 
 my $argsDeclaration =
@@ -149,6 +151,8 @@ sub run {
 
   my $isReportMode = $self->getIsReportMode();
 
+  my ($charFh, $charFile) = tempfile();
+
   my @investigationFiles;
 
   my $investigationSubset = $self->getArg('investigationSubset');
@@ -250,7 +254,7 @@ sub run {
         $self->checkDatabaseNodesAreHandled($isatabDatasets, $study->getNodes());
         $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
 
-        $self->loadStudy($study,$investigationId);
+        $self->loadStudy($study,$investigationId, $charFh);
       }
     }
     
@@ -262,9 +266,51 @@ sub run {
     $self->error("FOUND $errorCount ERRORS!");
   }
 
+
+  $self->loadCharacteristics($charFile);
+
   $self->logRowsInserted() if($self->getArg('commit'));
 
   return("Processed $investigationCount Investigations.");
+}
+
+
+
+sub loadCharacteristics{
+  my ($self, $charFile) = @_;
+
+  my $configFile = "$charFile" . ".ctrl";
+ 
+  my $logFile = "$charFile" . ".log";
+
+  $self->writeConfigFile($configFile, $charFile);
+
+  my $login       = $self->getConfig->getDatabaseLogin();
+
+  my $password    = $self->getConfig->getDatabasePassword();
+
+  my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+  my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+  if($self->getArg('commit')) {
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile");
+
+    open(LOG, $logFile) or die "Cannot opoen log file $logFile: $!";
+
+    while(<LOG>) {
+      $self->log($_);
+    }
+    close LOG;
+
+    unlink $logFile;
+  }
+
+  unlink $configFile;
+    
+  return "Processed lines from data files";
+
+
 }
 
 
@@ -343,7 +389,7 @@ sub checkProtocolsAndSetIds {
 }
 
 sub loadStudy {
-  my ($self, $study, $investigationId) = @_;
+  my ($self, $study, $investigationId, $charFh) = @_;
 
   my $extDbRlsId = $self->{_external_database_release_id};
 
@@ -357,7 +403,7 @@ sub loadStudy {
 
   $gusStudy->setDescription($description);
 
-  my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
+  my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy, $charFh);
 
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
 
@@ -366,7 +412,7 @@ sub loadStudy {
 
 
 sub loadNodes {
-  my ($self, $nodes, $gusStudy) = @_;
+  my ($self, $nodes, $gusStudy, $charFh) = @_;
 
   my %rv;
 
@@ -429,7 +475,7 @@ sub loadNodes {
         }
 
 	my $gusChar = GUS::Model::Study::Characteristic->new();
-	$gusChar->setParent($pan);
+#	$gusChar->setParent($pan);
 
 	# ALWAYS Set the qualifier_id
 	my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
@@ -451,6 +497,13 @@ sub loadNodes {
 	else {
 	  $gusChar->setValue($characteristic->getTerm());
 	}
+
+
+        print $charFh join("\t", ($pan->getId(), 
+                                  $gusChar->getQualifierId(), 
+                                  $gusChar->getUnitId(), 
+                                  $gusChar->getValue(), 
+                                  $gusChar->getOntologyTermId()));
 
       }
     }
@@ -973,6 +1026,69 @@ sub loadInvestigation{
   return $gusStudy->getId();
 
 }
+
+
+sub writeConfigFile {
+  my ($self, $configFile, $dataFile) = @_;
+
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
+  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+
+  my $database = $self->getDb();
+  my $projectId = $database->getDefaultProjectId();
+  my $userId = $database->getDefaultUserId();
+  my $groupId = $database->getDefaultGroupId();
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+  my $userRead = $database->getDefaultUserRead();
+  my $userWrite = $database->getDefaultUserWrite();
+  my $groupRead = $database->getDefaultGroupRead();
+  my $groupWrite = $database->getDefaultGroupWrite();
+  my $otherRead = $database->getDefaultOtherRead();
+  my $otherWrite = $database->getDefaultOtherWrite();
+
+  open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
+
+  print CONFIG "LOAD DATA
+INFILE '$dataFile'
+APPEND
+INTO TABLE Study.Characteristic
+FIELDS TERMINATED BY '\\t'
+TRAILING NULLCOLS
+(protocol_app_node_id,
+qualifier_id,
+unit_id,
+value,
+ontology_term_id,
+modification_date constant \"$modDate\", 
+user_read constant $userRead, 
+user_write constant $userWrite, 
+group_read constant $groupRead, 
+group_write constant $groupWrite, 
+other_read constant $otherRead, 
+other_write constant $otherWrite, 
+row_user_id constant $userId, 
+row_group_id constant $groupId, 
+row_project_id constant $projectId, 
+row_alg_invocation_id constant $algInvocationId,
+CHARACTERISTIC_ID \"Study.CHARACTERISTIC_sq.nextval\"
+)\n";
+  close CONFIG;
+}
+
+sub getConfig {
+  my ($self) = @_;
+
+  if (!$self->{config}) {
+    my $gusConfigFile = $self->getArg('gusconfigfile');
+     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
+   }
+
+  $self->{config};
+}
+
+
+
 sub undoTables {
   my ($self) = @_;
 
