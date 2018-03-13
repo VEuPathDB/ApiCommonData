@@ -294,7 +294,7 @@ sub loadCharacteristics{
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   if($self->getArg('commit')) {
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile");
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile direct=TRUE");
 
     open(LOG, $logFile) or die "Cannot opoen log file $logFile: $!";
 
@@ -474,36 +474,47 @@ sub loadNodes {
           $pan->setTaxonId($taxonId);
         }
 
-	my $gusChar = GUS::Model::Study::Characteristic->new();
+#	my $gusChar = GUS::Model::Study::Characteristic->new();
 #	$gusChar->setParent($pan);
 
-	# ALWAYS Set the qualifier_id
 	my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
-	$gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+        my $charQualifierId = $charQualifierOntologyTerm->getId();
+
+	# ALWAYS Set the qualifier_id
+
+#	$gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+
+        my $charUnitId;
 
 	if($characteristic->getUnit()) {
 	  my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
-	  $gusChar->setUnitId($unitOntologyTerm->getId());
+#	  $gusChar->setUnitId($unitOntologyTerm->getId());
+          $charUnitId = $unitOntologyTerm->getId();
 	}
+
+        my ($charValue, $charOntologyTermId);
 
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
           my $value = $self->{_ontology_term_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-	  $gusChar->setValue($value);
+#	  $gusChar->setValue($value);
+          $charValue = $value;
         }
 	elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
 	  my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
-	  $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
+#	  $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
+          $charOntologyTermId = $valueOntologyTerm->getId();
 	}
 	else {
-	  $gusChar->setValue($characteristic->getTerm());
+#	  $gusChar->setValue($characteristic->getTerm());
+          $charValue = $characteristic->getTerm();
 	}
 
 
         print $charFh join("\t", ($pan->getId(), 
-                                  $gusChar->getQualifierId(), 
-                                  $gusChar->getUnitId(), 
-                                  $gusChar->getValue(), 
-                                  $gusChar->getOntologyTermId()));
+                                  $charQualifierId,
+                                  $charUnitId,
+                                  $charValue,
+                                  $charOntologyTermId));
 
       }
     }
@@ -1053,6 +1064,7 @@ sub writeConfigFile {
 INFILE '$dataFile'
 APPEND
 INTO TABLE Study.Characteristic
+REENABLE DISABLED_CONSTRAINTS
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
 (protocol_app_node_id,
