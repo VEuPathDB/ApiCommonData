@@ -152,7 +152,10 @@ while (my $line = <IN>) {
     my $assemblySeq = $temps[9];
     my $sourceId;
     if ($assemblySeq=~ /^assemblySeqIds\|(.+)\|(.+)/) {
-	my $assemblySeq = $1;
+ 
+  # fixed on 03/14/2018 H.W.
+	#my $assemblySeq = $1;
+	$assemblySeq = $1;
 #	$sourceId = $2;
     }
     if (exists $mapHash{$assemblySeq}) {
