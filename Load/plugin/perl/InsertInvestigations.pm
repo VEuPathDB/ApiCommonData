@@ -514,7 +514,7 @@ sub loadNodes {
                                   $charQualifierId,
                                   $charUnitId,
                                   $charValue,
-                                  $charOntologyTermId));
+                                  $charOntologyTermId)) . "\n";
 
       }
     }
