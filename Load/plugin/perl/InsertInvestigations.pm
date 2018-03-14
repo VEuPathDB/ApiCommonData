@@ -426,6 +426,8 @@ sub loadNodes {
   foreach my $node (@$nodes) {
     my $pan;
 
+    my @charsForLoader;
+
     my $studyLinksAlreadyExist;
 
     if(my $panId = $node->{_PROTOCOL_APP_NODE_ID}) {
@@ -510,17 +512,18 @@ sub loadNodes {
 	}
 
 
-        print $charFh join("\t", ($pan->getId(), 
-                                  $charQualifierId,
-                                  $charUnitId,
-                                  $charValue,
-                                  $charOntologyTermId)) . "\n";
+#        print $charFh join("\t", ($pan->getId(), 
+        push @charsForLoader, [$charQualifierId, $charUnitId, $charValue, $charOntologyTermId];
 
       }
     }
 
     $pan->submit(undef, 1);
     $rv{$pan->getName()} = $pan->getId();
+
+    foreach my $charForLoader(@charsForLoader) {
+      print $charFh $pan->getId() . "\t" . join("\t", @$charForLoader) . "\n";
+    }
 
     $self->undefPointerCache();
 
