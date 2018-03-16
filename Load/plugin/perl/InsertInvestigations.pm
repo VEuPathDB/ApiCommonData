@@ -151,7 +151,7 @@ sub run {
 
   my $isReportMode = $self->getIsReportMode();
 
-  my ($charFh, $charFile) = tempfile();
+  my ($charFh, $charFile) = tempfile(SUFFIX => '.dat');
 
   my @investigationFiles;
 
