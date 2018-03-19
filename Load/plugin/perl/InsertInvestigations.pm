@@ -168,6 +168,8 @@ sub run {
     my $dirname = dirname $investigationFile;
     $self->log("Processing ISA Directory:  $dirname");
 
+    # clear out the protocol app node hash
+    $self->{_PROTOCOL_APP_NODE_MAP} = {};
 
     my $investigation;
     if($self->getArg('isSimpleConfiguration')) {
@@ -251,9 +253,10 @@ sub run {
 
 
         $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
+
+
         $self->checkDatabaseNodesAreHandled($isatabDatasets, $study->getNodes());
         $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
-
         $self->loadStudy($study,$investigationId, $charFh);
       }
     }
@@ -519,6 +522,10 @@ sub loadNodes {
     }
 
     $pan->submit(undef, 1);
+
+    # keep the cache up to date as we add new nodes
+    $self->{_PROTOCOL_APP_NODE_MAP}->{$pan->getName()} = $pan->getId();
+
     $rv{$pan->getName()} = $pan->getId();
 
     foreach my $charForLoader(@charsForLoader) {
@@ -977,36 +984,36 @@ where d.name = ?
  and i.STUDY_ID = sl.study_id
  and sl.PROTOCOL_APP_NODE_ID = pan.PROTOCOL_APP_NODE_ID";
 
-  my $dbh = $self->getQueryHandle();
-  my $sh = $dbh->prepare($sql);
 
-  my %studyNodes;
 
-  foreach my $datasetName(keys %$foundDatasets) {
-    $sh->execute($datasetName, $datasetName);
+  unless(scalar(keys(%{$self->{_PROTOCOL_APP_NODE_MAP}})) > 0) {
+    my $dbh = $self->getQueryHandle();
+    my $sh = $dbh->prepare($sql);
 
-    while(my ($pan, $panId) = $sh->fetchrow_array()) {
-      if($studyNodes{$datasetName}->{$pan}) {
-        $self->logOrError("DATABASE_ERROR:  Existing ProtocolAppNode name $pan not unique w/in a study");
-      }
+    my %studyNodes;
 
-      $studyNodes{$datasetName}->{$pan} = 1;
+    foreach my $datasetName(keys %$foundDatasets) {
+      $sh->execute($datasetName, $datasetName);
 
-      my $found = 0;
-      foreach my $node (@$nodes) {
-        if($node->getValue() eq $pan) {
-          $node->{_PROTOCOL_APP_NODE_ID} = $panId;
-          $found++ ;
+      while(my ($pan, $panId) = $sh->fetchrow_array()) {
+        if($studyNodes{$pan}) {
+          $self->logOrError("DATABASE_ERROR:  Existing ProtocolAppNode name $pan not unique w/in a study");
         }
-      }
 
-# no longer need to handle all database nodes
-#      unless($found == 1) {
-#        $self->logOrError("ISATAB_ERROR:  ProtocolAppNode named $pan for dataset $datasetName was not handled in the ISATab file.  Found it $found times.");
-#      }
+        $studyNodes{$pan} = 1;
+
+        $self->{_PROTOCOL_APP_NODE_MAP}->{$pan} = $panId;
+
+      }
+      $sh->finish();
     }
-    $sh->finish();
   }
+
+  foreach my $node (@$nodes) {
+    my $nodeName = $node->getValue();
+    $node->{_PROTOCOL_APP_NODE_ID} = $self->{_PROTOCOL_APP_NODE_MAP}->{$nodeName};
+  }
+
 }
 
 sub logOrError {
