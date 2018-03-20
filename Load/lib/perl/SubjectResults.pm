@@ -6,7 +6,7 @@ sub getProtocolName {
 }
 
 sub getSourceIdType {
-  return "literal"
+  return "subject"
 }
 
 1;
