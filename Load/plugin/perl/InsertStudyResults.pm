@@ -340,7 +340,7 @@ sub addResults {
 
     elsif ($sourceIdType =~ /subject/) {
       $hash = { subject => $a[0] };
-      start = 1;
+      $start = 1;
     }
 
 
