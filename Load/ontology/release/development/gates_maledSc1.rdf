@@ -336,13 +336,13 @@
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010767">
+    <rdfs:label>Norovirus detected by any method</rdfs:label>
     <MALED1:hasNotes>Was NoV genogroup I or II detected?</MALED1:hasNotes>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Norovirus detected (collapsed variable)?</MALED1:hasDescription1>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C14283"/>
     </rdfs:subClassOf>
-    <rdfs:label>Norovirus</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
@@ -444,17 +444,23 @@
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
     </rdfs:subClassOf>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010730">
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5806">
+    <rdfs:label>Cryptosporidium</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
     </rdfs:subClassOf>
-    <rdfs:label>H. nana</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010730">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <obo:EUPATH_0000755>hnana</obo:EUPATH_0000755>
+    <rdfs:label>H. nana detected by any method</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription1>H. nana detected?</MALED1:hasDescription1>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_102285"/>
+    </rdfs:subClassOf>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010851">
@@ -572,15 +578,15 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010754">
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Entamoeba coli</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_110766"/>
+    </rdfs:subClassOf>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription1>Entamoeba coli detected?</MALED1:hasDescription1>
     <MALED1:hasSource>MDF</MALED1:hasSource>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <obo:EUPATH_0000755>mdfecoli</obo:EUPATH_0000755>
+    <rdfs:label>Entamoeba coli detected by any method</rdfs:label>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010633">
@@ -660,6 +666,12 @@
     <MALED1:hasDescription1>cumulative count of the number of positive NoV GII samples by PID in first monthly stools</MALED1:hasDescription1>
     <MALED1:hasDescription2>continuous numeric</MALED1:hasDescription2>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_56625">
+    <rdfs:label>Isospora</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010879">
     <MALED1:belongsToCategory>summary score</MALED1:belongsToCategory>
@@ -1234,6 +1246,7 @@
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010611">
+    <rdfs:label>Astrovirus detected by any method</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C14283"/>
@@ -1241,21 +1254,20 @@
     <obo:EUPATH_0000755>astro</obo:EUPATH_0000755>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Astrovirus</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasNotes>Indeterminate test result is coded as no.</MALED1:hasNotes>
     <MALED1:hasDescription1>Astrovirus detected?</MALED1:hasDescription1>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010623">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_71585"/>
+    </rdfs:subClassOf>
     <MALED1:hasDescription1>Balantidium coli detected?</MALED1:hasDescription1>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Balantidium coli</rdfs:label>
+    <rdfs:label>Balantidium coli detected by any method</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <obo:EUPATH_0000755>bcoli</obo:EUPATH_0000755>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
@@ -1399,15 +1411,15 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010615">
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:label>T. trichiura detected by any method</rdfs:label>
     <obo:EUPATH_0000755>atric</obo:EUPATH_0000755>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <MALED1:hasDescription1>T. trichiura detected?</MALED1:hasDescription1>
-    <rdfs:label>T. trichiura</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_36087"/>
+    </rdfs:subClassOf>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010627">
@@ -1719,6 +1731,12 @@
     <obo:EUPATH_0000755>sumaep</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6251">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
+    <rdfs:label>Ascaris lumbricoides</rdfs:label>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010940">
     <MALED1:hasDescription2>continuous numeric</MALED1:hasDescription2>
     <MALED1:hasNotes>Information from the first diarrhea stool collected for each diarrhea episode. Complete testing required of stool samples. Information from NRV testing not included</MALED1:hasNotes>
@@ -1842,14 +1860,20 @@
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <obo:EUPATH_0000755>hook</obo:EUPATH_0000755>
     <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_33277"/>
     </rdfs:subClassOf>
-    <rdfs:label>Hookworm</rdfs:label>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Hookworm detected?</MALED1:hasDescription1>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
+    <rdfs:label>Hookworm detected by any method</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_110766">
+    <rdfs:label>Entamoeba coli</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010988">
     <rdfs:subClassOf>
@@ -1881,15 +1905,15 @@
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010726">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6216"/>
+    </rdfs:subClassOf>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasDescription1>H. diminuta detected?</MALED1:hasDescription1>
     <obo:EUPATH_0000755>hdim</obo:EUPATH_0000755>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
-    <rdfs:label>H. diminuta</rdfs:label>
+    <rdfs:label>H. diminuta detected by any method</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010847">
     <MALED1:hasSource>Calculated</MALED1:hasSource>
@@ -2029,7 +2053,7 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
     </rdfs:subClassOf>
-    <rdfs:label>I. butschilii</rdfs:label>
+    <rdfs:label>I. butschilii detected by any method</rdfs:label>
     <obo:EUPATH_0000755>ibut</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000696">
@@ -2045,9 +2069,9 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010931">
     <MALED1:belongsToCategory>summary score</MALED1:belongsToCategory>
+    <rdfs:label>Virus detected by any method</rdfs:label>
     <obo:EUPATH_0000755>virus</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>Virus</rdfs:label>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasDescription1>Did this stool sample have a virus detected?</MALED1:hasDescription1>
@@ -2322,22 +2346,22 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010821">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>Taenia sp.</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6202"/>
+    </rdfs:subClassOf>
     <MALED1:hasDescription1>Taenia sp. detected?</MALED1:hasDescription1>
     <obo:EUPATH_0000755>taenia</obo:EUPATH_0000755>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
+    <rdfs:label>Taenia sp. detected by any method</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010603">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <obo:EUPATH_0000755>aeromonas</obo:EUPATH_0000755>
-    <rdfs:label>Aeromonas detected by any method</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
+    <rdfs:label>Aeromonas detected by any method</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C86124"/>
     </rdfs:subClassOf>
@@ -2399,6 +2423,12 @@
     </rdfs:subClassOf>
     <MALED1:hasDescription2>continuous numeric</MALED1:hasDescription2>
     <MALED1:hasDescription1>cumulative count of the number of positive eiec samples by PID</MALED1:hasDescription1>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_110788">
+    <rdfs:label>Endolimax nana</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010716">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
@@ -2470,14 +2500,12 @@
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010607">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
-    <rdfs:label>A. lumbricoides</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_6251"/>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <obo:EUPATH_0000755>alumb</obo:EUPATH_0000755>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:label>A. lumbricoides detected by any method</rdfs:label>
     <MALED1:hasDescription1>A. lumbricoides detected?</MALED1:hasDescription1>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010849">
@@ -2582,6 +2610,12 @@
     </rdfs:subClassOf>
     <MALED1:hasDescription1>General surveillance characteristics</MALED1:hasDescription1>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6202">
+    <rdfs:label>Taenia</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000308">
     <rdfs:subClassOf>
@@ -2711,27 +2745,25 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010703">
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>E. nana</rdfs:label>
     <obo:EUPATH_0000755>enana</obo:EUPATH_0000755>
+    <rdfs:label>E. nana detected by any method</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription1>E. nana detected?</MALED1:hasDescription1>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_110788"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010715">
-    <rdfs:label>E. vermicularis</rdfs:label>
+    <rdfs:label>E. vermicularis detected by any method</rdfs:label>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasDescription1>E. vermicularis detected?</MALED1:hasDescription1>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <obo:EUPATH_0000755>everm</obo:EUPATH_0000755>
     <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_51028"/>
     </rdfs:subClassOf>
+    <obo:EUPATH_0000755>everm</obo:EUPATH_0000755>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
   </owl:Class>
@@ -2785,6 +2817,12 @@
     <obo:GATES_0000004>MAL-ED</obo:GATES_0000004>
     <obo:GATES_0000002>Birth length (cm)</obo:GATES_0000002>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6216">
+    <rdfs:label>Hymenolepis diminuta</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000647">
     <rdfs:subClassOf>
@@ -3114,6 +3152,12 @@
     <obo:GATES_0000012>One value of Column 'lbtest'</obo:GATES_0000012>
     <obo:GATES_0000004>MAL-ED</obo:GATES_0000004>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_102285">
+    <rdfs:label>Hymenolepis nana</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010490">
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
     <rdfs:label>Max loose stools</rdfs:label>
@@ -3174,10 +3218,10 @@
     <obo:EUPATH_0000755>st_etec_cum</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010935">
+    <rdfs:label>Virus other than norovirus, detected by any method</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <obo:EUPATH_0000755>virus_nonrv</obo:EUPATH_0000755>
-    <rdfs:label>Virus other than norovirus</rdfs:label>
     <MALED1:hasNotes>if astro =1 or rota=1 or adeno=1 then virus_nonrv=1;else virus_nonrv =0</MALED1:hasNotes>
     <MALED1:hasDescription1>Did this stool sample have a virus detected (excluding NRV information)?</MALED1:hasDescription1>
     <MALED1:hasDescription2>continuous numeric</MALED1:hasDescription2>
@@ -3342,15 +3386,15 @@
     <obo:EUPATH_0000755>dob</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010801">
-    <rdfs:label>Schistosoma</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:label>Schistosoma detected by any method</rdfs:label>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
-    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6181"/>
     </rdfs:subClassOf>
+    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <obo:EUPATH_0000755>schist</obo:EUPATH_0000755>
     <MALED1:hasDescription1>Schistosoma detected?</MALED1:hasDescription1>
   </owl:Class>
@@ -3398,15 +3442,13 @@
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasSource>MDF</MALED1:hasSource>
     <obo:EUPATH_0000755>mdfcrypt</obo:EUPATH_0000755>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5806"/>
     <MALED1:hasDescription1>cryptosporidium detected by modified acid fast stain?</MALED1:hasDescription1>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
-    <rdfs:label>Cryptosporidium, modified acid fast stain</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasNotes>Per microbiology committee, use "crypt" for analysis (Cryptosporidium detected by ELISA) Do NOT use this variable for analysis.</MALED1:hasNotes>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
+    <rdfs:label>Cryptosporidium detected by modified acid fast stain</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010926">
     <obo:EUPATH_0000755>sumvirus_cum_m</obo:EUPATH_0000755>
@@ -3681,6 +3723,12 @@
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010985"/>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6248">
+    <rdfs:label>Strongyloides stercoralis</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000679">
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056"/>
@@ -3893,6 +3941,12 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <obo:EUPATH_0000755>lastdiar</obo:EUPATH_0000755>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_51028">
+    <rdfs:label>Enterobius vermicularis</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010915">
     <MALED1:belongsToCategory>summary score</MALED1:belongsToCategory>
     <obo:EUPATH_0000755>sumpathg</obo:EUPATH_0000755>
@@ -3908,11 +3962,9 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011000">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasNotes>Use this variable for cryptosporidium for analysis. Indeterminate test result is coded as no.</MALED1:hasNotes>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
+    <rdfs:label>Cryptosporidium detected by ELISA</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5806"/>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Cryptosporidium, ELISA</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasDescription1>Was cryptosporidium detected by ELISA (collapsed)?</MALED1:hasDescription1>
@@ -4103,15 +4155,13 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010809">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_6248"/>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <obo:EUPATH_0000755>sstero</obo:EUPATH_0000755>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>S. stercoralis detected?</MALED1:hasDescription1>
-    <rdfs:label>S. stercoralis</rdfs:label>
+    <rdfs:label>S. stercoralis detected by any method</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010918">
     <MALED1:belongsToCategory>summary score</MALED1:belongsToCategory>
@@ -4137,14 +4187,12 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
+    <rdfs:label>Isospora detected by any method</rdfs:label>
     <MALED1:hasDescription1>Isospora detected using wet prep microscopy or modified acid fast stain</MALED1:hasDescription1>
     <MALED1:hasNotes>Information from mdfisosconc, mdfisosdirect, mdfmodstain</MALED1:hasNotes>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_56625"/>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Isospora</rdfs:label>
     <obo:EUPATH_0000755>isos</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010690">
@@ -4294,8 +4342,8 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011006">
     <obo:EUPATH_0000755>modother</obo:EUPATH_0000755>
-    <rdfs:label>Other eukaryota, modified acid-fast stain</rdfs:label>
     <MALED1:hasDescription1>Were other organisms detected by modified acid fast stain?</MALED1:hasDescription1>
+    <rdfs:label>Other eukaryota detected by modified acid-fast stain</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasNotes>Uses information from variable "mdfstaindetect"; This variable is 0 if the modified acid-fast stain detected nothing, Cryptosporidium, Isospora, or Cyclospora. Is (1) if the modified acid-fast stain detected an organism other than Cryptosporidium, Osospora or Cyclospora</MALED1:hasNotes>
     <rdfs:subClassOf>
@@ -4305,6 +4353,12 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5740">
+    <rdfs:label>Giardia</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010580">
     <rdfs:label>Astrovirus ELISA performed, fecal viral form</rdfs:label>
@@ -4404,16 +4458,14 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011003">
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:label>Giardia</rdfs:label>
     <MALED1:hasDescription1>Giardia result using ELISA?</MALED1:hasDescription1>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    </rdfs:subClassOf>
+    <rdfs:label>Giardia detected by any method</rdfs:label>
     <obo:EUPATH_0000755>giard</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasNotes>Per microbiology committee, use this variable for giardia analysis; results only from ELISA test. Indeterminate test result is coded as no.</MALED1:hasNotes>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5740"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
     <obo:GATES_0000012>data of 'SUBJ' (Subject level Data)</obo:GATES_0000012>
@@ -4692,8 +4744,8 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010691">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:label>stx2-producing STEC, detected by any method</rdfs:label>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
+    <rdfs:label>stx2-producing STEC, detected by any method</rdfs:label>
     <obo:EUPATH_0000755>ecpstx2</obo:EUPATH_0000755>
     <MALED1:hasSource>ECP</MALED1:hasSource>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C14206"/>
@@ -4730,6 +4782,10 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
     </rdfs:subClassOf>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_71585">
+    <rdfs:label>Balantioides coli</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000735">
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056"/>
@@ -4738,6 +4794,10 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <obo:GATES_0000012>One value of Column 'lbtest'</obo:GATES_0000012>
     <obo:GATES_0000004>MAL-ED</obo:GATES_0000004>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_36087">
+    <rdfs:label>Trichuris trichiura</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000711">
     <rdfs:subClassOf>
@@ -4935,6 +4995,10 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <rdfs:label>Number of children &lt;5 in house</rdfs:label>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <obo:GATES_0000004>GEMS</obo:GATES_0000004>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_472572">
+    <rdfs:label>Chilomastix mesnili</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
     <rdfs:subClassOf>
@@ -5148,6 +5212,7 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010793">
     <MALED1:hasNotes>Indeterminate test result is coded as no.</MALED1:hasNotes>
+    <rdfs:label>Rotavirus detected by any method</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
@@ -5157,7 +5222,6 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C14283"/>
     </rdfs:subClassOf>
-    <rdfs:label>Rotavirus</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738">
@@ -5205,7 +5269,7 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <obo:EUPATH_0000755>adeno</obo:EUPATH_0000755>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
-    <rdfs:label>Adenovirus</rdfs:label>
+    <rdfs:label>Adenovirus detected by any method</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasNotes>Indeterminate test result is coded as no.</MALED1:hasNotes>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
@@ -5413,11 +5477,13 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010695">
     <obo:EUPATH_0000755>ehist</obo:EUPATH_0000755>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
+    <rdfs:label>E. histolytica detected by any method</rdfs:label>
     <MALED1:hasNotes>Use this variable for E. histolytica results in analysis. Indeterminate test result is coded as no.</MALED1:hasNotes>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>E. histolytica</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5759"/>
+    </rdfs:subClassOf>
     <MALED1:hasDescription1>Was E. histolytica detected (collapsed)?</MALED1:hasDescription1>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
@@ -5505,9 +5571,9 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <MALED1:hasDescription1>NoV genogroup I result</MALED1:hasDescription1>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
-    <rdfs:label>Norovirus GI</rdfs:label>
     <obo:EUPATH_0000755>nrvgeno1</obo:EUPATH_0000755>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:label>Norovirus GI detected by any method</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010880">
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
@@ -5751,14 +5817,14 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010782">
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
-    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
+    <MALED1:toBeDecided>keep</MALED1:toBeDecided>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
     <obo:EUPATH_0000755>other</obo:EUPATH_0000755>
-    <rdfs:label>Other parasites</rdfs:label>
     <MALED1:hasNotes>Using variables "mdfotherdirect" and "mdfotherconc" from MDF form</MALED1:hasNotes>
     <MALED1:hasDescription1>Other parasites detected?</MALED1:hasDescription1>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+    <rdfs:label>Other parasites detected by any method</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010770">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
@@ -5897,6 +5963,10 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010983"/>
     </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_33277">
+    <rdfs:label>Hookworm</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001621">
     <obo:GATES_0000213>variable</obo:GATES_0000213>
@@ -6038,12 +6108,12 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010882">
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-    <rdfs:label>Parasite detected</rdfs:label>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
     <MALED1:hasNotes>if alumb=1 or bcoli=1 or cmes=1 or crypt=1 or cyclo=1 or ehist=1 or enana=1 or everm=1 or giard=1 or hdim=1 or hnana=1 or hook=1 or ibut=1 or isos=1 or sstero=1 or schist=1 or atric=1 or taenia=1 then parasite =1; else parasite=0;</MALED1:hasNotes>
     <MALED1:hasDescription1>Did this stool sample have a parasite detected?</MALED1:hasDescription1>
     <obo:EUPATH_0000755>parasite</obo:EUPATH_0000755>
+    <rdfs:label>Parasite detected by any method</rdfs:label>
     <MALED1:belongsToCategory>summary score</MALED1:belongsToCategory>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
@@ -6053,8 +6123,8 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>Salmonella detected by any method</rdfs:label>
     <obo:EUPATH_0000755>salmonella</obo:EUPATH_0000755>
+    <rdfs:label>Salmonella detected by any method</rdfs:label>
     <MALED1:hasNotes>Collapses all species information into one dichotomous variable</MALED1:hasNotes>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:hasDescription1>Salmonella detected (collapsed variable)?</MALED1:hasDescription1>
@@ -6307,18 +6377,20 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010651">
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_44417"/>
+    </rdfs:subClassOf>
     <MALED1:hasDescription1>Cyclospora detected?</MALED1:hasDescription1>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
-    <rdfs:label>Cyclospora</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <obo:EUPATH_0000755>cyclo</obo:EUPATH_0000755>
+    <rdfs:label>Cyclospora detected by any method</rdfs:label>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010663">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C14206"/>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C14206"/>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
@@ -6496,8 +6568,8 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C14283"/>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription1>NoV genogroup II result</MALED1:hasDescription1>
+    <rdfs:label>Norovirus GII detected by any method</rdfs:label>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
-    <rdfs:label>Norovirus GII</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010896">
     <rdfs:subClassOf>
@@ -6563,6 +6635,10 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
     <MALED1:hasNotes>Does not include information from microscopy and modified acid fast stains and norovirus RT-PCR</MALED1:hasNotes>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <obo:EUPATH_0000755>complete_testing_dnomdfnrv</obo:EUPATH_0000755>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6181">
+    <rdfs:label>Schistosoma</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010799">
     <rdfs:subClassOf>
@@ -6883,6 +6959,10 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010993"/>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_44417">
+    <rdfs:label>Cyclospora</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010620">
     <obo:EUPATH_0000755>atypicalepec_cum</obo:EUPATH_0000755>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
@@ -7121,6 +7201,10 @@ NA=Not applicable"</MALED1:hasDescription2>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <obo:GATES_0000004>ALL</obo:GATES_0000004>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5759">
+    <rdfs:label>Entamoeba histolytica</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010631">
     <obo:EUPATH_0000755>bdfecolipcr</obo:EUPATH_0000755>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
@@ -7181,15 +7265,15 @@ NA=Not applicable"</MALED1:hasDescription2>
     <obo:GATES_0000012>Not sure whether information only collected one time or every observation. Is it the summary data of Child like "Total # of days of follow-up" which we categorized under Child?</obo:GATES_0000012>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010643">
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_472572"/>
     <obo:EUPATH_0000755>cmes</obo:EUPATH_0000755>
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>C. mesnili</rdfs:label>
+    <rdfs:label>C. mesnili detected by any method</rdfs:label>
     <MALED1:hasDescription1>C. mesnili detected?</MALED1:hasDescription1>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCIT_C25796"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010764">
     <MALED1:hasSource>Calculated</MALED1:hasSource>
