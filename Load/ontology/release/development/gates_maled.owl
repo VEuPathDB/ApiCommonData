@@ -12,21 +12,6 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
   xml:base="http://purl.obolibrary.org/obo/gates/gates_maled">
   <owl:Ontology rdf:about=""/>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000662">
-    <obo:GATES_0000001>BAZ</obo:GATES_0000001>
-    <obo:GATES_0000010>Calculated using the WHO macro (igrowup_standard.sas)</obo:GATES_0000010>
-    <obo:GATES_0000005>baz</obo:GATES_0000005>
-    <rdfs:label>BMI for age z-score</rdfs:label>
-    <obo:GATES_0000006>baz</obo:GATES_0000006>
-    <obo:GATES_0000004>ALL</obo:GATES_0000004>
-    <obo:GATES_0000007>baz</obo:GATES_0000007>
-    <obo:GATES_0000003>num</obo:GATES_0000003>
-    <obo:GATES_0000002>BMI for age z-score</obo:GATES_0000002>
-    <obo:GATES_0000213>variable</obo:GATES_0000213>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-    </rdfs:subClassOf>
-  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000335">
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596"/>
@@ -50,16 +35,16 @@
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010538">
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
-    </rdfs:subClassOf>
-    <rdfs:label>Cough, maternal report SAF</rdfs:label>
+    <rdfs:label>Cough</rdfs:label>
+    <obo:EUPATH_0000755>safcough</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal report of cough, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safcough</obo:EUPATH_0000755>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010980"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000698">
     <obo:GATES_0000003>num</obo:GATES_0000003>
@@ -200,13 +185,13 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
     </rdfs:subClassOf>
-    <rdfs:label>Any illness, maternal report SAF</rdfs:label>
+    <obo:EUPATH_0000755>safill</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal report of any illness, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safill</obo:EUPATH_0000755>
+    <rdfs:label>Any illness</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010743">
     <rdfs:label>Cumulative count Isospora</rdfs:label>
@@ -446,18 +431,18 @@
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010863">
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-    </rdfs:subClassOf>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
-    <rdfs:label>Blood in stool, SRF report</rdfs:label>
+    <rdfs:label>Blood in stool</rdfs:label>
     <obo:EUPATH_0000755>srfstblood</obo:EUPATH_0000755>
     <MALED1:hasDescription1>Was stool specimen bloody as reported on SRF</MALED1:hasDescription1>
     <MALED1:hasSource>SRF</MALED1:hasSource>
     <MALED1:hasNotes>From initial stool sample (SRF form). For most analyses, use maternal-report of blood in stool.</MALED1:hasNotes>
     <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010730">
     <rdfs:subClassOf>
@@ -488,9 +473,9 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010984">
     <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
     </rdfs:subClassOf>
-    <rdfs:label>Presence of pathogens</rdfs:label>
+    <rdfs:label>Pathogens</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010996">
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
@@ -520,10 +505,10 @@
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010536">
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
-    <rdfs:label>ORT adminitered, SAF</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <obo:EUPATH_0000755>safort</obo:EUPATH_0000755>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
+    <rdfs:label>ORT administered</rdfs:label>
     <MALED1:hasNotes>ORT = oral rehydration therapy</MALED1:hasNotes>
     <MALED1:hasDescription2>ORT administrated, 1=yes, 0=no</MALED1:hasDescription2>
     <rdfs:subClassOf>
@@ -792,13 +777,13 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000746"/>
     </rdfs:subClassOf>
-    <rdfs:label>Diarrheal surviellence data, total days</rdfs:label>
+    <obo:EUPATH_0000755>sumsurv</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>Sum of days with data (where diar~=.)</MALED1:hasDescription2>
     <MALED1:hasDescription1>General surveillance characteristics</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>sumsurv</obo:EUPATH_0000755>
+    <rdfs:label>Diarrheal surveillance data, total days</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010854">
     <MALED1:hasDescription1>Amount of stool collected</MALED1:hasDescription1>
@@ -1014,13 +999,13 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
     </rdfs:subClassOf>
-    <rdfs:label>Less than normal appetite, maternal report SAF</rdfs:label>
+    <obo:EUPATH_0000755>safint</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal report of appetite, 0=normal; 1=less than normal</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safint</obo:EUPATH_0000755>
+    <rdfs:label>Appetite, maternal report</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010539">
     <rdfs:subClassOf>
@@ -1045,7 +1030,6 @@
     <obo:GATES_0000004>ALL</obo:GATES_0000004>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <MALED1:hasSource>calculated</MALED1:hasSource>
-    <rdfs:label>Length/height for age z-score</rdfs:label>
     <MALED1:hasJieNotes>EUPATH_0000689: recumbent length or height for age z-score. CC: made the requisite modification--see EUPATH IRI.</MALED1:hasJieNotes>
     <obo:GATES_0000010>Calculated using the WHO macro (igrowup_standard.sas)</obo:GATES_0000010>
     <obo:GATES_0000007>haz</obo:GATES_0000007>
@@ -1054,6 +1038,7 @@
     <obo:EUPATH_0000755>zlen</obo:EUPATH_0000755>
     <obo:GATES_0000002>Length/height for age z-score</obo:GATES_0000002>
     <MALED1:hasDescription2>Length-for-age Z-score</MALED1:hasDescription2>
+    <rdfs:label>Length/height-for-age z-score</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000677">
     <rdfs:label>Father, years of education</rdfs:label>
@@ -1172,10 +1157,10 @@
     <MALED1:hasDescription1>cumulative count of the number of positive H. nana samples by PID in first diarrhea stools</MALED1:hasDescription1>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010526">
+    <rdfs:label>Activity level</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
     </rdfs:subClassOf>
-    <rdfs:label>Activity level, maternal report SAF</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
@@ -1383,9 +1368,9 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000682">
     <MALED1:belongsToDataset>Anthropometry</MALED1:belongsToDataset>
-    <obo:GATES_0000002>Head circum for age z-score</obo:GATES_0000002>
     <obo:GATES_0000004>MAL-ED</obo:GATES_0000004>
     <MALED1:hasJieNotes>EUPATH_0000682:head circum for age z-score. CC: yep, that's what it is, confirmedw/Brianna. Made the requisite modification (see new IRI).</MALED1:hasJieNotes>
+    <rdfs:label>Head-circumference-for-age z-score</rdfs:label>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <MALED1:hasCSNotes>Check if for age like others. CC: Done, made the requisite changes.</MALED1:hasCSNotes>
     <obo:GATES_0000003>num</obo:GATES_0000003>
@@ -1397,7 +1382,7 @@
     </rdfs:subClassOf>
     <obo:GATES_0000001>HCAZ</obo:GATES_0000001>
     <MALED1:hasSource>calculated</MALED1:hasSource>
-    <rdfs:label>Head circum for age z-score</rdfs:label>
+    <obo:GATES_0000002>Head-circumference-for-age z-score</obo:GATES_0000002>
     <obo:EUPATH_0000755>zhc</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010615">
@@ -1427,13 +1412,13 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
     </rdfs:subClassOf>
-    <rdfs:label>Diarrhea episode</rdfs:label>
+    <obo:GATES_0000001>DAILY</obo:GATES_0000001>
     <obo:GATES_0000213>category</obo:GATES_0000213>
     <obo:GATES_0000200>1 row per child, per day of monitoring</obo:GATES_0000200>
     <obo:GATES_0000010>Variables in this dataset may also be applied to ANTHRO</obo:GATES_0000010>
     <obo:GATES_0000004>MAL-ED</obo:GATES_0000004>
     <obo:GATES_0000002>Daily Findings</obo:GATES_0000002>
-    <obo:GATES_0000001>DAILY</obo:GATES_0000001>
+    <rdfs:label>Gastrointestinal illness</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010506">
     <MALED1:hasDescription2>1 if ALRI, 0 if no ALRI. ALRI definition met when 1) Child had cough or shortness of breath (today or yesterday) &amp; 2) Rapid respiration rate today (average of two measurements) as defined by a) &gt;60 when child is &lt;60 days old, b) &gt;50 when child is &gt;60-&lt;365 days of age, and c) &gt;40 when child is &gt;365 days of age. ALRI episodes are separated by 14 ALRI-‘free’ days.</MALED1:hasDescription2>
@@ -1602,13 +1587,13 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
     </rdfs:subClassOf>
-    <rdfs:label>Ear pain/pulling maternal report SAF</rdfs:label>
+    <obo:EUPATH_0000755>safear</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal report of ear pain/pulling, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safear</obo:EUPATH_0000755>
+    <rdfs:label>Ear pain/pulling</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010989">
     <rdfs:subClassOf>
@@ -1630,7 +1615,6 @@
     <rdfs:label>Cumulative count LT only</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000683">
-    <rdfs:label>head circumference in cm</rdfs:label>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <rdfs:label>Head circumference (cm)</rdfs:label>
     <obo:GATES_0000007>hcircm</obo:GATES_0000007>
@@ -2206,30 +2190,16 @@
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010519">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
+    <obo:EUPATH_0000755>ill</obo:EUPATH_0000755>
     <rdfs:label>Any illness indicated</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>Illness variable indicates whether diarrhea episode, cough, fever, or vomiting was present on that day. (1 if dprev3==1, safcough==1, saffev==1, safvom==1) 1=yes; 0 = no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Illness categorization</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>ill</obo:EUPATH_0000755>
-  </owl:Class>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000661">
     <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000014"/>
     </rdfs:subClassOf>
-    <obo:GATES_0000007>bmi</obo:GATES_0000007>
-    <obo:GATES_0000012>derived variable from column WTG and HTCM</obo:GATES_0000012>
-    <rdfs:label>BMI (kg/m**2)</rdfs:label>
-    <obo:GATES_0000213>variable</obo:GATES_0000213>
-    <obo:GATES_0000004>ALL</obo:GATES_0000004>
-    <obo:GATES_0000003>num</obo:GATES_0000003>
-    <obo:GATES_0000001>BMI</obo:GATES_0000001>
-    <obo:GATES_0000006>bmi</obo:GATES_0000006>
-    <obo:GATES_0000010>10,000 * WTKG / HTCM**2</obo:GATES_0000010>
-    <obo:GATES_0000005>bmi</obo:GATES_0000005>
-    <obo:GATES_0000002>BMI (kg/m**2)</obo:GATES_0000002>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010604">
     <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
@@ -2541,9 +2511,7 @@
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000658">
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
-    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010988"/>
     <rdfs:label xml:lang="en">Enrollment measurement</rdfs:label>
     <obo:GATES_0000213>category</obo:GATES_0000213>
   </owl:Class>
@@ -3323,18 +3291,6 @@
     <MALED1:hasDescription2>Date of birth</MALED1:hasDescription2>
     <obo:EUPATH_0000755>dob</obo:EUPATH_0000755>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000710">
-    <rdfs:label>MUAC for age z-score</rdfs:label>
-    <obo:GATES_0000010>Calculated using the WHO macro (igrowup_standard.sas)</obo:GATES_0000010>
-    <obo:GATES_0000004>GEMS</obo:GATES_0000004>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-    <obo:GATES_0000213>variable</obo:GATES_0000213>
-    <obo:GATES_0000001>MUAZ</obo:GATES_0000001>
-    <obo:GATES_0000003>num</obo:GATES_0000003>
-    <obo:GATES_0000006>muaz</obo:GATES_0000006>
-    <obo:GATES_0000005>muaz</obo:GATES_0000005>
-    <obo:GATES_0000002>MUAC for age z-score</obo:GATES_0000002>
-  </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010801">
     <rdfs:label>Schistosoma</rdfs:label>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
@@ -3515,10 +3471,10 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010480">
     <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000746"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
     <MALED1:hasSource>calculated</MALED1:hasSource>
+    <rdfs:label>Cumulative sum diarrhea days</rdfs:label>
     <MALED1:hasDescription2>Cumulative sum of diarrhea days (dprev3) since beginning of follow up</MALED1:hasDescription2>
-    <rdfs:label>Cumulative days of diarrhea</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:hasNotes>new (child of EUPATH_0000742?)</MALED1:hasNotes>
     <obo:EUPATH_0000755>csumdiar</obo:EUPATH_0000755>
@@ -3797,9 +3753,7 @@
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <obo:GATES_0000001>AGEDAYS</obo:GATES_0000001>
     <obo:GATES_0000010>Derived as Date of Visit - Date of Birth + 1.  Else, if reported, then round to an integer.  Else if age in months is given, then AGEDAYS=AGEMOS*(365.25/12)</obo:GATES_0000010>
-    <rdfs:label>Age at observation (days)</rdfs:label>
     <obo:GATES_0000002>Age since birth at examination (days)</obo:GATES_0000002>
-    <rdfs:label>Age or age since birth in days</rdfs:label>
     <MALED1:hasSource>CAF/MOA/MOB</MALED1:hasSource>
     <MALED1:hasJieNotes>As Brianna said, observation != visit, if so, we may consider to add observation date. CC: Done--see label. May consider giving this a EUPATH IRI.</MALED1:hasJieNotes>
     <obo:GATES_0000004>ALL:  from LB, ANTHRO, CE, DAILY, GF, MB, and QS</obo:GATES_0000004>
@@ -3809,6 +3763,7 @@
     <MALED1:hasDescription2>Date</MALED1:hasDescription2>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <obo:GATES_0000005>agedays</obo:GATES_0000005>
+    <rdfs:label>Age (days)</rdfs:label>
     <MALED1:hasDescription2>Age in days (continuous numeric)</MALED1:hasDescription2>
     <obo:EUPATH_0000755>agedays</obo:EUPATH_0000755>
   </owl:Class>
@@ -4138,14 +4093,16 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <obo:EUPATH_0000755>ls_sc</obo:EUPATH_0000755>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010484">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
-    <rdfs:label>entrydiar</rdfs:label>
+    <rdfs:label>Initial date illness surveillance</rdfs:label>
+    <obo:EUPATH_0000755>entrydiar</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>Date at first follow up for diarrhea</MALED1:hasDescription2>
     <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>entrydiar</obo:EUPATH_0000755>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010581">
     <MALED1:hasSource>FVF</MALED1:hasSource>
@@ -4315,17 +4272,6 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
       <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010993"/>
     </rdfs:subClassOf>
     <MALED1:belongsToCategory>microbiology testing</MALED1:belongsToCategory>
-  </owl:Class>
-  <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000705">
-    <obo:GATES_0000006>muaccm</obo:GATES_0000006>
-    <obo:GATES_0000004>GEMS</obo:GATES_0000004>
-    <rdfs:label>Mid upper-arm circumference (cm)</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-    <obo:GATES_0000213>variable</obo:GATES_0000213>
-    <obo:GATES_0000001>MUACCM</obo:GATES_0000001>
-    <obo:GATES_0000003>num</obo:GATES_0000003>
-    <obo:GATES_0000002>Mid upper-arm circumference (cm)</obo:GATES_0000002>
-    <obo:GATES_0000005>muaccm</obo:GATES_0000005>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010471">
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
@@ -4596,7 +4542,6 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <MALED1:hasDescription2>Length in cm</MALED1:hasDescription2>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <obo:GATES_0000002>GEMS_Standing height (cm) or Recumbent length (cm) / MAL-ED_Recumbent length (cm)</obo:GATES_0000002>
-    <rdfs:label>recumbent length or height measurement datum in cm</rdfs:label>
     <obo:GATES_0000213>variable</obo:GATES_0000213>
     <obo:EUPATH_0000755>length</obo:EUPATH_0000755>
     <obo:GATES_0000004>ALL</obo:GATES_0000004>
@@ -4608,14 +4553,16 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     <rdfs:label xml:lang="en">Antibiotic administration</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010485">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
-    <rdfs:label>Last diarrheal follow-up, date</rdfs:label>
+    <rdfs:label>Final date illness surveillance</rdfs:label>
+    <obo:EUPATH_0000755>exitdiar</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>Date at last follow up for diarrhea</MALED1:hasDescription2>
     <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>exitdiar</obo:EUPATH_0000755>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000707">
     <obo:GATES_0000006>mhouseh</obo:GATES_0000006>
@@ -4801,13 +4748,13 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010488">
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
-    <rdfs:label>Less than normal appetite, maternal report</rdfs:label>
+    <obo:EUPATH_0000755>maxsafint</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>0 if appetite was normal during episode, 1 if mother reported 'less than normal' appetite</MALED1:hasDescription2>
     <MALED1:hasDescription1>Diarrhea episode characteristics</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>maxsafint</obo:EUPATH_0000755>
+    <rdfs:label>Appetite</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010476">
     <MALED1:hasSource>calculated</MALED1:hasSource>
@@ -4985,13 +4932,13 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010487">
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
-    <rdfs:label>Blood in stool, maternal report</rdfs:label>
+    <obo:EUPATH_0000755>maxb</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription2>1 if blood was reported by the mother at any time during this episode (safblood==1), 0 if no blood was reported during episode</MALED1:hasDescription2>
     <MALED1:hasDescription1>Diarrhea episode characteristics</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>maxb</obo:EUPATH_0000755>
+    <rdfs:label>Blood in stool during episode</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010596">
     <rdfs:label>Cumulative count AATA &amp; AAIC positive</rdfs:label>
@@ -5059,12 +5006,12 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010551">
     <MALED1:hasNotes>property of child, was this stool sample associated with a child who did not complete 2 years of data collection?</MALED1:hasNotes>
     <rdfs:label>Patient lost to follow-up</rdfs:label>
+    <MALED1:toBeDecided>Keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
     <MALED1:belongsToCategory>flag</MALED1:belongsToCategory>
     <MALED1:hasSource>Calculated</MALED1:hasSource>
     <MALED1:hasDescription1>Was this PID lost to follow-up?</MALED1:hasDescription1>
     <obo:EUPATH_0000755>flag_ltf</obo:EUPATH_0000755>
-    <MALED1:toBeDecided>Decision Requested.</MALED1:toBeDecided>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010989"/>
     <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
   </owl:Class>
@@ -5119,13 +5066,13 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010478">
     <MALED1:hasNotes>new (child of EUPATH_0000741?)</MALED1:hasNotes>
     <MALED1:hasSource>calculated</MALED1:hasSource>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
     <MALED1:hasDescription1>General diarrhea data (removes LM induced diarrhea)</MALED1:hasDescription1>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <obo:EUPATH_0000755>csumep</obo:EUPATH_0000755>
     <rdfs:label>Cumulative sum diarrhea episodes</rdfs:label>
     <MALED1:hasDescription2>Cumulative sum of diarrhea episodes (dint3) since beginning of follow up</MALED1:hasDescription2>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000746"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010587">
     <rdfs:label>Number of tests on stool sample</rdfs:label>
@@ -5657,14 +5604,16 @@ The result is in Column 'gfstresc', value is 'Yes' or 'No'. For consistency, we'
     <obo:GATES_0000003>num</obo:GATES_0000003>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010540">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
+    <obo:EUPATH_0000755>safind</obo:EUPATH_0000755>
     <rdfs:label>Indrawing, fieldworker observed</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Field worker observation of indrawing, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safind</obo:EUPATH_0000755>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010980"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010661">
     <rdfs:label>Cumulative count aaiC, first diarrhea</rdfs:label>
@@ -6405,7 +6354,7 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010533">
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
     <MALED1:hasNotes>property of day of observation: number of loose stools on that day</MALED1:hasNotes>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
     <MALED1:hasDescription2>Number of loose stools</MALED1:hasDescription2>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <rdfs:label># of loose stools in day</rdfs:label>
@@ -6586,19 +6535,17 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010980">
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-    <rdfs:label>ALRI episode</rdfs:label>
+    <rdfs:label>Respiratory illness</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010532">
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
-    </rdfs:subClassOf>
-    <rdfs:label>Diarrhea, maternal report SAF</rdfs:label>
+    <rdfs:label>Diarrhea</rdfs:label>
+    <obo:EUPATH_0000755>safdiar</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal assessment of diarrhea. This was not used in the identification of diarrhea, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safdiar</obo:EUPATH_0000755>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010883">
     <rdfs:subClassOf>
@@ -6842,13 +6789,13 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010511">
     <MALED1:hasDescription2>Cumulative number of days when ALRI was identified</MALED1:hasDescription2>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
-    <rdfs:label>Cumulative days of ALRI</rdfs:label>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <obo:EUPATH_0000755>cumalri</obo:EUPATH_0000755>
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010991"/>
     <MALED1:hasSource>calculated</MALED1:hasSource>
     <MALED1:hasDescription1>ALRI</MALED1:hasDescription1>
+    <rdfs:label>Cumulative sum ALRI days</rdfs:label>
     <MALED1:hasNotes>same concepts as diarrhea but with Acute Lower Respiratory Infection</MALED1:hasNotes>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010980"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010632">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
@@ -6863,7 +6810,7 @@ Values in Column 'sstest' are organized by aligning with ICEMR categories under 
     <MALED1:hasNotes>From BDF form. Information comes from first collected sample, if there was a recollection sample. "Salmonella" is the variable name for bdfsalmtype collapsed into a yes/no variable.</MALED1:hasNotes>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010983">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010989"/>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
     <rdfs:label>Pathogen-related characteristics</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010753">
@@ -6990,14 +6937,14 @@ NA=Not applicable"</MALED1:hasDescription2>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010535">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010992"/>
-    <rdfs:label>Deydration, maternal report SAF</rdfs:label>
+    <rdfs:label>Deydration</rdfs:label>
+    <obo:EUPATH_0000755>safdehyd</obo:EUPATH_0000755>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Maternal report of dehydration (None=0, Some=1, Severe=2)</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safdehyd</obo:EUPATH_0000755>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000670"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010656">
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
@@ -7064,9 +7011,9 @@ NA=Not applicable"</MALED1:hasDescription2>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010510">
     <MALED1:hasDescription1>ALRI</MALED1:hasDescription1>
+    <rdfs:label>ALRI indicated</rdfs:label>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010980"/>
-    <rdfs:label>ALRI episode indicated</rdfs:label>
     <MALED1:hasNotes>same concepts as diarrhea but with Acute Lower Respiratory Infection</MALED1:hasNotes>
     <MALED1:hasDescription2>1 for all days in episode (all days with "ALRI")</MALED1:hasDescription2>
     <obo:EUPATH_0000755>aprev3</obo:EUPATH_0000755>
@@ -7261,14 +7208,14 @@ NA=Not applicable"</MALED1:hasDescription2>
     <MALED1:hasDescription1>Was bfpA detected?</MALED1:hasDescription1>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010546">
-    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+    <obo:EUPATH_0000755>safref</obo:EUPATH_0000755>
     <rdfs:label>Referal made by fieldworker, SAF</rdfs:label>
     <MALED1:toBeDecided>keep</MALED1:toBeDecided>
     <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
     <MALED1:hasSource>SAF</MALED1:hasSource>
     <MALED1:hasDescription2>Referral made by field worker, 1=yes, 0=no</MALED1:hasDescription2>
     <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
-    <obo:EUPATH_0000755>safref</obo:EUPATH_0000755>
+    <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
   </owl:Class>
   <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/GATES_0000002">
     <rdfs:label>HBDG Label</rdfs:label>
