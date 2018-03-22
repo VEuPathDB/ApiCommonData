@@ -205,6 +205,7 @@ sub run {
 
 sub undoTables {
   return('ApiDB.NAFeaturePhenotype',
+         'Study.STUDYLINK',
          'Study.ProtocolAppNode',
          'Study.Study'
       );
