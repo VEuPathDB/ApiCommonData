@@ -74,6 +74,9 @@ create index dots.ns_submod_ix
 create index dots.as_submod_ix
   on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id);
 
+create index char_info_ix
+  on study.Characteristic
+     (protocol_app_node_id, qualifier_id, unit_id, table_id, characteristic_id, ontology_term_id, value);
 
 create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id);
 create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id);
