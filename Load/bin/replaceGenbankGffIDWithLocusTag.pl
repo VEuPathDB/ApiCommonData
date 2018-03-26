@@ -15,7 +15,7 @@ while (<GFF>) {
   next if ($_ =~ /^#/);
   my @items = split (/\t/, $_);
 
-  if ($items[2] eq "gene") {
+  if ($items[2] eq "gene" || $items[2] eq "pseudogene") {
     if ($items[8] =~ /ID=(\S+?)\;.+\;locus_tag=(\S+?)(\;|;$|$)/) {
       my $cGene = $1;
       $cLocusId{$cGene} = $2;
