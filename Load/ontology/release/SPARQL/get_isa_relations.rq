@@ -1,0 +1,16 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?sid ?psid
+WHERE { 
+	?cls a owl:Class .
+	?cls obo:EUPATH_0000800 ?source_id .
+	OPTIONAL {
+		?cls rdfs:subClassOf ?p_cls .
+		?p_cls obo:EUPATH_0000800 ?p_source_id .
+	}
+	BIND (str(?source_id) AS ?sid) .
+	BIND (IF(BOUND(?p_source_id), str(?p_source_id), "Thing") AS ?psid) .
+}
+ORDER BY DESC (?psid)
