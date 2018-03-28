@@ -135,6 +135,9 @@ sub preprocess {
 		    ($note =~ /frameshift/i || $note =~ /frame shift/i || $note =~ /intron/i ) ) {
 		    $geneFeature->add_tag_value("pseudo", "") if (!$geneFeature->has_tag("pseudo") );
 		  }
+		  if ($note =~ /pseudo$/ || $note =~ /frameshift$/) {
+		    $geneFeature->add_tag_value("pseudo", "") if (!$geneFeature->has_tag("pseudo") );
+		  }
 		}
 
 #		print STDERR Dumper $geneFeature;   # this can cause huge log files
