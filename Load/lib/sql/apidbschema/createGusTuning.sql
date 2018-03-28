@@ -63,45 +63,56 @@ create index dots.rfe_rnaexix
 -- for the tuning manager, which decides whether an input table has changed
 -- by finding its record count and max(modification_date)
 create index dots.nf_submod_ix
-  on dots.NaFeatureImp (subclass_view, modification_date, na_feature_id);
+  on dots.NaFeatureImp (subclass_view, modification_date, na_feature_id)
+  tablespace indx;
 
 create index dots.af_submod_ix
-  on dots.AaFeatureImp (subclass_view, modification_date, aa_feature_id);
+  on dots.AaFeatureImp (subclass_view, modification_date, aa_feature_id)
+  tablespace indx;
 
 create index dots.ns_submod_ix
-  on dots.NaSequenceImp (subclass_view, modification_date, na_sequence_id);
+  on dots.NaSequenceImp (subclass_view, modification_date, na_sequence_id)
+  tablespace indx;
 
 create index dots.as_submod_ix
-  on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id);
+  on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id)
+  tablespace indx;
 
 create index char_info_ix
   on study.Characteristic
-     (protocol_app_node_id, qualifier_id, unit_id, table_id, characteristic_id, ontology_term_id, value);
+     (protocol_app_node_id, qualifier_id, unit_id, table_id, characteristic_id, ontology_term_id, value)
+  tablespace indx;
 
-create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id);
-create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id);
-create index dots.ba_mod_ix on dots.blatalignment (modification_date, blat_alignment_id);
-create index dots.drnf_mod_ix on dots.dbrefaafeature (modification_date, db_ref_aa_feature_id);
-create index dots.draf_mod_ix on dots.dbrefnafeature (modification_date, db_ref_na_feature_id);
-create index dots.est_mod_ix on dots.est (modification_date, est_id);
-create index dots.gi_mod_ix on dots.geneinstance (modification_date, gene_instance_id);
-create index dots.ga_mod_ix on dots.goassociation (modification_date, go_association_id);
-create index dots.gai_mod_ix on dots.goassociationinstance (modification_date, go_association_instance_id);
-create index dots.gaec_mod_ix on dots.goassocinstevidcode (modification_date, go_assoc_inst_evid_code_id);
-create index dots.nfc_mod_ix on dots.nafeaturecomment (modification_date, na_feature_comment_id);
-create index dots.nfng_mod_ix on dots.nafeaturenagene (modification_date, na_feature_na_gene_id);
-create index dots.ng_mod_ix on dots.nagene (modification_date, na_gene_id);
-create index dots.nal_mod_ix on dots.nalocation (modification_date, na_location_id);
-create index dots.sp_mod_ix on dots.sequencepiece (modification_date, sequence_piece_id);
-create index dots.ssg_mod_ix on dots.sequencesequencegroup (modification_date, sequence_sequence_group_id);
-create index dots.sim_mod_ix on dots.similarity (modification_date, similarity_id);
-create index dots.simspan_mod_ix on dots.similarityspan (modification_date, similarity_span_id);
+create index pan_info_ix
+  on study.ProtocolAppNode
+     (protocol_app_node_id, isa_type, type_id, name,
+      external_database_release_id, source_id, subtype_id, node_order_num)
+  tablespace indx;
 
-create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
---create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
---create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
-create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
-create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
+create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id) tablespace indx;
+create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id) tablespace indx;
+create index dots.ba_mod_ix on dots.blatalignment (modification_date, blat_alignment_id) tablespace indx;
+create index dots.drnf_mod_ix on dots.dbrefaafeature (modification_date, db_ref_aa_feature_id) tablespace indx;
+create index dots.draf_mod_ix on dots.dbrefnafeature (modification_date, db_ref_na_feature_id) tablespace indx;
+create index dots.est_mod_ix on dots.est (modification_date, est_id) tablespace indx;
+create index dots.gi_mod_ix on dots.geneinstance (modification_date, gene_instance_id) tablespace indx;
+create index dots.ga_mod_ix on dots.goassociation (modification_date, go_association_id) tablespace indx;
+create index dots.gai_mod_ix on dots.goassociationinstance (modification_date, go_association_instance_id) tablespace indx;
+create index dots.gaec_mod_ix on dots.goassocinstevidcode (modification_date, go_assoc_inst_evid_code_id) tablespace indx;
+create index dots.nfc_mod_ix on dots.nafeaturecomment (modification_date, na_feature_comment_id) tablespace indx;
+create index dots.nfng_mod_ix on dots.nafeaturenagene (modification_date, na_feature_na_gene_id) tablespace indx;
+create index dots.ng_mod_ix on dots.nagene (modification_date, na_gene_id) tablespace indx;
+create index dots.nal_mod_ix on dots.nalocation (modification_date, na_location_id) tablespace indx;
+create index dots.sp_mod_ix on dots.sequencepiece (modification_date, sequence_piece_id) tablespace indx;
+create index dots.ssg_mod_ix on dots.sequencesequencegroup (modification_date, sequence_sequence_group_id) tablespace indx;
+create index dots.sim_mod_ix on dots.similarity (modification_date, similarity_id) tablespace indx;
+create index dots.simspan_mod_ix on dots.similarityspan (modification_date, similarity_span_id) tablespace indx;
+
+create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id) tablespace indx;
+--create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id) tablespace indx;
+--create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id) tablespace indx;
+create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id) tablespace indx;
+create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id) tablespace indx;
 
 
 -- for OrthoMCL:
@@ -250,10 +261,10 @@ create index dots.SnpDiff_ix on dots.NaFeatureImp
 -- CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
 --     indextype IS ctxsys.ctxcat;
 
--- create index sres.DbRefLowerId on sres.DbRef (external_database_release_id, lower(primary_identifier), db_ref_id);
--- create index sres.DbRefLowerId2 on sres.DbRef (external_database_release_id, lower(secondary_identifier), db_ref_id);
+-- create index sres.DbRefLowerId on sres.DbRef (external_database_release_id, lower(primary_identifier), db_ref_id) tablespace indx;
+-- create index sres.DbRefLowerId2 on sres.DbRef (external_database_release_id, lower(secondary_identifier), db_ref_id) tablespace indx;
 
--- create index dots.orthomcl_id_ix on dots.AaSequenceImp(subclass_view, string1, aa_sequence_id);
+-- create index dots.orthomcl_id_ix on dots.AaSequenceImp(subclass_view, string1, aa_sequence_id) tablespace indx;
 
 
 -- add this to prevent race condition in which we write duplicate rows
@@ -351,7 +362,7 @@ create table RESULTS.REPORTERINTENSITY
   );
 
 create index results.rptrintsty_revix0
-  on results.ReporterIntensity (protocol_app_node_id, reporter_intensity_id);
+  on results.ReporterIntensity (protocol_app_node_id, reporter_intensity_id) tablespace indx;
 
 create sequence RESULTS.REPORTERINTENSITY_SQ;
 
@@ -577,61 +588,61 @@ CREATE INDEX results.alphad_revix1 ON results.AlphaDiversity (protocol_app_node_
 -- unique constraints in the Results schema
 
 create unique index results.uqOtuAbundance
-      on results.OtuAbundance (na_sequence_id, protocol_app_node_id);
+      on results.OtuAbundance (na_sequence_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqCompoundMassSpec
-      on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id);
+      on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqEditingEvent
-      on results.EditingEvent (na_sequence_id, event_start, event_end, protocol_app_node_id);
+      on results.EditingEvent (na_sequence_id, event_start, event_end, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqFamilyDiffResult
-      on results.FamilyDiffResult (family_id, protocol_app_node_id);
+      on results.FamilyDiffResult (family_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqFamilyExpression
-      on results.FamilyExpression (family_id, protocol_app_node_id);
+      on results.FamilyExpression (family_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqGeneDiffResult
-      on results.GeneDiffResult (gene_id, protocol_app_node_id);
+      on results.GeneDiffResult (gene_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqGeneExpression
-      on results.GeneExpression (gene_id, protocol_app_node_id);
+      on results.GeneExpression (gene_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqGeneSimilarity
-      on results.GeneSimilarity (gene1_id, gene2_id, protocol_app_node_id);
+      on results.GeneSimilarity (gene1_id, gene2_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqNAFeatureDiffResult
-      on results.NAFeatureDiffResult (na_feature_id, protocol_app_node_id);
+      on results.NAFeatureDiffResult (na_feature_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqNaFeatureExpression
-      on results.NaFeatureExpression (na_feature_id, protocol_app_node_id);
+      on results.NaFeatureExpression (na_feature_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqNaFeatureHostResponse
-      on results.NaFeatureHostResponse (na_feature_id, protocol_app_node_id);
+      on results.NaFeatureHostResponse (na_feature_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqNaFeaturePhenotypeComp
-      on results.NaFeaturePhenotypeComp (na_feature_id, phenotype_composition_id, protocol_app_node_id);
+      on results.NaFeaturePhenotypeComp (na_feature_id, phenotype_composition_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqReporterDiffResult
-      on results.ReporterDiffResult (reporter_id, protocol_app_node_id);
+      on results.ReporterDiffResult (reporter_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqReporterExpression
-      on results.ReporterExpression (reporter_id, protocol_app_node_id);
+      on results.ReporterExpression (reporter_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqReporterIntensity
-      on results.ReporterIntensity (reporter_id, protocol_app_node_id);
+      on results.ReporterIntensity (reporter_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqRnaDiffResult
-      on results.RnaDiffResult (rna_id, protocol_app_node_id);
+      on results.RnaDiffResult (rna_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqRnaExpression
-      on results.RnaExpression (rna_id, protocol_app_node_id);
+      on results.RnaExpression (rna_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqSegmentDiffResult
-      on results.SegmentDiffResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
+      on results.SegmentDiffResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqSegmentResult
-      on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id);
+      on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id) tablespace indx;
 
 --------------------------------------------------------------------------------
 -- needed to run pivot() function on NaFeatureExpression
