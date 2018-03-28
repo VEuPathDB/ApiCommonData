@@ -2,15 +2,13 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT distinct ?sid ?label ?def
+SELECT distinct ?entity ?label ?def
 WHERE { 
 	?entity a owl:Class .
         ?entity rdfs:label ?slabel. 
-	?entity obo:EUPATH_0000800 ?source_id .
 	OPTIONAL {
 		?entity obo:IAO_0000115 ?definition .
 	}
 	BIND (str(?slabel) AS ?label) .
-	BIND (str(?source_id) AS ?sid) .
 	BIND (str(?definition) AS ?def) .
 }

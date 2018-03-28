@@ -1,11 +1,9 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT distinct ?sid ?vars
+SELECT distinct ?entity ?vars
 WHERE { 
 	?entity a owl:Class .
         ?entity obo:EUPATH_0000755 ?column. 
-	?entity obo:EUPATH_0000800 ?source_id .
 	BIND (str(?column) AS ?vars) .
-	BIND (str(?source_id) AS ?sid)
 }
