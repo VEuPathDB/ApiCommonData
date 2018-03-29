@@ -10,15 +10,18 @@ unless (0 < @ARGV){
     "Usage: getColumnNumberFromHeaderName.pl [-v|values] [-e|exact] [column_header] [file]",
     "\t-e exact match (default is not case-sensitive and allows partial match)",
     "\t-v get unique values in this column with count for each value (implies -e even if it is not specified)",
+    "\t-d delimiter (default is comma)",
     "")));
   exit;
 }
 
-my ($values,$exact);
+my ($values,$exact,$delim);
 
-GetOptions('v|values' => \$values, 'e|exact' => \$exact);
+GetOptions('v|values' => \$values, 'e|exact' => \$exact, 'd|delim=s', \$delim);
 
 $exact = 1 if $values;
+
+$delim ||= ',';
 
 my($headerName, @files) = @ARGV;
 
@@ -32,7 +35,7 @@ foreach my $filename (@files){
   chomp $firstline;
   
   
-  my @headers = split(/\t|,/, $firstline);
+  my @headers = split(/$delim/, $firstline);
   
   my $colNum;
   
@@ -53,7 +56,7 @@ foreach my $filename (@files){
   if( $values && defined($colNum)){
     my %vals;
     while(my $line = <FILE>){
-      my @data = split(/\t|,/, $line);
+      my @data = split(/$delim/, $line);
       $vals{ $data[$colNum] } ||= 0;
       $vals{ $data[$colNum] }++;
     }
