@@ -47,7 +47,7 @@ die "Must provide either an organismAbbrev on command line or parent taxon IDs o
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
 my $db      = "nuccore";
-my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
+my $utils = "https://www.ncbi.nlm.nih.gov/entrez/eutils";
 my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 
 # get isolate GIs for our list of taxa (and their child taxa)
@@ -185,8 +185,9 @@ SQL
 
   my @queryStrings;
   foreach my $batch (@$ncbiTaxIdsBatches) {
-      my @queries = map {"txid${_}[Organism:exp] AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes OR (chromosome[DEFINITION] AND complete+sequence[DEFINITION]))))"} @$batch;
-      my $queryString = join("OR ", @queries);
+      my @queries = map {"txid${_}[Organism:exp] "} @$batch;
+      my $queryString = "(".join("OR ", @queries).")";
+      $queryString .= "AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes OR (chromosome[DEFINITION] AND complete+sequence[DEFINITION]))))";
       push(@queryStrings,$queryString);
   }
   return @queryStrings;
