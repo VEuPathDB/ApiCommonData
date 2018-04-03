@@ -10,18 +10,19 @@ unless (0 < @ARGV){
     "Usage: getColumnNumberFromHeaderName.pl [-v|values] [-e|exact] [column_header] [file]",
     "\t-e exact match (default is not case-sensitive and allows partial match)",
     "\t-v get unique values in this column with count for each value (implies -e even if it is not specified)",
-    "\t-d delimiter (default is comma)",
+    "\t-t tab delimiter (default is comma)",
     "")));
   exit;
 }
 
-my ($values,$exact,$delim);
+my ($values,$exact,$tab,$delim);
 
-GetOptions('v|values' => \$values, 'e|exact' => \$exact, 'd|delim=s', \$delim);
+GetOptions('v|values' => \$values, 'e|exact' => \$exact, 't|tab', \$tab);
 
 $exact = 1 if $values;
 
-$delim ||= ',';
+$delim = $tab ? "\t" : ",";
+
 
 my($headerName, @files) = @ARGV;
 
