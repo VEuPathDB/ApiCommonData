@@ -12,6 +12,7 @@ use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
 use Bio::SeqFeature::Tools::Unflattener;
 use ApiCommonData::Load::Unflattener;
+use ApiCommonData::Load::Split;
 
 
 #input:
