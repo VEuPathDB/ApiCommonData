@@ -210,12 +210,12 @@ CREATE TABLE apidb.TranscriptLocation (
 
 CREATE INDEX apidb.transcriptloc_ix1
 ON apidb.TranscriptLocation (na_sequence_id, start_min, end_max, is_reversed,
-                          sequence_ontology_id, na_feature_id)
+                          sequence_ontology_id, na_feature_id, is_top_level)
 TABLESPACE INDX;
 
 CREATE INDEX apidb.transcriptloc_ix2
 ON apidb.TranscriptLocation (na_feature_id, na_sequence_id, start_min, end_max,
-                          is_reversed, sequence_ontology_id)
+                          is_reversed, sequence_ontology_id, is_top_level)
 TABLESPACE INDX;
 
 CREATE INDEX apidb.transcriptloc_revix1
