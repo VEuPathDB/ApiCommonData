@@ -1,0 +1,131 @@
+#!/usr/bin/perl
+
+## a script to split GeneDB bin sequence into individual contig
+
+use strict;
+use Getopt::Long;
+
+my ($gffFile, $fastaFile, $binSeqName, $tagName, $help);
+
+&GetOptions('gff3File=s' => \$gffFile,
+            'fastaFile=s' => \$fastaFile,
+            'binSeqName=s' => \$binSeqName,
+            'tagName=s' => \$tagName,
+            'help|h' => \$help,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $gffFile && $fastaFile && $binSeqName && $tagName);
+
+my $loc = "location.txt";
+open (LOC, ">$loc") || die "can not open file to write.\n";
+
+my (%ctgIDs, %ctgStarts, %ctgEnds, %ctgOrts);
+open (IN, $gffFile) || die "can not open gffFile to read.\n";
+while (<IN>) {
+  my @items = split(/\t/, $_);
+  if ($items[2] eq $tagName) {
+    my $id;
+    if ($items[8] =~ /ID=(.+?)\;/) {
+      $id = $1;
+      $id =~ s/\:/\_/g;
+    }
+    if ($id) {
+      print LOC "$id\t$items[3]\t$items[4]\t$items[7]\n";
+
+      $ctgIDs{$id} = $id;
+      $ctgStarts{$id} = $items[3];
+      $ctgEnds{$id} = $items[4];
+      $ctgOrts{$id} = $items[7];
+    }
+  }
+}
+close IN;
+close LOC;
+
+my $fastaOutFile = $fastaFile . "_split.fa";
+open (FOUT, ">$fastaOutFile") || die "can not open fasta outFile to read\n";
+
+my $binSeq;
+my $ifSkip = 1;
+open (FS, $fastaFile) || die "can not open fastaFile file to read.\n";
+while (<FS>) {
+  chomp;
+  if ($_ =~ /^>/) {
+    if ($_ =~ /^>$binSeqName/) {
+      $ifSkip = 0;
+    } else {
+      $ifSkip = 1;
+    }
+  }
+  if ($_ !~ /^>/ && $ifSkip == 0) {
+    $binSeq .= $_;
+  }
+
+  ## print seq that are not bin seq
+  print FOUT "$_\n" if ($ifSkip == 1);
+}
+
+close FS;
+
+
+foreach my $k (sort keys %ctgIDs) {
+  my $subSeq = substr($binSeq, $ctgStarts{$k}-1, $ctgEnds{$k}-$ctgStarts{$k}+1);
+  print FOUT ">$ctgIDs{$k} $ctgStarts{$k}\-$ctgEnds{$k}\n$subSeq\n";
+}
+close FOUT;
+
+
+my $gffOutFile = $gffFile . "_split.gff";
+open (GOUT, ">$gffOutFile") || die "can not open gff file to read\n";
+
+open (GFF, $gffFile) || die "can not open gffFile to read.\n";
+while (<GFF>) {
+  chomp;
+  my @items = split(/\t/, $_);
+  if ($items[0] ne $binSeqName) {
+    print GOUT "$_\n";
+  } else {
+    if ($items[2] eq $tagName || $items[2] eq 'gap') {
+      next;
+    }
+
+    foreach my $k(sort keys %ctgIDs) {
+      if ($items[3] >= $ctgStarts{$k} && $items[3] <= $ctgEnds{$k} ) {
+	my $start = $items[3] - $ctgStarts{$k} + 1;
+	my $end = $items[4] - $ctgStarts{$k} +1;
+	if ($start && $end) {
+	  print GOUT "$ctgIDs{$k}\t$items[1]\t$items[2]\t$start\t$end\t$items[5]\t$items[6]\t$items[7]\t$items[8]\n";
+	} else {
+	  print STDERR "something wrong at the line\n$_\n";
+	}
+      }
+    }
+  }
+}
+close GFF;
+close GOUT;
+
+##########
+sub generateGff3Column {
+  my $array = shift;
+  my $line;
+  foreach my $i (0..$#{$array}) {
+    $line .= ($i == 8) ? "$array->[$i]\n" : "$array->[$i]\t";
+  }
+  return $line;
+}
+
+
+sub usage {
+  die
+"
+Usage: splitBinSeqBasedOnContigTag --gff3File PvivaxP01.noseq.gff3 --fastaFile PvivaxP01.genome.fasta --binSeqName PvP01_00_v1 --tagName contig
+
+where
+  --gff3File:  required, the gff3 file that has to split the bin sequence
+  --fastaFile: required, the fasta file that has to split the bin sequence
+  --binSeqName: required, the bin sequence ID, eg. PvP01_00_v1
+  --tagName:  required, the tag name in the gff3 file that have contig info, eg. contig
+";
+}
