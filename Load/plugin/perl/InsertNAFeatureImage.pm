@@ -156,7 +156,7 @@ sub run {
       $naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
     }
 
-    print "could not find $sourceId\n" and next unless $naFeatureId;
+    $self->log("Could not find $sourceId\n") and next unless $naFeatureId;
 
     my $naFeatImage = GUS::Model::ApiDB::NAFeatureImage->new({'na_feature_id' => $naFeatureId, 
                                                               'image_uri'     => $img_uri,
