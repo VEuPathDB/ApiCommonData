@@ -51,6 +51,7 @@ foreach my $filename (@files){
     if($match) {
       $colNum = $i;
       printf("Found \"%s\" at column %d\n", $headers[$i],$colNum + 1);
+      last;
     }
   }
   
@@ -59,6 +60,7 @@ foreach my $filename (@files){
     while(my $line = <FILE>){
       chomp $line;
       my @data = split(/$delim/, $line);
+      next unless defined($data[$colNum]);
       $vals{ $data[$colNum] } ||= 0;
       $vals{ $data[$colNum] }++;
     }
