@@ -57,6 +57,7 @@ foreach my $filename (@files){
   if( $values && defined($colNum)){
     my %vals;
     while(my $line = <FILE>){
+      chomp $line;
       my @data = split(/$delim/, $line);
       $vals{ $data[$colNum] } ||= 0;
       $vals{ $data[$colNum] }++;
