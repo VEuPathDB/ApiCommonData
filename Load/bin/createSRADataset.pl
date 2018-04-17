@@ -20,7 +20,7 @@ This script creates dataset xml and analsysiConfig.xml for rnaSeq and HTS_SNPs f
 It takes SRA study id, organism abbreviation and dataset name as input. 
 For instance,
 
-%>createSRADataset.pl --study SRP106638 --organism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi --profileset_name "M mulatta infected with P cynomolgi over 100 days"
+%>createRNASeqDatasetFromSRA.pl --study SRP106638 --organism_abbrev mmul17573 --dataset_name Galinski_Mmulatta_Infected_with_Pcynomolgi --profileset_name "M mulatta infected with P cynomolgi over 100 days"
 
 Output will be Galinski_Mmulatta_Infected_with_Pcynomolgi.xml and analsysiConfig.xml
 EOL
@@ -76,8 +76,13 @@ $sth  = $dbh->prepare($stmt);
 $rv   = $sth->execute or die $DBI::errstr;
 
 while(my @row = $sth->fetchrow_array()) {
-  my $key = $row[0];
-  $hash{$key} = 1;   # store libary layout as a hash key
+  my $layout = $row[0];
+  if($layout =~ /PAIRED/i) {
+    $layout = 'PAIRED';
+  } elsif($layout =~ /SINGLE/i) {
+    $layout = 'SINGLE';
+  }
+  $hash{$layout} = 1;   # store libary layout as a hash key
 }
 
 my $size = keys %hash;
