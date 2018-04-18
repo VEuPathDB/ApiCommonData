@@ -813,5 +813,28 @@ GRANT execute ON apidb.parse_date TO gus_r;
 GRANT execute ON apidb.parse_date TO gus_w;
 
 -------------------------------------------------------------------------------
+create or replace procedure apidb.delete_by_invocation_id (table_name in varchar2, alg_invoc_list in varchar2)
+is
+
+begin
+  loop
+    execute immediate
+       'delete from ' || table_name
+       || ' where row_alg_invocation_id in ('
+       || alg_invoc_list
+       || ') and rownum <= 100000';
+    exit when sql%rowcount = 0;
+    commit;
+  end loop;
+  commit;
+
+end delete_by_invocation_id;
+/
+
+show errors;
+
+GRANT execute ON apidb.delete_by_invocation_id TO public;
+
+-------------------------------------------------------------------------------
 
 exit
