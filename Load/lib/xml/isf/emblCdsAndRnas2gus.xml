@@ -29,11 +29,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="tblastn_file" ignore="true"/>
     <qualifier name="clustalx_file" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
+    <qualifier name="color" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" ignore="true"/>
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="curation"                  ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
+    <qualifier name="domain"                   ignore="true"/>
     <qualifier name="EC_number"                 ignore="true"/>
     <qualifier name="fasta_file" ignore="true"/>
     <qualifier name="function" ignore="true"/>
@@ -61,6 +63,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_except"   ignore="true"/>  <!-- coded in mRNA -->
     <qualifier name="transl_table"   ignore="true"/>  <!-- coded in mRNA -->
     <qualifier name="translation"   ignore="true"/>  <!-- coded in mRNA -->
+    <qualifier name="partial" ignore="true"/>   <!-- coded in mRNA -->
     <qualifier name="pseudo" ignore="true"/>
   </feature>
 
@@ -76,11 +79,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="clustalx_file"                   ignore="true"/>
     <qualifier name="codon_start"                   ignore="true"/>
     <qualifier name="codon_recognized"          ignore="true"/>
+    <qualifier name="color"                   ignore="true"/>
     <qualifier name="colour"                   ignore="true"/>
     <qualifier name="comment"                   ignore="true"/>
     <qualifier name="controlled_curation"                   ignore="true"/>
     <qualifier name="curation"                   ignore="true"/>
     <qualifier name="db_xref"                   ignore="true"/>
+    <qualifier name="domain"                   ignore="true"/>
     <qualifier name="EC_number"                   ignore="true"/>
     <qualifier name="fasta_file"                   ignore="true"/>
     <qualifier name="gene" ignore="true"/>
@@ -105,6 +110,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" handler="api" method="transcriptTransTable"/>
+    <qualifier name="partial"         handler="api" method="setPartial"/>
     <qualifier name="pseudo"         handler="api" method="setPseudo"/>
   </feature>
 
