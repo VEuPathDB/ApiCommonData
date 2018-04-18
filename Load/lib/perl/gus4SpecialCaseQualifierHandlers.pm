@@ -227,7 +227,7 @@ sub sourceIdAndTranscriptSeqAndTranslatedAAFeat {
 	my $tLength = 0;
 	my @bioperlExons = $translatedAaFeature->{bioperlTranscript}->get_SeqFeatures;
 	my $exonCtr = scalar @bioperlExons;
-	#print STDERR "For $tagValues[0] exonCtr = $exonCtr\n";
+	#print STDERR "For $tagValues[0], aaSourceId = $aaSourceId, exonCtr = $exonCtr\n";
 	my $bioperlStrand = $translatedAaFeature->{bioperlTranscript}->location->strand;
 
 	foreach my $exon (sort {($bioperlStrand == 1) ? ($a->location->start <=> $b->location->start) 
