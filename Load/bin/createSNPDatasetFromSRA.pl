@@ -48,6 +48,8 @@ while(my @row = $sth->fetchrow_array()) {
   my $sample = $row[1];
   my $attr   = $row[2]; # mixed information, such as strain, isolate etc. can be used as sample name in analysisConfig
 
+  $sample =~ s/\s/_/g;
+
 print O1 <<EOL;
   <dataset class="SNPs_HTS_Sample_QuerySRA">
     <prop name="organismAbbrev">$org</prop>
@@ -66,13 +68,14 @@ print O1 <<EOL;
 
 EOL
 
-}
-
-print O1 "</datasets>\n";
-
 system("touch ../final/$sample");
 system("touch ../final/$sample.paired");
 system("touch ../final/$sample.qual");
 system("touch ../final/$sample.qual.paired");
+
+}
+
+print O1 "</datasets>\n";
+
 
 $dbh->disconnect(); 
