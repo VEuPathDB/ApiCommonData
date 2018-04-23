@@ -102,6 +102,7 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
     my $product = ($prodRef->{$tSourceId}) ? ($prodRef->{$tSourceId}) : "unspecified product";
     my $synonym = ($synonRef->{$gSourceId}) ? ($synonRef->{$gSourceId}) : "";
     $synonym =~ s/\,/\|/g;
+    $synonym =~ s/\t+/\|/g;
 
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
 
@@ -109,6 +110,8 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
 
     $source = "EuPathDB" if (!$source);
     $source =~ s/Interpro/InterPro/g;
+    $reference = "GO_REF:0000002" if ($source =~ /InterPro/i);  ## required by Achchuthan
+    $source = "EuPathDB" if ($source =~ /InterPro/);  ## required by Achchuthan
 
     my $withOrFrom;
     if ($evidenceCode eq "IEA") {  ## is $eviCodeParameter if $evidenceCode eq "IEA"
