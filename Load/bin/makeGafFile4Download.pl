@@ -101,8 +101,8 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
     my $geneName = ($nameRef->{$gSourceId}) ? ($nameRef->{$gSourceId}) : "$gSourceId";   ## if not available use gSourceId because it is required
     my $product = ($prodRef->{$tSourceId}) ? ($prodRef->{$tSourceId}) : "unspecified product";
     my $synonym = ($synonRef->{$gSourceId}) ? ($synonRef->{$gSourceId}) : "";
-    $synonym =~ s/\,/\|/g;
-    $synonym =~ s/\t+/\|/g;
+    #$synonym =~ s/\,/\|/g;  ## in the line 148, all goInfos will be assigned to a string separated by "|", so delay the change until subroutine printGoInfo
+    #print STDERR "\$synonym = $synonym;\n" if ($gSourceId eq "TcCLB.509179.100");
 
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
 
@@ -111,6 +111,7 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
     $source = "EuPathDB" if (!$source);
     $source =~ s/Interpro/InterPro/g;
     $reference = "GO_REF:0000002" if ($source =~ /InterPro/i);  ## required by Achchuthan
+                                                                ## https://www.ebi.ac.uk/GOA/InterPro2GO
     $source = "EuPathDB" if ($source =~ /InterPro/);  ## required by Achchuthan
 
     my $withOrFrom;
@@ -312,6 +313,7 @@ sub printGoInfo {
   foreach my $j (0..$#$arrayRef) {
     my @items = split (/\|/, $arrayRef->[$j]);
     foreach my $i (0..16) {
+      $items[10] =~ s/\,/\|/g; ## column 11, synomys needs to be separated by "|"
       ($i == 16) ? $fileH->print ("$items[$i]\n") : $fileH->print ("$items[$i]\t");
     }
   }
