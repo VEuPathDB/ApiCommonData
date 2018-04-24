@@ -50,3 +50,6 @@ primary key (event_id)
 );
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetEvent TO gus_w;
 GRANT select ON ApiDBUserDatasets.UserDatasetEvent TO gus_r;
+
+exit;
+
