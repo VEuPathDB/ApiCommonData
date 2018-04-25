@@ -383,6 +383,9 @@ $stmt->execute();
 
 while (my ($sourceId) = $stmt->fetchrow_array()) {
 
+  my @tafAAFeatureIds = getTafAAFeatureIds($sourceId);
+
+  foreach my $aaFeatureId (@tafAAFeatureIds) {
 #  my %exonLocations;
 my (@exonArrays, @cdsArrays, $cdsCount);
 
@@ -391,7 +394,8 @@ my $sqll = <<SQL;
 from DOTS.TRANSCRIPT t, DOTS.RNAFEATUREEXON rfe, DOTS.EXONFEATURE ef, DOTS.AAFEATUREEXON afe, DOTS.TRANSLATEDAAFEATURE taf, DOTS.NALOCATION nl
 where t.NA_FEATURE_ID=rfe.RNA_FEATURE_ID and rfe.EXON_FEATURE_ID=ef.NA_FEATURE_ID and ef.NA_FEATURE_ID=nl.NA_FEATURE_ID
 and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_FEATURE_ID=afe.AA_FEATURE_ID and afe.EXON_FEATURE_ID=ef.NA_FEATURE_ID
-and t.SOURCE_ID like '$sourceId' 
+--and t.SOURCE_ID like '$sourceId' 
+and taf.AA_FEATURE_ID=$aaFeatureId
 order by rfe.order_number
 SQL
 
@@ -434,6 +438,7 @@ SQL
 
     print "$tSourceId has $exonOrder,$nlStartMin,$nlEndMax,$cdsStart,$cdsEnd,$cdsCount,$isReversed\n" if ($tSourceId =~ /MACM_54953.C1orf27_transcript_01/);
   }
+}
 }
 $stmt->finish();
 
@@ -657,3 +662,17 @@ and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId
 };
 
 
+sub getTafAAFeatureIds {
+  my ($sourceId) = @_;
+  my $subsql = <<SQL;
+    select taf.AA_FEATURE_ID from dots.transcript t, DOTS.TRANSLATEDAAFEATURE taf
+where t.NA_FEATURE_ID=taf.NA_FEATURE_ID and t.SOURCE_ID like '$sourceId'
+SQL
+
+  my $substmt = $dbh->prepare($subsql);
+  $substmt->execute();
+  my @aaFeatureIds = $substmt->fetchrow_array();
+
+  $substmt->finish();
+  return @aaFeatureIds;
+}
