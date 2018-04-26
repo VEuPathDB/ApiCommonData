@@ -143,7 +143,7 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
     $items[13] = $date;                            ## Date
     $items[14] = $source;                          ## Assigned By
     $items[15] = "";                               ## Annotation Extension 
-    $items[16] = "EuPathDB:$tSourceId";            ## Gene Product Form ID, transcript ID in EuPathDB
+    $items[16] = "";                               ## Gene Product Form ID
 
     my $value = join ('|', @items);
     push (@goInfos, $value) if ($value);
