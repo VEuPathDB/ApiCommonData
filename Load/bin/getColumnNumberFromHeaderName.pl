@@ -32,11 +32,12 @@ foreach my $filename (@files){
 
   open(FILE, $filename) or die "Cannot open file $filename for reading: $!";
   
-  my $firstline = <FILE>;
-  chomp $firstline;
+  my $head = <FILE>;
+  chomp $head;
+	if($head =~ /\t/){ $delim = "\t"; }
   
   
-  my @headers = split(/$delim/, $firstline);
+  my @headers = split(/$delim/, $head);
   
   my $colNum;
   
