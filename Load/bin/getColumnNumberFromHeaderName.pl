@@ -35,9 +35,11 @@ foreach my $filename (@files){
   my $head = <FILE>;
   chomp $head;
 	if($head =~ /\t/){ $delim = "\t"; }
+
+	printf STDERR "Delimeter:[$delim]\n";
   
   
-  my @headers = split(/$delim/, $head);
+  my @headers = map { $_ =~ s/"//g; $_ } split(/$delim/, $head);
   
   my $colNum;
   
