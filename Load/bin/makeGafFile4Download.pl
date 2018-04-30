@@ -114,17 +114,17 @@ from apidbtuning.${tuningTablePrefix}GoTermSummary
                                                                 ## https://www.ebi.ac.uk/GOA/InterPro2GO
     $source = "EuPathDB" if ($source =~ /InterPro/);  ## required by Achchuthan
 
-    my $withOrFrom;
-    if ($evidenceCode eq "IEA") {  ## is $eviCodeParameter if $evidenceCode eq "IEA"
-      $withOrFrom = $eviCodeParameter;
-    } elsif ($evidenceCode eq "IPI" || $evidenceCode eq "ISS") {
-      $withOrFrom = $gSourceId;
-    } elsif ($evidenceCode eq "EXP" || $evidenceCode eq "IDA" || $evidenceCode eq "IEP"
-             || $evidenceCode eq "TAS" || $evidenceCode eq "NAS" || $evidenceCode eq "ND") {
-      $withOrFrom = "";
-    } else {
-      $withOrFrom == $eviCodeParameter;
-    }
+    my $withOrFrom = $eviCodeParameter;  ## required by Achchuthan
+    #if ($evidenceCode eq "IEA") {  ## is $eviCodeParameter if $evidenceCode eq "IEA"
+    #  $withOrFrom = $eviCodeParameter;
+    #} elsif ($evidenceCode eq "IPI" || $evidenceCode eq "ISS") {
+    #  $withOrFrom = $gSourceId;
+    #} elsif ($evidenceCode eq "EXP" || $evidenceCode eq "IDA" || $evidenceCode eq "IEP"
+    #         || $evidenceCode eq "TAS" || $evidenceCode eq "NAS" || $evidenceCode eq "ND") {
+    #  $withOrFrom = "";
+    #} else {
+    #  $withOrFrom = $eviCodeParameter;
+    #}
 
     my @items;
     $items[0] = "EuPathDB";
