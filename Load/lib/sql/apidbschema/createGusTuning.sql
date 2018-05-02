@@ -27,6 +27,7 @@ alter table dots.rnafeatureexon add (coding_start number(12), coding_end number(
 
 -- indexes on GUS tables
 
+
 --create index dots.NaFeat_alleles_ix
 --  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id)
 --  tablespace INDX;
@@ -83,11 +84,6 @@ create index char_info_ix
      (protocol_app_node_id, qualifier_id, unit_id, table_id, characteristic_id, ontology_term_id, value)
   tablespace indx;
 
-create index pan_info_ix
-  on study.ProtocolAppNode
-     (protocol_app_node_id, isa_type, type_id, name,
-      external_database_release_id, source_id, subtype_id, node_order_num)
-  tablespace indx;
 
 create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id) tablespace indx;
 create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id) tablespace indx;
@@ -330,6 +326,12 @@ alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
 alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
+create index pan_info_ix
+  on study.ProtocolAppNode
+     (protocol_app_node_id, isa_type, type_id, name,
+      external_database_release_id, source_id, subtype_id, node_order_num)
+  tablespace indx;
+
 ALTER TABLE results.NaFeatureDiffResult
   ADD (confidence FLOAT(126));
 
@@ -487,11 +489,13 @@ WHERE 'nafeaturehostresponse' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 --------------------------------------------------------------------------------
 
+GRANT REFERENCES on sres.taxon to results;
+
 create table Results.OtuAbundance
   (
     otu_abundance_id    number(12) not null,
     PROTOCOL_APP_NODE_ID  number(10) not null,
-    na_sequence_id             number(12) not null,
+    taxon_id             number(12) not null,
     raw_count                  number(20),
     relative_abundance         float(126),
     MODIFICATION_DATE     date not null,
@@ -506,7 +510,7 @@ create table Results.OtuAbundance
     ROW_PROJECT_ID        number(4) not null,
     ROW_ALG_INVOCATION_ID number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    foreign key (na_sequence_id) references DOTS.NASEQUENCEIMP,
+    foreign key (taxon_id) references SRES.TAXON,
     primary key (otu_abundance_id)
   );
 
@@ -533,7 +537,7 @@ WHERE 'otuabundance' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
 CREATE INDEX results.otuabun_revix1 ON results.OtuAbundance (protocol_app_node_id, otu_abundance_id) TABLESPACE indx;
-CREATE INDEX results.otuabun_revix2 ON results.OtuAbundance (na_sequence_id, otu_abundance_id) TABLESPACE indx;
+CREATE INDEX results.otuabun_revix2 ON results.OtuAbundance (taxon_id, otu_abundance_id) TABLESPACE indx;
 
 --------------------------------------------------------------------------------
 
@@ -588,7 +592,7 @@ CREATE INDEX results.alphad_revix1 ON results.AlphaDiversity (protocol_app_node_
 -- unique constraints in the Results schema
 
 create unique index results.uqOtuAbundance
-      on results.OtuAbundance (na_sequence_id, protocol_app_node_id) tablespace indx;
+      on results.OtuAbundance (taxon_id, protocol_app_node_id) tablespace indx;
 
 create unique index results.uqCompoundMassSpec
       on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id) tablespace indx;
