@@ -40,7 +40,7 @@ print O2 <<EOL;
     <property name="samples">
 EOL
 
-my $dbh = DBI->connect("dbi:SQLite:/home/hwang/projects/R_getSRA/SRAmetadb.sqlite", "", "", { RaiseError => 1 }) or die $DBI::errstr;
+my $dbh = DBI->connect("dbi:SQLite:/eupath/data/EuPathDB/manualDelivery/SRAmetadb/SRAmetadb.sqlite", "", "", { RaiseError => 1 }) or die $DBI::errstr;
 
 my $stmt = qq(select run_accession,sample_alias,sample_attribute from sra where study_accession = '$study' order by run_accession);
 my $sth  = $dbh->prepare($stmt);
