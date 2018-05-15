@@ -39,13 +39,15 @@ MicrobiomeDB project:
 PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 
 SELECT ?s
-  (COUNT(?label) AS ?label_count)
+  (COUNT(DISTINCT ?label) AS ?label_count)
   (GROUP_CONCAT(DISTINCT ?label;separator=&quot;|&quot;) AS ?labels)
 WHERE {
-  ?s rdfs:label ?label .
+  ?s rdfs:label ?org_label .
+  BIND (str(?org_label) AS ?label)
 }
 GROUP BY ?s
-HAVING (?label_count &gt; 1)</rdfs:comment>
+HAVING (?label_count &gt; 1)
+ORDER BY DESC(?label_count)</rdfs:comment>
     </owl:Ontology>
 </rdf:RDF>
 
