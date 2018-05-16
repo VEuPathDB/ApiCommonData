@@ -48,6 +48,18 @@ WHERE {
 GROUP BY ?s
 HAVING (?label_count &gt; 1)
 ORDER BY DESC(?label_count)</rdfs:comment>
+        <rdfs:comment># SPARQL used to get all terms and count of projects used the terms and their labels
+
+PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?s
+  (COUNT(?label) AS ?label_count)
+  (GROUP_CONCAT(DISTINCT ?label;separator=&quot;|&quot;) AS ?labels)
+WHERE {
+  ?s rdfs:label ?label .
+}
+GROUP BY ?s
+ORDER BY DESC(?label_count)</rdfs:comment>
     </owl:Ontology>
 </rdf:RDF>
 
