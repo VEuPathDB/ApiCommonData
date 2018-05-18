@@ -54,6 +54,8 @@ sub preprocess {
                                                                  $_->has_tag('product') ? 
                                                                    $_->get_tag_values('product') :
                                                                      ('');
+							       #print STDERR "\$prod = $prod, \$product = $product\n";
+							       $prod =~ s/\-R/\-P/;
                                                                $product eq $prod;
                                                              } @candidates;
                                         if (@container == 0) {
