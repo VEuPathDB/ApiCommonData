@@ -14,6 +14,11 @@ while (<IN>) {
 
   if ($_ =~ /^\>(\S+)/) {
     $seqId = $1;
+
+    ## for protein sequence from VectorBase, it uses proetin ID instead of transcript ID
+    ## need to replace protein ID with transcript ID
+    $seqId =~ s/\-P(\w)$/\-R$1/;
+
   } else {
     $proteins{$seqId} .= $_;
   }
