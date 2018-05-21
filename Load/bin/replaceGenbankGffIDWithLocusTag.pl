@@ -29,6 +29,9 @@ while (<GFF>) {
     }
   } elsif ($items[2] eq "mRNA" || $items[2] eq "tRNA"
 #	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA"
+	   || $items[2] eq "RNase_MRP_RNA"
+	   || $items[2] eq "SRP_RNA" || $items[2] eq "snRNA"
+	   || $items[2] eq "miRNA" || $items[2] eq "snoRNA"
 	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA" ) {
     if ($items[2] eq "mRNA" ) {
       $rnaType = "mRNA";
@@ -38,6 +41,16 @@ while (<GFF>) {
       $rnaType = "rRNA";
     } elsif ($items[2] eq "ncRNA") {
       $rnaType = "ncRNA";
+    } elsif ($items[2] eq "miRNA") {
+      $rnaType = "miRNA";
+    } elsif ($items[2] eq "snoRNA") {
+      $rnaType = "snoRNA";
+    } elsif ($items[2] eq "snRNA") {
+      $rnaType = "snRNA";
+    } elsif ($items[2] eq "SRP_RNA") {
+      $rnaType = "SRP_RNA";
+    } elsif ($items[2] eq "RNase_MRP_RNA") {
+      $rnaType = "RNase_MRP_RNA";
     } else {
       print STDERR "RNA type has not been assigned yet\n";
     }
