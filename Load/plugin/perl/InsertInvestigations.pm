@@ -996,11 +996,12 @@ where d.name = ?
       $sh->execute($datasetName, $datasetName);
 
       while(my ($pan, $panId) = $sh->fetchrow_array()) {
-        if($studyNodes{$pan}) {
+        if($studyNodes{$datasetName}->{$pan}) {
+
           $self->logOrError("DATABASE_ERROR:  Existing ProtocolAppNode name $pan not unique w/in a study");
         }
 
-        $studyNodes{$pan} = 1;
+        $studyNodes{$datasetName}->{$pan} = 1;
 
         $self->{_PROTOCOL_APP_NODE_MAP}->{$pan} = $panId;
 
