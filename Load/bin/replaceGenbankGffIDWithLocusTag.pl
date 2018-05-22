@@ -63,6 +63,11 @@ while (<GFF>) {
 #      $cRnaId{$cRna} = $cLocusId{$cGene}."\.$rnaType\.".$count{$cGene};
       $cRnaId{$cRna} = $cLocusId{$cGene}."-t".$bldNum."_".$count{$cGene};  ## only for first time generate, use rnaType and count is more reasonable
 
+      ## for the gff3 file downloaded from VectorBase, there are orig_transcript_id in the RNA feature, use these as transcript ID instead
+      if ($items[8] =~ /orig_transcript_id=gnl\|WGS:AAAB\|(\S+?)\;/) {
+        $cRnaId{$cRna} = $1;
+      }
+
       $items[8] =~ s/ID=$cRna/ID=$cRnaId{$cRna}/;
       $items[8] =~ s/Parent=$cGene/Parent=$cLocusId{$cGene}/;
 
@@ -79,8 +84,10 @@ while (<GFF>) {
     } else {
       print STDERR "no parent found for $items[8]\n";
     }
+  } elsif ($items[2] eq "region" || $items[2] eq "sequence_feature" ) {
+    ## for those that do not need anything
   } else {
-
+    print STDERR "type: $items[2] has not been assigned yet\n";
   }
 
   &printGff3Column (\@items);
