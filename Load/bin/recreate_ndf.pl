@@ -96,5 +96,9 @@ sub usage {
   my $m = shift;
   print STDERR "ERROR:  ${m}\n" if($m);
   print STDERR "perl recreate_ndf.pl --original_ndf_file <NDF> --gene_to_oligo_file <GENE_TO_OLIGO> --output_file <OUT>\n";
+  if($m) {
+    die $m;
+  }
+
   exit;
 }
