@@ -20,6 +20,22 @@ unless($organismAbbrev) {
   exit;
 }
 
+
+unless($gusConfig && -e $gusConfig) {
+  # print STDERR "gus.config not found... using default\n";
+  $gusConfig = $ENV{GUS_HOME} ."/config/gus.config";
+}
+
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfig, undef, 1);
+
+my $u = $gusconfig->{props}->{databaseLogin};
+my $pw = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $dbh = DBI->connect($dsn, $u, $pw, {AutoCommit => 0}) or die DBI::errstr;
+
+#########################################################
+### get database and release ids before deleting anything
 my $sql = <<SQL;
 select s.synteny_id, d.name, d.EXTERNAL_DATABASE_ID, s.external_database_release_id
 from apidb.organism o
@@ -33,24 +49,8 @@ where o.abbrev = ?
 	and o.taxon_id = nas.taxon_id
 	and (nas.na_sequence_id = s.A_NA_SEQUENCE_ID OR nas.na_sequence_id = s.b_na_sequence_id)
 SQL
-
-unless($gusConfig && -e $gusConfig) {
-  print STDERR "gus.config not found... using default\n";
-  $gusConfig = $ENV{GUS_HOME} ."/config/gus.config";
-}
-
-my $gusconfig = CBIL::Util::PropertySet->new($gusConfig, undef, 1);
-
-my $u = $gusconfig->{props}->{databaseLogin};
-my $pw = $gusconfig->{props}->{databasePassword};
-my $dsn = $gusconfig->{props}->{dbiDsn};
-
-my $dbh = DBI->connect($dsn, $u, $pw, {AutoCommit => 0}) or die DBI::errstr;
-
 my $sh = $dbh->prepare($sql);
 $sh->execute($organismAbbrev) or die $sh->errstr;
-
-
 my %dbids;
 my %relids;
 my @synids;
@@ -64,40 +64,66 @@ unless( 0 < $sh->rows ){
 	$dbh->disconnect;
 	exit;
 }
-
-my @dbid = sort keys %dbids;
-my @relid = sort keys %relids;
-my @tuple_status;
+my @dbid = sort keys %dbids; ## not used, but could be useful for debugging
+my @relid = sort keys %relids; ## not used, but could be useful for debugging
 
 
+#########################################################
 ## delete rows from apidb.syntentyanchor
 printf STDERR ("Deleting from apidb.syntenyanchor by synteny_id for %s\n", $organismAbbrev);
-
-$sql = 'delete from apidb.syntenyanchor where synteny_id=?';
+$sql = <<SQL;
+delete from apidb.syntenyanchor where synteny_id in (
+	select distinct(s.synteny_id)
+	from apidb.organism o
+		, dots.nasequence nas
+		, apidb.synteny s
+		, sres.externaldatabaserelease r
+		, sres.externaldatabase d
+	where o.abbrev = ? 
+		and s.external_database_release_id = r.external_database_release_id
+		and o.taxon_id = nas.taxon_id
+		and (nas.na_sequence_id = s.a_na_sequence_id or nas.na_sequence_id = s.b_na_sequence_id)
+)
+SQL
+my $start = time();
 $sh = $dbh->prepare($sql);
-$sh->bind_param_array(1,\@synids);
-$sh->execute_array({ ArrayTupleStatus => \@tuple_status } );
-printf STDERR ("Deleted %d rows from apidb.syntenyanchor\n", $sh->rows);
+$sh->execute($organismAbbrev) or die $sh->errstr;
+my $took = time() - $start;
+printf STDERR ("Deleted %d rows from apidb.syntenyanchor (%d seconds\n", $sh->rows, $took);
 
-#$dbh->trace($dbh->parse_trace_flags('SQL|2'));
+
+#########################################################
 ## delete rows from apidb.syntenty 
 printf STDERR ("Deleting from apidb.synteny for %s\n", $organismAbbrev);
-$sql = 'delete from apidb.synteny where external_database_release_id=?';
+$sql = <<SQL;
+delete from apidb.synteny where external_database_release_id in (
+	select distinct(s.external_database_release_id)
+	from apidb.organism o
+		, dots.nasequence nas
+		, apidb.synteny s
+		, sres.externaldatabaserelease r
+	where o.abbrev = ? 
+		and s.external_database_release_id = r.external_database_release_id
+		and o.taxon_id = nas.taxon_id
+		and (nas.na_sequence_id = s.a_na_sequence_id or nas.na_sequence_id = s.b_na_sequence_id)
+)
+SQL
 $sh = $dbh->prepare($sql);
-$sh->bind_param_array(1,\@relid);
-$sh->execute_array({ ArrayTupleStatus => \@tuple_status } );
+$sh->execute($organismAbbrev) or die $sh->errstr;
 printf STDERR ("Deleted %d rows from apidb.synteny\n", $sh->rows);
 
 
-
+#########################################################
 ## delete rows from sres.externaldatabaserelease
-printf STDERR ("Deleting from sres.externaldatabaserelease by external_database_release_id for %s\n", $organismAbbrev);
+printf STDERR ("Deleting from sres.externaldatabaserelease by external_database_release_id (%d ids) for %s\n", scalar @relid, $organismAbbrev);
 $sql = 'delete from sres.externaldatabaserelease where external_database_release_id=?';
 $sh = $dbh->prepare($sql);
 $sh->bind_param_array(1,\@relid);
-$sh->execute_array({ ArrayTupleStatus => \@tuple_status } );
+$sh->execute_array({ ArrayTupleStatus => \my @tuple_status } );
 printf STDERR ("Deleted %d rows from sres.externaldatabaserelease\n", $sh->rows);
 
+
+#########################################################
 ## delete rows from sres.externaldatabase
 printf STDERR ("Deleting from sres.externaldatabase by external_database_id for %s\n", $organismAbbrev);
 $sql = 'delete from sres.externaldatabase where external_database_id=?';
@@ -106,12 +132,14 @@ $sh->bind_param_array(1,\@dbid);
 $sh->execute_array({ ArrayTupleStatus => \@tuple_status } );
 printf STDERR ("Deleted %d rows from sres.externaldatabase\n", $sh->rows);
 
+
+#########################################################
 if($commit){
 	print STDERR ("Committing database changes before exiting\n");
 	$dbh->commit;
 }
 else	{
-	print STDERR ("TEST: Rolling back all database changes before exiting\n");
+	print STDERR ("No commit: Rolling back all database changes before exiting\n");
 	$dbh->rollback();
 }
 $dbh->disconnect;
