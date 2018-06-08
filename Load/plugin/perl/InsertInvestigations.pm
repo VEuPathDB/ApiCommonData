@@ -577,7 +577,7 @@ sub getOntologyTermGusObj {
 
     my $gusOntologyTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $ontologyTermId});
     unless($gusOntologyTerm->retrieveFromDB()) {
-      $self->error("ERROR:  OntologyTerm ID=$ontologyTermId not found in the database");
+      $self->error("ERROR:  Found TaxonID ($ontologyTermId).  Was expecting OntologyTerm ID");
     }
 
     $self->{_gus_ontologyterm_objects}->{$ontologyTermId} = $gusOntologyTerm;
