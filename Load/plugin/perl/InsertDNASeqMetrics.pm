@@ -169,7 +169,7 @@ sub run {
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
-                                                                    source_id => 'EuPathUserDefined_00501'});
+                                                                    source_id => 'EUPATH_0000454'});
     unless($coverageOntologyTerm->retrieveFromDB()) {
         $coverageOntologyTerm->submit();
         $self->undefPointerCache();
@@ -183,7 +183,7 @@ sub run {
 
 
     my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'proportion mapped reads',
-                                                                      source_id => 'EuPathUserDefined_00502'});
+                                                                      source_id => 'EUPATH_0000455'});
     unless($mappedReadOntologyTerm->retrieveFromDB()) {
         $mappedReadOntologyTerm->submit();
         $self->undefPointerCache();
