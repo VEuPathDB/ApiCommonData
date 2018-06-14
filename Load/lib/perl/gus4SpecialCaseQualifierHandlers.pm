@@ -462,8 +462,10 @@ sub anticodon {
   my @tags = $bioperlFeature->get_tag_values($tag);
   die "Feature has more than one /anticodon\n" if scalar(@tags) != 1;
 
-  my $transcript = &getGeneTranscript($self->{plugin}, $feature);
-  $transcript->setAnticodon($tags[0]);
+#  my $transcript = &getGeneTranscript($self->{plugin}, $feature);
+#  $transcript->setAnticodon($tags[0]);
+
+  $feature->setAnticodon($tags[0]);
   return [];
 }
 
