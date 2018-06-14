@@ -6,7 +6,7 @@ use strict;
 
 use XML::Simple;
 
-use GUS::Model::ApiDB::SequenceTaxon;
+use GUS::Model::ApiDB::SequenceTaxonString;
 
 use Data::Dumper;
 
@@ -154,20 +154,27 @@ SQL
       $self->undefPointerCache();
     }
 
+    #checks how many cols we have and if its only one assume it is taxonList
     my ($id, $taxonList) = split /\t/;
-
-    # find na_sequence_id corresponding to Greengenes ID
-    my $na_sequence_id = $sequenceIdMap{$id};
-    unless ($na_sequence_id) {
-      $self->log("WARN: Can't find Greengenes ID \"$id\" as an NaSequence.source_id");
-      next;
+    my $na_sequence_id;
+    if ($taxonList) {
+      # find na_sequence_id corresponding to Greengenes ID
+      $na_sequence_id = $sequenceIdMap{$id};
+      unless ($na_sequence_id) {
+        $self->log("WARN: Can't find Greengenes ID \"$id\" as an NaSequence.source_id");
+        next;
+      }
+    } else {
+      $taxonList = $id;
+      $id = undef;
+      $na_sequence_id = undef;
     }
 
     if ($taxonStringMap{$taxonList}) {
-      my $st = GUS::Model::ApiDB::SequenceTaxon->
+      my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	new({'na_sequence_id' => $na_sequence_id,
 	     'external_database_release_id' => $self->{external_database_release_id},
-	     'taxon_id' => $taxonStringMap{$taxonList}});
+	     'taxon_string_id' => $taxonStringMap{$taxonList}});
       $st->submit();
       next;
     }
@@ -211,10 +218,10 @@ SQL
 	# success: we uniquely identified this taxon
 
 	# store this (sequence-taxon) pair
-	my $st = GUS::Model::ApiDB::SequenceTaxon->
+	my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	  new({'na_sequence_id' => $na_sequence_id,
 	       'external_database_release_id' => $self->{external_database_release_id},
-	       'taxon_id' => $taxonId});
+	       'taxon_string_id' => $taxonId});
 	$st->submit();
 
 	# cache this taxon string->taxon ID mapping for the rest of the run
@@ -244,10 +251,10 @@ SQL
 	    # success: we uniquely identified this taxon
 
 	    # store this (sequence-taxon) pair
-	    my $st = GUS::Model::ApiDB::SequenceTaxon->
+	    my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	      new({'na_sequence_id' => $na_sequence_id,
 		   'external_database_release_id' => $self->{external_database_release_id},
-		   'taxon_id' => $taxonId});
+		   'taxon_string_id' => $taxonId});
 	    $st->submit();
 
 	    # cache this taxon string->taxon ID mapping for the rest of the run
@@ -328,7 +335,7 @@ sub undoTables {
   my ($self) = @_;
 
   return (
-    'ApiDB.SequenceTaxon',
+    'ApiDB.SequenceTaxonString',
      );
 }
 
