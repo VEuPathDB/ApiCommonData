@@ -174,7 +174,7 @@ SQL
       my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	new({'na_sequence_id' => $na_sequence_id,
 	     'external_database_release_id' => $self->{external_database_release_id},
-	     'taxon_string_id' => $taxonStringMap{$taxonList}});
+	     'sequence_taxon_string_id' => $taxonStringMap{$taxonList}});
       $st->submit();
       next;
     }
@@ -221,7 +221,7 @@ SQL
 	my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	  new({'na_sequence_id' => $na_sequence_id,
 	       'external_database_release_id' => $self->{external_database_release_id},
-	       'taxon_string_id' => $taxonId});
+	       'sequence_taxon_string_id' => $taxonId});
 	$st->submit();
 
 	# cache this taxon string->taxon ID mapping for the rest of the run
@@ -254,7 +254,7 @@ SQL
 	    my $st = GUS::Model::ApiDB::SequenceTaxonString->
 	      new({'na_sequence_id' => $na_sequence_id,
 		   'external_database_release_id' => $self->{external_database_release_id},
-		   'taxon_string_id' => $taxonId});
+		   'sequence_taxon_string_id' => $taxonId});
 	    $st->submit();
 
 	    # cache this taxon string->taxon ID mapping for the rest of the run
