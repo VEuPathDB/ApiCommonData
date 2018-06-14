@@ -46,7 +46,7 @@ foreach my $filename (@files){
   for(my $i = 0; $i < scalar @headers; $i++) {
     my $match = 0;
     if($exact){
-      $match = ($headers[$i] =~ /^$headerName$/);
+      $match = ($headers[$i] =~ /^$headerName$/i);
     }
     else{
       $match = ($headers[$i] =~ /$headerName/i);
