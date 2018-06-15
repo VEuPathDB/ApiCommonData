@@ -109,8 +109,8 @@ sub run {
 
 
     my @userDefinedOntologyTerms = (
-      ['average mapping coverage', 'EUPATH_0000454'],
-      ['proportion mapped reads', 'EUPATH_0000455'],
+      ['Average mapping coverage', 'EUPATH_0000454'],
+      ['Proportion mapped reads', 'EUPATH_0000455'],
       ['number mapped reads', 'EUPATH_0000456'],
       ['average read length', 'EUPATH_0000457'],
       ['unstranded unique average mapping coverage', 'EUPATH_0000458'],
@@ -144,12 +144,12 @@ sub run {
       my $termName = $a->[0];
       my $termSourceId = $a->[1];
 
-      my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({name => $termName, source_id => $termSourceId});
+      my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $termSourceId});
       unless($ontologyTerm->retrieveFromDB()) {
-        $self->error("Ontology Term $termName not found in database");
+        $self->error("Ontology Term $termName (source ID $termSourceId) not found in database");
       }
 
-      $ontologyTerms{$termName} = $ontologyTerm;
+      $ontologyTerms{$termSourceId} = $ontologyTerm;
     }
 
     my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
@@ -200,10 +200,10 @@ sub run {
         }
 
         #coverage     mapped      number_reads_mapped      avg_read_length
-        my @charTypes = ('Average mapping coverage',
-                         'Proportion mapped reads', 
-                         'number mapped reads',
-                         'average read length'
+        my @charTypes = ('EUPATH_0000454', -- Average mapping coverage
+                         'EUPATH_0000455', -- Proportion mapped reads
+                         'EUPATH_0000456', -- number mapped reads
+                         'EUPATH_0000457', -- average read length
             );
 
         for(my $i = 0; $i < scalar @charTypes; $i++) {
