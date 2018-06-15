@@ -402,7 +402,7 @@ sub lookupIdFromSourceId {
   elsif ($sourceIdType eq 'taxon_string') {
    my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
                                             from apidb.TaxonString ts
-                                            where ts.taxon_string = $sourceId");
+                                            where ts.taxon_string_id = $sourceId");
     unless (scalar @taxonIds == 1) {
         die "Number of taxon IDs returned should be 1\n";
     }
