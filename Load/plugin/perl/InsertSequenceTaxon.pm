@@ -7,7 +7,7 @@ use strict;
 use XML::Simple;
 
 use GUS::Model::ApiDB::SequenceTaxonString;
-use GUS::Model::ApiDB::SequenceTaxon;
+use GUS::Model::ApiDB::TaxonString;
 
 use Data::Dumper;
 
