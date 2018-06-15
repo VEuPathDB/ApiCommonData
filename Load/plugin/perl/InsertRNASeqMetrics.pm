@@ -200,8 +200,8 @@ sub run {
         }
 
         #coverage     mapped      number_reads_mapped      avg_read_length
-        my @charTypes = ('average mapping coverage',
-                         'proportion mapped reads', 
+        my @charTypes = ('Average mapping coverage',
+                         'Proportion mapped reads', 
                          'number mapped reads',
                          'average read length'
             );

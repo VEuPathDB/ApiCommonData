@@ -168,7 +168,7 @@ sub run {
     }
 
     # for now using random hard coded source_id for this - there must be a better way?!
-    my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'average mapping coverage',
+    my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'Average mapping coverage',
                                                                     source_id => 'EUPATH_0000454'});
     unless($coverageOntologyTerm->retrieveFromDB()) {
         $coverageOntologyTerm->submit();
@@ -182,7 +182,7 @@ sub run {
     $gusStudy->addToSubmitList($coverageCharacteristic);
 
 
-    my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'proportion mapped reads',
+    my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({name => 'Proportion mapped reads',
                                                                       source_id => 'EUPATH_0000455'});
     unless($mappedReadOntologyTerm->retrieveFromDB()) {
         $mappedReadOntologyTerm->submit();
