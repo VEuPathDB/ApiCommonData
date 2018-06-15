@@ -305,10 +305,11 @@ sub addResults {
         }
     }
 
-    elsif ($sourceIdType =~ /16s_rrna/) {
-      my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-      next unless $naSequenceId;
-      $hash = { na_sequence_id => $naSequenceId, };
+    elsif ($sourceIdType =~ /16s_rrna/ || $sourceIdType =~ /taxon_string/) {
+      my $taxonId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
+      #double check. may want to require this be found rather than skip
+      next unless $taxonId;
+      $hash = { taxon_id => $taxonId, };
       $start = 1;
     }
 
@@ -395,8 +396,32 @@ sub lookupIdFromSourceId {
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
   }
-  elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence'|| $sourceIdType eq '16s_rrna') {
+  elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
+  }
+  elsif ($sourceIdType eq 'taxon_string') {
+   my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
+                                            from apidb.TaxonString ts
+                                            where ts.taxon_string = $sourceId");
+    unless (scalar @taxonIds == 1) {
+        die "Number of taxon IDs returned should be 1\n";
+    }
+
+    $rv = @taxonIds[0];
+  }
+  elsif ($sourceIdType eq '16s_rrna') {
+   my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
+                                            from apidb.TaxonString ts
+                                            , apidb.SequenceTaxonString sts
+                                            , apidb.NaSequenceAttribute sa
+                                            where sa.na_sequence_attribute_id = $sourceId
+                                            and sa.na_sequence_id = sts.na_sequence_id
+                                            and sts.taxon_string_id = ts.taxon_string_id");
+    unless (scalar @taxonIds == 1) {
+        die "Number of taxon IDs returned should be 1\n";
+    }
+
+    $rv = @taxonIds[0];
   }
 
   elsif ($sourceIdType eq 'reporter') {
