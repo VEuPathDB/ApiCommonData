@@ -109,8 +109,8 @@ sub run {
 
 
     my @userDefinedOntologyTerms = (
-      ['Average mapping coverage', 'EUPATH_0000454'],
-      ['Proportion mapped reads', 'EUPATH_0000455'],
+      ['average mapping coverage', 'EUPATH_0000454'],
+      ['proportion mapped reads', 'EUPATH_0000455'],
       ['number mapped reads', 'EUPATH_0000456'],
       ['average read length', 'EUPATH_0000457'],
       ['unstranded unique average mapping coverage', 'EUPATH_0000458'],
@@ -149,7 +149,7 @@ sub run {
         $self->error("Ontology Term $termName (source ID $termSourceId) not found in database");
       }
 
-      $ontologyTerms{$termSourceId} = $ontologyTerm;
+      $ontologyTerms{$termName} = $ontologyTerm;
     }
 
     my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
@@ -200,10 +200,10 @@ sub run {
         }
 
         #coverage     mapped      number_reads_mapped      avg_read_length
-        my @charTypes = ('EUPATH_0000454', -- Average mapping coverage
-                         'EUPATH_0000455', -- Proportion mapped reads
-                         'EUPATH_0000456', -- number mapped reads
-                         'EUPATH_0000457', -- average read length
+        my @charTypes = ('average mapping coverage',
+                         'proportion mapped reads', 
+                         'number mapped reads',
+                         'average read length'
             );
 
         for(my $i = 0; $i < scalar @charTypes; $i++) {
