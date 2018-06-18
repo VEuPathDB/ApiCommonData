@@ -1,7 +1,7 @@
 CREATE TABLE apidb.TaxonString (
  taxon_string_id              NUMBER(10) ,
  taxon_id                     NUMBER(10),
- taxon_string                 VARCHAR2(100), 
+ taxon_string                 VARCHAR2(300), 
  modification_date            DATE,
  user_read                    NUMBER(1),
  user_write                   NUMBER(1),

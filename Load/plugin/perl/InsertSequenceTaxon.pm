@@ -370,6 +370,7 @@ sub undoTables {
 
   return (
     'ApiDB.SequenceTaxonString',
+    'ApiDB.TaxonString'
      );
 }
 
