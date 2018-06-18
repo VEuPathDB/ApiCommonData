@@ -314,7 +314,7 @@ SQL
               new({'taxon_id' => $taxonId,
                    'taxon_string' => $taxonList});
               $st->submit();
-              $taxonStringIdQ->execute($taxonId}) or die $dbh->errstr;
+              $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
               my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
               $taxonStringIdQ->finish() or die $dbh->errstr;
               if ($na_sequence_id) {
