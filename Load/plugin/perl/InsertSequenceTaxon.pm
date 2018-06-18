@@ -304,7 +304,7 @@ SQL
 	  if ($status eq "match") {
 	    # success: we uniquely identified this taxon
 
-            $taxonStringIdQ->execute($taxonId}) or die $dbh->errstr;
+            $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
             my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
             $taxonStringIdQ->finish() or die $dbh->errstr;
 
