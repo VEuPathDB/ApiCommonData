@@ -178,21 +178,35 @@ SQL
     }
 
     if ($taxonStringMap{$taxonList}) {
-      my $st = GUS::Model::ApiDB::TaxonString->
-        new({'taxon_id' => $taxonStringMap{$taxonList},
-             'taxon_string' => $taxonList});
-      $st->submit();
-      if ($na_sequence_id) {
+      $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
+      my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
+      $taxonStringIdQ->finish() or die $dbh->errstr;
+
+      if (scalar $taxonStringId == 0) {
+        my $st = GUS::Model::ApiDB::TaxonString->
+          new({'taxon_id' => $taxonStringMap{$taxonList},
+               'taxon_string' => $taxonList});
+        $st->submit();
         $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
         my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
         $taxonStringIdQ->finish() or die $dbh->errstr;
-        my $st = GUS::Model::ApiDB::SequenceTaxonString->
-          new({'na_sequence_id' => $na_sequence_id,
-	       'external_database_release_id' => $self->{external_database_release_id},
-               'taxon_string_id' => $taxonStringId});
-        $st->submit();
+        if ($na_sequence_id) {
+          my $st = GUS::Model::ApiDB::SequenceTaxonString->
+            new({'na_sequence_id' => $na_sequence_id,
+                 'external_database_release_id' => $self->{external_database_release_id},
+                 'taxon_string_id' => $taxonStringId});
+          $st->submit();
+        }
+      } else {
+        if ($na_sequence_id) {
+          my $st = GUS::Model::ApiDB::SequenceTaxonString->
+            new({'na_sequence_id' => $na_sequence_id,
+                 'external_database_release_id' => $self->{external_database_release_id},
+                 'taxon_string_id' => $taxonStringId});
+          $st->submit();
+        }
       }
-      next;  
+      next;
     }
 
     my @taxa = split(/; /, $taxonList);
@@ -233,21 +247,36 @@ SQL
       if ($taxonCount == 1) {
 	# success: we uniquely identified this taxon
 
-	# store this (sequence-taxon) pair
-	my $st = GUS::Model::ApiDB::TaxonString->
-        new({'taxon_id' => $taxonId,
-             'taxon_string' => $taxonList});
-        $st->submit();
-        if ($na_sequence_id) {
-          $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
+        $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
+        my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
+        $taxonStringIdQ->finish() or die $dbh->errstr;
+
+        if (scalar $taxonStringId == 0) {
+	  # store this (sequence-taxon) pair
+	  my $st = GUS::Model::ApiDB::TaxonString->
+          new({'taxon_id' => $taxonId,
+               'taxon_string' => $taxonList});
+          $st->submit();
+          $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
           my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
           $taxonStringIdQ->finish() or die $dbh->errstr;
-          my $st = GUS::Model::ApiDB::SequenceTaxonString->
-            new({'na_sequence_id' => $na_sequence_id,
-                 'external_database_release_id' => $self->{external_database_release_id},
-                 'taxon_string_id' => $taxonStringId});
-          $st->submit();
+          if ($na_sequence_id) {
+            my $st = GUS::Model::ApiDB::SequenceTaxonString->
+              new({'na_sequence_id' => $na_sequence_id,
+                   'external_database_release_id' => $self->{external_database_release_id},
+                   'taxon_string_id' => $taxonStringId});
+            $st->submit();
+          }
+        } else {
+          if ($na_sequence_id) {
+            my $st = GUS::Model::ApiDB::SequenceTaxonString->
+              new({'na_sequence_id' => $na_sequence_id,
+                   'external_database_release_id' => $self->{external_database_release_id},
+                   'taxon_string_id' => $taxonStringId});
+            $st->submit();
+          }
         }
+   
 
 	# cache this taxon string->taxon ID mapping for the rest of the run
 	$taxonStringMap{$taxonList} = $taxonId;
@@ -275,21 +304,36 @@ SQL
 	  if ($status eq "match") {
 	    # success: we uniquely identified this taxon
 
-	    # store this (sequence-taxon) pair
-            my $st = GUS::Model::ApiDB::TaxonString->
-            new({'taxon_id' => $taxonId,
-                 'taxon_string' => $taxonList});
-            $st->submit();
-            if ($na_sequence_id) {
-              $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
+            $taxonStringIdQ->execute($taxonId}) or die $dbh->errstr;
+            my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
+            $taxonStringIdQ->finish() or die $dbh->errstr;
+
+            if (scalar $taxonStringIdQ == 0) {
+	      # store this (sequence-taxon) pair
+              my $st = GUS::Model::ApiDB::TaxonString->
+              new({'taxon_id' => $taxonId,
+                   'taxon_string' => $taxonList});
+              $st->submit();
+              $taxonStringIdQ->execute($taxonId}) or die $dbh->errstr;
               my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
               $taxonStringIdQ->finish() or die $dbh->errstr;
-              my $st = GUS::Model::ApiDB::SequenceTaxonString->
-                new({'na_sequence_id' => $na_sequence_id,
-                     'external_database_release_id' => $self->{external_database_release_id},
-                     'taxon_string_id' => $taxonStringId});
-              $st->submit();
+              if ($na_sequence_id) {
+                my $st = GUS::Model::ApiDB::SequenceTaxonString->
+                  new({'na_sequence_id' => $na_sequence_id,
+                       'external_database_release_id' => $self->{external_database_release_id},
+                       'taxon_string_id' => $taxonStringId});
+                $st->submit();
+              }
+            } else {
+              if ($na_sequence_id) {
+                my $st = GUS::Model::ApiDB::SequenceTaxonString->
+                  new({'na_sequence_id' => $na_sequence_id,
+                       'external_database_release_id' => $self->{external_database_release_id},
+                       'taxon_string_id' => $taxonStringId});
+                $st->submit();
+              }
             }
+     
 
 	    # cache this taxon string->taxon ID mapping for the rest of the run
 	    $taxonStringMap{$taxonList} = $taxonId;
