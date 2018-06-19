@@ -713,10 +713,14 @@ BEGIN
         FROM DUAL;
 
       RETURN 1;
-   EXCEPTION
-      WHEN OTHERS
-      THEN
-         RETURN 0;
+
+      EXCEPTION
+        WHEN INVALID_NUMBER
+        THEN
+           RETURN 0;
+        WHEN OTHERS
+        THEN
+           RETURN 1;
    END;
 END;
 /
