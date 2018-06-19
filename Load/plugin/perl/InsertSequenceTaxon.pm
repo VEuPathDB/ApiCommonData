@@ -82,7 +82,7 @@ sub run {
   my $taxonStringIdQ = $dbh->prepare(<<SQL) or die $dbh->errstr;
     select taxon_string_id
     from apidb.taxonstring
-    where taxon_id = ?
+    where taxon_string = ?
 SQL
 
   # prepare first-pass query, which searches for a single name
@@ -178,7 +178,7 @@ SQL
     }
 
     if ($taxonStringMap{$taxonList}) {
-      $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
+      $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
       my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
       $taxonStringIdQ->finish() or die $dbh->errstr;
 
@@ -187,7 +187,7 @@ SQL
           new({'taxon_id' => $taxonStringMap{$taxonList},
                'taxon_string' => $taxonList});
         $st->submit();
-        $taxonStringIdQ->execute($taxonStringMap{$taxonList}) or die $dbh->errstr;
+        $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
         my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
         $taxonStringIdQ->finish() or die $dbh->errstr;
         if ($na_sequence_id) {
@@ -247,7 +247,7 @@ SQL
       if ($taxonCount == 1) {
 	# success: we uniquely identified this taxon
 
-        $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
+        $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
         my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
         $taxonStringIdQ->finish() or die $dbh->errstr;
 
@@ -257,7 +257,7 @@ SQL
           new({'taxon_id' => $taxonId,
                'taxon_string' => $taxonList});
           $st->submit();
-          $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
+          $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
           my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
           $taxonStringIdQ->finish() or die $dbh->errstr;
           if ($na_sequence_id) {
@@ -304,7 +304,7 @@ SQL
 	  if ($status eq "match") {
 	    # success: we uniquely identified this taxon
 
-            $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
+            $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
             my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
             $taxonStringIdQ->finish() or die $dbh->errstr;
 
@@ -314,7 +314,7 @@ SQL
               new({'taxon_id' => $taxonId,
                    'taxon_string' => $taxonList});
               $st->submit();
-              $taxonStringIdQ->execute($taxonId) or die $dbh->errstr;
+              $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
               my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
               $taxonStringIdQ->finish() or die $dbh->errstr;
               if ($na_sequence_id) {
