@@ -1,13 +1,27 @@
 #!/usr/bin/perl
 
-### usage: perl addProteinSeq3GffFile.pl genome.gff protein.fasta > addProt_genome.gff
-
 use strict;
+use Getopt::Long;
 
-my ($gffFile, $protFile, $transl_table) = @ARGV;
+
+my ($verbose, $help, $inputGffFile, $outputGffFile, $proteinFile, $idSuffix, $translTable);
+
+&GetOptions('help|h' => \$help,
+            'inputGffFile=s' => \$inputGffFile,
+            'outputGffFile=s' => \$outputGffFile,
+            'proteinFile=s' => \$proteinFile,
+            'idSuffix=s' => \$idSuffix,
+            'translTable=s' => \$translTable,
+           );
+
+&usage() if($help);
+
+&usage("Missing Required Arguments") unless (defined ($inputGffFile && $proteinFile) );
+
 
 my (%proteins, $seqId);
-open (IN, $protFile) || die "can not open protFile file to read.\n";
+
+open (IN, $proteinFile) || die "can not open proteinFile file to read.\n";
 while (<IN>) {
   chomp;
   next if ($_ =~ /^\s*$/);
@@ -19,13 +33,16 @@ while (<IN>) {
     ## need to replace protein ID with transcript ID
     $seqId =~ s/\-P(\w)$/\-R$1/;
 
+    if ($idSuffix) {
+      $seqId .= $idSuffix;
+    }
   } else {
     $proteins{$seqId} .= $_;
   }
 }
 close IN;
 
-open (INN, $gffFile) || die "can not open gffFile to read\n";
+open (INN, $inputGffFile) || die "can not open inputGffFile to read\n";
 while (<INN>) {
   chomp;
   my @items = split (/\t/, $_);
@@ -33,7 +50,7 @@ while (<INN>) {
   #$items[8] =~ s/cds_//;  ## only need with special case
   if ($items[2] eq 'mRNA') {
     if ($items[8] =~ /ID \"(\S+?)\"/) {
-      $items[8] .= "transl_table \"$transl_table\"\;" if ($transl_table);
+      $items[8] .= "transl_table \"$translTable\"\;" if ($translTable);
       $items[8] .= "translation \"$proteins{$1}\"\;";
     }
   }
@@ -45,4 +62,21 @@ while (<INN>) {
 close INN;
 
 
+sub usage {
+  die
+"
+A script to add protein sequence to a gff file
+Usage:
+
+addProteinSeqs2GffFile.pl --inputGffFile whole_genome.gff.prev --proteinFile C_albicans_SC5314_version_A22-s07-m01-r59_orf_trans_all.fasta --idSuffix -T > whole_genome.gff
+
+where
+  --inputGffFile: required, the input gff file name
+  --outputGffFile: the output gff file name
+  --proteinFile: required, the protein file name
+  --idSuffix: transcript Ids in the gff file have a id Suffix compare to the gene Ids in the protein file
+  --translTable: the translation table for sepecial organism
+
+";
+}
 
