@@ -4,7 +4,7 @@
 
 use strict;
 
-my ($gffFile, $protFile) = @ARGV;
+my ($gffFile, $protFile, $transl_table) = @ARGV;
 
 my (%proteins, $seqId);
 open (IN, $protFile) || die "can not open protFile file to read.\n";
@@ -33,6 +33,7 @@ while (<INN>) {
   #$items[8] =~ s/cds_//;  ## only need with special case
   if ($items[2] eq 'mRNA') {
     if ($items[8] =~ /ID \"(\S+?)\"/) {
+      $items[8] .= "transl_table \"$transl_table\"\;" if ($transl_table);
       $items[8] .= "translation \"$proteins{$1}\"\;";
     }
   }
