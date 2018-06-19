@@ -591,9 +591,6 @@ CREATE INDEX results.alphad_revix1 ON results.AlphaDiversity (protocol_app_node_
 -------------------------------------------------------------------------------------------
 -- unique constraints in the Results schema
 
-create unique index results.uqOtuAbundance
-      on results.OtuAbundance (taxon_id, protocol_app_node_id) tablespace indx;
-
 create unique index results.uqCompoundMassSpec
       on results.CompoundMassSpec (compound_id, isotopomer, protocol_app_node_id) tablespace indx;
 

@@ -307,11 +307,12 @@ SQL
             $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
             my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
             $taxonStringIdQ->finish() or die $dbh->errstr;
+            $self->log("taxonStringId is: \"$taxonStringId\"");    
 
             if (scalar $taxonStringIdQ == 0) {
 	      # store this (sequence-taxon) pair
               my $st = GUS::Model::ApiDB::TaxonString->
-              new({'taxon_id' => $taxonId,
+              new({'taxon_id' => $descendantTaxonId,
                    'taxon_string' => $taxonList});
               $st->submit();
               $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
@@ -336,7 +337,7 @@ SQL
      
 
 	    # cache this taxon string->taxon ID mapping for the rest of the run
-	    $taxonStringMap{$taxonList} = $taxonId;
+	    $taxonStringMap{$taxonList} = $descendantTaxonId;
 
 	    # stop looping through the taxon names in this list
 	    @taxa = undef;
