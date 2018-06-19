@@ -143,6 +143,7 @@ sub parseOtuFile {
   my $total_counts = {};
   my $otu_id = [];
   while  (my $line = <OTU>) {
+    chomp $line;
     my @values = split ("\t",$line);
     my $otu_id = shift @values;
     my $i = 0;
