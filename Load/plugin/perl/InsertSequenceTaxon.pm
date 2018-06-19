@@ -307,9 +307,8 @@ SQL
             $taxonStringIdQ->execute($taxonList) or die $dbh->errstr;
             my ($taxonStringId) = $taxonStringIdQ->fetchrow_array();
             $taxonStringIdQ->finish() or die $dbh->errstr;
-            $self->log("taxonStringId is: \"$taxonStringId\"");    
 
-            if (scalar $taxonStringIdQ == 0) {
+            if (scalar $taxonStringId == 0) {
 	      # store this (sequence-taxon) pair
               my $st = GUS::Model::ApiDB::TaxonString->
               new({'taxon_id' => $descendantTaxonId,
