@@ -1,12 +1,10 @@
-drop table ApiDBUserDatasets.UserDatasetEvent;
+truncate table ApiDBUserDatasets.UserDatasetEvent;
 
-drop view ApiDBUserDatasets.UserDatasetAccessControl;
+truncate table ApiDBUserDatasets.UserDatasetSharedWith;
 
-drop table ApiDBUserDatasets.UserDatasetSharedWith;
+truncate table ApiDBUserDatasets.UserDatasetOwner;
 
-drop table ApiDBUserDatasets.UserDatasetOwner;
-
-drop table ApiDBUserDatasets.InstalledUserDataset;
+truncate table ApiDBUserDatasets.InstalledUserDataset;
 
 exit;
 
