@@ -413,9 +413,9 @@ sub lookupIdFromSourceId {
    my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
                                             from apidb.TaxonString ts
                                             , apidb.SequenceTaxonString sts
-                                            , apidb.NaSequenceAttribute sa
-                                            where sa.na_sequence_attribute_id = $sourceId
-                                            and sa.na_sequence_id = sts.na_sequence_id
+                                            , dots.externalnasequence ns
+                                            where ns.source_id = $sourceId
+                                            and ns.na_sequence_id = sts.na_sequence_id
                                             and sts.taxon_string_id = ts.taxon_string_id");
     unless (scalar @taxonIds == 1) {
         die "Number of taxon IDs returned should be 1\n";
