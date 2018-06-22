@@ -1,15 +1,15 @@
 DROP TABLE hmdb.chemical_data;
 DROP TABLE hmdb.comments;
-DROP TABLE hmdb.compounds;
 DROP TABLE hmdb.database_accession;
 DROP TABLE hmdb.names;
-DROP TABLE hmdb.ontology;
 DROP TABLE hmdb.reference;
 DROP TABLE hmdb.relation;
-DROP TABLE hmdb.vertice;
-DROP TABLE hmdb.structures;
 DROP TABLE hmdb.default_structures;
 DROP TABLE hmdb.autogen_structures;
+DROP TABLE hmdb.structures;
+DROP TABLE hmdb.vertice;
+DROP TABLE hmdb.ontology;
+DROP TABLE hmdb.compounds;
 
 DROP SEQUENCE hmdb.chemical_data_SQ;
 DROP SEQUENCE hmdb.comments_SQ;

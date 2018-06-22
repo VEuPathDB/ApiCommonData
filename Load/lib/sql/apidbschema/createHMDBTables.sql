@@ -1,3 +1,28 @@
+CREATE TABLE hmdb.compounds(                                                                                                                                                                                
+    ID              NUMBER(12)      NOT NULL,
+    NAME            VARCHAR(255)    NOT NULL,
+    SOURCE          VARCHAR(32)     NOT NULL,
+    PARENT_ID       NUMBER(12)      NOT NULL,
+    HMDB_ACCESSION  VARCHAR(30)     NOT NULL,
+    STATUS          VARCHAR(1)      NOT NULL,
+    DEFINITION      VARCHAR(255),
+    STAR            NUMBER(12)      NOT NULL,
+    MODIFIED_ON     VARCHAR(32),
+    CREATED_BY      VARCHAR(32), 
+    MODIFICATION_DATE             DATE,
+    USER_READ                     NUMBER(1),
+    USER_WRITE                    NUMBER(1),
+    GROUP_READ                    NUMBER(10),
+    GROUP_WRITE                   NUMBER(1),
+    OTHER_READ                    NUMBER(1),
+    OTHER_WRITE                   NUMBER(1),
+    ROW_USER_ID                   NUMBER(12),
+    ROW_GROUP_ID                  NUMBER(4),
+    ROW_PROJECT_ID                NUMBER(4),
+    ROW_ALG_INVOCATION_ID         NUMBER(12),
+    PRIMARY KEY (ID)
+);
+
 CREATE TABLE hmdb.chemical_data (
   ID                            NUMBER(12)    NOT NULL,
   COMPOUND_ID                   NUMBER(12)    NOT NULL,
@@ -41,34 +66,9 @@ CREATE TABLE hmdb.comments(
     ROW_ALG_INVOCATION_ID         NUMBER(12),
     PRIMARY KEY (ID),
     FOREIGN KEY (COMPOUND_ID) REFERENCES hmdb.compounds(ID)
-):
-CREATE INDEX hmdb.co_revix0 ON hmdb.comments(compound_id) TABLESPACE index;
-    
-CREATE TABLE hmdb.compounds(
-    ID              NUMBER(12)      NOT NULL,
-    NAME            VARCHAR(255)    NOT NULL,
-    SOURCE          VARCHAR(32)     NOT NULL,
-    PARENT_ID       NUMBER(12)      NOT NULL,
-    HMDB_ACCESSION  VARCHAR(30)     NOT NULL,
-    STATUS          VARCHAR(1)      NOT NULL,
-    DEFINITION      VARCHAR(255),
-    STAR            NUMBER(12)      NOT NULL,
-    MODIFIED_ON     VARCHAR(32),
-    CREATED_BY      VARCHAR(32) 
-    MODIFICATION_DATE             DATE,
-    USER_READ                     NUMBER(1),
-    USER_WRITE                    NUMBER(1),
-    GROUP_READ                    NUMBER(10),
-    GROUP_WRITE                   NUMBER(1),
-    OTHER_READ                    NUMBER(1),
-    OTHER_WRITE                   NUMBER(1),
-    ROW_USER_ID                   NUMBER(12),
-    ROW_GROUP_ID                  NUMBER(4),
-    ROW_PROJECT_ID                NUMBER(4),
-    ROW_ALG_INVOCATION_ID         NUMBER(12),
-    PRIMARY KEY (ID)
 );
-
+CREATE INDEX hmdb.co_revix0 ON hmdb.comments(compound_id) TABLESPACE indx;
+    
 CREATE TABLE hmdb.database_accession (
     ID                NUMBER(12)      NOT NULL,
     COMPOUND_ID       NUMBER(12)      NOT NULL,
@@ -155,6 +155,28 @@ CREATE TABLE hmdb.reference (
 );
 CREATE INDEX hmdb.ref_revix0 ON hmdb.reference(compound_id) TABLESPACE indx;
 
+CREATE TABLE hmdb.vertice (
+    ID              NUMBER(12)      NOT NULL,
+    VERTICE_REF     VARCHAR(60)     NOT NULL,
+    COMPOUND_ID     NUMBER(12),
+    ONTOLOGY_ID     NUMBER(12)      NOT NULL,
+    MODIFICATION_DATE             DATE,
+    USER_READ                     NUMBER(1),
+    USER_WRITE                    NUMBER(1),
+    GROUP_READ                    NUMBER(10),
+    GROUP_WRITE                   NUMBER(1),
+    OTHER_READ                    NUMBER(1),
+    OTHER_WRITE                   NUMBER(1),
+    ROW_USER_ID                   NUMBER(12),
+    ROW_GROUP_ID                  NUMBER(4),
+    ROW_PROJECT_ID                NUMBER(4),
+    ROW_ALG_INVOCATION_ID         NUMBER(12),
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ONTOLOGY_ID) REFERENCES hmdb.ontology(ID),
+    CONSTRAINT unique_ontology_ref UNIQUE (vertice_ref, ontology_id)
+);
+CREATE INDEX hmdb.ver_revix0 ON hmdb.vertice(ontology_id) TABLESPACE indx;
+
 CREATE TABLE hmdb.relation (
     ID          NUMBER(12)          NOT NULL,
     TYPE        VARCHAR(255)        NOT NULL,
@@ -179,28 +201,6 @@ CREATE TABLE hmdb.relation (
 CREATE INDEX hmdb.rel_revix0 ON hmdb.relation(init_id) TABLESPACE indx;
 CREATE INDEX hmdb.rel_revix1 ON hmdb.relation(final_id) TABLESPACE indx;
 
-CREATE TABLE hmdb.vertice (
-    ID              NUMBER(12)      NOT NULL,
-    VERTICE_REF     VARCHAR(60)     NOT NULL,
-    COMPOUND_ID     NUMBER(12),
-    ONTOLOGY_ID     NUMBER(12)      NOT NULL,
-    MODIFICATION_DATE             DATE,
-    USER_READ                     NUMBER(1),
-    USER_WRITE                    NUMBER(1),
-    GROUP_READ                    NUMBER(10),
-    GROUP_WRITE                   NUMBER(1),
-    OTHER_READ                    NUMBER(1),
-    OTHER_WRITE                   NUMBER(1),
-    ROW_USER_ID                   NUMBER(12),
-    ROW_GROUP_ID                  NUMBER(4),
-    ROW_PROJECT_ID                NUMBER(4),
-    ROW_ALG_INVOCATION_ID         NUMBER(12),
-    PRIMARY KEY (ID),
-    FOREIGN KEY (ONTOLOGY_ID) REFERENCES hmdb.ontology(ID),
-    CONSTRAINT unique_ontology_ref UNIQUE (vertice_ref, ontology_id)
-);
-CREATE INDEX hmdb.ver_revix0 ON hmdb.vertice(ontology_id) TABLESPACE indx;
-
 CREATE TABLE hmdb.structures (
     ID              NUMBER(12)      NOT NULL,
     COMPOUND_ID     NUMBER(12)      NOT NULL,
@@ -219,7 +219,7 @@ CREATE TABLE hmdb.structures (
     ROW_PROJECT_ID                NUMBER(4),
     ROW_ALG_INVOCATION_ID         NUMBER(12),
     PRIMARY KEY (ID),
-    FOREIGN KEY (COMPOUND ID) REFERENCES hmdb.compounds(ID)
+    FOREIGN KEY (COMPOUND_ID) REFERENCES hmdb.compounds(ID)
 );
 
 CREATE TABLE hmdb.default_structures (
@@ -252,7 +252,7 @@ CREATE SEQUENCE hmdb.autogen_structures_SQ;
 GRANT SELECT ON hmdb.chemical_data TO gus_r;
 GRANT SELECT ON hmdb.comments TO gus_r;
 GRANT SELECT ON hmdb.compounds TO gus_r;
-GRANT SELECT ON hmdb.database_accesion TO gus_r;
+GRANT SELECT ON hmdb.database_accession TO gus_r;
 GRANT SELECT ON hmdb.names TO gus_r;
 GRANT SELECT ON hmdb.ontology TO gus_r;
 GRANT SELECT ON hmdb.reference TO gus_r;
