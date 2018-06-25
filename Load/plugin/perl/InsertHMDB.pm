@@ -160,7 +160,10 @@ sub makeName {
 #TODO: fill this out
 sub undoTables {
     my $self = @_;
-    return
+    return (
+        'hmdb.names',
+        'hmdb.compounds'
+    )
 }
 
 1;
