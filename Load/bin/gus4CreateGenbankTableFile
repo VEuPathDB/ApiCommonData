@@ -202,7 +202,7 @@ where taf.na_feature_id = t.NA_FEATURE_ID and t.NA_FEATURE_ID=$tNaFeatureId
     printSynonymTbl ($ofh, $gSourceId, $geneSynonymRef) if ($functAnnot{'synonym'});
 
     ## print a dbxref link to EuPathDB
-    printDbxRef2EuPathDB ($ofh, $gSourceId, $project);
+    #printDbxRef2EuPathDB ($ofh, $gSourceId, $project);  ## comment out for now until people request it
 
     ## FOR TRANSCRIPT
     ## get the codon_start
@@ -301,7 +301,7 @@ and t.NA_FEATURE_ID=$tNaFeatureId order by rfe.ORDER_NUMBER";
 	  printGenbankTagInfo ($ofh, "codon_start", $codonStart) if ($prefix5{$tNaFeatureId});
 
 	  ## print a dbxref link to EuPathDB
-	  printDbxRef2EuPathDB ($ofh, $tSourceId, $project);
+	  #printDbxRef2EuPathDB ($ofh, $tSourceId, $project);
 
 	  ## print functional annotation data for transcript
 	  printEcTbl ($ofh, $tSourceId, $transECRef) if ($functAnnot{'EC'});
@@ -573,7 +573,12 @@ sub printNoteTbl {
 
 sub printDbxRef2EuPathDB {
   my ($fh, $tId, $project) = @_;
-  my $inValue = "ApiDB_" . $project . ":" . $tId;
+  my $inValue;
+  if ($project) {
+    $inValue = "ApiDB_" . $project . ":" . $tId;
+  } else {
+    $inValue = "EuPathDB:" . $tId;
+  }
   printGenbankTagInfo ($fh, "db_xref", $inValue);
   return 0;
 }
