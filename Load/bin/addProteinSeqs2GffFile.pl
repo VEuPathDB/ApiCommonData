@@ -36,6 +36,12 @@ while (<IN>) {
     if ($idSuffix) {
       $seqId .= $idSuffix;
     }
+
+    ## some protein sequence files have translated table info at the defline
+    if ($_ =~ /translated using codon table (\d+)/) {
+      $translTable = $1;
+      #print STDERR "\$translTable = $translTable\n";
+    }
   } else {
     $proteins{$seqId} .= $_;
   }
