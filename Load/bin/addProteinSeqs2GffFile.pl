@@ -19,7 +19,7 @@ my ($verbose, $help, $inputGffFile, $outputGffFile, $proteinFile, $idSuffix, $tr
 &usage("Missing Required Arguments") unless (defined ($inputGffFile && $proteinFile) );
 
 
-my (%proteins, $seqId);
+my (%proteins, $seqId, %translTables);
 
 open (IN, $proteinFile) || die "can not open proteinFile file to read.\n";
 while (<IN>) {
@@ -39,7 +39,7 @@ while (<IN>) {
 
     ## some protein sequence files have translated table info at the defline
     if ($_ =~ /translated using codon table (\d+)/) {
-      $translTable = $1;
+      $translTables{$seqId} = $1;
       #print STDERR "\$translTable = $translTable\n";
     }
   } else {
@@ -57,6 +57,7 @@ while (<INN>) {
   if ($items[2] eq 'mRNA') {
     if ($items[8] =~ /ID \"(\S+?)\"/) {
       $items[8] .= "transl_table \"$translTable\"\;" if ($translTable);
+      $items[8] .= "transl_table \"$translTables{$1}\"\;" if ($translTables{$1});
       $items[8] .= "translation \"$proteins{$1}\"\;";
     }
   }
