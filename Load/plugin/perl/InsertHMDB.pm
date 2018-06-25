@@ -52,7 +52,7 @@ sub new {
     bless($self, $class);
 
     $self->initialize({ requiredDbVersion => 4.0,
-                        cvsRevision => '$Revision : 89665 $',
+                        cvsRevision => '$Revision$',
                         name => ref($self),
                         argsDeclaration => $argsDeclaration,
                         documentation => $documentation
@@ -61,7 +61,7 @@ sub new {
 }
 
 sub  run {
-    my $self = @_;
+    my ($self) = @_;
 
     $self->setPointerCacheSize(100000);
     
@@ -82,7 +82,7 @@ sub  run {
         $xc->registerNs('hmdb', 'http://www.hmdb.ca');
 
         my @accessions = $xc->findnodes('hmdb:accession');
-        die "Metabolite with accession $accessions[0] should have only on primary accession. Please check xml.\n" if scalar @accessions != 1;
+        die "Metabolite with accession $accessions[0] should have only one primary accession. Please check xml.\n" if scalar @accessions != 1;
 
         my $accession = $accessions[0];
         #my $name = $xc->findnodes('hmdb:name')->[0];
@@ -93,7 +93,19 @@ sub  run {
 
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
             my $secondaryCompound = &makeCompound($xc, $secondaryAccession, 0);
-            $secondaryCompound->setParent_Id($primaryCompound->{'id'});
+            $secondaryCompound->setParent($primaryCompound->{'id'});
+        }
+
+        my @names =  $xc->findnodes('hmdb:name');
+        die "Metabolite with accession $accession should have only one name.  Please check xml.\n" if scalar @names != 1;
+        &makeName($names[0], 'NAME', $primaryCompound);
+
+        my @iupacNames = $xc->findnodes('hmdb:iupac_name');
+        die "Metabolite with accession $accession should only have one IUPAC name.  Please check xml.\n" if scalar @iupacNames != 1;
+        &makeName($names[0], 'IUPAC NAME', $primaryCompound);
+
+        foreach my $synonym ($xc->findnodes('hmdb:synonyms/hmdb:synonym')) {
+            &makeName($synonym, 'SYNONYM'. $primaryCompound);
         }
     }
     # move reader to next metabolite instead of parsing all children of current node
@@ -136,6 +148,13 @@ sub makeCompound {
     }
     my $compound = GUS::Model::hmdb::compounds->new({name => $name, hmdb_accession => $accession, definition => $definition});
     return $compound;
+}
+
+sub makeName {
+    my ($self, $name, $type, $compound) = @_;
+    my $gusName = GUS::Model::hmdb::names->new({name => $name, type => $type, source => 'hmdb'});
+    $gusName->setParent($compound);
+    return $gusName;
 }
 
 #TODO: fill this out
