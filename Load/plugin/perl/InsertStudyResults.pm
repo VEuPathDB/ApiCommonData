@@ -414,7 +414,7 @@ sub lookupIdFromSourceId {
                                             from apidb.TaxonString ts
                                             , apidb.SequenceTaxonString sts
                                             , dots.externalnasequence ns
-                                            where ns.source_id = $sourceId
+                                            where ns.source_id = to_char($sourceId)
                                             and ns.na_sequence_id = sts.na_sequence_id
                                             and sts.taxon_string_id = ts.taxon_string_id");
     unless (scalar @taxonIds == 1) {
