@@ -14,6 +14,7 @@ use GUS::Model::hmdb::names;
 use GUS::Model::hmdb::chemical_data;
 use GUS::Model::hmdb::database_accession;
 use GUS::Model::hmdb::structures;
+use GUS::Model::hmdb::autogen_structures;
 use GUS::Model::hmdb::default_structures;
 
 use XML::LibXML::Reader;
@@ -65,6 +66,7 @@ sub  run {
 
     $self->setPointerCacheSize(100000);
     
+    my $xrefSourceMap = {chebi => 'ChEBI', kegg => 'KEGG COMPOUND', pubchem_compound => 'PubChem'};
 
     my $reader = XML::LibXML::Reader->new(location => "/home/crouchk/hmdb_metabolites_minusOntology.xml")
         or die "cannot read file '/home/crouchk/hmdb_metabolites_minusOntology.xml': $!\n";
@@ -84,83 +86,137 @@ sub  run {
         my @accessions = $xc->findnodes('hmdb:accession');
         die "Metabolite with accession $accessions[0] should have only one primary accession. Please check xml.\n" if scalar @accessions != 1;
 
-        my $accession = $accessions[0];
-        #my $name = $xc->findnodes('hmdb:name')->[0];
-        #my $definition = $xc->findnodes('hmdb:description')->[0];
-        
+        my $accession = $accessions[0]->textContent();
+        print STDERR "Inserting primary accesssion...\n";  
         my $primaryCompound = makeCompound($xc, $accession, 1);
-        $primaryCompound->retrieveFromDB();
 
+        print STDERR "Inserting secondary accessions...\n";
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
-            my $secondaryCompound = &makeCompound($xc, $secondaryAccession, 0);
+            my $secondaryCompound = &makeCompound($xc, $secondaryAccession->textContent(), 0);
             $secondaryCompound->setParent($primaryCompound->{'id'});
         }
 
         my @names =  $xc->findnodes('hmdb:name');
         die "Metabolite with accession $accession should have only one name.  Please check xml.\n" if scalar @names != 1;
-        &makeName($names[0], 'NAME', $primaryCompound);
+        &makeName($names[0]->textContent(), 'NAME', $primaryCompound);
 
         my @iupacNames = $xc->findnodes('hmdb:iupac_name');
         die "Metabolite with accession $accession should only have one IUPAC name.  Please check xml.\n" if scalar @iupacNames != 1;
-        &makeName($names[0], 'IUPAC NAME', $primaryCompound);
+        &makeName($names[0]->textContent(), 'IUPAC NAME', $primaryCompound);
 
         foreach my $synonym ($xc->findnodes('hmdb:synonyms/hmdb:synonym')) {
-            &makeName($synonym, 'SYNONYM'. $primaryCompound);
+            &makeName($synonym->textContent(), 'SYNONYM', $primaryCompound);
         }
+
+        my $formula = $xc->findnodes('hmdb:chemical_formula')->[0]->textContent();
+        &addChemicalData($formula, 'FORMULA', $primaryCompound) unless ($formula eq '');
+
+        my $mass = $xc->findnodes('hmdb:average_molecular_weight')->[0]->textContent();
+        &addChemicalData($mass, 'MASS', $primaryCompound) unless ($mass eq '');
+
+        my $charge;
+        foreach my $property ($xc->findnodes('hmdb:predicted_properties/hmdb:property')) {
+            foreach my $node ($property->getChildrenByTagName('kind')) {
+                if ($node->textContent() eq 'formal_charge') {
+                    $charge = $property->getChildrenByTagName('value')->[0]->textContent();
+                }
+            }
+        }
+        &addChemicalData($charge, 'CHARGE', $primaryCompound) unless (! defined $charge || $charge eq '');
+
+        #For now, just load chebi, pubchem and kegg xrefs
+        my @xrefs = ('chebi', 'pubchem_compound', 'kegg'); 
+        foreach my $xref (@xrefs) {
+            &addXrefs($xc, $xref, $primaryCompound, $xrefSourceMap);
+        }
+
+        my $inchi = $xc->findnodes('hmdb:inchi')->[0]->textContent();
+        &addStructureFromXml($inchi, 'InChI', $primaryCompound) unless ($inchi eq '');
+
+        my $inchikey = $xc->findnodes('hmdb:inchikey')->[0]->textContent();
+        &addStructureFromXml($inchikey, 'InChIKey', $primaryCompound) unless ($inchikey eq '');
+
+        my $smiles = $xc->findnodes('hmdb:smiles')->[0]->textContent();
+        &addStructureFromXml($smiles, 'SMILES', $primaryCompound) unless ($smiles eq '');
+
+
+        $primaryCompound->submit();
+        $self->undefPointerCache();
+        #exit;
     }
     # move reader to next metabolite instead of parsing all children of current node
     $reader->next;
 }
         
-#    print STDERR Dumper $accession->textContent();
-#    print STDERR Dumper $name->textContent();
-#    print STDERR Dumper $definition->textContent();
-
-#    foreach my $accession ($xc->findnodes('hmdb:accession')) {
-#        print STDERR "Primary accession:\n";
-#        print Dumper $accession->nodeName();
-#        print Dumper $accession->textContent();
-#    }
-#    print STDERR "Secondary accessions:\n";
-#    foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
-#        print Dumper $secondaryAccession->nodeName();
-#        print Dumper $secondaryAccession->textContent();
-#    }
-    #this way iterates through all child nodes but probably easier to extract what I want with lookups as above
-    #my @nodeList = $doc->childNodes();
-    #foreach my $node (@nodeList) {
-    #    #need to exclude text nodes with no content here
-    #    print STDERR Dumper $node->nodeName();
-    #    print STDERR Dumper $node->textContent();
-    #}
-    #moves reader to next metabolite node rather than parsing all the children of the previous node
-#    $reader->next;
-
-
 
 sub makeCompound {
-    my ($self, $xc, $accession, $isPrimary) = @_;
+    my ($xc, $accession, $isPrimary) = @_;
     my $name;
     my $definition;
     if ($isPrimary) {
-        my $name = $xc->findnodes('hmdb:name')->[0];
-        my $definition = $xc->findnodes('hmdb:description')->[0];
+        $name = $xc->findnodes('hmdb:name')->[0]->textContent();
+        $definition = $xc->findnodes('hmdb:description')->[0]->textContent();
     }
-    my $compound = GUS::Model::hmdb::compounds->new({name => $name, hmdb_accession => $accession, definition => $definition});
+    print STDERR Dumper $accession;
+    print STDERR Dumper $name;
+    print STDERR Dumper $definition;
+    my $compound = GUS::Model::hmdb::compounds->new({name => $name, hmdb_accession => $accession, definition => $definition, source => 'HMDB'});
     return $compound;
 }
 
 sub makeName {
-    my ($self, $name, $type, $compound) = @_;
-    my $gusName = GUS::Model::hmdb::names->new({name => $name, type => $type, source => 'hmdb'});
+    my ($name, $type, $compound) = @_;
+    print STDERR Dumper $name;
+    print STDERR Dumper $type;
+    my $gusName = GUS::Model::hmdb::names->new({name => $name, type => $type, source => 'HMDB'});
     $gusName->setParent($compound);
     return $gusName;
+}
+
+sub addChemicalData {
+    my ($property, $type, $compound) = @_;
+    print STDERR Dumper $property;
+    print STDERR Dumper $type;
+    my $chemicalData = GUS::Model::hmdb::chemical_data->new({chemical_data => $property, type => $type, source => 'HMDB'});
+    $chemicalData->setParent($compound);
+    return $chemicalData;
+}
+
+sub addXrefs {
+    my ($xc, $xref, $compound, $xrefSourceMap) = @_;
+    my $xmlTag = "hmdb:".$xref."_id";
+    my $xrefAccession = $xc->findnodes($xmlTag)->[0]->textContent();
+    if (defined $xrefAccession && $xrefAccession ne '') {
+        my $source = $xrefSourceMap->{$xref};
+        print STDERR Dumper $xref;
+        print STDERR Dumper $xrefAccession;
+        print STDERR Dumper $source;
+        my $databaseAccession = GUS::Model::hmdb::database_accession->new({accession_number => $xrefAccession, source => $source, type => $source." accession"}); 
+        $databaseAccession->setParent($compound);
+        return $databaseAccession;
+    }
+}
+
+sub addStructureFromXml {
+    my ($structure, $type, $compound) = @_;
+    print STDERR Dumper $structure;
+    print STDERR Dumper $type;
+    my $gusStructure = GUS::Model::hmdb::structures->new({structure => $structure, type => $type, dimension => '1D'});
+    $gusStructure->setParent($compound);
+
+    my $autogenStructure = GUS::Model::hmdb::autogen_structures->new();
+    $autogenStructure->setParent($gusStructure);
+    return $gusStructure;
 }
 
 #TODO: fill this out
 sub undoTables {
     my $self = @_;
     return (
+        'hmdb.autogen_structures',
+        'hmdb.structures',
+        'hmdb.database_accession',
+        'hmdb.chemical_data',
         'hmdb.names',
         'hmdb.compounds'
     )
