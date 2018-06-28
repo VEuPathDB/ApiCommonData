@@ -4,7 +4,7 @@ truncate table ApiDBUserDatasets.UserDatasetSharedWith;
 
 truncate table ApiDBUserDatasets.UserDatasetOwner;
 
-truncate table ApiDBUserDatasets.InstalledUserDataset;
+delete from ApiDBUserDatasets.InstalledUserDataset;
 
 exit;
 
