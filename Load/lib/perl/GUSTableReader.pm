@@ -112,7 +112,7 @@ and (ws.name like 'global.%'
     $sh->finish();
   }
 
-  my $rowAlgInvocationId = $row->{ROW_ALG_INVOCATION_ID};
+  my $rowAlgInvocationId = $row->{row_alg_invocation_id};
 
   if($self->{_global_row_alg_invocation_ids}->{$rowAlgInvocationId}) {
     return 1;
@@ -142,7 +142,7 @@ and ws.name like 'metadata.ISA%'
     $sh->finish();
   }
 
-  my $rowAlgInvocationId = $row->{ROW_ALG_INVOCATION_ID};
+  my $rowAlgInvocationId = $row->{row_alg_invocation_id};
 
   if($self->{_skip_row_alg_invocation_ids}->{$rowAlgInvocationId}) {
     return 1;
