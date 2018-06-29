@@ -1,12 +1,12 @@
 #!/usr/bin/perl
 
 use strict;
-use DBI;
+use Tie::IxHash;
 use Getopt::Long;
 
 my ($study, $org, $dsname, $profile);
 my $strand = 0;
-my %hash;
+tie my %hash, "Tie::IxHash";
 
 &GetOptions( 'study=s'             => \$study,
              'organism_abbrev=s'   => \$org,
@@ -40,33 +40,37 @@ print O2 <<EOL;
     <property name="samples">
 EOL
 
-
 my $cmd = "wget -O $study.runInfo.csv 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term=$study'";
 print "$cmd\n";
 
 system($cmd);
 
 open INFO, "$study.runInfo.csv";
+
 while(<INFO>) {
   my $header = $_ and next if /^Run/;
   next if /^\s+$/;
   my @arr = split /,/, $_;
   my $run_id = $arr[0];
   my $sample = $arr[29];
+  push @{$hash{$sample}}, $run_id; 
+}
 
-
+while(my ($k, $v) = each %hash) {
+  my $runs = join ',', @$v;
 
 print O1 <<EOL;
   <dataset class="rnaSeqSample_QuerySRA">
     <prop name="organismAbbrev">$org</prop>
     <prop name="experimentName">$dsname</prop>
-    <prop name="sampleName">$run_id</prop>
-    <prop name="sraQueryString">$run_id</prop>
+    <prop name="sampleName">$k</prop>
+    <prop name="sraQueryString">$runs</prop>
   </dataset>
+
 EOL
 
 print O2 <<EOL;
-      <value>$sample|$run_id</value>
+      <value>$k display text|$k</value>
 EOL
 }
 
