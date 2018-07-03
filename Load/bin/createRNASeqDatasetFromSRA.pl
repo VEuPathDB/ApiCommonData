@@ -58,19 +58,20 @@ while(<INFO>) {
 
 while(my ($k, $v) = each %hash) {
   my $runs = join ',', @$v;
+  my $sampleName = $v->[0];
 
 print O1 <<EOL;
   <dataset class="rnaSeqSample_QuerySRA">
     <prop name="organismAbbrev">$org</prop>
     <prop name="experimentName">$dsname</prop>
-    <prop name="sampleName">$k</prop>
+    <prop name="sampleName">$sampleName</prop>
     <prop name="sraQueryString">$runs</prop>
   </dataset>
 
 EOL
 
 print O2 <<EOL;
-      <value>$k display text|$k</value>
+      <value>$k sample_name_need_modification|$sampleName</value>
 EOL
 }
 
