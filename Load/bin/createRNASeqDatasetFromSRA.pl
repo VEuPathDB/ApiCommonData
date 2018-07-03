@@ -52,7 +52,8 @@ while(<INFO>) {
   next if /^\s+$/;
   my @arr = split /,/, $_;
   my $run_id = $arr[0];
-  my $sample = $arr[29];
+  my $sample = $arr[24];
+  my $biosample = $arr[25];
   push @{$hash{$sample}}, $run_id; 
 }
 
@@ -70,8 +71,10 @@ print O1 <<EOL;
 
 EOL
 
+  my $display = &getSampleInfo($k);
+
 print O2 <<EOL;
-      <value>$k sample_name_need_modification|$sampleName</value>
+      <value>$display|$sampleName</value>
 EOL
 }
 
@@ -88,3 +91,22 @@ print O2 <<EOL;
 </xml>
 
 EOL
+
+sub getSampleInfo {
+  my $sample_id = shift;
+
+  my $cmd = "wget -O $sample_id.tmp 'https://www.ncbi.nlm.nih.gov/biosample/$sample_id?report=full&format=text'";
+  system($cmd);
+
+  open S, "$sample_id.tmp";
+  while(<S>) {
+    chomp;
+    next unless /^\s+\//;
+    my ($attr, $val) = split /=/, $_;
+    $val =~ s/"//g;
+    if($attr =~ /strain/ || $attr =~ /host/ || $attr =~ /individual/) {
+      $sample_id .= " $val";
+    }
+  }
+  return $sample_id;
+}
