@@ -71,17 +71,17 @@ sub getGoInfoFromDbs {
   my ($dbhSub, $extDbRlsId, $taxonId, $idRef, $nameRef, $prodRef, $synonRef, $transTypeRef, $date, $tuningTablePrefix) = @_;
   my @goInfos;
 
-  ## use apidbtuning.GoTermSummary table to get GO info
+  ## use apidbtuning.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
   my $sqlSub = "
 select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
 decode(ontology, 'Biological Process', 'P',
                  'Molecular Function', 'F',
                  'Cellular Component', 'C', ontology) 
-from apidbtuning.${tuningTablePrefix}GoTermSummary
+from apidbtuning.${tuningTablePrefix}GeneGoTerms
 ";
 
   my $sqlRefSub = readFromDatabase($dbhSub, $sqlSub);
-  print STDERR "the total number of goTermSummary is $#$sqlRefSub\n";
+  print STDERR "the total number of GeneGoTerms is $#$sqlRefSub\n";
 
   foreach my $i (0..$#$sqlRefSub) {
     my ($gSourceId, $tSourceId, $goId, $reference, $evidenceCode, $goTermName, $source, $eviCodeParameter, $ontology) = split(/\|/, $sqlRefSub->[$i]);
