@@ -93,8 +93,8 @@ sub  run {
         print STDERR "Inserting secondary accessions...\n";
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
             my $secondaryCompound = &makeCompound($xc, $secondaryAccession->textContent(), 0);
-            #$secondaryCompound->setParent($primaryCompound->{'id'});
-            $secondaryCompound->{'parent_id'} = $primaryCompound;
+            $secondaryCompound->setParent($primaryCompound);
+            #$secondaryCompound->{'parent_id'} = $primaryCompound;
         }
 
         my @names =  $xc->findnodes('hmdb:name');
