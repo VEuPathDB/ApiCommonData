@@ -69,15 +69,15 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SequenceTaxonString TO gus_w;
 GRANT SELECT ON apidb.SequenceTaxonString TO gus_r;
 GRANT SELECT ON apidb.SequenceTaxonString_sq TO gus_w;
 
-CREATE INDEX apidb.seqTx_seq_ix
+CREATE INDEX apidb.seqTxStr_seq_ix
   ON apidb.SequenceTaxonString (na_sequence_id, taxon_string_id, external_database_release_id)
   TABLESPACE indx;
 
-CREATE INDEX apidb.seqTx_tx_ix
+CREATE INDEX apidb.seqTxStr_tx_ix
   ON apidb.SequenceTaxonString (taxon_string_id, na_sequence_id, external_database_release_id)
   TABLESPACE indx;
 
-CREATE INDEX apidb.seqTx_dbrls_ix
+CREATE INDEX apidb.seqTxStr_dbrls_ix
   ON apidb.SequenceTaxonString (external_database_release_id, na_sequence_id, taxon_string_id)
   TABLESPACE indx;
 
