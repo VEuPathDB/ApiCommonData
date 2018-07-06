@@ -22,8 +22,25 @@ use XML::LibXML::XPathContext;
 use XML::LibXML;
 use Data::Dumper;
 
-#TODO fill  these out
-my $argsDeclaration = [];
+my $argsDeclaration = [
+    fileArg({   name            => 'xmlFile',
+                descr           => 'XML dump of all compounds from HMDB',
+                reqd            => 1,
+                mustExist       => 1,
+                format          => 'xml',
+                constraintFunc  => undef,
+                isList          => 0,
+            }),
+
+    fileArg({   name            => 'sdfFile',
+                descr           => 'Structure for HMDB compounds in SDF format',
+                reqd            => 1,
+                mustExist       => 1,
+                format          => 'sdf',
+                constraintFunc => undef,
+                isList          => 0,
+            }),
+];
 
 my $purpose = <<PURPOSE;
 Insert HMDB metabolites
@@ -33,11 +50,29 @@ my $purposeBrief = <<PURPOSE_BRIEF;
 Insert HMDB metabolites
 PURPOSE_BRIEF
 
-my $notes;
-my $tablesAffected;
-my $tablesDependedOn;
-my $howToRestart;
-my $failureCases;
+my $notes = <<NOTES;
+NOTES
+
+my $tablesAffected = <<TABLES_AFFECTED;
+hmdb.default_structuresm
+hmdb.autogen_structures,
+hmdb.structures,
+hmdb.database_accession,
+hmdb.chemical_data,
+hmdb.names,
+hmdb.compounds'
+TABLES_AFFECTED
+
+my $tablesDependedOn = <<TABLES_DEPENDED_ON;
+TABLES_DEPENDED_ON
+
+my $howToRestart = <<RESTART;
+There are no restart facilities for this plugin
+RESTART
+
+my $failureCases = <<FAIL_CASES;
+FAIL_CASES
+
 my $documentation = {   purpose => $purpose,
                         purposeBrief => $purposeBrief,
                         notes => $notes,
@@ -67,9 +102,37 @@ sub  run {
     $self->setPointerCacheSize(100000);
     
     my $xrefSourceMap = {chebi => 'ChEBI', kegg => 'KEGG COMPOUND', pubchem_compound => 'PubChem'};
+    
+    my $sdfFile = $self->getArg('sdfFile');
+    my $molStructures;
 
-    my $reader = XML::LibXML::Reader->new(location => "/home/crouchk/hmdb_metabolites_minusOntology.xml")
-        or die "cannot read file '/home/crouchk/hmdb_metabolites_minusOntology.xml': $!\n";
+    do {
+        open(SDF, $sdfFile) or die "Cannot open SDF file for reading\n$!\n";
+        #reset record input separator to slurp one record at a time - should only be reset in this scope
+        local $/ = '$$$$';
+        while (<SDF>) {
+            my $record = $_;
+            my @entries = split('> <', $record);
+            my $hmdbId;
+            foreach my $entry (@entries) {
+                if ($entry =~ /DATABASE_ID/) {
+                    $hmdbId = (split('\n', $entry))[1];
+                }
+            }
+            my $mol = $entries[0];
+            $mol =~ s/\n//;
+
+            if (defined $hmdbId) {
+                $molStructures->{$hmdbId} = $mol;
+            }
+        }
+        close SDF;
+    };
+
+    my $xmlFile = $self->getArg('xmlFile');
+
+    my $reader = XML::LibXML::Reader->new(location => $xmlFile)
+        or die "cannot read file $xmlFile: $!\n";
 
 
     while($reader->read) {
@@ -94,7 +157,6 @@ sub  run {
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
             my $secondaryCompound = &makeCompound($xc, $secondaryAccession->textContent(), 0);
             $secondaryCompound->setParent($primaryCompound);
-            #$secondaryCompound->{'parent_id'} = $primaryCompound;
         }
 
         my @names =  $xc->findnodes('hmdb:name');
@@ -140,13 +202,20 @@ sub  run {
         my $smiles = $xc->findnodes('hmdb:smiles')->[0]->textContent();
         &addStructureFromXml($smiles, 'SMILES', $primaryCompound) unless ($smiles eq '');
 
+        my $mol = $molStructures->{$accession};
+        print STDERR Dumper $mol;
 
-        $primaryCompound->submit();
+
+        #$primaryCompound->submit();
         $self->undefPointerCache();
         #exit;
+        # move reader to next metabolite instead of parsing children of current node
+        $reader->next;
     }
+
+
     # move reader to next metabolite instead of parsing all children of current node
-    $reader->next;
+    #$reader->next;
 }
         
 
@@ -210,10 +279,25 @@ sub addStructureFromXml {
     return $gusStructure;
 }
 
-#TODO: fill this out
+# Deletes self-referencing FKs from hmdb.compounds to allow undo
+sub undoPreprocess {
+    my ($self, $dbh, $rowAlgInvocationList) = @_;
+    my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
+
+    my $sql = "UPDATE hmdb.compounds
+               SET parent_id = NULL
+               WHERE row_alg_invocation_id in ($rowAlgInvocations)";
+    
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+    $sh->finish();
+}
+
+
 sub undoTables {
     my $self = @_;
     return (
+        'hmdb.default_structures',
         'hmdb.autogen_structures',
         'hmdb.structures',
         'hmdb.database_accession',
