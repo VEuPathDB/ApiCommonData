@@ -103,6 +103,7 @@ sub  run {
     
     my $xrefSourceMap = {chebi => 'ChEBI', kegg => 'KEGG COMPOUND', pubchem_compound => 'PubChem'};
     
+    #parse sdf file and make hash of id:mol to load later
     my $sdfFile = $self->getArg('sdfFile');
     my $molStructures;
 
@@ -202,20 +203,24 @@ sub  run {
         my $smiles = $xc->findnodes('hmdb:smiles')->[0]->textContent();
         &addStructureFromXml($smiles, 'SMILES', $primaryCompound) unless ($smiles eq '');
 
-        my $mol = $molStructures->{$accession};
-        print STDERR Dumper $mol;
+        #lookup mol data from hash and load
+        if (exists $molStructures->{$accession}) {
+            my $mol = $molStructures->{$accession};
+            chomp $mol;
+            print STDERR Dumper $mol;
+            my $gusStructure = GUS::Model::hmdb::structures->new({structure => $mol, type => 'mol', dimension => '2D'});
+            $gusStructure->setParent($primaryCompound);
+        
+            my $defaultStructure = GUS::Model::hmdb::autogen_structures->new();
+            $defaultStructure->setParent($gusStructure);
+        }
 
-
-        #$primaryCompound->submit();
+        $primaryCompound->submit();
         $self->undefPointerCache();
-        #exit;
+
         # move reader to next metabolite instead of parsing children of current node
         $reader->next;
     }
-
-
-    # move reader to next metabolite instead of parsing all children of current node
-    #$reader->next;
 }
         
 
