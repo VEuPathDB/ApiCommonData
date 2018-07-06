@@ -121,7 +121,7 @@ sub  run {
                 }
             }
             my $mol = $entries[0];
-            $mol =~ s/\n//;
+            $mol =~ s/^\n+//;
 
             if (defined $hmdbId) {
                 $molStructures->{$hmdbId} = $mol;
@@ -137,7 +137,7 @@ sub  run {
 
 
     while($reader->read) {
-        ## start element nodes only
+        ## start element nodes named metabolite only
         next unless $reader->nodeType == 1;
         next unless $reader->name eq 'metabolite';
         print STDERR "Parsing next metabolite\n";
@@ -152,7 +152,7 @@ sub  run {
 
         my $accession = $accessions[0]->textContent();
         print STDERR "Inserting primary accesssion...\n";  
-        my $primaryCompound = makeCompound($xc, $accession, 1);
+        my $primaryCompound = &makeCompound($xc, $accession, 1);
 
         print STDERR "Inserting secondary accessions...\n";
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
@@ -211,7 +211,7 @@ sub  run {
             my $gusStructure = GUS::Model::hmdb::structures->new({structure => $mol, type => 'mol', dimension => '2D'});
             $gusStructure->setParent($primaryCompound);
         
-            my $defaultStructure = GUS::Model::hmdb::autogen_structures->new();
+            my $defaultStructure = GUS::Model::hmdb::default_structures->new();
             $defaultStructure->setParent($gusStructure);
         }
 
