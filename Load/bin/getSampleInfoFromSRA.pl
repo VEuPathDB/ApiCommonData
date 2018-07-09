@@ -6,7 +6,7 @@ use Tie::IxHash;
 my %library;
 tie my %hash, "Tie::IxHash";
 
-my $usage = "getSampleInfoFromSRA.pl SRP106638\n";
+my $usage = "getSampleInfoFromSRA.pl SRP145096\n";
 my $study = shift or die $usage;
 
 my $cmd = "wget -O $study.runInfo.csv 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term=$study'";
