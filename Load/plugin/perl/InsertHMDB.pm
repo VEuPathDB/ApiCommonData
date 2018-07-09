@@ -151,10 +151,8 @@ sub  run {
         die "Metabolite with accession $accessions[0] should have only one primary accession. Please check xml.\n" if scalar @accessions != 1;
 
         my $accession = $accessions[0]->textContent();
-        print STDERR "Inserting primary accesssion...\n";  
         my $primaryCompound = &makeCompound($xc, $accession, 1);
 
-        print STDERR "Inserting secondary accessions...\n";
         foreach my $secondaryAccession ($xc->findnodes('hmdb:secondary_accessions/hmdb:accession')) {
             my $secondaryCompound = &makeCompound($xc, $secondaryAccession->textContent(), 0);
             $secondaryCompound->setParent($primaryCompound);
@@ -207,7 +205,6 @@ sub  run {
         if (exists $molStructures->{$accession}) {
             my $mol = $molStructures->{$accession};
             chomp $mol;
-            print STDERR Dumper $mol;
             my $gusStructure = GUS::Model::hmdb::structures->new({structure => $mol, type => 'mol', dimension => '2D'});
             $gusStructure->setParent($primaryCompound);
         
@@ -232,17 +229,12 @@ sub makeCompound {
         $name = $xc->findnodes('hmdb:name')->[0]->textContent();
         $definition = $xc->findnodes('hmdb:description')->[0]->textContent();
     }
-    print STDERR Dumper $accession;
-    print STDERR Dumper $name;
-    print STDERR Dumper $definition;
     my $compound = GUS::Model::hmdb::compounds->new({name => $name, hmdb_accession => $accession, definition => $definition, source => 'HMDB'});
     return $compound;
 }
 
 sub makeName {
     my ($name, $type, $compound) = @_;
-    print STDERR Dumper $name;
-    print STDERR Dumper $type;
     my $gusName = GUS::Model::hmdb::names->new({name => $name, type => $type, source => 'HMDB'});
     $gusName->setParent($compound);
     return $gusName;
@@ -250,8 +242,6 @@ sub makeName {
 
 sub addChemicalData {
     my ($property, $type, $compound) = @_;
-    print STDERR Dumper $property;
-    print STDERR Dumper $type;
     my $chemicalData = GUS::Model::hmdb::chemical_data->new({chemical_data => $property, type => $type, source => 'HMDB'});
     $chemicalData->setParent($compound);
     return $chemicalData;
@@ -263,9 +253,6 @@ sub addXrefs {
     my $xrefAccession = $xc->findnodes($xmlTag)->[0]->textContent();
     if (defined $xrefAccession && $xrefAccession ne '') {
         my $source = $xrefSourceMap->{$xref};
-        print STDERR Dumper $xref;
-        print STDERR Dumper $xrefAccession;
-        print STDERR Dumper $source;
         my $databaseAccession = GUS::Model::hmdb::database_accession->new({accession_number => $xrefAccession, source => $source, type => $source." accession"}); 
         $databaseAccession->setParent($compound);
         return $databaseAccession;
@@ -274,8 +261,6 @@ sub addXrefs {
 
 sub addStructureFromXml {
     my ($structure, $type, $compound) = @_;
-    print STDERR Dumper $structure;
-    print STDERR Dumper $type;
     my $gusStructure = GUS::Model::hmdb::structures->new({structure => $structure, type => $type, dimension => '1D'});
     $gusStructure->setParent($compound);
 
