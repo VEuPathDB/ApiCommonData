@@ -8,19 +8,33 @@ use GUS::PluginMgr::Plugin;
 use DBI;
 use DBD::Oracle;
 
-use GUS::Model::Platform::ReporterLocation_Table;
-
 use GUS::Model::ApiDB::DATABASETABLEMAPPING;
 
 use Data::Dumper;
 
-my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::SRes::ExternalDatabase" => ["name"],
-                            "GUS::Model::Core::ProjectInfo" => ["name", "release"],
+my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release"],
                             "GUS::Model::Core::TableInfo" => ["name", "database_id"],
                             "GUS::Model::Core::DatabaseInfo" => ["name"],
                             "GUS::Model::Core::GroupInfo" => ["name"],
                             "GUS::Model::Core::UserInfo" => ["login"],
-                            #TODO:  ADD THESE
+                            "GUS::Model::DoTS.AASequenceImp" => ["source_id", "external_database_release_id"],
+                            "GUS::Model::DoTS.BLATAlignmentQuality" => ["name"],
+                            "GUS::Model::SRes::ExternalDatabase" => ["name"],
+                            "GUS::Model::SRes.ExternalDatabaseRelease" => ["external_database_id", "version"],
+                            "GUS::Model::SRes.OntologyTerm" => ["source_id"],
+                            "GUS::Model::SRes.OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
+                            "GUS::Model::SRes.OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
+                            "GUS::Model::SRes.OntologyTermType" => ["name"],
+                            "GUS::Model::SRes.EnzymeClass" => ["ec_number"],
+                            "GUS::Model::SRes.Taxon" => ["ncbi_tax_id"],
+                            "GUS::Model::SRes.TaxonName" => ["taxon_id", "name"],
+                            "GUS::Model::SRes.EnzymeClassAttribute" => ["enzyme_class_id", "attribute_value"],
+                            "GUS::Model::SRes.GeneticCode" => ["name"],
+                            "GUS::Model::SRes.DbRef" => ["primary_identifier", "secondary_identifier", "external_database_release_id"],
+                            "GUS::Model::ApiDB.GoSubset" => ["go_subset_term", "ontology_term_id", "external_database_release_id"],
+                            "GUS::Model::ApiDB.IsolateGPS" => ["gazetteer_id"],
+                            "GUS::Model::ApiDB.EcNumberGenus" => ["ec_number", "genus"],
+                            "GUS::Model::ApiDB.Datasource" => ["name"],
     );
 
 # ----------------------------------------------------------
@@ -137,6 +151,8 @@ sub run {
 
   $tableReader->connectDatabase();
 
+  $self->log("Getting Table Dependencies and Ordering Tables by Foreign Keys...");
+
   my $tableInfo = $self->getAllTableInfo($tableReader);
   
   my $orderedTables = [];
@@ -149,8 +165,9 @@ sub run {
     $self->error("Expected $initialTableCount tables but found $orderedTableCount upon Ordering");
   }
 
-  # TODO:  foreach reverse sort of orderedTables, do undo
-
+  foreach my $tableName (reverse @$orderedTables) {
+    $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+  }
 
   foreach my $tableName (@$orderedTables) {
     $self->loadTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
@@ -159,8 +176,67 @@ sub run {
   $tableReader->disconnectDatabase();
 }
 
-sub addToIdMappings {
-  my ($self, $database, $idMappings, $tableNames, $keepIds) = @_;
+
+sub undoTable {
+  my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
+
+  if ($self->{commit} == 1) {
+    my $primaryKeyColumn = $tableInfo->{primaryKey};
+
+    my $origPksHash = $tableReader->getDistinctValuesForTableField($tableName, $primaryKeyColumn, 0);
+
+    my $sql = &getDatabaseTableMappingSql($database, [$tableName]);
+  
+    my $dbh = $self->getDbHandle();
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
+
+    my $deleteMapSql = "delete from apidb.DatabaseTableMapping 
+             where database_orig = '$database'
+             and table_name = '$tableName'
+             and primary_key_orig = ?";
+
+    my $delMapSh = $dbh->prepare($deleteMapSql) or die $dbh->errstr;;
+
+    my $count;
+    while(my ($databaseOrig, $tableName, $pkOrig, $pk) = $sh->fetchrow_array()) {
+      next if($origPksHash->{$pkOrig});
+      
+      $delMapSh->execute($pkOrig);
+
+      if($count++ % 1000 == 0) {
+        $self->log("Deleted $count rows from ApiDB.DatabaseTableMapping for table $tableName");
+        $dbh->commit();
+      }
+    }
+    $dbh->commit();
+
+    # delete rows from primary table where primaryKey not in (select primarykey from mapping table)
+    my $tableAbbrev = &getAbbreviatedTableName($tableName, ".");
+    my $chunkSize = 100000;
+
+    my $deleteSql = "delete from $tableAbbrev
+        where $primaryKeyColumn not in (select primary_key 
+                                        from apidb.databasetablemapping 
+                                        where database_orig = '$database' 
+                                        and table_name = '$tableName')
+        and rownum <= $chunkSize";
+
+    my $deleteStmt = $dbh->prepare($deleteSql) or die $dbh->errstr;
+    my $rowsDeleted = 0;
+    
+    while (1) {
+      my $rtnVal = $deleteStmt->execute() or die $self->{dbh}->errstr;
+      $rowsDeleted += $rtnVal;
+      $self->log("Deleted $rowsDeleted rows from $tableName");
+      $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
+      last if $rtnVal < $chunkSize;
+    }
+  }
+}
+
+sub getDatabaseTableMappingSql {
+  my ($database, $tableNames) = @_;
 
   my $tableNamesString = join(",", map { "'" . &getAbbreviatedTableName($_, '::') . "'" } @$tableNames);
 
@@ -172,6 +248,15 @@ sub addToIdMappings {
              where database_orig = '$database'
              and table_name in ($tableNamesString)
 ";
+
+  return $sql;
+}
+
+
+sub addToIdMappings {
+  my ($self, $database, $idMappings, $tableNames, $keepIds) = @_;
+
+  my $sql = &getDatabaseTableMappingSql($database, $tableNames);
   
   my $dbh = $self->getDbHandle(); # this is the one which is inserting rows
   my $sh = $dbh->prepare($sql);
@@ -194,6 +279,8 @@ sub getIdMappings {
 
   my $idMappings = {};
 
+  $self->log("Begin ID Lookup for $tableName from database $database");
+
   foreach my $pr (@{$tableInfo->{parentRelations}}) {
     my $field = $pr->[1];
 
@@ -201,7 +288,7 @@ sub getIdMappings {
 
     my @tableNames;
 
-    my $keepIds = $tableReader->getDistinctValuesForTableField($tableName, $field);
+    my $keepIds = $tableReader->getDistinctValuesForTableField($tableName, $field, 0);
 
     if(ref($pr->[0]) eq 'ARRAY') {
       push @tableNames, @{$pr->[0]};
@@ -214,6 +301,8 @@ sub getIdMappings {
   }
 
   $self->addToIdMappings($database, $idMappings, [$tableName], undef);
+
+  $self->log("Finished ID Lookup for $tableName from database $database");
 
   return $idMappings;
 }
@@ -266,7 +355,7 @@ sub loadTable {
 
   my $primaryKeyColumn = $tableInfo->{primaryKey};
 
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName);
+  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
 
   while(my $row = $tableReader->nextRowAsHashref()) {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
@@ -316,9 +405,7 @@ sub loadTable {
       $self->getDb()->manageTransaction(0, 'begin');
     }
 
-
   $self->undefPointerCache();
-
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
@@ -338,6 +425,11 @@ sub getAbbreviatedTableName {
 sub lookupPrimaryKey {
   my ($self, $tableName, $row, $globalLookup) = @_;
 
+  # These tables have global row_alg invocation ids but are not global
+  if($tableName eq "GUS::Model::Core.AlgorithmParam" || $tableName eq "GUS::Model::Core.AlgorithmInvocation") {
+      return undef;
+  }
+
   unless($GLOBAL_UNIQUE_FIELDS{$tableName}) {
     $self->error("Table $tableName requires fields for Global Lookup");
   }
@@ -352,13 +444,24 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName) = @_;
+  my ($self, $primaryKeyColumn, $tableName, $tableReader, $idMappings) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
   my $fields = $GLOBAL_UNIQUE_FIELDS{$tableName};
 
   return unless($fields);
+
+  $self->log("Preparing Global Lookup for table $tableName");
+
+  my $keepIds = {};  # keep only global rows for this table from input db
+  my $origIdsToKeep = $tableReader->getDistinctValuesForTableField($tableName, $primaryKeyColumn, 1); 
+  foreach my $origId (keys %$origIdsToKeep) {
+    if($origIdsToKeep->{$origId}) {
+      my $id = $idMappings->{$tableName}->{$origId};
+      $keepIds->{$id} = 1;
+    }
+  }
 
   my $fieldsString = join(",", map { $_ } @$fields);
 
@@ -371,6 +474,8 @@ sub globalLookupForTable  {
 
   my $rowCount = 0;
   while(my ($pk, @a) = $sh->fetchrow_array()) {
+    next unless($keepIds->{$pk});
+
     my $key = join("_", @a);
     $lookup{$key} = $pk;
     $rowCount++
@@ -381,6 +486,8 @@ sub globalLookupForTable  {
   unless($rowCount == scalar(keys(%lookup))) {
     $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
   }
+
+  $self->log("Finished caching Global Lookup for table $tableName");
 
   return \%lookup;
 }
@@ -433,7 +540,7 @@ sub getTableRelationsSql {
                    from core.tableinfo t, core.databaseinfo d
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
-                    and d.name not in ('UserDatasets', 'ApidbUserDatasets')
+                    and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null

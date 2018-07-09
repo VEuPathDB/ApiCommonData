@@ -54,7 +54,8 @@ B<Parameters:>
 
  $self(TableReader): a table reader object
  $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(arrayref): this field is a foreign key field in the gus $table
+ $field(string): this field is a foreign key field in the gus $table
+ $onlyGlobalRows(boolean): results hash value for non global rows will be zero
 
 B<Return type:> 
 
