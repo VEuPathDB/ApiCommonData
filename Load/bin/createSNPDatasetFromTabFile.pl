@@ -23,7 +23,7 @@ This script creates dataset xml and manual delivery files for HTS_SNPs from SRA.
 It takes SRA study id, organism abbreviation and dataset name as input. 
 For instance,
 
-%>createSNPDatasetFromSRA.pl --project_name FungiDB --study ERP009642 --organism_abbrev afumAf293 --experiment_name Azole-Resistance_Mutations --version 2015-04-24 --hasCNV
+%>createSNPDatasetFromTabFile --project_name FungiDB --study ERP009642 --organism_abbrev afumAf293 --experiment_name Azole-Resistance_Mutations --version 2015-04-24 --hasCNV
 
 Output will be dataset xml and empty sample files under manual delivery file dir 
 EOL
