@@ -1,41 +1,31 @@
 #!/usr/bin/perl
 
 use strict;
-use DBI;
-use Getopt::Long;
+use Cwd;
 
-my ($proj, $study, $org, $exp, $version);
-my $cnv = 0;
-my %hash;
+my $cnv = 1;
 
-&GetOptions( 'project_name=s'    => \$proj,
-             'study=s'           => \$study,
-             'organism_abbrev=s' => \$org,
-             'experiment_name=s' => \$exp,
-             'version=s'         => \$version,
-             'hasCNV!'           => \$cnv
-           );
-
-unless($study && $proj && $org && $exp && $version) {
-  print <<EOL;
+my $usage =<<EOL;
+MUST run this script under manual delivery workSpace directory! e.g /eupath/data/EuPathDB/manualDelivery/TriTrypDB/tbruTREU927/SNP/Weir_Population_Genomics/2013-05-21/workSpace
 
 This script creates dataset xml and manual delivery files for HTS_SNPs from SRA.
-It takes SRA study id, organism abbreviation and dataset name as input. 
-For instance,
 
-%>createSNPDatasetFromTabFile.pl --project_name FungiDB --study SRP145096 --organism_abbrev caurB8441 --experiment_name Experiment_Name --version Version --hasCNV
+%>createSNPDatasetFromTabFile.pl file_with_sample_name_run_ids-
 
 Output will be dataset xml and empty sample files under manual delivery file dir 
 EOL
-  exit;
 
-}
+my $file = shift or die $usage;
+my @dir = split /\//, getcwd;
+my $project = $dir[5];
+my $org     = $dir[6];
+my $exp     = $dir[8];
+my $version = $dir[9];
 
 open O1, ">$exp.xml";
 print O1 "<datasets>\n";
 
-
-open S, "$study.samples.txt";
+open S, $file;
 
 while(<S>) {
   chomp;
@@ -54,7 +44,7 @@ EOL
 if($cnv) {
 print O1 <<EOL;
   <dataset class="copyNumberVariationSamples">
-    <prop name="projectName">$proj</prop>
+    <prop name="projectName">$project</prop>
     <prop name="organismAbbrev">$org</prop>
     <prop name="experimentName">$exp</prop>
     <prop name="experimentVersion">$version</prop>
