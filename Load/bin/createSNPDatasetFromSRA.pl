@@ -32,26 +32,14 @@ EOL
 }
 
 open O1, ">$exp.xml";
-
 print O1 "<datasets>\n";
 
-my $dbh = DBI->connect("dbi:SQLite:/eupath/data/EuPathDB/manualDelivery/SRAmetadb/SRAmetadb.sqlite", "", "", { RaiseError => 1 }) or die $DBI::errstr;
 
-my $stmt = qq(select run_accession,sample_alias,sample_attribute from sra where study_accession = '$study' order by run_accession);
-my $sth  = $dbh->prepare($stmt);
-my $rv   = $sth->execute or die $DBI::errstr;
+open S, "$study.samples.txt";
 
-if($rv < 0) {
-   print $DBI::errstr;
-}
-
-while(my @row = $sth->fetchrow_array()) {
-  my $run_id = $row[0];
-  my $sample = $row[1];
-  my $attr   = $row[2]; # mixed information, such as strain, isolate etc. can be used as sample name in analysisConfig
-
-  $sample =~ s/\s/_/g;
-  $sample =~ s/\//-/g;
+while(<S>) {
+  chomp;
+  my ($sample, $run_id) = split /\|/, $_;
 
 print O1 <<EOL;
   <dataset class="SNPs_HTS_Sample_QuerySRA">
@@ -84,5 +72,3 @@ system("touch ../final/$sample.qual.paired");
 }
 
 print O1 "</datasets>\n";
-
-$dbh->disconnect(); 
