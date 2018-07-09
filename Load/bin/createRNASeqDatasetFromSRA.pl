@@ -6,6 +6,7 @@ use Getopt::Long;
 
 my ($study, $org, $dsname, $profile);
 my $strand = 0;
+my %library;
 tie my %hash, "Tie::IxHash";
 
 &GetOptions( 'study=s'             => \$study,
@@ -52,8 +53,9 @@ while(<INFO>) {
   next if /^\s+$/;
   my @arr = split /,/, $_;
   my $run_id = $arr[0];
+  my $lib    = $arr[11];
   my $sample = $arr[24];
-  my $biosample = $arr[25];
+  $library{$sample} = $lib;
   push @{$hash{$sample}}, $run_id; 
 }
 
@@ -97,6 +99,8 @@ sub getSampleInfo {
 
   my $cmd = "wget -O $sample_id.tmp 'https://www.ncbi.nlm.nih.gov/biosample/$sample_id?report=full&format=text'";
   system($cmd);
+  
+   $sample_id .= " $library{$sample_id}";
 
   open S, "$sample_id.tmp";
   while(<S>) {
