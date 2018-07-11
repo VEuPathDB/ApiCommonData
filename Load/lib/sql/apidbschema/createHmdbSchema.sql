@@ -30,7 +30,10 @@ WHERE lower('hmdb') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 
 
 -- GRANTs required for CTXSYS
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to hmdb;
+GRANT CONNECT, CTXAPP, GUS_W to hmdb;
+
+-- we aren't sure we need this, and would rather not:
+-- GRANT RESOURCE to hmdb;
 
 ALTER USER hmdb ACCOUNT LOCK;
 
