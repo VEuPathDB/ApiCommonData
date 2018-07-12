@@ -270,6 +270,10 @@ sub addResults {
   elsif ($protocolName eq 'crispr_phenotype') {
     $tableString = "ApiDB::CrisprPhenotype";
   }
+elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
+    $tableString = "ApiDB::WHOStandards";
+  }
+
   else {
     $tableString = "Results::NAFeatureExpression";
   }
