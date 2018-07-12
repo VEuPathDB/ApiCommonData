@@ -140,7 +140,6 @@ sub  run {
         ## start element nodes named metabolite only
         next unless $reader->nodeType == 1;
         next unless $reader->name eq 'metabolite';
-        print STDERR "Parsing next metabolite\n";
         #copies current node and all children to a DOM element object
         my $doc = $reader->copyCurrentNode(1);
         #register an xpath context for node lookups
