@@ -319,7 +319,9 @@ sub getIdMappings {
 }
 
 sub mapRow {
-  my ($self, $row, $idMappings, $tableInfo) = @_;
+  my ($self, $row, $idMappings, $tableInfo, $origPrimaryKey) = @_;
+
+  my @setToPk;
 
   my %mappedRow = %$row;
 
@@ -343,14 +345,21 @@ sub mapRow {
 
     my $mappedId = $idMappings->{$parentTable}->{$origId};
 
+    
     unless($mappedId) {
-      $self->error("Could not map foreign key value $origId from $parentTable");
+      if($tableInfo->{fullTableName} eq $parentTable && $origId eq $origPrimaryKey) {
+        push @setToPk, lc($field);
+      }
+      else {
+        $self->error("Could not map foreign key value $origId from $parentTable");        
+      }
     }
+
 
     $mappedRow{lc($field)} = $mappedId;
   }
 
-  return \%mappedRow;
+  return \%mappedRow, \@setToPk;
 }
 
 sub loadTable {
@@ -376,7 +385,7 @@ sub loadTable {
     next if($tableReader->skipRow($row));
     next if($idMappings->{$tableName}->{$origPrimaryKey}); # next time around
 
-    my $mappedRow = $self->mapRow($row, $idMappings, $tableInfo);
+    my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
     my $primaryKey;
     if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/) {
@@ -404,6 +413,14 @@ sub loadTable {
       $gusRow->submit(undef, 1);
 
       $primaryKey = $gusRow->getId();
+
+      # If the table is self referencing AND the fk is to the same row, we need to submit again after updating that field or fields
+      foreach my $ancestorField (@$fieldsToSetToPk) {
+        $self->log("Setting Field $ancestorField in table $tableName to same value as PrimaryKey for row: $primaryKey");
+        $gusRow->set($ancestorField, $primaryKey);
+        $gusRow->submit();
+      }
+
     }
 
     my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
@@ -626,6 +643,8 @@ sub getAllTableInfo {
 
     $allTableInfo{$fullTableName}->{isSelfReferencing} = $isSelfReferencing;
     $allTableInfo{$fullTableName}->{parentRelations} = \@parentRelationsNoHousekeeping;
+
+    $allTableInfo{$fullTableName}->{fullTableName} = $fullTableName;
 
     # TODO:  confirm that this is 1:1 with table
     $allTableInfo{$fullTableName}->{primaryKey} = $dbiTable->getPrimaryKey();
