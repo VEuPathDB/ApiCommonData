@@ -382,7 +382,7 @@ sub loadTable {
     if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
-        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row");
+        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
       }
     }
 
