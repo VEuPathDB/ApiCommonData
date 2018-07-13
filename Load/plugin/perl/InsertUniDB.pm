@@ -359,12 +359,12 @@ sub loadTable {
   $self->getDb()->manageTransaction(0, 'begin');
 
   my $rowCount = 0;
+  my $primaryKeyColumn = $tableInfo->{primaryKey};
+  my $isSelfReferencing = $tableInfo->{isSelfReferencing};
 
-  $tableReader->prepareTable($tableName);
+  $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn);
 
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-
-  my $primaryKeyColumn = $tableInfo->{primaryKey};
 
   my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
 
@@ -410,6 +410,9 @@ sub loadTable {
                                                                              primary_key => $primaryKey,
                                                                             });
     $databaseTableMapping->submit(undef, 1);
+
+    # self referencing tables will need mappings for loaded rows
+    $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
 
     if($rowCount++ % 2000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
