@@ -45,17 +45,26 @@ sub getArgsDeclaration {
   my $argsDeclaration  =
     [
      stringArg ({ name => 'database',
-                   descr => 'gus oracle instance name (plas-inc), directory or files or possibly mysql database depending on the table_reader below',
-                   constraintFunc => undef,
-                   reqd => 1,
-                   isList => 0 
-                 }),
+                  descr => 'gus oracle instance name (plas-inc), directory or files or possibly mysql database depending on the table_reader below',
+                  constraintFunc => undef,
+                  reqd => 1,
+                  isList => 0 
+                }),
+
      stringArg ({ name => 'table_reader',
-                   descr => 'perl class which will serve out rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
-                   constraintFunc => undef,
-                   reqd => 1,
-                   isList => 0 
-                 }),
+                  descr => 'perl class which will serve out rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
+                  constraintFunc => undef,
+                  reqd => 1,
+                  isList => 0 
+                }),
+
+
+     booleanArg({
+       name            =>  'skipUndo', 
+       descr           =>  'skip undo method if set',
+       reqd            =>  0,
+       isList          =>  0
+                }),
 
     ];
 
@@ -165,8 +174,10 @@ sub run {
     $self->error("Expected $initialTableCount tables but found $orderedTableCount upon Ordering");
   }
 
-  foreach my $tableName (reverse @$orderedTables) {
-    $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+  unless($self->getArg('skipUndo')) {
+    foreach my $tableName (reverse @$orderedTables) {
+      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+    }
   }
 
   foreach my $tableName (@$orderedTables) {
@@ -369,7 +380,7 @@ sub loadTable {
     if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
-        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
+        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row");
       }
     }
 
@@ -454,14 +465,8 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  my $keepIds = {};  # keep only global rows for this table from input db
   my $origIdsToKeep = $tableReader->getDistinctValuesForTableField($tableName, $primaryKeyColumn, 1); 
-  foreach my $origId (keys %$origIdsToKeep) {
-    if($origIdsToKeep->{$origId}) {
-      my $id = $idMappings->{$tableName}->{$origId};
-      $keepIds->{$id} = 1;
-    }
-  }
+
 
   my $fieldsString = join(",", map { $_ } @$fields);
 
@@ -474,7 +479,7 @@ sub globalLookupForTable  {
 
   my $rowCount = 0;
   while(my ($pk, @a) = $sh->fetchrow_array()) {
-    next unless($keepIds->{$pk});
+    next unless($origIdsToKeep->{$pk});
 
     my $key = join("_", @a);
     $lookup{$key} = $pk;
@@ -563,6 +568,8 @@ sub getAllTableInfo {
   $sh->execute();
 
   while(my ($table, $schema, $primaryKey) = $sh->fetchrow_array()) {
+    next if($table eq 'DATABASETABLEMAPPING'); # Do not sync the mapping table
+
     my $fullTableName = "GUS::Model::${schema}::${table}";
     my $packageName = "${fullTableName}_Table";
     eval "require $packageName";

@@ -101,7 +101,10 @@ and (ws.name like 'global.%'
   or ws.name like 'Pathways_'
   or ws.name = 'EcNumberGenus_RSRC.runPlugin'
   or ws.name = 'metadata.ontologySynonyms.Ontology_Synonyms_genbankIsolates_RSRC.runPlugin'
-)";
+)
+UNION
+select row_alg_invocation_id from core.algorithm where name = 'SQL*PLUS'
+";
 
     my $sh = $dbh->prepare($sql);
     $sh->execute();
