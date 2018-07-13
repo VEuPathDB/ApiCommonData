@@ -333,6 +333,8 @@ sub mapRow {
 
     my $origId = $mappedRow{lc($field)};
 
+    next unless($origId); # no mappings for null values
+
     # Handle "Soft Keys"
     if($softKeyTableField) {
       my $softKeyTableId = $row->{lc($softKeyTableField)};
