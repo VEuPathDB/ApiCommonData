@@ -270,7 +270,7 @@ sub addResults {
   elsif ($protocolName eq 'crispr_phenotype') {
     $tableString = "ApiDB::CrisprPhenotype";
   }
-elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
+  elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
     $tableString = "ApiDB::WHOStandards";
   }
 
@@ -341,6 +341,10 @@ elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
     }
 
     elsif ($sourceIdType =~ /literal/) {
+	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
+	    $hash = {label=>$a[0]};
+	    $start = 1;
+	}
     }
 
     elsif ($sourceIdType =~ /subject/) {

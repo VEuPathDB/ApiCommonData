@@ -1,7 +1,6 @@
 CREATE TABLE apidb.WHOStandards (
  who_standards_id         NUMBER(12) NOT NULL,
- z_score            FLOAT(126),
- percentile            FLOAT(126),
+ label                VARCHAR(10),
  protocol_app_node_id         NUMBER(10) NOT NULL,
  value              FLOAT(126),
  modification_date            date NOT NULL,
@@ -19,8 +18,7 @@ CREATE TABLE apidb.WHOStandards (
  PRIMARY KEY (who_standards_id)
 );
 
-CREATE INDEX apidb.whostd_revix0 ON apidb.WHOStandards (z_score, who_standards_id) TABLESPACE indx;
-CREATE INDEX apidb.whostd_revix2 ON apidb.WHOStandards (percentile, who_standards_id) TABLESPACE indx;
+CREATE INDEX apidb.whostd_revix0 ON apidb.WHOStandards (label, who_standards_id) TABLESPACE indx;
 CREATE INDEX apidb.whostd_revix1 ON apidb.WHOStandards (protocol_app_node_id, who_standards_id) TABLESPACE indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WHOStandards TO gus_w;
