@@ -28,8 +28,12 @@ sub getTableSql {
 
   my $orderBy;
   if($isSelfReferencing) {
+    if(lc($tableName) eq "sres.ontologyterm") {
+      $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
+    }
     $orderBy = "order by $primaryKeyColumn";
   }
+
   #TODO: should we always order by pk?
   return "select * from $tableName $orderBy";
 }
