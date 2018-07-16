@@ -66,7 +66,8 @@ sub prepareTable {
 
   my $sql = $self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn);
 
-  my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } ); # don't handle clobs/blobs automatically
+  my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } ) 
+      or die "Can't prepare SQL statement: " . $dbh->errstr();
   $sh->execute();
 
   $self->setStatementHandle($sh);
@@ -85,17 +86,17 @@ sub nextRowAsHashref {
 
   my $hash = $sh->fetchrow_hashref();
 
+  if($hash) {
 
+    foreach my $lobColumn (@{$tableInfo->{lobColumns}}) {
+      my $lobLoc = $hash->{lc($lobColumn)};
 
-  foreach my $lobColumn (@{$tableInfo->{lobColumns}}) {
-    my $lobLoc = $hash->{lc($lobColumn)};
-
-    if($lobLoc) {
-      my $clobData = $self->readClob($lobLoc);
-      $hash->{lc($lobColumn)} = $clobData;
+      if($lobLoc) {
+        my $clobData = $self->readClob($lobLoc);
+        $hash->{lc($lobColumn)} = $clobData;
+      }
     }
   }
-
   return $hash;
 }
 
