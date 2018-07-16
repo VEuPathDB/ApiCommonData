@@ -362,9 +362,34 @@ sub mapRow {
   return \%mappedRow, \@setToPk;
 }
 
+sub queryForMaxMappedOrigPk {
+  my ($self, $database, $tableName) = @_;
+
+  my $sql = "select max(primary_key_orig) 
+             from apidb.databasetablemapping 
+             where database_orig = '$database' 
+             and table_name = '$tableName'";
+
+  my $dbh = $self->getQueryHandle();  
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my ($max) = $sh->fetchrow_array();
+
+  unless($max) {
+    return 0;
+  }
+
+  return $max;
+}
+
+
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
+
+  next unless($tableName =~ /AASequenceImp/);
   $self->log("Begin Loading table $tableName from database $database");
 
   $self->getDb()->manageTransaction(0, 'begin');
@@ -379,11 +404,15 @@ sub loadTable {
 
   my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
 
-  while(my $row = $tableReader->nextRowAsHashref()) {
+  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, &getAbbreviatedTableName($tableName, "::"));
+
+  $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
+
+  while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
+    next if($origPrimaryKey <= $alreadyMappedMaxOrigPk); # restart OR new data (TODO: won't work for "skipped" datasets)
     next if($tableReader->skipRow($row));
-    next if($idMappings->{$tableName}->{$origPrimaryKey}); # next time around
 
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
@@ -428,6 +457,7 @@ sub loadTable {
                                                                              primary_key_orig => $origPrimaryKey,
                                                                              primary_key => $primaryKey,
                                                                             });
+
     $databaseTableMapping->submit(undef, 1);
 
     # self referencing tables will need mappings for loaded rows
@@ -604,6 +634,14 @@ sub getAllTableInfo {
 
     my $parentRelations = $dbiTable->getParentRelations();
 
+    my @lobColumns;
+
+    foreach my $att (@{$dbiTable->getAttributeInfo()}) {
+      if(uc($att->{type}) eq "CLOB" || uc($att->{type}) eq "BLOB") {
+        push @lobColumns, $att->{col};
+      }
+    }
+
     my @parentRelationsNoHousekeeping;
 
     my $isSelfReferencing;
@@ -641,6 +679,7 @@ sub getAllTableInfo {
       }
     }
 
+    $allTableInfo{$fullTableName}->{lobColumns} = \@lobColumns;
     $allTableInfo{$fullTableName}->{isSelfReferencing} = $isSelfReferencing;
     $allTableInfo{$fullTableName}->{parentRelations} = \@parentRelationsNoHousekeeping;
 

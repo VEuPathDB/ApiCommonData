@@ -6,6 +6,8 @@ use strict;
 use DBI;
 use DBD::Oracle;
 
+use Data::Dumper;
+
 use GUS::Supported::GusConfig;
 
 sub setDatabaseHandle { $_[0]->{_database_handle} = $_[1] }
@@ -21,22 +23,39 @@ sub getTableNameFromPackageName {
   return $1 . "." . $2;
 }
 
+
+sub readClob {
+  my ($self, $lobLocator) = @_;
+
+  my $dbh = $self->getDatabaseHandle();
+
+  my $chunkSize = 1034;   # Arbitrary chunk size, for example
+  my $offset = 1;   # Offsets start at 1, not 0
+
+  my $output;
+
+  while(1) {
+    my $data = $dbh->ora_lob_read($lobLocator, $offset, $chunkSize );
+    last unless length $data;
+    $output .= $data;
+    $offset += $chunkSize;
+  }
+
+  return $output;
+}
+
+
 sub getTableSql {
   my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn) = @_;
 
   $tableName = &getTableNameFromPackageName($tableName);
 
-  my $orderBy;
-  if($isSelfReferencing) {
-    if(lc($tableName) eq "sres.ontologyterm") {
-      $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
-    }
-    else {
-      $orderBy = "order by $primaryKeyColumn";
-    }
+  my $orderBy = "order by $primaryKeyColumn";
+
+  if(lc($tableName) eq "sres.ontologyterm") {
+    $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
   }
 
-  #TODO: should we always order by pk?
   return "select * from $tableName $orderBy";
 }
 
@@ -45,7 +64,9 @@ sub prepareTable {
 
   my $dbh = $self->getDatabaseHandle();
 
-  my $sh = $dbh->prepare($self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn));
+  my $sql = $self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn);
+
+  my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } ); # don't handle clobs/blobs automatically
   $sh->execute();
 
   $self->setStatementHandle($sh);
@@ -59,10 +80,23 @@ sub finishTable {
 }
 
 sub nextRowAsHashref {
-  my ($self) = @_;
+  my ($self, $tableInfo) = @_;
   my $sh = $self->getStatementHandle();
 
-  return $sh->fetchrow_hashref();
+  my $hash = $sh->fetchrow_hashref();
+
+
+
+  foreach my $lobColumn (@{$tableInfo->{lobColumns}}) {
+    my $lobLoc = $hash->{lc($lobColumn)};
+
+    if($lobLoc) {
+      my $clobData = $self->readClob($lobLoc);
+      $hash->{lc($lobColumn)} = $clobData;
+    }
+  }
+
+  return $hash;
 }
 
 
