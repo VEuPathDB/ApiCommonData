@@ -388,8 +388,6 @@ sub queryForMaxMappedOrigPk {
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
-
-  next unless($tableName =~ /AASequenceImp/);
   $self->log("Begin Loading table $tableName from database $database");
 
   $self->getDb()->manageTransaction(0, 'begin');
