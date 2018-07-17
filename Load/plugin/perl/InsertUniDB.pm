@@ -17,6 +17,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::Core::DatabaseInfo" => ["name"],
                             "GUS::Model::Core::GroupInfo" => ["name"],
                             "GUS::Model::Core::UserInfo" => ["login"],
+                            "GUS::Model::Core::Algorithm" => ["name"],
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
@@ -415,7 +416,7 @@ sub loadTable {
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
     my $primaryKey;
-    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/) {
+    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
