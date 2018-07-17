@@ -7,7 +7,17 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems.owl"/>
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems.owl">
+        <owl:versionInfo>2018-07-17</owl:versionInfo>
+        <rdfs:comment>Update labels per Brianna&apos;s request
+Combine variables with same labels under &quot;Previously sought care&quot;(EUPATH_0010380) category
+Move Enrollment date related terms under ‘Administrative information’ category
+Remove following variables:
+ - aar EAEC, Taqman Array Card result (EUPATH_0015347)
+ - aar EAEC, Taqman Array Card result (EUPATH_0015391)
+ - aar negative EAEC, Taqman Array Card result (EUPATH_0015390)
+ - eae EPEC, Taqman Array Card result (EUPATH_0015354)</rdfs:comment>
+    </owl:Ontology>
     
 
 
@@ -973,7 +983,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010054 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010054">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENROLLDATE</obo:EUPATH_0000755>
         <rdfs:label>Enrollment date</rdfs:label>
@@ -2581,7 +2591,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010025"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_VOLUME</obo:EUPATH_0000755>
-        <rdfs:label>Stool volume (ml)</rdfs:label>
+        <rdfs:label>Stool volume (mL)</rdfs:label>
     </owl:Class>
     
 
@@ -2740,7 +2750,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010369 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010369">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_MON</obo:EUPATH_0000755>
         <rdfs:label>Enrollment month</rdfs:label>
@@ -2751,7 +2761,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010370 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010370">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_YR</obo:EUPATH_0000755>
         <rdfs:label>Enrollment year</rdfs:label>
@@ -4566,6 +4576,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_OUTSIDE</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEKCARE</obo:EUPATH_0000755>
         <rdfs:label>Seek outside care</rdfs:label>
     </owl:Class>
     
@@ -4577,6 +4588,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_PHARM</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_PHARM</obo:EUPATH_0000755>
         <rdfs:label>Pharmacy</rdfs:label>
     </owl:Class>
     
@@ -4588,6 +4600,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_FRIEND</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_FRIEND</obo:EUPATH_0000755>
         <rdfs:label>Friend/Relative</rdfs:label>
     </owl:Class>
     
@@ -4599,6 +4612,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_HEALER</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_HEALER</obo:EUPATH_0000755>
         <rdfs:label>Traditional healer</rdfs:label>
     </owl:Class>
     
@@ -4610,6 +4624,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_DOC</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_DOC</obo:EUPATH_0000755>
         <rdfs:label>Unlicensed practitioner</rdfs:label>
     </owl:Class>
     
@@ -4621,6 +4636,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_PRIVDOC</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_PRIVDOC</obo:EUPATH_0000755>
         <rdfs:label>Licensed practitioner</rdfs:label>
     </owl:Class>
     
@@ -4632,6 +4648,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_REMDY</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>F7_SEEK_REMDY</obo:EUPATH_0000755>
         <rdfs:label>Bought a remedy/drug</rdfs:label>
     </owl:Class>
     
@@ -4969,7 +4986,7 @@
         <obo:EUPATH_0000755>F4B_MUAC_AGEZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MUAC_AGEZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MUAC_AGEZ_F</obo:EUPATH_0000755>
-        <rdfs:label>MUAC for Age Z-Score &lt;-5 or &gt;5</rdfs:label>
+        <rdfs:label>MUAC for age z-score &lt;-5 or &gt;5</rdfs:label>
     </owl:Class>
     
 
@@ -4982,7 +4999,7 @@
         <obo:EUPATH_0000755>F4B_MED_MUAC_AGEZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MED_MUAC_AGEZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MED_MUAC_AGEZ_F</obo:EUPATH_0000755>
-        <rdfs:label>MUAC for Age Z-Score &lt;-5 or &gt;5 (median ac)</rdfs:label>
+        <rdfs:label>MUAC for age z-score &lt;-5 or &gt;5 (median ac)</rdfs:label>
     </owl:Class>
     
 
@@ -4999,7 +5016,7 @@
         <obo:EUPATH_0000755>F4B_REHYD_BMIZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_BMIZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_BMIZ_F</obo:EUPATH_0000755>
-        <rdfs:label>BMI Z-Score&lt;-5 or &gt;5</rdfs:label>
+        <rdfs:label>BMI z-score&lt;-5 or &gt;5</rdfs:label>
     </owl:Class>
     
 
@@ -5016,7 +5033,7 @@
         <obo:EUPATH_0000755>F4B_REHYD_MED_BMIZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MED_BMIZ_F</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MED_BMIZ_F</obo:EUPATH_0000755>
-        <rdfs:label>BMI Z-Score&lt;-5 or &gt;5 (median ht)</rdfs:label>
+        <rdfs:label>BMI z-score&lt;-5 or &gt;5 (median ht)</rdfs:label>
     </owl:Class>
     
 
@@ -5901,83 +5918,6 @@
         <obo:EUPATH_0000274 xml:lang="en">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_MED_NONE</obo:EUPATH_0000755>
         <rdfs:label>Not currently receiving medication</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015210 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015210">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEKCARE</obo:EUPATH_0000755>
-        <rdfs:label>Seek outside care</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015211 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015211">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_PHARM</obo:EUPATH_0000755>
-        <rdfs:label>Pharmacy</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015212 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015212">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">12</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_FRIEND</obo:EUPATH_0000755>
-        <rdfs:label>Friend/Relative</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015213 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015213">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">13</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_HEALER</obo:EUPATH_0000755>
-        <rdfs:label>Traditional healer</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015214 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015214">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">14</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_DOC</obo:EUPATH_0000755>
-        <rdfs:label>Unlicensed practitioner</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015215 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015215">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">15</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_PRIVDOC</obo:EUPATH_0000755>
-        <rdfs:label>Licensed practitioner</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015216 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015216">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010380"/>
-        <obo:EUPATH_0000274 xml:lang="en">16</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>F7_SEEK_REMDY</obo:EUPATH_0000755>
-        <rdfs:label>Bought a remedy/drug</rdfs:label>
     </owl:Class>
     
 
@@ -7325,17 +7265,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015347 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015347">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">18</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>eaec_aar</obo:EUPATH_0000755>
-        <rdfs:label>aar EAEC, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015348 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015348">
@@ -7398,17 +7327,6 @@
         <obo:EUPATH_0000274 xml:lang="en">24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>epec_bfpa</obo:EUPATH_0000755>
         <rdfs:label>bfpA EPEC, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015354 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015354">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">25</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>epec_eae</obo:EUPATH_0000755>
-        <rdfs:label>eae EPEC, Taqman Array Card result</rdfs:label>
     </owl:Class>
     
 
@@ -7794,28 +7712,6 @@
         <obo:EUPATH_0000274 xml:lang="en">60</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>EAEC</obo:EUPATH_0000755>
         <rdfs:label>EAEC, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015390 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015390">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">61</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>EAEC_NOAAR</obo:EUPATH_0000755>
-        <rdfs:label>aar negative EAEC, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015391 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015391">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">62</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>EAEC_AAR</obo:EUPATH_0000755>
-        <rdfs:label>aar EAEC, Taqman Array Card result</rdfs:label>
     </owl:Class>
     
 
