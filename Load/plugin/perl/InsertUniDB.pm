@@ -164,11 +164,13 @@ sub run {
   $self->log("Getting Table Dependencies and Ordering Tables by Foreign Keys...");
 
   my $tableInfo = $self->getAllTableInfo($tableReader);
+
+  my $initialTableCount = scalar(keys(%$tableInfo));
   
   my $orderedTables = [];
   $self->orderTablesByRelations($tableInfo, $orderedTables);
 
-  my $initialTableCount = scalar(keys(%$tableInfo));
+
   my $orderedTableCount = scalar @$orderedTables;
 
   unless($initialTableCount == $orderedTableCount) {
@@ -397,13 +399,14 @@ sub loadTable {
   my $primaryKeyColumn = $tableInfo->{primaryKey};
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
 
-  $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn);
-
-  my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
-
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, &getAbbreviatedTableName($tableName, "::"));
+
+  $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
+
+  # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows
+  my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
+  
+  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
@@ -565,6 +568,8 @@ sub orderTable {
   my ($self, $tableName, $tableInfo, $seenTables, $orderedTables) = @_;
 
   return if($seenTables->{$tableName});
+
+  next unless($tableInfo->{$tableName});
 
   my @parentsList;
   foreach my $pr (@{$tableInfo->{$tableName}->{parentRelations}}) {

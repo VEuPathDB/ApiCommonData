@@ -46,7 +46,7 @@ sub readClob {
 
 
 sub getTableSql {
-  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn) = @_;
+  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
   $tableName = &getTableNameFromPackageName($tableName);
 
@@ -56,15 +56,18 @@ sub getTableSql {
     $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
   }
 
-  return "select * from $tableName $orderBy";
+  my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
+
+
+  return "select * from $tableName $where $orderBy";
 }
 
 sub prepareTable {
-  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn) = @_;
+  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
   my $dbh = $self->getDatabaseHandle();
 
-  my $sql = $self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn);
+  my $sql = $self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk);
 
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } ) 
       or die "Can't prepare SQL statement: " . $dbh->errstr();
@@ -139,7 +142,6 @@ from APIDB.WORKFLOWSTEPALGINVOCATION w
     ,APIDB.WORKFLOWSTEP ws
 where w.workflow_step_id = ws.workflow_step_id
 and (ws.name like 'global.%'
-  or ws.name like 'Pathways_'
   or ws.name = 'EcNumberGenus_RSRC.runPlugin'
   or ws.name = 'metadata.ontologySynonyms.Ontology_Synonyms_genbankIsolates_RSRC.runPlugin'
 )
@@ -174,7 +176,8 @@ sub skipRow {
 from APIDB.WORKFLOWSTEPALGINVOCATION w
     ,APIDB.WORKFLOWSTEP ws
 where w.workflow_step_id = ws.workflow_step_id
-and ws.name like 'metadata.ISA%'
+and (ws.name like 'metadata.ISA%'
+  or ws.name like 'Pathways_%')
 ";
 
     my $sh = $dbh->prepare($sql);
