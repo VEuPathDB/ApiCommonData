@@ -12,7 +12,13 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath_merged.owl">
         <rdfs:comment xml:lang="en">A subset of OBI contains all terms representing NIAID GSCID/BRC Project, Sample and Sequencing Assay Core Standards, This OBI view contains NIAID GSCID and BRC community preferred labels and field IDs assigned by NIAID metadata working group. The details of NIAID GSCID and BRC metadata standards are available on: http://www.niaid.nih.gov/labsandresources/resources/dmid/metadata/Pages/default.aspx.</rdfs:comment>
+        <rdfs:comment>2018-07-18
+Add 3 GO terms temporarily:
+ - developmental process
+ - spore germination
+ - conidium germination (added in 2018-05, not the version used by EuPathDB now)</rdfs:comment>
         <rdfs:comment xml:lang="en">The view was generated from OBI release version 20150413 using ontoDog.</rdfs:comment>
+        <owl:versionInfo>2018-07-18</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -11450,6 +11456,36 @@ CD3T188G is a polymophism on the human CD36 gene.</obo:IAO_0000116>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Any process specifically pertinent to the functioning of integrated living units: cells, tissues, organs, and organisms. A process is a collection of molecular events with a defined beginning and end.</obo:IAO_0000115>
         <obo:IAO_0000412 rdf:resource="http://purl.obolibrary.org/obo/go.owl"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">biological_process</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GO_0009847 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GO_0009847">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GO_0032502"/>
+        <obo:IAO_0000115>The physiological and developmental changes that occur in a spore following release from dormancy up to the earliest signs of growth (e.g. emergence from a spore wall). [database_cross_reference: GOC:lr]</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">spore germination</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GO_0032502 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GO_0032502">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GO_0008150"/>
+        <obo:IAO_0000115>A biological process whose specific outcome is the progression of an integrated living unit: an anatomical structure (which may be a subcellular structure, cell, tissue, or organ), or organism over time from an initial condition to a later condition. [database_cross_reference: GOC:isa_complete]</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">developmental process</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/GO_0120164 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GO_0120164">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GO_0009847"/>
+        <obo:IAO_0000115>The physiological and developmental changes that occur in a conidium or asexual spore following release from dormancy up to the earliest signs of development such as swelling of conidia, adhesion and nuclear decondensation followed by hyphal growth several hours later. In many genera of plant pathogenic fungi (e.g. Magnaporthe, Colletotrichum, Ustilago), swelling of the hyphal tips to form appressorium, metabolic activities including respiration, RNA and protein synthesis and trehalose breakdown and changes in cell wall composition can be detected in conidium germination. [database_cross_reference: PMID:9529886][database_cross_reference: PMID:27355215][database_cross_reference: DOI:10.1128/9781555815523.ch10][database_cross_reference: PMID:11377860][database_cross_reference: PMID:17950638][database_cross_reference: PMID:18944978][database_cross_reference: PMID:25063657][database_cross_reference: PMID:10835388]</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">conidium germination</rdfs:label>
     </owl:Class>
     
 
