@@ -55,11 +55,15 @@ sub getTableSql {
   if(lc($tableName) eq "sres.ontologyterm") {
     $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
   }
+  if(lc($tableName) eq "core.tableinfo") {
+    $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
+  }
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
 
+  my $sql = "select * from $tableName $where $orderBy";
 
-  return "select * from $tableName $where $orderBy";
+  return $sql;
 }
 
 sub prepareTable {
@@ -203,7 +207,7 @@ sub getDistinctTablesForTableIdField {
     my $dbh = $self->getDatabaseHandle();
 
   my $sql = "select distinct nvl(v.name, t.name) as table_name
-                           , nvl(v.table_id, t.table_id) as table_id
+                           , t.table_id as table_id
                            , nvl(vd.name, d.name) as database_name
 from core.tableinfo t
    , core.tableinfo v

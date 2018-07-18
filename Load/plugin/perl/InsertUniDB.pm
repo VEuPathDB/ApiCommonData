@@ -346,9 +346,9 @@ sub mapRow {
       $parentTable = $softKeyTableMap->{$softKeyTableId};
     }
 
+
     my $mappedId = $idMappings->{$parentTable}->{$origId};
 
-    
     unless($mappedId) {
       if($tableInfo->{fullTableName} eq $parentTable && $origId eq $origPrimaryKey) {
         push @setToPk, lc($field);
@@ -405,7 +405,7 @@ sub loadTable {
 
   # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-  
+
   my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
@@ -601,7 +601,7 @@ sub getTableRelationsSql {
                    from core.tableinfo t, core.databaseinfo d
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
-                    and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI')
+                    and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null
