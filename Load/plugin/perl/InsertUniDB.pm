@@ -21,6 +21,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::Core::UserProject" => ["user_id", "project_id"],
                             "GUS::Model::Core::UserGroup" => ["user_id", "group_id"],
                             "GUS::Model::Core::Algorithm" => ["name"],
+                            "GUS::Model::Core::AlgorithmImplementation" => ["executable", "cvs_revision"], 
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
@@ -422,7 +423,7 @@ sub loadTable {
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
     my $primaryKey;
-    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName eq "GUS::Model::Core::Algorithm") {
+    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
@@ -446,7 +447,7 @@ sub loadTable {
 
       $gusRow->submit(undef, 1);
 
-      $primaryKey = $gusRow->getId();
+      $primaryKey = $gusRow->get(lc($primaryKeyColumn));
 
       # If the table is self referencing AND the fk is to the same row, we need to submit again after updating that field or fields
       foreach my $ancestorField (@$fieldsToSetToPk) {
@@ -493,8 +494,8 @@ sub getAbbreviatedTableName {
 sub lookupPrimaryKey {
   my ($self, $tableName, $row, $globalLookup) = @_;
 
-  # These tables have global row_alg invocation ids but are not global
-  if($tableName eq "GUS::Model::Core.AlgorithmParam" || $tableName eq "GUS::Model::Core.AlgorithmInvocation") {
+  # Load all alg invocations
+  if($tableName eq "GUS::Model::Core::AlgorithmInvocation") {
       return undef;
   }
 
@@ -605,6 +606,7 @@ sub getTableRelationsSql {
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
                     and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
+                    and t.name not in ('AlgorithmParam', 'AlgorithmParamKey', 'AlgorithmParamKeyType')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null
