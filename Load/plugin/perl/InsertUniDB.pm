@@ -15,8 +15,11 @@ use Data::Dumper;
 my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release"],
                             "GUS::Model::Core::TableInfo" => ["name", "database_id"],
                             "GUS::Model::Core::DatabaseInfo" => ["name"],
+                            "GUS::Model::Core::DatabaseVersion" => ["version"],
                             "GUS::Model::Core::GroupInfo" => ["name"],
                             "GUS::Model::Core::UserInfo" => ["login"],
+                            "GUS::Model::Core::UserProject" => ["user_id", "project_id"],
+                            "GUS::Model::Core::UserGroup" => ["user_id", "group_id"],
                             "GUS::Model::Core::Algorithm" => ["name"],
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
@@ -449,7 +452,7 @@ sub loadTable {
       foreach my $ancestorField (@$fieldsToSetToPk) {
         $self->log("Setting Field $ancestorField in table $tableName to same value as PrimaryKey for row: $primaryKey");
         $gusRow->set($ancestorField, $primaryKey);
-        $gusRow->submit();
+        $gusRow->submit(undef, 1);
       }
 
     }
