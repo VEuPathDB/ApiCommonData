@@ -201,7 +201,7 @@ sub undoTable {
   if ($self->{commit} == 1) {
     my $primaryKeyColumn = $tableInfo->{primaryKey};
 
-    my $origPksHash = $tableReader->getDistinctValuesForTableField($tableName, $primaryKeyColumn, 0);
+    my $origPksHash = $tableReader->getDistinctValuesForTableFields($tableName, [$primaryKeyColumn], 0);
 
     my $sql = &getDatabaseTableMappingSql($database, [$tableName]);
   
@@ -306,7 +306,7 @@ sub getIdMappings {
 
     my @tableNames;
 
-    my $keepIds = $tableReader->getDistinctValuesForTableField($tableName, $field, 0);
+    my $keepIds = $tableReader->getDistinctValuesForTableFields($tableName, [$field], 0);
 
     if(ref($pr->[0]) eq 'ARRAY') {
       push @tableNames, @{$pr->[0]};
@@ -395,6 +395,8 @@ sub queryForMaxMappedOrigPk {
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
+#  next unless $tableName =~ /AlgorithmImplementation/;
+
   $self->log("Begin Loading table $tableName from database $database");
 
   $self->getDb()->manageTransaction(0, 'begin');
@@ -415,6 +417,7 @@ sub loadTable {
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
+
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
     next if($origPrimaryKey <= $alreadyMappedMaxOrigPk); # restart OR new data (TODO: won't work for "skipped" datasets)
@@ -523,8 +526,8 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  my $origIdsToKeep = $tableReader->getDistinctValuesForTableField($tableName, $primaryKeyColumn, 1); 
-
+  # get distinct rows from input table which are global
+  my $origKeysToKeep = $tableReader->getDistinctValuesForTableFields($tableName, $fields, 1); 
 
   my $fieldsString = join(",", map { $_ } @$fields);
 
@@ -537,9 +540,11 @@ sub globalLookupForTable  {
 
   my $rowCount = 0;
   while(my ($pk, @a) = $sh->fetchrow_array()) {
-    next unless($origIdsToKeep->{$pk});
-
     my $key = join("_", @a);
+
+    next unless($origKeysToKeep->{$key});
+
+
     $lookup{$key} = $pk;
     $rowCount++
   }

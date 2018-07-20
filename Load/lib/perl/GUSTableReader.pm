@@ -234,8 +234,10 @@ and d.database_id = t.database_id
   return \%rv;
 }
 
-sub getDistinctValuesForTableField {
-  my ($self, $fullTableName, $field, $onlyGlobalRows) = @_;
+
+
+sub getDistinctValuesForTableFields {
+  my ($self, $fullTableName, $fields, $onlyGlobalRows) = @_;
 
   my $tableName = &getTableNameFromPackageName($fullTableName);
 
@@ -247,22 +249,28 @@ sub getDistinctValuesForTableField {
   my %rv;
   my $dbh = $self->getDatabaseHandle();
 
-  my $sql = "select distinct $field $addRowAlgInvocationId from $tableName";
+  my $fieldsString = join(",", @$fields);
+
+  my $sql = "select distinct $fieldsString $addRowAlgInvocationId from $tableName";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
   while(my $row = $sh->fetchrow_hashref()) {
-    my $id = $row->{lc($field)};
+    my @values = map { $row->{lc($_)} } @$fields;
 
-    if($onlyGlobalRows) {
-      $rv{$id} = $self->isRowGlobal($row);
+    my $key = join("_", @values);
+
+    if($onlyGlobalRows && $self->isRowGlobal($row)) {
+      $rv{$key} = 1;
     }
     else {
-      $rv{$id} = 1;
+      $rv{$key} = 1;
     }
   }
   $sh->finish();
 
   return \%rv;
 }
+
+
 1;
