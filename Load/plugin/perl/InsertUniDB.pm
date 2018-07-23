@@ -152,6 +152,9 @@ sub new {
 sub run {
   my $self = shift;
 
+  my $dbh = $self->getDbHandle();
+  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($dbh->errstr);
+
   my $database = $self->getArg('database');
   my $tableReaderClass = $self->getArg('table_reader');
 

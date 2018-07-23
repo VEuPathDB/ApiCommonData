@@ -125,6 +125,8 @@ sub connectDatabase {
   $dbh->{AutoCommit} = 0;
   $dbh->{FetchHashKeyName} = "NAME_lc";
 
+  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $dbh->errstr;
+
   $self->setDatabaseHandle($dbh);
 }
 
