@@ -514,6 +514,9 @@ sub loadNodes {
           $charValue = $characteristic->getTerm();
 	}
 
+	# strip off carriage return
+	$charValue =~ s/\r//;
+
 
 #        print $charFh join("\t", ($pan->getId(), 
         push @charsForLoader, [$charQualifierId, $charUnitId, $charValue, $charOntologyTermId];
