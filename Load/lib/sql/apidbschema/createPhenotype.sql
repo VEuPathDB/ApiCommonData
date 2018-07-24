@@ -11,6 +11,7 @@ create table ApiDB.PhenotypeModel (
  is_successful                NUMBER(1),
  organism                     VARCHAR(200),
  has_multiple_mutations       NUMBER(1),
+ mutation_description         VARCHAR(500),
  modification_date            DATE,
  user_read                    NUMBER(1),
  user_write                   NUMBER(1),
