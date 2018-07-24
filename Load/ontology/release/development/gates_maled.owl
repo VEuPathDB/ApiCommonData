@@ -11,7 +11,8 @@
      xmlns:efo="http://www.ebi.ac.uk/efo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_maled.owl">
         <owl:versionInfo>2018-07-24</owl:versionInfo>
-        <obo:GATES_0000010>add &apos;Observation type&apos; on 2018-07-24</obo:GATES_0000010>
+        <obo:GATES_0000010>add &apos;Observation type&apos; on 2018-07-24
+change &apos;Participant&apos; from EUPATH_0000051 (human participant under investigation) to EUPATH_0000096(study participant information)</obo:GATES_0000010>
     </owl:Ontology>
     
 
@@ -332,17 +333,6 @@ Other = 07</MALED1:hasDescription2>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000051 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000051">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:GATES_0000204>Participant</obo:GATES_0000204>
-        <obo:GATES_0000213>category</obo:GATES_0000213>
-        <rdfs:label>Participant</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000091 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000091">
@@ -375,7 +365,7 @@ Other = 07</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000095 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000095">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <MALED1:belongsToDataset>Anthropometry</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>WHO</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>bf_24m</MALED1:belongsToDataset>
@@ -411,6 +401,16 @@ Other = 07</MALED1:hasDescription2>
         <obo:GATES_0000007>subjid</obo:GATES_0000007>
         <obo:GATES_0000213>variable</obo:GATES_0000213>
         <rdfs:label>Subject ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:GATES_0000213>category</obo:GATES_0000213>
+        <rdfs:label>Participant</rdfs:label>
     </owl:Class>
     
 
@@ -8539,7 +8539,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010981 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010981">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <rdfs:label>Demographics</rdfs:label>
     </owl:Class>
     
@@ -8603,7 +8603,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010988 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010988">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <rdfs:label>Study details</rdfs:label>
     </owl:Class>
     
@@ -8612,7 +8612,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010989 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010989">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <rdfs:label>Study participant characteristics</rdfs:label>
     </owl:Class>
     
@@ -9042,7 +9042,7 @@ NA=Not applicable&quot;</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011027 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011027">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <MALED1:belongsToDataset>bf_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Maximum age of imputed exclusive breastfeeding (liquid or food given on next day).</MALED1:hasDescription1>
         <MALED1:hasDescription2>These calculations change feeding definitions starting with the first occasion.  They do not allow for back and forth.</MALED1:hasDescription2>
@@ -10528,7 +10528,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011191 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011191">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <rdfs:label>Weaning</rdfs:label>
     </owl:Class>
     
@@ -11808,7 +11808,7 @@ and dividing the total by 32</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011690 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011690">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <rdfs:label>Breastfeeding summary</rdfs:label>
     </owl:Class>
     
