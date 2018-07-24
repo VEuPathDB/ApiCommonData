@@ -37,8 +37,8 @@ my $argsDeclaration =
    fileArg({name           => 'metaDataRoot',
             descr          => 'directory where to find directories of isa tab files',
             reqd           => 1,
-	    mustExist      => 1,
-	    format         => '',
+        mustExist      => 1,
+        format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -64,35 +64,35 @@ stringArg({name           => 'extDbRlsSpec',
 
 
    booleanArg({name => 'isSimpleConfiguration',
-	      descr => 'if true, use CBIL::ISA::InvestigationSimple',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     }),
+          descr => 'if true, use CBIL::ISA::InvestigationSimple',
+          reqd => 1,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
 
    booleanArg({name => 'skipDatasetLookup',
-	      descr => 'do not require existing nodes for datasets listed in isa files',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     }),
+          descr => 'do not require existing nodes for datasets listed in isa files',
+          reqd => 1,
+          constraintFunc => undef,
+          isList => 0,
+         }),
 
 
 
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
-	    mustExist      => 1,
-	    format         => '',
+        mustExist      => 1,
+        format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
    fileArg({name           => 'valueMappingFile',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
-	    mustExist      => 1,
-	    format         => '',
+        mustExist      => 1,
+        format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -100,8 +100,8 @@ stringArg({name           => 'extDbRlsSpec',
    fileArg({name           => 'dateObfuscationFile',
             descr          => 'For InvestigationSimple Reader',
             reqd           => 0,
-	    mustExist      => 1,
-	    format         => '',
+        mustExist      => 1,
+        format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -479,46 +479,46 @@ sub loadNodes {
           $pan->setTaxonId($taxonId);
         }
 
-#	my $gusChar = GUS::Model::Study::Characteristic->new();
-#	$gusChar->setParent($pan);
-
-	my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+    #   my $gusChar = GUS::Model::Study::Characteristic->new();
+    #   $gusChar->setParent($pan);
+    
+        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
         my $charQualifierId = $charQualifierOntologyTerm->getId();
 
-	# ALWAYS Set the qualifier_id
+      # ALWAYS Set the qualifier_id
 
-#	$gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
+    #   $gusChar->setQualifierId($charQualifierOntologyTerm->getId()); # CANNOT SET Parent because ontology term id and Unit id.  both fk to sres.ontologyterm
 
         my $charUnitId;
 
-	if($characteristic->getUnit()) {
-	  my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
-#	  $gusChar->setUnitId($unitOntologyTerm->getId());
+        if($characteristic->getUnit()) {
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
+    #     $gusChar->setUnitId($unitOntologyTerm->getId());
           $charUnitId = $unitOntologyTerm->getId();
-	}
+        }
 
         my ($charValue, $charOntologyTermId);
 
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
           my $value = $self->{_ontology_term_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-#	  $gusChar->setValue($value);
+    #     $gusChar->setValue($value);
           $charValue = $value;
         }
-	elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-	  my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
-#	  $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
-          $charOntologyTermId = $valueOntologyTerm->getId();
-	}
-	else {
-#	  $gusChar->setValue($characteristic->getTerm());
-          $charValue = $characteristic->getTerm();
-	}
+        elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+          my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
+    #     $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
+              $charOntologyTermId = $valueOntologyTerm->getId();
+        }
+        else {
+    #     $gusChar->setValue($characteristic->getTerm());
+              $charValue = $characteristic->getTerm();
+        }
+    
+        # strip off carriage return
+        $charValue =~ s/\r//;
 
-	# strip off carriage return
-	$charValue =~ s/\r//;
 
-
-#        print $charFh join("\t", ($pan->getId(), 
+    #   print $charFh join("\t", ($pan->getId(), 
         push @charsForLoader, [$charQualifierId, $charUnitId, $charValue, $charOntologyTermId];
 
       }
@@ -934,7 +934,7 @@ and tn.name_class = 'scientific name'
       while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
         $ontologyTermId = $id;
         $ontologyTermName = $name;
-	$count++;
+    $count++;
       }
       $sh->finish();
       if($count == 1) {
