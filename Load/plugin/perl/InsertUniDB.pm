@@ -398,6 +398,10 @@ sub queryForMaxMappedOrigPk {
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
+
+  # New GUS Table ApiDB does not use
+  next if $tableName =~ /SnpLinkage/;
+
 #  next unless $tableName =~ /AlgorithmImplementation/;
 
   $self->log("Begin Loading table $tableName from database $database");
