@@ -59,6 +59,11 @@ sub getTableSql {
     $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
   }
 
+  if(lc($tableName) eq "study.study") {
+    $orderBy = "order by investigation_id nulls first, study_id";
+  }
+
+
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
 
   my $sql = "select * from $tableName $where $orderBy";
