@@ -10,9 +10,8 @@
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:efo="http://www.ebi.ac.uk/efo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_maled.owl">
-        <owl:versionInfo>2018-07-24</owl:versionInfo>
-        <obo:GATES_0000010>add &apos;Observation type&apos; on 2018-07-24
-change &apos;Participant&apos; from EUPATH_0000051 (human participant under investigation) to EUPATH_0000096(study participant information)</obo:GATES_0000010>
+        <owl:versionInfo>2018-07-25</owl:versionInfo>
+        <obo:GATES_0000010>add &apos;Stool collection type&apos; (EUPATH_0010842) on 2018-07-25</obo:GATES_0000010>
     </owl:Ontology>
     
 
@@ -2251,17 +2250,12 @@ extened window, out of window</MALED1:hasDescription1>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010548">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <MALED1:belongsToCategory>flag</MALED1:belongsToCategory>
-        <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Is this a monthly, archive only sample? (collected in months 13,14,16,17,19,20,22,23)</MALED1:hasDescription1>
-        <MALED1:hasDescription1>Type of specimen collected</MALED1:hasDescription1>
         <MALED1:hasDescription2>1=yes;0=no</MALED1:hasDescription2>
-        <MALED1:hasDescription2>Monthly =M1; Diarrheal =D1; Monthly recollection =MR; Diarrheal recollection =DR</MALED1:hasDescription2>
-        <MALED1:hasNotes>Based on new study-defined stool type, newsrfspectype (&quot;M1&quot;)</MALED1:hasNotes>
         <MALED1:hasSource>Calculated</MALED1:hasSource>
         <MALED1:hasSource>SRF</MALED1:hasSource>
         <MALED1:toBeDecided>Decision Requested.</MALED1:toBeDecided>
-        <obo:EUPATH_0000755>SRFSPECTYPE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>flag_archivesample</obo:EUPATH_0000755>
         <rdfs:label>Monthly, archive only sample</rdfs:label>
     </owl:Class>
@@ -6804,6 +6798,20 @@ extened window, out of window</MALED1:hasDescription1>
         <MALED1:toBeDecided>Decision Requested.</MALED1:toBeDecided>
         <obo:EUPATH_0000755>qnsviraltest</obo:EUPATH_0000755>
         <rdfs:label>Quantity enough to perform viral tests</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010842 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010842">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
+        <MALED1:hasDescription1>Type of specimen collected</MALED1:hasDescription1>
+        <MALED1:hasDescription2>Monthly =M1; Diarrheal =D1; Monthly recollection =MR; Diarrheal recollection =DR</MALED1:hasDescription2>
+        <MALED1:hasNotes>Based on new study-defined stool type, newsrfspectype (&quot;M1&quot;)</MALED1:hasNotes>
+        <obo:EUPATH_0000755>SRFSPECTYPE</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Stool collection type</rdfs:label>
     </owl:Class>
     
 
