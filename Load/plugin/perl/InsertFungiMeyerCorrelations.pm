@@ -11,8 +11,8 @@ use Data::Dumper;
 
 my $argsDeclaration =
   [
-   fileArg({name           => 'dataFile',
-            descr          => 'directory where to find directories of isa tab files',
+   fileArg({name           => 'dataDir',
+            descr          => 'directory where to find tab files to load',
             reqd           => 1,
 	    mustExist      => 1,
 	    format         => '',
