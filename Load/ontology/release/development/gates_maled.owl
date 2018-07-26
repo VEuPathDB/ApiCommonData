@@ -10,8 +10,36 @@
      xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:efo="http://www.ebi.ac.uk/efo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_maled.owl">
-        <owl:versionInfo>2018-07-25</owl:versionInfo>
-        <obo:GATES_0000010>add &apos;Stool collection type&apos; (EUPATH_0010842) on 2018-07-25</obo:GATES_0000010>
+        <owl:versionInfo>2018-07-26</owl:versionInfo>
+        <obo:GATES_0000010>1. Move following terms with their parents from Household to Observation
+
+EUPATH_0000006 (fsefloor)
+EUPATH_0000335 (fsetoiletmod)
+ENVO_00003064 (fsewdrink)
+EUPATH_0000727 (fseincomenum)
+EUPATH_0000714 (fsesleep)
+
+redmine #31046
+
+2. Removed ontology terms which don’t have corresponding variables in the dataset
+- Date (EUPATH_0011694)
+- Total # of diarrheal episodes (EUPATH_0000741)
+
+3. Swap ‘Sample’ and ‘Specimen information’ source ID
+	Sample 	EUPATH_0011679 - &gt; EUPATH_0000609
+	Specimen information	EUPATH_0000609 -&gt; EUPATH_0011679
+
+Note: Specimen information (EUPATH_0000609) was added long time ago intended to group all entities related to specimen serve as high-level category.
+
+4. Replace IRI for two terms:
+Treatment: EUPATH_0010994 -&gt; OGMS_0000090
+Laboratory test: EUPATH_0011699 -&gt; OGMS_0000056
+
+redmine ##30991
+
+5. Relabel terms:
+- ’Subject ID’ -&gt; ’Participant ID’
+- ‘Facilities’ -&gt; ‘Dwelling facilities’</obo:GATES_0000010>
     </owl:Ontology>
     
 
@@ -399,7 +427,7 @@ Other = 07</MALED1:hasDescription2>
         <obo:GATES_0000006>subjid</obo:GATES_0000006>
         <obo:GATES_0000007>subjid</obo:GATES_0000007>
         <obo:GATES_0000213>variable</obo:GATES_0000213>
-        <rdfs:label>Subject ID</rdfs:label>
+        <rdfs:label>Participant ID</rdfs:label>
     </owl:Class>
     
 
@@ -473,11 +501,11 @@ Other = 07</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000302 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000302">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:GATES_0000004>ALL</obo:GATES_0000004>
         <obo:GATES_0000012>ICEMR category</obo:GATES_0000012>
         <obo:GATES_0000213>category</obo:GATES_0000213>
-        <rdfs:label>Facilities</rdfs:label>
+        <rdfs:label>Dwelling facilities</rdfs:label>
     </owl:Class>
     
 
@@ -485,7 +513,7 @@ Other = 07</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000303 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000303">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:GATES_0000004>ALL</obo:GATES_0000004>
         <obo:GATES_0000012>ICEMR category</obo:GATES_0000012>
         <obo:GATES_0000213>category</obo:GATES_0000213>
@@ -497,7 +525,7 @@ Other = 07</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000304 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000304">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:GATES_0000004>ALL</obo:GATES_0000004>
         <obo:GATES_0000213>category</obo:GATES_0000213>
         <rdfs:label>Socioeconomic factors</rdfs:label>
@@ -567,8 +595,8 @@ Other = 07</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000609 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <rdfs:label>Specimen information</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:label>Sample</rdfs:label>
     </owl:Class>
     
 
@@ -864,7 +892,7 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000724 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:GATES_0000001>MB</obo:GATES_0000001>
         <obo:GATES_0000002>Microbiology Results</obo:GATES_0000002>
         <obo:GATES_0000004>ALL</obo:GATES_0000004>
@@ -983,15 +1011,6 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000741 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000741">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000746"/>
-        <rdfs:label xml:lang="en">Total # of diarrheal episodes</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000742 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000742">
@@ -1045,7 +1064,7 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010001">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010994"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <rdfs:label xml:lang="en">Antibiotic administration</rdfs:label>
     </owl:Class>
     
@@ -1054,7 +1073,7 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010217 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010217">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -1074,7 +1093,7 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010226 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010226">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -1108,7 +1127,7 @@ The result is in Column &apos;gfstresc&apos;, value is &apos;Yes&apos; or &apos;
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010438 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010438">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>Anthropometry</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>WHO</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>diet_24m</MALED1:belongsToDataset>
@@ -2082,7 +2101,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010536 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010536">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010994"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <MALED1:belongsToDataset>IllnessSurveillance</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Original SAF data variables</MALED1:hasDescription1>
         <MALED1:hasDescription2>ORT administrated, 1=yes, 0=no</MALED1:hasDescription2>
@@ -2265,7 +2284,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010550 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010550">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>flag</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Is this stool sample an appropriate diarrhea stool to analyze?</MALED1:hasDescription1>
@@ -2350,7 +2369,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010555 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010555">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>flag</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Is this stool sample an appropriate monthly stool to analyze?</MALED1:hasDescription1>
@@ -2486,7 +2505,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010564 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010564">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>microbiology testing</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Was Cary Blair used for culture?</MALED1:hasDescription1>
@@ -2502,7 +2521,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010565 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010565">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>microbiology testing</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Was culture performed?</MALED1:hasDescription1>
@@ -3571,7 +3590,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010631 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010631">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Was e. coli archived for PCR?</MALED1:hasDescription1>
@@ -5794,7 +5813,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010779 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010779">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Cycle time to become positive for Norovirus Genogroup II</MALED1:hasDescription1>
@@ -5810,7 +5829,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010780 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010780">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>pathogen</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Cycle time to become positive for Norovirus Genogroup I</MALED1:hasDescription1>
@@ -6819,7 +6838,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010843 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010843">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>denotes a completely tested first diarrhea stool sample</MALED1:hasDescription1>
@@ -6915,7 +6934,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010849 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010849">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -6983,7 +7002,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010853 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010853">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -7000,7 +7019,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010854 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010854">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Amount of stool collected</MALED1:hasDescription1>
@@ -7036,7 +7055,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010857 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010857">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -7055,7 +7074,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010859 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010859">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -7076,7 +7095,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010860 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010860">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -7095,7 +7114,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010861 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010861">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
@@ -7168,7 +7187,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010866 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010866">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>number of cumulative diarrhea stools where stoolcount_d=1</MALED1:hasDescription1>
@@ -7201,7 +7220,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010868 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010868">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>number of cumulative monthly stools collected per protocol</MALED1:hasDescription1>
@@ -7218,7 +7237,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010869 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010869">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -7235,7 +7254,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010870 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010870">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -7252,7 +7271,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010871 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010871">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -7269,7 +7288,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010872 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010872">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <MALED1:belongsToCategory>stool type</MALED1:belongsToCategory>
         <MALED1:belongsToDataset>Microbiology</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Type of stool sample collected</MALED1:hasDescription1>
@@ -8593,7 +8612,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010986 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010986">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <rdfs:label>Stool, descriptive statistics</rdfs:label>
     </owl:Class>
     
@@ -8629,7 +8648,7 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010990 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010990">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <rdfs:label>Sufficient amount</rdfs:label>
     </owl:Class>
     
@@ -8656,17 +8675,8 @@ extened window, out of window</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010993 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010993">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <rdfs:label>Test completion</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010994 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010994">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-        <rdfs:label>Treatment</rdfs:label>
     </owl:Class>
     
 
@@ -10375,7 +10385,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011165 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011165">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mn_blood_iar_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Date of sample arrival</MALED1:hasDescription1>
         <MALED1:hasSource>BRF</MALED1:hasSource>
@@ -10388,7 +10398,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011168 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011168">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mn_blood_iar_24m</MALED1:belongsToDataset>
         <MALED1:hasCSNotes>Yes, date of sample collection sounds good. As long as there is another variable that tells what type of sample</MALED1:hasCSNotes>
         <MALED1:hasDescription1>Date of sample collection (derived from BCHDATECOL &amp; BRFDATECOL)</MALED1:hasDescription1>
@@ -10455,7 +10465,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011177 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011177">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mn_blood_iar_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Date of assay</MALED1:hasDescription1>
         <MALED1:hasNotes>Needs a new class, definable in terms of &quot;assay&quot; and &quot;hasEndDateTime&quot;</MALED1:hasNotes>
@@ -10509,7 +10519,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011189 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011189">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mn_blood_iar_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>0=use; 1=don’t use</MALED1:hasDescription1>
         <MALED1:hasSource>ZAR</MALED1:hasSource>
@@ -10661,7 +10671,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011363 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011363">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
         <MALED1:hasCSNotes>was lactulose:mannitol test given the day of or the day before the date of stool collection?</MALED1:hasCSNotes>
         <MALED1:hasDescription1>indicator if lactulose:mannitol test given the day of or the day before the date of stool collection</MALED1:hasDescription1>
@@ -10732,7 +10742,7 @@ Correction factors: BG 0.9808628, BR 0.9867873, IN 0.9890661, NP 0.9905681, PE 0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011550 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011550">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mpo_neo_ala_24m</MALED1:belongsToDataset>
         <MALED1:hasCSNotes>Was stool recollection requested? (01= &apos;Yes, monthly specimen &lt;4g&apos; / 02= &apos;Yes, diarrheal specimen &lt;2g&apos; / 00= &apos;No&apos; / NA= Missing value</MALED1:hasCSNotes>
         <MALED1:hasDescription1>Was recollection requested?</MALED1:hasDescription1>
@@ -11721,7 +11731,7 @@ and dividing the total by 32</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011676 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011676">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <rdfs:label>Sample type</rdfs:label>
     </owl:Class>
     
@@ -11762,8 +11772,8 @@ and dividing the total by 32</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011679 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011679">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <rdfs:label>Sample</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:label>Specimen information</rdfs:label>
     </owl:Class>
     
 
@@ -11834,17 +11844,8 @@ and dividing the total by 32</MALED1:hasDescription1>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011693 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011693">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <rdfs:label>Collection target</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011694 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011694">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <rdfs:label>Date</rdfs:label>
     </owl:Class>
     
 
@@ -11863,15 +11864,6 @@ and dividing the total by 32</MALED1:hasDescription1>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011696">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011676"/>
         <rdfs:label>Urine</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011699 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011699">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <rdfs:label>Laboratory test</rdfs:label>
     </owl:Class>
     
 
@@ -12007,7 +11999,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011718 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011718">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Retinol</rdfs:label>
     </owl:Class>
     
@@ -12016,7 +12008,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011719 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011719">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Zinc</rdfs:label>
     </owl:Class>
     
@@ -12034,7 +12026,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011721 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011721">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Iron</rdfs:label>
     </owl:Class>
     
@@ -12043,7 +12035,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011722 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011722">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Lead</rdfs:label>
     </owl:Class>
     
@@ -12052,7 +12044,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011723 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011723">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Alpha-1-acid glycoprotein</rdfs:label>
     </owl:Class>
     
@@ -12273,7 +12265,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011748 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011748">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Intestinal inflammation</rdfs:label>
     </owl:Class>
     
@@ -12282,7 +12274,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011749 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011749">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label>Iodine</rdfs:label>
     </owl:Class>
     
@@ -12658,7 +12650,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/OBI_0000659 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <rdfs:label>Specimen collection process</rdfs:label>
     </owl:Class>
     
@@ -12667,7 +12659,7 @@ Others = 3</MALED1:hasDescription2>
     <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <MALED1:belongsToDataset>mn_blood_iar_24m</MALED1:belongsToDataset>
         <MALED1:hasDescription1>Sample ID</MALED1:hasDescription1>
         <MALED1:hasSource>BRF/UCF</MALED1:hasSource>
@@ -12761,11 +12753,29 @@ Need to assoicate specimen to different lab test, like zinc, retinol, etc.</obo:
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000056 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:label>Laboratory test</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OGMS_0000083 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000083">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
         <rdfs:label xml:lang="en">Physical finding</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000090 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label>Treatment</rdfs:label>
     </owl:Class>
     
 
