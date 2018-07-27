@@ -259,8 +259,11 @@ sub run {
         $self->checkDatabaseProtocolApplicationsAreHandledAndMark($isatabDatasets, $study->getEdges());
         $self->loadStudy($study,$investigationId, $charFh);
       }
+
+      # clear out the protocol app node hash
+      $self->{_PROTOCOL_APP_NODE_MAP} = {};
     }
-    
+
     $investigationCount++;
   }
 
