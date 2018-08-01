@@ -1,0 +1,22 @@
+# Find leaf terms which no corresponding variables in the dataset
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?sid ?label
+WHERE { 
+	?entity a owl:Class .
+        ?entity rdfs:label ?slabel. 
+    	filter not exists { 
+      		?entity obo:EUPATH_0000755 ?variable .
+    	}
+    	filter not exists { 
+		?e rdfs:subClassOf ?entity .
+    	}
+	BIND (str(?slabel) AS ?label) .
+	BIND(COALESCE(
+	  IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
+	  IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+ 	  REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid)
+}

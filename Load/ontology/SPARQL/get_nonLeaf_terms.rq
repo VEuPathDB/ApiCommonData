@@ -1,0 +1,22 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?entity ?label ?pEntity ?pLabel
+WHERE { 
+	?entity a owl:Class .
+        ?entity rdfs:label ?s_label.
+	OPTIONAL {
+		?entity rdfs:subClassOf ?parent_entity .
+	}
+	OPTIONAL {
+		?parent_entity rdfs:label ?p_label.
+	}
+    	filter exists { 
+		?e rdfs:subClassOf ?entity .
+    	}
+	BIND (str(?s_label) AS ?label) .
+	BIND (str(?p_label) AS ?pLabel) .
+	BIND (IF(BOUND(?parent_entity), ?parent_entity, "http://www.w3.org/2002/07/owl#Thing") AS ?pEntity) .
+}
+ORDER BY ASC(?pLabel)
