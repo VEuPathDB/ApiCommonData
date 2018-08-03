@@ -73,7 +73,7 @@ sub getGoInfoFromDbs {
 
   ## use apidbtuning.GoTermSummary table to get GO info- JP changed to GeneGoTerms to match gene pages - only those go terms assigned, not the linked hierarchy 
   my $sqlSub = "
-select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
+select GENE_SOURCE_ID, TRANSCRIPT_SOURCE_ID, IS_NOT, GO_ID, REFERENCE, EVIDENCE_CODE, GO_TERM_NAME, SOURCE, EVIDENCE_CODE_PARAMETER, 
 decode(ontology, 'Biological Process', 'P',
                  'Molecular Function', 'F',
                  'Cellular Component', 'C', ontology) 
@@ -84,7 +84,7 @@ from apidbtuning.${tuningTablePrefix}GeneGoTerms
   print STDERR "the total number of GeneGoTerms is $#$sqlRefSub\n";
 
   foreach my $i (0..$#$sqlRefSub) {
-    my ($gSourceId, $tSourceId, $goId, $reference, $evidenceCode, $goTermName, $source, $eviCodeParameter, $ontology) = split(/\|/, $sqlRefSub->[$i]);
+    my ($gSourceId, $tSourceId, $isNot, $goId, $reference, $evidenceCode, $goTermName, $source, $eviCodeParameter, $ontology) = split(/\|/, $sqlRefSub->[$i]);
 
     next if (!$idRef->{$gSourceId});  ## continue only when the gSourceId is in the queried organism
     next if (!$goId);
@@ -130,7 +130,7 @@ from apidbtuning.${tuningTablePrefix}GeneGoTerms
     $items[0] = "EuPathDB";
     $items[1] = $gSourceId;                        ## gene source id
     $items[2] = $geneName;                         ## "Symbol"
-    $items[3] = "";                                ## Qualifier, optional
+    $items[3] = uc($isNot);                        ## Qualifier, optional
     $items[4] = $goId;                             ## GO ID
     $items[5] = $reference;                        ## DB:Reference
     $items[6] = $evidenceCode;                     ## Evidence Code
