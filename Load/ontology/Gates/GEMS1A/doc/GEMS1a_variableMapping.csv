@@ -1,54 +1,50 @@
-colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,category,parentLabel,parentIRI,codebookDescription,codebookValues,notesforOnt
-1,,,MSD,gems1a_case_control_study_data,,,"Defined as three or more loose stools within the previous 24 hours and at least one of the following criteria: sunken eyes, loss of skin turgor, intravenous hydration administered or prescribed, dysentery or admission to hospital with diarrhea or dysentery. This variable answers the question: Did the Child have moderate-to-severe diarrhea?",,,,Did child have moderate-to-severe diarrhea?,,
-2,,,dysentery_ind,gems1a_case_control_study_data,,,,,,,Was dysentery indicated?,0/1,
+colOrder,overallOrder,displayOrder,variable,dataFile,IRI,label,definition,category,parentLabel,parentIRI,codebookDescription,codebookValues,notesforOnt
+1,,,MSD,gems1a_case_control_study_data,,Moderate-to-severe diarrhea,"Defined as three or more loose stools within the previous 24 hours and at least one of the following criteria: sunken eyes, loss of skin turgor, intravenous hydration administered or prescribed, dysentery or admission to hospital with diarrhea or dysentery. This variable answers the question: Did the Child have moderate-to-severe diarrhea?",,,,Did child have moderate-to-severe diarrhea?,,
+2,,,dysentery_ind,gems1a_case_control_study_data,,Dysentery,,,,,Was dysentery indicated?,0/1,
 3,,,SITE,gems1a_case_control_study_data,OBI_0001627,Country,,,,,Country,Categorical,GEMS1
 4,,,CENTER,gems1a_case_control_study_data,EUPATH_0010047,Study center,,,,,3-Digit Center Number,,GEMS1
 5,,,CHILDID,gems1a_case_control_study_data,EUPATH_0010048,Child ID,,,,,Child ID,Num,GEMS1
 6,,,CASEID,gems1a_case_control_study_data,EUPATH_0010049,Case ID,,,,,"Child ID of Case, used to group Cases and matching Control",Num,GEMS1
 7,,,Type,gems1a_case_control_study_data,EUPATH_0010375,Case or Control Child,,,,,Identify Observation as a Case or Control,Case,GEMS1
-8,,,Study,gems1a_case_control_study_data,,,,,,,Enrolled in MSD Study or LSD Study,,
-9,,,LSD,gems1a_case_control_study_data,,,,,,,Did child have Less Severe Diarrhea?,,
+8,,,Study,gems1a_case_control_study_data,,Study arm,,,,,Enrolled in MSD Study or LSD Study,,
+9,,,LSD,gems1a_case_control_study_data,,Less-severe diarrhea,,,,,Did child have Less Severe Diarrhea?,,
 14,,,agegroup,gems1a_case_control_study_data,EUPATH_0010367,Age group,,,,,Calculated Age Group from base_age,1,GEMS1
 15,,,ENROLLDATE,gems1a_case_control_study_data,EUPATH_0010054,Enrollment date,,,,,"Date of Enrollment (or visit date on form 3, 2, 6)",DATE,GEMS1
-16,,,LAB_SPECIMEN_ID,gems1a_case_control_study_data,,,,,,,Lab Specimen ID,Num,
+16,,,LAB_SPECIMEN_ID,gems1a_case_control_study_data,,Sample ID,,,,,Lab Specimen ID,Num,*In other data
 17,,,LAB_PAIR,gems1a_case_control_study_data,EUPATH_0010055,Lab form status,,,,,"Good Case-Control lab pair, enrolled, labeled and all forms",0,GEMS1
 33,,,Wealth_Index,gems1a_case_control_study_data,EUPATH_0000014,"Household wealth index, numerical",,,,,"Household wealth index, numerical",,GEMS1
 34,,,wiq,gems1a_case_control_study_data,EUPATH_0000143,"Household wealth index, categorical",,,,,Categorical Rank for wealth index,,GEMS1
-36,,,F2_DATE,gems1a_case_control_study_data,,,,,,,Registration Log Date Completed,DATE,
-40,,,F2_AGE,gems1a_case_control_study_data,,,,,,,Age,Num,
+36,,,F2_DATE,gems1a_case_control_study_data,,Registration date,,,,,Registration Log Date Completed,DATE,
+40,,,F2_AGE,gems1a_case_control_study_data,,Age (days),,,,,Age,Num,
 41,,,F2_GENDER,gems1a_case_control_study_data,PATO_0000047,Sex,,,,,Gender?,0,GEMS1
-42,,,F2_HOSP,gems1a_case_control_study_data,,,,,,,Hospitalized?,0,
-43,,,F2_DSS,gems1a_case_control_study_data,,,,,,,Qualifies for DSS?,1,
-44,,,F2_LOOSE_STOOLS,gems1a_case_control_study_data,,,,,,,Three or more abnormally loose or watery stools in the previous 24 hour period,1,
-48,,,F3_DATE,gems1a_case_control_study_data,,,,,,,Date eligibility form was completed,Date,
+42,,,F2_HOSP,gems1a_case_control_study_data,,Hospitalized,,,,,Hospitalized?,0,
+43,,,F2_DSS,gems1a_case_control_study_data,EUPATH_0010407,EUPATH_0010407,,,,,Qualifies for DSS?,1,
+44,,,F2_LOOSE_STOOLS,gems1a_case_control_study_data,,Three or more abnormally loose or watery stools in the previous 24 hour period,,,,,Three or more abnormally loose or watery stools in the previous 24 hour period,1,
+48,,,F3_DATE,gems1a_case_control_study_data,,Eligibility form date,,,,,Date eligibility form was completed,Date,
 50,,,F3_CHILDBIRTH,gems1a_case_control_study_data,http://www.ebi.ac.uk/efo/EFO_0004950,Date of birth,,,,,Child's Birthdate,Date,GEMS1
-51,,,F3_AGE,gems1a_case_control_study_data,,,,,,,Age in Months,Num,
 52,,,F3_GENDER,gems1a_case_control_study_data,PATO_0000047,Sex,,,,,,0,GEMS1
 53,,,F3_CHILD_DSS,gems1a_case_control_study_data,EUPATH_0010407,Child qualified as DSS resident,,,,,Does the Child Qualify as a DSS Resident?,1,GEMS1
 54,,,F3_AGE59,gems1a_case_control_study_data,EUPATH_0010409,Child less than 60 months of age,,,,,Is this child 0-59 months of Age,1,GEMS1
 55,,,F3_ABN_LOOSE,gems1a_case_control_study_data,EUPATH_0010410,Child passed 3 or more abnormally loose stools during the previous 24 hours,,,,,Did this child pass 3 or more abnormally loose stools during the previous 24 hours?,1,GEMS1
 56,,,F3_DRH_7,gems1a_case_control_study_data,EUPATH_0010411,Current diarrhea episode began within the last 7 days,,,,,Did current diarrhea episode begin within the previous 7 days?,1,GEMS1
 57,,,F3_DRH7DAY,gems1a_case_control_study_data,EUPATH_0010412,Child had at least 7 days w/o diarrhea before current episode,,,,,"Before this episode began, did the child have at least 7 days without Diarrhea?",1,GEMS1
-58,,,F3_QUALIFY_GEMS1A,gems1a_case_control_study_data,,,,,,,"Based on qualifying checklist, does this child qualify for GEMS 1A?",0/1,
-62,,,F3_LSD_CASE,gems1a_case_control_study_data,,,,,,,Is this child currently enrolled in GEMS1A as an LSD Case?,0/1,
-63,,,F3_MSD_CASE,gems1a_case_control_study_data,,,,,,,Is this child currently enrolled in GEMS1A as an MSD Case?,0/1,
+62,,,F3_LSD_CASE,gems1a_case_control_study_data,,"At registration, currently enrolled in GEMS1A as an LSD Case",,,,,Is this child currently enrolled in GEMS1A as an LSD Case?,0/1,
+63,,,F3_MSD_CASE,gems1a_case_control_study_data,,"At registration, currently enrolled in GEMS1A as an MSD Case",,,,,Is this child currently enrolled in GEMS1A as an MSD Case?,0/1,
 64,,,F3_DRH_SUNKEYES,gems1a_case_control_study_data,EUPATH_0010413,"Sunken eyes, more than normal",,,,,"Does the Child have any one of following: Sunken eyes, more than normal",0,GEMS1
 65,,,F3_DRH_TURGOR,gems1a_case_control_study_data,EUPATH_0010414,Loss of skin turgor,,,,,Does the Child have any one of following: Loss of skin turgor,0,GEMS1
 66,,,F3_DRH_IV,gems1a_case_control_study_data,EUPATH_0010415,IV rehydration administered or prescribed,,,,,Does the Child have any one of following: intravenous rehydration administered or prescribed?,0,GEMS1
-67,,,F3_DRH_DYS,gems1a_case_control_study_data,EUPATH_0010416,Dysentery,,,,,Does the Child have any one of the following: dysentery (diarrhea with visible blood in stool observed or reported),0,GEMS1
+67,,,F3_DRH_DYS,gems1a_case_control_study_data,EUPATH_0010416,Dysentery,Diarrhea with visible blood in stool observed or reported,,,,Does the Child have any one of the following: dysentery (diarrhea with visible blood in stool observed or reported),0,GEMS1
 68,,,F3_DRH_HOSP,gems1a_case_control_study_data,EUPATH_0010417,Hospitalized with diarrhea or dysentery,,,,,Does the Child have any one of the following: hospitalized with diarrhea or dysentery,0,GEMS1
-69,,,F3_CHILD_MSD,gems1a_case_control_study_data,,,,,,,Is the child eligible for enrollment in the MSD study,,
-71,,,F3_CHILD_LSD,gems1a_case_control_study_data,,,,,,,Is the child eligible for enrollment in the LSD study,,
+69,,,F3_CHILD_MSD,gems1a_case_control_study_data,,Child eligible for enrollment in MSD study,,,,,Is the child eligible for enrollment in the MSD study,,
+71,,,F3_CHILD_LSD,gems1a_case_control_study_data,,Child eligible for enrollment in LSD study,,,,,Is the child eligible for enrollment in the LSD study,,
 74,,,F3_CONSENT,gems1a_case_control_study_data,EUPATH_0010420,Consent for enrollment given,,,,,Was consent obtained?,1,GEMS1
-75,,,F3_ANTIBIOTIC,gems1a_case_control_study_data,EUPATH_0010421,Child given antibiotic before stool sample collection?,,,,,Was child given antibiotic before whole stool sample could be collected?,0,GEMS1
+75,,,F3_ANTIBIOTIC,gems1a_case_control_study_data,EUPATH_0010421,Child given antibiotic before stool sample collection,,,,,Was child given antibiotic before whole stool sample could be collected?,0,GEMS1
 76,,,F3_STOOL_SMPL,gems1a_case_control_study_data,EUPATH_0010422,Whole stool collected within 12 hrs. of registration,,,,,"If no to 'was child given ab', was a stool sample collected from the child within 12 hours of registration?",1,GEMS1
 77,,,F3_RECT_SWAB,gems1a_case_control_study_data,EUPATH_0010423,Rectal swabs collected before antibiotics and whole stool collected within 12 hrs of registration,,,,,"if Yes to 'was child given ab', were rectal swabs taken before antibiotics and was a whole stool collected within 12 hours of registration?",1,GEMS1
 78,,,F3_CHILD_ENROLL,gems1a_case_control_study_data,EUPATH_0010424,Child enrolled,,,,,Was the child enrolled?,1,GEMS1
 87,,,F4A_DATE,gems1a_case_control_study_data,EUPATH_0000091,Date of visit,,,,,Enrollment (Non-Medical) Date,Date,GEMS1
 89,,,F4A_PRIMCARE,gems1a_case_control_study_data,EUPATH_0000720,Caretaker relationship to Child,,,,,Who is Child's Primary Caretaker?,1,GEMS1
-90,,,F4A_PRIMCARE_SPEC,gems1a_case_control_study_data,,,,,,,"Other primary caretaker, specify",Char,
 91,,,F4A_RELATIONSHIP,gems1a_case_control_study_data,EUPATH_0010123,Interviewee relationship to Child,,,,,What is your relationship to the Child?,1,GEMS1
-92,,,F4A_RELATION_SPEC,gems1a_case_control_study_data,,,,,,,"Other relation, specify",Char,
 93,,,F4A_MOM_LIVE,gems1a_case_control_study_data,EUPATH_0010127,Mothers residence,,,,,Where does Child's mother live?,1,GEMS1
 94,,,F4A_DAD_LIVE,gems1a_case_control_study_data,EUPATH_0000676,Fathers residence,,,,,Where does Child's father live?,1,GEMS1
 95,,,F4A_PRIM_SCHL,gems1a_case_control_study_data,EUPATH_0010129,Primary caretakers education level,,,,,How far did the child's primary caretaker go in school?,1,GEMS1
@@ -57,7 +53,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 98,,,F4A_YNG_CHILDREN,gems1a_case_control_study_data,EUPATH_0010232,Number of children under 60 months in house,,,,,How many children younger than 60 months live in the household?,Num,GEMS1
 99,,,F4A_SLP_ROOMS,gems1a_case_control_study_data,EUPATH_0000715,Sleeping rooms in household,,,,,How many rooms in your household are used for sleeping?,Num,GEMS1
 100,,,F4A_FLOOR,gems1a_case_control_study_data,EUPATH_0000006,Floor material,,,,,What is the predominant floor in the house of Child?,1,GEMS1
-101,,,F4A_FLOOR_SPEC,gems1a_case_control_study_data,,,,,,,"What is the predominant floor in the house of Child, Specify",Char,
 102,,,F4A_HOUSE_ELEC,gems1a_case_control_study_data,EUPATH_0021084,Electricity,,,,,Does your household have Electricity?,0,GEMS1
 103,,,F4A_HOUSE_BIKE,gems1a_case_control_study_data,EUPATH_0015001,Bicycle/rickshaw,,,,,Does your household have a bicycle/rickshaw?,0,GEMS1
 104,,,F4A_HOUSE_PHONE,gems1a_case_control_study_data,EUPATH_0015002,Telephone (mobile or non-mobile),,,,,Does your household have a telephone (mobile or non-mobile)?,0,GEMS1
@@ -82,7 +77,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 123,,,F4A_FUEL_KERO,gems1a_case_control_study_data,EUPATH_0015021,Kerosene,,,,,What type of cooking fuel does your house use? Kerosene?,0,GEMS1
 124,,,F4A_FUEL_WOOD,gems1a_case_control_study_data,EUPATH_0015022,Wood,,,,,What type of cooking fuel does your house use? Wood?,0,GEMS1
 125,,,F4A_FUEL_OTHER,gems1a_case_control_study_data,EUPATH_0015023,Other,,,,,What type of cooking fuel does your house use? Other?,0,GEMS1
-126,,,F4A_FUEL_OTHER_SPEC,gems1a_case_control_study_data,,,,,,,"What type of cooking fuel does your house use? Other, specify?",Char,
 127,,,F4A_ANI_GOAT,gems1a_case_control_study_data,EUPATH_0015024,Goat,,,,,Do the following animals live in the compound where Child lives? Goat?,0,GEMS1
 128,,,F4A_ANI_SHEEP,gems1a_case_control_study_data,EUPATH_0015025,Sheep,,,,,Do the following animals live in the compound where Child lives? Sheep?,0,GEMS1
 129,,,F4A_ANI_DOG,gems1a_case_control_study_data,EUPATH_0015026,Dog,,,,,Do the following animals live in the compound where Child lives? Dog?,0,GEMS1
@@ -91,7 +85,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 132,,,F4A_ANI_RODENTS,gems1a_case_control_study_data,EUPATH_0015029,Rodents,,,,,Do the following animals live in the compound where Child lives? Rodents?,0,GEMS1
 133,,,F4A_ANI_FOWL,gems1a_case_control_study_data,EUPATH_0015030,Fowl,,,,,"Do the following animals live in the compound where Child lives? Fowl (Chicken, duck or other birds)?",0,GEMS1
 134,,,F4A_ANI_OTHER,gems1a_case_control_study_data,EUPATH_0015031,Other,,,,,Do the following animals live in the compound where Child lives? Other?,0,GEMS1
-135,,,F4A_ANI_SPEC,gems1a_case_control_study_data,,,,,,,"Do the following animals live in the compound where Child lives? Other, specify.",Char,
 136,,,F4A_ANI_NO,gems1a_case_control_study_data,EUPATH_0015032,No animals,,,,,Do the following animals live in the compound where Child lives? No Animals?,0,GEMS1
 137,,,F4A_WATER_HOUSE,gems1a_case_control_study_data,EUPATH_0015033,Piped into house,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Piped into house?",0,GEMS1
 138,,,F4A_WATER_COVWELL,gems1a_case_control_study_data,EUPATH_0015034,Covered well in house or yard,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Covered well in house or yard?",0,GEMS1
@@ -111,9 +104,7 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 152,,,F4A_WATER_BOUGHT,gems1a_case_control_study_data,EUPATH_0015048,"Bought (tank, bottle, etc.)",,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Bought, tank, bottles, etc?",0,GEMS1
 153,,,F4A_WATER_OTHR,gems1a_case_control_study_data,EUPATH_0015049,Other water source,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Other?",0,GEMS1
 154,,,F4A_WATER_BORE,gems1a_case_control_study_data,EUPATH_0015050,Bore hole,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Bore hole?",0,GEMS1
-155,,,F4A_WATER_SPEC,gems1a_case_control_study_data,,,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Other, specify.",Char,
 156,,,F4A_MS_WATER,gems1a_case_control_study_data,EUPATH_0010099,Main drinking water source,,,,,"During the last two weeks, what was the main source of drinking water for members of your household?",1,GEMS1
-157,,,F4A_MS_SPEC,gems1a_case_control_study_data,,,,,,,"During the last two weeks, what was the main source of drinking water for members of your household? Other, specify.",Char,
 158,,,F4A_TIME_WATER,gems1a_case_control_study_data,EUPATH_0000726,Time to retrieve drinking water,,,,,"How long does it take to go there, get water and come back?",0,GEMS1
 159,,,F4A_FETCH_WATER,gems1a_case_control_study_data,EUPATH_0010234,Fetch drinking water everyday,,,,,Do you or other members from your household go and fetch drinking water fro the household every day?,0,GEMS1
 160,,,F4A_TRIP_DAY,gems1a_case_control_study_data,EUPATH_0010135,Water trips daily,,,,,"On average, how many trips do you and members of your household make to fetch water each day?",Num,GEMS1
@@ -122,14 +113,10 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 163,,,F4A_STORE_WATER,gems1a_case_control_study_data,EUPATH_0010141,Child given stored water for drinking,,,,,"In the last two weeks, did you give Child stored water for drinking?",0,GEMS1
 164,,,F4A_TRT_WATER,gems1a_case_control_study_data,EUPATH_0010108,Drinking water treatment,,,,,Do you usually treat drinking water at home?,0,GEMS1
 165,,,F4A_TRT_METHOD,gems1a_case_control_study_data,EUPATH_0000700,Drinking water treatment method,,,,,Which method do you use the most to treat drinking water at home?,0,GEMS1
-166,,,F4A_TRT_METHOD_SPEC,gems1a_case_control_study_data,,,,,,,Which method do you use the most to treat drinking water at home?,Char,
 167,,,F4A_CHLORINE,gems1a_case_control_study_data,EUPATH_0010147,Chlorine treatment brand,,,,,"If you use chlorine liquid, powder or tablets, which type do you most commonly use?",0,GEMS1
-168,,,F4A_CHLORINE_SPEC,gems1a_case_control_study_data,,,,,,,"If you use chlorine liquid, powder or tablets, which type do you most commonly use?",Char,
 169,,,F4A_NOTRT_WATER,gems1a_case_control_study_data,EUPATH_0010151,Child given untreated water,,,,,In the last two weeks did you give Child water which was not treated?,0,GEMS1
 170,,,F4A_DISP_FECES,gems1a_case_control_study_data,EUPATH_0000722,Child waste disposal,,,,,How do you usually dispose of Childs feces?,1,GEMS1
-171,,,F4A_DISP_SPEC,gems1a_case_control_study_data,,,,,,,How do you usually dispose of Childs feces? Other specify.,Char,
 172,,,F4A_FAC_WASTE,gems1a_case_control_study_data,EUPATH_0000335,Human waste facilities,,,,,What kind of facility does your household most commonly use to dispose of human fecal waste?,1,GEMS1
-173,,,F4A_FAC_SPEC,gems1a_case_control_study_data,,,,,,,"What kind of facility does your household most commonly use to dispose of human fecal waste? Other, specify",Char,
 174,,,F4A_SHARE_FAC,gems1a_case_control_study_data,EUPATH_0010236,Households sharing human waste disposal facility,,,,,How many households (other than your own) share this facility?,Num,GEMS1
 175,,,F4A_WASH_EAT,gems1a_case_control_study_data,EUPATH_0015051,Washes hands before eating,,,,,When do you usually wash your hands? Before eating?,0,GEMS1
 176,,,F4A_WASH_COOK,gems1a_case_control_study_data,EUPATH_0015052,Washes hands before cooking,,,,,When do you usually wash your hands? Before cooking?,0,GEMS1
@@ -139,12 +126,10 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 180,,,F4A_WASH_CHILD,gems1a_case_control_study_data,EUPATH_0015056,Washes hands after cleaning child who defecated,,,,,When do you usually wash your hands? After cleaning child who defecated?,0,GEMS1
 181,,,F4A_WASH_NEVER,gems1a_case_control_study_data,EUPATH_0015057,Never washes hands,,,,,When do you usually wash your hands? Never?,0,GEMS1
 182,,,F4A_WASH_OTHR,gems1a_case_control_study_data,EUPATH_0015058,Washes hands other times,,,,,"When do you usually wash your hands? Other, specify?",0,GEMS1
-183,,,F4A_WASH_SPEC,gems1a_case_control_study_data,,,,,,,When do you usually wash your hands? Other specify.,Char,
 184,,,F4A_WASH_USE,gems1a_case_control_study_data,EUPATH_0000681,Usual hand washing,,,,,"When you wash your hands, what do you usually use?",1,GEMS1
-185,,,F4A_BREASTFED_SINCE_ILL,gems1a_case_control_study_data,,,,,,,Has child been breast feeding since becoming ill with diarrhea?,0,
-186,,,F4A_BREASTFED_BEFORE_ILL,gems1a_case_control_study_data,,,,,,,Was child breastfeeding during the week before becoming ill with diarrhea?,0,
+185,,,F4A_BREASTFED_SINCE_ILL,gems1a_case_control_study_data,,Child breastfed since ill,,,,,Has child been breast feeding since becoming ill with diarrhea?,0,
+186,,,F4A_BREASTFED_BEFORE_ILL,gems1a_case_control_study_data,,Child breastfed before ill,,,,,Was child breastfeeding during the week before becoming ill with diarrhea?,0,
 187,,,F4A_DRH_DAYS,gems1a_case_control_study_data,EUPATH_0010238,Diarrheal episode duration (days),,,,,How many days including today has this episode of diarrhea lasted?,Num,GEMS1
-188,,,F4A_DRH_ONSET,gems1a_case_control_study_data,,,,,,,Date of onset of diarrhea,Date,
 189,,,F4A_DRH_STOOLS,gems1a_case_control_study_data,EUPATH_0010239,Describe stool since the illness began,,,,,"Since Child became ill with diarrhea, how would you describe the stool?",1,GEMS1
 190,,,F4A_MAX_STOOLS,gems1a_case_control_study_data,EUPATH_0010240,Daily maximum of loose stools,,,,,"During the illness, what was the maximum number of loose stools that Child passed in a day (24 hour period)?",1,GEMS1
 191,,,F4A_DRH_BLOOD,gems1a_case_control_study_data,EUPATH_0015059,Blood in stools,,,,,Did Child have any of the following since this illness began? Blood in stools?,0,GEMS1
@@ -177,13 +162,9 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 218,,,F4A_HOMETRT_ZINC,gems1a_case_control_study_data,EUPATH_0015086,Zinc,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Zinc (tablet/syrup)?",0,GEMS1
 219,,,F4A_HOMETRT_NONE,gems1a_case_control_study_data,EUPATH_0015087,No special remedies given,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? No special remedies given?",0,GEMS1
 220,,,F4A_HOMETRT_OTHRLIQ,gems1a_case_control_study_data,EUPATH_0015088,Any other liquids,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Any other liquids?",0,GEMS1
-221,,,F4A_HOMETRTLIQ_SPEC,gems1a_case_control_study_data,,,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Any other liquids, specify.",Char,
 222,,,F4A_HOMETRT_AB,gems1a_case_control_study_data,EUPATH_0015089,Antibiotics,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Antibiotics?",0,GEMS1
-223,,,F4A_HOMETRT_AB_SPEC,gems1a_case_control_study_data,,,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Antibiotics, specify.",Char,
 224,,,F4A_HOMETRT_OTHR1,gems1a_case_control_study_data,EUPATH_0015090,Other treatment,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Other (1)?",0,GEMS1
-225,,,F4A_HOMETRT_SPEC1,gems1a_case_control_study_data,,,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Other (1) Specify.",Char,
 226,,,F4A_HOMETRT_OTHR2,gems1a_case_control_study_data,EUPATH_0015091,Other treatment,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Other (2)?",0,GEMS1
-227,,,F4A_HOMETRT_SPEC2,gems1a_case_control_study_data,,,,,,,"Before coming to this hospital/health center, was child given any of the following to treat their diarrhea? Other (2) Specify.",Char,
 228,,,F4A_OFFR_DRINK,gems1a_case_control_study_data,EUPATH_0010241,Amount offered to drink during diarrheal episode,,,,,"Since Child developed diarrhea, how much have you been offering Child to drink?",1,GEMS1
 229,,,F4A_OFFR_EAT,gems1a_case_control_study_data,EUPATH_0010177,Amount offered to eat during diarrheal episode,,,,,"Since Child developed diarrhea, how much have you been offering Child to eat?",1,GEMS1
 230,,,F4A_SEEK_OUTSIDE,gems1a_case_control_study_data,EUPATH_0015092,Seek outside care,,,,,"Before coming to this hospital/health center, did you seek care for Child outside your household for this illness?",0,GEMS1
@@ -193,7 +174,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 234,,,F4A_SEEK_DOC,gems1a_case_control_study_data,EUPATH_0015096,Unlicensed practitioner,,,,,"If you previously sought care for Child for this illness, where did you go? Unlicensed practitioner/village doctor/bush doctor/vilage health worker?",0,GEMS1
 235,,,F4A_SEEK_PRIVDOC,gems1a_case_control_study_data,EUPATH_0015097,Licensed practitioner,,,,,"If you previously sought care for Child for this illness, where did you go? Licensed practitioner/private doctor (not at hospital)",0,GEMS1
 236,,,F4A_SEEK_REMDY,gems1a_case_control_study_data,EUPATH_0015098,Bought a remedy/drug,,,,,"If you previously sought care for Child for this illness, where did you go? Bought a remedy/medicine at the shop/market",0,GEMS1
-237,,,F4A_SEEK_REMDY_SPEC,gems1a_case_control_study_data,,,,,,,"If you previously sought care for Child for this illness, where did you go? Bought a remedy/medicine at the shop/market, specify.",Char,
 238,,,F4A_SEEK_CTR1,gems1a_case_control_study_data,EUPATH_0010155,Hospital/Center of first choice,,,,,"If you previously sought care for Child for this illness, where did you go? Hospital/Center of first choice?",0,GEMS1
 239,,,F4A_SEEK_CTR1_CODE,gems1a_case_control_study_data,EUPATH_0010157,First choice facility code,,,,,,3-digit code,GEMS1
 240,,,F4A_SEEK_CTR1_SHC,gems1a_case_control_study_data,EUPATH_0010159,First choice facility SHC,,,,,,0,GEMS1
@@ -204,7 +184,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 245,,,F4A_SEEK_CTR3_CODE,gems1a_case_control_study_data,EUPATH_0010169,Third choice facility code,,,,,,3-digit code,GEMS1
 246,,,F4A_SEEK_CTR3_SHC,gems1a_case_control_study_data,EUPATH_0010171,Third choice facility SHC,,,,,,NA,GEMS1
 247,,,F4A_SEEK_OTHER,gems1a_case_control_study_data,EUPATH_0010173,Other Hospital/Center,,,,,"If you previously sought care for Child for this illness, where did you go? Other hospital/center?",0,GEMS1
-248,,,F4A_SEEK_OTHER_SPEC,gems1a_case_control_study_data,,,,,,,"If you previously sought care for Child for this illness, where did you go? Other hospital/center, specify.",Char,
 249,,,F4A_PHARM_TOTAL,gems1a_case_control_study_data,EUPATH_0010243,Pharmacy medical expenses,,,,,What were your or your household estimated out-of-pocket expenses for the following: Total Medical Pharmacy,Num,GEMS1
 250,,,F4A_PHARM_TRNSPRT,gems1a_case_control_study_data,EUPATH_0010244,Pharmacy transportation expenses,,,,,What were your or your household estimated out-of-pocket expenses for the following: Transportation Pharmacy,Num,GEMS1
 251,,,F4A_HEAL_TOTAL,gems1a_case_control_study_data,EUPATH_0010245,Traditional healer medical expenses,,,,,What were your or your household estimated out-of-pocket expenses for the following: Total Medical Traditional Healer,Num,GEMS1
@@ -221,7 +200,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 262,,,F4A_CTR2_TRNSPRT,gems1a_case_control_study_data,EUPATH_0010256,"Hospital/Center of 2nd choice, Transport expenses",,,,,What were your or your household estimated out-of-pocket expenses for the following: Transportation Hospital/Center of 2nd Choice,Num,GEMS1
 263,,,F4A_CTR3_TOTAL,gems1a_case_control_study_data,EUPATH_0010257,"Hospital/Center of 3rd choice, Total expenses",,,,,What were your or your household estimated out-of-pocket expenses for the following: Total Medical Hospital/Center of 3rd Choice,Num,GEMS1
 264,,,F4A_CTR3_TRNSPRT,gems1a_case_control_study_data,EUPATH_0010258,"Hospital/Center of 3rd choice, Transport expenses",,,,,What were your or your household estimated out-of-pocket expenses for the following: Transportation Hospital/Center of 3rd Choice,Num,GEMS1
-265,,,F4A_OTHER_SPEC,gems1a_case_control_study_data,,,,,,,"What were your or your household estimated out-of-pocket expenses for the following: Transportation Other, specify",Num,
 266,,,F4A_OTHER_TOTAL,gems1a_case_control_study_data,EUPATH_0010260,Other expense amount,,,,,What were your or your household estimated out-of-pocket expenses for the following: Total Medical Other,Num,GEMS1
 267,,,F4A_OTHER_TRNSPRT,gems1a_case_control_study_data,EUPATH_0010261,Other transportation expenses,,,,,What were your or your household estimated out-of-pocket expenses for the following: Transportation Other,Num,GEMS1
 268,,,F4A_MONEY_MEAL,gems1a_case_control_study_data,EUPATH_0015099,Cutting down expenses from meal,,,,,Where did the money come from? Cutting down expenses from meal?,0,GEMS1
@@ -232,7 +210,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 273,,,F4A_MONEY_DONAT,gems1a_case_control_study_data,EUPATH_0015104,Asking for donations outside the household,,,,,Where did the money come from? Asking for donations outside the household?,0,GEMS1
 274,,,F4A_MONEY_RELATIVE,gems1a_case_control_study_data,EUPATH_0015105,Paid by relative or friend,,,,,Where did the money come from? Relative or friend pays on your behalf?,0,GEMS1
 275,,,F4A_MONEY_OTHR,gems1a_case_control_study_data,EUPATH_0015106,Other money source,,,,,Where did the money come from? Other?,0,GEMS1
-276,,,F4A_MONEY_SPEC,gems1a_case_control_study_data,,,,,,,"Where did the money come from? Other, specify.",Char,
 277,,,F4A_TRNSPORT_TIME,gems1a_case_control_study_data,EUPATH_0010262,Transportation time to clinic,,,,,How long did it take to get here from your home (including the journey time and any time waiting for transport?,1,GEMS1
 278,,,F4A_TRNS_INIT_PAY,gems1a_case_control_study_data,EUPATH_0010263,Amount paid for initial transportation to clinic,,,,,"If you paid for transportation to bring the child to the hospital or clinic, how much did you pay?",Num,GEMS1
 279,,,F4A_TRNS_YOU_PAY,gems1a_case_control_study_data,EUPATH_0010264,Amount paid for trips to clinic after initial visit,,,,,"Other than the first trip to bring the child to the health center, how much did you pay for transport to or from this facility during the child's stay in the facility?",Num,GEMS1
@@ -252,24 +229,22 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 293,,,F4A_SPENT_DONAT,gems1a_case_control_study_data,EUPATH_0015112,Asking for donations outside the household,,,,,Where did the money that you spent during this visit or hospitalization come from? Asking for donations outside of the household?,0,GEMS1
 294,,,F4A_SPENT_RELATIVE,gems1a_case_control_study_data,EUPATH_0015113,Paid by relative or friend,,,,,Where did the money that you spent during this visit or hospitalization come from? Relative or friend pays on your behalf?,0,GEMS1
 295,,,F4A_SPENT_OTHR,gems1a_case_control_study_data,EUPATH_0015114,Other money source,,,,,Where did the money that you spent during this visit or hospitalization come from? Other?,0,GEMS1
-296,,,F4A_SPENT_SPEC,gems1a_case_control_study_data,,,,,,,Where did the money that you spent during this visit or hospitalization come from? Other specify.,Char,
 297,,,F4A_LOSE_EARN,gems1a_case_control_study_data,EUPATH_0010273,Lost earnings due to care,,,,,Did you lose some earnings due to seeking or providing care during Child's Illness,0,GEMS1
 298,,,F4A_LOSE_TOTAL,gems1a_case_control_study_data,EUPATH_0010274,Amount earnings lost due to care,,,,,"If yes, how much?",,GEMS1
 299,,,F4A_OTHRLOSE_EARN,gems1a_case_control_study_data,EUPATH_0010275,Other lost earnings,,,,,Did other caregivers lose some earnings due to seeking or providing care during Child's Illness,0,GEMS1
 300,,,F4A_OTHRLOSE_TOTAL,gems1a_case_control_study_data,EUPATH_0010276,Amount other lost earnings,,,,,"If yes, how much?",,GEMS1
 301,,,F4A_DAYSLOST_CARE,gems1a_case_control_study_data,EUPATH_0010277,Income days lost while seeking care,,,,,How much time have you spent taking care of Child when otherwise you woul dhave been doing income generating activities?,Character and Numeric,GEMS1
 302,,,F4A_DAYSLOST_OTHRCRE,gems1a_case_control_study_data,EUPATH_0010278,Other caregivers income days lost while seeking care,,,,,How much time have other caregivers spent taking care of Child when otherwise they would have been doing income generating activities?,Character and Numeric,GEMS1
-303,,,F4A_SPECIMEN_ID,gems1a_case_control_study_data,,,,,,,,,
+303,,,F4A_SPECIMEN_ID,gems1a_case_control_study_data,,Sample ID,,,,,,,
 307,,,F4B_DATE,gems1a_case_control_study_data,EUPATH_0000091,Date of visit,,,,,Visit Date For Enrollment Questionaire for Cases,Date,GEMS1
-309,,,F4B_WT_CHILD,gems1a_case_control_study_data,,,,,,,Physical findings: Weight 0-23 months Caretaker + Child,Num,
-310,,,F4B_WT_CARE,gems1a_case_control_study_data,,,,,,,Physical findings: Weight 0-23 months Caretaker alone,Num,
-311,,,F4B_WT,gems1a_case_control_study_data,,,,,,,Physical findings: Weight of Child Alone 24-59 Months,Num,
+309,,,F4B_WT_CHILD,gems1a_case_control_study_data,,Weight of caretaker + child (kg),,,,,Physical findings: Weight 0-23 months Caretaker + Child,Num,
+310,,,F4B_WT_CARE,gems1a_case_control_study_data,,Weight of caretaker alone (kg),,,,,Physical findings: Weight 0-23 months Caretaker alone,Num,
 312,,,F4B_WEIGHT,gems1a_case_control_study_data,EUPATH_0000732,Weight (kg),,,,,Physical findings: Calculated Weight,Num,GEMS1
 313,,,F4B_WAZ,gems1a_case_control_study_data,EUPATH_0000733,Weight for age z-score,,,,,Physical findings: Weight for Age,Num,GEMS1
 314,,,F4B_WAZ_F,gems1a_case_control_study_data,EUPATH_0015121,WAZ <-6 or >5,,,,,Physical findings: Flag for _ZWAZ<-6 or _ZWAZ>5,0,GEMS1
-315,,,F4B_HT1,gems1a_case_control_study_data,,,,,,,Physical findings: 1b. Height 1st,Num,
-316,,,F4B_HT2,gems1a_case_control_study_data,,,,,,,Physical findings: 1b. Height 2nd,Num,
-317,,,F4B_HT3,gems1a_case_control_study_data,,,,,,,Physical findings: 1b. Height 3rd,Num,
+315,,,F4B_HT1,gems1a_case_control_study_data,,"Height, 1st (cm)",,,,,Physical findings: 1b. Height 1st,Num,
+316,,,F4B_HT2,gems1a_case_control_study_data,,"Height, 2nd (cm)",,,,,Physical findings: 1b. Height 2nd,Num,
+317,,,F4B_HT3,gems1a_case_control_study_data,,"Height, 3rd (cm)",,,,,Physical findings: 1b. Height 3rd,Num,
 318,,,F4B_HEIGHT,gems1a_case_control_study_data,EUPATH_0010078,Height; mean (cm),,,,,Physical findings: Calculated mean height,Num,GEMS1
 319,,,F4B_HEIGHT_MEDIAN,gems1a_case_control_study_data,EUPATH_0010079,Height; median (cm),,,,,Physical findings: Calculated median height,Num,GEMS1
 320,,,F4B_HAZ,gems1a_case_control_study_data,EUPATH_0000689,Length/height for age z-score,,,,,Physical findings: Length/height-for-age z-score,Num,GEMS1
@@ -280,9 +255,9 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 325,,,F4B_MED_HAZ_F,gems1a_case_control_study_data,EUPATH_0015124,HAZ <-6 or >6 (median ht),,,,,Physical findings: Flag for _HAZ<-6 or _HAZ>6 (median ht),0,GEMS1
 326,,,F4B_MED_WHZ,gems1a_case_control_study_data,EUPATH_0010083,Weight for length/height z-score (median ht),,,,,Physical findings: Weight-for-length/height z-score (median ht),Num,GEMS1
 327,,,F4B_MED_WHZ_F,gems1a_case_control_study_data,EUPATH_0015125,WHZ <-5 or >5 (median ht),,,,,Physical findings: Flag for _WHZ<-5 or _WHZ>5 (median ht),0,GEMS1
-328,,,F4B_MUAC1,gems1a_case_control_study_data,,,,,,,Physical findings: 1c. MUAC 1st,Num,
-329,,,F4B_MUAC2,gems1a_case_control_study_data,,,,,,,Physical findings: 1c. MUAC 2nd,Num,
-330,,,F4B_MUAC3,gems1a_case_control_study_data,,,,,,,Physical findings: 1c. MUAC 3rd,Num,
+328,,,F4B_MUAC1,gems1a_case_control_study_data,,"MUAC, 1st (cm)",,,,,Physical findings: 1c. MUAC 1st,Num,
+329,,,F4B_MUAC2,gems1a_case_control_study_data,,"MUAC, 2nd (cm)",,,,,Physical findings: 1c. MUAC 2nd,Num,
+330,,,F4B_MUAC3,gems1a_case_control_study_data,,"MUAC, 3rd (cm)",,,,,Physical findings: 1c. MUAC 3rd,Num,
 331,,,F4B_MUAC,gems1a_case_control_study_data,EUPATH_0010087,MUAC; mean (cm),,,,,Physical findings: Calculated mean MUAC,Num,GEMS1
 332,,,F4B_MUAC_MEDIAN,gems1a_case_control_study_data,EUPATH_0010088,MUAC; median (cm),,,,,Physical findings: Calculated median MUAC,Num,GEMS1
 333,,,F4B_MUAC_AGEZ,gems1a_case_control_study_data,EUPATH_0000710,MUAC for age z-score,,,,,Physical findings: Arm circumference-for-age z score,Num,GEMS1
@@ -315,7 +290,7 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 360,,,F4B_RECOMMEND,gems1a_case_control_study_data,EUPATH_0010298,Child received recommended rehydration,,,,,Will child receive recommended rehydration at this hopsital/health center?,0,GEMS1
 365,,,F4B_CHILD_EVAL,gems1a_case_control_study_data,EUPATH_0010299,Child evaluated after 4 hours,,,,,Outcome 4hrs after starting rehydration: Was the child evaluated after 4 hours?,0,GEMS1
 366,,,F4B_CHILD_EVAL_SPEC,gems1a_case_control_study_data,EUPATH_0010300,Reason not evaluated after rehydration,,,,,If not evaluated after 4 hours what was the reason?,Char,GEMS1
-367,,,F4B_CHILD_COMP_REHYD,gems1a_case_control_study_data,,,,,,,Outcoe 4 hrs after starting rehydration: Was the child completely rehydrated?,,
+367,,,F4B_CHILD_COMP_REHYD,gems1a_case_control_study_data,,Child completely rehydrated 4 hrs after starting rehydration,,,,,Outcoe 4 hrs after starting rehydration: Was the child completely rehydrated?,,
 368,,,F4B_FIND_WT_CHILD,gems1a_case_control_study_data,EUPATH_0010070,Weight of caretaker + child (kg),,,,,Outcome 4hrs After Rehyd: Weight 4 hrs after caretaker + child,Num,GEMS1
 369,,,F4B_FIND_WT_CARE,gems1a_case_control_study_data,EUPATH_0010071,Weight of caretaker alone (kg),,,,,Outcome 4hrs After Rehyd: Weight after 4 hrs caretaker alone,Num,GEMS1
 370,,,F4B_FIND_WT,gems1a_case_control_study_data,EUPATH_0000732,Weight (kg),,,,,Outcome 4hrs After Rehyd: Weight 4 hrs after child alone,Num,GEMS1
@@ -326,15 +301,15 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 375,,,F4B_FIND_WHZ_F,gems1a_case_control_study_data,EUPATH_0015123,WHZ <-5 or >5,,,,,Outcome 4hrs After Rehyd: Flag for _WHZ<-5 or _WHZ>5,0,GEMS1
 376,,,F4B_FIND_MED_WHZ,gems1a_case_control_study_data,EUPATH_0010083,Weight for length/height z-score (median ht),,,,,Outcome 4hrs After Rehyd: Weight-for-length/height z-score (median ht),Num,GEMS1
 377,,,F4B_FIND_MED_WHZ_F,gems1a_case_control_study_data,EUPATH_0015125,WHZ <-5 or >5 (median ht),,,,,Outcome 4hrs After Rehyd: Flag for _ZWFL<-5 or _ZWFL>5 (median ht),0,GEMS1
-378,,,F4B_FIND_MUAC_1,gems1a_case_control_study_data,,,,,,,4 hrs after. MUAC 1st,,
-379,,,F4B_FIND_MUAC_2,gems1a_case_control_study_data,,,,,,,4 hrs after. MUAC 2nd,,
-380,,,F4B_FIND_MUAC_3,gems1a_case_control_study_data,,,,,,,4 hrs after. MUAC 3rd,,
-381,,,F4B_FIND_MUAC,gems1a_case_control_study_data,,,,,,,4 hrs after: Calculated mean MUAC,,
-382,,,F4B_FIND_MUAC_MEDIAN,gems1a_case_control_study_data,,,,,,,4hrs after: Calculated median MUAC,,
-383,,,F4B_FIND_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,4 hrs after: Arm circumference-for-age z score,,
-384,,,F4B_FIND_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,4 hrs after: Flag for _ZAC<-5 or _ZAC>5,,
-385,,,F4B_FIND_MED_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,4 hrs after: Median Arm circumference-for-age z score,,
-386,,,F4B_FIND_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,4 hrs after: Flag for median _ZAC<-5 or _ZAC>5,,
+378,,,F4B_FIND_MUAC_1,gems1a_case_control_study_data,,"MUAC, 1st (cm)",,,,,4 hrs after. MUAC 1st,,
+379,,,F4B_FIND_MUAC_2,gems1a_case_control_study_data,,"MUAC, 2nd (cm)",,,,,4 hrs after. MUAC 2nd,,
+380,,,F4B_FIND_MUAC_3,gems1a_case_control_study_data,,"MUAC, 3rd (cm)",,,,,4 hrs after. MUAC 3rd,,
+381,,,F4B_FIND_MUAC,gems1a_case_control_study_data,,MUAC; mean (cm),,,,,4 hrs after: Calculated mean MUAC,,
+382,,,F4B_FIND_MUAC_MEDIAN,gems1a_case_control_study_data,,MUAC; median (cm),,,,,4hrs after: Calculated median MUAC,,
+383,,,F4B_FIND_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score,,,,,4 hrs after: Arm circumference-for-age z score,,
+384,,,F4B_FIND_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5,,,,,4 hrs after: Flag for _ZAC<-5 or _ZAC>5,,
+385,,,F4B_FIND_MED_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score (median ac),,,,,4 hrs after: Median Arm circumference-for-age z score,,
+386,,,F4B_FIND_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5 (median ac),,,,,4 hrs after: Flag for median _ZAC<-5 or _ZAC>5,,
 387,,,F4B_FIND_BMI,gems1a_case_control_study_data,EUPATH_0000661,BMI (kg/m**2),,,,,Outcome 4hrs After Rehyd: Calculated BMI=weight / squared(_CLENHEI),Num,GEMS1
 388,,,F4B_FIND_BMIZ,gems1a_case_control_study_data,EUPATH_0000662,BMI for age z-score,,,,,Outcome 4hrs After Rehyd: BMI-for-age z-score,Num,GEMS1
 389,,,F4B_FIND_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015128,BMI z-score<-5 or >5,,,,,Outcome 4hrs After Rehyd: Flag for _ZBMI<-5 or _ZBMI>5,0,GEMS1
@@ -360,22 +335,21 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 409,,,F4B_REHYD_WHZ_F,gems1a_case_control_study_data,EUPATH_0015123,WHZ <-5 or >5,,,,,Outcome if addl Rehyd Need: After Rehyd Flag for WHZ<-5 or WHZ>5,0,GEMS1
 410,,,F4B_REHYD_MED_WHZ,gems1a_case_control_study_data,EUPATH_0010083,Weight for length/height z-score (median ht),,,,,Outcome if addl Rehyd Need: After Rehyd Weight-for-length/height z-score (median ht),,GEMS1
 411,,,F4B_REHYD_MED_WHZ_F,gems1a_case_control_study_data,EUPATH_0015125,WHZ <-5 or >5 (median ht),,,,,Outcome if addl Rehyd Need: After Rehyd Flag WHZ z-score <-5 WHZ>5 (median ht),0,GEMS1
-412,,,F4B_REHYD_MUAC_1,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need. MUAC 1st,,
-413,,,F4B_REHYD_MUAC_2,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need. MUAC 2nd,,
-414,,,F4B_REHYD_MUAC_3,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need. MUAC 3rd,,
-415,,,F4B_REHYD_MUAC,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need: Calculated mean MUAC,,
-416,,,F4B_REHYD_MUAC_MEDIAN,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Needr: Calculated median MUAC,,
-417,,,F4B_REHYD_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need: Arm circumference-for-age z score,,
-418,,,F4B_REHYD_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need: Flag for _ZAC<-5 or _ZAC>5,,
-419,,,F4B_REHYD_MED_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need: Median Arm circumference-for-age z score,,
-420,,,F4B_REHYD_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Outcome if addl Rehyd Need: Flag for median _ZAC<-5 or _ZAC>5,,
+412,,,F4B_REHYD_MUAC_1,gems1a_case_control_study_data,,"MUAC, 1st (cm)",,,,,Outcome if addl Rehyd Need. MUAC 1st,,
+413,,,F4B_REHYD_MUAC_2,gems1a_case_control_study_data,,"MUAC, 2nd (cm)",,,,,Outcome if addl Rehyd Need. MUAC 2nd,,
+414,,,F4B_REHYD_MUAC_3,gems1a_case_control_study_data,,"MUAC, 3rd (cm)",,,,,Outcome if addl Rehyd Need. MUAC 3rd,,
+415,,,F4B_REHYD_MUAC,gems1a_case_control_study_data,,MUAC; mean (cm),,,,,Outcome if addl Rehyd Need: Calculated mean MUAC,,
+416,,,F4B_REHYD_MUAC_MEDIAN,gems1a_case_control_study_data,,MUAC; median (cm),,,,,Outcome if addl Rehyd Needr: Calculated median MUAC,,
+417,,,F4B_REHYD_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score,,,,,Outcome if addl Rehyd Need: Arm circumference-for-age z score,,
+418,,,F4B_REHYD_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5,,,,,Outcome if addl Rehyd Need: Flag for _ZAC<-5 or _ZAC>5,,
+419,,,F4B_REHYD_MED_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score (median ac),,,,,Outcome if addl Rehyd Need: Median Arm circumference-for-age z score,,
+420,,,F4B_REHYD_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5 (median ac),,,,,Outcome if addl Rehyd Need: Flag for median _ZAC<-5 or _ZAC>5,,
 421,,,F4B_REHYD_BMI,gems1a_case_control_study_data,EUPATH_0000661,BMI (kg/m**2),,,,,Outcome if addl Rehyd Need: After Rehyd Calculated BMI=weight / squared(_CLENHEI),Num,GEMS1
 422,,,F4B_REHYD_BMIZ,gems1a_case_control_study_data,EUPATH_0000662,BMI for age z-score,,,,,Outcome if addl Rehyd Need: After Rehyd Calculated BMI for Age Z-score ,Num,GEMS1
 423,,,F4B_REHYD_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015128,BMI z-score<-5 or >5,,,,,Outcome if addl Rehyd Need: After Rehyd Flag Calculated BMI for Age Z-score <-5 or BMI Z >5,0,GEMS1
 424,,,F4B_REHYD_MED_BMI,gems1a_case_control_study_data,EUPATH_0010093,BMI (median ht),,,,,Outcome if addl Rehyd Need: After Rehyd Calculated BMI=weight / squared(_CLENHEI),Num,GEMS1
 425,,,F4B_REHYD_MED_BMIZ,gems1a_case_control_study_data,EUPATH_0010094,BMI for age z-score (median ht),,,,,Outcome if addl Rehyd Need: After Rehyd Calculated BMI for Age Z-score (median ht),Num,GEMS1
 426,,,F4B_REHYD_MED_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015129,BMI z-score<-5 or >5 (median ht),,,,,Outcome if addl Rehyd Need: After Rehyd Flag Calculated BMI for Age Z-score (median ht) <-5 or BMI Z >5,0,GEMS1
-427,,,F4B_DISCHARGE_DATE,gems1a_case_control_study_data,,,,,,,,,
 429,,,F4B_OUT_WT_CHILD,gems1a_case_control_study_data,EUPATH_0010070,Weight of caretaker + child (kg),,,,,Outcome when Leaving Hosp/Health Center: Weight of Caretaker + Child,Num,GEMS1
 430,,,F4B_OUT_WT_CARE,gems1a_case_control_study_data,EUPATH_0010071,Weight of caretaker alone (kg),,,,,Outcome when Leaving Hosp/Health Center:  Weight of Caretaker,Num,GEMS1
 431,,,F4B_OUT_WT,gems1a_case_control_study_data,EUPATH_0000732,Weight (kg),,,,,Outcome when Leaving Hosp/Health Center:  Weight of Child Alone 24-59m,Num,GEMS1
@@ -387,16 +361,15 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 437,,,F4B_OUT_WHZ_F,gems1a_case_control_study_data,EUPATH_0015123,WHZ <-5 or >5,,,,,Outcome when Leaving Hosp/Health Center: After Rehyd Flag for WHZ<-5 or WHZ>5,0,GEMS1
 438,,,F4B_OUT_MED_WHZ,gems1a_case_control_study_data,EUPATH_0010083,Weight for length/height z-score (median ht),,,,,Outcome when Leaving Hosp/Health Center: After Rehyd Weight-for-length/height z-score (median ht),,GEMS1
 439,,,F4B_OUT_MED_WHZ_F,gems1a_case_control_study_data,EUPATH_0015125,WHZ <-5 or >5 (median ht),,,,,Outcome when Leaving Hosp/Health Center: After Rehyd Flag WHZ z-score <-5 WHZ>5 (median ht),0,GEMS1
-440,,,F4B_OUT_MUAC_1,gems1a_case_control_study_data,,,,,,,Outcome when Leaving. MUAC 1st,,
-441,,,F4B_OUT_MUAC_2,gems1a_case_control_study_data,,,,,,,Outcome when Leaving. MUAC 2nd,,
-442,,,F4B_OUT_MUAC_3,gems1a_case_control_study_data,,,,,,,Outcome when Leaving. MUAC 3rd,,
-443,,,F4B_OUT_MUAC_NA,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Calculated mean MUAC NA,,
-444,,,F4B_OUT_MUAC,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Calculated mean MUAC,,
-445,,,F4B_OUT_MUAC_MEDIAN,gems1a_case_control_study_data,,,,,,,Outcome when Leaving Calculated median MUAC,,
-446,,,F4B_OUT_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Arm circumference-for-age z score,,
-447,,,F4B_OUT_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Flag for _ZAC<-5 or _ZAC>5,,
-448,,,F4B_OUT_MED_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Median Arm circumference-for-age z score,,
-449,,,F4B_OUT_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Outcome when Leaving: Flag for median _ZAC<-5 or _ZAC>5,,
+440,,,F4B_OUT_MUAC_1,gems1a_case_control_study_data,,"MUAC, 1st (cm)",,,,,Outcome when Leaving. MUAC 1st,,
+441,,,F4B_OUT_MUAC_2,gems1a_case_control_study_data,,"MUAC, 2nd (cm)",,,,,Outcome when Leaving. MUAC 2nd,,
+442,,,F4B_OUT_MUAC_3,gems1a_case_control_study_data,,"MUAC, 3rd (cm)",,,,,Outcome when Leaving. MUAC 3rd,,
+444,,,F4B_OUT_MUAC,gems1a_case_control_study_data,,MUAC; mean (cm),,,,,Outcome when Leaving: Calculated mean MUAC,,
+445,,,F4B_OUT_MUAC_MEDIAN,gems1a_case_control_study_data,,MUAC; median (cm),,,,,Outcome when Leaving Calculated median MUAC,,
+446,,,F4B_OUT_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score,,,,,Outcome when Leaving: Arm circumference-for-age z score,,
+447,,,F4B_OUT_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5,,,,,Outcome when Leaving: Flag for _ZAC<-5 or _ZAC>5,,
+448,,,F4B_OUT_MED_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score (median ac),,,,,Outcome when Leaving: Median Arm circumference-for-age z score,,
+449,,,F4B_OUT_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5 (median ac),,,,,Outcome when Leaving: Flag for median _ZAC<-5 or _ZAC>5,,
 450,,,F4B_OUT_BMI,gems1a_case_control_study_data,EUPATH_0000661,BMI (kg/m**2),,,,,Outcome when Leaving Hosp/Health Center: After Rehyd Calculated BMI=weight / squared(_CLENHEI),Num,GEMS1
 451,,,F4B_OUT_BMIZ,gems1a_case_control_study_data,EUPATH_0000662,BMI for age z-score,,,,,Outcome when Leaving Hosp/Health Center: After Rehyd Calculated BMI for Age Z-score ,Num,GEMS1
 452,,,F4B_OUT_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015128,BMI z-score<-5 or >5,,,,,Outcome when Leaving Hosp/Health Center:After Rehyd Flag Calculated BMI for Age Z-score <-5 or BMI Z >5,0,GEMS1
@@ -415,7 +388,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 465,,,F4B_OUTCOME_MLNT,gems1a_case_control_study_data,EUPATH_0015136,Malnutrition,,,,,Outcome when Leaving Hosp/Health Center: Malnutrition,0,GEMS1
 466,,,F4B_OUTCOME_TYPHOID,gems1a_case_control_study_data,EUPATH_0015137,Typhoid,,,,,Outcome when Leaving Hosp/Health Center: Thyphoid,0,GEMS1
 467,,,F4B_OUTCOME_OTHR,gems1a_case_control_study_data,EUPATH_0015138,Other diagnosis,,,,,Outcome when Leaving Hosp/Health Center: Other,0,GEMS1
-468,,,F4B_OUTCOME_SPEC,gems1a_case_control_study_data,,,,,,,"Outcome when Leaving Hosp/Health Center: Other, specify",Char,
 469,,,F4B_TRT_PRES_ORS,gems1a_case_control_study_data,EUPATH_0015161,ORS,,,,,Given prescription for treatment at home: ORS,0,GEMS1
 470,,,F4B_TRT_GIVE_ORS,gems1a_case_control_study_data,EUPATH_0015139,ORS,,,,,Treatment given in health center: ORS,0,GEMS1
 471,,,F4B_TRT_PRES_IV,gems1a_case_control_study_data,EUPATH_0015162,Intravenous fluids,,,,,Given prescription for treatment at home: Intravenous fluids,0,GEMS1
@@ -448,7 +420,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 498,,,F4B_TRT_GIVE_SLPY,gems1a_case_control_study_data,EUPATH_0015153,Selexid,,,,,Treatment given in health center: Selexid/Pivmecillinam,0,GEMS1
 499,,,F4B_TRT_PRES_OTHR,gems1a_case_control_study_data,EUPATH_0015176,Other antibiotic,,,,,Given prescription for treatment at home: Other antibiotic,0,GEMS1
 500,,,F4B_TRT_GIVE_OTHR,gems1a_case_control_study_data,EUPATH_0015154,Other antibiotic,,,,,Treatment given in health center: Other antibiotic,0,GEMS1
-501,,,F4B_TRT_SPEC,gems1a_case_control_study_data,,,,,,,Treatment given in health center: Other specify,Char,
 502,,,F4B_TRT_PRES_ZINC,gems1a_case_control_study_data,EUPATH_0015177,Zinc,,,,,Given prescription for treatment at home: Zinc,0,GEMS1
 503,,,F4B_TRT_GIVE_ZINC,gems1a_case_control_study_data,EUPATH_0015155,Zinc,,,,,Treatment given in health center: Zinc,0,GEMS1
 504,,,F4B_TRT_PRES_HOME,gems1a_case_control_study_data,EUPATH_0015178,Homemade fluid,,,,,Given prescription for treatment at home: A (government recommended) homemade fluid,0,GEMS1
@@ -457,13 +428,10 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 507,,,F4B_TRT_GIVE_ANTI,gems1a_case_control_study_data,EUPATH_0015157,Antimalarial,,,,,Treatment given in health center: An antimalarial drug,0,GEMS1
 508,,,F4B_TRT_PRES_OTHR1,gems1a_case_control_study_data,EUPATH_0015180,Other medicine,,,,,Given prescription for treatment at home: Other medicine,0,GEMS1
 509,,,F4B_TRT_GIVE_OTHR1,gems1a_case_control_study_data,EUPATH_0015158,Other medicine,,,,,Treatment given in health center: Other medicine,0,GEMS1
-510,,,F4B_TRT_SPEC1,gems1a_case_control_study_data,,,,,,,Treatment given in health center: Other medicine specify,Char,
 511,,,F4B_TRT_PRES_OTHR2,gems1a_case_control_study_data,EUPATH_0015181,Other medicine,,,,,Given prescription for treatment at home: Other medicine ,0,GEMS1
 512,,,F4B_TRT_GIVE_OTHR2,gems1a_case_control_study_data,EUPATH_0015159,Other medicine,,,,,Treatment given in health center: Other medicine,0,GEMS1
-513,,,F4B_TRT_SPEC2,gems1a_case_control_study_data,,,,,,,Treatment given in health center: Other medicine,Char,
 514,,,F4B_TRT_PRES_OTHR3,gems1a_case_control_study_data,EUPATH_0015182,Other medicine,,,,,Given prescription for treatment at home: Other medicine,0,GEMS1
 515,,,F4B_TRT_GIVE_OTHR3,gems1a_case_control_study_data,EUPATH_0015160,Other medicine,,,,,Treatment given in health center: Other medicine,0,GEMS1
-516,,,F4B_TRT_SPEC3,gems1a_case_control_study_data,,,,,,,Treatment given in health center: Other medicine specify,Char,
 517,,,F4B_TRT_NONE,gems1a_case_control_study_data,EUPATH_0015183,None prescribed or taken,,,,,None prescribed/taken,0,GEMS1
 518,,,F4B_OUTCOME,gems1a_case_control_study_data,EUPATH_0010353,Outcome leaving hospital/health center,,,,,Outcome when leaving hospital/health center,1,GEMS1
 519,,,F4B_DATE_DEATH,gems1a_case_control_study_data,EUPATH_0000150,Date of death,,,,,"If the child died, what was the date of death?",Date,GEMS1
@@ -474,12 +442,12 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 527,,,F4B_Last_WHZ_F,gems1a_case_control_study_data,EUPATH_0015123,WHZ <-5 or >5,,,,,Last Flag ZWFL <-5 ZWFL>5,0,GEMS1
 528,,,F4B_Last_med_WHZ,gems1a_case_control_study_data,EUPATH_0010083,Weight for length/height z-score (median ht),,,,,Last weight-median length/height Z-Score,Num,GEMS1
 529,,,F4B_Last_med_WHZ_F,gems1a_case_control_study_data,EUPATH_0015125,WHZ <-5 or >5 (median ht),,,,,Last Flag for ZWFL<-5 or ZWFL >5,0,GEMS1
-530,,,F4B_LAST_MUAC,gems1a_case_control_study_data,,,,,,,Last MUAC,,
-531,,,F4B_LAST_MUAC_MEDIAN,gems1a_case_control_study_data,,,,,,,LAST median MUAC,,
-532,,,F4B_LAST_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Last MUAC for Age Z-Score,,
-533,,,F4B_LAST_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Last Flag MUAC for Age Z-Score,,
-534,,,F4B_LAST_MED_MUAC_AGEZ,gems1a_case_control_study_data,,,,,,,Last median MUAC for Age Z-Score,,
-535,,,F4B_LAST_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,,,,,,Last median MUAC for Age Z-Score Flag,,
+530,,,F4B_LAST_MUAC,gems1a_case_control_study_data,,MUAC; mean (cm),,,,,Last MUAC,,
+531,,,F4B_LAST_MUAC_MEDIAN,gems1a_case_control_study_data,,MUAC; median (cm),,,,,LAST median MUAC,,
+532,,,F4B_LAST_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score,,,,,Last MUAC for Age Z-Score,,
+533,,,F4B_LAST_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5,,,,,Last Flag MUAC for Age Z-Score,,
+534,,,F4B_LAST_MED_MUAC_AGEZ,gems1a_case_control_study_data,,MUAC for age z-score (median ac),,,,,Last median MUAC for Age Z-Score,,
+535,,,F4B_LAST_MED_MUAC_AGEZ_F,gems1a_case_control_study_data,,MUAC for age z-score <-5 or >5 (median ac),,,,,Last median MUAC for Age Z-Score Flag,,
 536,,,F4B_Last_BMI,gems1a_case_control_study_data,EUPATH_0000661,BMI (kg/m**2),,,,,Last calculated BMI,Num,GEMS1
 537,,,F4B_Last_BMIZ,gems1a_case_control_study_data,EUPATH_0000662,BMI for age z-score,,,,,Last BMI-for-Age Z-Score,Num,GEMS1
 538,,,F4B_Last_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015128,BMI z-score<-5 or >5,,,,,Last Flag for Z_BMI <-5 or Z_BMI >5,0,GEMS1
@@ -487,14 +455,14 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 540,,,F4B_Last_med_BMIZ,gems1a_case_control_study_data,EUPATH_0010094,BMI for age z-score (median ht),,,,,Last calculated BMI-for-age z-score (median height),Num,GEMS1
 541,,,F4B_Last_med_BMIZ_F,gems1a_case_control_study_data,EUPATH_0015129,BMI z-score<-5 or >5 (median ht),,,,,Last Flag for ZBMI<-5 or ZBMI >5 (median height),0,GEMS1
 542,,,F6_DATE,gems1a_case_control_study_data,EUPATH_0010119,Date of control eligibility check,,,,,Eligibility for Controls Visit Date,,GEMS1
-544,,,F6_CASE_DOB,gems1a_case_control_study_data,EUPATH_0010406,DOB of prospective case,,,,,Index Case: Birthdate of Index Case,Date,GEMS1
+544,,,F6_CASE_DOB,gems1a_case_control_study_data,EUPATH_0010406,DOB of index case,,,,,Index Case: Birthdate of Index Case,Date,GEMS1
 545,,,F6_CASE_AGE,gems1a_case_control_study_data,EUPATH_0010120,Age at observation (months),,,,,Index Case: Age of Index Case,Num,GEMS1
 546,,,F6_CASE_GENDER,gems1a_case_control_study_data,EUPATH_0010405,Sex,,,,,Index Case: Gender of Index Case,0,GEMS1
 547,,,F6_CASE_ENROLL,gems1a_case_control_study_data,EUPATH_0010042,Enrollment date of case,,,,,Index Case: Date of enrollment of index case,Date,GEMS1
 548,,,F6_CASE_ID,gems1a_case_control_study_data,EUPATH_0000725,Child ID of matched case,,,,,Index Case: Case ID Number of index case,Num,GEMS1
-549,,,F6_LSD_MSD,gems1a_case_control_study_data,,,,,,,Enrollment for Case MSD or LSD,0/1,
+549,,,F6_LSD_MSD,gems1a_case_control_study_data,,Index case enrolled as MSD or LSD,,,,,Enrollment for Case MSD or LSD,0/1,
 550,,,F6_BIRTH_DATE,gems1a_case_control_study_data,http://www.ebi.ac.uk/efo/EFO_0004950,Date of birth,,,,,Controls Information: Birthdate,Date,GEMS1
-551,,,F6_AGE,gems1a_case_control_study_data,,,,,,,Controls Information: Age,Num,
+551,,,F6_AGE,gems1a_case_control_study_data,,Age (months),,,,,Controls Information: Age,Num,
 552,,,F6_GENDER,gems1a_case_control_study_data,PATO_0000047,Sex,,,,,Controls Information: Child's gender,0,GEMS1
 553,,,F6_ID_CHILD,gems1a_case_control_study_data,,,,,,,Have you been able to identify the child?,1,
 557,,,F6_AGE_MATCH,gems1a_case_control_study_data,,,,,,,Eligibility: Is this child appropriately age-matched to the index case?,1,
@@ -511,13 +479,12 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 571,,,F6_NOT_ENROLL,gems1a_case_control_study_data,,,,,,,,,
 572,,,F6_NOT_INVITE,gems1a_case_control_study_data,,,,,,,,,
 574,,,F6_REFUSED,gems1a_case_control_study_data,,,,,,,,,
-576,,,F6_DATE_ENROLL,gems1a_case_control_study_data,,,,,,,"If child is enrolled into the study, enter the date of enrollment.",,
+576,,,F6_DATE_ENROLL,gems1a_case_control_study_data,,Enrollment date,,,,,"If child is enrolled into the study, enter the date of enrollment.",,
 580,,,F7_DATE,gems1a_case_control_study_data,EUPATH_0000091,Date of visit,,,,,Enrollment Controls Visit Date,Date,GEMS1
 582,,,F7_CASE_ID,gems1a_case_control_study_data,EUPATH_0000725,Child ID of matched case,,,,,Index Case ID,Num,GEMS1
 583,,,F7_PRIMCARE,gems1a_case_control_study_data,EUPATH_0000720,Caretaker relationship to Child,,,,,Who is Child's Primary Caretaker?,1,GEMS1
 584,,,F7_PRIMCARE_SPEC,gems1a_case_control_study_data,EUPATH_0000720,Caretaker relationship to Child,,,,,"Other primary caretaker, specify",Char,GEMS1
 585,,,F7_RELATION,gems1a_case_control_study_data,EUPATH_0010123,Interviewee relationship to Child,,,,,What is your relationship to the Child?,1,GEMS1
-586,,,F7_RELATION_SPEC,gems1a_case_control_study_data,,,,,,,"Other relation, specify",Char,
 587,,,F7_MOM_LIVE,gems1a_case_control_study_data,EUPATH_0010127,Mothers residence,,,,,Where does Child's mother live?,1,GEMS1
 588,,,F7_DAD_LIVE,gems1a_case_control_study_data,EUPATH_0000676,Fathers residence,,,,,Where does Child's father live?,1,GEMS1
 589,,,F7_PRIM_SCHL,gems1a_case_control_study_data,EUPATH_0010129,Primary caretakers education level,,,,,How far did the child's primary caretaker go in school?,1,GEMS1
@@ -526,7 +493,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 592,,,F7_YNG_CHILDRN,gems1a_case_control_study_data,EUPATH_0010232,Number of children under 60 months in house,,,,,How many children younger than 60 months live in the household?,Num,GEMS1
 593,,,F7_SLP_ROOMS,gems1a_case_control_study_data,EUPATH_0000715,Sleeping rooms in household,,,,,How many rooms in your household are used for sleeping?,Num,GEMS1
 594,,,F7_FLOOR,gems1a_case_control_study_data,EUPATH_0000006,Floor material,,,,,What is the predominant floor in the house of Child?,1,GEMS1
-595,,,F7_FLOOR_SPEC,gems1a_case_control_study_data,,,,,,,"What is the predominant floor in the house of Child, Specify",Char,
 596,,,F7_HOUSE_ELEC,gems1a_case_control_study_data,EUPATH_0021084,Electricity,,,,,Does your household have Electricity?,0,GEMS1
 597,,,F7_HOUSE_TELE,gems1a_case_control_study_data,EUPATH_0015003,Television,,,,,Does your household have a telephone (mobile or non-mobile)?,0,GEMS1
 598,,,F7_HOUSE_SCOOT,gems1a_case_control_study_data,EUPATH_0015006,Motorcycle/Scooter,,,,,Does your household have a Motorcycle/Scooter?,0,GEMS1
@@ -551,7 +517,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 617,,,F7_FUEL_DUNG,gems1a_case_control_study_data,EUPATH_0015017,Animal dung,,,,,What type of cooking fuel does your house use? Animal dung?,0,GEMS1
 618,,,F7_FUEL_CROP,gems1a_case_control_study_data,EUPATH_0015020,Agricultural crop residue,,,,,What type of cooking fuel does your house use? Agricultural crop residue?,0,GEMS1
 619,,,F7_FUEL_OTHER,gems1a_case_control_study_data,EUPATH_0015023,Other,,,,,What type of cooking fuel does your house use? Other?,0,GEMS1
-620,,,F7_FUEL_OTHER_SPEC,gems1a_case_control_study_data,,,,,,,"What type of cooking fuel does your house use? Other, specify?",Char,
 621,,,F7_ANI_GOAT,gems1a_case_control_study_data,EUPATH_0015024,Goat,,,,,Do the following animals live in the compound where Child lives? Goat?,0,GEMS1
 622,,,F7_ANI_SHEEP,gems1a_case_control_study_data,EUPATH_0015025,Sheep,,,,,Do the following animals live in the compound where Child lives? Sheep?,0,GEMS1
 623,,,F7_ANI_DOG,gems1a_case_control_study_data,EUPATH_0015026,Dog,,,,,Do the following animals live in the compound where Child lives? Dog?,0,GEMS1
@@ -560,7 +525,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 626,,,F7_ANI_RODENTS,gems1a_case_control_study_data,EUPATH_0015029,Rodents,,,,,Do the following animals live in the compound where Child lives? Rodents?,0,GEMS1
 627,,,F7_ANI_FOWL,gems1a_case_control_study_data,EUPATH_0015030,Fowl,,,,,"Do the following animals live in the compound where Child lives? Fowl (Chicken, duck or other birds)?",0,GEMS1
 628,,,F7_ANI_OTHER,gems1a_case_control_study_data,EUPATH_0015031,Other,,,,,Do the following animals live in the compound where Child lives? Other?,0,GEMS1
-629,,,F7_ANI_SPEC,gems1a_case_control_study_data,,,,,,,"Do the following animals live in the compound where Child lives? Other, specify.",Char,
 630,,,F7_ANI_NO,gems1a_case_control_study_data,EUPATH_0015032,No animals,,,,,Do the following animals live in the compound where Child lives? No Animals?,0,GEMS1
 631,,,F7_WATER_HOUSE,gems1a_case_control_study_data,EUPATH_0015033,Piped into house,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Piped into house?",0,GEMS1
 632,,,F7_WATER_YARD,gems1a_case_control_study_data,EUPATH_0015035,Piped into yard,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Piped into yard?",0,GEMS1
@@ -580,9 +544,7 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 646,,,F7_WATER_BOUGHT,gems1a_case_control_study_data,EUPATH_0015048,"Bought (tank, bottle, etc.)",,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Bought, tank, bottles, etc?",0,GEMS1
 647,,,F7_WATER_BORE,gems1a_case_control_study_data,EUPATH_0015050,Bore hole,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Bore hole?",0,GEMS1
 648,,,F7_WATER_OTHR,gems1a_case_control_study_data,EUPATH_0015049,Other water source,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Other?",0,GEMS1
-649,,,F7_WATER_SPEC,gems1a_case_control_study_data,,,,,,,"During the last two weeks, has your household ever obtained drinking water from any of the following sources? Other, specify.",Char,
 650,,,F7_MS_WATER,gems1a_case_control_study_data,EUPATH_0010099,Main drinking water source,,,,,"During the last two weeks, what was the main source of drinking water for members of your household?",1,GEMS1
-651,,,F7_MS_SPEC,gems1a_case_control_study_data,,,,,,,"During the last two weeks, what was the main source of drinking water for members of your household? Other, specify.",Char,
 652,,,F7_TIME_WATER,gems1a_case_control_study_data,EUPATH_0000726,Time to retrieve drinking water,,,,,"How long does it take to go there, get water and come back?",0,GEMS1
 653,,,F7_FETCH_WATER,gems1a_case_control_study_data,EUPATH_0010234,Fetch drinking water everyday,,,,,Do you or other members from your household go and fetch drinking water fro the household every day?,0,GEMS1
 654,,,F7_TRIP_DAY,gems1a_case_control_study_data,EUPATH_0010135,Water trips daily,,,,,"On average, how many trips do you and members of your household make to fetch water each day?",Num,GEMS1
@@ -591,14 +553,10 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 657,,,F7_STORE_WATER,gems1a_case_control_study_data,EUPATH_0010141,Child given stored water for drinking,,,,,"In the last two weeks, did you give Child stored water for drinking?",0,GEMS1
 658,,,F7_TRT_WATER,gems1a_case_control_study_data,EUPATH_0010108,Drinking water treatment,,,,,Do you usually treat drinking water at home?,0,GEMS1
 659,,,F7_TRT_METHOD,gems1a_case_control_study_data,EUPATH_0000700,Drinking water treatment method,,,,,Which method do you use the most to treat drinking water at home?,0,GEMS1
-660,,,F7_TRT_METHOD_SPEC,gems1a_case_control_study_data,,,,,,,Which method do you use the most to treat drinking water at home?,Char,
 661,,,F7_CHLORINE,gems1a_case_control_study_data,EUPATH_0010147,Chlorine treatment brand,,,,,"If you use chlorine liquid, powder or tablets, which type do you most commonly use?",0,GEMS1
-662,,,F7_CHLORINE_SPEC,gems1a_case_control_study_data,,,,,,,"If you use chlorine liquid, powder or tablets, which type do you most commonly use?",Char,
 663,,,F7_NOTRT_WATER,gems1a_case_control_study_data,EUPATH_0010151,Child given untreated water,,,,,In the last two weeks did you give Child water which was not treated?,0,GEMS1
 664,,,F7_DISP_FECES,gems1a_case_control_study_data,EUPATH_0000722,Child waste disposal,,,,,How do you usually dispose of Childs feces?,1,GEMS1
-665,,,F7_DISP_SPEC,gems1a_case_control_study_data,,,,,,,How do you usually dispose of Childs feces? Other specify.,Char,
 666,,,F7_FAC_WASTE,gems1a_case_control_study_data,EUPATH_0000335,Human waste facilities,,,,,What kind of facility does your household most commonly use to dispose of human fecal waste?,1,GEMS1
-667,,,F7_FAC_SPEC,gems1a_case_control_study_data,,,,,,,"What kind of facility does your household most commonly use to dispose of human fecal waste? Other, specify",Char,
 668,,,F7_SHARE_FAC,gems1a_case_control_study_data,EUPATH_0010236,Households sharing human waste disposal facility,,,,,How many households (other than your own) share this facility?,Num,GEMS1
 669,,,F7_WASH_EAT,gems1a_case_control_study_data,EUPATH_0015051,Washes hands before eating,,,,,When do you usually wash your hands? Before eating?,0,GEMS1
 670,,,F7_WASH_COOK,gems1a_case_control_study_data,EUPATH_0015052,Washes hands before cooking,,,,,When do you usually wash your hands? Before cooking?,0,GEMS1
@@ -608,9 +566,8 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 674,,,F7_WASH_CHILD,gems1a_case_control_study_data,EUPATH_0015056,Washes hands after cleaning child who defecated,,,,,When do you usually wash your hands? After cleaning child who defecated?,0,GEMS1
 675,,,F7_WASH_NEVER,gems1a_case_control_study_data,EUPATH_0015057,Never washes hands,,,,,When do you usually wash your hands? Never?,0,GEMS1
 676,,,F7_WASH_OTHR,gems1a_case_control_study_data,EUPATH_0015058,Washes hands other times,,,,,"When do you usually wash your hands? Other, specify?",0,GEMS1
-677,,,F7_WASH_SPEC,gems1a_case_control_study_data,,,,,,,When do you usually wash your hands? Other specify.,Char,
 678,,,F7_WASH_USE,gems1a_case_control_study_data,EUPATH_0000681,Usual hand washing,,,,,"When you wash your hands, what do you usually use?",1,GEMS1
-679,,,F7_EVERBREASTFED,gems1a_case_control_study_data,,,,,,,Was the child ever breastfed?,0/1,
+679,,,F7_EVERBREASTFED,gems1a_case_control_study_data,,Ever breastfed,,,,,Was the child ever breastfed?,0/1,
 680,,,F7_BREASTFED,gems1a_case_control_study_data,EUPATH_0010371,Breastfed,,,,,Is Child currently breastfed?,0,GEMS1
 681,,,F7_BLOOD,gems1a_case_control_study_data,EUPATH_0015184,Blood in stools during last 7 days,,,,,During the last 7 das did Child have any of the following? Blood?,0,GEMS1
 682,,,F7_FEVER,gems1a_case_control_study_data,EUPATH_0015185,Fever during last 7 days,,,,,During the last 7 das did Child have any of the following? Fever measured at least 38C or parental perception,0,GEMS1
@@ -633,16 +590,12 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 699,,,F7_MED_CIPRO,gems1a_case_control_study_data,EUPATH_0015200,Ciprofloxacin,,,,,What are the medicines that the child is currently receiving? Ciprofloxacin/Norfloxacin/other fluroquinolone,0,GEMS1
 700,,,F7_MED_SELE,gems1a_case_control_study_data,EUPATH_0015201,Selexid,,,,,What are the medicines that the child is currently receiving? Selexid/Pivmecillinam,0,GEMS1
 701,,,F7_MED_OTHERANT,gems1a_case_control_study_data,EUPATH_0015202,Other antibiotic,,,,,What are the medicines that the child is currently receiving? Other anitibiotic,0,GEMS1
-702,,,F7_MED_ANT_SPEC,gems1a_case_control_study_data,,,,,,,"What are the medicines that the child is currently receiving? Other antibiotic, specify.",,
 703,,,F7_MED_ZINC,gems1a_case_control_study_data,EUPATH_0015203,Zinc,,,,,What are the medicines that the child is currently receiving? Zinc,0,GEMS1
 704,,,F7_MED_GOVFLUID,gems1a_case_control_study_data,EUPATH_0015204,Homemade fluid,,,,,What are the medicines that the child is currently receiving? A (government recommended) homemade fluid,0,GEMS1
 705,,,F7_MED_ANTIMAL,gems1a_case_control_study_data,EUPATH_0015205,Antimalarial,,,,,What are the medicines that the child is currently receiving? An antimalarial drug,0,GEMS1
 706,,,F7_MED_OTHER1,gems1a_case_control_study_data,EUPATH_0015206,Other medicine,,,,,What are the medicines that the child is currently receiving? Other medicine (1)?,0,GEMS1
-707,,,F7_MED_OTH1_SPEC,gems1a_case_control_study_data,,,,,,,What are the medicines that the child is currently receiving? Other medicine (1). Specify.,Char,
 708,,,F7_MED_OTHER2,gems1a_case_control_study_data,EUPATH_0015207,Other medicine,,,,,What are the medicines that the child is currently receiving? Other medicine (2)?,0,GEMS1
-709,,,F7_MED_OTH2_SPEC,gems1a_case_control_study_data,,,,,,,What are the medicines that the child is currently receiving? Other medicine (2)? Specify.,Char,
 710,,,F7_MED_OTHER3,gems1a_case_control_study_data,EUPATH_0015208,Other medicine,,,,,What are the medicines that the child is currently receiving? Other medicine (3)?,0,GEMS1
-711,,,F7_MED_OTH3_SPEC,gems1a_case_control_study_data,,,,,,,What are the medicines that the child is currently receiving? Other medicine (3)? Specify.,Char,
 712,,,F7_MED_NONE,gems1a_case_control_study_data,EUPATH_0015209,Not currently receiving medication,,,,,What are the medicines that the child is currently receiving? Nothing.,0,GEMS1
 713,,,F7_SEEKCARE,gems1a_case_control_study_data,EUPATH_0015092,Seek outside care,,,,,"The last time Child had diarrhea, did you seek care for him/her outside your household?",0,GEMS1
 714,,,F7_SEEK_PHARM,gems1a_case_control_study_data,EUPATH_0015093,Pharmacy,,,,,If you sought care for Child's last episode of diarrhea where did you go? Pharmacy,0,GEMS1
@@ -651,7 +604,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 717,,,F7_SEEK_DOC,gems1a_case_control_study_data,EUPATH_0015096,Unlicensed practitioner,,,,,If you sought care for Child's last episode of diarrhea where did you go? Unlicensed practitioner/village doctor/bush doctor/village health worker,0,GEMS1
 718,,,F7_SEEK_PRIVDOC,gems1a_case_control_study_data,EUPATH_0015097,Licensed practitioner,,,,,If you sought care for Child's last episode of diarrhea where did you go? Licensed practitioner/private doctor (not at hospital,0,GEMS1
 719,,,F7_SEEK_REMDY,gems1a_case_control_study_data,EUPATH_0015098,Bought a remedy/drug,,,,,If you sought care for Child's last episode of diarrhea where did you go? Bought a remedy/medicine at the shop/market?,0,GEMS1
-720,,,F7_SEEK_REMDY_SPEC,gems1a_case_control_study_data,,,,,,,If you sought care for Child's last episode of diarrhea where did you go? Bought a remedy/medicine at the shop/market? Specify.,Char,
 721,,,F7_SEEK_CTR1,gems1a_case_control_study_data,EUPATH_0010155,Hospital/Center of first choice,,,,,If you sought care for Child's last episode of diarrhea where did you go? Hospital/Center of first choice,0,GEMS1
 722,,,F7_SEEK_CTR1_CODE,gems1a_case_control_study_data,EUPATH_0010157,First choice facility code,,,,,If you sought care for Child's last episode of diarrhea where did you go? Hospital/Center of first choice Code,,GEMS1
 723,,,F7_SEEK_CTR1_SHC,gems1a_case_control_study_data,EUPATH_0010159,First choice facility SHC,,,,,If you sought care for Child's last episode of diarrhea where did you go? Hospital/Center of first choice. SHC,0,GEMS1
@@ -662,7 +614,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 728,,,F7_SEEK_CTR3_CODE,gems1a_case_control_study_data,EUPATH_0010169,Third choice facility code,,,,,If you sought care for Child's last episode of diarrhea where did you go? Hospital/Center of third choice Code,Num,GEMS1
 729,,,F7_SEEK_CTR3_SHC,gems1a_case_control_study_data,EUPATH_0010171,Third choice facility SHC,,,,,If you sought care for Child's last episode of diarrhea where did you go? Hospital/Center of third choice SHC,0,GEMS1
 730,,,F7_SEEK_OTHR,gems1a_case_control_study_data,EUPATH_0010173,Other Hospital/Center,,,,,If you sought care for Child's last episode of diarrhea where did you go? Other Hospital/Center,0,GEMS1
-731,,,F7_SEEK_OTHR_SPEC,gems1a_case_control_study_data,,,,,,,If you sought care for Child's last episode of diarrhea where did you go? Other Hospital/Center specify,Char,
 732,,,F7_OFFR_DRINK,gems1a_case_control_study_data,EUPATH_0010241,Amount offered to drink during diarrheal episode,,,,,"The last time Child had diarrhea, how much did you offer Child to drink?",0,GEMS1
 733,,,F7_OFFR_EAT,gems1a_case_control_study_data,EUPATH_0010177,Amount offered to eat during diarrheal episode,,,,,"The last time Child had diarrhea, how much did you offer Child to eat?",0,GEMS1
 734,,,F7_WT_CHILD,gems1a_case_control_study_data,EUPATH_0010070,Weight of caretaker + child (kg),,,,,Physical findings: Weight 0-23 months Caretaker + Child,Num,GEMS1
@@ -707,7 +658,7 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 773,,,F7_ABN_HAIR,gems1a_case_control_study_data,EUPATH_0015118,Abnormal hair,,,,,"Physical findings: Abnormal hair: sparse, loose, straight",0,GEMS1
 774,,,F7_UNDER_NUTR,gems1a_case_control_study_data,EUPATH_0015119,Undernutrition,,,,,Physical findings: Undernutrition: wasted/very thin,0,GEMS1
 775,,,F7_SKIN_FLAKY,gems1a_case_control_study_data,EUPATH_0015120,Skin has flaky paint appearance,,,,,Physical findings: Skin has 'flaky paint' appearance,0,GEMS1
-776,,,F7_SPECIMEN_ID,gems1a_case_control_study_data,,,,,,,,1,
+776,,,F7_SPECIMEN_ID,gems1a_case_control_study_data,,Sample ID,,,,,,1,
 780,,,F11_DATE,gems1a_case_control_study_data,EUPATH_0010214,Collection visit date,,,,,Visit date for Stool Collection,,GEMS1
 782,,,F11_DATESTOOL,gems1a_case_control_study_data,EUPATH_0010215,Date stool passed,,,,,Date first whole stool passed/excreted,Date,GEMS1
 783,,,F11_TIMESTOOL,gems1a_case_control_study_data,EUPATH_0010216,Time stool passed,,,,,Time first whole stool passed/excreted,24 hr Time,GEMS1
@@ -729,7 +680,6 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 799,,,F11_ANTI_PENI,gems1a_case_control_study_data,EUPATH_0015230,Penicillin,,,,,If received antibiotic: Penicillin?,0,GEMS1
 800,,,F11_ANTI_AMOX,gems1a_case_control_study_data,EUPATH_0015231,Amoxycillin,,,,,If received antibiotic: Amoxicillin?,0,GEMS1
 801,,,F11_ANTI_OTHER,gems1a_case_control_study_data,EUPATH_0015232,Other antibiotic,,,,,If received antibiotic: Other Antibiotic?,0,GEMS1
-802,,,F11_ANTI_SPEC,gems1a_case_control_study_data,,,,,,,"If received antibiotic: Other antibiotic, specify",Char,
 803,,,F11_ANTI_DATE,gems1a_case_control_study_data,EUPATH_0010219,Date of first antibiotic administration,,,,,If antibiotic was given: Date of first antibiotic,Date,GEMS1
 804,,,F11_ANTI_TIME,gems1a_case_control_study_data,EUPATH_0010220,Time of first antibiotic administration,,,,,If antibiotic was given: Time of first antibiotic,Time 24 hr,GEMS1
 805,,,F11_RECTAL_SWAB,gems1a_case_control_study_data,EUPATH_0010221,Rectal swabs collected,,,,,"If the child is a case and was given antibiotics at the health center before the child produced a whole stool specimen, were rectal swabs collected form the child before the child received antibiotics?",0,GEMS1
@@ -738,57 +688,53 @@ colOrder,overallOrder,displayOrder,variable,dataset,IRI,label,definition,categor
 808,,,F11_DATESTAFF,gems1a_case_control_study_data,EUPATH_0010224,Date stool/rectal swab placed in transport media,,,,,Date whole stool/rectal swab placed in transport media,Date,GEMS1
 809,,,F11_TIMESTAFF,gems1a_case_control_study_data,EUPATH_0010225,Time stool/rectal swab placed in transport media,,,,,Time whole stool/rectal swab placed in transport media,Time 24 hr,GEMS1
 812,,,F11_SPECIMEN_ID,gems1a_case_control_study_data,EUPATH_0010226,Stool specimen ID,,,,,Speciment ID,,GEMS1
-827,,,F15_WT_VOL_ACT,gems1a_case_control_study_data,,,,,,,Actual weight,,
-846,,,F16_DATE,gems1a_case_control_study_data,,,,,,,Calculated Date of Test,Date,
+827,,,F15_WT_VOL_ACT,gems1a_case_control_study_data,,Stool weight (g),,,,,Actual weight,,
+846,,,F16_DATE,gems1a_case_control_study_data,,Test date,,,,,Calculated Date of Test,Date,
 851,,,F16_CAMPY_NONJEJ,gems1a_case_control_study_data,EUPATH_0015299,"Campylobacter (non-jejuni or coli), bacteriology",,,,,Bacteria Isolated: Campylobacter (not jejuni or coli),0,GEMS1
 852,,,F16_CAMPY_NONSPEC,gems1a_case_control_study_data,EUPATH_0015300,"Campylobacter (non-speciated), bacteriology",,,,,Bacteria Isolated: Campylobacter (non-speciated),0,GEMS1
-860,,,F16CORR_S_NONTYPE,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella non-typeable,0,
-861,,,F16CORR_SHIG_1A,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 1A,0,
-862,,,F16CORR_SHIG_1B,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 1B,0,
-863,,,F16CORR_SHIG_2A,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 2A,0,
-864,,,F16CORR_SHIG_2B,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 2B,0,
-865,,,F16CORR_SHIG_3A,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 3A,0,
-866,,,F16CORR_SHIG_3B,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri Serotype 3B,0,
+860,,,F16CORR_S_NONTYPE,gems1a_case_control_study_data,,"Shigella serogroup nontypeable, bacteriology",,,,,Bacteria Isolated: Shigella non-typeable,0,
+861,,,F16CORR_SHIG_1A,gems1a_case_control_study_data,,"Shigella flexneri seroptype 1A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 1A,0,
+862,,,F16CORR_SHIG_1B,gems1a_case_control_study_data,,"Shigella flexneri seroptype 1B, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 1B,0,
+863,,,F16CORR_SHIG_2A,gems1a_case_control_study_data,,"Shigella flexneri seroptype 2A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 2A,0,
+864,,,F16CORR_SHIG_2B,gems1a_case_control_study_data,,"Shigella flexneri seroptype 2B, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 2B,0,
+865,,,F16CORR_SHIG_3A,gems1a_case_control_study_data,,"Shigella flexneri seroptype 3A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 3A,0,
+866,,,F16CORR_SHIG_3B,gems1a_case_control_study_data,,"Shigella flexneri seroptype 3B, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 3B,0,
 867,,,F16CORR_SHIG_4A,gems1a_case_control_study_data,EUPATH_0015324,"Shigella flexneri seroptype 4A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 4A,0,GEMS1
 868,,,F16CORR_SHIG_4B,gems1a_case_control_study_data,EUPATH_0015301,"Shigella flexneri seroptype 4B, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 4B,0,GEMS1
 869,,,F16CORR_SHIG_4C,gems1a_case_control_study_data,EUPATH_0015325,"Shigella flexneri seroptype 4C, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 4C,0,GEMS1
 870,,,F16CORR_SHIG_5A,gems1a_case_control_study_data,EUPATH_0015326,"Shigella flexneri seroptype 5A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 5A,0,GEMS1
 871,,,F16CORR_SHIG_5B,gems1a_case_control_study_data,EUPATH_0015302,"Shigella flexneri seroptype 5B, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 5B,0,GEMS1
 872,,,F16CORR_SHIG_6,gems1a_case_control_study_data,EUPATH_0015303,"Shigella flexneri seroptype 6, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype 6,0,GEMS1
-873,,,F16CORR_SHIG_7A,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella flexneri serotype 7A,,
+873,,,F16CORR_SHIG_7A,gems1a_case_control_study_data,,"Shigella flexneri seroptype 7A, bacteriology",,,,,Bacteria Isolated: Shigella flexneri serotype 7A,,
 874,,,F16CORR_SHIG_X,gems1a_case_control_study_data,EUPATH_0015327,"Shigella flexneri seroptype X, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype X,0,GEMS1
 875,,,F16CORR_SHIG_Y,gems1a_case_control_study_data,EUPATH_0015328,"Shigella flexneri seroptype Y, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Serotype Y,0,GEMS1
 876,,,F16CORR_SHIG_NONTYP,gems1a_case_control_study_data,EUPATH_0015304,"Shigella flexneri non-typeable, bacteriology",,,,,Bacteria Isolated: Shigella flexneri Non-typeable,0,GEMS1
-877,,,F16CORR_SHIG_DYSENT1,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Shigella dysenteriae serotype 1,0,
+877,,,F16CORR_SHIG_DYSENT1,gems1a_case_control_study_data,,"Shigella dysenteriae serotype 1, bacteriology",,,,,Bacteria Isolated: Shigella dysenteriae serotype 1,0,
 878,,,F16_VIB_CHOLERAE,gems1a_case_control_study_data,EUPATH_0015306,"Vibrio cholerae, bacteriology",,,,,Bacteria Isolated: Vibrio cholerae,0,GEMS1
-879,,,F16_VIB_01,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Vibrio cholerae 01 Serotype,0,
-880,,,F16_VIB_0139,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: Vibrio cholerae 0139 Serotype,0,
+879,,,F16_VIB_01,gems1a_case_control_study_data,,"Vibrio cholerae 01, bacteriology",,,,,Bacteria Isolated: Vibrio cholerae 01 Serotype,0,
+880,,,F16_VIB_0139,gems1a_case_control_study_data,,"Vibrio cholerae 0139, bacteriology",,,,,Bacteria Isolated: Vibrio cholerae 0139 Serotype,0,
 881,,,F16_VIB_NON,gems1a_case_control_study_data,EUPATH_0015309,"Vibrio cholerae non-O1/O139, bacteriology",,,,,Bacteria Isolated: Vibrio cholerae Non01/0139 Serotype,0,GEMS1
-882,,,F16_VIB_ELTORCLASS,gems1a_case_control_study_data,,,,,,,Bacteria isolated: Vibrio cholerae 01 El tor class,1,
-883,,,F16_VIB_INABAOGAWA,gems1a_case_control_study_data,,,,,,,Bacteria isolated: Vibrio 01,1,
+882,,,F16_VIB_ELTORCLASS,gems1a_case_control_study_data,,"Vibrio cholerae 01 El Tor, bacteriology",,,,,Bacteria isolated: Vibrio cholerae 01 El tor class,1,
+883,,,F16_VIB_INABAOGAWA,gems1a_case_control_study_data,,"Vibrio cholerae Inaba or Ogawa, bacteriology",,,,,Bacteria isolated: Vibrio 01,1,
 884,,,F16_VIB_PARAHAEM,gems1a_case_control_study_data,EUPATH_0015322,"Vibrio parahaemolyticus, bacteriology",,,,,Bacteria Isolated: Vibrio parahaemolyticus,0,GEMS1
 885,,,F16_VIB_OTHER,gems1a_case_control_study_data,EUPATH_0015312,"Vibrio (other species), bacteriology",,,,,Bacteria Isolated: Vibrio (other species),0,GEMS1
-886,,,F16CORR_NONEPATHOS,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: None of the above bacterial species isolated,0,
 887,,,F16CORR_ECOLI,gems1a_case_control_study_data,,,,,,,Bacteria Isolated: E. coli Isolated,0,
-893,,,F17_DATE,gems1a_case_control_study_data,,,,,,,Calculated Date or E.coli PCR Test,,
 895,,,F17CORR_RESULT_ESTA,gems1a_case_control_study_data,EUPATH_0015317,"ST positive ETEC, PCR result",,,,,estA (ST) PCR,0,GEMS1
 896,,,F17CORR_RESULT_ELTB,gems1a_case_control_study_data,EUPATH_0010679,"LT positive ETEC, PCR",,,,,eltb (LT) PCR,0,GEMS1
 897,,,F17CORR_RESULT_BFPA,gems1a_case_control_study_data,EUPATH_0015318,"bfpA EPEC, PCR result",,,,,bfpa PCR,0,GEMS1
 898,,,F17CORR_RESULT_AATA,gems1a_case_control_study_data,EUPATH_0010663,"aatA EAEC, PCR",,,,,aatA PCR,0,GEMS1
 899,,,F17CORR_RESULT_AAIC,gems1a_case_control_study_data,EUPATH_0010659,"aaiC EAEC, PCR",,,,,aaiC PCR,0,GEMS1
 900,,,F17CORR_RESULT_EAE,gems1a_case_control_study_data,EUPATH_0010671,"eae EPEC, PCR",,,,,EAE PCR,0,GEMS1
-901,,,F17CORR_EPEC_EAE,gems1a_case_control_study_data,,,,,,,PCR Duplex: EPEC eae,0,
-902,,,F17CORR_EAE_RESULTS,gems1a_case_control_study_data,,,,,,,PCR Duplex: EPEC eae results,0,
-903,,,F17CORR_EPEC_ST,gems1a_case_control_study_data,,,,,,,PCR Duplex: EPEC ST,0,
-904,,,F17CORR_ST_RESULTS,gems1a_case_control_study_data,,,,,,,PCR Duplex: EPEC ST,0,
-905,,,F17CORR_EPEC_BFPA,gems1a_case_control_study_data,,,,,,,bfpA monoplex PCR,0,
-906,,,F17CORR_BFPA_RESULTS,gems1a_case_control_study_data,,,,,,,bfpA monoplex PCR results,0,
-911,,,F17A_DATE,gems1a_case_control_study_data,,,,,,,Calculated Date of EPEC Polymerase Chain Reaction Test,Date,
+901,,,F17CORR_EPEC_EAE,gems1a_case_control_study_data,,"eae EPEC, PCR duplex performed",,,,,PCR Duplex: EPEC eae,0,
+902,,,F17CORR_EAE_RESULTS,gems1a_case_control_study_data,,"eae EPEC, PCR duplex result",,,,,PCR Duplex: EPEC eae results,0,
+903,,,F17CORR_EPEC_ST,gems1a_case_control_study_data,,"ST ETEC, PCR duplex performed",,,,,PCR Duplex: EPEC ST,0,
+904,,,F17CORR_ST_RESULTS,gems1a_case_control_study_data,,"ST positive ETEC, PCR duplex result",,,,,PCR Duplex: EPEC ST,0,
+905,,,F17CORR_EPEC_BFPA,gems1a_case_control_study_data,,"bfpA EPEC, PCR monoplex performed",,,,,bfpA monoplex PCR,0,
+906,,,F17CORR_BFPA_RESULTS,gems1a_case_control_study_data,,"bfpA EPEC, PCR monoplex result",,,,,bfpA monoplex PCR results,0,
 913,,,F17A_STX2,gems1a_case_control_study_data,EUPATH_0010691,"stx2 STEC, PCR",,,,,EPEC STX-2 PCR,0,GEMS1
 914,,,F17A_SEN,gems1a_case_control_study_data,EUPATH_0015313,"sen, PCR",,,,,EPEC SEN PCR,0,GEMS1
 915,,,F17A_STX1,gems1a_case_control_study_data,EUPATH_0010687,"stx1 STEC, PCR",,,,,EPEC STX-1 PCR,0,GEMS1
 916,,,F17A_EFA1,gems1a_case_control_study_data,EUPATH_0015314,"efa1, PCR",,,,,EPEC EFA-1 ,0,GEMS1
-921,,,F18_DATE,gems1a_case_control_study_data,,,,,,,Protozoal & Viral Immunoassays Test Date,,
 944,,,F18_CLOSTR_GDH,gems1a_case_control_study_data,,,,,,,Clostridium GDH Ag ,0,
 945,,,F18_CLOSTR_TOXIN,gems1a_case_control_study_data,,,,,,,Clostridium difficile Toxin A/B,0,
 950,,,F19_DATE,gems1a_case_control_study_data,,,,,,,Test Date of RT-PCR for Viruses,,
