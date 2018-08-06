@@ -188,6 +188,7 @@ from APIDB.WORKFLOWSTEPALGINVOCATION w
     ,APIDB.WORKFLOWSTEP ws
 where w.workflow_step_id = ws.workflow_step_id
 and (ws.name like 'metadata.ISA%'
+  or ws.name like 'ReactionsXRefs_%'
   or ws.name like 'Pathways_%')
 ";
 

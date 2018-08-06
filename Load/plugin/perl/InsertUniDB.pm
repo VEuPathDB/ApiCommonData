@@ -559,7 +559,11 @@ sub globalLookupForTable  {
 
   
   unless($rowCount == scalar(keys(%lookup))) {
-    $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
+
+    # TODO:  remove this hard coding.  Long run do not throw error here.  Being extra safe while testing
+    unless($tableName eq 'SRes.EnzymeClassAttribute') {
+      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
+    }
   }
 
   $self->log("Finished caching Global Lookup for table $tableName");
