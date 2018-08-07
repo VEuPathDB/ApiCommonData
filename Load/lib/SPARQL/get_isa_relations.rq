@@ -2,12 +2,22 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT distinct ?cls ?pIRI
-WHERE { 
-	?cls a owl:Class .
-	OPTIONAL {
-		?cls rdfs:subClassOf ?p_cls .
+SELECT * {
+	{
+		SELECT distinct ?entity ?parent
+		WHERE { 
+			?entity a owl:Class .
+			?entity rdfs:subClassOf ?parent . 
+		}
 	}
-	BIND (IF(BOUND(?p_cls), ?p_cls, "Thing") AS ?pIRI) .
+	UNION{
+		SELECT ?entity ?parent
+		WHERE {
+			?entity a owl:Class .
+			filter not exists {
+		  	?entity rdfs:subClassOf ?no_parent .
+			}
+		  BIND (<http://www.w3.org/2002/07/owl#Thing> AS ?parent) .
+		}
+	}
 }
-ORDER BY DESC (?pIRI)
