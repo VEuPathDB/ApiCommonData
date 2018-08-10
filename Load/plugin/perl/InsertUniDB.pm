@@ -434,7 +434,7 @@ sub loadTable {
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
     my $primaryKey;
-    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName =~ /GUS::Model::Study::Protocol/) {
+    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol') {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
