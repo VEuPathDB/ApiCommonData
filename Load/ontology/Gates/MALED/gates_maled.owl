@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_maled.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_maled.owl"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace">
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_maled.owl"/>
     
 
@@ -19,6 +19,14 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TEMP_0000001 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/TEMP_0000001">
+        <rdfs:label xml:lang="en">JZ notes</rdfs:label>
+    </owl:AnnotationProperty>
     
 
 
@@ -352,10 +360,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000609 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:TEMP_0011500>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample information</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</rdfs:label>
     </owl:Class>
     
 
@@ -704,21 +711,6 @@
         <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Consistency of stool reported on SRF. From initial stool sample (SRF form). Source=SRF</obo:TEMP_0011505>
         <obo:TEMP_0011506 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Watery =01; Liquid =02; Soft =03; Formed =04</obo:TEMP_0011506>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool consistency</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010226 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010226">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFMBSAMPID</obo:TEMP_0011501>
-        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
-        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID on SRF form (used as gold standard for Sample ID). This is the stool sample&apos;s unique identification number.. Source=SRF</obo:TEMP_0011505>
-        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Sample ID&quot;&quot; label for all samples (stool, urine, blood), combine EUPATH_0010226 &amp; OBI_0001616; don&apos;t display in the heirarchy, but retain the data</obo:TEMP_0011507>
-        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">samid &amp; SRFMBSAMPID will collapse into the same variable. don&apos;t display in the heirarchy, but retain the data</obo:TEMP_0011509>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID</rdfs:label>
     </owl:Class>
     
 
@@ -1621,15 +1613,11 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010535">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010535"/>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011752"/>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:TEMP_0011500>
-        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">safdehyd</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull_24m.csv, micro_x_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">observation</obo:TEMP_0011504>
-        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Was children dehydrated? Maternal report of dehydration. From illness dataset. Source=illnessfull.csv</obo:TEMP_0011505>
-        <obo:TEMP_0011506 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=yes;0=no</obo:TEMP_0011506>
         <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new parent created</obo:TEMP_0011507>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dehydration symptom</rdfs:label>
     </owl:Class>
     
 
@@ -1825,7 +1813,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010551 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010551">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">flag_ltf</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv</obo:TEMP_0011502>
@@ -6138,26 +6126,12 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010856 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010856">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
-        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFDATE</obo:TEMP_0011501>
-        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
-        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of collection. Source=SRF</obo:TEMP_0011505>
-        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Date of sample collection&quot;&quot; lablel for all samples (stool, urine, blood), combine EUPATH_0011679 &amp; EUPATH_0011168</obo:TEMP_0011507>
-        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">datecol &amp; SRFDATE will collapse into the same label</obo:TEMP_0011509>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample collection</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010857 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010857">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:TEMP_0000001>Shold label be &quot;Sample ID for initial collection&quot;?
+What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP_0000001>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFFRSTSID</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
@@ -6172,7 +6146,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010859 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010859">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sid.r1</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
@@ -6187,7 +6161,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010860 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010860">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sid.r2</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
@@ -6202,7 +6176,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010861 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010861">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sid.r3</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
@@ -6360,7 +6334,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010873 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010873">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">stoolwindow</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv</obo:TEMP_0011502>
@@ -8480,7 +8454,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011082 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011082">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011669"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011848"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sum_sweets</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_24m.csv</obo:TEMP_0011502>
@@ -8680,7 +8654,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011096">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011846"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sumgrains</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_24m.csv</obo:TEMP_0011502>
@@ -8876,7 +8850,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011110 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011110">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011667"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011847"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sumroots</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_24m.csv</obo:TEMP_0011502>
@@ -9045,19 +9019,12 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011122">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010982"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">target_month</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_24m.csv, fsq_24m.csv,  wami_24m.csv, WHOcoreallsites_24m.csv</obo:TEMP_0011502>
-        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">observation</obo:TEMP_0011504>
-        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target/scheduled month. Source=FRQ/FSQ/BRF/UCF/SRF/FSE/MOA</obo:TEMP_0011505>
-        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI for target_month under observations should be different from IRI for target_month under samples</obo:TEMP_0011507>
         <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">target_month from diet, fsq, wami, &amp; WHO datasets will collapse into the same label</obo:TEMP_0011509>
-        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">target_month from mpo_neo_ala &amp; mn_blood_iar datasets will collapse into the same label</obo:TEMP_0011509>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target month for sample collection</rdfs:label>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target month for surveillance data collection</rdfs:label>
     </owl:Class>
     
@@ -9378,29 +9345,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011165 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011165">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BRFDATE</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample arrival. Source=BRF</obo:TEMP_0011505>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample arrival to laboratory</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011168 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011168">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
-        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">datecol</obo:TEMP_0011501>
-        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
-        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample collection. Source=calculated</obo:TEMP_0011505>
-        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Date of sample collection&quot;&quot; lablel for all samples (stool, urine, blood), combine EUPATH_0011679 &amp; EUPATH_0011168</obo:TEMP_0011507>
-        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">datecol &amp; SRFDATE will collapse into the same label</obo:TEMP_0011509>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample collection</rdfs:label>
     </owl:Class>
     
 
@@ -9465,7 +9416,8 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011177 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011177">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <obo:TEMP_0000001>I think it should associated with urine assay.</obo:TEMP_0000001>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IARDATE</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
@@ -9524,7 +9476,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011189 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011189">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SAVDONTUSE</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
@@ -9750,7 +9702,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011550 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011550">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFRECOLREQ</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mpo_neo_ala_24m.csv</obo:TEMP_0011502>
@@ -10574,7 +10526,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011659 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011659">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011659"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011846"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">moagrain</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WHOcoreallsites_24m.csv</obo:TEMP_0011502>
@@ -10686,7 +10638,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011667 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011667">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011667"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011847"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">moaroot</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WHOcoreallsites_24m.csv</obo:TEMP_0011502>
@@ -10714,7 +10666,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011669 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011669">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011669"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011848"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">moasug</obo:TEMP_0011501>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WHOcoreallsites_24m.csv</obo:TEMP_0011502>
@@ -10781,24 +10733,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011676 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011676">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
-        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
-        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sampletype</obo:TEMP_0011501>
-        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
-        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of sample (blood, urine). Source=calculated</obo:TEMP_0011505>
-        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Sample type&quot;&quot; label for all samples (stool, urine, blood), combine EUPATH_0011676 &amp; OBI_0100051)</obo:TEMP_0011507>
-        <obo:TEMP_0011508 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">.</obo:TEMP_0011508>
-        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">this variable does not exist for stool samples and will have to be created by data loaders; all data from mpo_neo_ala dataset should be given sampletype = &quot;&quot;stool&quot;&quot;</obo:TEMP_0011509>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011677 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011677">
@@ -10830,9 +10764,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011679 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011679">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:TEMP_0000001>Should combine this category with Laboratory test?</obo:TEMP_0000001>
+        <obo:TEMP_0000001>The category is too general. May consider to remove.
+ontology term &apos;specimen information&apos; is added to use as catogory grouping all kinds of entities that related to specimen.
+Root, Sample is mapped to this ontology term (http://purl.obolibrary.org/obo/EUPATH_0000609)</obo:TEMP_0000001>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample information</rdfs:label>
     </owl:Class>
     
 
@@ -10873,7 +10812,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011692 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011692">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood characteristics</rdfs:label>
@@ -10884,7 +10823,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011695 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011695">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool characteristics</rdfs:label>
@@ -10895,7 +10834,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011696 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011696">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine Characteristics</rdfs:label>
@@ -10906,7 +10845,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011699 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011699">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory tests</rdfs:label>
@@ -11790,6 +11729,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011797">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011699"/>
+        <obo:TEMP_0000001>might be &apos;urine assay&apos; or &apos;urine test&apos;?</obo:TEMP_0000001>
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
         <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new parent created</obo:TEMP_0011507>
@@ -12201,7 +12141,7 @@
         <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:TEMP_0011500>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">observation</obo:TEMP_0011504>
         <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new parent created</obo:TEMP_0011507>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vomiting</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vomiting symptom</rdfs:label>
     </owl:Class>
     
 
@@ -12382,6 +12322,21 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011851 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011851">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:TEMP_0011500>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">target_month</obo:TEMP_0011501>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
+        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target/scheduled month. Source=FRQ/FSQ/BRF/UCF/SRF/FSE/MOA</obo:TEMP_0011505>
+        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">target_month from mpo_neo_ala &amp; mn_blood_iar datasets will collapse into the same label</obo:TEMP_0011509>
+        <rdfs:label xml:lang="en">Target month for sample collection</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015003 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015003">
@@ -12423,6 +12378,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/HP_0001944 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0001944">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010535"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/HP_0001944"/>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:TEMP_0011500>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">safdehyd</obo:TEMP_0011501>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull_24m.csv, micro_x_24m.csv</obo:TEMP_0011502>
+        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">observation</obo:TEMP_0011504>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Was children dehydrated? Maternal report of dehydration. From illness dataset. Source=illnessfull.csv</obo:TEMP_0011505>
+        <obo:TEMP_0011506 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=yes;0=no</obo:TEMP_0011506>
+        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">new parent created</obo:TEMP_0011507>
+        <rdfs:label xml:lang="en">Dehydration</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_10239 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10239">
@@ -12460,14 +12433,37 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFMBSAMPID</obo:TEMP_0011501>
         <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sampid</obo:TEMP_0011501>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID on SRF form (used as gold standard for Sample ID). This is the stool sample&apos;s unique identification number.. Source=SRF</obo:TEMP_0011505>
         <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID. Source=BRF/UCF</obo:TEMP_0011505>
         <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Sample ID&quot;&quot; label for all samples (stool, urine, blood), combine EUPATH_0010226 &amp; OBI_0001616; don&apos;t display in the heirarchy, but retain the data</obo:TEMP_0011507>
         <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">samid &amp; SRFMBSAMPID will collapse into the same variable. don&apos;t display in the heirarchy, but retain the data</obo:TEMP_0011509>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SRFDATE</obo:TEMP_0011501>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">datecol</obo:TEMP_0011501>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">micro_x_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:TEMP_0011502>
+        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of collection. Source=SRF</obo:TEMP_0011505>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample collection. Source=calculated</obo:TEMP_0011505>
+        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Date of sample collection&quot;&quot; lablel for all samples (stool, urine, blood), combine EUPATH_0011679 &amp; EUPATH_0011168</obo:TEMP_0011507>
+        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">datecol &amp; SRFDATE will collapse into the same label</obo:TEMP_0011509>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of sample collection</rdfs:label>
     </owl:Class>
     
 
@@ -12482,6 +12478,24 @@
         <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household</obo:TEMP_0011504>
         <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country ID. Source=FRQ</obo:TEMP_0011505>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0100051 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011679"/>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:TEMP_0011500>
+        <obo:TEMP_0011500 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:TEMP_0011500>
+        <obo:TEMP_0011501 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sampletype</obo:TEMP_0011501>
+        <obo:TEMP_0011502 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv, mpo_neo_ala_24m.csv</obo:TEMP_0011502>
+        <obo:TEMP_0011504 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0011504>
+        <obo:TEMP_0011505 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of sample (blood, urine). Source=calculated</obo:TEMP_0011505>
+        <obo:TEMP_0011507 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">use more general &quot;&quot;Sample type&quot;&quot; label for all samples (stool, urine, blood), combine EUPATH_0011676 &amp; OBI_0100051)</obo:TEMP_0011507>
+        <obo:TEMP_0011508 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">.</obo:TEMP_0011508>
+        <obo:TEMP_0011509 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">this variable does not exist for stool samples and will have to be created by data loaders; all data from mpo_neo_ala dataset should be given sampletype = &quot;&quot;stool&quot;&quot;</obo:TEMP_0011509>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
     </owl:Class>
     
 
@@ -12563,5 +12577,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.2.4.20160507-1731) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
