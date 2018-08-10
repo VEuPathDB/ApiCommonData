@@ -564,7 +564,7 @@ sub globalLookupForTable  {
     # TODO:  remove this hard coding.  Long run do not throw error here.  Being extra safe while testing
     # TODO:  remove external database after testing
     if($tableName ne 'SRes.EnzymeClassAttribute' && $tableName ne 'SRes.TaxonName' && $tableName ne 'SRes.ExternalDatabase') {
-      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
+#      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
     }
   }
 
