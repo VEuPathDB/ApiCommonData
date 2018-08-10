@@ -535,7 +535,7 @@ sub globalLookupForTable  {
   $self->log("Preparing Global Lookup for table $tableName");
 
   # get distinct rows from input table which are global
-  my $origKeysToKeep = $tableReader->getDistinctValuesForTableFields($tableName, $fields, 1); 
+  my $origKeysToKeep = $tableReader->getDistinctValuesForTableFields($tableName, $fields, 0); 
 
   my $fieldsString = join(",", map { $_ } @$fields);
 
@@ -562,7 +562,8 @@ sub globalLookupForTable  {
   unless($rowCount == scalar(keys(%lookup))) {
 
     # TODO:  remove this hard coding.  Long run do not throw error here.  Being extra safe while testing
-    if($tableName ne 'SRes.EnzymeClassAttribute' && $tableName ne 'SRes.TaxonName') {
+    # TODO:  remove external database after testing
+    if($tableName ne 'SRes.EnzymeClassAttribute' && $tableName ne 'SRes.TaxonName' && $tableName ne 'SRes.ExternalDatabase') {
       $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
     }
   }
