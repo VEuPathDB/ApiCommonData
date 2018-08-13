@@ -169,10 +169,13 @@ sub run {
 
     # for now using random hard coded source_id for this - there must be a better way?!
     my $coverageOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EUPATH_0000454'}); # "Average mapping coverage"
-    unless($coverageOntologyTerm->retrieveFromDB()) {
-        $coverageOntologyTerm->setName('Average mapping coverage');
-        $coverageOntologyTerm->submit();
-        $self->undefPointerCache();
+    my $termCount = $coverageOntologyTerm->retrieveFromDB();
+    if ($termCount > 1) {
+      $self->userError("More than one OntologyTerm record found with source_id \"" . $coverageOntologyTerm->getSourceId() . "\"\n");
+    } elsif ($termCount == 0) {
+      $coverageOntologyTerm->setName('Average mapping coverage');
+      $coverageOntologyTerm->submit();
+      $self->undefPointerCache();
     }
     my $coverageOntologyTermId = $coverageOntologyTerm->getId();
 
@@ -181,13 +184,16 @@ sub run {
     $coverageCharacteristic->setParent($assayProtocolAppNode);
     $gusStudy->addToSubmitList($coverageCharacteristic);
 
-
     my $mappedReadOntologyTerm = GUS::Model::SRes::OntologyTerm->new({source_id => 'EUPATH_0000455'}); # "Proportion mapped reads"
-    unless($mappedReadOntologyTerm->retrieveFromDB()) {
-        $mappedReadOntologyTerm->setName('Proportion mapped reads');
-        $mappedReadOntologyTerm->submit();
-        $self->undefPointerCache();
+    my $termCount = $mappedReadOntologyTerm->retrieveFromDB();
+    if ($termCount > 1) {
+      $self->userError("More than one OntologyTerm record found with source_id \"" . $mappedReadOntologyTerm->getSourceId() . "\"\n");
+    } elsif ($termCount == 0) {
+      $mappedReadOntologyTerm->setName('Proportion mapped reads');
+      $mappedReadOntologyTerm->submit();
+      $self->undefPointerCache();
     }
+
     my $mappedReadOntologyTermId = $mappedReadOntologyTerm->getId();
 
     my $mappedReadCharacteristic = GUS::Model::Study::Characteristic->new({value => $mappedReadPercentage});
