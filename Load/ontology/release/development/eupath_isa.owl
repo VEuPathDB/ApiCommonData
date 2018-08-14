@@ -7,7 +7,10 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/eupath_isa.owl"/>
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/eupath_isa.owl">
+        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20180814</owl:versionInfo>
+        <rdfs:comment>Added some terms needed for Bld39</rdfs:comment>
+    </owl:Ontology>
     
 
 
@@ -65,6 +68,18 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CHEBI_10023 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_10023">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/CHEBI_35727"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>VCZ</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">voriconazole</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/CHEBI_23888 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_23888">
@@ -72,6 +87,102 @@
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">protocol parameter</obo:ISA_0000001>
         <obo:ISA_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compound</obo:ISA_0000003>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compound</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_2682 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_2682">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OMP_0000274"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>AmB</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">amphotericin B</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_35727 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_35727">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OMP_0000274"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>Triazole</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">triazoles</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_46081 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_46081">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/CHEBI_35727"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>FCZ</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">fluconazole</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_474180 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_474180">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OMP_0000274"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>CSF</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">caspofungin</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_55346 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_55346">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OMP_0000274"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>AND</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">anidulafungin</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_600520 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_600520">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OMP_0000274"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>MF</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">micafungin</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_6076 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_6076">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/CHEBI_35727"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>ICZ</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">itraconazole</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_64355 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_64355">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/CHEBI_35727"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>PZ</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">posaconazole</rdfs:label>
     </owl:Class>
     
 
@@ -528,6 +639,27 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0005002 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005002">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+        <obo:ISA_0000001>characteristics</obo:ISA_0000001>
+        <obo:ISA_0000002>Sample</obo:ISA_0000002>
+        <obo:ISA_0000003>Parental and Clone</obo:ISA_0000003>
+        <rdfs:label xml:lang="en">Parental and clone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0005004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
+        <rdfs:label xml:lang="en">Anti-fungal agent resistance</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/FLU_0001025 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/FLU_0001025">
@@ -770,10 +902,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OMP_0000274">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000104"/>
-        <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_0000001>
-        <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_0000002>
-        <obo:ISA_0000003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">antimicrobial agent resistance phenotype</obo:ISA_0000003>
-        <rdfs:label xml:lang="en">Anti-fungal resistance</rdfs:label>
+        <rdfs:label xml:lang="en">Anti-fungal agent resistance</rdfs:label>
     </owl:Class>
     
 
