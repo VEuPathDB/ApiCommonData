@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/microbiome.owl#"
      xml:base="http://purl.obolibrary.org/obo/microbiome.owl"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:microbiome="http://purl.obolibrary.org/obo/microbiome.owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:microbiome="http://purl.obolibrary.org/obo/microbiome.owl#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionInfo>2017-08-11</owl:versionInfo>
-        <rdfs:comment>SVN revision: 83786</rdfs:comment>
+        <owl:versionInfo>2018-08-15</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -149,12 +149,12 @@
     <!-- http://purl.obolibrary.org/obo/ENVO_00000070 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000070">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Built-environment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MIxS environmental package</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <JZ_comment>related to EnVO: building (http://purl.obolibrary.org/obo/ENVO_00000073)</JZ_comment>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Built-environment</rdfs:label>
     </owl:Class>
     
 
@@ -162,17 +162,17 @@
     <!-- http://purl.obolibrary.org/obo/ENVO_00000176 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000176">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Elevation (feet)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_elev</micro_ID>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">air</Env_package>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <obo:EUPATH_0000266>EnVO: elevation, add &apos;elevation data&apos; in EuPath ontology?</obo:EUPATH_0000266>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">the elevation of the sampling site as measured by the vertical distance from mean sea level</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000562>http://purl.obolibrary.org/obo/ENVO_00000176</obo:MICRO_0000562>
-        <obo:EUPATH_0000266>EnVO: elevation, add &apos;elevation data&apos; in EuPath ontology?</obo:EUPATH_0000266>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">air</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
         <common_name xml:lang="geneban">elev</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_elev</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Elevation (feet)</rdfs:label>
     </owl:Class>
     
 
@@ -180,16 +180,16 @@
     <!-- http://purl.obolibrary.org/obo/ENVO_00000428 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000428">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment (biome)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
+        <obo:EUPATH_0000266>biome</obo:EUPATH_0000266>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biomes are defined based on factors such as plant structures, leaf types, plant spacing, and other factors like climate. Biome should be treated as the descriptor of the broad ecological context of a sample. Examples include: desert, taiga, deciduous wood</obo:IAO_0000115>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_env_biome</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000562>http://purl.obolibrary.org/obo/ENVO_00000428</obo:MICRO_0000562>
-        <obo:EUPATH_0000266>biome</obo:EUPATH_0000266>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
         <common_name xml:lang="geneban">env_biome</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_env_biome</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment (biome)</rdfs:label>
     </owl:Class>
     
 
@@ -197,12 +197,12 @@
     <!-- http://purl.obolibrary.org/obo/ENVO_00002297 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00002297">
-        <rdfs:label>Local environment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000539>env_feature</obo:MICRO_0000539>
         <obo:IAO_0000115>Environmental feature level includes geographic environmental features. Compared to biome, feature is a descriptor of the more local environment. Examples include: harbor, cliff, or lake. EnvO (v 2013-06-14) terms can be found via the link: www.environmentontology.org</obo:IAO_0000115>
+        <obo:MICRO_0000539>env_feature</obo:MICRO_0000539>
         <MIxS_label xml:lang="en">Environment (feature)</MIxS_label>
+        <term_type>variable</term_type>
+        <rdfs:label>Local environment</rdfs:label>
     </owl:Class>
     
 
@@ -210,19 +210,19 @@
     <!-- http://purl.obolibrary.org/obo/ENVO_00010483 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00010483">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment (material)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000587"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_env_material</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The environmental material level refers to the material that was displaced by the sample, or material in which a sample was embedded, prior to the sampling event. Environmental material terms are generally mass nouns. Examples include: air, soil, or water</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/ENVO_00010483</obo:MICRO_0000562>
-        <MIxS_label>environment (material)</MIxS_label>
-        <JZ_comment>Is it environmental material as sample source?</JZ_comment>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <JZ_comment>I think it is the sample source when specimen is enviromental entity</JZ_comment>
-        <common_name xml:lang="geneban">env_material</common_name>
         <obo:EUPATH_0000266>environmental material</obo:EUPATH_0000266>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The environmental material level refers to the material that was displaced by the sample, or material in which a sample was embedded, prior to the sampling event. Environmental material terms are generally mass nouns. Examples include: air, soil, or water</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/ENVO_00010483</obo:MICRO_0000562>
+        <JZ_comment>I think it is the sample source when specimen is enviromental entity</JZ_comment>
+        <JZ_comment>Is it environmental material as sample source?</JZ_comment>
+        <MIxS_label>environment (material)</MIxS_label>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
+        <common_name xml:lang="geneban">env_material</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_env_material</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment (material)</rdfs:label>
     </owl:Class>
     
 
@@ -230,16 +230,16 @@
     <!-- http://purl.obolibrary.org/obo/ERO_0002033 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ERO_0002033">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host family relationship</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_family_relationship</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">family_relationship</synonym>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">relationships to other hosts in the same study; can include multiple relationships</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
         <common_name xml:lang="geneban">host_family_relationship</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_family_relationship</micro_ID>
+        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">family_relationship</synonym>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host family relationship</rdfs:label>
     </owl:Class>
     
 
@@ -247,11 +247,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000019 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000019">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Residents in dwelling</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
+        <obo:MICRO_0000539>number_residents_human</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>number_residents_human</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Residents in dwelling</rdfs:label>
     </owl:Class>
     
 
@@ -259,10 +259,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000049 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000049">
-        <rdfs:label xml:lang="en">Visit type</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115>Visit 1-3 (pretreatment, treated, post treatment)</obo:IAO_0000115>
         <obo:MICRO_0000539>Timepoint</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">Visit type</rdfs:label>
     </owl:Class>
     
 
@@ -270,10 +270,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000087 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000087">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household information</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household information</rdfs:label>
     </owl:Class>
     
 
@@ -281,14 +281,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000452 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000452">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">City, village, or region</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_geo_loc_name</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The geographical origin of the sample as defined by the country or sea name followed by specific region name. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html), or the GAZ ontology (v 1.512)  (http://purl.bioontology.org/ontology/GAZ)</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">geo_loc_name</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
+        <common_name xml:lang="geneban">geo_loc_name</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_geo_loc_name</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">City, village, or region</rdfs:label>
     </owl:Class>
     
 
@@ -296,12 +296,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000492 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000492">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Courses of antibiotics</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">the number of courses of antibiotics received by the human or animal</obo:IAO_0000115>
+        <obo:MICRO_0000539>course_num</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>course_num</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Courses of antibiotics</rdfs:label>
     </owl:Class>
     
 
@@ -309,11 +309,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000493 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000493">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Family ID</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
         <obo:MICRO_0000539>family</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Family ID</rdfs:label>
     </owl:Class>
     
 
@@ -321,11 +321,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000494 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000494">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling ID</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/ENVO_00000070"/>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>house</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling ID</rdfs:label>
     </owl:Class>
     
 
@@ -333,12 +333,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000497 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000497">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom&apos;s courses of delivery antibiotics</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of courses of antibiotics received by mom prior to delivery</obo:IAO_0000115>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>mom_courses_ofdeliveryabx</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom&apos;s courses of delivery antibiotics</rdfs:label>
     </owl:Class>
     
 
@@ -346,16 +346,16 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000512 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000512">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host common name</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_common_name</micro_ID>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">common name of the host, e.g. human</obo:IAO_0000115>
-        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">common_name</synonym>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">host_common_name</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_common_name</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_common_name</micro_ID>
+        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">common_name</synonym>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host common name</rdfs:label>
     </owl:Class>
     
 
@@ -363,10 +363,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000578 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000578">
-        <rdfs:label xml:lang="en">Depth</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
         <obo:IAO_0000115>depth is defined as the vertical distance below local surface, e.g. for sediment or soil samples depth is measured from sediment or soil surface, respectivly. Depth can be reported as an interval for subsurface samples</obo:IAO_0000115>
         <term_type>variable</term_type>
+        <rdfs:label xml:lang="en">Depth</rdfs:label>
     </owl:Class>
     
 
@@ -374,12 +374,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000579 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000579">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age in days</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">the animal&apos;s or human&apos;s age counted in days</obo:IAO_0000115>
+        <obo:MICRO_0000539>day_of_life</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>day_of_life</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age in days</rdfs:label>
     </owl:Class>
     
 
@@ -387,12 +387,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000580 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000580">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic exposure</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">was the child exposed to antibiotics?</obo:IAO_0000115>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>antiexposedall</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic exposure</rdfs:label>
     </owl:Class>
     
 
@@ -400,12 +400,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000581 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000581">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Baby&apos;s delivery mode</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Method of delivery (newborn)</obo:IAO_0000115>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>delivery</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Baby&apos;s delivery mode</rdfs:label>
     </owl:Class>
     
 
@@ -413,11 +413,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000582 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000582">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:MICRO_0000539>abx_name</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic</rdfs:label>
     </owl:Class>
     
 
@@ -425,12 +425,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000583 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000583">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bee colony tetracycline</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">was the bee colony treated with tetracycline</obo:IAO_0000115>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>colony_tetracycline</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bee colony tetracycline</rdfs:label>
     </owl:Class>
     
 
@@ -438,12 +438,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000584 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000584">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child&apos;s diet</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">overall, what the main source of nutrition for the child?</obo:IAO_0000115>
+        <obo:MICRO_0000539>diet_3</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>diet_3</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child&apos;s diet</rdfs:label>
     </owl:Class>
     
 
@@ -451,12 +451,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000585 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000585">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child&apos;s diet (by month)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">For each month, what was the main source of nutrition for the child?</obo:IAO_0000115>
         <obo:MICRO_0000539>diet_2_month</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child&apos;s diet (by month)</rdfs:label>
     </owl:Class>
     
 
@@ -464,15 +464,15 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000586 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000586">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drug usage</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_drug_usage</micro_ID>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">any drug used by subject and the frequency of usage; can include multiple drugs used</obo:IAO_0000115>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
         <common_name xml:lang="geneban">drug_usage</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_drug_usage</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drug usage</rdfs:label>
     </owl:Class>
     
 
@@ -480,10 +480,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000587 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000587">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment information</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environment information</rdfs:label>
     </owl:Class>
     
 
@@ -491,12 +491,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000588 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000588">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Family move</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">boolean; did the household move</obo:IAO_0000115>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>moved</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Family move</rdfs:label>
     </owl:Class>
     
 
@@ -504,10 +504,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000589 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000589">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host information</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host information</rdfs:label>
     </owl:Class>
     
 
@@ -515,16 +515,16 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000590 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000590">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host diet</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">type of diet depending on the host, for animals omnivore, herbivore etc., for humans high-fat, meditteranean etc.; can include multiple diet types</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_diet</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_diet</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet</synonym>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">type of diet depending on the host, for animals omnivore, herbivore etc., for humans high-fat, meditteranean etc.; can include multiple diet types</obo:IAO_0000115>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <common_name xml:lang="geneban">host_diet</common_name>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host diet</rdfs:label>
     </owl:Class>
     
 
@@ -532,12 +532,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000592 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000592">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bee larval tetracycline</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">were bee larvae treated with tetracycline?</obo:IAO_0000115>
         <obo:MICRO_0000539>larval_tetracycline</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bee larval tetracycline</rdfs:label>
     </owl:Class>
     
 
@@ -545,16 +545,16 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000593 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000593">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host total mass</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_tot_mass</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">tot_mass</synonym>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">total mass of the host at collection, the unit depends on host</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">host_tot_mass</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_tot_mass</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_tot_mass</micro_ID>
+        <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">tot_mass</synonym>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host total mass</rdfs:label>
     </owl:Class>
     
 
@@ -562,12 +562,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000594 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000594">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mother or child</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Choose samples obtained from the mother, from the child, or both.</obo:IAO_0000115>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>mom_child</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mother or child</rdfs:label>
     </owl:Class>
     
 
@@ -575,11 +575,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000595 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000595">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"># child occupants</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000539>number_children</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child occupants</rdfs:label>
     </owl:Class>
     
 
@@ -587,11 +587,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000597 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000597">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent adult occupants</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
         <obo:MICRO_0000539>percent_adult_residents</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent adult occupants</rdfs:label>
     </owl:Class>
     
 
@@ -599,11 +599,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000598 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000598">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent male occupants</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
+        <obo:MICRO_0000539>percent_male</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>percent_male</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent male occupants</rdfs:label>
     </owl:Class>
     
 
@@ -611,12 +611,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000599 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000599">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibiotics (yes/no)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">boolean for mom given prenatal antibiotics</obo:IAO_0000115>
-        <term_type>variable</term_type>
         <obo:MICRO_0000539>mom_prenatal_abx</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibiotics (yes/no)</rdfs:label>
     </owl:Class>
     
 
@@ -624,12 +624,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000600 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000600">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibotics (by class)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">class of antibiotics given to mom</obo:IAO_0000115>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>mom_prenatal_abx_class</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibotics (by class)</rdfs:label>
     </owl:Class>
     
 
@@ -637,12 +637,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000601 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000601">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibotics (by trimester)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Trimester antibiotics given to mom</obo:IAO_0000115>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>mom_prenatal_abx_trimester</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prenatal antibotics (by trimester)</rdfs:label>
     </owl:Class>
     
 
@@ -650,15 +650,15 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000602 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000602">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of pets or farm animals</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_pet_farm_animal</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specification of presence of pets or farm animals in the environment of subject, if yes the animals should be specified; can include multiple animals present</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">pet_farm_animal</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">pet_farm_animal</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_pet_farm_animal</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of pets or farm animals</rdfs:label>
     </owl:Class>
     
 
@@ -666,10 +666,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000603 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000603">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0600047"/>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing</rdfs:label>
     </owl:Class>
     
 
@@ -677,12 +677,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000604 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000604">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing batch</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000603"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In which batch were samples sequenced together</obo:IAO_0000115>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>run_prefix_prep</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing batch</rdfs:label>
     </owl:Class>
     
 
@@ -690,12 +690,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000605 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000605">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study summary</rdfs:label>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:EUPATH_0000266>investigation</obo:EUPATH_0000266>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0000066</obo:MICRO_0000562>
         <JZ_comment>It is the overview of an experiment. Can consider to promote this category to root and leave other categories under current Protocol. It means to change it as sibling of Protocol.</JZ_comment>
         <term_type>category</term_type>
-        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0000066</obo:MICRO_0000562>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study summary</rdfs:label>
     </owl:Class>
     
 
@@ -703,11 +703,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000606 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000606">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
-        <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000539>subjec</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject</rdfs:label>
     </owl:Class>
     
 
@@ -715,15 +715,15 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000607 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000607">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight loss in last three months</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_weight_loss_3_month</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specification of weight loss in the last three months, if yes should be further specified to include amount of weight loss</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">weight_loss_3_month</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">weight_loss_3_month</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_weight_loss_3_month</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight loss in last three months</rdfs:label>
     </owl:Class>
     
 
@@ -731,14 +731,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000608 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000608">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection device or method</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_samp_collect_device</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The method or device employed for collecting the sample</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">samp_collect_device</common_name>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
+        <common_name xml:lang="geneban">samp_collect_device</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_samp_collect_device</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection device or method</rdfs:label>
     </owl:Class>
     
 
@@ -746,9 +746,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000609 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Samples</rdfs:label>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</rdfs:label>
     </owl:Class>
     
 
@@ -756,10 +756,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000610 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000610">
-        <rdfs:label xml:lang="en">Skin symptom or sign</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
+        <rdfs:label xml:lang="en">Skin symptom or sign</rdfs:label>
     </owl:Class>
     
 
@@ -767,10 +767,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000611 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000611">
-        <rdfs:label>Source information</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label>Sample source</rdfs:label>
     </owl:Class>
     
 
@@ -778,12 +778,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000612 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000612">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human or Animal</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MIxS environmental package</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <JZ_comment>rename from Veterinary to &apos;Human or Animal&apos;</JZ_comment>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human or Animal</rdfs:label>
     </owl:Class>
     
 
@@ -791,14 +791,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000613 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000613">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection time post infection</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes when the samples were collected following infection</obo:IAO_0000115>
-        <obo:MICRO_0000561 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TP1- 0 weeks, TP2- 6 weeks, TP3- 12 weeks</obo:MICRO_0000561>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Timepoint</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">weeks</obo:MICRO_0000560>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">weeks</obo:MICRO_0000560>
+        <obo:MICRO_0000561 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TP1- 0 weeks, TP2- 6 weeks, TP3- 12 weeks</obo:MICRO_0000561>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection time post infection</rdfs:label>
     </owl:Class>
     
 
@@ -806,14 +806,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000614 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000614">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ear thickness</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ear thickness</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of ear thickness of a mouse</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ear thickness</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Thickness</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mm</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ear thickness</rdfs:label>
     </owl:Class>
     
 
@@ -821,13 +821,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000615 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000615">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transepidermal water loss</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TEWL</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transepidermal water loss</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"> g/m2 h</obo:MICRO_0000560>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TEWL</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"> g/m2 h</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transepidermal water loss</rdfs:label>
     </owl:Class>
     
 
@@ -835,13 +835,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000616 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000616">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Site of ear swabbed</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes which ear was swabbed (left or right)</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Side</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Side of the mouse</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Site of ear swabbed</rdfs:label>
     </owl:Class>
     
 
@@ -849,14 +849,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000617 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000617">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin type swabbed</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the type of skin swabbed (lesion, non-lesion (contralateral skin), etc)</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lesion, Border (adjacent to lesion), Normal (Contralateral skin)</obo:MICRO_0000560>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Site</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SkinType</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lesion, Border (adjacent to lesion), Normal (Contralateral skin)</obo:MICRO_0000560>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin type swabbed</rdfs:label>
     </owl:Class>
     
 
@@ -864,14 +864,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000618 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000618">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathology score</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0- no lesion, 1- redness/swelling, 2- pinna deformation, 3- ulceration, 4- partial tissue loss, 5- total tissue loss</obo:MICRO_0000560>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathology score</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathology score used during leishmania infections</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathology score</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Score</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0- no lesion, 1- redness/swelling, 2- pinna deformation, 3- ulceration, 4- partial tissue loss, 5- total tissue loss</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathology score</rdfs:label>
     </owl:Class>
     
 
@@ -879,13 +879,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000619">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of treatments</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the number of treatments needed before the lesion healed</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No. Treatment</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of treatments</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of treatments</rdfs:label>
     </owl:Class>
     
 
@@ -893,13 +893,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000620 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000620">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin thickening</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin thickening</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lichenification</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score  0 to 5</obo:MICRO_0000560>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score  0 to 5</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin thickening</rdfs:label>
     </owl:Class>
     
 
@@ -907,13 +907,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000621 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000621">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lesion size (area)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the size of the lesion at the time the swab was collected</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lesion Size (Area)</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mm squared</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lesion size (area)</rdfs:label>
     </owl:Class>
     
 
@@ -921,13 +921,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000622 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000622">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score before treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_visit1</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_visit1</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_visit1</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score before treatment</rdfs:label>
     </owl:Class>
     
 
@@ -935,13 +935,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000623 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000623">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score during treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_Visit2</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_Visit2</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score during treatment</rdfs:label>
     </owl:Class>
     
 
@@ -949,13 +949,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000624 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000624">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score after treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_Visit3</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Axilla_Visit3</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Axillary lesion score after treatment</rdfs:label>
     </owl:Class>
     
 
@@ -963,13 +963,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000625 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000625">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score before treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_visit1</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_visit1</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score before treatment</rdfs:label>
     </owl:Class>
     
 
@@ -977,13 +977,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000626 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000626">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score during treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_Visit2</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_Visit2</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_Visit2</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score during treatment</rdfs:label>
     </owl:Class>
     
 
@@ -991,13 +991,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000627 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000627">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score after treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_Visit3</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Groin_Visit3</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Groin lesion score after treatment</rdfs:label>
     </owl:Class>
     
 
@@ -1005,13 +1005,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000628 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000628">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score before treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit1</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit1</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit1</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score before treatment</rdfs:label>
     </owl:Class>
     
 
@@ -1019,13 +1019,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000629 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000629">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score during treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit2</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit2</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit2</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score during treatment</rdfs:label>
     </owl:Class>
     
 
@@ -1033,13 +1033,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000630 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000630">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score after treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit3</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LesionScore_Pinna_Visit3</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 15</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pinna lesion score after treatment</rdfs:label>
     </owl:Class>
     
 
@@ -1047,13 +1047,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000631 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000631">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin lesion cured (yes/no)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cured</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes whether the patient&apos;s lesion was healed after treatment</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yes, No, NA</obo:MICRO_0000560>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cured</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yes, No, NA</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin lesion cured (yes/no)</rdfs:label>
     </owl:Class>
     
 
@@ -1061,14 +1061,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000632 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000632">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin lesion duration</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes how long a lesion was present before swabbing it</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Duration (Days)</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Duration of lesion</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:MICRO_0000560>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">days</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin lesion duration</rdfs:label>
     </owl:Class>
     
 
@@ -1076,13 +1076,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000633 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000633">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin readness</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin readness</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Erythema</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 5</obo:MICRO_0000560>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score 0 to 5</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of skin readness</rdfs:label>
     </owl:Class>
     
 
@@ -1090,14 +1090,14 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000634 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000634">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of inflammation</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the degree (area) of inflammation after a patient was exposed to leishmania antigen</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DTH</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Delayed type hypersensitivity</obo:MICRO_0000539>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the degree (area) of inflammation after a patient was exposed to leishmania antigen</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mm squared</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of inflammation</rdfs:label>
     </owl:Class>
     
 
@@ -1105,13 +1105,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000635 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000635">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry</obo:MICRO_0000539>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry Unit</obo:MICRO_0000560>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epidermal Moisture content</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry Unit</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Corneometry</rdfs:label>
     </owl:Class>
     
 
@@ -1119,13 +1119,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000636 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000636">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of hairloss</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alopecia</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of hairloss</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alopecia</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score  0 to 5</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degree of hairloss</rdfs:label>
     </owl:Class>
     
 
@@ -1133,13 +1133,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000637 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000637">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Affected by atopic dermatitis (yes/no)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AU</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Affected or Unaffected</obo:IAO_0000115>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:MICRO_0000560>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AU</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:MICRO_0000560>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Affected by atopic dermatitis (yes/no)</rdfs:label>
     </owl:Class>
     
 
@@ -1147,13 +1147,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000639 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000639">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study group</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Co-housed Naïve,Infected</obo:MICRO_0000560>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes treatment, infection status, etc.</obo:IAO_0000115>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Group</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Co-housed Naïve,Infected</obo:MICRO_0000560>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study group</rdfs:label>
     </owl:Class>
     
 
@@ -1161,13 +1161,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000640 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000640">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animal cage num for experiment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage # designated for that experiment</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage</obo:MICRO_0000539>
         <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage Number</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animal cage num for experiment</rdfs:label>
     </owl:Class>
     
 
@@ -1175,12 +1175,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000641 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000641">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage number for a mouse</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CageID</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number assigned to each mouse in the cage</obo:IAO_0000115>
-        <term_type>variable</term_type>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CageID</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cage number for a mouse</rdfs:label>
     </owl:Class>
     
 
@@ -1188,10 +1188,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000747 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000747">
-        <rdfs:label xml:lang="en">DNA extraction date</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:IAO_0000115>Describes when the DNA was extracted</obo:IAO_0000115>
         <obo:MICRO_0000539>ExtractionDate</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">DNA extraction date</rdfs:label>
     </owl:Class>
     
 
@@ -1199,10 +1199,10 @@
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
     </owl:Class>
     
 
@@ -1210,10 +1210,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000463 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000463">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">abx_pmp_all</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">abx_pmp_all</rdfs:label>
     </owl:Class>
     
 
@@ -1221,10 +1221,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000481 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000481">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mom_ld_abx</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mom_ld_abx</rdfs:label>
     </owl:Class>
     
 
@@ -1232,10 +1232,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000482 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000482">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mom_pre_post_ld</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mom_pre_post_ld</rdfs:label>
     </owl:Class>
     
 
@@ -1243,10 +1243,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000486 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000486">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Move time</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Move time</rdfs:label>
     </owl:Class>
     
 
@@ -1254,11 +1254,11 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000494 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000494">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">psn</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">participant identifier</obo:IAO_0000115>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">psn</rdfs:label>
     </owl:Class>
     
 
@@ -1266,10 +1266,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000500 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000500">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</rdfs:label>
     </owl:Class>
     
 
@@ -1277,10 +1277,10 @@
     <!-- http://purl.obolibrary.org/obo/MICRO_0000502 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000502">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surface</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surface</rdfs:label>
     </owl:Class>
     
 
@@ -1288,13 +1288,13 @@
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_9615 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_9615">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Canine Breed</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breed</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Canine Breed</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breed</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Canine Breed</rdfs:label>
     </owl:Class>
     
 
@@ -1302,11 +1302,11 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0000659 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000266>specimen collection process</obo:EUPATH_0000266>
-        <term_type>category</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection</rdfs:label>
     </owl:Class>
     
 
@@ -1314,16 +1314,16 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age of host at the time of sampling; relevant scale depends on species and study, e.g. could be seconds for amoebae or centuries for trees</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_age</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_age</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age</synonym>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age of host at the time of sampling; relevant scale depends on species and study, e.g. could be seconds for amoebae or centuries for trees</obo:IAO_0000115>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">host_age</common_name>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age</rdfs:label>
     </owl:Class>
     
 
@@ -1331,9 +1331,9 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
-        <rdfs:label xml:lang="en">Sample ID</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:MICRO_0000539>#SampleID, SampleID</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">Sample ID</rdfs:label>
     </owl:Class>
     
 
@@ -1341,17 +1341,17 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Collection date</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_collection_date</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The time of sampling, either as an instance (single point in time) or interval. In case no exact time is available, the date/time can be right truncated i.e. all of these are valid times: 2008-01-23T19:23:10+00:00; 2008-01-23T19:23:10; 2008-01-23; 2008-01</obo:IAO_0000115>
-        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
         <obo:EUPATH_0000266>specimen collection time measurement datum</obo:EUPATH_0000266>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <common_name xml:lang="geneban">collection_date</common_name>
-        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0001619</obo:MICRO_0000562>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The time of sampling, either as an instance (single point in time) or interval. In case no exact time is available, the date/time can be right truncated i.e. all of these are valid times: 2008-01-23T19:23:10+00:00; 2008-01-23T19:23:10; 2008-01-23; 2008-01</obo:IAO_0000115>
         <obo:MICRO_0000539>collection_timestamp</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0001619</obo:MICRO_0000562>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
+        <common_name xml:lang="geneban">collection_date</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_collection_date</micro_ID>
+        <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Collection date</rdfs:label>
     </owl:Class>
     
 
@@ -1359,8 +1359,8 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001620 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001620">
-        <rdfs:label xml:lang="en">Latitude (degrees)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:label xml:lang="en">Latitude (degrees)</rdfs:label>
     </owl:Class>
     
 
@@ -1368,8 +1368,8 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001621 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001621">
-        <rdfs:label xml:lang="en">Longitude (degrees)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:label xml:lang="en">Longitude (degrees)</rdfs:label>
     </owl:Class>
     
 
@@ -1377,13 +1377,13 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001622 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001622">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Title</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000605"/>
-        <rdfs:comment>study name</rdfs:comment>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:EUPATH_0000266>investigation title</obo:EUPATH_0000266>
-        <term_type>variable</term_type>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0001622</obo:MICRO_0000562>
+        <term_type>variable</term_type>
+        <rdfs:comment>study name</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Title</rdfs:label>
     </owl:Class>
     
 
@@ -1391,9 +1391,9 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001627 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
-        <rdfs:label xml:lang="en">Country</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
         <term_type>variable</term_type>
+        <rdfs:label xml:lang="en">Country</rdfs:label>
     </owl:Class>
     
 
@@ -1401,12 +1401,12 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001891 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001891">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing center</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000603"/>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">At which center were samples sequenced</obo:IAO_0000115>
+        <obo:MICRO_0000539>sequencecenter</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
-        <obo:MICRO_0000539>sequencecenter</obo:MICRO_0000539>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing center</rdfs:label>
     </owl:Class>
     
 
@@ -1414,11 +1414,11 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001898 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001898">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Notes</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:MICRO_0000539>notes</obo:MICRO_0000539>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Notes</rdfs:label>
     </owl:Class>
     
 
@@ -1426,9 +1426,9 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0100026 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100026">
-        <rdfs:label xml:lang="en">Host organism</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
         <obo:IAO_0000115>scientific name of the host, e.g. homo sapiens</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">Host organism</rdfs:label>
     </owl:Class>
     
 
@@ -1436,13 +1436,13 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0100051 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:MICRO_0000539>sample_type</obo:MICRO_0000539>
         <obo:EUPATH_0000266>specimen</obo:EUPATH_0000266>
-        <term_type>variable</term_type>
+        <obo:MICRO_0000539>sample_type</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
         <rdfs:comment>same as sampletype</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
     </owl:Class>
     
 
@@ -1450,7 +1450,9 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0600047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0600047">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing assay</rdfs:label>
+        <obo:EUPATH_0000266>sequencing assay</obo:EUPATH_0000266>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0600047</obo:MICRO_0000562>
         <JZ_comment>Consider following the ISA tab file:
 
 1. overall information of experiment
@@ -1472,10 +1474,8 @@
 - sequence data analysis
 
 - microbe information including assay results</JZ_comment>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <obo:EUPATH_0000266>sequencing assay</obo:EUPATH_0000266>
         <term_type>category</term_type>
-        <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0600047</obo:MICRO_0000562>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing assay</rdfs:label>
     </owl:Class>
     
 
@@ -1483,10 +1483,10 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000015">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical history</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>category</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical history</rdfs:label>
     </owl:Class>
     
 
@@ -1494,10 +1494,10 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000090 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
-        <rdfs:label xml:lang="en">Treatment</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <term_type>category</term_type>
         <obo:IAO_0000115>A processual entity whose completion is hypothesized (by a healthcare provider) to alleviate the signs and symptoms associated with a disorder</obo:IAO_0000115>
+        <term_type>category</term_type>
+        <rdfs:label xml:lang="en">Treatment</rdfs:label>
     </owl:Class>
     
 
@@ -1505,16 +1505,16 @@
     <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_sex</micro_ID>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">physical sex of the host</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_sex</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_sex</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex</synonym>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <common_name xml:lang="geneban">host_sex</common_name>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</rdfs:label>
     </owl:Class>
     
 
@@ -1522,10 +1522,10 @@
     <!-- http://purl.obolibrary.org/obo/REO_0000699 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/REO_0000699">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Social role</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <term_type>variable</term_type>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Social role</rdfs:label>
     </owl:Class>
     
 
@@ -1533,11 +1533,11 @@
     <!-- http://purl.obolibrary.org/obo/SO_0001000 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/SO_0001000">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Region of 16S rRNA sequenced</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000603"/>
         <obo:MICRO_0000539>region</obo:MICRO_0000539>
         <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <term_type>variable</term_type>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Region of 16S rRNA sequenced</rdfs:label>
     </owl:Class>
     
 
@@ -1545,16 +1545,16 @@
     <!-- http://purl.obolibrary.org/obo/UBERON_0000061 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000061">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body site</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">name of body site where the sample was obtained from</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_body_site</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_body_site</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">body_site</synonym>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">name of body site where the sample was obtained from</obo:IAO_0000115>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">host_body_site</common_name>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body site</rdfs:label>
     </owl:Class>
     
 
@@ -1562,16 +1562,16 @@
     <!-- http://purl.obolibrary.org/obo/UBERON_0000105 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000105">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host life stage</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_life_stage</micro_ID>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">description of life stage of host</obo:IAO_0000115>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_life_stage</common_name>
+        <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_life_stage</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">life_stage</synonym>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <common_name xml:lang="geneban">host_life_stage</common_name>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host life stage</rdfs:label>
     </owl:Class>
     
 
@@ -1579,16 +1579,16 @@
     <!-- http://purl.obolibrary.org/obo/UBERON_0000463 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000463">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body product</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">substance produced by the body, e.g. stool, mucus, where the sample was obtained from. For Foundational Model of Anatomy Ontology (FMA) (v 3.1) terms, please see http://purl.bioontology.org/ontology/FMA</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_body_product</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_body_product</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">body_product</synonym>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">substance produced by the body, e.g. stool, mucus, where the sample was obtained from. For Foundational Model of Anatomy Ontology (FMA) (v 3.1) terms, please see http://purl.bioontology.org/ontology/FMA</obo:IAO_0000115>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <common_name xml:lang="geneban">host_body_product</common_name>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body product</rdfs:label>
     </owl:Class>
     
 
@@ -1596,16 +1596,16 @@
     <!-- http://purl.obolibrary.org/obo/UBERON_0000466 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000466">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body habitat</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">original body habitat where the sample was obtained from</obo:IAO_0000115>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
+        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
+        <common_name xml:lang="geneban">host_body_habitat</common_name>
         <micro_ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MiXS_host_body_habitat</micro_ID>
         <synonym rdf:datatype="http://www.w3.org/2001/XMLSchema#string">body_habitat</synonym>
-        <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
-        <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">original body habitat where the sample was obtained from</obo:IAO_0000115>
         <term_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
-        <common_name xml:lang="geneban">host_body_habitat</common_name>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host body habitat</rdfs:label>
     </owl:Class>
     
 
@@ -1613,13 +1613,13 @@
     <!-- http://purl.obolibrary.org/obo/UBERON_0019204 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0019204">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin type</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000610"/>
-        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BodyType</obo:MICRO_0000539>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes the microenvironment of the body part</obo:IAO_0000115>
+        <obo:MICRO_0000539 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BodyType</obo:MICRO_0000539>
+        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
         <obo:MICRO_0000560 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sebaceous, Dry, Moist</obo:MICRO_0000560>
         <term_type>variable</term_type>
-        <obo:MICRO_0000559>yes</obo:MICRO_0000559>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin type</rdfs:label>
     </owl:Class>
     
 
@@ -1627,13 +1627,13 @@
     <!-- http://purl.obolibrary.org/obo/UO_0000196 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/UO_0000196">
-        <rdfs:label xml:lang="en">pH</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:MICRO_0000539>pH</obo:MICRO_0000539>
+        <rdfs:label xml:lang="en">pH</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
