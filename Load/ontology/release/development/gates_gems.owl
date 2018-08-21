@@ -8,8 +8,8 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems.owl">
-        <rdfs:comment>Change Samples to Sample</rdfs:comment>
-        <owl:versionInfo>2018-07-26</owl:versionInfo>
+        <rdfs:comment>SVN revision: 90985</rdfs:comment>
+        <owl:versionInfo>2018-08-21</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -36,15 +36,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000755 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000755">
-        <rdfs:label>Column header</rdfs:label>
-    </owl:AnnotationProperty>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/GATES_GEMS_0000003 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/GATES_GEMS_0000003">
-        <rdfs:label>Notes</rdfs:label>
+        <rdfs:label>variable</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -53,6 +45,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
         <rdfs:label xml:lang="en">definition</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TEMP_0000003 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/TEMP_0000003">
+        <rdfs:label>Notes</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -245,7 +245,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000596 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
         <obo:EUPATH_0000274 xml:lang="en">17</obo:EUPATH_0000274>
         <rdfs:label>Waste disposal</rdfs:label>
     </owl:Class>
@@ -375,7 +375,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000686 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000686">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">15</obo:EUPATH_0000274>
         <rdfs:label>Hygiene</rdfs:label>
     </owl:Class>
@@ -416,7 +416,7 @@
         <obo:EUPATH_0000755>F4B_MUAC_AGEZ</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MUAC_AGEZ</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MUAC_AGEZ</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>changed from EUPATH_0010203, so, it will merge info, ignore case or control</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>changed from EUPATH_0010203, so, it will merge info, ignore case or control</obo:TEMP_0000003>
         <rdfs:label>MUAC for age z-score</rdfs:label>
     </owl:Class>
     
@@ -532,7 +532,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000731 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000731">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
         <obo:EUPATH_0000274 xml:lang="en">16</obo:EUPATH_0000274>
         <rdfs:label>Water information</rdfs:label>
     </owl:Class>
@@ -2746,7 +2746,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_MON</obo:EUPATH_0000755>
-        <rdfs:label>Enrollment month</rdfs:label>
+        <rdfs:label>Month of enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -2757,7 +2757,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_YR</obo:EUPATH_0000755>
-        <rdfs:label>Enrollment year</rdfs:label>
+        <rdfs:label>Year of enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -3149,7 +3149,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_ANTIBIOTIC</obo:EUPATH_0000755>
-        <rdfs:label>Child given antibiotic before stool sample collection?</rdfs:label>
+        <rdfs:label>Child given antibiotic before stool sample collection</rdfs:label>
     </owl:Class>
     
 
@@ -3203,7 +3203,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn9</obo:EUPATH_0000755>
-        <rdfs:label>aatA and aaiC EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aatA and aaiC positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3214,7 +3214,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_642"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn23</obo:EUPATH_0000755>
-        <rdfs:label>Aeromonas, bacteriology</rdfs:label>
+        <rdfs:label>Aeromonas, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -3225,8 +3225,9 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn15</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>Calculated: Atypical EPEC (aEPEC)</obo:GATES_GEMS_0000003>
-        <rdfs:label>Atypical EPEC, PCR</rdfs:label>
+        <obo:IAO_0000115>eae positive, bfpA negative</obo:IAO_0000115>
+        <obo:TEMP_0000003>Calculated: Atypical EPEC (aEPEC)</obo:TEMP_0000003>
+        <rdfs:label>Atypical EPEC, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3237,7 +3238,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn6</obo:EUPATH_0000755>
-        <rdfs:label>aatA or aaiC EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aatA or aaiC positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3248,7 +3249,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_AAIC</obo:EUPATH_0000755>
-        <rdfs:label>aaiC EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aaiC positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3259,7 +3260,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_AATA</obo:EUPATH_0000755>
-        <rdfs:label>aatA EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aatA positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3270,7 +3271,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn10</obo:EUPATH_0000755>
-        <rdfs:label>bfpA EPEC, PCR</rdfs:label>
+        <rdfs:label>EPEC bfpA positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3281,7 +3282,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_EAE</obo:EUPATH_0000755>
-        <rdfs:label>eae EPEC, PCR</rdfs:label>
+        <rdfs:label>EPEC eae positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3292,7 +3293,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_ELTB</obo:EUPATH_0000755>
-        <rdfs:label>LT positive ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC LT positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3303,7 +3304,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn2</obo:EUPATH_0000755>
-        <rdfs:label>ST positive ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC ST positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3314,7 +3315,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_STX1</obo:EUPATH_0000755>
-        <rdfs:label>stx1 STEC, PCR</rdfs:label>
+        <rdfs:label>STEC stx1 positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3325,7 +3326,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_STX2</obo:EUPATH_0000755>
-        <rdfs:label>stx2 STEC, PCR</rdfs:label>
+        <rdfs:label>STEC stx2 positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3336,7 +3337,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn11</obo:EUPATH_0000755>
-        <rdfs:label>eae and bfpA EPEC, PCR</rdfs:label>
+        <rdfs:label>EPEC eae and bfpA positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3347,7 +3348,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn1</obo:EUPATH_0000755>
-        <rdfs:label>ST or LT ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC ST or LT positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3358,7 +3359,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">17</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn5</obo:EUPATH_0000755>
-        <rdfs:label>LT positive ST negative ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC LT positive ST negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3369,7 +3370,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_142786"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn24</obo:EUPATH_0000755>
-        <rdfs:label>Norovirus, RT-PCR</rdfs:label>
+        <rdfs:label>Norovirus, by RT-PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3380,7 +3381,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_122928"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn25</obo:EUPATH_0000755>
-        <rdfs:label>Norovirus GI, RT-PCR</rdfs:label>
+        <rdfs:label>Norovirus GI, by RT-PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3391,7 +3392,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_122929"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn26</obo:EUPATH_0000755>
-        <rdfs:label>Norovirus GII, RT-PCR</rdfs:label>
+        <rdfs:label>Norovirus GII, by RT-PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3402,7 +3403,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5759"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn37</obo:EUPATH_0000755>
-        <rdfs:label>Entamoeba histolytica, ELISA</rdfs:label>
+        <rdfs:label>Entamoeba histolytica, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -3413,7 +3414,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10912"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn22</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus, ELISA</rdfs:label>
+        <rdfs:label>Rotavirus, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -3424,7 +3425,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn17</obo:EUPATH_0000755>
-        <rdfs:label>Shigella, bacteriology</rdfs:label>
+        <rdfs:label>Shigella, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -3435,7 +3436,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">18</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn4</obo:EUPATH_0000755>
-        <rdfs:label>ST positive LT negative ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC ST positive LT negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3446,7 +3447,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn14</obo:EUPATH_0000755>
-        <rdfs:label>stx1 or stx2 STEC, PCR</rdfs:label>
+        <rdfs:label>STEC stx1 or stx2 positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3477,7 +3478,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_194"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn38</obo:EUPATH_0000755>
-        <rdfs:label>Campylobacter, bacteriology</rdfs:label>
+        <rdfs:label>Campylobacter, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -3488,7 +3489,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5806"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn35</obo:EUPATH_0000755>
-        <rdfs:label>Cryptosporidium, ELISA</rdfs:label>
+        <rdfs:label>Cryptosporidium, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -3499,7 +3500,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_5740"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn36</obo:EUPATH_0000755>
-        <rdfs:label>Giardia, ELISA</rdfs:label>
+        <rdfs:label>Giardia, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -4829,7 +4830,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010023"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_CHEST_INDRW</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:TEMP_0000003>
         <rdfs:label>Chest indrawing</rdfs:label>
     </owl:Class>
     
@@ -5620,7 +5621,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010391"/>
         <obo:EUPATH_0000274 xml:lang="en">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_TRT_NONE</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>this is not option in F4B_TRT_GIVE</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>this is not option in F4B_TRT_GIVE</obo:TEMP_0000003>
         <rdfs:label>None prescribed or taken</rdfs:label>
     </owl:Class>
     
@@ -5874,7 +5875,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010389"/>
         <obo:EUPATH_0000274 xml:lang="en">20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_MED_OTHER1</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>option &apos;other&apos;</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>option &apos;other&apos;</obo:TEMP_0000003>
         <rdfs:label>Other medicine</rdfs:label>
     </owl:Class>
     
@@ -5886,7 +5887,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010389"/>
         <obo:EUPATH_0000274 xml:lang="en">21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_MED_OTHER2</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>option &apos;other&apos;</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>option &apos;other&apos;</obo:TEMP_0000003>
         <rdfs:label>Other medicine</rdfs:label>
     </owl:Class>
     
@@ -5898,7 +5899,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010389"/>
         <obo:EUPATH_0000274 xml:lang="en">22</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_MED_OTHER3</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>option &apos;other&apos;</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>option &apos;other&apos;</obo:TEMP_0000003>
         <rdfs:label>Other medicine</rdfs:label>
     </owl:Class>
     
@@ -6306,7 +6307,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010030"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F5_RECTAL</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:TEMP_0000003>
         <rdfs:label>Rectal prolapse</rdfs:label>
     </owl:Class>
     
@@ -6615,7 +6616,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn3</obo:EUPATH_0000755>
-        <rdfs:label>ST and LT positive ETEC, PCR</rdfs:label>
+        <rdfs:label>ETEC ST and LT positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6626,7 +6627,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn7</obo:EUPATH_0000755>
-        <rdfs:label>aatA positive aaiC negative EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aatA positive aaiC negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6637,7 +6638,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn8</obo:EUPATH_0000755>
-        <rdfs:label>aaiC positive aatA negative EAEC, PCR</rdfs:label>
+        <rdfs:label>EAEC aaiC positive aatA negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6648,7 +6649,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn12</obo:EUPATH_0000755>
-        <rdfs:label>bfpA positive eae negative EPEC, PCR</rdfs:label>
+        <rdfs:label>EPEC bfpA positive eae negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6659,7 +6660,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn13</obo:EUPATH_0000755>
-        <rdfs:label>eae positive bfpA negative EPEC, PCR</rdfs:label>
+        <rdfs:label>EPEC eae positive bfpA negative, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6670,7 +6671,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10508"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn27</obo:EUPATH_0000755>
-        <rdfs:label>Adenovirus serotypes 40/41, ELISA</rdfs:label>
+        <rdfs:label>Adenovirus serotypes 40/41, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -6681,7 +6682,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10508"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn28</obo:EUPATH_0000755>
-        <rdfs:label>Adenovirus, not serotypes 40/41, ELISA</rdfs:label>
+        <rdfs:label>Adenovirus, not serotypes 40/41, by ELISA</rdfs:label>
     </owl:Class>
     
 
@@ -6692,7 +6693,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_127906"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn29</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae O1, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae O1, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6703,7 +6704,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_127906"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn30</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae O1, serotype Inaba, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae O1, serotype Inaba, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6714,7 +6715,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_127906"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn31</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae O1, serotype Ogawa, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae O1, serotype Ogawa, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6725,7 +6726,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_666"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn32</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae O139, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae O139, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6736,7 +6737,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_590"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn33</obo:EUPATH_0000755>
-        <rdfs:label>Salmonella typhi, bacteriology</rdfs:label>
+        <rdfs:label>Salmonella typhi, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6747,7 +6748,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_590"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn34</obo:EUPATH_0000755>
-        <rdfs:label>Salmonella non-typhi, bacteriology</rdfs:label>
+        <rdfs:label>Salmonella non-typhi, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6758,7 +6759,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_95341"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn42</obo:EUPATH_0000755>
-        <rdfs:label>Sapovirus, RT-PCR</rdfs:label>
+        <rdfs:label>Sapovirus, by RT-PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6769,7 +6770,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">22</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn16</obo:EUPATH_0000755>
-        <rdfs:label>eae and stx EHEC, PCR</rdfs:label>
+        <rdfs:label>EHEC eae and stx positive, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6780,7 +6781,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_194"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_CAMPY_NONJEJ</obo:EUPATH_0000755>
-        <rdfs:label>Campylobacter (non-jejuni or coli), bacteriology</rdfs:label>
+        <rdfs:label>Campylobacter (non-jejuni or coli), by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6791,7 +6792,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_194"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_CAMPY_NONSPEC</obo:EUPATH_0000755>
-        <rdfs:label>Campylobacter (non-speciated), bacteriology</rdfs:label>
+        <rdfs:label>Campylobacter (non-speciated), by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6799,10 +6800,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015301 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015301">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_4B</obo:EUPATH_0000755>
-        <rdfs:label>Shigella flexneri seroptype 4B, bacteriology</rdfs:label>
+        <rdfs:label>Shigella flexneri serotype 4B, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6810,10 +6811,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015302 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015302">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_5B</obo:EUPATH_0000755>
-        <rdfs:label>Shigella flexneri seroptype 5B, bacteriology</rdfs:label>
+        <rdfs:label>Shigella flexneri serotype 5B, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6821,10 +6822,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015303 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015303">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_6</obo:EUPATH_0000755>
-        <rdfs:label>Shigella flexneri seroptype 6, bacteriology</rdfs:label>
+        <rdfs:label>Shigella flexneri serotype 6, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6832,10 +6833,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015304 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015304">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_NONTYP</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri non-typeable, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri non-typeable, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6846,7 +6847,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
         <obo:EUPATH_0000274 xml:lang="en">15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_NONTYPABLE</obo:EUPATH_0000755>
-        <rdfs:label>Shigella non-typeable, bacteriology</rdfs:label>
+        <rdfs:label>Shigella non-typeable, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6857,7 +6858,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_666"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_VIB_CHOLERAE</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6868,7 +6869,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_666"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_VIB_NON</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae non-O1/O139, bacteriology</rdfs:label>
+        <rdfs:label>Vibrio cholerae non-O1/O139, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6879,7 +6880,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_662"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_VIB_OTHER</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio (other species), bacteriology</rdfs:label>
+        <rdfs:label>Vibrio (other species), by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6890,7 +6891,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_SEN</obo:EUPATH_0000755>
-        <rdfs:label>sen, PCR</rdfs:label>
+        <rdfs:label>E. coli sen positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6901,7 +6902,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274 xml:lang="en">24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_EFA1</obo:EUPATH_0000755>
-        <rdfs:label>efa1, PCR</rdfs:label>
+        <rdfs:label>EHEC efa1 positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6912,7 +6913,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_195"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn40</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Campylobacter coli, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Campylobacter coli, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6923,7 +6924,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_197"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn39</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Campylobacter jejuni, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Campylobacter jejuni, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6934,7 +6935,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010985"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_ESTA</obo:EUPATH_0000755>
-        <rdfs:label>ST positive ETEC, PCR result</rdfs:label>
+        <rdfs:label>ETEC ST positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6945,7 +6946,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010985"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_BFPA</obo:EUPATH_0000755>
-        <rdfs:label>bfpA EPEC, PCR result</rdfs:label>
+        <rdfs:label>EPEC bfpA positive, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6953,10 +6954,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015319 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015319">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn18</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6967,7 +6968,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_621"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn21</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella boydii, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella boydii, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6978,7 +6979,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_622"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn20</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella dysenteriae, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella dysenteriae, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -6989,7 +6990,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_670"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16_VIB_PARAHAEM</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Vibrio parahaemolyticus, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Vibrio parahaemolyticus, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7000,7 +7001,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_624"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn19</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella sonnei, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella sonnei, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7011,7 +7012,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_984898"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_4A</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri seroptype 4A, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 4A, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7022,7 +7023,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_1617964"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_4C</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri seroptype 4C, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 4C, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7033,7 +7034,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_424718"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_5A</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri seroptype 5A, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 5A, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7044,7 +7045,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_1935182"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_X</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri seroptype X, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype X, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7055,7 +7056,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_424720"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F16CORR_SHIG_Y</obo:EUPATH_0000755>
-        <rdfs:label xml:lang="en">Shigella flexneri seroptype Y, bacteriology</rdfs:label>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype Y, by bacteriology</rdfs:label>
     </owl:Class>
     
 
@@ -7066,7 +7067,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_39733"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn41</obo:EUPATH_0000755>
-        <rdfs:label>Astrovirus, RT-PCR</rdfs:label>
+        <rdfs:label>Astrovirus, by RT-PCR</rdfs:label>
     </owl:Class>
     
 
@@ -7077,7 +7078,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>adenovirus</obo:EUPATH_0000755>
-        <rdfs:label>Adenovirus, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Adenovirus, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7088,7 +7089,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>adenovirus_40_41</obo:EUPATH_0000755>
-        <rdfs:label>Adenovirus serotypes 40/41, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Adenovirus serotypes 40/41, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7099,7 +7100,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>aeromonas</obo:EUPATH_0000755>
-        <rdfs:label>Aeromonas, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Aeromonas, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7110,7 +7111,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ancylostoma</obo:EUPATH_0000755>
-        <rdfs:label>Ancylostoma, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Ancylostoma, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7121,7 +7122,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ascaris</obo:EUPATH_0000755>
-        <rdfs:label>Ascaris, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Ascaris, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7132,18 +7133,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>astrovirus</obo:EUPATH_0000755>
-        <rdfs:label>Astrovirus, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015336 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015336">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>bacterial_16s</obo:EUPATH_0000755>
-        <rdfs:label>Bacterial 16s ribosomal RNA, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Astrovirus, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7154,7 +7144,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>b_fragilis</obo:EUPATH_0000755>
-        <rdfs:label>Bacteriodes fragilis, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Bacteriodes fragilis, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7165,7 +7155,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>campylobacter_pan</obo:EUPATH_0000755>
-        <rdfs:label>Campylobacter, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Campylobacter, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7176,7 +7166,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>c_difficile_tcda</obo:EUPATH_0000755>
-        <rdfs:label>Clostridium difficile toxin A (TcdA), Taqman Array Card result</rdfs:label>
+        <rdfs:label>Clostridium difficile toxin A (TcdA), by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7187,7 +7177,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>c_difficile_tcdb</obo:EUPATH_0000755>
-        <rdfs:label>Clostridium difficile toxin B (TcdB), Taqman Array Card result</rdfs:label>
+        <rdfs:label>Clostridium difficile toxin B (TcdB), by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7198,7 +7188,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>c_jejuni_coli</obo:EUPATH_0000755>
-        <rdfs:label>Campylobacter jejuni/coli, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Campylobacter jejuni/coli, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7209,7 +7199,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>cryptosporidium</obo:EUPATH_0000755>
-        <rdfs:label>Cryptosporidium, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Cryptosporidium, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7220,7 +7210,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>cryptosporidium_hominis</obo:EUPATH_0000755>
-        <rdfs:label>Cryptosporidium hominis, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Cryptosporidium hominis, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7231,7 +7221,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>cryptosporidium_parvum</obo:EUPATH_0000755>
-        <rdfs:label>Cryptosporidium parvum, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Cryptosporidium parvum, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7242,7 +7232,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>cyclospora</obo:EUPATH_0000755>
-        <rdfs:label>Cyclospora, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Cyclospora, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7253,7 +7243,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">17</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>eaec_aaic</obo:EUPATH_0000755>
-        <rdfs:label>aaiC EAEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>EAEC aaiC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7264,7 +7254,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>eaec_aata</obo:EUPATH_0000755>
-        <rdfs:label>aatA EAEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>EAEC aatA, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7275,7 +7265,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>eaec_aggr</obo:EUPATH_0000755>
-        <rdfs:label>aggR EAEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>EAEC aggR, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7286,7 +7276,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>e_bieneusi</obo:EUPATH_0000755>
-        <rdfs:label>Enterocytozoon bieneusi, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Enterocytozoon bieneusi, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7297,7 +7287,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">22</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>e_histolytica</obo:EUPATH_0000755>
-        <rdfs:label>Entamoeba histolytica, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Entamoeba histolytica, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7308,7 +7298,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>e_intestinalis</obo:EUPATH_0000755>
-        <rdfs:label>Encephalitozoon intestinalis, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Encephalitozoon intestinalis, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7319,7 +7309,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>epec_bfpa</obo:EUPATH_0000755>
-        <rdfs:label>bfpA EPEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>EPEC bfpA, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7330,7 +7320,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">26</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>etec_lt</obo:EUPATH_0000755>
-        <rdfs:label>LT positive ETEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>ETEC LT, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7341,7 +7331,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">27</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>etec_sth</obo:EUPATH_0000755>
-        <rdfs:label>STh ETEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>ETEC STh, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7352,7 +7342,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">28</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>etec_stp</obo:EUPATH_0000755>
-        <rdfs:label>STp ETEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>ETEC STp, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7363,7 +7353,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">29</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>giardia_a</obo:EUPATH_0000755>
-        <rdfs:label>Giardia Assemblage A , Taqman Array Card result</rdfs:label>
+        <rdfs:label>Giardia Assemblage A, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7374,7 +7364,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">30</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>giardia_b</obo:EUPATH_0000755>
-        <rdfs:label>Giardia Assemblage B , Taqman Array Card result</rdfs:label>
+        <rdfs:label>Giardia Assemblage B, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7385,7 +7375,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">31</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>giardia</obo:EUPATH_0000755>
-        <rdfs:label>Giardia, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Giardia, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7396,7 +7386,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">32</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>h_pylori</obo:EUPATH_0000755>
-        <rdfs:label>Helicobacter pylori, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Helicobacter pylori, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7407,7 +7397,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">33</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>isospora</obo:EUPATH_0000755>
-        <rdfs:label>Isospora, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Isospora, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7418,7 +7408,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">34</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>necator</obo:EUPATH_0000755>
-        <rdfs:label>Necator, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Necator, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7429,7 +7419,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">35</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>norovirus_gi</obo:EUPATH_0000755>
-        <rdfs:label>Norovirus GI, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Norovirus GI, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7440,7 +7430,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">36</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>norovirus_gii</obo:EUPATH_0000755>
-        <rdfs:label>Norovirus GII, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Norovirus GII, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7451,7 +7441,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">37</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7462,7 +7452,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">44</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g10</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G10, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G10, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7473,7 +7463,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">45</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g12</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G12, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G12, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7484,7 +7474,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">38</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g1</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G1, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G1, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7495,7 +7485,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">39</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g2</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G2, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G2, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7506,7 +7496,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">40</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g3</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G3, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G3, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7517,7 +7507,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">41</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g4</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G4, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G4, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7528,7 +7518,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">42</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g8</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G8, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G8, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7539,7 +7529,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">43</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_g9</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype G9, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype G9, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7550,7 +7540,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">50</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p10</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P10, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P10, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7561,7 +7551,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">51</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p11</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P11, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P11, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7572,7 +7562,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">46</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p4</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P4, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P4, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7583,7 +7573,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">47</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p6</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P6, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P6, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7594,7 +7584,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">48</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p8</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P8, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P8, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7605,7 +7595,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">49</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>rotavirus_p9</obo:EUPATH_0000755>
-        <rdfs:label>Rotavirus genotype P9, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Rotavirus genotype P9, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7616,7 +7606,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">52</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>salmonella</obo:EUPATH_0000755>
-        <rdfs:label>Salmonella, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Salmonella, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7627,7 +7617,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">53</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>sapovirus</obo:EUPATH_0000755>
-        <rdfs:label>Sapovirus, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Sapovirus, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7638,7 +7628,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">54</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>shigella_eiec</obo:EUPATH_0000755>
-        <rdfs:label>Shigella or EIEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Shigella or EIEC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7649,7 +7639,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">55</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>stec_stx1</obo:EUPATH_0000755>
-        <rdfs:label>stx1 STEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>STEC stx1, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7660,7 +7650,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">56</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>stec_stx2</obo:EUPATH_0000755>
-        <rdfs:label>stx2 STEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>STEC stx2, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7671,7 +7661,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">57</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>strongyloides</obo:EUPATH_0000755>
-        <rdfs:label>Strongyloides, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Strongyloides, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7682,7 +7672,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">58</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>trichuris</obo:EUPATH_0000755>
-        <rdfs:label>Trichuris, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Trichuris, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7693,7 +7683,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">59</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>v_cholerae</obo:EUPATH_0000755>
-        <rdfs:label>Vibrio cholerae, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Vibrio cholerae, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7704,7 +7694,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">60</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>EAEC</obo:EUPATH_0000755>
-        <rdfs:label>EAEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>EAEC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7715,7 +7705,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">63</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ST_ETEC</obo:EUPATH_0000755>
-        <rdfs:label>ST positive ETEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>ETEC ST, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7726,29 +7716,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">64</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>LT_ETEC</obo:EUPATH_0000755>
-        <rdfs:label>LT positive ETEC, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015394 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015394">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">65</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>STP</obo:EUPATH_0000755>
-        <rdfs:label>STp, Taqman Array Card result</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015395 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015395">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
-        <obo:EUPATH_0000274 xml:lang="en">66</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>STH</obo:EUPATH_0000755>
-        <rdfs:label>STh, Taqman Array Card result</rdfs:label>
+        <rdfs:label>ETEC LT positive ST negative, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7759,7 +7727,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">67</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>TEPEC</obo:EUPATH_0000755>
-        <rdfs:label>Typical EPEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Typical EPEC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7770,7 +7738,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">68</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>aEPEC</obo:EUPATH_0000755>
-        <rdfs:label>Atypical EPEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>Atypical EPEC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7781,7 +7749,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0015399"/>
         <obo:EUPATH_0000274 xml:lang="en">69</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>STEC</obo:EUPATH_0000755>
-        <rdfs:label>STEC, Taqman Array Card result</rdfs:label>
+        <rdfs:label>STEC, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7796,6 +7764,66 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015443 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015443">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_374923"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_1A</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 1A, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015444 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015444">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_41434"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_1B</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 1B, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015445 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015445">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_42897"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_2A</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 2A, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015446 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015446">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_1288825"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_2B</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 2B, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015447 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015447">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_424717"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_3A</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 3A, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015448 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015448">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_435321"/>
+        <obo:EUPATH_0000755>F16CORR_SHIG_3B</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 3B, by bacteriology</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021084 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021084">
@@ -7803,7 +7831,7 @@
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_HOUSE_ELEC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_HOUSE_ELEC</obo:EUPATH_0000755>
-        <obo:GATES_GEMS_0000003>EUPATH_0021084 in ICEMR india</obo:GATES_GEMS_0000003>
+        <obo:TEMP_0000003>EUPATH_0021084 in ICEMR india</obo:TEMP_0000003>
         <rdfs:label>Electricity</rdfs:label>
     </owl:Class>
     
@@ -7869,6 +7897,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1288825 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1288825">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 2B</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_142786 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_142786">
@@ -7882,7 +7919,7 @@
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_1617964 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1617964">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
         <rdfs:label>Shigella flexneri serotype 4C</rdfs:label>
     </owl:Class>
@@ -7892,7 +7929,7 @@
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_1935182 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1935182">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">12</obo:EUPATH_0000274>
         <rdfs:label>Shigella flexneri serotype X</rdfs:label>
     </owl:Class>
@@ -7949,6 +7986,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_374923 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_374923">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 1A</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_39733 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_39733">
@@ -7959,10 +8005,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_41434 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_41434">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 1B</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_424717 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424717">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 3A</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_424718 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424718">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <rdfs:label>Shigella flexneri serotype 5A</rdfs:label>
     </owl:Class>
@@ -7972,9 +8036,27 @@
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_424720 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424720">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">13</obo:EUPATH_0000274>
         <rdfs:label>Shigella flexneri serotype Y</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_42897 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_42897">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 2A</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_435321 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_435321">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
+        <rdfs:label xml:lang="en">Shigella flexneri serotype 3B</rdfs:label>
     </owl:Class>
     
 
@@ -8122,7 +8204,7 @@
     <!-- http://purl.obolibrary.org/obo/NCBITaxon_984898 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_984898">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <rdfs:label>Shigella flexneri serotype 4A</rdfs:label>
     </owl:Class>
@@ -8159,6 +8241,15 @@
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <rdfs:label>Household</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/http://purl.obolibrary.org/obo/NCBITaxon_623">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
+        <rdfs:label xml:lang="en">Shigella flexneri</rdfs:label>
     </owl:Class>
     
 
