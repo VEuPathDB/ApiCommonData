@@ -542,8 +542,8 @@ sub loadTable {
 
   my %housekeepingFieldsHash = map { $_ => 1 } @$HOUSEKEEPING_FIELDS;
 
-  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => 'ctl');
-  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => 'ctl');
+  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.ctl');
+  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.ctl');
 
   if(!$isSelfReferencing && !$hasLobColumns) {
     $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod);
