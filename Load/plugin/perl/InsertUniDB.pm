@@ -522,6 +522,8 @@ sub loadTable {
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
   my $hasLobColumns = scalar(@{$tableInfo->{lobColumns}}) > 0;
 
+  my $hasNewRows;
+
   my $abbreviatedTableColon = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
@@ -570,6 +572,8 @@ sub loadTable {
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
 
       if(!$isSelfReferencing && !$hasLobColumns) {
+        $hasNewRows = 1;
+
         $maxPrimaryKey++;
         $mappedRow->{lc($primaryKeyColumn)} = $maxPrimaryKey;
 
@@ -639,7 +643,7 @@ sub loadTable {
 
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 
-  if(!$isSelfReferencing && !$hasLobColumns) {
+  if(!$isSelfReferencing && !$hasLobColumns && $hasNewRows) {
     my $login       = $self->getConfig->getDatabaseLogin();
     my $password    = $self->getConfig->getDatabasePassword();
     my $dbiDsn      = $self->getConfig->getDbiDsn();
