@@ -573,6 +573,7 @@ sub loadTable {
 
       if(!$isSelfReferencing && !$hasLobColumns) {
         $hasNewRows = 1;
+        $rowCount++
 
         $maxPrimaryKey++;
         $mappedRow->{lc($primaryKeyColumn)} = $maxPrimaryKey;
@@ -641,7 +642,7 @@ sub loadTable {
 
   $tableReader->finishTable();
 
-  $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
+
 
   if(!$isSelfReferencing && !$hasLobColumns && $hasNewRows) {
     my $login       = $self->getConfig->getDatabaseLogin();
@@ -663,6 +664,7 @@ sub loadTable {
 
   }
 
+  $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 }
 
 sub getAbbreviatedTableName {
