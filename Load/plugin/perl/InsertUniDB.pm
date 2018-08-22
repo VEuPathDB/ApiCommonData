@@ -485,6 +485,10 @@ sub writeConfigFile {
     push @$attributeList, keys %$housekeepingMap;
   }
 
+  foreach my $dateColumn (@{$tableInfo->{dateColumns}}) {
+    $housekeepingMap->{lc($dateColumn)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
+  }
+
 
   my @fields = map { lc($_) . $housekeepingMap->{lc($_)}  } @$attributeList;
 
@@ -826,11 +830,17 @@ sub getAllTableInfo {
     my $parentRelations = $dbiTable->getParentRelations();
 
     my @lobColumns;
+    my @dateColumns;
 
     foreach my $att (@{$dbiTable->getAttributeInfo()}) {
       if(uc($att->{type}) eq "CLOB" || uc($att->{type}) eq "BLOB") {
         push @lobColumns, $att->{col};
       }
+
+      if(uc($att->{type}) eq "DATE") {
+        push @dateColumns, $att->{col};
+      }
+
     }
 
     my @parentRelationsNoHousekeeping;
@@ -873,6 +883,7 @@ sub getAllTableInfo {
     }
 
     $allTableInfo{$fullTableName}->{lobColumns} = \@lobColumns;
+    $allTableInfo{$fullTableName}->{dateColumns} = \@dateColumns;
     $allTableInfo{$fullTableName}->{isSelfReferencing} = $isSelfReferencing;
     $allTableInfo{$fullTableName}->{parentRelations} = \@parentRelationsNoHousekeeping;
 
