@@ -864,7 +864,7 @@ sub getAllTableInfo {
       }
 
       # important for us to retain row_project_id
-      unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || ($fullTableName eq $PROJECT_INFO_TABLE && $field eq "row_project_id")) {
+      unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || (&getAbbreviatedTableName($fullTableName, '.') eq $PROJECT_INFO_TABLE && $field eq "row_project_id")) {
         push @parentRelationsNoHousekeeping, $parentRelation;
       }
     }
