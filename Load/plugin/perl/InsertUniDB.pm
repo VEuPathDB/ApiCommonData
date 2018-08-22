@@ -662,7 +662,7 @@ sub loadTable {
     }
 
 
-    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn log=${sqlldrMapFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
+    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn rows=1000 log=${sqlldrMapFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
     unless($sqlLdrMapSystemResult / 256 == 0) {
       $self->error("sqlldr failed:  ${sqlldrMapFn}.log");
     }
