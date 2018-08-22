@@ -462,8 +462,7 @@ sub writeConfigFile {
 
   my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || $tableName eq $MAPPING_TABLE_NAME) ? " constant $projectId" : "";
 
-  my $housekeepingMap = {'modification_date' =>  " constant \"$modDate\"",
-                         'user_read' => " constant $userRead", 
+  my $housekeepingMap = {'user_read' => " constant $userRead", 
                          'user_write' => " constant $userWrite", 
                          'group_read' => " constant $groupRead", 
                          'group_write' => " constant $groupWrite", 
@@ -489,6 +488,7 @@ sub writeConfigFile {
     $housekeepingMap->{lc($dateColumn)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
   }
 
+  $housekeepingMap->{'modification_date'} = " constant \"$modDate\"";
 
   my @fields = map { lc($_) . $housekeepingMap->{lc($_)}  } @$attributeList;
 
