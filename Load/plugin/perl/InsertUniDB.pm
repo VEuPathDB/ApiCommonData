@@ -942,4 +942,16 @@ sub foundValueInArray {
   return 0;
 }
 
+
+sub getConfig {
+  my ($self) = @_;
+
+  if (!$self->{config}) {
+    my $gusConfigFile = $self->getArg('gusconfigfile');
+     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
+   }
+
+  $self->{config};
+}
+
 1;
