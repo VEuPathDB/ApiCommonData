@@ -646,13 +646,13 @@ sub loadTable {
 
     my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-    my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0"); # if($self->getArg('commit'));
+    my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
     unless($sqlLdrSystemResult / 256 == 0) {
       $self->error("sqlldr failed:  ${sqlldrDatFn}.log");
     }
 
 
-    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn log=${sqlldrMapFn}.log discardmax=0 errors=0");# if($self->getArg('commit'));
+    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn log=${sqlldrMapFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
     unless($sqlLdrMapSystemResult / 256 == 0) {
       $self->error("sqlldr failed:  ${sqlldrMapFn}.log");
     }
