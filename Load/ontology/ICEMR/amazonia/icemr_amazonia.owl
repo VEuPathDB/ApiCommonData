@@ -151,7 +151,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Potable water</obo:EUPATH_0001003>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Potable water</obo:IAO_0000115>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">potable water = drinking water in ENVO,So rename it to drinking water source and update the ID to (ENVO_00003064)?</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">potable water = drinking water in ENVO,So rename it to drinking water source and update the ID to (ENVO_00003064)? Ans: In this case it should stay &quot;Potable water&quot; with a separate IRI since it is asking if the household has drinkable water, y/n.</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drinking water source</rdfs:label>
     </owl:Class>
     
@@ -1037,7 +1037,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_F2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Thick smear result from study</obo:EUPATH_0001003>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of parasites species in a thick blood smear. Analysis performed by study personnel</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of parasites species present in a thick blood smear. Analysis performed by study personnel.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, microscopy</rdfs:label>
     </owl:Class>
     
@@ -1065,7 +1065,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Density of sexual stage falciparum, parasite/microliter</obo:EUPATH_0001003>
         <obo:TEMP_0022104 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">only done when blood smear done</obo:TEMP_0022104>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">P. falciparum gametocyte stage density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">P. falciparum gametocyte density (per uL blood), microscopy</rdfs:label>
     </owl:Class>
     
 
@@ -1139,7 +1139,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_F2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other symptoms</obo:EUPATH_0001003>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">what&apos;s possible values for this variable?</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">what&apos;s possible values for this variable? Ans: free-text, we might end up dropping this later</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other medical complaint</rdfs:label>
     </owl:Class>
     
@@ -1180,7 +1180,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_household</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of enrollment</obo:EUPATH_0001003>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How is it different from other enrollment date, EUPATH_0010054? Is it also enrollment date for participant? If so, we need to add it to participant category too.</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How is it different from other enrollment date, EUPATH_0010054? Is it also enrollment date for participant? If so, we need to add it to participant category too. Ans: fec_enrol is present in both the household file and participant file and has the same date for both. This variable needs to show up both as the &quot;Date of household visit&quot; under household and the &quot;Date of enrollment&quot; under Participant &gt; Participant study details. However, since the data is being pulled from 2 different files with the same column name, do we need to change the column name in one of the files so the corrret data is displayed under the correct display label?</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of household visit</rdfs:label>
     </owl:Class>
     
@@ -1194,7 +1194,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_household</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source of water</obo:EUPATH_0001003>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">I think it is water source for household usage, not restricted to drinking. Updated ID.</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">I think it is water source for household usage, not restricted to drinking. Updated ID. Ans: The update is fine. The data dictionary is not clear on whether it is drinking water or general water, so it makes sense to go with the more general term.</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water source</rdfs:label>
     </owl:Class>
     
@@ -1860,20 +1860,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0022050 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0022050">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cod_uni</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_F2</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unique code (created for merge)</obo:EUPATH_0001003>
-        <obo:TEMP_0022104 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Need this and &quot;&quot;aa&quot;&quot; to identify each individual observation, not for web display, only for database referencing. Do we need to make an ontology term then?</obo:TEMP_0022104>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">???</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0022051 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0022051">
@@ -1882,7 +1868,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Peru_F2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Smear result from national ministry of health</obo:EUPATH_0001003>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of parasites species in a thick blood smear. Analysis performed by MINSA</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of parasites species identified in a thick blood smear. Analysis performed by MINSA</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, Ministry of Health microscopy</rdfs:label>
     </owl:Class>
     
@@ -1939,7 +1925,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Place of travel 1</obo:EUPATH_0001003>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Place visted most recently and method of getting there</obo:IAO_0000115>
         <obo:TEMP_0022104 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">link to date via presencia</obo:TEMP_0022104>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does it collect at on visit or multiple time? We have other travel info under participant.</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does it collect at on visit or multiple time? We have other travel info under participant. Ans: This was collected multiple times, at each observation, whereas everything currently under &quot;Travel details&quot; was only collected once at enrollment.</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Most recent travel</rdfs:label>
     </owl:Class>
     
@@ -1955,7 +1941,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Place of travel 2</obo:EUPATH_0001003>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Place visited second most recently and method of getting there</obo:IAO_0000115>
         <obo:TEMP_0022104 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">link to date via presencia</obo:TEMP_0022104>
-        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does it collect at on visit or multiple time? We have other travel info under participant.</obo:TEMP_0022105>
+        <obo:TEMP_0022105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does it collect at on visit or multiple time? We have other travel info under participant. Ans: This was collected multiple times, at each observation, whereas everything currently under &quot;Travel details&quot; was only collected once at enrollment.</obo:TEMP_0022105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Second most recent travel</rdfs:label>
     </owl:Class>
     
