@@ -574,7 +574,7 @@ sub loadTable {
 
       if(!$isSelfReferencing && !$hasLobColumns) {
         $hasNewRows = 1;
-        $rowCount++
+        $rowCount++;
 
         $maxPrimaryKey++;
         $mappedRow->{lc($primaryKeyColumn)} = $maxPrimaryKey;
