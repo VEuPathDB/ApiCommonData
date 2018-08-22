@@ -10,7 +10,15 @@ use DBD::Oracle;
 
 use GUS::Model::ApiDB::DATABASETABLEMAPPING;
 
+use File::Temp qw/ tempfile /;
+
 use Data::Dumper;
+
+
+my $MAPPING_TABLE_NAME = "ApiDB.DatabaseTableMapping";
+my $PROJECT_INFO_TABLE = "Core.ProjectInfo";
+my $TABLE_INFO_TABLE = "Core.TableInfo";
+
 
 my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release"],
                             "GUS::Model::Core::TableInfo" => ["name", "database_id"],
@@ -42,6 +50,20 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::ApiDB::Datasource" => ["name"],
                             "GUS::Model::Study::Protocol" => ["name"],
     );
+
+
+my $HOUSEKEEPING_FIELDS = ['modification_date',
+                           'user_read',
+                           'user_write',
+                           'group_read',
+                           'group_write',
+                           'other_read',
+                           'other_write',
+                           'row_user_id',
+                           'row_group_id',
+                           'row_alg_invocation_id',
+                           'row_project_id',
+    ];
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -213,7 +235,7 @@ sub undoTable {
     my $sh = $dbh->prepare($sql);
     $sh->execute();
 
-    my $deleteMapSql = "delete from apidb.DatabaseTableMapping 
+    my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
              where database_orig = '$database'
              and table_name = '$tableName'
              and primary_key_orig = ?";
@@ -227,7 +249,7 @@ sub undoTable {
       $delMapSh->execute($pkOrig);
 
       if($count++ % 1000 == 0) {
-        $self->log("Deleted $count rows from ApiDB.DatabaseTableMapping for table $tableName");
+        $self->log("Deleted $count rows from $MAPPING_TABLE_NAME for table $tableName");
         $dbh->commit();
       }
     }
@@ -239,7 +261,7 @@ sub undoTable {
 
     my $deleteSql = "delete from $tableAbbrev
         where $primaryKeyColumn not in (select primary_key 
-                                        from apidb.databasetablemapping 
+                                        from $MAPPING_TABLE_NAME
                                         where database_orig = '$database' 
                                         and table_name = '$tableName')
         and rownum <= $chunkSize";
@@ -266,7 +288,7 @@ sub getDatabaseTableMappingSql {
                   , table_name
                   , primary_key_orig
                   , primary_key 
-             from apidb.DatabaseTableMapping 
+             from $MAPPING_TABLE_NAME
              where database_orig = '$database'
              and table_name in ($tableNamesString)
 ";
@@ -377,7 +399,7 @@ sub queryForMaxMappedOrigPk {
   my ($self, $database, $tableName) = @_;
 
   my $sql = "select max(primary_key_orig) 
-             from apidb.databasetablemapping 
+             from $MAPPING_TABLE_NAME
              where database_orig = '$database' 
              and table_name = '$tableName'";
 
@@ -396,14 +418,100 @@ sub queryForMaxMappedOrigPk {
 }
 
 
+sub queryForMaxPK {
+  my ($self, $tableName, $primaryKey) = @_;
+
+  my $sql = "select max($primaryKey) from $tableName";
+
+  my $dbh = $self->getQueryHandle();  
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my ($max) = $sh->fetchrow_array();
+
+  unless($max) {
+    return 0;
+  }
+
+  return $max;
+}
+
+
+sub writeConfigFile {
+  my ($self, $configFh, $tableInfo, $tableName) = @_;
+
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
+  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+
+  my $database = $self->getDb();
+  my $projectId = $database->getDefaultProjectId();
+  my $userId = $database->getDefaultUserId();
+  my $groupId = $database->getDefaultGroupId();
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+  my $userRead = $database->getDefaultUserRead();
+  my $userWrite = $database->getDefaultUserWrite();
+  my $groupRead = $database->getDefaultGroupRead();
+  my $groupWrite = $database->getDefaultGroupWrite();
+  my $otherRead = $database->getDefaultOtherRead();
+  my $otherWrite = $database->getDefaultOtherWrite();
+
+  my $attributeList = $tableInfo->{attributeList};
+
+
+  my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || $tableName eq $MAPPING_TABLE_NAME) ? " constant $projectId" : "";
+
+  my $housekeepingMap = {'modification_date' =>  " constant \"$modDate\"",
+                         'user_read' => " constant $userRead", 
+                         'user_write' => " constant $userWrite", 
+                         'group_read' => " constant $groupRead", 
+                         'group_write' => " constant $groupWrite", 
+                         'other_read' => " constant $otherRead", 
+                         'other_write' => " constant $otherWrite", 
+                         'row_user_id' => " constant $userId", 
+                         'row_group_id' => " constant $groupId", 
+                         'row_alg_invocation_id' => " constant $algInvocationId",
+                         'row_project_id' => $rowProjectId,
+  };
+
+  if($tableName eq $MAPPING_TABLE_NAME) {
+    $attributeList = ["database_orig",
+                      "table_name",
+                      "primary_key_orig",
+                      "primary_key"
+        ];
+
+    push @$attributeList, keys %$housekeepingMap;
+  }
+
+
+  my @fields = map { lc($_) . $housekeepingMap->{lc($_)}  } @$attributeList;
+
+  if($tableName eq $MAPPING_TABLE_NAME) {
+    push @fields, "database_table_mapping_id \"${tableName}_sq.nextval\"",
+  }
+
+  my $fieldsString = join(",\n", @fields);
+
+  print  $configFh "LOAD DATA
+INFILE *
+APPEND
+INTO TABLE $tableName
+REENABLE DISABLED_CONSTRAINTS
+FIELDS TERMINATED BY '\\t'
+($fieldsString
+)
+begindata
+";
+}
+
+
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
-
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
-
-#  next unless $tableName =~ /AlgorithmImplementation/;
 
   $self->log("Begin Loading table $tableName from database $database");
 
@@ -412,17 +520,35 @@ sub loadTable {
   my $rowCount = 0;
   my $primaryKeyColumn = $tableInfo->{primaryKey};
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
+  my $hasLobColumns = scalar(@{$tableInfo->{lobColumns}}) > 0;
 
-  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, &getAbbreviatedTableName($tableName, "::"));
+  my $abbreviatedTableColon = &getAbbreviatedTableName($tableName, "::");
+  my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
+
+  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColon);
+
+  my $maxPrimaryKey = $self->queryForMaxPK($abbreviatedTablePeriod, $primaryKeyColumn);
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
   # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
 
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $tableReader, $idMappings);
+  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
+
+  my %housekeepingFieldsHash = map { $_ => 1 } @$HOUSEKEEPING_FIELDS;
+
+  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => 'ctl');
+  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => 'ctl');
+
+  if(!$isSelfReferencing && !$hasLobColumns) {
+    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod);
+    $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME);
+  }
+
+  my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
 
@@ -441,51 +567,70 @@ sub loadTable {
       }
     }
 
-    unless($primaryKey) {
-      $mappedRow->{lc($primaryKeyColumn)} = undef;
-      $mappedRow->{row_user_id} = undef;
-      $mappedRow->{row_group_id} = undef;
-      $mappedRow->{row_project_id} = undef if($tableName eq "GUS::Model::Core::ProjectInfo"); #Important that we keep the project id for everything except projectinfo
-      $mappedRow->{row_alg_invocation_id} = undef;
+    if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
 
-      eval "require $tableName";
-      die $@ if $@;  
+      if(!$isSelfReferencing && !$hasLobColumns) {
+        $maxPrimaryKey++;
+        $mappedRow->{lc($primaryKeyColumn)} = $maxPrimaryKey;
 
-      my $gusRow = eval {
-        $tableName->new($mappedRow);
-      };
-      die $@ if $@;
-
-      $gusRow->submit(undef, 1);
-
-      $primaryKey = $gusRow->get(lc($primaryKeyColumn));
-
-      # If the table is self referencing AND the fk is to the same row, we need to submit again after updating that field or fields
-      foreach my $ancestorField (@$fieldsToSetToPk) {
-        $self->log("Setting Field $ancestorField in table $tableName to same value as PrimaryKey for row: $primaryKey");
-        $gusRow->set($ancestorField, $primaryKey);
-        $gusRow->submit(undef, 1);
+        my @a;
+        foreach my $a (@attributeList) {
+          push @a, $mappedRow->{$a} unless($housekeepingFieldsHash{$a});
+        }
+        
+        push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
+        print $sqlldrDatFh join("\t", @a) . "\n";
+        
+        my @mappingRow = ($database, $abbreviatedTableColon, $origPrimaryKey, $maxPrimaryKey);
+        print $sqlldrMapFh join("\t", @mappingRow) . "\n";
       }
+      else {
+        $mappedRow->{lc($primaryKeyColumn)} = undef;
+        $mappedRow->{row_user_id} = undef;
+        $mappedRow->{row_group_id} = undef;
+        $mappedRow->{row_project_id} = undef if($abbreviatedTablePeriod eq $PROJECT_INFO_TABLE); #Important that we keep the project id for everything except projectinfo
+        $mappedRow->{row_alg_invocation_id} = undef;
 
+        eval "require $tableName";
+        die $@ if $@;  
+
+        my $gusRow = eval {
+          $tableName->new($mappedRow);
+        };
+        die $@ if $@;
+
+        $gusRow->submit(undef, 1);
+
+        $primaryKey = $gusRow->get(lc($primaryKeyColumn));
+
+        # If the table is self referencing AND the fk is to the same row, we need to submit again after updating that field or fields
+        foreach my $ancestorField (@$fieldsToSetToPk) {
+          $self->log("Setting Field $ancestorField in table $tableName to same value as PrimaryKey for row: $primaryKey");
+          $gusRow->set($ancestorField, $primaryKey);
+          $gusRow->submit(undef, 1);
+        }
+
+
+        my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
+                                                                                 table_name => $abbreviatedTableColon,
+                                                                                 primary_key_orig => $origPrimaryKey,
+                                                                                 primary_key => $primaryKey,
+                                                                                });
+        $databaseTableMapping->submit(undef, 1);
+
+        # self referencing tables will need mappings for loaded rows
+        $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
+
+
+        if($rowCount++ % 2000 == 0) {
+          $self->getDb()->manageTransaction(0, 'commit');
+          $self->getDb()->manageTransaction(0, 'begin');
+        }
+
+        $self->undefPointerCache();
+      }
     }
 
-    my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
-                                                                             table_name => &getAbbreviatedTableName($tableName, '::'),
-                                                                             primary_key_orig => $origPrimaryKey,
-                                                                             primary_key => $primaryKey,
-                                                                            });
-
-    $databaseTableMapping->submit(undef, 1);
-
-    # self referencing tables will need mappings for loaded rows
-    $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
-
-    if($rowCount++ % 2000 == 0) {
-      $self->getDb()->manageTransaction(0, 'commit');
-      $self->getDb()->manageTransaction(0, 'begin');
-    }
-
-  $self->undefPointerCache();
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
@@ -493,6 +638,27 @@ sub loadTable {
   $tableReader->finishTable();
 
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
+
+  if(!$isSelfReferencing && !$hasLobColumns) {
+    my $login       = $self->getConfig->getDatabaseLogin();
+    my $password    = $self->getConfig->getDatabasePassword();
+    my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+    my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+    my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0"); # if($self->getArg('commit'));
+    unless($sqlLdrSystemResult / 256 == 0) {
+      $self->error("sqlldr failed:  ${sqlldrDatFn}.log");
+    }
+
+
+    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn log=${sqlldrMapFn}.log discardmax=0 errors=0");# if($self->getArg('commit'));
+    unless($sqlLdrMapSystemResult / 256 == 0) {
+      $self->error("sqlldr failed:  ${sqlldrMapFn}.log");
+    }
+
+  }
+
 }
 
 sub getAbbreviatedTableName {
@@ -504,6 +670,8 @@ sub getAbbreviatedTableName {
 
 sub lookupPrimaryKey {
   my ($self, $tableName, $row, $globalLookup) = @_;
+
+  
 
   # Load all alg invocations
   if($tableName eq "GUS::Model::Core::AlgorithmInvocation") {
@@ -524,7 +692,7 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName, $tableReader, $idMappings) = @_;
+  my ($self, $primaryKeyColumn, $tableName) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
@@ -533,9 +701,6 @@ sub globalLookupForTable  {
   return unless($fields);
 
   $self->log("Preparing Global Lookup for table $tableName");
-
-  # get distinct rows from input table which are global
-  my $origKeysToKeep = $tableReader->getDistinctValuesForTableFields($tableName, $fields, 0); 
 
   my $fieldsString = join(",", map { $_ } @$fields);
 
@@ -550,9 +715,6 @@ sub globalLookupForTable  {
   while(my ($pk, @a) = $sh->fetchrow_array()) {
     my $key = join("_", @a);
 
-    next unless($origKeysToKeep->{$key});
-
-
     $lookup{$key} = $pk;
     $rowCount++
   }
@@ -560,12 +722,7 @@ sub globalLookupForTable  {
 
   
   unless($rowCount == scalar(keys(%lookup))) {
-
-    # TODO:  remove this hard coding.  Long run do not throw error here.  Being extra safe while testing
-    # TODO:  remove external database after testing
-    if($tableName ne 'SRes.EnzymeClassAttribute' && $tableName ne 'SRes.TaxonName' && $tableName ne 'SRes.ExternalDatabase') {
-#      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
-    }
+      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
   }
 
   $self->log("Finished caching Global Lookup for table $tableName");
@@ -682,7 +839,8 @@ sub getAllTableInfo {
         $isSelfReferencing = 1;
       }
 
-      if($parentTable eq 'GUS::Model::Core::TableInfo') {
+
+      if(&getAbbreviatedTableName($parentTable, ".") eq $TABLE_INFO_TABLE) {
         my $softKeyTablesHash = $tableReader->getDistinctTablesForTableIdField($field, "${schema}.${table}");
         my @softKeyTables = values %$softKeyTablesHash;
 
@@ -695,13 +853,14 @@ sub getAllTableInfo {
       }
 
       # NASequenceImp has circular foreign key to sequence piece. we never use
+      # TODO:  should fix this in gus schema
       if($fullTableName eq "GUS::Model::DoTS::NASequenceImp" &&
          $parentTable eq "GUS::Model::DoTS::SequencePiece") {
         next;
       }
 
       # important for us to retain row_project_id
-      unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || ($fullTableName eq "GUS::Model::Core::ProjectInfo" && $field eq "row_project_id")) {
+      unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || ($fullTableName eq $PROJECT_INFO_TABLE && $field eq "row_project_id")) {
         push @parentRelationsNoHousekeeping, $parentRelation;
       }
     }
@@ -714,6 +873,8 @@ sub getAllTableInfo {
 
     # TODO:  confirm that this is 1:1 with table
     $allTableInfo{$fullTableName}->{primaryKey} = $dbiTable->getPrimaryKey();
+
+    $allTableInfo{$fullTableName}->{attributeList} = $dbiTable->getAttributeList();
   }
 
   return \%allTableInfo;
