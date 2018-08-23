@@ -4791,11 +4791,25 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010760 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010760">
+        <rdfs:label xml:lang="en">Any parasites detected by wet prep microscopy</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011840"/>
+        <obo:EUPATH_0001004>1=yes;0=no</obo:EUPATH_0001004>
+        <obo:EUPATH_0001001>micro_x_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>Were parasites observed?. Raw variable from MDF form.. Source=MDF</obo:EUPATH_0001003>
+        <obo:EUPATH_0000755>mdfparayn</obo:EUPATH_0000755>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010761 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010761">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Modified acid fast stain microscopy result</rdfs:label>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011845"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011840"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Did the modified acid-fast stain detect an organism?. Raw variable from MDF form. Information contained in this variable has  been abstracted and included in other variables.. Source=MDF</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">No =00; Yes, Cryptosporidium = 01; Yes, Isospora =02; Yes, Cyclospora =03; Yes, other =04</obo:EUPATH_0001004>
@@ -6463,7 +6477,7 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010882 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010882">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Any parasite detected by any method</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Any parasites detected by any method</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011840"/>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=yes;0=no</obo:EUPATH_0001004>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
@@ -9264,10 +9278,9 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011154 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011154">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ferritin (ng/mL)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adjusted ferritin (ng/mL)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
-        <obo:TEMP_0011508 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FARVAL1/FARVAL2/FARVALMEAN not loaded, only loading adjfar</obo:TEMP_0011508>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">adjfar</obo:EUPATH_0000755>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inflammation (AGPVAL&gt;100) adjusted ferritin concentration using site specific correction factors*. Correction factors: BG 1.211645, BR 1.202649, IN 1.195700, NP 1.146191, PE 1.066748, PK 1.706467, SA 1.048493, TZ 1.094226. Source=calculated</obo:EUPATH_0001003>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:EUPATH_0001001>
@@ -9279,7 +9292,7 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011155 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011155">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Retinol (mg/dL)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adjusted retinol (mg/dL)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011718"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:TEMP_0011508 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RARCONC not loaded, only loading adjrar</obo:TEMP_0011508>
@@ -9440,14 +9453,12 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011178 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011178">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low ferritin (less than 12ng/mL)</rdfs:label>
+        <rdfs:label xml:lang="en">Low adjusted ferritin (less than 12ng/mL)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= adjfar &lt;12; 0=adjfar&gt;=12. Source=calculated</obo:EUPATH_0001003>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lowadjfar</obo:EUPATH_0000755>
-        <obo:TEMP_0011508 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lowfar not loaded, only loading lowadjfar</obo:TEMP_0011508>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>1= adjfar &lt;12; 0=adjfar&gt;=12. Source=calculated</obo:EUPATH_0001003>
+        <obo:EUPATH_0000755>lowadjfar</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>mn_blood_iar_24m.csv</obo:EUPATH_0001001>
     </owl:Class>
     
 
@@ -9455,7 +9466,7 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011179 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011179">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low retinol (less than 20mg/dL)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low adjusted retinol (less than 20mg/dL)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011718"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= adjrar &lt;20; 0= adjrar&gt;=20. Source=calculated</obo:EUPATH_0001003>
@@ -9470,7 +9481,7 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011180 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011180">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low zinc (less than 9.9umol/L)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low adjusted zinc (less than 9.9 umol/L)</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011719"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= adjzinc_mml&lt;9.9; 0= adjzinc_mml&gt;=9.9. All zinc data from SAV should be excluded from analysis, not just records where SAVDONTUSE=1. Source=calculated</obo:EUPATH_0001003>
@@ -9944,6 +9955,20 @@ What is &apos;Sample ID&apos; different from other kinds of Sample ID?</obo:TEMP
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household</obo:EUPATH_0001002>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">people</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wami_24m.csv</obo:EUPATH_0001001>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011611 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011611">
+        <rdfs:label xml:lang="en">Household toilet?</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000596"/>
+        <obo:EUPATH_0001003>Do you have a toilet in your household ?. Source=SAV Latrine</obo:EUPATH_0001003>
+        <obo:EUPATH_0000755>q3</obo:EUPATH_0000755>
+        <obo:EUPATH_0001002>household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001001>wami_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001004>Yes = 01; No = 00</obo:EUPATH_0001004>
     </owl:Class>
     
 
@@ -10858,6 +10883,20 @@ Root, Sample is mapped to this ontology term (http://purl.obolibrary.org/obo/EUP
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011701 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011701">
+        <rdfs:label xml:lang="en">Latrine type, current</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000596"/>
+        <obo:EUPATH_0001002>household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001001>wami_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0000755>typeof</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003>Type of pit latrine. Source=TZH latrine</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004>1=With Slab, 2=No slab, 3=No facility, NA=No facility</obo:EUPATH_0001004>
     </owl:Class>
     
 
@@ -12317,6 +12356,32 @@ Root, Sample is mapped to this ontology term (http://purl.obolibrary.org/obo/EUP
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011849 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011849">
+        <rdfs:label xml:lang="en">Ferritin #1 (ng/mL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FAR Value1 (mcg/L or ng/ml), blood</obo:EUPATH_0001003>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FARVAL1</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011850 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011850">
+        <rdfs:label xml:lang="en">Ferritin #2 (ng/mL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
+        <obo:EUPATH_0001001>mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0000755>FARVAL2</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003>FAR Value2 (mcg/L or ng/ml), blood</obo:EUPATH_0001003>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011851 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011851">
@@ -12556,6 +12621,71 @@ Root, Sample is mapped to this ontology term (http://purl.obolibrary.org/obo/EUP
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED TAC data</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">schistosoma</obo:EUPATH_0000755>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011871 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011871">
+        <rdfs:label xml:lang="en">Mean ferritin (ng/mL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FARVALMEAN</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean (FARVAL1, FARVAL2), blood</obo:EUPATH_0001003>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011872 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011872">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low ferritin (less than 12ng/mL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011724"/>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= FARVAL1 &lt;12; 0= FARVAL1&gt;=12, blood</obo:EUPATH_0001003>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lowfar</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011873 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011873">
+        <rdfs:label xml:lang="en">Low retinol (less than 20mg/dL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011718"/>
+        <obo:EUPATH_0001003>1= RARCONC &lt;20; 0= RARCONC&gt;=20, blood</obo:EUPATH_0001003>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001001>mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0000755>lowrar</obo:EUPATH_0000755>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011874 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011874">
+        <rdfs:label xml:lang="en">Low zinc (less than 9.9 umol/L)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011719"/>
+        <obo:EUPATH_0001001>mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001003>1= zinc_mml&lt;9.9; 0= zinc_mml&gt;=9.9, blood</obo:EUPATH_0001003>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0000755>lowzinc</obo:EUPATH_0000755>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011875 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011875">
+        <rdfs:label xml:lang="en">Retinol (mg/dL)</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011718"/>
+        <obo:EUPATH_0001002>sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0000755>RARCONC</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>mn_blood_iar_24m.csv</obo:EUPATH_0001001>
+        <obo:EUPATH_0001003>Retinol concentration (mcg/dL), blood</obo:EUPATH_0001003>
     </owl:Class>
     
 
