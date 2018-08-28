@@ -598,7 +598,10 @@ sub loadTable {
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
     my $primaryKey;
-    if($tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol') {
+
+    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol';
+
+    if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
@@ -611,8 +614,8 @@ sub loadTable {
         $hasNewRows = 1;
         $rowCount++;
 
-        $maxPrimaryKey++;
-        $mappedRow->{lc($primaryKeyColumn)} = $maxPrimaryKey;
+        $primaryKey = $maxPrimaryKey++;
+        $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
         my @a;
         foreach my $a (@attributeList) {
@@ -622,7 +625,7 @@ sub loadTable {
         push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
         print $sqlldrDatFh join("\t", @a) . "\n";
         
-        my @mappingRow = ($database, $abbreviatedTableColon, $origPrimaryKey, $maxPrimaryKey);
+        my @mappingRow = ($database, $abbreviatedTableColon, $origPrimaryKey, $primaryKey);
         print $sqlldrMapFh join("\t", @mappingRow) . "\n";
       }
       else {
@@ -670,6 +673,16 @@ sub loadTable {
 
         $self->undefPointerCache();
       }
+
+      # update the globalMapp for newly added rows
+      if($isGlobal) {
+        my $globalUniqueFields = $GLOBAL_UNIQUE_FIELDS{$tableName};
+
+        my @globalUniqueValues = map { $mappedRow->{lc($_)} } @$globalUniqueFields;
+        my $key = join("_", @globalUniqueValues);
+        $globalLookup->{$key} = $primaryKey;
+      }
+
     }
 
   }
@@ -677,8 +690,6 @@ sub loadTable {
   $self->getDb()->manageTransaction(0, 'commit');
 
   $tableReader->finishTable();
-
-
 
   if(!$isSelfReferencing && !$hasLobColumns && $hasNewRows) {
     my $login       = $self->getConfig->getDatabaseLogin();
