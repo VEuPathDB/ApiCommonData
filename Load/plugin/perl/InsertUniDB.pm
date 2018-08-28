@@ -549,8 +549,6 @@ sub loadTable {
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
 
-  next unless $tableName =~ /ProjectInfo/;
-
   $self->log("Begin Loading table $tableName from database $database");
 
   $self->getDb()->manageTransaction(0, 'begin');
