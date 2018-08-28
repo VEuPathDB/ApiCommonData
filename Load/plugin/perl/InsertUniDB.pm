@@ -485,7 +485,7 @@ sub writeConfigFile {
       my $type = $att->{'type'};
 
       if($type eq 'NUMBER') {
-        $datatypeMap->{lc($col)} = " EXTERNAL INTEGER$precString";
+        $datatypeMap->{lc($col)} = " INTEGER EXTERNAL$precString";
       }
       elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
         $datatypeMap->{lc($col)} = " CHAR($length)";
@@ -494,7 +494,7 @@ sub writeConfigFile {
         $datatypeMap->{lc($col)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
       }
       elsif($type eq 'FLOAT') {
-        $datatypeMap->{lc($col)} = " EXTERNAL FLOAT$precString";
+        $datatypeMap->{lc($col)} = " FLOAT EXTERNAL$precString";
       }
       else {
         $self->error("$type columns not currently supported by this plugin for loading with sqlloader");
@@ -514,8 +514,8 @@ sub writeConfigFile {
 
     $datatypeMap->{'database_orig'} = " CHAR(10)";
     $datatypeMap->{'table_name'} = " CHAR(35)";
-    $datatypeMap->{'primary_key_orig'} = " EXTERNAL INTEGER(20)";
-    $datatypeMap->{'primary_key'} = " EXTERNAL INTEGER(20)";
+    $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
+    $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
   }
 
   $datatypeMap->{'modification_date'} = " constant \"$modDate\"";
