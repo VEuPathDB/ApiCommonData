@@ -458,21 +458,50 @@ sub writeConfigFile {
   my $otherWrite = $database->getDefaultOtherWrite();
 
   my $attributeList = $tableInfo->{attributeList};
+  my $attributeInfo = $tableInfo->{attributeInfo};
 
 
   my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || $tableName eq $MAPPING_TABLE_NAME) ? " constant $projectId" : "";
 
-  my $housekeepingMap = {'user_read' => " constant $userRead", 
-                         'user_write' => " constant $userWrite", 
-                         'group_read' => " constant $groupRead", 
-                         'group_write' => " constant $groupWrite", 
-                         'other_read' => " constant $otherRead", 
-                         'other_write' => " constant $otherWrite", 
-                         'row_user_id' => " constant $userId", 
-                         'row_group_id' => " constant $groupId", 
-                         'row_alg_invocation_id' => " constant $algInvocationId",
-                         'row_project_id' => $rowProjectId,
+  my $datatypeMap = {'user_read' => " constant $userRead", 
+                     'user_write' => " constant $userWrite", 
+                     'group_read' => " constant $groupRead", 
+                     'group_write' => " constant $groupWrite", 
+                     'other_read' => " constant $otherRead", 
+                     'other_write' => " constant $otherWrite", 
+                     'row_user_id' => " constant $userId", 
+                     'row_group_id' => " constant $groupId", 
+                     'row_alg_invocation_id' => " constant $algInvocationId",
+                     'row_project_id' => $rowProjectId,
   };
+
+  foreach my $att (@$attributeInfo) {
+    my $col = $att->{'col'};
+
+    unless($datatypeMap->{$col}) {
+      my $prec = $att->{'prec'};
+      my $precString = $prec ? "($prec)" : "";
+      my $length = $att->{'length'};
+      my $type = $att->{'type'};
+
+      if($type eq 'NUMBER') {
+        $datatypeMap->{lc($col)} = " EXTERNAL INTEGER$precString";
+      }
+      elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
+        $datatypeMap->{lc($col)} = " CHAR($length)";
+      }
+      elsif($type eq 'DATE') {
+        $datatypeMap->{lc($col)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
+      }
+      elsif($type eq 'FLOAT') {
+        $datatypeMap->{lc($col)} = " EXTERNAL FLOAT$precString";
+      }
+      else {
+        $self->error("$type columns not currently supported by this plugin for loading with sqlloader");
+      }
+    }
+  }
+
 
   if($tableName eq $MAPPING_TABLE_NAME) {
     $attributeList = ["database_orig",
@@ -481,24 +510,26 @@ sub writeConfigFile {
                       "primary_key"
         ];
 
-    push @$attributeList, keys %$housekeepingMap;
+    push @$attributeList, keys %$datatypeMap;
+
+    $datatypeMap->{'database_orig'} = " CHAR(10)";
+    $datatypeMap->{'table_name'} = " CHAR(35)";
+    $datatypeMap->{'primary_key_orig'} = " EXTERNAL INTEGER(20)";
+    $datatypeMap->{'primary_key'} = " EXTERNAL INTEGER(20)";
   }
 
-  foreach my $dateColumn (@{$tableInfo->{dateColumns}}) {
-    $housekeepingMap->{lc($dateColumn)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
-  }
+  $datatypeMap->{'modification_date'} = " constant \"$modDate\"";
 
-  $housekeepingMap->{'modification_date'} = " constant \"$modDate\"";
-
-  my @fields = map { lc($_) . $housekeepingMap->{lc($_)}  } @$attributeList;
+  my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } @$attributeList;
 
   if($tableName eq $MAPPING_TABLE_NAME) {
+    # TODO: hoiw to say INTEGER(20) for this pk?
     push @fields, "database_table_mapping_id \"${tableName}_sq.nextval\"",
   }
 
   my $fieldsString = join(",\n", @fields);
 
-  print  $configFh "LOAD DATA
+  print $configFh "LOAD DATA
 INFILE *
 APPEND
 INTO TABLE $tableName
@@ -830,17 +861,13 @@ sub getAllTableInfo {
     my $parentRelations = $dbiTable->getParentRelations();
 
     my @lobColumns;
-    my @dateColumns;
+
+    my $attributeInfo = $dbiTable->getAttributeInfo();
 
     foreach my $att (@{$dbiTable->getAttributeInfo()}) {
       if(uc($att->{type}) eq "CLOB" || uc($att->{type}) eq "BLOB") {
         push @lobColumns, $att->{col};
       }
-
-      if(uc($att->{type}) eq "DATE") {
-        push @dateColumns, $att->{col};
-      }
-
     }
 
     my @parentRelationsNoHousekeeping;
@@ -882,8 +909,9 @@ sub getAllTableInfo {
       }
     }
 
+    $allTableInfo{$fullTableName}->{attributeInfo} = $attributeInfo;
     $allTableInfo{$fullTableName}->{lobColumns} = \@lobColumns;
-    $allTableInfo{$fullTableName}->{dateColumns} = \@dateColumns;
+
     $allTableInfo{$fullTableName}->{isSelfReferencing} = $isSelfReferencing;
     $allTableInfo{$fullTableName}->{parentRelations} = \@parentRelationsNoHousekeeping;
 
