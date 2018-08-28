@@ -78,6 +78,28 @@ foreach $fn (keys %annotated){
 ###. "type=Sequence detailTable=apidb.SequenceDetail fields=all dir=" . $fn . "\n";
 ###}
 
+
+my $sql2 = "select FAMILY_REPRESENTATIVE_ABBREV, FAMILY_NAME_FOR_FILES from apidb.organism where FAMILY_NAME_FOR_FILES is not null";
+
+my $stmt2 = $dbh->prepareAndExecute($sql2);
+
+my %isolates;
+
+while(my ($familyRepAbbrev,$familyFilename) = $stmt2->fetchrow_array()) {
+	$isolates{$familyFilename} = $familyRepAbbrev;
+}
+
+$stmt2->finish();
+
+
+foreach my $familyFile (keys  %isolates){
+	 print FILE "org=" . $familyFile . "|" . $isolates{$familyFile} ."_isolates_genbank_RSRC\n"
+. "type=PopsetAlt detailTable=apidb.IsolateDetail fields=all otherSql=0 dir=" . $familyFile . "\n";
+}
+
+print FILE "org=" . $project . "\n"
+. 'type=Compound detailTable=apidb.CompoundDetail fields="CompoundName,Properties,IupacNames,Definition,SecondaryIds,Synonyms,CompoundsMetabolicPathways,PathwaysFromCompounds" dir=' . $project . "\n";
+
 print FILE "//\n";
 
 close(FILE);
