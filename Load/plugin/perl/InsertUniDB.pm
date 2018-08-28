@@ -549,6 +549,8 @@ sub loadTable {
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
 
+  next unless $tableName =~ /ProjectInfo/;
+
   $self->log("Begin Loading table $tableName from database $database");
 
   $self->getDb()->manageTransaction(0, 'begin');
@@ -560,10 +562,10 @@ sub loadTable {
 
   my $hasNewRows;
 
-  my $abbreviatedTableColon = &getAbbreviatedTableName($tableName, "::");
+  my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
-  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColon);
+  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
 
   my $maxPrimaryKey = $self->queryForMaxPK($abbreviatedTablePeriod, $primaryKeyColumn);
 
@@ -606,6 +608,17 @@ sub loadTable {
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
       }
+
+      if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
+        my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
+                                                                                 table_name => $abbreviatedTableColumn,
+                                                                                 primary_key_orig => $origPrimaryKey,
+                                                                                 primary_key => $primaryKey,
+                                                                                });
+        $databaseTableMapping->submit(undef, 1);
+        $self->getDb()->manageTransaction(0, 'commit');
+        $self->getDb()->manageTransaction(0, 'begin');
+      }
     }
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
@@ -625,7 +638,7 @@ sub loadTable {
         push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
         print $sqlldrDatFh join("\t", @a) . "\n";
         
-        my @mappingRow = ($database, $abbreviatedTableColon, $origPrimaryKey, $primaryKey);
+        my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
         print $sqlldrMapFh join("\t", @mappingRow) . "\n";
       }
       else {
@@ -656,7 +669,7 @@ sub loadTable {
 
 
         my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
-                                                                                 table_name => $abbreviatedTableColon,
+                                                                                 table_name => $abbreviatedTableColumn,
                                                                                  primary_key_orig => $origPrimaryKey,
                                                                                  primary_key => $primaryKey,
                                                                                 });
