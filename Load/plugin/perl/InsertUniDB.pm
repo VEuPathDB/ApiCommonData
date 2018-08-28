@@ -475,34 +475,6 @@ sub writeConfigFile {
                      'row_project_id' => $rowProjectId,
   };
 
-  foreach my $att (@$attributeInfo) {
-    my $col = $att->{'col'};
-
-    unless($datatypeMap->{$col}) {
-      my $prec = $att->{'prec'};
-      my $precString = $prec ? "($prec)" : "";
-      my $length = $att->{'length'};
-      my $type = $att->{'type'};
-
-      if($type eq 'NUMBER') {
-        $datatypeMap->{lc($col)} = " INTEGER EXTERNAL$precString";
-      }
-      elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
-        $datatypeMap->{lc($col)} = " CHAR($length)";
-      }
-      elsif($type eq 'DATE') {
-        $datatypeMap->{lc($col)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
-      }
-      elsif($type eq 'FLOAT') {
-        $datatypeMap->{lc($col)} = " FLOAT EXTERNAL$precString";
-      }
-      else {
-        $self->error("$type columns not currently supported by this plugin for loading with sqlloader");
-      }
-    }
-  }
-
-
   if($tableName eq $MAPPING_TABLE_NAME) {
     $attributeList = ["database_orig",
                       "table_name",
@@ -516,6 +488,34 @@ sub writeConfigFile {
     $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
     $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
+  }
+  else {
+    foreach my $att (@$attributeInfo) {
+      my $col = $att->{'col'};
+
+      unless($datatypeMap->{$col}) {
+        my $prec = $att->{'prec'};
+        my $precString = $prec ? "($prec)" : "";
+        my $length = $att->{'length'};
+        my $type = $att->{'type'};
+
+        if($type eq 'NUMBER') {
+          $datatypeMap->{lc($col)} = " INTEGER EXTERNAL$precString";
+        }
+        elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
+          $datatypeMap->{lc($col)} = " CHAR($length)";
+        }
+        elsif($type eq 'DATE') {
+          $datatypeMap->{lc($col)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
+        }
+        elsif($type eq 'FLOAT') {
+          $datatypeMap->{lc($col)} = " FLOAT EXTERNAL$precString";
+        }
+        else {
+          $self->error("$type columns not currently supported by this plugin for loading with sqlloader");
+        }
+      }
+    }
   }
 
   $datatypeMap->{'modification_date'} = " constant \"$modDate\"";
