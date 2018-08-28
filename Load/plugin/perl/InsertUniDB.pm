@@ -786,7 +786,7 @@ sub globalLookupForTable  {
 
   
   unless($rowCount == scalar(keys(%lookup))) {
-      $self->error("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated.");
+      $self->log("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated... choosing one");
   }
 
   $self->log("Finished caching Global Lookup for table $tableName");
