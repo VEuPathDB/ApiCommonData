@@ -614,7 +614,7 @@ sub loadTable {
         $hasNewRows = 1;
         $rowCount++;
 
-        $primaryKey = $maxPrimaryKey++;
+        $primaryKey = ++$maxPrimaryKey;
         $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
         my @a;
