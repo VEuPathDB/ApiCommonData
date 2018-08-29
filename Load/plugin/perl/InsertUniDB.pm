@@ -530,7 +530,7 @@ sub writeConfigFile {
   my $fieldsString = join(",\n", @fields);
 
   print $configFh "LOAD DATA
-INFILE *
+INFILE * \"str X'7C0A'\" 
 APPEND
 INTO TABLE $tableName
 REENABLE DISABLED_CONSTRAINTS
@@ -634,10 +634,10 @@ sub loadTable {
         }
         
         push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
-        print $sqlldrDatFh join("\t", @a) . "\n";
+        print $sqlldrDatFh join("\t", @a) . "|\n"; # note the special "|\n" line terminator
         
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-        print $sqlldrMapFh join("\t", @mappingRow) . "\n";
+        print $sqlldrMapFh join("\t", @mappingRow) . "|\n"; # note the special "|\n" line terminator
       }
       else {
         $mappedRow->{lc($primaryKeyColumn)} = undef;
