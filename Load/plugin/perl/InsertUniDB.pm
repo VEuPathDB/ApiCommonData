@@ -14,6 +14,9 @@ use File::Temp qw/ tempfile /;
 
 use Data::Dumper;
 
+my $END_OF_RECORD_DELIMITER = "#EOR#\n";
+my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
+my $END_OF_LOB_DELIMITER = "<endlob>\n";
 
 my $MAPPING_TABLE_NAME = "ApiDB.DatabaseTableMapping";
 my $PROJECT_INFO_TABLE = "Core.ProjectInfo";
@@ -479,7 +482,8 @@ sub writeConfigFile {
     $attributeList = ["database_orig",
                       "table_name",
                       "primary_key_orig",
-                      "primary_key"
+                      "primary_key",
+                      'modification_date',
         ];
 
     push @$attributeList, keys %$datatypeMap;
@@ -491,7 +495,7 @@ sub writeConfigFile {
   }
   else {
     foreach my $att (@$attributeInfo) {
-      my $col = $att->{'col'};
+      my $col = lc($att->{'col'});
 
       unless($datatypeMap->{$col}) {
         my $prec = $att->{'prec'};
@@ -500,17 +504,22 @@ sub writeConfigFile {
         my $type = $att->{'type'};
 
         if($type eq 'NUMBER') {
-          $datatypeMap->{lc($col)} = " INTEGER EXTERNAL$precString";
+          $datatypeMap->{$col} = " INTEGER EXTERNAL$precString";
         }
         elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
-          $datatypeMap->{lc($col)} = " CHAR($length)";
+          $datatypeMap->{$col} = " CHAR($length)";
         }
         elsif($type eq 'DATE') {
-          $datatypeMap->{lc($col)} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
+          $datatypeMap->{$col} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
         }
         elsif($type eq 'FLOAT') {
-          $datatypeMap->{lc($col)} = " FLOAT EXTERNAL$precString";
+          $datatypeMap->{$col} = " FLOAT EXTERNAL$precString";
         }
+
+        elsif($type eq 'BLOB' || $type eq 'CLOB') {
+          $datatypeMap->{$col} = " LOBFILE( CONSTANT '${tableName}.${col}.txt') TERMINATED BY \"$END_OF_LOB_DELIMITER\")";
+        }
+
         else {
           $self->error("$type columns not currently supported by this plugin for loading with sqlloader");
         }
@@ -530,11 +539,11 @@ sub writeConfigFile {
   my $fieldsString = join(",\n", @fields);
 
   print $configFh "LOAD DATA
-INFILE '$datFileName' \"str X'7C0A'\" 
+INFILE '$datFileName' \"str '$END_OF_RECORD_DELIMITER'\" 
 APPEND
 INTO TABLE $tableName
 REENABLE DISABLED_CONSTRAINTS
-FIELDS TERMINATED BY '\\t'
+FIELDS TERMINATED BY '$END_OF_COLUMN_DELIMITER'
 TRAILING NULLCOLS
 ($fieldsString
 )
@@ -550,17 +559,21 @@ sub loadTable {
 
   $self->log("Begin Loading table $tableName from database $database");
 
-  $self->getDb()->manageTransaction(0, 'begin');
-
   my $rowCount = 0;
   my $primaryKeyColumn = $tableInfo->{primaryKey};
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
   my $hasLobColumns = scalar(@{$tableInfo->{lobColumns}}) > 0;
 
-  my $hasNewRows;
+  my ($hasNewRows, $hasNewMapRows);
 
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
+
+  my %lobFiles = map { $_ => 1 } @{$tableInfo->{lobColumns}};
+  foreach my $lobCol (lc(@{$tableInfo->{lobColumns}})) {
+    open(my $fh, ">${abbreviatedTablePeriod}.$lobCol") or die "Cannot open ${abbreviatedTablePeriod}.$lobCol for writing: $!";
+    $lobFiles{$lobCol} = $fh;
+  }
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
 
@@ -568,7 +581,7 @@ sub loadTable {
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
-  # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows
+  # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows??
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
 
   my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName);
@@ -583,10 +596,9 @@ sub loadTable {
   my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.dat');
   my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.dat');
 
-  if(!$isSelfReferencing && !$hasLobColumns) {
-    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
-    $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
-  }
+
+  $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
+  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
@@ -610,14 +622,9 @@ sub loadTable {
       }
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
-        my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
-                                                                                 table_name => $abbreviatedTableColumn,
-                                                                                 primary_key_orig => $origPrimaryKey,
-                                                                                 primary_key => $primaryKey,
-                                                                                });
-        $databaseTableMapping->submit(undef, 1);
-        $self->getDb()->manageTransaction(0, 'commit');
-        $self->getDb()->manageTransaction(0, 'begin');
+        $hasNewMapRows = 1;
+        my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
+        print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER ; # note the special line terminator
 
         $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey
       }
@@ -625,69 +632,40 @@ sub loadTable {
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
 
-      if(!$isSelfReferencing && !$hasLobColumns) {
-        $hasNewRows = 1;
-        $rowCount++;
+      $hasNewRows = 1;
+      $rowCount++;
 
-        $primaryKey = ++$maxPrimaryKey;
-        $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
+      $primaryKey = ++$maxPrimaryKey;
+      $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
-        my @a;
-        foreach my $a (@attributeList) {
-          push @a, $mappedRow->{$a} unless($housekeepingFieldsHash{$a});
-        }
-        
-        push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
-        print $sqlldrDatInfileFh join("\t", @a) . "|\n"; # note the special "|\n" line terminator
-        
-        my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-        print $sqlldrMapInfileFh join("\t", @mappingRow) . "|\n"; # note the special "|\n" line terminator
+      # If the table is self referencing AND the fk is to the same row
+      foreach my $ancestorField (@$fieldsToSetToPk) {
+        $mappedRow->{lc($ancestorField)} = $primaryKey;
       }
-      else {
-        $mappedRow->{lc($primaryKeyColumn)} = undef;
-        $mappedRow->{row_user_id} = undef;
-        $mappedRow->{row_group_id} = undef;
-        $mappedRow->{row_project_id} = undef if($abbreviatedTablePeriod eq $PROJECT_INFO_TABLE); #Important that we keep the project id for everything except projectinfo
-        $mappedRow->{row_alg_invocation_id} = undef;
 
-        eval "require $tableName";
-        die $@ if $@;  
+      # self referencing tables will need mappings for loaded rows
+      $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
 
-        my $gusRow = eval {
-          $tableName->new($mappedRow);
-        };
-        die $@ if $@;
-
-        $gusRow->submit(undef, 1);
-
-        $primaryKey = $gusRow->get(lc($primaryKeyColumn));
-
-        # If the table is self referencing AND the fk is to the same row, we need to submit again after updating that field or fields
-        foreach my $ancestorField (@$fieldsToSetToPk) {
-          $self->log("Setting Field $ancestorField in table $tableName to same value as PrimaryKey for row: $primaryKey");
-          $gusRow->set($ancestorField, $primaryKey);
-          $gusRow->submit(undef, 1);
-        }
-
-
-        my $databaseTableMapping = GUS::Model::ApiDB::DATABASETABLEMAPPING->new({database_orig => $database, 
-                                                                                 table_name => $abbreviatedTableColumn,
-                                                                                 primary_key_orig => $origPrimaryKey,
-                                                                                 primary_key => $primaryKey,
-                                                                                });
-        $databaseTableMapping->submit(undef, 1);
-
-        # self referencing tables will need mappings for loaded rows
-        $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
-
-
-        if($rowCount++ % 2000 == 0) {
-          $self->getDb()->manageTransaction(0, 'commit');
-          $self->getDb()->manageTransaction(0, 'begin');
-        }
-
-        $self->undefPointerCache();
+      my @a;
+      foreach my $a (@attributeList) {
+        push @a, $mappedRow->{$a} unless($housekeepingFieldsHash{$a});
       }
+        
+      push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
+
+      my @nonLobColumns = grep { !$lobFiles{$_} } @a;
+
+      print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @nonLobColumns) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER; # note the special line terminator
+
+      # each lob column is written to a lobfile
+      foreach my $lobCol (keys %lobFiles) {
+        my $fh = $lobFiles{$lobCol};
+        print $fh $mappedRow->{$lobCol} . $END_OF_LOB_DELIMITER;
+      }
+        
+      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
+      print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER; # note the special line terminator
+
 
       # update the globalMapp for newly added rows
       if($isGlobal) {
@@ -702,22 +680,21 @@ sub loadTable {
 
   }
 
-  $self->getDb()->manageTransaction(0, 'commit');
-
   $tableReader->finishTable();
 
-  if(!$isSelfReferencing && !$hasLobColumns && $hasNewRows) {
+  if($hasNewRows || $hasNewMapRows) {
     my $login       = $self->getConfig->getDatabaseLogin();
     my $password    = $self->getConfig->getDatabasePassword();
     my $dbiDsn      = $self->getConfig->getDbiDsn();
 
     my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-    my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
-    unless($sqlLdrSystemResult / 256 == 0) {
-      $self->error("sqlldr failed:  ${sqlldrDatFn}.log");
+    if($hasNewRows) {
+      my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
+      unless($sqlLdrSystemResult / 256 == 0) {
+        $self->error("sqlldr failed:  ${sqlldrDatFn}.log");
+      }
     }
-
 
     my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn rows=1000 log=${sqlldrMapFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
     unless($sqlLdrMapSystemResult / 256 == 0) {
