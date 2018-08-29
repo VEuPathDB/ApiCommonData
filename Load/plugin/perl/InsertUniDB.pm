@@ -618,6 +618,8 @@ sub loadTable {
         $databaseTableMapping->submit(undef, 1);
         $self->getDb()->manageTransaction(0, 'commit');
         $self->getDb()->manageTransaction(0, 'begin');
+
+        $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey
       }
     }
 
