@@ -47,10 +47,15 @@ __DATA__
 FungiDB|29|Sschenckii1099-18|39
 FungiDB|29|CalbicansWO1|39
 FungiDB|29|AochraceoroseusIBT24754|39
+FungiDB|29|CalbicansSC5314|39
+FungiDB|29|CalbicansSC5314_B|39
+FungiDB|29|CglabrataCBS138|39
+FungiDB|29|BcinereaB05-10|39
 MicrosporidiaDB|29|EhepatopenaeiTH1|39
 MicrosporidiaDB|29|EcanceriGB1|39
 MicrosporidiaDB|29|HeriocheirGB1|39
 MicrosporidiaDB|29|Heriocheircanceri|39
+TriTrypDB|29|LinfantumJPCM5|39
 #
 #FungiDB|29|HcapsulatumH143|38
 #FungiDB|29|CgattiiEJB2|38
