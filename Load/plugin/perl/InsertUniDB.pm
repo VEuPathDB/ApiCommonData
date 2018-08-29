@@ -538,7 +538,6 @@ FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
 ($fieldsString
 )
-begindata
 ";
 }
 
