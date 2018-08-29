@@ -439,7 +439,7 @@ sub queryForMaxPK {
 
 
 sub writeConfigFile {
-  my ($self, $configFh, $tableInfo, $tableName) = @_;
+  my ($self, $configFh, $tableInfo, $tableName, $datFileName) = @_;
 
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
@@ -530,7 +530,7 @@ sub writeConfigFile {
   my $fieldsString = join(",\n", @fields);
 
   print $configFh "LOAD DATA
-INFILE * \"str X'7C0A'\" 
+INFILE '$datFileName' \"str X'7C0A'\" 
 APPEND
 INTO TABLE $tableName
 REENABLE DISABLED_CONSTRAINTS
@@ -581,9 +581,12 @@ sub loadTable {
   my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.ctl');
   my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.ctl');
 
+  my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.dat');
+  my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.dat');
+
   if(!$isSelfReferencing && !$hasLobColumns) {
-    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod);
-    $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME);
+    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
+    $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
   }
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
@@ -634,10 +637,10 @@ sub loadTable {
         }
         
         push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
-        print $sqlldrDatFh join("\t", @a) . "|\n"; # note the special "|\n" line terminator
+        print $sqlldrDatInfileFh join("\t", @a) . "|\n"; # note the special "|\n" line terminator
         
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-        print $sqlldrMapFh join("\t", @mappingRow) . "|\n"; # note the special "|\n" line terminator
+        print $sqlldrMapInfileFh join("\t", @mappingRow) . "|\n"; # note the special "|\n" line terminator
       }
       else {
         $mappedRow->{lc($primaryKeyColumn)} = undef;
