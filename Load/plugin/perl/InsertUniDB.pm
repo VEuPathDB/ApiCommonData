@@ -570,7 +570,7 @@ sub loadTable {
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
   my %lobFiles = map { $_ => 1 } @{$tableInfo->{lobColumns}};
-  foreach my $lobCol (lc(@{$tableInfo->{lobColumns}})) {
+  foreach my $lobCol (@{$tableInfo->{lobColumns}}) {
     open(my $fh, ">${abbreviatedTablePeriod}.$lobCol") or die "Cannot open ${abbreviatedTablePeriod}.$lobCol for writing: $!";
     $lobFiles{$lobCol} = $fh;
   }
@@ -596,14 +596,12 @@ sub loadTable {
   my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.dat');
   my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.dat');
 
-
   $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
-
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
     next if($origPrimaryKey <= $alreadyMappedMaxOrigPk); # restart OR new data (TODO: won't work for "skipped" datasets)
@@ -624,7 +622,7 @@ sub loadTable {
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
         $hasNewMapRows = 1;
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-        print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER ; # note the special line terminator
+        print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER ; # note the special line terminator
 
         $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey
       }
@@ -655,7 +653,7 @@ sub loadTable {
 
       my @nonLobColumns = grep { !$lobFiles{$_} } @a;
 
-      print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @nonLobColumns) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER; # note the special line terminator
+      print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @nonLobColumns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
       # each lob column is written to a lobfile
       foreach my $lobCol (keys %lobFiles) {
@@ -664,7 +662,7 @@ sub loadTable {
       }
         
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-      print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_COLUMN_DELIMITER . $END_OF_RECORD_DELIMITER; # note the special line terminator
+      print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
 
       # update the globalMapp for newly added rows
