@@ -444,6 +444,15 @@ sub queryForMaxPK {
 sub writeConfigFile {
   my ($self, $configFh, $tableInfo, $tableName, $datFileName) = @_;
 
+  my $eolLiteral = $END_OF_LOB_DELIMITER;
+  $eolLiteral =~ s/\n/\\n/;
+
+  my $eorLiteral = $END_OF_RECORD_DELIMITER;
+  $eorLiteral =~ s/\n/\\n/;
+
+  my $eocLiteral = $END_OF_COLUMN_DELIMITER;
+  $eocLiteral =~ s/\t/\\t/;
+
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
   my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
@@ -517,7 +526,7 @@ sub writeConfigFile {
         }
 
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
-          $datatypeMap->{$col} = " LOBFILE( CONSTANT '${tableName}.${col}.txt') TERMINATED BY \"$END_OF_LOB_DELIMITER\")";
+          $datatypeMap->{$col} = " LOBFILE( CONSTANT '${tableName}.${col}.txt') TERMINATED BY \"$eolLiteral\"";
         }
 
         else {
@@ -533,17 +542,20 @@ sub writeConfigFile {
 
   if($tableName eq $MAPPING_TABLE_NAME) {
     # TODO: hoiw to say INTEGER(20) for this pk?
-    push @fields, "database_table_mapping_id \"${tableName}_sq.nextval\"",
+    push @fields, "database_table_mapping_id \"${tableName}_sq.nextval\"";
   }
 
   my $fieldsString = join(",\n", @fields);
 
+
+
+
   print $configFh "LOAD DATA
-INFILE '$datFileName' \"str '$END_OF_RECORD_DELIMITER'\" 
+INFILE '$datFileName' \"str '$eorLiteral'\" 
 APPEND
 INTO TABLE $tableName
 REENABLE DISABLED_CONSTRAINTS
-FIELDS TERMINATED BY '$END_OF_COLUMN_DELIMITER'
+FIELDS TERMINATED BY '$eocLiteral'
 TRAILING NULLCOLS
 ($fieldsString
 )
@@ -571,7 +583,7 @@ sub loadTable {
 
   my %lobFiles = map { $_ => 1 } @{$tableInfo->{lobColumns}};
   foreach my $lobCol (@{$tableInfo->{lobColumns}}) {
-    open(my $fh, ">${abbreviatedTablePeriod}.$lobCol") or die "Cannot open ${abbreviatedTablePeriod}.$lobCol for writing: $!";
+    open(my $fh, ">${abbreviatedTablePeriod}.$lobCol.txt") or die "Cannot open ${abbreviatedTablePeriod}.$lobCol for writing: $!";
     $lobFiles{$lobCol} = $fh;
   }
 
@@ -598,6 +610,7 @@ sub loadTable {
 
   $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
+
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
@@ -644,14 +657,8 @@ sub loadTable {
       # self referencing tables will need mappings for loaded rows
       $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
 
-      my @a;
-      foreach my $a (@attributeList) {
-        push @a, $mappedRow->{$a} unless($housekeepingFieldsHash{$a});
-      }
-        
-      push @a, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
-
-      my @nonLobColumns = grep { !$lobFiles{$_} } @a;
+      my @nonLobColumns = map { $mappedRow->{$_} } grep { !$lobFiles{$_} && !$housekeepingFieldsHash{$_} } @attributeList;
+      push @nonLobColumns, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
 
       print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @nonLobColumns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
