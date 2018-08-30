@@ -708,6 +708,8 @@ sub loadTable {
 
   }
 
+  $rowCount = 0 unless($self->getArg('commit'));
+
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 }
 
