@@ -513,7 +513,7 @@ sub writeConfigFile {
         my $type = $att->{'type'};
 
         if($type eq 'NUMBER') {
-          $datatypeMap->{$col} = " INTEGER EXTERNAL$precString";
+          $datatypeMap->{$col} = " CHAR$precString";
         }
         elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
           $datatypeMap->{$col} = " CHAR($length)";
@@ -522,7 +522,7 @@ sub writeConfigFile {
           $datatypeMap->{$col} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
         }
         elsif($type eq 'FLOAT') {
-          $datatypeMap->{$col} = " FLOAT EXTERNAL$precString";
+          $datatypeMap->{$col} = " CHAR(255)";
         }
 
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
