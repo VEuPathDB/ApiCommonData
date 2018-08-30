@@ -58,7 +58,7 @@ if ($fileToCopy) {
   } elsif ($fileToCopy =~ /^genename/i || $fileToCopy =~ /^gene/i || $fileToCopy =~ /^name/i ) {
     $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/function/$source\_gene_names/$version/";
     $finalFile = "geneName.txt";
-  } elsif ($fileToCopy =~ /^go_asso/i || $fileToCopy =~ /^GO/ ) {
+  } elsif ($fileToCopy =~ /^go_asso/i || $fileToCopy =~ /^GO/i ) {
     $outDir = "/eupath/data/EuPathDB/manualDelivery/$project/$orgAbbrev/function/$source\_GOAssociations/$version/";
     $finalFile = "associations.gas";
   } elsif ($fileToCopy =~ /^synonym/i) {
