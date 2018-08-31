@@ -52,6 +52,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::ApiDB::EcNumberGenus" => ["ec_number", "genus"],
                             "GUS::Model::ApiDB::Datasource" => ["name"],
                             "GUS::Model::Study::Protocol" => ["name"],
+                            "GUS::Model::Study::ProtocolParam" => ["protocol_id", "name"],
     );
 
 
@@ -625,7 +626,7 @@ sub loadTable {
 
     my $primaryKey;
 
-    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol';
+    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol' || $tableName eq 'GUS::Model::Study::ProtocolParam';
 
     if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
