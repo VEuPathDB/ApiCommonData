@@ -538,7 +538,8 @@ sub writeConfigFile {
 
   $datatypeMap->{'modification_date'} = " constant \"$modDate\"";
 
-  my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } @$attributeList;
+  my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { $_ ne 'row_project_id'} @$attributeList;
+  push @fields, "row_project_id " . $datatypeMap->{row_project_id}; #ensure row_project_id is last
 
   if($tableName eq $MAPPING_TABLE_NAME) {
     # TODO: hoiw to say INTEGER(20) for this pk?
