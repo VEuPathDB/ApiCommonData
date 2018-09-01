@@ -514,7 +514,7 @@ sub writeConfigFile {
         my $type = $att->{'type'};
 
         if($type eq 'NUMBER') {
-          $datatypeMap->{$col} = " CHAR$precString";
+          $datatypeMap->{$col} = " CHAR";
         }
         elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
           $datatypeMap->{$col} = " CHAR($length)";
