@@ -1,0 +1,273 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use DBI;
+use DBD::Oracle;
+#use CBIL::Util::PropertySet;
+use CBIL::Util::Utils;
+use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
+use ApiCommonData::Load::AnnotationUtils qw{getSeqIO};
+use ApiCommonData::Load::Unflattener;
+
+
+my ($inputFileOrDir, $inputFileFormat, $outputFileDir, $help);
+&GetOptions('inputFileOrDir=s' => \$inputFileOrDir,
+	    'inputFileFormat=s' => \$inputFileFormat,
+	    'outputFileDir=s' => \$outputFileDir,
+	    'help|h' => \$help
+	    );
+&usage() if ($help);
+&usage("Missing a Required Argument") unless (defined $inputFileOrDir && $inputFileFormat);
+
+if (!$outputFileDir) {
+  $outputFileDir = ".";
+}
+
+my $wholeGenomeFile = ($inputFileFormat =~ /gff/i) ? "$outputFileDir/whole_genome.gff" : "$inputFileOrDir";
+
+
+## pre1. if gff3, run makeCustomFastaAndGffFromGff3 and preprocessGFF3o
+if ($inputFileFormat =~ /gff/i) {
+  my $pGC1 = "makeCustomFastaAndGffFromGff3 --input_dir $inputFileOrDir --output_fasta $outputFileDir/whole_genome.fasta --output_gff $outputFileDir/whole_genome.noseq.gff3";
+  print STDERR "running...\n  $pGC1\n";
+  &runCmd($pGC1);
+  print STDERR "Done:\n  $pGC1\n";
+
+  my $pGC2 = "preprocessGFF3 --input_gff $outputFileDir/whole_genome.noseq.gff3 --output_gff $wholeGenomeFile ";
+  print STDERR "running...\n  $pGC2\n";
+  &runCmd($pGC2);
+  print STDERR "Done:\n  $pGC2\n";
+
+}
+
+
+## 1. run reportFeatureQualifiers
+## reportFeatureQualifiers --format gff3 --file_or_Dir whole_genome.gff > report.txt
+
+my $pc1 = "reportFeatureQualifiers --format $inputFileFormat --file_or_Dir $wholeGenomeFile > $outputFileDir/report.txt";
+print STDERR "running...\n  $pc1\n";
+&runCmd($pc1);
+print STDERR "Done:\n  $pc1\n";
+
+
+## 2. check gene model
+my $bioperlSeqIO = &getSeqIO($wholeGenomeFile, $inputFileFormat);
+while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
+  my $seqType = 'DNA';
+  if (defined $bioperlSeq->molecule) {
+    $seqType = $bioperlSeq->molecule;
+  } elsif (defined $bioperlSeq->alphabet) {
+    $seqType = $bioperlSeq->alphabet;
+  }
+
+  my @topSeqFeatures;
+  if ($seqType !~ /rna/i) {
+    if ($inputFileFormat =~ /gff/i) {
+      @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
+    } elsif ($inputFileFormat =~ /embl/i) {
+      @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
+    } elsif ($inputFileFormat =~ /genbank/i) {
+      @topSeqFeatures = processWithGenbank($bioperlSeq);
+    } else {
+      print STDERR "ERROR: The format $inputFileFormat have not been coded yet\n";
+    }
+  }
+
+## 3.3. check if gene, rna, exon or CDS are on the same strand
+  &checkGeneStructure (\@topSeqFeatures);
+
+  foreach my $bioperlFeatureTree (@topSeqFeatures) {
+    my $geneFeature = $bioperlFeatureTree;
+
+## 3.1. check if gene has ID
+    &checkIfGeneID ($geneFeature);
+
+    my $type = $geneFeature->primary_tag();
+    if ($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' || $type eq 'centromere') {
+      $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+      next;
+    }
+
+    my $gene = &traverseSeqFeature($geneFeature, $bioperlSeq);
+    if ($gene) {
+      $bioperlSeq->add_SeqFeature($gene);
+    }
+  }
+
+}
+
+## inside gene model,
+## 3.2. check if gene ID is unique gene ID, such as locus_tag, ID, and etc.
+
+
+sub processWithGenbank {
+  my ($bioperlSeq) = @_;
+  my $unflattener = ApiCommonData::Load::Unflattener->new;
+
+  $unflattener->error_threshold(1);
+  $unflattener->report_problems(\*STDERR);
+  $unflattener->unflatten_seq(-seq=>$bioperlSeq,
+			      -use_magic=>1);
+  return $bioperlSeq->get_SeqFeatures;
+
+}
+sub processWithEmbl {
+}
+sub processWithGff {
+
+}
+
+sub traverseSeqFeature {
+  my ($geneFeature, $bioperlSeq) = @_;
+  my (@genes, $gene);
+  my @RNAs = $geneFeature->get_SeqFeatures;
+
+  my $transcriptCount = scalar @RNAs;
+  my $ctr = 1;
+
+  $gene = &makeBioperlFeature("gene", $geneFeature->location, $bioperlSeq);
+  $gene = &copyQualifiers($geneFeature, $gene);
+
+  foreach my $RNA (sort {$a->location->start <=> $b->location->start
+			   || $a->location->end <=> $b->location->end } @RNAs) {
+
+    my $subType = $RNA->primary_tag;
+
+    ## based on RNA type to make the gene
+
+    my $transcript = &makeBioperlFeature ("$subType", $RNA->location, $bioperlSeq);
+    $transcript = &copyQualifiers($RNA, $transcript);
+
+    if ($subType =~ /RNA/ || $subType eq "transcript") {
+      my @containedSubFeatures = $RNA->get_SeqFeatures;
+      foreach my $subSubFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures) {
+	my $subSubType = $subSubFeature->primary_tag;
+	if ($subSubType eq 'exon' || $subSubType eq 'CDS' || $subSubType eq 'UTR') {
+	  my $exon = &makeBioperlFeature ($subSubFeature->primary_tag, $subSubFeature->location, $bioperlSeq);
+	  $transcript->add_SeqFeature($exon);
+	}
+      }
+    }
+    $gene->add_SeqFeature($transcript);
+  }
+  push (@genes, $gene) if ($gene);
+  return (\@genes);
+}
+
+sub getSeqIO {
+  my ($inputFile, $format) = @_;
+  my $bioperlSeqIO;
+
+  if ($format =~ m/^gff([2|3])$/i) {
+    print STDERR "pre-processing GFF file ...\n";
+    $bioperlSeqIO = convertGFFStreamToSeqIO($1);
+    print STDERR "done pre-processing gff file\n";
+  } else {
+    $bioperlSeqIO = Bio::SeqIO->new (-format => $format,
+                                     -file => $inputFile);
+  }
+  return $bioperlSeqIO;
+}
+
+sub checkIfGeneID {
+  my ($feature) = @_;
+
+  if ($feature->has_tag ("ID") || $feature->has_tag("locus_tag") || $feature->has_tag("gene")) {
+    return 1;
+  } else {
+    print STDERR "the required gene ID, ID/locus_tag/gene have not been found.\n";
+    exit;
+  }
+}
+
+sub checkIfGeneIDIsUnique {
+  my ($feature, $idSymbol) = @_;
+
+  my %ids;
+  if ($feature->has_tag ($idSymbol)) {
+    my $id = $feature->get_tag_values();
+    if ($ids{$id}) {
+      print STDERR "\$id: $id is not unique.\n";
+      exit;
+    } else {
+      $ids{$id} = 1;
+    }
+  } else {
+    print STDERR "the required gene ID, $idSymbol is not in the file.\n";
+    exit;
+  }
+  return 1;
+}
+
+## check if gene, rna, exon or CDS are on the same strand
+sub checkGeneStructure {
+  my $geneFeature = shift;
+  foreach my $gene (@{$geneFeature} ) {
+    my $type = $gene->primary_tag();
+    if ($type eq 'gene' || $type eq 'pseudogene') {
+      my @RNAs = $gene->get_SeqFeatures;
+      foreach my $RNA (sort {$a->location->start <=> $b->location->start
+			       || $a->location->end <=> $b->location->end} @RNAs){
+#	my ($rID) = $RNA->get_tag_values('ID');
+	my ($rID);
+	if ($RNA->has_tag("ID")) {
+	  ($rID) = $RNA->get_tag_values('ID');
+	} elsif ($RNA->has_tag("locus_tag")) {
+	  ($rID) = $RNA->get_tag_values('locus_tag');
+	} else {
+	  print STDERR "the unique gene ID has not been coded in checkGeneStructure yet.\n";
+	}
+	die "gene and rna are not on the same strand: $rID \n" if ($gene->location->strand != $RNA->location->strand);
+	my @exons= $RNA->get_SeqFeatures;
+	foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
+	    if ( ($gene->location->strand != $exon->location->strand)
+		 || ($RNA->location->strand != $exon->location->strand ) ) {
+	          die "gene, rna, and exon are not on the same strand: $rID\n";
+		}
+	  }
+      }
+    }
+  }
+  return 1;
+}
+
+sub copyQualifiers {  ## copy qualifiers other than ID, Parent, and Derives_from
+  my ($geneFeature, $bioperlFeatureTree) = @_;
+  for my $qualifier ($geneFeature->get_all_tags()) {
+    if ($bioperlFeatureTree->has_tag($qualifier) 
+	&& $qualifier ne "ID" && $qualifier ne "Parent" && $qualifier ne "Derives_from") {
+      # remove tag and recreate with merged non-redundant values
+      my %seen;
+      my @uniqVals = grep {!$seen{$_}++} 
+                       $bioperlFeatureTree->remove_tag($qualifier), 
+                       $geneFeature->get_tag_values($qualifier);
+      $bioperlFeatureTree->add_tag_value(
+                             $qualifier, 
+                             @uniqVals
+                           );    
+    } elsif($qualifier ne "ID" && $qualifier ne "Parent" && $qualifier ne "Derives_from") {
+      $bioperlFeatureTree->add_tag_value(
+                             $qualifier,
+                             $geneFeature->get_tag_values($qualifier)
+                           );
+    }
+  }
+  return $bioperlFeatureTree;
+}
+
+sub usage {
+  die
+"
+Usage: validateAnnotationFile
+
+where:
+  --inputFileOrDir: required, the annotation file name or directory containing annotation files
+  --inputFileFormat: required, the format of annotation file(s)
+  --outputFileDir: optional, the directory name for output file
+
+";
+}
+
