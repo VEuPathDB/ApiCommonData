@@ -205,16 +205,16 @@ printSynonymClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasSynony
 printCommentClass ($ofh, \%excelInfo, "transcript") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^t/i);
 printCommentClass ($ofh, \%excelInfo, "gene") if ($excelInfo{$organismAbbrev}{'hasNote'} =~ /^g/i);
 
-printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
+printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
-printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
-printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
-printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
-printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
+printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStraindbEST ($ofh, \%excelInfo);
-printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^t/i);
+printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printIsolatesFromFamilyRep ($ofh, \%excelInfo);
 
 
