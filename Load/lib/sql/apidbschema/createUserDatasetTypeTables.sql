@@ -65,37 +65,6 @@ GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression_sq TO gus_w;
 
 --------------------------------------------------------------------------------
 
-create table ApiDBUserDatasets.Profile (
- profile_id                   number(20),
- user_dataset_id               number(20),
- dataset_type                 varchar2(50),
- dataset_subtype              varchar2(50),
- profile_type                 varchar2(20),
- source_id                    varchar2(400),
--- profile_study_id             number(5),
--- profile_set_name             varchar2(400),
- profile_set_suffix           varchar2(50),
- profile_as_string            varchar2(4000),
- max_value                    number,
- min_value                    number,
- max_timepoint                varchar2(200),
- min_timepoint                varchar2(200),
- foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
- primary key (profile_id)
-);
-
-create index ApiDBUserDatasets.prf_idx1
-  on ApiDBUserDatasets.Profile
-     (user_dataset_id, profile_id)
-  tablespace indx;
-
-create sequence ApiDBUserDatasets.profile_sq;
-
-grant insert, select, update, delete on ApiDBUserDatasets.Profile to gus_w;
-grant select on ApiDBUserDatasets.Profile to gus_r;
-grant select on ApiDBUserDatasets.profile_sq to gus_w;
-
---------------------------------------------------------------------------------
 exit;
 
 
