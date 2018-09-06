@@ -86,7 +86,7 @@ create table ApiDBUserDatasets.Profile (
 
 create index ApiDBUserDatasets.prf_idx1
   on ApiDBUserDatasets.Profile
-     (profile_set_id, profile_id)
+     (user_dataset_id, profile_id)
   tablespace indx;
 
 create sequence ApiDBUserDatasets.profile_sq;
