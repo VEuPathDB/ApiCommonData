@@ -64,41 +64,23 @@ GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression TO gus_r;
 GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression_sq TO gus_w;
 
 --------------------------------------------------------------------------------
-create table ApiDBUserDatasets.ProfileSet (
- profile_set_id number(20),
- user_dataset_id number(20),
- foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
- primary key (profile_set_id)
-);
 
-create index ApiDBUserDatasets.pset_idx1
-  on ApiDBUserDatasets.ProfileSet
-     (profile_set_id, user_dataset_id)
-  tablespace indx;
-
-create sequence ApiDBUserDatasets.profileset_sq;
-
-grant insert, select, update, delete on ApiDBUserDatasets.ProfileSet to gus_w;
-grant select on ApiDBUserDatasets.ProfileSet to gus_r;
-grant select on ApiDBUserDatasets.profileSet_sq to gus_w;
-
---------------------------------------------------------------------------------
 create table ApiDBUserDatasets.Profile (
  profile_id                   number(20),
- profile_set_id               number(20),
+ user_dataset_id               number(20),
  dataset_type                 varchar2(50),
  dataset_subtype              varchar2(50),
  profile_type                 varchar2(20),
  source_id                    varchar2(400),
- profile_study_id             number(5),
- profile_set_name             varchar2(400),
+-- profile_study_id             number(5),
+-- profile_set_name             varchar2(400),
  profile_set_suffix           varchar2(50),
  profile_as_string            varchar2(4000),
  max_value                    number,
  min_value                    number,
  max_timepoint                varchar2(200),
  min_timepoint                varchar2(200),
- foreign key (profile_set_id) references ApiDBUserDatasets.ProfileSet,
+ foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
  primary key (profile_id)
 );
 

@@ -8,7 +8,7 @@ create table ApiDB.PhenotypeGrowthRate (
  expected_variance            NUMBER(6,4),
  rgr_ci_low                   NUMBER(6,4),
  rgr_ci_high                  NUMBER(6,4),
- times_analyzed               NUMBER(1),
+ times_analyzed               NUMBER(2),
  construct                    VARCHAR(50),
  notes                        VARCHAR(250),
  modification_date              DATE,
