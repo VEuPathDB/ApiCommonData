@@ -1,0 +1,128 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+use JSON;
+
+use File::Find;
+use File::Basename;
+
+my ($userDatasetId, $manifestFile, $projectId) = @ARGV;
+
+usage() unless scalar(@ARGV) == 3;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+$dbh->{RaiseError} = 1;
+
+my $panPkSql = "select ApiDBUserDatasets.UD_ProtocolAppNode_sq.nextval from dual";
+my $panPkSh = $dbh->prepare($panPkSql);
+
+my $insertProtocolAppNode = $dbh->prepare(<<EOF);
+    INSERT INTO ApiDBUserDatasets.UD_PROTOCOLAPPNODE
+    (protocol_app_node_id, user_dataset_id, name, node_order_num)
+    VALUES (?,?,?,?)
+EOF
+
+my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
+    INSERT INTO ApiDBUserDatasets.UD_NAFeatureExpression
+    (na_feat_expression_id, protocol_app_node_id, na_feature_id, value)
+    VALUES (ApiDBUserDatasets.UD_NaFeatureExpression_sq.nextval,?,?,?)
+EOF
+
+
+open my $fh, $manifest or die "Can't open file $manifest for readin:  $!";
+my $manifestContent = do { local $/; <$fh> }; #SLURP
+
+my $json = decode_json $manifestContent;
+
+my $orderNum = 1;
+my $count = 0;
+
+my %geneIds;
+
+while(@{$json->{TODO}}) { # TODO:  need example of how this looks
+  chomp;
+  my $filename = $_;
+  next unless($filename =~ /(.+)\.gene_expression\.tab$/);
+
+  my $panName = $1;
+
+  $panPkSh->execute();
+  my ($panId) = $panPkSh->fetchrow_array();
+
+  $insertProtocolAppNode->execute($panId, $userDatasetId, $panName, $orderNum);
+
+  open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
+
+  while(<DAT>) {
+    chomp;
+
+    my @a = split(/\t/, $_);
+
+    my $sourceId = $a[0];
+    my $fpkm = $a[9];
+
+    unless(%geneIds) {
+      &makeGeneSourceIdMapping($sourceId, $dbh);
+    }
+    
+    my $naFeatureId = $geneIds{$sourceId};
+    unless($naFeatureId) {
+      die "Could not find an na_feature_id for source_id $sourceId"
+    }
+
+
+    $insertNaFeatureExpression->execute($panId, $naFeatureId, $fpkm);
+
+    $dbh->commit if ($count++ % 1000 == 0);    
+  }
+
+  $dbh->commit;
+  $orderNum;
+}
+
+$dbh->commit;
+
+
+sub makeGeneSourceIdMapping {
+  my ($sourceId, $dbh) = @_;
+
+  my $sql = "select source_id, na_feature_id from apidbtuning.geneattributes where organism in (select organism from apidbtuning.geneattributes where source_id = '$sourceId')";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my ($sourceId, $naFeatureId) = $sh->fetchrow_array()) {
+    $geneIds{$sourceId} = $naFeatureId;
+  }
+  $sh->finish();
+}
+
+sub usage {
+  die "
+
+Install an RNASeq user dataset in the user dataset schema.
+
+Usage installRnaSeqUserDataset user_dataset_id manifest.txt project_id
+
+Where:
+  user_dataset_id:  a user dataset id
+  manifest:         a txt file with one file name per line
+  project_id:       PlasmoDB, etc.
+
+Finds gus.config in \$GUS_HOME/config/project_id/gus.config
+
+";
+}
