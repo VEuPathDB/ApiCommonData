@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($userDatasetId, $projectId) = @ARGV;
+
+usage() unless $userDatasetId && $projectId;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my $dbh = $db->getQueryHandle(0);
+
+my $deleteProtocolAppNodes = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UD_PROTOCOLAPPNODE
+    WHERE user_dataset_id = ?
+EOF
+
+
+my $deleteNaFeatureExpression = $dbh->prepare(<<EOF);
+    DELETE from ApiDBUserDatasets.UD_NAFeatureExpression
+    WHERE protocol_app_node_id in (select distinct protocol_app_node_id 
+                                   from ApiDBUserDatasets.UD_PROTOCOLAPPNODE 
+                                   where user_dataset_id = ?)
+EOF
+
+
+$deleteNaFeatureExpression->execute($userDatasetId);
+$deleteProtocolAppNodes->execute($userDatasetId);
+
+$dbh->commit;
+
+sub usage {
+  die "
+Uninstall a Gene List user dataset from the user datasets schema.
+
+Usage:  uninstallGeneListUserDataset user_dataset_id project_id
+
+Where:
+  user_dataset_id:  a user dataset id
+  project_id:       PlasmoDB, etc.
+
+
+Finds gus.config in \$GUS_HOME/config/project_id/gus.config
+
+";
+}
