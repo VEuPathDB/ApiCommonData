@@ -1,0 +1,22 @@
+# Get terms with its label, display order and parent
+# It can be used to add/update display order of terms in the search filters
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?entity ?label ?displayOrder ?plabel 
+WHERE { 
+	?entity a owl:Class .
+	?entity rdfs:label ?tlabel .
+	BIND (str(?tlabel) AS ?label) .
+	OPTIONAL {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?parentlabel . 
+		BIND (str(?parentlabel) AS ?plabel) .
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0000274 ?displayOrder .
+	}
+}
+ORDER BY ASC (?plabel)
