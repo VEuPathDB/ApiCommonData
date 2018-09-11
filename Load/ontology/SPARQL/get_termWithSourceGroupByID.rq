@@ -1,0 +1,29 @@
+# List terms with ?projectlabels and project source group by ID
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?sid
+  (COUNT(DISTINCT ?project) AS ?project_count)
+  (GROUP_CONCAT(DISTINCT ?label;separator=" | ") AS ?labels)
+  (GROUP_CONCAT(DISTINCT ?project;separator=" | ") AS ?projects)
+WHERE {
+  <http://purl.obolibrary.org/obo/clinEpi.owl> owl:imports ?file .
+  GRAPH ?file {?entity rdfs:label ?org_label} .
+  ?entity a owl:Class .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	?f2) AS ?project) .
+  BIND(COALESCE(
+ 	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
+	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+ 	IF(CONTAINS(STR(?entity), "#"), STRAFTER(STR(?entity), "#"), ?c),
+  	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid) .
+  BIND (str(?org_label) AS ?label) .
+}
+GROUP BY ?sid
+ORDER BY ASC(?sid)
