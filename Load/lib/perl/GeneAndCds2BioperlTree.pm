@@ -135,7 +135,8 @@ sub preprocess {
 		    ($note =~ /frameshift/i || $note =~ /frame shift/i || $note =~ /intron/i ) ) {
 		    $geneFeature->add_tag_value("pseudo", "") if (!$geneFeature->has_tag("pseudo") );
 		  }
-		  if ($note =~ /pseudo$/ || $note =~ /frameshift$/) {
+		  if ($note =~ /pseudo$/ || $note =~ /frameshift$/
+		      || $note =~ /contains internal stop codon/) {
 		    $geneFeature->add_tag_value("pseudo", "") if (!$geneFeature->has_tag("pseudo") );
 		  }
 		}
