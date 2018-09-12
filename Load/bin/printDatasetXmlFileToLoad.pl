@@ -115,7 +115,7 @@ $excelInfo{$organismAbbrev}{"referenceStrainOrganismAbbrev"} = $excelInfo{$organ
 print STDERR "\$count = $count\n";
  
 foreach my $j (0..$#excelColumn) {
-  print STDERR "$j, $excelColumn[$j]\n";
+#  print STDERR "$j, $excelColumn[$j]\n";
 }
 
 foreach my $k (sort keys %excelInfo) {
