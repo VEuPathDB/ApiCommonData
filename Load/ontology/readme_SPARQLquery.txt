@@ -65,8 +65,11 @@ How to open terminal on Window 10?
 Notes: You need to change the PATH to the files or queries if you want to run the query and save results in the directory other than what specified here.
 
 =============================================================
-# Individual project queries
+# Individual ontology queries
 =============================================================
+
+—————————————————————————————————————————————————————————————————————————————
+# RETRIEVAL QUERY
 
 ————————————————————————————————————————————————————————————
 # Generate the file for adding/updating display order
@@ -78,10 +81,31 @@ robot query --input ./ICEMR/south_asia/icemr_southAsia.owl --query ./SPARQL/get_
 # Gates MALED
 robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/gates_MALED_displayOrder.csv
 
+—————————————————————————————————————————————————————————————————————————————
+# QC QUERY
+
+————————————————————————————————————————————————————————————
+# Check any label used for more than one ontology terms
+#	QC_sameLabelForMultipleTerms.rq
+————————————————————————————————————————————————————————————
+# Gates GEMS1
+robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/QC_sameLabelForMultipleTerms.rq ./query_results/GEMS1_terms_sameLabelForMultipleTerms.csv
+
+————————————————————————————————————————————————————————————
+# Check any leaf terms without corresponding variables in the dataset
+#	QC_leaf_notVariable.rq
+————————————————————————————————————————————————————————————
+# Gates MALED
+robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/QC_leaf_notVariable.rq ./query_results/MALED_leaf_terms_no_mapped_variables.csv
+
+
 
 =============================================================
-# Multiple projects queries
+# Multiple ontologies queries
 =============================================================
+
+—————————————————————————————————————————————————————————————————————————————
+# RETRIEVAL QUERY
 
 ————————————————————————————————————————————————————————————
 # List all terms with their parents and project sources
@@ -91,18 +115,11 @@ robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/get_displayOr
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithParentAndSource.rq ./query_results/clinEpi_termsWithParentAndSource.csv
 
 ————————————————————————————————————————————————————————————
-# Find terms used in which project(s)
+# List terms used in which project(s)
 #	get_termWithSourceGroupByID.rq
 ————————————————————————————————————————————————————————————
 # ClinEpi
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithSourceGroupByID.rq ./query_results/clinEpi_termsWithSource.csv
-
-————————————————————————————————————————————————————————————
-# Check any inconsistent labels used for same ontology term in multiple projects 
-#	QC_termWithMultipleLabelsWithSource.rq
-————————————————————————————————————————————————————————————
-# ClinEpi
-robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_termWithMultipleLabelsWithSource.rq ./query_results/clinEpi_termWithMultipleLabelsWithSource.csv
 
 ————————————————————————————————————————————————————————————
 # Retrieve terms which are not leaves of the tree (considering the terms as category), used to generate category OWL file  
@@ -112,4 +129,19 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_nonLeaf_terms.rq ./query_results/clinEpi_categories.csv
 
 
+—————————————————————————————————————————————————————————————————————————————
+# QC QUERY
 
+————————————————————————————————————————————————————————————
+# Check any inconsistent labels used for same ontology term in multiple projects 
+#	QC_termWithMultipleLabelsWithSource.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_termWithMultipleLabelsWithSource.rq ./query_results/clinEpi_termWithMultipleLabelsWithSource.csv
+
+————————————————————————————————————————————————————————————
+# Check any terms asserted under different categories in different projects
+#	QC_termWithMultipleParents.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_termWithMultipleParents.rq ./query_results/clinEpi_termsWithMultipleParents.csv
