@@ -73,6 +73,7 @@ my (
 &usage("Missing a Required Argument") unless(defined $projectName && $organismAbbrev && $excelFile);
 &usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
 &usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
+&usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -279,6 +280,7 @@ sub printEmblAnnotation {
       printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
     } else {
       next;
+      print STDERR "The secondary annotation has not been configurated yet!";
     }
     printNameWithDollarSign ($fh, 'projectName');
     printNameWithDollarSign ($fh, 'organismAbbrev');
@@ -850,8 +852,8 @@ where
   --dbxrefVersion: required, the version of dbxref_gene2Entrez, dbxref_gene2PubmedFromNcbi, dbxref_gene2Uniprot
   --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
-  --sourceIdRegex: optional, it is required if format is GeneDB or fasta
-  --isfMappingFile: optional, it is required if format is GeneDB or gff3
+  --sourceIdRegex: optional, it is required if format is gff3 or fasta
+  --isfMappingFile: optional, it is required if format is gff3 or embl
 
 ";
 }
