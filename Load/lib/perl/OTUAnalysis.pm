@@ -55,7 +55,10 @@ sub munge {
 
   $self->setProtocolName('taxonomic_diversity_assessment_by_targeted_gene_survey');
 
-  my ($samples, $fileNames, $dataHash,  $totalCounts) = $self->parseOtuFile($dataFile, $output_dir);
+  #perl version requires unique otu_ids, which is not the case for taxon strings
+  #my ($samples, $fileNames, $dataHash,  $totalCounts) = $self->parseOtuFile($dataFile, $output_dir);
+  my ($samples, $fileNames, $otuRFile) = $self->parseOtuFileR($dataFile, $output_dir);
+  $self->runR($otuRFile);
 
   $self->setNames($samples);
   $self->setFileNames($fileNames);
@@ -105,14 +108,52 @@ sub parseBiomFile {
 
 file_input = "$inputFile";
 file_output = "$dataFile";
-source("$ENV{GUS_HOME}/lib/R/TranscriptExpression/parse_biom.R");
+#source("$ENV{GUS_HOME}/lib/R/TranscriptExpression/parse_biom.R");
+library(biomformat)
+biom.obj = read_biom(file_input);
 
-biom.obj = read_hdf5_biom(file_input);
+#enforces a specific organization of taxonomy in metadata list in input file
+assignTaxaAsID <- function(x) {
+
+        kingdom <- x[["metadata"]][["superkingdom"]]
+        phylum <- x[["metadata"]][["phylum"]]
+        class <- x[["metadata"]][["class"]]
+        order <- x[["metadata"]][["order"]]
+        family <- x[["metadata"]][["family"]]
+        genus <- x[["metadata"]][["genus"]]
+        species <- x[["metadata"]][["species"]]
+
+        #TODO figure out if there are null or na vals etc and make sure they are handled right
+        if (is.null(phylum) | length(phylum) == 0) {
+          taxaString <- "drop"
+        } else {
+          taxaString <- paste0("k__", kingdom, "; p__", phylum, "; c__", class, ": o__", order, "; f__", family, "; g__", genus, "; s__", species)
+        }
+        x <- modifyList(x, list(id = taxaString))
+}
 
 otu=data.frame(biom.obj\$data);
-otu=t(otu);
+otu=data.frame(t(otu));
+
+#if colnames auto-generated then replace with actual names from metadata
+if (all(substring(colnames(otu),1,1) == "X")) {
+  colIDs <- unlist(lapply(biom.obj\$columns, "[[", "id"))
+  colIDs <- gsub("'", "", colIDs)
+  colnames(otu) <- colIDs
+}
+
 ID <- unlist(lapply(biom.obj\$rows, "[[", "id"));
+
+#attempt to get IDs from taxon strings in metadata
+taxaIdList <- lapply(biom.obj\$rows, assignTaxaAsID)
+taxaID <- unlist(lapply(taxaIdList, "[[", "id"))
+taxaID <- gsub("'", "", taxaID)
+if (!all(taxaID == "drop")) {
+  ID <- taxaID
+}
+
 otu = cbind(ID,otu)
+otu <- otu[!(otu\$ID=="drop"),]
 write.table(otu, file=file_output, quote = FALSE, sep ="\t", row.names=FALSE);
 
 
@@ -125,6 +166,57 @@ RString
   return $rFile;
 
 
+}
+
+sub parseOtuFileR {
+  my ($self, $dataFile, $output_dir) = @_;
+
+  open (OTU, "<$dataFile");
+
+  my $header = <OTU>;
+  $header=~s/\n|\r//g;
+  my @sample_ids = split("\t",$header);
+  shift @sample_ids;
+
+  close OTU;
+
+  my $ordered_samples = [];
+  my $ordered_file_names = [];
+
+  for my $sample_id (@sample_ids) {
+    push (@$ordered_samples, $sample_id);
+    my $outputFile = $self->getOutputFile();
+    push (@$ordered_file_names, ".".$outputFile."/".$sample_id)
+  }
+
+  my ($fh, $rFile) = tempfile(DIR => "/tmp/", suffix=>".R");
+
+  open(RCODE, "> $rFile") or die "Cannot open $rFile for writing:$!";
+
+  my $rString = <<RString;
+
+  library(data.table)
+  
+  dt <- fread("$dataFile", header=TRUE, na.strings = c(NA, "NA"))
+  samples <- colnames(dt)[2:length(dt)]
+  idCol <- colnames(dt)[1]
+
+  for (sample in samples) {
+    dtSample <- dt[, c(idCol, sample), with=FALSE][!is.na(dt[[sample]])]
+    sum <- sum(dtSample[[sample]])
+    dtSample <- dtSample[dtSample[[sample]] != 0,]
+    dtSample <- dtSample[!is.na(dtSample[[sample]]),]
+    dtSample\$rel_abun <- dtSample[[sample]]/sum
+    colnames(dtSample) <- c("ID", "raw_count", "relative_abundance")
+    write.table(dtSample, file=paste0("$output_dir", sample), quote = FALSE, sep ="\t", row.names=FALSE)
+  }
+
+RString
+  print RCODE $rString;
+
+  close RCODE;
+
+  return ($ordered_samples, $ordered_file_names, $rFile);
 }
 
 sub parseOtuFile {
