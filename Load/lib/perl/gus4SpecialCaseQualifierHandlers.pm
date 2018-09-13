@@ -849,6 +849,11 @@ sub validateGene {
 	      $warning .= "selenoprotein " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') 
 					      || $translatedAAFeat->{bioperlTranscript}->has_tag('stop_codon_redefined_as_selenocysteine') );
 
+	      if ($bioperlFeature->has_tag('product') ) {
+		my ($tempProduct) = $bioperlFeature->get_tag_values('product');
+		$warning .= "selenoprotein " if ($tempProduct =~ /selenoprotein/i);
+	      }
+
 	      $warning .= "Pseudo " if ($transcript->getIsPseudo());
 	      $warning .= "Partial " if ($transcript->getIsPartial());
 
