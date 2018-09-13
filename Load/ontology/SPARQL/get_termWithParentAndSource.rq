@@ -5,7 +5,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 SELECT DISTINCT ?sid ?label ?parent_entity ?parent_label ?project
 WHERE {
-  <http://purl.obolibrary.org/obo/clinEpi.owl> owl:imports ?file .
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
   GRAPH ?file {?entity rdfs:label ?org_label .
 	OPTIONAL {
 	 ?entity rdfs:subClassOf ?parent_entity . 

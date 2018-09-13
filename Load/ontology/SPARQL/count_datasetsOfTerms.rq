@@ -1,0 +1,15 @@
+# Number of datasets the ontology classes(terms) were used and indicate whether they have same labels among multiple datasets
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?entity 
+	(count(distinct ?g) as ?Num_datasets) 
+	(if(count(distinct ?label)<2, "Yes", "No") as ?same_label)
+WHERE {
+	<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:label ?label}
+}
+GROUP BY ?entity
+ORDER BY DESC(?same_label) DESC(?Num_datasets)

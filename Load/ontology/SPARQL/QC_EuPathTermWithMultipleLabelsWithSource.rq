@@ -1,23 +1,24 @@
-# List terms with ?projectlabels and project source group by ID
+# Check whether any terms with same ID use different labels in different projects
 
 PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 SELECT ?sid
-  (COUNT(DISTINCT ?project) AS ?project_count)
+  (COUNT(DISTINCT ?label) AS ?label_count)
   (GROUP_CONCAT(DISTINCT ?label;separator=" | ") AS ?labels)
-  (GROUP_CONCAT(DISTINCT ?project;separator=" | ") AS ?projects)
+  (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?datasets)
 WHERE {
   <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
   GRAPH ?file {?entity rdfs:label ?org_label} .
   ?entity a owl:Class .
+  FILTER (contains(str(?entity), "EUPATH_"))
   BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
   BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
   BIND(COALESCE(
 	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
 	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
 	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
-	?f2) AS ?project) .
+	?f2) AS ?dataset) .
   BIND(COALESCE(
  	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
 	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
@@ -25,5 +26,6 @@ WHERE {
   	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid) .
   BIND (str(?org_label) AS ?label) .
 }
-GROUP BY ?sid
+GROUP BY ?sid 
+HAVING (?label_count > 1)
 ORDER BY ASC(?sid)

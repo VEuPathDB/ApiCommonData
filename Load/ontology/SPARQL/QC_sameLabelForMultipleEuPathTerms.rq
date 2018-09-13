@@ -1,4 +1,4 @@
-# Find ontology terms with same label
+# Find EuPathDB terms with same label
 
 PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -9,6 +9,7 @@ SELECT ?label
 WHERE {
   ?entity a owl:Class .
   ?entity rdfs:label ?org_label .
+  FILTER (contains(str(?entity), "EUPATH_"))
   BIND (str(?org_label) AS ?label)
   BIND(COALESCE(
 	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
