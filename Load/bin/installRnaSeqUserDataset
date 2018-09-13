@@ -8,6 +8,8 @@ use GUS::ObjRelP::DbiDatabase;
 
 use JSON;
 
+use Data::Dumper;
+
 use File::Find;
 use File::Basename;
 
@@ -51,6 +53,10 @@ my $orderNum = 1;
 my $count = 0;
 
 my %geneIds;
+
+print STDERR $json;
+die "stopping";
+
 
 while(@{$json->{TODO}}) { # TODO:  need example of how this looks
   chomp;
