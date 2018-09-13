@@ -300,7 +300,7 @@ sub loadCharacteristics{
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   if($self->getArg('commit')) {
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile");
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000");
 
     open(LOG, $logFile) or die "Cannot opoen log file $logFile: $!";
 
