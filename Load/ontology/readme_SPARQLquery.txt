@@ -50,10 +50,6 @@ SVN check out the files from https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommon
 =============================================================
 
 1. Open Terminal window for running command line
-How to open terminal on Mac? 
-	https://www.wikihow.com/Open-a-Terminal-Window-in-Mac
-How to open terminal on Window 10? 
-	https://www.howtogeek.com/235101/10-ways-to-open-the-command-prompt-in-windows-10/
 
 2. Change path to checked-out ontology directory
 
@@ -119,7 +115,7 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 #	get_termWithSourceGroupByID.rq
 ————————————————————————————————————————————————————————————
 # ClinEpi
-robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithSourceGroupByID.rq ./query_results/clinEpi_termsWithSource.csv
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithSourceGroupByID.rq ./query_results/clinEpi_termsWithSourceGroupByID.csv
 
 ————————————————————————————————————————————————————————————
 # Retrieve terms which are not leaves of the tree (considering the terms as category), used to generate category OWL file  
@@ -139,9 +135,71 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 # ClinEpi
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_termWithMultipleLabelsWithSource.rq ./query_results/clinEpi_termWithMultipleLabelsWithSource.csv
 
+# All projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/QC_termWithMultipleLabelsWithSource.rq ./query_results/allProjects_termWithMultipleLabelsWithSource.csv
+
+
+————————————————————————————————————————————————————————————
+# Check any inconsistent labels used for same EuPathDB ontology term in multiple projects 
+#	QC_EuPathTermWithMultipleLabelsWithSource.rq
+————————————————————————————————————————————————————————————
+# All projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/QC_EuPathTermWithMultipleLabelsWithSource.rq ./query_results/allProjects_EuPathTermWithMultipleLabelsWithSource.csv
+
+
+————————————————————————————————————————————————————————————
+# Check any label used for more than one ontology terms
+#	QC_sameLabelForMultipleTerms.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_sameLabelForMultipleTerms.rq ./query_results/clinEpi_terms_sameLabelForMultipleTerms.csv
+
+# All projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/QC_sameLabelForMultipleTerms.rq ./query_results/allProjects_terms_sameLabelForMultipleTerms.csv
+
+
+
+————————————————————————————————————————————————————————————
+# Check any label used for more than one EuPath ontology terms
+#	QC_QC_sameLabelForMultipleEuPathTerms.rq
+————————————————————————————————————————————————————————————
+# All projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/QC_sameLabelForMultipleEuPathTerms.rq ./query_results/allProjects_terms_sameLabelForMultipleEuPathTerms.csv
+
+
 ————————————————————————————————————————————————————————————
 # Check any terms asserted under different categories in different projects
 #	QC_termWithMultipleParents.rq
 ————————————————————————————————————————————————————————————
 # ClinEpi
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/QC_termWithMultipleParents.rq ./query_results/clinEpi_termsWithMultipleParents.csv
+
+
+—————————————————————————————————————————————————————————————————————————————
+# COUNT QUERY
+
+————————————————————————————————————————————————————————————
+# Number of distinct ontology classes(terms) 
+#	count_uniqueClasses.rq
+————————————————————————————————————————————————————————————
+# All EuPathDB projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_uniqueClasses.rq ./query_results/allProjects_termsCount.csv
+
+————————————————————————————————————————————————————————————
+# Number of distinct EuPathDB ontology classes(terms) 
+#	count_uniqueEuPathClasses.rq
+————————————————————————————————————————————————————————————
+# All EuPathDB projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_uniqueEuPathClasses.rq ./query_results/allProjects_EUPATHtermsCount.csv
+
+
+————————————————————————————————————————————————————————————
+# Number of datasets the ontology classes(terms) were used and indicate whether they have same labels 
+#	count_datasetsOfTerms.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/count_datasetsOfTerms.rq ./query_results/clinEpi_count_datasetsOfTerms.csv
+
+# All EuPathDB projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_datasetsOfTerms.rq ./query_results/allProjects_count_datasetsOfTerms.csv
+
