@@ -44,8 +44,6 @@ EOF
 
 open my $fh, $manifestFile or die "Can't open file $manifestFile for readin:  $!";
 
-my $manifestContent = do { local $/; <$fh> }; #SLURP
-
 my $orderNum = 1;
 my $count = 0;
 
@@ -53,21 +51,12 @@ my %geneIds;
 
 my $dirname = dirname $manifestFile;
 
-my @filesInDir = glob($dirname . "/*");
-print STDERR Dumper \@filesInDir;
-
-print STDERR "\n\nMANIFEST=\n\n";
-
-print STDERR $manifestContent;
-die "stopping";
-
 
 while(<$fh>) { # TODO:  need example of how this looks
   chomp;
-  my $filename = $_;
-  next unless($filename =~ /(.+)\.gene_expression\.tab$/);
+  my ($panName, $filename) = split(/\t/, $_);
 
-  my $panName = $1;
+  next unless($filename =~ /(.+)\.txt$/);
 
   $panPkSh->execute();
   my ($panId) = $panPkSh->fetchrow_array();
