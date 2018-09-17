@@ -65,6 +65,8 @@ while(<$fh>) { # TODO:  need example of how this looks
 
   open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
 
+  <DAT>; # throw away the first line
+
   while(<DAT>) {
     chomp;
 
@@ -72,6 +74,9 @@ while(<$fh>) { # TODO:  need example of how this looks
 
     my $sourceId = $a[0];
     my $fpkm = $a[9];
+
+    next unless($sourceId);
+
 
     unless(%geneIds) {
       &makeGeneSourceIdMapping($sourceId, $dbh);
