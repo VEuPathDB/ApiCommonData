@@ -1,12 +1,40 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/clinEpi_category.owl#"
      xml:base="http://purl.obolibrary.org/obo/clinEpi_category.owl"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace">
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/clinEpi_category.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000266 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000266">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ontological label</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000273 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000273">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ontological definition</rdfs:label>
+    </owl:AnnotationProperty>
     
 
 
@@ -21,47 +49,12 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/ENVO_00003064 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00003064">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drinking water source</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000001 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000001">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Building material</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000003 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000003">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Roof material</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000023 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000023">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cooking fuel</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000040 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000040">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000090"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Basis of complicated diagnosis</rdfs:label>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of complicated malaria</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria with the presence of any danger signs including inability to sit up or stand, vomiting everything, unable to breastfeed or drink and lethargy or meeting criteria for severe malaria.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complicated malaria</rdfs:label>
     </owl:Class>
     
@@ -71,6 +64,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">obsolete_medication material</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that is bearer of a medication role.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medication</rdfs:label>
     </owl:Class>
     
@@ -80,6 +75,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis of symptomatic malaria</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A diagnosis of malaria based on positive blood smear with subjective fever or elevated temperature resulting in antimalarial treatment.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria diagnosis</rdfs:label>
     </owl:Class>
     
@@ -89,16 +86,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study participant information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity which is about features of a human participant under investigation.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
     </owl:Class>
     
 
@@ -107,6 +97,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000302">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on dwelling facilities</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling facilities</rdfs:label>
     </owl:Class>
     
@@ -116,6 +107,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000303">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on dwelling physical characteristics</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling characteristics</rdfs:label>
     </owl:Class>
     
@@ -125,6 +117,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000304">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">socioeconomic factor</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Socioeconomic factors</rdfs:label>
     </owl:Class>
     
@@ -134,6 +127,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000305">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated clinical visit information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aggregated visit details</rdfs:label>
     </owl:Class>
     
@@ -143,6 +137,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000306">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human genotype information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant genotype</rdfs:label>
     </owl:Class>
     
@@ -152,6 +147,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000307">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on participant study details</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant study details</rdfs:label>
     </owl:Class>
     
@@ -161,6 +157,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000308">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hospitalization information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hospitalization</rdfs:label>
     </owl:Class>
     
@@ -170,8 +167,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000309">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">symptom or sign information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Signs and symptoms</rdfs:label>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms and signs</rdfs:label>
     </owl:Class>
     
 
@@ -180,6 +177,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000310">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information on observation details</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation details</rdfs:label>
     </owl:Class>
     
@@ -189,6 +187,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000312">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated entomological measurement data</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aggregated entomological measurement</rdfs:label>
     </owl:Class>
     
@@ -198,6 +197,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000313">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">individual entomological measurement data</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individual entomological measurement</rdfs:label>
     </owl:Class>
     
@@ -207,6 +207,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000322">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles funestus related information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles funestus</rdfs:label>
     </owl:Class>
     
@@ -216,6 +217,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000323">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles gambiae sensu lato related information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles gambiae sl</rdfs:label>
     </owl:Class>
     
@@ -225,6 +227,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000324">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mosquito parity information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquito parity</rdfs:label>
     </owl:Class>
     
@@ -234,6 +237,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000325">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000313"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sporozoite testing information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sporozoite testing</rdfs:label>
     </owl:Class>
     
@@ -243,6 +247,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000326">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000312"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">aggregated sporozoite testing information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sporozoite rate</rdfs:label>
     </owl:Class>
     
@@ -252,6 +257,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000327">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">entomological measurement data</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomological measurements</rdfs:label>
     </owl:Class>
     
@@ -261,6 +267,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000339">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dwelling animal information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A dwelling information about animal living in a human dwelling.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animals</rdfs:label>
     </owl:Class>
     
@@ -270,6 +278,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000340">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human traveling information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about human traveling.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Travel details</rdfs:label>
     </owl:Class>
     
@@ -279,6 +289,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000341">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vector control intervention information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about vector control intervention towards interruption of transmission of infectious diseases.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vector information</rdfs:label>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vector intervention</rdfs:label>
     </owl:Class>
@@ -289,55 +301,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000342">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">employment information</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity that is about employment.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Employment</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000343 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000343">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000339"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animals on property</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000344 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000344">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000341"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bednet treatment</rdfs:label>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Last bednet treatment</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000413 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000413">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever treatment location</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000423 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000423">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021091"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, microscopy</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000425 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000425">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plasmodium species in last year</rdfs:label>
     </owl:Class>
     
 
@@ -346,90 +312,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000427">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">number of months since malaria diagnosis</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A time measurement datum of number of months since malaria diagnosis.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Last malaria diagnosis (days)</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000430 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000430">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimalarial medications used</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000431 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000431">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Where treated</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000433 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000433">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021092"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, PCR</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000437 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000437">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000541"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, FalciVax RDT</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000438 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000438">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000541"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, OptiMAL RDT</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000439 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000439">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000341"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal mosquito repellent</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000440 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000440">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000441 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000441">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000341"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in the last 12 months</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000451 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000451">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Typical healthcare</rdfs:label>
     </owl:Class>
     
 
@@ -438,6 +323,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000541">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rapid diagnosis test result as positive or negative</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A categorical measurement datum that is the result of rapid diagnosis test using a value of positive or negative.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT results</rdfs:label>
     </owl:Class>
     
@@ -447,6 +334,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">human waste disposal</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An environmental feature for disposing human waste.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Waste disposal</rdfs:label>
     </owl:Class>
     
@@ -456,6 +345,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specimen information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</rdfs:label>
     </owl:Class>
     
@@ -465,6 +355,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000649">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anthropometry datum</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A data item of measurement or proportions of the human body.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anthropometry</rdfs:label>
     </owl:Class>
     
@@ -474,6 +366,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000671">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information of human death</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Death information</rdfs:label>
     </owl:Class>
     
@@ -483,6 +376,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000678">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">feeding information</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Feeding</rdfs:label>
     </owl:Class>
     
@@ -492,6 +386,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000686">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hygienic process</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hygiene</rdfs:label>
     </owl:Class>
     
@@ -501,6 +396,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">stool test for microorganisms</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assay that subjects a stool sample to a test for microorganisms.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool microbiology test</rdfs:label>
     </owl:Class>
     
@@ -511,6 +408,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000731">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information of water for a household</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water information</rdfs:label>
     </owl:Class>
     
@@ -520,6 +418,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">information of process</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An information content entity is about a process.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</rdfs:label>
     </owl:Class>
     
@@ -530,6 +430,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000740">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malaria treatment</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A treatment to alleviate the signs and symptoms associated with malaria.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria treatment</rdfs:label>
     </owl:Class>
     
@@ -539,6 +441,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000746">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">summary information of diarrhea episode</obo:EUPATH_0000266>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Summary of diarrheal episodes</rdfs:label>
     </owl:Class>
     
@@ -548,6 +451,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010001">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010039"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">antibiotic administration process</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Administering substance in vivo where an antibiotic substance is administered to a living organism.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic administration</rdfs:label>
     </owl:Class>
     
@@ -603,15 +508,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010010">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010008"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Caretaker income lost; Enrollment</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010011 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010011">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010009"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Money source for expenses of hospitalization or clinical visits</rdfs:label>
     </owl:Class>
     
 
@@ -683,6 +579,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010024">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rehydration treatment</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment whose aim is to restore the normal hydration state of a living organism.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rehydration therapy</rdfs:label>
     </owl:Class>
     
@@ -737,6 +635,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010032">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environment associated with human dwelling</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Environmental system used as dwelling by humans.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling environment</rdfs:label>
     </owl:Class>
     
@@ -782,16 +682,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010039">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">stool collection process</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specimen collection process aimed at collecting a stool sample.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool specimen collection process</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010040 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010040">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010001"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic administered before stool collection?</rdfs:label>
     </owl:Class>
     
 
@@ -819,159 +712,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010356">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010015"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms in the last 7 days</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010357 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010357">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010015"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case, Symptoms since illness began</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010378 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010378">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea treatment before visit; Enrollment</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010379 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010379">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Money source for expenses before visit</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010380 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010380">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010013"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previously sought care</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010381 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010381">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000686"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">When wash hand</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010383 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010383">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anthropometry flag</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010389 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010389">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010022"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Control Child Medication at enrollment</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010390 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010390">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea treatment given in health center</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010391 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010391">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea treatment by prescription at home</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010392 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010392">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010026"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis leaving hospital</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010393 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010393">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010028"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previous diagnosis</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010394 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010394">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010031"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Illness since enrollment visit</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010395 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010395">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010031"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visited health facility</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010398 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010398">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010108"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chlorine treatment brand</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010399 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010399">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drinking water retrieval method</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010400 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010400">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000686"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hand washing material</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010401 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010401">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010108"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water treatment materials</rdfs:label>
     </owl:Class>
     
 
@@ -1822,24 +1562,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0021002 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021002">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0021003 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021003">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Signs</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021091 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021091">
@@ -1854,16 +1576,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021092">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PCR results</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0021093 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021093">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water source</rdfs:label>
     </owl:Class>
     
 
@@ -1899,556 +1611,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A reference to a place on the Earth, by its name or by its geographical location.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_102285 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_102285">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hymenolepis nana</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_10239 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10239">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Virus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_10508 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10508">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adenovirus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_10912 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10912">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rotavirus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_110766 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_110766">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entamoeba coli</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_110788 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_110788">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endolimax nana</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_122928 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_122928">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_142786"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Norovirus GI</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_122929 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_122929">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_142786"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Norovirus GII</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_127906 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_127906">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_666"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vibrio cholerae O1</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1288825 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1288825">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 2B</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_142786 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_142786">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Norovirus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1496 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1496">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clostridium difficile</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1617964 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1617964">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 4C</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1935182 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1935182">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype X</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_194 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_194">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Campylobacter</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_195 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_195">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_194"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Campylobacter coli</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_197 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_197">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_194"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Campylobacter jejuni</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_2 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bacteria</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_210 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_210">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Helicobacter pylori</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_2759 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2759">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eukaryota</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_33277 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_33277">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ancylostomatoidea</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_36087 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_36087">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Trichuris trichiura</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_374923 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_374923">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 1A</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_39733 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_39733">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Astrovirus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_41434 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_41434">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 1B</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_424717 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424717">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 3A</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_424718 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424718">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 5A</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_424720 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_424720">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype Y</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_42897 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_42897">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 2A</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_435321 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_435321">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 3B</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_44417 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_44417">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cyclospora</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_472572 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_472572">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chilomastix mesnili</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_51022 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_51022">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ancylostoma duodenale</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_51028 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_51028">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enterobius vermicularis</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_51031 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_51031">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Necator americanus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_562 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_562">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">E. coli</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_56625 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_56625">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Isospora</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_5740 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5740">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Giardia</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_5759 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5759">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entamoeba histolytica</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_5806 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_5806">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cryptosporidium</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_590 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_590">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Salmonella</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6181 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6181">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Schistosoma</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_620 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_620">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6202 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6202">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taenia</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_621 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_621">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella boydii</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6216 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6216">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hymenolepis diminuta</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_622 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_622">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella dysenteriae</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_623 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_623">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_624 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_624">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_620"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella sonnei</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6248 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6248">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Strongyloides stercoralis</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_6252 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_6252">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ascaris lumbricoides</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_630 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_630">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yersinia enterocolitica</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_642 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_642">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aeromonas</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_662 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_662">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vibrio</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_666 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_666">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_662"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vibrio cholerae</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_670 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_670">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_662"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vibrio parahaemolyticus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_703 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_703">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plesiomonas shigelloides</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_71585 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_71585">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Balantidium coli</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_817 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_817">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bacteroides fragilis</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_95341 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_95341">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sapovirus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/NCBITaxon_984898 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_984898">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_623"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shigella flexneri serotype 4A</rdfs:label>
     </owl:Class>
     
 
@@ -2457,16 +1622,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specimen collection process</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A planned process with the objective of collecting a specimen.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OBI_0100051 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
     </owl:Class>
     
 
@@ -2475,6 +1633,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000014">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical finding</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A representation that is either the output of a clinical history taking or a physical examination or an image finding, or some combination thereof.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical finding</rdfs:label>
     </owl:Class>
     
@@ -2485,6 +1645,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000015">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinical history</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A series of statements representing health-relevant qualities of a patient and of a patient&apos;s family.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical history</rdfs:label>
     </owl:Class>
     
@@ -2494,6 +1656,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">laboratory test</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A measurement assay that has as input a patient-derived specimen, and as output a result that represents a quality of the specimen.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory test</rdfs:label>
     </owl:Class>
     
@@ -2503,6 +1667,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000073">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diagnosis</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The representation of a conclusion of a diagnostic process.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis</rdfs:label>
     </owl:Class>
     
@@ -2512,6 +1678,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000083">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">physical examination finding</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TODO: Define.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical examination</rdfs:label>
     </owl:Class>
     
@@ -2521,6 +1689,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">treatment</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A processual entity whose completion is hypothesized (by a healthcare provider) to alleviate the signs and symptoms associated with a disorder</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment</rdfs:label>
     </owl:Class>
     
@@ -2530,11 +1700,13 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PCO_0000024">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000266 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">household</obo:EUPATH_0000266>
+        <obo:EUPATH_0000273 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A material entity that consists of one or more people who live in the same dwelling and also share at meals or living accommodation, and may consist of a single family or some other grouping of people.</obo:EUPATH_0000273>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.2.4.20160507-1731) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
