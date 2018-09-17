@@ -6,8 +6,6 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-use JSON;
-
 use Data::Dumper;
 
 use File::Find;
@@ -44,21 +42,27 @@ my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
 EOF
 
 
-open my $fh, $manifest or die "Can't open file $manifest for readin:  $!";
-my $manifestContent = do { local $/; <$fh> }; #SLURP
+open my $fh, $manifestFile or die "Can't open file $manifestFile for readin:  $!";
 
-my $json = decode_json $manifestContent;
+my $manifestContent = do { local $/; <$fh> }; #SLURP
 
 my $orderNum = 1;
 my $count = 0;
 
 my %geneIds;
 
-print STDERR $json;
+my $dirname = dirname $manifestFile;
+
+my @filesInDir = glob($dirname . "/*");
+print STDERR Dumper \@filesInDir;
+
+print STDERR "\n\nMANIFEST=\n\n";
+
+print STDERR $manifestContent;
 die "stopping";
 
 
-while(@{$json->{TODO}}) { # TODO:  need example of how this looks
+while(<$fh>) { # TODO:  need example of how this looks
   chomp;
   my $filename = $_;
   next unless($filename =~ /(.+)\.gene_expression\.tab$/);
