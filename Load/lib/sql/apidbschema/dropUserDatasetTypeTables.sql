@@ -4,20 +4,13 @@ drop table ApiDBUserDatasets.UD_NaFeatureExpression;
 
 drop  table ApiDBUserDatasets.UD_PROTOCOLAPPNODE;
 
+drop  table ApiDBUserDatasets.UD_PROFILESET;
+
 drop sequence ApiDBUserDatasets.UD_ProtocolAppNode_sq;
 
 drop sequence ApiDBUserDatasets.UD_NaFeatureExpression_sq;
 
-DELETE FROM core.TableInfo
-WHERE lower(name) = lower('UD_NaFeatureExpression')
-  AND database_id = (SELECT database_id
-                     FROM core.DatabaseInfo 
-                     WHERE lower(name) = 'ApidbUserDatasets');
+drop sequence ApiDBUserDatasets.UD_PROFILESET_SQ;
 
-DELETE FROM core.TableInfo
-WHERE lower(name) = lower('UD_ProtocolAppNode')
-  AND database_id = (SELECT database_id
-                     FROM core.DatabaseInfo 
-                     WHERE lower(name) = 'ApidbUserDatasets');
 
 exit;
