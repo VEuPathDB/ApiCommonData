@@ -14,6 +14,7 @@ GRANT select ON ApiDBUserDatasets.UD_GeneId TO gus_r;
 create table ApiDBUserDatasets.UD_ProfileSet (
  profile_set_id number(20),
  user_dataset_id number(20),
+ NAME VARCHAR2(200) not null,  
  foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
  primary key (profile_set_id)
 );
