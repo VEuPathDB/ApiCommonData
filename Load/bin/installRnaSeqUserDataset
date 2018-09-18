@@ -35,8 +35,8 @@ my $psPkSh = $dbh->prepare($psPkSql);
 
 my $insertProfileSet = $dbh->prepare(<<EOF);
     INSERT INTO ApiDBUserDatasets.UD_PROFILESET
-    (user_dataset_id, profile_set_id)
-    VALUES (?,?)
+    (user_dataset_id, profile_set_id, name)
+    VALUES (?,?,?)
 EOF
 
 
@@ -81,7 +81,7 @@ while(<$fh>) { # TODO:  need example of how this looks
     $psPkSh->execute();
     ($psId) = $psPkSh->fetchrow_array();
 
-    $insertProfileSet->execute($userDatasetId, $psId);
+    $insertProfileSet->execute($userDatasetId, $psId, $group);
 
     $profileSetIds{$group} = $psId;
   }
