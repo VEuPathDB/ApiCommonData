@@ -29,9 +29,20 @@ $dbh->{RaiseError} = 1;
 my $panPkSql = "select ApiDBUserDatasets.UD_ProtocolAppNode_sq.nextval from dual";
 my $panPkSh = $dbh->prepare($panPkSql);
 
+my $psPkSql = "select ApiDBUserDatasets.UD_ProfileSet_sq.nextval from dual";
+my $psPkSh = $dbh->prepare($psPkSql);
+
+
+my $insertProfileSet = $dbh->prepare(<<EOF);
+    INSERT INTO ApiDBUserDatasets.UD_PROFILESET
+    (user_dataset_id, profile_set_id)
+    VALUES (?,?)
+EOF
+
+
 my $insertProtocolAppNode = $dbh->prepare(<<EOF);
     INSERT INTO ApiDBUserDatasets.UD_PROTOCOLAPPNODE
-    (protocol_app_node_id, user_dataset_id, name, node_order_num)
+    (protocol_app_node_id, profile_set_id, name, node_order_num)
     VALUES (?,?,?,?)
 EOF
 
@@ -41,6 +52,8 @@ my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
     VALUES (ApiDBUserDatasets.UD_NaFeatureExpression_sq.nextval,?,?,?)
 EOF
 
+
+my %profileSetIds;
 
 open my $fh, $manifestFile or die "Can't open file $manifestFile for readin:  $!";
 
@@ -54,14 +67,29 @@ my $dirname = dirname $manifestFile;
 
 while(<$fh>) { # TODO:  need example of how this looks
   chomp;
-  my ($panName, $filename) = split(/\t/, $_);
+  my ($panName, $filename, $group) = split(/\t/, $_);
+
+  $group = "PROFILE_1" unless($group);
 
   next unless($filename =~ /(.+)\.txt$/);
+
+  my $psId;
+  if($profileSetIds{$group}) {
+    $psId = $profileSetIds{$group};
+  }
+  else {
+    $psPkSh->execute();
+    ($psId) = $psPkSh->fetchrow_array();
+
+    $insertProfileSet->execute($userDatasetId, $psId);
+
+    $profileSetIds{$group} = $psId;
+  }
 
   $panPkSh->execute();
   my ($panId) = $panPkSh->fetchrow_array();
 
-  $insertProtocolAppNode->execute($panId, $userDatasetId, $panName, $orderNum);
+  $insertProtocolAppNode->execute($panId, $psId, $panName, $orderNum);
 
   open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
 
