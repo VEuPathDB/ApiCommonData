@@ -295,6 +295,7 @@ sub traverseSeqFeatures {
 
 	    ## in case protein coding genes do not have CDS info in the annotation
 	    ## take the exon coordinates as CDS coordinates
+	    ## if (scalar @codingStartAndEndPairs == 0 && $transType eq "mRNA") {
 	    if ($#codingStartAndEndPairs == -1 && $transType eq "mRNA") {
 	      foreach my $e (@exons) {
 		my $eStrand = $e->location->strand;
