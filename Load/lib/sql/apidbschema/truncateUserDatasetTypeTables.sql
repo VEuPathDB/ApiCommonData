@@ -1,7 +1,9 @@
-truncate TABLE  ApiDBUserDatasets.UD_GeneId;
-
 truncate table ApiDBUserDatasets.UD_NaFeatureExpression;
 
-truncate  table ApiDBUserDatasets.UD_PROTOCOLAPPNODE;
+delete from ApiDBUserDatasets.UD_ProtocolAppNode;
+
+delete from ApiDBUserDatasets.UD_ProfileSet;
+
+truncate table ApiDBUserDatasets.UD_GeneId;
 
 exit;
