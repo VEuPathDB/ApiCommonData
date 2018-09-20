@@ -281,6 +281,7 @@ sub traverseSeqFeatures {
              'snoRNA',
              'tRNA',
              'tmRNA',
+             'scRNA',
              'ncRNA',
              )
         ) {
