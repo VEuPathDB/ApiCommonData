@@ -185,6 +185,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000151 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000151">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>ENROLLDATE</obo:EUPATH_0000755>
+        <rdfs:label>Enrollment date</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000302 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000302">
@@ -211,6 +222,15 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <rdfs:label>Socioeconomic factors</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000307 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000307">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Participant study details</rdfs:label>
     </owl:Class>
     
 
@@ -769,6 +789,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010023">
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <rdfs:label>obosolete_Signs at enrollment</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -818,6 +839,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010030">
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <rdfs:label>obsolete_Signs at follow-up</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -855,9 +877,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010036 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010036">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
-        <rdfs:label>Case eligibility criteria</rdfs:label>
+        <rdfs:label>Eligibility criteria</rdfs:label>
     </owl:Class>
     
 
@@ -867,7 +889,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010037">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
-        <rdfs:label>Individuals related to Child</rdfs:label>
+        <rdfs:label>Individuals related to participant</rdfs:label>
     </owl:Class>
     
 
@@ -987,17 +1009,6 @@
         <obo:EUPATH_0000274 xml:lang="en">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>P_LabFrm</obo:EUPATH_0000755>
         <rdfs:label>All members of the Good Pair have all lab forms complete?</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010054 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010054">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
-        <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>ENROLLDATE</obo:EUPATH_0000755>
-        <rdfs:label>Enrollment date</rdfs:label>
     </owl:Class>
     
 
@@ -2727,7 +2738,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010369 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010369">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_MON</obo:EUPATH_0000755>
         <rdfs:label>Month of enrollment</rdfs:label>
@@ -2738,7 +2749,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010370 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010370">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_YR</obo:EUPATH_0000755>
         <rdfs:label>Year of enrollment</rdfs:label>
@@ -2749,7 +2760,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010371 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010371">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000678"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011690"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_BREASTFED</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_BREASTFED</obo:EUPATH_0000755>
@@ -3501,6 +3512,15 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn36</obo:EUPATH_0000755>
         <rdfs:label>Giardia, by ELISA</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011690 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011690">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000678"/>
+        <rdfs:label xml:lang="en">Breastfeeding summary</rdfs:label>
     </owl:Class>
     
 
