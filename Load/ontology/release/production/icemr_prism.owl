@@ -9,7 +9,8 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_prism.owl">
-        <owl:versionInfo>2018-01-10</owl:versionInfo>
+        <owl:versionInfo>2018-09-20</owl:versionInfo>
+        <rdfs:comment>SVN revision 91776</rdfs:comment>
     </owl:Ontology>
     
 
@@ -158,7 +159,23 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000755 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000755">
-        <rdfs:label>implements variable</rdfs:label>
+        <rdfs:label>variable</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001003 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001003">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">codebookDescription</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001005 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001005">
+        <rdfs:label xml:lang="en">multifilter</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -227,10 +244,21 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_00000501 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000501">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BED</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bed?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bed</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/ENVO_00003064 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00003064">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
         <obo:EUPATH_0000266>drinking water</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">SWATER</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Drinking water source</obo:EUPATH_0000268>
@@ -239,6 +267,160 @@
         <obo:EUPATH_0000755>swater</obo:EUPATH_0000755>
         <obo:IAO_0000115>Primary source of drinking water</obo:IAO_0000115>
         <rdfs:label>Drinking water source</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000577 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000577">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RADIO</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Radio?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Radio</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000578 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000578">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CASSETTE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cassette player?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cassette player</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000579 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000579">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TV</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Television?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Television</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000581 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000581">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MOBILE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mobile phone?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mobile phone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000582 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000582">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PHONE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fixed phone?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Landline phone</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000583 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000583">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FRIDGE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Refrigerator?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Refrigerator</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000584 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000584">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TABLE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Table?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Table</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000586 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000586">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CHAIR</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chairs?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chair</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000588 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000588">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SOFA</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sofa set?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sofa</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000595 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000595">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CUPBOARD</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cupboard?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cupboard</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000596 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000596">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CLOCK</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clock?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clock</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000606 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000606">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CART</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">An animal-drawn cart?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cart</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000614 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000614">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BICYCLE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A bicycle?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bicycle</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000615 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000615">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SCOOTER</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A motorcycle or motor scooter?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Motorcycle/Scooter</rdfs:label>
     </owl:Class>
     
 
@@ -400,7 +582,7 @@
         <obo:EUPATH_0000273>number of rooms in a dwelling that may be of a particular type such as used for sleeping.</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>hhrooms</obo:EUPATH_0000755>
         <obo:IAO_0000115>Number of rooms in dwelling used for sleeping (scalar measurement)</obo:IAO_0000115>
-        <rdfs:label>Rooms (#)</rdfs:label>
+        <rdfs:label>Sleeping rooms in household</rdfs:label>
     </owl:Class>
     
 
@@ -416,7 +598,7 @@
         <obo:EUPATH_0000273>land area measured in acres: a scalar measurement datum of land measured in acres that may be of a particular type such as land owned by a household.</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>numaland</obo:EUPATH_0000755>
         <obo:IAO_0000115>Size of property (in acres)</obo:IAO_0000115>
-        <rdfs:label>acres (#)</rdfs:label>
+        <rdfs:label>Acres (#)</rdfs:label>
     </owl:Class>
     
 
@@ -432,7 +614,7 @@
         <obo:EUPATH_0000273>A scalar measurement datum of meals per day in a household</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>hhmeals</obo:EUPATH_0000755>
         <obo:IAO_0000115>Number of meals eaten by household on an average day</obo:IAO_0000115>
-        <rdfs:label>meals / day (#)</rdfs:label>
+        <rdfs:label>Meals per day (#)</rdfs:label>
     </owl:Class>
     
 
@@ -448,7 +630,7 @@
         <obo:EUPATH_0000273>A scalar measurement datum of days eating meat in a  week in a household</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>hhnumt</obo:EUPATH_0000755>
         <obo:IAO_0000115>Number of meals per week that household eats meat</obo:IAO_0000115>
-        <rdfs:label>meat meals / week (#)</rdfs:label>
+        <rdfs:label>Meat meals per week (#)</rdfs:label>
     </owl:Class>
     
 
@@ -464,7 +646,7 @@
         <obo:EUPATH_0000273>how often problems satisfying food needs in a household</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>hhpsf</obo:EUPATH_0000755>
         <obo:IAO_0000115>Number of times per week that household has difficulty in satisfying food needs</obo:IAO_0000115>
-        <rdfs:label>Food problems / week</rdfs:label>
+        <rdfs:label>Food problems per week</rdfs:label>
     </owl:Class>
     
 
@@ -529,7 +711,6 @@
         <obo:EUPATH_0000755>cmcategory</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>complicatedmalaria</obo:EUPATH_0000755>
         <obo:IAO_0000115>Diagnosis of malaria with danger signs including inability to sit up or stand, vomiting, unable to breastfeed or drink and lethargy, or criteria for severe malaria.</obo:IAO_0000115>
-        <rdfs:label>Basis of complicated diagnosis</rdfs:label>
         <rdfs:label>Complicated malaria</rdfs:label>
     </owl:Class>
     
@@ -553,7 +734,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000047">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>hemoglobin level in gm per dL</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">hemoglobin</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Hemoglobin</obo:EUPATH_0000268>
@@ -569,7 +750,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000048 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000048">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>blood smear reading as positive or negative</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Bsdich</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Asexual parasites present (microscopy)</obo:EUPATH_0000268>
@@ -667,7 +848,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000092 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000092">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>asexual parasite density in count per ul</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">parasitedensity</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Asexual parasite density</obo:EUPATH_0000268>
@@ -683,7 +864,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000094 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000094">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000266>household identifier</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">hhid</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Household ID</obo:EUPATH_0000268>
@@ -777,7 +958,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000114 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000114">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000305"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020004"/>
         <obo:EUPATH_0000266>average asexual parasite density of a participant with asymptomatic microscopic parasitemia</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Ave Asymptomatic Parasite Density</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Ave parasite density (asymptomatic parasitemia)</obo:EUPATH_0000268>
@@ -792,7 +973,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000115 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000115">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000305"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020004"/>
         <obo:EUPATH_0000266>average asexual parasite density of a participant with malaria</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Ave Malaria Parasite Density</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Ave parasite density (malaria diagnosis)</obo:EUPATH_0000268>
@@ -831,7 +1012,7 @@
         <obo:EUPATH_0000273>An average value of Anopheles mosquitoes tested for sporozoites across multiple collections (e.g. from a given household across CDC light trap collections) in a given period.</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>ave anopheles tested</obo:EUPATH_0000755>
         <obo:IAO_0000115>Average number of Anopheles examined for sporozoites</obo:IAO_0000115>
-        <rdfs:label>Ave Anopheles tested</rdfs:label>
+        <rdfs:label>Anopheles tested (average)</rdfs:label>
     </owl:Class>
     
 
@@ -847,7 +1028,7 @@
         <obo:EUPATH_0000273>An average value of sporozoite positive female Anopheles mosquitoes across multiple collections (e.g. from a given household over a number of nights of collections).</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>ave anopheles positive</obo:EUPATH_0000755>
         <obo:IAO_0000115>Average number of Anopheles with Plasmodium sporozoites</obo:IAO_0000115>
-        <rdfs:label>Ave Anopheles positive</rdfs:label>
+        <rdfs:label>Anopheles positive (average)</rdfs:label>
     </owl:Class>
     
 
@@ -863,7 +1044,7 @@
         <obo:EUPATH_0000273>An average precentage value of female Anopheles mosquitoes tested as sporozoites-positive in all female mosquitoes tested for sporozoites across multiple collections.</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>ave percent anopheles positive</obo:EUPATH_0000755>
         <obo:IAO_0000115>Average percent of Anopheles with Plasmodium sporozoites</obo:IAO_0000115>
-        <rdfs:label>% Anopheles positive</rdfs:label>
+        <rdfs:label>Anopheles positive (%)</rdfs:label>
     </owl:Class>
     
 
@@ -880,7 +1061,7 @@
         <obo:EUPATH_0000755>age</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>ageyrs</obo:EUPATH_0000755>
         <obo:IAO_0000115>Date of study participant&apos;s birth</obo:IAO_0000115>
-        <rdfs:label>Age at time of enrollment</rdfs:label>
+        <rdfs:label>Age at enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -1081,29 +1262,7 @@
         <obo:EUPATH_0000268 xml:lang="en">Assets</obo:EUPATH_0000268>
         <obo:EUPATH_0000271>variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000273>An information content entity about items that a household owns such as a car, funiture, etc.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000755>assets</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>bankacco</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>bed</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>bicycle</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>car</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>cart</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>cassette</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>chair</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>clock</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>cupboard</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>electirc</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>electric</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>fridge</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>mboat</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>mobile</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>nomboat</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>phone</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>radio</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>scooter</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>sofa</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>table</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>tv</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>watch</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <obo:IAO_0000115>Assets refer to whether the household reported ownership of each of the items listed.</obo:IAO_0000115>
         <rdfs:label>Assets</rdfs:label>
     </owl:Class>
@@ -1338,6 +1497,60 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000167 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000167">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BANKACCO</obo:EUPATH_0000755>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bank account</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000170 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000170">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NOMBOAT</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A boat without a  motor?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Boat without a motor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000171 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000171">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CAR</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A car or truck?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Car/Truck</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000179 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000179">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MBOAT</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A boat with a motor?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Boat with a motor</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000186 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000186">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WATCH</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does any member of your household own or have A watch?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Watch</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000191 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000191">
@@ -1568,7 +1781,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000207 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000207">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>presence of Plasmodium gametocytes by microscopy</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">gametocytes</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Gametocytes present (microscopy)</obo:EUPATH_0000268>
@@ -1760,7 +1973,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000308 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000308">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>hospitalization information</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Hospitalization</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">hospitalization</obo:EUPATH_0000268>
@@ -1774,13 +1987,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000309 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000309">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>symptom or sign information</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Symptoms and Signs</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Symptoms and Signs</obo:EUPATH_0000268>
         <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
         <obo:EUPATH_0000755>symptoms and signs</obo:EUPATH_0000755>
-        <rdfs:label>Symptoms or signs</rdfs:label>
+        <rdfs:label>Signs and symptoms</rdfs:label>
     </owl:Class>
     
 
@@ -1788,13 +2001,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000310 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000310">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>information on clinical visit details</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Visit Details</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Visit Details</obo:EUPATH_0000268>
         <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
         <obo:EUPATH_0000755>visit details</obo:EUPATH_0000755>
-        <rdfs:label>Visit details</rdfs:label>
+        <rdfs:label>Observation details</rdfs:label>
     </owl:Class>
     
 
@@ -1802,7 +2015,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000311 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000311">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>clinical visit type information</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">visittype</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Visit type</obo:EUPATH_0000268>
@@ -2015,20 +2228,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000328 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000328">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000266>clinical visit information</obo:EUPATH_0000266>
-        <obo:EUPATH_0000267 xml:lang="en">Visit</obo:EUPATH_0000267>
-        <obo:EUPATH_0000268 xml:lang="en">Visit</obo:EUPATH_0000268>
-        <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000755>visit</obo:EUPATH_0000755>
-        <rdfs:label>Visit</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000333 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000333">
@@ -2060,7 +2259,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000335 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000335">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000596"/>
         <obo:EUPATH_0000266>human waste disposal in a household</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">TFACLTY</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Excreta disposal</obo:EUPATH_0000268>
@@ -2105,7 +2304,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000338 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000338">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>malaria diagnosis and parasite status information</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">malariacat</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Malaria diagnosis and parasite status</obo:EUPATH_0000268>
@@ -2135,7 +2334,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000487 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000487">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>presence of submicrosopic parasites by loop-mediated isothermal amplification assay</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Submicroscopic parasites present (LAMP)</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Submicroscopic parasites present (LAMP)</obo:EUPATH_0000268>
@@ -2149,7 +2348,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000488 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000488">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>information of blood smear not performed</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Blood smear not performed</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Blood smear not performed</obo:EUPATH_0000268>
@@ -2163,7 +2362,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000489 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000489">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>negative blood smear and negative LAMP</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Negative blood smear and negative LAMP</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Negative blood smear and negative LAMP</obo:EUPATH_0000268>
@@ -2177,7 +2376,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000490 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000490">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0000266>information of negative blood smear and LAMP not done</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Negative blood smear and LAMP not done</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Negative blood smear and LAMP not done</obo:EUPATH_0000268>
@@ -2202,6 +2401,23 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000596 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <rdfs:label xml:lang="en">Waste disposal</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000609 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
+        <rdfs:label xml:lang="en">Sample</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000638 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000638">
@@ -2217,8 +2433,17 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000671 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000671">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <rdfs:label xml:lang="en">Death information</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000731 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000731">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <rdfs:label xml:lang="en">Water information</rdfs:label>
     </owl:Class>
     
 
@@ -2234,6 +2459,20 @@
         <obo:EUPATH_0000755>cd36t188g</obo:EUPATH_0000755>
         <obo:IAO_0000115>Allelic information on the CD36 gene (Cluster of Differentiation 36; Canton et al., 2013), which encodes an integral membrane protein in many cell types. This member of the scavenger receptor family imports fatty acids into cells, and is also an endothelial receptor bound by erythrocytes infected with the malaria parasite Plasmodium falciparum.</obo:IAO_0000115>
         <rdfs:label>CD36 genotype</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000738 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0000267 xml:lang="en">Visit</obo:EUPATH_0000267>
+        <obo:EUPATH_0000268 xml:lang="en">Visit</obo:EUPATH_0000268>
+        <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
+        <obo:EUPATH_0000755>clinicalVisit</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>visit</obo:EUPATH_0000755>
+        <rdfs:label>Observation</rdfs:label>
     </owl:Class>
     
 
@@ -2259,6 +2498,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010981 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010981">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Demographics</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020001">
@@ -2278,6 +2526,38 @@
         <obo:EUPATH_0000271>variable</obo:EUPATH_0000271>
         <obo:EUPATH_0000755>rfa</obo:EUPATH_0000755>
         <rdfs:label>Other medical complaint</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020003 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020003">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
+        <obo:EUPATH_0000271>variable</obo:EUPATH_0000271>
+        <obo:EUPATH_0000755>collectiondate</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>collectionmonthyear</obo:EUPATH_0000755>
+        <rdfs:label>Collection date</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Aggregated illness data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021084 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021084">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000144"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELECTIRC</obo:EUPATH_0000755>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does your household have......Electricity?</obo:EUPATH_0001003>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Electricity</rdfs:label>
     </owl:Class>
     
 
@@ -2391,24 +2671,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/OBI_0001619 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000266 xml:lang="en">specimen collection time measurement datum</obo:EUPATH_0000266>
-        <obo:EUPATH_0000271>variable</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273 xml:lang="en">A time measurement datum that is the measure of the time when the specimens are collected.</obo:EUPATH_0000273>
-        <obo:EUPATH_0000755>collectiondate</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>collectionmonthyear</obo:EUPATH_0000755>
-        <rdfs:label>Collection date</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/OBI_0100051 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000266>specimen</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">sample_type</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Specimen type</obo:EUPATH_0000268>
@@ -2439,17 +2705,15 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/OGMS_0000018 -->
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000056 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000018">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
-        <obo:EUPATH_0000266>laboratory finding</obo:EUPATH_0000266>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000267 xml:lang="en">Laboratory Findings</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Laboratory Findings</obo:EUPATH_0000268>
         <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
-        <obo:EUPATH_0000273>A representation of a quality of a specimen that is the output of a laboratory test and that can support an inference to an assertion about some quality of the patient.</obo:EUPATH_0000273>
         <obo:EUPATH_0000755>laboratory findings</obo:EUPATH_0000755>
-        <rdfs:label>Laboratory findings</rdfs:label>
+        <rdfs:label>Laboratory test</rdfs:label>
     </owl:Class>
     
 
@@ -2457,7 +2721,7 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000073 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000073">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>diagnosis</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Diagnosis</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Diagnosis</obo:EUPATH_0000268>
@@ -2472,7 +2736,7 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000083 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000083">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>physical examination finding</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">Physical Examination</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Physical Examination</obo:EUPATH_0000268>
@@ -2487,7 +2751,7 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000090 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000328"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000266>treatment</obo:EUPATH_0000266>
         <obo:EUPATH_0000271>category</obo:EUPATH_0000271>
         <obo:EUPATH_0000273>A processual entity whose completion is hypothesized (by a healthcare provider) to alleviate the signs and symptoms associated with a disorder</obo:EUPATH_0000273>
@@ -2499,7 +2763,7 @@
     <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000266>biological sex</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">gender</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">Sex</obo:EUPATH_0000268>
@@ -2605,7 +2869,7 @@
     <!-- http://www.ebi.ac.uk/efo/EFO_0004950 -->
 
     <owl:Class rdf:about="http://www.ebi.ac.uk/efo/EFO_0004950">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000266>date of birth</obo:EUPATH_0000266>
         <obo:EUPATH_0000267 xml:lang="en">DOB</obo:EUPATH_0000267>
         <obo:EUPATH_0000268 xml:lang="en">date of birth</obo:EUPATH_0000268>
@@ -2668,9 +2932,6 @@
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000485">
         <obo:EUPATH_0000755>submicroscopic parasitemia</obo:EUPATH_0000755>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738">
-        <obo:EUPATH_0000755>clinicalVisit</obo:EUPATH_0000755>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/OBI_0000659">
         <obo:EUPATH_0000755>specimen collection</obo:EUPATH_0000755>
