@@ -201,6 +201,15 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label xml:lang="en">Medication</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
@@ -873,9 +882,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010022 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010022">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">18</obo:EUPATH_0000274>
-        <rdfs:label>Control, Medication at enrollment</rdfs:label>
+        <rdfs:comment>Replaced by more general category &apos;Medication&apos; EUPATH_0000057</rdfs:comment>
+        <rdfs:label>obsolete_Control, Medication at enrollment</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -904,7 +914,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010025">
         <obo:EUPATH_0000274 xml:lang="en">13</obo:EUPATH_0000274>
-        <rdfs:label>Obselete_Clinical findings after rehydration</rdfs:label>
+        <rdfs:label>obselete_Clinical findings after rehydration</rdfs:label>
         <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
@@ -1027,7 +1037,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_ENROLL</obo:EUPATH_0000755>
-        <rdfs:label>Enrollment date of case</rdfs:label>
+        <rdfs:label>Enrollment date, corresponding case</rdfs:label>
     </owl:Class>
     
 
@@ -1645,7 +1655,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_AGE</obo:EUPATH_0000755>
-        <rdfs:label>Age at observation (months)</rdfs:label>
+        <rdfs:label>Age, corresponding case (months)</rdfs:label>
     </owl:Class>
     
 
@@ -1749,7 +1759,7 @@ F5, Signs at follow-up</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010153 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010153">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_CUR_MED</obo:EUPATH_0000755>
         <rdfs:label>Currently receiving medication</rdfs:label>
@@ -1760,7 +1770,7 @@ F5, Signs at follow-up</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010154 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010154">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F7_MED_ONGOING</obo:EUPATH_0000755>
         <rdfs:label>Prescription available for current medication</rdfs:label>
@@ -2956,7 +2966,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010389 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010389">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label>Control Child Medication at enrollment</rdfs:label>
@@ -3080,7 +3090,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_GENDER</obo:EUPATH_0000755>
-        <rdfs:label>Sex of case</rdfs:label>
+        <rdfs:label>Sex, corresponding case</rdfs:label>
     </owl:Class>
     
 
@@ -3091,7 +3101,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_DOB</obo:EUPATH_0000755>
-        <rdfs:label>DOB of prospective case</rdfs:label>
+        <rdfs:label>Date of birth, corresponding case</rdfs:label>
     </owl:Class>
     
 
