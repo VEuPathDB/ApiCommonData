@@ -8,7 +8,8 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_indian.owl">
-        <rdfs:comment>2018-07-05</rdfs:comment>
+        <owl:versionInfo>2018-09-24</owl:versionInfo>
+        <rdfs:comment>Built on SVN Revision: 91888</rdfs:comment>
     </owl:Ontology>
     
 
@@ -36,6 +37,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000755">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Column Header</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001005 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001005">
+        <rdfs:label xml:lang="en">multifilter</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -180,23 +189,25 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000744 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000744">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
+        <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_type_of_dwelling</obo:EUPATH_0000755>
+        <rdfs:comment>replaced EUPATH_0000002 by ENVO_01000744</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling type</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000001">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Building material</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000002 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000002">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_type_of_dwelling</obo:EUPATH_0000755>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling type</rdfs:label>
     </owl:Class>
     
 
@@ -206,6 +217,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000003">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Roof material</rdfs:label>
     </owl:Class>
     
@@ -290,7 +302,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000094 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000094">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_fid</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household ID</rdfs:label>
@@ -301,7 +313,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000095 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000095">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sid</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant ID</rdfs:label>
@@ -314,17 +326,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000100 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000100">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
-        <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">fever_2wk_yn</obo:EUPATH_0000755>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever in last 2 weeks</rdfs:label>
     </owl:Class>
     
 
@@ -355,7 +356,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age_en</obo:EUPATH_0000755>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at time of enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -396,16 +397,6 @@
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">manifestations_chk___7</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Severe anemia</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000302 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000302">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
-        <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling facilities</rdfs:label>
     </owl:Class>
     
 
@@ -465,7 +456,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000310">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit details</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation details</rdfs:label>
     </owl:Class>
     
 
@@ -473,9 +464,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000339 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000339">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animals</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">obsolete_Animals</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -495,7 +486,16 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000341">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vector intervention</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household vector intervention</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000342 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000342">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Employment</rdfs:label>
     </owl:Class>
     
 
@@ -503,8 +503,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000343 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000343">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000339"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animals on property</rdfs:label>
     </owl:Class>
     
@@ -513,9 +514,11 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000344 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000344">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bednet treatment</rdfs:label>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>This variable was only collected at the first visit.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal bednet treatment</rdfs:label>
     </owl:Class>
     
 
@@ -523,7 +526,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000345 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000345">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">education_rad</obo:EUPATH_0000755>
         <obo:IAO_0000115>The highest level of education completed</obo:IAO_0000115>
@@ -535,7 +538,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000359 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000359">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000342"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">occupation_rad</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Occupation</rdfs:label>
@@ -546,7 +549,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000395 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000395">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000339"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_animals_nonpets_count</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Livestock (#)</rdfs:label>
@@ -557,7 +560,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000396 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000396">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000339"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_animals_pets_count</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pets/other animals (#)</rdfs:label>
@@ -627,7 +630,7 @@
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drugs_2wk_comply_yn</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial medications as advised in the last 2 weeks.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial drugs as advised</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial medication as advised</rdfs:label>
     </owl:Class>
     
 
@@ -639,7 +642,7 @@
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drugs_2wk_yn</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial medication in last 2 weeks</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial drugs</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Took antimalarial medication</rdfs:label>
     </owl:Class>
     
 
@@ -669,8 +672,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000413 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000413">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021098"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <obo:IAO_0000115>Type of healthcare facility where treated for fever in the last two weeks</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever treatment location</rdfs:label>
     </owl:Class>
@@ -704,7 +708,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000418 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000418">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000339"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cen_indoor_residents</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animals indoors</rdfs:label>
@@ -728,6 +732,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000423">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021091"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, microscopy</rdfs:label>
     </owl:Class>
     
@@ -736,7 +741,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000424 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000424">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nationality</obo:EUPATH_0000755>
         <obo:IAO_0000115>Country of birth</obo:IAO_0000115>
@@ -750,6 +755,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000425">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plasmodium species in last year</rdfs:label>
     </owl:Class>
     
@@ -761,6 +768,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pastyear_num_dx</obo:EUPATH_0000755>
+        <obo:IAO_0000115>This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria diagnoses past year (#)</rdfs:label>
     </owl:Class>
     
@@ -772,6 +780,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pastyear_num_mo</obo:EUPATH_0000755>
+        <obo:IAO_0000115>This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Last malaria diagnosis (days)</rdfs:label>
     </owl:Class>
     
@@ -783,7 +792,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pastyear_treat_rad</obo:EUPATH_0000755>
-        <obo:IAO_0000115>Whether antimalarials were used for the most recent malaria diagnosis within the last year</obo:IAO_0000115>
+        <obo:IAO_0000115>Whether antimalarials were used for the most recent malaria diagnosis within the last year. This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treated with antimalarials</rdfs:label>
     </owl:Class>
     
@@ -795,8 +804,8 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pastyear_treatdate</obo:EUPATH_0000755>
-        <obo:IAO_0000115>Date of most recent treatment with antimalarials within the last year</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimalarial drug treated date</rdfs:label>
+        <obo:IAO_0000115>Date of most recent treatment with antimalarials within the last year. This variable was only collected at the first visit.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimalarial treatment date</rdfs:label>
     </owl:Class>
     
 
@@ -806,8 +815,9 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000430">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
-        <obo:IAO_0000115>Type of antimalarials used for the most recent treament within the last year</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimalarial drugs used</rdfs:label>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Type of antimalarials used for the most recent treament within the last year. This variable was only collected at the first visit.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimalarial medications used</rdfs:label>
     </owl:Class>
     
 
@@ -817,7 +827,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000431">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000427"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
-        <obo:IAO_0000115>Where treated for the most recent malaria episode within the last year</obo:IAO_0000115>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Where treated for the most recent malaria episode within the last year. This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Where treated</rdfs:label>
     </owl:Class>
     
@@ -840,6 +851,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000433">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021092"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, PCR</rdfs:label>
     </owl:Class>
     
@@ -860,6 +872,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000437">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000541"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, FalciVax RDT</rdfs:label>
     </owl:Class>
     
@@ -870,6 +883,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000438">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000541"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Parasite species, OptiMAL RDT</rdfs:label>
     </owl:Class>
     
@@ -878,8 +892,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000439 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000439">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
         <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personal mosquito repellent</rdfs:label>
     </owl:Class>
     
@@ -890,6 +906,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000440">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resident status</rdfs:label>
     </owl:Class>
     
@@ -898,9 +915,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000441 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000441">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000341"/>
         <obo:EUPATH_0000274 xml:lang="en">11</obo:EUPATH_0000274>
-        <obo:IAO_0000115>Use of insecticide spraying in last 12 months</obo:IAO_0000115>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Use of insecticide spraying in last 12 months. This variable was only collected at the first visit.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprayed in the last 12 months</rdfs:label>
     </owl:Class>
     
@@ -909,7 +927,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000442 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000442">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">state_birth</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">State of birth</rdfs:label>
@@ -1011,6 +1029,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000451">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Typical healthcare source</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Typical healthcare</rdfs:label>
     </owl:Class>
@@ -1074,9 +1093,19 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000609 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000609">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
-        <rdfs:label xml:lang="en">Samples</rdfs:label>
+        <rdfs:label xml:lang="en">Sample</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000731 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000731">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household water</rdfs:label>
     </owl:Class>
     
 
@@ -1090,10 +1119,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010032 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010032">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:label xml:lang="en">Dwelling environment</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010981 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010981">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label xml:lang="en">Demographics</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021001">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">redcap_event_name</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit number</rdfs:label>
     </owl:Class>
@@ -1105,6 +1152,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021002">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms</rdfs:label>
     </owl:Class>
     
@@ -1115,6 +1163,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021003">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <obo:IAO_0000115>Severe manifestations of malaria</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Signs</rdfs:label>
     </owl:Class>
@@ -2081,7 +2130,8 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021093 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021093">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000302"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label xml:lang="en">Water source</rdfs:label>
     </owl:Class>
     
@@ -2105,6 +2155,35 @@
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>state</obo:EUPATH_0000755>
         <rdfs:label xml:lang="en">State</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021096 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021096">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021098"/>
+        <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">fever_2wk_yn</obo:EUPATH_0000755>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever in last 2 weeks</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021097 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021097">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label xml:lang="en">Personal vector intervention</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021098 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021098">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label xml:lang="en">Immediate clinical history</rdfs:label>
     </owl:Class>
     
 
@@ -2242,17 +2321,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <obo:IAO_0000115>Types of blood samples obtained</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OBI_0500000 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0500000">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study design</rdfs:label>
     </owl:Class>
     
 
@@ -2260,7 +2331,7 @@
     <!-- http://purl.obolibrary.org/obo/OGMS_0000015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000015">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical history</rdfs:label>
     </owl:Class>
@@ -2299,7 +2370,7 @@
     <!-- http://purl.obolibrary.org/obo/PATO_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PATO_0000047">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sex_rad</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</rdfs:label>
