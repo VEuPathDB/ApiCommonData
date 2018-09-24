@@ -74,6 +74,9 @@ Notes: You need to change the PATH to the files or queries if you want to run th
 # ICEMR southAsia
 robot query --input ./ICEMR/south_asia/icemr_southAsia.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_southAsia_displayOrder.csv
 
+# ICEMR amazonia peru longitudinal study
+robot query --input ./ICEMR/amazonia/icemr_amazoniaPeru_long.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_amazoniaPeru_long_displayOrder.csv
+
 # Gates MALED
 robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/gates_MALED_displayOrder.csv
 
