@@ -454,6 +454,12 @@ sub writeConfigFile {
   my $eocLiteral = $END_OF_COLUMN_DELIMITER;
   $eocLiteral =~ s/\t/\\t/;
 
+
+  my $hasRowProjectId = 1;
+  if($tableName eq 'ApiDB.Snp' || $tableName eq 'ApiDB.SequenceVariation') {
+    $hasRowProjectId = 0;
+  }
+
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
   my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
@@ -473,7 +479,7 @@ sub writeConfigFile {
   my $attributeList = $tableInfo->{attributeList};
   my $attributeInfo = $tableInfo->{attributeInfo};
 
-
+  
   my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || $tableName eq $MAPPING_TABLE_NAME) ? " constant $projectId" : "";
 
   my $datatypeMap = {'user_read' => " constant $userRead", 
@@ -493,6 +499,7 @@ sub writeConfigFile {
                       "table_name",
                       "primary_key_orig",
                       "primary_key",
+                      "global_natural_key",
                       'modification_date',
         ];
 
@@ -540,11 +547,14 @@ sub writeConfigFile {
   $datatypeMap->{'modification_date'} = " constant \"$modDate\"";
 
   my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { $_ ne 'row_project_id'} @$attributeList;
-  push @fields, "row_project_id " . $datatypeMap->{row_project_id}; #ensure row_project_id is last
+
+  if($hasRowProjectId) {
+    push @fields, "row_project_id " . $datatypeMap->{row_project_id}; #ensure row_project_id is last
+  }
 
   if($tableName eq $MAPPING_TABLE_NAME) {
     # TODO: hoiw to say INTEGER(20) for this pk?
-    push @fields, "database_table_mapping_id \"${tableName}_sq.nextval\"";
+    push @fields, "database_table_mapping_id SEQUENCE(MAX,1)";
   }
 
   my $fieldsString = join(",\n", @fields);
@@ -598,7 +608,7 @@ sub loadTable {
   # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows??
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
 
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName);
+  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
@@ -612,7 +622,6 @@ sub loadTable {
 
   $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
-
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
@@ -636,7 +645,7 @@ sub loadTable {
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
         $hasNewMapRows = 1;
-        my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
+        my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, undef);
         print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER ; # note the special line terminator
 
         $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey
@@ -670,18 +679,20 @@ sub loadTable {
         print $fh $mappedRow->{$lobCol} . $END_OF_LOB_DELIMITER;
       }
         
-      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-      print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
-
 
       # update the globalMapp for newly added rows
+
+      my $globalNaturalKey;
       if($isGlobal) {
         my $globalUniqueFields = $GLOBAL_UNIQUE_FIELDS{$tableName};
 
         my @globalUniqueValues = map { $mappedRow->{lc($_)} } @$globalUniqueFields;
-        my $key = join("_", @globalUniqueValues);
-        $globalLookup->{$key} = $primaryKey;
+        my $globalNaturalKey = join("_", @globalUniqueValues);
+        $globalLookup->{$globalNaturalKey} = $primaryKey;
       }
+
+      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, $globalNaturalKey);
+      print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
     }
 
@@ -725,8 +736,6 @@ sub getAbbreviatedTableName {
 sub lookupPrimaryKey {
   my ($self, $tableName, $row, $globalLookup) = @_;
 
-  
-
   # Load all alg invocations
   if($tableName eq "GUS::Model::Core::AlgorithmInvocation") {
       return undef;
@@ -746,7 +755,7 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName) = @_;
+  my ($self, $primaryKeyColumn, $tableName, $database) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
@@ -756,18 +765,16 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  my $fieldsString = join(",", map { $_ } @$fields);
+  $tableName = &getAbbreviatedTableName($tableName, "::")
 
-  $tableName = &getAbbreviatedTableName($tableName, '.');
-  my $sql = "select $primaryKeyColumn, $fieldsString from $tableName";
+  my $sql = "select primary_key, global_natural_key from apidb.DatabaseTableMapping where table_name = $tableName and global_natural_key is not null";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my %lookup;
 
   my $rowCount = 0;
-  while(my ($pk, @a) = $sh->fetchrow_array()) {
-    my $key = join("_", @a);
+  while(my ($pk, $key) = $sh->fetchrow_array()) {
 
     $lookup{$key} = $pk;
     $rowCount++
@@ -914,6 +921,12 @@ sub getAllTableInfo {
          $parentTable eq "GUS::Model::DoTS::SequencePiece") {
         next;
       }
+
+      if($fullTableName eq "GUS::Model::ApiDB::SequenceVariation" && (lc($field) eq 'location' || lc($parentField) eq 'location')) {
+        next;
+      }
+
+
 
       # important for us to retain row_project_id
       unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || (&getAbbreviatedTableName($fullTableName, '.') eq $PROJECT_INFO_TABLE && $field eq "row_project_id")) {
