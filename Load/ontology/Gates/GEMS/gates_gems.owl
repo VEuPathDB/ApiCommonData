@@ -862,9 +862,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010015">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">10</obo:EUPATH_0000274>
-        <rdfs:label>Clinical findings at enrollment</rdfs:label>
+        <rdfs:comment>removed this category since it is very specify and only one variable under it.</rdfs:comment>
+        <rdfs:label>obsolete_Clinical findings at enrollment</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -933,9 +934,10 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010028 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010028">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">22</obo:EUPATH_0000274>
-        <rdfs:label>Clinical findings at follow-up</rdfs:label>
+        <rdfs:comment>Moved two terms, ‘Previous diagnosis’ and ‘Illness since enrollment’ under it to Observation. Changed ‘Previous diagnosis’ to ‘Previous diagnosis at 60 day follow-up visit’</rdfs:comment>
+        <rdfs:label>obosolete_Clinical findings at follow-up</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
     </owl:Class>
     
 
@@ -953,7 +955,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010031 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010031">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010028"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <rdfs:label>Illness since enrollment</rdfs:label>
     </owl:Class>
@@ -1005,6 +1007,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010038">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011877"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
+        <rdfs:comment>The ‘stool characteristics’ were reported by the laboratory technician upon receipt into the lab.</rdfs:comment>
         <rdfs:label>Stool characteristics</rdfs:label>
     </owl:Class>
     
@@ -1739,7 +1742,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CHLORINE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_CHLORINE</obo:EUPATH_0000755>
-        <rdfs:label>Chlorine treatment brand</rdfs:label>
+        <rdfs:label>Preferred chlorine treatment brand</rdfs:label>
     </owl:Class>
     
 
@@ -2603,10 +2606,11 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010296 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010296">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_NATURE_STOOL</obo:EUPATH_0000755>
-        <rdfs:label>Nature of the stool</rdfs:label>
+        <rdfs:comment>F4B_NATURE_STOOL is reported by the data collector following the question, &apos;Did the interviewer observe a stool sample...if so, what was the nature of the stool?&quot; and the options are ‘Loose/liquid stool without blood’, ‘Loose/liquid stool with blood’ and ‘Normal stool’.</rdfs:comment>
+        <rdfs:label>Nature of stool at collection</rdfs:label>
     </owl:Class>
     
 
@@ -2781,6 +2785,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010351">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
         <obo:EUPATH_0000274 xml:lang="en">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
         <rdfs:label>Case, Symptoms at Enrollment</rdfs:label>
     </owl:Class>
     
@@ -3010,10 +3015,10 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010393 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010393">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010028"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
-        <rdfs:label>Previous diagnosis</rdfs:label>
+        <rdfs:label>Previous diagnosis at 60 day follow-up visit</rdfs:label>
     </owl:Class>
     
 
@@ -4865,11 +4870,12 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015115 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015115">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_CHEST_INDRW</obo:EUPATH_0000755>
         <obo:TEMP_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:TEMP_0000003>
         <rdfs:comment>Signs at enrollment</rdfs:comment>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:label>Chest indrawing</rdfs:label>
     </owl:Class>
     
@@ -4878,11 +4884,12 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015116 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015116">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_RECTAL</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_RECTAL</obo:EUPATH_0000755>
         <obo:TEMP_0000003>label need to be updated, not make sense be subClass of &apos;clinical findings&apos;/physical findings</obo:TEMP_0000003>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
@@ -4894,11 +4901,12 @@ F5, Signs at follow-up</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015117 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015117">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_BIPEDAL</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_BIPEDAL</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_BIPEDAL</obo:EUPATH_0000755>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
@@ -4910,11 +4918,12 @@ F5, Signs at follow-up</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015118 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015118">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_ABN_HAIR</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_ABN_HAIR</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_ABN_HAIR</obo:EUPATH_0000755>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:comment>merged:
 F4B_ABN_HAIR, F7_ABN_HAIR under &apos;Signs at enrollment&apos;
 F5_ABN_HAIR under &apos;Signs at follow-up&apos;</rdfs:comment>
@@ -4926,11 +4935,12 @@ F5_ABN_HAIR under &apos;Signs at follow-up&apos;</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015119 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015119">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_UNDER_NUTR</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_UNDER_NUTR</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_UNDER_NUTR</obo:EUPATH_0000755>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
@@ -4942,11 +4952,12 @@ F5, Signs at follow-up</rdfs:comment>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015120 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015120">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/TEMP_1005075"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
         <obo:EUPATH_0000274 xml:lang="en">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_SKIN_FLAKY</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_SKIN_FLAKY</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SKIN_FLAKY</obo:EUPATH_0000755>
+        <rdfs:comment>boolean value</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
@@ -8250,15 +8261,6 @@ Some values are boolean and some are categorical.</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0000274 xml:lang="en">1</obo:EUPATH_0000274>
         <rdfs:label>Household</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/TEMP_1005075 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/TEMP_1005075">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021003"/>
-        <rdfs:label xml:lang="en">Signs_boolean values_temp</rdfs:label>
     </owl:Class>
     
 
