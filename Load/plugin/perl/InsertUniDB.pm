@@ -687,7 +687,7 @@ sub loadTable {
         my $globalUniqueFields = $GLOBAL_UNIQUE_FIELDS{$tableName};
 
         my @globalUniqueValues = map { $mappedRow->{lc($_)} } @$globalUniqueFields;
-        my $globalNaturalKey = join("_", @globalUniqueValues);
+        $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
       }
 
