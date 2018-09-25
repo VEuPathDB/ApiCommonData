@@ -24,7 +24,8 @@ create table apidb.Snp (
     positions_in_cds_full varchar2(2500),
     positions_in_protein_full varchar2(2500),
     reference_aa_full varchar2(2500),
-    modification_date            date
+    modification_date            date,
+    PRIMARY KEY (snp_id)
 );
 
 create sequence apidb.Snp_sq;
@@ -55,7 +56,8 @@ create table apidb.SequenceVariation (
     protocol_app_node_id         NUMBER(10) NOT NULL,
     products_full  varchar2(2500),
     diff_from_adjacent_snp number(1),
-    modification_date            date
+    modification_date            date,
+    PRIMARY KEY (sequence_variation_id)
 );
 
 create sequence apidb.SequenceVariation_sq;
@@ -65,6 +67,43 @@ create sequence apidb.SequenceVariation_sq;
 grant select on apidb.SequenceVariation to gus_r;
 grant insert, select, update, delete on apidb.SequenceVariation to gus_w;
 grant select ON apidb.SequenceVariation_sq TO gus_w;
+
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'Snp',
+       'Standard', 'snp_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+WHERE 'snp' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'SequenceVariation',
+       'Standard', 'sequence_variation_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+WHERE 'sequencevariation' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
 
 exit;
 

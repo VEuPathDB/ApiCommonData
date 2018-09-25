@@ -10,9 +10,10 @@ alter table apidb.snp add foreign key (na_sequence_id) references dots.NaSequenc
 alter table apidb.snp add foreign key (external_database_release_id) references sres.ExternalDatabaseRelease (external_database_release_id);
 
 alter table apidb.snp add unique (source_id);
-alter table apidb.snp add unique (snp_id);
 
-alter table apidb.snp add primary key (na_sequence_id, location);
+alter table apidb.snp add unique (na_sequence_id, location);
+
+alter table apidb.snp add primary key (snp_id);
 
 create index apidb.SnpLocIx
 on apidb.Snp (na_sequence_id, location, source_id, snp_id, gene_na_feature_id) tablespace indx;
