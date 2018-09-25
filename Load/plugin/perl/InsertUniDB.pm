@@ -765,7 +765,7 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  $tableName = &getAbbreviatedTableName($tableName, "::")
+  $tableName = &getAbbreviatedTableName($tableName, "::");
 
   my $sql = "select primary_key, global_natural_key from apidb.DatabaseTableMapping where table_name = $tableName and global_natural_key is not null";
 
