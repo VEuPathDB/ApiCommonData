@@ -1,3 +1,8 @@
+
+-- these may already be set.  If so, they will print error but not fail
+alter table apidb.snp add primary key (snp_id);
+alter table apidb.sequencevariation add primary key (sequence_variation_id);
+
 WHENEVER SQLERROR EXIT 1;
 
 grant insert, select, update, delete on apidb.Snp to gus_w;
@@ -12,8 +17,6 @@ alter table apidb.snp add foreign key (external_database_release_id) references 
 alter table apidb.snp add unique (source_id);
 
 alter table apidb.snp add unique (na_sequence_id, location);
-
-alter table apidb.snp add primary key (snp_id);
 
 create index apidb.SnpLocIx
 on apidb.Snp (na_sequence_id, location, source_id, snp_id, gene_na_feature_id) tablespace indx;
@@ -41,7 +44,7 @@ grant select ON apidb.SequenceVariation to gus_r;
 
 grant select ON apidb.SequenceVariation_sq to gus_w;
 
-alter table apidb.sequencevariation add primary key (sequence_variation_id);
+
 alter table apidb.sequencevariation add foreign key (external_database_release_id) references sres.ExternalDatabaseRelease (external_database_release_id);
 alter table apidb.sequencevariation add foreign key (snp_ext_db_rls_id) references sres.ExternalDatabaseRelease (external_database_release_id);
 alter table apidb.sequencevariation add foreign key (ref_na_sequence_id, location) references apidb.Snp (na_sequence_id, location);
