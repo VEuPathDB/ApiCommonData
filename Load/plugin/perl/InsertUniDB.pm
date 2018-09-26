@@ -644,6 +644,8 @@ sub loadTable {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
       }
 
+
+
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
         $hasNewMapRows = 1;
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, undef);
@@ -786,7 +788,7 @@ sub globalLookupForTable  {
   while(my ($pk, @a) = $sh->fetchrow_array()) {
 
     my @values = map { lc($_) } @a;
-    my $key = join("_", @a);
+    my $key = join("_", @values);
 
     $lookup{$key} = $pk;
     $rowCount++
