@@ -506,6 +506,7 @@ sub writeConfigFile {
     push @$attributeList, keys %$datatypeMap;
 
     $datatypeMap->{'database_orig'} = " CHAR(10)";
+    $datatypeMap->{'global_natural_key'} = " CHAR(2500)";
     $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
     $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
