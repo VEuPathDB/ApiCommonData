@@ -766,16 +766,25 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  $tableName = &getAbbreviatedTableName($tableName, "::");
+  my $fieldsString = join(",", map { $_ } @$fields);
+  $tableName = &getAbbreviatedTableName($tableName, ".");
 
-  my $sql = "select primary_key, global_natural_key from apidb.DatabaseTableMapping where table_name = '$tableName' and global_natural_key is not null";
+  my $sql;
+  if($tableName  eq $TABLE_INFO_TABLE) {
+    $sql = "select $primaryKeyColumn, $fieldsString from $tableName";
+  }
+  else {
+    $tableName = &getAbbreviatedTableName($tableName, "::");
+    $sql = "select primary_key, global_natural_key from apidb.DatabaseTableMapping where table_name = '$tableName' and global_natural_key is not null";
+  }
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my %lookup;
 
   my $rowCount = 0;
-  while(my ($pk, $key) = $sh->fetchrow_array()) {
+  while(my ($pk, @a) = $sh->fetchrow_array()) {
+    my $key = join("_", @a)
 
     $lookup{$key} = $pk;
     $rowCount++
