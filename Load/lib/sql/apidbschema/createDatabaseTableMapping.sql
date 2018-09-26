@@ -4,7 +4,7 @@ CREATE TABLE apidb.DatabaseTableMapping (
        table_name varchar2(35), 
        primary_key_orig number(20), 
        primary_key number(20),
-       global_natural_key varchar2(100),
+       global_natural_key varchar2(2500),
        MODIFICATION_DATE     DATE,
        USER_READ             NUMBER(1),
        USER_WRITE            NUMBER(1),
