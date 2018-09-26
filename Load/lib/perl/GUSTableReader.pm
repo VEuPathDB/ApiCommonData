@@ -62,7 +62,7 @@ sub getTableSql {
   if(lc($tableName) eq "study.study") {
     $orderBy = "order by investigation_id nulls first, study_id";
   }
-  if(lc($tableName) eq "sres.taoxn") {
+  if(lc($tableName) eq "sres.taxon") {
     $orderBy = "order by parent_id nulls first, taxon_id";
   }
 
