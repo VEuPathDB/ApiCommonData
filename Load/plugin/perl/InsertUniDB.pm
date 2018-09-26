@@ -582,6 +582,13 @@ sub loadTable {
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
 
+  # try to reuse all rows from these tables
+  # some of these will have rows populated by the installer so globalMapping query is different
+  my $isGlobalTable = $tableName =~ /GUS::Model::Core::(\w+)Info/ || 
+      $tableName =~ /GUS::Model::Core::Algorithm/ || 
+      $tableName eq 'GUS::Model::Study::Protocol' || 
+      $tableName eq 'GUS::Model::Study::ProtocolParam';
+
   $self->log("Begin Loading table $tableName from database $database");
 
   my $rowCount = 0;
@@ -609,7 +616,7 @@ sub loadTable {
   # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows??
   my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
 
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database);
+  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isGlobalTable);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
@@ -626,6 +633,7 @@ sub loadTable {
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
+
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
@@ -636,7 +644,7 @@ sub loadTable {
 
     my $primaryKey;
 
-    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $tableName =~ /GUS::Model::Core::(\w+)Info/ || $tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq 'GUS::Model::Study::Protocol' || $tableName eq 'GUS::Model::Study::ProtocolParam';
+    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $isGlobalTable;
 
     if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
@@ -758,7 +766,7 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName, $database) = @_;
+  my ($self, $primaryKeyColumn, $tableName, $database, $isGlobalTable) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
@@ -772,7 +780,7 @@ sub globalLookupForTable  {
   $tableName = &getAbbreviatedTableName($tableName, ".");
 
   my $sql;
-  if($tableName  eq $TABLE_INFO_TABLE) {
+  if($isGlobalTable) {
     $sql = "select $primaryKeyColumn, $fieldsString from $tableName";
   }
   else {
