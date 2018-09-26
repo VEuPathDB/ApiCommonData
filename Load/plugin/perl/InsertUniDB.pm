@@ -784,7 +784,7 @@ sub globalLookupForTable  {
 
   my $rowCount = 0;
   while(my ($pk, @a) = $sh->fetchrow_array()) {
-    my $key = join("_", @a)
+    my $key = join("_", @a);
 
     $lookup{$key} = $pk;
     $rowCount++
