@@ -622,11 +622,11 @@ sub loadTable {
 
   my %housekeepingFieldsHash = map { $_ => 1 } @$HOUSEKEEPING_FIELDS;
 
-  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.ctl');
-  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.ctl');
+  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
 
-  my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 1, SUFFIX => '.dat');
-  my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 1, SUFFIX => '.dat');
+  my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.dat');
+  my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.dat');
 
   $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
@@ -648,11 +648,10 @@ sub loadTable {
 
     if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
+
       unless($primaryKey) {
         $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
       }
-
-
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
         $hasNewMapRows = 1;
@@ -697,7 +696,7 @@ sub loadTable {
       if($isGlobal) {
         my $globalUniqueFields = $GLOBAL_UNIQUE_FIELDS{$tableName};
 
-        my @globalUniqueValues = map { $mappedRow->{lc($_)} } @$globalUniqueFields;
+        my @globalUniqueValues = map { lc($mappedRow->{lc($_)}) } @$globalUniqueFields;
         $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
       }
@@ -734,6 +733,8 @@ sub loadTable {
 
   $rowCount = 0 unless($self->getArg('commit'));
 
+  unlink($sqlldrDatFn,$sqlldrMapFn,$sqlldrDatInfileFn,$sqlldrMapInfileFn);
+
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 }
 
@@ -758,7 +759,7 @@ sub lookupPrimaryKey {
 
   my $fields = $GLOBAL_UNIQUE_FIELDS{$tableName};
 
-  my @values = map { $row->{lc($_)} } @$fields;
+  my @values = map { lc($row->{lc($_)}) } @$fields;
   my $key = join("_", @values);
 
   return $globalLookup->{$key};
