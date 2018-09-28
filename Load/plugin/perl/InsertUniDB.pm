@@ -728,7 +728,7 @@ sub loadTable {
   # update the sequence 
   my $sequenceName = "${abbreviatedTablePeriod}_sq";
   my $dbh = $self->getQueryHandle();  
-  my my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
+  my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
   my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
   if($sequenceDifference > 0) {
     $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
