@@ -633,7 +633,6 @@ sub loadTable {
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
-
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
@@ -663,7 +662,6 @@ sub loadTable {
     }
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
-
       $hasNewRows = 1;
       $rowCount++;
 
@@ -688,10 +686,8 @@ sub loadTable {
         my $fh = $lobFiles{$lobCol};
         print $fh $mappedRow->{$lobCol} . $END_OF_LOB_DELIMITER;
       }
-        
 
       # update the globalMapp for newly added rows
-
       my $globalNaturalKey;
       if($isGlobal) {
         my $globalUniqueFields = $GLOBAL_UNIQUE_FIELDS{$tableName};
@@ -703,13 +699,12 @@ sub loadTable {
 
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, $globalNaturalKey);
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
-
     }
-
   }
 
   $tableReader->finishTable();
 
+  # Run Loader
   if($hasNewRows || $hasNewMapRows) {
     my $login       = $self->getConfig->getDatabaseLogin();
     my $password    = $self->getConfig->getDatabasePassword();
@@ -728,13 +723,23 @@ sub loadTable {
     unless($sqlLdrMapSystemResult / 256 == 0) {
       $self->error("sqlldr failed:  ${sqlldrMapFn}.log");
     }
-
   }
 
-  $rowCount = 0 unless($self->getArg('commit'));
+  # update the sequence 
+  my $sequenceName = "${abbreviatedTablePeriod}_sq";
+  my $dbh = $self->getQueryHandle();  
+  my my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
+  my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+  if($sequenceDifference > 0) {
+    $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
+    $dbh->do("select ${sequenceName}.nextval from dual");
+    $dbh->do("alter sequence $sequenceName increment by 1");
+  }
 
+  # clean up the temporary files
   unlink($sqlldrDatFn,$sqlldrMapFn,$sqlldrDatInfileFn,$sqlldrMapInfileFn);
 
+  $rowCount = 0 unless($self->getArg('commit'));
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 }
 
@@ -777,11 +782,11 @@ sub globalLookupForTable  {
 
   $self->log("Preparing Global Lookup for table $tableName");
 
-  my $fieldsString = join(",", map { $_ } @$fields);
-  $tableName = &getAbbreviatedTableName($tableName, ".");
-
   my $sql;
   if($isGlobalTable) {
+    my $fieldsString = join(",", map { $_ } @$fields);
+    $tableName = &getAbbreviatedTableName($tableName, ".");
+
     $sql = "select $primaryKeyColumn, $fieldsString from $tableName";
   }
   else {
