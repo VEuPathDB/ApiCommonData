@@ -77,8 +77,21 @@ robot query --input ./ICEMR/south_asia/icemr_southAsia.owl --query ./SPARQL/get_
 # ICEMR amazonia peru longitudinal study
 robot query --input ./ICEMR/amazonia/icemr_amazoniaPeru_long.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_amazoniaPeru_long_displayOrder.csv
 
+# Gates GEMS1
+robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/gates_GEMS1_displayOrder.csv
+
+
 # Gates MALED
 robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/gates_MALED_displayOrder.csv
+
+------------------------------------------------------------------------------------------
+# Get variables and mapped ontology terms with labels	
+#	get_variable_sourceID_label.rq
+------------------------------------------------------------------------------------------
+# Gates GEMS
+robot query --use-graphs true --input ./release/production/gates_gems.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/gates_gems_variableMappings.csv
+
+
 
 —————————————————————————————————————————————————————————————————————————————
 # QC QUERY
@@ -164,7 +177,7 @@ robot query --use-graphs true --input ./harmonization/web_display.owl --query ./
 
 ————————————————————————————————————————————————————————————
 # Check any label used for more than one EuPath ontology terms
-#	QC_QC_sameLabelForMultipleEuPathTerms.rq
+#	QC_sameLabelForMultipleEuPathTerms.rq
 ————————————————————————————————————————————————————————————
 # All projects
 robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/QC_sameLabelForMultipleEuPathTerms.rq ./query_results/allProjects_terms_sameLabelForMultipleEuPathTerms.csv
