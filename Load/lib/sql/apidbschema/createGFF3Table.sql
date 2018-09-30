@@ -109,7 +109,7 @@ CREATE TABLE ApiDB.GFF3Attributes (
  gff3_attribute_id     NUMBER(38) not null,
  gff3_attribute_key_id NUMBER(38) not null,
  gff3_feature_id       NUMBER(10) not null,
- value	               VARCHAR2(64) not null,
+ value	               VARCHAR2(300) not null,
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
  USER_WRITE            NUMBER(1),
