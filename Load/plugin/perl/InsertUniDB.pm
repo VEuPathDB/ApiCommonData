@@ -954,7 +954,9 @@ sub getAllTableInfo {
         next;
       }
 
-
+      if($fullTableName eq "GUS::Model::ApiDB::SequenceVariation" && lc($field) eq 'ref_na_sequence_id') {
+        $parentRelation->[0] = 'GUS::Model::DoTS::NASequenceImp';
+      }
 
       # important for us to retain row_project_id
       unless($field eq "row_alg_invocation_id" || $field eq "row_user_id" || $field eq "row_group_id" || (&getAbbreviatedTableName($fullTableName, '.') eq $PROJECT_INFO_TABLE && $field eq "row_project_id")) {
