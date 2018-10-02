@@ -46,7 +46,7 @@ while (<XML>) {
         my $response = getstore($url, "$1.biopax");
         die "Error: $response when getting from $url\n" unless is_success($response);
         my $jsonUrl = $urlJson.uri_escape($1);
-        my $response = getstore($jsonUrl, "$1.json");
+        $response = getstore($jsonUrl, "$1.json");
         die "Error: $response when getting from $jsonUrl\n" unless is_success($response);
     }
 }
