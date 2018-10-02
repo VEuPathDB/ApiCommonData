@@ -849,6 +849,11 @@ sub orderTable {
     }
   }
 
+  # sequencevariation has a foreign key (nasequence_id,location) to apidb.snp but parentRelations only has the fk to NASequenceImp
+  if($tableName eq "GUS::Model::ApiDB::SequenceVariation") {
+    push @parentsList, "GUS::Model::ApiDB::Snp";
+  }
+
   foreach my $parentTableName (@parentsList) {
     # foreignKey to own table
     unless($parentTableName eq $tableName) {
