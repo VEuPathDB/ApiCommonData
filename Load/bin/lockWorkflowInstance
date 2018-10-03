@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+
+use DBI;
+use DBD::Oracle;
+
+my ($gusConfigFile, $instance, $unlock);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+            "instance=s" => \$instance,
+	    "unlock!" => \$unlock
+    );
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $dbh = DBI->connect("dbi:Oracle:$instance", $gusconfig->getDatabaseLogin(), $gusconfig->getDatabasePassword()) or die DBI->errstr;
+$dbh->{RaiseError} = 1;
+$dbh->{AutoCommit} = 1;
+
+
+my $DONE = 'DONE';
+my $LOCKED = 'LOCKED';
+
+if($unlock) {
+  $dbh->do("update apidb.workflow set state = '$DONE' where state = '$LOCKED'");
+}
+else {
+
+  my $sh = $dbh->prepare("select state from apidb.workflow");
+  $sh->execute();
+  while(my ($state) = $sh->fetchrow_array()) {
+    die "All workfows should be $DONE.  Found state:  $state" unless($state eq $DONE);
+  }
+  $sh->finish();
+
+  $dbh->do("update apidb.workflow set state = '$LOCKED' where state = '$DONE'");
+}
+
+1;
