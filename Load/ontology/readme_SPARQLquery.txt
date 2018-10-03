@@ -7,6 +7,9 @@
 Please following the instruction on the page:
 	http://robot.obolibrary.org
 
+Current for making queries working for cross ontologies, need to download robot.jar "v1.2.0-alpha-1" from page: https://github.com/ontodev/robot/releases
+
+
 =============================================================
 # Retrieve ontology files and SPARQL queries from SVN repository
 =============================================================
