@@ -92,8 +92,14 @@ robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/get_displayOr
 #	get_variable_sourceID_label.rq
 ------------------------------------------------------------------------------------------
 # Gates GEMS
-robot query --use-graphs true --input ./release/production/gates_gems.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/gates_gems_variableMappings.csv
+robot query --input ./release/production/gates_gems.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/gates_gems_variableMappings.csv
 
+------------------------------------------------------------------------------------------
+# Get variables under specify root category, observation, household, sample, participant	
+#	get_variable_sourceID_label.rq
+------------------------------------------------------------------------------------------
+# Gates GEMS
+robot query --input ./release/production/gates_gems.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/gates_gems_variableMappings.csv
 
 
 —————————————————————————————————————————————————————————————————————————————
@@ -112,6 +118,45 @@ robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/QC_sameLabelFor
 ————————————————————————————————————————————————————————————
 # Gates MALED
 robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/QC_leaf_notVariable.rq ./query_results/MALED_leaf_terms_no_mapped_variables.csv
+
+
+—————————————————————————————————————————————————————————————————————————————
+# QC COUNT
+————————————————————————————————————————————————————————————
+# Count variable number under Household category
+#	count_Household_variables.rq
+————————————————————————————————————————————————————————————
+# Gates MALED
+
+robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_Household_variables.rq ./query_results/gates_maled_count_Household_variables.csv
+
+
+————————————————————————————————————————————————————————————
+# Count variable number under Participant category
+#	count_Participant_variables.rq
+————————————————————————————————————————————————————————————
+# Gates MALED
+
+robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_Participant_variables.rq ./query_results/gates_maled_count_Participant_variables.csv
+
+
+————————————————————————————————————————————————————————————
+# Count variable number under Observation category
+#	count_Observation_variables.rq
+————————————————————————————————————————————————————————————
+# Gates MALED
+
+robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_Observation_variables.rq ./query_results/gates_maled_count_Observation_variables.csv
+
+
+————————————————————————————————————————————————————————————
+# Count variable number under Sample category
+#	count_Sample_variables.rq
+————————————————————————————————————————————————————————————
+# Gates MALED
+
+robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_Sample_variables.rq ./query_results/gates_maled_count_Sample_variables.csv
+
 
 
 
