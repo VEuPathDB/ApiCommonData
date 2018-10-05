@@ -121,7 +121,7 @@ robot query --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/QC_leaf_notVa
 
 
 —————————————————————————————————————————————————————————————————————————————
-# QC COUNT
+# COUNT QUERY
 ————————————————————————————————————————————————————————————
 # Count variable number under Household category
 #	count_Household_variables.rq
