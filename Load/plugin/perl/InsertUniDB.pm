@@ -14,6 +14,10 @@ use File::Temp qw/ tempfile /;
 
 use Data::Dumper;
 
+use POSIX qw(mkfifo);
+
+use Fcntl;
+
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 my $END_OF_LOB_DELIMITER = "<endlob>\n";
@@ -178,6 +182,9 @@ sub new {
 
 sub run {
   my $self = shift;
+
+
+  chdir "/home/jbrestel/tmp/unidb_dir";
 
   my $dbh = $self->getDbHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or $self->error($dbh->errstr);
@@ -535,7 +542,8 @@ sub writeConfigFile {
         }
 
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
-          $datatypeMap->{$col} = " LOBFILE( CONSTANT '${tableName}.${col}.txt') TERMINATED BY \"$eolLiteral\"";
+          $self->error("BLOB and CLOB should be loaded with GUS Objects not sqlldr");
+#          $datatypeMap->{$col} = " LOBFILE( CONSTANT '${tableName}.${col}.txt') TERMINATED BY \"$eolLiteral\"";
         }
 
         else {
@@ -575,9 +583,14 @@ TRAILING NULLCOLS
 ";
 }
 
-
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
+
+  if(!$self->getArg('commit') && !$self->getArg('debug')) {
+    $self->log("SKIP $tableName!  no commit and no debug");
+    next;
+  }
+  next unless $tableName =~ /BibliographicReference/;
 
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
@@ -588,6 +601,12 @@ sub loadTable {
       $tableName =~ /GUS::Model::Core::Algorithm/ || 
       $tableName eq 'GUS::Model::Study::Protocol' || 
       $tableName eq 'GUS::Model::Study::ProtocolParam';
+
+  my $login       = $self->getConfig->getDatabaseLogin();
+  my $password    = $self->getConfig->getDatabasePassword();
+  my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+  my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   $self->log("Begin Loading table $tableName from database $database");
 
@@ -601,11 +620,26 @@ sub loadTable {
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
-  my %lobFiles = map { $_ => 1 } @{$tableInfo->{lobColumns}};
-  foreach my $lobCol (@{$tableInfo->{lobColumns}}) {
-    open(my $fh, ">${abbreviatedTablePeriod}.$lobCol.txt") or die "Cannot open ${abbreviatedTablePeriod}.$lobCol for writing: $!";
-    $lobFiles{$lobCol} = $fh;
+  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess);
+  unless($hasLobColumns) {
+    ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
+    $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
+    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
+    $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
+    open($sqlldrDatProcess, "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+    open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
   }
+  else {
+    eval "require $tableName";
+    $self->error($@) if $@; 
+  }
+
+  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  my $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
+  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
+  $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrMapInfileFn, 0700));
+  open(my $sqlldrMapProcess, "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=1000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+  open(my $sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
 
@@ -621,15 +655,6 @@ sub loadTable {
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
   my %housekeepingFieldsHash = map { $_ => 1 } @$HOUSEKEEPING_FIELDS;
-
-  my ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
-  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
-
-  my ($sqlldrDatInfileFh, $sqlldrDatInfileFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.dat');
-  my ($sqlldrMapInfileFh, $sqlldrMapInfileFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.dat');
-
-  $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn);
-  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn);
 
   my @attributeList = map { lc($_) } @{$tableInfo->{attributeList}};
 
@@ -665,27 +690,40 @@ sub loadTable {
       $hasNewRows = 1;
       $rowCount++;
 
-      $primaryKey = ++$maxPrimaryKey;
-      $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
-
       # If the table is self referencing AND the fk is to the same row
       foreach my $ancestorField (@$fieldsToSetToPk) {
         $mappedRow->{lc($ancestorField)} = $primaryKey;
       }
 
+      # for tables with LOB data, load with GUS Objects, otherwise sqlldr
+      if($hasLobColumns) {
+        $mappedRow->{lc($primaryKeyColumn)} = undef;
+        $mappedRow->{row_user_id} = undef;
+        $mappedRow->{row_group_id} = undef;
+        $mappedRow->{row_project_id} = undef if($abbreviatedTablePeriod eq $PROJECT_INFO_TABLE); #Important that we keep the project id for everything except projectinfo
+        $mappedRow->{row_alg_invocation_id} = undef;
+
+        my $gusRow = eval {
+          $tableName->new($mappedRow);
+        };
+        die $@ if $@;
+
+        $gusRow->submit(undef, 1);
+        
+        $primaryKey = $gusRow->get(lc($primaryKeyColumn));        
+      }
+      else {
+        $primaryKey = ++$maxPrimaryKey;
+        $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
+
+        my @columns = map { $mappedRow->{$_} } grep { !$housekeepingFieldsHash{$_} } @attributeList;
+        push @columns, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
+
+        print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @columns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
+      }
+
       # self referencing tables will need mappings for loaded rows
       $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
-
-      my @nonLobColumns = map { $mappedRow->{$_} } grep { !$lobFiles{$_} && !$housekeepingFieldsHash{$_} } @attributeList;
-      push @nonLobColumns, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
-
-      print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @nonLobColumns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
-
-      # each lob column is written to a lobfile
-      foreach my $lobCol (keys %lobFiles) {
-        my $fh = $lobFiles{$lobCol};
-        print $fh $mappedRow->{$lobCol} . $END_OF_LOB_DELIMITER;
-      }
 
       # update the globalMapp for newly added rows
       my $globalNaturalKey;
@@ -704,42 +742,31 @@ sub loadTable {
 
   $tableReader->finishTable();
 
-  # Run Loader
-  if($hasNewRows || $hasNewMapRows) {
-    my $login       = $self->getConfig->getDatabaseLogin();
-    my $password    = $self->getConfig->getDatabasePassword();
-    my $dbiDsn      = $self->getConfig->getDbiDsn();
+  close $sqlldrMapInfileFh;
+  close $sqlldrMapProcess;
+  $self->error("sqlldr process failed!") if($?);
+  unlink($sqlldrMapFn,$sqlldrMapInfileFn);
 
-    my ($dbi, $type, $db) = split(':', $dbiDsn);
-
-    if($hasNewRows) {
-      my $sqlLdrSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
-      unless($sqlLdrSystemResult / 256 == 0) {
-        $self->error("sqlldr failed:  ${sqlldrDatFn}.log");
-      }
+  unless($hasLobColumns) {
+    close $sqlldrDatInfileFh;
+    close $sqlldrDatProcess;
+    if($?) {
+      $self->error("sqlldr process for databasemapping failed!");
     }
+    unlink($sqlldrDatFn,$sqlldrDatInfileFn);
 
-    my $sqlLdrMapSystemResult = system("sqlldr $login/$password\@$db control=$sqlldrMapFn rows=1000 log=${sqlldrMapFn}.log discardmax=0 errors=0") if($self->getArg('commit'));
-    unless($sqlLdrMapSystemResult / 256 == 0) {
-      $self->error("sqlldr failed:  ${sqlldrMapFn}.log");
+    # update the sequence
+    my $sequenceName = "${abbreviatedTablePeriod}_sq";
+    my $dbh = $self->getQueryHandle();  
+    my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
+    my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+    if($sequenceDifference > 0) {
+      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
+      $dbh->do("select ${sequenceName}.nextval from dual");
+      $dbh->do("alter sequence $sequenceName increment by 1");
     }
   }
 
-  # update the sequence 
-  my $sequenceName = "${abbreviatedTablePeriod}_sq";
-  my $dbh = $self->getQueryHandle();  
-  my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
-  my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-  if($sequenceDifference > 0) {
-    $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
-    $dbh->do("select ${sequenceName}.nextval from dual");
-    $dbh->do("alter sequence $sequenceName increment by 1");
-  }
-
-  # clean up the temporary files
-  unlink($sqlldrDatFn,$sqlldrMapFn,$sqlldrDatInfileFn,$sqlldrMapInfileFn);
-
-  $rowCount = 0 unless($self->getArg('commit'));
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
 }
 
