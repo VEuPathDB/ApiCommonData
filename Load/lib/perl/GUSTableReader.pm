@@ -284,4 +284,20 @@ sub getDistinctValuesForTableFields {
 }
 
 
+sub getMaxLobLength {
+  my ($self, $fullTableName, $lobField) = @_;
+
+  my $tableName = &getTableNameFromPackageName($fullTableName);
+
+  my $dbh = $self->getDatabaseHandle();
+  my $sql = "select max(length($lobField)) from $tableName";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my ($length) = $sh->fetchrow_array();
+  $sh->finish();
+
+  return $length;
+}
+
 1;
