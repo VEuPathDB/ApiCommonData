@@ -712,7 +712,7 @@ sub loadTable {
         
         $primaryKey = $gusRow->get(lc($primaryKeyColumn));        
 
-        if($rowCount++ % 2000 == 0) {
+        if($rowCount % 2000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
           $self->getDb()->manageTransaction(0, 'begin');
         }
