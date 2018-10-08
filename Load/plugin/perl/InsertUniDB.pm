@@ -710,6 +710,8 @@ sub loadTable {
         $gusRow->submit(undef, 1);
         
         $primaryKey = $gusRow->get(lc($primaryKeyColumn));        
+
+        $self->undefPointerCache();
       }
       else {
         $primaryKey = ++$maxPrimaryKey;
@@ -737,6 +739,8 @@ sub loadTable {
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, $globalNaturalKey);
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
     }
+    
+
   }
 
   $tableReader->finishTable();
