@@ -629,6 +629,7 @@ sub loadTable {
     open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
   }
   else {
+    $self->getDb()->manageTransaction(0, 'begin');
     eval "require $tableName";
     $self->error($@) if $@; 
   }
@@ -711,6 +712,10 @@ sub loadTable {
         
         $primaryKey = $gusRow->get(lc($primaryKeyColumn));        
 
+        if($rowCount++ % 2000 == 0) {
+          $self->getDb()->manageTransaction(0, 'commit');
+          $self->getDb()->manageTransaction(0, 'begin');
+        }
         $self->undefPointerCache();
       }
       else {
@@ -768,6 +773,9 @@ sub loadTable {
       $dbh->do("select ${sequenceName}.nextval from dual");
       $dbh->do("alter sequence $sequenceName increment by 1");
     }
+  }
+  else {
+    $self->getDb()->manageTransaction(0, 'commit');
   }
 
   $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
