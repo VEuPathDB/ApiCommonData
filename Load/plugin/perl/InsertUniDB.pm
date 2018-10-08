@@ -553,7 +553,7 @@ sub writeConfigFile {
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
           my $charLength = $tableReader->getMaxLobLength($tableInfo->{fullTableName}, $col);
           $charLength = 1 unless($charLength);
-          $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$solLiteral' AND '$eolLiteral' NULLIF $col=''";
+          $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$solLiteral' AND '$eolLiteral'";
         }
 
         else {
