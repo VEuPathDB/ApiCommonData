@@ -590,7 +590,6 @@ sub loadTable {
     $self->log("SKIP $tableName!  no commit and no debug");
     next;
   }
-  next unless $tableName =~ /BibliographicReference/;
 
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
