@@ -631,7 +631,7 @@ sub loadTable {
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader);
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
-    open($sqlldrDatProcess, "sqlldr $login/$password\@$db readsize=3000000 control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+    open($sqlldrDatProcess, "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
     open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
   }
   else {
