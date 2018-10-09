@@ -46,17 +46,19 @@ sub getSampleInfo {
   my $cmd = "wget -O $sample_id.tmp 'https://www.ncbi.nlm.nih.gov/biosample/$sample_id?report=full&format=text'";
   system($cmd);
   
-  $sample_id = "$library{$sample_id}"; 
-
   open S, "$sample_id.tmp";
+  my $sample = $library{$sample_id};
+
   while(<S>) {
     chomp;
-    next unless /^\s+\//;
+    if(/^\<pre\>(.*)$/) {
+      $sample .= " ". $1;
+    }
     my ($attr, $val) = split /=/, $_; 
-    $val =~ s/"//g;
     if($attr =~ /strain/ || $attr =~ /host/ || $attr =~ /individual/) {
-      $sample_id .= " $val";
+      $val =~ s/"//g;
+      $sample .= " $val";
     }   
   }
-  return $sample_id;
+  return $sample;
 }
