@@ -405,7 +405,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000740 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000740">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 xml:lang="en">5</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria treatment</rdfs:label>
     </owl:Class>
@@ -449,6 +449,15 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label xml:lang="en">Blood microbiology test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021002 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021002">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
+        <rdfs:label xml:lang="en">Symptoms</rdfs:label>
     </owl:Class>
     
 
@@ -514,7 +523,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0023003 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0023003">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X98._Altered_levels_of_consciousness</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
@@ -1139,18 +1148,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0023037 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0023037">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X96._Pulmonary_oedema</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pulmonary edema</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0023038 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0023038">
@@ -1159,18 +1156,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample_collection_form</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection time</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0023039 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0023039">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X97._Enlarged_spleen</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Splenomegaly</rdfs:label>
     </owl:Class>
     
 
@@ -1355,14 +1340,38 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/HP_0001744 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0001744">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X97._Enlarged_spleen</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Splenomegaly</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/HP_0001892 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0001892">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X99._Abnormal_bleeding</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abnormal bleeding</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/HP_0100598 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0100598">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X96._Pulmonary_oedema</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inpatient_care_chart_review</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pulmonary edema</rdfs:label>
     </owl:Class>
     
 
@@ -1462,6 +1471,15 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274 xml:lang="en">2</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical examination</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000090 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000090">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label xml:lang="en">Treatment</rdfs:label>
     </owl:Class>
     
 
