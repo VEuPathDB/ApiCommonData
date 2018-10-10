@@ -21,16 +21,22 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle(0);
 
 my $deleteProtocolAppNodes = $dbh->prepare(<<EOF);
-    DELETE from ApiDBUserDatasets.UD_PROTOCOLAPPNODE
-    WHERE user_dataset_id = ?
+    delete from apidbUserDatasets.UD_ProtocolAppNode
+    where profile_set_id
+          in (select profile_set_id
+              from apidbUserDatasets.ud_ProfileSet
+              where user_dataset_id = ?)
 EOF
 
 
 my $deleteNaFeatureExpression = $dbh->prepare(<<EOF);
     DELETE from ApiDBUserDatasets.UD_NAFeatureExpression
-    WHERE protocol_app_node_id in (select distinct protocol_app_node_id 
-                                   from ApiDBUserDatasets.UD_PROTOCOLAPPNODE
-                                   where user_dataset_id = ?)
+    WHERE protocol_app_node_id in (select protocol_app_node_id 
+                                   from apidbUserDatasets.UD_ProtocolAppNode
+                                   where profile_set_id
+                                         in (select profile_set_id
+                                             from apidbUserDatasets.ud_ProfileSet
+                                             where user_dataset_id = ?))
 EOF
 
 my $deleteProfileSet = $dbh->prepare(<<EOF);
