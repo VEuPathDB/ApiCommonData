@@ -644,7 +644,7 @@ sub loadTable {
   my $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader);
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
-  open(my $sqlldrMapProcess, "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=1000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+  open(my $sqlldrMapProcess, "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 bindsize=512000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
   open(my $sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
@@ -756,6 +756,8 @@ sub loadTable {
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
     }
   }
+
+  $self->log("Finished Reading data from $tableName");
 
   $tableReader->finishTable();
 
