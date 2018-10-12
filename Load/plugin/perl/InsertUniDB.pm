@@ -606,7 +606,7 @@ sub loadTable {
       $tableName eq 'GUS::Model::Study::ProtocolParam';
 
   my $hasRowProjectId = 1;
-  if($tableName eq 'ApiDB.Snp' || $tableName eq 'ApiDB.SequenceVariation') {
+  if($abbreviatedTablePeriod eq 'ApiDB.Snp' || $abbreviatedTablePeriod eq 'ApiDB.SequenceVariation') {
     $hasRowProjectId = 0;
   }
 
