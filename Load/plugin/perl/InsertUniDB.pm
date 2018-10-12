@@ -345,7 +345,8 @@ sub getIdMappings {
 
   my $idMappings = {};
 
-  $self->log("Begin ID Lookup for $tableName from database $database");
+  my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
+  $self->log("Begin ID Lookup for $abbreviatedTableColumn from database $database");
 
   foreach my $pr (@{$tableInfo->{parentRelations}}) {
     my $field = $pr->[1];
@@ -368,7 +369,7 @@ sub getIdMappings {
 
   $self->addToIdMappings($database, $idMappings, [$tableName], undef);
 
-  $self->log("Finished ID Lookup for $tableName from database $database");
+  $self->log("Finished ID Lookup for $abbreviatedTableColumn from database $database");
 
   return $idMappings;
 }
@@ -615,7 +616,7 @@ sub loadTable {
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-  $self->log("Begin Loading table $abbreviatedTablePeriod from database $database");
+  $self->log("Begin Loading table $abbreviatedTableColumn from database $database");
 
   my $rowCount = 0;
   my $primaryKeyColumn = $tableInfo->{primaryKey};
@@ -680,7 +681,7 @@ sub loadTable {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
 
       unless($primaryKey) {
-        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $abbreviatedTablePeriod...adding row") if($self->getArg("debug"));
+        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $abbreviatedTableColumn...adding row") if($self->getArg("debug"));
       }
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
@@ -779,12 +780,12 @@ sub loadTable {
     }
 
     if($rowCount % 100000 == 0) {
-      $self->log("Processed $rowCount from $abbreviatedTablePeriod");
+      $self->log("Processed $rowCount from $abbreviatedTableColumn");
     }
 
   }
 
-  $self->log("Finished Reading data from $abbreviatedTablePeriod.");
+  $self->log("Finished Reading data from $abbreviatedTableColumn");
 
   $tableReader->finishTable();
 
@@ -820,7 +821,7 @@ sub loadTable {
     $self->getDb()->manageTransaction(0, 'commit');
   }
 
-  $self->log("Finished Loading $rowCount Rows into table $tableName from database $database");
+  $self->log("Finished Loading $rowCount Rows into table $abbreviatedTableColumn from database $database");
 }
 
 sub getAbbreviatedTableName {
@@ -860,7 +861,8 @@ sub globalLookupForTable  {
 
   return unless($fields);
 
-  $self->log("Preparing Global Lookup for table $tableName");
+  my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
+  $self->log("Preparing Global Lookup for table $abbreviatedTableColumn from database $database");
 
   my $sql;
   if($isGlobalTable) {
@@ -894,7 +896,7 @@ sub globalLookupForTable  {
       $self->log("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated... choosing one");
   }
 
-  $self->log("Finished caching Global Lookup for table $tableName");
+  $self->log("Finished caching Global Lookup for table $abbreviatedTableColumn from database $database");
 
   return \%lookup;
 }
