@@ -624,14 +624,15 @@ sub loadTable {
 
   my ($hasNewDatRows, $hasNewMapRows);
 
-  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess, $sqlldrDatProcessString, $sqlldrMapProcess);
+  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess, $sqlldrDatProcessString);
+  my ($sqlldrMapFh, $sqlldrMapFn, $sqlldrMapInfileFh, $sqlldrMapInfileFn, $sqlldrMapProcess, $sqlldrMapProcessString);
   if($loadDatWithSqlldr) {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
     $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
-    open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
+
   }
   else {
     $self->getDb()->manageTransaction(0, 'begin');
@@ -639,12 +640,12 @@ sub loadTable {
     $self->error($@) if $@;
   }
 
-  my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
-  my $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
+  ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
-  my $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
-  open(my $sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
+  $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
 
@@ -684,8 +685,10 @@ sub loadTable {
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
 
-
-        open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewMapRows);
+        unless($hasNewMapRows) {
+          open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
+        }
 
         $hasNewMapRows = 1;
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, undef);
@@ -696,8 +699,15 @@ sub loadTable {
     }
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
-      open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewMapRows);
-      open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewDatRows);
+      unless($hasNewMapRows) {
+        open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
+      }
+
+      unless($hasNewDatRows) {
+        open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
+      }
 
       $hasNewDatRows = 1;
       $hasNewMapRows = 1;
