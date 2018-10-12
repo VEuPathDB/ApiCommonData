@@ -706,7 +706,12 @@ sub loadTable {
         }
 
         my @columns = map { $lobColumns{$_} ? $START_OF_LOB_DELIMITER . $mappedRow->{$_} . $END_OF_LOB_DELIMITER : $mappedRow->{$_} } grep { !$housekeepingFieldsHash{$_} } @attributeList;
-        push @columns, $mappedRow->{row_project_id} if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE);
+
+
+        if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE) {
+          $self->error("Could not map row") unless $mappedRow->{row_project_id};
+          push @columns, $mappedRow->{row_project_id};
+        }
       
         print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @columns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
       }
