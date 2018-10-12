@@ -112,7 +112,8 @@ while(<$fh>) { # TODO:  need example of how this looks
     
     my $naFeatureId = $geneIds{$sourceId};
     unless($naFeatureId) {
-      die "Could not find an na_feature_id for source_id $sourceId"
+      print "WARN: Could not find an na_feature_id for source_id $sourceId";
+      next;
     }
 
 
