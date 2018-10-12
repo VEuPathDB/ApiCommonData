@@ -461,7 +461,7 @@ sub queryForMaxPK {
 
 
 sub writeConfigFile {
-  my ($self, $configFh, $tableInfo, $tableName, $datFileName, $tableReader) = @_;
+  my ($self, $configFh, $tableInfo, $tableName, $datFileName, $tableReader, $hasRowProjectId) = @_;
 
   my $eolLiteral = $END_OF_LOB_DELIMITER;
   my $solLiteral = $START_OF_LOB_DELIMITER;
@@ -471,12 +471,6 @@ sub writeConfigFile {
 
   my $eocLiteral = $END_OF_COLUMN_DELIMITER;
   $eocLiteral =~ s/\t/\\t/;
-
-
-  my $hasRowProjectId = 1;
-  if($tableName eq 'ApiDB.Snp' || $tableName eq 'ApiDB.SequenceVariation') {
-    $hasRowProjectId = 0;
-  }
 
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
@@ -610,28 +604,33 @@ sub loadTable {
       $tableName eq 'GUS::Model::Study::Protocol' || 
       $tableName eq 'GUS::Model::Study::ProtocolParam';
 
+  my $hasRowProjectId = 1;
+  if($tableName eq 'ApiDB.Snp' || $tableName eq 'ApiDB.SequenceVariation') {
+    $hasRowProjectId = 0;
+  }
+
   my $login       = $self->getConfig->getDatabaseLogin();
   my $password    = $self->getConfig->getDatabasePassword();
   my $dbiDsn      = $self->getConfig->getDbiDsn();
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-  $self->log("Begin Loading table $tableName from database $database");
+  $self->log("Begin Loading table $abbreviatedTablePeriod from database $database");
 
   my $rowCount = 0;
   my $primaryKeyColumn = $tableInfo->{primaryKey};
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
   my %lobColumns = map { lc($_) => 1 } @{$tableInfo->{lobColumns}};
 
-  my ($hasNewRows, $hasNewMapRows);
+  my ($hasNewDatRows, $hasNewMapRows);
 
-  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess);
+  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess, $sqlldrDatProcessString, $sqlldrMapProcess);
   if($loadDatWithSqlldr) {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
-    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader);
+    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
-    open($sqlldrDatProcess, "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
     open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
   }
   else {
@@ -642,9 +641,9 @@ sub loadTable {
 
   my ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
   my $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
-  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader);
+  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
-  open(my $sqlldrMapProcess, "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 bindsize=512000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |") or die "Cannot open pipe for sqlldr process:  $!";
+  my $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
   open(my $sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
@@ -680,10 +679,14 @@ sub loadTable {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
 
       unless($primaryKey) {
-        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $tableName...adding row") if($self->getArg("debug"));
+        $self->log("No lookup Found for GLOBAL row $origPrimaryKey in table $abbreviatedTablePeriod...adding row") if($self->getArg("debug"));
       }
 
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
+
+
+        open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewMapRows);
+
         $hasNewMapRows = 1;
         my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, undef);
         print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER ; # note the special line terminator
@@ -693,7 +696,11 @@ sub loadTable {
     }
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
-      $hasNewRows = 1;
+      open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewMapRows);
+      open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!" unless($hasNewDatRows);
+
+      $hasNewDatRows = 1;
+      $hasNewMapRows = 1;
       $rowCount++;
 
       if($loadDatWithSqlldr) {
@@ -708,7 +715,7 @@ sub loadTable {
         my @columns = map { $lobColumns{$_} ? $START_OF_LOB_DELIMITER . $mappedRow->{$_} . $END_OF_LOB_DELIMITER : $mappedRow->{$_} } grep { !$housekeepingFieldsHash{$_} } @attributeList;
 
 
-        if($abbreviatedTablePeriod ne $PROJECT_INFO_TABLE) {
+        if($hasRowProjectId && $abbreviatedTablePeriod ne $PROJECT_INFO_TABLE) {
           $self->error("Could not map row") unless $mappedRow->{row_project_id};
           push @columns, $mappedRow->{row_project_id};
         }
@@ -760,22 +767,32 @@ sub loadTable {
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, $globalNaturalKey);
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
     }
+
+    if($rowCount % 100000 == 0) {
+      $self->log("Processed $rowCount from $abbreviatedTablePeriod");
+    }
+
   }
 
-  $self->log("Finished Reading data from $tableName");
+  $self->log("Finished Reading data from $abbreviatedTablePeriod.");
 
   $tableReader->finishTable();
 
   close $sqlldrMapInfileFh;
-  close $sqlldrMapProcess;
-  $self->error("sqlldr process failed!") if($?);
+  if($hasNewMapRows) {
+    close $sqlldrMapProcess;
+    $self->error("sqlldr process failed!") if($?);
+  }
   unlink($sqlldrMapFn,$sqlldrMapInfileFn);
 
   if($loadDatWithSqlldr) {
     close $sqlldrDatInfileFh;
-    close $sqlldrDatProcess;
-    if($?) {
-      $self->error("sqlldr process for databasemapping failed!");
+
+    if($hasNewDatRows) {
+      close $sqlldrDatProcess;
+      if($?) {
+        $self->error("sqlldr process for databasemapping failed!");
+      }
     }
     unlink($sqlldrDatFn,$sqlldrDatInfileFn);
 
