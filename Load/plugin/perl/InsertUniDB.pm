@@ -464,6 +464,8 @@ sub queryForMaxPK {
 sub writeConfigFile {
   my ($self, $configFh, $tableInfo, $tableName, $datFileName, $tableReader, $hasRowProjectId) = @_;
 
+  my $fullTableName = $tableInfo->{fullTableName};
+
   my $eolLiteral = $END_OF_LOB_DELIMITER;
   my $solLiteral = $START_OF_LOB_DELIMITER;
 
@@ -512,9 +514,10 @@ sub writeConfigFile {
                       "table_name",
                       "primary_key_orig",
                       "primary_key",
-                      "global_natural_key",
                       'modification_date',
         ];
+
+    push @$attributeList, "global_natural_key" if($GLOBAL_UNIQUE_FIELDS{$fullTableName});
 
     push @$attributeList, keys %$datatypeMap;
 
@@ -548,7 +551,7 @@ sub writeConfigFile {
         }
 
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
-          my $charLength = $tableReader->getMaxLobLength($tableInfo->{fullTableName}, $col);
+          my $charLength = $tableReader->getMaxLobLength($fullTableName, $col);
           $charLength = 1 unless($charLength);
           $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$solLiteral' AND '$eolLiteral'";
         }
@@ -645,8 +648,7 @@ sub loadTable {
   $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
   $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
-  $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
-
+  $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 bindsize=512000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
   my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
 
@@ -775,14 +777,14 @@ sub loadTable {
         $globalLookup->{$globalNaturalKey} = $primaryKey;
       }
       
-      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey, $globalNaturalKey);
+      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
+      push @mappingRow, $globalNaturalKey if($GLOBAL_UNIQUE_FIELDS{$tableName});
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
-    }
 
-    if($rowCount % 100000 == 0) {
-      $self->log("Processed $rowCount from $abbreviatedTableColumn");
+      if($rowCount % 100000 == 0) {
+        $self->log("Processed $rowCount from $abbreviatedTableColumn");
+      }
     }
-
   }
 
   $self->log("Finished Reading data from $abbreviatedTableColumn");
