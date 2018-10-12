@@ -788,17 +788,16 @@ sub loadTable {
 
   $tableReader->finishTable();
 
-  close $sqlldrMapInfileFh;
   if($hasNewMapRows) {
+    close $sqlldrMapInfileFh;
     close $sqlldrMapProcess;
     $self->error("sqlldr process failed!") if($?);
   }
   unlink($sqlldrMapFn,$sqlldrMapInfileFn);
 
   if($loadDatWithSqlldr) {
-    close $sqlldrDatInfileFh;
-
     if($hasNewDatRows) {
+      close $sqlldrDatInfileFh;
       close $sqlldrDatProcess;
       if($?) {
         $self->error("sqlldr process for databasemapping failed!");
