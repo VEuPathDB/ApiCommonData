@@ -707,9 +707,12 @@ sub loadTable {
         open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
       }
 
-      unless($hasNewDatRows) {
-        open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
-        open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
+
+      if($loadDatWithSqlldr) {
+        unless($hasNewDatRows) {
+          open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
+        }
       }
 
       $hasNewDatRows = 1;
