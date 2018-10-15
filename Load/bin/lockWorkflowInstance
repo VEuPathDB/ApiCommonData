@@ -39,6 +39,13 @@ else {
   }
   $sh->finish();
 
+  my $shWs = $dbh->prepare("select distinct state from apidb.workflowstep");
+  $shWs->execute();
+  while(my ($state) = $shWs->fetchrow_array()) {
+    die "All workfow steps should be $DONE.  Found state:  $state" unless($state eq $DONE);
+  }
+  $shWs->finish();
+
   $dbh->do("update apidb.workflow set state = '$LOCKED' where state = '$DONE'");
 }
 
