@@ -633,7 +633,6 @@ sub loadTable {
   if($loadDatWithSqlldr) {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
-    $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
     $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
@@ -657,9 +656,7 @@ sub loadTable {
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
   # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows??
-  my $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-
-  my $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isGlobalTable);
+  my ($idMappings, $globalLookup);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
 
@@ -672,6 +669,13 @@ sub loadTable {
 
     next if($origPrimaryKey <= $alreadyMappedMaxOrigPk); # restart OR new data (TODO: won't work for "skipped" datasets)
     next if($tableReader->skipRow($row));
+
+    # first time we see data
+    unless($idMappings) {
+      $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
+      $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isGlobalTable);
+    }
+
 
     my ($mappedRow, $fieldsToSetToPk) = $self->mapRow($row, $idMappings, $tableInfo, $origPrimaryKey);
 
@@ -710,6 +714,7 @@ sub loadTable {
 
       if($loadDatWithSqlldr) {
         unless($hasNewDatRows) {
+          $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
           open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
           open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
         }
