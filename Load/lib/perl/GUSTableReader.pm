@@ -50,22 +50,25 @@ sub getTableSql {
 
   $tableName = &getTableNameFromPackageName($tableName);
 
-  my $orderBy = "order by $primaryKeyColumn";
+  my $orderBy = "";
+  if($isSelfReferencing) {
 
-  if(lc($tableName) eq "sres.ontologyterm") {
-    $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
-  }
-  if(lc($tableName) eq "core.tableinfo") {
-    $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
-  }
+    $orderBy = "order by $primaryKeyColumn";
 
-  if(lc($tableName) eq "study.study") {
-    $orderBy = "order by investigation_id nulls first, study_id";
-  }
-  if(lc($tableName) eq "sres.taxon") {
-    $orderBy = "order by parent_id nulls first, taxon_id";
-  }
+    if(lc($tableName) eq "sres.ontologyterm") {
+      $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
+    }
+    if(lc($tableName) eq "core.tableinfo") {
+      $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
+    }
 
+    if(lc($tableName) eq "study.study") {
+      $orderBy = "order by investigation_id nulls first, study_id";
+    }
+    if(lc($tableName) eq "sres.taxon") {
+      $orderBy = "order by parent_id nulls first, taxon_id";
+    }
+  }
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
 
