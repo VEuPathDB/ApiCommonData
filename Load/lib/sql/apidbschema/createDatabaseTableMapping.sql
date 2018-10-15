@@ -26,6 +26,9 @@ GRANT SELECT ON ApiDB.DatabaseTableMapping TO gus_r;
 CREATE INDEX apidb.db_tbl_map_idx
 ON ApiDB.DatabaseTableMapping (database_orig, table_name, primary_key_orig, primary_key) tablespace indx;
 
+CREATE INDEX apidb.db_tbl_map_g_idx
+ON ApiDB.DatabaseTableMapping (table_name, global_natural_key, primary_key) tablespace indx;
+
 CREATE SEQUENCE apidb.DatabaseTableMapping_sq;
 
 GRANT SELECT ON apidb.DATABASETABLEMAPPING_sq TO gus_r;
