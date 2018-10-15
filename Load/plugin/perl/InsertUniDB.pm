@@ -634,7 +634,7 @@ sub loadTable {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
-    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
   }
   else {
