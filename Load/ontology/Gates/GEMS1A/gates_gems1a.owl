@@ -278,15 +278,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000057 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000057">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <rdfs:label>Medication</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000096 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
@@ -474,6 +465,17 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000310">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <rdfs:label xml:lang="en">Observation details</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000321 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000321">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000308"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis at discharge</rdfs:label>
     </owl:Class>
     
 
@@ -995,7 +997,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0004991 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0004991">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4A_DATE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_DATE</obo:EUPATH_0000755>
@@ -1097,7 +1099,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010013 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010013">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021098"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previous diarrheal care</rdfs:label>
     </owl:Class>
@@ -2217,7 +2219,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010153 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010153">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F7_CUR_MED</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -2233,7 +2235,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010154 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010154">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F7_MED_ONGOING</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -3669,7 +3671,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010351">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case, Symptoms at Enrollment</rdfs:label>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms at Enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -3705,7 +3708,8 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010357">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case, Symptoms since illness began</rdfs:label>
+        <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Symptoms since illness began</rdfs:label>
     </owl:Class>
     
 
@@ -3858,7 +3862,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010389 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010389">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000057"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Control Child Medication at enrollment</rdfs:label>
     </owl:Class>
@@ -3881,16 +3885,6 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea treatment by prescription at home</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0010392 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010392">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000308"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis leaving hospital</rdfs:label>
     </owl:Class>
     
 
@@ -6844,7 +6838,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015130 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015130">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_DRH</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6860,7 +6854,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015131 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015131">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_DYS</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6876,7 +6870,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015132 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015132">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_PNEU</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6892,7 +6886,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015133 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015133">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_MNGTS</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6908,7 +6902,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015134 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015134">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_BACT</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6924,7 +6918,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015135 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015135">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_MALA</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6940,7 +6934,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015136 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015136">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_MLNT</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6956,7 +6950,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015137 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015137">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_TYPHOID</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -6972,7 +6966,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015138 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015138">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010392"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000321"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_OUTCOME_OTHR</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
@@ -11182,5 +11176,5 @@ Need to check whether it can be inmplemented in multifilters.</obo:TEMP_0000001>
 
 
 
-<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
 
