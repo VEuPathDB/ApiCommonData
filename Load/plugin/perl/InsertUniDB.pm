@@ -577,7 +577,10 @@ sub writeConfigFile {
 
   my $fieldsString = join(",\n", @fields);
 
-  print $configFh "LOAD DATA
+
+  my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME ? "" : "UNRECOVERABLE\n";
+
+  print $configFh "${unrecoverable}LOAD DATA
 CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
 INFILE '$datFileName' \"str '$eorLiteral'\" 
 APPEND
