@@ -580,13 +580,16 @@ sub writeConfigFile {
 
   my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME ? "" : "UNRECOVERABLE\n";
 
+  # SNP and Seqvar wait til end to enable constraints because it takes a very long time
+  # also this is error prone because of the amount of TEMP indx space
+  my $reenableDisabledConstraints = $hasRowProjectId ? "REENABLE DISABLED_CONSTRAINTS\n" : "";
+
   print $configFh "${unrecoverable}LOAD DATA
 CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
 INFILE '$datFileName' \"str '$eorLiteral'\" 
 APPEND
 INTO TABLE $tableName
-REENABLE DISABLED_CONSTRAINTS
-FIELDS TERMINATED BY '$eocLiteral'
+${reenableDisabledConstraints}FIELDS TERMINATED BY '$eocLiteral'
 TRAILING NULLCOLS
 ($fieldsString
 )
