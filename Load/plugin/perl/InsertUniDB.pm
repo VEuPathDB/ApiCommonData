@@ -579,10 +579,7 @@ sub writeConfigFile {
 
 
   my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME ? "" : "UNRECOVERABLE\n";
-
-  # SNP and Seqvar wait til end to enable constraints because it takes a very long time
-  # also this is error prone because of the amount of TEMP indx space
-  my $reenableDisabledConstraints = $hasRowProjectId ? "REENABLE DISABLED_CONSTRAINTS\n" : "";
+  my $reenableDisabledConstraints = $tableName eq $MAPPING_TABLE_NAME ? "REENABLE DISABLED_CONSTRAINTS\n" : "";
 
   print $configFh "${unrecoverable}LOAD DATA
 CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
@@ -641,7 +638,7 @@ sub loadTable {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
-    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=true log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
   }
   else {
