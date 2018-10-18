@@ -601,6 +601,7 @@ sub loadTable {
 
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
+  next if $tableName =~ /ApiDB::GeneGff/; #TODO:  what is different about this table?? some issue with the content of the clob
 
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
