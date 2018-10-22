@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Getopt::Long;
+use Text::CSV_XS;
 
 unless (0 < @ARGV){
   printf STDERR (join("\n",(
@@ -23,6 +24,8 @@ $exact = 1 if $values;
 
 $delim = $tab ? "\t" : ",";
 
+my $csv = Text::CSV_XS->new({ binary => 1, sep_char => $delim, quote_char => '"' }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
+
 
 my($headerName, @files) = @ARGV;
 
@@ -34,10 +37,9 @@ foreach my $filename (@files){
   
   my $head = <FILE>;
   chomp $head;
-	if($head =~ /\t/){ $delim = "\t"; }
+	if($head =~ /\t/){ $delim = "\t"; $tab = 1; $csv->sep_char($delim); }
 
 	printf STDERR "Delimeter:[$delim]\n";
-  
   
   my @headers = map { $_ =~ s/"//g; $_ } split(/$delim/, $head);
   
@@ -53,7 +55,7 @@ foreach my $filename (@files){
     }
     if($match) {
       $colNum = $i;
-      printf("Found \"%s\" at column %d\n", $headers[$i],$colNum + 1);
+      printf STDERR ("Found \"%s\" at column %d\n", $headers[$i],$colNum + 1);
       last;
     }
   }
@@ -62,12 +64,23 @@ foreach my $filename (@files){
     my %vals;
     while(my $line = <FILE>){
       chomp $line;
-      my @data = split(/$delim/, $line);
+      my @data; # = split(/$delim/, $line);
+      if($csv->parse($line)) {
+        @data = $csv->fields();
+      }
+      else {
+          my $error= "".$csv->error_diag;
+        die "Could not parse line: $error";
+      }
       next unless defined($data[$colNum]);
       $vals{ $data[$colNum] } ||= 0;
       $vals{ $data[$colNum] }++;
     }
-    printf("\nvalue\tcount\n-----\t-----\n%s\n", join("\n", map { sprintf("%s\t%5d", $_, $vals{$_}) } sort keys %vals));
+    print STDERR ("\nvalue\tcount\n-----\t-----\n");
+		printf ("%s\n", join("\n", map { sprintf("%s\t%5d", $_, $vals{$_}) } sort keys %vals));
+		my $nonempty = 0;
+		map { $nonempty += $vals{$_} if ($_ ne "")  } keys %vals;
+    printf STDERR ("-----\nNon-empty\t%d\n", $nonempty);
   }
   elsif(!defined($colNum)){
     printf STDERR ("Column \"%s\" not found in %s\n", $headerName, $filename);
