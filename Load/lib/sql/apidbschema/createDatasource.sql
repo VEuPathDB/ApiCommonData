@@ -1,6 +1,6 @@
 CREATE TABLE apidb.Datasource (
  data_source_id                   NUMBER(12) NOT NULL,
- name                         VARCHAR2(120) NOT NULL,
+ name                         VARCHAR2(200) NOT NULL,
  version                      VARCHAR2(30) NOT NULL,
  is_species_scope             NUMBER(1),
  taxon_id                     NUMBER(12),
