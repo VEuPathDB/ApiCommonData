@@ -11,7 +11,7 @@ CREATE TABLE ApiDB.GFF3 (
  is_reversed           NUMBER(3),
  phase                 VARCHAR2(1),
  attr                  CLOB,
- parent_attr           VARCHAR2(20),
+ parent_attr           VARCHAR2(100),
  id_attr               VARCHAR2(100),  
  external_database_release_id NUMBER(10),
  MODIFICATION_DATE     DATE,

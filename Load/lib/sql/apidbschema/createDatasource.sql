@@ -6,7 +6,7 @@ CREATE TABLE apidb.Datasource (
  taxon_id                     NUMBER(12),
  type                         VARCHAR2(50),
  subtype                      VARCHAR2(50),
- external_database_name       VARCHAR2(120),
+ external_database_name       VARCHAR2(150),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
