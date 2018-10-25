@@ -17,7 +17,7 @@ sub setStatementHandle { $_[0]->{_statement_handle} = $_[1] }
 sub getStatementHandle { $_[0]->{_statement_handle} }
 
 sub getTableNameFromPackageName {
-  my ($fullTableName) = @_;
+  my ($self, $fullTableName) = @_;
 
   $fullTableName =~ /GUS::Model::(.+)::(.+)/i;
   return $1 . "." . $2;
@@ -48,26 +48,25 @@ sub readClob {
 sub getTableSql {
   my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
-  $tableName = &getTableNameFromPackageName($tableName);
+  $tableName = $self->getTableNameFromPackageName($tableName);
 
-  my $orderBy = "";
-  if($isSelfReferencing) {
 
-    $orderBy = "order by $primaryKeyColumn";
 
-    if(lc($tableName) eq "sres.ontologyterm") {
-      $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
-    }
-    if(lc($tableName) eq "core.tableinfo") {
-      $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
-    }
 
-    if(lc($tableName) eq "study.study") {
-      $orderBy = "order by investigation_id nulls first, study_id";
-    }
-    if(lc($tableName) eq "sres.taxon") {
-      $orderBy = "order by parent_id nulls first, taxon_id";
-    }
+  my $orderBy = "order by $primaryKeyColumn";
+
+  if(lc($tableName) eq "sres.ontologyterm") {
+    $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
+  }
+  if(lc($tableName) eq "core.tableinfo") {
+    $orderBy = "order by view_on_table_id nulls first, superclass_table_id nulls first, table_id";
+  }
+  
+  if(lc($tableName) eq "study.study") {
+    $orderBy = "order by investigation_id nulls first, study_id";
+  }
+  if(lc($tableName) eq "sres.taxon") {
+    $orderBy = "start with parent_id is null connect by PRIOR taxon_id = parent_id";
   }
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
@@ -255,7 +254,7 @@ and d.database_id = t.database_id
 sub getDistinctValuesForTableFields {
   my ($self, $fullTableName, $fields, $onlyGlobalRows) = @_;
 
-  my $tableName = &getTableNameFromPackageName($fullTableName);
+  my $tableName = $self->getTableNameFromPackageName($fullTableName);
 
   my $addRowAlgInvocationId = "";
   if($onlyGlobalRows) {
@@ -292,7 +291,7 @@ sub getDistinctValuesForTableFields {
 sub getMaxLobLength {
   my ($self, $fullTableName, $lobField) = @_;
 
-  my $tableName = &getTableNameFromPackageName($fullTableName);
+  my $tableName = $self->getTableNameFromPackageName($fullTableName);
 
   my $dbh = $self->getDatabaseHandle();
   my $sql = "select max(length($lobField)) from $tableName";
