@@ -608,6 +608,7 @@ sub loadTable {
   # try to reuse all rows from these tables
   # some of these will have rows populated by the installer so globalMapping query is different
   my $isGlobalTable = $tableName =~ /GUS::Model::Core::(\w+)Info/ || 
+      $tableName =~ /GUS::Model::SRes::Taxon/ || 
       $tableName =~ /GUS::Model::Core::Algorithm/ || 
       $tableName eq 'GUS::Model::Study::Protocol' || 
       $tableName eq 'GUS::Model::Study::ProtocolParam';
