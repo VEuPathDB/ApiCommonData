@@ -608,7 +608,6 @@ sub loadTable {
   # try to reuse all rows from these tables
   # some of these will have rows populated by the installer so globalMapping query is different
   my $isGlobalTable = $tableName =~ /GUS::Model::Core::(\w+)Info/ || 
-      $tableName =~ /GUS::Model::SRes::Taxon/ || 
       $tableName =~ /GUS::Model::Core::Algorithm/ || 
       $tableName eq 'GUS::Model::Study::Protocol' || 
       $tableName eq 'GUS::Model::Study::ProtocolParam';
@@ -779,6 +778,9 @@ sub loadTable {
 
       # self referencing tables will need mappings for loaded rows
       $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
+
+
+      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
       
       # update the globalMapp for newly added rows
       my $globalNaturalKey;
@@ -788,10 +790,11 @@ sub loadTable {
         my @globalUniqueValues = map { lc($mappedRow->{lc($_)}) } @$globalUniqueFields;
         $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
+
+        $self->error("Global Natural Key not initialized for new row") unless $globalNaturalKey;
+        push @mappingRow, $globalNaturalKey;
       }
-      
-      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-      push @mappingRow, $globalNaturalKey if($GLOBAL_UNIQUE_FIELDS{$tableName});
+
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
       if($rowCount % 100000 == 0) {
