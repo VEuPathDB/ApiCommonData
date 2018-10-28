@@ -802,7 +802,6 @@ sub loadTable {
         $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
 
-        $self->error("Global Natural Key not initialized for new row") unless $globalNaturalKey;
         push @mappingRow, $globalNaturalKey;
       }
 
