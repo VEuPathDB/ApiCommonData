@@ -81,6 +81,8 @@ my $HOUSEKEEPING_FIELDS = ['modification_date',
 # Load Arguments
 # ----------------------------------------------------------
 
+
+
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [
@@ -242,6 +244,15 @@ sub run {
   $tableReader->disconnectDatabase();
 }
 
+
+sub error {
+  my ($self, $msg) = @_;
+
+  print STDERR "\nERROR: $msg\n";
+
+  $self->SUPER::error($msg);
+
+}
 
 sub undoTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
