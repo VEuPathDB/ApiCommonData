@@ -331,7 +331,7 @@ ALTER TABLE results.NaFeatureDiffResult
   ADD (confidence FLOAT(126));
 
 alter table dots.GoAssocInstEvidCode add reference varchar2(500);
-alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(400);
+alter table dots.GoAssocInstEvidCode add evidence_code_parameter varchar2(2000);
 
 create table RESULTS.REPORTERINTENSITY
   (
