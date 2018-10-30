@@ -28,6 +28,8 @@ my $MAPPING_TABLE_NAME = "ApiDB.DatabaseTableMapping";
 my $PROJECT_INFO_TABLE = "Core.ProjectInfo";
 my $TABLE_INFO_TABLE = "Core.TableInfo";
 
+my $PLACEHOLDER_STRING = "PLACEHOLDER_STRING";
+
 # CLOB data in here requires some hand holding
 my $NA_SEQUENCE_TABLE_NAME = "DoTS.NASequenceImp";
 
@@ -77,11 +79,11 @@ my $HOUSEKEEPING_FIELDS = ['modification_date',
                            'row_project_id',
     ];
 
+
+
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
-
-
 
 sub getArgsDeclaration {
   my $argsDeclaration  =
@@ -102,7 +104,15 @@ sub getArgsDeclaration {
                 }),
 
      stringArg ({ name => 'table_reader',
-                  descr => 'perl class which will serve out rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
+                  descr => 'perl class which will serve out full rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
+                  constraintFunc => undef,
+                  reqd => 1,
+                  isList => 0 
+                }),
+
+
+     stringArg ({ name => 'pk_table_reader',
+                  descr => 'perl class which will serve out primary_keys to this plugin for undo context.  Example ApiCommonData::Load::GUSPrimaryKeyTableReader',
                   constraintFunc => undef,
                   reqd => 1,
                   isList => 0 
@@ -115,6 +125,15 @@ sub getArgsDeclaration {
        reqd            =>  0,
        isList          =>  0
                 }),
+
+
+     booleanArg({
+       name            =>  'rebuildIndexsAndEnableConstraintsOnly', 
+       descr           =>  'if true, only rebuild indexes and reenable R/P constraints',
+       reqd            =>  0,
+       isList          =>  0
+                }),
+
 
     ];
 
@@ -171,6 +190,24 @@ FAIL
 }
 
 
+sub getActiveForkedProcesses {
+  my ($self) = @_;
+
+  return $self->{_active_forked_processes} || [];
+}
+
+sub addActiveForkedProcess {
+  my ($self, $pid) = @_;
+
+  push @{$self->{_active_forked_processes}}, $pid;
+}
+
+sub resetActiveForkedProcesses {
+  my ($self) = @_;
+
+  $self->{_active_forked_processes} = [];
+}
+
 
 sub new {
   my $class = shift;
@@ -194,6 +231,110 @@ sub new {
   return $self;
 }
 
+sub error {
+  my ($self, $msg) = @_;
+  print STDERR "\nERROR: $msg\n";
+
+  foreach my $pid (@{$self->getActiveForkedProcesses()}) {
+    kill(9, $pid); 
+  }
+
+  $self->SUPER::error($msg);
+}
+
+
+sub makeReaderObj {
+  my ($database, $readerClass) = @_;
+
+  eval "require $readerClass";
+  die $@ if $@;  
+
+  my $reader = eval {
+    $readerClass->new($database);
+  };
+  die $@ if $@;
+
+  return $reader;
+}
+
+
+sub rebuildIndexesAndEnableConstraints {
+  my ($self, $tableInfo) = @_;
+
+  my $fullTableName = $tableInfo->{fullTableName};
+  my $abbreviatedTablePeriod = &getAbbreviatedTableName($fullTableName, ".");
+
+  my ($owner, $tableName) = split(/\./, uc($abbreviatedTablePeriod));
+
+  $self->rebuildIndexes($owner, $tableName);
+
+  $self->enablePrimaryKeyConstraint($owner, $tableName);
+  $self->enableReferentialConstraints($owner, $tableName);
+}
+
+
+sub rebuildIndexes {
+  my ($self, $owner, $tableName) = @_;
+
+  my $sql = "select index_name from all_indexes where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
+
+  my $alterSql = "alter index ${owner}.${PLACEHOLDER_STRING} rebuild";
+
+  $self->doConstraintsSql($sql, $alterSql);
+
+
+}
+
+sub enablePriamryKeyConstraint {
+  my ($self, $owner, $tableName) = @_;
+
+  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'P'  and upper(status) = 'DISABLED'";
+
+  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+
+  $self->doConstraintsSql($sql, $alterSql);
+}
+
+
+sub enableReferentialConstraints {
+  my ($self, $owner, $tableName) = @_;
+
+  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'  and upper(status) = 'DISABLED'";
+
+  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+
+  $self->doConstraintsSql($sql, $alterSql);
+}
+
+sub disableReferentialConstraintsFromTable {
+  my ($self, $tableNamePeriod) = @_;
+
+  my ($owner, $tableName) = split(/\./, uc($tableNamePeriod));
+
+  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'";
+
+  my $alterSql = "alter table $tableNamePeriod disable constraint $PLACEHOLDER_STRING";
+
+  $self->doConstraintsSql($sql, $alterSql);
+}
+
+sub doConstraintsSql {
+  my ($self, $constraintSelect, $doSql) = @_;
+
+  my $dbh = $self->getQueryHandle();  
+
+  my $sh = $dbh->prepare($constraintSelect) or die $dbh->errstr;
+  $sh->execute() or die $dbh->errstr;
+
+  while(my ($constraintName) = $sh->fetchrow_array()) {
+    my $tmpSql = $doSql;
+
+    $tmpSql =~ s/$PLACEHOLDER_STRING/$constraintName/;
+    $dbh->do($tmpSql) or die $dbh->errstr;
+  }
+  $sh->finish();
+}
+
 sub run {
   my $self = shift;
 
@@ -205,15 +346,11 @@ sub run {
   my $database = $self->getArg('database');
   my $tableReaderClass = $self->getArg('table_reader');
 
-  eval "require $tableReaderClass";
-  die $@ if $@;  
+  my $tableReader = &makeReaderObj($database, $tableReaderClass);
 
-  my $tableReader = eval {
-    $tableReaderClass->new($database);
-  };
-  die $@ if $@;
 
   $tableReader->connectDatabase();
+
 
   $self->log("Getting Table Dependencies and Ordering Tables by Foreign Keys...");
 
@@ -231,10 +368,23 @@ sub run {
     $self->error("Expected $initialTableCount tables but found $orderedTableCount upon Ordering");
   }
 
-  unless($self->getArg('skipUndo')) {
-    foreach my $tableName (reverse @$orderedTables) {
-      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+  if($self->getArg('rebuildIndexsAndEnableConstraintsOnly')) {
+    foreach my $tableName (@$orderedTables) {
+      $self->rebuildIndexesAndEnableConstraints($tableInfo->{$tableName});
     }
+    return("Rebuilt all indexes and updated disabled constraints.");
+  }
+
+  unless($self->getArg('skipUndo')) {
+    my $pkTableReaderClass = $self->getArg('pk_table_reader');
+    my $pkTableReader = &makeReaderObj($database, $pkTableReaderClass);
+    $pkTableReader->connectDatabase();
+
+    foreach my $tableName (reverse @$orderedTables) {
+      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $pkTableReader);
+    }
+
+    $pkTableReader->disconnectDatabase();
   }
 
   foreach my $tableName (@$orderedTables) {
@@ -244,72 +394,146 @@ sub run {
   $tableReader->disconnectDatabase();
 }
 
+sub hasRowsToDelete {
+  my ($self, $database, $tableReader, $tableInfo, $maxPkOrig) = @_;
 
-sub error {
-  my ($self, $msg) = @_;
+  my $tableName = $tableInfo->{fullTableName};
+  my $primaryKeyColumn = $tableInfo->{primaryKey};
+  my $abbreviatedTable = &getAbbreviatedTableName($tableName, "::");
 
-  print STDERR "\nERROR: $msg\n";
+  my $countAlreadyMapped = $self->queryForCountMappedOrigPk($database, $abbreviatedTable);
 
-  $self->SUPER::error($msg);
 
+  # count from input db where pk <= maxPkValue already mapped
+  my $inputTableRowCount = $tableReader->getTableCount($tableName, $primaryKeyColumn, $maxPkOrig);
+
+  if($inputTableRowCount == $countAlreadyMapped) {
+    return 0;
+  }
+  return 1;
 }
+
+
+sub loadPrimaryKeyTableForUndo {
+  my ($self, $tableInfo, $primaryKeyTableName, $tableReader, $maxPkOrig, $dbh) = @_;
+
+  my $tableName = $tableInfo->{fullTableName};
+  my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
+  my $primaryKeyColumn = $tableInfo->{primaryKey};
+
+  my $eorLiteral = $END_OF_RECORD_DELIMITER;
+  $eorLiteral =~ s/\n/\\n/;
+
+  my $attributeInfo = $tableInfo->{attributeInfo};    
+
+  my ($pkInfo) = grep { lc($_->{'col'}) eq lc($primaryKeyColumn) } @$attributeInfo;
+  my $prec = $pkInfo->{'prec'};
+
+  $dbh->do("create table $primaryKeyTableName ($primaryKeyColumn number($prec), primary key($primaryKeyColumn))")  or die $dbh->errstr;;
+
+  my ($sqlldrUndoFh, $sqlldrUndoFn) = tempfile("sqlldrUndoXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  my $sqlldrUndoInfileFn = "${abbreviatedTablePeriod}_pk.dat";
+
+  print $sqlldrUndoFh "LOAD DATA
+CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
+INFILE '$sqlldrUndoInfileFn' \"str '$eorLiteral'\" 
+APPEND
+INTO TABLE primarykey
+REENABLE DISABLED_CONSTRAINTS
+($primaryKeyColumn CHAR($prec))
+    ";
+
+    $self->error("Could not create named pipe for sqlloader undo file") unless(mkfifo($sqlldrUndoInfileFn, 0700));
+
+    my $login       = $self->getConfig->getDatabaseLogin();
+    my $password    = $self->getConfig->getDatabasePassword();
+    my $dbiDsn      = $self->getConfig->getDbiDsn();
+    my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+    my $sqlldrUndoProcessString = "sqlldr $login/$password\@$db control=$sqlldrUndoFn rows=100000 bindsize=512000 log=${sqlldrUndoFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    my $pid = open(my $sqlldrUndoProcess, $sqlldrUndoProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+    $self->addActiveForkedProcess($pid);
+    open(my $sqlldrUndoInfileFh, ">$sqlldrUndoInfileFn") or die "Could not open named pipe $sqlldrUndoInfileFn for writing: $!";
+
+    $tableReader->prepareTable($tableName, undef, $primaryKeyColumn, $maxPkOrig);
+    
+    while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
+      my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
+      print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
+    }
+
+    close $sqlldrUndoInfileFh;
+    close $sqlldrUndoProcess;
+    $self->error("sqlldr process failed!") if($?);
+    unlink($sqlldrUndoFn,$sqlldrUndoInfileFn);
+}
+
+sub deleteFromTable {
+  my ($self, $dbh, $deleteSql, $tableName) = @_;
+  my $chunkSize = 100000;
+  $deleteSql = $deleteSql . " and rownum <= $chunkSize";
+
+  my $deleteStmt = $dbh->prepare($deleteSql) or die $dbh->errstr;
+  my $rowsDeleted = 0;
+    
+  while (1) {
+    my $rtnVal = $deleteStmt->execute() or die $dbh->errstr;
+    $rowsDeleted += $rtnVal;
+    $self->log("Deleted $rowsDeleted rows from $tableName");
+    $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
+    last if $rtnVal < $chunkSize;
+  }
+
+  return $rowsDeleted;
+}
+
+
 
 sub undoTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
-  if ($self->{commit} == 1) {
-    my $primaryKeyColumn = $tableInfo->{primaryKey};
+  my $abbreviatedTable = &getAbbreviatedTableName($tableName, "::");
+  my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
-    my $origPksHash = $tableReader->getDistinctValuesForTableFields($tableName, [$primaryKeyColumn], 0);
+  my $primaryKeyColumn = $tableInfo->{primaryKey};
 
-    my $sql = &getDatabaseTableMappingSql($database, [$tableName]);
-  
-    my $dbh = $self->getDbHandle();
-    my $sh = $dbh->prepare($sql);
-    $sh->execute();
+  $self->log("Begin Undo for $abbreviatedTable from database $database");
 
-    my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
+  my $maxPkOrig = $self->queryForMaxMappedOrigPk($database, $abbreviatedTable);
+
+  unless($self->hasRowsToDelete($database, $tableReader, $tableInfo, $maxPkOrig)) {
+    $self->log("No rows to delete for $abbreviatedTable from database $database");
+    return;
+  }
+
+  $self->resetActiveForkedProcesses();
+
+  # TODO:  what is the state of the indexeson the  primary table? Will they matter when deleting?
+
+  my $dbh = $self->getDbHandle();
+
+  my $primaryKeyTableName = "primarykey";
+  $self->loadPrimaryKeyTableForUndo($tableInfo, $primaryKeyTableName, $tableReader, $maxPkOrig, $dbh);
+
+  my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
              where database_orig = '$database'
-             and table_name = '$tableName'
-             and primary_key_orig = ?";
+             and table_name = '$abbreviatedTable'
+             and primary_key_orig not in (select $primaryKeyColumn from $primaryKeyTableName)";
 
-    my $delMapSh = $dbh->prepare($deleteMapSql) or die $dbh->errstr;;
 
-    my $count;
-    while(my ($databaseOrig, $tableName, $pkOrig, $pk) = $sh->fetchrow_array()) {
-      next if($origPksHash->{$pkOrig});
-      
-      $delMapSh->execute($pkOrig);
+  # TODO:  Should not delete global row if other rows point to it
 
-      if($count++ % 1000 == 0) {
-        $self->log("Deleted $count rows from $MAPPING_TABLE_NAME for table $tableName");
-        $dbh->commit();
-      }
-    }
-    $dbh->commit();
-
-    # delete rows from primary table where primaryKey not in (select primarykey from mapping table)
-    my $tableAbbrev = &getAbbreviatedTableName($tableName, ".");
-    my $chunkSize = 100000;
-
-    my $deleteSql = "delete from $tableAbbrev
+  my $deleteSql = "delete from $abbreviatedTablePeriod
         where $primaryKeyColumn not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
                                         where database_orig = '$database' 
-                                        and table_name = '$tableName')
-        and rownum <= $chunkSize";
+                                        and table_name = '$abbreviatedTable')
+        ";
 
-    my $deleteStmt = $dbh->prepare($deleteSql) or die $dbh->errstr;
-    my $rowsDeleted = 0;
-    
-    while (1) {
-      my $rtnVal = $deleteStmt->execute() or die $self->{dbh}->errstr;
-      $rowsDeleted += $rtnVal;
-      $self->log("Deleted $rowsDeleted rows from $tableName");
-      $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
-      last if $rtnVal < $chunkSize;
-    }
-  }
+  $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
+  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
+
+  $dbh->do("drop table $primaryKeyTableName") or die $dbh->errstr;;
 }
 
 sub getDatabaseTableMappingSql {
@@ -429,10 +653,24 @@ sub mapRow {
   return \%mappedRow, \@setToPk;
 }
 
+
 sub queryForMaxMappedOrigPk {
   my ($self, $database, $tableName) = @_;
 
-  my $sql = "select max(primary_key_orig) 
+  return $self->pkOrigFunctions($database, $tableName, "max");
+}
+
+sub queryForCountMappedOrigPk {
+  my ($self, $database, $tableName) = @_;
+
+  return $self->pkOrigFunctions($database, $tableName, "count");
+}
+
+
+sub pkOrigFunctions {
+  my ($self, $database, $tableName, $function) = @_;
+
+  my $sql = "select ${function}(primary_key_orig) 
              from $MAPPING_TABLE_NAME
              where database_orig = '$database' 
              and table_name = '$tableName'";
@@ -442,13 +680,13 @@ sub queryForMaxMappedOrigPk {
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  my ($max) = $sh->fetchrow_array();
+  my ($val) = $sh->fetchrow_array();
 
-  unless($max) {
+  unless($val) {
     return 0;
   }
 
-  return $max;
+  return $val;
 }
 
 
@@ -476,9 +714,6 @@ sub writeConfigFile {
   my ($self, $configFh, $tableInfo, $tableName, $datFileName, $tableReader, $hasRowProjectId) = @_;
 
   my $fullTableName = $tableInfo->{fullTableName};
-
-  my $eolLiteral = $END_OF_LOB_DELIMITER;
-  my $solLiteral = $START_OF_LOB_DELIMITER;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
@@ -564,7 +799,7 @@ sub writeConfigFile {
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
           my $charLength = $tableReader->getMaxLobLength($fullTableName, $col);
           $charLength = 1 unless($charLength);
-          $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$solLiteral' AND '$eolLiteral'";
+          $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$START_OF_LOB_DELIMITER' AND '$END_OF_LOB_DELIMITER'";
         }
 
         else {
@@ -590,7 +825,12 @@ sub writeConfigFile {
 
 
   my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME ? "" : "UNRECOVERABLE\n";
-  my $reenableDisabledConstraints = $tableName eq $MAPPING_TABLE_NAME ? "REENABLE DISABLED_CONSTRAINTS\n" : "";
+
+  # need to reenable constraints for core tables or the plugin won't fire up
+  my $reenableDisabledConstraints = "";
+  if($tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq $MAPPING_TABLE_NAME) {
+    $reenableDisabledConstraints = "REENABLE DISABLED_CONSTRAINTS\n";
+  }
 
   print $configFh "${unrecoverable}LOAD DATA
 CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
@@ -602,7 +842,11 @@ TRAILING NULLCOLS
 ($fieldsString
 )
 ";
+
 }
+
+
+
 
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
@@ -610,6 +854,8 @@ sub loadTable {
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
   next if $tableName =~ /ApiDB::GeneGff/; #TODO:  what is different about this table?? some issue with the content of the clob
+
+  $self->resetActiveForkedProcesses();
 
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
@@ -649,10 +895,14 @@ sub loadTable {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
-    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=true log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+
+    my $skipIndexMaintenance = $tableName =~ /GUS::Model::Core::Algorithm/ ? "false" : "true";
+    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=$skipIndexMaintenance log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
   }
   else {
+    $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
+
     $self->getDb()->manageTransaction(0, 'begin');
     eval "require $tableName";
     $self->error($@) if $@;
@@ -670,7 +920,6 @@ sub loadTable {
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
-  # TODO:  could pass $alredyMappedMaxOrigPk here to cache fewer rows??
   my ($idMappings, $globalLookup);
 
   $self->log("Will skip rows with a $primaryKeyColumn <= $alreadyMappedMaxOrigPk");
@@ -708,7 +957,8 @@ sub loadTable {
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
 
         unless($hasNewMapRows) {
-          open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          my $pid = open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          $self->addActiveForkedProcess($pid);
           open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
         }
 
@@ -722,7 +972,8 @@ sub loadTable {
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
       unless($hasNewMapRows) {
-        open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        my $pid = open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        $self->addActiveForkedProcess($pid);
         open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
       }
 
@@ -730,7 +981,8 @@ sub loadTable {
       if($loadDatWithSqlldr) {
         unless($hasNewDatRows) {
           $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
-          open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          my $pid = open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          $self->addActiveForkedProcess($pid);
           open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
         }
       }
@@ -789,9 +1041,6 @@ sub loadTable {
 
       # self referencing tables will need mappings for loaded rows
       $idMappings->{$tableName}->{$origPrimaryKey} = $primaryKey if($isSelfReferencing);
-
-
-      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
       
       # update the globalMapp for newly added rows
       my $globalNaturalKey;
@@ -801,10 +1050,10 @@ sub loadTable {
         my @globalUniqueValues = map { lc($mappedRow->{lc($_)}) } @$globalUniqueFields;
         $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
-
-        push @mappingRow, $globalNaturalKey;
       }
-
+      
+      my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
+      push @mappingRow, $globalNaturalKey;
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
       if($rowCount % 100000 == 0) {
