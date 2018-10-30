@@ -797,8 +797,8 @@ sub variationProduct {
 
     next if($positionInCds > length $consensusCodingSequence);
 
-    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds, $allele, $strand);
-    my $refProduct = &getAminoAcidSequenceOfSnp($refConsensusCodingSequence, $positionInCds, $allele, $strand);
+    my $product = &getAminoAcidSequenceOfSnp($consensusCodingSequence, $positionInCds);
+    my $refProduct = &getAminoAcidSequenceOfSnp($refConsensusCodingSequence, $positionInCds);
 
     if($product ne $refProduct) {
       $adjacentSnpCausesProductDifference = 1;
@@ -1201,7 +1201,7 @@ sub calculateAminoAcidPosition {
 
 
 sub getAminoAcidSequenceOfSnp {
-  my ($cdsSequence, $positionInCds, $allele, $strand) = @_;
+  my ($cdsSequence, $positionInCds) = @_;
 
 
   my $codonLength = 3;
@@ -1209,12 +1209,6 @@ sub getAminoAcidSequenceOfSnp {
   my $offset = $positionInCds - $modCds;
 
   my $codon = substr $cdsSequence, $offset - 1, $codonLength;
-
-  if($strand == -1) {
-    $allele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
-  }
-
- my $subbedAllele = substr $codon, $modCds, 1, $allele;
 
   # Assuming this is a simple hash lookup which is quick; 
   return $CODON_TABLE->translate($codon);
