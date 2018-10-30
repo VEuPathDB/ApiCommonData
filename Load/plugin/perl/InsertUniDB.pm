@@ -90,7 +90,7 @@ sub getArgsDeclaration {
     [
    fileArg({name           => 'logDir',
             descr          => 'directory where to log sqlldr output',
-            reqd           => 1,
+            reqd           => 0,
             mustExist      => 1,
             format         => '',
             constraintFunc => undef,
@@ -99,14 +99,14 @@ sub getArgsDeclaration {
      stringArg ({ name => 'database',
                   descr => 'gus oracle instance name (plas-inc), directory or files or possibly mysql database depending on the table_reader below',
                   constraintFunc => undef,
-                  reqd => 1,
+                  reqd => 0,
                   isList => 0 
                 }),
 
      stringArg ({ name => 'table_reader',
                   descr => 'perl class which will serve out full rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
                   constraintFunc => undef,
-                  reqd => 1,
+                  reqd => 0,
                   isList => 0 
                 }),
 
@@ -114,7 +114,7 @@ sub getArgsDeclaration {
      stringArg ({ name => 'pk_table_reader',
                   descr => 'perl class which will serve out primary_keys to this plugin for undo context.  Example ApiCommonData::Load::GUSPrimaryKeyTableReader',
                   constraintFunc => undef,
-                  reqd => 1,
+                  reqd => 0,
                   isList => 0 
                 }),
 
