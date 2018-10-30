@@ -106,7 +106,7 @@ sub getArgsDeclaration {
      stringArg ({ name => 'table_reader',
                   descr => 'perl class which will serve out full rows to this plugin.  Example ApiCommonData::Load::GUSTableReader',
                   constraintFunc => undef,
-                  reqd => 0,
+                  reqd => 1,
                   isList => 0 
                 }),
 
