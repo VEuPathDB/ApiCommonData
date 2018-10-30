@@ -90,7 +90,7 @@ sub getArgsDeclaration {
     [
    fileArg({name           => 'logDir',
             descr          => 'directory where to log sqlldr output',
-            reqd           => 0,
+            reqd           => 1,
             mustExist      => 1,
             format         => '',
             constraintFunc => undef,
