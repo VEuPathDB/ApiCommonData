@@ -264,13 +264,13 @@ sub rebuildIndexesAndEnableConstraints {
   my $fullTableName = $tableInfo->{fullTableName};
   my $abbreviatedTablePeriod = &getAbbreviatedTableName($fullTableName, ".");
 
-  $self->log("Rebuilding Indexes on Table $abbreviatedTablePeriod\n");
+  $self->log("Rebuilding Indexes on Table $abbreviatedTablePeriod");
 
   my ($owner, $tableName) = split(/\./, uc($abbreviatedTablePeriod));
 
   $self->rebuildIndexes($owner, $tableName);
 
-  $self->log("Enabling Constraints on Table $abbreviatedTablePeriod\n");
+  $self->log("Enabling Constraints on Table $abbreviatedTablePeriod");
 
   $self->enablePrimaryKeyConstraint($owner, $tableName);
   $self->enableReferentialConstraints($owner, $tableName);
@@ -289,7 +289,7 @@ sub rebuildIndexes {
 
 }
 
-sub enablePriamryKeyConstraint {
+sub enablePrimaryKeyConstraint {
   my ($self, $owner, $tableName) = @_;
 
   my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'P'  and upper(status) = 'DISABLED'";
@@ -335,7 +335,7 @@ sub doConstraintsSql {
 
     $tmpSql =~ s/$PLACEHOLDER_STRING/$constraintName/;
 
-    $self->log("Running SQL:  $tmpSql\n");
+    $self->log("Running SQL:  $tmpSql");
 
     $dbh->do($tmpSql) or die $dbh->errstr;
   }
