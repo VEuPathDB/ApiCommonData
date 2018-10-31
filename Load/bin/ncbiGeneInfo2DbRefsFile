@@ -28,15 +28,19 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-my ($file, $taxId) = @ARGV;
+my ($file, $taxId, $speciesTaxa) = @ARGV;
 
 
 usage() unless ($file, $taxId);
 
+if($speciesTaxa){
+	$taxId = `getSpeciesNCBITaxaList --NCBITaxId $taxId`;
+	die "\nError calling 'getSpeciesNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
+}
 my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
-
 die "\nError calling 'getSubNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
-#print STDERR "$subNCBITaxaList\n";
+
+print STDERR "$subNCBITaxaList\n";
 
 my @taxaLists = split(/\,/,$subNCBITaxaList);
 
