@@ -1,0 +1,52 @@
+#!/usr/bin/perl 
+## Given a taxonId, print a comma-separated list of taxonIds for the tree
+## species parent of the given taxon
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($verbose,$taxon_id,$gusConfigFile);
+&GetOptions("verbose!"=> \$verbose,
+            "NCBITaxId=s" => \$taxon_id,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+my $usage = "usage: getSpeciesTaxa --NCBITaxId --verbose " .
+             "--gusConfigFile [\$GUS_CONFIG_FILE]\n";
+die $usage unless $taxon_id;
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->
+  new($gusconfig->getDbiDsn(),
+      $gusconfig->getReadOnlyDatabaseLogin(),
+      $gusconfig->getReadOnlyDatabasePassword(),
+      $verbose,0,1,
+      $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+
+my $sql = <<SQL;
+  select ncbi_tax_id
+  from SRes.Taxon
+  start with ncbi_tax_id in ($taxon_id)
+  connect by taxon_id = prior parent_id
+  and rank = 'species'
+SQL
+
+print STDERR "Query: $sql\n" if $verbose;
+
+my $stmt = $dbh->prepareAndExecute($sql);
+
+my @taxa;
+while(my($currentTaxon) = $stmt->fetchrow_array()){
+  push(@taxa, $currentTaxon);
+}
+
+print join(',', @taxa), "\n";
+
+$db->logout();
