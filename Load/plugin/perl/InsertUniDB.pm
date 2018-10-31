@@ -283,7 +283,7 @@ sub rebuildIndexes {
 
   my $sql = "select index_name from all_indexes where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
 
-  my $alterSql = "alter index ${owner}.${PLACEHOLDER_STRING} rebuild";
+  my $alterSql = "alter index ${owner}.${PLACEHOLDER_STRING} rebuild nologging";
 
   $self->doConstraintsSql($sql, $alterSql);
 
@@ -1327,11 +1327,11 @@ sub getAllTableInfo {
       }
 
       # NASequenceImp has circular foreign key to sequence piece. we never use
-      # TODO:  should fix this in gus schema
-      if($fullTableName eq "GUS::Model::DoTS::NASequenceImp" &&
-         $parentTable eq "GUS::Model::DoTS::SequencePiece") {
-        next;
-      }
+      # should work now. has been fixed in gus schema
+      #if($fullTableName eq "GUS::Model::DoTS::NASequenceImp" &&
+      #   $parentTable eq "GUS::Model::DoTS::SequencePiece") {
+      #  next;
+      #}
 
       if($fullTableName eq "GUS::Model::ApiDB::SequenceVariation" && (lc($field) eq 'location' || lc($parentField) eq 'location')) {
         next;
