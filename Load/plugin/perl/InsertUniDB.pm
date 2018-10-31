@@ -273,6 +273,7 @@ sub rebuildIndexesAndEnableConstraints {
   $self->log("Enabling Constraints on Table $abbreviatedTablePeriod");
 
   $self->enablePrimaryKeyConstraint($owner, $tableName);
+  $self->enableUniqueConstraints($owner, $tableName);
   $self->enableReferentialConstraints($owner, $tableName);
 }
 
@@ -298,6 +299,17 @@ sub enablePrimaryKeyConstraint {
 
   $self->doConstraintsSql($sql, $alterSql);
 }
+
+sub enableUniqueConstraints {
+  my ($self, $owner, $tableName) = @_;
+
+  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'U'  and upper(status) = 'DISABLED'";
+
+  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+
+  $self->doConstraintsSql($sql, $alterSql);
+}
+
 
 
 sub enableReferentialConstraints {
