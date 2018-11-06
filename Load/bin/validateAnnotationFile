@@ -13,6 +13,10 @@ use ApiCommonData::Load::AnnotationUtils qw{getSeqIO};
 use ApiCommonData::Load::Unflattener;
 
 
+## TODO
+## 1. catch the CDS locationis outside of transcript location
+## 2. catch the aa sequence length, report if it is less than 10
+
 my ($inputFileOrDir, $inputFileFormat, $outputFileDir, $help);
 &GetOptions('inputFileOrDir=s' => \$inputFileOrDir,
 	    'inputFileFormat=s' => \$inputFileFormat,
@@ -27,7 +31,7 @@ if (!$outputFileDir) {
 }
 
 my $wholeGenomeFile = ($inputFileFormat =~ /gff/i) ? "$outputFileDir/whole_genome.gff" : "$inputFileOrDir";
-
+my ($idSymbol);
 
 ## pre1. if gff3, run makeCustomFastaAndGffFromGff3 and preprocessGFF3o
 if ($inputFileFormat =~ /gff/i) {
@@ -41,6 +45,11 @@ if ($inputFileFormat =~ /gff/i) {
   &runCmd($pGC2);
   print STDERR "Done:\n  $pGC2\n";
 
+}
+
+## if genbank, check the organims names are same in the DEFINITION line 
+if ($inputFileFormat =~ /genbank/i) {
+  &checkOrganismName();
 }
 
 
@@ -67,10 +76,13 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
   if ($seqType !~ /rna/i) {
     if ($inputFileFormat =~ /gff/i) {
       @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
+      $idSymbol = "ID";
     } elsif ($inputFileFormat =~ /embl/i) {
       @topSeqFeatures = $bioperlSeq->remove_SeqFeatures;
+      $idSymbol = "locus_tag";
     } elsif ($inputFileFormat =~ /genbank/i) {
       @topSeqFeatures = processWithGenbank($bioperlSeq);
+      $idSymbol = "locus_tag";
     } else {
       print STDERR "ERROR: The format $inputFileFormat have not been coded yet\n";
     }
@@ -78,18 +90,28 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
 
 ## 3.3. check if gene, rna, exon or CDS are on the same strand
   &checkGeneStructure (\@topSeqFeatures);
+  &checkIfGeneIDIsUnique (\@topSeqFeatures);
 
   foreach my $bioperlFeatureTree (@topSeqFeatures) {
     my $geneFeature = $bioperlFeatureTree;
 
-## 3.1. check if gene has ID
-    &checkIfGeneID ($geneFeature);
-
     my $type = $geneFeature->primary_tag();
-    if ($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' || $type eq 'centromere') {
+    #print STDERR "\$type = $type\n";
+    if ($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' || $type eq 'centromere'
+	|| $type eq 'source'
+       ) {
       $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
       next;
     }
+
+## 3.1. check if gene has ID
+    if ($type eq 'gene' || $type eq 'pseudogene'
+       || $type eq 'mRNA' || $type eq 'pseudogenic_transcript'
+	|| $type =~ /RNA$/
+       ) {
+      &checkIfGeneID ($geneFeature);
+    }
+
 
     my $gene = &traverseSeqFeature($geneFeature, $bioperlSeq);
     if ($gene) {
@@ -102,6 +124,36 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
 ## inside gene model,
 ## 3.2. check if gene ID is unique gene ID, such as locus_tag, ID, and etc.
 
+
+sub getGeneInfoFromGenbank {
+  my ($inputFile) = @_;
+  my (%seqId, %geneStart, %geneEnd, %geneStrand);
+
+  my $bioperlSeqIO = Bio::SeqIO->new(-format => 'genbank',
+                                     -file => $inputFile);
+  while (my $seq = $bioperlSeqIO->next_seq() ) {
+    my $sId = ($seq->id) ? ($seq->id) : ($seq->accession());
+    my @seqFeatures = $seq->get_SeqFeatures;
+    foreach my $feature (@seqFeatures) {
+      my $type = $feature->primary_tag();
+      if ($type eq "gene" || $type eq "pseudogene") {
+        my ($geneId) = $feature->get_tag_values('locus_tag');
+        if ($geneId) {
+          $seqId{$geneId} = $sId;
+          $geneStart{$geneId} = $feature->location->start;
+          $geneEnd{$geneId} = $feature->location->end;
+          $geneStrand{$geneId} = $feature->location->strand;
+           print STDERR "process pro $geneId...$seqId{$geneId}\n";
+        }
+      }
+    }
+  }
+  return (\%seqId, \%geneStart, \%geneEnd, \%geneStrand);
+}
+
+sub checkOrganismName {
+  my ($input) = @_;
+}
 
 sub processWithGenbank {
   my ($bioperlSeq) = @_;
@@ -172,46 +224,59 @@ sub getSeqIO {
   return $bioperlSeqIO;
 }
 
-sub checkIfGeneID {
+sub checkIfGeneID {   ## Done with test
   my ($feature) = @_;
 
   if ($feature->has_tag ("ID") || $feature->has_tag("locus_tag") || $feature->has_tag("gene")) {
     return 1;
   } else {
-    print STDERR "the required gene ID, ID/locus_tag/gene have not been found.\n";
+    my $idGene = $feature->primary_tag();
+    my $idStart = $feature->location->start;
+    my $idEnd = $feature->location->end;
+    print STDERR "ERROR: the required gene ID (ID, locus_tag, or gene) have not been found for $idGene: $idStart..$idEnd.\n";
     exit;
   }
 }
 
-sub checkIfGeneIDIsUnique {
-  my ($feature, $idSymbol) = @_;
+sub checkIfGeneIDIsUnique {  ## Done test
+  my $geneFeature = shift;
 
   my %ids;
-  if ($feature->has_tag ($idSymbol)) {
-    my $id = $feature->get_tag_values();
-    if ($ids{$id}) {
-      print STDERR "\$id: $id is not unique.\n";
-      exit;
-    } else {
-      $ids{$id} = 1;
+
+  foreach my $feature (@{$geneFeature}) {
+    my $type = $feature->primary_tag();
+    if ($type eq 'gene' || $type eq 'pseudogene') {
+      my $cid;
+      if ($feature->has_tag("ID")) {
+	($cid) = $feature->get_tag_values('ID');
+      } elsif ($feature->has_tag("locus_tag")) {
+	($cid) = $feature->get_tag_values('locus_tag');
+      } else {
+	print STDERR "the unique gene ID has not been coded in checkIfGeneIdIsUnique yet.\n";
+      }
+
+      if ($ids{$cid}) {
+	print STDERR "\$cid: $cid is not unique.\n";
+	exit;
+      } else {
+	$ids{$cid} = 1;
+      }
     }
-  } else {
-    print STDERR "the required gene ID, $idSymbol is not in the file.\n";
-    exit;
   }
   return 1;
 }
 
 ## check if gene, rna, exon or CDS are on the same strand
-sub checkGeneStructure {
+sub checkGeneStructure {  ## Done test
   my $geneFeature = shift;
+
   foreach my $gene (@{$geneFeature} ) {
     my $type = $gene->primary_tag();
     if ($type eq 'gene' || $type eq 'pseudogene') {
       my @RNAs = $gene->get_SeqFeatures;
       foreach my $RNA (sort {$a->location->start <=> $b->location->start
 			       || $a->location->end <=> $b->location->end} @RNAs){
-#	my ($rID) = $RNA->get_tag_values('ID');
+
 	my ($rID);
 	if ($RNA->has_tag("ID")) {
 	  ($rID) = $RNA->get_tag_values('ID');
