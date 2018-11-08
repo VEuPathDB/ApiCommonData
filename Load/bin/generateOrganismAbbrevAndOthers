@@ -26,6 +26,7 @@ my $species = shift @items;
 my $strainAbbrev = join ('', @items);
 $strainAbbrev =~ s/isolate//i;
 $strainAbbrev =~ s/strain//i;
+$strainAbbrev =~ s/breed//i;
 $strainAbbrev =~ s/str\.//i;
 $strainAbbrev =~ s/\///g;
 
