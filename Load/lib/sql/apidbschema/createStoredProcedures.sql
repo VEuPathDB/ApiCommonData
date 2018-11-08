@@ -45,8 +45,7 @@ GRANT execute ON apidb.reverse_complement TO gus_w;
 CREATE OR REPLACE TYPE apidb.varchartab AS TABLE OF VARCHAR2(4000);
 /
 
-GRANT execute ON apidb.varchartab TO gus_r;
-GRANT execute ON apidb.varchartab TO gus_w;
+GRANT execute ON apidb.varchartab TO PUBLIC;
 
 CREATE OR REPLACE FUNCTION
 apidb.tab_to_string (p_varchar2_tab  IN  apidb.varchartab,
@@ -80,8 +79,7 @@ END tab_to_string;
 
 show errors;
 
-GRANT execute ON apidb.tab_to_string TO gus_r;
-GRANT execute ON apidb.tab_to_string TO gus_w;
+GRANT execute ON apidb.tab_to_string TO PUBLIC;
 
 -------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION
@@ -111,8 +109,7 @@ END tab_to_clob;
 
 show errors;
 
-GRANT execute ON apidb.tab_to_clob TO gus_r;
-GRANT execute ON apidb.tab_to_clob TO gus_w;
+GRANT execute ON apidb.tab_to_clob TO PUBLIC;
 -------------------------------------------------------------------------------
 create or replace procedure apidb.analyze (schema_name IN varchar2, table_name IN varchar2)
 authid current_user -- run with the privileges of the database user who calls it, not the owner (which is apidb)
@@ -666,8 +663,7 @@ end wrap;
 
 show errors;
 
-GRANT execute ON apidb.wrap TO gus_r;
-GRANT execute ON apidb.wrap TO gus_w;
+GRANT execute ON apidb.wrap TO PUBLIC;
 
 -------------------------------------------------------------------------------
 create or replace function apidb.display_function (function_name string, x number)
