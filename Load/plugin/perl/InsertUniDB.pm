@@ -43,11 +43,13 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::Core::UserGroup" => ["user_id", "group_id"],
                             "GUS::Model::Core::Algorithm" => ["name"],
                             "GUS::Model::Core::AlgorithmImplementation" => ["executable", "cvs_revision"], 
+                            "GUS::Model::Core::AlgorithmParamKeyType" => ["type"], 
+                            "GUS::Model::Core::AlgorithmParamKey" => ["algorithm_implementation_id", "algorithm_param_ke"], 
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
-                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "name", "external_database_release_id"], # TODO:  WHy is name included here??
+                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"], # TODO:  WHy is name included here??
                             "GUS::Model::SRes::OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
                             "GUS::Model::SRes::OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologyTermType" => ["name"],
@@ -111,28 +113,15 @@ sub getArgsDeclaration {
                 }),
 
 
-     stringArg ({ name => 'pk_table_reader',
-                  descr => 'perl class which will serve out primary_keys to this plugin for undo context.  Example ApiCommonData::Load::GUSPrimaryKeyTableReader',
-                  constraintFunc => undef,
-                  reqd => 0,
-                  isList => 0 
-                }),
+   enumArg({ name => 'mode',
+	     descr => 'load,undo, rebuildIndexesAndEnableConstraints',
+	     constraintFunc => undef,
+	     reqd => 0,
+	     isList => 0,
+	     enum => 'load, undo, rebuildIndexesAndEnableConstraints',
+	     default => 'early'
+	   }),
 
-
-     booleanArg({
-       name            =>  'skipUndo', 
-       descr           =>  'skip undo method if set',
-       reqd            =>  0,
-       isList          =>  0
-                }),
-
-
-     booleanArg({
-       name            =>  'rebuildIndexsAndEnableConstraintsOnly', 
-       descr           =>  'if true, only rebuild indexes and reenable R/P constraints',
-       reqd            =>  0,
-       isList          =>  0
-                }),
 
 
     ];
@@ -387,27 +376,28 @@ sub run {
     $self->error("Expected $initialTableCount tables but found $orderedTableCount upon Ordering");
   }
 
-  if($self->getArg('rebuildIndexsAndEnableConstraintsOnly')) {
+  my $mode = $self->getArg('mode');
+
+  if($mode eq 'rebuildIndexesAndEnableConstraints') {
     foreach my $tableName (@$orderedTables) {
       $self->rebuildIndexesAndEnableConstraints($tableInfo->{$tableName});
     }
     return("Rebuilt all indexes and updated disabled constraints.");
   }
 
-  unless($self->getArg('skipUndo')) {
-    my $pkTableReaderClass = $self->getArg('pk_table_reader');
-    my $pkTableReader = &makeReaderObj($database, $pkTableReaderClass);
-    $pkTableReader->connectDatabase();
-
+  if($mode eq 'undo') {
     foreach my $tableName (reverse @$orderedTables) {
-      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $pkTableReader);
+      $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
 
-    $pkTableReader->disconnectDatabase();
+    $tableReader->disconnectDatabase();
+    return("Ran Undo For all Tables");
   }
 
-  foreach my $tableName (@$orderedTables) {
-    $self->loadTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+  if($mode eq 'load') {
+    foreach my $tableName (@$orderedTables) {
+      $self->loadTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
+    }
   }
 
   $tableReader->disconnectDatabase();
@@ -894,7 +884,6 @@ sub loadTable {
   # some of these will have rows populated by the installer so globalMapping query is different
   my $isAllGlobalTable = $self->isAllGlobalTable($tableName);
 
-
   my $hasRowProjectId = 1;
   if($abbreviatedTablePeriod eq 'ApiDB.Snp' || $abbreviatedTablePeriod eq 'ApiDB.SequenceVariation') {
     $hasRowProjectId = 0;
@@ -1260,7 +1249,7 @@ sub getTableRelationsSql {
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
                     and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
-                    and t.name not in ('AlgorithmParam', 'AlgorithmParamKey', 'AlgorithmParamKeyType')
+                    and t.name not in ('AlgorithmParam')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null
