@@ -25,6 +25,7 @@ my $START_OF_LOB_DELIMITER = "<startlob>";
 my $END_OF_LOB_DELIMITER = "<endlob>";
 
 my $MAPPING_TABLE_NAME = "ApiDB.DatabaseTableMapping";
+my $GLOBAL_NATURAL_KEY_TABLE_NAME = "ApiDB.GlobalNaturalKey";
 my $PROJECT_INFO_TABLE = "Core.ProjectInfo";
 my $TABLE_INFO_TABLE = "Core.TableInfo";
 
@@ -382,16 +383,12 @@ sub run {
     foreach my $tableName (@$orderedTables) {
       $self->rebuildIndexesAndEnableConstraints($tableInfo->{$tableName});
     }
-    return("Rebuilt all indexes and updated disabled constraints.");
   }
 
   if($mode eq 'undo') {
     foreach my $tableName (reverse @$orderedTables) {
       $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
-
-    $tableReader->disconnectDatabase();
-    return("Ran Undo For all Tables");
   }
 
   if($mode eq 'load') {
@@ -411,7 +408,6 @@ sub hasRowsToDelete {
   my $abbreviatedTable = &getAbbreviatedTableName($tableName, "::");
 
   my $countAlreadyMapped = $self->queryForCountMappedOrigPk($database, $abbreviatedTable);
-
 
   # count from input db where pk <= maxPkValue already mapped
   my $inputTableRowCount = $tableReader->getTableCount($tableName, $primaryKeyColumn, $maxPkOrig);
@@ -515,6 +511,8 @@ sub undoTable {
     return;
   }
 
+  $self->rebuildIndexesAndEnableConstraints($tableInfo);
+
   $self->resetActiveForkedProcesses();
 
   # TODO:  what is the state of the indexeson the  primary table? Will they matter when deleting?
@@ -539,8 +537,19 @@ sub undoTable {
                                         and table_name = '$abbreviatedTable')
         ";
 
+
+  my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
+        where $primaryKeyColumn not in (select primary_key 
+                                        from $MAPPING_TABLE_NAME
+                                        where database_orig = '$database' 
+                                        and table_name = '$abbreviatedTable')
+        ";
+
+
+
   $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
   $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
+  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
 
   $dbh->do("drop table $primaryKeyTableName") or die $dbh->errstr;;
 }
@@ -750,7 +759,9 @@ sub writeConfigFile {
   my $attributeInfo = $tableInfo->{attributeInfo};
 
   
-  my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || $tableName eq $MAPPING_TABLE_NAME) ? " constant $projectId" : "";
+  my $rowProjectId = ($tableName eq $PROJECT_INFO_TABLE || 
+                      $tableName eq $MAPPING_TABLE_NAME || 
+                      $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) ? " constant $projectId" : "";
 
   my $datatypeMap = {'user_read' => " constant $userRead", 
                      'user_write' => " constant $userWrite", 
@@ -772,14 +783,24 @@ sub writeConfigFile {
                       'modification_date',
         ];
 
-    push @$attributeList, "global_natural_key" if($GLOBAL_UNIQUE_FIELDS{$fullTableName});
-
     push @$attributeList, keys %$datatypeMap;
 
     $datatypeMap->{'database_orig'} = " CHAR(10)";
-    $datatypeMap->{'global_natural_key'} = " CHAR(2500)";
     $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
+    $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
+  }
+  elsif($tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
+    $attributeList = [ "table_name",
+                       "primary_key",
+                       "global_natural_key",
+                       "modification_date",
+        ];
+
+    push @$attributeList, keys %$datatypeMap;
+
+    $datatypeMap->{'global_natural_key'} = " CHAR(1000)";
+    $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
   }
   else {
@@ -830,14 +851,18 @@ sub writeConfigFile {
     push @fields, "database_table_mapping_id SEQUENCE(MAX,1)";
   }
 
+  if($tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
+    push @fields, "global_natural_key_id SEQUENCE(MAX,1)";
+  }
+
   my $fieldsString = join(",\n", @fields);
 
 
-  my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME ? "" : "UNRECOVERABLE\n";
+  my $unrecoverable = $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME ? "" : "UNRECOVERABLE\n";
 
   # need to reenable constraints for core tables or the plugin won't fire up
   my $reenableDisabledConstraints = "";
-  if($tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq $MAPPING_TABLE_NAME) {
+  if($tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
     $reenableDisabledConstraints = "REENABLE DISABLED_CONSTRAINTS\n";
   }
 
@@ -902,17 +927,26 @@ sub loadTable {
   my $isSelfReferencing = $tableInfo->{isSelfReferencing};
   my %lobColumns = map { lc($_) => 1 } @{$tableInfo->{lobColumns}};
 
-  my ($hasNewDatRows, $hasNewMapRows);
+  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
+
+  my ($hasNewDatRows, $hasNewMapRows, $hasNewGlobalRows);
 
   my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess, $sqlldrDatProcessString);
   my ($sqlldrMapFh, $sqlldrMapFn, $sqlldrMapInfileFh, $sqlldrMapInfileFn, $sqlldrMapProcess, $sqlldrMapProcessString);
+  my ($sqlldrGlobFh, $sqlldrGlobFn, $sqlldrGlobInfileFh, $sqlldrGlobInfileFn, $sqlldrGlobProcess, $sqlldrGlobProcessString);
+
   if($loadDatWithSqlldr) {
     ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
 
     my $skipIndexMaintenance = $tableName =~ /GUS::Model::Core::Algorithm/ ? "false" : "true";
-    $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=$skipIndexMaintenance log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    if($alreadyMappedMaxOrigPk) {
+      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrGlobFn rows=10000 bindsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    }
+    else {
+      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=$skipIndexMaintenance log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+    }
 
   }
   else {
@@ -929,7 +963,13 @@ sub loadTable {
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
   $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 bindsize=512000 log=${sqlldrMapFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
-  my $alreadyMappedMaxOrigPk = $self->queryForMaxMappedOrigPk($database, $abbreviatedTableColumn);
+  ($sqlldrGlobFh, $sqlldrGlobFn) = tempfile("sqlldrGlobXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  $sqlldrGlobInfileFn = "${abbreviatedTablePeriod}_global.dat";
+  $self->writeConfigFile($sqlldrGlobFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
+  $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrGlobInfileFn, 0700));
+  $sqlldrGlobProcessString = "sqlldr $login/$password\@$db control=$sqlldrGlobFn rows=10000 bindsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+
+
 
   my $maxPrimaryKey = $self->queryForMaxPK($abbreviatedTablePeriod, $primaryKeyColumn);
 
@@ -1068,8 +1108,18 @@ sub loadTable {
       }
       
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
-      push @mappingRow, $globalNaturalKey;
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
+
+      unless($hasNewGlobalRows) {
+        my $pidGlob = open($sqlldrGlobProcess, $sqlldrGlobProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        $self->addActiveForkedProcess($pidGlob);
+        open($sqlldrGlobInfileFh, ">$sqlldrGlobInfileFn") or die "Could not open named pipe $sqlldrGlobInfileFn for writing: $!";
+      }
+
+      my @globalRow = ($abbreviatedTableColumn, $primaryKey, $globalNaturalKey);
+      print $sqlldrGlobInfileFh join($END_OF_COLUMN_DELIMITER, @globalRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
+
+      $hasNewGlobalRows = 1;
 
       if($rowCount % 100000 == 0) {
         $self->log("Processed $rowCount from $abbreviatedTableColumn");
@@ -1165,7 +1215,7 @@ sub globalLookupForTable  {
   }
   else {
     $tableName = &getAbbreviatedTableName($tableName, "::");
-    $sql = "select primary_key, global_natural_key from apidb.DatabaseTableMapping where table_name = '$tableName' and global_natural_key is not null";
+    $sql = "select primary_key, global_natural_key from $GLOBAL_NATURAL_KEY_TABLE_NAME where table_name = '$tableName' and global_natural_key is not null";
   }
 
   my $sh = $dbh->prepare($sql);
