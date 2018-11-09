@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_gems.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_gems.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems.owl"/>
     
 
@@ -240,7 +240,7 @@
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_DATE_DEATH</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_DATE_DEATH</obo:EUPATH_0000755>
-        <rdfs:label>Date of death</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Death date</rdfs:label>
     </owl:Class>
     
 
@@ -607,7 +607,7 @@
         <obo:EUPATH_0000755>F4A_PRIMCARE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_PRIMCARE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_PRIMCARE_SPEC</obo:EUPATH_0000755>
-        <rdfs:label>Caretaker relationship to Child</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Caretaker relationship to participant</rdfs:label>
     </owl:Class>
     
 
@@ -620,7 +620,7 @@
         <obo:EUPATH_0000755>F4A_DISP_FECES</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_CHILD_FECES</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_DISP_FECES</obo:EUPATH_0000755>
-        <rdfs:label>Child waste disposal</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child waste disposal</rdfs:label>
     </owl:Class>
     
 
@@ -642,7 +642,7 @@
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_ID</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_CASE_ID</obo:EUPATH_0000755>
-        <rdfs:label>Child ID of matched case</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant ID for matched case</rdfs:label>
     </owl:Class>
     
 
@@ -756,7 +756,7 @@
         <obo:EUPATH_0000755>F4B_DATE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_DATE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of observation</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation date</rdfs:label>
     </owl:Class>
     
 
@@ -786,7 +786,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010006">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
         <obo:EUPATH_0000274>13</obo:EUPATH_0000274>
-        <rdfs:label>Expenses of previously sought care</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Previously sought care expenses</rdfs:label>
     </owl:Class>
     
 
@@ -806,7 +806,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010009">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010008"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
-        <rdfs:label>Expenses of hospitalization clinical visits</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hospitalization or clinical visit expenses</rdfs:label>
     </owl:Class>
     
 
@@ -827,7 +827,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010009"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
-        <rdfs:label>Money source for expenses of hospitalization or clinical visits</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Money source for hospitalization or clinical visit expenses</rdfs:label>
     </owl:Class>
     
 
@@ -982,7 +982,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>CHILDID</obo:EUPATH_0000755>
-        <rdfs:label>Child ID</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant ID</rdfs:label>
     </owl:Class>
     
 
@@ -1026,7 +1026,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274>10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>P_All</obo:EUPATH_0000755>
-        <rdfs:label>All members of the Good Pair have all forms complete?</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All forms complete for all Good Pair members</rdfs:label>
     </owl:Class>
     
 
@@ -1037,7 +1037,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274>12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>P_LabFrm</obo:EUPATH_0000755>
-        <rdfs:label>All members of the Good Pair have all lab forms complete?</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">All lab forms complete for all Good Pair members</rdfs:label>
     </owl:Class>
     
 
@@ -1081,7 +1081,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010037"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F5_RELATION</obo:EUPATH_0000755>
-        <rdfs:label>Interviewee relationship to child; 60 day follow-up</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Interviewee relationship to participant, 60 day follow-up</rdfs:label>
     </owl:Class>
     
 
@@ -1092,7 +1092,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021098"/>
         <obo:EUPATH_0000274>19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F5_CHILD_HEALTH</obo:EUPATH_0000755>
-        <rdfs:label>Child health at 60 day follow-up visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Health at 60 day follow-up visit</rdfs:label>
     </owl:Class>
     
 
@@ -1140,7 +1140,7 @@
         <obo:EUPATH_0000755>F4B_REHYD_WT_CHILD</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_WT_CHILD</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_WT_CHILD</obo:EUPATH_0000755>
-        <rdfs:label>Weight of caretaker + child (kg)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Caretaker plus participant weight (kg)</rdfs:label>
     </owl:Class>
     
 
@@ -1155,7 +1155,7 @@
         <obo:EUPATH_0000755>F4B_REHYD_WT_CARE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_WT_CARE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_WT_CARE</obo:EUPATH_0000755>
-        <rdfs:label>Weight of caretaker alone (kg)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Caretaker weight (kg)</rdfs:label>
     </owl:Class>
     
 
@@ -1204,7 +1204,7 @@
         <obo:EUPATH_0000755>F4B_HEIGHT</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_HEIGHT</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_HEIGHT</obo:EUPATH_0000755>
-        <rdfs:label>Height; mean (cm)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean height (cm)</rdfs:label>
     </owl:Class>
     
 
@@ -1296,7 +1296,7 @@
         <obo:EUPATH_0000755>F4B_MUAC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MUAC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MUAC</obo:EUPATH_0000755>
-        <rdfs:label>MUAC; mean (cm)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean MUAC (cm)</rdfs:label>
     </owl:Class>
     
 
@@ -1388,7 +1388,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
-        <rdfs:label>Respiratory rate per minute, 1st</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory rate (breaths/min)</rdfs:label>
     </owl:Class>
     
 
@@ -1404,7 +1404,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
-        <rdfs:label>Respiratory rate per minute, 2nd</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory rate (breaths/min), 2nd</rdfs:label>
     </owl:Class>
     
 
@@ -1420,7 +1420,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:comment>merged:
 F4B, F7, Signs at enrollment
 F5, Signs at follow-up</rdfs:comment>
-        <rdfs:label>Respiratory rate, mean</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean respiratory rate (breaths/min)</rdfs:label>
     </owl:Class>
     
 
@@ -1433,7 +1433,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000755>F4A_MS_WATER</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F5_MS_WATER</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_MS_WATER</obo:EUPATH_0000755>
-        <rdfs:label>Main drinking water source</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean respiratory rate (breaths/min)</rdfs:label>
     </owl:Class>
     
 
@@ -1567,7 +1567,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of control eligibility check</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Control eligibility check date</rdfs:label>
     </owl:Class>
     
 
@@ -1590,7 +1590,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_RELATIONSHIP</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_RELATION</obo:EUPATH_0000755>
-        <rdfs:label>Interviewee relationship to Child</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Interviewee relationship to participant</rdfs:label>
     </owl:Class>
     
 
@@ -1650,7 +1650,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_STORE_WATER</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_STORE_WATER</obo:EUPATH_0000755>
-        <rdfs:label>Child given stored water for drinking</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Given stored water for drinking</rdfs:label>
     </owl:Class>
     
 
@@ -1674,7 +1674,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_NOTRT_WATER</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_NOTRT_WATER</obo:EUPATH_0000755>
-        <rdfs:label>Child given untreated water</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Given untreated water</rdfs:label>
     </owl:Class>
     
 
@@ -1708,7 +1708,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR1</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR1</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of first choice</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st choice hospital/center</rdfs:label>
     </owl:Class>
     
 
@@ -1720,7 +1720,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR1_CODE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR1_CODE</obo:EUPATH_0000755>
-        <rdfs:label>First choice facility code</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st choice facility code</rdfs:label>
     </owl:Class>
     
 
@@ -1732,7 +1732,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR1_SHC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR1_SHC</obo:EUPATH_0000755>
-        <rdfs:label>First choice facility SHC</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st choice facility SHC</rdfs:label>
     </owl:Class>
     
 
@@ -1744,7 +1744,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR2</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR2</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of second choice</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2nd choice hospital/center</rdfs:label>
     </owl:Class>
     
 
@@ -1756,7 +1756,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR2_CODE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR2_CODE</obo:EUPATH_0000755>
-        <rdfs:label>Second choice facility code</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2nd choice facility code</rdfs:label>
     </owl:Class>
     
 
@@ -1768,7 +1768,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR2_SHC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR2_SHC</obo:EUPATH_0000755>
-        <rdfs:label>Second choice facility SHC</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2nd choice facility SHC</rdfs:label>
     </owl:Class>
     
 
@@ -1780,7 +1780,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR3</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR3</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of third choice</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3rd choice hospital/center</rdfs:label>
     </owl:Class>
     
 
@@ -1792,7 +1792,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR3_CODE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR3_CODE</obo:EUPATH_0000755>
-        <rdfs:label>Third choice facility code</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3rd choice facility code</rdfs:label>
     </owl:Class>
     
 
@@ -1804,7 +1804,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_SEEK_CTR3_SHC</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_SEEK_CTR3_SHC</obo:EUPATH_0000755>
-        <rdfs:label>Third choice facility SHC</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3rd choice facility SHC</rdfs:label>
     </owl:Class>
     
 
@@ -1882,7 +1882,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010001"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F11_ANTIBIOTIC</obo:EUPATH_0000755>
-        <rdfs:label>Child administered antibiotic</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Administered antibiotic</rdfs:label>
     </owl:Class>
     
 
@@ -1893,7 +1893,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010001"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F11_ANTI_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of first antibiotic administration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st antibiotic administration date</rdfs:label>
     </owl:Class>
     
 
@@ -1904,7 +1904,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010001"/>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F11_ANTI_TIME</obo:EUPATH_0000755>
-        <rdfs:label>Time of first antibiotic administration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Time of 1st antibiotic administration</rdfs:label>
     </owl:Class>
     
 
@@ -1926,7 +1926,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010039"/>
         <obo:EUPATH_0000274>6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F11_SWAB_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of rectal swab</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rectal swab date</rdfs:label>
     </owl:Class>
     
 
@@ -1937,7 +1937,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010039"/>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F11_SWAB_TIME</obo:EUPATH_0000755>
-        <rdfs:label>Time of rectal swab</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rectal swab time</rdfs:label>
     </owl:Class>
     
 
@@ -1971,7 +1971,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_PPL_HOUSE</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_PPL_HOUSE</obo:EUPATH_0000755>
-        <rdfs:label>Number of persons living in house</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Persons living in house</rdfs:label>
     </owl:Class>
     
 
@@ -1983,7 +1983,7 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_YNG_CHILDREN</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_YNG_CHILDRN</obo:EUPATH_0000755>
-        <rdfs:label>Number of children under 60 months in house</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Children under 60 months in house</rdfs:label>
     </owl:Class>
     
 
@@ -2040,7 +2040,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_MAX_STOOLS</obo:EUPATH_0000755>
-        <rdfs:label>Daily maximum of loose stools</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Max loose stools per day, during episode</rdfs:label>
     </owl:Class>
     
 
@@ -2172,7 +2172,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR1_TOTAL</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 1st choice, Total expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st choice hospital/center, total expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2183,7 +2183,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR1_TRNSPRT</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 1st choice, Transport expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1st choice hospital/center, transport expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2194,7 +2194,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR2_TOTAL</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 2nd choice Total expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2nd choice hospital/center, total expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2205,7 +2205,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR2_TRNSPRT</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 2nd choice, Transport expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2nd choice hospital/center, transport expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2216,7 +2216,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR3_TOTAL</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 3rd choice, Total expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3rd choice hospital/center, total expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2227,7 +2227,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010006"/>
         <obo:EUPATH_0000274>16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_CTR3_TRNSPRT</obo:EUPATH_0000755>
-        <rdfs:label>Hospital/Center of 3rd choice, Transport expenses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3rd choice hospital/center, transport expenses</rdfs:label>
     </owl:Class>
     
 
@@ -2517,7 +2517,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_NATURE_STOOL</obo:EUPATH_0000755>
         <rdfs:comment>F4B_NATURE_STOOL is reported by the data collector following the question, &apos;Did the interviewer observe a stool sample...if so, what was the nature of the stool?&quot; and the options are ‘Loose/liquid stool without blood’, ‘Loose/liquid stool with blood’ and ‘Normal stool’.</rdfs:comment>
-        <rdfs:label>Nature of stool at collection</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool nature</rdfs:label>
     </owl:Class>
     
 
@@ -2528,7 +2528,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_CHILD_REHYD</obo:EUPATH_0000755>
-        <rdfs:label>Child required rehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Required rehydration</rdfs:label>
     </owl:Class>
     
 
@@ -2539,7 +2539,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_RECOMMEND</obo:EUPATH_0000755>
-        <rdfs:label>Child received recommended rehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Received recommended rehydration</rdfs:label>
     </owl:Class>
     
 
@@ -2550,7 +2550,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_CHILD_EVAL</obo:EUPATH_0000755>
-        <rdfs:label>Child evaluated after 4 hours</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Evaluated after 4 hours</rdfs:label>
     </owl:Class>
     
 
@@ -2572,7 +2572,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_CHILD_PURGE</obo:EUPATH_0000755>
-        <rdfs:label>Child continued to purge watery stool after starting rehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Continued to purge watery stool after starting rehydration</rdfs:label>
     </owl:Class>
     
 
@@ -2627,7 +2627,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_REHYD_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of rehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rehydration date</rdfs:label>
     </owl:Class>
     
 
@@ -2638,7 +2638,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010024"/>
         <obo:EUPATH_0000274>10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_REHYD_TIME</obo:EUPATH_0000755>
-        <rdfs:label>Time of rehydration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rehydration time</rdfs:label>
     </owl:Class>
     
 
@@ -2660,7 +2660,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000308"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_ADMIT</obo:EUPATH_0000755>
-        <rdfs:label>Child admitted to hospital</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Admitted to hospital</rdfs:label>
     </owl:Class>
     
 
@@ -2682,7 +2682,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000308"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4B_HOSP</obo:EUPATH_0000755>
-        <rdfs:label>Child in hospital &gt; 60 days</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hospitalized &gt; 60 days</rdfs:label>
     </owl:Class>
     
 
@@ -2759,7 +2759,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_MON</obo:EUPATH_0000755>
-        <rdfs:label>Month of enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enrollment month</rdfs:label>
     </owl:Class>
     
 
@@ -2770,7 +2770,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ENR_YR</obo:EUPATH_0000755>
-        <rdfs:label>Year of enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enrollment year</rdfs:label>
     </owl:Class>
     
 
@@ -2793,7 +2793,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>FIRSTID</obo:EUPATH_0000755>
-        <rdfs:label>Child ID at 1st enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant ID at 1st enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -2815,7 +2815,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>Type</obo:EUPATH_0000755>
-        <rdfs:label>Case or Control Child</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case or Control participant</rdfs:label>
     </owl:Class>
     
 
@@ -2881,7 +2881,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0001005>yes</obo:EUPATH_0001005>
-        <rdfs:label>Control Child Medication at enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Control participant medication at enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -2991,7 +2991,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_GENDER</obo:EUPATH_0000755>
-        <rdfs:label>Sex, corresponding case</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex, matched case</rdfs:label>
     </owl:Class>
     
 
@@ -3002,7 +3002,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010002"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F6_CASE_DOB</obo:EUPATH_0000755>
-        <rdfs:label>Date of birth, corresponding case</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date, matched case</rdfs:label>
     </owl:Class>
     
 
@@ -3013,7 +3013,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_CHILD_DSS</obo:EUPATH_0000755>
-        <rdfs:label>Child qualified as DSS resident</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Qualified as DSS resident</rdfs:label>
     </owl:Class>
     
 
@@ -3024,7 +3024,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_NOT_GEMS</obo:EUPATH_0000755>
-        <rdfs:label>Child not currently enrolled as a GEMS Case</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Not currently enrolled as a GEMS Case</rdfs:label>
     </owl:Class>
     
 
@@ -3035,7 +3035,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_AGE59</obo:EUPATH_0000755>
-        <rdfs:label>Child less than 60 months of age</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant under 60 months</rdfs:label>
     </owl:Class>
     
 
@@ -3046,7 +3046,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_ABN_LOOSE</obo:EUPATH_0000755>
-        <rdfs:label>Child passed 3 or more abnormally loose stools during the previous 24 hours</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Passed 3 or more abnormally loose stools during the previous 24 hours</rdfs:label>
     </owl:Class>
     
 
@@ -3068,7 +3068,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_DRH7DAY</obo:EUPATH_0000755>
-        <rdfs:label>Child had at least 7 days w/o diarrhea before current episode</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">At least 7 days without diarrhea before current episode</rdfs:label>
     </owl:Class>
     
 
@@ -3167,7 +3167,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_ANTIBIOTIC</obo:EUPATH_0000755>
-        <rdfs:label>Child given antibiotic before stool sample collection</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Given antibiotic before stool collection</rdfs:label>
     </owl:Class>
     
 
@@ -3200,7 +3200,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000274>14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_CHILD_ENROLL</obo:EUPATH_0000755>
-        <rdfs:label>Child enrolled</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant enrolled</rdfs:label>
     </owl:Class>
     
 
@@ -3221,7 +3221,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn9</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aatA and aaiC positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aatA and aaiC pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3256,7 +3256,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn6</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aatA or aaiC positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aatA or aaiC pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3267,7 +3267,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_AAIC</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aaiC positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aaiC pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3278,7 +3278,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_AATA</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aatA positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aatA pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3289,7 +3289,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn10</obo:EUPATH_0000755>
-        <rdfs:label>EPEC bfpA positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC bfpA pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3300,7 +3300,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_EAE</obo:EUPATH_0000755>
-        <rdfs:label>EPEC eae positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC eae pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3311,7 +3311,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>18</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_ELTB</obo:EUPATH_0000755>
-        <rdfs:label>ETEC LT positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC LT pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3322,7 +3322,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn2</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3333,7 +3333,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_STX1</obo:EUPATH_0000755>
-        <rdfs:label>STEC stx1 positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">STEC stx1 pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3344,7 +3344,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>26</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_STX2</obo:EUPATH_0000755>
-        <rdfs:label>STEC stx2 positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">STEC stx2 pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -3355,7 +3355,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn11</obo:EUPATH_0000755>
-        <rdfs:label>EPEC eae and bfpA positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC eae and bfpA pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3366,7 +3366,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn1</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST or LT positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST or LT pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3377,7 +3377,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn5</obo:EUPATH_0000755>
-        <rdfs:label>ETEC LT positive ST negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC LT positive ST neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3454,7 +3454,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn4</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST positive LT negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST positive LT neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3465,7 +3465,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn14</obo:EUPATH_0000755>
-        <rdfs:label>STEC stx1 or stx2 positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">STEC stx1 or stx2 pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -4144,7 +4144,7 @@ Note: Normal, Slow-return, Very slow</rdfs:comment>
         <obo:EUPATH_0000274>6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F4A_WASH_CHILD</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F7_WASH_CHILD</obo:EUPATH_0000755>
-        <rdfs:label>Washes hands after cleaning child who defecated</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Washes hands after cleaning child who defecated</rdfs:label>
     </owl:Class>
     
 
@@ -6479,7 +6479,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn3</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST and LT positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST and LT pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6490,7 +6490,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn7</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aatA positive aaiC negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aatA positive aaiC neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6501,7 +6501,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn8</obo:EUPATH_0000755>
-        <rdfs:label>EAEC aaiC positive aatA negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aaiC positive aatA neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6512,7 +6512,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn12</obo:EUPATH_0000755>
-        <rdfs:label>EPEC bfpA positive eae negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC bfpA positive eae neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6523,7 +6523,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn13</obo:EUPATH_0000755>
-        <rdfs:label>EPEC eae positive bfpA negative, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC eae positive bfpA neg, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6633,7 +6633,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_562"/>
         <obo:EUPATH_0000274>16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>pn16</obo:EUPATH_0000755>
-        <rdfs:label>EHEC eae and stx positive, by PCR</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EHEC eae and stx pos, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -6754,7 +6754,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>30</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_SEN</obo:EUPATH_0000755>
-        <rdfs:label>E. coli sen positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">E. coli sen pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6765,7 +6765,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17A_EFA1</obo:EUPATH_0000755>
-        <rdfs:label>EHEC efa1 positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EHEC efa1 pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6798,7 +6798,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_ESTA</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -6809,7 +6809,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F17CORR_RESULT_BFPA</obo:EUPATH_0000755>
-        <rdfs:label>EPEC bfpA positive, by PCR result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EPEC bfpA pos, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -7183,7 +7183,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>etec_lt</obo:EUPATH_0000755>
-        <rdfs:label>ETEC LT positive, by TAC result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC LT pos, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7579,7 +7579,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>ST_ETEC</obo:EUPATH_0000755>
-        <rdfs:label>ETEC ST positive, by TAC result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC ST pos, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -7590,7 +7590,7 @@ F5, Signs at follow-up</rdfs:comment>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
         <obo:EUPATH_0000274>23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>LT_ETEC</obo:EUPATH_0000755>
-        <rdfs:label>ETEC LT positive ST negative, by TAC result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ETEC LT positive ST neg, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -8242,11 +8242,11 @@ F5, Signs at follow-up</rdfs:comment>
         <obo:EUPATH_0000274>2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755>F3_CHILDBIRTH</obo:EUPATH_0000755>
         <obo:EUPATH_0000755>F6_BIRTH_DATE</obo:EUPATH_0000755>
-        <rdfs:label>Date of birth</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.4.20160507-1731) https://github.com/owlcs/owlapi -->
 
