@@ -942,7 +942,7 @@ sub loadTable {
 
     my $skipIndexMaintenance = $tableName =~ /GUS::Model::Core::Algorithm/ ? "false" : "true";
     if($alreadyMappedMaxOrigPk) {
-      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrGlobFn rows=10000 bindsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn rows=10000 bindsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
     }
     else {
       $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=$skipIndexMaintenance log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
