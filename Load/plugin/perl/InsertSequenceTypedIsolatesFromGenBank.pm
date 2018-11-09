@@ -341,9 +341,10 @@ sub makeOntologyTerm {
   my ($self, $termHash, $extDbRlsId) = @_;
 
   foreach my $term( keys %$termHash) {
-    my $termObj = GUS::Model::SRes::OntologyTerm->new({ name => $term });
+    my $termObj = GUS::Model::SRes::OntologyTerm->new({ source_id => "GENISO $term" });
 
     unless  ($termObj->retrieveFromDB ){ 
+      $termObj->setName($name);
       $termObj->setExternalDatabaseReleaseId($extDbRlsId);
       $termObj->submit();
     }

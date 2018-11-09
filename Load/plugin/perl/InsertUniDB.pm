@@ -47,7 +47,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
-                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "name", "external_database_release_id"],
+                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "name", "external_database_release_id"], # TODO:  WHy is name included here??
                             "GUS::Model::SRes::OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
                             "GUS::Model::SRes::OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologyTermType" => ["name"],
@@ -865,14 +865,23 @@ TRAILING NULLCOLS
 }
 
 
+sub isAllGlobalTable {
+  my ($self, $tableName) = @_;
 
+  return 0 if($tableName eq "GUS::Model::DoTS::AASequenceImp" || $tableName eq "GUS::Model::SRes::DbRef");
+
+  if($GLOBAL_UNIQUE_FIELDS{$tableName}){
+    return 1;
+  }
+  
+  return 0;
+}
 
 sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
   # New GUS Table ApiDB does not use
   next if $tableName =~ /SnpLinkage/;
-  next if $tableName =~ /ApiDB::GeneGff/; #TODO:  what is different about this table?? some issue with the content of the clob
 
   $self->resetActiveForkedProcesses();
 
@@ -883,10 +892,8 @@ sub loadTable {
 
   # try to reuse all rows from these tables
   # some of these will have rows populated by the installer so globalMapping query is different
-  my $isGlobalTable = $tableName =~ /GUS::Model::Core::(\w+)Info/ || 
-      $tableName =~ /GUS::Model::Core::Algorithm/ || 
-      $tableName eq 'GUS::Model::Study::Protocol' || 
-      $tableName eq 'GUS::Model::Study::ProtocolParam';
+  my $isAllGlobalTable = $self->isAllGlobalTable($tableName);
+
 
   my $hasRowProjectId = 1;
   if($abbreviatedTablePeriod eq 'ApiDB.Snp' || $abbreviatedTablePeriod eq 'ApiDB.SequenceVariation') {
@@ -956,7 +963,7 @@ sub loadTable {
     # first time we see data
     unless($idMappings) {
       $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-      $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isGlobalTable);
+      $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isAllGlobalTable);
     }
 
 
@@ -964,7 +971,7 @@ sub loadTable {
 
     my $primaryKey;
 
-    my $isGlobal = $tableReader->isRowGlobal($mappedRow) || $isGlobalTable;
+    my $isGlobal = $isAllGlobalTable || $tableReader->isRowGlobal($mappedRow);
 
     if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
@@ -1149,7 +1156,7 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName, $database, $isGlobalTable) = @_;
+  my ($self, $primaryKeyColumn, $tableName, $database, $isAllGlobalTable) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
@@ -1161,7 +1168,7 @@ sub globalLookupForTable  {
   $self->log("Preparing Global Lookup for table $abbreviatedTableColumn from database $database");
 
   my $sql;
-  if($isGlobalTable) {
+  if($isAllGlobalTable) {
     my $fieldsString = join(",", map { $_ } @$fields);
     $tableName = &getAbbreviatedTableName($tableName, ".");
 
