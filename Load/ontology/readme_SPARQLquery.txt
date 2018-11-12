@@ -74,6 +74,9 @@ Notes: You need to change the PATH to the files or queries if you want to run th
 # Generate the file for adding/updating display order
 #	get_column_sourceID_label_parent.rq
 ————————————————————————————————————————————————————————————
+# ICEMR india
+robot query --input ./ICEMR/india/icemr_indian.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_indian_displayOrder.csv
+
 # ICEMR southAsia
 robot query --input ./ICEMR/south_asia/icemr_southAsia.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_southAsia_displayOrder.csv
 
@@ -173,6 +176,13 @@ robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_
 ————————————————————————————————————————————————————————————
 # ClinEpi
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithParentAndSource.rq ./query_results/clinEpi_termsWithParentAndSource.csv
+
+————————————————————————————————————————————————————————————
+# List terms which used as multifilter variables or values with their parents and project sources
+#	get_multifilterWithSource.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_multifilterWithSource.rq ./query_results/clinEpi_multifilerWithSource.csv
 
 ————————————————————————————————————————————————————————————
 # List terms used in which project(s)
