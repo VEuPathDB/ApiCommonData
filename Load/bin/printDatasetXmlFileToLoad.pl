@@ -111,6 +111,33 @@ $excelInfo{$organismAbbrev}{'projectName'} = $projectName;
 $excelInfo{$organismAbbrev}{"referenceStrainOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"} 
   if ($excelInfo{$organismAbbrev}{"isReferenceStrain"} =~ /^y/i);
 
+## add secondaryAnnot if it is not get from arguments
+if ($secondaryAnnot !~ /mito/i && $excelInfo{$organismAbbrev}{"hasMito"} =~ /^y/i) {
+  die "ERROR: mito- genome included, please add argument --secondaryAnnot 'mito'\n";
+}
+if ($secondaryAnnot !~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} =~ /^y/i) {
+  die "ERROR: api- genome included, please add argument --secondaryAnnot 'api'\n";
+}
+
+if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
+  if ($excelInfo{$organismAbbrev}{"haveSupercontig"} =~ /^y/i) {
+    if ($secondaryAnnot !~ /superc/i) {
+      die "ERROR: secondary genome, supercontig included, please add argument --secondaryAnnot 'supercontig'\n";
+    }
+  }
+  if ($excelInfo{$organismAbbrev}{"haveContig"} =~ /^y/i) {
+    if ($secondaryAnnot !~ /con/i || ($secondaryAnnot =~ /con/i && $secondaryAnnot =~ /superc/i) ) {
+      die "ERROR: secondary genome, contig included, please add argument --secondaryAnnot 'contig'\n";
+    }
+  }
+} else {
+  if ($excelInfo{$organismAbbrev}{"haveSupercontig"} =~ /^y/i && $excelInfo{$organismAbbrev}{"haveContig"} =~ /^y/i ) {
+    if ($secondaryAnnot !~ /cont/i) {
+      die "ERROR: secondary genome, contig included, please add argument --secondaryAnnot 'contig'\n";
+    }
+  }
+}
+
 
 print STDERR "\$count = $count\n";
  
