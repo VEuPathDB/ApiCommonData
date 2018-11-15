@@ -3,7 +3,6 @@ overallOrder,variable,dataFile,IRI,label,definition,category,parentLabel,parentI
 2,redcap_event_name,CRF_DATA,http://purl.obolibrary.org/obo/EUPATH_0021001,Visit #,,observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,,day_7_arm_1 end_of_study_arm_1   enrollment_arm_1,,
 3,date,CRF_DATA,http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,,observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,,date,,
 4,time,CRF_DATA,http://purl.obolibrary.org/obo/EUPATH_0023052,Observation time,,observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,,time,,
-6,rsp_yn,CRF_DATA,,,,,,,,,,"Unsure yet what this variable is. Emailed data providers, but no response yet"
 9,age,CRF_DATA,http://purl.obolibrary.org/obo/OBI_0001169,Age,Age in years,participant,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,,numeric,,
 10,sex_rad,CRF_DATA,http://purl.obolibrary.org/obo/PATO_0000047,Sex,,participant,Demographics,http://purl.obolibrary.org/obo/EUPATH_0010981,,1 female 2 male,,
 11,education_rad,CRF_DATA,http://purl.obolibrary.org/obo/EUPATH_0000345,Education level,The highest level of education completed,participant,Demographics,http://purl.obolibrary.org/obo/EUPATH_0010981,,"1 None
@@ -197,6 +196,8 @@ CANT REMEMBER
 165,mic_species___4,microscopy_Malaria,http://purl.obolibrary.org/obo/EUPATH_0021030,Plasmodium malariae,,sample,"Plasmodium species, by microscopy",http://purl.obolibrary.org/obo/EUPATH_0000423,,binary,value,
 166,mic_species___5,microscopy_Malaria,http://purl.obolibrary.org/obo/EUPATH_0021031,Microscopy performed,,sample,Microscopy,http://purl.obolibrary.org/obo/EUPATH_0011802,,binary,value,
 167,mic_counts1,microscopy_Malaria,,,,sample,,,,numeric,,"Jay will split into 4 variables, EUPATH_0000550, EUPATH_0000546, EUPATH_0000551, EUPATH_0000547. Need to discuss with him how to map this"
+,pcr_scd,PCR_malaria,http://purl.obolibrary.org/obo/OBI_0001619,Sample collection date,,sample,Sample collection,http://purl.obolibrary.org/obo/OBI_0000659,Sample collection date,date,,
+,pcr_dna_source,PCR_malaria,http://purl.obolibrary.org/obo/EUPATH_0000432,PCR DNA sample source,,sample,Blood sample,http://purl.obolibrary.org/obo/OBI_0000655,,,,
 176,pcr_species___1,PCR_malaria,http://purl.obolibrary.org/obo/EUPATH_0021048,Negative,,sample,"Plasmodium species, by PCR",http://purl.obolibrary.org/obo/EUPATH_0000433,,binary,value,
 177,pcr_species___2,PCR_malaria,http://purl.obolibrary.org/obo/EUPATH_0021049,Plasmodium falciparum,,sample,"Plasmodium species, by PCR",http://purl.obolibrary.org/obo/EUPATH_0000433,,binary,value,
 178,pcr_species___3,PCR_malaria,http://purl.obolibrary.org/obo/EUPATH_0021050,Plasmodium vivax,,sample,"Plasmodium species, by PCR",http://purl.obolibrary.org/obo/EUPATH_0000433,,binary,value,
@@ -206,7 +207,6 @@ CANT REMEMBER
 185,igm_chik_rad,ELISA_Chikungunya,,"Chikungunya, by SD Bioline IgM ELISA",,sample,,,This ELISA assay from Alere (Abbott) tests for IgM against the chikungunya virus,"1, Pos | 2, Neg",,
 186,igm_chik_od,ELISA_Chikungunya,,,,sample,,,The OD (optical density) of the sample for the ELISA assay that tests for IgM against the chikungunya virus from Alere (Abbott),numeric,,Should fall under Raw test result > Raw virus data
 187,igm_chik_cutoff,ELISA_Chikungunya,,,,sample,,,The OD (optical density) cut off value. Anything above this is considered positive for IgM against Chikungunya,numeric,,Should fall under Raw test result > Raw virus data
-188,igm_chik_calfac,ELISA_Chikungunya,,,,sample,,,,numeric,,"Unsure yet what this variable is. Emailed data providers, but no response yet"
 195,rdt_scd,RDT_Chikungunya_Dengue,http://purl.obolibrary.org/obo/OBI_0001619,Sample collection date,,sample,Sample collection,http://purl.obolibrary.org/obo/OBI_0000659,Sample collection date,date,,
 196,rdt_dengue_jmitra_ns1,RDT_Chikungunya_Dengue,,NS1 antigen,,sample,"Dengue, by Dengue Day 1 Test RDT",,NS1 RDT from J. Mitra and Co. ,"1, Pos | 2, Neg",,
 197,rdt_dengue_jmitra_ab___1,RDT_Chikungunya_Dengue,,IgM,,sample,"Dengue, by Dengue Day 1 Test RDT",,IgM,binary,value,
@@ -222,20 +222,18 @@ CANT REMEMBER
 215,igm_typhus_rad,IgM_Dengue,,"Dengue, by Panbio Dengue IgM capture ELISA",,sample,,,This ELISA assay from Alere (Abbott) tests for IgM against the dengue virus,"1, Pos | 2, Neg",,
 216,igm_typhus_od,IgM_Dengue,,,,sample,,,The OD (optical density) of the sample for the ELISA assay from Alere (Abbott) that tests for IgM against the dengue virus ,numeric,,Should fall under Raw test result > Raw virus data
 217,igm_typhus_cutoff,IgM_Dengue,,,,sample,,,The OD (optical density) cut off value. Anything above this is considered positive for IgM against Dengue,numeric,,Should fall under Raw test result > Raw virus data
-218,igm_typhus_calfac,IgM_Dengue,,,,sample,,,,numeric,,"Unsure yet what this variable is. Emailed data providers, but no response yet"
 227,ns1_dengue_scd,N_Dengue,http://purl.obolibrary.org/obo/OBI_0001619,Sample collection date,,sample,Sample collection,http://purl.obolibrary.org/obo/OBI_0000659,Sample collection date,date,,
 228,ns1_dengue_rad,N_Dengue,,"Dengue, by Panbio Dengue Early ELISA",,sample,,,This ELISA assay from Alere (Abbott) tests for the dengue NS1 antigen,"1, Pos | 2, Neg",,
 229,ns1_dengue_od,N_Dengue,,,,sample,,,The OD (optical density) of the sample for the ELISA assay from Alere (Abbott) that tests for the dengue NS1 antigen,numeric,,Should fall under Raw test result > Raw virus data
 230,ns1_dengue_cutoff,N_Dengue,,,,sample,,,The OD (optical density) cut off value. Anything above this is considered positive for NS1 from dengue virus,numeric,,Should fall under Raw test result > Raw virus data
-231,ns1_dengue_calfac,N_Dengue,,,,sample,,,,numeric,,"Unsure yet what this variable is. Emailed data providers, but no response yet"
 238,pcr_scd,PCR_Salmonella_typhi,http://purl.obolibrary.org/obo/OBI_0001619,Sample collection date,,sample,Sample collection,http://purl.obolibrary.org/obo/OBI_0000659,Sample collection date,date,,
 239,pcr_dna_source,PCR_Salmonella_typhi,,,,sample,,,,"1, SV | 2, Vac",,We have a PCR DNA sample source variable that we used for sample source for malaria PCR before. Should we reuse that variable here?
 240,pcr_result,PCR_Salmonella_typhi,,"Salmonella typhi, by PCR",,sample,,,,"1, Neg | 2, Pos",,
 249,igm_typhus_scd,ELISA_scrub_typhus,http://purl.obolibrary.org/obo/OBI_0001619,Sample collection date,,sample,Sample collection,http://purl.obolibrary.org/obo/OBI_0000659,Sample collection date,date,,
 250,igm_typhus_rad,ELISA_scrub_typhus,,"Scrub typhus, by DetectTM IgM ELISA",,sample,,,This ELISA assay from InBios International tests for IgM against scrub typhus,"1, Pos | 2, Neg",,
 251,igm_typhus_od,ELISA_scrub_typhus,,,,sample,,,The OD (optical density) of the sample for the ELISA assay from InBios International tests that tests for IgM against scrub typhus,numeric,,Should fall under Raw test result > Raw bacteria data
-NA,,,,"Dengue, by Dengue Duo Test RDT",,,,,,,yes,
-NA,,,,"Dengue, by Dengue Day 1 Test RDT",,,,,,,yes,
+,,,,"Dengue, by Dengue Duo Test RDT",,,,,,,yes,
+,,,,"Dengue, by Dengue Day 1 Test RDT",,,,,,,yes,
 NA,,,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,,,,
 NA,,,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,,,,
 NA,,,http://purl.obolibrary.org/obo/EUPATH_0000342,Employment,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,,,,
