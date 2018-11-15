@@ -84,7 +84,11 @@ robot query --input ./ICEMR/south_asia/icemr_southAsia.owl --query ./SPARQL/get_
 robot query --input ./ICEMR/amazonia/icemr_amazoniaPeru_long.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_amazoniaPeru_long_displayOrder.csv
 
 # Gates GEMS1
-robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/gates_GEMS1_displayOrder.csv
+robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/GEMS_displayOrder.csv
+
+# Gates GEMS1a
+robot query --input ./Gates/GEMS1A/gates_gems1a.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/GEMS1a_displayOrder.csv
+
 
 
 # Gates MALED
