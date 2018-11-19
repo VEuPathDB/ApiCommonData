@@ -1,4 +1,4 @@
-alter table userlogins5.users
+alter table userlogins5.comment_users
 add (constraint pk_users primary key (user_id) validate);
 
 alter table userlogins5.Comments
@@ -6,7 +6,7 @@ add (constraint comment_pk primary key (comment_id) validate);
 
 alter table userlogins5.Comments
    add (constraint user_fk foreign key (user_id)
-        references userlogins5.users validate);
+        references userlogins5.comment_users validate);
 
 
 create or replace function apidb.author_list (p_comment_id number)
@@ -39,7 +39,7 @@ begin
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
-      from userlogins5.users
+      from userlogins5.comment_users
       where user_id = :new.user_id;
     exception
       when NO_DATA_FOUND then
@@ -76,7 +76,7 @@ begin
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
-      from userlogins5.users
+      from userlogins5.comment_users
       where user_id = :new.user_id;
     exception
       when NO_DATA_FOUND then
@@ -113,7 +113,7 @@ begin
    begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
-      from userlogins5.users
+      from userlogins5.comment_users
       where user_id = (select user_id from userlogins5.Comments where comment_id = :new.comment_id);
     exception
       when NO_DATA_FOUND then
@@ -165,7 +165,7 @@ begin
   begin
     select first_name || ' ' || last_name || '(' || organization || ')'
     into userinfo
-    from userlogins5.users
+    from userlogins5.comment_users
     where user_id = (select user_id from userlogins5.Comments where comment_id = :new.comment_id);
   exception
     when NO_DATA_FOUND then
@@ -261,7 +261,7 @@ begin
       begin
         select first_name || ' ' || last_name || '(' || organization || ')'
         into userinfo
-        from userlogins5.users
+        from userlogins5.comment_users
         where user_id = (select user_id from userlogins5.Comments where comment_id = cmntRef_trggr_pkg.stale(i));
       exception
         when NO_DATA_FOUND then
@@ -278,7 +278,7 @@ end;
 /
 
 create or replace trigger userlogins5.users_update
-before update on userlogins5.users
+before update on userlogins5.comment_users
 for each row
 declare
   userinfo varchar2(1000);
