@@ -101,6 +101,9 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA" so="tRNA">
     <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="aa" ignore="true"/>
+    <qualifier name="anticodon"                 handler="api" method="anticodon"/>
+    <qualifier name="gc_content" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -116,6 +119,11 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="rRNA" so="rRNA">
     <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="evalue" ignore="true"/>
+    <qualifier name="gc" ignore="true"/>
+    <qualifier name="model_acc" ignore="true"/>
+    <qualifier name="model_name" ignore="true"/>
+    <qualifier name="model_range" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -131,6 +139,18 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="snRNA" so="snRNA">
     <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="evalue" ignore="true"/>
+    <qualifier name="gc" ignore="true"/>
+    <qualifier name="model_acc" ignore="true"/>
+    <qualifier name="model_name" ignore="true"/>
+    <qualifier name="model_range" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="model_range" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Ontology_term" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="score"     ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -146,6 +166,11 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="snoRNA" so="snoRNA">
     <qualifier name="ID"           column="source_id"/> <!-- load ID in annotation --> 
     <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="evalue" ignore="true"/>
+    <qualifier name="gc" ignore="true"/>
+    <qualifier name="model_acc" ignore="true"/>
+    <qualifier name="model_name" ignore="true"/>
+    <qualifier name="model_range" ignore="true"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="product" ignore="true"/>
@@ -299,6 +324,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="FEAT_NAME"              ignore="true"/>
     <qualifier name="satellite"              ignore="true"/>
   </feature> 
+
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="ID"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
+  </feature>
 
   <feature name="transposable_element" table="DoTS::TransposableElement" so="transposable_element">
     <qualifier name="ID"           column="source_id"/>
