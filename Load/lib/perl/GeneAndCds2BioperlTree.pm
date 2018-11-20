@@ -123,6 +123,13 @@ sub preprocess {
 		  }
 		} else {
 		  ($gID) = $geneFeature->get_tag_values("locus_tag");
+
+		  ## ignore gene feature that assigned for repeat_region
+		  ## for example, TriTrypDB: Bodo saltans CYKH01000000
+		  if ($gID =~ /^Bodo_v3\:repeat/) {
+		    next OUTER;
+		  }
+
 		  print STDERR "processing $gID...\n";
 		}
 
