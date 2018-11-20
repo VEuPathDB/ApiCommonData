@@ -41,6 +41,7 @@ sub preprocess {
     &checkGeneStructure (\@topSeqFeatures);
 
     my %polypeptide;
+
     foreach my $bioperlFeatureTree (@topSeqFeatures) {
       my $type = $bioperlFeatureTree->primary_tag();
 
@@ -64,7 +65,7 @@ sub preprocess {
       }
     }
 
-	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+    OUTER: foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    # print STDERR "Feature type is: $type\n";
 
@@ -139,16 +140,27 @@ sub preprocess {
 			if ($geneFeature->get_SeqFeatures){
 			    next;
 			}else{
+			    my ($cID) = $geneFeature->get_tag_values("ID") if ($geneFeature->has_tag("ID"));
+			    print "  generate subFeature for $cID\n";
+
 			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
 			    my @exonLocs = $geneLoc->each_Location();
 			    foreach my $exonLoc (@exonLocs){
 				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+				if ($exonLoc->strand == -1){
+				      $exon->add_tag_value('CodingStart', $exonLoc->end());
+				      $exon->add_tag_value('CodingEnd', $exonLoc->start());
+				} else {
+				      $exon->add_tag_value('CodingStart', $exonLoc->start());
+				      $exon->add_tag_value('CodingEnd', $exonLoc->end());
+				}
 				$transcript->add_SeqFeature($exon);
 			    }
 			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
+			    next OUTER;
 			}
 		    }
 		}
