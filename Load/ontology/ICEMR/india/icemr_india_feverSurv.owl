@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/icemr/icemr_india_feverSurv.owl#"
      xml:base="http://purl.obolibrary.org/obo/icemr/icemr_india_feverSurv.owl"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace">
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_india_feverSurv.owl"/>
     
 
@@ -94,18 +94,6 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    
-
-
-    <!-- assay -->
-
-    <owl:Class rdf:about="assay"/>
-    
-
-
-    <!-- data item -->
-
-    <owl:Class rdf:about="data item"/>
     
 
 
@@ -319,7 +307,10 @@
 
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000307 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000307">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:label>Participant study details</rdfs:label>
+    </owl:Class>
     
 
 
@@ -1490,7 +1481,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021107 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021107">
-        <rdfs:subClassOf rdf:resource="assay"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_chik_rad</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELISA_Chikungunya</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1505,7 +1496,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021108 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021108">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_chik_od</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELISA_Chikungunya</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1520,7 +1511,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021109 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021109">
-        <rdfs:subClassOf rdf:resource="value specification"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001933"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_chik_cutoff</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELISA_Chikungunya</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1535,7 +1526,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021110 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021110">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_jmitra_ns1</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1550,7 +1541,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021111 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021111">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_jmitra_ab___1</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1565,7 +1556,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021112 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021112">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_jmitra_ab___2</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1580,7 +1571,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021113 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021113">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_jmitra_ab___3</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1595,7 +1586,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021114 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021114">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_alere_ns1</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1610,7 +1601,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021115 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021115">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_alere_ab___1</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1625,7 +1616,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021116 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021116">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_alere_ab___2</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1640,7 +1631,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021117 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021117">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_dengue_alere_ab___3</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1655,7 +1646,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021118 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021118">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_chik_jmitra_igm</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1670,7 +1661,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021119 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021119">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rdt_chik_alere_igm</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RDT_Chikungunya_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1685,7 +1676,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021120 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021120">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_typhus_rad</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IgM_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1700,7 +1691,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021121 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021121">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_typhus_od</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IgM_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1715,7 +1706,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021122 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021122">
-        <rdfs:subClassOf rdf:resource="value specification"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001933"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_typhus_cutoff</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IgM_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1730,7 +1721,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021123 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021123">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ns1_dengue_rad</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1745,7 +1736,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021124 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021124">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ns1_dengue_od</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1760,7 +1751,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021125 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021125">
-        <rdfs:subClassOf rdf:resource="value specification"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0001933"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ns1_dengue_cutoff</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N_Dengue</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1775,7 +1766,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021126 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021126">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_typhus_rad</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELISA_scrub_typhus</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1790,7 +1781,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021127 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021127">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">igm_typhus_od</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ELISA_scrub_typhus</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -1805,7 +1796,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021128 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021128">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010106 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:TEMP_0010106>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dengue, by Dengue Duo Test RDT</rdfs:label>
     </owl:Class>
@@ -1815,7 +1806,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021129 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021129">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010106 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:TEMP_0010106>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dengue, by Dengue Day 1 Test RDT</rdfs:label>
     </owl:Class>
@@ -1923,7 +1914,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021137 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021137">
-        <rdfs:subClassOf rdf:resource="data item"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/IAO_0000027"/>
         <obo:TEMP_0010100 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pcr_result</obo:TEMP_0010100>
         <obo:TEMP_0010101 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PCR_Salmonella_typhi</obo:TEMP_0010101>
         <obo:TEMP_0010103 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:TEMP_0010103>
@@ -2081,6 +2072,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/IAO_0000027 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000027">
+        <rdfs:label>data item</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/IAO_0000408 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/IAO_0000408">
@@ -2169,6 +2168,14 @@
         <obo:TEMP_0010104 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection date</obo:TEMP_0010104>
         <obo:TEMP_0010105 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">date</obo:TEMP_0010105>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection date</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0001933 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001933">
+        <rdfs:label>value specification</rdfs:label>
     </owl:Class>
     
 
@@ -2359,15 +2366,9 @@
         <obo:TEMP_0010107 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jay will split into 4 variables, EUPATH_0000550, EUPATH_0000546, EUPATH_0000551, EUPATH_0000547. Need to discuss with him how to map this</obo:TEMP_0010107>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">split into 4 variables</rdfs:label>
     </owl:Class>
-    
-
-
-    <!-- value specification -->
-
-    <owl:Class rdf:about="value specification"/>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.2.4.20160507-1731) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
