@@ -51,6 +51,7 @@ EOL
 open F, $file;
 while(<F>) {
   chomp;
+  next if /^#/;
   my ($samples, $run) = split /\|/, $_;
   my @runs = split /,/, $run;
 
