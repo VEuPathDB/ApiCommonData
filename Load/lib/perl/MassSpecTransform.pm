@@ -1004,6 +1004,33 @@ sub getIgnoredModificationSymbolMap {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::PeptideLineAndProteinLineStartWithSpecCharBS;
+use base qw(ApiCommonData::Load::MassSpecTransform);
+
+# a package to parse a file, protineLine starts with B when peptide line starts with S
+# e.g. PiroplasmaDB/bmicRI/massSpec/Whole_Blood_Prot
+
+sub isProteinLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString =~ /^B/) {
+    return 1;
+  }
+  return 0;
+}
+
+sub isPeptideLine {
+  my ($self, $lineString, $lineArray) = @_;
+
+  if($lineString =~ /^S/) {
+    return 1;
+  }
+  return 0;
+}
+
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::PeptideLineAndProteinLineStartWithSpecCharSqtFromPride;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
