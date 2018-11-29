@@ -600,6 +600,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="linkage_evidence"      ignore="true"/>
   </feature>
 
+  <feature name="assembly_gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="ID"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
+  </feature>
+
   <feature name="variation" table="DoTS::Miscellaneous" so="">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="note"                      ignore="true"/>
