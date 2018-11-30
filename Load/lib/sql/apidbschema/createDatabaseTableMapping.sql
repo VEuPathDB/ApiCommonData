@@ -72,7 +72,7 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GlobalNaturalKey TO gus_w;
 GRANT SELECT ON ApiDB.GlobalNaturalKey TO gus_r;
 
 CREATE INDEX apidb.db_tbl_map_g_idx
-ON ApiDB.DatabaseTableMapping (table_name, global_natural_key, primary_key) tablespace indx;
+ON ApiDB.GlobalNaturalKey (table_name, global_natural_key, primary_key) tablespace indx;
 
 CREATE SEQUENCE apidb.GlobalNaturalKey_sq;
 
