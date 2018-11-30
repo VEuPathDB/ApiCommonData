@@ -280,7 +280,13 @@ sub run {
   return("Processed $investigationCount Investigations.");
 }
 
-
+sub countLines {
+  my ($self, $charFile) = @_;
+	open(FILE, "<", $charFile);
+	my $count += tr/\n/\n/ while sysread(FILE, $_, 2 ** 16);
+	close(FILE);
+	return $count;
+}
 
 sub loadCharacteristics{
   my ($self, $charFile) = @_;
@@ -299,8 +305,15 @@ sub loadCharacteristics{
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
+	my $directMode = 'false';
+	if ($self->countLines() > 100000){
+		$directMode = 'true';
+		$self->log("SQLLDR will use DIRECT path\n");
+	}
+
+	my $exitstatus;
   if($self->getArg('commit')) {
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000");
+    $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
 
     open(LOG, $logFile) or die "Cannot opoen log file $logFile: $!";
 
@@ -313,6 +326,22 @@ sub loadCharacteristics{
   }
 
   unlink $configFile;
+
+	if($exitstatus > 0){
+		die "ERROR: sqlldr returned exit status $exitstatus";
+	}
+
+  my $sequenceName = "Study.CHARACTERISTIC_sq";
+  my $dbh = $self->getQueryHandle();
+  my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual");
+  my ($maxPrimaryKey) = $dbh->selectrow_array("select MAX(CHARACTERISTIC_ID) FROM Study.CHARACTERISTIC");
+  my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+	$self->log("Updating CHARACTERISTIC_ID starting from $sequenceDifference\n");
+  if($sequenceDifference > 0) {
+    $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
+    $dbh->do("select ${sequenceName}.nextval from dual");
+    $dbh->do("alter sequence $sequenceName increment by 1");
+  }
     
   return "Processed lines from data files";
 
@@ -1100,7 +1129,7 @@ row_user_id constant $userId,
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
 row_alg_invocation_id constant $algInvocationId,
-CHARACTERISTIC_ID \"Study.CHARACTERISTIC_sq.nextval\"
+CHARACTERISTIC_ID SEQUENCE(MAX,1)
 )\n";
   close CONFIG;
 }
