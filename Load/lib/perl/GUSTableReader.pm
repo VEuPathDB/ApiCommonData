@@ -196,7 +196,8 @@ and (ws.name like 'metadata.ISA%'
   or ws.name like 'ReactionsXRefs_%'
   or ws.name like 'metaboliteProfiles%'
   or ws.name like 'MetaboliteProfiles%'
-  or ws.name like 'Pathways_%')
+  or ws.name like 'Pathways_%'
+  or ws.name = '%UPDATE%Ontology%')
 ";
 
     my $sh = $dbh->prepare($sql);
