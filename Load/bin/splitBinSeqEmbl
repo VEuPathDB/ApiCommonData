@@ -1,0 +1,149 @@
+#!/usr/bin/perl
+
+## a script to split Embl Bin sequence into individual contig
+## still under development
+
+use strict;
+use Getopt::Long;
+use Bio::SeqFeature::Generic;
+use ApiCommonData::Load::AnnotationUtils qw{getSeqIO};
+
+my ($binFile, $tagName, $outputFilePrefix, $help);
+
+&GetOptions('binFile=s' => \$binFile,
+            'tagName=s' => \$tagName,
+            'outputFilePrefix=s' => \$outputFilePrefix,
+            'help|h' => \$help,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $binFile && $tagName);
+
+my $seq_in = Bio::SeqIO->new ('-file' => "<$binFile", '-format' => 'embl');
+
+my $gapC = 0;
+
+my ($organismName, $molType);
+
+while (my $seq = $seq_in->next_seq() ) {
+  my ($key, %subSeqs, %subFeats, %subOthers, $subStart, $subEnd);
+
+  my $totalSeq = $seq->seq;
+
+  #my $temTotalSeq = substr($totalSeq, 0, 100000);
+  #print STDERR ">Pvlk_whole\n$temTotalSeq\n";
+
+  my $segCnt = 1;
+  my $preEnd = 0;
+
+  foreach my $bioperlFeature ($seq->get_SeqFeatures()) {
+    my $type = $bioperlFeature->primary_tag();
+
+    if ($type eq "assembly_gap") {
+      #$key = $bioperlFeature->location->start . "-" . $bioperlFeature->location->end;
+      #my $s = $bioperlFeature->location->start;
+      #my $e = $bioperlFeature->location->end;
+      #print STDERR "assemlby_gap: $key\n$subSeqs{$key}\n" if ($gapC < 10);
+
+      $subStart = $preEnd + 1;
+      $subEnd = $bioperlFeature->location->start - 1;
+
+      $subSeqs{$segCnt} = substr($totalSeq, $subStart-1, $subEnd - $subStart +1);
+
+      $preEnd = $bioperlFeature->location->end;
+      $segCnt++;
+    } elsif ($type eq "CDS"
+	    || $type eq "tRNA"
+	    || $type eq "rRNA"
+	    || $type eq "nRNA"
+	    ) {
+
+      ## adjust start and end, and put th
+
+      my @eachLocs = $bioperlFeature->location->each_Location();
+      foreach my $eachLoc (@eachLocs) {
+	my $eachNewStart = $eachLoc->start - $preEnd;
+	my $eachNewEnd = $eachLoc->end - $preEnd;
+	$eachLoc->start($eachNewStart);
+	$eachLoc->end($eachNewEnd);
+      }
+
+      #my $newStart = $bioperlFeature->location->start - $preEnd;
+      #my $newEnd = $bioperlFeature->location->end - $preEnd;
+
+      #$bioperlFeature->location->start($newStart);
+      #$bioperlFeature->location->end($newEnd);
+
+      push @{$subFeats{$segCnt}}, $bioperlFeature;
+
+    } elsif ($type eq "source") {
+
+      ($organismName) = $bioperlFeature->get_tag_values('organism') if ($bioperlFeature->has_tag('organism'));
+      ($molType) = $bioperlFeature->get_tag_values('mol_type') if ($bioperlFeature->has_tag('mol_type'));
+
+    } else {
+    }
+  }
+
+  foreach my $k (sort keys %subSeqs) {
+    #print STDERR ">sub_$k\n$subSeqs{$k}\n" if ($k < 50);
+
+    my $outputFile = ($outputFilePrefix) ? $outputFilePrefix : $binFile;
+    $outputFile =~ s/.*\///;
+    $outputFile =~ s/\.embl/\_/;
+    $outputFile .= $k.".embl";
+
+    my $seq_out = Bio::SeqIO->new('-file' => ">$outputFile", '-format' => 'embl');
+
+    my $newSeqId = $outputFile;
+    $newSeqId =~ s/\.embl$//;
+    print STDERR "print $newSeqId...\n";
+    my $newSeq = Bio::Seq->new(
+			       -id => $newSeqId,
+			       -accession_number => $newSeqId,
+			       -seq => $subSeqs{$k},
+			      );
+
+    $newSeq->accession_number($newSeqId);
+
+#    my $newSubFeats = new Bio::SeqFeature::Generic (
+#               -start      => $subStarts{$k},
+#               -end        => $subEnds{$k},
+#						   );
+
+    my $sourceFeat = Bio::SeqFeature::Generic->new(
+            -start      => 1,
+            -end        => length($newSeq->seq),
+            -primary    => 'source',
+            -tag        => {
+                organism => $organismName,
+                mol_type => $molType,
+			   },
+						 );
+
+    $newSeq->add_SeqFeature($sourceFeat);
+
+    if ($subFeats{$k}) {
+      foreach my $i (0..$#{$subFeats{$k}}) {
+	$newSeq->add_SeqFeature($subFeats{$k}[$i]);
+      }
+    }
+
+    $seq_out->write_seq($newSeq);
+
+  }
+}
+
+
+
+sub usage {
+  die
+"
+Usage: splitBinSeqEmbl --binFile ../fromProvider/PVL_00.embl --tagName 'assembly_gap' --outputFilePrefix 'PVL_00_'
+
+where
+  --binFile:  required, the bin file name and directory that wants to be split
+  --tagName:  required, the tag name in the bin file that have contig info, eg. assembly_gap, contig, and etc.
+  --outputFilePrefix:  optional, the prefix for the output files, eg. PVL_00_
+";
+}
