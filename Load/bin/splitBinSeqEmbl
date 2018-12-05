@@ -2,6 +2,7 @@
 
 ## a script to split Embl Bin sequence into individual contig
 ## still under development
+## need to deal with the last gene, eg PVL_000221700
 
 use strict;
 use Getopt::Long;
@@ -45,6 +46,9 @@ while (my $seq = $seq_in->next_seq() ) {
       #my $e = $bioperlFeature->location->end;
       #print STDERR "assemlby_gap: $key\n$subSeqs{$key}\n" if ($gapC < 10);
 
+      my ($gapType) = $bioperlFeature->get_tag_values('gap_type') if ($bioperlFeature->has_tag('gap_type'));
+      next if ($gapType eq "within scaffold");  ## skip within scaffold gap
+
       $subStart = $preEnd + 1;
       $subEnd = $bioperlFeature->location->start - 1;
 
@@ -56,6 +60,7 @@ while (my $seq = $seq_in->next_seq() ) {
 	    || $type eq "tRNA"
 	    || $type eq "rRNA"
 	    || $type eq "nRNA"
+	    || $type eq "ncRNA"
 	    ) {
 
       ## adjust start and end, and put th
