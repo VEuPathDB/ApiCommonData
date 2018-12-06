@@ -72,7 +72,7 @@ Notes: You need to change the PATH to the files or queries if you want to run th
 
 ————————————————————————————————————————————————————————————
 # Generate the file for adding/updating display order
-#	get_column_sourceID_label_parent.rq
+#	get_displayOrder_lable_parentLabel.rq.rq
 ————————————————————————————————————————————————————————————
 # ICEMR india
 robot query --input ./ICEMR/india/icemr_indian.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/ICEMR_indian_displayOrder.csv
