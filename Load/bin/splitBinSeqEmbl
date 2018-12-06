@@ -2,7 +2,6 @@
 
 ## a script to split Embl Bin sequence into individual contig
 ## still under development
-## need to deal with the last gene, eg PVL_000221700
 
 use strict;
 use Getopt::Long;
@@ -31,9 +30,6 @@ while (my $seq = $seq_in->next_seq() ) {
 
   my $totalSeq = $seq->seq;
 
-  #my $temTotalSeq = substr($totalSeq, 0, 100000);
-  #print STDERR ">Pvlk_whole\n$temTotalSeq\n";
-
   my $segCnt = 1;
   my $preEnd = 0;
 
@@ -41,13 +37,16 @@ while (my $seq = $seq_in->next_seq() ) {
     my $type = $bioperlFeature->primary_tag();
 
     if ($type eq "assembly_gap") {
-      #$key = $bioperlFeature->location->start . "-" . $bioperlFeature->location->end;
-      #my $s = $bioperlFeature->location->start;
-      #my $e = $bioperlFeature->location->end;
-      #print STDERR "assemlby_gap: $key\n$subSeqs{$key}\n" if ($gapC < 10);
 
       my ($gapType) = $bioperlFeature->get_tag_values('gap_type') if ($bioperlFeature->has_tag('gap_type'));
-      next if ($gapType eq "within scaffold");  ## skip within scaffold gap
+      if ($gapType eq "within scaffold") {  ## for assembly_gap within scaffold, not split but add to features
+	my $nStart = $bioperlFeature->location->start - $preEnd;
+	my $nEnd = $bioperlFeature->location->end - $preEnd;
+	$bioperlFeature->location->start($nStart);
+	$bioperlFeature->location->end($nEnd);
+	push @{$subFeats{$segCnt}}, $bioperlFeature;
+	next;
+      }
 
       $subStart = $preEnd + 1;
       $subEnd = $bioperlFeature->location->start - 1;
@@ -64,20 +63,19 @@ while (my $seq = $seq_in->next_seq() ) {
 	    ) {
 
       ## adjust start and end, and put th
-
       my @eachLocs = $bioperlFeature->location->each_Location();
       foreach my $eachLoc (@eachLocs) {
 	my $eachNewStart = $eachLoc->start - $preEnd;
+	if ($eachLoc->start_pos_type() eq "BEFORE" ) {  ## for partial gene
+	  $eachNewStart = "<".$eachNewStart;
+	}
 	my $eachNewEnd = $eachLoc->end - $preEnd;
+	if ($eachLoc->end_pos_type() eq "AFTER") {  ## for partial gene
+	  $eachNewEnd = ">".$eachNewEnd;
+	}
 	$eachLoc->start($eachNewStart);
 	$eachLoc->end($eachNewEnd);
       }
-
-      #my $newStart = $bioperlFeature->location->start - $preEnd;
-      #my $newEnd = $bioperlFeature->location->end - $preEnd;
-
-      #$bioperlFeature->location->start($newStart);
-      #$bioperlFeature->location->end($newEnd);
 
       push @{$subFeats{$segCnt}}, $bioperlFeature;
 
@@ -90,8 +88,14 @@ while (my $seq = $seq_in->next_seq() ) {
     }
   }
 
+  ## add the last piece of seq
+  if (!$subSeqs{$segCnt}) {
+    $subStart = $preEnd + 1;
+    $subEnd = length ($totalSeq);
+    $subSeqs{$segCnt} = substr($totalSeq, $subStart-1, $subEnd - $subStart +1);
+  }
+
   foreach my $k (sort keys %subSeqs) {
-    #print STDERR ">sub_$k\n$subSeqs{$k}\n" if ($k < 50);
 
     my $outputFile = ($outputFilePrefix) ? $outputFilePrefix : $binFile;
     $outputFile =~ s/.*\///;
@@ -110,11 +114,6 @@ while (my $seq = $seq_in->next_seq() ) {
 			      );
 
     $newSeq->accession_number($newSeqId);
-
-#    my $newSubFeats = new Bio::SeqFeature::Generic (
-#               -start      => $subStarts{$k},
-#               -end        => $subEnds{$k},
-#						   );
 
     my $sourceFeat = Bio::SeqFeature::Generic->new(
             -start      => 1,
