@@ -22,17 +22,24 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="alias"      ignore="true"/>
     <qualifier name="eupathdb_uc"      ignore="true"/>
     <qualifier name="feature_id"          ignore="true"/>
+    <qualifier name="has_frameshift"          ignore="true"/>
+    <qualifier name="has_internal_stop"          ignore="true"/>
+    <qualifier name="has_start"          ignore="true"/>
+    <qualifier name="has_stop"          ignore="true"/>
     <qualifier name="isObsolete"	ignore="true"/>
     <qualifier name="internalGap" 	ignore="true"/>
     <qualifier name="literature" 	ignore="true"/>
     <qualifier name="Name"          ignore="true"/>
     <qualifier name="orthologous_to"          ignore="true"/>
+    <qualifier name="original_prot_length"          ignore="true"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="previous_systematic_id"      ignore="true"/>
     <qualifier name="product_synonym"      ignore="true"/>
+    <qualifier name="ratt_ortholog"      ignore="true"/>
     <qualifier name="synonym"      ignore="true"/>
     <qualifier name="score"      ignore="true"/>
     <qualifier name="Start_range"      ignore="true"/>
+    <qualifier name="Target"      ignore="true"/>
     <qualifier name="End_range"        ignore="true"/>
     <qualifier name="isFmaxPartial"      ignore="true"/>
     <qualifier name="isFminPartial"      ignore="true"/>
@@ -474,6 +481,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="paralogous_to"               ignore="true"/>
     <qualifier name="polypeptide_domain"               ignore="true"/>
     <qualifier name="orthologous_to"               ignore="true"/>
+    <qualifier name="ortholog_cluster"               ignore="true"/>
     <qualifier name="polypeptide_domain"               ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="product_synonym"               ignore="true"/>
@@ -516,14 +524,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="eC_number"               ignore="true"/>
     <qualifier name="End_range"               ignore="true"/>
     <qualifier name="eupathdb_uc"               ignore="true"/>
+    <qualifier name="evalue"               ignore="true"/>
     <qualifier name="fasta_file"               ignore="true"/>
     <qualifier name="feature_id"               ignore="true"/>
     <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gc"               ignore="true"/>
     <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
     <qualifier name="history"               ignore="true"/>
     <qualifier name="isObsolete"               ignore="true"/>
     <qualifier name="literature"               ignore="true"/>
     <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="model_acc"               ignore="true"/>
+    <qualifier name="model_name"               ignore="true"/>
+    <qualifier name="model_range"               ignore="true"/>
     <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
     <qualifier name="Ontology_term"               ignore="true"/>
     <qualifier name="paralogous_to"               ignore="true"/>
@@ -557,6 +570,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA" so="tRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
     <qualifier name="alias"      ignore="true"/>
+    <qualifier name="aa"      ignore="true"/>
+    <qualifier name="anticodon"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -574,6 +589,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="fasta_file"               ignore="true"/>
     <qualifier name="feature_id"               ignore="true"/>
     <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gc_content"               ignore="true"/>
     <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
     <qualifier name="history"               ignore="true"/>
     <qualifier name="isObsolete"               ignore="true"/>
@@ -626,14 +642,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="eC_number"               ignore="true"/>
     <qualifier name="End_range"               ignore="true"/>
     <qualifier name="eupathdb_uc"               ignore="true"/>
+    <qualifier name="evalue"               ignore="true"/>
     <qualifier name="fasta_file"               ignore="true"/>
     <qualifier name="feature_id"               ignore="true"/>
     <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gc"               ignore="true"/>
     <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
     <qualifier name="history"               ignore="true"/>
     <qualifier name="isObsolete"               ignore="true"/>
     <qualifier name="literature"               ignore="true"/>
     <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="model_acc"               ignore="true"/>
+    <qualifier name="model_name"               ignore="true"/>
+    <qualifier name="model_range"               ignore="true"/>
     <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
     <qualifier name="Ontology_term"               ignore="true"/>
     <qualifier name="paralogous_to"               ignore="true"/>
@@ -681,14 +702,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="eC_number"               ignore="true"/>
     <qualifier name="End_range"               ignore="true"/>
     <qualifier name="eupathdb_uc"               ignore="true"/>
+    <qualifier name="evalue"               ignore="true"/>
     <qualifier name="fasta_file"               ignore="true"/>
     <qualifier name="feature_id"               ignore="true"/>
+    <qualifier name="gc"               ignore="true"/>
     <qualifier name="gO"               ignore="true"/>
     <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
     <qualifier name="history"               ignore="true"/>
     <qualifier name="isObsolete"               ignore="true"/>
     <qualifier name="literature"               ignore="true"/>
     <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="model_acc"               ignore="true"/>
+    <qualifier name="model_name"               ignore="true"/>
+    <qualifier name="model_range"               ignore="true"/>
     <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
     <qualifier name="Ontology_term"               ignore="true"/>
     <qualifier name="paralogous_to"               ignore="true"/>
@@ -722,6 +748,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="snoRNA" so="snoRNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
     <qualifier name="alias"      ignore="true"/>
+    <qualifier name="evalue"      ignore="true"/>
     <qualifier name="previous_systematic_id"               ignore="true"/>
     <qualifier name="Name"               ignore="true"/>
     <qualifier name="Note"               ignore="true"/>
@@ -739,11 +766,15 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="fasta_file"               ignore="true"/>
     <qualifier name="feature_id"               ignore="true"/>
     <qualifier name="gO"               ignore="true"/>
+    <qualifier name="gc"               ignore="true"/>
     <qualifier name="gPI_anchor_cleavage_site"               ignore="true"/>
     <qualifier name="history"               ignore="true"/>
     <qualifier name="isObsolete"               ignore="true"/>
     <qualifier name="literature"               ignore="true"/>
     <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="model_acc"               ignore="true"/>
+    <qualifier name="model_name"               ignore="true"/>
+    <qualifier name="model_range"               ignore="true"/>
     <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
     <qualifier name="Ontology_term"               ignore="true"/>
     <qualifier name="paralogous_to"               ignore="true"/>
@@ -798,6 +829,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete"               ignore="true"/>
     <qualifier name="literature"               ignore="true"/>
     <qualifier name="membrane_structure"               ignore="true"/>
+    <qualifier name="model_name"               ignore="true"/>
     <qualifier name="non_cytoplasmic_polypeptide_region"               ignore="true"/>
     <qualifier name="Ontology_term"               ignore="true"/>
     <qualifier name="paralogous_to"               ignore="true"/>
