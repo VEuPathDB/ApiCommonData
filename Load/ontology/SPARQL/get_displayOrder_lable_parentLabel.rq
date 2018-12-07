@@ -4,6 +4,7 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 SELECT distinct ?entity ?label ?displayOrder ?plabel
 WHERE { 
@@ -19,7 +20,8 @@ WHERE {
 		BIND (str(?parentlabel) AS ?plabel) .
 	}
 	OPTIONAL {
-		?entity obo:EUPATH_0000274 ?displayOrder .
+		?entity obo:EUPATH_0000274 ?order .
+		BIND (xsd:integer(?order) AS ?displayOrder) .
 	}
 }
-ORDER BY ASC (?plabel)
+ORDER BY ASC (?plabel) ASC (?displayOrder) ASC (?label)
