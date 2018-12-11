@@ -1,0 +1,29 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?entity
+  (GROUP_CONCAT(DISTINCT ?name;separator="; ") AS ?label)
+  (GROUP_CONCAT(DISTINCT ?defs;separator="; ") AS ?definition)
+  (GROUP_CONCAT(DISTINCT ?variable;separator="; ") AS ?variables)
+  (GROUP_CONCAT(DISTINCT ?parentLabel;separator="; ") AS ?parent_label)
+  (GROUP_CONCAT(DISTINCT ?parent_entity;separator="; ") AS ?parent_IRI)
+WHERE {
+   	?entity a owl:Class .
+   	?entity rdfs:label ?slabel . 
+  	?entity rdfs:subClassOf ?parent_entity .
+	?parent_entity rdfs:label ?plabel .
+   	OPTIONAL {
+   		?entity obo:EUPATH_0000755 ?var .
+   	}
+	OPTIONAL {
+		?entity obo:IAO_0000115 ?def .
+	}
+	BIND (str(?slabel) AS ?name) .
+	BIND (str(?var) AS ?var_str) .
+	BIND (REPLACE(?var_str, "_", " ") AS ?variable) .
+	BIND (str(?def) AS ?defs) .
+	BIND (str(?plabel) AS ?parentLabel) .
+}
+GROUP BY ?entity
+ORDER BY ASC(?entity)
