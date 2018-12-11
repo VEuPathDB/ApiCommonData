@@ -281,3 +281,16 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 # All EuPathDB projects
 robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_datasetsOfTerms.rq ./query_results/allProjects_count_datasetsOfTerms.csv
 
+
+—————————————————————————————————————————————————————————————————————————————
+# SOLR QUERY
+
+————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————————
+# Get term information for solr collection 	
+	get_solr_collection.rq
+————————————————————————————————————————————————————————————
+# All EuPathDB projects
+robot query  --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/get_solr_collection.rq ./query_results/solr_collection.csv
+
