@@ -1,0 +1,50 @@
+#!/usr/bin/perl
+
+## makeTranscriptIdsAliases based on new and previous transcriptInfoAndIds files
+## based on 100% sequence similarity
+
+use strict;
+use Getopt::Long;
+
+my ($help, $newTranscriptIdsFile, $prevTranscriptIdsFile, %oldId2Seq, %newId2Seq);
+
+&GetOptions('newTranscriptIdsFile=s' => \$newTranscriptIdsFile,
+            'prevTranscriptIdsFile=s' => \$prevTranscriptIdsFile,
+            'help|h' => \$help,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $newTranscriptIdsFile && $prevTranscriptIdsFile);
+
+open (OLD, "$prevTranscriptIdsFile");
+while (<OLD>) {
+  chomp;
+  my @items = split (/\t/, $_);
+  $oldId2Seq{$items[4]} = $items[1] if ($items[1] && $items[4]);
+}
+close OLD;
+
+open (NEW, "$newTranscriptIdsFile");
+while (<NEW>) {
+  chomp;
+  my @vals = split (/\t/, $_);
+  $newId2Seq{$vals[4]} = $vals[1] if ($vals[1] && $vals[4]);
+}
+close NEW;
+
+foreach my $k (sort keys %newId2Seq) {
+  foreach my $kk (sort keys %oldId2Seq) {
+    print "$k\t$kk\n" if ($newId2Seq{$k} eq $oldId2Seq{$kk});
+  }
+}
+
+sub usage {
+  die
+"
+Usage: perl makeTranscriptIdsAliases.pl --newTranscriptidsfile 2018-11-08_transcriptInfoAndIds --prevTranscriptIdsFile 2017-12-06_transcriptInfoAndIds > ../final/aliases.txt
+
+where
+  --newTranscriptIdsFile:  the current transcriptIdsFile
+  --prevTranscriptIdsFile:  the previous transcriptIdsFile
+";
+}
