@@ -29,12 +29,22 @@ while (<GFF>) {
     }
   } elsif ($items[2] eq "mRNA" || $items[2] eq "tRNA"
 #	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA"
+	   || $items[2] eq "V_gene_segment" || $items[2] eq "C_gene_segment"
+	   || $items[2] eq "transcript"
+	   || $items[2] eq "telomerase_RNA"
+	   || $items[2] eq "antisense_RNA"
 	   || $items[2] eq "RNase_MRP_RNA"
 	   || $items[2] eq "SRP_RNA" || $items[2] eq "snRNA"
 	   || $items[2] eq "miRNA" || $items[2] eq "snoRNA"
 	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA" ) {
     if ($items[2] eq "mRNA" ) {
       $rnaType = "mRNA";
+    } elsif ($items[2] eq "V_gene_segment" || $items[2] eq "C_gene_segment"
+	     || $items[2] eq "telomerase_RNA" || $items[2] eq "antisense_RNA"
+	     || $items[2] eq "transcript") {
+      $rnaType = "mRNA";
+      $items[8] .= ";Loading_note=$items[2]";
+      $items[2] = "mRNA";
     } elsif ($items[2] eq "tRNA") {
       $rnaType = "tRNA";
     } elsif ($items[2] eq "rRNA") {
