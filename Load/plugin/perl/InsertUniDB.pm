@@ -123,6 +123,20 @@ sub getArgsDeclaration {
 	     default => 'early'
 	   }),
 
+   fileArg({name           => 'forceSkipDatasetFile',
+            descr          => 'list of datasets to skip',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+   fileArg({name           => 'forceLoadDatasetFile',
+            descr          => 'list of datasets to load',
+            reqd           => 0,
+            mustExist      => 1,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
 
 
     ];
@@ -234,13 +248,13 @@ sub error {
 
 
 sub makeReaderObj {
-  my ($database, $readerClass) = @_;
+  my ($database, $readerClass, $forceSkipDatasetFile, $forceLoadDatasetFile) = @_;
 
   eval "require $readerClass";
   die $@ if $@;  
 
   my $reader = eval {
-    $readerClass->new($database);
+    $readerClass->new($database, $forceSkipDatasetFile, $forceLoadDatasetFile);
   };
   die $@ if $@;
 
@@ -354,8 +368,10 @@ sub run {
 
   my $database = $self->getArg('database');
   my $tableReaderClass = $self->getArg('table_reader');
+  my $forceSkipDatasetFile = $self->getArg('forceSkipDatasetFile');
+  my $forceLoadDatasetFile = $self->getArg('forceLoadDatasetFile');
 
-  my $tableReader = &makeReaderObj($database, $tableReaderClass);
+  my $tableReader = &makeReaderObj($database, $tableReaderClass, $forceSkipDatasetFile, $forceLoadDatasetFile);
 
 
   $tableReader->connectDatabase();
@@ -986,8 +1002,10 @@ sub loadTable {
   while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
 
-    next if($origPrimaryKey <= $alreadyMappedMaxOrigPk); # restart OR new data (TODO: won't work for "skipped" datasets)
     next if($tableReader->skipRow($row));
+    if($origPrimaryKey <= $alreadyMappedMaxOrigPk){
+			next unless $tableReader->loadRow($row); # restart OR new data (TODO: won't work for "skipped" datasets)
+		}
 
     # first time we see data
     unless($idMappings) {
@@ -1478,6 +1496,10 @@ sub getConfig {
    }
 
   $self->{config};
+}
+
+sub undoTables {
+
 }
 
 1;

@@ -10,6 +10,21 @@ use Data::Dumper;
 
 use GUS::Supported::GusConfig;
 
+
+my @skipDatasets = (
+  'metadata.ISA%',
+  'ReactionsXRefs_%',
+  'metaboliteProfiles%',
+  'MetaboliteProfiles%',
+  'Pathways_%',
+);
+
+my @globalDatasets = (
+  'global.%',
+  'EcNumberGenus_RSRC.runPlugin',
+  'metadata.ontologySynonyms.Ontology_Synonyms_genbankIsolates_RSRC.runPlugin',
+);
+
 sub setDatabaseHandle { $_[0]->{_database_handle} = $_[1] }
 sub getDatabaseHandle { $_[0]->{_database_handle} }
 
@@ -147,23 +162,26 @@ sub disconnectDatabase {
   $dbh->disconnect();
 }
 
+sub getOrListSql {
+  my ($self, $field, $list) = @_;
+  return join("\n or ", map { /%/ ? "$field like '$_'" : "$field = '$_'" } @$list);
+}
 
 sub isRowGlobal {
   my ($self, $row) = @_;
 
   if(!$self->{_global_row_alg_invocation_ids}) {
     my $dbh = $self->getDatabaseHandle();
+    my $listOfGlobalDatasets = $self->getOrListSql('ws.name', \@globalDatasets);
     my $sql = "select w.ALGORITHM_INVOCATION_ID
 from APIDB.WORKFLOWSTEPALGINVOCATION w
     ,APIDB.WORKFLOWSTEP ws
 where w.workflow_step_id = ws.workflow_step_id
-and (ws.name like 'global.%'
-  or ws.name = 'EcNumberGenus_RSRC.runPlugin'
-  or ws.name = 'metadata.ontologySynonyms.Ontology_Synonyms_genbankIsolates_RSRC.runPlugin'
-)
+and ( $listOfGlobalDatasets )
 UNION
 select row_alg_invocation_id from core.algorithm where name = 'SQL*PLUS'
 ";
+## ^ UNION ... not needed for loadRow
 
     my $sh = $dbh->prepare($sql);
     $sh->execute();
@@ -182,39 +200,54 @@ select row_alg_invocation_id from core.algorithm where name = 'SQL*PLUS'
   return 0;
 }
 
-
 sub skipRow {
   my ($self, $row) = @_;
 
   if(!$self->{_skip_row_alg_invocation_ids}) {
-    my $dbh = $self->getDatabaseHandle();
-    my $sql = "select w.ALGORITHM_INVOCATION_ID
-from APIDB.WORKFLOWSTEPALGINVOCATION w
-    ,APIDB.WORKFLOWSTEP ws
-where w.workflow_step_id = ws.workflow_step_id
-and (ws.name like 'metadata.ISA%'
-  or ws.name like 'ReactionsXRefs_%'
-  or ws.name like 'metaboliteProfiles%'
-  or ws.name like 'MetaboliteProfiles%'
-  or ws.name like 'Pathways_%'
-  or ws.name = '%UPDATE%Ontology%')
-";
-
-    my $sh = $dbh->prepare($sql);
-    $sh->execute();
-
-    while( my ($id) = $sh->fetchrow_array()) {
-      $self->{_skip_row_alg_invocation_ids}->{$id} = 1;
+    ## Resolve skip/load list
+    if($self->{_force_skip_datasets}){
+      push(@skipDatasets, @{$self->{_force_skip_datasets}});
     }
-    $sh->finish();
+    $self->{_skip_row_alg_invocation_ids} = $self->getRowAlgInvocationIds(\@skipDatasets);
   }
-
   my $rowAlgInvocationId = $row->{row_alg_invocation_id};
-
   if($self->{_skip_row_alg_invocation_ids}->{$rowAlgInvocationId}) {
     return 1;
   }
   return 0;
+}
+
+sub loadRow {
+  my ($self, $row) = @_;
+  if(! defined($self->{_load_row_alg_invocation_ids})) {
+    if($self->{_force_load_datasets}){
+      $self->{_load_row_alg_invocation_ids} = $self->getRowAlgInvocationIds($self->{_force_load_datasets});
+		}
+  }
+  my $rowAlgInvocationId = $row->{row_alg_invocation_id};
+  if($self->{_load_row_alg_invocation_ids}->{$rowAlgInvocationId}) {
+    return 1;
+  }
+  return 0;
+}
+
+sub getRowAlgInvocationIds {
+  my ($self, $listOfDatasets) = @_;
+  my $datasetList = $self->getOrListSql('ws.name', $listOfDatasets);
+  my $dbh = $self->getDatabaseHandle();
+      my $sql = "select w.ALGORITHM_INVOCATION_ID
+from APIDB.WORKFLOWSTEPALGINVOCATION w
+      ,APIDB.WORKFLOWSTEP ws
+where w.workflow_step_id = ws.workflow_step_id
+and ( $datasetList ) ";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my %results;
+  while( my ($id) = $sh->fetchrow_array()) {
+    $results{$id} = 1;
+  }
+  $sh->finish();
+  return \%results;
 }
 
 sub getDistinctTablesForTableIdField {

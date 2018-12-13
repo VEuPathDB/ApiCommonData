@@ -4,9 +4,23 @@ package ApiCommonData::Load::UniDBTableReader;
 sub getDatabase {$_[0]->{_database}}
 
 sub new {
-  my ($class, $database) = @_;
+  my ($class, $database, $forceSkipDatasetFile, $forceLoadDatasetFile) = @_;
+	my $obj = {
+		_database => $database,
+		_force_skip_datasets => &readListFromFile($forceSkipDatasetFile),
+		_force_load_datasets => &readListFromFile($forceLoadDatasetFile),
+	};
+  return bless $obj, $class;
+}
 
-  return bless {_database => $database}, $class;
+sub readListFromFile {
+	my ($self, $file) = @_;
+	return [] unless($file && -e $file);
+	open(FH, "<$file") or die "Cannot read $file:$!\n";
+	my @list = <FH>;
+	close(FH);
+	chomp @list;
+	return \@list;
 }
 
 sub connectDatabase {}
@@ -22,6 +36,7 @@ sub nextRowAsHashref {}
 sub isGlobalRow {}
 
 sub skipRow {}
+sub loadRow {}
 
 
 =head2 Helpers for Caching Foreign Keys
