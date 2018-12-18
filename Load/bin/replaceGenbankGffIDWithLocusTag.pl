@@ -37,33 +37,13 @@ while (<GFF>) {
 	   || $items[2] eq "SRP_RNA" || $items[2] eq "snRNA"
 	   || $items[2] eq "miRNA" || $items[2] eq "snoRNA"
 	   || $items[2] eq "rRNA" || $items[2] eq "ncRNA" ) {
-    if ($items[2] eq "mRNA" ) {
-      $rnaType = "mRNA";
-    } elsif ($items[2] eq "V_gene_segment" || $items[2] eq "C_gene_segment"
-	     || $items[2] eq "telomerase_RNA" || $items[2] eq "antisense_RNA"
-	     || $items[2] eq "transcript") {
-      $rnaType = "mRNA";
-      $items[8] .= ";Loading_note=$items[2]";
-      $items[2] = "mRNA";
-    } elsif ($items[2] eq "tRNA") {
-      $rnaType = "tRNA";
-    } elsif ($items[2] eq "rRNA") {
-      $rnaType = "rRNA";
-    } elsif ($items[2] eq "ncRNA") {
-      $rnaType = "ncRNA";
-    } elsif ($items[2] eq "miRNA") {
-      $rnaType = "miRNA";
-    } elsif ($items[2] eq "snoRNA") {
-      $rnaType = "snoRNA";
-    } elsif ($items[2] eq "snRNA") {
-      $rnaType = "snRNA";
-    } elsif ($items[2] eq "SRP_RNA") {
-      $rnaType = "SRP_RNA";
-    } elsif ($items[2] eq "RNase_MRP_RNA") {
-      $rnaType = "RNase_MRP_RNA";
-    } else {
-      print STDERR "RNA type has not been assigned yet\n";
-    }
+
+    $rnaType = $items[2];
+
+    #if ($items[2] eq "transcript") {  ## for Bos_taurus_UMD_3-1-1 only
+    #  $rnaType = "misc_RNA";
+    #  $items[2] = "misc_RNA";
+    #}
 
     if ($items[8] =~ /ID=(\S+?)\;Parent=(\S+?)\;/) {
       my $cRna = $1;
