@@ -193,6 +193,10 @@ sub traverseSeqFeatures {
              'SRP.RNA',
              'RNase_MRP_RNA',
              'SRP_RNA',
+             'antisense_RNA',
+             'telomerase_RNA',
+             'V_gene_segment',
+             'C_gene_segment',
              )
         ) {
 
@@ -205,6 +209,10 @@ sub traverseSeqFeatures {
             $RNA->add_tag_value("pseudo","");
             $type = 'coding';
         }
+
+	if ($type eq 'V_gene_segment' || $type eq 'C_gene_segment'){
+	  $type = 'misc_feature';
+	}
 
 	if($type eq 'mRNA' || $type eq 'transcript'){
 	  $type = 'coding';
