@@ -36,6 +36,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Gene" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
     <qualifier name="GO" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="locus_tag" ignore="true"/>
@@ -109,6 +110,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="interproscan" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
@@ -123,6 +125,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="protein_id" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
     <qualifier name="Target" ignore="true"/>
     <qualifier name="track" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -513,6 +516,100 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
+  <feature name="antisense_RNA" so="antisense_RNA">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
+    <qualifier name="anticodon"                 handler="api" method="anticodon"/>
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="proteinId" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
+    <qualifier name="track" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="WebId" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="telomerase_RNA" so="telomerase_RNA">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
+    <qualifier name="anticodon"                 handler="api" method="anticodon"/>
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="proteinId" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
+    <qualifier name="track" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="WebId" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
   <feature name="RNase_MRP_RNA" so="RNase_MRP_RNA">
     <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
@@ -596,6 +693,54 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="proteinId" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="start_range" ignore="true"/>
+    <qualifier name="Target" ignore="true"/>
+    <qualifier name="track" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcriptId" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="WebId" ignore="true"/>
+    <qualifier name="partial"     handler="api"    method="setPartial"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
+    <qualifier name="isPseudo"      handler="api"    method="setPseudo"/>
+  </feature>
+
+  <feature name="misc_feature" so="ncRNA">
+    <qualifier name="ID"             column="source_id"/>  <!-- load transcript ID in annotation file--> 
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="translation"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" handler="api" method="transcriptTransTable"/> 
+    <qualifier name="anticodon"                 handler="api" method="anticodon"/>
+    <qualifier name="_AED" ignore="true"/>
+    <qualifier name="_eAED" ignore="true"/>
+    <qualifier name="_QI" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Aliases" ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="date" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="end_range" ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene_biotype" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="GO" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
+    <qualifier name="GeneType" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="ncrna_class" ignore="true"/>
+    <qualifier name="orf_classification" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="proteinId" ignore="true"/>
+    <qualifier name="score" ignore="true"/>
+    <qualifier name="start_range" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
     <qualifier name="Target" ignore="true"/>
     <qualifier name="track" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -920,14 +1065,19 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="biotype" ignore="true"/>
     <qualifier name="description" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
@@ -937,20 +1087,107 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="partial"      handler="api"    method="setPartial"/>
   </feature>
  
+  <feature name="antisense_RNA_gene" so="antisense_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="length" ignore="true"/>
+    <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="telomerase_RNA_gene" so="telomerase_RNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="biotype" ignore="true"/>
+    <qualifier name="description" ignore="true"/>
+    <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gbkey"         ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="length" ignore="true"/>
+    <qualifier name="LocusTag" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="Loading_note" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
   <feature name="misc_RNA_gene" so="misc_RNA_encoding">
     <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
     <qualifier name="Parent"          ignore="true"/>
     <qualifier name="biotype"         ignore="true"/>
     <qualifier name="description"         ignore="true"/>
+    <qualifier name="Dbxref"         ignore="true"/>
     <qualifier name="exon_id"         ignore="true"/>
     <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
     <qualifier name="gene_biotype"         ignore="true"/>
     <qualifier name="gene_id" ignore="true"/>
     <qualifier name="gene_name" ignore="true"/>
     <qualifier name="length" ignore="true"/>
     <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
     <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
     <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="transcript_name" ignore="true"/>
+    <qualifier name="version" ignore="true"/>
+    <qualifier name="pseudo"       handler="api"    method="setPseudo"/>
+    <qualifier name="partial"      handler="api"    method="setPartial"/>
+  </feature>
+
+  <feature name="misc_feature_gene" so="non_protein_coding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="Parent"          ignore="true"/>
+    <qualifier name="biotype"         ignore="true"/>
+    <qualifier name="description"         ignore="true"/>
+    <qualifier name="Dbxref"         ignore="true"/>
+    <qualifier name="exon_id"         ignore="true"/>
+    <qualifier name="exon_number"         ignore="true"/>
+    <qualifier name="gbkey" ignore="true"/>
+    <qualifier name="gene"         ignore="true"/>
+    <qualifier name="gene_biotype"         ignore="true"/>
+    <qualifier name="gene_id" ignore="true"/>
+    <qualifier name="gene_name" ignore="true"/>
+    <qualifier name="length" ignore="true"/>
+    <qualifier name="logic_name" ignore="true"/>
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Note" ignore="true"/>
+    <qualifier name="nb_exon" ignore="true"/>
+    <qualifier name="product" ignore="true"/>
     <qualifier name="transcript_id" ignore="true"/>
     <qualifier name="transcript_name" ignore="true"/>
     <qualifier name="version" ignore="true"/>
