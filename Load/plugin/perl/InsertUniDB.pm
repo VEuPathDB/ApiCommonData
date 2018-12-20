@@ -1310,14 +1310,14 @@ sub orderTable {
 sub getTableRelationsSql {
   return "select ti.name as table_name
                   , di.name as database_name
-                  , ti. primary_key_column
+                  , ti.primary_key_column
              from (-- everything but version and userdataset schemas
                    select  t.* 
                    from core.tableinfo t, core.databaseinfo d
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
                     and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
-                    and t.name not in ('AlgorithmParam')
+                    and t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null
