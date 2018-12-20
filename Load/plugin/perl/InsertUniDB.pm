@@ -1152,8 +1152,15 @@ sub loadTable {
     close $sqlldrMapInfileFh;
     close $sqlldrMapProcess;
     $self->error("sqlldr process failed!") if($?);
-  }
-  unlink($sqlldrMapFn,$sqlldrMapInfileFn);
+	}
+	unlink($sqlldrMapFn,$sqlldrMapInfileFn);
+
+  if($hasNewGlobalRows) {
+    close $sqlldrGlobInfileFh;
+    close $sqlldrGlobProcess;
+    $self->error("sqlldr process failed!") if($?);
+	}
+	unlink($sqlldrGlobFn,$sqlldrGlobInfileFn);
 
   if($loadDatWithSqlldr) {
     if($hasNewDatRows) {
