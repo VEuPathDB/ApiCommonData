@@ -912,7 +912,6 @@ sub loadTable {
   my ($self, $database, $tableName, $tableInfo, $tableReader) = @_;
 
   # New GUS Table ApiDB does not use
-  next if $tableName =~ /SnpLinkage/;
 
   $self->resetActiveForkedProcesses();
 
@@ -1317,7 +1316,7 @@ sub getTableRelationsSql {
                    where lower(t.table_type) != 'version'
                     and t.DATABASE_ID = d.DATABASE_ID
                     and d.name not in ('UserDatasets', 'ApidbUserDatasets', 'chEBI', 'hmdb')
-                    and t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping')
+                    and t.name not in ('AlgorithmParam','GlobalNaturalKey','DatabaseTableMapping','SnpLinkage')
                    minus
                    -- minus Views on tables
                    select * from core.tableinfo where view_on_table_id is not null
