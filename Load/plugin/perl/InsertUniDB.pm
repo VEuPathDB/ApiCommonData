@@ -980,7 +980,7 @@ sub loadTable {
 
   ($sqlldrGlobFh, $sqlldrGlobFn) = tempfile("sqlldrGlobXXXX", UNLINK => 0, SUFFIX => '.ctl');
   $sqlldrGlobInfileFn = "${abbreviatedTablePeriod}_global.dat";
-  $self->writeConfigFile($sqlldrGlobFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
+  $self->writeConfigFile($sqlldrGlobFh, $tableInfo, $GLOBAL_NATURAL_KEY_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
   $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrGlobInfileFn, 0700));
   $sqlldrGlobProcessString = "sqlldr $login/$password\@$db control=$sqlldrGlobFn rows=10000 bindsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
 
