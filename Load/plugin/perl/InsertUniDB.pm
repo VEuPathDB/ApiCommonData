@@ -1122,22 +1122,23 @@ sub loadTable {
         my @globalUniqueValues = map { lc($mappedRow->{lc($_)}) } @$globalUniqueFields;
         $globalNaturalKey = join("_", @globalUniqueValues);
         $globalLookup->{$globalNaturalKey} = $primaryKey;
+
+	      unless($hasNewGlobalRows) {
+	        my $pidGlob = open($sqlldrGlobProcess, $sqlldrGlobProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+	        $self->addActiveForkedProcess($pidGlob);
+	        open($sqlldrGlobInfileFh, ">$sqlldrGlobInfileFn") or die "Could not open named pipe $sqlldrGlobInfileFn for writing: $!";
+	      }
+	
+	      my @globalRow = ($abbreviatedTableColumn, $primaryKey, $globalNaturalKey);
+	      print $sqlldrGlobInfileFh join($END_OF_COLUMN_DELIMITER, @globalRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
+	
+	      $hasNewGlobalRows = 1;
       }
       
       my @mappingRow = ($database, $abbreviatedTableColumn, $origPrimaryKey, $primaryKey);
       print $sqlldrMapInfileFh join($END_OF_COLUMN_DELIMITER, @mappingRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
 
-      unless($hasNewGlobalRows) {
-        my $pidGlob = open($sqlldrGlobProcess, $sqlldrGlobProcessString) or die "Cannot open pipe for sqlldr process:  $!";
-        $self->addActiveForkedProcess($pidGlob);
-        open($sqlldrGlobInfileFh, ">$sqlldrGlobInfileFn") or die "Could not open named pipe $sqlldrGlobInfileFn for writing: $!";
-      }
-
-      my @globalRow = ($abbreviatedTableColumn, $primaryKey, $globalNaturalKey);
-      print $sqlldrGlobInfileFh join($END_OF_COLUMN_DELIMITER, @globalRow) . $END_OF_RECORD_DELIMITER; # note the special line terminator
-
-      $hasNewGlobalRows = 1;
-
+	
       if($rowCount % 100000 == 0) {
         $self->log("Processed $rowCount from $abbreviatedTableColumn");
       }
