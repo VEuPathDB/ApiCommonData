@@ -232,7 +232,12 @@ sub traverseSeqFeatures {
 
 	my($geneID) = $geneFeature->get_tag_values('ID');
 	if (!$gene) {    ## only create one gene for multiple transcript
-	  $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
+	  my $geneType = $type;
+	  if ($geneFeature->has_tag("gene_biotype")) {
+	    my ($geneBioType) = $geneFeature->get_tag_values("gene_biotype");
+	    $geneType = "coding" if ($geneBioType eq "protein_coding" );
+	  }
+	  $gene = &makeBioperlFeature("${geneType}_gene", $geneFeature->location, $bioperlSeq) if (!$gene);
 	  $gene->add_tag_value("ID",$geneID);
 	  $gene = &copyQualifiers($geneFeature, $gene);
 	}
