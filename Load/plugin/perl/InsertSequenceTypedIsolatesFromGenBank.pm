@@ -344,7 +344,7 @@ sub makeOntologyTerm {
     my $termObj = GUS::Model::SRes::OntologyTerm->new({ source_id => "GENISO $term" });
 
     unless  ($termObj->retrieveFromDB ){ 
-      $termObj->setName($name);
+      $termObj->setName($term);
       $termObj->setExternalDatabaseReleaseId($extDbRlsId);
       $termObj->submit();
     }
