@@ -255,7 +255,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaSeq) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaSeq == $codingTransCount);
+print STDERR "ERROR: the number of translatedAASequence, $tranAaSeq, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\nIt also happen when gene has multiple transcripts that mixed with protein-coding and non-protein-coding\n" unless ($tranAaSeq == $codingTransCount);
 
 my $sql = <<SQL;
   select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
@@ -264,7 +264,7 @@ my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 my ($tranAaFeat) = $stmt->fetchrow_array();
 $stmt->finish();
-print STDERR "ERROR... the number of translatedAAFeature, $tranAaFeat, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\n" unless ($tranAaFeat == $codingTransCount);
+print STDERR "ERROR... the number of translatedAAFeature, $tranAaFeat, which is not equal to the number of coding_gene in transcript table, $codingTransCount\nThis will be OK when one transcript has more than one translation in gus4. Keep here to catch this case.\nIt also happen when gene has multiple transcripts that mixed with protein-coding and non-protein-coding\n" unless ($tranAaFeat == $codingTransCount);
 
 
 ## K. check the translatedAaFeature table, translation_start or translation_stop can not be null or < 0
