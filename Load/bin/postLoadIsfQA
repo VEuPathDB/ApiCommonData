@@ -158,6 +158,20 @@ my ($totalSeqLength) = $stmt->fetchrow_array();
 print STDERR "The length of sequences that have been loaded = $totalSeqLength\n";
 $stmt->finish();
 
+## D.2 check the lenght of sequence ID is not hit the max 50 characters
+## redmine task #33128
+my $sql = <<SQL;
+  select source_id from dots.externalnasequence where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($seqId) = $stmt->fetchrow_array()) {
+  if (length($seqId) > 49 ) {
+    print STDERR "ERROR found at sequence ID \'$seqId\',\n  it hits the max 50 characters. Please short it\n";
+  }
+}
+$stmt->finish();
+
 ## E. check the gene number that has been loaded
 my $sql = <<SQL;
   select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId
