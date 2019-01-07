@@ -305,38 +305,37 @@ sub loadCharacteristics{
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-	my $directMode = 'false';
-	if ($self->countLines() > 100000){
-		$directMode = 'true';
-		$self->log("SQLLDR will use DIRECT path\n");
-	}
+  my $directMode = 'false';
+  if ($self->countLines() > 100000){
+      $directMode = 'true';
+      $self->log("SQLLDR will use DIRECT path\n");
+  }
 
-	my $exitstatus;
-  if($self->getArg('commit')) {
-    $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
+  if(!$self->getArg('commit')) {
+      my $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
 
-    open(LOG, $logFile) or die "Cannot opoen log file $logFile: $!";
+      if($exitstatus != 0){
+	  die "ERROR: sqlldr returned exit status $exitstatus";
+      }
 
-    while(<LOG>) {
-      $self->log($_);
-    }
-    close LOG;
+      open(LOG, $logFile) or die "Cannot open log file $logFile: $!";
 
-    unlink $logFile;
+      while(<LOG>) {
+	  $self->log($_);
+      }
+      close LOG;
+
+      unlink $logFile;
   }
 
   unlink $configFile;
-
-	if($exitstatus > 0){
-		die "ERROR: sqlldr returned exit status $exitstatus";
-	}
 
   my $sequenceName = "Study.CHARACTERISTIC_sq";
   my $dbh = $self->getQueryHandle();
   my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual");
   my ($maxPrimaryKey) = $dbh->selectrow_array("select MAX(CHARACTERISTIC_ID) FROM Study.CHARACTERISTIC");
   my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-	$self->log("Updating CHARACTERISTIC_ID starting from $sequenceDifference\n");
+  $self->log("Updating CHARACTERISTIC_ID starting from $sequenceDifference\n");
   if($sequenceDifference > 0) {
     $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
     $dbh->do("select ${sequenceName}.nextval from dual");
