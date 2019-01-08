@@ -1,3 +1,9 @@
+OWLconverter.jar
+-----------------------------------------
+Convert tab delimited or csv file to OWL format file
+
+
+-----------------------------------------
 Run OWLconverter.jar
 -----------------------------------------
 Requirement:
@@ -11,11 +17,12 @@ Test files
 ====================== 
 Under test directory 
 
+Example:
 java -jar OWLconverter.jar -settingFilename test/setting.txt 
 
 Notes: please update path to your script/test directory in the setting.txt before run the command.
 
-
+-----------------------------------------
 Preparation of Setting file
 -----------------------------------------
 Setting file is a tab-delimited text file, contains 2 columns specified the information needed to convert a tab-delimited or csv format file to OWL file. The first columns are parameters taken by the script and should be not be renamed. The second columns are values of parameters. 
