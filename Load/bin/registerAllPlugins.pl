@@ -37,7 +37,9 @@ $dbh->disconnect();
 
 
 foreach my $pluginPath (glob "$ENV{GUS_HOME}/lib/perl/*/*/Plugin/*.pm") {
-  my $failedCompile = system("perl -c $pluginPath >/dev/null 2>&1");
+  print "$pluginPath\n";
+
+  my $failedCompile = system("perl -c -I $ENV{GUS_HOME}/lib/perl $pluginPath >/dev/null 2>&1");
   next if $failedCompile;
 
   my $module = $pluginPath;
