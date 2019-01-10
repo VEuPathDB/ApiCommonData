@@ -37,8 +37,6 @@ $dbh->disconnect();
 
 
 foreach my $pluginPath (glob "$ENV{GUS_HOME}/lib/perl/*/*/Plugin/*.pm") {
-  print "$pluginPath\n";
-
   my $failedCompile = system("perl -c -I $ENV{GUS_HOME}/lib/perl $pluginPath >/dev/null 2>&1");
   next if $failedCompile;
 
@@ -47,8 +45,6 @@ foreach my $pluginPath (glob "$ENV{GUS_HOME}/lib/perl/*/*/Plugin/*.pm") {
   $module =~ /lib::perl::(.+)\.pm$/;
   $module = $1; 
  
-  print "package=$module\n";
-  
   # if the database doesn't know about the Plugin, register it
   if(!$algorithms{$module}) {
     system("ga +create $module --commit");
