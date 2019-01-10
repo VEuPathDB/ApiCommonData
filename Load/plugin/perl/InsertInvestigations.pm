@@ -311,7 +311,7 @@ sub loadCharacteristics{
       $self->log("SQLLDR will use DIRECT path\n");
   }
 
-  if(!$self->getArg('commit')) {
+  if($self->getArg('commit')) {
       my $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
 
       if($exitstatus != 0){
