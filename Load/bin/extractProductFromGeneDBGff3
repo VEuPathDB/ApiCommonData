@@ -74,6 +74,18 @@ while (<IN>) {
 	    $prodKeyValue{is_preferred} = 1;
 	  } elsif ($prodKey eq "rank") {
 	    $prodKeyValue{rank} = 1;
+	  } elsif ($prodKey eq "db_xref") {
+	    if ($prodValue =~ /pmid/i) {
+	      $prodValue =~ s/\s+//g;
+	      my @pmidValues = split(/\|/, $prodValue);
+	      foreach my $v (@pmidValues) {
+		push (@{$prodKeyValue{pmid}}, $v);
+	      }
+	    }
+	  } elsif ($prodKey eq "evidence") {
+	    $prodKeyValue{evidCode} = getGoEvidenceCode($prodValue);
+	  } elsif ($prodKey eq "with") {
+	    $prodKeyValue{with} = $prodValue;
 	  }
 
 	  if ($prodKey && !$prodValue) { ## if only one value but no key-value pair
@@ -81,11 +93,20 @@ while (<IN>) {
 	  }
 	}
 	if ($prodKeyValue{is_preferred}) {
-	  $prodKeyValue{term} .= "\ttrue";
+	  $prodKeyValue{term} .= "\t1";
 	} elsif (!$prodKeyValue{rank}) {
-	  $prodKeyValue{term} .= "\ttrue";
+	  $prodKeyValue{term} .= "\t1";
+	} else {   ## if is_preferred = false, add an empty column
+	  $prodKeyValue{term} .= "\t0";
 	}
-	print OUT "$keyValue{transID}\t$prodKeyValue{term}\n";
+
+	if ($prodKeyValue{pmid}) {
+	  foreach my $pV (@{$prodKeyValue{pmid}}) {
+	    print OUT "$keyValue{transID}\t$prodKeyValue{term}\t$pV\t$prodKeyValue{evidCode}\t$prodKeyValue{with}\n";
+	  }
+	} else {
+	  print OUT "$keyValue{transID}\t$prodKeyValue{term}\t$prodKeyValue{pmid}\t$prodKeyValue{evidCode}\t$prodKeyValue{with}\n";
+	}
       }
     }
   }
@@ -96,6 +117,59 @@ close OUT;
 
 
 ############
+sub getGoEvidenceCode {
+  my ($string) = @_;
+
+  if ($string =~ /INFERRED FROM ELECTRONIC ANNOTATION/i) {
+    return "IEA";
+  } elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/i) {
+    return "ISO";
+  } elsif ($string =~ /NOT RECORDED/i) {
+    return "NR";
+  } elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
+    return "IDA";
+  } elsif ($string =~ /No biological Data available/i) {
+    return "ND";
+  } elsif ($string =~ /INFERRED FROM SEQUENCE OR STRUCTURAL SIMILARITY/i) {
+    return "ISS";
+  } elsif ($string =~ /Inferred from Sequence Alignment/i) {
+    return "ISA";
+  } elsif ($string =~ /Inferred from Sequence Model/i) {
+    return "ISM";
+  } elsif ($string =~ /Inferred from Genomic Context/i) {
+    return "IGC";
+  } elsif ($string =~ /Inferred from Biological aspect of Ancestor/i) {
+    return "IBA";
+  } elsif ($string =~ /Inferred from Biological aspect of Descendant/i) {
+    return "IBD";
+  } elsif ($string =~ /Inferred from Key Residues/i) {
+    return "IKR";
+  } elsif ($string =~ /Inferred from Rapid Divergence /i) {
+    return "IRD";
+  } elsif ($string =~ /inferred from Reviewed Computational Analysis/i) {
+    return "RCA";
+  } elsif ($string =~ /Inferred from Experiment/i) {
+    return "EXP";
+  } elsif ($string =~ /Inferred from Physical Interaction/i) {
+    return "IPI";
+  } elsif ($string =~ /Inferred from Mutant Phenotype/i) {
+    return "IMP";
+  } elsif ($string =~ /Inferred from Genetic Interaction/i) {
+    return "IGI";
+  } elsif ($string =~ /Inferred from Expression Pattern/i) {
+    return "IEP";
+  } elsif ($string =~ /Traceable Author Statement/i) {
+    return "TAS";
+  } elsif ($string =~ /Non-traceable Author Statement/i) {
+    return "NAS";
+  } elsif ($string =~ /Inferred by Curator/i) {
+    return "IC";
+  } else {
+    return $string;
+  }
+}
+
+
 sub usage {
   die
 "
