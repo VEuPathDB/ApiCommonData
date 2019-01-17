@@ -4,6 +4,9 @@ CREATE TABLE apidb.TranscriptProduct (
  external_database_release_id NUMBER(12) NOT NULL,
  product                      VARCHAR(500) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
+ publication                  VARCHAR2(20),           -- e.g. "PMID:18534909"
+ evidence_code                NUMBER(10),             -- foreign key to sres.OntologyTerm 
+ with_from                    VARCHAR2(60),           -- e.g. "UniProtKB:RL2A_YEAST"
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -27,6 +30,10 @@ REFERENCES dots.NaFeatureImp (na_feature_id);
 ALTER TABLE apidb.TranscriptProduct
 ADD CONSTRAINT transc_prod_fk2 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
+
+ALTER TABLE apidb.TranscriptProduct
+ADD CONSTRAINT transc_prod_fk3 FOREIGN KEY (evidence_code)
+REFERENCES sres.OntologyTerm (ontology_term_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.TranscriptProduct TO gus_w;
 GRANT SELECT ON apidb.TranscriptProduct TO gus_r;
