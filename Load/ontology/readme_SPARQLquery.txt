@@ -108,6 +108,10 @@ robot query --input ./release/production/gates_gems.owl --query ./SPARQL/get_var
 # Gates GEMS
 robot query --input ./release/production/gates_gems.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/gates_gems_variableMappings.csv
 
+------------------------------------------------------------------------------------------
+# Microbiome
+robot query --input ./Microbiome/microbiome.owl --query ./SPARQL/get_variable_sourceID_label.rq ./query_results/microbiome_variableMappings.csv
+
 
 —————————————————————————————————————————————————————————————————————————————
 # QC QUERY
@@ -180,6 +184,13 @@ robot query --input ./release/production/gates_maled.owl --query ./SPARQL/count_
 ————————————————————————————————————————————————————————————
 # ClinEpi
 robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithParentAndSource.rq ./query_results/clinEpi_termsWithParentAndSource.csv
+
+
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/get_termWithParentAndSource.rq ./query_results/clinEpi_termsWithParentAndSource.csv
+
+# All projects
+robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/get_termWithParentAndSource.rq ./query_results/web_display_termsWithParentAndSource.csv
+
 
 ————————————————————————————————————————————————————————————
 # List terms which used as multifilter variables or values with their parents and project sources
