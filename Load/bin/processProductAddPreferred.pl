@@ -25,14 +25,17 @@ while (<IN>) {
   my @items= split (/\t/, $_);
 
   ## check if the product name has been assigned to this gene
-  if (!$assignedProduct{$items[0]}{$items[1]}) {
-    push @{$products{$items[0]}}, $items[1];
-    $assignedProduct{$items[0]}{$items[1]} = 1;
+  $items[1] =~ s/\;/\,/g;
+  my $pkey = "$items[1];$items[3];$items[4];$items[5]";
+
+  if (!$assignedProduct{$items[0]}{$pkey}) {
+    push @{$products{$items[0]}}, $pkey;
+    $assignedProduct{$items[0]}{$pkey} = 1;
   }
 
   if ($items[2] == 1 || $items[2] =~ /true/) {
     $isPreferred{$items[0]} = 1;
-    $isPreferredProd{$items[0]}{$items[1]} = 1;
+    $isPreferredProd{$items[0]}{$pkey} = 1;
   }
 }
 
@@ -53,7 +56,9 @@ foreach my $k (sort keys %products) {
 	$is_preferred = ($i == 0) ? 1 : 0;
       }
     }
-    print OUT "$k\t$products{$k}[$i]\t$is_preferred\n";
+#    print OUT "$k\t$products{$k}[$i]\t$is_preferred\n";
+    my @pValue = split (/;/, $products{$k}[$i]);
+    print OUT "$k\t$pValue[0]\t$is_preferred\t$pValue[1]\t$pValue[2]\t$pValue[3]\n";
   }
 }
 close IN;
