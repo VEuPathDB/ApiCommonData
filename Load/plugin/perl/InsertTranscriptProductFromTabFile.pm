@@ -157,7 +157,7 @@ sub run {
 
       $totalNum++;
 
-      my ($sourceId, $product, $preferred) = split(/\t/,$_);
+      my ($sourceId, $product, $preferred, $pmid, $evCode, $with) = split(/\t/,$_);
       if ($preferred =~ /true/i || $preferred == 1) {
 	$preferred = 1;
       } else {
@@ -178,7 +178,7 @@ sub run {
 	  my $nafeatureId = $transcript->getNaFeatureId();
           my $productReleaseId = $transcript->getExternalDatabaseReleaseId();
 
-	  $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred);
+	  $self->makeTranscriptProduct($productReleaseId,$nafeatureId,$product,$preferred, $pmid, $evCode, $with);
 
 	  $processed++;
       }else{
@@ -194,22 +194,42 @@ sub run {
 
 
 sub makeTranscriptProduct {
-  my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
+  my ($self,$productReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with) = @_;
 
+  my $evCodeLink = getEvidCodeLink ($self, $evCode);
   my $transcriptProduct = GUS::Model::ApiDB::TranscriptProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
+						                    'publication' => $pmid,
 						                     });
 
   unless ($transcriptProduct->retrieveFromDB()){
       $transcriptProduct->set("is_preferred",$preferred);
       $transcriptProduct->set("external_database_release_id",$productReleaseId);
+      $transcriptProduct->set("evidence_code",$evCodeLink);
+      $transcriptProduct->set("with_from",$with);
       $transcriptProduct->submit();
   }else{
-      $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId");
+      $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId, with publication: $pmid\n");
   }
 
 }
 
+sub getEvidCodeLink {
+  my ($self, $evCodeName) = @_;
+
+  my $evCodeLink;
+  my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new ({
+						       name => $evCodeName
+						       });
+
+  unless ($ontologyTerm->retrieveFromDB()) {
+    $evCodeLink = $ontologyTerm->getOntologyTermId();
+  } else {
+    $self->log ("ERROR", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table");
+  }
+
+  return $evCodeLink;
+}
 
 sub getOrCreateExtDbAndDbRls{
   my ($self, $dbName,$dbVer) = @_;
