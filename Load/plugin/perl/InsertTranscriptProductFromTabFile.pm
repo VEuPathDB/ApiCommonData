@@ -34,7 +34,7 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
-
+use GUS::Model::SRes::OntologyTerm;
 # ----------------------------------------------------------
 # Load Arguments
 # ----------------------------------------------------------
