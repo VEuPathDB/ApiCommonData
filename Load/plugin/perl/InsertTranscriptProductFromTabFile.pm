@@ -219,7 +219,7 @@ sub getEvidCodeLink {
 
   my $evCodeLink;
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new ({
-						       name => $evCodeName
+						       'name' => $evCodeName
 						       });
 
   unless ($ontologyTerm->retrieveFromDB()) {
