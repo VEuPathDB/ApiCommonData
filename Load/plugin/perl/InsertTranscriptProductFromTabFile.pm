@@ -196,7 +196,7 @@ sub run {
 sub makeTranscriptProduct {
   my ($self,$productReleaseId,$naFeatId,$product,$preferred, $pmid, $evCode, $with) = @_;
 
-  my $evCodeLink = getEvidCodeLink ($self, $evCode);
+  my $evCodeLink = getEvidCodeLink ($self, $evCode) if ($evCode);
   my $transcriptProduct = GUS::Model::ApiDB::TranscriptProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
 						                    'publication' => $pmid,
@@ -219,10 +219,10 @@ sub getEvidCodeLink {
 
   my $evCodeLink;
   my $ontologyTerm = GUS::Model::SRes::OntologyTerm->new ({
-						       'name' => $evCodeName
+						       'source_id' => $evCodeName
 						       });
 
-  unless ($ontologyTerm->retrieveFromDB()) {
+  if ($ontologyTerm->retrieveFromDB()) {
     $evCodeLink = $ontologyTerm->getOntologyTermId();
   } else {
     $self->log ("ERROR", "Evidence code $evCodeName does not exists in SRes::OntologyTerm table");
