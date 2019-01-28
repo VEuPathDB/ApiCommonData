@@ -1,0 +1,43 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT distinct ?displayOrder ?variable ?dataFile ?IRI ?label ?definition ?category ?parentLabel ?parentIRI ?codebookDescription ?codebookValues ?multifilter
+WHERE { 
+	?IRI a owl:Class .
+	?IRI rdfs:label ?tlabel .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?label) .
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?parentIRI .
+		?parentIRI rdfs:label ?plabel . 
+		BIND (str(?plabel) AS ?parentLabel) .
+	}
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?displayOrder .
+    }
+    OPTIONAL {
+        ?IRI obo:EUPATH_0000755 ?variable .
+    }  
+    OPTIONAL {
+        ?IRI obo:EUPATH_0001001 ?dataFile .
+    }
+    OPTIONAL {
+        ?IRI obo:EUPATH_0001005 ?multifilter .
+    }
+    OPTIONAL {
+        ?IRI obo:IAO_0000115 ?definition .
+    }
+    OPTIONAL {
+        ?IRI obo:EUPATH_0001002 ?category .
+    }
+    OPTIONAL {
+        ?IRI obo:EUPATH_0001003 ?codebookDescription .
+    }
+    OPTIONAL {
+        ?IRI obo:EUPATH_0001004 ?codebookValues .
+    }
+}
