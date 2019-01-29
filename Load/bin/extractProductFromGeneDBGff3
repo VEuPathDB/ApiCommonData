@@ -102,6 +102,11 @@ while (<IN>) {
 
 	if ($prodKeyValue{pmid}) {
 	  foreach my $pV (@{$prodKeyValue{pmid}}) {
+	    ## fix some errors in annotation file
+	    $pV =~ s/PMID:PMID:/PMID:/ig;
+	    if ($pV =~ /(PMID:(\d+))+/) {
+	      $pV = $1;
+	    }
 	    print OUT "$keyValue{transID}\t$prodKeyValue{term}\t$pV\t$prodKeyValue{evidCode}\t$prodKeyValue{with}\n";
 	  }
 	} else {
