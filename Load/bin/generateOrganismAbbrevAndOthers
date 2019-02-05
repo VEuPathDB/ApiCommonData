@@ -29,6 +29,7 @@ $strainAbbrev =~ s/strain//i;
 $strainAbbrev =~ s/breed//i;
 $strainAbbrev =~ s/str\.//i;
 $strainAbbrev =~ s/\///g;
+$strainAbbrev =~ s/\./\-/g;
 
 my $organismAbbrev = lc(substr($genus, 0, 1)).substr($species, 0, 3).$strainAbbrev;
 my $organismNameForFiles = substr($genus, 0, 1).$species.$strainAbbrev;
