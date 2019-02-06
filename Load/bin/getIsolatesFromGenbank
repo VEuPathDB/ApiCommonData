@@ -106,6 +106,8 @@ sub getGiList {
     my $queryCnt = 1;
     foreach my $query (@queries) {
 	my $esearch_result = get("$esearch$query");
+  ## add five seconds delay - https://redmine.apidb.org/issues/33440
+  sleep(5);
 	print STDERR "$esearch$query\n\n" if $PRINT_URLS;
 	die "Failed running esearch query" unless defined $esearch_result;
 
