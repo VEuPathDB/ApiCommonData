@@ -71,6 +71,7 @@ my (
 	    );
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $projectName && $organismAbbrev && $excelFile);
+&usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /fasta/i && !$sourceIdRegex);
 &usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
 &usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
 &usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
@@ -138,6 +139,12 @@ if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
   }
 }
 
+## check format is consistant with %excelInfo
+if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^n/i ) {
+  unless ($format =~ /fasta/i) {
+    die "ERROR: The format argument is fasta, but isAnnotatedGenome in Excel file is not no\n";
+  }
+}
 
 print STDERR "\$count = $count\n";
  
@@ -254,6 +261,62 @@ close $ofh;
 
 
 ##################### subroutine ###################
+sub printSecondaryFasta {
+  my ($fh, $secondAnnot) = @_;
+
+  my @secondaryAnnotations = split (/\,/, $secondAnnot);
+
+  foreach my $second (@secondaryAnnotations) {
+    $second =~ s/^\s+//;
+
+    ## print fasta
+    if ($second =~ /^contig/i || $second =~ /^supercontig/i) {
+      print $fh "  <dataset class=\"fasta_secondary_genome\">\n";
+      printNameWithValue ($fh, 'soTerm', $second);
+    } elsif ($second =~ /^api/i ) {
+      print $fh "  <dataset class=\"fasta_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'apicoplast');
+      printNameWithValue ($fh, 'soTerm', 'apicoplast_chromosome');
+    } elsif ($second =~ /^mito/i ) {
+      print $fh "  <dataset class=\"fasta_organelle_genome\">\n";
+      printNameWithValue ($fh, 'organelle', 'mitochondrion');
+      printNameWithValue ($fh, 'soTerm', 'mitochondrial_chromosome');
+    } else {
+      next;
+    }
+    printNameWithDollarSign ($fh, 'projectName');
+    printNameWithDollarSign ($fh, 'organismAbbrev');
+    printNameWithDollarSign ($fh, 'ncbiTaxonId');
+    printNameWithDollarSign ($fh, 'name', 'genomeSource');
+    printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+    printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
+    printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
+    print $fh "  </dataset>\n";
+    print $fh "\n";
+  }
+}
+
+sub printPrimaryFasta {
+  my ($fh, $format, $secondAnnot) = @_;
+
+  print $fh "  <dataset class=\"fasta_primary_genome_sequence\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'name', 'genomeSource');
+  printNameWithDollarSign ($fh, 'version', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'soTerm');
+  printNameWithValue ($fh, 'table', "DoTS::ExternalNASequence");
+  printNameWithValue ($fh, 'sourceIdRegex', "$sourceIdRegex");
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+  printSecondaryFasta ($fh, $secondAnnot) if ($secondAnnot);
+
+  return 0;
+}
+
 sub printAnnotation {
   my ($fh, $format, $secondAnnot) = @_;
 
@@ -265,6 +328,8 @@ sub printAnnotation {
     printGff3Annotation ($fh, $format, $secondAnnot);
   } elsif ( $format =~ /embl/i) {
     printEmblAnnotation ($fh, $format, $secondAnnot);
+  } elsif ( $format =~ /fasta/i) {
+    printPrimaryFasta ($fh, $format, $secondAnnot);
   } else {
     print STDERR "format have not been configured yet\n";
   }
