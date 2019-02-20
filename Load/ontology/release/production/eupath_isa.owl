@@ -306,6 +306,19 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000095 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000095">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
+        <obo:EUPATH_0000755>subject</obo:EUPATH_0000755>
+        <obo:IAO_0000115>Unique participant ID</obo:IAO_0000115>
+        <obo:ISA_0000001>characteristicQualifier</obo:ISA_0000001>
+        <obo:ISA_0000002>Source</obo:ISA_0000002>
+        <rdfs:label xml:lang="zh">Participant ID</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000104 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000104">
@@ -603,7 +616,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000639">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PNAS_paper</obo:EUPATH_0000755>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Experimental group (assay control, naive North American adult (negative control), pooled Ugandan plasma (positive control), study sample (Ugandan child) included in PNAS (https://doi.org/10.1073/pnas.1501705112), study sample (Ugandan child) not included in PNAS analysis)</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Experimental sample, control sample, or assay control.</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_0000001>
         <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study group</rdfs:label>
@@ -886,7 +899,7 @@ https://www.ncbi.nlm.nih.gov/pubmed/18261945</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005011">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">incMal</obo:EUPATH_0000755>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria incidence in the previous year, calculated as the number of symptomatic malaria episodes occurring 365 days before sample collection. This was only calculated for sample samples used in the PNAS analysis</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria incidence in the previous year, calculated as the number of symptomatic malaria episodes occurring 365 days before sample collection.</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_0000001>
         <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria incidence in the previous 365 days</rdfs:label>
@@ -1120,10 +1133,10 @@ https://www.ncbi.nlm.nih.gov/pubmed/18261945</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005029">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sincepar_log</obo:EUPATH_0000755>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis variable: log transformed days since the last time parasites were detected, adjusted for analysis. If parasites detected &lt;14d before sample collection, sincepar=14; If parasites detected &gt;500d or never diagnosed since enrollment, sincepar=500.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis variable: log transformed days since the last time parasites were detected, adjusted for analysis. If parasites detected &lt;14d before sample collection, days since last P. falciparum detection was set to 14; If parasites detected &gt;500d or never diagnosed since enrollment, days since last P. falciparum detection was set to 500.</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_0000001>
         <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_0000002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Days since last P. falciparum detection, adjusted and log transformed</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis metric: Days since last P. falciparum detection, adjusted &amp; log transformed</rdfs:label>
     </owl:Class>
     
 
@@ -1133,22 +1146,23 @@ https://www.ncbi.nlm.nih.gov/pubmed/18261945</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005030">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">incMal_log</obo:EUPATH_0000755>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis variable: log transformed malaria incidence in the previous year, calculated as the number of symptomatic malaria episodes occurring 365 days before sample collection. This was only calculated for sample samples used in the PNAS analysis</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis variable: log transformed malaria incidence in the previous year, calculated as the number of symptomatic malaria episodes occurring 365 days before sample collection.</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_0000001>
         <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_0000002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria incidence in the previous 365 days, log transformed</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Analysis metric: Malaria incidence in the previous 365 days, log transformed</rdfs:label>
     </owl:Class>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0030002 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0005031 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030002">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0005031">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
         <obo:EUPATH_0000755>study_type</obo:EUPATH_0000755>
+        <obo:IAO_0000115>Samples for this investigation were obtained from Ugandan children enrolled in either the Tororo Child Cohort (TCC) Study or the Kanungu site of the Program for Resistance, Immunology, and Surveillance of Malaria Cohort Study.</obo:IAO_0000115>
         <obo:ISA_0000001>characteristicQualifier</obo:ISA_0000001>
         <obo:ISA_0000002>Source</obo:ISA_0000002>
-        <rdfs:label xml:lang="zh">Study type</rdfs:label>
+        <rdfs:label xml:lang="zh">Study cohort</rdfs:label>
     </owl:Class>
     
 
@@ -1278,6 +1292,7 @@ https://www.ncbi.nlm.nih.gov/pubmed/18261945</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001619">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Collection date</obo:EUPATH_0000755>
+        <obo:IAO_0000115>Date of sample collection</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">protocol parameter</obo:ISA_0000001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection date</rdfs:label>
     </owl:Class>
@@ -1360,6 +1375,7 @@ https://www.ncbi.nlm.nih.gov/pubmed/18261945</rdfs:comment>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0100051">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specimen</obo:EUPATH_0000755>
+        <obo:IAO_0000115>Type of sample</obo:IAO_0000115>
         <obo:ISA_0000001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicsQualifier</obo:ISA_0000001>
         <obo:ISA_0000002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:ISA_0000002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
