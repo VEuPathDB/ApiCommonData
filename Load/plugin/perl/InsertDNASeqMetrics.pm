@@ -230,7 +230,6 @@ sub undoTables {
     'Study.StudyLink',
     'Study.ProtocolAppNode',
     'Study.ProtocolApp',
-    'Study.Protocol',
      );
 }
 
