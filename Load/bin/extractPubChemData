@@ -57,7 +57,7 @@ my $base_url;
 my $end_url ='';
 
 if ($db_type eq 'pccompound') {
-    $base_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=' . $db_type . '&id=';
+    $base_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=' . $db_type . '&id=';
 } else {
     $base_url = 'http://pubchem.ncbi.nlm.nih.gov/rest/pug/substance/sid/';
     if ($property eq 'CID') {

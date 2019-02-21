@@ -47,8 +47,8 @@ die "Must provide either an organismAbbrev on command line or parent taxon IDs o
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
 my $db      = "nuccore";
-my $utils = "https://www.ncbi.nlm.nih.gov/entrez/eutils";
-my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
+my $utils = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+my $esearch = "$utils/esearch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&retmax=1&usehistory=y&term=";
 
 # get isolate GIs for our list of taxa (and their child taxa)
 my @giList = getGiList($organismAbbrev, $parentNcbiTaxonIds);
@@ -73,7 +73,7 @@ my $c;
 foreach my $batch (@giBatches) {
   $c++;
   print STDERR ".";
-  my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb&retmode=text";
+  my $url = "$utils/efetch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&id=$batch&rettype=gb&retmode=text";
   my $gb_result = get($url);
   print STDERR "batch $c\n" if $PRINT_URLS;
   print STDERR "\n$url\n\n" if $PRINT_URLS;
@@ -204,7 +204,7 @@ sub getGIs {
     print STDERR "  running $summaryBatches esummary queries to get GIs in batches of 10000 \n";
      while(1) {
 	 # gets at most 10000
-	 my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
+	 my $efetch = "$utils/esummary.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
 
 	 print STDERR "$efetch\n\n" if $PRINT_URLS;
 	 my $efetch_result = get($efetch);

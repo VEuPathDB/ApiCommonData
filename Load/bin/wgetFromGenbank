@@ -50,7 +50,7 @@ my $utils = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 
 my $s_result;
 if ($query && !$id_list) {
-	my $esearch = "$utils/esearch.fcgi?db=$db&usehistory=y&term=$query";
+	my $esearch = "$utils/esearch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&usehistory=y&term=$query";
 	$s_result = get($esearch);
 }
 
@@ -63,7 +63,7 @@ open(FILE, ">$output") || die "Could not open output file '$output'\n";
 my $retmax = 500;
 for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
 
-	my $url = "$utils/efetch.fcgi?db=$db&WebEnv=$web";
+	my $url = "$utils/efetch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&WebEnv=$web";
 	$url .= "&query_key=$key&retstart=$retstart";
 	$url .= "&retmax=$retmax&rettype=$outputFormat&retmode=text";
 
@@ -81,7 +81,7 @@ for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
 }
 
 if ($id_list) {
-	my $url = "$utils/efetch.fcgi?db=$db&id=$id_list&rettype=$outputFormat&retmode=text";
+	my $url = "$utils/efetch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$db&id=$id_list&rettype=$outputFormat&retmode=text";
 	my $gb_result = get($url);
 	print FILE "$gb_result";
 }

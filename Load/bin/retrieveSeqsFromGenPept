@@ -42,7 +42,7 @@ die "Cannot find file '$inFile'" unless (-e $inFile);
 die "Must provide an output file" unless ($outFile);
 
 ##use webservices to access all info at genbank
-my $baseUrl = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&rettype=fasta&id=";
+my $baseUrl = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=protein&rettype=fasta&id=";
 
 open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!\n";
 open (OUT, "> $outFile") or die "Cannot open file '$outFile' for writing: $!\n";
