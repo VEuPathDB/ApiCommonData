@@ -6,12 +6,12 @@ use Cwd;
 use HTML::TreeBuilder;
 use Data::Dumper;
 
-my ($dataSourceName, $displayName, $shortDisplayName, $shortAttribution, $datasetSummary, $datasetDescription, $contact)=('TODO') x 7;
+my ($dataSourceName, $displayName, $shortDisplayName, $shortAttribution, $datasetSummary, $datasetDescription, $contact, $dataLocation)=('TODO') x 8;
 
 my $usage =<<EOL;
 Automate the creation of presenter entries from the redmine descriptions. Output will be dataset presenter xml
 MUST run this script under manual delivery workSpace directory! e.g /eupath/data/EuPathDB/manualDelivery/TriTrypDB/tbruTREU927/SNP/Weir_Population_Genomics/2013-05-21/workSpace
-%>createPresenterFromRedmineDesc.pl file_with_redmine_descriptions.html
+%>createPresenterFromRedmineDesc.pl file_with_redmine_descriptions.html buildNumber
 
 EOL
 
@@ -53,6 +53,9 @@ foreach (@urls){
 		  $contact=$vals[$i+1];
       } 
     }
+ }elsif ($_->as_text=~/Data location/){
+    my @vals = split /Data location:/, $_->as_text;
+    $dataLocation = $vals[1];
  }
 }
 #print $dataSourceName . "\n";
@@ -62,6 +65,7 @@ foreach (@urls){
 #print $datasetSummary . "\n";
 #print $datasetDescription . "\n";
 #print $contact . "\n";
+#print $dataLocation . "\n";
 
 open O1, ">$dataSourceName.xml";
 print O1 <<EOL;
@@ -78,8 +82,8 @@ print O1 <<EOL;
     <history buildNumber="$buildNumber"/>
     <primaryContactId>$contact</primaryContactId>
     <link>
-      <text>></text>
-      <url><![CDATA[]]></url>
+      <text></text>
+      <url><![CDATA[$dataLocation]]></url>
     </link>
     <pubmedId></pubmedId>
 EOL
