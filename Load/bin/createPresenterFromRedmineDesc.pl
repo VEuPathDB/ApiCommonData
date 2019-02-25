@@ -67,6 +67,20 @@ foreach (@urls){
 #print $contact . "\n";
 #print $dataLocation . "\n";
 
+open O2, ">contact.xml";
+print O2 <<EOL;
+  <contact>
+    <contactId></contactId>
+    <name>$contact</name>
+    <institution></institution>
+    <email></email>
+    <address></address>
+    <city></city>
+    <state></state>
+    <zip></zip>
+    <country></country>
+  </contact>
+EOL
 open O1, ">$dataSourceName.xml";
 print O1 <<EOL;
     <datasetPresenter name="$dataSourceName" projectName="$project">
@@ -81,6 +95,7 @@ print O1 <<EOL;
     <releasePolicy></releasePolicy>
     <history buildNumber="$buildNumber"/>
     <primaryContactId>$contact</primaryContactId>
+    <contactId>$contact</contactId>
     <link>
       <text></text>
       <url><![CDATA[$dataLocation]]></url>
@@ -144,4 +159,8 @@ print O1 <<EOL;
     </templateInjector>
 EOL
 }
-print O1 "</datasetPresenter>\n";
+print O1 <<EOL;
+</datasetPresenter>
+<internalDataset name="$dataSourceName"/>
+EOL
+
