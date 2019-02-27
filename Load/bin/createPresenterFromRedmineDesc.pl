@@ -123,7 +123,7 @@ print O1 <<EOL;
       <prop name="graphPriorityOrderGrouping">0</prop>
       <prop name="graphXAxisSamplesDescription"><![CDATA[]]></prop>
       <prop name="isDESeq">TODO</prop>
-      <prop name="isDEGseq">TODO</prop>
+      <prop name="isDEGseq">false</prop>
       <prop name="includeProfileSimilarity">false</prop>
       <prop name="profileTimeShift"></prop>
     </templateInjector>
