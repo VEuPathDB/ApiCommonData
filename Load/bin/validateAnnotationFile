@@ -9,7 +9,7 @@ use DBD::Oracle;
 #use CBIL::Util::PropertySet;
 use CBIL::Util::Utils;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
-use ApiCommonData::Load::AnnotationUtils qw{getSeqIO};
+use ApiCommonData::Load::AnnotationUtils;
 use ApiCommonData::Load::Unflattener;
 
 
@@ -54,18 +54,14 @@ if ($inputFileFormat =~ /genbank/i) {
 
 
 ## 1. run reportFeatureQualifiers
-## reportFeatureQualifiers --format gff3 --file_or_Dir whole_genome.gff > report.txt
-
-my $pc1 = "reportFeatureQualifiers --format $inputFileFormat --file_or_Dir $wholeGenomeFile > $outputFileDir/report.txt";
-print STDERR "running...\n  $pc1\n";
-&runCmd($pc1);
-print STDERR "Done:\n  $pc1\n";
-
+&runReportFeatureQualifiers($inputFileFormat, $wholeGenomeFile);
 
 ## 2. check gene model
-my $bioperlSeqIO = &getSeqIO($wholeGenomeFile, $inputFileFormat);
+my $bioperlSeqIO = ApiCommonData::Load::AnnotationUtils::getSeqIO($wholeGenomeFile, $inputFileFormat);
 while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
   my $seqType = 'DNA';
+  print STDERR "Processing ...\n";
+
   if (defined $bioperlSeq->molecule) {
     $seqType = $bioperlSeq->molecule;
   } elsif (defined $bioperlSeq->alphabet) {
@@ -87,34 +83,18 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
       print STDERR "ERROR: The format $inputFileFormat have not been coded yet\n";
     }
   }
+  print STDERR "\$idSymbol = $idSymbol\n";
 
 ## 3.1. check if gene has ID
   &checkIfGeneID (\@topSeqFeatures);
 
-## 3.3. check if gene, rna, exon or CDS are on the same strand
-  &checkGeneStructure (\@topSeqFeatures);
-
-## 3.4. check if gene ID is unique
+## 3.2. check if gene ID is unique
   &checkIfGeneIDIsUnique (\@topSeqFeatures);
 
-  foreach my $bioperlFeatureTree (@topSeqFeatures) {
-    my $geneFeature = $bioperlFeatureTree;
+## 3.3. check if gene, rna, exon or CDS are on the same strand
+## 3.4. check if overlapped exons 
+  &checkGeneStructure (\@topSeqFeatures);
 
-    my $type = $geneFeature->primary_tag();
-
-    if ($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' || $type eq 'centromere'
-	|| $type eq 'source'
-       ) {
-      $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-      next;
-    }
-
-
-    my $gene = &traverseSeqFeature($geneFeature, $bioperlSeq);
-    if ($gene) {
-      $bioperlSeq->add_SeqFeature($gene);
-    }
-  }
 
 }
 
@@ -162,59 +142,6 @@ sub processWithGenbank {
 sub processWithEmbl {
 }
 sub processWithGff {
-
-}
-
-sub traverseSeqFeature {
-  my ($geneFeature, $bioperlSeq) = @_;
-  my (@genes, $gene);
-  my @RNAs = $geneFeature->get_SeqFeatures;
-
-  my $transcriptCount = scalar @RNAs;
-  my $ctr = 1;
-
-  $gene = &makeBioperlFeature("gene", $geneFeature->location, $bioperlSeq);
-  $gene = &copyQualifiers($geneFeature, $gene);
-
-  foreach my $RNA (sort {$a->location->start <=> $b->location->start
-			   || $a->location->end <=> $b->location->end } @RNAs) {
-
-    my $subType = $RNA->primary_tag;
-
-    ## based on RNA type to make the gene
-
-    my $transcript = &makeBioperlFeature ("$subType", $RNA->location, $bioperlSeq);
-    $transcript = &copyQualifiers($RNA, $transcript);
-
-    if ($subType =~ /RNA/ || $subType eq "transcript") {
-      my @containedSubFeatures = $RNA->get_SeqFeatures;
-      foreach my $subSubFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures) {
-	my $subSubType = $subSubFeature->primary_tag;
-	if ($subSubType eq 'exon' || $subSubType eq 'CDS' || $subSubType eq 'UTR') {
-	  my $exon = &makeBioperlFeature ($subSubFeature->primary_tag, $subSubFeature->location, $bioperlSeq);
-	  $transcript->add_SeqFeature($exon);
-	}
-      }
-    }
-    $gene->add_SeqFeature($transcript);
-  }
-  push (@genes, $gene) if ($gene);
-  return (\@genes);
-}
-
-sub getSeqIO {
-  my ($inputFile, $format) = @_;
-  my $bioperlSeqIO;
-
-  if ($format =~ m/^gff([2|3])$/i) {
-    print STDERR "pre-processing GFF file ...\n";
-    $bioperlSeqIO = convertGFFStreamToSeqIO($1);
-    print STDERR "done pre-processing gff file\n";
-  } else {
-    $bioperlSeqIO = Bio::SeqIO->new (-format => $format,
-                                     -file => $inputFile);
-  }
-  return $bioperlSeqIO;
 }
 
 sub checkIfGeneID {   ## Done with test
@@ -225,6 +152,7 @@ sub checkIfGeneID {   ## Done with test
     if ($type eq 'gene' || $type eq 'pseudogene'
 	|| $type eq 'mRNA' || $type eq 'pseudogenic_transcript'
 	|| $type =~ /RNA$/
+	|| $type eq 'CDS'   ## for genbank format
        ) {
 
       my $cid = getIdOrLocusTag($feature);
@@ -236,19 +164,6 @@ sub checkIfGeneID {   ## Done with test
     }
   }
   return 1;
-
-#  my ($feature) = @_;
-
-#  if ($feature->has_tag ("ID") || $feature->has_tag("locus_tag") || $feature->has_tag("gene")) {
-#    return 1;
-#  } else {
-#    my $idGene = $feature->primary_tag();
-#    my $idStart = $feature->location->start;
-#    my $idEnd = $feature->location->end;
-#    print STDERR "ERROR: the required gene ID (ID, locus_tag, or gene) have not been found for $idGene: $idStart..$idEnd.\n";
-#    exit;
-#  }
-
 }
 
 sub checkIfGeneIDIsUnique {  ## Done test
@@ -262,11 +177,17 @@ sub checkIfGeneIDIsUnique {  ## Done test
 
       my $cid = getIdOrLocusTag($feature);
 
+      ## test gene structures
+##      &printGeneStructures($feature) if ($cid eq "I317_00002");
+      &printGeneStructures($feature) if ($cid eq "PVL_010005500");
+
+      my $s = $feature->location->start;
+      my $e = $feature->location->end;
+
       if ($ids{$cid}) {
-	print STDERR "ERROR: the gene ID: '$cid' is not unique.\n";
-	exit;
+	die "\nERROR: the gene ID: '$cid' is not unique. duplicated at $ids{$cid} and $s..$e\n";
       } else {
-	$ids{$cid} = 1;
+	$ids{$cid} = "$s..$e";
       }
     }
   }
@@ -274,6 +195,7 @@ sub checkIfGeneIDIsUnique {  ## Done test
 }
 
 ## check if gene, rna, exon or CDS are on the same strand
+## check if overlapped exon
 sub checkGeneStructure {  ## Done test
   my $geneFeature = shift;
 
@@ -284,22 +206,58 @@ sub checkGeneStructure {  ## Done test
       foreach my $RNA (sort {$a->location->start <=> $b->location->start
 			       || $a->location->end <=> $b->location->end} @RNAs){
 
-	my ($rID) = getIdOrLocusTag($RNA);
+	&checkIfSameStrand($gene, $RNA);
 
-	if ($gene->location->strand != $RNA->location->strand) {
-	  die "ERROR: at '$rID', gene and rna are not on the same strand\n";
-	}
+	&checkIfOverlapExon ($RNA, 'exon');
+	&checkIfOverlapExon ($RNA, 'CDS');
 
-	my @exons= $RNA->get_SeqFeatures;
-	foreach my $exon(sort {$a->location->start <=> $b->location->start} @exons){
-	    if ( ($gene->location->strand != $exon->location->strand)
-		 || ($RNA->location->strand != $exon->location->strand ) ) {
-	          die "ERROR: at '$rID', gene/rna and exon are not on the same strand\n";
-		}
-
-	  }
       }
     }
+  }
+  return 1;
+}
+
+sub checkIfOverlapExon {  ## $type is text of 'exon' OR 'CDS'
+                          ## check overlap for exon only, because there is only one CDS in exon features
+                          ## but check if same strand for both CDS and exon
+  my ($RNA, $type) = @_;
+  my ($cId) = getIdOrLocusTag ($RNA);
+  my @exons = $RNA->get_SeqFeatures;
+
+  my (%preEnd);
+  foreach my $exon (sort {$a->location->start <=> $b->location->start} @exons ) {
+    my $cStart = $exon->location->start;
+    my $cEnd = $exon->location->end;
+    my $cType = $exon->primary_tag();
+
+    &checkIfSameStrand($RNA, $exon) if ($cType eq $type );
+
+    if ($cType eq $type) {
+      if ($preEnd{$cType}) {
+	print STDERR "ERROR: overlapped exon found at '$cType' '$cId': $cStart....$cEnd\n" if ($preEnd{$cType} >= $cStart);
+      }
+      $preEnd{$cType} = $cEnd;
+    }
+  }
+  return 1;
+}
+
+sub checkIfSameStrand {
+  my ($feat1, $feat2) = @_;
+  my ($cId) = getIdOrLocusTag ($feat1);
+  my $type1 = $feat1->primary_tag();
+  my $type2 = $feat2->primary_tag();
+
+  if ($feat1->location->strand != $feat2->location->strand) {
+    print STDERR "ERROR, at $cId, $type1 and $type2 are not on the same strand\n";
+    my $feat1S = $feat1->location->start;
+    my $feat1E = $feat1->location->end;
+    my $feat1St = $feat1->location->strand;
+    my $feat2S = $feat2->location->start;
+    my $feat2E = $feat2->location->end;
+    my $feat2St = $feat2->location->strand;
+    print STDERR "  $type1: $feat1S..$feat1E at $feat1St; $type2: $feat2S..$feat2E at $feat2St\n";
+
   }
   return 1;
 }
@@ -317,41 +275,56 @@ sub getIdOrLocusTag {
     $cType = $feature->primary_tag();
     $cStart = $feature->location->start;
     $cEnd = $feature->location->end;
-    print STDERR "For this version, the unique gene ID, 'ID' or 'locus_tag' tag is required in the annotation file.
-      The unique gene ID has not been coded for feature '$cType' at $cStart ... $cEnd\n\n";
-    exit;
+    die "\nFor this version, the unique gene ID, 'ID' or 'locus_tag' tag is required in the annotation file.
+\nError: The unique gene ID has not been coded for feature '$cType' at $cStart ... $cEnd\n\n";
   }
   return $cId;
 }
 
-sub copyQualifiers {  ## copy qualifiers other than ID, Parent, and Derives_from
-  my ($geneFeature, $bioperlFeatureTree) = @_;
-  for my $qualifier ($geneFeature->get_all_tags()) {
-    if ($bioperlFeatureTree->has_tag($qualifier) 
-	&& $qualifier ne "ID" && $qualifier ne "Parent" && $qualifier ne "Derives_from") {
-      # remove tag and recreate with merged non-redundant values
-      my %seen;
-      my @uniqVals = grep {!$seen{$_}++} 
-                       $bioperlFeatureTree->remove_tag($qualifier), 
-                       $geneFeature->get_tag_values($qualifier);
-      $bioperlFeatureTree->add_tag_value(
-                             $qualifier, 
-                             @uniqVals
-                           );    
-    } elsif($qualifier ne "ID" && $qualifier ne "Parent" && $qualifier ne "Derives_from") {
-      $bioperlFeatureTree->add_tag_value(
-                             $qualifier,
-                             $geneFeature->get_tag_values($qualifier)
-                           );
+## reportFeatureQualifiers --format gff3 --file_or_Dir whole_genome.gff > report.txt
+sub runReportFeatureQualifiers {
+  my ($format, $genomeFile, $outputDir) = @_;
+  $outputDir = "." if (!$outputDir);
+  my $pc = "reportFeatureQualifiers --format $format --file_or_Dir $genomeFile > $outputDir/report.txt";
+  print STDERR "running...\n  $pc\n";
+  &runCmd($pc);
+  print STDERR "Done:\n  $pc\n";
+  return 1;
+}
+
+sub printGeneStructures {
+  my ($gene) = @_;
+
+  &printBioPerlStructures($gene);
+
+  foreach my $rna (sort {$a->location->start <=> $b->location->start} $gene->get_SeqFeatures) {
+    &printBioPerlStructures($rna, "  ");
+    foreach my $exon (sort {$a->location->start <=> $b->location->start} $rna->get_SeqFeatures) {
+      &printBioPerlStructures ($exon, "    ");
     }
   }
-  return $bioperlFeatureTree;
+  return 1;
+}
+
+sub printBioPerlStructures {
+  my ($feat, $prefix) = @_;
+  my $t = $feat->primary_tag();
+  my $s = $feat->location->start;
+  my $e = $feat->location->end;
+  my $strand = $feat->location->strand;
+  print STDERR "$prefix$t: $s..$e at $strand\n";
 }
 
 sub usage {
   die
 "
-Usage: validateAnnotationFile
+A script to validate gene model for annotation that has standard structure.
+  gene: or pseudogene, required
+  transcript: mRNA, tRNA, rRNA, and ect, optional
+  exon: or pseudogenic_exon, optional
+  CDS: optional
+
+Usage: validateAnnotationFile --inputFileOrDir genome.gbf --inputFileFormat genbank
 
 where:
   --inputFileOrDir: required, the annotation file name or directory containing annotation files
