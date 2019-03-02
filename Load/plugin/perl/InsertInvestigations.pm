@@ -306,7 +306,7 @@ sub loadCharacteristics{
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   my $directMode = 'false';
-  if ($self->countLines() > 100000){
+  if ($self->countLines($charFile) > 100000){
       $directMode = 'true';
       $self->log("SQLLDR will use DIRECT path\n");
   }
