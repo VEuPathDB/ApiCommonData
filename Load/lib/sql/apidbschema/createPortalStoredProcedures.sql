@@ -71,3 +71,4 @@ GRANT execute ON apidb.wrap TO gus_r;
 GRANT execute ON apidb.wrap TO gus_w;
 
 -------------------------------------------------------------------------------
+exit
