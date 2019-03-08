@@ -71,4 +71,45 @@ GRANT execute ON apidb.wrap TO gus_r;
 GRANT execute ON apidb.wrap TO gus_w;
 
 -------------------------------------------------------------------------------
+
+CREATE OR REPLACE TYPE apidb.varchartab AS TABLE OF VARCHAR2(4000);
+/
+
+GRANT execute ON apidb.varchartab TO PUBLIC;
+
+CREATE OR REPLACE FUNCTION
+apidb.tab_to_string (p_varchar2_tab  IN  apidb.varchartab,
+                     p_delimiter     IN  VARCHAR2 DEFAULT ',')
+RETURN VARCHAR2 IS
+l_string     VARCHAR2(32767);
+BEGIN
+
+  IF p_varchar2_tab.FIRST IS NULL THEN
+    RETURN null;
+  END IF;
+
+  FOR i IN p_varchar2_tab.FIRST .. p_varchar2_tab.LAST LOOP
+    IF i != p_varchar2_tab.FIRST AND length(l_string) < 4000 THEN
+      l_string := l_string || p_delimiter;
+    END IF;
+
+    IF length(l_string) >= 3997 THEN
+      l_string := SUBSTR(l_string, 1, 3997) ||  '...' ;
+    ELSIF (length(l_string) + length(p_varchar2_tab(i))) > 4000 THEN
+      l_string := l_string || SUBSTR(p_varchar2_tab(i), 1, 3997 - length(l_string)) || '...' ;
+    ELSE
+      l_string := l_string || p_varchar2_tab(i);
+    END IF;
+  END LOOP;
+
+  RETURN l_string;
+
+END tab_to_string;
+/
+
+show errors;
+
+GRANT execute ON apidb.tab_to_string TO PUBLIC;
+
+-------------------------------------------------------------------------------
 exit
