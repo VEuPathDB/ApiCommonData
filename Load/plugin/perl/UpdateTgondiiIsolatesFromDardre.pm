@@ -169,7 +169,7 @@ EOSQL
 
       }
   
-$sql = <<EOSQL;
+my $sql2 = <<EOSQL;
 
       SELECT ens.na_sequence_id, ens.source_id,
          f.na_feature_id, f.subclass_view
@@ -182,8 +182,8 @@ $sql = <<EOSQL;
 
 EOSQL
       
-  my $stmt = $self->prepareAndExecute($sql);    
-      while (my ($sequenceId, $sourceId,$featureId, $subclassView) = $stmt->fetchrow_array()) {
+  my $stmt2 = $self->prepareAndExecute($sql2);    
+      while (my ($sequenceId, $sourceId,$featureId, $subclassView) = $stmt2->fetchrow_array()) {
 	
 	push(@{$isolates{$sourceId}},$sequenceId,$featureId);
 
