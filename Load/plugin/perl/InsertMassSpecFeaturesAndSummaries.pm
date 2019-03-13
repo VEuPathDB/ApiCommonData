@@ -539,14 +539,14 @@ sub addRecordsToGenes {
 
           # ensure that all peptides match on to this protein
 
-          my $proteinMatchPercent = $self->checkThatPeptidesMatch($record,$prot->[1]);
-          if($proteinMatchPercent >= $proteinMatchCuttoff) {
+#          my $proteinMatchPercent = $self->checkThatPeptidesMatch($record,$prot->[1]);
+#          if($proteinMatchPercent >= $proteinMatchCuttoff) {
 #          if($self->checkThatAllPeptidesMatch($record,$prot->[1])) {
             $wasFound = 1;
             $self->copyRecord($record, $aaSeqId);
-          }else{
-			     warn "For $record->{sourceId} (".scalar(@{$record->{peptides}})." peptides), only $proteinMatchPercent % of peptides matched, less than $proteinMatchCuttoff %, now try testing all proteins.\n";
-          } 
+#          }else{
+#			     warn "For $record->{sourceId} (".scalar(@{$record->{peptides}})." peptides), only $proteinMatchPercent % of peptides matched, less than $proteinMatchCuttoff %, now try testing all proteins.\n";
+#          } 
         }
       }
     }
