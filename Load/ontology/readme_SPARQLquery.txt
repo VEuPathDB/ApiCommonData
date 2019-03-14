@@ -127,6 +127,11 @@ robot query --use-graphs true --input ./Gates/MALED/gates_maled.owl --query ./SP
 # Gates GEMS1
 robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/QC_sameLabelForMultipleTerms.rq ./query_results/GEMS1_terms_sameLabelForMultipleTerms.csv
 
+
+# Gates GEMS1 HUAS
+robot query --input ./Gates/GEMS-HUAS/gates_gems_huas.owl --query ./SPARQL/QC_sameLabelForMultipleTerms.rq ./query_results/GEMS1_HUAS_terms_sameLabelForMultipleTerms.csv
+
+
 ————————————————————————————————————————————————————————————
 # Check any leaf terms without corresponding variables in the dataset
 #	QC_leaf_notVariable.rq
