@@ -26,7 +26,7 @@ while (<IN>) {
   my @items = split(/\t/, $_);
   if ($items[2] eq $tagName) {
     my $id;
-    if ($items[8] =~ /ID=(.+?)\;/) {
+    if ($items[8] =~ /ID=(.+?)\;/ || $items[8] =~ /Name=(.+?)(;|$)/) {
       $id = $1;
       $id =~ s/\:/\_/g;
     }
@@ -76,7 +76,7 @@ foreach my $k (sort keys %ctgIDs) {
 close FOUT;
 
 
-my $gffOutFile = $gffFile . "_split.gff";
+my $gffOutFile = $gffFile . "_split.gff3";
 open (GOUT, ">$gffOutFile") || die "can not open gff file to read\n";
 
 open (GFF, $gffFile) || die "can not open gffFile to read.\n";
