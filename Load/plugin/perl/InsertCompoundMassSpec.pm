@@ -111,7 +111,7 @@ sub run {
   my ($self) = @_;
 
   my $peakFile = $self->getArg('peaksFile');
-  print STDERR "$peakFile :Ross \n";
+  #print STDERR "$peakFile :Ross \n";
 
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
@@ -134,14 +134,14 @@ sub run {
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
 
-  print STDERR "Ross :$external_database_release_id";
+  #print STDERR "Ross :$external_database_release_id";
 
   $ms_polarity = "";
   $isotopomer = ""; # leaving null for now.
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
-  # my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({external_database_release_id=>$external_database_release_id, peak_number=>$peak_id, mass=>$mass, retention_time=>$retention_time, ms_polarity=>$ms_polarity});
-  # $compoundPeaksRow->submit(); #TODO FIX THIS.
+  my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({external_database_release_id=>$external_database_release_id, peak_number=>$peak_id, mass=>$mass, retention_time=>$retention_time, ms_polarity=>$ms_polarity});
+  $compoundPeaksRow->submit(); #TODO FIX THIS.
 
 # # Load into CompoundPeaksChebi
 #
