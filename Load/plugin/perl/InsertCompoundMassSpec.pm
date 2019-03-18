@@ -141,14 +141,14 @@ sub run {
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
 # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
-  my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
-    external_database_release_id=>$external_database_release_id,
-    peak_number=>$peak_id, mass=>$mass,
-    retention_time=>$retention_time,
-    ms_polarity=>$ms_polarity
-    });
-  $self->undefPointerCache();
-  $compoundPeaksRow->submit(); #NOTE, ok to here.
+  # my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
+  #   external_database_release_id=>$external_database_release_id,
+  #   peak_number=>$peak_id, mass=>$mass,
+  #   retention_time=>$retention_time,
+  #   ms_polarity=>$ms_polarity
+  #   });
+  # $self->undefPointerCache();
+  # $compoundPeaksRow->submit(); #NOTE, ok to here.
 
 # Load into CompoundPeaksChebi
 
