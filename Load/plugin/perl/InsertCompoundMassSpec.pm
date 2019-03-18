@@ -141,7 +141,8 @@ sub run {
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
   my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({external_database_release_id=>$external_database_release_id, peak_number=>$peak_id, mass=>$mass, retention_time=>$retention_time, ms_polarity=>$ms_polarity});
-  $compoundPeaksRow->submit(); #TODO FIX THIS.
+  self->undefPointerCache();
+  $compoundPeaksRow->submit(); #TODO FIX THIS. Issue with max number of rows.
 
 # # Load into CompoundPeaksChebi
 #
