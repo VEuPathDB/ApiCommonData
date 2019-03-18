@@ -177,7 +177,8 @@ sub run {
   );
 
   print STDERR "Ross";
-  #print STDERR Dumper @compoundSQL;
+  print STDERR Dumper @compoundSQL;
+  print STDERR "\n";
 
   my $compoundIDLoad = @compoundSQL[0];
 
