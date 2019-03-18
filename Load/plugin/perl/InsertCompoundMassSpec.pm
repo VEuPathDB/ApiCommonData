@@ -166,7 +166,7 @@ sub run {
 
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=>
-    "c.id
+    "select c.id
 		  , c.chebi_accession
 		  , select s.structure
 		  from chebi.structures s
