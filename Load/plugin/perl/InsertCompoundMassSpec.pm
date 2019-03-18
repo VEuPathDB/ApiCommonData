@@ -179,7 +179,7 @@ sub run {
   my $compoundIDLoad = @compoundSQL[0];
 
   # Loaded some test data into apidb.compoundpeaks on rm23697
-  my @compoundPeaksSQL = $self->sqlAsArray({Sql=>
+  my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
 		  "SELECT cp.compound_peaks_id
 		   FROM APIDB.CompoundPeaks cp
 		   WHERE cp.mass = '$mass'
