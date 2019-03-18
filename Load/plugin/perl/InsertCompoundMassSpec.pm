@@ -181,10 +181,10 @@ sub run {
   my @compoundPeaksSQL = $self->sqlAsArray({Sql=>
 		  "SELECT cp.compound_peaks_id
 		   FROM APIDB.CompoundPeaks cp
-		   WHERE cp.mass = $mass
-			 and cp.retention_time= $retention_time");
+		   WHERE cp.mass = '$mass'
+			 and cp.retention_time= '$retention_time'");
 
-  $compound_peaks_id = @compoundPeaksSQL[0];
+  my $compound_peaks_id = @compoundPeaksSQL[0];
 
   print STDERR $compoundIDLoad, " ", $compound_peaks_id, " ", $isotopomer,  "\n";
 
