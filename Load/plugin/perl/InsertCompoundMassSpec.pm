@@ -129,7 +129,7 @@ sub run {
 #	$ms_polarity = $peaksArray[4];
 #	$isotopomer = $peaksArray[5];
 
-  #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity; # - looks fine.
+  print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity; # - looks fine.
 
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -161,6 +161,9 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
+  my $compundLookup = 'InChIKey=' . $compound_id;
+  print STDERR "lookup $compundLookup \n"
+
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=>
     "select s.structure
@@ -170,7 +173,7 @@ sub run {
 		  , CHEBI.compounds c
 		  where s.type = 'InChIKey'
           and c.id = s.compound_id
-		  and to_char(s.structure) = 'InChIKey=$compound_id'"
+		  and to_char(s.structure) = '$compundLookup'"
   );
 
   print STDERR "Ross";
