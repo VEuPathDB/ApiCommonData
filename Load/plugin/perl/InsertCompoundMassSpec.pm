@@ -162,7 +162,7 @@ sub run {
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
   my $compundLookup = 'InChIKey=' . $compound_id;
-  print STDERR "lookup $compundLookup \n"
+  print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=>
