@@ -140,6 +140,7 @@ sub run {
   $isotopomer = ""; # leaving null for now.
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
+# NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
   my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({external_database_release_id=>$external_database_release_id, peak_number=>$peak_id, mass=>$mass, retention_time=>$retention_time, ms_polarity=>$ms_polarity});
   $self->undefPointerCache();
   $compoundPeaksRow->submit(); #NOTE, ok to here.
@@ -154,7 +155,7 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-
+  # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=>
     "select s.structure
 		  --, c.chebi_accession
@@ -167,21 +168,23 @@ sub run {
   );
 
   print STDERR "Ross";
-  print STDERR Dumper @compoundSQL;
-#
-#   my $compoundIDLoad = @compoundSQL[0];
-#
-#   my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-# 		  "SELECT cp.compound_peaks_id
-# 		   FROM APIDB.CompoundPeaks cp
-# 		   WHERE cp.mass = $mass
-# 			 and cp.retention_time=$retention_time");
-#
-#   $compound_peaks_id = @compoundPeaksSQL[0];
-#
-#   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({compound_id=>$compoundIDLoad, compound_peaks_id=>$compound_peaks_id, isotopomer=>$isotopomer});
-#
-#   $compoundPeaksChebiRow->submit();
+  #print STDERR Dumper @compoundSQL;
+
+  my $compoundIDLoad = @compoundSQL[0];
+
+  my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+		  "SELECT cp.compound_peaks_id
+		   FROM APIDB.CompoundPeaks cp
+		   WHERE cp.mass = $mass
+			 and cp.retention_time=$retention_time");
+
+  $compound_peaks_id = @compoundPeaksSQL[0];
+
+  print STDERR $compoundIDLoad, " ", $compound_peaks_id, " ", $isotopomer,  "\n";
+
+  my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({compound_id=>$compoundIDLoad, compound_peaks_id=>$compound_peaks_id, isotopomer=>$isotopomer});
+
+  $compoundPeaksChebiRow->submit();
   } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
