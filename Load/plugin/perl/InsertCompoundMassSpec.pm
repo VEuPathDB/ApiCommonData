@@ -195,7 +195,7 @@ sub run {
   # });
   #
   # $compoundPeaksChebiRow->submit();
-  # } #End of while(<PEAKS>)
+  } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
 
