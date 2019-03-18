@@ -162,32 +162,32 @@ sub run {
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
   # This look up takes time.
-  # my @compoundSQL = $self->sqlAsArray(Sql=>
-  #   "select s.structure
-	# 	  --, c.chebi_accession
-	# 	  --, c.id
-	# 	  from chebi.structures s
-	# 	  , CHEBI.compounds c
-	# 	  where s.type = 'InChIKey'
-  #         and c.id = s.compound_id
-	# 	  and to_char(s.structure) = 'InChIKey=$compound_id'"
-  # );
-  #
-  # print STDERR "Ross";
-  # #print STDERR Dumper @compoundSQL;
-  #
-  # my $compoundIDLoad = @compoundSQL[0];
-  #
-  # # Loaded some test data into apidb.compoundpeaks on rm23697
-  # my @compoundPeaksSQL = $self->sqlAsArray({Sql=>
-	# 	  "SELECT cp.compound_peaks_id
-	# 	   FROM APIDB.CompoundPeaks cp
-	# 	   WHERE cp.mass = '$mass'
-	# 		 and cp.retention_time= '$retention_time'"); # NOTE the precision of the data in the SQL table for mass and rt.
-  #
-  # my $compound_peaks_id = @compoundPeaksSQL[0];
-  #
-  # print STDERR $compoundIDLoad, " ", $compound_peaks_id, " ", $isotopomer,  "\n";
+  my @compoundSQL = $self->sqlAsArray(Sql=>
+    "select s.structure
+		  --, c.chebi_accession
+		  --, c.id
+		  from chebi.structures s
+		  , CHEBI.compounds c
+		  where s.type = 'InChIKey'
+          and c.id = s.compound_id
+		  and to_char(s.structure) = 'InChIKey=$compound_id'"
+  );
+
+  print STDERR "Ross";
+  #print STDERR Dumper @compoundSQL;
+
+  my $compoundIDLoad = @compoundSQL[0];
+
+  # Loaded some test data into apidb.compoundpeaks on rm23697
+  my @compoundPeaksSQL = $self->sqlAsArray({Sql=>
+		  "SELECT cp.compound_peaks_id
+		   FROM APIDB.CompoundPeaks cp
+		   WHERE cp.mass = '$mass'
+			 and cp.retention_time= '$retention_time'"); # NOTE the precision of the data in the SQL table for mass and rt.
+
+  my $compound_peaks_id = @compoundPeaksSQL[0];
+
+  print STDERR $compoundIDLoad, " ", $compound_peaks_id, " ", $isotopomer,  "\n";
   #
   # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
   #   compound_id=>$compoundIDLoad,
