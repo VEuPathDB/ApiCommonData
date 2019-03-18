@@ -163,10 +163,10 @@ sub run {
 		  , CHEBI.compounds c
 		  where s.type = 'InChIKey'
           and c.id = s.compound_id
-		  and to_char(s.structure) = $compound_id"
+		  and to_char(s.structure) = '$compound_id'"
   );
 
-  print STDERR "Ross"; 
+  print STDERR "Ross";
   print STDERR Dumper @compoundSQL;
 #
 #   my $compoundIDLoad = @compoundSQL[0];
