@@ -129,7 +129,7 @@ sub run {
 #	$ms_polarity = $peaksArray[4];
 #	$isotopomer = $peaksArray[5];
 
-  print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity; # - looks fine.
+  #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity; # - looks fine.
 
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -187,7 +187,7 @@ sub run {
 
   my $compound_peaks_id = @compoundPeaksSQL[0];
 
-  print STDERR $compoundIDLoad, " ", $compound_peaks_id, " ", $isotopomer,  "\n";
+  print STDERR "c: ", $compoundIDLoad, " cp: ", $compound_peaks_id, " ", $isotopomer,  "\n";
   #
   # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
   #   compound_id=>$compoundIDLoad,
