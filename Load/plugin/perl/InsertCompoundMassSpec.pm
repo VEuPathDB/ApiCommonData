@@ -142,30 +142,32 @@ sub run {
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
   my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({external_database_release_id=>$external_database_release_id, peak_number=>$peak_id, mass=>$mass, retention_time=>$retention_time, ms_polarity=>$ms_polarity});
   $self->undefPointerCache();
-  $compoundPeaksRow->submit(); #TODO FIX THIS. Issue with max number of rows.
+  $compoundPeaksRow->submit(); #NOTE, ok to here.
 
-# # Load into CompoundPeaksChebi
-#
-# #  @compoundSQL = $self->sqlAsArray(Sql=>
-# #		  "SELECT cmp.id
-# #		  FROM CHEBI.Compounds cmp WHERE cmp.id = '$compound_id'"); #This may need to change depending on if we used CheBi or not.... add option for running plugin with different compound DBs.
-#
-# #  my @compoundSQL = $self->sqlAsArray(Sql=>
-# #		  "SELECT cmp.id
-# #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
-#
-#
-#   my @compoundSQL = $self->sqlAsArray(Sql=>
-#     "select s.structure
-# 		  --, c.chebi_accession
-# 		  --, c.id
-# 		  from chebi.structures s
-# 		  , CHEBI.compounds c
-# 		  where s.type = 'InChIKey'
-#           and c.id = s.compound_id
-# 		  and to_char(s.structure) = $compound_id"
-#   );
-#
+# Load into CompoundPeaksChebi
+
+#  @compoundSQL = $self->sqlAsArray(Sql=>
+#		  "SELECT cmp.id
+#		  FROM CHEBI.Compounds cmp WHERE cmp.id = '$compound_id'"); #This may need to change depending on if we used CheBi or not.... add option for running plugin with different compound DBs.
+
+#  my @compoundSQL = $self->sqlAsArray(Sql=>
+#		  "SELECT cmp.id
+#		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
+
+
+  my @compoundSQL = $self->sqlAsArray(Sql=>
+    "select s.structure
+		  --, c.chebi_accession
+		  --, c.id
+		  from chebi.structures s
+		  , CHEBI.compounds c
+		  where s.type = 'InChIKey'
+          and c.id = s.compound_id
+		  and to_char(s.structure) = $compound_id"
+  );
+
+  print STDERR "Ross"; 
+  print STDERR Dumper @compoundSQL;
 #
 #   my $compoundIDLoad = @compoundSQL[0];
 #
