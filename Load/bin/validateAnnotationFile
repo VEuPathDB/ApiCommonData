@@ -16,11 +16,15 @@ use ApiCommonData::Load::Unflattener;
 ## TODO
 ## 1. catch the CDS locationis outside of transcript location
 ## 2. catch the aa sequence length, report if it is less than 10
+## 3. for gff3, check there is a Parent tag for mRNA, exon, CDS, and peptide, 
+##    eg. MONOS_16842 at /eupath/data/EuPathDB/manualDelivery/TrichDB/mspPA203/genome/Unknown/2019-03-06/fromProvider/Monocercomonoides_v3.3.gff3
 
-my ($inputFileOrDir, $inputFileFormat, $outputFileDir, $help);
+
+my ($inputFileOrDir, $inputFileFormat, $outputFileDir, $printTagValuePair, $help);
 &GetOptions('inputFileOrDir=s' => \$inputFileOrDir,
 	    'inputFileFormat=s' => \$inputFileFormat,
 	    'outputFileDir=s' => \$outputFileDir,
+	    'printTagValuePair=s' => \$printTagValuePair,
 	    'help|h' => \$help
 	    );
 &usage() if ($help);
@@ -54,7 +58,7 @@ if ($inputFileFormat =~ /genbank/i) {
 
 
 ## 1. run reportFeatureQualifiers
-&runReportFeatureQualifiers($inputFileFormat, $wholeGenomeFile);
+&runReportFeatureQualifiers($inputFileFormat, $wholeGenomeFile, $outputFileDir);
 
 ## 2. check gene model
 my $bioperlSeqIO = ApiCommonData::Load::AnnotationUtils::getSeqIO($wholeGenomeFile, $inputFileFormat);
@@ -85,6 +89,12 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
   }
   print STDERR "\$idSymbol = $idSymbol\n";
 
+  ## printTagValuePair only
+  if ($printTagValuePair =~ /^y/i) {
+    &printTagValuePairData (\@topSeqFeatures, "");
+    next;
+  }
+
 ## 3.1. check if gene has ID
   &checkIfGeneID (\@topSeqFeatures);
 
@@ -95,6 +105,35 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
 ## 3.4. check if overlapped exons 
   &checkGeneStructure (\@topSeqFeatures);
 
+
+
+}
+
+
+sub printTagValuePairData {
+  my ($geneFeature, $prefix) = @_;
+
+  my $subPrefix = $prefix."  ";
+
+  my ($type, $start, $end);
+  foreach my $feature (@{$geneFeature}) {
+    $type = $feature->primary_tag();
+
+    $start = $feature->location->start;
+    $end = $feature->location->end;
+    print "\n" if ($type eq "gene" || $type eq "pseudogene");
+    print "$prefix$type: $start..$end\n";
+
+    foreach my $tag ($feature->get_all_tags()) {
+      foreach my $value ($feature->get_tag_values($tag)) {
+	print "$subPrefix$tag: $value\n";
+      }
+    }
+
+    my @subFeature = $feature->get_SeqFeatures();
+    &printTagValuePairData(\@subFeature, $subPrefix);
+  }
+  return 1;
 
 }
 
@@ -224,7 +263,7 @@ sub checkIfOverlapExon {  ## $type is text of 'exon' OR 'CDS'
   my ($cId) = getIdOrLocusTag ($RNA);
   my @exons = $RNA->get_SeqFeatures;
 
-  my (%preEnd);
+  my (%preStart, %preEnd);
   foreach my $exon (sort {$a->location->start <=> $b->location->start} @exons ) {
     my $cStart = $exon->location->start;
     my $cEnd = $exon->location->end;
@@ -234,8 +273,9 @@ sub checkIfOverlapExon {  ## $type is text of 'exon' OR 'CDS'
 
     if ($cType eq $type) {
       if ($preEnd{$cType}) {
-	print STDERR "ERROR: overlapped exon found at '$cType' '$cId': $cStart....$cEnd\n" if ($preEnd{$cType} >= $cStart);
+	print STDERR "ERROR: overlapped exon found at '$cType' '$cId': $preStart{$cType}..$preEnd{$cType} and $cStart..$cEnd\n" if ($preEnd{$cType} >= $cStart);
       }
+      $preStart{$cType} = $cStart;
       $preEnd{$cType} = $cEnd;
     }
   }
@@ -325,11 +365,13 @@ A script to validate gene model for annotation that has standard structure.
   CDS: optional
 
 Usage: validateAnnotationFile --inputFileOrDir genome.gbf --inputFileFormat genbank
+           --printTagValuePair (print tag-value pair only)
 
 where:
   --inputFileOrDir: required, the annotation file name or directory containing annotation files
   --inputFileFormat: required, the format of annotation file(s)
   --outputFileDir: optional, the directory name for output file
+  --printTagValuePair: optional, only print tags and values pair, do not run validation
 
 ";
 }
