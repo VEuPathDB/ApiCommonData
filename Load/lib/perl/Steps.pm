@@ -1,25 +1,4 @@
 use strict;
-#vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
-  # GUS4_STATUS | SRes.SequenceOntology          | auto   | broken
-  # GUS4_STATUS | Study.OntologyEntry            | auto   | broken
-  # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
-  # GUS4_STATUS | Dots.RNAFeatureExon            | auto   | absent
-  # GUS4_STATUS | RAD.SageTag                    | auto   | broken
-  # GUS4_STATUS | RAD.Analysis                   | auto   | broken
-  # GUS4_STATUS | ApiDB.Profile                  | auto   | absent
-  # GUS4_STATUS | Study.Study                    | auto   | absent
-  # GUS4_STATUS | Dots.Isolate                   | auto   | broken
-  # GUS4_STATUS | DeprecatedTables               | auto   | absent
-  # GUS4_STATUS | Pathway                        | auto   | absent
-  # GUS4_STATUS | DoTS.SequenceVariation         | auto   | absent
-  # GUS4_STATUS | RNASeq Junctions               | auto   | absent
-  # GUS4_STATUS | Simple Rename                  | auto   | absent
-  # GUS4_STATUS | ApiDB Tuning Gene              | auto   | broken
-  # GUS4_STATUS | Rethink                        | auto   | absent
-  # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
-#^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 
 use Bio::SeqIO;
 use CBIL::Util::PropertySet;
@@ -1021,8 +1000,10 @@ sub copyPipelineDirToComputeCluster {
 
   return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipeline/primary",
-			  "$clusterProjectDir");
+  #system("ssh -2 consign.pmacs.upenn.edu '/bin/bash -login -c | mkdir -p ($clusterReleaseDir/analysis_pipeline/primary/)'");
+  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipeline/primary","$clusterProjectDir");
+
+  #system("ssh -2 consign.pmacs.upenn.edu '/bin/bash -login -c | ln -s $clusterReleaseDir/analysis_pipeline/primary/logs $clusterReleaseDir/analysis_pipeline/primary/data'");
 
   $mgr->{cluster}->runCmdOnCluster("ln -s $clusterReleaseDir/analysis_pipeline/primary/logs $clusterReleaseDir/analysis_pipeline/primary/data");
 
@@ -1669,7 +1650,7 @@ sub makeTranscriptDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
-                apidb.FeatureLocation fl,
+                ApidbTuning.FeatureLocation fl,
                 dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
         AND gf.na_sequence_id = ns.na_sequence_id
@@ -2090,7 +2071,7 @@ sub makeDerivedCdsDownloadFileTransformed {
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM apidb.FeatureLocation fl,
+           FROM ApidbTuning.FeatureLocation fl,
                 ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
@@ -2333,7 +2314,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             taas.length
             as defline,
             taas.sequence
-           FROM apidb.FeatureLocation fl,
+           FROM ApidbTuning.FeatureLocation fl,
                 ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
@@ -2567,7 +2548,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            apidb.FeatureLocation fl,
+            ApidbTuning.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -2634,7 +2615,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            apidb.FeatureLocation fl,
+            ApidbTuning.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -2822,7 +2803,7 @@ sub makeMixedGenomicDownloadFile {
                ns.sequence
            FROM dots.nasequence ns,
 	        sres.taxonname tn,
-                ApidbTuning.GenomicSeqAttributes sa
+                ApidbTuning.SequenceAttributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
 	    AND ns.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'
@@ -3776,9 +3757,9 @@ sub mapProteomeToGroups{
 
   my $groupsFile = $propertySet->getProp('groupsFile');
 
-  my $blastOutput =  "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/master/mainresult/blastSimilarity.out.gz";
+  my $blastOutput =  "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/master/mainresult/blastSimilarity.out";
 
-  my $blastSelfOutput =  "$mgr->{dataDir}/similarity/Proteome-Proteome/master/mainresult/blastSimilarity.out.gz"; 
+  my $blastSelfOutput =  "$mgr->{dataDir}/similarity/Proteome-Proteome/master/mainresult/blastSimilarity.out"; 
 
   my $cmd = "orthomclMapProteomeToGroups $blastSelfOutput $blastOutput $groupsFile  'wxyz' $mgr->{dataDir}/similarity/Proteome-ProteinSeqs mcl $logfile";
 
@@ -4515,8 +4496,9 @@ sub startProteinBlastOnComputeCluster {
   return if $mgr->startStep("Starting $name blast on cluster", $signal);
 
   $mgr->endStep($signal);
-
-  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue $ppn";
+  my $gusHome = '$GUS_HOME';
+  my $clusterCmdMsg = "bsub $gusHome/bin/distribjobSubmit $mgr->{clusterDataDir}/logs/${queryFile}-${subjectFile}.log --numNodes NUMBER_OF_NODES --runTime 0 --propFile $mgr->{clusterDataDir}/similarity/${queryFile}-${subjectFile}/input/controller.prop --parallelInit 4 --mpn 8 --q normal 1";
+ # my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue $ppn";
 
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
