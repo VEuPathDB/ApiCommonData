@@ -173,7 +173,7 @@ sub run {
                                             where s.type = 'InChIKey'
                                             and c.id = s.compound_id
                                             and to_char(s.structure) = '$compundLookup'
-                                            ");
+                                            "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables.
   # print STDERR "Ross";
   # print STDERR Dumper @compoundSQL;
   # print STDERR "\n";
@@ -198,7 +198,7 @@ sub run {
     isotopomer=>$isotopomer
     });
 
-  #$compoundPeaksChebiRow->submit();
+  $compoundPeaksChebiRow->submit();
   $self->undefPointerCache();
 
   } #End of while(<PEAKS>)
