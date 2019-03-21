@@ -206,7 +206,7 @@ sub run {
 
 # munge the results file. Map using the peak ID for now.
   my $dir = $self->getArg->{mainDirectory};
-  print STDERR "dir = ", $dir; 
+  print STDERR "dir = ", $dir;
   #my $resultsFile = $self->getArg->{'resultsFile'};
   #my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
@@ -214,8 +214,6 @@ sub run {
 #
 # # run SUPER class run().
 #   $resultsData->run();
-
-  print STDERR "Running";
 
 }
 
