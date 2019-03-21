@@ -190,8 +190,8 @@ sub run {
     compound_peaks_id=>$compound_peaks_id,
     isotopomer=>$isotopomer
   });
-
-  $compoundPeaksChebiRow->submit();
+  print STDERR "Ross", $compoundPeaksChebiRow; 
+  #$compoundPeaksChebiRow->submit();
 
   } #End of while(<PEAKS>)
 
