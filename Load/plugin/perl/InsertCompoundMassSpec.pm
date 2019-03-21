@@ -139,7 +139,7 @@ sub run {
   #print STDERR "Ross :$external_database_release_id";
 
   $ms_polarity = "";
-  $isotopomer = undef; # leaving null for now.
+  $isotopomer = "test"; # leaving null for now.
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
 # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
