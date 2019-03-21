@@ -166,14 +166,14 @@ sub run {
 
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=>
-    "select c.id
-    , c.chebi_accession
-    , s.structure
-    from chebi.structures s
-    , CHEBI.compounds c
-      where s.type = 'InChIKey'
-      and c.id = s.compound_id
-		  and to_char(s.structure) = '$compundLookup'"
+  "select c.id
+, c.chebi_accession
+, s.structure
+from chebi.structures s
+,CHEBI.compounds c
+where s.type = 'InChIKey'
+and c.id = s.compound_id
+and to_char(s.structure) = 'InChIKey=AKXKFZDCRYJKTF-UHFFFAOYSA-N'"
   ); # TODO this is not fiding the key.
 
   print STDERR "Ross";
