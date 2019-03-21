@@ -148,7 +148,7 @@ sub run {
     ms_polarity=>$ms_polarity
     });
 
-  $self->undefPointerCache();
+
   $compoundPeaksRow->submit(); #NOTE, ok to here.
 
 # Load into CompoundPeaksChebi
@@ -192,7 +192,8 @@ sub run {
     isotopomer=>$isotopomer
     });
 
-  #$compoundPeaksChebiRow->submit();
+  $compoundPeaksChebiRow->submit();
+  $self->undefPointerCache();
 
   } #End of while(<PEAKS>)
 
