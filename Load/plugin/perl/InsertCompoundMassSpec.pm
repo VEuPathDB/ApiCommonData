@@ -161,7 +161,7 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-  my $compundLookup = 'InChIKey=' . $compound_id;
+  my $compundLookup = '%' . $compound_id;
   print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
@@ -172,7 +172,7 @@ sub run {
                                             ,CHEBI.compounds c
                                             where s.type = 'InChIKey'
                                             and c.id = s.compound_id
-                                            and to_char(s.structure) = 'InChIKey=$compound_id'"); # TODO this is not fiding the key.
+                                            and to_char(s.structure) like '$compundLookup'"); # TODO this is not fiding the key.
 
   print STDERR "Ross";
   print STDERR Dumper @compoundSQL;
