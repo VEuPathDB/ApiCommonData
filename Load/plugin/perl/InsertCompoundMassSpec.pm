@@ -167,7 +167,7 @@ sub run {
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=> "select * from chebi.structures s
                                                where s.type = 'InChIKey'
-                                               and to_char(s.structure) = 'InChIKey=$compound_id'"); # TODO this is not fiding the key.
+                                               and to_char(s.structure) = 'InChIKey=BSABBBMNWQWLLU-GSVOUGTGSA-N'"); # TODO this is not fiding the key.
 
   print STDERR "Ross";
   print STDERR Dumper @compoundSQL;
