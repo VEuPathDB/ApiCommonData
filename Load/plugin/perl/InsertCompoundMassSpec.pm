@@ -161,7 +161,7 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-  my $compundLookup = 'InChIKey=' . 'JDVVGAQPNNXQDW-TVNFTVLESA-N';
+  my $compundLookup = 'InChIKey=' . $compound_id;
   print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
