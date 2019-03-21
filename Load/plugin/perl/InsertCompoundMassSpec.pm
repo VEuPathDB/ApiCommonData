@@ -184,11 +184,11 @@ sub run {
   my $compound_peaks_id = @compoundPeaksSQL[0];
 
   print STDERR "c: ", $compoundIDLoad, " cp: ", $compound_peaks_id, " ", $isotopomer,  "\n";
-  
+
   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
     compound_id=>$compoundIDLoad,
     compound_peaks_id=>$compound_peaks_id,
-    sotopomer=>$isotopomer
+    isotopomer=>$isotopomer
   });
 
   $compoundPeaksChebiRow->submit();
