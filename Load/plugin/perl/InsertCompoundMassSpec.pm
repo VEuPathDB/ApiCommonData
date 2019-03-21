@@ -126,6 +126,7 @@ sub run {
 	$mass = $peaksArray[1];
 	$retention_time = $peaksArray[2];
 	$compound_id = $peaksArray[3];
+  chomp $compound_id;
 #	$ms_polarity = $peaksArray[4];
 #	$isotopomer = $peaksArray[5];
 
@@ -161,7 +162,7 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-  my $compundLookup = 'InChIKey=' . chomp($compound_id) . "test";
+  my $compundLookup = 'InChIKey=' . $compound_id;
   print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
