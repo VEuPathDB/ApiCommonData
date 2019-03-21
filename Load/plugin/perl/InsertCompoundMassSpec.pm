@@ -148,7 +148,7 @@ sub run {
     ms_polarity=>$ms_polarity
     });
 
-  $compoundPeaksRow->submit(); #NOTE, ok to here.
+  #compoundPeaksRow->submit(); #NOTE, ok to here.
 
 # Load into CompoundPeaksChebi
 
