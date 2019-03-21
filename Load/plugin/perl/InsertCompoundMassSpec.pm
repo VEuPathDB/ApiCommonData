@@ -126,7 +126,7 @@ sub run {
 	$mass = $peaksArray[1];
 	$retention_time = $peaksArray[2];
 	$compound_id = $peaksArray[3];
-  chomp $compound_id;
+  chomp $compound_id; # needs due to the new line char.
 #	$ms_polarity = $peaksArray[4];
 #	$isotopomer = $peaksArray[5];
 
@@ -134,7 +134,6 @@ sub run {
 
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
-
   #print STDERR "Ross :$external_database_release_id";
 
   $ms_polarity = "";
@@ -163,16 +162,15 @@ sub run {
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
   my $compundLookup = 'InChIKey=' . $compound_id;
-  print STDERR "lookup $compundLookup \n";
+  #print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=> "select * from chebi.structures s
                                                where to_char(s.structure) = '$compundLookup'
-                                               and s.type = 'InChIKey'"); # TODO this is not fiding the key.
-
-  print STDERR "Ross";
-  print STDERR Dumper @compoundSQL;
-  print STDERR "\n";
+                                               and s.type = 'InChIKey'");
+  # print STDERR "Ross";
+  # print STDERR Dumper @compoundSQL;
+  # print STDERR "\n";
 
   my $compoundIDLoad = @compoundSQL[0];
 
@@ -186,14 +184,14 @@ sub run {
   my $compound_peaks_id = @compoundPeaksSQL[0];
 
   print STDERR "c: ", $compoundIDLoad, " cp: ", $compound_peaks_id, " ", $isotopomer,  "\n";
-  #
-  # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-  #   compound_id=>$compoundIDLoad,
-  #   compound_peaks_id=>$compound_peaks_id,
-  #   sotopomer=>$isotopomer
-  # });
-  #
-  # $compoundPeaksChebiRow->submit();
+  
+  my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+    compound_id=>$compoundIDLoad,
+    compound_peaks_id=>$compound_peaks_id,
+    sotopomer=>$isotopomer
+  });
+
+  $compoundPeaksChebiRow->submit();
 
   } #End of while(<PEAKS>)
 
