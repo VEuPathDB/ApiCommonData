@@ -198,7 +198,7 @@ sub run {
     isotopomer=>$isotopomer
     });
 
-  $compoundPeaksChebiRow->submit();
+  #$compoundPeaksChebiRow->submit();
   $self->undefPointerCache();
 
   } #End of while(<PEAKS>)
