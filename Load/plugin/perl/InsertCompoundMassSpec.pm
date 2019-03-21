@@ -110,6 +110,8 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  #TODO - set path to the files.
+
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
 
@@ -137,7 +139,7 @@ sub run {
   #print STDERR "Ross :$external_database_release_id";
 
   $ms_polarity = "";
-  $isotopomer = "test"; # leaving null for now.
+  $isotopomer = ""; # leaving null for now.
 
 # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
 # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
@@ -203,10 +205,10 @@ sub run {
   } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
-
-#   my $dir = $self->getArg->{mainDirectory} ;
-#   my $resultsFile = $self->getArg->{'resultsFile'};
-#   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
+  my $dir = $self->getArg->{mainDirectory};
+  print STDERR "dir = ", $dir; 
+  #my $resultsFile = $self->getArg->{'resultsFile'};
+  #my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
 #   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args);
 #
