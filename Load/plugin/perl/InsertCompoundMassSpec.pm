@@ -110,8 +110,6 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  #TODO - set path to the files.
-
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
 
@@ -205,15 +203,17 @@ sub run {
   } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
-  #my $dir = $self->getArg->{mainDirectory};
-  #print STDERR "dir = ", $dir;
-  #my $resultsFile = $self->getArg->{'resultsFile'};
-  #my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
+
+#   my $dir = $self->getArg->{mainDirectory} ;
+#   my $resultsFile = $self->getArg->{'resultsFile'};
+#   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
 #   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args);
 #
 # # run SUPER class run().
 #   $resultsData->run();
+
+  print STDERR "Running";
 
 }
 
