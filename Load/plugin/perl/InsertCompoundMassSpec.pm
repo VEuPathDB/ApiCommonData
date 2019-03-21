@@ -179,7 +179,8 @@ sub run {
 		  "SELECT cp.compound_peaks_id
 		   FROM APIDB.CompoundPeaks cp
 		   WHERE cp.mass = '$mass'
-			 and cp.retention_time= '$retention_time'"); # NOTE the precision of the data in the SQL table for mass and rt.
+			 and cp.retention_time= '$retention_time'
+       and cp.external_database_release_id = $external_database_release_id"); # NOTE the precision of the data in the SQL table for mass and rt.
 
   my $compound_peaks_id = @compoundPeaksSQL[0];
 
@@ -189,9 +190,9 @@ sub run {
     compound_id=>$compoundIDLoad,
     compound_peaks_id=>$compound_peaks_id,
     isotopomer=>$isotopomer
-  });
+    });
 
-  $compoundPeaksChebiRow->submit();
+  #$compoundPeaksChebiRow->submit();
 
   } #End of while(<PEAKS>)
 
