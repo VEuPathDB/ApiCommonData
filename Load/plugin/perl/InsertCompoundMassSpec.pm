@@ -148,7 +148,6 @@ sub run {
     ms_polarity=>$ms_polarity
     });
 
-
   $compoundPeaksRow->submit(); #NOTE, ok to here.
 
 # Load into CompoundPeaksChebi
@@ -190,13 +189,13 @@ sub run {
 
   my $compound_peaks_id = @compoundPeaksSQL[0];
 
-  print STDERR "c: ", $compoundIDLoad, " cp: ", $compound_peaks_id, " ", $isotopomer,  "\n";
+  print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
 
   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
     compound_id=>$compoundIDLoad,
     compound_peaks_id=>$compound_peaks_id,
     isotopomer=>$isotopomer
-    });
+  }); # NOTE ok to here.
 
   $compoundPeaksChebiRow->submit();
   $self->undefPointerCache();
