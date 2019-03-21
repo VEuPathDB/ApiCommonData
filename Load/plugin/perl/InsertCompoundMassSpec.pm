@@ -161,13 +161,13 @@ sub run {
 #		  "SELECT cmp.id
 #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-  my $compundLookup = 'InChIKey=' . $compound_id;
+  my $compundLookup = "'" .'InChIKey=' . $compound_id . "'";
   print STDERR "lookup $compundLookup \n";
 
   # This look up takes time.
   my @compoundSQL = $self->sqlAsArray(Sql=> "select * from chebi.structures s
                                                where s.type = 'InChIKey'
-                                               and to_char(s.structure) = '$compundLookup'"); # TODO this is not fiding the key.
+                                               and to_char(s.structure) = $compundLookup"); # TODO this is not fiding the key.
 
   print STDERR "Ross";
   print STDERR Dumper @compoundSQL;
