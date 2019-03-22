@@ -200,10 +200,11 @@ sub run {
 # munge the results file. Map using the peak ID for now.
 
   my $dir = $self->getArg('mainDirectory');
-  #my $resultsFile = $self->getArg('resultsFile');
+  my $resultsFile = $self->getArg('resultsFile');
   print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
-  my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading/final', makePercentiles=>0, inputFile=>'data.tab', profileSetName=> };
+  #TODO Fix the filepaths.
+  my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading', makePercentiles=>0, inputFile=>'data.tab', profileSetName=> };
   my $params;
 
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
