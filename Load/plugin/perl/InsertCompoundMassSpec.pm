@@ -148,7 +148,7 @@ sub run {
     ms_polarity=>$ms_polarity
     });
 
-  $compoundPeaksRow->submit(); #NOTE, ok to here.
+  # $compoundPeaksRow->submit(); #NOTE, ok to here.
 
 # Load into CompoundPeaksChebi
 
@@ -180,25 +180,25 @@ sub run {
   my $compoundIDLoad = @compoundSQL[0];
 
   # Loaded some test data into apidb.compoundpeaks on rm23697
-  # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-	# 	  "SELECT cp.compound_peaks_id
-	# 	   FROM APIDB.CompoundPeaks cp
-	# 	   WHERE cp.mass = '$mass'
-	# 		 and cp.retention_time= '$retention_time'
-  #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
-  #
-  # my $compound_peaks_id = @compoundPeaksSQL[0];
-  #
-  # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-  #
-  # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-  #   compound_id=>$compoundIDLoad,
-  #   compound_peaks_id=>$compound_peaks_id,
-  #   isotopomer=>$isotopomer
-  # }); # NOTE ok to here.
-  #
-  # $compoundPeaksChebiRow->submit();
-  # $self->undefPointerCache();
+  my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+		  "SELECT cp.compound_peaks_id
+		   FROM APIDB.CompoundPeaks cp
+		   WHERE cp.mass = '$mass'
+			 and cp.retention_time= '$retention_time'
+       and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+
+  my $compound_peaks_id = @compoundPeaksSQL[0];
+
+  print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+
+  my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+    compound_id=>$compoundIDLoad,
+    compound_peaks_id=>$compound_peaks_id,
+    isotopomer=>$isotopomer
+  }); # NOTE ok to here.
+
+  #$compoundPeaksChebiRow->submit();
+  $self->undefPointerCache();
 
   } #End of while(<PEAKS>)
 
