@@ -204,9 +204,10 @@ sub run {
   print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
+  my $params;
 
-  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args);
-  $resultsData->munge(); 
+  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  $resultsData->munge();
 #
 # # run SUPER class run().
 #   $resultsData->run();
