@@ -194,7 +194,7 @@ sub run {
 
       #$compoundPeaksChebiRow->submit();
       $self->undefPointerCache();
-ll
+
   } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
