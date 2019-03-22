@@ -205,6 +205,7 @@ sub run {
 # munge the results file. Map using the peak ID for now.
 
    my $dir = $self->getArg{mainDirectory};
+   print STDERR $dir;
 #   my $resultsFile = $self->getArg->{'resultsFile'};
 #   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
