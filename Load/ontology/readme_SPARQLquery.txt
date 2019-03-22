@@ -89,6 +89,9 @@ robot query --input ./Gates/GEMS/gates_gems.owl --query ./SPARQL/get_displayOrde
 # Gates GEMS1a
 robot query --input ./Gates/GEMS1A/gates_gems1a.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/GEMS1a_displayOrder.csv
 
+# Gates GEMS1 HUAS
+robot query --input ./Gates/GEMS-HUAS/gates_gems_huas.owl --query ./SPARQL/get_displayOrder_lable_parentLabel.rq ./query_results/GEMS1_HUAS_displayOrder.csv
+
 
 
 # Gates MALED
