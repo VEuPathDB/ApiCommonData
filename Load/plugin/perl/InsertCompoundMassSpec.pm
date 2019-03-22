@@ -197,14 +197,14 @@ sub run {
     isotopomer=>$isotopomer
   }); # NOTE ok to here.
 
-  $compoundPeaksChebiRow->submit();
+  #$compoundPeaksChebiRow->submit();
   $self->undefPointerCache();
 
   } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
 
-#   my $dir = $self->getArg->{mainDirectory} ;
+   my $dir = $self->getArg{mainDirectory};
 #   my $resultsFile = $self->getArg->{'resultsFile'};
 #   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
