@@ -204,7 +204,8 @@ sub run {
   print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
   #TODO Fix the filepaths.
-  my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading', makePercentiles=>0, inputFile=>'data.tab', profileSetName=> };
+  my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading', makePercentiles=>0, inputFile=>'data.tab', profileSetName=>'RossMetaTest' };
+  #TODO What should profileSetName be?
   my $params;
 
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
