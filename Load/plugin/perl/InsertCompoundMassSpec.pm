@@ -14,7 +14,7 @@ use strict;
 
 my $argsDeclaration =
 [
-    fileArg({name           => 'mainDirectory',
+    fileArg({name           => 'inputDir',
         descr          => 'Directory in which to find input files',
         reqd           => 1,
         mustExist      => 1,
@@ -199,7 +199,7 @@ sub run {
 
 # munge the results file. Map using the peak ID for now.
 
-  my $dir = $self->getArg('mainDirectory');
+  my $dir = $self->getArg('inputDir');
   my $resultsFile = $self->getArg('resultsFile');
   print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
