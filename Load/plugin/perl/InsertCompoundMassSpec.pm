@@ -211,7 +211,9 @@ sub run {
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
   $resultsData->munge(); # This works.
 
+  $self->SUPER::run();
 
+  print STDERR "Ross- END"
 }
 
 1;
