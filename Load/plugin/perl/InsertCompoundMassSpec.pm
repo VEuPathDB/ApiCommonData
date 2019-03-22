@@ -201,7 +201,7 @@ sub run {
 
   my $dir = $self->getArg('mainDirectory');
   my $resultsFile = $self->getArg('resultsFile');
-  print STDERR "dir ", $dir, "   file: " $resultsFile;
+  print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
 #   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
 #
