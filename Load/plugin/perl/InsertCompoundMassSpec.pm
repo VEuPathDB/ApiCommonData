@@ -203,7 +203,7 @@ sub run {
   my $resultsFile = $self->getArg('resultsFile');
   print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
-  my $args = {mainDirectory=>"data.tab", makePercentiles=>0, inputFile=>$resultsFile, profileSetName=> };
+  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>"data.tab", profileSetName=> };
   my $params;
 
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
