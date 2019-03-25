@@ -204,7 +204,7 @@ sub run {
 
   #TODO Fix the filepaths.
   my $inputFile = $dir . "/" . $resultsFile;
-  my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading/final', makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
   #TODO What should profileSetName be?
   my $params;
 
