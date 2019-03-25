@@ -119,6 +119,7 @@ sub run {
 
   my @header = split(/\t/, $header);
   my ($external_database_release_id, $peak_id, $mass, $retention_time, $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer);
+  my ($lastMass, $lastRT);
 
   while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);
@@ -130,72 +131,75 @@ sub run {
   #	$ms_polarity = $peaksArray[4];
   #	$isotopomer = $peaksArray[5];
 
-    print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
+    if (($lastMass == $mass) && ($lastRT == $retention_time)){ #Mulplite compounds can map to one mass/rt pair.
+    print STDERR "$mass - $retention_time already in CompoundPeaks - skipping.\n"
+    }
+    else {
+      print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
 
-    my $extDbSpec = $self->getArg('extDbSpec');
-    $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
-    #print STDERR "Ross :$external_database_release_id";
-    $ms_polarity = "";
-    $isotopomer = "test"; # leaving null for now.
+      my $extDbSpec = $self->getArg('extDbSpec');
+      $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
+      #print STDERR "Ross :$external_database_release_id";
+      $ms_polarity = "";
+      $isotopomer = "test"; # leaving null for now.
 
-    # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
-    # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
-      my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
-        external_database_release_id=>$external_database_release_id,
-        peak_number=>$peak_id, mass=>$mass,
-        retention_time=>$retention_time,
-        ms_polarity=>$ms_polarity
-      });
+      # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
+      # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
+        my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
+          external_database_release_id=>$external_database_release_id,
+          peak_number=>$peak_id, mass=>$mass,
+          retention_time=>$retention_time,
+          ms_polarity=>$ms_polarity
+        });
+        # $compoundPeaksRow->submit(); #NOTE, ok to here.
 
-      # $compoundPeaksRow->submit(); #NOTE, ok to here.
+      } # end of else mass/rt test.
+        # Load into CompoundPeaksChebi
+        #  @compoundSQL = $self->sqlAsArray(Sql=>
+        #		  "SELECT cmp.id
+        #		  FROM CHEBI.Compounds cmp WHERE cmp.id = '$compound_id'"); #This may need to change depending on if we used CheBi or not.... add option for running plugin with different compound DBs.
+        #  my @compoundSQL = $self->sqlAsArray(Sql=>
+        #		  "SELECT cmp.id
+        #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-      # Load into CompoundPeaksChebi
+        my $compundLookup = 'InChIKey=' . $compound_id;
 
-      #  @compoundSQL = $self->sqlAsArray(Sql=>
-      #		  "SELECT cmp.id
-      #		  FROM CHEBI.Compounds cmp WHERE cmp.id = '$compound_id'"); #This may need to change depending on if we used CheBi or not.... add option for running plugin with different compound DBs.
+        # This look up takes time.
+        my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
+                                                  , c.chebi_accession
+                                                  , s.structure
+                                                  from chebi.structures s
+                                                  , CHEBI.compounds c
+                                                  where s.type = 'InChIKey'
+                                                  and c.id = s.compound_id
+                                                  and to_char(s.structure) = '$compundLookup'
+                                                  "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
 
-      #  my @compoundSQL = $self->sqlAsArray(Sql=>
-      #		  "SELECT cmp.id
-      #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
+        my $compoundIDLoad = @compoundSQL[0];
 
-      my $compundLookup = 'InChIKey=' . $compound_id;
-      #print STDERR "lookup $compundLookup \n";
+        # Loaded some test data into apidb.compoundpeaks on rm23697
+        my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+      		  "SELECT cp.compound_peaks_id
+      		   FROM APIDB.CompoundPeaks cp
+      		   WHERE cp.mass = '$mass'
+      			 and cp.retention_time= '$retention_time'
+             and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
 
-      # This look up takes time.
-      my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
-                                                , c.chebi_accession
-                                                , s.structure
-                                                from chebi.structures s
-                                                , CHEBI.compounds c
-                                                where s.type = 'InChIKey'
-                                                and c.id = s.compound_id
-                                                and to_char(s.structure) = '$compundLookup'
-                                                "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
+        my $compound_peaks_id = @compoundPeaksSQL[0];
+        print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
 
-      my $compoundIDLoad = @compoundSQL[0];
+        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+          compound_id=>$compoundIDLoad,
+          compound_peaks_id=>$compound_peaks_id,
+          isotopomer=>$isotopomer
+        }); # NOTE ok to here.
 
-      # Loaded some test data into apidb.compoundpeaks on rm23697
-      my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-    		  "SELECT cp.compound_peaks_id
-    		   FROM APIDB.CompoundPeaks cp
-    		   WHERE cp.mass = '$mass'
-    			 and cp.retention_time= '$retention_time'
-           and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+        #$compoundPeaksChebiRow->submit();
+        $self->undefPointerCache();
+        $lastMass = $peaksArray[1];
+        $lastRT = $peaksArray[2];
 
-      my $compound_peaks_id = @compoundPeaksSQL[0];
-      print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-
-      my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-        compound_id=>$compoundIDLoad,
-        compound_peaks_id=>$compound_peaks_id,
-        isotopomer=>$isotopomer
-      }); # NOTE ok to here.
-
-      #$compoundPeaksChebiRow->submit();
-      $self->undefPointerCache();
-
-  } #End of while(<PEAKS>)
+    } #End of while(<PEAKS>)
 
 # munge the results file. Map using the peak ID for now.
 
@@ -208,7 +212,7 @@ sub run {
   #TODO What should profileSetName be?
   my $params;
 
-  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params); # Miising inputProtocolAppNodes in config
   $resultsData->munge(); # This works.
 
   $self->SUPER::run();
