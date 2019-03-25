@@ -198,12 +198,8 @@ sub run {
 
   } #End of while(<PEAKS>)
 
-
   my $resultsFile = $self->getArg('resultsFile');
-  #print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
-  #TODO Fix the filepaths.
-  my $inputFile = $dir . "/" . $resultsFile;
   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
   #TODO What should profileSetName be?
   my $params;
