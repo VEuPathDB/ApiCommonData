@@ -55,7 +55,7 @@ my $argsDeclaration =
     fileArg({name           => 'configFile',
         descr          => 'Name of config File, describes the profiles being loaded',
         reqd           => 1,
-        mustExist      => 1,
+        mustExist      => 0,
         format         => 'Tab file with header',
         constraintFunc => undef,
         isList         => 0, }),
@@ -209,6 +209,8 @@ sub run {
   $resultsData->munge(); # This works.
 
   $self->SUPER::run();
+
+  #TODO  -  needs the file insert_study_results_config.txt needs to exist (even if empty and the written to) - how to get around this.
 
   print STDERR "Ross- END"
 }
