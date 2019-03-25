@@ -115,11 +115,11 @@ sub run {
   #print STDERR "$peakFile :Ross \n";
   my $peakFile = $dir . "/" . $peakFile;
 
-  open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
+  open(PEAKS, "/home/rmadden/MetabolomicsDataLoading/final/peaks.tab") or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
-
   my @header = split(/\t/, $header);
+
   my ($external_database_release_id, $peak_id, $mass, $retention_time, $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer);
   my ($lastMass, $lastRT);
 
