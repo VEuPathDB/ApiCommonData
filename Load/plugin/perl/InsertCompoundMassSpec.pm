@@ -113,8 +113,9 @@ sub run {
   my $dir = $self->getArg('inputDir');
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
+  my $peakFile = $dir . "/" . $peakFile;
 
-  open(PEAKS, $dir . "/" . $peakFile) or $self->("Could not open $peakFile for reading: $!");
+  open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
 
