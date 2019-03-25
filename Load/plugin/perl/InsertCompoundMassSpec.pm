@@ -128,11 +128,12 @@ sub run {
   	$retention_time = $peaksArray[2];
   	$compound_id = $peaksArray[3];
     chomp $compound_id; # needs due to the new line char.
-  #	$ms_polarity = $peaksArray[4];
-  #	$isotopomer = $peaksArray[5];
+    #	$ms_polarity = $peaksArray[4];
+    #	$isotopomer = $peaksArray[5];
 
-    if (($lastMass == $mass) && ($lastRT == $retention_time)){ #Mulplite compounds can map to one mass/rt pair.
-    print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+    if (($lastMass == $mass) && ($lastRT == $retention_time)){
+      #Mulplite compounds can map to one mass/rt pair.
+      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
       print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
@@ -192,27 +193,23 @@ sub run {
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
 
-    } #End of while(<PEAKS>) # NOTE ok to here.
-
-# munge the results file. Map using the peak ID for now.
+  } #End of while(<PEAKS>)
 
   my $dir = $self->getArg('inputDir');
   my $resultsFile = $self->getArg('resultsFile');
-  print STDERR "dir ", $dir, "   file: ", $resultsFile;
+  #print STDERR "dir ", $dir, "   file: ", $resultsFile;
 
   #TODO Fix the filepaths.
   my $args = {mainDirectory=>'/home/rmadden/MetabolomicsDataLoading', makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
   #TODO What should profileSetName be?
   my $params;
 
-  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params); # Miising inputProtocolAppNodes in config
-  $resultsData->munge(); # This works.
-
+  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  $resultsData->munge();
   $self->SUPER::run();
 
-  #TODO  -  needs the file insert_study_results_config.txt needs to exist (even if empty and the written to) - how to get around this.
+  #TODO  - need to rm insert_study_results_config.txt??
 
-  print STDERR "Ross- END"
 }
 
 1;
