@@ -144,18 +144,17 @@ sub run {
       $isotopomer = "test"; # leaving null for now.
 
       # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
-      # NOTE : Check that changing the format (csv->tab) does not chnage the Mass / RT float values.
+      # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
           external_database_release_id=>$external_database_release_id,
           peak_number=>$peak_id, mass=>$mass,
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        #$compoundPeaksRow->submit(); #NOTE, ok to here.
+        #$compoundPeaksRow->submit(); .
 
       } # end of else mass/rt test.
         # Load into CompoundPeaksChebi
-      
         my $compundLookup = 'InChIKey=' . $compound_id;
 
         # This look up takes time.
@@ -186,14 +185,14 @@ sub run {
           compound_id=>$compoundIDLoad,
           compound_peaks_id=>$compound_peaks_id,
           isotopomer=>$isotopomer
-        }); # NOTE ok to here.
+        });
 
-        $compoundPeaksChebiRow->submit();
+        #$compoundPeaksChebiRow->submit();
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
 
-    } #End of while(<PEAKS>)
+    } #End of while(<PEAKS>) # NOTE ok to here.
 
 # munge the results file. Map using the peak ID for now.
 
@@ -209,7 +208,7 @@ sub run {
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params); # Miising inputProtocolAppNodes in config
   $resultsData->munge(); # This works.
 
-  #$self->SUPER::run();
+  $self->SUPER::run();
 
   print STDERR "Ross- END"
 }
