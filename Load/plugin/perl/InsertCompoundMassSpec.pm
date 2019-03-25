@@ -114,8 +114,9 @@ sub run {
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
   my $peakFile = $dir . "/" . $peakFile;
+  print STDERR $peakFile;
 
-  open(PEAKS, "/home/rmadden/MetabolomicsDataLoading/final/peaks.tab") or $self->("Could not open $peakFile for reading: $!");
+  open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
   my @header = split(/\t/, $header);
