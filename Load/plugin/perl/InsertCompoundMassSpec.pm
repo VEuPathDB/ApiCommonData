@@ -132,7 +132,7 @@ sub run {
   #	$isotopomer = $peaksArray[5];
 
     if (($lastMass == $mass) && ($lastRT == $retention_time)){ #Mulplite compounds can map to one mass/rt pair.
-    print STDERR "$mass - $retention_time already in CompoundPeaks - skipping.\n"
+    print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
       print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
@@ -151,7 +151,7 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        # $compoundPeaksRow->submit(); #NOTE, ok to here.
+        $compoundPeaksRow->submit(); #NOTE, ok to here.
 
       } # end of else mass/rt test.
         # Load into CompoundPeaksChebi
@@ -194,7 +194,7 @@ sub run {
           isotopomer=>$isotopomer
         }); # NOTE ok to here.
 
-        #$compoundPeaksChebiRow->submit();
+        $compoundPeaksChebiRow->submit();
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
@@ -215,7 +215,7 @@ sub run {
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params); # Miising inputProtocolAppNodes in config
   $resultsData->munge(); # This works.
 
-  $self->SUPER::run();
+  #$self->SUPER::run();
 
   print STDERR "Ross- END"
 }
