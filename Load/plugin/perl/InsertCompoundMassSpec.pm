@@ -162,42 +162,42 @@ sub run {
         #		  "SELECT cmp.id
         #		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
 
-        my $compundLookup = 'InChIKey=' . $compound_id;
-
-        # This look up takes time.
-        my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
-                                                  , c.chebi_accession
-                                                  , s.structure
-                                                  from chebi.structures s
-                                                  , CHEBI.compounds c
-                                                  where s.type = 'InChIKey'
-                                                  and c.id = s.compound_id
-                                                  and to_char(s.structure) = '$compundLookup'
-                                                  "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
-
-        my $compoundIDLoad = @compoundSQL[0];
-
-        # Loaded some test data into apidb.compoundpeaks on rm23697
-        my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-      		  "SELECT cp.compound_peaks_id
-      		   FROM APIDB.CompoundPeaks cp
-      		   WHERE cp.mass = '$mass'
-      			 and cp.retention_time= '$retention_time'
-             and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
-
-        my $compound_peaks_id = @compoundPeaksSQL[0];
-        print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-
-        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-          compound_id=>$compoundIDLoad,
-          compound_peaks_id=>$compound_peaks_id,
-          isotopomer=>$isotopomer
-        }); # NOTE ok to here.
-
-        $compoundPeaksChebiRow->submit();
-        $self->undefPointerCache();
-        $lastMass = $peaksArray[1];
-        $lastRT = $peaksArray[2];
+        # my $compundLookup = 'InChIKey=' . $compound_id;
+        #
+        # # This look up takes time.
+        # my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
+        #                                           , c.chebi_accession
+        #                                           , s.structure
+        #                                           from chebi.structures s
+        #                                           , CHEBI.compounds c
+        #                                           where s.type = 'InChIKey'
+        #                                           and c.id = s.compound_id
+        #                                           and to_char(s.structure) = '$compundLookup'
+        #                                           "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
+        #
+        # my $compoundIDLoad = @compoundSQL[0];
+        #
+        # # Loaded some test data into apidb.compoundpeaks on rm23697
+        # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+      	# 	  "SELECT cp.compound_peaks_id
+      	# 	   FROM APIDB.CompoundPeaks cp
+      	# 	   WHERE cp.mass = '$mass'
+      	# 		 and cp.retention_time= '$retention_time'
+        #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+        #
+        # my $compound_peaks_id = @compoundPeaksSQL[0];
+        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+        #
+        # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+        #   compound_id=>$compoundIDLoad,
+        #   compound_peaks_id=>$compound_peaks_id,
+        #   isotopomer=>$isotopomer
+        # }); # NOTE ok to here.
+        #
+        # $compoundPeaksChebiRow->submit();
+        # $self->undefPointerCache();
+        # $lastMass = $peaksArray[1];
+        # $lastRT = $peaksArray[2];
 
     } #End of while(<PEAKS>)
 
