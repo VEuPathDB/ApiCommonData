@@ -196,8 +196,8 @@ sub run {
         #
         # $compoundPeaksChebiRow->submit();
         # $self->undefPointerCache();
-        # $lastMass = $peaksArray[1];
-        # $lastRT = $peaksArray[2];
+         $lastMass = $peaksArray[1];
+         $lastRT = $peaksArray[2];
 
     } #End of while(<PEAKS>)
 
