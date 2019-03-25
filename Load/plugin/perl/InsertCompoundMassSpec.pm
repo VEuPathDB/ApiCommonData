@@ -155,14 +155,8 @@ sub run {
 
       } # end of else mass/rt test.
         # Load into CompoundPeaksChebi
-        #  @compoundSQL = $self->sqlAsArray(Sql=>
-        # 		  "SELECT cmp.id
-        # 		  FROM CHEBI.Compounds cmp WHERE cmp.id = '$compound_id'"); #This may need to change depending on if we used CheBi or not.... add option for running plugin with different compound DBs.
-        #  my @compoundSQL = $self->sqlAsArray(Sql=>
-        # 		  "SELECT cmp.id
-        # 		   FROM APIDB.pubchemcompound cmp WHERE cmp.pubchem_compund_id = '$compound_id'");
-        #
-        # my $compundLookup = 'InChIKey=' . $compound_id;
+      
+        my $compundLookup = 'InChIKey=' . $compound_id;
 
         # This look up takes time.
         my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
