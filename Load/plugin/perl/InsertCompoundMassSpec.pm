@@ -144,10 +144,10 @@ sub run {
 
     if (($lastMass == $mass) && ($lastRT == $retention_time)){
       #Mulplite compounds can map to one mass/rt pair.
-      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+      #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
+      #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
 
       my $extDbSpec = $self->getArg('extDbSpec');
       $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -188,20 +188,21 @@ sub run {
         }
 
         # Loaded some test data into apidb.compoundpeaks on rm23697
-        my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-      		  "SELECT cp.compound_peaks_id
-      		   FROM APIDB.CompoundPeaks cp
-      		   WHERE cp.mass = '$mass'
-      			 and cp.retention_time= '$retention_time'
-             and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
 
-        my $compound_peaks_id = @compoundPeaksSQL[0];
-        print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-
-        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-          compound_id=>$compoundIDLoad,
-          compound_peaks_id=>$compound_peaks_id,
-          isotopomer=>$isotopomer
+        # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+      	# 	  "SELECT cp.compound_peaks_id
+      	# 	   FROM APIDB.CompoundPeaks cp
+      	# 	   WHERE cp.mass = '$mass'
+      	# 		 and cp.retention_time= '$retention_time'
+        #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+        #
+        # my $compound_peaks_id = @compoundPeaksSQL[0];
+        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+        #
+        # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+        #   compound_id=>$compoundIDLoad,
+        #   compound_peaks_id=>$compound_peaks_id,
+        #   isotopomer=>$isotopomer
         });
 
         #$compoundPeaksChebiRow->submit();
