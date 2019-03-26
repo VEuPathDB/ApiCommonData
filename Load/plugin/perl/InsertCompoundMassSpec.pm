@@ -110,6 +110,14 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $testHash = {};
+  $testHash->{"CompoundMissing"} = 0;
+  $testHash->{"AllMissing"} = 0;
+  #total number
+  #missing peak_number
+
+
+
   my $dir = $self->getArg('inputDir');
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
@@ -174,6 +182,11 @@ sub run {
 
         my $compoundIDLoad = @compoundSQL[0];
 
+        if (!$compoundIDLoad) {
+          $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
+
+        }
+
         # Loaded some test data into apidb.compoundpeaks on rm23697
         my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
       		  "SELECT cp.compound_peaks_id
@@ -198,18 +211,20 @@ sub run {
 
   } #End of while(<PEAKS>)
 
-  my $resultsFile = $self->getArg('resultsFile');
+  print Dumper $testHash;
 
-  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
-  #TODO What should profileSetName be?
-  my $params;
-
-  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
-  $resultsData->munge();
-  $self->SUPER::run();
-
-  #TODO  - need to rm insert_study_results_config.txt??
+  # my $resultsFile = $self->getArg('resultsFile');
+  #
+  # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+  # #TODO What should profileSetName be?
+  # my $params;
+  #
+  # my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  # $resultsData->munge();
+  # $self->SUPER::run();
+  # #TODO  - need to rm insert_study_results_config.txt??
 
 }
+
 
 1;
