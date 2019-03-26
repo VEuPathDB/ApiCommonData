@@ -45,7 +45,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::Core::Algorithm" => ["name"],
                             "GUS::Model::Core::AlgorithmImplementation" => ["executable", "cvs_revision"], 
                             "GUS::Model::Core::AlgorithmParamKeyType" => ["type"], 
-                            "GUS::Model::Core::AlgorithmParamKey" => ["algorithm_implementation_id", "algorithm_param_ke"], 
+                            "GUS::Model::Core::AlgorithmParamKey" => ["algorithm_implementation_id", "algorithm_param_key"], 
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
