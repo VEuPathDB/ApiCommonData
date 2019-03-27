@@ -148,7 +148,7 @@ sub run {
 
     if (($lastMass == $mass) && ($lastRT == $retention_time)){
       #Mulplite compounds can map to one mass/rt pair.
-      #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
       #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
@@ -211,7 +211,7 @@ sub run {
              and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
 
         my $compound_peaks_id = @compoundPeaksSQL[0];
-        print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
 
         my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
           compound_id=>$compoundIDLoad,
