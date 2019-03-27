@@ -128,11 +128,13 @@ sub run {
   my ($external_database_release_id, $peak_id, $mass, $retention_time, $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer);
   my ($lastMass, $lastRT);
 
-  my $allPresent = True;
+  my $allPresent = 1;
 
   while(<PEAKS>){
     if (($lastMass != $mass) && ($lastRT != $retention_time)){
-      $allPresent = True;
+      if ($allPresent == 1){
+        $allPresent = 1;
+      }
     }
 
     my @peaksArray = split(/\t/, $_);
@@ -187,10 +189,10 @@ sub run {
         if (!$compoundIDLoad) {
           $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
           if (($lastMass == $mass) && ($lastRT == $retention_time)){
-            $allPresent = False;
+            $allPresent = 0;
           }
           elsif(($lastMass != $mass) && ($lastRT != $retention_time)){
-            if ($allPresent = False){
+            if ($allPresent = 0){
               $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
             }
           }
