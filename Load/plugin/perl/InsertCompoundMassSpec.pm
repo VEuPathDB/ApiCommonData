@@ -22,12 +22,12 @@ my $argsDeclaration =
         constraintFunc => undef,
         isList         => 0, }),
 
-    # stringArg({name => 'extDbSpec',
-    #       descr => 'External database from whence this data came|version',
-    #       constraintFunc=> undef,
-    #       reqd  => 1,
-    #       isList => 0
-    #      }),
+    stringArg({name => 'extDbSpec',
+          descr => 'External database from whence this data came|version',
+          constraintFunc=> undef,
+          reqd  => 1,
+          isList => 0
+         }),
 
     stringArg({name => 'studyName',
           descr => 'Name of the Study;  Will be added if it does not already exist',
@@ -134,7 +134,6 @@ sub run {
   my $peakFile = $dir . "/" . $peakFile;
   #print STDERR $peakFile;
 
-
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
@@ -161,32 +160,31 @@ sub run {
     #	$ms_polarity = $peaksArray[4];
     #	$isotopomer = $peaksArray[5];
 
-# TRYP TEST ---
-    # if (($lastMass == $mass) && ($lastRT == $retention_time)){
-    #   #Mulplite compounds can map to one mass/rt pair.
-    #   #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
-    # }
-    # else {
-    #   #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
-    #
-    #   my $extDbSpec = $self->getArg('extDbSpec');
-    #   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
-    #   #print STDERR "Ross :$external_database_release_id";
-    #   $ms_polarity = "";
-    #   $isotopomer = "test"; # leaving null for now.
-    #
-    #   # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
-    #   # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
-    #     my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
-    #       external_database_release_id=>$external_database_release_id,
-    #       peak_number=>$peak_id, mass=>$mass,
-    #       retention_time=>$retention_time,
-    #       ms_polarity=>$ms_polarity
-    #     });
-    #     #$compoundPeaksRow->submit(); .
-    #
-    #   } # end of else mass/rt test.
-    #     # Load into CompoundPeaksChebi
+    if (($lastMass == $mass) && ($lastRT == $retention_time)){
+      #Mulplite compounds can map to one mass/rt pair.
+      #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+    }
+    else {
+      #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
+
+      my $extDbSpec = $self->getArg('extDbSpec');
+      $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
+      #print STDERR "Ross :$external_database_release_id";
+      $ms_polarity = "";
+      $isotopomer = "test"; # leaving null for now.
+
+      # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
+      # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
+        my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
+          external_database_release_id=>$external_database_release_id,
+          peak_number=>$peak_id, mass=>$mass,
+          retention_time=>$retention_time,
+          ms_polarity=>$ms_polarity
+        });
+        #$compoundPeaksRow->submit(); .
+
+      } # end of else mass/rt test.
+        # Load into CompoundPeaksChebi
         my $compundLookup = 'InChIKey=' . $compound_id;
 
         # This look up takes time.
@@ -225,41 +223,41 @@ sub run {
 
         # Loaded some test data into apidb.compoundpeaks on rm23697
 
-        # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-      	# 	  "SELECT cp.compound_peaks_id
-      	# 	   FROM APIDB.CompoundPeaks cp
-      	# 	   WHERE cp.mass = '$mass'
-      	# 		 and cp.retention_time= '$retention_time'
-        #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
-        #
-        # my $compound_peaks_id = @compoundPeaksSQL[0];
-        # # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-        #
-        # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-        #   compound_id=>$compoundIDLoad,
-        #   compound_peaks_id=>$compound_peaks_id,
-        #   isotopomer=>$isotopomer
-        #   });
-        #
-        # #$compoundPeaksChebiRow->submit();
-        # $self->undefPointerCache();
-        # $lastMass = $peaksArray[1];
-        # $lastRT = $peaksArray[2];
+        my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+      		  "SELECT cp.compound_peaks_id
+      		   FROM APIDB.CompoundPeaks cp
+      		   WHERE cp.mass = '$mass'
+      			 and cp.retention_time= '$retention_time'
+             and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+
+        my $compound_peaks_id = @compoundPeaksSQL[0];
+        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+
+        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+          compound_id=>$compoundIDLoad,
+          compound_peaks_id=>$compound_peaks_id,
+          isotopomer=>$isotopomer
+          });
+
+        #$compoundPeaksChebiRow->submit();
+        $self->undefPointerCache();
+        $lastMass = $peaksArray[1];
+        $lastRT = $peaksArray[2];
 
   } #End of while(<PEAKS>)
 
   #print Dumper $testHash;
   print STDERR "Count of no keys= $count. \n";
 
-  # my $resultsFile = $self->getArg('resultsFile');
-  #
-  # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
-  # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
-  # my $params;
-  #
-  # my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
-  # $resultsData->munge();
-  # $self->SUPER::run();
+  my $resultsFile = $self->getArg('resultsFile');
+
+  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+  #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
+  my $params;
+
+  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  $resultsData->munge();
+  $self->SUPER::run();
   #TODO  - need to rm insert_study_results_config.txt??
 
 
