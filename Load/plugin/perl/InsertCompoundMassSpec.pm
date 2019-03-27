@@ -202,7 +202,7 @@ sub run {
         #print STDERR $compoundIDLoad;
 
         if(!$compoundIDLoad){
-          print STDERR "No key: $compundLookup ";
+          print STDERR "No key: $compundLookup\n";
           $count = $count+1;
         }
 
@@ -247,7 +247,7 @@ sub run {
   } #End of while(<PEAKS>)
 
   #print Dumper $testHash;
-  print STDERR "Count of no keys= $count";
+  print STDERR "Count of no keys= $count. \n";
 
   my $resultsFile = $self->getArg('resultsFile');
 
