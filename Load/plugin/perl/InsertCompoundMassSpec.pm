@@ -192,12 +192,12 @@ sub run {
           # if (($lastMass == $mass) && ($lastRT == $retention_time)){
           #   $allPresent = 0;
           # }
-          #if(($lastMass != $mass) && ($lastRT != $retention_time)){
-            if ($allPresent = 0){
+          if(($lastMass != $mass) && ($lastRT != $retention_time)){
+            if ($allPresent == 0){
               $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
               $allPresent = 1;
             }
-          #}
+          }
         }
 
         # Loaded some test data into apidb.compoundpeaks on rm23697
