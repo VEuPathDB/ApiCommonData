@@ -188,12 +188,14 @@ sub run {
 
         if (!$compoundIDLoad) {
           $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
-          if (($lastMass == $mass) && ($lastRT == $retention_time)){
-            $allPresent = 0;
-          }
+          $allPresent = 0;
+          # if (($lastMass == $mass) && ($lastRT == $retention_time)){
+          #   $allPresent = 0;
+          # }
           elsif(($lastMass != $mass) && ($lastRT != $retention_time)){
             if ($allPresent = 0){
               $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
+              $allPresent = 1;
             }
           }
         }
