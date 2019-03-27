@@ -113,10 +113,6 @@ sub run {
   my $testHash = {};
   $testHash->{"CompoundMissing"} = 0;
   $testHash->{"AllMissing"} = 0;
-  #total number
-  #missing peak_number
-
-
 
   my $dir = $self->getArg('inputDir');
   my $peakFile = $self->getArg('peaksFile');
@@ -132,7 +128,13 @@ sub run {
   my ($external_database_release_id, $peak_id, $mass, $retention_time, $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer);
   my ($lastMass, $lastRT);
 
+  my $allPresent = True;
+
   while(<PEAKS>){
+    if (($lastMass != $mass) && ($lastRT != $retention_time)){
+      $allPresent = True;
+    }
+
     my @peaksArray = split(/\t/, $_);
   	$peak_id = $peaksArray[0];
   	$mass = $peaksArray[1];
@@ -184,6 +186,13 @@ sub run {
 
         if (!$compoundIDLoad) {
           $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
+          if (($lastMass == $mass) && ($lastRT == $retention_time)){
+            $allPresent = False;
+          }
+          elsif(($lastMass != $mass) && ($lastRT != $retention_time)){
+            if ($allPresent = False){
+              $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
+            }
 
         }
 
@@ -203,7 +212,7 @@ sub run {
         #   compound_id=>$compoundIDLoad,
         #   compound_peaks_id=>$compound_peaks_id,
         #   isotopomer=>$isotopomer
-        });
+        #   });
 
         #$compoundPeaksChebiRow->submit();
         $self->undefPointerCache();
