@@ -121,7 +121,7 @@ sub run {
                     where s.type = 'InChIKey'
                     and c.id = s.compound_id";
 
-  my $compundHash = $dbh->selectall_hashref($sqlQuery, 'STRUCTURE');
+  my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'STRUCTURE');
   #print STDERR Dumper $compundHash;
 
   my $testHash = {};
@@ -188,9 +188,17 @@ sub run {
         my $compundLookup = 'InChIKey=' . $compound_id;
 
         # This look up takes time.
-
+        # my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
+        #                                           , c.chebi_accession
+        #                                           , s.structure
+        #                                           from chebi.structures s
+        #                                           , CHEBI.compounds c
+        #                                           where s.type = 'InChIKey'
+        #                                           and c.id = s.compound_id
+        #                                           and to_char(s.structure) = '$compundLookup'
+        #                                           "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
         #my $compoundIDLoad = @compoundSQL[0];
-        my $compoundIDLoad = $compundHash{$compundLookup}->{"ID"};
+        my $compoundIDLoad = $compoundHash->{$compundLookup}->{"ID"};
         print STDERR $compoundIDLoad;
 
         # # Testing InChIKey presence.
