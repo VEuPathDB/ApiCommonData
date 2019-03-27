@@ -107,23 +107,22 @@ sub new {
   return $self;
 }
 
-my $dbh = $self->getQueryHandle();
-my $sqlQuery = "select c.id
-                  , c.chebi_accession
-                  , s.structure
-                  from chebi.structures s
-                  , CHEBI.compounds c
-                  where s.type = 'InChIKey'
-                  and c.id = s.compound_id";
-
-  my $compundHash = $dbh->selectall_hashref($sqlQuery, 'id');
-  print STDERR Dumper $compundHash;
-
-my
 
 
 sub run {
   my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+  my $sqlQuery = "select c.id
+                    , c.chebi_accession
+                    , s.structure
+                    from chebi.structures s
+                    , CHEBI.compounds c
+                    where s.type = 'InChIKey'
+                    and c.id = s.compound_id";
+
+    my $compundHash = $dbh->selectall_hashref($sqlQuery, 'id');
+    print STDERR Dumper $compundHash;
 
   my $testHash = {};
   $testHash->{"CompoundMissing"} = 0;
