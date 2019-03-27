@@ -107,7 +107,7 @@ sub new {
   return $self;
 }
 
-
+my $count = 0;
 
 sub run {
   my ($self) = @_;
@@ -162,7 +162,7 @@ sub run {
 
     if (($lastMass == $mass) && ($lastRT == $retention_time)){
       #Mulplite compounds can map to one mass/rt pair.
-      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+      #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
       #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
@@ -199,7 +199,12 @@ sub run {
         #                                           "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
         #my $compoundIDLoad = @compoundSQL[0];
         my $compoundIDLoad = $compoundHash->{$compundLookup}->{"ID"};
-        print STDERR $compoundIDLoad;
+        #print STDERR $compoundIDLoad;
+
+        if(!$compoundIDLoad){
+          print STDERR "No key: $compundLookup ";
+          $count = $count+1;
+        }
 
         # # Testing InChIKey presence.
         # if (!$compoundIDLoad) {
@@ -242,6 +247,7 @@ sub run {
   } #End of while(<PEAKS>)
 
   #print Dumper $testHash;
+  print STDERR "Count of no keys= $count";
 
   my $resultsFile = $self->getArg('resultsFile');
 
