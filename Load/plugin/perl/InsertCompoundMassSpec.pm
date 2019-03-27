@@ -22,12 +22,12 @@ my $argsDeclaration =
         constraintFunc => undef,
         isList         => 0, }),
 
-    stringArg({name => 'extDbSpec',
-          descr => 'External database from whence this data came|version',
-          constraintFunc=> undef,
-          reqd  => 1,
-          isList => 0
-         }),
+    # stringArg({name => 'extDbSpec',
+    #       descr => 'External database from whence this data came|version',
+    #       constraintFunc=> undef,
+    #       reqd  => 1,
+    #       isList => 0
+    #      }),
 
     stringArg({name => 'studyName',
           descr => 'Name of the Study;  Will be added if it does not already exist',
