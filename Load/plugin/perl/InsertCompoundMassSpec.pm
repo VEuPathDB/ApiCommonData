@@ -122,7 +122,7 @@ sub run {
                     and c.id = s.compound_id";
 
   my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'STRUCTURE');
-  #print STDERR Dumper $compundHash;
+  #print STDERR Dumper $compoundHash;
 
   # my $testHash = {};
   # $testHash->{"CompoundMissing"} = 0;
@@ -132,7 +132,7 @@ sub run {
   my $peakFile = $self->getArg('peaksFile');
   #print STDERR "$peakFile :Ross \n";
   my $peakFile = $dir . "/" . $peakFile;
-  #print STDERR $peakFile;
+  print STDERR $peakFile;
 
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
@@ -239,7 +239,7 @@ sub run {
           isotopomer=>$isotopomer
           });
 
-        #$compoundPeaksChebiRow->submit();
+        $compoundPeaksChebiRow->submit();
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
@@ -259,9 +259,6 @@ sub run {
   $resultsData->munge();
   $self->SUPER::run();
   #TODO  - need to rm insert_study_results_config.txt??
-
-
-
 
 }
 
