@@ -186,19 +186,7 @@ sub run {
 
         my $compoundIDLoad = @compoundSQL[0];
 
-        if (!$compoundIDLoad) {
-          $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
-          $allPresent = 0;
-          # if (($lastMass == $mass) && ($lastRT == $retention_time)){
-          #   $allPresent = 0;
-          # }
-          elsif(($lastMass != $mass) && ($lastRT != $retention_time)){
-            if ($allPresent = 0){
-              $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
-              $allPresent = 1;
-            }
-          }
-        }
+
 
         # Loaded some test data into apidb.compoundpeaks on rm23697
 
@@ -222,6 +210,20 @@ sub run {
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
+
+        if (!$compoundIDLoad) {
+          $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
+          $allPresent = 0;
+          # if (($lastMass == $mass) && ($lastRT == $retention_time)){
+          #   $allPresent = 0;
+          # }
+          if(($lastMass != $mass) && ($lastRT != $retention_time)){
+            if ($allPresent = 0){
+              $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
+              $allPresent = 1;
+            }
+          }
+        }
 
   } #End of while(<PEAKS>)
 
