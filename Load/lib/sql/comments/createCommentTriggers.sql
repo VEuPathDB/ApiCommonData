@@ -26,6 +26,8 @@ begin
 end;
 /
 
+show errors;
+
 grant execute on apidb.author_list to public;
 
 create or replace trigger userlogins5.comments_insert
