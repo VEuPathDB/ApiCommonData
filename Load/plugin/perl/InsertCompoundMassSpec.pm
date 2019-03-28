@@ -135,7 +135,7 @@ sub run {
                     from chebi.structures s
                     , CHEBI.compounds c
                     where s.type = 'InChIKey'
-                    and c.id = s.compound_id"
+                    and c.id = s.compound_id";
 
   $compoundTypeSQL->{'HMDB'} = "select da.compound_id as MYID
                                  , da.accession_number as MYKEY
@@ -172,7 +172,7 @@ sub run {
   chomp $header;
   my @header = split(/\t/, $header);
 
-  my ($external_database_release_id, $peak_id, $mass, $retention_time,
+  my ($external_database_release_id, $mass, $retention_time,
     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
     $user_compound_name);
   my ($lastMass, $lastRT);
@@ -192,7 +192,7 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
+      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
 
       my $extDbSpec = $self->getArg('extDbSpec');
       $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -200,15 +200,15 @@ sub run {
       $ms_polarity = "";
       $isotopomer = "test"; # leaving null for now.
 
-      ####### Load into CompoudPeaks #NOTE - may want to take out peak_id ######
+      ####### Load into CompoudPeaks ######
       # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
           external_database_release_id=>$external_database_release_id,
-          peak_number=>$peak_id, mass=>$mass,
+          mass=>$mass,
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        #$compoundPeaksRow->submit();
+        $compoundPeaksRow->submit();
 
       } # end of else mass/rt test.
 
