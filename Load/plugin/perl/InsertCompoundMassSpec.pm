@@ -59,6 +59,14 @@ my $argsDeclaration =
         format         => 'Tab file with header',
         constraintFunc => undef,
         isList         => 0, }),
+
+    stringArg({name => 'compoundType',
+        descr => 'The compund identifier type that has been supplied with the data e.g. KEGG, InChIKey',
+        constraintFunc=> undef,
+        reqd  => 1,
+        isList => 0
+       }),
+
 ];
 
 my $purpose = <<PURPOSE;
@@ -112,16 +120,41 @@ my $count = 0;
 sub run {
   my ($self) = @_;
 
-  my $dbh = $self->getQueryHandle();
-  my $sqlQuery = "select c.id
+  # Hash of SQL queries for the different compound types e.g. KEGG, InChIKey, HMDB.
+  # Cols are renamed - MYKEY: for the lookup. MYID: as the ID that needs to be returned.
+  my $compoundTypeSQL = {};
+
+  $compoundTypeSQL->{'KEGG'} = "select da.compound_id as MYID
+                                 , da.accession_number as MYKEY
+                                 from CHEBI.database_accession da
+                                 where da.source = 'KEGG COMPOUND'";
+
+  $compoundTypeSQL->{'InChIKey'} = "select c.id as MYID
                     , c.chebi_accession
-                    , s.structure
+                    , s.structure as MYKEY
                     from chebi.structures s
                     , CHEBI.compounds c
                     where s.type = 'InChIKey'
-                    and c.id = s.compound_id";
+                    and c.id = s.compound_id"
 
-  my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'STRUCTURE');
+  $compoundTypeSQL->{'HMDB'} = "select da.compound_id as MYID
+                                 , da.accession_number as MYKEY
+                                 from CHEBI.database_accession da
+                                 where da.source = 'HMDB'";
+
+
+  my $dbh = $self->getQueryHandle();
+  my $compoundType = $self->getArg('compoundType');
+  my $sqlQuery = $compoundTypeSQL->{$compoundType};
+  # my $sqlQuery = "select c.id
+  #                   , c.chebi_accession
+  #                   , s.structure
+  #                   from chebi.structures s
+  #                   , CHEBI.compounds c
+  #                   where s.type = 'InChIKey'
+  #                   and c.id = s.compound_id";
+
+  my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'MYKEY');
   #print STDERR Dumper $compoundHash;
 
   # my $testHash = {};
@@ -139,33 +172,27 @@ sub run {
   chomp $header;
   my @header = split(/\t/, $header);
 
-  my ($external_database_release_id, $peak_id, $mass, $retention_time, $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer);
+  my ($external_database_release_id, $peak_id, $mass, $retention_time,
+    $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
+    $user_compound_name);
   my ($lastMass, $lastRT);
 
-  # my $allPresent = 1;
 
   while(<PEAKS>){
-    # if (($lastMass != $mass) && ($lastRT != $retention_time)){
-    #   if ($allPresent == 1){
-    #     $allPresent = 1;
-    #   }
-    # }
-
     my @peaksArray = split(/\t/, $_);
-  	$peak_id = $peaksArray[0];
-  	$mass = $peaksArray[1];
-  	$retention_time = $peaksArray[2];
-  	$compound_id = $peaksArray[3];
+  	$mass = $peaksArray[0];
+  	$retention_time = $peaksArray[1];
+  	$compound_id = $peaksArray[2];
     chomp $compound_id; # needs due to the new line char.
     #	$ms_polarity = $peaksArray[4];
     #	$isotopomer = $peaksArray[5];
 
     if (($lastMass == $mass) && ($lastRT == $retention_time)){
       #Mulplite compounds can map to one mass/rt pair.
-      #print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      #print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
+      print STDERR $peak_id, " ",  $mass, " ", $retention_time, " ", $compound_id, " ", $ms_polarity, "\n"; # - looks fine.
 
       my $extDbSpec = $self->getArg('extDbSpec');
       $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -173,7 +200,7 @@ sub run {
       $ms_polarity = "";
       $isotopomer = "test"; # leaving null for now.
 
-      # Load into CompoudPeaks #NOTE - may want to take out peak_id #### NOTE ###
+      ####### Load into CompoudPeaks #NOTE - may want to take out peak_id ######
       # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
           external_database_release_id=>$external_database_release_id,
@@ -181,84 +208,68 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        #$compoundPeaksRow->submit(); .
+        #$compoundPeaksRow->submit();
 
       } # end of else mass/rt test.
-        # Load into CompoundPeaksChebi
-        my $compundLookup = 'InChIKey=' . $compound_id;
 
-        # This look up takes time.
-        # my @compoundSQL = $self->sqlAsArray(Sql=> "select c.id
-        #                                           , c.chebi_accession
-        #                                           , s.structure
-        #                                           from chebi.structures s
-        #                                           , CHEBI.compounds c
-        #                                           where s.type = 'InChIKey'
-        #                                           and c.id = s.compound_id
-        #                                           and to_char(s.structure) = '$compundLookup'
-        #                                           "); # OBSIPTVJSOCDLZ-UHFFFAOYSA-N -  not in tables. Others also.
-        #my $compoundIDLoad = @compoundSQL[0];
-        my $compoundIDLoad = $compoundHash->{$compundLookup}->{"ID"};
-        #print STDERR $compoundIDLoad;
-
-        if(!$compoundIDLoad){
-          print STDERR "No key: $compundLookup\n";
-          $count = $count+1;
-        }
-
-        # # Testing InChIKey presence.
-        # if (!$compoundIDLoad) {
-        #   $testHash->{"CompoundMissing"} =  $testHash->{"CompoundMissing"} +1;
-        #   $allPresent = 0;
-        #   # if (($lastMass == $mass) && ($lastRT == $retention_time)){
-        #   #   $allPresent = 0;
-        #   # }
-        #   if(($lastMass != $mass) && ($lastRT != $retention_time)){
-        #     if ($allPresent == 0){
-        #       $testHash->{"AllMissing"} =  $testHash->{"AllMissing"} +1;
-        #       $allPresent = 1;
-        #     }
-        #   }
+        # ###### Load into CompoundPeaksChebi ######
+        # my $compundLookup;
+        # if($compoundType eq 'InChIKey'){
+        #   my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
         # }
+        # else{
+        #   $compundLookup = $compound_id;
+        # }
+        #
+        # my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
+        # #print STDERR $compoundIDLoad;
+        #
+        # if(!$compoundIDLoad){
+        #   print STDERR "No key: $compundLookup\n";
+        #   $count = $count+1;
+        # }
+        #
+        # # Should move this outside and get data as a hash.
+        # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
+      	# 	  "SELECT cp.compound_peaks_id
+      	# 	   FROM APIDB.CompoundPeaks cp
+      	# 	   WHERE cp.mass = '$mass'
+      	# 		 and cp.retention_time= '$retention_time'
+        #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
+        #
+        # my $compound_peaks_id = @compoundPeaksSQL[0];
+        # # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
+        #
+        # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+        #   compound_id=>$compoundIDLoad,
+        #   compound_peaks_id=>$compound_peaks_id,
+        #   isotopomer=>$isotopomer,
+        #   user_compound_name=>$compound_id
+        #   });
+        #
+        # #$compoundPeaksChebiRow->submit();
+        # ###### END - Load into CompoundPeaksChebi ######
 
-        # Loaded some test data into apidb.compoundpeaks on rm23697
 
-        my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-      		  "SELECT cp.compound_peaks_id
-      		   FROM APIDB.CompoundPeaks cp
-      		   WHERE cp.mass = '$mass'
-      			 and cp.retention_time= '$retention_time'
-             and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
-
-        my $compound_peaks_id = @compoundPeaksSQL[0];
-        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,  "\n";
-
-        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-          compound_id=>$compoundIDLoad,
-          compound_peaks_id=>$compound_peaks_id,
-          isotopomer=>$isotopomer
-          });
-
-        $compoundPeaksChebiRow->submit();
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
 
   } #End of while(<PEAKS>)
 
-  #print Dumper $testHash;
-  print STDERR "Count of no keys= $count. \n";
-
-  my $resultsFile = $self->getArg('resultsFile');
-
-  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
-  #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
-  my $params;
-
-  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
-  $resultsData->munge();
-  $self->SUPER::run();
-  #TODO  - need to rm insert_study_results_config.txt??
+  # #print Dumper $testHash;
+  # print STDERR "Count of no keys= $count. \n";
+  #
+  # my $resultsFile = $self->getArg('resultsFile');
+  #
+  # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+  # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
+  # my $params;
+  #
+  # my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  # $resultsData->munge();
+  # $self->SUPER::run();
+  # #TODO  - need to rm insert_study_results_config.txt??
 
 }
 
