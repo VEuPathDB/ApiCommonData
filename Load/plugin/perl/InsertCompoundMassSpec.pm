@@ -146,14 +146,6 @@ sub run {
   my $dbh = $self->getQueryHandle();
   my $compoundType = $self->getArg('compoundType');
   my $sqlQuery = $compoundTypeSQL->{$compoundType};
-  # my $sqlQuery = "select c.id
-  #                   , c.chebi_accession
-  #                   , s.structure
-  #                   from chebi.structures s
-  #                   , CHEBI.compounds c
-  #                   where s.type = 'InChIKey'
-  #                   and c.id = s.compound_id";
-
   my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'MYKEY');
   #print STDERR Dumper $compoundHash;
 
@@ -177,7 +169,6 @@ sub run {
     $user_compound_name);
   my ($lastMass, $lastRT);
 
-
   while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);
   	$mass = $peaksArray[0];
@@ -192,7 +183,7 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
+      #print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
 
       my $extDbSpec = $self->getArg('extDbSpec');
       $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -208,54 +199,91 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        $compoundPeaksRow->submit();
-
+        #$compoundPeaksRow->submit();
       } # end of else mass/rt test.
-
-        # ###### Load into CompoundPeaksChebi ######
-        # my $compundLookup;
-        # if($compoundType eq 'InChIKey'){
-        #   my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
-        # }
-        # else{
-        #   $compundLookup = $compound_id;
-        # }
-        #
-        # my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
-        # #print STDERR $compoundIDLoad;
-        #
-        # if(!$compoundIDLoad){
-        #   print STDERR "No key: $compundLookup\n";
-        #   $count = $count+1;
-        # }
-        #
-        # # Should move this outside and get data as a hash.
-        # my @compoundPeaksSQL = $self->sqlAsArray(Sql=>
-      	# 	  "SELECT cp.compound_peaks_id
-      	# 	   FROM APIDB.CompoundPeaks cp
-      	# 	   WHERE cp.mass = '$mass'
-      	# 		 and cp.retention_time= '$retention_time'
-        #      and cp.external_database_release_id = '$external_database_release_id'"); # NOTE the precision of the data in the SQL table for mass and rt.
-        #
-        # my $compound_peaks_id = @compoundPeaksSQL[0];
-        # print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,"user_compound_name", $compound_id,  "\n";
-        #
-        # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-        #   compound_id=>$compoundIDLoad,
-        #   compound_peaks_id=>$compound_peaks_id,
-        #   isotopomer=>$isotopomer,
-        #   user_compound_name=>$compound_id
-        #   });
-        #
-        # #$compoundPeaksChebiRow->submit();
-        # ###### END - Load into CompoundPeaksChebi ######
 
 
         $self->undefPointerCache();
         $lastMass = $peaksArray[1];
         $lastRT = $peaksArray[2];
+      } #End of while(<PEAKS>)
 
-  } #End of while(<PEAKS>)
+      my $dbh = $self->getQueryHandle();
+
+      my $compoundPeaksSQL =
+          "select cp.compound_peaks_id
+            , cp.mass || '|' || cp.retention_time as KEY
+            from ApiDB.CompoundPeaks cp
+            where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
+
+      my $sqlQuery = $compoundTypeSQL->{$compoundPeaksSQL};
+      my $peaksHash = $dbh->selectall_hashref($sqlQuery, 'KEY');
+
+      print STDERR Dumper $peaksHash;
+
+    #   ###### Load into CompoundPeaksChebi ######
+    #   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
+    #   my $header = <PEAKS>;
+    #   chomp $header;
+    #   my @header = split(/\t/, $header);
+    #
+    #   while(<PEAKS>){
+    #     my @peaksArray = split(/\t/, $_);
+    #     $mass = $peaksArray[0];
+    #     $retention_time = $peaksArray[1];
+    #     $compound_id = $peaksArray[2];
+    #     chomp $compound_id; # needs due to the new line char.
+    #     #	$ms_polarity = $peaksArray[4];
+    #     #	$isotopomer = $peaksArray[5];
+    #
+    #   my ($external_database_release_id, $mass, $retention_time,
+    #     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
+    #     $user_compound_name);
+    #   my ($lastMass, $lastRT);
+    #
+    #
+    #   my $compundLookup;
+    #   if($compoundType eq 'InChIKey'){
+    #     my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
+    #   }
+    #   else{
+    #     $compundLookup = $compound_id;
+    #   }
+    #
+    #   my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
+    #   #print STDERR $compoundIDLoad;
+    #
+    #   if(!$compoundIDLoad){
+    #     print STDERR "No key: $compundLookup\n";
+    #     $count = $count+1;
+    #   }
+    #
+    #   my $compound_peaks_id = @compoundPeaksSQL[0];
+    #   print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,"user_compound_name", $compound_id,  "\n";
+    #
+    #   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+    #     compound_id=>$compoundIDLoad,
+    #     compound_peaks_id=>$compound_peaks_id,
+    #     isotopomer=>$isotopomer,
+    #     user_compound_name=>$compound_id
+    #     });
+    #
+    #   #$compoundPeaksChebiRow->submit();
+    #   $self->undefPointerCache();
+    #   } #End of while(<PEAKS>)
+    # ###### END - Load into CompoundPeaksChebi ######
+
+
+
+
+
+
+
+
+
+
+
+
 
   # #print Dumper $testHash;
   # print STDERR "Count of no keys= $count. \n";
