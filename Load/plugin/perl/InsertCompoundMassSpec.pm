@@ -152,7 +152,7 @@ sub run {
   my $dir = $self->getArg('inputDir');
   my $peakFile = $self->getArg('peaksFile');
   my $peakFile = $dir . "/" . $peakFile;
-  print STDERR $peakFile;
+  print STDERR "$peakFile\n";
 
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
@@ -182,11 +182,9 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
-
       $ms_polarity = "";
       $isotopomer = "test"; # leaving null for now.
-
+      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
       ####### Load into CompoudPeaks ######
       # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
@@ -210,8 +208,7 @@ sub run {
           from ApiDB.CompoundPeaks cp
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
-    my $sqlQuery = $compoundTypeSQL->{$compoundPeaksSQL};
-    my $peaksHash = $dbh->selectall_hashref($sqlQuery, 'KEY');
+    my $peaksHash = $dbh->selectall_hashref($compoundPeaksSQL, 'KEY');
 
     print STDERR Dumper $peaksHash;
 
