@@ -183,7 +183,7 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      #print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
+      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
 
       my $extDbSpec = $self->getArg('extDbSpec');
       $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -199,7 +199,7 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        #$compoundPeaksRow->submit();
+        $compoundPeaksRow->submit();
       } # end of else mass/rt test.
 
 
