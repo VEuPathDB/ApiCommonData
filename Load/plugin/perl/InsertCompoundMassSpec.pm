@@ -204,8 +204,8 @@ sub run {
 
 
         $self->undefPointerCache();
-        $lastMass = $peaksArray[1];
-        $lastRT = $peaksArray[2];
+        $lastMass = $peaksArray[0];
+        $lastRT = $peaksArray[1];
       } #End of while(<PEAKS>)
 
       my $dbh = $self->getQueryHandle();
