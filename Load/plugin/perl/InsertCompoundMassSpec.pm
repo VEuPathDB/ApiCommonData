@@ -164,6 +164,10 @@ sub run {
     $user_compound_name);
   my ($lastMass, $lastRT);
 
+  my $extDbSpec = $self->getArg('extDbSpec');
+  $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
+  #print STDERR "Ross :$external_database_release_id";
+
   while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);
   	$mass = $peaksArray[0];
@@ -180,9 +184,6 @@ sub run {
     else {
       #print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
 
-      my $extDbSpec = $self->getArg('extDbSpec');
-      $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
-      #print STDERR "Ross :$external_database_release_id";
       $ms_polarity = "";
       $isotopomer = "test"; # leaving null for now.
 
