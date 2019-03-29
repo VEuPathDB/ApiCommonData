@@ -218,6 +218,9 @@ sub run {
     my @header = split(/\t/, $header);
 
     while(<PEAKS>){
+      my ($mass, $retention_time,
+          $compound_id, $compound_peaks_id, $isotopomer);
+
       my @peaksArray = split(/\t/, $_);
       $mass = $peaksArray[0];
       $retention_time = $peaksArray[1];
@@ -225,9 +228,6 @@ sub run {
       chomp $compound_id; # needs due to the new line char.
       #	$ms_polarity = $peaksArray[4];
       #	$isotopomer = $peaksArray[5];
-
-    my ($mass, $retention_time,
-        $compound_id, $compound_peaks_id, $isotopomer);
 
     my $compundLookup;
     if($compoundType eq 'InChIKey'){
@@ -238,11 +238,8 @@ sub run {
     }
 
     $compound_peaks_id = $peaksHash->{$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-
     my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
-    #print STDERR $compoundIDLoad;
 
-    my $compound_peaks_id = @compoundPeaksSQL[0];
     print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
     my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
