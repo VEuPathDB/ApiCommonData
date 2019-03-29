@@ -271,15 +271,15 @@ sub run {
   # #print Dumper $testHash;
   # print STDERR "Count of no keys= $count. \n";
   #
-  # my $resultsFile = $self->getArg('resultsFile');
-  #
-  # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+   my $resultsFile = $self->getArg('resultsFile');
+  
+   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
   # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
-  # my $params;
+   my $params;
   #
-  # my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
-  # $resultsData->munge();
-  # $self->SUPER::run();
+   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+   $resultsData->munge();
+   $self->SUPER::run();
   # #TODO  - need to rm insert_study_results_config.txt??
 
 }
