@@ -209,8 +209,7 @@ sub run {
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
     my $peaksHash = $dbh->selectall_hashref($compoundPeaksSQL, 'KEY');
-
-    print STDERR Dumper $peaksHash;
+    #print STDERR Dumper $peaksHash;
 
     ###### Load into CompoundPeaksChebi ######
     open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
@@ -238,7 +237,7 @@ sub run {
       $compundLookup = $compound_id;
     }
 
-    $compound_peaks_id = $peaksHash{$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'}
+    $compound_peaks_id = $peaksHash->{$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 
     my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
     #print STDERR $compoundIDLoad;
