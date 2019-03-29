@@ -193,7 +193,7 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-        #$compoundPeaksRow->submit();
+        $compoundPeaksRow->submit();
       }
       $self->undefPointerCache();
       $lastMass = $peaksArray[0];
