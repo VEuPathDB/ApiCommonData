@@ -182,7 +182,7 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      #print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
+      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
 
       $ms_polarity = "";
       $isotopomer = "test"; # leaving null for now.
@@ -200,8 +200,9 @@ sub run {
       $self->undefPointerCache();
       $lastMass = $peaksArray[0];
       $lastRT = $peaksArray[1];
-      close(PEAKS);
+
     } #End of while(<PEAKS>)
+    close(PEAKS);
 
     my $compoundPeaksSQL =
         "select cp.compound_peaks_id
@@ -263,8 +264,9 @@ sub run {
   #
   #   #$compoundPeaksChebiRow->submit();
   #   $self->undefPointerCache();
-  #   close(PEAKS);
+
   #   } #End of while(<PEAKS>)
+  #   close(PEAKS);
   # ###### END - Load into CompoundPeaksChebi ######
 
 
