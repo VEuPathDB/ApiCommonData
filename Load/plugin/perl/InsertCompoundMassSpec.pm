@@ -212,59 +212,53 @@ sub run {
 
     print STDERR Dumper $peaksHash;
 
-  #   ###### Load into CompoundPeaksChebi ######
-  #   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
-  #   my $header = <PEAKS>;
-  #   chomp $header;
-  #   my @header = split(/\t/, $header);
-  #
-  #   while(<PEAKS>){
-  #     my @peaksArray = split(/\t/, $_);
-  #     $mass = $peaksArray[0];
-  #     $retention_time = $peaksArray[1];
-  #     $compound_id = $peaksArray[2];
-  #     chomp $compound_id; # needs due to the new line char.
-  #     #	$ms_polarity = $peaksArray[4];
-  #     #	$isotopomer = $peaksArray[5];
-  #
-  #   my ($external_database_release_id, $mass, $retention_time,
-  #     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
-  #     $user_compound_name);
-  #   my ($lastMass, $lastRT);
-  #
-  #
-  #   my $compundLookup;
-  #   if($compoundType eq 'InChIKey'){
-  #     my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
-  #   }
-  #   else{
-  #     $compundLookup = $compound_id;
-  #   }
-  #
-  #   my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
-  #   #print STDERR $compoundIDLoad;
-  #
-  #   if(!$compoundIDLoad){
-  #     print STDERR "No key: $compundLookup\n";
-  #     $count = $count+1;
-  #   }
-  #
-  #   my $compound_peaks_id = @compoundPeaksSQL[0];
-  #   print STDERR "c:", $compoundIDLoad, " cp:", $compound_peaks_id, " iso:", $isotopomer,"user_compound_name", $compound_id,  "\n";
-  #
-  #   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-  #     compound_id=>$compoundIDLoad,
-  #     compound_peaks_id=>$compound_peaks_id,
-  #     isotopomer=>$isotopomer,
-  #     user_compound_name=>$compound_id
-  #     });
-  #
-  #   #$compoundPeaksChebiRow->submit();
-  #   $self->undefPointerCache();
+    ###### Load into CompoundPeaksChebi ######
+    open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
+    my $header = <PEAKS>;
+    chomp $header;
+    my @header = split(/\t/, $header);
 
-  #   } #End of while(<PEAKS>)
-  #   close(PEAKS);
-  # ###### END - Load into CompoundPeaksChebi ######
+    while(<PEAKS>){
+      my @peaksArray = split(/\t/, $_);
+      $mass = $peaksArray[0];
+      $retention_time = $peaksArray[1];
+      $compound_id = $peaksArray[2];
+      chomp $compound_id; # needs due to the new line char.
+      #	$ms_polarity = $peaksArray[4];
+      #	$isotopomer = $peaksArray[5];
+
+    my ($mass, $retention_time,
+        $compound_id, $compound_peaks_id, $isotopomer);
+
+    my $compundLookup;
+    if($compoundType eq 'InChIKey'){
+      my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
+    }
+    else{
+      $compundLookup = $compound_id;
+    }
+
+    $compound_peaks_id = $peaksHash{$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'}
+
+    my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
+    #print STDERR $compoundIDLoad;
+
+    my $compound_peaks_id = @compoundPeaksSQL[0];
+    print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+
+    my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+      compound_id=>$compoundIDLoad,
+      compound_peaks_id=>$compound_peaks_id,
+      isotopomer=>$isotopomer,
+      user_compound_name=>$compound_id
+      });
+
+    #$compoundPeaksChebiRow->submit();
+    $self->undefPointerCache();
+
+    } #End of while(<PEAKS>)
+    close(PEAKS);
+  ###### END - Load into CompoundPeaksChebi ######
 
 
 
