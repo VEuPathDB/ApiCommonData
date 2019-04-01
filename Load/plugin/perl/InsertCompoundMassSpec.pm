@@ -235,9 +235,10 @@ sub run {
           $compound_id, $compound_peaks_id, $isotopomer);
 
       my @peaksArray = split(/\t/, $_);
-      $mass = $peaksArray[0];
-      $retention_time = $peaksArray[1];
-      $compound_id = $peaksArray[2];
+      $peak_id = $peaksArray[0];
+    	$mass = $peaksArray[1];
+    	$retention_time = $peaksArray[2];
+    	$compound_id = $peaksArray[3];
       chomp $compound_id; # needs due to the new line char.
       #	$ms_polarity = $peaksArray[4];
       #	$isotopomer = $peaksArray[5];
