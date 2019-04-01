@@ -67,6 +67,13 @@ my $argsDeclaration =
         isList => 0
        }),
 
+   stringArg({name => 'hasPeakMappingID',
+       descr => 'y/n . Has a column that maps the rows in the peaks file to the data file.',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
 ];
 
 my $purpose = <<PURPOSE;
@@ -159,7 +166,7 @@ sub run {
   chomp $header;
   my @header = split(/\t/, $header);
 
-  my ($external_database_release_id, $mass, $retention_time,
+  my ($external_database_release_id, $mass, $retention_time, $peak_id,
     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
     $user_compound_name);
   my ($lastMass, $lastRT);
@@ -170,14 +177,15 @@ sub run {
 
   while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);
-  	$mass = $peaksArray[0];
-  	$retention_time = $peaksArray[1];
-  	$compound_id = $peaksArray[2];
+    $peak_id = $peaksArray[0];
+  	$mass = $peaksArray[1];
+  	$retention_time = $peaksArray[2];
+  	$compound_id = $peaksArray[3];
     chomp $compound_id; # needs due to the new line char.
     #	$ms_polarity = $peaksArray[4];
     #	$isotopomer = $peaksArray[5];
 
-    if (($lastMass == $mass) && ($lastRT == $retention_time)){
+    if (($lastPeakId == $peak_id) && ($lastMass == $mass) && ($lastRT == $retention_time)){
       #Mulplite compounds can map to one mass/rt pair.
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
@@ -191,13 +199,18 @@ sub run {
           external_database_release_id=>$external_database_release_id,
           mass=>$mass,
           retention_time=>$retention_time,
+          peak_id=>$peak_id,
           ms_polarity=>$ms_polarity
         });
 #		$compoundPeaksRow->submit();
       }
       $self->undefPointerCache();
-      $lastMass = $peaksArray[0];
-      $lastRT = $peaksArray[1];
+
+      # If the next item is the same data this is not loaded, only one row is needed
+      # to be the primary key to the other tables. 
+      $lastPeakId = $peaksArray[0];
+      $lastMass = $peaksArray[1];
+      $lastRT = $peaksArray[2];
 
     } #End of while(<PEAKS>)
     close(PEAKS);
@@ -256,23 +269,11 @@ sub run {
     close(PEAKS);
   ###### END - Load into CompoundPeaksChebi ######
 
-
-
-
-
-
-
-
-
-
-
-
-
   # #print Dumper $testHash;
   # print STDERR "Count of no keys= $count. \n";
   #
    my $resultsFile = $self->getArg('resultsFile');
-  
+
    my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
   # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
    my $params;
