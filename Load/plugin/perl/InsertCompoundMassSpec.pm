@@ -193,7 +193,7 @@ sub run {
           retention_time=>$retention_time,
           ms_polarity=>$ms_polarity
         });
-		$compoundPeaksRow->submit();
+#		$compoundPeaksRow->submit();
       }
       $self->undefPointerCache();
       $lastMass = $peaksArray[0];
@@ -249,7 +249,7 @@ sub run {
       user_compound_name=>$compound_id
       });
 
-	$compoundPeaksChebiRow->submit();
+#	$compoundPeaksChebiRow->submit();
     $self->undefPointerCache();
 
     } #End of while(<PEAKS>)
