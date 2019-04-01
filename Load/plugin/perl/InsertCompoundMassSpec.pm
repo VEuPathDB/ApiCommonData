@@ -169,7 +169,7 @@ sub run {
   my ($external_database_release_id, $mass, $retention_time, $peak_id,
     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
     $user_compound_name);
-  my ($lastMass, $lastRT);
+  my ($lastMass, $lastRT, $lastPeakId);
 
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
@@ -207,7 +207,7 @@ sub run {
       $self->undefPointerCache();
 
       # If the next item is the same data this is not loaded, only one row is needed
-      # to be the primary key to the other tables. 
+      # to be the primary key to the other tables.
       $lastPeakId = $peaksArray[0];
       $lastMass = $peaksArray[1];
       $lastRT = $peaksArray[2];
@@ -217,7 +217,7 @@ sub run {
 
     my $compoundPeaksSQL =
         "select cp.compound_peaks_id
-          , cp.mass || '|' || cp.retention_time as KEY
+          , cp.peak_id || '|' || cp.mass || '|' || cp.retention_time as KEY
           from ApiDB.CompoundPeaks cp
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
@@ -250,7 +250,7 @@ sub run {
       $compundLookup = $compound_id;
     }
 
-    $compound_peaks_id = $peaksHash->{$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
+    $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
     my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
 
     print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
