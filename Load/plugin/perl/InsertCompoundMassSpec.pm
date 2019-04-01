@@ -175,7 +175,7 @@ sub run {
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
   #print STDERR "Ross :$external_database_release_id";
 
-  while(<PEAKS>){
+  while(<PEAKS>){ # Could add all to a hash to speed up, not that slow to loop over twice though.
     my @peaksArray = split(/\t/, $_);
     $peak_id = $peaksArray[0];
   	$mass = $peaksArray[1];
@@ -202,8 +202,8 @@ sub run {
           peak_id=>$peak_id,
           ms_polarity=>$ms_polarity
         });
-#		$compoundPeaksRow->submit();
-      }
+      $compoundPeaksRow->submit();
+    }
       $self->undefPointerCache();
 
       # If the next item is the same data this is not loaded, only one row is needed
@@ -212,7 +212,7 @@ sub run {
       $lastMass = $peaksArray[1];
       $lastRT = $peaksArray[2];
 
-    } #End of while(<PEAKS>)
+  } #End of while(<PEAKS>)
     close(PEAKS);
 
     my $compoundPeaksSQL =
@@ -263,7 +263,7 @@ sub run {
       user_compound_name=>$compound_id
       });
 
-#	$compoundPeaksChebiRow->submit();
+    $compoundPeaksChebiRow->submit();
     $self->undefPointerCache();
 
     } #End of while(<PEAKS>)
