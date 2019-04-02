@@ -202,7 +202,7 @@ sub run {
           peak_id=>$peak_id,
           ms_polarity=>$ms_polarity
         });
-      $compoundPeaksRow->submit();
+      #$compoundPeaksRow->submit();
     }
       $self->undefPointerCache();
 
@@ -263,7 +263,7 @@ sub run {
       user_compound_name=>$compound_id
       });
 
-    $compoundPeaksChebiRow->submit();
+    #$compoundPeaksChebiRow->submit();
     $self->undefPointerCache();
 
     } #End of while(<PEAKS>)
@@ -275,7 +275,7 @@ sub run {
   #
    my $resultsFile = $self->getArg('resultsFile');
 
-   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>'RossMetaTest' };
+   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$self->getArg('studyName') };
   # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
    my $params;
   #
