@@ -91,17 +91,34 @@ while(<$fh>) { # TODO:  need example of how this looks
 
   $insertProtocolAppNode->execute($panId, $psId, $panName, $orderNum);
 
+  my ($idIndex, $fpkmIndex);
   open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
 
-  <DAT>; # throw away the first line
+  # check header to distinguish file type
+  <DAT>;
+  chomp;
+  my $header = $_;
+
+  if ($header eq "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\\
+tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status") {
+    # Cufflinks FPKM file
+    $idIndex = 0;
+    $fpkmIndex = 9;
+  } elsif ($header eq "gene_id\tFPKM") {
+    # FPKMtool file
+    $idIndex = 0;
+    $fpkmIndex = 1;
+  } else {
+    die "unrecognized header record: \"$header\"";
+  }
 
   while(<DAT>) {
     chomp;
 
     my @a = split(/\t/, $_);
 
-    my $sourceId = $a[0];
-    my $fpkm = $a[9];
+    my $sourceId = $a[$idIndex];
+    my $fpkm = $a[$fpkmIndex];
 
     next unless($sourceId);
 
