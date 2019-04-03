@@ -37,7 +37,7 @@ my $argsDeclaration =
          }),   # Need this?
 
     fileArg({name           => 'peaksFile',
-        descr          => 'Name of file containing the compound peaks.',
+        descr          => 'Name of file containing the compound peaks. Cols = PeakID, Mass, RT, CompoundID',
         reqd           => 1,
         mustExist      => 1,
         format         => 'Tab',
@@ -45,7 +45,7 @@ my $argsDeclaration =
         isList         => 0, }),
 
     fileArg({name           => 'resultsFile',
-        descr          => 'Name of file containing the resuls values.',
+        descr          => 'Name of file containing the resuls values. Cols = PeakID|Mass|RT (1 concatentated with '|' col), result1 .... resultX',
         reqd           => 1,
         mustExist      => 1,
         format         => 'Tab',
@@ -61,14 +61,14 @@ my $argsDeclaration =
         isList         => 0, }),
 
     stringArg({name => 'compoundType',
-        descr => 'The compund identifier type that has been supplied with the data e.g. KEGG, InChIKey',
+        descr => 'The compund identifier (CompoundID - peaksFile) type that has been supplied with the data e.g. KEGG, InChIKey',
         constraintFunc=> undef,
         reqd  => 1,
         isList => 0
        }),
 
    stringArg({name => 'hasPeakMappingID',
-       descr => 'y/n . Has a column that maps the rows in the peaks file to the data file.',
+       descr => 'y/n . Has a column (PeakID) that maps the rows in the resultsFile to the peaksFile.',
        constraintFunc=> undef,
        reqd  => 1,
        isList => 0
@@ -161,6 +161,7 @@ sub run {
   my $peakFile = $dir . "/" . $peakFile;
   print STDERR "$peakFile\n";
 
+  ####### Load into CompoudPeaks ######
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
@@ -169,32 +170,37 @@ sub run {
   my ($external_database_release_id, $mass, $retention_time, $peak_id,
     $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
     $user_compound_name);
+
+    # Mulplite compounds can map to one mass/rt pair.
+    # If the next item is the same data this is not loaded, only one row is needed
+    # to be the primary key to the other tables.
+    # The below are used to test and bypass.
   my ($lastMass, $lastRT, $lastPeakId);
 
   my $extDbSpec = $self->getArg('extDbSpec');
   $external_database_release_id = $self->getExtDbRlsId($extDbSpec);
   #print STDERR "Ross :$external_database_release_id";
 
-  while(<PEAKS>){ # Could add all to a hash to speed up, not that slow to loop over twice though.
+  while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);
     $peak_id = $peaksArray[0];
   	$mass = $peaksArray[1];
   	$retention_time = $peaksArray[2];
   	$compound_id = $peaksArray[3];
-    chomp $compound_id; # needs due to the new line char.
+    chomp $compound_id;
     #	$ms_polarity = $peaksArray[4];
-    #	$isotopomer = $peaksArray[5];
+    #	$isotopomer = $peaksArray[5]; # Not using for the moment. Setting in elsif below.
 
     if (($lastPeakId == $peak_id) && ($lastMass == $mass) && ($lastRT == $retention_time)){
-      #Mulplite compounds can map to one mass/rt pair.
+
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
       $ms_polarity = "";
-      $isotopomer = "test"; # leaving null for now.
-      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n"; # - looks fine.
-      ####### Load into CompoudPeaks ######
-      # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float values.
+      $isotopomer = "test";
+      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n";
+
+      # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float value.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
           external_database_release_id=>$external_database_release_id,
           mass=>$mass,
@@ -206,15 +212,15 @@ sub run {
     }
       $self->undefPointerCache();
 
-      # If the next item is the same data this is not loaded, only one row is needed
-      # to be the primary key to the other tables.
       $lastPeakId = $peaksArray[0];
       $lastMass = $peaksArray[1];
       $lastRT = $peaksArray[2];
 
   } #End of while(<PEAKS>)
     close(PEAKS);
+    ####### END - Load into CompoudPeaks ######
 
+    # Hash of all the loaded compound peaks from above.
     my $compoundPeaksSQL =
         "select cp.compound_peaks_id
           , cp.peak_id || '|' || cp.mass || '|' || cp.retention_time as KEY
@@ -268,25 +274,24 @@ sub run {
 
     } #End of while(<PEAKS>)
     close(PEAKS);
-  ###### END - Load into CompoundPeaksChebi ######
+    ###### END - Load into CompoundPeaksChebi ######
 
-  # #print Dumper $testHash;
-  # print STDERR "Count of no keys= $count. \n";
-  #
+    ###### Load into CompoundMassSpecResults ######
+
    my $resultsFile = $self->getArg('resultsFile');
 
    my $profileSetName = $self->getArg('studyName') . $self->getArg('compoundType');
 
    my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
-  # #TODO Set an input for proper  profileSetName - this goes into Study.Study table.
+   # NOTE Setting profileSetName as studyName + compoundType for now.
    my $params;
-  #
+
    my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
    $resultsData->munge();
    $self->SUPER::run();
-  # #TODO  - need to rm insert_study_results_config.txt??
+  # TODO  - need to rm insert_study_results_config.txt??
 
+  ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
 }
-
 
 1;
