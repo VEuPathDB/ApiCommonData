@@ -8,8 +8,6 @@ use GUS::Model::ApiDB::CompoundPeaksChebi;
 use GUS::Model::ApiDB::CompoundPeaks;
 use GUS::PluginMgr::Plugin;
 use Data::Dumper;
-use
-s
 
 use strict;
 
@@ -304,6 +302,7 @@ sub run {
 }
 
 sub undoTables {
+  my ($self) = @_;
   # For GUS::Community::Plugin::Undo - this is getting the tables to remove from
   # in the plugin InsertStudyResults.
   # This sub has to be here to call the sub in InsertStudyResults.
