@@ -43,14 +43,16 @@ while (<IN>) {
   chomp;
   my %keyValue;
   my @items = split (/\t/, $_);
-  if ($items[2] eq "polypeptide" || ($items[2] =~ /RNA$/ && $items[2] ne "mRNA") ) {
+#  if ($items[2] eq "polypeptide" || ($items[2] =~ /RNA$/ && $items[2] ne "mRNA") ) {  ## for previous version of GeneDB GFF3 file
+  if ($items[2] =~ /RNA$/ || $items[2] =~ /pseudogenic_transcript/) {
     my @pairs = split (/\;/, $items[8]);
     foreach my $i (0..$#pairs) {
       my ($key, $value) = split (/\=/, $pairs[$i]);
       if ($items[2] eq "polypeptide" && $key eq "Derives_from" ) {
 	$keyValue{transID} = $value;
       }
-      if ( $items[2] =~ /RNA$/ && $key eq "ID") {
+#      if ( $items[2] =~ /RNA$/ && $key eq "ID") {  ## for previous version of GeneDB GFF3 file
+      if ( $key eq "ID") {
 	$keyValue{transID} = $value;
       }
       if ($key eq "product") {
