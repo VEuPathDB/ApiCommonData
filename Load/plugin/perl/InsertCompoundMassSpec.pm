@@ -69,12 +69,12 @@ my $argsDeclaration =
         isList => 0
        }),
 
-   stringArg({name => 'hasPeakMappingID',
-       descr => 'y/n . Has a column (PeakID) that maps the rows in the resultsFile to the peaksFile.',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 0
-      }),
+   # stringArg({name => 'hasPeakMappingID',
+   #     descr => 'y/n . Has a column (PeakID) that maps the rows in the resultsFile to the peaksFile.',
+   #     constraintFunc=> undef,
+   #     reqd  => 1,
+   #     isList => 0
+   #    }),
 
 ];
 
@@ -291,7 +291,62 @@ sub run {
    my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
    $resultsData->munge();
    $self->SUPER::run();
-  # TODO  - need to rm insert_study_results_config.txt??
+
+  system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
+  # renamed as the munge method appends to the config file.
+
+  my $meanRScript = 
+<<RString;
+  library(data.table)
+
+  data <- read.csv('data.tab', sep='\t', header=TRUE)
+  data = data.table(data)
+  output <-data.table(data[,1])#(V1=NA)
+  colnames(output)<- " "
+  header = ""
+  mapping <- read.csv('mapping.tab', sep='\t', header=TRUE)
+  mapping = data.table(mapping)
+
+  # add in data col for sample names
+  groups = unique(mapping[['group']])
+
+  for(i in groups){
+  #   print(i)
+      newData <- mapping[group ==i]
+      newData = data.table(newData)
+      samples = as.vector(newData[['Sample_Names']])
+      newResults = data[, samples, with=FALSE]
+      newResults$mean <- rowMeans(newResults, na.rm=TRUE)
+      mean <- newResults[, 'mean']
+      new_col_name = paste(i, 'mean')
+      header = paste(header, new_col_name, sep='\t')
+  #   print(mean)
+      output = cbind(output, mean[, 'mean'])
+      setnames(output, 'mean', new_col_name)
+  }
+
+  # output[, V1 :=NULL]
+  # print(output)
+  # print(header)
+
+  write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+  write.table(output, file='mean.tab', sep="\t", append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)
+  quit('no');
+RString
+
+  my $rFile = $self->writeRScript($meanRScript);
+  $self->runR($rFile);
+  system("rm $rFile");
+
+  my $meanFile = 'mean.tab';
+  # This is set by the R script.
+
+  # my $meanArgs = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$meanFile, profileSetName=>$profileSetName};
+  #
+  # my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
+  # #will have to move the data in the hidden folder and replace with mean data to make work.
+  # # this will ensure that it has the right study name.
+
 
 
   # Add step to add averaged data.
