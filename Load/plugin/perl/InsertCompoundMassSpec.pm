@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::InsertCompoundMassSpec;
 #use lib "$ENV{GUS_HOME}/lib/perl";
 use ApiCommonData::Load::Plugin::InsertStudyResults;
 use ApiCommonData::Load::MetaboliteProfiles;
+use CBIL::TranscriptExpression::DataMunger::Profiles;
 use GUS::Model::ApiDB::CompoundPeaksChebi;
 use GUS::Model::ApiDB::CompoundPeaks;
 use GUS::PluginMgr::Plugin;
@@ -38,7 +39,7 @@ my $argsDeclaration =
     fileArg({name           => 'peaksFile',
         descr          => 'Name of file containing the compound peaks. Cols = PeakID, Mass, RT, CompoundID',
         reqd           => 1,
-        mustExist      => 1,
+        mustExist      => 0,
         format         => 'Tab',
         constraintFunc => undef,
         isList         => 0,
@@ -47,7 +48,7 @@ my $argsDeclaration =
     fileArg({name           => 'resultsFile',
         descr          => 'Name of file containing the resuls values. Cols = PeakID|Mass|RT (1 concatentated with '|' col), result1 .... resultX',
         reqd           => 1,
-        mustExist      => 1,
+        mustExist      => 0,
         format         => 'Tab',
         constraintFunc => undef,
         isList         => 0,
@@ -56,7 +57,7 @@ my $argsDeclaration =
     fileArg({name           => 'mappingFile',
         descr          => 'Mapping file of samples -> groups.',
         reqd           => 1,
-        mustExist      => 1,
+        mustExist      => 0,
         format         => 'Tab',
         constraintFunc => undef,
         isList         => 0,
@@ -147,18 +148,27 @@ sub run {
                                  from CHEBI.database_accession da
                                  where da.source = 'KEGG COMPOUND'";
 
-  $compoundTypeSQL->{'InChIKey'} = "select c.id as MYID
-                    , c.chebi_accession
-                    , s.structure as MYKEY
-                    from chebi.structures s
-                    , CHEBI.compounds c
-                    where s.type = 'InChIKey'
-                    and c.id = s.compound_id";
+  # $compoundTypeSQL->{'InChIKey'} = "select c.id as MYID
+  #                   , c.chebi_accession
+  #                   , s.structure as MYKEY
+  #                   from chebi.structures s
+  #                   , CHEBI.compounds c
+  #                   where s.type = 'InChIKey'
+  #                   and c.id = s.compound_id";
+
+  ## RONAN TEST ##
+
+  $compoundTypeSQL->{'InChIKey'} = "select da.compound_id as MYID
+                                   , da.accession_number as MYKEY
+                                   from CHEBI.database_accession da
+                                   where da.source in ('HMDB', 'KEGG', 'LIPID MAPS')";
 
   $compoundTypeSQL->{'HMDB'} = "select da.compound_id as MYID
                                  , da.accession_number as MYKEY
                                  from CHEBI.database_accession da
                                  where da.source = 'HMDB'";
+
+                        # ~~~~~ TODO - use other mapping col and map to ChEBI.
 
 
   my $dbh = $self->getQueryHandle();
@@ -299,57 +309,57 @@ sub run {
 
    my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
    $resultsData->munge();
-   $self->SUPER::run();
+#   $self->SUPER::run();
 
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
-
-  my $mappingFile = $self->getArg('mappingFile');
-
-  my $meanRScript =
-<<RString;
-  library(data.table)
-
-  data <- read.csv('data.tab', sep='\t', header=TRUE)
-  data = data.table(data)
-  output <-data.table(data[,1])#(V1=NA)
-  colnames(output)<- " "
-  header = ""
-  mapping <- read.csv('$mappingFile', sep='\t', header=TRUE)
-  mapping = data.table(mapping)
-
-  # add in data col for sample names
-  groups = unique(mapping[['group']])
-
-  for(i in groups){
-  #   print(i)
-      newData <- mapping[group ==i]
-      newData = data.table(newData)
-      samples = as.vector(newData[['Sample_Names']])
-      newResults = data[, samples, with=FALSE]
-      newResults$mean <- rowMeans(newResults, na.rm=TRUE)
-      mean <- newResults[, 'mean']
-      new_col_name = paste(i, 'mean')
-      header = paste(header, new_col_name, sep='\t')
-  #   print(mean)
-      output = cbind(output, mean[, 'mean'])
-      setnames(output, 'mean', new_col_name)
-  }
-
-  # output[, V1 :=NULL]
-  # print(output)
-  # print(header)
-
-  write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-  write.table(output, file='mean.tab', sep="\t", append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)
-  quit('no');
-RString
-
-  my $rFile = $self->writeRScript($meanRScript);
-  $self->runR($rFile);
-  system("rm $rFile");
-
-  my $meanFile = 'mean.tab';
+#
+#   my $mappingFile = $self->getArg('mappingFile');
+#
+#   my $meanRScript =
+# <<RString;
+#   library(data.table)
+#
+#   data <- read.csv('data.tab', sep='\t', header=TRUE)
+#   data = data.table(data)
+#   output <-data.table(data[,1])#(V1=NA)
+#   colnames(output)<- " "
+#   header = ""
+#   mapping <- read.csv('$mappingFile', sep='\t', header=TRUE)
+#   mapping = data.table(mapping)
+#
+#   # add in data col for sample names
+#   groups = unique(mapping[['group']])
+#
+#   for(i in groups){
+#   #   print(i)
+#       newData <- mapping[group ==i]
+#       newData = data.table(newData)
+#       samples = as.vector(newData[['Sample_Names']])
+#       newResults = data[, samples, with=FALSE]
+#       newResults[,mean] <- rowMeans(newResults, na.rm=TRUE)
+#       mean <- newResults[, 'mean']
+#       new_col_name = paste(i, 'mean')
+#       header = paste(header, new_col_name, sep='\t')
+#   #   print(mean)
+#       output = cbind(output, mean[, 'mean'])
+#       setnames(output, 'mean', new_col_name)
+#   }
+#
+#   # output[, V1 :=NULL]
+#   # print(output)
+#   # print(header)
+#
+#   write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+#   write.table(output, file='mean.tab', sep="\t", append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)
+#   quit('no');
+# RString
+#
+#   my $rFile = $self->writeRScript($meanRScript);
+#   $self->runR($rFile);
+#   system("rm $rFile");
+#
+#   my $meanFile = 'mean.tab';
   # This is set by the R script.
 
   # my $meanArgs = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$meanFile, profileSetName=>$profileSetName};
