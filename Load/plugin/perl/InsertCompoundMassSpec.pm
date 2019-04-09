@@ -271,12 +271,12 @@ sub run {
       #	$isotopomer = $peaksArray[5];
 
     my $compundLookup;
-    if($compoundType eq 'InChIKey'){
-      my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
-    }
-    else{
+	#if($compoundType eq 'InChIKey'){
+	# my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
+	#}
+	#else{
       $compundLookup = $compound_id;
-    }
+	  #}
 
     $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
     my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
