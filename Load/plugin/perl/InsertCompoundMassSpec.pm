@@ -72,12 +72,12 @@ my $argsDeclaration =
         isList         => 0
       }),
 
-    stringArg({name => 'compoundType',
-        descr => 'The compund identifier (CompoundID - peaksFile) type that has been supplied with the data e.g. KEGG, InChIKey',
-        constraintFunc=> undef,
-        reqd  => 1,
-        isList => 0
-       }),
+    # stringArg({name => 'compoundType',
+    #     descr => 'The compund identifier (CompoundID - peaksFile) type that has been supplied with the data e.g. KEGG, InChIKey',
+    #     constraintFunc=> undef,
+    #     reqd  => 1,
+    #     isList => 0
+    #    }),
 
    # stringArg({name => 'hasPeakMappingID',
    #     descr => 'y/n . Has a column (PeakID) that maps the rows in the resultsFile to the peaksFile.',
@@ -141,41 +141,74 @@ sub run {
 
   # Hash of SQL queries for the different compound types e.g. KEGG, InChIKey, HMDB.
   # Cols are renamed - MYKEY: for the lookup. MYID: as the ID that needs to be returned.
-  my $compoundTypeSQL = {};
 
-  $compoundTypeSQL->{'KEGG'} = "select da.compound_id as MYID
-                                 , da.accession_number as MYKEY
-                                 from CHEBI.database_accession da
-                                 where da.source = 'KEGG COMPOUND'";
+  ##NOTE - old query
+  # $compoundTypeSQL->{'KEGG'} = "select da.compound_id as MYID
+  #                                , da.accession_number as MYKEY
+  #                                from CHEBI.database_accession da
+  #                                where da.source = 'KEGG COMPOUND'";
 
-  # $compoundTypeSQL->{'InChIKey'} = "select c.id as MYID
-  #                   , c.chebi_accession
-  #                   , s.structure as MYKEY
-  #                   from chebi.structures s
-  #                   , CHEBI.compounds c
-  #                   where s.type = 'InChIKey'
-  #                   and c.id = s.compound_id";
+  my $compoundInChIKeySQL = "select c.id as MYID
+                    , c.chebi_accession
+                    , s.structure as MYKEY
+                    from chebi.structures s
+                    , CHEBI.compounds c
+                    where s.type = 'InChIKey'
+                    and c.id = s.compound_id";
 
-  ## RONAN TEST ##
 
-  $compoundTypeSQL->{'InChIKey'} = "select da.compound_id as MYID
+
+  my $compoundOtherSQL = "select da.compound_id as MYID
                                    , da.accession_number as MYKEY
                                    from CHEBI.database_accession da
-                                   where da.source in ('HMDB', 'KEGG', 'LIPID MAPS')";
+                                   where da.source in (
+                                   'KEGG DRUG'
+                                   ,'ChEBI'
+                                   ,'CiteXplore'
+                                   ,'LIPID MAPS'
+                                   ,'PDB'
+                                   ,'SUBMITTER'
+                                   ,'SMID'
+                                   ,'KEGG COMPOUND'
+                                   ,'Beilstein'
+                                   ,'COMe'
+                                   ,'RESID'
+                                   ,'Patent'
+                                   ,'KEGG GLYCAN'
+                                   ,'KNApSAcK'
+                                   ,'Chemical Ontology'
+                                   ,'WebElements'
+                                   ,'ChEMBL'
+                                   ,'HMDB'
+                                   ,'Gmelin'
+                                   ,'YMDB'
+                                   ,'Alan Wood' ||CHR(39)||'s Pesticides'
+                                   ,'ChemIDplus'
+                                   ,'NIST Chemistry WebBook'
+                                   ,'Reaxys'
+                                   ,'UM-BBD'
+                                   ,'Wikipedia'
+                                   ,'ECMDB'
+                                   ,'PubChem'
+                                   ,'PDBeChem'
+                                   ,'MolBase'
+                                   ,'DrugBank'
+                                   ,'MetaCyc'
+                                   ,'Chemspider'
+                                   )";
 
-  $compoundTypeSQL->{'HMDB'} = "select da.compound_id as MYID
-                                 , da.accession_number as MYKEY
-                                 from CHEBI.database_accession da
-                                 where da.source = 'HMDB'";
-
-                        # ~~~~~ TODO - use other mapping col and map to ChEBI.
 
 
   my $dbh = $self->getQueryHandle();
-  my $compoundType = $self->getArg('compoundType');
-  my $sqlQuery = $compoundTypeSQL->{$compoundType};
-  my $compoundHash = $dbh->selectall_hashref($sqlQuery, 'MYKEY');
-  #print STDERR Dumper $compoundHash;
+  ### InChIKey hash ###
+  my $compoundInChIKeyHash = {};
+  $compoundInChIKeyHash = $dbh->selectall_hashref($compoundInChIKeySQL, 'MYKEY');
+  #print STDERR Dumper $compoundInChIKeyHash;
+
+  ### Other Compound Hash ###
+  my $otherCompoundHash = {};
+  $otherCompoundHash = $dbh->selectall_hashref($compoundOtherSQL, 'MYKEY');
+  #print STDERR Dumper $otherCompoundHash;
 
   my $dir = $self->getArg('inputDir');
   my $peakFile = $self->getArg('peaksFile');
@@ -270,29 +303,31 @@ sub run {
       #	$ms_polarity = $peaksArray[4];
       #	$isotopomer = $peaksArray[5];
 
-    my $compundLookup;
-	#if($compoundType eq 'InChIKey'){
-	# my $compundLookup = $compundLookup = 'InChIKey=' . $compound_id;
-	#}
-	#else{
-      $compundLookup = $compound_id;
-	  #}
+      my $compundLookup = $compound_id;
+      my $compoundIDLoad;
 
-    $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-    my $compoundIDLoad = $compoundHash->{$compundLookup}->{"MYID"};
+      if(defined($compoundInChIKeyHash->{'InChIKey=' . $compundLookup})){
+        print STDERR "lookup: $compundLookup \n";
+        $compoundIDLoad = $compoundInChIKeyHash->{$compundLookup}->{'MYID'};
+      }
+      elsif(defined($otherCompoundHash->{$compundLookup})){
+        print STDERR "lookup: $compundLookup \n"; 
+        $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
+      }
+      else{;}
 
-    print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+      $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
+      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
-    my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-      compound_id=>$compoundIDLoad,
-      compound_peaks_id=>$compound_peaks_id,
-      isotopomer=>$isotopomer,
-      user_compound_name=>$compound_id
-      });
+      my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+        compound_id=>$compoundIDLoad,
+        compound_peaks_id=>$compound_peaks_id,
+        isotopomer=>$isotopomer,
+        user_compound_name=>$compound_id
+        });
 
-    $compoundPeaksChebiRow->submit();
-    $self->undefPointerCache();
-
+      $compoundPeaksChebiRow->submit();
+      $self->undefPointerCache();
     } #End of while(<PEAKS>)
     close(PEAKS);
     ###### END - Load into CompoundPeaksChebi ######
@@ -301,7 +336,7 @@ sub run {
 
    my $resultsFile = $self->getArg('resultsFile');
 
-   my $profileSetName = $self->getArg('studyName') . $self->getArg('compoundType');
+   my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
 
    my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
    # NOTE Setting profileSetName as studyName + compoundType for now.
