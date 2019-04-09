@@ -69,7 +69,7 @@ while (<IN>) {
       if ($item =~ /\[PMID (\d+)\]/) {
 	$dbRef = "PMID:".$1;
       }
-      if ($item =~ /;ev_code=(\w+)/ || $item =~ /\[Evidence (\S+?)\]/ ) {
+      if ($item =~ /;ev_code=(\w+)/ || $item =~ /\[Evidence\s+(\S+?)\]/ ) {
 	$evCode = $1;
 	$evCode = uc ($evCode);
       }
