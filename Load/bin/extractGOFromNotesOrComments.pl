@@ -79,7 +79,13 @@ while (<IN>) {
     $evCode = 'IEA' if (!$evCode);
     $product = $products{$sourceId} if (!$product);
 
-    print "$db\t$sourceId\t$sourceId\t\t$goid\t$dbRef\t$evCode\t\t$aspect\t$product\t$sourceId\t$sourceIdType\t$taxonId\t$date\t$db\n";
+    my @evCodes = split (/\,/, $evCode);
+    my $preEc;
+    foreach my $ec (@evCodes) {
+      print "$db\t$sourceId\t$sourceId\t\t$goid\t$dbRef\t$ec\t\t$aspect\t$product\t$sourceId\t$sourceIdType\t$taxonId\t$date\t$db\n" if ($ec ne $preEc);
+      $preEc = $ec;
+    }
+#    print "$db\t$sourceId\t$sourceId\t\t$goid\t$dbRef\t$evCode\t\t$aspect\t$product\t$sourceId\t$sourceIdType\t$taxonId\t$date\t$db\n";
 
   }
 }
