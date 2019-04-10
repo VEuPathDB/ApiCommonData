@@ -398,9 +398,9 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, ro
   # Easiest implementation for SUPER::run is just to move the data for the means
   # into a directoy that is named the same as the resultsFile directory made.
   system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
-  system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
+  #system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
   $self->SUPER::run();
-  system("mv $dir/.$resultsFile/ $dir/.means_$resultsFile/");
+  system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
   #will have to move the data in the hidden folder and replace with mean data to make work.
   # this will ensure that it has the right study name.
