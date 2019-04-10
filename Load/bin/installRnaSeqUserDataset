@@ -95,12 +95,10 @@ while(<$fh>) { # TODO:  need example of how this looks
   open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
 
   # check header to distinguish file type
-  <DAT>;
-  chomp;
-  my $header = $_;
+  my $header = <DAT>;
+  chomp($header);
 
-  if ($header eq "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\\
-tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status") {
+  if ($header eq "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status") {
     # Cufflinks FPKM file
     $idIndex = 0;
     $fpkmIndex = 9;
