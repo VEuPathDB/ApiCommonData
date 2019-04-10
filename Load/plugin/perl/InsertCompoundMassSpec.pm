@@ -333,19 +333,14 @@ sub run {
     ###### END - Load into CompoundPeaksChebi ######
 
     ###### Load into CompoundMassSpecResults ######
-
    my $resultsFile = $self->getArg('resultsFile');
-
    my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
-
    my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
    # NOTE Setting profileSetName as studyName + compoundType for now.
    my $params;
-
    my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
    $resultsData->munge();
    $self->SUPER::run();
-
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
 
@@ -403,9 +398,9 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, ro
   # Easiest implementation for SUPER::run is just to move the data for the means
   # into a directoy that is named the same as the resultsFile directory made.
   system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
-  #system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
+  system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
   $self->SUPER::run();
-  #system("mv $dir/.$resultsFile/ $dir/.means_$resultsFile/");
+  system("mv $dir/.$resultsFile/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
   #will have to move the data in the hidden folder and replace with mean data to make work.
   # this will ensure that it has the right study name.
