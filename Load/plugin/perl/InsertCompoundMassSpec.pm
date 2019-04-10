@@ -311,7 +311,7 @@ sub run {
         $compoundIDLoad = $compoundInChIKeyHash->{$compundLookup}->{'MYID'};
       }
       elsif(defined($otherCompoundHash->{$compundLookup})){
-        print STDERR "lookup: $compundLookup \n"; 
+        print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
       }
       else{;}
@@ -344,70 +344,71 @@ sub run {
 
    my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
    $resultsData->munge();
-#   $self->SUPER::run();
+   $self->SUPER::run();
 
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
-#
-#   my $mappingFile = $self->getArg('mappingFile');
-#
-#   my $meanRScript =
-# <<RString;
-#   library(data.table)
-#
-#   data <- read.csv('data.tab', sep='\t', header=TRUE)
-#   data = data.table(data)
-#   output <-data.table(data[,1])#(V1=NA)
-#   colnames(output)<- " "
-#   header = ""
-#   mapping <- read.csv('$mappingFile', sep='\t', header=TRUE)
-#   mapping = data.table(mapping)
-#
-#   # add in data col for sample names
-#   groups = unique(mapping[['group']])
-#
-#   for(i in groups){
-#   #   print(i)
-#       newData <- mapping[group ==i]
-#       newData = data.table(newData)
-#       samples = as.vector(newData[['Sample_Names']])
-#       newResults = data[, samples, with=FALSE]
-#       newResults[,mean] <- rowMeans(newResults, na.rm=TRUE)
-#       mean <- newResults[, 'mean']
-#       new_col_name = paste(i, 'mean')
-#       header = paste(header, new_col_name, sep='\t')
-#   #   print(mean)
-#       output = cbind(output, mean[, 'mean'])
-#       setnames(output, 'mean', new_col_name)
-#   }
-#
-#   # output[, V1 :=NULL]
-#   # print(output)
-#   # print(header)
-#
-#   write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-#   write.table(output, file='mean.tab', sep="\t", append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)
-#   quit('no');
-# RString
-#
-#   my $rFile = $self->writeRScript($meanRScript);
-#   $self->runR($rFile);
-#   system("rm $rFile");
-#
-#   my $meanFile = 'mean.tab';
+
+  my $mappingFile = $self->getArg('mappingFile');
+
+  my $meanRScript =
+  "library(data.table)
+
+data <- read.csv('data.tab', sep='\\t', header=TRUE)
+data = data.table(data)
+output <-data.table(data[,1])#(V1=NA)
+colnames(output)<- ' '
+header = ''
+mapping <- read.csv('$mappingFile', sep='\\t', header=TRUE)
+mapping = data.table(mapping)
+
+# add in data col for sample names
+groups = unique(mapping[['group']])
+
+for(i in groups){
+#   print(i)
+    newData <- mapping[group ==i]
+    newData = data.table(newData)
+    samples = as.vector(newData[['Sample_Names']])
+    newResults = data[, samples, with=FALSE]
+    newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
+    mean <- newResults[, 'mean']
+    new_col_name = paste(i, 'mean')
+    header = paste(header, new_col_name, sep='\\t')
+#   print(mean)
+    output = cbind(output, mean[, 'mean'])
+    setnames(output, 'mean', new_col_name)
+}
+
+#output[, V1 :=NULL]
+print(output)
+print(header)
+
+write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)";
+
+# NEED underscores for names.
+  open(my $fh, '>', "$dir/mean.R");
+  print $fh "$meanRScript";
+  close $fh;
+  my $command = "Rscript $dir/mean.R";
+  system($command);
+  system("rm $dir/mean.R");
   # This is set by the R script.
+  my $meanFile = 'mean.tab';
 
-  # my $meanArgs = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$meanFile, profileSetName=>$profileSetName};
-  #
-  # my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
-  # #will have to move the data in the hidden folder and replace with mean data to make work.
-  # # this will ensure that it has the right study name.
+  my $meanArgs = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$meanFile, profileSetName=>$profileSetName};
+  my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
+  $meanData->munge();
+  # Easiest implementation for SUPER::run is just to move the data for the means
+  # into a directoy that is named the same as the resultsFile directory made.
+  system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
+  system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
+  #$self->SUPER::run();
 
-
-
-  # Add step to add averaged data.
-  # Add file specifying the cols that are to be averaged.
-  # Query averaged data.
+  system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
+  #will have to move the data in the hidden folder and replace with mean data to make work.
+  # this will ensure that it has the right study name.
 
   ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
 }
