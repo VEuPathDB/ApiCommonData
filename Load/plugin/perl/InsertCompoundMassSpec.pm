@@ -242,8 +242,9 @@ sub run {
   	$retention_time = $peaksArray[2];
   	$compound_id = $peaksArray[3];
     chomp $compound_id;
-    #	$ms_polarity = $peaksArray[4];
-    #	$isotopomer = $peaksArray[5]; # Not using for the moment. Setting in elsif below.
+    $isotopomer = $peaksArray[4];
+    $ms_polarity = $peaksArray[5];
+     # Not using for the moment. Setting in elsif below.
 
     if (($lastPeakId == $peak_id) && ($lastMass == $mass) && ($lastRT == $retention_time)){
 
@@ -333,23 +334,24 @@ sub run {
     ###### END - Load into CompoundPeaksChebi ######
 
     ###### Load into CompoundMassSpecResults ######
-   my $resultsFile = $self->getArg('resultsFile');
-   my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
-   my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
-   # NOTE Setting profileSetName as studyName + compoundType for now.
-   my $params;
-   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
-   $resultsData->munge();
-   $self->SUPER::run();
+  my $resultsFile = $self->getArg('resultsFile');
+  my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
+  my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
+  # NOTE Setting profileSetName as studyName + compoundType for now.
+  my $params;
+  my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  $resultsData->munge();
+  $self->SUPER::run();
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
+  system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
 
   my $mappingFile = $self->getArg('mappingFile');
 
   my $meanRScript =
   "library(data.table)
 
-data <- read.csv('data.tab', sep='\\t', header=TRUE)
+data <- read.csv('$resultsFile', sep='\\t', header=TRUE)
 data = data.table(data)
 output <-data.table(data[,1])#(V1=NA)
 colnames(output)<- ' '
@@ -380,7 +382,8 @@ print(output)
 print(header)
 
 write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)";
+write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)"
+;
 
 # NEED underscores for names.
   open(my $fh, '>', "$dir/mean.R");
@@ -395,16 +398,10 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, ro
   my $meanArgs = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$meanFile, profileSetName=>$profileSetName};
   my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
   $meanData->munge();
-  # Easiest implementation for SUPER::run is just to move the data for the means
-  # into a directoy that is named the same as the resultsFile directory made.
-  system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
-  #system("mv $dir/.mean.tab/ $dir/.$resultsFile/");
+
   $self->SUPER::run();
   system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
-  #will have to move the data in the hidden folder and replace with mean data to make work.
-  # this will ensure that it has the right study name.
-
   ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
 }
 
