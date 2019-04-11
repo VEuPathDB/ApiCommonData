@@ -351,22 +351,23 @@ sub run {
   my $meanRScript =
   "library(data.table)
 
-data <- read.csv('$resultsFile', sep='\\t', header=TRUE)
+data <- read.csv('$resultsFile', sep='\\t', header=TRUE, check.names=FALSE)
 data = data.table(data)
 output <-data.table(data[,1])#(V1=NA)
 colnames(output)<- ' '
 header = ''
 mapping <- read.csv('$mappingFile', sep='\\t', header=TRUE)
 mapping = data.table(mapping)
+colnames(mapping)[1]<-'sample'
+colnames(mapping)[2]<-'group'
 
-# add in data col for sample names
 groups = unique(mapping[['group']])
 
 for(i in groups){
 #   print(i)
     newData <- mapping[group ==i]
     newData = data.table(newData)
-    samples = as.vector(newData[['Sample_Names']])
+    samples = as.vector(newData[['sample']])
     newResults = data[, samples, with=FALSE]
     newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
     mean <- newResults[, 'mean']
@@ -376,10 +377,6 @@ for(i in groups){
     output = cbind(output, mean[, 'mean'])
     setnames(output, 'mean', new_col_name)
 }
-
-#output[, V1 :=NULL]
-print(output)
-print(header)
 
 write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
 write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, row.names=FALSE, quote=FALSE)"
