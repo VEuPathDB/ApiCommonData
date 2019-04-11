@@ -187,6 +187,25 @@ sub getRelationships {
 	return \@seen;
 }
 
+sub getMultifilters {
+	my ($self) = @_;
+	my @seen;
+	
+ 	my $it = $self->execute('get_termtypes');
+	while (my $row = $it->next) {
+		my $uri = $row->{entity}->as_hash()->{iri}|| $row->{entity}->as_hash()->{URI};
+	  next unless($uri);
+		my $sid = $self->getSourceIdFromIRI($uri);
+		die "Cannot get source id from $uri" unless $sid;
+		push(@seen, {
+			subject => $sid,
+			type => "EUPATH_0000271",
+			object => "EUPATH_0001005"
+		});
+	}
+	return \@seen;
+}
+
 sub getDisplayOrder {
 	my ($self) = @_;
 	my %seen;
