@@ -251,8 +251,6 @@ sub run {
       print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      $ms_polarity = "";
-      $isotopomer = "test";
       print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n";
 
       # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float value.
@@ -301,8 +299,8 @@ sub run {
     	$retention_time = $peaksArray[2];
     	$compound_id = $peaksArray[3];
       chomp $compound_id; # needs due to the new line char.
-      #	$ms_polarity = $peaksArray[4];
-      #	$isotopomer = $peaksArray[5];
+      	$isotopomer = $peaksArray[4];
+      	$ms_polarity = $peaksArray[5];
 
       my $compundLookup = $compound_id;
       my $compoundIDLoad;
