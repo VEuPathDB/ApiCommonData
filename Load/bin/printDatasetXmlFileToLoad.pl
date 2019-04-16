@@ -114,10 +114,10 @@ $excelInfo{$organismAbbrev}{"referenceStrainOrganismAbbrev"} = $excelInfo{$organ
 
 ## add secondaryAnnot if it is not get from arguments
 if ($secondaryAnnot !~ /mito/i && $excelInfo{$organismAbbrev}{"hasMito"} =~ /^y/i) {
-  die "ERROR: mito- genome included, please add argument --secondaryAnnot 'mito'\n";
+  die "ERROR: mito- genome included, please add argument: --secondaryAnnot 'mito'\n";
 }
 if ($secondaryAnnot !~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} =~ /^y/i) {
-  die "ERROR: api- genome included, please add argument --secondaryAnnot 'api'\n";
+  die "ERROR: api- genome included, please add argument: --secondaryAnnot 'api'\n";
 }
 
 if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
@@ -622,7 +622,7 @@ sub printRefStrainEpitope {
     print $fh "  <dataset class=\"referenceStrain-epitope_sequences_IEDB\">\n";
     printNameWithDollarSign ($fh, 'organismAbbrev');
     printNameWithDollarSign ($fh, 'speciesNcbiTaxonId');
-    printNameWithValue ($fh, 'version', '2.4');
+    printNameWithValue ($fh, 'version', '3.10.0');
     print $fh "  </dataset>\n";
     print $fh "\n";
   }
