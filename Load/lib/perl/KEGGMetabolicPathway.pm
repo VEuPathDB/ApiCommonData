@@ -12,8 +12,8 @@ use GUS::Model::ApiDB::PathwayReaction;
 use GUS::Model::ApiDB::PathwayReactionRel;
 
 sub getReaderClass {
-  return "GUS::Supported::KEGGReader";
-  #return "GUS::Supported::KEGGReaderv2";
+#		return "GUS::Supported::KEGGReader";
+	 return "GUS::Supported::KEGGReaderv2";
 }
 
 sub makeGusObjects {
@@ -22,6 +22,7 @@ sub makeGusObjects {
 
   my $reader = $self->getReader();
   my $pathwayHash = $reader->getPathwayHash();
+  print STDERR Dumper $pathwayHash;
 
   my $typeToTableMap = {compound => 'chEBI::Compounds', enzyme => 'SRes::EnzymeClass', reaction => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
   my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme', reaction => 'enzyme'};
@@ -40,11 +41,9 @@ sub makeGusObjects {
   # MAKE NODES
   foreach my $node (values %{$pathwayHash->{NODES}}) {
     my $keggType = $node->{TYPE};
-    my $keggSourceId = $node->{SOURCE_ID};
-
+	my $keggSourceId = $node->{SOURCE_ID};
     my $type = $typeToOntologyTerm->{$keggType};
     my $tableName = $typeToTableMap->{$keggType};
-
     next unless($type); 
 
     my $typeId = $self->mapAndCheck($type, $self->getOntologyTerms());
@@ -83,19 +82,26 @@ sub makeGusObjects {
   }
 
   foreach my $compoundId (keys %{$pathwayHash->{EDGES}}) {
-    my $compoundNode = $pathwayHash->{NODES}->{$compoundId};
-    my $compoundSourceId = $compoundNode->{SOURCE_ID};
-    my $gusCompoundNode = $self->getNodeByUniqueId($compoundId);
-
+		  #print STDERR "cpd id $compoundId \n";
+	my $compoundNode = $pathwayHash->{NODES}->{$compoundId};
+	#print STDERR  "cpd node \n";
+	#print STDERR Dumper $compoundNode; 
+	my $compoundSourceId = $compoundNode->{SOURCE_ID};
+	#print STDERR "cpdsrcID $compoundSourceId \n";
+	my $gusCompoundNode = $self->getNodeByUniqueId($compoundId);
     foreach my $otherId (@{$pathwayHash->{EDGES}->{$compoundId}}) {
       my $otherNode = $pathwayHash->{NODES}->{$otherId};
       my $gusOtherNode = $self->getNodeByUniqueId($otherId);
-
       my $gusRelationship;
+	  #    	print STDERR "node \n";
+	  #		print STDERR Dumper $gusCompoundNode->{'display_name'};
+	  # 	print STDERR "other node \n";
+	  #		print STDERR Dumper $gusOtherNode->{'display_name'};
       if($otherNode->{TYPE} eq 'enzyme') {
         my $reactionId = $otherNode->{REACTION};
         $reactionId =~ s/rn\://g;
-        my $reactionHash = $self->findReactionById($reactionId);
+		#print STDERR "rxn id: $reactionId\n"; 
+		my $reactionHash = $self->findReactionById($reactionId);
 
 
         if($reactionHash) {
@@ -113,8 +119,10 @@ sub makeGusObjects {
           my $compoundIsProduct = &existsInArrayOfHashes($compoundId, $reactionHash->{PRODUCTS});
 
           if($compoundIsSubstrate && $compoundIsProduct) {
-            die "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
-          }
+				  #die "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
+            print STDERR "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
+			# ROSS : this was taken out as there is one legitimate instance in the 2019.02 data. No others were found.
+			}
 
           unless($compoundIsSubstrate || $compoundIsProduct) {
             print STDERR "WARN:  Could not find compound $compoundId in either substrates or products for Reaction $reactionId\n";
@@ -124,9 +132,12 @@ sub makeGusObjects {
 
           if($compoundIsSubstrate) {
             $gusRelationship->setParent($gusCompoundNode, "node_id");
-            $gusRelationship->setParent($gusOtherNode, "associated_node_id");
+            print STDERR "gus cpd node:";
+			$gusRelationship->setParent($gusOtherNode, "associated_node_id");
+            print STDERR "gus other node:";
             $gusRelationship->setIsReversible($isReversible);
-          }
+		}
+
           else {
             $gusRelationship->setParent($gusOtherNode, "node_id");
             $gusRelationship->setParent($gusCompoundNode, "associated_node_id");
