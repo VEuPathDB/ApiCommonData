@@ -12,8 +12,7 @@ use GUS::Model::ApiDB::PathwayReaction;
 use GUS::Model::ApiDB::PathwayReactionRel;
 
 sub getReaderClass {
-#		return "GUS::Supported::KEGGReader";
-	 return "GUS::Supported::KEGGReaderv2";
+	 return "GUS::Supported::KEGGReader";
 }
 
 sub makeGusObjects {
@@ -27,11 +26,14 @@ sub makeGusObjects {
   my $typeToTableMap = {compound => 'chEBI::Compounds', enzyme => 'SRes::EnzymeClass', reaction => 'SRes::EnzymeClass', map => 'SRes::Pathway' };
   my $typeToOntologyTerm = {compound => 'molecular entity', map => 'metabolic process', enzyme => 'enzyme', reaction => 'enzyme'};
 
+  my $sourceId = $pathwayHash->{SOURCE_ID};
+  $sourceId =~ s/^rn/ec/;
+
   print STDERR "Making GUS Objects for pathway $pathwayHash->{NAME} ($pathwayHash->{SOURCE_ID} )\n";
 
   my $pathway = GUS::Model::SRes::Pathway->new({name => $pathwayHash->{NAME}, 
-                                               source_id => $pathwayHash->{SOURCE_ID},
-                                                external_database_release_id => $self->getExtDbRlsId(),
+                                               source_id => $sourceId,
+                                               external_database_release_id => $self->getExtDbRlsId(),
                                                url => $pathwayHash->{URI}
                                                });
 
