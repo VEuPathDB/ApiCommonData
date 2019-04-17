@@ -84,25 +84,16 @@ sub makeGusObjects {
   }
 
   foreach my $compoundId (keys %{$pathwayHash->{EDGES}}) {
-		  #print STDERR "cpd id $compoundId \n";
 	my $compoundNode = $pathwayHash->{NODES}->{$compoundId};
-	#print STDERR  "cpd node \n";
-	#print STDERR Dumper $compoundNode; 
 	my $compoundSourceId = $compoundNode->{SOURCE_ID};
-	#print STDERR "cpdsrcID $compoundSourceId \n";
 	my $gusCompoundNode = $self->getNodeByUniqueId($compoundId);
     foreach my $otherId (@{$pathwayHash->{EDGES}->{$compoundId}}) {
       my $otherNode = $pathwayHash->{NODES}->{$otherId};
       my $gusOtherNode = $self->getNodeByUniqueId($otherId);
       my $gusRelationship;
-	  #    	print STDERR "node \n";
-	  #		print STDERR Dumper $gusCompoundNode->{'display_name'};
-	  # 	print STDERR "other node \n";
-	  #		print STDERR Dumper $gusOtherNode->{'display_name'};
       if($otherNode->{TYPE} eq 'enzyme') {
         my $reactionId = $otherNode->{REACTION};
         $reactionId =~ s/rn\://g;
-		#print STDERR "rxn id: $reactionId\n"; 
 		my $reactionHash = $self->findReactionById($reactionId);
 
 
@@ -121,9 +112,7 @@ sub makeGusObjects {
           my $compoundIsProduct = &existsInArrayOfHashes($compoundId, $reactionHash->{PRODUCTS});
 
           if($compoundIsSubstrate && $compoundIsProduct) {
-				  #die "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
             print STDERR "Compound $compoundSourceId cannot be a substrate and a product for reaction $reactionId";
-			# ROSS : this was taken out as there is one legitimate instance in the 2019.02 data. No others were found.
 			}
 
           unless($compoundIsSubstrate || $compoundIsProduct) {
@@ -134,9 +123,7 @@ sub makeGusObjects {
 
           if($compoundIsSubstrate) {
             $gusRelationship->setParent($gusCompoundNode, "node_id");
-            print STDERR "gus cpd node:";
 			$gusRelationship->setParent($gusOtherNode, "associated_node_id");
-            print STDERR "gus other node:";
             $gusRelationship->setIsReversible($isReversible);
 		}
 
