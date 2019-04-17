@@ -34,6 +34,9 @@ if ($productFile) {
   close PD;
 }
 
+## print GO head line
+print "!gaf-version: 1.0\n";
+
 open (IN, "$notesFile") || die "can not open $notesFile to read\n";
 while (<IN>) {
   chomp;
