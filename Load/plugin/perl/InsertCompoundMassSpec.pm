@@ -222,7 +222,7 @@ sub run {
   my @header = split(/\t/, $header);
 
   my ($external_database_release_id, $mass, $retention_time, $peak_id,
-    $ms_polarity, $compound_id, $compound_peaks_id, $isotopomer,
+    $ms_polarity, $compound_id, $InChIKey, $compound_peaks_id, $isotopomer,
     $user_compound_name);
 
     # Mulplite compounds can map to one mass/rt pair.
@@ -240,18 +240,21 @@ sub run {
     $peak_id = $peaksArray[0];
   	$mass = $peaksArray[1];
   	$retention_time = $peaksArray[2];
-  	$compound_id = $peaksArray[3];
+    $isotopomer = $peaksArray[3];
+    $ms_polarity = $peaksArray[4];
+  	$compound_id = $peaksArray[5];
     chomp $compound_id;
-    $isotopomer = $peaksArray[4];
-    $ms_polarity = $peaksArray[5];
+	$InChIKey = $peaksArray[6];
+	chomp $InChiKey; 
+	
      # Not using for the moment. Setting in elsif below.
 
     if (($lastPeakId == $peak_id) && ($lastMass == $mass) && ($lastRT == $retention_time)){
 
-      print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
+			#print STDERR "Mass: $mass - RT: $retention_time pair already in CompoundPeaks - skipping.\n"
     }
     else {
-      print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n";
+			#print STDERR  "Mass:", $mass, " RT:", $retention_time, "  Cpd ID:", $compound_id, " MS Pol:", $ms_polarity, "\n";
 
       # NOTE : Check that changing the format (csv->tab) does not change the Mass / RT float value.
         my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
@@ -295,28 +298,33 @@ sub run {
 
       my @peaksArray = split(/\t/, $_);
       $peak_id = $peaksArray[0];
-    	$mass = $peaksArray[1];
-    	$retention_time = $peaksArray[2];
-    	$compound_id = $peaksArray[3];
-      chomp $compound_id; # needs due to the new line char.
-      	$isotopomer = $peaksArray[4];
-      	$ms_polarity = $peaksArray[5];
+      $mass = $peaksArray[1];
+	  $retention_time = $peaksArray[2];
+      $isotopomer = $peaksArray[3];
+      $ms_polarity = $peaksArray[4];
+      $compound_id = $peaksArray[5];
+      chomp $compound_id;
+      $InChIKey = $peaksArray[6];
+      chomp $InChiKey; 
+      
+	  my $compundLookup = $compound_id;
+	  my $compoundIDLoad;
 
-      my $compundLookup = $compound_id;
-      my $compoundIDLoad;
-
-      if(defined($compoundInChIKeyHash->{'InChIKey=' . $compundLookup})){
-        print STDERR "lookup: $compundLookup \n";
-        $compoundIDLoad = $compoundInChIKeyHash->{$compundLookup}->{'MYID'};
+	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
+# They are never seen so adding the col to the table to have both is not useful for the moment. 
+# To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
+      if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
+			  #print STDERR "lookup: $compundLookup \n";
+        $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
       }
       elsif(defined($otherCompoundHash->{$compundLookup})){
-        print STDERR "lookup: $compundLookup \n";
+			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
       }
       else{;}
 
       $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+#      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
         compound_id=>$compoundIDLoad,
