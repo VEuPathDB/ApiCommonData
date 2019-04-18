@@ -245,7 +245,7 @@ sub run {
   	$compound_id = $peaksArray[5];
     chomp $compound_id;
 	$InChIKey = $peaksArray[6];
-	chomp $InChiKey; 
+	chomp $InChIKey; 
 	
      # Not using for the moment. Setting in elsif below.
 
