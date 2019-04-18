@@ -8,8 +8,8 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems1a_huas.owl">
-        <rdfs:comment>Built on SVN revision 96816</rdfs:comment>
-        <owl:versionInfo>2019-03-28</owl:versionInfo>
+        <rdfs:comment>Built on SVN revision 97417</rdfs:comment>
+        <owl:versionInfo>2019-04-18</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -371,6 +371,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010177">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>offer_eat</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">offr_eat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_huas_lite_data_kenya.sas7bdat, gems1a_huas_lite_data_6_sites.sas7bdat</obo:EUPATH_0001001>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">E40: Health care utilization. How much was the child offered to eat during the diarrheal illness? . Only complete for children who had diarrhea in the last 2 weeks.</obo:EUPATH_0001003>
@@ -386,7 +387,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010238">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drh_days</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drh_days_last</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_huas_lite_data_kenya.sas7bdat, gems1a_huas_lite_data_6_sites.sas7bdat</obo:EUPATH_0001001>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">D28: Diarrhea history. How many days did the child have diarrhea. Only complete for children who had diarrhea in the last 2 weeks</obo:EUPATH_0001003>
@@ -417,6 +417,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010241">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>offer_drink</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">offr_drink</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_huas_lite_data_kenya.sas7bdat, gems1a_huas_lite_data_6_sites.sas7bdat</obo:EUPATH_0001001>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">E39: Health care utilization. How much was the child offered to drink during the diarrheal illness? . Only complete for children who had diarrhea in the last 2 weeks</obo:EUPATH_0001003>
@@ -708,6 +709,16 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1, 2, 3, 9</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Irritable/less playful</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015519 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015519">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010016"/>
+        <obo:EUPATH_0000755>drh_days</obo:EUPATH_0000755>
+        <rdfs:label>Child days since diarrhea</rdfs:label>
     </owl:Class>
     
 
@@ -1220,6 +1231,15 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=NOT IN CODEBOOK, 1=No, 2=Yes, NA=NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Seek outside care</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0015711 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015711">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
+        <rdfs:label>Reason interview not conducted</rdfs:label>
     </owl:Class>
     
 
