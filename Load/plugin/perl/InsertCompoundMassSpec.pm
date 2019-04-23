@@ -329,7 +329,7 @@ sub run {
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
 		print STDERR "Testing other hash for $peak_id $InChIKey \n";
-		print STDERR "Other hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
+		print STDERR "Other hash value :", Dumper $compoundOtherHash->{$compound_id};
       }
       else{print STDERR "Not in either hash\n";}
 	 
@@ -340,7 +340,8 @@ sub run {
 		#if neither had cpd, load null.
 
       $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+	  
+      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n \n\n\n\n";
 
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
         compound_id=>$compoundIDLoad,
