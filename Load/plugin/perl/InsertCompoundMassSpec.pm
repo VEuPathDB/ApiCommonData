@@ -397,7 +397,7 @@ for(i in groups){
 }
 
 write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-write.table(output, file='mean.tab', sep='\\t', append=TRUE, na="0", col.names=FALSE, row.names=FALSE, quote=FALSE)"
+write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=FALSE, row.names=FALSE, quote=FALSE)"
 ;
 
 # NEED underscores for names.
