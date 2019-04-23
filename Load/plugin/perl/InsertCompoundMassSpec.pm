@@ -323,13 +323,13 @@ sub run {
 	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-		print STDERR $compoundIDLoad; 
+		print STDERR "1: $compoundIDLoad \n"; 
 	  }
       elsif(defined($otherCompoundHash->{$compoundLookup})){
         $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
 		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
 		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
-		print STDERR $compoundIDLoad; 
+		print STDERR "2: $compoundIDLoad\n"; 
       }
       else{;}
 	 
@@ -350,7 +350,7 @@ sub run {
         user_compound_name=>$compound_id
         });
 
-	  $compoundPeaksChebiRow->submit();
+      #$compoundPeaksChebiRow->submit();
       $self->undefPointerCache();
     } #End of while(<PEAKS>)
     close(PEAKS);
@@ -364,7 +364,7 @@ sub run {
   my $params;
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
   $resultsData->munge();
-  $self->SUPER::run();
+  #$self->SUPER::run();
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
   system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
@@ -419,7 +419,7 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, ro
   my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
   $meanData->munge();
 
-  $self->SUPER::run();
+  #$self->SUPER::run();
   system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
   ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
