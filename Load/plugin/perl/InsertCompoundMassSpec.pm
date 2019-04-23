@@ -315,18 +315,16 @@ sub run {
 # To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
     print STDERR "Values in hashes for $peak_id:\n";
 	print STDERR Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-	print STDERR Dumper $otherCompoundHash->{$compundLookup};
+	print STDERR Dumper $otherCompoundHash->{$compoundLookup};
 	
 	
 	
 	if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
-			  #print STDERR "lookup: $compundLookup \n";
 		print STDERR "FOUND ---- InChI hash for $peak_id $compound_id \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
       elsif(defined($otherCompoundHash->{$compoundLookup})){
-			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
 		print STDERR "FOUND #### other hash for $peak_id $InChIKey \n";
 		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
