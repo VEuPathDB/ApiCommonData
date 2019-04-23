@@ -317,13 +317,13 @@ sub run {
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		print STDERR "Testing InChI hash for $peak_id \n";
-		print STDERR "Inchi hash value : $compoundInChIKeyHash->{'InChIKey=' . $InChIKey}\n";
+		print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
       elsif(defined($otherCompoundHash->{$compundLookup})){
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
 		print STDERR "Testing other hash for $peak_id \n";
-		print STDERR "Other hash value : $compoundInChIKeyHash->{'InChIKey=' . $InChIKey}\n";
+		print STDERR "Other hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
       else{;}
 	 
