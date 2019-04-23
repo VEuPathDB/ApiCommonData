@@ -321,7 +321,7 @@ sub run {
 	
 	  if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
 	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
-        $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
+        $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey=' . $InChIKey}->{'MYID'};
 		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
 		print STDERR "1: $compoundIDLoad \n"; 
 	  }
