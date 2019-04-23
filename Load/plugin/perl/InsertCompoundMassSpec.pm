@@ -343,7 +343,7 @@ sub run {
         user_compound_name=>$compound_id
         });
 
-	  $compoundPeaksChebiRow->submit();
+#	  $compoundPeaksChebiRow->submit();
       $self->undefPointerCache();
     } #End of while(<PEAKS>)
     close(PEAKS);
