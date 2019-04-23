@@ -323,11 +323,13 @@ sub run {
 	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-      }
+		print STDERR $compoundIDLoad; 
+	  }
       elsif(defined($otherCompoundHash->{$compoundLookup})){
         $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
 		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
 		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
+		print STDERR $compoundIDLoad; 
       }
       else{;}
 	 
