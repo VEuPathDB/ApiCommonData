@@ -292,6 +292,7 @@ sub run {
     chomp $header;
     my @header = split(/\t/, $header);
 
+	my $compoundPeaksTest  = {}; 
     while(<PEAKS>){
       my ($mass, $retention_time,
           $compound_id, $compound_peaks_id, $isotopomer);
@@ -306,10 +307,13 @@ sub run {
       chomp $compound_id;
       $InChIKey = $peaksArray[6];
       chomp $InChIKey; 
-      
+
 	  my $compoundLookup = $compound_id;
 	  my $InChILookup = 'InChIKey=' . $InChIKey; 
 	  my $compoundIDLoad;
+
+	  if(-e $compoundPeaksTest->{$peak_id}){;}
+	  else{$compoundPeaksTest->{$peak_id} = [];}
 
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
@@ -333,20 +337,27 @@ sub run {
 		#print STDERR "2: $compoundIDLoad\n"; 
       }
       else{;}
+
+	  if ($compoundPeaksTest->{$peak_id} ~~ $compoundIDLoad)
+	  {;}
+	  else{
+	    push @$compoundPeaksTest->{$peak_id}, $compoundIDLoad; 
 	 
-      $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
+        $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 	  
 	  #print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n \n\n\n\n";
 
-      my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-        compound_id=>$compoundIDLoad,
-        compound_peaks_id=>$compound_peaks_id,
-        isotopomer=>$isotopomer,
-        user_compound_name=>$compound_id
-        });
+        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+          compound_id=>$compoundIDLoad,
+          compound_peaks_id=>$compound_peaks_id,
+          isotopomer=>$isotopomer,
+          user_compound_name=>$compound_id
+          });
 
-      $compoundPeaksChebiRow->submit();
+        $compoundPeaksChebiRow->submit();
+	  }
       $self->undefPointerCache();
+	  print STDERR Dumper $compoundPeaksTest->{$peak_id} 
     } #End of while(<PEAKS>)
     close(PEAKS);
     ###### END - Load into CompoundPeaksChebi ######
