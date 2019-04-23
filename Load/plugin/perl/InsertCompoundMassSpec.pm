@@ -313,23 +313,23 @@ sub run {
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
 # To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
-    print STDERR "Values in hashes for $peak_id:\n";
-	print STDERR Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-	print STDERR Dumper $otherCompoundHash->{$compoundLookup};
+      print STDERR "Values in hashes for $peak_id:\n";
+	  print STDERR Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
+	  print STDERR Dumper $otherCompoundHash->{$compoundLookup};
 	
 	
 	
-	if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
-		print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
+	  if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
+	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
-		print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
+		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
       elsif(defined($otherCompoundHash->{$compoundLookup})){
         $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
-		print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
-		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
+		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
+		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
       }
-      else{print STDERR "Not in either hash\n";}
+      else{;}
 	 
 		#Test for cpd in hash of inchi
 		#load if there
