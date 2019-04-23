@@ -307,7 +307,7 @@ sub run {
       $InChIKey = $peaksArray[6];
       chomp $InChIKey; 
       
-	  my $compundLookup = $compound_id;
+	  my $compoundLookup = $compound_id;
 	  my $compoundIDLoad;
 
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
@@ -325,9 +325,9 @@ sub run {
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
-      elsif(defined($otherCompoundHash->{$compundLookup})){
+      elsif(defined($otherCompoundHash->{$compoundLookup})){
 			  #print STDERR "lookup: $compundLookup \n";
-        $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
+        $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
 		print STDERR "FOUND #### other hash for $peak_id $InChIKey \n";
 		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
       }
