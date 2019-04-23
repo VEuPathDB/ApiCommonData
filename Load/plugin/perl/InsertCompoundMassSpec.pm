@@ -313,15 +313,23 @@ sub run {
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
 # To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
-      if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
+      if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey}) && !$compoundInChIKeyHash->{'InChIKey=' . $InChIKey} eq ''){
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
+		print STDERR "Testing InChI hash for $peak_id \n";
       }
       elsif(defined($otherCompoundHash->{$compundLookup})){
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
+		print STDERR "Testing other hash for $peak_id \n";
       }
       else{;}
+
+		#Test for cpd in hash of inchi
+		#load if there
+		#test for cpd id, if none above, in other hash
+		#load if there
+		#if neither had cpd, load null.
 
       $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 #      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
@@ -333,7 +341,7 @@ sub run {
         user_compound_name=>$compound_id
         });
 
-      $compoundPeaksChebiRow->submit();
+# $compoundPeaksChebiRow->submit();
       $self->undefPointerCache();
     } #End of while(<PEAKS>)
     close(PEAKS);
@@ -347,7 +355,7 @@ sub run {
   my $params;
   my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
   $resultsData->munge();
-  $self->SUPER::run();
+  # $self->SUPER::run();
   system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # renamed as the munge method appends to the config file.
   system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
@@ -402,7 +410,7 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, col.names=FALSE, ro
   my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
   $meanData->munge();
 
-  $self->SUPER::run();
+  #$self->SUPER::run();
   system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
   ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
