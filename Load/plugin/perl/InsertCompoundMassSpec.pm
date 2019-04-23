@@ -324,7 +324,7 @@ sub run {
 		print STDERR "Testing other hash for $peak_id \n";
       }
       else{;}
-
+	 
 		#Test for cpd in hash of inchi
 		#load if there
 		#test for cpd id, if none above, in other hash
@@ -332,7 +332,7 @@ sub run {
 		#if neither had cpd, load null.
 
       $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-#      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
         compound_id=>$compoundIDLoad,
@@ -341,7 +341,7 @@ sub run {
         user_compound_name=>$compound_id
         });
 
-# $compoundPeaksChebiRow->submit();
+	  $compoundPeaksChebiRow->submit();
       $self->undefPointerCache();
     } #End of while(<PEAKS>)
     close(PEAKS);
