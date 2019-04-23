@@ -329,7 +329,7 @@ sub run {
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
 		print STDERR "Testing other hash for $peak_id $InChIKey \n";
-		print STDERR "Other hash value :", Dumper $compoundOtherHash->{$compound_id};
+		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compound_id};
       }
       else{print STDERR "Not in either hash\n";}
 	 
