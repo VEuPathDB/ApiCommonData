@@ -313,23 +313,23 @@ sub run {
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
 # To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
-    print STDERR "Values to in hashes for $peak_id:";
+    print STDERR "Values in hashes for $peak_id:\n";
 	print STDERR Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-	print STDERR Dumper $otherCompoundHash->{$compundLookup}->{'MYID'};
+	print STDERR Dumper $otherCompoundHash->{$compundLookup};
 	
 	
 	
 	if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
 			  #print STDERR "lookup: $compundLookup \n";
-		print STDERR "Testing InChI hash for $peak_id $compound_id \n";
+		print STDERR "FOUND ---- InChI hash for $peak_id $compound_id \n";
         $compoundIDLoad = $compoundInChIKeyHash->{'InChIKey' . $InChIKey}->{'MYID'};
 		print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
       }
       elsif(defined($otherCompoundHash->{$compundLookup})){
 			  #print STDERR "lookup: $compundLookup \n";
         $compoundIDLoad = $otherCompoundHash->{$compundLookup}->{'MYID'};
-		print STDERR "Testing other hash for $peak_id $InChIKey \n";
-		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compound_id};
+		print STDERR "FOUND #### other hash for $peak_id $InChIKey \n";
+		print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
       }
       else{print STDERR "Not in either hash\n";}
 	 
@@ -341,7 +341,7 @@ sub run {
 
       $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 	  
-      print STDERR "ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n \n\n\n\n";
+      print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n \n\n\n\n";
 
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
         compound_id=>$compoundIDLoad,
