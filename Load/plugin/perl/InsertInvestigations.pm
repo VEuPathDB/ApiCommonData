@@ -159,7 +159,7 @@ sub run {
   if($investigationSubset) {
     @investigationFiles = map { "$metaDataRoot/$_/$investigationBaseName" } @$investigationSubset;
   }
-  else { 
+  else {
     @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
   }
 
@@ -292,7 +292,7 @@ sub loadCharacteristics{
   my ($self, $charFile) = @_;
 
   my $configFile = "$charFile" . ".ctrl";
- 
+
   my $logFile = "$charFile" . ".log";
 
   $self->writeConfigFile($configFile, $charFile);
@@ -335,13 +335,13 @@ sub loadCharacteristics{
   my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual");
   my ($maxPrimaryKey) = $dbh->selectrow_array("select MAX(CHARACTERISTIC_ID) FROM Study.CHARACTERISTIC");
   my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-  $self->log("Updating CHARACTERISTIC_ID starting from $sequenceDifference\n");
+  $self->log("Increasing CHARACTERISTIC_ID by $sequenceDifference\n");
   if($sequenceDifference > 0) {
     $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
     $dbh->do("select ${sequenceName}.nextval from dual");
     $dbh->do("alter sequence $sequenceName increment by 1");
   }
-    
+
   return "Processed lines from data files";
 
 
@@ -373,7 +373,7 @@ sub checkLoadedDatasets {
   my $dbh = $self->getQueryHandle();
 
   my $rv;
-  
+
   foreach my $dataset (keys %$isatabDatasets) {
     my ($count) = $dbh->selectrow_array("select count(*) from apidb.datasource where name = '$dataset'");
     $rv++ if($count == 1);
@@ -429,7 +429,7 @@ sub loadStudy {
 
   my $identifier = $study->getIdentifier();
 #  my $title = $study->getTitle();
- 
+
   my $description = $study->getDescription();
 
   my $gusStudy = GUS::Model::Study::Study->new({name => $identifier, source_id => $identifier, investigation_id =>$investigationId, external_database_release_id=>$extDbRlsId});
@@ -451,7 +451,7 @@ sub loadNodes {
   my %rv;
 
   my $gusStudyId = $gusStudy->getId();
-  
+
   my $slPanIds = $self->lookupStudyLinks($gusStudyId);
 
   my $nodeCount = 0;
@@ -512,7 +512,7 @@ sub loadNodes {
 
     #   my $gusChar = GUS::Model::Study::Characteristic->new();
     #   $gusChar->setParent($pan);
-    
+
         my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
         my $charQualifierId = $charQualifierOntologyTerm->getId();
 
@@ -537,19 +537,19 @@ sub loadNodes {
         }
         elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
           my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
-    #     $gusChar->setOntologyTermId($valueOntologyTerm->getId()); 
+    #     $gusChar->setOntologyTermId($valueOntologyTerm->getId());
               $charOntologyTermId = $valueOntologyTerm->getId();
         }
         else {
     #     $gusChar->setValue($characteristic->getTerm());
               $charValue = $characteristic->getTerm();
         }
-    
+
         # strip off carriage return
         $charValue =~ s/\r//;
 
 
-    #   print $charFh join("\t", ($pan->getId(), 
+    #   print $charFh join("\t", ($pan->getId(),
         push @charsForLoader, [$charQualifierId, $charUnitId, $charValue, $charOntologyTermId];
 
       }
@@ -682,7 +682,7 @@ sub loadProtocols {
 
     $gusProtocol->submit();
     $pNameToId->{$protocolName} = $gusProtocol->getId();
-    
+
     foreach my $pp ($gusProtocol->getChildren("Study::ProtocolParam")) { # no need to retrieve here
       my $ppName = $pp->getName();
       my $ppId = $pp->getId();
@@ -749,7 +749,7 @@ sub loadEdges {
         $gusProtocolId = $gusProtocol->getId();
         $protocolNamesToIdMap->{$protocolName} = $gusProtocolId;
       }
-      
+
       $gusProtocolApp->setProtocolId($gusProtocolId);
     }
 
@@ -870,7 +870,7 @@ and pan.PROTOCOL_APP_NODE_ID = sl.PROTOCOL_APP_NODE_ID
 and sl.STUDY_ID = s.study_id
 and s.EXTERNAL_DATABASE_RELEASE_ID = r.EXTERNAL_DATABASE_RELEASE_ID
 and r.EXTERNAL_DATABASE_ID = d.external_database_id
-) 
+)
 where dataset = ? ";
 
   my $dbh = $self->getQueryHandle();
@@ -898,7 +898,7 @@ where dataset = ? ";
       foreach my $edge (@$edges) {
         my $protocolApps = $edge->getProtocolApplications();
 
-        # Not in the business of matching protocol series.  
+        # Not in the business of matching protocol series.
         next if(scalar @$protocolApps > 1);
         my $protocolApp = $protocolApps->[0];
 
@@ -917,7 +917,7 @@ where dataset = ? ";
 
           if(join(".", @inputs) eq join(".", @databaseInputs)) {
             $edge->{_DATABASE_STATUS} = 'FOUND_OUTPUTS_AND_INPUTS';
-          } 
+          }
           else {
 
 
@@ -934,7 +934,7 @@ where dataset = ? ";
 
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
-  
+
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
@@ -947,20 +947,20 @@ and lower(?) like  'ncbitaxon%'
 and t.taxon_id = tn.taxon_id
 and tn.name_class = 'scientific name'
 ";
-  
+
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
-  
+
   my $rv = {};
   my $oeToName = {};
 
-  
+
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
-    
+
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
       $sh->execute($accessionOrName, $accessionOrName, $accessionOrName);
-      my $count=0;   
+      my $count=0;
       my ($ontologyTermId, $ontologyTermName);
       while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
         $ontologyTermId = $id;
@@ -972,15 +972,15 @@ and tn.name_class = 'scientific name'
         $rv->{$os}->{$ota} = $ontologyTermId;
 
         $oeToName->{$os}->{$ota} = $ontologyTermName;
-        
+
       }
       else {
         $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found or were not found uniquely in the database");
-        
+
       }
     }
   }
-  
+
   $self->{_ontology_term_to_identifiers} = $rv;
   $self->{_ontology_term_to_names} = $oeToName;
 }
@@ -1117,16 +1117,16 @@ qualifier_id,
 unit_id,
 value,
 ontology_term_id,
-modification_date constant \"$modDate\", 
-user_read constant $userRead, 
-user_write constant $userWrite, 
-group_read constant $groupRead, 
-group_write constant $groupWrite, 
-other_read constant $otherRead, 
-other_write constant $otherWrite, 
-row_user_id constant $userId, 
-row_group_id constant $groupId, 
-row_project_id constant $projectId, 
+modification_date constant \"$modDate\",
+user_read constant $userRead,
+user_write constant $userWrite,
+group_read constant $groupRead,
+group_write constant $groupWrite,
+other_read constant $otherRead,
+other_write constant $otherWrite,
+row_user_id constant $userId,
+row_group_id constant $groupId,
+row_project_id constant $projectId,
 row_alg_invocation_id constant $algInvocationId,
 CHARACTERISTIC_ID SEQUENCE(MAX,1)
 )\n";
@@ -1149,7 +1149,7 @@ sub getConfig {
 sub undoTables {
   my ($self) = @_;
 
-  return ( 
+  return (
     'Study.Input',
     'Study.Output',
     'Study.Characteristic',
