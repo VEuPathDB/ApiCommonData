@@ -311,11 +311,12 @@ sub run {
 	  my $compoundLookup = $compound_id;
 	  my $InChILookup = 'InChIKey=' . $InChIKey; 
 	  my $compoundIDLoad;
-
+	  # The hash below is testing for unique ChEBI IDs with peaks. e.g. ID ChEBI: X may be mapped to by >1 IDs from the provider data. In this
+	  # instance the ChEBI ID is only loaded into the DB once at the first match - this stops the results being incorrect in the Model (queries/compoundQueries.xml ) where the ChEBI IDs are used to group the data (summing the abundance). 
 	  if(defined($compoundPeaksTest->{$peak_id})){;}
 	  else{$compoundPeaksTest->{$peak_id} = {};}
 
-	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
+	#NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
 # To get a ChEBI ID the InChIKey is tested first, the the other compound ID. 
 	# print STDERR "Values in hashes for $peak_id:\n";
@@ -346,8 +347,8 @@ sub run {
 		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value"; 
   		}
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-		print STDERR $peak_id; 
-		print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+		#print STDERR $peak_id; 
+		#print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
         my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
           compound_id=>$compoundIDLoad,
