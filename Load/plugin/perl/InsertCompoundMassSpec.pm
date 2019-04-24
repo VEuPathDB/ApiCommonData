@@ -339,13 +339,15 @@ sub run {
       else{;}
 
 	  if ($compoundPeaksTest->{$peak_id} ~~ $compoundIDLoad)
-	  {;}
+	  {print STDERR "$compoundIDLoad in hash\n"}
 	  else{
-	    push $compoundPeaksTest->{$peak_id}, $compoundIDLoad; 
-	 
+	    if ($compoundIDLoad eq ""){}
+		else{
+		  push $compoundPeaksTest->{$peak_id}, $compoundIDLoad; 
+  		}
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-		#print STDERR $peak_id; 
-		# print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+		print STDERR $peak_id; 
+		print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
         my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
           compound_id=>$compoundIDLoad,
