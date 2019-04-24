@@ -313,7 +313,7 @@ sub run {
 	  my $compoundIDLoad;
 
 	  if(defined($compoundPeaksTest->{$peak_id})){;}
-	  else{$compoundPeaksTest->{$peak_id} = [];}
+	  else{$compoundPeaksTest->{$peak_id} = {};}
 
 	#NOTE - for noow only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
 # They are never seen so adding the col to the table to have both is not useful for the moment. 
@@ -338,12 +338,12 @@ sub run {
       }
       else{;}
 
-	  if ($compoundPeaksTest->{$peak_id} ~~ $compoundIDLoad)
+	  if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
 	  {print STDERR "$compoundIDLoad in hash\n"}
 	  else{
 	    if ($compoundIDLoad eq ""){}
 		else{
-		  push $compoundPeaksTest->{$peak_id}, $compoundIDLoad; 
+		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value"; 
   		}
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 		print STDERR $peak_id; 
