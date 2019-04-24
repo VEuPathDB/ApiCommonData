@@ -341,7 +341,7 @@ sub run {
 	  if ($compoundPeaksTest->{$peak_id} ~~ $compoundIDLoad)
 	  {;}
 	  else{
-	    if (!$compoundIDLoad eq ''){push $compoundPeaksTest->{$peak_id}, $compoundIDLoad;} 
+	    push $compoundPeaksTest->{$peak_id}, $compoundIDLoad; 
 	 
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
 		#print STDERR $peak_id; 
