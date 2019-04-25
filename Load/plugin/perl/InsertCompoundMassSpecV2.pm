@@ -266,7 +266,7 @@ sub run {
     my $compoundPeaksSQL =
         "select cp.compound_peaks_id
           , cp.peak_id || '|' || cp.mass || '|' || cp.retention_time as KEY
-          from ApiDB.CompoundPeaks cp
+          from ApiDB.CompoundPeaksVTWO cp
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
     my $peaksHash = $dbh->selectall_hashref($compoundPeaksSQL, 'KEY');
