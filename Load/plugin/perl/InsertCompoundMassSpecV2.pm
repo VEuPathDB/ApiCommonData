@@ -5,8 +5,8 @@ package ApiCommonData::Load::Plugin::InsertCompoundMassSpecV2;
 use ApiCommonData::Load::Plugin::InsertStudyResults;
 use ApiCommonData::Load::MetaboliteProfiles;
 use CBIL::TranscriptExpression::DataMunger::Profiles;
-use GUS::Model::ApiDB::CompoundPeaksChebi;
-use GUS::Model::ApiDB::CompoundPeaks;
+use GUS::Model::ApiDB::CompoundPeaksChebiVTWO;
+use GUS::Model::ApiDB::CompoundPeaksVTWO;
 use GUS::PluginMgr::Plugin;
 use Data::Dumper;
 
