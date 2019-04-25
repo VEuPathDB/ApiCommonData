@@ -270,7 +270,7 @@ sub run {
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
     my $peaksHash = $dbh->selectall_hashref($compoundPeaksSQL, 'KEY');
-    #print STDERR Dumper $peaksHash;
+    print STDERR Dumper $peaksHash;
 
     ###### Load into CompoundPeaksChebi ######
     open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
@@ -286,7 +286,7 @@ sub run {
       my @peaksArray = split(/\t/, $_);
       $peak_id = $peaksArray[0];
       $mass = $peaksArray[1];
-	  $retention_time = $peaksArray[2];
+	    $retention_time = $peaksArray[2];
       $isotopomer = $peaksArray[3];
       $ms_polarity = $peaksArray[4];
       $compound_id = $peaksArray[5];
@@ -294,47 +294,45 @@ sub run {
       $InChIKey = $peaksArray[6];
       chomp $InChIKey;
 
-	  my $compoundLookup = $compound_id;
-	  my $InChILookup = 'InChIKey=' . $InChIKey;
-	  my $compoundIDLoad;
-	  # The hash below is testing for unique ChEBI IDs with peaks. e.g. ID ChEBI: X may be mapped to by >1 IDs from the provider data. In this
-	  # instance the ChEBI ID is only loaded into the DB once at the first match - this stops the results being incorrect in the Model (queries/compoundQueries.xml ) where the ChEBI IDs are used to group the data (summing the abundance).
-	  if(defined($compoundPeaksTest->{$peak_id})){;}
-	  else{$compoundPeaksTest->{$peak_id} = {};}
+  	  my $compoundLookup = $compound_id;
+  	  my $InChILookup = 'InChIKey=' . $InChIKey;
+  	  my $compoundIDLoad;
+  	  # The hash below is testing for unique ChEBI IDs with peaks. e.g. ID ChEBI: X may be mapped to by >1 IDs from the provider data. In this
+  	  # instance the ChEBI ID is only loaded into the DB once at the first match - this stops the results being incorrect in the Model (queries/compoundQueries.xml ) where the ChEBI IDs are used to group the data (summing the abundance).
+  	  if(defined($compoundPeaksTest->{$peak_id})){;}
+  	  else{$compoundPeaksTest->{$peak_id} = {};}
 
-	#NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
-# They are never seen so adding the col to the table to have both is not useful for the moment.
-# To get a ChEBI ID the InChIKey is tested first, the the other compound ID.
-	# print STDERR "Values in hashes for $peak_id:\n";
-	# print STDERR Dumper $compoundInChIKeyHash->{$InChILookup};
-	# print STDERR Dumper $otherCompoundHash->{$compoundLookup};
+  	#NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
+  # They are never seen so adding the col to the table to have both is not useful for the moment.
+  # To get a ChEBI ID the InChIKey is tested first, the the other compound ID.
+  	# print STDERR "Values in hashes for $peak_id:\n";
+  	# print STDERR Dumper $compoundInChIKeyHash->{$InChILookup};
+  	# print STDERR Dumper $otherCompoundHash->{$compoundLookup};
 
+  	  if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
+  	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
+          $compoundIDLoad = $compoundInChIKeyHash->{$InChILookup}->{'MYID'};
+  		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
+  		#print STDERR "1: $compoundIDLoad \n";
+  	  }
+        elsif(defined($otherCompoundHash->{$compoundLookup})){
+          $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
+  		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
+  		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
+  		#print STDERR "2: $compoundIDLoad\n";
+        }
+        else{;}
 
-
-	  if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
-	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
-        $compoundIDLoad = $compoundInChIKeyHash->{$InChILookup}->{'MYID'};
-		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-		#print STDERR "1: $compoundIDLoad \n";
-	  }
-      elsif(defined($otherCompoundHash->{$compoundLookup})){
-        $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
-		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
-		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
-		#print STDERR "2: $compoundIDLoad\n";
-      }
-      else{;}
-
-	  if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
-	  {print STDERR "$compoundIDLoad in hash\n"}
-	  else{
-	    if ($compoundIDLoad eq ""){}
-		else{
-		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
-  		}
+  	  if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
+  	  {print STDERR "$compoundIDLoad in hash\n"}
+  	  else{
+  	    if ($compoundIDLoad eq ""){}
+    		else{
+    		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
+      	}
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-		#print STDERR $peak_id;
-		#print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+    		print STDERR $peak_id;
+    		print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
         my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebiVTWO->new({
           compound_id=>$compoundIDLoad,
@@ -343,11 +341,11 @@ sub run {
           user_compound_name=>$compound_id
           });
 
-        $compoundPeaksChebiRow->submit();
-	  }
+          $compoundPeaksChebiRow->submit();
+  	  }
       $self->undefPointerCache();
-	  #print STDERR "Peak =  $peak_id\n";
-	  #print STDERR Dumper $compoundPeaksTest->{$peak_id}
+  	  #print STDERR "Peak =  $peak_id\n";
+  	  #print STDERR Dumper $compoundPeaksTest->{$peak_id}
     } #End of while(<PEAKS>)
     close(PEAKS);
     ###### END - Load into CompoundPeaksChebi ######
