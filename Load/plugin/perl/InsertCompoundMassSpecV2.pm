@@ -230,8 +230,8 @@ sub run {
     $ms_polarity = $peaksArray[4];
   	$compound_id = $peaksArray[5];
     chomp $compound_id;
-	$InChIKey = $peaksArray[6];
-	chomp $InChIKey;
+	   $InChIKey = $peaksArray[6];
+	    chomp $InChIKey;
 
      # Not using for the moment. Setting in elsif below.
 
@@ -270,7 +270,7 @@ sub run {
           where cp.external_database_release_id = '$external_database_release_id'"; # NOTE the precision of the data in the SQL table for mass and rt.
 
     my $peaksHash = $dbh->selectall_hashref($compoundPeaksSQL, 'KEY');
-    print STDERR Dumper $peaksHash;
+    #print STDERR Dumper $peaksHash;
 
     ###### Load into CompoundPeaksChebi ######
     open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
@@ -331,8 +331,8 @@ sub run {
     		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
       	}
         $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-    		print STDERR $peak_id;
-    		print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+    		#print STDERR $peak_id;
+    		#print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
         my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebiVTWO->new({
           compound_id=>$compoundIDLoad,
@@ -355,7 +355,7 @@ sub run {
   my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
   my $params;
 
-  # ## Loading of the raw data ##  - Not used, not loaded for now.
+  # ####### Loading of the raw data ##  - Not used, not loaded for now. #######
   # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
   # # NOTE Setting profileSetName as studyName + compoundType for now.
 
@@ -365,42 +365,114 @@ sub run {
   # system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
   # # renamed as the munge method appends to the config file.
   # system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
-  # ## END -  Loading of the raw data ##
+  # ####### END -  Loading of the raw data #######
 
   my $mappingFile = 'mapping.tab';
 
   my $meanRScript =
-  "library(data.table)
+  # This is the old R script - pre-sd.
+#   library(data.table)
+#
+# data <- read.csv('$resultsFile', sep='\\t', header=TRUE, check.names=FALSE)
+# data = data.table(data)
+# output <-data.table(data[,1])#(V1=NA)
+# colnames(output)<- ' '
+# header = ''
+# mapping <- read.csv('$mappingFile', sep='\\t', header=TRUE)
+# mapping = data.table(mapping)
+# colnames(mapping)[1]<-'sample'
+# colnames(mapping)[2]<-'group'
+#
+# groups = unique(mapping[['group']])
+#
+# for(i in groups){
+# #   print(i)
+#     newData <- mapping[group ==i]
+#     newData = data.table(newData)
+#     samples = as.vector(newData[['sample']])
+#     newResults = data[, samples, with=FALSE]
+#     newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
+#     mean <- newResults[, 'mean']
+#     new_col_name = paste(i, 'mean')
+#     header = paste(header, new_col_name, sep='\\t')
+# #   print(mean)
+#     output = cbind(output, mean[, 'mean'])
+#     setnames(output, 'mean', new_col_name)
+# }
+#
+# write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+# write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=FALSE, row.names=FALSE, quote=FALSE)
 
-data <- read.csv('$resultsFile', sep='\\t', header=TRUE, check.names=FALSE)
+"
+library(data.table)
+library(matrixStats)
+
+# input data.
+print('1 here')
+data <- read.csv('$dir/data.tab', sep='\\t', header=TRUE, check.names=FALSE)  # make sure check.names is not needed.
+print('2 here')
 data = data.table(data)
-output <-data.table(data[,1])#(V1=NA)
-colnames(output)<- ' '
-header = ''
-mapping <- read.csv('$mappingFile', sep='\\t', header=TRUE)
-mapping = data.table(mapping)
-colnames(mapping)[1]<-'sample'
-colnames(mapping)[2]<-'group'
+# output data.tables.
+output <-data.table(data[,1])
+sd_output <-data.table(data[,1])
 
+# For storing file header and new col names.
+colnames(output)<- ' '
+colnames(sd_output)<- ' '
+header = ''
+sd_header = ''
+
+# Mapping file that gives sample groupings
+mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE)
+mapping = data.table(mapping)
+
+# Output dir for sd.
+dir.create('$dir/.sd')
+
+# add in data col for sample names
 groups = unique(mapping[['group']])
 
 for(i in groups){
-#   print(i)
+    # Get each sample by groups from mapping, calculate row means.
     newData <- mapping[group ==i]
     newData = data.table(newData)
-    samples = as.vector(newData[['sample']])
+    samples = as.vector(newData[['Sample_Names']])
     newResults = data[, samples, with=FALSE]
     newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
     mean <- newResults[, 'mean']
-    new_col_name = paste(i, 'mean')
+
+    # New column names for samples. Table header -  needs to be like this for munge input (no index header value).
+    new_col_name = paste(i, 'mean', sep='_')
+    new_col_name_sd = paste(i, 'SD', sep='_')
     header = paste(header, new_col_name, sep='\\t')
-#   print(mean)
+    sd_header = paste(sd_header, i, sep='\\t') # need name to be as munge output???
+
+    # Drop mean to work out SD by rows.
+    newResults[,'mean':=NULL]
+    newResults = cbind(newResults, transform(newResults, SD=rowSds(as.matrix(newResults), na.rm=TRUE)))
+
+    # Add to output data.tables and rename cols with relevant sample names.
     output = cbind(output, mean[, 'mean'])
     setnames(output, 'mean', new_col_name)
+
+    sd_output = cbind(sd_output, newResults[, 'SD'])
+    #setnames(sd_output, 'SD', new_col_name_sd)
+    print(sd_output)
+
+    # Write the SD files to a dir with the names as the munge method outputs.
+    sd_out = paste('$dir/.sd', gsub(' ', '_', i),  sep='/')
+    print(sd_out)
+    write.table(sd_header, file=sd_out, col.names=FALSE, row.names=FALSE, quote=FALSE)
+    write.table(sd_output, file=sd_out, sep='\\t', append=TRUE, na='0',  col.names=FALSE, row.names=FALSE, quote=FALSE)
+    # Drop the sample SD now the file has been written
+    sd_output[,'SD':=NULL]
+    sd_header = ''
 }
 
-write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=FALSE, row.names=FALSE, quote=FALSE)"
+# Writing header first, see above comment about munge method.
+write.table(header, file='$dir/mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+write.table(output, file='$dir/mean.tab', sep='\\t', append=TRUE, na='0',  col.names=FALSE, row.names=FALSE, quote=FALSE)
+"
 ;
 
   open(my $fh, '>', "$dir/mean.R");
@@ -408,7 +480,7 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=F
   close $fh;
   my $command = "Rscript $dir/mean.R";
   system($command);
-  system("rm $dir/mean.R");
+  #system("rm $dir/mean.R");
   # This is set by the R script.
   my $meanFile = 'mean.tab';
 
@@ -418,10 +490,62 @@ write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=F
 
   # take munge output and combine with standard error.
 
-  #$self->SUPER::run();
+  my $combineRScript = "
+  library(data.table)
+
+  # take percetile data -> table # Not needed - in the munge output.
+  #percentile <-read.csv('mean.tab.pct', sep='\\t', header=TRUE, check.names=FALSE)
+  #percentile = data.table(percentile)
+  #print(percentile)
+
+  # take each of the samples from mapping
+  mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE)
+  mapping = data.table(mapping)
+  #print(mapping)
+  groups = unique(mapping[['group']])
+
+  # get file for mean of group via mapping file
+  for(i in groups){
+          #print(i) # has no hashes.
+          # Read munge output for sample. )
+          file = paste('$dir/.mean.tab',  paste(gsub(' ',  '_', i ), '_mean', sep='' ), sep='/')
+          data <- read.csv(file, sep='\\t', header=TRUE, check.names=FALSE)
+          data = data.table(data)
+          setnames(data, 1, 'idx')
+          #print(data)
+
+          # Read sd data.
+          sd <-read.csv(paste('$dir/.sd', gsub(' ', '_', i), sep='/') ,header=TRUE, sep='\t')
+          sd = data.table(sd)
+          setnames(sd, 1, 'idx')
+          setnames(sd, 2, 'sd')
+          sd[,'sd'] = round(x = sd[,'sd'],digits = 2)
+          #print(sd)
+
+          # Join on index with sd table.
+          merged = merge(data, sd, by='idx')
+          # Overite munge output.
+          write.table(merged, file=file, sep='\\t', row.names=FALSE, quote=FALSE)
+  }
+  ";
+
+  open(my $fh, '>', "$dir/combine.R");
+  print $fh "$combineRScript";
+  close $fh;
+  my $combineCommand = "Rscript $dir/combine.R";
+  system($combineCommand);
+
+  $self->SUPER::run();
   system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
   system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
   ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
+
+# rm statements for developing
+system("rm $dir/insert_study_results_config.txt");
+#system("rm -r $dir/.means_$resultsFile/");
+#system("rm -r $dir/.sd");
+#system("rm -r $dir/mean.tab");
+
 }
 
 sub undoTables {
