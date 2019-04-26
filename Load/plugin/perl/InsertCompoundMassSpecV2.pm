@@ -524,6 +524,8 @@ write.table(output, file='$dir/mean.tab', sep='\\t', append=TRUE, na='0',  col.n
 
           # Join on index with sd table.
           merged = merge(data, sd, by='idx')
+          setnames(sd, 3, 'percentile')
+          setnames(sd, 2, 'standard error')
           # Overite munge output.
           write.table(merged, file=file, sep='\\t', row.names=FALSE, quote=FALSE)
   }
