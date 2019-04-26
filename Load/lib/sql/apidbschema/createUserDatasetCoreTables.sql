@@ -1,7 +1,9 @@
 
 create table ApiDBUserDatasets.InstalledUserDataset (
 user_dataset_id number(20) not null,
-name varchar(100) not null,
+name           varchar(100) not null,
+is_invalid     number(1),
+invalid_reason varchar2(100),
 primary key (user_dataset_id)
 );
 GRANT insert, select, update, delete ON ApiDBUserDatasets.InstalledUserDataset TO gus_w;
