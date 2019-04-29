@@ -438,7 +438,7 @@ sub lookupIdFromSourceId {
     my @reporterIds = $self->sqlAsArray(Sql => "select r.reporter_id
                                                 from platform.reporter r
                                                 where r.external_database_release_id = $probeExtDbRlsId
-                                                and r.source_id = $sourceId");
+                                                and r.source_id = '$sourceId'");
     unless (scalar @reporterIds == 1) {
         die "Number of probes returned should be 1\n";
     }
