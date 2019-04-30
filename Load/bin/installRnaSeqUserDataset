@@ -55,7 +55,7 @@ EOF
 
 my %profileSetIds;
 
-open my $fh, $manifestFile or die "Can't open file $manifestFile for readin:  $!";
+open my $fh, $manifestFile or die "Can't open manifest file \"$manifestFile\" for reading:  $!";
 
 my $orderNum = 1;
 my $count = 0;
@@ -107,7 +107,7 @@ while(<$fh>) { # TODO:  need example of how this looks
     $idIndex = 0;
     $fpkmIndex = 1;
   } else {
-    die "unrecognized header record: \"$header\"";
+    markDatasetInvalid($dbh, $userDatasetId, "unrecognized header record: \"$header\"");
   }
 
   while(<DAT>) {
@@ -143,6 +143,20 @@ while(<$fh>) { # TODO:  need example of how this looks
 
 $dbh->commit;
 
+sub markDatasetInvalid {
+  my ($dbh, $userDatasetId, $reason) = @_;
+
+  my $updateIud = $dbh->prepare(<<EOF) or die $dbh->errstr;
+    update apidbUserDatasets.InstalledUserDataset
+    set is_invalid = 1,
+        invalid_reason = ?
+    where user_dataset_id = ?
+EOF
+
+  $updateIud->execute($reason, $userDatasetId) or die $dbh->errstr;
+  $dbh->commit;
+  exit;
+}
 
 sub makeGeneSourceIdMapping {
   my ($sourceId, $dbh) = @_;
