@@ -72,33 +72,40 @@ WHERE 'Synteny' NOT IN (SELECT name FROM core.TableInfo
 
 ------------------------------------------------------------------------------
 
-CREATE TABLE ApiDB.SyntenyAnchor (
- synteny_anchor_id            NUMBER(10),
- synteny_id                   NUMBER(10),
- syntenic_loc                 NUMBER(12),
- prev_ref_loc                 NUMBER(12),
- ref_loc                      NUMBER(12),
- next_ref_loc                 NUMBER(12),
- modification_date            DATE,
- user_read                    NUMBER(1),
- user_write                   NUMBER(1),
- group_read                   NUMBER(1),
- group_write                  NUMBER(1),
- other_read                   NUMBER(1),
- other_write                  NUMBER(1),
- row_user_id                  NUMBER(12),
- row_group_id                 NUMBER(3),
- row_project_id               NUMBER(4),
- row_alg_invocation_id        NUMBER(12),
+CREATE TABLE ApiDB.SyntenicGene (
+ syntenic_gene_id            NUMBER(10),
+ synteny_id                  NUMBER(10),
+ na_sequence_id              number(10),
+ start_min                   number,
+ end_max                     number,
+ is_reversed                 number(1),
+ tstarts                     VARCHAR2(4000),
+ blocksizes                  VARCHAR2(1200),
+ syn_na_feature_id          number(10),
+ syn_organism_abbrev         varchar2(20),
+ modification_date           DATE,
+ user_read                   NUMBER(1),
+ user_write                  NUMBER(1),
+ group_read                  NUMBER(1),
+ group_write                 NUMBER(1),
+ other_read                  NUMBER(1),
+ other_write                 NUMBER(1),
+ row_user_id                 NUMBER(12),
+ row_group_id                NUMBER(3),
+ row_project_id              NUMBER(4),
+ row_alg_invocation_id       NUMBER(12),
  FOREIGN KEY (synteny_id) REFERENCES apidb.Synteny (synteny_id),
- PRIMARY KEY (synteny_anchor_id)
+ FOREIGN KEY (syn_na_feature_id) REFERENCES dots.nafeatureimp (na_feature_id),
+ FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequence (na_sequence_id),
+ PRIMARY KEY (syntenic_gene_id)
 );
 
-CREATE SEQUENCE ApiDB.SyntenyAnchor_sq;
 
-GRANT insert, select, update, delete ON ApiDB.SyntenyAnchor TO gus_w;
-GRANT select ON ApiDB.SyntenyAnchor TO gus_r;
-GRANT select ON ApiDB.SyntenyAnchor_sq TO gus_w;
+CREATE SEQUENCE ApiDB.SyntenicGene_sq;
+
+GRANT insert, select, update, delete ON ApiDB.SyntenicGene TO gus_w;
+GRANT select ON ApiDB.SyntenicGene TO gus_r;
+GRANT select ON ApiDB.SyntenicGene_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -106,22 +113,20 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'SyntenyAnchor',
-       'Standard', 'synteny_anchor_id',
+SELECT core.tableinfo_sq.nextval, 'SyntenicGene',
+       'Standard', 'syntenic_gene_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE LOWER(name) = 'apidb') d
-WHERE 'SyntenyAnchor' NOT IN (SELECT name FROM core.TableInfo
+WHERE 'SyntenicGene' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-CREATE INDEX apidb.SyntAnch_front_ix
-       ON apidb.SyntenyAnchor (synteny_id, ref_loc, next_ref_loc)
-TABLESPACE INDX;
+-- CREATE INDEX apidb.SyntGene_f_ix
+--        ON apidb.SyntenicGene (synteny_id, ref_loc, next_ref_loc)
+-- TABLESPACE INDX;
 
-CREATE INDEX apidb.SyntAnch_back_ix
-       ON apidb.SyntenyAnchor (synteny_id, ref_loc, prev_ref_loc)
-TABLESPACE INDX;
+
 ------------------------------------------------------------------------------
 exit;
