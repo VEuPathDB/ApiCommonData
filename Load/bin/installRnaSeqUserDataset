@@ -107,7 +107,8 @@ while(<$fh>) { # TODO:  need example of how this looks
     $idIndex = 0;
     $fpkmIndex = 1;
   } else {
-    die "unrecognized header record: \"$header\"";
+    print "unrecognized header record: \"$header\"";
+    exit;
   }
 
   while(<DAT>) {
