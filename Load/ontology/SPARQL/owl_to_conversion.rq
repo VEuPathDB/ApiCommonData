@@ -1,9 +1,8 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-SELECT distinct ?displayOrder ?variable ?dataFile ?IRI ?label ?definition ?category ?parentLabel ?parentIRI ?codebookDescription ?codebookValues ?multifilter
+SELECT distinct ?displayOrder ?variable ?dataFile ?IRI ?label ?definition ?category ?parentLabel ?parentIRI ?codebookDescription ?codebookValues ?termType
 WHERE { 
 	?IRI a owl:Class .
 	?IRI rdfs:label ?tlabel .
@@ -26,7 +25,7 @@ WHERE {
         ?IRI obo:EUPATH_0001001 ?dataFile .
     }
     OPTIONAL {
-        ?IRI obo:EUPATH_0001005 ?multifilter .
+        ?IRI obo:EUPATH_0001005 ?termType .
     }
     OPTIONAL {
         ?IRI obo:IAO_0000115 ?definition .
