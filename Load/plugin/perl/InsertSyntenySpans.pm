@@ -727,7 +727,7 @@ sub loadSyntenicGene {
 
   my $syntenicGeneObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
                                                              start_min => $start,
-                                                             end_max => $end
+                                                             end_max => $end,
                                                              is_reversed => $isReversed,
                                                              tstarts => $tstarts,
                                                              blocksizes => $blocksizes,
