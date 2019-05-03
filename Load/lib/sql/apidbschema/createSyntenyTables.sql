@@ -123,9 +123,9 @@ FROM dual,
 WHERE 'SyntenicGene' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
--- CREATE INDEX apidb.SyntGene_f_ix
---        ON apidb.SyntenicGene (synteny_id, ref_loc, next_ref_loc)
--- TABLESPACE INDX;
+ CREATE INDEX apidb.SyntGene_f_ix
+        ON apidb.SyntenicGene (na_sequence_id, start_min, end_max, synteny_id, syn_na_feature_id, syn_organism_abbrev)
+ TABLESPACE INDX;
 
 
 ------------------------------------------------------------------------------
