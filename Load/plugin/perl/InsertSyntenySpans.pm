@@ -29,7 +29,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::NASequence;
 
 use GUS::Model::ApiDB::Synteny;
-use GUS::Model::ApiDB::SyntenyAnchor;
+use GUS::Model::ApiDB::SyntenicGene;
 
 use CBIL::Util::V;
 
@@ -162,6 +162,13 @@ sub run {
 
   my $count = 0;
 
+  my $dbh = $self->getQueryHandle(); 
+  $self->{_syntenic_genes_sh} = $dbh->prepare("select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
+                                                 from apidb.featurelocation
+                                                where na_sequence_id = ? and end_max >= ? and start_min <= ?
+                                                 and feature_type in ('GeneFeature', 'ExonFeature')
+                                                 and is_top_level = 1");
+
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
   while(<MAP>) {
     chomp;
@@ -232,11 +239,11 @@ sub run {
         push @pairs, [$anchorsA->[$i],$anchorsB->[$i]];
       }
 
-      my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId);
+      my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId, $organismAbbrevB);
       $syntenyObjA->submit();
       $self->undefPointerCache();
 
-      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId);
+      my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId, $organismAbbrevA);
       $syntenyObjB->submit();
       $self->undefPointerCache();
 
@@ -250,9 +257,9 @@ sub run {
   }
   close MAP;
 
-  my $anchorCount = $self->getAnchorCount();
+  my $syntenicGeneCount = $self->getSyntenicGeneCount();
 
-  return "inserted $count synteny spans and $anchorCount anchors ";
+  return "inserted $count synteny spans and $syntenicGeneCount syntenic genes ";
 }
 
 
@@ -297,7 +304,7 @@ sub getSyntenyStartEndAnchors {
 #--------------------------------------------------------------------------------
 
 sub makeSynteny {
-  my ($self, $syntenyA, $syntenyB, $pairs, $index, $synDbRlsId) = @_;
+  my ($self, $syntenyA, $syntenyB, $pairs, $index, $synDbRlsId, $synOrganismAbbrev) = @_;
 
 
   my $naSequenceMap = $self->getNaSequenceMap();
@@ -316,12 +323,14 @@ sub makeSynteny {
 						});
 
 
-  my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
+#  my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
 
 
   my $synIndex = $index == 1 ? 0 : 1;
 
-  $self->createSyntenyAnchors($synteny, \@sortedPairs, $index, $synIndex);
+#  $self->createSyntenyAnchors($synteny, \@sortedPairs, $index, $synIndex);
+
+  $self->createSyntenicGenesInReferenceSpace($synteny, $pairs, $index, $synIndex, $naSequenceMap->{$syntenyA->seq_id}, $synOrganismAbbrev);
 
 
   return $synteny;
@@ -594,15 +603,178 @@ sub addCoordPairs {
 
 #--------------------------------------------------------------------------------
 
-sub getAnchorCount {$_[0]->{anchor_count}}
+sub getSyntenicGeneCount {$_[0]->{syntenic_gene_count}}
 
-sub countAnchor {
+sub countSyntenicGenes {
   my ($self) = @_;
 
-  my $count = $self->{anchor_count}++;
+  my $count = $self->{syntenic_gene_count}++;
 
-  $self->log("Inserted $count rows into ApiDb::SyntenyAnchor") if ($count && $count % 1000 == 0);
+  $self->log("Inserted $count rows into ApiDb::SyntenicGene") if ($count && $count % 1000 == 0);
 }
+
+#--------------------------------------------------------------------------------
+
+sub createSyntenicGenesInReferenceSpace {
+  my ($self, $syntenyObj, $pairs, $refIndex, $synIndex, $refNaSequenceId, $synOrganismAbbrev) = @_;
+
+  my ($features, $sortedLocations) = $self->getSyntenicGenes($syntenyObj);
+
+  my $syntenyIsReversed = $syntenyObj->getIsReversed();
+
+  my %mappedCoords;
+
+  my $loc = pop @$sortedLocations;
+
+  my @sortedPairs = sort {$a->[$synIndex] <=> $b->[$synIndex]} @$pairs;
+
+  my $length = scalar @sortedPairs;
+
+  for(my $i = 1; $i < $length; $i++) {
+
+    my $refLocStart = $sortedPairs[$i-1]->[$refIndex];
+    my $synLocStart = $sortedPairs[$i-1]->[$synIndex];
+    my $refLocEnd = $sortedPairs[$i]->[$refIndex];
+    my $synLocEnd = $sortedPairs[$i]->[$synIndex];
+
+
+
+    while(($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd)) {
+      my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
+      if($refLocStart < $refLocEnd) {
+        $mappedCoords{$loc} = int(($synPct * ($refLocEnd - $refLocStart + 1)) + $refLocStart);
+      }
+      else {
+        $mappedCoords{$loc} = int($refLocStart - ($synPct * ($refLocStart - $refLocEnd + 1)));
+      }
+      
+      $loc = pop @$sortedLocations;
+    }
+
+    next if scalar @$sortedLocations == 0;
+
+    if($loc < $synLocStart) {
+      die "should never be here";
+    }
+  }
+
+  die "did not process all locations" if scalar @$sortedLocations > 0;
+
+  foreach my $geneId (keys %$features) {
+    my $gene = $features->{$geneId};
+
+    $self->loadSyntenicGene($gene, $synOrganismAbbrev, \%mappedCoords, $syntenyIsReversed, $refNaSequenceId, $syntenyObj);
+  }
+}
+
+#--------------------------------------------------------------------------------
+
+sub mapSyntenicGeneCoords {
+  my ($self, $row, $mappedCoords, $syntenyIsReversed) = @_;
+
+
+  my $origStart = $row->{START_MIN};
+  my $origEnd = $row->{END_MAX};
+
+  my $start = $mappedCoords->{$origStart};
+  my $end = $mappedCoords->{$origEnd};
+
+  if($start > $end) {
+    my $tmp = $end;
+    $end = $start;
+    $start = $tmp;
+  }
+
+  unless(defined($start) && defined($end)) {
+    print Dumper $row;
+    die "start or end not defined" ;
+  }
+
+  my $rowIsReversed = $row->{IS_REVERSED};
+
+  my $isReversed;
+  if($syntenyIsReversed == 0) {
+    $isReversed = $rowIsReversed == 0 ? 0 : 1;
+  }
+  else {
+    $isReversed = $rowIsReversed == 0 ? 1 : 0;
+  }
+  return ($start, $end, $isReversed);
+
+}
+
+#--------------------------------------------------------------------------------
+
+sub loadSyntenicGene {
+  my ($self, $gene, $synOrganismAbbrev, $mappedCoords, $syntenyIsReversed, $refNaSequenceId, $syntenyObj) = @_;
+
+  my $geneRow = $gene->{gene};
+
+  my ($start, $end, $isReversed) = $self->mapSyntenicGeneCoords($geneRow, $mappedCoords, $syntenyIsReversed);
+
+  my (@tstartsAr, @blocksizesAr);
+  
+  foreach my $exon (@{$gene->{exons}}) {
+    my ($eStart, $eEnd, $eIsReversed) = $self->mapSyntenicGeneCoords($exon, $mappedCoords, $syntenyIsReversed);
+    push(@tstartsAr, $eStart); 
+    push(@blocksizesAr, $eEnd - $eStart + 1);
+  }
+
+  my $synNaFeatureId = $geneRow->{NA_FEATURE_ID};
+
+  my $tstarts = join(",", @tstartsAr);
+  my $blocksizes = join(",", @blocksizesAr);
+
+  my $syntenicGeneObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
+                                                             start_min => $start,
+                                                             end_max => $end
+                                                             is_reversed => $isReversed,
+                                                             tstarts => $tstarts,
+                                                             blocksizes => $blocksizes,
+                                                             syn_na_feature_id => $synNaFeatureId,
+                                                             syn_organism_abbrev => $synOrganismAbbrev});
+  $syntenyObj->addChild($syntenicGeneObj);
+  $self->countSyntenicGenes();
+}
+
+#--------------------------------------------------------------------------------
+
+sub getSyntenicGenes {
+  my ($self, $syntenyObj) = @_;
+
+  my $naSequenceId = $syntenyObj->getBNaSequenceId();
+  my $start = $syntenyObj->getBStart();
+  my $end = $syntenyObj->getBEnd();
+
+  my $sh = $self->{_syntenic_genes_sh};
+  $sh->execute($naSequenceId, $start, $end);
+
+  my (%locations, %rows);
+  while(my $hash = $sh->fetchrow_hashref()) {
+    my $id = $hash->{NA_FEATURE_ID};
+    my $parent = $hash->{PARENT_ID};
+
+    my $start = $hash->{START_MIN};
+    my $end = $hash->{END_MAX};
+
+    $locations{$start}++;
+    $locations{$end}++;
+
+    if($hash->{FEATURE_TYPE} eq 'GeneFeature') {
+      $rows{$id}->{gene} = $hash;
+    }
+    else {
+      push @{$rows{$parent}->{exons}}, $hash;
+    }
+  }
+
+  $sh->finish();
+
+  my @sortedLocations = sort { $b <=> $a } keys %locations;
+
+  return \%rows, \@sortedLocations;
+}
+
 
 #--------------------------------------------------------------------------------
 
@@ -651,13 +823,15 @@ sub addAnchorToGusObj {
   }
   my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($anchor);
   $syntenyObj->addChild($anchorObj);
-  $self->countAnchor();
+
 }
 
 #--------------------------------------------------------------------------------
 
 sub undoTables {
-  return qw(ApiDB.SyntenyAnchor ApiDB.Synteny);
+  return ("ApiDB.SyntenyAnchor",
+          "ApiDB.SyntenicGene",
+          "ApiDB.Synteny");
 }
 
 1;
