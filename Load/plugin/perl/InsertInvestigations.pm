@@ -437,11 +437,13 @@ sub loadStudy {
 
   $gusStudy->setDescription($description);
 
+### DISABLE CONSTRAINTS
   my $panNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy, $charFh);
 
   my ($protocolParamsToIdMap, $protocolNamesToIdMap) = $self->loadProtocols($study->getProtocols());
 
   $self->loadEdges($study->getEdges, $panNameToIdMap, $protocolParamsToIdMap, $protocolNamesToIdMap);
+### ENABLE CONSTRAINTS
 }
 
 
@@ -1115,7 +1117,7 @@ TRAILING NULLCOLS
 (protocol_app_node_id,
 qualifier_id,
 unit_id,
-value,
+value char(2000),
 ontology_term_id,
 modification_date constant \"$modDate\",
 user_read constant $userRead,
