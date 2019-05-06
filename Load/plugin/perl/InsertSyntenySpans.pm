@@ -667,7 +667,9 @@ sub createSyntenicGenesInReferenceSpace {
       elsif($newLocation > $refLocStart) {
         $mappedCoords{$loc} = $refLocEnd;
       }
-      $mappedCoords{$loc} = $newLocation;
+      else {
+        $mappedCoords{$loc} = $newLocation;
+      }
 
       $loc = pop @$sortedLocations;
     }
