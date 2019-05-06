@@ -163,11 +163,20 @@ sub run {
   my $count = 0;
 
   my $dbh = $self->getQueryHandle(); 
-  $self->{_syntenic_genes_sh} = $dbh->prepare("select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
+  $self->{_syntenic_genes_sh} = $dbh->prepare("with genes as (
+select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
                                                  from apidb.featurelocation
                                                 where na_sequence_id = ? and end_max >= ? and start_min <= ?
-                                                 and feature_type in ('GeneFeature', 'ExonFeature')
-                                                 and is_top_level = 1");
+                                                 and feature_type in ('GeneFeature')
+                                                 and is_top_level = 1
+)
+select * from genes
+union
+select fl.sequence_source_id, fl.feature_source_id, fl.feature_type, fl.na_feature_id, fl.start_min, fl.end_max, fl.is_reversed, fl.parent_id
+                                                 from apidb.featurelocation fl, genes
+                                                 where fl.feature_type in ('ExonFeature')
+                                                 and is_top_level = 1
+                                                 and genes.na_feature_id = fl.parent_id");
 
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
   while(<MAP>) {
@@ -641,13 +650,25 @@ sub createSyntenicGenesInReferenceSpace {
 
     while(($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd)) {
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
+
+      my $newLocation;
+
       if($refLocStart < $refLocEnd) {
-        $mappedCoords{$loc} = int(($synPct * ($refLocEnd - $refLocStart + 1)) + $refLocStart);
+        $newLocation = int(($synPct * ($refLocEnd - $refLocStart + 1)) + $refLocStart);
       }
       else {
-        $mappedCoords{$loc} = int($refLocStart - ($synPct * ($refLocStart - $refLocEnd + 1)));
+        $newLocation = int($refLocStart - ($synPct * ($refLocStart - $refLocEnd + 1)));
       }
-      
+
+      # don't allow the location to extend beyond the start/end of the span
+      if($newLocation < $refLocStart) {
+        $mappedCoords{$loc} = $refLocStart;
+      }
+      elsif($newLocation > $refLocStart) {
+        $mappedCoords{$loc} = $refLocEnd;
+      }
+      $mappedCoords{$loc} = $newLocation;
+
       $loc = pop @$sortedLocations;
     }
 
@@ -671,7 +692,6 @@ sub createSyntenicGenesInReferenceSpace {
 
 sub mapSyntenicGeneCoords {
   my ($self, $row, $mappedCoords, $syntenyIsReversed) = @_;
-
 
   my $origStart = $row->{START_MIN};
   my $origEnd = $row->{END_MAX};
