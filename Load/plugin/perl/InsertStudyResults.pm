@@ -396,10 +396,7 @@ sub lookupIdFromSourceId {
   my $rv;
 
   if($sourceIdType eq 'transcript') {
-    my $ids = GUS::Supported::Util::getNaFeatureIdsFromSourceId($self, $sourceId, 'Transcript');
-    if(scalar @$ids == 1) {
-      $rv = $ids->[0];
-    }
+    $rv = GUS::Supported::Util::getNaFeatureIdsFromSourceId($self, $sourceId, 'Transcript');
   }
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
@@ -435,15 +432,7 @@ sub lookupIdFromSourceId {
   elsif ($sourceIdType eq 'reporter') {
     my $probeExtDbRlsSpec = $self->getArg('platformExtDbSpec');
     my $probeExtDbRlsId = $self->getExtDbRlsId($probeExtDbRlsSpec);
-    my @reporterIds = $self->sqlAsArray(Sql => "select r.reporter_id
-                                                from platform.reporter r
-                                                where r.external_database_release_id = $probeExtDbRlsId
-                                                and r.source_id = '$sourceId'");
-    unless (scalar @reporterIds == 1) {
-        die "Number of probes returned should be 1\n";
-    }
-
-    $rv = @reporterIds[0];
+    $rv = GUS::Supported::Util::getReporterIdFromSourceId($self, $sourceId, $probeExtDbRlsId);
   }
 
   elsif ($sourceIdType eq 'ontology_term') {
