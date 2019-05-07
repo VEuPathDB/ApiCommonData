@@ -770,8 +770,6 @@ sub loadSyntenicGene {
     push(@blocksizesAr, $eEnd - $eStart + 1);
   }
 
-  exit;
-
   my $synNaFeatureId = $geneRow->{NA_FEATURE_ID};
 
   my $tstarts = join(",", @tstartsAr);
