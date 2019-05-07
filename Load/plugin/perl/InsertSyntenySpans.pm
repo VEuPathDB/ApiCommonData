@@ -753,8 +753,6 @@ sub loadSyntenicGene {
 
   my $geneRow = $gene->{gene};
 
-  next unless($geneRow->{NA_FEATURE_ID} == 1946811);
-
   my $geneStart = $geneRow->{START_MIN};
   my $geneEnd = $geneRow->{END_MAX};
 
