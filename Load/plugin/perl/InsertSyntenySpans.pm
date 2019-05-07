@@ -741,7 +741,7 @@ sub mapSyntenicExonCoords {
   }
 
   my $origProportion = (($exonPosition - $origGeneStart) / ($origGeneEnd - $origGeneStart + 1));
-  my $lengthToExonPosition = ($geneEnd - $geneEnd + 1) * $origProportion;
+  my $lengthToExonPosition = ($geneEnd - $geneStart + 1) * $origProportion;
 
   return ceil($geneStart + $lengthToExonPosition);
 }
