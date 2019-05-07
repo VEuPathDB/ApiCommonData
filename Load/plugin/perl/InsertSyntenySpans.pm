@@ -180,6 +180,7 @@ select fl.sequence_source_id, fl.feature_source_id, fl.feature_type, fl.na_featu
                                                  and is_top_level = 1
                                                  and genes.na_feature_id = fl.parent_id");
 
+
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
   while(<MAP>) {
     chomp;
@@ -730,7 +731,7 @@ sub mapSyntenicGeneCoords {
 #--------------------------------------------------------------------------------
 
 sub mapSyntenicExonCoords {
-  my ($self, $exonPosition, $origGeneStart, $origGeneEnd, $geneStart, $geneEnd, $geneScalingFactor) = @_;
+  my ($self, $exonPosition, $origGeneStart, $origGeneEnd, $geneStart, $geneEnd) = @_;
 
   if($exonPosition == $origGeneStart) {
     return $geneStart;
@@ -739,7 +740,10 @@ sub mapSyntenicExonCoords {
     return $geneEnd;
   }
 
-  return ceil($exonPosition * $geneScalingFactor);
+  my $origProportion = (($exonPosition - $origGeneStart) / ($origGeneEnd - $origGeneStart + 1));
+  my $lengthToExonPosition = ($geneEnd - $geneEnd + 1) * $origProportion;
+
+  return ceil($geneStart + $lengthToExonPosition);
 }
 
 #--------------------------------------------------------------------------------
@@ -749,23 +753,24 @@ sub loadSyntenicGene {
 
   my $geneRow = $gene->{gene};
 
+  next unless($geneRow->{NA_FEATURE_ID} == 1946811);
+
   my $geneStart = $geneRow->{START_MIN};
   my $geneEnd = $geneRow->{END_MAX};
 
   my ($start, $end, $isReversed) = $self->mapSyntenicGeneCoords($geneRow, $mappedCoords, $syntenyIsReversed);
 
-
-  my $geneScalingFactor = ($end - $start + 1) / ($geneEnd - $geneStart + 1);
-
   my (@tstartsAr, @blocksizesAr);
   
-  foreach my $exon (@{$gene->{exons}}) {
-    my $eStart= $self->mapSyntenicExonCoords($exon->{START_MIN}, $geneStart, $geneEnd, $start, $end, $geneScalingFactor);
-    my $eEnd= $self->mapSyntenicExonCoords($exon->{END_MAX}, $geneStart, $geneEnd, $start, $end, $geneScalingFactor);
+  foreach my $exon (sort { $a->{START_MIN} <=> $b->{START_MIN}} @{$gene->{exons}}) {
+    my $eStart= $self->mapSyntenicExonCoords($exon->{START_MIN}, $geneStart, $geneEnd, $start, $end);
+    my $eEnd= $self->mapSyntenicExonCoords($exon->{END_MAX}, $geneStart, $geneEnd, $start, $end);
 
     push(@tstartsAr, $eStart); 
     push(@blocksizesAr, $eEnd - $eStart + 1);
   }
+
+  exit;
 
   my $synNaFeatureId = $geneRow->{NA_FEATURE_ID};
 
