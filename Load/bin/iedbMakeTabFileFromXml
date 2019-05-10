@@ -210,8 +210,9 @@ sub findRelevantFiles {
   print STDERR "Finding files that contain our organisms\n";
   my @a = map {"<SourceOrganismId>$_</SourceOrganismId>"} @organismIds;
   my $expr = join("|", @a);
-
-  my $f = `grep -lE "$expr" $dir/*.xml`;
+  #my $cmd = "grep -lE \"$expr\" $dir/*.xml";
+  #print STDERR "$cmd\n";
+  my $f = `find $dir -type f | xargs grep -lE "$expr"`;
   my @files =  split(/\n/,$f);
   print STDERR "Found " . scalar(@files) . " files\n";
   return @files;
