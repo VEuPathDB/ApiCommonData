@@ -209,7 +209,7 @@ sub run {
 
   my ($external_database_release_id, $mass, $retention_time, $peak_id,
     $ms_polarity, $compound_id, $InChIKey, $compound_peaks_id, $isotopomer,
-    $user_compound_name);
+    $user_compound_name, $is_preferred_compound);
 
     # Mulplite compounds can map to one mass/rt pair.
     # If the next item is the same data this is not loaded, only one row is needed
@@ -230,8 +230,9 @@ sub run {
     $ms_polarity = $peaksArray[4];
   	$compound_id = $peaksArray[5];
     chomp $compound_id;
-	   $InChIKey = $peaksArray[6];
-	    chomp $InChIKey;
+    $InChIKey = $peaksArray[6];
+    chomp $InChIKey;
+    $is_preferred_compound = $peaksArray[7];
 
      # Not using for the moment. Setting in elsif below.
 
@@ -281,7 +282,7 @@ sub run {
 	my $compoundPeaksTest  = {};
     while(<PEAKS>){
       my ($mass, $retention_time,
-          $compound_id, $compound_peaks_id, $isotopomer);
+          $compound_id, $compound_peaks_id, $isotopomer, $is_preferred_compound);
 
       my @peaksArray = split(/\t/, $_);
       $peak_id = $peaksArray[0];
@@ -293,6 +294,7 @@ sub run {
       chomp $compound_id;
       $InChIKey = $peaksArray[6];
       chomp $InChIKey;
+	  $is_preferred_compound = $peaksArray[7];
 
   	  my $compoundLookup = $compound_id;
   	  my $InChILookup = 'InChIKey=' . $InChIKey;
@@ -338,7 +340,8 @@ sub run {
           compound_id=>$compoundIDLoad,
           compound_peaks_id=>$compound_peaks_id,
           isotopomer=>$isotopomer,
-          user_compound_name=>$compound_id
+          user_compound_name=>$compound_id,
+		  is_preferred_compound=>$is_preferred_compound
           });
 
           $compoundPeaksChebiRow->submit();
