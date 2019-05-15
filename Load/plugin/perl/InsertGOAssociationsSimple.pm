@@ -239,6 +239,7 @@ sub run {
 
 	my $dbreference = $self->getDBReference($inputAssoc);
 	my $with = $self->getWith($inputAssoc);
+	my $dataSource = $self->getDataSource($inputAssoc);
 	my $rowId = $self->getTargetRowId($sourceId);
 
 #	print "ref is $dbreference and evcodepara is $with\n\n";
@@ -246,7 +247,7 @@ sub run {
 
 	my $assocId = $self->findAssociationId($rowId,$inputAssoc,$goDbRlsId);
 
-	$self->addAssociationInstance($assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $dbreference, $with);
+	$self->addAssociationInstance($assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $dbreference, $with, $dataSource);
 
 	$self->log("processing $sourceId; processed $count lines")
 	    if ($logFrequency && ($count % $logFrequency == 0));
@@ -440,7 +441,7 @@ SELECT row_id, go_term_id, is_not, go_association_id from DoTS.GOAssociation WHE
 }
 
 sub addAssociationInstance {
-  my ($self, $assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $DBRef, $with) = @_;
+  my ($self, $assocId, $inputAssoc, $goEvidenceCodeDbRlsId, $DBRef, $with, $source) = @_;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
@@ -449,7 +450,7 @@ sub addAssociationInstance {
   my $instance = GUS::Model::DoTS::GOAssociationInstance->new();
   $instance->setGoAssociationId($assocId);
   $instance->setIsPrimary(1);
-  $instance->setGoAssocInstLoeId($self->getLoeId());
+  $instance->setGoAssocInstLoeId($self->getLoeId($source));
   $instance->setIsDeprecated(0);
   $instance->setExternalDatabaseReleaseId($extDbRlsId);
 
@@ -468,12 +469,16 @@ sub addAssociationInstance {
 }
 
 sub getLoeId {
-  my ($self) = @_;
+  my ($self, $source) = @_;
 
   if (!$self->{loeId}) {
 
     my $loe = GUS::Model::DoTS::GOAssociationInstanceLOE->new();
-    $loe->setName($self->getArg('lineOfEvidence'));
+    if ($source) {
+      $loe->setName($source);
+    } else {
+      $loe->setName($self->getArg('lineOfEvidence'));
+    }
     if (!$loe->retrieveFromDB()) {
       $loe->submit();
     }
