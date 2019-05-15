@@ -26,7 +26,7 @@ sub getArgsDeclaration {
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
-               enum           => 'KEGG, MPMP, BioCyc'
+               enum           => 'KEGG, MPMP, BioCyc, Reactome'
              }),
         
      stringArg({ name => 'extDbRlsSpec',
@@ -102,6 +102,7 @@ sub run {
   my $pathwayFormat = $self->getArg('format');
   my $extension = ($pathwayFormat eq 'MPMP') ? 'cyjs' 
                 : ($pathwayFormat eq 'BioCyc') ? 'biopax'
+                : ($pathwayFormat eq 'Reactome') ? 'json'
                 : 'xml';
 
   my @pathwayFiles = <$inputFileDir/*.$extension>;
