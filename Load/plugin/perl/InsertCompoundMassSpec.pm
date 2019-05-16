@@ -307,14 +307,14 @@ sub run {
       chomp $is_preferred_compound;
 
       print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
-      print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", @$preferredCompounds->{$mass . "|" . $retention_time}[0];
+      print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
 
       # Testing for a preferred compound. Will load only that for the peak.
       # If more than one preferred in a peak (should not have this) it is skipped.
       if (scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
-      {}
-      elsif(@$preferredCompounds->{$mass . "|" . $retention_time}[0] != $compound_id)
-      {}
+      {print STDERR "More than 1 preferred compound in hash - skipping.\n"}
+      elsif($preferredCompounds->{$mass . "|" . $retention_time}[0] ne $compound_id)
+      {print STDERR "Not a preferred compound - skipping for this peak.\n"}
       else{
     	  my $compoundLookup = $compound_id;
     	  my $InChILookup = 'InChIKey=' . $InChIKey;
