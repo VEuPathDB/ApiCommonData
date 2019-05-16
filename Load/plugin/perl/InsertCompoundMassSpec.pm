@@ -306,10 +306,12 @@ sub run {
       $InChIKey = $peaksArray[6];
       chomp $InChIKey;
 	    $is_preferred_compound = $peaksArray[7];
+      chomp $is_preferred_compound;
 
       print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
 
-
+      # Testing for a preferred compound. Will load only that for the peak.
+      # If more than one preferred in a peak (should not have this) it is skipped.
       if (scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
       {}
       elsif($preferredCompounds->{$mass . "|" . $retention_time}[0] != $compound_id)
