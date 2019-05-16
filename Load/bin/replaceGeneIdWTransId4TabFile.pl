@@ -45,12 +45,12 @@ while (<IN>) {
     if ($gene2Trans{$vals[1]}) {
       foreach my $i (0..$#{$gene2Trans{$vals[1]}}) {
 	$newVals[1] = $gene2Trans{$vals[1]}[$i];
-	$newVals[2] = $gene2Trans{$vals[2]}[$i];
+#	$newVals[2] = $gene2Trans{$vals[2]}[$i];
 	&printTabColumn (\@newVals);
       }
+    } else {
+      &printTabColumn (\@newVals);
     }
-#    $vals[1] = $gene2Trans{$vals[1]} if ($gene2Trans{$vals[1]});
-#    $vals[2] = $gene2Trans{$vals[2]} if ($gene2Trans{$vals[2]});
 
   } elsif ($fileType =~ /product/i) {  ## for product
     if ($gene2Trans{$vals[0]}) {
@@ -58,8 +58,9 @@ while (<IN>) {
 	$newVals[0] = $gene2Trans{$vals[0]}[$i];
 	&printTabColumn (\@newVals);
       }
+    } else {
+      &printTabColumn (\@newVals);
     }
-    #$vals[0] = $gene2Trans{$vals[0]} if ($gene2Trans{$vals[0]});
 
   } else {
     print "file Type has not been coded yet\n";
