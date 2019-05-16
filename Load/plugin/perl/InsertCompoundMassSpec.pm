@@ -306,8 +306,8 @@ sub run {
 	    $is_preferred_compound = $peaksArray[7];
       chomp $is_preferred_compound;
 
-      print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
-      print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
+    #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
+    #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
 
       # Testing for a preferred compound. Will load only that for the peak.
       # If more than one preferred in a peak (should not have this) it is skipped.
