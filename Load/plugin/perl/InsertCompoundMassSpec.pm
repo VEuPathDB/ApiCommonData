@@ -311,9 +311,9 @@ sub run {
 
       # Testing for a preferred compound. Will load only that for the peak.
       # If more than one preferred in a peak (should not have this) it is skipped.
-      if (scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
+      if (exists $preferredCompounds->{$mass . "|" . $retention_time} && scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
       {print STDERR "More than 1 preferred compound in hash - skipping.\n"}
-      elsif($preferredCompounds->{$mass . "|" . $retention_time}[0] ne $compound_id)
+      elsif(exists $preferredCompounds->{$mass . "|" . $retention_time} && $preferredCompounds->{$mass . "|" . $retention_time}[0] ne $compound_id)
       {print STDERR "Not a preferred compound - skipping for this peak.\n"}
       else{
     	  my $compoundLookup = $compound_id;
