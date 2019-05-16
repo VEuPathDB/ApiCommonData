@@ -262,7 +262,7 @@ sub run {
 
 
 
-      if ($is_preferred_compound eq 'y'){
+      if ($is_preferred_compound == 1){
         print STDERR "Pref?", $is_preferred_compound;
         $preferredCompounds->{$mass . "|" . $retention_time} = [$compound_id] ;
       }
