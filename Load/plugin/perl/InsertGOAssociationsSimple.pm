@@ -476,7 +476,7 @@ sub addAssociationInstance {
 sub getLoeId {
   my ($self, $source) = @_;
 
-  if (!$self->{loeId}) {
+#  if (!$self->{loeId}) {
 
     my $loe = GUS::Model::DoTS::GOAssociationInstanceLOE->new();
     if ($source) {
@@ -488,7 +488,7 @@ sub getLoeId {
       $loe->submit();
     }
     $self->{loeId} = $loe->getId();
-  }
+#  }
 
   return $self->{loeId};
 }
