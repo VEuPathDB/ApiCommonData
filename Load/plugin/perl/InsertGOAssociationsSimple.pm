@@ -289,6 +289,11 @@ sub getDBReference{
     return $inputAssoc->getDBReference();
 }
 
+sub getDataSource{
+    my ($self, $inputAssoc) = @_;
+    return $inputAssoc->getDataSource();
+}
+
 sub getWith{
     my ($self, $inputAssoc) = @_;
     return $inputAssoc->getWith();
