@@ -96,7 +96,7 @@ CREATE TABLE ApiDB.SyntenicGene (
  row_alg_invocation_id       NUMBER(12),
  FOREIGN KEY (synteny_id) REFERENCES apidb.Synteny (synteny_id),
  FOREIGN KEY (syn_na_feature_id) REFERENCES dots.nafeatureimp (na_feature_id),
- FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequence (na_sequence_id),
+ FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequenceimp (na_sequence_id),
  PRIMARY KEY (syntenic_gene_id)
 );
 
