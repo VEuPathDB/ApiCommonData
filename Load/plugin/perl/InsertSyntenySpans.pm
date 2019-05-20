@@ -344,7 +344,6 @@ sub makeSynteny {
 
   $self->createSyntenicGenesInReferenceSpace($synteny, $pairs, $index, $synIndex, $naSequenceMap->{$syntenyA->seq_id}, $synOrganismAbbrev);
 
-
   return $synteny;
 }
 
@@ -649,9 +648,9 @@ sub createSyntenicGenesInReferenceSpace {
     my $refLocEnd = $sortedPairs[$i]->[$refIndex];
     my $synLocEnd = $sortedPairs[$i]->[$synIndex];
 
-
-
     while(($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd)) {
+
+
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
 
       my $newLocation;
@@ -663,16 +662,7 @@ sub createSyntenicGenesInReferenceSpace {
         $newLocation = int($refLocStart - ($synPct * ($refLocStart - $refLocEnd + 1)));
       }
 
-      # don't allow the location to extend beyond the start/end of the span
-      if($newLocation < $refLocStart) {
-        $mappedCoords{$loc} = $refLocStart;
-      }
-      elsif($newLocation > $refLocEnd) {
-        $mappedCoords{$loc} = $refLocEnd;
-      }
-      else {
-        $mappedCoords{$loc} = $newLocation;
-      }
+      $mappedCoords{$loc} = $newLocation;
 
       $loc = pop @$sortedLocations;
     }
@@ -685,6 +675,9 @@ sub createSyntenicGenesInReferenceSpace {
   }
 
   die "did not process all locations" if scalar @$sortedLocations > 0;
+
+
+  print Dumper \%mappedCoords;
 
   foreach my $geneId (keys %$features) {
     my $gene = $features->{$geneId};
@@ -781,6 +774,9 @@ sub loadSyntenicGene {
                                                              blocksizes => $blocksizes,
                                                              syn_na_feature_id => $synNaFeatureId,
                                                              syn_organism_abbrev => $synOrganismAbbrev});
+
+
+  print $syntenicGeneObj->toString();
   $syntenyObj->addChild($syntenicGeneObj);
   $self->countSyntenicGenes();
 }
@@ -805,11 +801,12 @@ sub getSyntenicGenes {
     my $start = $hash->{START_MIN};
     my $end = $hash->{END_MAX};
 
-    $locations{$start}++;
-    $locations{$end}++;
 
     if($hash->{FEATURE_TYPE} eq 'GeneFeature') {
       $rows{$id}->{gene} = $hash;
+
+      $locations{$start}++;
+      $locations{$end}++;
     }
     else {
       push @{$rows{$parent}->{exons}}, $hash;
