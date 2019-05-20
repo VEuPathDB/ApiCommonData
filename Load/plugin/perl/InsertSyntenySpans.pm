@@ -676,9 +676,6 @@ sub createSyntenicGenesInReferenceSpace {
 
   die "did not process all locations" if scalar @$sortedLocations > 0;
 
-
-  print Dumper \%mappedCoords;
-
   foreach my $geneId (keys %$features) {
     my $gene = $features->{$geneId};
 
@@ -776,7 +773,6 @@ sub loadSyntenicGene {
                                                              syn_organism_abbrev => $synOrganismAbbrev});
 
 
-  print $syntenicGeneObj->toString();
   $syntenyObj->addChild($syntenicGeneObj);
   $self->countSyntenicGenes();
 }
