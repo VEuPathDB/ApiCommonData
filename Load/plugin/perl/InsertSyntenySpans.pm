@@ -657,12 +657,31 @@ sub createSyntenicGenesInReferenceSpace {
 
       if($refLocStart < $refLocEnd) {
         $newLocation = int(($synPct * ($refLocEnd - $refLocStart + 1)) + $refLocStart);
+
+        if($newLocation < $refLocStart) {
+          $mappedCoords{$loc} = $refLocStart;
+        }
+        elsif($newLocation > $refLocEnd) {
+          $mappedCoords{$loc} = $refLocEnd;
+        }
+        else {
+          $mappedCoords{$loc} = $newLocation;
+        }
       }
       else {
         $newLocation = int($refLocStart - ($synPct * ($refLocStart - $refLocEnd + 1)));
+
+        if($newLocation < $refLocEnd) {
+          $mappedCoords{$loc} = $refLocEnd;
+        }
+        elsif($newLocation > $refLocStart) {
+          $mappedCoords{$loc} = $refLocStart;
+        }
+        else {
+          $mappedCoords{$loc} = $newLocation;
+        }
       }
 
-      $mappedCoords{$loc} = $newLocation;
 
       $loc = pop @$sortedLocations;
     }
