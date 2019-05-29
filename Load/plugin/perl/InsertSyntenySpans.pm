@@ -648,9 +648,7 @@ sub createSyntenicGenesInReferenceSpace {
     my $refLocEnd = $sortedPairs[$i]->[$refIndex];
     my $synLocEnd = $sortedPairs[$i]->[$synIndex];
 
-    while(($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd)) {
-
-
+    while($loc && (($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd))) {
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
 
       my $newLocation;
