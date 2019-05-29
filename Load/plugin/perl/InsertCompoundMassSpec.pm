@@ -288,6 +288,8 @@ sub run {
     chomp $header;
     my @header = split(/\t/, $header);
 
+	my $isPreferredCheck = @header[7]; 
+
 	my $compoundPeaksTest  = {};
     while(<PEAKS>){
       my ($mass, $retention_time,
@@ -303,9 +305,14 @@ sub run {
       chomp $compound_id;
       $InChIKey = $peaksArray[6];
       chomp $InChIKey;
+		print STDERR "#####  $isPreferredCheck"; 
+	  if(defined($isPreferredCheck)){
 	    $is_preferred_compound = $peaksArray[7];
-      chomp $is_preferred_compound;
-
+        chomp $is_preferred_compound;
+	  }
+	  else{
+	    $is_preferred_compound = 1;
+	  } 
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
 
@@ -326,7 +333,7 @@ sub run {
 
     	#NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
     # They are never seen so adding the col to the table to have both is not useful for the moment.
-    # To get a ChEBI ID the InChIKey is tested first, the the other compound ID.
+    # To get a ChEBI ID the InChIKey is tested first, then the other compound ID.
     	# print STDERR "Values in hashes for $peak_id:\n";
     	# print STDERR Dumper $compoundInChIKeyHash->{$InChILookup};
     	# print STDERR Dumper $otherCompoundHash->{$compoundLookup};
