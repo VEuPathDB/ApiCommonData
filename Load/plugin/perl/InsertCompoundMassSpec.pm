@@ -298,20 +298,21 @@ sub run {
       my @peaksArray = split(/\t/, $_);
       $peak_id = $peaksArray[0];
       $mass = $peaksArray[1];
-	    $retention_time = $peaksArray[2];
+	  $retention_time = $peaksArray[2];
       $isotopomer = $peaksArray[3];
       $ms_polarity = $peaksArray[4];
       $compound_id = $peaksArray[5];
       chomp $compound_id;
       $InChIKey = $peaksArray[6];
       chomp $InChIKey;
-		print STDERR "#####  $isPreferredCheck"; 
 	  if(defined($isPreferredCheck)){
 	    $is_preferred_compound = $peaksArray[7];
+		print STDERR "#####  $isPreferredCheck"; 
         chomp $is_preferred_compound;
 	  }
 	  else{
 	    $is_preferred_compound = 1;
+		print 'Other';
 	  } 
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
