@@ -316,7 +316,7 @@ sub run {
 		print 'Other';
 	  }
 
-	  if (defined($preferredLoaded{$compound_id})){;}
+	  if (defined($preferredLoaded->{$compound_id})){;}
 	  else{
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
