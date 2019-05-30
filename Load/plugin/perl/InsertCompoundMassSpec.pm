@@ -289,7 +289,7 @@ sub run {
     my @header = split(/\t/, $header);
 
 	my $isPreferredCheck = @header[7]; 
-    my $preferredLoaded = {};;
+    my $preferredLoaded = {};
 	my $compoundPeaksTest  = {};
     
 	while(<PEAKS>){
