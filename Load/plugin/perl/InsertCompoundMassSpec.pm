@@ -457,7 +457,9 @@ sd_header = ''
 # Mapping file that gives sample groupings
 mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE)
 mapping = data.table(mapping)
-
+# Takes the col inputs of samples, groups and renames to conform with the rest of the script. 
+names(mapping)[1] <- 'sample'
+names(mapping)[2] <- 'group'
 # Output dir for sd.
 dir.create('$dir/.sd')
 
@@ -468,7 +470,7 @@ for(i in groups){
     # Get each sample by groups from mapping, calculate row means.
     newData <- mapping[group ==i]
     newData = data.table(newData)
-    samples = as.vector(newData[['Sample_Names']])
+    samples = as.vector(newData[['sample']])
     newResults = data[, samples, with=FALSE]
     newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
     mean <- newResults[, 'mean']
