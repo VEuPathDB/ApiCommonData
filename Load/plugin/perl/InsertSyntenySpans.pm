@@ -763,13 +763,25 @@ sub loadSyntenicGene {
   my $geneStart = $geneRow->{START_MIN};
   my $geneEnd = $geneRow->{END_MAX};
 
-  my ($start, $end, $isReversed) = $self->mapSyntenicGeneCoords($geneRow, $mappedCoords, $syntenyIsReversed);
+  my ($mappedStart, $mappedEnd, $isReversed) = $self->mapSyntenicGeneCoords($geneRow, $mappedCoords, $syntenyIsReversed);
+
+  my $geneLength = $geneEnd - $geneStart - 1;
+  my $mappedLength = $mappedEnd - $mappedStart - 1;
+
+  # do not let the mapped length expand bigger than the original gene size.
+  if($mappedLength > $geneLength) {
+    my $mappedMidpoint = floor($mappedLength/2) + $mappedStart;
+    my $halfGeneLength = floor($geneLength / 2);
+
+    $mappedStart = $mappedMidpoint - $halfGeneLength;
+    $mappedEnd = $mappedMidpoint + $halfGeneLength;
+  }
 
   my (@tstartsAr, @blocksizesAr);
   
   foreach my $exon (sort { $a->{START_MIN} <=> $b->{START_MIN}} @{$gene->{exons}}) {
-    my $eStart= $self->mapSyntenicExonCoords($exon->{START_MIN}, $geneStart, $geneEnd, $start, $end);
-    my $eEnd= $self->mapSyntenicExonCoords($exon->{END_MAX}, $geneStart, $geneEnd, $start, $end);
+    my $eStart= $self->mapSyntenicExonCoords($exon->{START_MIN}, $geneStart, $geneEnd, $mappedStart, $mappedEnd);
+    my $eEnd= $self->mapSyntenicExonCoords($exon->{END_MAX}, $geneStart, $geneEnd, $mappedStart, $mappedEnd);
 
     push(@tstartsAr, $eStart); 
     push(@blocksizesAr, $eEnd - $eStart + 1);
@@ -781,8 +793,8 @@ sub loadSyntenicGene {
   my $blocksizes = join(",", @blocksizesAr);
 
   my $syntenicGeneObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
-                                                             start_min => $start,
-                                                             end_max => $end,
+                                                             start_min => $mappedStart,
+                                                             end_max => $mappedEnd,
                                                              is_reversed => $isReversed,
                                                              tstarts => $tstarts,
                                                              blocksizes => $blocksizes,
