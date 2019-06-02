@@ -1,10 +1,21 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT DISTINCT ?entity ?label
+SELECT DISTINCT ?entity ?label 
 WHERE {
-  ?entity rdfs:subClassOf <http://www.w3.org/2002/07/owl#Thing> .
-  ?entity rdfs:label ?slabel.
+  ?entity a owl:Class ;
+          rdfs:label ?slabel .
+  {
+    ?entity rdfs:subClassOf <http://www.w3.org/2002/07/owl#Thing> .
+  }
+  UNION 
+  {
+    ?entity a owl:Class ;
+            rdfs:label ?slabel .
+    FILTER NOT EXISTS { 
+      ?entity rdfs:subClassOf ?p . 
+    }
+  }
   BIND (str(?slabel) AS ?label) .
 }
 
