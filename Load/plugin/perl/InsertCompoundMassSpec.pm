@@ -289,7 +289,7 @@ sub run {
     my @header = split(/\t/, $header);
 
 	my $isPreferredCheck = @header[7]; 
-    my $preferredLoaded = {};
+  my $preferredLoaded = {};
 	my $compoundPeaksTest  = {};
     
 	while(<PEAKS>){
@@ -316,7 +316,7 @@ sub run {
 		print 'Other';
 	  }
 
-	  if (defined($preferredLoaded->{$compound_id})){;}
+	  if (defined($preferredLoaded->{$compoundIDLoad})){;}
 	  else{
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
@@ -369,7 +369,7 @@ sub run {
       		#print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
 		  # Adding to hash for testing if a preferred comp is already in DB - peak to peak check. 
-		  if(defined($is_preferred_compound)){$preferredLoaded->{$compound_id} = 1;}
+		  if(defined($is_preferred_compound)){$preferredLoaded->{$compoundIDLoad} = 1;}
           
 		  my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
             compound_id=>$compoundIDLoad,
