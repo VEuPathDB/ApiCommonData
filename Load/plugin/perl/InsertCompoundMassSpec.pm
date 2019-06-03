@@ -464,7 +464,7 @@ header = ''
 sd_header = ''
 
 # Mapping file that gives sample groupings
-mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE)
+mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE, check.names=FALSE)
 mapping = data.table(mapping)
 # Takes the col inputs of samples, groups and renames to conform with the rest of the script. 
 names(mapping)[1] <- 'sample'
@@ -542,8 +542,10 @@ write.table(output, file='$dir/mean.tab', sep='\\t', append=TRUE, na='0',  col.n
   #print(percentile)
 
   # take each of the samples from mapping
-  mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE)
+  mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE, check.names=FALSE)
   mapping = data.table(mapping)
+  names(mapping)[1] <- 'sample'
+  names(mapping)[2] <- 'group'
   #print(mapping)
   groups = unique(mapping[['group']])
 
