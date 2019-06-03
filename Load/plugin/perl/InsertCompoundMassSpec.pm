@@ -293,101 +293,102 @@ sub run {
 	my $compoundPeaksTest  = {};
     
 	while(<PEAKS>){
-      my ($mass, $retention_time,
-          $compound_id, $compound_peaks_id, $isotopomer, $is_preferred_compound);
+    my ($mass, $retention_time,
+        $compound_id, $compound_peaks_id, $isotopomer, $is_preferred_compound);
 
-      my @peaksArray = split(/\t/, $_);
-      $peak_id = $peaksArray[0];
-      $mass = $peaksArray[1];
-	  $retention_time = $peaksArray[2];
-      $isotopomer = $peaksArray[3];
-      $ms_polarity = $peaksArray[4];
-      $compound_id = $peaksArray[5];
-      chomp $compound_id;
-      $InChIKey = $peaksArray[6];
-      chomp $InChIKey;
-	  if(defined($isPreferredCheck)){
-	    $is_preferred_compound = $peaksArray[7];
-		print STDERR "#####  $isPreferredCheck"; 
-        chomp $is_preferred_compound;
-	  }
-	  else{
-	    $is_preferred_compound = 1;
-		print 'Other';
-	  }
-
-	  if (defined($preferredLoaded->{$compoundIDLoad})){;}
-	  else{
+    my @peaksArray = split(/\t/, $_);
+    $peak_id = $peaksArray[0];
+    $mass = $peaksArray[1];
+    $retention_time = $peaksArray[2];
+    $isotopomer = $peaksArray[3];
+    $ms_polarity = $peaksArray[4];
+    $compound_id = $peaksArray[5];
+    chomp $compound_id;
+    $InChIKey = $peaksArray[6];
+    chomp $InChIKey;
+    if(defined($isPreferredCheck)){
+      $is_preferred_compound = $peaksArray[7];
+      print STDERR "#####  $isPreferredCheck"; 
+      chomp $is_preferred_compound;
+    }
+    else{
+      $is_preferred_compound = 1;
+      print 'Other';
+    } 
+  
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
 
-      # Testing for a preferred compound. Will load only that for the peak.
-      # If more than one preferred in a peak (should not have this) it is skipped.
-      if (exists $preferredCompounds->{$mass . "|" . $retention_time} && scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
-      {print STDERR "More than 1 preferred compound in hash - skipping.\n"}
-      elsif(exists $preferredCompounds->{$mass . "|" . $retention_time} && $preferredCompounds->{$mass . "|" . $retention_time}[0] ne $compound_id)
-      {print STDERR "Not a preferred compound - skipping for this peak.\n"}
-      else{
-    	  my $compoundLookup = $compound_id;
-    	  my $InChILookup = 'InChIKey=' . $InChIKey;
-    	  my $compoundIDLoad;
-    	  # The hash below is testing for unique ChEBI IDs with peaks. e.g. ID ChEBI: X may be mapped to by >1 IDs from the provider data. In this
-    	  # instance the ChEBI ID is only loaded into the DB once at the first match - this stops the results being incorrect in the Model (queries/compoundQueries.xml ) where the ChEBI IDs are used to group the data (summing the abundance).
-    	  if(defined($compoundPeaksTest->{$peak_id})){;}
-    	  else{$compoundPeaksTest->{$peak_id} = {};}
+    # Testing for a preferred compound. Will load only that for the peak.
+    # If more than one preferred in a peak (should not have this) it is skipped.
+    if (exists $preferredCompounds->{$mass . "|" . $retention_time} && scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}) > 1)
+    {print STDERR "More than 1 preferred compound in hash - skipping.\n"}
+    elsif(exists $preferredCompounds->{$mass . "|" . $retention_time} && $preferredCompounds->{$mass . "|" . $retention_time}[0] ne $compound_id)
+    {print STDERR "Not a preferred compound - skipping for this peak.\n"}
+    else{
+      my $compoundLookup = $compound_id;
+      my $InChILookup = 'InChIKey=' . $InChIKey;
+      my $compoundIDLoad;
+      # The hash below is testing for unique ChEBI IDs with peaks. e.g. ID ChEBI: X may be mapped to by >1 IDs from the provider data. In this
+      # instance the ChEBI ID is only loaded into the DB once at the first match - this stops the results being incorrect in the Model (queries/compoundQueries.xml ) where the ChEBI IDs are used to group the data (summing the abundance).
+      if(defined($compoundPeaksTest->{$peak_id})){;}
+      else{$compoundPeaksTest->{$peak_id} = {};}
 
-    	#NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
-    # They are never seen so adding the col to the table to have both is not useful for the moment.
-    # To get a ChEBI ID the InChIKey is tested first, then the other compound ID.
-    	# print STDERR "Values in hashes for $peak_id:\n";
-    	# print STDERR Dumper $compoundInChIKeyHash->{$InChILookup};
-    	# print STDERR Dumper $otherCompoundHash->{$compoundLookup};
+      #NOTE - for now only the $compound_id is being loaded into the table. The InChIKey, if there is one, is not.
+      # They are never seen so adding the col to the table to have both is not useful for the moment.
+      # To get a ChEBI ID the InChIKey is tested first, then the other compound ID.
+      # print STDERR "Values in hashes for $peak_id:\n";
+      # print STDERR Dumper $compoundInChIKeyHash->{$InChILookup};
+      # print STDERR Dumper $otherCompoundHash->{$compoundLookup};
 
-    	  if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
-    	    #print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
-            $compoundIDLoad = $compoundInChIKeyHash->{$InChILookup}->{'MYID'};
-    		#	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
-    		#print STDERR "1: $compoundIDLoad \n";
-    	  }
-          elsif(defined($otherCompoundHash->{$compoundLookup})){
-            $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
-    		#print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
-    		#print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
-    		#print STDERR "2: $compoundIDLoad\n";
-          }
-          else{;}
-
-    	  if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
-    	  {print STDERR "$compoundIDLoad in hash\n"}
-    	  else{
-    	    if ($compoundIDLoad eq ""){}
-      		else{
-      		  $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
-        	}
-          $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
-      		#print STDERR $peak_id;
-      		#print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
-
-		  # Adding to hash for testing if a preferred comp is already in DB - peak to peak check. 
-		  if(defined($is_preferred_compound)){$preferredLoaded->{$compoundIDLoad} = 1;}
-          
-		  my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            compound_id=>$compoundIDLoad,
-            compound_peaks_id=>$compound_peaks_id,
-            isotopomer=>$isotopomer,
-            user_compound_name=>$compound_id,
-  		  is_preferred_compound=>$is_preferred_compound
-            });
-
-            $compoundPeaksChebiRow->submit();
-    	  }
-        $self->undefPointerCache();
-    	  #print STDERR "Peak =  $peak_id\n";
-    	  #print STDERR Dumper $compoundPeaksTest->{$peak_id}
+      if(defined($compoundInChIKeyHash->{'InChIKey=' . $InChIKey})){
+        # print STDERR "FOUND ---- InChI hash for $peak_id $InChIKey \n";
+        $compoundIDLoad = $compoundInChIKeyHash->{$InChILookup}->{'MYID'};
+        #	print STDERR "Inchi hash value :", Dumper $compoundInChIKeyHash->{'InChIKey=' . $InChIKey};
+        # print STDERR "1: $compoundIDLoad \n";
       }
-	  } # End preferredLoaded test.
-    } #End of while(<PEAKS>)
-    close(PEAKS);
+      elsif(defined($otherCompoundHash->{$compoundLookup})){
+        $compoundIDLoad = $otherCompoundHash->{$compoundLookup}->{'MYID'};
+        #print STDERR "FOUND #### other hash for $peak_id $compoundLookup \n";
+        #print STDERR "Other hash value :", Dumper $otherCompoundHash->{$compoundLookup};
+        #print STDERR "2: $compoundIDLoad\n";
+      }
+      else{;}
+
+      # If a compound ID has already been loaded as it is preferred, this will skip loading the compound ID for other peaks. 
+      if (defined($preferredLoaded->{$compoundIDLoad})){;}
+      else{	  
+        if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
+        {print STDERR "$compoundIDLoad in hash\n"}
+        else{
+          if ($compoundIDLoad eq ""){}
+          else{
+            $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
+          }
+          $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
+          #print STDERR $peak_id;
+          #print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
+
+          # Adding to hash for testing if a preferred comp is already in DB - peak to peak check. 
+          if(defined($is_preferred_compound)){$preferredLoaded->{$compoundIDLoad} = 1;}
+            
+          my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+                compound_id=>$compoundIDLoad,
+                compound_peaks_id=>$compound_peaks_id,
+                isotopomer=>$isotopomer,
+                user_compound_name=>$compound_id,
+            is_preferred_compound=>$is_preferred_compound
+                });
+
+          $compoundPeaksChebiRow->submit();
+        }
+        $self->undefPointerCache();
+        #print STDERR "Peak =  $peak_id\n";
+        #print STDERR Dumper $compoundPeaksTest->{$peak_id}
+      } # End preferredLoaded test.
+    }
+  } #End of while(<PEAKS>)
+  close(PEAKS);
     ###### END - Load into CompoundPeaksChebi ######
 
     ###### Load into CompoundMassSpecResults ######
