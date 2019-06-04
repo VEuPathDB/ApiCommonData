@@ -30,6 +30,7 @@ use GUS::Model::DoTS::NASequence;
 
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::SyntenicGene;
+use GUS::Model::ApiDB::SyntenicScale;
 
 use CBIL::Util::V;
 
@@ -648,6 +649,18 @@ sub createSyntenicGenesInReferenceSpace {
     my $refLocEnd = $sortedPairs[$i]->[$refIndex];
     my $synLocEnd = $sortedPairs[$i]->[$synIndex];
 
+    my $refLength = abs($refLocEnd - $refLocStart) + 1;
+    my $synLength = abs($synLocEnd - $synLocStart) + 1;
+
+    my $scale = $refLength > $synLength ? $refLength / $synLength : -1 * ($synLength / $refLength);
+
+    my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
+                                                             start_min => $refLocStart < $refLocEnd ? $refLocStart : $refLocEnd,
+                                                             end_max => $refLocStart < $refLocEnd ? $refLocEnd : $refLocStart,
+                                                             scale => $scale,
+                                                             syn_organism_abbrev => $synOrganismAbbrev});
+    $syntenicScaleObj->setParent($syntenyObj);
+
     while($loc && (($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd))) {
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
 
@@ -747,7 +760,7 @@ sub mapSyntenicExonCoords {
     return $geneEnd;
   }
 
-  my $origProportion = (($exonPosition - $origGeneStart) / ($origGeneEnd - $origGeneStart + 1));
+  my $origProportion = (($exonPosition - $origGeneStart + 1) / ($origGeneEnd - $origGeneStart + 1));
   my $lengthToExonPosition = ($geneEnd - $geneStart + 1) * $origProportion;
 
   return ceil($geneStart + $lengthToExonPosition);
