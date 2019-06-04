@@ -360,10 +360,11 @@ sub run {
       # This presumes that the isotopomers are only in the mass/rt range of the isotopomer and not ambiguosly elsewhere in another peak/s.
       if ((defined($preferredLoaded->{$compoundIDLoad})) && (undef($isotopomer)){;}
       else{	  
-        if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
-        {print STDERR "$compoundIDLoad in hash\n"}
+        if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad})){
+          print STDERR "$compoundIDLoad in hash\n";
+        }
         else{
-          if ($compoundIDLoad eq ""){}
+          if ($compoundIDLoad eq ""){;}
           else{
             $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
           }
