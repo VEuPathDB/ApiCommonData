@@ -358,16 +358,17 @@ sub run {
       # If a compound ID has already been loaded as it is preferred, this will skip loading the compound ID for other peaks. 
       # If the compound is an isotopomer it will be preferred (likely with these experiments) and in many peaks. This will load the range of isotopomers.
       # This presumes that the isotopomers are only in the mass/rt range of the isotopomer and not ambiguosly elsewhere in another peak/s.
-      if (defined($preferredLoaded->{$compoundIDLoad})){;}
+      if (defined($preferredLoaded->{$compoundIDLoad})){print STDERR "Here 1\n";}
       else{	  
         if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad})){
           print STDERR "$compoundIDLoad in hash\n";
         }
         else{
           if ($compoundIDLoad eq ""){;}
-          elsif(defined($isotopomer)){;} # Not adding isotopomer cpd ID to peak - peak test. Want that ID for all peaks. 
+          # elsif(defined($isotopomer)){;} # Not adding isotopomer cpd ID to peak - peak test. Want that ID for all peaks. 
           else{
             $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
+            print STDERR "Here 2\n";
           }
           $compound_peaks_id = $peaksHash->{$peak_id . '|' .$mass . '|' . $retention_time}->{'COMPOUND_PEAKS_ID'};
           #print STDERR $peak_id;
@@ -415,39 +416,6 @@ sub run {
   my $mappingFile = 'mapping.tab';
 
   my $meanRScript =
-  # This is the old R script - pre-sd.
-#   library(data.table)
-#
-# data <- read.csv('$resultsFile', sep='\\t', header=TRUE, check.names=FALSE)
-# data = data.table(data)
-# output <-data.table(data[,1])#(V1=NA)
-# colnames(output)<- ' '
-# header = ''
-# mapping <- read.csv('$mappingFile', sep='\\t', header=TRUE)
-# mapping = data.table(mapping)
-# colnames(mapping)[1]<-'sample'
-# colnames(mapping)[2]<-'group'
-#
-# groups = unique(mapping[['group']])
-#
-# for(i in groups){
-# #   print(i)
-#     newData <- mapping[group ==i]
-#     newData = data.table(newData)
-#     samples = as.vector(newData[['sample']])
-#     newResults = data[, samples, with=FALSE]
-#     newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
-#     mean <- newResults[, 'mean']
-#     new_col_name = paste(i, 'mean')
-#     header = paste(header, new_col_name, sep='\\t')
-# #   print(mean)
-#     output = cbind(output, mean[, 'mean'])
-#     setnames(output, 'mean', new_col_name)
-# }
-#
-# write.table(header, file='mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
-# write.table(output, file='mean.tab', sep='\\t', append=TRUE, na='0', col.names=FALSE, row.names=FALSE, quote=FALSE)
-
 "
 library(data.table)
 library(matrixStats)
@@ -580,8 +548,6 @@ write.table(output, file='$dir/mean.tab', sep='\\t', append=TRUE, na='0',  col.n
           write.table(merged, file=file, sep='\\t', row.names=FALSE, quote=FALSE)
   }
   ";
-
-  #TODO - what do the cols need to be specified as in insrt study results
 
   open(my $fh, '>', "$dir/combine.R");
   print $fh "$combineRScript";
