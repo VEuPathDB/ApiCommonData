@@ -290,7 +290,7 @@ sub run {
 
 	my $isPreferredCheck = @header[7]; 
   my $preferredLoaded = {};
-	my $compoundPeaksTest  = {};
+	my $compoundPeaksTest = {};
     
 	while(<PEAKS>){
     my ($mass, $retention_time,
@@ -358,13 +358,14 @@ sub run {
       # If a compound ID has already been loaded as it is preferred, this will skip loading the compound ID for other peaks. 
       # If the compound is an isotopomer it will be preferred (likely with these experiments) and in many peaks. This will load the range of isotopomers.
       # This presumes that the isotopomers are only in the mass/rt range of the isotopomer and not ambiguosly elsewhere in another peak/s.
-      if ((defined($preferredLoaded->{$compoundIDLoad})) && (undef($isotopomer))){;}
+      if (defined($preferredLoaded->{$compoundIDLoad})){;}
       else{	  
         if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad})){
           print STDERR "$compoundIDLoad in hash\n";
         }
         else{
           if ($compoundIDLoad eq ""){;}
+          elsif(defined($isotopomer)){;} # Not adding isotopomer cpd ID to peak - peak test. Want that ID for all peaks. 
           else{
             $compoundPeaksTest->{$peak_id}->{$compoundIDLoad} = "Dummy value";
           }
@@ -373,7 +374,7 @@ sub run {
           #print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
           # Adding to hash for testing if a preferred comp is already in DB - peak to peak check. 
-          if(defined($is_preferred_compound)){$preferredLoaded->{$compoundIDLoad} = 1;}
+          if((defined($is_preferred_compound)) && (undef($isotopomer)){$preferredLoaded->{$compoundIDLoad} = 1;}
             
           my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$compoundIDLoad,
