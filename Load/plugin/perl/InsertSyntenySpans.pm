@@ -654,7 +654,7 @@ sub createSyntenicGenesInReferenceSpace {
 
     my $scale = $refLength > $synLength ? $refLength / $synLength : -1 * ($synLength / $refLength);
 
-    my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
+    my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicScale->new({na_sequence_id => $refNaSequenceId,
                                                              start_min => $refLocStart < $refLocEnd ? $refLocStart : $refLocEnd,
                                                              end_max => $refLocStart < $refLocEnd ? $refLocEnd : $refLocStart,
                                                              scale => $scale,
