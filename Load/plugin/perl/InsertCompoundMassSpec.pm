@@ -358,7 +358,7 @@ sub run {
       # If a compound ID has already been loaded as it is preferred, this will skip loading the compound ID for other peaks. 
       # If the compound is an isotopomer it will be preferred (likely with these experiments) and in many peaks. This will load the range of isotopomers.
       # This presumes that the isotopomers are only in the mass/rt range of the isotopomer and not ambiguosly elsewhere in another peak/s.
-      if ((defined($preferredLoaded->{$compoundIDLoad})) && (undef($isotopomer)){;}
+      if ((defined($preferredLoaded->{$compoundIDLoad})) && (undef($isotopomer))){;}
       else{	  
         if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad})){
           print STDERR "$compoundIDLoad in hash\n";
@@ -380,7 +380,7 @@ sub run {
                 compound_peaks_id=>$compound_peaks_id,
                 isotopomer=>$isotopomer,
                 user_compound_name=>$compound_id,
-            is_preferred_compound=>$is_preferred_compound
+                is_preferred_compound=>$is_preferred_compound
                 });
 
           $compoundPeaksChebiRow->submit();
