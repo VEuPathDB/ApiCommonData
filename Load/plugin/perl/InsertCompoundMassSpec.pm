@@ -372,7 +372,12 @@ sub run {
           #print STDERR "\n TO LOAD : ChEBI ID:", $compoundIDLoad, "  CpdPeaksID:", $compound_peaks_id, "  Iso:", $isotopomer,"  User CPD ID:", $compound_id,  "\n";
 
           # Adding to hash for testing if a preferred comp is already in DB - peak to peak check. 
-          if((defined($is_preferred_compound))){$preferredLoaded->{$compoundIDLoad} = 1;}
+          if(defined($isotopomer)){;}
+          else{
+            if((defined($is_preferred_compound))){
+              $preferredLoaded->{$compoundIDLoad} = 1;
+            }
+          }
             
           my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$compoundIDLoad,
