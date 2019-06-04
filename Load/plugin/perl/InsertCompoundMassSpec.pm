@@ -306,6 +306,7 @@ sub run {
     chomp $compound_id;
     $InChIKey = $peaksArray[6];
     chomp $InChIKey;
+
     if(defined($isPreferredCheck)){
       $is_preferred_compound = $peaksArray[7];
       print STDERR "#####  $isPreferredCheck"; 
@@ -314,8 +315,7 @@ sub run {
     else{
       $is_preferred_compound = 1;
       print 'Other';
-    } 
-  
+    }   
     #  print STDERR Dumper $preferredCompounds->{$mass . "|" . $retention_time};
     #  print STDERR scalar(@{$preferredCompounds->{$mass . "|" . $retention_time}}), " ", $preferredCompounds->{$mass . "|" . $retention_time}[0], " ", $compound_id;
 
@@ -356,7 +356,9 @@ sub run {
       else{;}
 
       # If a compound ID has already been loaded as it is preferred, this will skip loading the compound ID for other peaks. 
-      if (defined($preferredLoaded->{$compoundIDLoad})){;}
+      # If the compound is an isotopomer it will be preferred (likely with these experiments) and in many peaks. This will load the range of isotopomers.
+      # This presumes that the isotopomers are only in the mass/rt range of the isotopomer and not ambiguosly elsewhere in another peak/s.
+      if ((defined($preferredLoaded->{$compoundIDLoad})) && (undef($isotopomer)){;}
       else{	  
         if (defined($compoundPeaksTest->{$peak_id}->{$compoundIDLoad}))
         {print STDERR "$compoundIDLoad in hash\n"}
