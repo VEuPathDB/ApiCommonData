@@ -914,6 +914,7 @@ sub addAnchorToGusObj {
 sub undoTables {
   return ("ApiDB.SyntenyAnchor",
           "ApiDB.SyntenicGene",
+          "ApiDB.SyntenicScale",
           "ApiDB.Synteny");
 }
 
