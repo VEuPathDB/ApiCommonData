@@ -1,0 +1,344 @@
+colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,codebookValues,termType,notesForOnt,notesForProvider,notesForDL,variable_dataFile,uniqueVar,type,example,dateTime,formatCode,values,uniqueValueCount,percentMissing,flag
+1,x...intervalname,crf1_mali project 1 data,keep,,Observation,NA,NA,,,,NA,X...IntervalName,x...intervalname|crf1_mali project 1 data,chr,Screening & Enrollment,NA,NA,Screening & Enrollment,1,0,duplicated
+2,encounterdate,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,EncounterDate,encounterdate|crf1_mali project 1 data,chr,25/8/2012,date?,NA,>10 unique values,36,0,NA
+3,crf1,crf1_mali project 1 data,discard,,,NA,"1, no, CRF 1 - Screening & Enrollment
+2, no, CRF 2 - Follow-up Day 0
+4, no, CRF 4 - Household Questionnare",,,,NA,crf1,crf1|crf1_mali project 1 data,int,1,NA,NA,1 to 1,1,0,NA
+4,subjid,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,subjID,subjid|crf1_mali project 1 data,lgl,NA,NA,NA,n/a,0,0,duplicated
+5,country,crf1_mali project 1 data,keep,,Household,Country of pt enrollment,"1, no, Senegal
+2, no, Gambia
+3, no, Mali",,,,NA,country,country|crf1_mali project 1 data,int,3,NA,NA,3 to 3,1,0,duplicated
+6,region,crf1_mali project 1 data,keep,,Household,Region of Pt enrollment,"1, no, THIES
+2, no, GAMBISSARA
+3, no, SEGOU
+4, no, KOULIKORO",,,,NA,region,region|crf1_mali project 1 data,int,4,NA,NA,3 to 4,2,0,NA
+7,hc,crf1_mali project 1 data,keep,,Household,Health Center of the point of enrollment,"1, no, SLAP de Thiès
+2, no, Medina Fall Post1
+3, no, Medina Fall Post2
+4, no, Gambissara HC
+5, no, Cscom Dangassa
+6, no, Cscom Kolia Bambana
+7, no, Not in a HC
+-77, no, Missing",,,,NA,HC,hc|crf1_mali project 1 data,int,5,NA,NA,5 to 6,2,0,NA
+8,dov,crf1_mali project 1 data,keep,,Observation,A4_CRF1,NA,,,,NA,DOV,dov|crf1_mali project 1 data,chr,25/8/2012,NA,NA,>10 unique values,36,0,duplicated
+9,censid,crf1_mali project 1 data,discard,,,Census ID,NA,,,,NA,censID,censid|crf1_mali project 1 data,chr,m6-00002-60,NA,NA,>10 unique values,3845,0,NA
+10,village,crf1_mali project 1 data,keep,,Household,Village of Residence (Choose only one answer),"1, no, Medina Fall
+2, no, Gambissara town
+3, no, Sare Jawbeh
+4, no, Fula Mori Boch
+5, no, Sare Bondo
+6, no, Dangassa
+7, no, Koila Bamana
+66, no, Other
+-77, no, Missing",,,,NA,village,village|crf1_mali project 1 data,int,6,NA,NA,6 to 7,2,0,duplicated
+11,spec_village,crf1_mali project 1 data,discard,,,If Other in A.6 Specify,NA,,,,NA,spec_village,spec_village|crf1_mali project 1 data,int,-88,NA,NA,-88 to -88,1,0,duplicated
+12,visit,crf1_mali project 1 data,discard,,,Visit,"-1, no, SCREENING
+4, no, HOUSEHOLD
+9, no, FOLLOW UP",,,,NA,visit,visit|crf1_mali project 1 data,int,-1,NA,NA,-1 to -1,1,0,NA
+13,unknown_date_of_visit,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,unknown_date_of_visit,unknown_date_of_visit|crf1_mali project 1 data,int,0,date?,NA,0 to 0,1,0,NA
+14,missing_dov,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,missing_DOV,missing_dov|crf1_mali project 1 data,int,0,NA,NA,0 to 0,1,0,NA
+15,followup_survey_number,crf1_mali project 1 data,discard,,,NA,NA,,,,"-77, -77, Missing in the form",followup_survey_number,followup_survey_number|crf1_mali project 1 data,lgl,NA,NA,NA,n/a,0,0,duplicated
+16,consent,crf1_mali project 1 data,discard,,,Did the patient sign the assent or consent form?,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,consent,consent|crf1_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+17,doc,crf1_mali project 1 data,keep,,Participant,Date of signature of the assent/consent form,NA,,,,NA,DOC,doc|crf1_mali project 1 data,chr,25/8/2012,NA,NA,>10 unique values,36,0.000260078,NA
+18,doc_not_known,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,doc_not_known,doc_not_known|crf1_mali project 1 data,int,0,NA,NA,0 to 0,1,0,NA
+19,doc_missing,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,doc_missing,doc_missing|crf1_mali project 1 data,int,0,NA,NA,0 to 0,1,0,NA
+20,interviewer,crf1_mali project 1 data,discard,,,"Initials of interviewer
+(3 FIRST LETTERS OF FIRST AND LAST NAME)",NA,,,,NA,interviewer,interviewer|crf1_mali project 1 data,chr,sor dia,NA,NA,>10 unique values,19,0,NA
+21,dob,crf1_mali project 1 data,keep,,Participant,C1_CRF1,NA,,,,NA,DOB,dob|crf1_mali project 1 data,chr,9/9/09,NA,NA,>10 unique values,464,0,NA
+22,gender,crf1_mali project 1 data,keep,,Participant,C2_CRF1,"1, no, Male
+2, no, Female
+-77, no, Missing",,,,NA,gender,gender|crf1_mali project 1 data,int,1,NA,NA,-77 to 2,3,0,NA
+23,age_yr,crf1_mali project 1 data,keep,,Participant,C3A_CRF1,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",age_yr,age_yr|crf1_mali project 1 data,int,65,NA,NA,0 to 87,83,0,NA
+24,age_month,crf1_mali project 1 data,keep,,Participant,C3B_CRF1,NA,,,,"-99, -99, Unknown
+-88, -88, Not applicable DOB entered
+-77, -77, Missing",age_month,age_month|crf1_mali project 1 data,int,NA,NA,NA,0 to 11,12,0,NA
+25,ethnicity,crf1_mali project 1 data,keep,,Participant,C4_CRF1,"1, no, Wolof
+2, no, Sérère
+3, no, Peulh/Fula
+4, no, Bambara
+5, no, Sarakholé/Serehule
+6, no, Socé/Mandinka/Malinke
+7, no, Diola/Jola
+8, no, Maure
+9, no, Bozo/somono
+10, no, Dogon
+66, no, Other
+-99, no, Unknown
+-77, no, Missing",,,,NA,ethnicity,ethnicity|crf1_mali project 1 data,int,6,NA,NA,-77 to 66,9,0,NA
+26,spec_ethinicity,crf1_mali project 1 data,keep,,Participant,C4_1_CRF1,NA,,,,NA,spec_ethinicity,spec_ethinicity|crf1_mali project 1 data,chr,-88,NA,NA,>10 unique values,12,0,NA
+27,dob_not_known,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,dob_not_known,dob_not_known|crf1_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+28,dob_missing,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,dob_missing,dob_missing|crf1_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+29,age,crf1_mali project 1 data,keep,,Participant,NA,NA,,,,NA,age,age|crf1_mali project 1 data,dbl,65,NA,NA,0 to 87,202,0,NA
+30,country_copy,crf1_mali project 1 data,discard,,,Country of pt enrollment,"1, no, Senegal
+2, no, Gambia
+3, no, Mali",,,,NA,country_copy,country_copy|crf1_mali project 1 data,int,3,NA,NA,3 to 3,1,0,NA
+31,region_copy,crf1_mali project 1 data,discard,,,Region of Pt enrollment,"1, no, THIES
+2, no, GAMBISSARA
+3, no, SEGOU
+4, no, KOULIKORO",,,,NA,region_copy,region_copy|crf1_mali project 1 data,int,4,NA,NA,3 to 4,2,0,NA
+32,modified_age_calculation,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,modified_age_calculation,modified_age_calculation|crf1_mali project 1 data,int,65,NA,NA,-99 to 87,85,0,NA
+33,modified_age_calculation_copy,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,modified_age_calculation_copy,modified_age_calculation_copy|crf1_mali project 1 data,int,65,NA,NA,-99 to 87,85,0,NA
+34,random_elig,crf1_mali project 1 data,discard,,,Is the subject included randomly selected within a study village/community,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,random_elig,random_elig|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,NA
+35,area_elig,crf1_mali project 1 data,discard,,,Is the subject expected to remain in the study area during the next 18 months,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,area_elig,area_elig|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,NA
+36,consent_elig,crf1_mali project 1 data,discard,,,Was the consent/assent obtained?,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,consent_elig,consent_elig|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,NA
+37,chrondis_elig,crf1_mali project 1 data,discard,,,"Chronic diseases (heart diseases,kidney diseases, cancer, diabetes,leukemia, auto immune disease requiring longterm therapy)","1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,chrondis_elig,chrondis_elig|crf1_mali project 1 data,int,0,NA,NA,-77 to 1,3,0,NA
+38,eligible,crf1_mali project 1 data,discard,,,Is The Patient eligible? (No SHADED AREA),"1, no, Yes
+0, no, No",,,,NA,eligible,eligible|crf1_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+39,studyid,crf1_mali project 1 data,keep,,Participant,Study ID,NA,,,,NA,studyID,studyid|crf1_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3843,0.000520156,NA
+40,passed_screening,crf1_mali project 1 data,discard,,,Calculated by StudyTRAX and compared to manual answer,"0, no, No
+1, no, Yes",,,,NA,passed_screening,passed_screening|crf1_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+41,temperature,crf1_mali project 1 data,keep,,Observation,Temperature,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",temperature,temperature|crf1_mali project 1 data,dbl,36.9,NA,NA,34 to 40.3,56,0,duplicated
+42,temperature_site,crf1_mali project 1 data,keep,,Observation,NA,"1, no, Axillary
+2, no, Tympanic (Ear)
+3, no, Rectal
+4, no, Oral
+-77, no, Missing",,,,NA,temperature_site,temperature_site|crf1_mali project 1 data,int,NA,NA,NA,-77 to 1,2,0,duplicated
+43,weight,crf1_mali project 1 data,keep,,Observation,Weight,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",weight,weight|crf1_mali project 1 data,dbl,63.9,NA,NA,3 to 121.8,765,0,duplicated
+44,fever24,crf1_mali project 1 data,keep,,Observation,Fever in the previous 24 hours?,"1, no, Yes
+0, no, No
+-99, no, Unknown
+-77, no, Missing",,,,NA,fever24,fever24|crf1_mali project 1 data,int,0,NA,NA,-77 to 1,3,0,duplicated
+45,spleen,crf1_mali project 1 data,keep,,Observation,Spleen size:,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",spleen,spleen|crf1_mali project 1 data,int,0,NA,NA,0 to 6,7,0,duplicated
+46,pregnant,crf1_mali project 1 data,keep,,Observation,Is the patient pregnant?,"1, no, Yes
+0, no, No
+-88, no, Cannot be pregnant (due to age or gender)
+-77, no, Missing",,,,NA,pregnant,pregnant|crf1_mali project 1 data,int,-88,NA,NA,-88 to 1,3,0,duplicated
+47,rdt,crf1_mali project 1 data,keep,,Sample,RDT Done,"1, no, Yes
+0, no, No
+-88, no, No symptoms
+-77, no, Missing",,,,NA,RDT,rdt|crf1_mali project 1 data,int,0,NA,NA,-88 to 1,4,0,duplicated
+48,rdt_hrp,crf1_mali project 1 data,keep,,Sample,RDT (HRP2) Positive,"1, no, Yes
+0, no, No
+-88, no, RDT not done
+-77, no, Missing",,,,NA,RDT_HRP,rdt_hrp|crf1_mali project 1 data,int,-88,NA,NA,-88 to 1,4,0,duplicated
+49,hbsample,crf1_mali project 1 data,keep,,Sample,F3_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,hbsample,hbsample|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+50,hemoglobin,crf1_mali project 1 data,keep,,Sample,F4_CRF1,NA,,,,"-99, -99, Unknown
+-88, -88, Skip
+-77, -77, Missing",hemoglobin,hemoglobin|crf1_mali project 1 data,dbl,15.1,NA,NA,4.2 to 18.9,122,0,duplicated
+51,smear,crf1_mali project 1 data,keep,,Sample,F5_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,smear,smear|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+52,filter,crf1_mali project 1 data,keep,,Sample,F6_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,filter,filter|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+53,spots,crf1_mali project 1 data,keep,,Sample,F6_1_CRF1,"1, no, One
+2, no, Two
+-77, no, Missing",,,,NA,spots,spots|crf1_mali project 1 data,int,2,NA,NA,-77 to 2,2,0,duplicated
+54,edta,crf1_mali project 1 data,keep,,Sample,F7_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,EDTA,edta|crf1_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+55,participantid,crf1_mali project 1 data,discard,,,NA,NA,,,,NA,participantID,participantid|crf1_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3843,0.000520156,duplicated
+1,x...intervalname,crf3_mali project 1 data,keep,,Observation,NA,NA,,,,NA,X...IntervalName,x...intervalname|crf3_mali project 1 data,chr,Screening & Enrollment,NA,NA,"Jun-15, Jun-16, Nov-15, Nov-Dec 2016, Screening & Enrollment, Visit 2, Visit 3, Visit 4, Visit 5",9,0,duplicated
+2,slidenum1,crf3_mali project 1 data,discard,,,NA,NA,,,,NA,slideNum1,slidenum1|crf3_mali project 1 data,chr,slm10524-4,NA,NA,>10 unique values,18181,0.000164917,NA
+3,studyid1,crf3_mali project 1 data,keep,,Participant,Study number,NA,,,,NA,studyID1,studyid1|crf3_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3839,0,NA
+4,slideid1,crf3_mali project 1 data,keep,,Sample,Slide number,NA,,,,NA,slideID1,slideid1|crf3_mali project 1 data,chr,slm10524-4,NA,NA,>10 unique values,18181,0.000164917,NA
+5,readnum1,crf3_mali project 1 data,keep,,Sample,Slide reading,"1, no, First
+2, no, Second
+3, no, Third
+-77, no, Missing on the form",,,,NA,readnum1,readnum1|crf3_mali project 1 data,int,1,NA,NA,-77 to 2,3,0,NA
+6,smrpos1,crf3_mali project 1 data,keep,,Sample,A4_smearPos_CRF3,"1, no, Yes
+0, no, No
+-77, no, Missing on the form",,,,NA,smrpos1,smrpos1|crf3_mali project 1 data,int,0,NA,NA,-77 to 1,3,0,NA
+7,mlspec1_1,crf3_mali project 1 data,discard,,,P_Falciparum,NA,,,,NA,mlspec1_1,mlspec1_1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+8,mlspec2_1,crf3_mali project 1 data,discard,,,P . Vivax,NA,,,,NA,mlspec2_1,mlspec2_1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+9,mlspec3_1,crf3_mali project 1 data,discard,,,P Ovale,NA,,,,NA,mlspec3_1,mlspec3_1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+10,mlspec4_1,crf3_mali project 1 data,discard,,,P Malaria,NA,,,,NA,mlspec4_1,mlspec4_1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+11,mlspec88_1,crf3_mali project 1 data,discard,,,Not Accessible,NA,,,,NA,mlspec88_1,mlspec88_1|crf3_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+12,mlspec77_1,crf3_mali project 1 data,discard,,,Missing on the form,NA,,,,NA,mlspec77_1,mlspec77_1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+13,asexpf1,crf3_mali project 1 data,keep,,Sample,Number of P Falciparum,NA,,,,"-88, -88, Skip
+-77, -77, Missing on the form",asexpf1,asexpf1|crf3_mali project 1 data,int,0,NA,NA,0 to 640000,1054,0,NA
+14,gamete1,crf3_mali project 1 data,keep,,Sample,Presence of P Falciparum gametocytes,"1, no, Yes
+0, no, No
+-88, no, N/A
+-77, no, Missing on the form",,,,NA,gamete1,gamete1|crf3_mali project 1 data,int,0,NA,NA,-88 to 1,4,0,NA
+15,num_gametocytes1,crf3_mali project 1 data,keep,,Sample,Number of P Falciparum,NA,,,,"-88, -88, Skip
+-77, -77, Missing on the form",num_gametocytes1,num_gametocytes1|crf3_mali project 1 data,int,NA,NA,NA,0 to 11775,107,0,NA
+16,slreddt1,crf3_mali project 1 data,keep,,Sample,Date the slide is read,NA,,,,NA,slreddt1,slreddt1|crf3_mali project 1 data,chr,22/1/2013,NA,NA,>10 unique values,245,0,NA
+17,slreddt_miss1,crf3_mali project 1 data,discard,,,NA,NA,,,,NA,slreddt_miss1,slreddt_miss1|crf3_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+18,intinit1,crf3_mali project 1 data,discard,,,Initials of the lab technician,NA,,,,NA,intinit1,intinit1|crf3_mali project 1 data,chr,mor dou,NA,NA,>10 unique values,41,0,NA
+19,viscrf3_1,crf3_mali project 1 data,discard,,,NA,"1, no, SLIDE ENROLLMENT
+0, no, SLIDE PCD
+2, no, VISIT 2
+3, no, VISIT 3
+4, no, VISIT 4
+5, no, VISIT 5
+6, no, VISIT 6
+7, no, VISIT 7
+8, no, VISIT 8
+9, no, VISIT 9
+10, no, VISIT 10",,,,NA,viscrf3_1,viscrf3_1|crf3_mali project 1 data,int,1,NA,NA,1 to 8,8,0,NA
+20,p_falciparum_num1,crf3_mali project 1 data,keep,,Sample,Value set through dependency,NA,,,,NA,P_falciparum_num1,p_falciparum_num1|crf3_mali project 1 data,int,-88,NA,NA,-88 to 1,4,0,NA
+21,p_vivax_num1,crf3_mali project 1 data,keep,,Sample,Value set through dependency,NA,,,,NA,P_vivax_num1,p_vivax_num1|crf3_mali project 1 data,int,-88,NA,NA,-88 to 2,4,0,NA
+22,p_ovale_num1,crf3_mali project 1 data,keep,,Sample,Value set through dependency,NA,,,,NA,P_ovale_num1,p_ovale_num1|crf3_mali project 1 data,int,-88,NA,NA,-88 to 3,4,0,NA
+23,p_malariae_num1,crf3_mali project 1 data,keep,,Sample,Value set through dependency,NA,,,,NA,P_malariae_num1,p_malariae_num1|crf3_mali project 1 data,int,-88,NA,NA,-88 to 4,4,0,NA
+24,p_na_num1,crf3_mali project 1 data,discard,,,Value set through dependency,NA,,,,NA,P_NA_num1,p_na_num1|crf3_mali project 1 data,int,-88,NA,NA,-88 to 0,3,0,NA
+25,comment_crf3_1,crf3_mali project 1 data,discard,,Sample,NA,NA,,,,NA,comment_CRF3_1,comment_crf3_1|crf3_mali project 1 data,chr,CRF8: RBM sans code BARRe( retourne 21/06/2014 ABD),NA,NA,>10 unique values,80,0.99312847,NA
+26,compare_date1,crf3_mali project 1 data,discard,,,set through the interval expression,NA,,,,NA,compare_date1,compare_date1|crf3_mali project 1 data,chr,25/8/2012,date?,NA,>10 unique values,104,0.000879556,NA
+27,participantid,crf3_mali project 1 data,discard,,,NA,NA,,,,NA,participantID,participantid|crf3_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3839,0,duplicated
+1,x...intervalname,crf8_mali project 1 data,keep,,Observation,NA,NA,,,,NA,X...IntervalName,x...intervalname|crf8_mali project 1 data,chr,Screening & Enrollment,NA,NA,"Jun-15, Jun-16, Nov-15, Nov-Dec 2016, Screening & Enrollment, Visit 2, Visit 3, Visit 4, Visit 5",9,0,duplicated
+2,censusid,crf8_mali project 1 data,discard,,,NA,NA,,,,NA,censusID,censusid|crf8_mali project 1 data,chr,m6-00002-60,NA,NA,>10 unique values,3609,0.80239816,NA
+3,country1,crf8_mali project 1 data,discard,,,Country of pt enrollment,"1, no, Senegal
+2, no, Gambia
+3, no, Mali",,,,NA,country1,country1|crf8_mali project 1 data,int,3,NA,NA,3 to 3,1,0,NA
+4,region1,crf8_mali project 1 data,discard,,,Region of Pt enrollment,"1, no, THIES
+2, no, GAMBISSARA
+3, no, SEGOU
+4, no, KOULIKORO",,,,NA,region1,region1|crf8_mali project 1 data,int,4,NA,NA,3 to 4,2,0,NA
+5,village1,crf8_mali project 1 data,discard,,,Village of Residence,"1, no, Medina Fall
+2, no, Gambissara town
+3, no, Sare Jawbeh
+4, no, Fula Mori Boch
+5, no, Sare Bondo
+6, no, Dangassa
+7, no, Koila Bamana
+66, no, Other
+-77, no, Missing",,,,NA,village1,village1|crf8_mali project 1 data,int,6,NA,NA,6 to 7,2,0,NA
+6,spec_village1,crf8_mali project 1 data,discard,,,"If Other in A.3, Specify",NA,,,,NA,spec_village1,spec_village1|crf8_mali project 1 data,int,-88,NA,NA,-88 to -88,1,0,NA
+7,sample_id,crf8_mali project 1 data,keep,,Sample,Sample ID:,NA,,,,NA,sample_ID,sample_id|crf8_mali project 1 data,chr,edtam10524-4,NA,NA,>10 unique values,18254,0.000164258,NA
+8,sample_collect_date,crf8_mali project 1 data,keep,,Sample,A5 Date sample collected,NA,,,,NA,sample_collect_date,sample_collect_date|crf8_mali project 1 data,chr,25/8/2012,date?,NA,>10 unique values,100,0.00043802,NA
+9,a5_missing,crf8_mali project 1 data,discard,,,Date sample collected missing,NA,,,,NA,a5_missing,a5_missing|crf8_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+10,a6_study_subject_id,crf8_mali project 1 data,keep,,Participant,A.6 Study Subject ID,NA,,,,NA,a6_study_subject_id,a6_study_subject_id|crf8_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3617,0,NA
+11,b1_hr,crf8_mali project 1 data,discard,,,B.1 CRF8_hr,NA,,,,"-88, -88, No tube
+-77, -77, Missing in the form",b1_hr,b1_hr|crf8_mali project 1 data,int,13,NA,NA,0 to 23,19,0,NA
+12,b1_min,crf8_mali project 1 data,discard,,,B1 CRF8_min,NA,,,,NA,b1_min,b1_min|crf8_mali project 1 data,int,25,NA,NA,-88 to 59,62,0,NA
+13,vol_b2,crf8_mali project 1 data,keep,,Sample,B_2 Volume of plama in plasma tube,NA,,,,"-88, -88, No Tube 2 collected
+-77, -77, Missing in the form",vol_b2,vol_b2|crf8_mali project 1 data,dbl,50,NA,NA,0 to 50,18,0,NA
+14,vol_b3,crf8_mali project 1 data,keep,,Sample,B_3 Volume of plama in plasma tube2,NA,,,,"-88, -88, No Tube 2 collected
+-77, -77, Missing in the form",vol_b3,vol_b3|crf8_mali project 1 data,int,NA,NA,NA,10 to 10,1,0,NA
+15,vol_b4,crf8_mali project 1 data,keep,,Sample,b4 Volume in red pellet tubes,NA,,,,"-88, -88, No tube
+-77, -77, Missing in the form",vol_b4,vol_b4|crf8_mali project 1 data,dbl,10,NA,NA,0.05 to 50,11,0,NA
+16,vol_b5,crf8_mali project 1 data,discard,,,b5 Volume in red pellet tubes,NA,,,,"-88, -88, No tube
+-77, -77, Missing in the form",vol_b5,vol_b5|crf8_mali project 1 data,lgl,NA,NA,NA,n/a,0,0,NA
+17,b3_time_freezer_hr,crf8_mali project 1 data,discard,,,B.3 Time in freezer - hours,NA,,,,"-77, -77, Missing in the form",b3_time_freezer_hr,b3_time_freezer_hr|crf8_mali project 1 data,int,21,NA,NA,-88 to 23,17,0,NA
+18,b3_time_freezer_min,crf8_mali project 1 data,discard,,,B.3 Time in freezer - mins,NA,,,,NA,b3_time_freezer_min,b3_time_freezer_min|crf8_mali project 1 data,int,40,NA,NA,-88 to 59,51,0,NA
+19,date_tubes_go,crf8_mali project 1 data,discard,,,Date tubes go to Dakar/Bamako/Fajara,NA,,,,NA,date_tubes_go,date_tubes_go|crf8_mali project 1 data,chr,7/7/07,date?,NA,>10 unique values,35,0.00043802,NA
+20,b4_missing,crf8_mali project 1 data,discard,,,Date tubes go to Dakar/Bamako/Fajara missing,NA,,,,NA,b4_missing,b4_missing|crf8_mali project 1 data,int,1,NA,NA,0 to 1,2,0,NA
+21,b5_time_freezer_hr,crf8_mali project 1 data,discard,,,B.5 Time in freezer - hour,NA,,,,"-77, -77, Missing in the form",b5_time_freezer_hr,b5_time_freezer_hr|crf8_mali project 1 data,int,NA,NA,NA,-88 to 22,9,0,NA
+22,b5_time_freezer_min,crf8_mali project 1 data,discard,,,B.5 Time in freezer - mins,NA,,,,NA,b5_time_freezer_min,b5_time_freezer_min|crf8_mali project 1 data,int,-77,NA,NA,-88 to 59,14,0,NA
+23,c1_technician_initials,crf8_mali project 1 data,discard,,,C1 Technician Initials,NA,,,,NA,c1_technician_initials,c1_technician_initials|crf8_mali project 1 data,chr,sei dia,NA,NA,>10 unique values,27,0.000492773,NA
+24,visit_crf8,crf8_mali project 1 data,discard,,,Set in the interval expression at screening for check on study ID,"0, no, screening & enrollment
+1, no, follow-up1",,,,NA,visit_crf8,visit_crf8|crf8_mali project 1 data,int,0,NA,NA,0 to 1,2,0,NA
+25,visit_ed,crf8_mali project 1 data,discard,,,used for Sample ID validation,"2, no, Visit 2
+3, no, Visit 3
+4, no, Visit 4
+5, no, Visit 5
+6, no, October 2014
+7, no, January 2015
+8, no, June 2015
+9, no, August 2015",,,,NA,visit_ed,visit_ed|crf8_mali project 1 data,int,NA,NA,NA,2 to 13,7,0,NA
+26,form9_edta_label,crf8_mali project 1 data,discard,,,NA,NA,,,,NA,form9_EDTA_label,form9_edta_label|crf8_mali project 1 data,lgl,NA,NA,NA,n/a,0,0,NA
+27,participantid,crf8_mali project 1 data,discard,,,NA,NA,,,,NA,participantID,participantid|crf8_mali project 1 data,chr,m160524-20,NA,NA,>10 unique values,3617,0,duplicated
+1,x...id,crf9_mali project 1 data,discard,,,NA,NA,,,,NA,X...ID,x...id|crf9_mali project 1 data,int,15,NA,NA,15 to 49985,14713,0,NA
+2,country,crf9_mali project 1 data,discard,,,Country of pt enrollment,"1, no, Senegal
+2, no, Gambia
+3, no, Mali",,,,NA,country,country|crf9_mali project 1 data,int,3,NA,NA,3 to 3,1,0,duplicated
+3,dov,crf9_mali project 1 data,keep,,Observation,A4_CRF1,NA,,,,NA,DOV,dov|crf9_mali project 1 data,chr,12/2/13,NA,NA,>10 unique values,75,0,duplicated
+4,followup_survey_number,crf9_mali project 1 data,discard,,,NA,NA,,,,"-77, -77, Missing in the form",followup_survey_number,followup_survey_number|crf9_mali project 1 data,int,NA,NA,NA,2 to 9,8,0,duplicated
+5,village,crf9_mali project 1 data,discard,,,Village of Residence (Choose only one answer),"1, no, Medina Fall
+2, no, Gambissara town
+3, no, Sare Jawbeh
+4, no, Fula Mori Boch
+5, no, Sare Bondo
+6, no, Dangassa
+7, no, Koila Bamana
+66, no, Other
+-77, no, Missing",,,,NA,village,village|crf9_mali project 1 data,int,6,NA,NA,6 to 7,2,0,duplicated
+6,spec_village,crf9_mali project 1 data,discard,,,If Other in A.6 Specify,NA,,,,NA,spec_village,spec_village|crf9_mali project 1 data,int,-88,NA,NA,-88 to -88,1,0,duplicated
+7,b1,crf9_mali project 1 data,keep,,,Is the patient present in the village/quarter,"1, no, Yes
+0, no, No
+-77, no, Missing in the form",,,,NA,b1,b1|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,NA
+8,b2,crf9_mali project 1 data,keep,,Observation,Has the patient had an episode of fever/ malaria in the past 6 months,"1, no, Yes
+0, no, No
+-77, no, Missing in the form",,,,NA,b2,b2|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,NA
+9,b21,crf9_mali project 1 data,keep,,Observation,"�If yes, how many�",NA,,,,"-99, -99, Does not know
+-88, -88, Skip; no episodes
+-77, -77, Missing in the form",b21,b21|crf9_mali project 1 data,int,1,NA,NA,0 to 10,10,0,NA
+10,b22,crf9_mali project 1 data,keep,,Observation,"If yes, at which month (three first letters; -88 no episode; -99 patient does not know","1, no, Jan
+2, no, Feb
+3, no, Mar
+4, no, Apr
+5, no, May
+6, no, Jun
+7, no, Jul
+8, no, Aug
+9, no, Sep
+10, no, Oct
+11, no, Nov
+12, no, Dec
+-88, no, no episode
+-99, no, patient does not know
+-77, no, missing in the form",,,,NA,b22,b22|crf9_mali project 1 data,int,1,NA,NA,-99 to 12,15,0,NA
+11,b23,crf9_mali project 1 data,keep,,Observation,"If yes, how was the diagnosis made ?","1, no, Blood test
+0, no, No blood test
+-99, no, Does not know
+-88, no, No malaria
+-77, no, Missing in the form",,,,NA,b23,b23|crf9_mali project 1 data,int,1,NA,NA,-99 to 1,5,0,NA
+12,temperature,crf9_mali project 1 data,keep,,Observation,Temperature,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",temperature,temperature|crf9_mali project 1 data,dbl,36.8,NA,NA,33 to 43.6,73,0,duplicated
+13,temperature_site,crf9_mali project 1 data,keep,,Observation,NA,"1, no, Axillary
+2, no, Tympanic (Ear)
+3, no, Rectal
+4, no, Oral
+-77, no, Missing",,,,NA,temperature_site,temperature_site|crf9_mali project 1 data,int,NA,NA,NA,-77 to 2,3,0,duplicated
+14,weight,crf9_mali project 1 data,keep,,Observation,Weight,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",weight,weight|crf9_mali project 1 data,dbl,88,NA,NA,3.3 to 136.6,914,0,duplicated
+15,fever24,crf9_mali project 1 data,keep,,Observation,Fever in the previous 24 hours?,"1, no, Yes
+0, no, No
+-99, no, Unknown
+-77, no, Missing",,,,NA,fever24,fever24|crf9_mali project 1 data,int,0,NA,NA,-77 to 1,3,0,duplicated
+16,spleen,crf9_mali project 1 data,keep,,Observation,Spleen size:,NA,,,,"-99, -99, Unknown
+-77, -77, Missing",spleen,spleen|crf9_mali project 1 data,int,0,NA,NA,0 to 6,7,0,duplicated
+17,pregnant,crf9_mali project 1 data,keep,,Observation,Is the patient pregnant?,"1, no, Yes
+0, no, No
+-88, no, Cannot be pregnant (due to age or gender)
+-77, no, Missing",,,,NA,pregnant,pregnant|crf9_mali project 1 data,int,-88,NA,NA,-88 to 1,4,0,duplicated
+18,rdt,crf9_mali project 1 data,keep,,Sample,RDT Done,"1, no, Yes
+0, no, No
+-88, no, No symptoms
+-77, no, Missing",,,,NA,RDT,rdt|crf9_mali project 1 data,int,0,NA,NA,-88 to 1,4,0,duplicated
+19,rdt_hrp,crf9_mali project 1 data,keep,,Sample,RDT (HRP2) Positive,"1, no, Yes
+0, no, No
+-88, no, RDT not done
+-77, no, Missing",,,,NA,RDT_HRP,rdt_hrp|crf9_mali project 1 data,int,-88,NA,NA,-88 to 1,4,0,duplicated
+20,hbsample,crf9_mali project 1 data,keep,,Sample,F3_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,hbsample,hbsample|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+21,hemoglobin,crf9_mali project 1 data,keep,,Sample,F4_CRF1,NA,,,,"-99, -99, Unknown
+-88, -88, Skip
+-77, -77, Missing",hemoglobin,hemoglobin|crf9_mali project 1 data,dbl,15.6,NA,NA,2.8 to 19.9,140,0,duplicated
+22,smear,crf9_mali project 1 data,keep,,Sample,F5_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,smear,smear|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+23,filter,crf9_mali project 1 data,keep,,Sample,F6_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,filter,filter|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+24,spots,crf9_mali project 1 data,keep,,Sample,F6_1_CRF1,"1, no, One
+2, no, Two
+-77, no, Missing",,,,NA,spots,spots|crf9_mali project 1 data,int,2,NA,NA,-77 to 2,3,0,duplicated
+25,edta,crf9_mali project 1 data,keep,,Sample,F7_CRF1,"1, no, Yes
+0, no, No
+-77, no, Missing",,,,NA,EDTA,edta|crf9_mali project 1 data,int,1,NA,NA,-77 to 1,3,0,duplicated
+26,interviewer1,crf9_mali project 1 data,discard,,,"Initials of interviewer
+(3 FIRST LETTERS OF FIRST AND LAST NAME)",NA,,,,NA,interviewer1,interviewer1|crf9_mali project 1 data,chr,nou tel,NA,NA,>10 unique values,31,0.002174947,NA
+27,comments1,crf9_mali project 1 data,discard,,,NA,NA,,,,NA,comments1,comments1|crf9_mali project 1 data,chr,CPN,NA,NA,>10 unique values,73,0.99320329,NA
+28,referenceid,crf9_mali project 1 data,discard,,,NA,NA,,,,NA,ReferenceID,referenceid|crf9_mali project 1 data,chr,m6-00005-80,NA,NA,>10 unique values,3524,0,NA
+29,projectspecificid,crf9_mali project 1 data,keep,,Participant,NA,NA,,,,NA,ProjectSpecificID,projectspecificid|crf9_mali project 1 data,chr,m161138-18,NA,NA,>10 unique values,3524,0,NA
+30,subjid,crf9_mali project 1 data,discard,,,NA,NA,,,,NA,subjID,subjid|crf9_mali project 1 data,chr,m161138-18,NA,NA,>10 unique values,3515,0.001427309,duplicated
+31,intervalname,crf9_mali project 1 data,keep,,Observation,NA,NA,,,,NA,IntervalName,intervalname|crf9_mali project 1 data,chr,Visit 2,NA,NA,"Jun-15, Jun-16, Nov-15, Nov-Dec 2016, Visit 2, Visit 3, Visit 4, Visit 5",8,0,NA
+32,participantid,crf9_mali project 1 data,discard,,,NA,NA,,,,NA,participantID,participantid|crf9_mali project 1 data,chr,m161138-18,NA,NA,>10 unique values,3524,0,duplicated
