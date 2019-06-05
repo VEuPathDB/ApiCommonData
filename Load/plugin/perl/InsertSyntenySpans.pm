@@ -46,6 +46,9 @@ use POSIX;
 
 use Data::Dumper;
 
+
+my $SYNTENIC_SCALE_CUTOFF = 1.5;
+
 my $argsDeclaration = 
   [
    fileArg({ name           => 'inputDirectory',
@@ -654,12 +657,17 @@ sub createSyntenicGenesInReferenceSpace {
 
     my $scale = $refLength > $synLength ? $refLength / $synLength : -1 * ($synLength / $refLength);
 
-    my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicScale->new({na_sequence_id => $refNaSequenceId,
-                                                             start_min => $refLocStart < $refLocEnd ? $refLocStart : $refLocEnd,
-                                                             end_max => $refLocStart < $refLocEnd ? $refLocEnd : $refLocStart,
-                                                             scale => $scale,
-                                                             syn_organism_abbrev => $synOrganismAbbrev});
-    $syntenicScaleObj->setParent($syntenyObj);
+
+    if(abs($scale) > $SYNTENIC_SCALE_CUTOFF) {
+      my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicScale->new({na_sequence_id => $refNaSequenceId,
+                                                                    start_min => $refLocStart < $refLocEnd ? $refLocStart : $refLocEnd,
+                                                                    end_max => $refLocStart < $refLocEnd ? $refLocEnd : $refLocStart,
+                                                                    scale => $scale,
+                                                                    ref_length => $refLength,
+                                                                    syn_length => $synLength,
+                                                                    syn_organism_abbrev => $synOrganismAbbrev});
+      $syntenicScaleObj->setParent($syntenyObj);
+    }
 
     while($loc && (($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd))) {
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
