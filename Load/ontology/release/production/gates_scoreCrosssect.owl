@@ -8,8 +8,8 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_scoreCrosssect.owl">
-        <owl:versionInfo>2019-05-15</owl:versionInfo>
-        <rdfs:comment>Built on SVN revision 98185</rdfs:comment>
+        <rdfs:comment>Built on SVN revision 98707</rdfs:comment>
+        <owl:versionInfo>2019-06-06</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -205,6 +205,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool microbiology test</rdfs:label>
     </owl:Class>
@@ -283,6 +284,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010983 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010983">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label>Aggregate organism detection data</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011800 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011800">
@@ -294,6 +306,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011810 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011810">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010983"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label>Eukaryote detection aggregate data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011819 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011819">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011810"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label>Schistosoma aggregate data</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015457 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015457">
@@ -301,7 +335,7 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study_Arm</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sm_XS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study Arm</obo:EUPATH_0001003>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study Arm: Abbreviations in arm descriptions: s= school based treatment, c= community wide treatment, h= drug holiday. Study arms describe treatment received by the village in each of the four study years. In Sm1 (Sustaining control) studies, Arm 1= ssss, Arm 2= sshh, Arm 3=shsh. In Sm2 (Gaining control) studies, Arm 1= cccc, Arm 2= ccss, Arm 3= cchh, Arm 4= ssss, Arm 5=sshh, Arm 6=shsh.</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, 2, 3, 4, 5, 6</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study arm</rdfs:label>
@@ -402,7 +436,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0030007 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030007">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030025"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sm1a</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sm1b</obo:EUPATH_0000755>
@@ -700,6 +734,69 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030023 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030023">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011819"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>Sm_binary</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>Sm_XS</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>Presence or absence of Schistosoma mansoni infection in this study participant, based on detection of at least one S. mansoni egg in any of the stool samples.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Schistosoma mansoni: Presence or Absence</obo:IAO_0000115>
+        <rdfs:label>Schistosoma mansoni, by microscopy</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030024 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030024">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011819"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>Mean_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>Sm_XS</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>Arithmetic mean of the epg values from all samples for this study participant.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Mean Schistosoma mansoni eggs per gram, from all samples for this study participant</obo:IAO_0000115>
+        <rdfs:label>Mean Schistosoma mansomi eggs per gram, by microscopy</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030025 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030025">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label>Schistosoma</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030026 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030026">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030025"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>sm1a_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>sm1b_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>sm2a_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>sm2b_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>sm3a_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>sm3b_epg</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>Sm_XS</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003>Schistosoma mansoni eggs per gram of feces from # specimen, &apos;n&apos; slide, calculated by multiplying number of Schistosoma mansoni eggs counted in the n slide from the n stool sample by the constant 24. In the variable name, sm= Schistosoma mansoni, # refers to the first stool specimen, and the letter refers to the first (&apos;b&apos;) slide, epg stands for Eggs Per Gram.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Schistosoma mansoni eggs per gram, # specimen &apos;n&apos; slide</obo:IAO_0000115>
+        <rdfs:label>Schistosoma mansomi eggs per gram, by microscopy</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -804,6 +901,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laboratory test</rdfs:label>
     </owl:Class>
