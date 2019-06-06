@@ -129,4 +129,57 @@ WHERE 'SyntenicGene' NOT IN (SELECT name FROM core.TableInfo
 
 
 ------------------------------------------------------------------------------
+
+
+CREATE TABLE ApiDB.SyntenicScale (
+ syntenic_scale_id            NUMBER(10),
+ synteny_id                  NUMBER(10),
+ na_sequence_id              number(10),
+ start_min                   number,
+ end_max                     number,
+ scale                       number,
+ syn_organism_abbrev         varchar2(20),
+ modification_date           DATE,
+ user_read                   NUMBER(1),
+ user_write                  NUMBER(1),
+ group_read                  NUMBER(1),
+ group_write                 NUMBER(1),
+ other_read                  NUMBER(1),
+ other_write                 NUMBER(1),
+ row_user_id                 NUMBER(12),
+ row_group_id                NUMBER(3),
+ row_project_id              NUMBER(4),
+ row_alg_invocation_id       NUMBER(12),
+ FOREIGN KEY (synteny_id) REFERENCES apidb.Synteny (synteny_id),
+ FOREIGN KEY (na_sequence_id) REFERENCES dots.nasequenceimp (na_sequence_id),
+ PRIMARY KEY (syntenic_scale_id)
+);
+
+
+CREATE SEQUENCE ApiDB.SyntenicScale_sq;
+
+GRANT insert, select, update, delete ON ApiDB.SyntenicScale TO gus_w;
+GRANT select ON ApiDB.SyntenicScale TO gus_r;
+GRANT select ON ApiDB.SyntenicScale_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'SyntenicScale',
+       'Standard', 'syntenic_scale_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE LOWER(name) = 'apidb') d
+WHERE 'SyntenicScale' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+ CREATE INDEX apidb.SyntScale_f_ix
+        ON apidb.SyntenicScale (na_sequence_id, start_min, end_max, synteny_id, syn_organism_abbrev)
+ TABLESPACE INDX;
+
 exit;
