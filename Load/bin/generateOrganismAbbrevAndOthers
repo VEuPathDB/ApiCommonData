@@ -22,6 +22,8 @@ my ($organismFullName,
 my @items = split (/\s/, $organismFullName);
 
 my $genus = shift @items;
+$genus =~ s/^\[//;
+$genus =~ s/\]$//;
 my $species = shift @items;
 my $strainAbbrev = join ('', @items);
 $strainAbbrev =~ s/isolate//i;
