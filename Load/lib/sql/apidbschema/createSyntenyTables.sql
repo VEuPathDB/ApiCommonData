@@ -138,6 +138,8 @@ CREATE TABLE ApiDB.SyntenicScale (
  start_min                   number,
  end_max                     number,
  scale                       number,
+ ref_length                  number,
+ syn_length                  number,
  syn_organism_abbrev         varchar2(20),
  modification_date           DATE,
  user_read                   NUMBER(1),
