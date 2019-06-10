@@ -557,6 +557,7 @@ sub printGeneDBAnnotation {
 
 sub printGenBankAnnotation {
   my ($fh, $format, $secondAnnot) = @_;
+  $isfMappingFile = "genbankGenbank2Gus.xml" if (!$isfMappingFile);
   my @secondaryAnnotations = split (/\,/, $secondAnnot);
   print $fh "  <dataset class=\"genbank_primary_genome\">\n";
   printNameWithDollarSign ($fh, 'projectName');
@@ -565,7 +566,7 @@ sub printGenBankAnnotation {
   printNameWithDollarSign ($fh, 'name', 'genomeSource');
   printNameWithDollarSign ($fh, 'version', 'genomeVersion');
   printNameWithDollarSign ($fh, 'soTerm');
-  printNameWithValue ($fh, 'mapFile', 'genbankGenbank2Gus.xml');
+  printNameWithValue ($fh, 'mapFile', $isfMappingFile);
   printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
   print $fh "  </dataset>\n";
   print $fh "\n";
@@ -945,7 +946,7 @@ where
   --format: optional, the format of annotation, such as GenBank, GeneDB, and etc.
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
   --sourceIdRegex: optional, it is required if format is gff3 or fasta
-  --isfMappingFile: optional, it is required if format is gff3 or embl
+  --isfMappingFile: optional, it is required if format is gff3 or embl. Also required if it doesn't use genbankGenbank2Gus.xml
 
 ";
 }
