@@ -85,6 +85,36 @@ GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression TO gus_r;
 GRANT select ON ApiDBUserDatasets.UD_NaFeatureExpression_sq TO gus_w;
 
 --------------------------------------------------------------------------------
+CREATE TABLE apidbUserDatasets.ud_NaFeatureDiffResult (
+  na_feat_diff_res_id  NUMBER(12),
+  protocol_app_node_id NUMBER(10),
+  na_feature_id        NUMBER(10),
+  mean1                FLOAT(126),
+  sd1                  FLOAT(126),
+  mean2                FLOAT(126),
+  sd2                  FLOAT(126),
+  fdr                  FLOAT(126),
+  fold_change          FLOAT(126),
+  test_statistic       FLOAT(126),
+  p_value              FLOAT(126),
+  adj_p_value          FLOAT(126),
+  q_value              FLOAT(126),
+  confidence_up        FLOAT(126),
+  confidence_down      FLOAT(126),
+  confidence           FLOAT(126),
+  z_score              FLOAT(12),
+  is_significant       NUMBER(1),
+  FOREIGN KEY (protocol_app_node_id) REFERENCES apidbUserDatasets.ud_ProtocolAppNode,
+  PRIMARY KEY (na_feat_diff_res_id)
+);
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidbUserDatasets.ud_NaFeatureDiffResult TO gus_w;
+GRANT SELECT ON apidbUserDatasets.ud_NaFeatureDiffResult TO gus_r;
+
+CREATE SEQUENCE apidbUserDatasets.ud_NaFeatureDiffResult_sq;
+GRANT SELECT ON apidbUserDatasets.ud_NaFeatureDiffResult_sq TO gus_w;
+--------------------------------------------------------------------------------
+
 exit;
 
 
