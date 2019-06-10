@@ -120,6 +120,14 @@ if ($secondaryAnnot !~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} =~
   die "ERROR: api- genome included, please add argument: --secondaryAnnot 'api'\n";
 }
 
+## add additional check for secondaryAnnotation
+if ($secondaryAnnot =~ /mito/i && $excelInfo{$organismAbbrev}{"hasMito"} !~ /^y/i) {
+  die "ERROR: The --secondaryAnnot arguemnt includes 'mito', but it isn't included in the excel file. Please double check it!!\n";
+}
+if ($secondaryAnnot =~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} !~ /^y/i) {
+  die "ERROR: The --secondaryAnnot arguemnt includes 'api', but it isn't included in the excel file. Please double check it!!\n";
+}
+
 if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
   if ($excelInfo{$organismAbbrev}{"haveSupercontig"} =~ /^y/i) {
     if ($secondaryAnnot !~ /superc/i) {
