@@ -316,7 +316,7 @@ sub run {
             compound_id=>$chebi,
             isotopomer=>$isotopomer,
             user_compound_name=>$InChIKey,
-            is_preferred_compound=>'1'
+            is_preferred_compound=>'0'
         });
 	    $compoundPeaksChebiRow->setParent($compoundPeaksRow);
 	    $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
@@ -325,23 +325,11 @@ sub run {
 	
 	  $compoundPeaksRow->submit();
 	  $self->undefPointerCache()
-	} # End foreach $peak
+	} # End foreach $chebi
+  } # End foreach $peak
+} # close sub new
 
 
-#	my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
-	#          external_database_release_id=>$external_database_release_id,
-	#      mass=>$mass,
-	#      retention_time=>$retention_time,
-	#      peak_id=>$peak_id,
-	#      ms_polarity=>$ms_polarity
-     
-	# });
-
-	foreach my $chebiKey (keys $compoundHash->{$peak}){
-#			continue;
-			# print STDERR Dumper $chebiKey;
-    }
-  } 
 	#make new peak GUS object 
     # for each chebi id:
       #if preferred:
