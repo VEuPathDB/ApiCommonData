@@ -170,6 +170,7 @@
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="locus_tag"      handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="gene"           ignore="true"/>
     <qualifier name="note"           ignore="true"/>
     <qualifier name="product"        ignore="true"/>
   </feature>
@@ -206,6 +207,11 @@
     <qualifier name="db_xref"				ignore="true"/>
     <qualifier name="mol_type"				ignore="true"/>
     <qualifier name="organism"				ignore="true"/>
+  </feature>
+
+  <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note" ignore="true"/>
   </feature>
 
 </mapping>
