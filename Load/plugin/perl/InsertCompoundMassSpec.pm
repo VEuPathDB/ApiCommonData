@@ -231,7 +231,12 @@ sub run {
 	
     my $peakCompId = $chebiId . '|' . $peak_id; 
 
-    $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = $InChIKey; #TODO will this work with more than one chebi ID in our DB. 
+    if( !(defined($compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId})) )
+    {
+      $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = [];
+      push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }
+    else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }; #TODO will this work with more than one chebi ID in our DB. 
+    # Or no chebi ID in the DB but more than one ID in the data.
     $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
 
     if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peakCompId})) 
@@ -246,20 +251,19 @@ sub run {
   } #End of while(<PEAKS>)
   close(PEAKS);
 
-  #  print STDERR Dumper $compoundHash;  
-  #  print STDERR Dumper $preferredCompounds->{1};  
+  print STDERR Dumper $compoundHash;  
+#  print STDERR Dumper $preferredCompounds->{'1'};  
 
   # Loop over the entries in the compoundHash and load. 
   foreach my $peak(keys $compoundHash){
-	  print STDERR "Peak: \n";
-	  print STDERR Dumper $peak; 
+    print STDERR "Peak: \n";
+  	print STDERR Dumper $peak; 
     my ($mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
 
     $mass = $compoundHash->{$peak}->{'peak_data'}[0];
     $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
     $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
-    $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
-    #print STDERR "$mass, $retention_time"; 
+    $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3];     
 
     my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
         external_database_release_id=>$external_database_release_id,
@@ -269,49 +273,58 @@ sub run {
         ms_polarity=>$ms_polarity
         });
     # For a peak want to test if there is a preferred compound	
-    foreach my $chebi(keys $compoundHash->{$peak}){
-      my $peakCompId = $chebi . '|'. $peak;   
+    foreach my $pref(keys $compoundHash->{$peak}){
+      foreach my $chebi (keys $compoundHash->{$peak}->{$pref}){
+        my $peakCompId = $chebi . '|'. $peak;
+        
+        if ($chebi eq 'peak_data'){
+          ;
+        }    
+        elsif ( (defined($preferredCompounds->{'1'}->{$peakCompId})) 
+          && (scalar(@{$preferredCompounds->{'1'}->{$peakCompId}}) == 1) 
+        ){ 
+          print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
 
-      if ( (defined($preferredCompounds->{1}->{$peakCompId}) 
-        && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
-        && defined($compoundHash->{$peak}->{$peakCompId}->{1}) ){ 
-        print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
-
-        $InChIKey = $compoundHash->{$peak}->{'1'}->{$chebi};
-      
-        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            compound_id=>$chebi,
-              isotopomer=>$isotopomer,
-              user_compound_name=>$InChIKey,
-              is_preferred_compound=>'1'
-          });
-        $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-        $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
-      }
-
-              #TODO -  take out parent relationship to the peak - cpd and test the loading.
-              #TODO - add in set parent to the chebi id -> chebi table. 
-              #TODO - reverse the submit order of the objects - test to see if that is the issue. 
-
-          # If there is no pref compound load all the other compounds. 
-      elsif( defined($preferredCompounds->{0}->{$peakCompId}) ){
-        #	print STDERR "OTHER LOAD: $peak, $chebi \n"; 
-        $mass = $compoundHash->{$peak}->{'peak_data'}[0];
-        $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
-        $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
-        $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
-        $InChIKey = $compoundHash->{$peak}->{'0'}->{$chebi};
-        #print STDERR "$mass, $retention_time"; 
-      
-        my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+          foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
+            #print STDERR "CPD = $cpd\n"     
+            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
                 isotopomer=>$isotopomer,
-                user_compound_name=>$InChIKey,
+                user_compound_name=>$cpd,
+                is_preferred_compound=>'1'
+              });
+            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+          }
+
+        }
+                #TODO -  take out parent relationship to the peak - cpd and test the loading.
+                #TODO - add in set parent to the chebi id -> chebi table. 
+                #TODO - reverse the submit order of the objects - test to see if that is the issue. 
+            # If there is no pref compound load all the other compounds. 
+        elsif( defined($preferredCompounds->{'0'}->{$peakCompId}) ){
+          print STDERR "OTHER LOAD: $peak, $chebi \n"; 
+          $mass = $compoundHash->{$peak}->{'peak_data'}[0];
+          $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
+          $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
+          $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
+          print STDERR "Data: $mass, $retention_time \n";  
+        
+          foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){
+            #print STDERR "CPD = $cpd\n"         
+            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+                compound_id=>$chebi,
+                isotopomer=>$isotopomer,
+                user_compound_name=>$cpd,
                 is_preferred_compound=>'0'
-        });
-        $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-        $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
-      }        
+              });
+            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+          }
+          # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+          # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
+        }
+      } # End foreach $pref        
     } # End foreach $chebi
     $compoundPeaksRow->submit();
     $self->undefPointerCache();
