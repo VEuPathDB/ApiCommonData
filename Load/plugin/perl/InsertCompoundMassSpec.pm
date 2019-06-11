@@ -287,14 +287,14 @@ sub run {
 
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
             #print STDERR "CPD = $cpd\n"     
-            # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            #     compound_id=>$chebi,
-            #     isotopomer=>$isotopomer,
-            #     user_compound_name=>$cpd,
-            #     is_preferred_compound=>'1'
-            #   });
-            # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+                compound_id=>$chebi,
+                isotopomer=>$isotopomer,
+                user_compound_name=>$cpd,
+                is_preferred_compound=>'1'
+              });
+            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
 
         }
@@ -313,14 +313,14 @@ sub run {
         
           foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){
             #print STDERR "CPD = $cpd\n"         
-            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-                compound_id=>$chebi,
-                isotopomer=>$isotopomer,
-                user_compound_name=>$cpd,
-                is_preferred_compound=>'0'
-              });
-            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+            # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+            #     compound_id=>$chebi,
+            #     isotopomer=>$isotopomer,
+            #     user_compound_name=>$cpd,
+            #     is_preferred_compound=>'0'
+            #   });
+            # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
           # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
           # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
