@@ -234,7 +234,7 @@ sub run {
 	
 	my $peakCompId = $chebiId . '|' . $peak_id; 
 
-    $compoundHash->{$peak_id}->{$chebiId}->{$is_preferred_compound} = [$mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey];
+  $compoundHash->{$peak_id}->{$chebiId}->{$is_preferred_compound} = [$mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey];
 
     if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peakCompId})) 
     && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peakCompId})){
@@ -248,84 +248,84 @@ sub run {
   close(PEAKS);
   
   print STDERR Dumper $preferredCompounds->{1};
-#  print STDERR Dumper $compoundHash;  
+  print STDERR Dumper $compoundHash;  
 
 # Loop over the entries in the compoundHash and load. 
   foreach my $peak(keys $compoundHash){
-	print STDERR "Peak: \n";
-	print STDERR Dumper $peak; 
+	  print STDERR "Peak: \n";
+	  print STDERR Dumper $peak; 
   	my ($peak_id, $mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
 
-  # For a peak want to test if there is a preferred compound	
-	foreach my $chebi(keys $compoundHash->{$peak}){
-	  my $peakCompId = $chebi . '|'. $peak; 
-	 
-	  my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
-		  external_database_release_id=>$external_database_release_id,
-		  mass=>$mass,
-		  retention_time=>$retention_time,
-		  peak_id=>$peak,
-		  ms_polarity=>$ms_polarity
-      });
+    # For a peak want to test if there is a preferred compound	
+    # foreach my $chebi(keys $compoundHash->{$peak}){
+    #   my $peakCompId = $chebi . '|'. $peak; 
+    
+    #   my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
+    #     external_database_release_id=>$external_database_release_id,
+    #     mass=>$mass,
+    #     retention_time=>$retention_time,
+    #     peak_id=>$peak,
+    #     ms_polarity=>$ms_polarity
+    #     });
 
-	  if ( (defined($preferredCompounds->{1}->{$peakCompId}) 
-      && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
-      && defined($compoundHash->{$peak}->{$peakCompId}->{1}) ){
-	  #print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
-	    $mass = $compoundHash->{$peak}->{$chebi}->{1}[0];
-	    $retention_time = $compoundHash->{$peak}->{$chebi}->{1}[1];
-	    $isotopomer = $compoundHash->{$peak}->{$chebi}->{1}[2];
-	    $ms_polarity = $compoundHash->{$peak}->{$chebi}->{1}[3]; 
-	    $InChIKey = $compoundHash->{$peak}->{$chebi}->{1}[4]; 	
-	    print STDERR "$mass, $retention_time"; 
-		
-		my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-        	compound_id=>$chebi,
-            isotopomer=>$isotopomer,
-            user_compound_name=>$InChIKey,
-            is_preferred_compound=>'1'
-        });
-		$compoundPeaksChebiRow->setParent($compoundPeaksRow);
-	  	$compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
-	  }
+    #   if ( (defined($preferredCompounds->{1}->{$peakCompId}) 
+    #     && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
+    #     && defined($compoundHash->{$peak}->{$peakCompId}->{1}) ){
+    #   #print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
+    #     $mass = $compoundHash->{$peak}->{$chebi}->{1}[0];
+    #     $retention_time = $compoundHash->{$peak}->{$chebi}->{1}[1];
+    #     $isotopomer = $compoundHash->{$peak}->{$chebi}->{1}[2];
+    #     $ms_polarity = $compoundHash->{$peak}->{$chebi}->{1}[3]; 
+    #     $InChIKey = $compoundHash->{$peak}->{$chebi}->{1}[4]; 	
+    #     print STDERR "$mass, $retention_time"; 
+      
+    #   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+    #         compound_id=>$chebi,
+    #           isotopomer=>$isotopomer,
+    #           user_compound_name=>$InChIKey,
+    #           is_preferred_compound=>'1'
+    #       });
+    #   $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+    #   $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
+    #   }
 
-	  # Redundant due to 1 pref peak having >1 ChEBI Id in our DB. 
-#	  elsif( (defined($preferredCompounds->{1}->{$peakCompId})) 
-#      && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) > 1) 
-#      && defined($compoundHash->{$peak}->{$peakCompId}->{1}) 
-#	  #&& !(defined($preferredCompounds->{1}->{''}))
-#	  ) 
-#	  {
-#        # TODO for the future may want to bypass and print the compounds causing issues. 
-#        # There may always be one hash with more than one where we do not have a chebi ID. 
-#        print STDERR "Peak $peak has >1 preferred compounds - exiting. \n";
-#        print STDERR Dumper $preferredCompounds->{1}->{$chebi}; 
-#	  }
+    #         #TODO -  take out parent relationship to the peak - cpd and test the loading.
+    #         #TODO - add in set parent to the chebi id -> chebi table. 
+    #         #TODO - reverse the submit order of the objects - test to see if that is the issue. 
 
-      # If there is no pref compound load all the other compounds. 
-      elsif( defined($preferredCompounds->{0}->{$peakCompId}) ){
-	  #	print STDERR "OTHER LOAD: $peak, $chebi \n"; 
-	    $mass = $compoundHash->{$peak}->{$chebi}->{0}[0];
-	    $retention_time = $compoundHash->{$peak}->{$chebi}->{0}[1];
-	    $isotopomer = $compoundHash->{$peak}->{$chebi}->{0}[2];
-	    $ms_polarity = $compoundHash->{$peak}->{$chebi}->{0}[3]; 
-	    $InChIKey = $compoundHash->{$peak}->{$chebi}->{0}[4]; 	
-	    print STDERR "$mass, $retention_time"; 
-		
-		my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            compound_id=>$chebi,
-            isotopomer=>$isotopomer,
-            user_compound_name=>$InChIKey,
-            is_preferred_compound=>'0'
-        });
-	    $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-	    $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
-  
-      }
-	
-	  $compoundPeaksRow->submit();
-	  $self->undefPointerCache()
-	} # End foreach $chebi
+    #           # Redundant due to 1 pref peak having >1 ChEBI Id in our DB. 
+    #       #	  elsif( (defined($preferredCompounds->{1}->{$peakCompId})) 
+    #       #      && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) > 1) 
+    #       #      && defined($compoundHash->{$peak}->{$peakCompId}->{1}) 
+    #       #	  #&& !(defined($preferredCompounds->{1}->{''}))
+    #       #	  ) 
+    #       #	  {
+    #       #        print STDERR "Peak $peak has >1 preferred compounds - exiting. \n";
+    #       #        print STDERR Dumper $preferredCompounds->{1}->{$chebi}; 
+    #       #	  }
+
+    #     # If there is no pref compound load all the other compounds. 
+    #     elsif( defined($preferredCompounds->{0}->{$peakCompId}) ){
+    #   #	print STDERR "OTHER LOAD: $peak, $chebi \n"; 
+    #     $mass = $compoundHash->{$peak}->{$chebi}->{0}[0];
+    #     $retention_time = $compoundHash->{$peak}->{$chebi}->{0}[1];
+    #     $isotopomer = $compoundHash->{$peak}->{$chebi}->{0}[2];
+    #     $ms_polarity = $compoundHash->{$peak}->{$chebi}->{0}[3]; 
+    #     $InChIKey = $compoundHash->{$peak}->{$chebi}->{0}[4]; 	
+    #     print STDERR "$mass, $retention_time"; 
+      
+    #   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+    #           compound_id=>$chebi,
+    #           isotopomer=>$isotopomer,
+    #           user_compound_name=>$InChIKey,
+    #           is_preferred_compound=>'0'
+    #       });
+    #     $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+    #     $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
+    #     }
+    #   $compoundPeaksRow->submit();
+    #   $self->undefPointerCache()
+    # } # End foreach $chebi
   } # End foreach $peak
 } # close sub new
 
