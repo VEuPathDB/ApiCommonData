@@ -296,7 +296,6 @@ sub run {
             $compoundPeaksChebiRow->setParent($compoundPeaksRow);
             $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
-
         }
                 #TODO -  take out parent relationship to the peak - cpd and test the loading.
                 #TODO - add in set parent to the chebi id -> chebi table. 
@@ -304,12 +303,12 @@ sub run {
             # If there is no pref compound load all the other compounds. 
         elsif( defined($preferredCompounds->{'0'}->{$peakCompId})
         && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161
-          print STDERR "OTHER LOAD: $peak, $chebi \n"; 
+          #print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
           $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
           $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
-          print STDERR "Data: $mass, $retention_time \n";  
+          #print STDERR "Data: $mass, $retention_time \n";  
         
           foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){
             #print STDERR "CPD = $cpd\n"         
