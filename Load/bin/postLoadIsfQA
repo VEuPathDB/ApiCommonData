@@ -471,15 +471,20 @@ where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=$naSeqId order by 
   my $stmtt = $dbh->prepare($sqloo2);
   $stmtt->execute();
 
-  my ($preSourceId, $preStart, $preEnd);
+  my ($preSourceId, $preStart, $preEnd, $preStrand);
   while (my ($gfSourceId, $nlStartMin, $nlEndMax, $strand) = $stmtt->fetchrow_array() ) {
-    print STDERR "In sequence $naSourceId, gene $gfSourceId and $preSourceId are duplicated at position $nlStartMin \.\. $nlEndMax\n" if ($preStart == $nlStartMin && $preEnd == $nlEndMax);
 
-    ## print STDERR "In $naSourceId, $strand strand, $gfSourceId and $preSourceId are overlapped. $gfSourceId: $nlStartMin \.\. $nlEndMax; $preSourceId: $preStart \.\. $preEnd\n" if ($nlStartMin < $preEnd);
+    if ($preStart == $nlStartMin && $preEnd == $nlEndMax) {
+      print STDERR "In sequence $naSourceId, gene $gfSourceId and $preSourceId are duplicated at position $nlStartMin \.\. $nlEndMax\n";
+      if ($strand != $preStrand) {
+	print STDERR "      but at different strands.\n";
+      }
+    }
 
     $preSourceId = $gfSourceId;
     $preStart = $nlStartMin;
     $preEnd = $nlEndMax;
+    $preStrand = $strand;
   }
   $stmtt->finish();
 }
