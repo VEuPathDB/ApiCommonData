@@ -29,6 +29,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::NASequence;
 
 use GUS::Model::ApiDB::Synteny;
+use GUS::Model::ApiDB::SyntenyAnchor;
 use GUS::Model::ApiDB::SyntenicGene;
 use GUS::Model::ApiDB::SyntenicScale;
 
@@ -344,7 +345,7 @@ sub makeSynteny {
 
   my $synIndex = $index == 1 ? 0 : 1;
 
-#  $self->createSyntenyAnchors($synteny, \@sortedPairs, $index, $synIndex);
+  $self->createSyntenyAnchors($synteny, \@sortedPairs, $index, $synIndex);
 
   $self->createSyntenicGenesInReferenceSpace($synteny, $pairs, $index, $synIndex, $naSequenceMap->{$syntenyA->seq_id}, $synOrganismAbbrev);
 
