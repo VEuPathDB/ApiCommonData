@@ -340,7 +340,7 @@ sub makeSynteny {
 						});
 
 
-#  my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
+  my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
 
 
   my $synIndex = $index == 1 ? 0 : 1;
