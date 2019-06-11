@@ -225,43 +225,45 @@ sub run {
   # preferredCompounds stores the preferred status and the ChEBI IDs from our DB. 
   while(<PEAKS>){
     my @peaksArray = split(/\t/, $_);    
-    ($peak_id, $mass, $retention_time, $isotopomer, $ms_polarity, $compound_id, $InChIKey, $is_preferred_compound) = split(/\t/, $_);
+    my ($peak_id, $mass, $retention_time, $isotopomer, $ms_polarity, $compound_id, $InChIKey, $is_preferred_compound) = split(/\t/, $_);
     chomp $InChIKey;
     chomp $is_preferred_compound;
-	
-    if (defined($InChIKey)) {$chebiId = $compoundInChIKeyHash->{'InChIKey='.$InChIKey}->{'MYID'}}
+
+    my $chebiId; 	
+    if (defined($InChIKey)) {$chebiId = $compoundInChIKeyHash->{'InChIKey='.$InChIKey}->{'MYID'};}
     else {$chebiId  = $otherCompoundHash->{$compoundLookup}->{'MYID'};}
 	
-	my $peakCompId = $chebiId . '|' . $peak_id; 
+    my $peakCompId = $chebiId . '|' . $peak_id; 
 
-  $compoundHash->{$peak_id}->{$chebiId}->{$is_preferred_compound} = [$mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey];
+    $compoundHash->{$peak_id}->{$chebiId} = $InChIKey; #TODO will this work with more than one chebi ID in our DB. 
+    $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
 
     if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peakCompId})) 
-    && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peakCompId})){
+    && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peakCompId}) )
+    {
 	    push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
 	  }
-	else{
-	  $preferredCompounds->{$is_preferred_compound}->{$peakCompId} = [];
-	  push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
-	  }
+	  else{
+	    $preferredCompounds->{$is_preferred_compound}->{$peakCompId} = [];
+	    push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
+    }
   } #End of while(<PEAKS>)
   close(PEAKS);
-  
-  print STDERR Dumper $preferredCompounds->{1};
-  print STDERR Dumper $compoundHash;  
 
-# Loop over the entries in the compoundHash and load. 
+#  print STDERR Dumper $compoundHash;  
+#  print STDERR Dumper $preferredCompounds->{1};  ~
+
+  # Loop over the entries in the compoundHash and load. 
   foreach my $peak(keys $compoundHash){
 	  print STDERR "Peak: \n";
 	  print STDERR Dumper $peak; 
   	my ($mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
 
-    $mass = $compoundHash->{$peak}->{$chebi}->{1}[0];
-    $retention_time = $compoundHash->{$peak}->{$chebi}->{1}[1];
-    $isotopomer = $compoundHash->{$peak}->{$chebi}->{1}[2];
-    $ms_polarity = $compoundHash->{$peak}->{$chebi}->{1}[3]; 
-    $InChIKey = $compoundHash->{$peak}->{$chebi}->{1}[4]; 	
-    print STDERR "$mass, $retention_time"; 
+    $mass = $compoundHash->{$peak}->{'peak_data'}[0];
+    $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
+    $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
+    $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
+    #print STDERR "$mass, $retention_time"; 
 
     my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
         external_database_release_id=>$external_database_release_id,
@@ -274,11 +276,12 @@ sub run {
     foreach my $chebi(keys $compoundHash->{$peak}){
       my $peakCompId = $chebi . '|'. $peak;   
 
+      $InChIKey = $compoundHash->{$peak}->{$chebi};
+
       if ( (defined($preferredCompounds->{1}->{$peakCompId}) 
         && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
         && defined($compoundHash->{$peak}->{$peakCompId}->{1}) ){
       #print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
-
       
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
             compound_id=>$chebi,
@@ -308,12 +311,13 @@ sub run {
         # If there is no pref compound load all the other compounds. 
         elsif( defined($preferredCompounds->{0}->{$peakCompId}) ){
       #	print STDERR "OTHER LOAD: $peak, $chebi \n"; 
-        $mass = $compoundHash->{$peak}->{$chebi}->{0}[0];
-        $retention_time = $compoundHash->{$peak}->{$chebi}->{0}[1];
-        $isotopomer = $compoundHash->{$peak}->{$chebi}->{0}[2];
-        $ms_polarity = $compoundHash->{$peak}->{$chebi}->{0}[3]; 
-        $InChIKey = $compoundHash->{$peak}->{$chebi}->{0}[4]; 	
-        print STDERR "$mass, $retention_time"; 
+
+        $mass = $compoundHash->{$peak}->{'peak_data'}[0];
+        $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
+        $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
+        $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
+        $InChIKey = $compoundHash->{$peak}->{$chebi}; 
+        #print STDERR "$mass, $retention_time"; 
       
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
               compound_id=>$chebi,
