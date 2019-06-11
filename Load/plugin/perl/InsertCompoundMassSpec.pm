@@ -254,13 +254,20 @@ sub run {
   foreach my $peak(keys $compoundHash){
 	  print STDERR "Peak: \n";
 	  print STDERR Dumper $peak; 
-  	my ($peak_id, $mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
+  	my ($mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
+
+    $mass = $compoundHash->{$peak}->{$chebi}->{1}[0];
+    $retention_time = $compoundHash->{$peak}->{$chebi}->{1}[1];
+    $isotopomer = $compoundHash->{$peak}->{$chebi}->{1}[2];
+    $ms_polarity = $compoundHash->{$peak}->{$chebi}->{1}[3]; 
+    $InChIKey = $compoundHash->{$peak}->{$chebi}->{1}[4]; 	
+    print STDERR "$mass, $retention_time"; 
 
     my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
         external_database_release_id=>$external_database_release_id,
         mass=>$mass,
         retention_time=>$retention_time,
-        peak_id=>$peak_id,
+        peak_id=>$peak,
         ms_polarity=>$ms_polarity
         });
     # For a peak want to test if there is a preferred compound	
@@ -271,12 +278,7 @@ sub run {
         && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
         && defined($compoundHash->{$peak}->{$peakCompId}->{1}) ){
       #print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
-        $mass = $compoundHash->{$peak}->{$chebi}->{1}[0];
-        $retention_time = $compoundHash->{$peak}->{$chebi}->{1}[1];
-        $isotopomer = $compoundHash->{$peak}->{$chebi}->{1}[2];
-        $ms_polarity = $compoundHash->{$peak}->{$chebi}->{1}[3]; 
-        $InChIKey = $compoundHash->{$peak}->{$chebi}->{1}[4]; 	
-        print STDERR "$mass, $retention_time"; 
+
       
       my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
             compound_id=>$chebi,
