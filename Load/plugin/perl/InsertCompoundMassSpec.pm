@@ -256,17 +256,16 @@ sub run {
 	  print STDERR Dumper $peak; 
   	my ($peak_id, $mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
 
-    # For a peak want to test if there is a preferred compound	
-    foreach my $chebi(keys $compoundHash->{$peak}){
-      my $peakCompId = $chebi . '|'. $peak; 
-    
-      my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
+    my $compoundPeaksRow = GUS::Model::ApiDB::CompoundPeaks->new({
         external_database_release_id=>$external_database_release_id,
         mass=>$mass,
         retention_time=>$retention_time,
-        peak_id=>$peak,
+        peak_id=>$peak_id,
         ms_polarity=>$ms_polarity
         });
+    # For a peak want to test if there is a preferred compound	
+    foreach my $chebi(keys $compoundHash->{$peak}){
+      my $peakCompId = $chebi . '|'. $peak;   
 
       if ( (defined($preferredCompounds->{1}->{$peakCompId}) 
         && (scalar(@{$preferredCompounds->{1}->{$peakCompId}}) == 1)) 
