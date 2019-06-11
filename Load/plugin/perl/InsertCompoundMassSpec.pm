@@ -303,7 +303,7 @@ sub run {
                 #TODO - reverse the submit order of the objects - test to see if that is the issue. 
             # If there is no pref compound load all the other compounds. 
         elsif( defined($preferredCompounds->{'0'}->{$peakCompId})
-        && !(defined($preferredCompounds->{'1'}->{$peakCompId}) ){
+        && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161
           print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
