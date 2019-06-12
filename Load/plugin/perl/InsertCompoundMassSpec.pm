@@ -253,12 +253,21 @@ sub run {
           push @{$chebiIdArray}, $chebiSearched; 
         }  # $chebiId = $compoundInChIKeyHash->{'InChIKey='.$InChIKey}->{'MYID'};
       }
-      else{;} # InChIKey may no be in or DB. 
     }
     else {
-      push @{$chebiIdArray}, $otherCompoundHash->{$compound_id}->{'MYID'};
+      if ( defined($otherCompoundHash->{$compound_id}->{'MYID'}) ){
+        push @{$chebiIdArray}, $otherCompoundHash->{$compound_id}->{'MYID'};
+      }
     } 
     print STDERR Dumper $chebiIdArray; 
+
+    
+      
+    if( scalar@{$chebiIdArray} == 0 ){
+      $compoundHash->{$peak_id}->{$is_preferred_compound}
+      $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];; # Need to set this for the peaks with no chebi ID hits. 
+      #  print "Here."
+    }
 
     foreach my $chebiId (@{$chebiIdArray}){
       my $peakCompId = $chebiId . '|' . $peak_id; 
@@ -266,8 +275,7 @@ sub run {
       if( !(defined($compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId})) ){ 
         $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = [];
         push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }
-        else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; 
-      }; 
+      else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; } 
       #TODO will this work with more than one chebi ID in our DB. 
       # Or no chebi ID in the DB but more than one ID in the data.
       $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
@@ -285,7 +293,9 @@ sub run {
   close(PEAKS);
   ###### END - Read peaks.tab into hash ######
 
-  print STDERR Dumper $compoundHash; 
+  print STDERR Dumper $compoundHash;
+  my $size = keys %{$compoundHash};
+  print "RM - Size of hash = $size \n";
   print STDERR "ROSS \n"; 
   print STDERR Dumper $preferredCompounds->{'1'};  
 
