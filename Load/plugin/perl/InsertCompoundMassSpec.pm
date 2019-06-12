@@ -225,6 +225,8 @@ sub run {
     chomp $InChIKey;
     chomp $is_preferred_compound;
 
+    if (undef($$is_preferred_compound)){$is_preferred_compound = '1';}
+
     my $chebiIdArray = [];   	
   
     if (defined($InChIKey)) {
