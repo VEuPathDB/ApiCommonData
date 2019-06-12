@@ -128,19 +128,24 @@ sub run {
   # Hash of SQL queries for the different compound types e.g. KEGG, InChIKey, HMDB.
   # Cols are renamed - MYKEY: for the lookup. MYID: as the ID that needs to be returned.
 
-  ##NOTE - old query
-  # $compoundTypeSQL->{'KEGG'} = "select da.compound_id as MYID
-  #                                , da.accession_number as MYKEY
-  #                                from CHEBI.database_accession da
-  #                                where da.source = 'KEGG COMPOUND'";
+  my $compoundInChIKeySQL = 
+    "select replace (s.structure, 'InChIKey=', '') as MYKEY
+    , c.chebi_accession
+    --  , replace (s.structure, 'InChIKey=', '') || '|' || c.id  as MYKEY
+    , c.id as MYID 
+    from chebi.structures s
+    , CHEBI.compounds c
+    where s.type = 'InChIKey'
+    and c.id = s.compound_id                    
+  ";
 
-  my $compoundInChIKeySQL = "select c.id as MYID
-                    , c.chebi_accession
-                    , s.structure as MYKEY
-                    from chebi.structures s
-                    , CHEBI.compounds c
-                    where s.type = 'InChIKey'
-                    and c.id = s.compound_id";
+  # my $compoundInChIKeySQL = "select c.id as MYID
+  #                   , c.chebi_accession
+  #                   , replace (s.structure, 'InChIKey=', '')  || '|' || c.id  as MYKEY
+  #                   from chebi.structures s
+  #                   , CHEBI.compounds c
+  #                   where s.type = 'InChIKey'
+  #                   and c.id = s.compound_id";
 
   my $compoundOtherSQL = "select da.compound_id as MYID
                                    , da.accession_number as MYKEY
@@ -185,8 +190,21 @@ sub run {
 
   ### InChIKey hash ###
   my $compoundInChIKeyHash = {};
-  $compoundInChIKeyHash = $dbh->selectall_hashref($compoundInChIKeySQL, 'MYKEY');
-  #print STDERR Dumper $compoundInChIKeyHash;
+  my $compoundInChIKeyArray = [];
+  $compoundInChIKeyArray = $dbh->selectall_arrayref($compoundInChIKeySQL); 
+  #print STDERR Dumper $compoundInChIKeyArray; 
+
+  # This has is needed are there are multiple ChEBI IDs for an InChIKey. I need to return all the ChEBI IDs for the data to
+  # be properly represented. 
+  foreach my $item (@{$compoundInChIKeyArray}) {
+    my @inChI = split(/-/, @{$item}[0]);  
+    # print STDERR Dumper @inChI[0]; 
+    $compoundInChIKeyHash->{@inChI[0]}->{@inChI[1]}->{@inChI[2]}->{@{$item}[2]}->{'InChIKey'} = @{$item}[0];
+    $compoundInChIKeyHash->{@inChI[0]}->{@inChI[1]}->{@inChI[2]}->{@{$item}[2]}->{'ChEBI'} = @{$item}[2];  
+  }
+  # print STDERR Dumper $compoundInChIKeyHash;
+  # # $compoundInChIKeyHash = $dbh->selectall_hashref($compoundInChIKeySQL, 'MYKEY');
+  # # print STDERR Dumper $compoundInChIKeyHash;
 
   ### Other Compound Hash ###
   my $otherCompoundHash = {};
@@ -198,7 +216,7 @@ sub run {
   my $peakFile = $dir . "/" . $peakFile;
   print STDERR "$peakFile\n";
 
-  ###### Load into CompoudPeaks ######
+  ###### Read peaks.tab into hash ######
   open(PEAKS, $peakFile) or $self->("Could not open $peakFile for reading: $!");
   my $header = <PEAKS>;
   chomp $header;
@@ -214,7 +232,6 @@ sub run {
 
   my $preferredCompounds = {};
   my $compoundHash = {};
-  my ($compoundLookup, $chebiId);
 
   # Load into two hashes.
   # compoundHash stores the compounds with the associated data.
@@ -225,39 +242,57 @@ sub run {
     chomp $InChIKey;
     chomp $is_preferred_compound;
 
-    my $chebiId; 	
-    if (defined($InChIKey)) {$chebiId = $compoundInChIKeyHash->{'InChIKey='.$InChIKey}->{'MYID'};}
-    else {$chebiId  = $otherCompoundHash->{$compoundLookup}->{'MYID'};}
-	
-    my $peakCompId = $chebiId . '|' . $peak_id; 
+    my $chebiIdArray = [];   	
+  
+    if (defined($InChIKey)) {
+      my @keys = split(/-/, $InChIKey);
 
-    if( !(defined($compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId})) )
-    {
-      $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = [];
-      push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }
-    else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }; #TODO will this work with more than one chebi ID in our DB. 
-    # Or no chebi ID in the DB but more than one ID in the data.
-    $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
-
-    if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peakCompId})) 
-    && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peakCompId}) )
-    {
-	    push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
-	  }
-	  else{
-	    $preferredCompounds->{$is_preferred_compound}->{$peakCompId} = [];
-	    push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
+      if ( defined($compoundInChIKeyHash->{@keys[0]}->{@keys[1]}->{@keys[2]}) ){      
+        foreach my $chebiSearched (keys $compoundInChIKeyHash->{@keys[0]}->{@keys[1]}->{@keys[2]}){        
+          #print STDERR $chebiSearched; 
+          push @{$chebiIdArray}, $chebiSearched; 
+        }  # $chebiId = $compoundInChIKeyHash->{'InChIKey='.$InChIKey}->{'MYID'};
+      }
+      else{;} # InChIKey may no be in or DB. 
     }
+    else {
+      push @{$chebiIdArray}, $otherCompoundHash->{$compound_id}->{'MYID'};
+    } 
+    print STDERR Dumper $chebiIdArray; 
+
+    foreach my $chebiId (@{$chebiIdArray}){
+      my $peakCompId = $chebiId . '|' . $peak_id; 
+
+      if( !(defined($compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId})) ){ 
+        $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = [];
+        push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }
+        else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; 
+      }; 
+      #TODO will this work with more than one chebi ID in our DB. 
+      # Or no chebi ID in the DB but more than one ID in the data.
+      $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
+
+      if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peakCompId})) 
+      && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peakCompId}) ){
+        push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
+      }
+      else{
+        $preferredCompounds->{$is_preferred_compound}->{$peakCompId} = [];
+        push $preferredCompounds->{$is_preferred_compound}->{$peakCompId}, $peak_id;
+      }
+    } # End of foreach $chebiId 
   } #End of while(<PEAKS>)
   close(PEAKS);
+  ###### END - Read peaks.tab into hash ######
 
-  print STDERR Dumper $compoundHash;  
-#  print STDERR Dumper $preferredCompounds->{'1'};  
+  print STDERR Dumper $compoundHash; 
+  print STDERR "ROSS \n"; 
+  print STDERR Dumper $preferredCompounds->{'1'};  
 
-  # Loop over the entries in the compoundHash and load. 
+  ###### Load into CompoundPeaks & CompoundPeaksChebi ######
   foreach my $peak(keys $compoundHash){
-    print STDERR "Peak: \n";
-  	print STDERR Dumper $peak; 
+    # print STDERR "Peak: \n";
+  	# print STDERR Dumper $peak; 
     my ($mass, $retention_time, $isotopomer, $ms_polarity, $InChIKey);
 
     $mass = $compoundHash->{$peak}->{'peak_data'}[0];
@@ -286,15 +321,16 @@ sub run {
           print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
 
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
-            #print STDERR "CPD = $cpd\n"     
-            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-                compound_id=>$chebi,
-                isotopomer=>$isotopomer,
-                user_compound_name=>$cpd,
-                is_preferred_compound=>'1'
-              });
-            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+            print STDERR "CPD = $cpd\n"  
+
+            # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+            #     compound_id=>$chebi,
+            #     isotopomer=>$isotopomer,
+            #     user_compound_name=>$cpd,
+            #     is_preferred_compound=>'1'
+            #   });
+            # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
         }
                 #TODO -  take out parent relationship to the peak - cpd and test the loading.
@@ -329,7 +365,9 @@ sub run {
     $compoundPeaksRow->submit();
     $self->undefPointerCache();
   } # End foreach $peak
-} # close sub new
+  ###### Load into CompoundPeaks & CompoundPeaksChebi ######
+
+} # close sub read
 
 
 	#make new peak GUS object 
