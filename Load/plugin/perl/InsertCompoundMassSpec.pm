@@ -320,12 +320,13 @@ sub run {
     # For a peak want to test if there is a preferred compound	
     foreach my $pref(keys $compoundHash->{$peak}){
       foreach my $chebi (keys $compoundHash->{$peak}->{$pref}){
-        my $peakCompId = $chebi . '|'. $peak;
-        
+
+        my $peakCompId = $chebi . '|'. $peak;        
         if ($chebi eq 'peak_data'){
           ;
         }    
-        elsif ( (defined($preferredCompounds->{'1'}->{$peakCompId})) 
+        elsif ( $pref eq '1' 
+          && (defined($preferredCompounds->{'1'}->{$peakCompId})) 
           && (scalar(@{$preferredCompounds->{'1'}->{$peakCompId}}) == 1) 
         ){ 
           print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
@@ -347,8 +348,9 @@ sub run {
                 #TODO - add in set parent to the chebi id -> chebi table. 
                 #TODO - reverse the submit order of the objects - test to see if that is the issue. 
             # If there is no pref compound load all the other compounds. 
-        elsif( defined($preferredCompounds->{'0'}->{$peakCompId})
-        && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161
+        elsif( $pref eq '0'
+          && defined($preferredCompounds->{'0'}->{$peakCompId})
+          && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161
           #print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
