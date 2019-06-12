@@ -139,13 +139,6 @@ sub run {
     and c.id = s.compound_id                    
   ";
 
-  # my $compoundInChIKeySQL = "select c.id as MYID
-  #                   , c.chebi_accession
-  #                   , replace (s.structure, 'InChIKey=', '')  || '|' || c.id  as MYKEY
-  #                   from chebi.structures s
-  #                   , CHEBI.compounds c
-  #                   where s.type = 'InChIKey'
-  #                   and c.id = s.compound_id";
 
   my $compoundOtherSQL = "select da.compound_id as MYID
                                    , da.accession_number as MYKEY
@@ -203,8 +196,6 @@ sub run {
     $compoundInChIKeyHash->{@inChI[0]}->{@inChI[1]}->{@inChI[2]}->{@{$item}[2]}->{'ChEBI'} = @{$item}[2];  
   }
   # print STDERR Dumper $compoundInChIKeyHash;
-  # # $compoundInChIKeyHash = $dbh->selectall_hashref($compoundInChIKeySQL, 'MYKEY');
-  # # print STDERR Dumper $compoundInChIKeyHash;
 
   ### Other Compound Hash ###
   my $otherCompoundHash = {};
@@ -337,14 +328,13 @@ sub run {
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
                 isotopomer=>$isotopomer,
-                user_compound_name=>$cpd, # TODO This needs to be updated from the chebI ID to the user cpd names.
+                user_compound_name=>$cpd, # TODO This needs to be updated from the chebI ID to the user cpd names???
                 is_preferred_compound=>'1'
               });
             $compoundPeaksChebiRow->setParent($compoundPeaksRow);
             $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
         }
-                #TODO -  take out parent relationship to the peak - cpd and test the loading.
                 #TODO - add in set parent to the chebi id -> chebi table. 
             # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
@@ -374,23 +364,178 @@ sub run {
     $compoundPeaksRow->submit();
     $self->undefPointerCache();
   } # End foreach $peak
-  ###### Load into CompoundPeaks & CompoundPeaksChebi ######
+  ###### END - Load into CompoundPeaks & CompoundPeaksChebi ######
+
+  ###### Load into CompoundMassSpecResults ######
+  my $resultsFile = 'data.tab';
+  my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
+  my $params;
+
+  # ####### Loading of the raw data ##  - Not used, not loaded for now. #######
+  # my $args = {mainDirectory=>$dir, makePercentiles=>0, inputFile=>$resultsFile, profileSetName=>$profileSetName};
+  # # NOTE Setting profileSetName as studyName + compoundType for now.
+
+  # my $resultsData = ApiCommonData::Load::MetaboliteProfiles->new($args, $params);
+  # $resultsData->munge();
+  # $self->SUPER::run();
+  # system('mv insert_study_results_config.txt results_insert_study_results_config.txt');
+  # # renamed as the munge method appends to the config file.
+  # system("mv $dir/.$resultsFile/ $dir/.resultsFile_$resultsFile/");
+  # ####### END -  Loading of the raw data #######
+
+  my $mappingFile = 'mapping.tab';
+
+  my $meanRScript =
+        "
+        library(data.table)
+        library(matrixStats)
+
+        # input data.
+        print('1 here')
+        data <- read.csv('$dir/data.tab', sep='\\t', header=TRUE, check.names=FALSE)  # make sure check.names is not needed.
+        print('2 here')
+        data = data.table(data)
+        # output data.tables.
+        output <-data.table(data[,1])
+        sd_output <-data.table(data[,1])
+
+        # For storing file header and new col names.
+        colnames(output)<- ' '
+        colnames(sd_output)<- ' '
+        header = ''
+        sd_header = ''
+
+        # Mapping file that gives sample groupings
+        mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE, check.names=FALSE)
+        mapping = data.table(mapping)
+        # Takes the col inputs of samples, groups and renames to conform with the rest of the script. 
+        names(mapping)[1] <- 'sample'
+        names(mapping)[2] <- 'group'
+        # Output dir for sd.
+        dir.create('$dir/.sd')
+
+        # add in data col for sample names
+        groups = unique(mapping[['group']])
+
+        for(i in groups){
+            # Get each sample by groups from mapping, calculate row means.
+            newData <- mapping[group ==i]
+            newData = data.table(newData)
+            samples = as.vector(newData[['sample']])
+            newResults = data[, samples, with=FALSE]
+            newResults[,'mean'] <- rowMeans(newResults, na.rm=TRUE)
+            mean <- newResults[, 'mean']
+
+            # New column names for samples. Table header -  needs to be like this for munge input (no index header value).
+            new_col_name = paste(i, 'mean', sep='_')
+            new_col_name_sd = paste(i, 'SD', sep='_')
+            header = paste(header, new_col_name, sep='\\t')
+            sd_header = paste(sd_header, i, sep='\\t') # need name to be as munge output???
+
+            # Drop mean to work out SD by rows.
+            newResults[,'mean':=NULL]
+            newResults = cbind(newResults, transform(newResults, SD=rowSds(as.matrix(newResults), na.rm=TRUE)))
+
+            # Add to output data.tables and rename cols with relevant sample names.
+            output = cbind(output, mean[, 'mean'])
+            setnames(output, 'mean', new_col_name)
+
+            sd_output = cbind(sd_output, newResults[, 'SD'])
+            #setnames(sd_output, 'SD', new_col_name_sd)
+            print(sd_output)
+
+            # Write the SD files to a dir with the names as the munge method outputs.
+            sd_out = paste('$dir/.sd', gsub(' ', '_', i),  sep='/')
+            print(sd_out)
+            write.table(sd_header, file=sd_out, col.names=FALSE, row.names=FALSE, quote=FALSE)
+            write.table(sd_output, file=sd_out, sep='\\t', append=TRUE, na='0',  col.names=FALSE, row.names=FALSE, quote=FALSE)
+            # Drop the sample SD now the file has been written
+            sd_output[,'SD':=NULL]
+            sd_header = ''
+        }
+
+        # Writing header first, see above comment about munge method.
+        write.table(header, file='$dir/mean.tab', col.names=FALSE, row.names=FALSE, quote=FALSE)
+        write.table(output, file='$dir/mean.tab', sep='\\t', append=TRUE, na='0',  col.names=FALSE, row.names=FALSE, quote=FALSE)
+        "
+  ;
+
+  open(my $fh, '>', "$dir/mean.R");
+  print $fh "$meanRScript";
+  close $fh;
+  my $command = "Rscript $dir/mean.R";
+  system($command);
+  #system("rm $dir/mean.R");
+  # This is set by the R script.
+  my $meanFile = 'mean.tab';
+
+  my $meanArgs = {mainDirectory=>$dir, makePercentiles=>1, inputFile=>$meanFile, profileSetName=>$profileSetName};
+  my $meanData = ApiCommonData::Load::MetaboliteProfiles->new($meanArgs, $params);
+  $meanData->munge();
+
+  # take munge output and combine with standard error.
+  my $combineRScript = "
+      library(data.table)
+
+      # take percetile data -> table # Not needed - in the munge output.
+      #percentile <-read.csv('mean.tab.pct', sep='\\t', header=TRUE, check.names=FALSE)
+      #percentile = data.table(percentile)
+      #print(percentile)
+
+      # take each of the samples from mapping
+      mapping <- read.csv('$dir/mapping.tab', sep='\\t', header=TRUE, check.names=FALSE)
+      mapping = data.table(mapping)
+      names(mapping)[1] <- 'sample'
+      names(mapping)[2] <- 'group'
+      #print(mapping)
+      groups = unique(mapping[['group']])
+
+      # get file for mean of group via mapping file
+      for(i in groups){
+              #print(i) # has no hashes.
+              # Read munge output for sample. )
+              file = paste('$dir/.mean.tab',  paste(gsub(' ',  '_', i ), '_mean', sep='' ), sep='/')
+              data <- read.csv(file, sep='\\t', header=TRUE, check.names=FALSE)
+              data = data.table(data)
+              setnames(data, 1, 'idx')
+              #print(data)
+
+              # Read sd data.
+              sd <-read.csv(paste('$dir/.sd', gsub(' ', '_', i), sep='/') ,header=TRUE, sep='\t')
+              sd = data.table(sd)
+              setnames(sd, 1, 'idx')
+              setnames(sd, 2, 'sd')
+              sd[,'sd'] = round(x = sd[,'sd'],digits = 2)
+              #print(sd)
+
+              # Join on index with sd table.
+              merged = merge(data, sd, by='idx')
+              #setnames(sd, 3, 'percentile')
+              #setnames(sd, 2, 'standard_error')
+              setcolorder(merged, c(1, 3, 4, 2))
+              # Overite munge output.
+              write.table(merged, file=file, sep='\\t', row.names=FALSE, quote=FALSE)
+      }
+  ";
+
+  open(my $fh, '>', "$dir/combine.R");
+  print $fh "$combineRScript";
+  close $fh;
+  my $combineCommand = "Rscript $dir/combine.R";
+  system($combineCommand);
+
+  $self->SUPER::run();
+  system("mv $dir/.mean.tab/ $dir/.means_$resultsFile/");
+  system('mv insert_study_results_config.txt mean_insert_study_results_config.txt');
+  ###### END - Load into CompoundMassSpecResults -  using InsertStudyResults.pm ######
+
+# rm statements for developing
+system("rm $dir/insert_study_results_config.txt");
+#system("rm -r $dir/.means_$resultsFile/");
+#system("rm -r $dir/.sd");
+#system("rm -r $dir/mean.tab");
 
 } # close sub read
-
-
-	#make new peak GUS object 
-    # for each chebi id:
-      #if preferred:
-        #make compound object
-        #look up peak from preferred hash
-        #check if already loaded
-        #if not isotopomer, count how many are in array.  If not 1, decide how to handle this.
-        #if loaded go to next compound without loading this one
-        # if not, set parent compound->setParent(peak)
-        #add compounds to peak object submit list
-    #submit
-    #undef pointer cache
 
     
     ####### END - Load into CompoudPeaks ######
