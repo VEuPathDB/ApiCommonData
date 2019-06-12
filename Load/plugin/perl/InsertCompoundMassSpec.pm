@@ -190,7 +190,7 @@ sub run {
     $compoundInChIKeyHash->{@inChI[0]}->{@inChI[1]}->{@inChI[2]}->{@{$item}[2]}->{'InChIKey'} = @{$item}[0];
     $compoundInChIKeyHash->{@inChI[0]}->{@inChI[1]}->{@inChI[2]}->{@{$item}[2]}->{'ChEBI'} = @{$item}[2];  
   }
-  
+
   ### Other Compound Hash ###
   my $otherCompoundHash = {};
   $otherCompoundHash = $dbh->selectall_hashref($compoundOtherSQL, 'MYKEY');
@@ -372,9 +372,7 @@ sub run {
         library(matrixStats)
 
         # input data.
-        print('1 here')
         data <- read.csv('$dir/data.tab', sep='\\t', header=TRUE, check.names=FALSE)  # make sure check.names is not needed.
-        print('2 here')
         data = data.table(data)
         # output data.tables.
         output <-data.table(data[,1])
@@ -427,7 +425,6 @@ sub run {
 
             # Write the SD files to a dir with the names as the munge method outputs.
             sd_out = paste('$dir/.sd', gsub(' ', '_', i),  sep='/')
-            print(sd_out)
             write.table(sd_header, file=sd_out, col.names=FALSE, row.names=FALSE, quote=FALSE)
             write.table(sd_output, file=sd_out, sep='\\t', append=TRUE, na='0',  col.names=FALSE, row.names=FALSE, quote=FALSE)
             # Drop the sample SD now the file has been written
