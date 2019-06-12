@@ -264,8 +264,8 @@ sub run {
     
       
     if( scalar@{$chebiIdArray} == 0 ){
-      $compoundHash->{$peak_id}->{$is_preferred_compound}
-      $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];; # Need to set this for the peaks with no chebi ID hits. 
+      $compoundHash->{$peak_id}->{$is_preferred_compound};
+      $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity]; # Need to set this for the peaks with no chebi ID hits. 
       #  print "Here."
     }
 
