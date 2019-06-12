@@ -331,7 +331,7 @@ sub run {
           print STDERR "LOAD: Pref peak $peak has cpd ($chebi)\n";
 
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
-            print STDERR "CPD = $cpd\n"  
+            print STDERR "CPD = $cpd\n";
 
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
