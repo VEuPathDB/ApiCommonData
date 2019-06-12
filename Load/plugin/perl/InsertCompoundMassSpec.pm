@@ -346,7 +346,6 @@ sub run {
         }
                 #TODO -  take out parent relationship to the peak - cpd and test the loading.
                 #TODO - add in set parent to the chebi id -> chebi table. 
-                #TODO - reverse the submit order of the objects - test to see if that is the issue. 
             # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
           && defined($preferredCompounds->{'0'}->{$peakCompId})
@@ -359,18 +358,16 @@ sub run {
           #print STDERR "Data: $mass, $retention_time \n";  
         
           foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){
-            #print STDERR "CPD = $cpd\n"         
-            # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            #     compound_id=>$chebi,
-            #     isotopomer=>$isotopomer,
-            #     user_compound_name=>$cpd,
-            #     is_preferred_compound=>'0'
-            #   });
-            # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+            # print STDERR "CPD = $cpd\n"         
+            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+                compound_id=>$chebi,
+                isotopomer=>$isotopomer,
+                user_compound_name=>$cpd,
+                is_preferred_compound=>'0'
+              });
+            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
-          # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-          # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow)
         }
       } # End foreach $pref        
     } # End foreach $chebi
