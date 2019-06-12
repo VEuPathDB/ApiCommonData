@@ -293,7 +293,7 @@ sub run {
   close(PEAKS);
   ###### END - Read peaks.tab into hash ######
 
-  print STDERR Dumper $compoundHash;
+  #print STDERR Dumper $compoundHash;
   my $size = keys %{$compoundHash};
   print "RM - Size of hash = $size \n";
   print STDERR "ROSS \n"; 
@@ -333,14 +333,14 @@ sub run {
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
             print STDERR "CPD = $cpd\n"  
 
-            # my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-            #     compound_id=>$chebi,
-            #     isotopomer=>$isotopomer,
-            #     user_compound_name=>$cpd,
-            #     is_preferred_compound=>'1'
-            #   });
-            # $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            # $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+                compound_id=>$chebi,
+                isotopomer=>$isotopomer,
+                user_compound_name=>$cpd, # TODO This needs to be updated from the chebI ID to the user cpd names.
+                is_preferred_compound=>'1'
+              });
+            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
         }
                 #TODO -  take out parent relationship to the peak - cpd and test the loading.
