@@ -277,10 +277,10 @@ sub run {
   close(PEAKS);
   ###### END - Read peaks.tab into hash ######
 
-  my $size = keys %{$compoundHash};
-  print "RM - Size of hash = $size \n";
-  print STDERR Dumper $compoundHash;
-  print STDERR Dumper $preferredCompounds->{'1'};  
+  # my $size = keys %{$compoundHash};
+  # print "RM - Size of hash = $size \n";
+  # print STDERR Dumper $compoundHash;
+  # print STDERR Dumper $preferredCompounds->{'1'};  
 
   ###### Load into CompoundPeaks & CompoundPeaksChebi ######
   foreach my $peak(keys $compoundHash){
@@ -310,7 +310,6 @@ sub run {
           && (defined($preferredCompounds->{'1'}->{$chebi}->{$peak})) 
           #&& (scalar(@{$preferredCompounds->{'1'}->{$peak_id}->{$chebi}}) == 1) 
         ){ 
-          print STDERR "Here 1\n";
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){    
             print STDERR "Adding this $cpd for $isotopomer\n";
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
@@ -328,15 +327,14 @@ sub run {
         elsif( $pref eq '0'
           && defined($preferredCompounds->{'0'}->{$chebi}->{$peak})
           && !(defined($preferredCompounds->{'1'}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
-          print STDERR "OTHER LOAD: $peak, $chebi \n"; 
+          # print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
           $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
           $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
           #print STDERR "Data: $mass, $retention_time \n";  
         
-          foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){
-            # print STDERR "CPD = $cpd\n"         
+          foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){   
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
                 isotopomer=>$isotopomer,
