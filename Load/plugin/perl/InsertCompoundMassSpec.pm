@@ -264,13 +264,13 @@ sub run {
       # Or no chebi ID in the DB but more than one ID in the data.
       $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
 
-      if ( (defined($preferredCompounds->{$is_preferred_compound}->{$peak_id}->{$chebiId})) 
-      && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$peak_id}->{$chebiId}) ){
-        push $preferredCompounds->{$is_preferred_compound}->{$peak_id}->{$chebiId}, $peak_id;
+      if ( (defined($preferredCompounds->{$is_preferred_compound}->{$chebiId}->{$peak_id})) 
+      && !($peak_id ~~ $preferredCompounds->{$is_preferred_compound}->{$chebiId}->{$peak_id}) ){
+        push $preferredCompounds->{$is_preferred_compound}->{$chebiId}->{$peak_id}, $peak_id;
       }
       else{
-        $preferredCompounds->{$is_preferred_compound}->{$peak_id}->{$chebiId} = [];
-        push $preferredCompounds->{$is_preferred_compound}->{$peak_id}->{$chebiId}, $peak_id;
+        $preferredCompounds->{$is_preferred_compound}->{$chebiId}->{$peak_id} = [];
+        push $preferredCompounds->{$is_preferred_compound}->{$chebiId}->{$peak_id}, $peak_id;
       }
     } # End of foreach $chebiId 
   } #End of while(<PEAKS>)
@@ -302,13 +302,12 @@ sub run {
     # For a peak want to test if there is a preferred compound	
     foreach my $pref(keys $compoundHash->{$peak}){
       foreach my $chebi (keys $compoundHash->{$peak}->{$pref}){
-        print STDERR "Here 0\n";
         my $peakCompId = $chebi . '|'. $peak;        
         if ($chebi eq 'peak_data'){
           ;
         }    
         elsif ( $pref eq '1'           
-          && (defined($preferredCompounds->{'1'}->{$peak}->{$chebi})) 
+          && (defined($preferredCompounds->{'1'}->{$chebi}->{$peak})) 
           #&& (scalar(@{$preferredCompounds->{'1'}->{$peak_id}->{$chebi}}) == 1) 
         ){ 
           print STDERR "Here 1\n";
@@ -327,8 +326,8 @@ sub run {
           #TODO - add in set parent to the chebi id -> chebi table. 
          # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
-          && defined($preferredCompounds->{'0'}->{$peak}->{$chebi})
-          && !(defined($preferredCompounds->{'1'}->{$peak}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
+          && defined($preferredCompounds->{'0'}->{$chebi}->{$peak})
+          && !(defined($preferredCompounds->{'1'}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
           print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
