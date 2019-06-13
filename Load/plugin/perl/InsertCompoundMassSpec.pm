@@ -225,11 +225,15 @@ sub run {
     chomp $InChIKey;
     chomp $is_preferred_compound;
 
-    if (undef($$is_preferred_compound)){$is_preferred_compound = '1';}
+    if ($is_preferred_compound eq  '' ){
+      $is_preferred_compound = '1';
+      #print STDERR "Set pref to 1\n ";
+    }
 
+    print STDERR "$compound_id = compound id for peak: $peak_id\n"; 
     my $chebiIdArray = [];   	
   
-    if (defined($InChIKey)) {
+    if ( defined($InChIKey) && !($InChIKey eq '' ) ) {
       my @keys = split(/-/, $InChIKey);
 
       if ( defined($compoundInChIKeyHash->{@keys[0]}->{@keys[1]}->{@keys[2]}) ){      
@@ -247,7 +251,6 @@ sub run {
     if( scalar@{$chebiIdArray} == 0 ){
       $compoundHash->{$peak_id}->{$is_preferred_compound};
       $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity]; # Need to set this for the peaks with no chebi ID hits. 
-
     }
 
     foreach my $chebiId (@{$chebiIdArray}){
@@ -275,8 +278,9 @@ sub run {
   ###### END - Read peaks.tab into hash ######
 
   my $size = keys %{$compoundHash};
-  # print "RM - Size of hash = $size \n";
-  # print STDERR Dumper $preferredCompounds->{'1'};  
+  print "RM - Size of hash = $size \n";
+  print STDERR Dumper $compoundHash;
+  print STDERR Dumper $preferredCompounds->{'1'};  
 
   ###### Load into CompoundPeaks & CompoundPeaksChebi ######
   foreach my $peak(keys $compoundHash){
@@ -307,7 +311,8 @@ sub run {
           && (defined($preferredCompounds->{'1'}->{$peakCompId})) 
           && (scalar(@{$preferredCompounds->{'1'}->{$peakCompId}}) == 1) 
         ){ 
-          foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){             
+          foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){    
+            print STDERR "Adding this $cpd for $isotopomer\n";
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
                 isotopomer=>$isotopomer,
@@ -322,7 +327,7 @@ sub run {
          # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
           && defined($preferredCompounds->{'0'}->{$peakCompId})
-          && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161
+          && !(defined($preferredCompounds->{'1'}->{$peakCompId})) ){ # cpd 58161 #TODO test only no pref are added
           #print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
