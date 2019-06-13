@@ -302,15 +302,16 @@ sub run {
     # For a peak want to test if there is a preferred compound	
     foreach my $pref(keys $compoundHash->{$peak}){
       foreach my $chebi (keys $compoundHash->{$peak}->{$pref}){
-
+        print STDERR "Here 0\n";
         my $peakCompId = $chebi . '|'. $peak;        
         if ($chebi eq 'peak_data'){
           ;
         }    
-        elsif ( $pref eq '1' 
-          && (defined($preferredCompounds->{'1'}->{$peak_id}->{$chebi})) 
-          && (scalar(@{$preferredCompounds->{'1'}->{$peak_id}->{$chebi}}) == 1) 
+        elsif ( $pref eq '1'           
+          && (defined($preferredCompounds->{'1'}->{$peak}->{$chebi})) 
+          #&& (scalar(@{$preferredCompounds->{'1'}->{$peak_id}->{$chebi}}) == 1) 
         ){ 
+          print STDERR "Here 1\n";
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){    
             print STDERR "Adding this $cpd for $isotopomer\n";
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
@@ -326,9 +327,9 @@ sub run {
           #TODO - add in set parent to the chebi id -> chebi table. 
          # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
-          && defined($preferredCompounds->{'0'}->{$peak_id}->{$chebi})
-          && !(defined($preferredCompounds->{'1'}->{$peak_id}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
-          #print STDERR "OTHER LOAD: $peak, $chebi \n"; 
+          && defined($preferredCompounds->{'0'}->{$peak}->{$chebi})
+          && !(defined($preferredCompounds->{'1'}->{$peak}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
+          print STDERR "OTHER LOAD: $peak, $chebi \n"; 
           $mass = $compoundHash->{$peak}->{'peak_data'}[0];
           $retention_time = $compoundHash->{$peak}->{'peak_data'}[1];
           $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
