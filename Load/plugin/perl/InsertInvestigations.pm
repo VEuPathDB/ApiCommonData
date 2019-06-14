@@ -26,7 +26,7 @@ use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
 
 use Scalar::Util qw(blessed);
-
+use POSIX qw/strftime/;
 use File::Temp qw/ tempfile /;
 
 use Data::Dumper;
@@ -290,27 +290,27 @@ sub countLines {
 
 sub loadCharacteristics{
   my ($self, $charFile) = @_;
-
   my $configFile = "$charFile" . ".ctrl";
-
   my $logFile = "$charFile" . ".log";
-
-  $self->writeConfigFile($configFile, $charFile);
+  my @fields = (
+    'CHARACTERISTIC_ID SEQUENCE(MAX,1)',
+    'protocol_app_node_id',
+    'qualifier_id',
+    'unit_id',
+    'value char(2000)',
+    'ontology_term_id'
+  );
+  $self->writeConfigFile($configFile, $charFile, "Study.Characteristic", \@fields);
 
   my $login       = $self->getConfig->getDatabaseLogin();
-
   my $password    = $self->getConfig->getDatabasePassword();
-
   my $dbiDsn      = $self->getConfig->getDbiDsn();
-
   my ($dbi, $type, $db) = split(':', $dbiDsn);
-
   my $directMode = 'false';
   if ($self->countLines($charFile) > 100000){
       $directMode = 'true';
       $self->log("SQLLDR will use DIRECT path\n");
   }
-
   if($self->getArg('commit')) {
       my $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
 
@@ -1087,12 +1087,10 @@ sub loadInvestigation{
 
 
 sub writeConfigFile {
-  my ($self, $configFile, $dataFile) = @_;
+  my ($self, $configFile, $dataFile, $table, $fieldsArray) = @_;
 
-  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
-  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
-  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
-
+  my $modDate = uc(strftime("%d-%b-%Y", localtime));
+  my $fields = join(",\n", @$fieldsArray);
   my $database = $self->getDb();
   my $projectId = $database->getDefaultProjectId();
   my $userId = $database->getDefaultUserId();
@@ -1114,11 +1112,8 @@ INTO TABLE Study.Characteristic
 REENABLE DISABLED_CONSTRAINTS
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
-(protocol_app_node_id,
-qualifier_id,
-unit_id,
-value char(2000),
-ontology_term_id,
+(
+$fields,
 modification_date constant \"$modDate\",
 user_read constant $userRead,
 user_write constant $userWrite,
@@ -1129,8 +1124,7 @@ other_write constant $otherWrite,
 row_user_id constant $userId,
 row_group_id constant $groupId,
 row_project_id constant $projectId,
-row_alg_invocation_id constant $algInvocationId,
-CHARACTERISTIC_ID SEQUENCE(MAX,1)
+row_alg_invocation_id constant $algInvocationId
 )\n";
   close CONFIG;
 }
