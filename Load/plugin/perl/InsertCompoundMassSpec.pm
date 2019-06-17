@@ -325,6 +325,7 @@ sub run {
           #TODO - add in set parent to the chebi id -> chebi table. 
          # If there is no pref compound load all the other compounds. 
         elsif( $pref eq '0'
+          && !(defined($compoundHash->{$peak}->{'1'}))
           && defined($preferredCompounds->{'0'}->{$chebi}->{$peak})
           && !(defined($preferredCompounds->{'1'}->{$chebi})) ){ # cpd 58161 #TODO test only no pref are added
           # print STDERR "OTHER LOAD: $peak, $chebi \n"; 
