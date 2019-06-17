@@ -353,9 +353,9 @@ sub run {
               is_preferred_compound=>'0'
             });
 
-            $compoundPeaksChebiRow->setParent($compoundPeaksRow);
-            $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
-          }
+          $compoundPeaksChebiRow->setParent($compoundPeaksRow);
+          $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
+          
         }
       } # End foreach $pref        
     } # End foreach $chebi
