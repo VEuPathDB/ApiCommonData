@@ -259,7 +259,7 @@ sub run {
       if( !(defined($compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId})) ){ 
         $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId} = [];
         push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; }
-      else {push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; } 
+      else{push $compoundHash->{$peak_id}->{$is_preferred_compound}->{$chebiId}, $InChIKey; } 
       #TODO will this work with more than one chebi ID in our DB. 
       # Or no chebi ID in the DB but more than one ID in the data.
       $compoundHash->{$peak_id}->{'peak_data'} = [$mass, $retention_time, $isotopomer, $ms_polarity];
@@ -279,8 +279,8 @@ sub run {
 
   # my $size = keys %{$compoundHash};
   # print "RM - Size of hash = $size \n";
-  # print STDERR Dumper $compoundHash;
-  # print STDERR Dumper $preferredCompounds->{'1'};  
+  print STDERR Dumper $compoundHash;
+  print STDERR Dumper $preferredCompounds->{'1'};  
 
   ###### Load into CompoundPeaks & CompoundPeaksChebi ######
   foreach my $peak(keys $compoundHash){
@@ -334,14 +334,25 @@ sub run {
           $isotopomer = $compoundHash->{$peak}->{'peak_data'}[2];
           $ms_polarity = $compoundHash->{$peak}->{'peak_data'}[3]; 
           #print STDERR "Data: $mass, $retention_time \n";  
-        
-          foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){   
-            my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
-                compound_id=>$chebi,
-                isotopomer=>$isotopomer,
-                user_compound_name=>$cpd,
-                is_preferred_compound=>'0'
-              });
+
+          ## This loads all the compounds in the hash - however they can duplicate if using InChIKeys. 
+          ## At the moment they are never seen on the site - so only loading the first value. 
+          # foreach my $cpd (@{$compoundHash->{$peak}->{'0'}->{$chebi}}){   
+          #   my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+          #       compound_id=>$chebi,
+          #       isotopomer=>$isotopomer,
+          #       user_compound_name=>$cpd,
+          #       is_preferred_compound=>'0'
+          #     });         
+
+          ### Loads only one compound per chebi id. 
+          my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
+              compound_id=>$chebi,
+              isotopomer=>$isotopomer,
+              user_compound_name=>@{$compoundHash->{$peak}->{'0'}->{$chebi}}[0],
+              is_preferred_compound=>'0'
+            });
+
             $compoundPeaksChebiRow->setParent($compoundPeaksRow);
             $compoundPeaksRow->addToSubmitList($compoundPeaksChebiRow);
           }
