@@ -174,7 +174,13 @@ sub run {
                                    ,'DrugBank'
                                    ,'MetaCyc'
                                    ,'Chemspider'
-                                   )";
+                                   )                                   
+                        UNION
+                          select  
+                            c.id  as MYID,
+                            c.chebi_accession as MYKEY
+                            from 
+                            chebi.compounds c";
   
   my $dbh = $self->getQueryHandle();
 
