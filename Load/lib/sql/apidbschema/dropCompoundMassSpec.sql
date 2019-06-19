@@ -24,7 +24,3 @@ WHERE lower(name) = lower('CompoundPeaks')
   AND database_id = (SELECT database_id
                      FROM core.DatabaseInfo 
                      WHERE lower(name) = 'apidb');
-                            
------------
-
-exit;
