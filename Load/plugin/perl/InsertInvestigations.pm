@@ -1129,17 +1129,16 @@ sub sideloadStudy {
     $gusStudy->setDescription($description);
     my $studyId = $gusStudy->getId();
     my $invId = $gusStudy->getInvestigationId();
-    my $firstpass=1;
     while($study->hasMoreData()) {
 	  	$inv->parseStudy($study);
-      if($firstpass){
-        $inv->dealWithAllOntologies();
-        $self->checkProtocolsAndSetIds($study->getProtocols());
-        my $iOntologyTermAccessions = $inv->getOntologyAccessionsHash();
-        $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
-        $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-        $firstpass=0;
-      }
+      ## We must update the cached ontology terms for each batch of rows from a study
+      ## (Not every batch will use all ontology terms needed later for loading Characteristics)
+      $inv->dealWithAllOntologies();
+      $self->checkProtocolsAndSetIds($study->getProtocols());
+      my $iOntologyTermAccessions = $inv->getOntologyAccessionsHash();
+      $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
+      $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
+      ##
 	  	my $edges = $study->getEdges();
       push(@$alledges, @$edges);
 	  	my $prots = $study->getProtocols();
