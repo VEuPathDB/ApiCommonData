@@ -1,0 +1,276 @@
+<!--
+The feature and qualifier names to use here follow those set by BioPerl's
+tree structure and any reshaping/renaming done by bioperlSeqPreprocessor, not
+necessarily by what's defined in the input (eg. Genbank) file
+-->
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::GeneAndMixSubFeatsGroupTagGene2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::gus4SpecialCaseQualifierHandlers"/>
+
+
+
+  <feature name="coding_gene" so="protein_coding">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <qualifier name="gene"           handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="codon_start" ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"           ignore="true"/>
+    <qualifier name="transl_except"        ignore="true"/>
+    <qualifier name="translation"          ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_process" ignore="true"/>
+    <qualifier name="GO_function" ignore="true"/>
+    <qualifier name="function" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
+    <qualifier name="pseudo"         ignore="true"/>
+  </feature>
+
+  <feature name="pseudo_gene" so="pseudogene">
+    <qualifier name="gene"     handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="codon_start" ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="EC_number"			ignore="true"/>
+    <qualifier name="protein_id"           ignore="true"/>
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_process" ignore="true"/>
+    <qualifier name="GO_function" ignore="true"/>
+    <qualifier name="function" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
+    <qualifier name="pseudo"         handler="api" method="setPseudo"/>
+  </feature>
+
+  <!-- genebank gene feature reshaped into new coding_gene, so ignore this feature -->
+  <feature name="gene" ignore="true">
+    <qualifier name="locus_tag"/>
+    <qualifier name="note"/>
+  </feature>
+
+  <feature name="tRNA_gene" so="tRNA_encoding">
+    <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"		ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="selenocysteine"       ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+  </feature>
+
+  <feature name="rRNA_gene" so="rRNA_encoding">
+    <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="inference"  ignore="true"/>
+    <qualifier name="note"			ignore="true"/>
+    <qualifier name="transcript_id"			ignore="true"/>
+  </feature>
+
+  <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+  </feature>
+
+  <feature name="snRNA_gene" so="snoRNA_encoding">
+    <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+  </feature>
+
+  <feature name="misc_RNA_gene" so="non_protein_coding">
+    <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeqAndTranslatedAAFeat"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+  </feature>
+
+  <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
+    <qualifier name="gene" column="source_id"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="curation" ignore="true"/>
+    <qualifier name="rpt_family"/>
+    <qualifier name="rpt_type"/>
+    <qualifier name="rpt_unit_seq" handler="api" method="rptUnit"/>
+    <qualifier name="comment_Nterm" handler="api" method="commentNterm"/>
+    <qualifier name="blastn_file"            ignore="true"/>
+    <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="fasta_file"             ignore="true"/>
+    <qualifier name="FEAT_NAME"              ignore="true"/>
+  </feature>
+
+  <feature name="source" table="DoTS::Source" so="">
+    <qualifier name="chromosome"/>
+    <qualifier name="collected_by"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="host"			ignore="true"/>
+    <qualifier name="isolate"/>
+    <qualifier name="isolation_source"      ignore="true"/>
+    <qualifier name="mol_type" ignore="true"/>
+    <qualifier name="organism"/>
+    <qualifier name="serotype"/>
+    <qualifier name="strain"/>
+    <qualifier name="dev_stage"/>
+    <qualifier name="sub_species"/>
+    <qualifier name="country" ignore="true"/>
+    <qualifier name="specific_host" ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="tissue_type" ignore="true"/>
+    <qualifier name="cell_type" ignore="true"/>
+    <qualifier name="clone" ignore="true"/>
+    <qualifier name="clone_lib" ignore="true"/>
+    <qualifier name="haplotype" ignore="true"/>
+  </feature>
+
+  <feature name="unsure" ignore="true">
+  </feature>
+
+  <feature name="variation" table="DoTS::Miscellaneous" so="">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note"                ignore="true"/>
+  </feature>
+
+  <feature name="mRNA" so="mRNA">
+    <qualifier name="gene" ignore="true"/>  <!-- load transcriptID that generated by ISF -->
+    <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_start"		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="exception"			ignore="true"/>
+    <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"		ignore="true"/>
+    <qualifier name="transcript_id"			ignore="true"/>
+    <qualifier name="transl_table"         handler="api" method="transcriptTransTable"/> 
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"              handler="api" method="setPartial"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="tRNA" so="tRNA">
+    <qualifier name="gene" ignore="true"/>  <!-- load transcriptID that generated by ISF -->
+    <qualifier name="anticodon"			handler="api" method="anticodon"/>
+    <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_start"		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="inference"			ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"		ignore="true"/>
+    <qualifier name="transl_table"         handler="api" method="transcriptTransTable"/> 
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"              handler="api" method="setPartial"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="rRNA" so="rRNA">
+    <qualifier name="gene" ignore="true"/>  <!-- load transcriptID that generated by ISF -->
+    <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_start"		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="inference"			ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"		ignore="true"/>
+    <qualifier name="transcript_id"		ignore="true"/>
+    <qualifier name="transl_table"         handler="api" method="transcriptTransTable"/> 
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"              handler="api" method="setPartial"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="snoRNA" so="snoRNA">
+    <qualifier name="gene" ignore="true"/>  <!-- load transcriptID that generated by ISF -->
+    <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_start"		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="inference"			ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"		ignore="true"/>
+    <qualifier name="transcript_id"		ignore="true"/>
+    <qualifier name="transl_table"         handler="api" method="transcriptTransTable"/> 
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"              handler="api" method="setPartial"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="snRNA" so="snRNA">
+    <qualifier name="gene" ignore="true"/>  <!-- load transcriptID that generated by ISF -->
+    <qualifier name="CDSLength"			ignore="true"/>
+    <qualifier name="codon_start"		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="function"			ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
+    <qualifier name="inference"		ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="protein_id"		ignore="true"/>
+    <qualifier name="transcript_id"		ignore="true"/>
+    <qualifier name="transl_table"         handler="api" method="transcriptTransTable"/> 
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="partial"              handler="api" method="setPartial"/>
+    <qualifier name="pseudo"               handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="exon">
+    <qualifier name="gene"  ignore="true"/>
+    <qualifier name="CodingStart"    ignore="true"/>
+    <qualifier name="CodingEnd"      ignore="true"/>
+    <qualifier name="OrderNumber"    ignore="true"/>
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="type" ignore="true"/>
+  </feature>
+
+  <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="pseudo" handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="misc_feature_gene" so="sequence_feature">
+    <qualifier name="gene" column="source_id"/>
+    <qualifier name="locus_tag"  ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
+  </feature>
+  
+  <feature name="polyA_site" so="polyA_site" ignore="true">
+  </feature>
+
+</mapping>
