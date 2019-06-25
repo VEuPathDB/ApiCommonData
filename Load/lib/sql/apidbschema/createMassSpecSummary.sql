@@ -69,5 +69,4 @@ FROM dual,
 WHERE 'massspecsummary' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-
 exit;
