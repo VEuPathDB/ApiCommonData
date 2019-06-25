@@ -111,7 +111,7 @@ sub new {
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
 		      documentation     => $documentation});
-
+ 
   return $self;
 }
 
@@ -124,7 +124,6 @@ sub run {
   $dbiDatabase->setDoNotUpdateAlgoInvoId(1);
 
   my $configFile = $self->getArg('configFile');
-
   open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
   my $header = <CONFIG>;
@@ -135,7 +134,6 @@ sub run {
     chomp;
 
     my ($nodeName, $file, $sourceIdType, $inputProtocolAppNodeNames, $protocolName,  $protocolParamValues, $studyName) = split(/\t/, $_);
-
     my $investigation = $self->makeStudy($self->getArg('studyName'));
 
     my @investigationLinks = $investigation->getChildren('Study::StudyLink');
@@ -165,7 +163,7 @@ sub run {
 
     my $protocolAppNode = $self->makeProtocolAppNode($nodeName, $existingStudyAppNodes, $nodeOrderNum, $appNodeType);
 
-   my $protocol = $self->makeProtocol($protocolType);
+    my $protocol = $self->makeProtocol($protocolType);
 
     my $protocolApp =  GUS::Model::Study::ProtocolApp->new();
     $protocolApp->setParent($protocol);
@@ -273,13 +271,14 @@ sub addResults {
   elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
     $tableString = "ApiDB::WHOStandards";
   }
-
+  elsif ($protocolName eq "compoundMassSpec") {
+    $tableString = "ApiDB::CompoundMassSpecResult"; 
+  }
   else {
     $tableString = "Results::NAFeatureExpression";
   }
 
   my $class = "GUS::Model::$tableString";
-
   eval "require $class";
   if($@) {
     $self->error($@);
@@ -296,7 +295,6 @@ sub addResults {
     chomp;
 
     my @a = split(/\t/, $_);
-
     my ($hash, $start);
     if ($sourceIdType =~ /segment/ || $sourceIdType =~ /NASequence/) {
         my $naSequenceId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -329,16 +327,16 @@ sub addResults {
         $start = 1;
     }
 
-    elsif ($sourceIdType =~ /compound/) {
-
-      my ($chebi, $isotopomer) = split(/\|/, $a[0]);
-
-      my $reporterId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
-      $hash = { compound_id => $reporterId ,
-                isotopomer => $isotopomer,
-      };
-      $start = 1;
-    }
+#    elsif ($sourceIdType =~ /compound/) { #ROSS - need to delete this? Only for Llinas?
+	#
+	# my ($chebi, $isotopomer) = split(/\|/, $a[0]);
+	#
+	# my $reporterId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
+	# $hash = { compound_id => $reporterId ,
+	#           isotopomer => $isotopomer,
+	# };
+	# $start = 1;
+	# }
 
     elsif ($sourceIdType =~ /literal/) {
 	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
@@ -352,8 +350,23 @@ sub addResults {
       $start = 1;
     }
 
-
-
+	elsif($sourceIdType =~ /compound_MassSpec/){   #ROSS - also from config file.
+	  
+	  @a = split(/\t/, $_);
+	  # There are two ways of mapping peaks to compounds - peakID or mass/rt pairs. This passes the values into an array used below to query the DB. -- This is now only one way - using all 3 pieces of data.
+	  my @massRTSplit = split(/\|/,$a[0]);
+	  my @peakMassRT =[@massRTSplit[0], @massRTSplit[1], @massRTSplit[2]];  
+	  my $compoundPeaksID = $self->lookupIdFromSourceId(@peakMassRT, $sourceIdType);
+	  #print STDERR "Compound Peaks Id: $compoundPeaksID \n";
+	  my $percentile = $a[1];
+	  my $standard_error = $a[2]; 
+	  $hash->{compound_peaks_id} = $compoundPeaksID;
+	  $hash->{percentile} = $percentile;
+	  $hash->{standard_error} = $standard_error;
+	  #print STDERR "################\n\n";
+	  #print STDERR Dumper $hash; 
+	  $start = 3; 
+	}
 
     else {
         my $naFeatureId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
@@ -381,7 +394,6 @@ sub addResults {
     }
 
     $result->setParent($protocolAppNode);
-
     $result->submit();
 
     $self->undefPointerCache();
@@ -452,6 +464,30 @@ sub lookupIdFromSourceId {
 
     $rv = @compoundIds[0];
   }
+
+  elsif($sourceIdType eq "compound_MassSpec"){
+
+    #my $peakMapping =  $self->getArg('hasPeakMappingID');
+    my $compoundPeaksExtDbRlsId = $self->getExtDbRlsId($self->getArg('extDbSpec'));
+ 	my @compoundPeaksID; 
+	my $peakID = @$sourceId[0];
+    my $mass = @$sourceId[1];
+	my $rt = @$sourceId[2];
+    @compoundPeaksID = $self->sqlAsArray(Sql=> "select cp.compound_peaks_id from ApiDB.CompoundPeaks cp
+  													where cp.peak_id = $peakID
+													and cp.mass = '$mass'
+													and cp.retention_time = '$rt'
+												    and cp.external_database_release_id = $compoundPeaksExtDbRlsId"); 
+  
+    
+									#print STDERR "Ross $peakID, $mass, $rt  ";									
+									#print STDERR Dumper @compoundPeaksID;
+    unless (scalar @compoundPeaksID == 1){
+      die "Number of Compoud Peaks returned should be 1\n."
+    }
+	  $rv = @compoundPeaksID[0];
+  }
+
 
   # USES Name instead of source_id here
   elsif ($sourceIdType eq 'haploblock') {
@@ -658,6 +694,9 @@ sub undoTables {
     'ApiDB.PHENOTYPESCORE',
     'ApiDB.PhenotypeGrowthRate',
     'ApiDB.WHOSTANDARDS',
+	'ApiDB.CompoundMassSpecResult',  
+	'ApiDB.CompoundPeaksChebi',  
+	'ApiDB.CompoundPeaks',  
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
