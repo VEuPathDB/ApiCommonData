@@ -285,8 +285,8 @@ sub run {
 
   # my $size = keys %{$compoundHash};
   # print "RM - Size of hash = $size \n";
-  print STDERR Dumper $compoundHash;
-  print STDERR Dumper $preferredCompounds->{'1'};  
+  # print STDERR Dumper $compoundHash;
+  # print STDERR Dumper $preferredCompounds->{'1'};  
 
   ###### Load into CompoundPeaks & CompoundPeaksChebi ######
   foreach my $peak(keys $compoundHash){
@@ -317,7 +317,7 @@ sub run {
           #&& (scalar(@{$preferredCompounds->{'1'}->{$peak_id}->{$chebi}}) == 1) 
         ){ 
           foreach my $cpd (@{$compoundHash->{$peak}->{'1'}->{$chebi}}){    
-            print STDERR "Adding this $cpd for $isotopomer\n";
+				  # print STDERR "Adding this $cpd for $isotopomer\n";
             my $compoundPeaksChebiRow = GUS::Model::ApiDB::CompoundPeaksChebi->new({
                 compound_id=>$chebi,
                 isotopomer=>$isotopomer,
