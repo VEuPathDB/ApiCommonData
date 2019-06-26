@@ -8,7 +8,6 @@ my ($verbose, $help, $inputGffFile, $outputGffFile, $proteinFile, $idSuffix, $tr
 
 &GetOptions('help|h' => \$help,
             'inputGffFile=s' => \$inputGffFile,
-            'outputGffFile=s' => \$outputGffFile,
             'proteinFile=s' => \$proteinFile,
             'idSuffix=s' => \$idSuffix,
             'translTable=s' => \$translTable,
@@ -56,6 +55,7 @@ while (<INN>) {
   #$items[8] =~ s/cds_//;  ## only need with special case
   if ($items[2] eq 'mRNA') {
     if ($items[8] =~ /ID \"(\S+?)\"/) {
+#    if ($items[8] =~ /Parent \"(\S+?)\"/) {  ## for these protein sequences named by gene ID
       $items[8] .= "transl_table \"$translTable\"\;" if ($translTable);
       $items[8] .= "transl_table \"$translTables{$1}\"\;" if ($translTables{$1});
       $items[8] .= "translation \"$proteins{$1}\"\;";
@@ -79,7 +79,6 @@ addProteinSeqs2GffFile.pl --inputGffFile whole_genome.gff.prev --proteinFile C_a
 
 where
   --inputGffFile: required, the input gff file name
-  --outputGffFile: the output gff file name
   --proteinFile: required, the protein file name
   --idSuffix: transcript Ids in the gff file have a id Suffix compare to the gene Ids in the protein file
   --translTable: the translation table for sepecial organism
