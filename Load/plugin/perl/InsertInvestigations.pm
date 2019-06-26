@@ -282,10 +282,10 @@ sub run {
 
 sub countLines {
   my ($self, $charFile) = @_;
-	open(FILE, "<", $charFile);
-	my $count += tr/\n/\n/ while sysread(FILE, $_, 2 ** 16);
-	close(FILE);
-	return $count;
+  open(FILE, "<", $charFile);
+  my $count += tr/\n/\n/ while sysread(FILE, $_, 2 ** 16);
+  close(FILE);
+  return $count;
 }
 
 sub loadCharacteristics{
@@ -315,13 +315,13 @@ sub loadCharacteristics{
       my $exitstatus = system("sqlldr $login/$password\@$db control=$configFile log=$logFile rows=1000 direct=$directMode");
 
       if($exitstatus != 0){
-	  die "ERROR: sqlldr returned exit status $exitstatus";
+    die "ERROR: sqlldr returned exit status $exitstatus";
       }
 
       open(LOG, $logFile) or die "Cannot open log file $logFile: $!";
 
       while(<LOG>) {
-	  $self->log($_);
+    $self->log($_);
       }
       close LOG;
 
