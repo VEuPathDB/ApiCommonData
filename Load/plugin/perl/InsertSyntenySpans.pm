@@ -31,7 +31,7 @@ use GUS::Model::DoTS::NASequence;
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::SyntenyAnchor;
 use GUS::Model::ApiDB::SyntenicGene;
-use GUS::Model::ApiDB::SyntenicScale;
+#use GUS::Model::ApiDB::SyntenicScale;
 
 use CBIL::Util::V;
 
@@ -46,9 +46,6 @@ use Bio::Location::Simple;
 use POSIX;
 
 use Data::Dumper;
-
-
-my $SYNTENIC_SCALE_CUTOFF = 1.5;
 
 my $argsDeclaration = 
   [
@@ -170,20 +167,11 @@ sub run {
   my $count = 0;
 
   my $dbh = $self->getQueryHandle(); 
-  $self->{_syntenic_genes_sh} = $dbh->prepare("with genes as (
-select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
+  $self->{_syntenic_genes_sh} = $dbh->prepare("select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
                                                  from apidb.featurelocation
                                                 where na_sequence_id = ? and end_max >= ? and start_min <= ?
                                                  and feature_type in ('GeneFeature')
-                                                 and is_top_level = 1
-)
-select * from genes
-union
-select fl.sequence_source_id, fl.feature_source_id, fl.feature_type, fl.na_feature_id, fl.start_min, fl.end_max, fl.is_reversed, fl.parent_id
-                                                 from apidb.featurelocation fl, genes
-                                                 where fl.feature_type in ('ExonFeature')
-                                                 and is_top_level = 1
-                                                 and genes.na_feature_id = fl.parent_id");
+                                                 and is_top_level = 1");
 
 
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
@@ -656,20 +644,6 @@ sub createSyntenicGenesInReferenceSpace {
     my $refLength = abs($refLocEnd - $refLocStart) + 1;
     my $synLength = abs($synLocEnd - $synLocStart) + 1;
 
-    my $scale = $refLength > $synLength ? $refLength / $synLength : -1 * ($synLength / $refLength);
-
-
-    if(abs($scale) > $SYNTENIC_SCALE_CUTOFF) {
-      my $syntenicScaleObj = GUS::Model::ApiDB::SyntenicScale->new({na_sequence_id => $refNaSequenceId,
-                                                                    start_min => $refLocStart < $refLocEnd ? $refLocStart : $refLocEnd,
-                                                                    end_max => $refLocStart < $refLocEnd ? $refLocEnd : $refLocStart,
-                                                                    scale => $scale,
-                                                                    ref_length => $refLength,
-                                                                    syn_length => $synLength,
-                                                                    syn_organism_abbrev => $synOrganismAbbrev});
-      $syntenicScaleObj->setParent($syntenyObj);
-    }
-
     while($loc && (($loc >= $synLocStart && $loc <= $synLocEnd) || ($i == 1 && $loc < $synLocStart) || ($i == $length-1 && $loc > $synLocEnd))) {
       my $synPct = ($loc - $synLocStart + 1) / ($synLocEnd - $synLocStart + 1);
 
@@ -757,23 +731,6 @@ sub mapSyntenicGeneCoords {
 
 }
 
-#--------------------------------------------------------------------------------
-
-sub mapSyntenicExonCoords {
-  my ($self, $exonPosition, $origGeneStart, $origGeneEnd, $geneStart, $geneEnd) = @_;
-
-  if($exonPosition == $origGeneStart) {
-    return $geneStart;
-  }
-  if($exonPosition == $origGeneEnd) {
-    return $geneEnd;
-  }
-
-  my $origProportion = (($exonPosition - $origGeneStart + 1) / ($origGeneEnd - $origGeneStart + 1));
-  my $lengthToExonPosition = ($geneEnd - $geneStart + 1) * $origProportion;
-
-  return ceil($geneStart + $lengthToExonPosition);
-}
 
 #--------------------------------------------------------------------------------
 
@@ -790,36 +747,12 @@ sub loadSyntenicGene {
   my $geneLength = $geneEnd - $geneStart - 1;
   my $mappedLength = $mappedEnd - $mappedStart - 1;
 
-  # do not let the mapped length expand bigger than the original gene size.
-  if($mappedLength > $geneLength) {
-    my $mappedMidpoint = floor($mappedLength/2) + $mappedStart;
-    my $halfGeneLength = floor($geneLength / 2);
-
-    $mappedStart = $mappedMidpoint - $halfGeneLength;
-    $mappedEnd = $mappedMidpoint + $halfGeneLength;
-  }
-
-  my (@tstartsAr, @blocksizesAr);
-  
-  foreach my $exon (sort { $a->{START_MIN} <=> $b->{START_MIN}} @{$gene->{exons}}) {
-    my $eStart= $self->mapSyntenicExonCoords($exon->{START_MIN}, $geneStart, $geneEnd, $mappedStart, $mappedEnd);
-    my $eEnd= $self->mapSyntenicExonCoords($exon->{END_MAX}, $geneStart, $geneEnd, $mappedStart, $mappedEnd);
-
-    push(@tstartsAr, $eStart); 
-    push(@blocksizesAr, $eEnd - $eStart + 1);
-  }
-
   my $synNaFeatureId = $geneRow->{NA_FEATURE_ID};
-
-  my $tstarts = join(",", @tstartsAr);
-  my $blocksizes = join(",", @blocksizesAr);
 
   my $syntenicGeneObj = GUS::Model::ApiDB::SyntenicGene->new({na_sequence_id => $refNaSequenceId,
                                                              start_min => $mappedStart,
                                                              end_max => $mappedEnd,
                                                              is_reversed => $isReversed,
-                                                             tstarts => $tstarts,
-                                                             blocksizes => $blocksizes,
                                                              syn_na_feature_id => $synNaFeatureId,
                                                              syn_organism_abbrev => $synOrganismAbbrev});
 
@@ -848,16 +781,10 @@ sub getSyntenicGenes {
     my $start = $hash->{START_MIN};
     my $end = $hash->{END_MAX};
 
+    $rows{$id}->{gene} = $hash;
 
-    if($hash->{FEATURE_TYPE} eq 'GeneFeature') {
-      $rows{$id}->{gene} = $hash;
-
-      $locations{$start}++;
-      $locations{$end}++;
-    }
-    else {
-      push @{$rows{$parent}->{exons}}, $hash;
-    }
+    $locations{$start}++;
+    $locations{$end}++;
   }
 
   $sh->finish();
