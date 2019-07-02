@@ -107,7 +107,7 @@ while(<$fh>) { # TODO:  need example of how this looks
     $idIndex = 0;
     $fpkmIndex = 1;
   } else {
-    markDatasetInvalid($dbh, $userDatasetId, "unrecognized header record: \"$header\"");
+    markDatasetInvalid($dbh, $userDatasetId, "unrecognized header record. Not a valid FPKM file.");
   }
 
   while(<DAT>) {
