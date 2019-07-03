@@ -52,6 +52,36 @@ my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
     VALUES (ApiDBUserDatasets.UD_NaFeatureExpression_sq.nextval,?,?,?)
 EOF
 
+my $unswitchProfiles = $dbh->prepare(<<EOF);
+update apidbUserDatasets.ud_ProfileSet
+set name = case name
+             when 'sense' then 'antisense'
+             when 'antisense' then 'sense'
+             else name
+           end
+where user_dataset_id = ?
+  and user_dataset_id
+      in (select sense.user_dataset_id
+          from (select ps.user_dataset_id, median(nfe.value) as median
+                from apidbUserDatasets.ud_NAFeatureExpression nfe,
+                     apidbUserDatasets.ud_ProfileSet ps,
+                     apidbUserDatasets.ud_ProtocolAppNode pan
+                where ps.name = 'sense'
+                  and ps.profile_set_id = pan.profile_set_id
+                  and pan.protocol_app_node_id = nfe.protocol_app_node_id
+                group by ps.user_dataset_id, ps.name) sense,
+               (select ps.user_dataset_id, median(nfe.value) as median
+                from apidbUserDatasets.ud_NAFeatureExpression nfe,
+                     apidbUserDatasets.ud_ProfileSet ps,
+                     apidbUserDatasets.ud_ProtocolAppNode pan
+                where ps.name = 'antisense'
+                  and ps.profile_set_id = pan.profile_set_id
+                  and pan.protocol_app_node_id = nfe.protocol_app_node_id
+                group by ps.user_dataset_id, ps.name) antisense
+          where sense.user_dataset_id = antisense.user_dataset_id
+            and sense.median < antisense.median)
+EOF
+
 
 my %profileSetIds;
 
@@ -124,7 +154,7 @@ while(<$fh>) { # TODO:  need example of how this looks
     unless(%geneIds) {
       &makeGeneSourceIdMapping($sourceId, $dbh);
     }
-    
+
     my $naFeatureId = $geneIds{$sourceId};
     unless($naFeatureId) {
       print "WARN: Could not find an na_feature_id for source_id $sourceId";
@@ -140,6 +170,8 @@ while(<$fh>) { # TODO:  need example of how this looks
   $dbh->commit;
   $orderNum++;
 }
+
+$unswitchProfiles->execute($userDatasetId);
 
 $dbh->commit;
 
