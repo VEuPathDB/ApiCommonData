@@ -555,10 +555,11 @@ sub undoTable {
 
 
   my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
-        where $primaryKeyColumn not in (select primary_key 
+        where primary_key not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
                                         where database_orig = '$database' 
                                         and table_name = '$abbreviatedTable')
+          and table_name='$abbreviatedTable'
         ";
 
 
