@@ -448,7 +448,7 @@ sub loadPrimaryKeyTableForUndo {
   my $attributeInfo = $tableInfo->{attributeInfo};    
 
   my ($pkInfo) = grep { lc($_->{'col'}) eq lc($primaryKeyColumn) } @$attributeInfo;
-  my $prec = $pkInfo->{'prec'};
+  my $prec = $pkInfo->{'prec'} || 12; ## a default precision for primary key
 
   $dbh->do("create table $primaryKeyTableName ($primaryKeyColumn number($prec), primary key($primaryKeyColumn))")  or die $dbh->errstr;;
 
