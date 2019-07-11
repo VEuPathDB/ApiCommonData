@@ -422,13 +422,16 @@ sub hasRowsToDelete {
   my $tableName = $tableInfo->{fullTableName};
   my $primaryKeyColumn = $tableInfo->{primaryKey};
   my $abbreviatedTable = &getAbbreviatedTableName($tableName, "::");
+  my $abbreviatedTablePeriod = &getAbbreviatedTableName($tableName, ".");
 
   my $countAlreadyMapped = $self->queryForCountMappedOrigPk($database, $abbreviatedTable);
 
   # count from input db where pk <= maxPkValue already mapped
   my $inputTableRowCount = $tableReader->getTableCount($tableName, $primaryKeyColumn, $maxPkOrig);
 
-  if($inputTableRowCount == $countAlreadyMapped) {
+  my $countPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'count');
+
+  if($inputTableRowCount == $countAlreadyMapped && $inputTableRowCount == $countPrimaryKey) {
     return 0;
   }
   return 1;
@@ -504,6 +507,8 @@ sub deleteFromTable {
     $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
     last if $rtnVal < $chunkSize;
   }
+
+  $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
 
   return $rowsDeleted;
 }
@@ -725,23 +730,23 @@ sub pkOrigFunctions {
 }
 
 
-sub queryForMaxPK {
-  my ($self, $tableName, $primaryKey) = @_;
+sub queryForPKAggFxn {
+  my ($self, $tableName, $primaryKey, $function) = @_;
 
-  my $sql = "select max($primaryKey) from $tableName";
+  my $sql = "select ${function}($primaryKey) from $tableName";
 
   my $dbh = $self->getQueryHandle();  
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  my ($max) = $sh->fetchrow_array();
+  my ($value) = $sh->fetchrow_array();
 
-  unless($max) {
+  unless($value) {
     return 0;
   }
 
-  return $max;
+  return $value;
 }
 
 
@@ -987,7 +992,7 @@ sub loadTable {
 
 
 
-  my $maxPrimaryKey = $self->queryForMaxPK($abbreviatedTablePeriod, $primaryKeyColumn);
+  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
