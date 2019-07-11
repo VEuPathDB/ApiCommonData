@@ -549,14 +549,30 @@ sub undoTable {
              and primary_key_orig not in (select $primaryKeyColumn from $primaryKeyTableName)";
 
 
-  # TODO:  Should not delete global row if other rows point to it
-
-  my $deleteSql = "delete from $abbreviatedTablePeriod
+  my $deleteSql;
+  if($tableName =~ /GUS::Model::Core::Algorithm/) {
+    $deleteSql = "delete from $abbreviatedTablePeriod
+        where $primaryKeyColumn not in (select primary_key 
+                                        from $MAPPING_TABLE_NAME
+                                        where database_orig = '$database' 
+                                        and table_name = '$abbreviatedTable'
+                                        UNION
+                                        select $primaryKeyColumn 
+                                        from $abbreviatedTablePeriod t, core.projectinfo p
+                                        where t.row_project_id = p.project_id
+                                        and p.name not in ('UniDB', 'Database administration')
+                                       )
+        ";
+  }
+  else {
+  $deleteSql = "delete from $abbreviatedTablePeriod
         where $primaryKeyColumn not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
                                         where database_orig = '$database' 
                                         and table_name = '$abbreviatedTable')
         ";
+
+  }
 
 
   my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
