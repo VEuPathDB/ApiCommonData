@@ -285,7 +285,7 @@ sub rebuildIndexesAndEnableConstraints {
 sub rebuildIndexes {
   my ($self, $owner, $tableName) = @_;
 
-  my $sql = "select index_name from all_indexes where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
+  my $sql = "select index_name from all_indexes where upper(table_owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
 
   my $alterSql = "alter index ${owner}.${PLACEHOLDER_STRING} rebuild nologging";
 
@@ -550,12 +550,11 @@ sub undoTable {
 
 
   my $deleteSql;
-  if($tableName =~ /GUS::Model::Core::Algorithm/) {
+  if($tableName =~ /GUS::Model::Core/) {
     $deleteSql = "delete from $abbreviatedTablePeriod
         where $primaryKeyColumn not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
-                                        where database_orig = '$database' 
-                                        and table_name = '$abbreviatedTable'
+                                        where table_name = '$abbreviatedTable'
                                         UNION
                                         select $primaryKeyColumn 
                                         from $abbreviatedTablePeriod t, core.projectinfo p
@@ -568,8 +567,7 @@ sub undoTable {
   $deleteSql = "delete from $abbreviatedTablePeriod
         where $primaryKeyColumn not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
-                                        where database_orig = '$database' 
-                                        and table_name = '$abbreviatedTable')
+                                        where table_name = '$abbreviatedTable')
         ";
 
   }
@@ -578,8 +576,7 @@ sub undoTable {
   my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
         where primary_key not in (select primary_key 
                                         from $MAPPING_TABLE_NAME
-                                        where database_orig = '$database' 
-                                        and table_name = '$abbreviatedTable')
+                                        where table_name = '$abbreviatedTable')
           and table_name='$abbreviatedTable'
         ";
 
