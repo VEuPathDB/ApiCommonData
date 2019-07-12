@@ -557,7 +557,7 @@ sub undoTable {
               MINUS select primary_key 
                 from $MAPPING_TABLE_NAME
                 where table_name = '$abbreviatedTable'
-              MINUS select $primaryKeyColumn 
+              MINUS select t.$primaryKeyColumn 
                 from $abbreviatedTablePeriod t, core.projectinfo p
                 where t.row_project_id = p.project_id
                 and p.name in ('UniDB', 'Database administration')
