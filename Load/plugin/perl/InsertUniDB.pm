@@ -559,7 +559,7 @@ sub undoTable {
                                         select $primaryKeyColumn 
                                         from $abbreviatedTablePeriod t, core.projectinfo p
                                         where t.row_project_id = p.project_id
-                                        and p.name not in ('UniDB', 'Database administration')
+                                        and p.name in ('UniDB', 'Database administration')
                                        )
         ";
   }
