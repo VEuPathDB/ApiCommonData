@@ -552,31 +552,37 @@ sub undoTable {
   my $deleteSql;
   if($tableName =~ /GUS::Model::Core/) {
     $deleteSql = "delete from $abbreviatedTablePeriod
-        where $primaryKeyColumn not in (select primary_key 
-                                        from $MAPPING_TABLE_NAME
-                                        where table_name = '$abbreviatedTable'
-                                        UNION
-                                        select $primaryKeyColumn 
-                                        from $abbreviatedTablePeriod t, core.projectinfo p
-                                        where t.row_project_id = p.project_id
-                                        and p.name in ('UniDB', 'Database administration')
-                                       )
-        ";
+          where $primaryKeyColumn in (
+            select $primaryKeyColumn from $abbreviatedTablePeriod
+              MINUS select primary_key 
+                from $MAPPING_TABLE_NAME
+                where table_name = '$abbreviatedTable'
+              MINUS select $primaryKeyColumn 
+                from $abbreviatedTablePeriod t, core.projectinfo p
+                where t.row_project_id = p.project_id
+                and p.name in ('UniDB', 'Database administration')
+        )
+";        
+
   }
   else {
   $deleteSql = "delete from $abbreviatedTablePeriod
-        where $primaryKeyColumn not in (select primary_key 
-                                        from $MAPPING_TABLE_NAME
-                                        where table_name = '$abbreviatedTable')
+        where $primaryKeyColumn in (
+          select $primaryKeyColumn 
+            from $abbreviatedTablePeriod
+            minus select primary_key from ApiDB.DatabaseTableMapping
+            where table_name = '$abbreviatedTable')
         ";
 
   }
 
 
   my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
-        where primary_key not in (select primary_key 
-                                        from $MAPPING_TABLE_NAME
-                                        where table_name = '$abbreviatedTable')
+        where primary_key in (
+          select primary_key from $GLOBAL_NATURAL_KEY_TABLE_NAME
+            minus select primary_key 
+            from $MAPPING_TABLE_NAME
+            where table_name = '$abbreviatedTable')
           and table_name='$abbreviatedTable'
         ";
 
