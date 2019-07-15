@@ -271,6 +271,9 @@ sub addResults {
   elsif ($protocolName eq 'ClinEpiData::Load::WHOProfiles') {
     $tableString = "ApiDB::WHOStandards";
   }
+  elsif ($protocolName =~ /MetaCycle/) {
+    $tableString = "ApiDB::NAFeatureMetaCycle";
+  }
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
@@ -694,6 +697,7 @@ sub undoTables {
     'ApiDB.PHENOTYPESCORE',
     'ApiDB.PhenotypeGrowthRate',
     'ApiDB.WHOSTANDARDS',
+    'ApiDB.NAFeatureMetaCycle',
 	'ApiDB.CompoundMassSpecResult',  
 	'ApiDB.CompoundPeaksChebi',  
 	'ApiDB.CompoundPeaks',  
