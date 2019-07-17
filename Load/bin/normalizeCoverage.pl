@@ -143,6 +143,8 @@ foreach my $expWithReps (keys %dealingWithReps) {
  	    my $baseBed = basename $file_to_open;
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
+
+            &sortBedGraph($replicateDir/$baseBed);
 	    &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 	    if ($baseBed =~ /^unique/) {
 		if ($baseBed =~/firststrand/)  {
@@ -216,9 +218,20 @@ sub merge_normalized_coverage {
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
 
+            &sortBedGraph($inputDir/$k/normalized/$baseBed);
  	    &runCmd("bedGraphToBigWig $inputDir/$k/normalized/$baseBed $topLevelSeqSizeFile $inputDir/$k/normalized/final/$bwFile"); 
  	}
      }
+}
+
+
+sub sortBedGraph {
+  my $bedFile = shift;
+
+  my $cmd = "mv $bedFile ${bedFile}.tmp; LC_COLLATE=C sort -k1,1 -k2,2n ${bedFile}.tmp > $bedFile; rm ${bedFile}.tmp"; 
+  &runCmd($cmd);
+
+  return $bedFile;
 }
 
 # # updates coverage file - score * normalization_ratio
