@@ -144,7 +144,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
 
-            &sortBedGraph($replicateDir/$baseBed);
+            &sortBedGraph("$replicateDir/$baseBed");
 	    &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 	    if ($baseBed =~ /^unique/) {
 		if ($baseBed =~/firststrand/)  {
@@ -218,7 +218,7 @@ sub merge_normalized_coverage {
  	    my $bwFile = $baseBed;
  	    $bwFile =~ s/\.bed$/.bw/;
 
-            &sortBedGraph($inputDir/$k/normalized/$baseBed);
+            &sortBedGraph("$inputDir/$k/normalized/$baseBed");
  	    &runCmd("bedGraphToBigWig $inputDir/$k/normalized/$baseBed $topLevelSeqSizeFile $inputDir/$k/normalized/final/$bwFile"); 
  	}
      }
