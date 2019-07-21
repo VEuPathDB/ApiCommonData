@@ -77,7 +77,7 @@ foreach my $coverageLine (@{$coverages}) {
 close (BED);
 
 #convert to bigwig for GBrowse
-&runCmd ("sort -k1,1 -k2,2n $outputDir/$sampleName.unsrt.bed > $outputDir/$sampleName.srt.bed") == 0 or die "Sort bedfile failed\n$?\n";
+&runCmd ("LC_COLLATE=C sort -k1,1 -k2,2n $outputDir/$sampleName.unsrt.bed > $outputDir/$sampleName.srt.bed") == 0 or die "Sort bedfile failed\n$?\n";
 &runCmd ("bedGraphToBigWig $outputDir/$sampleName.srt.bed $chromSizesFile $outputDir/$sampleName.bw") == 0 or die "Convert to bigwig failed\n$?\n";
 # clean up files that are not needed
 &runCmd ("rm -f $outputDir/$sampleName.unsrt.bed $outputDir/$sampleName.srt.bed") == 0 or die "Cleanup failed\n$?\n";
