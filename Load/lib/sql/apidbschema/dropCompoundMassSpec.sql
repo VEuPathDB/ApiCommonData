@@ -17,7 +17,7 @@ WHERE lower(name) = lower('CompoundPeaksChebi')
                      WHERE lower(name) = 'apidb');
                               
 DROP TABLE ApiDB.CompoundPeaks;
-DROP SEQUENCE ApiDB.CompoundPeaks_sq;
+DROP SEQUENCE ApiDB.CompoundPeaks_SQ;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) = lower('CompoundPeaks')
