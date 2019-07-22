@@ -1004,6 +1004,24 @@ sub getIgnoredModificationSymbolMap {
 
 1;
 
+package ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLinePhospoandAcetyl;
+use base qw(ApiCommonData::Load::MassSpecTransform::PeptideLineIsProteinLine);
+
+sub getReportedModificationSymbolMap {
+  my ($self) = @_;
+
+  return { '*' => 'phosphorylation_site',
+	   '^' => 'acetylation_site',
+  };
+
+sub getIgnoredModificationSymbolMap {
+  my ($self) = @_;
+
+  return {};
+}
+
+1;
+
 package ApiCommonData::Load::MassSpecTransform::PeptideLineAndProteinLineStartWithSpecCharBS;
 use base qw(ApiCommonData::Load::MassSpecTransform);
 
