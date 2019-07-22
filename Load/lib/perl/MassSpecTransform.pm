@@ -1013,6 +1013,7 @@ sub getReportedModificationSymbolMap {
   return { '*' => 'phosphorylation_site',
 	   '^' => 'acetylation_site',
   };
+}
 
 sub getIgnoredModificationSymbolMap {
   my ($self) = @_;
@@ -1021,6 +1022,7 @@ sub getIgnoredModificationSymbolMap {
 }
 
 1;
+
 
 package ApiCommonData::Load::MassSpecTransform::PeptideLineAndProteinLineStartWithSpecCharBS;
 use base qw(ApiCommonData::Load::MassSpecTransform);
