@@ -1,105 +1,101 @@
-CREATE TABLE CompoundPeaks (
- compound_peaks_id            NUMBER(12) NOT NULL,
- PRIMARY KEY (compound_peaks_id),
- external_database_release_id NUMBER(12),
- FOREIGN KEY (external_database_release_id) REFERENCES SRES.EXTERNALDATABASERELEASE (external_database_release_id),
- peak_id                  NUMBER(12), 
- mass                         NUMBER(12,6), 
- retention_time               NUMBER(12,6), 
- ms_polarity                  CHAR(1) CONSTRAINT ms_polarity_value CHECK (ms_polarity in ('+', '-', NULL)),
-
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL
+CREATE TABLE ApiDB.CompoundPeaks (
+   COMPOUND_PEAKS_ID            NUMBER(12)      NOT NULL,
+   EXTERNAL_DATABASE_RELEASE_ID NUMBER(12),
+   PEAK_ID                      NUMBER(12), 
+   MASS                         NUMBER(12,6), 
+   RETENTION_TIME               NUMBER(12,6), 
+   MS_POLARITY                  CHAR(1),
+   MODIFICATION_DATE            DATE            NOT NULL,
+   USER_READ                    NUMBER(1)       NOT NULL,
+   USER_WRITE                   NUMBER(1)       NOT NULL,
+   GROUP_READ                   NUMBER(1)       NOT NULL,
+   GROUP_WRITE                  NUMBER(1)       NOT NULL,
+   OTHER_READ                   NUMBER(1)       NOT NULL,
+   OTHER_WRITE                  NUMBER(1)       NOT NULL,
+   ROW_USER_ID                  NUMBER(12)      NOT NULL,
+   ROW_GROUP_ID                 NUMBER(3)       NOT NULL,
+   ROW_PROJECT_ID               NUMBER(4)       NOT NULL,
+   ROW_ALG_INVOCATION_ID        NUMBER(12)      NOT NULL,
+   PRIMARY KEY (COMPOUND_PEAKS_ID),
+   FOREIGN KEY (EXTERNAL_DATABASE_RELEASE_ID) REFERENCES SRes.ExternalDatabaseRelease (EXTERNAL_DATABASE_RELEASE_ID) 
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.CompoundPeaks TO gus_w;  
-GRANT SELECT ON apidb.CompoundPeaks TO gus_r;  
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundPeaks TO gus_w;  
+GRANT SELECT ON ApiDB.CompoundPeaks TO gus_r;  
 
 --CREATE INDEX cp_external_database_release_id_idx ON apidb.CompoundPeaks(external_database_release_id);
 
 -----------
-CREATE SEQUENCE apidb.CompoundPeaks_sq;    
+CREATE SEQUENCE ApiDB.CompoundPeaks_SQ;    
 
-GRANT SELECT ON apidb.CompoundPeaks_sq TO gus_r;
-GRANT SELECT ON apidb.CompoundPeaks_sq TO gus_w;
+GRANT SELECT ON ApiDB.CompoundPeaks_SQ TO gus_r;
+GRANT SELECT ON ApiDB.CompoundPeaks_SQ TO gus_w;
 ----------------------
 
-CREATE TABLE apidb.CompoundPeaksChebi (
- compound_peaks_chebi_id      NUMBER(12) NOT NULL,
- PRIMARY KEY (compound_peaks_chebi_id),
- compound_id                  NUMBER(15),
- FOREIGN KEY (compound_id) REFERENCES CHEBI.Compounds (id),
- compound_peaks_id            NUMBER(12) NOT NULL,
- FOREIGN KEY (compound_peaks_id) REFERENCES apidb.CompoundPeaks (compound_peaks_id),
- isotopomer                   VARCHAR2(100),
- user_compound_name           VARCHAR2(200),
- is_preferred_compound        NUMBER(1),
-
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL
+CREATE TABLE ApiDB.CompoundPeaksChebi (
+   COMPOUND_PEAKS_CHEBI_ID      NUMBER(12)      NOT NULL,
+   COMPOUND_ID                  NUMBER(15),
+   COMPOUND_PEAKS_ID            NUMBER(12)      NOT NULL,
+   ISOTOPOMER                   VARCHAR2(100),
+   USER_COMPOUND_NAME           VARCHAR2(200),
+   IS_PREFERRED_COMPOUND        NUMBER(1),
+   MODIFICATION_DATE            DATE            NOT NULL,
+   USER_READ                    NUMBER(1)       NOT NULL,
+   USER_WRITE                   NUMBER(1)       NOT NULL,
+   GROUP_READ                   NUMBER(1)       NOT NULL,
+   GROUP_WRITE                  NUMBER(1)       NOT NULL,
+   OTHER_READ                   NUMBER(1)       NOT NULL,
+   OTHER_WRITE                  NUMBER(1)       NOT NULL,
+   ROW_USER_ID                  NUMBER(12)      NOT NULL,
+   ROW_GROUP_ID                 NUMBER(3)       NOT NULL,
+   ROW_PROJECT_ID               NUMBER(4)       NOT NULL,
+   ROW_ALG_INVOCATION_ID        NUMBER(12)      NOT NULL,
+   PRIMARY KEY (COMPOUND_PEAKS_CHEBI_ID),
+   FOREIGN KEY (COMPOUND_ID) REFERENCES chEBI.Compounds (ID),
+   FOREIGN KEY (COMPOUND_PEAKS_ID) REFERENCES ApiDB.CompoundPeaks (COMPOUND_PEAKS_ID),
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.CompoundPeaksChebi TO gus_w;  
-GRANT SELECT ON apidb.CompoundPeaksChebi TO gus_r;  
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundPeaksChebi TO gus_w;  
+GRANT SELECT ON ApiDB.CompoundPeaksChebi TO gus_r;  
 
 -----------
-CREATE SEQUENCE apidb.CompoundPeaksChebi_sq;    
+CREATE SEQUENCE ApiDB.CompoundPeaksChebi_SQ;    
 
-GRANT SELECT ON apidb.CompoundPeaksChebi_sq TO gus_r;
-GRANT SELECT ON apidb.CompoundPeaksChebi_sq TO gus_w;
+GRANT SELECT ON ApiDB.CompoundPeaksChebi_SQ TO gus_r;
+GRANT SELECT ON ApiDB.CompoundPeaksChebi_SQ TO gus_w;
 ----------------------
 
-CREATE TABLE apidb.CompoundMassSpecResult (
- compound_mass_spec_result_id NUMBER(12) NOT NULL,
- PRIMARY KEY (compound_mass_spec_result_id),
- protocol_app_node_id         NUMBER(10) NOT NULL,
- FOREIGN KEY (protocol_app_node_id) REFERENCES study.protocolappnode (protocol_app_node_id),
- compound_peaks_id            NUMBER(12) NOT NULL,
- FOREIGN KEY (compound_peaks_id) REFERENCES CompoundPeaks (compound_peaks_id),
- percentile                   NUMBER(16,13),
- standard_error               NUMBER(14,2), 
-
- value                        NUMBER(12),
-
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL
+CREATE TABLE ApiDB.CompoundMassSpecResult (
+   COMPOUND_MASS_SPEC_RESULT_ID NUMBER(12)      NOT NULL,
+   PROTOCOL_APP_NODE_ID         NUMBER(10)      NOT NULL,
+   COMPOUND_PEAKS_ID            NUMBER(12)      NOT NULL,
+   PERCENTILE                   NUMBER(16,13),
+   STANDARD_ERROR               NUMBER(14,2), 
+   VALUE                        NUMBER(12),
+   MODIFICATION_DATE            DATE            NOT NULL,
+   USER_READ                    NUMBER(1)       NOT NULL,
+   USER_WRITE                   NUMBER(1)       NOT NULL,
+   GROUP_READ                   NUMBER(1)       NOT NULL,
+   GROUP_WRITE                  NUMBER(1)       NOT NULL,
+   OTHER_READ                   NUMBER(1)       NOT NULL,
+   OTHER_WRITE                  NUMBER(1)       NOT NULL,
+   ROW_USER_ID                  NUMBER(12)      NOT NULL,
+   ROW_GROUP_ID                 NUMBER(3)       NOT NULL,
+   ROW_PROJECT_ID               NUMBER(4)       NOT NULL,
+   ROW_ALG_INVOCATION_ID        NUMBER(12)      NOT NULL,
+   PRIMARY KEY (COMPOUND_MASS_SPEC_RESULT_ID),
+   FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES Study.ProtocolAppNode (PROTOCOL_APP_NODE_ID),
+   FOREIGN KEY (COMPOUND_PEAKS_ID) REFERENCES ApidDB.CompoundPeaks (COMPOUND_PEAKS_ID)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.CompoundMassSpecResult TO gus_w;  
-GRANT SELECT ON apidb.CompoundMassSpecResult TO gus_r;  
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundMassSpecResult TO gus_w;  
+GRANT SELECT ON ApiDB.CompoundMassSpecResult TO gus_r;  
 
 -----------
-CREATE SEQUENCE apidb.CompoundMassSpecResult_sq;  
+CREATE SEQUENCE ApiDB.CompoundMassSpecResult_SQ;  
 
-GRANT SELECT ON apidb.CompoundMassSpecResult_sq TO gus_r; 
-GRANT SELECT ON apidb.CompoundMassSpecResult_sq TO gus_w; 
+GRANT SELECT ON ApiDB.CompoundMassSpecResult_SQ TO gus_r; 
+GRANT SELECT ON ApiDB.CompoundMassSpecResult_SQ TO gus_w; 
 ----------------------
 
 INSERT INTO core.TableInfo
@@ -109,12 +105,12 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id,
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'CompoundPeaks',
-       'Standard', 'compound_peaks_id',
+       'Standard', 'COMPOUND_PEAKS_ID',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'CompoundPeaks' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
@@ -127,12 +123,12 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id,
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'CompoundPeaksChebi',
-       'Standard', 'compound_peaks_chebi_id',
+       'Standard', 'COMPOUND_PEAKS_CHEBI_ID',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'CompoundPeaksChebi' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
@@ -145,12 +141,12 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id,
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'CompoundMassSpecResult',
-       'Standard', 'compound_mass_spec_result_id',
+       'Standard', 'COMPOUND_MASS_SPEC_RESULT_ID',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'CompoundMassSpecResult' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 

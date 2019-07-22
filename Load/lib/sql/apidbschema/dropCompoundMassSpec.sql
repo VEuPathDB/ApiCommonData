@@ -1,5 +1,5 @@
-DROP TABLE apidb.CompoundMassSpecResult;
-DROP SEQUENCE apidb.CompoundMassSpecResult_sq;
+DROP TABLE ApiDB.CompoundMassSpecResult;
+DROP SEQUENCE ApiDB.CompoundMassSpecResult_SQ;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) = lower('CompoundMassSpecResult')
@@ -7,8 +7,8 @@ WHERE lower(name) = lower('CompoundMassSpecResult')
                      FROM core.DatabaseInfo 
                      WHERE lower(name) = 'apidb');
                      
-DROP TABLE apidb.CompoundPeaksChebi;
-DROP SEQUENCE apidb.CompoundPeaksChebi_sq;
+DROP TABLE ApiDB.CompoundPeaksChebi;
+DROP SEQUENCE ApiDB.CompoundPeaksChebi_SQ;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) = lower('CompoundPeaksChebi')
@@ -16,8 +16,8 @@ WHERE lower(name) = lower('CompoundPeaksChebi')
                      FROM core.DatabaseInfo 
                      WHERE lower(name) = 'apidb');
                               
-DROP TABLE apidb.CompoundPeaks;
-DROP SEQUENCE apidb.CompoundPeaks_sq;
+DROP TABLE ApiDB.CompoundPeaks;
+DROP SEQUENCE ApiDB.CompoundPeaks_sq;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) = lower('CompoundPeaks')
