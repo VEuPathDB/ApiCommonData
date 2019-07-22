@@ -153,3 +153,5 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
 WHERE 'CompoundMassSpecResult' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
+
+exit;
