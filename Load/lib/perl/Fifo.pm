@@ -19,13 +19,13 @@ module to manage  a fifo ojbect
 =item Usage
 
 my $fifo = ApiCommonData::Load::Fifo->new($fifoName, $mode, $readerProcessString);
-my $pid = $fifo->getReaderProcessId();
+nnmy $pid = $fifo->getReaderProcessId();
 my $fh = $fifo->attachWriter();
 
 OR
 
 my $fifo = ApiCommonData::Load::Fifo->new($fifoName, $mode);
-my $pid = $fifo->attachReader();
+my $pid = $fifo->attachReader($processString);
 my $fh = $fifo->attachWriter();
 
 =back
@@ -113,7 +113,13 @@ sub DESTROY {
 
   my $fh = $self->getFileHandle();
   close $fh;
+
+  # kill the process if close doesn't work
   close $readerFh;
+  if($?) {
+    kill(9, $self->getReaderProcessId()); 
+  }
+
   unlink $fifoName;
 }
 
