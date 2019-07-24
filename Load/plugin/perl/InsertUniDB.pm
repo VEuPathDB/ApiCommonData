@@ -14,7 +14,8 @@ use File::Temp qw/ tempfile /;
 
 use Data::Dumper;
 
-use POSIX qw(mkfifo);
+use ApiCommonData::Load::Fifo;
+use ApiCommonData::Load::Sqlldr;
 
 use Fcntl;
 
@@ -455,41 +456,42 @@ sub loadPrimaryKeyTableForUndo {
 
   $dbh->do("create table $primaryKeyTableName ($primaryKeyColumn number($prec), primary key($primaryKeyColumn))")  or die $dbh->errstr;;
 
-  my ($sqlldrUndoFh, $sqlldrUndoFn) = tempfile("sqlldrUndoXXXX", UNLINK => 0, SUFFIX => '.ctl');
+  my $login       = $self->getConfig->getDatabaseLogin();
+  my $password    = $self->getConfig->getDatabasePassword();
+  my $dbiDsn      = $self->getConfig->getDbiDsn();
+  my ($dbi, $type, $db) = split(':', $dbiDsn);
+
   my $sqlldrUndoInfileFn = "${abbreviatedTablePeriod}_pk.dat";
 
-  print $sqlldrUndoFh "LOAD DATA
-CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
-INFILE '$sqlldrUndoInfileFn' \"str '$eorLiteral'\" 
-APPEND
-INTO TABLE primarykey
-REENABLE DISABLED_CONSTRAINTS
-($primaryKeyColumn CHAR($prec))
-    ";
+  my $sqlldrUndo = ApiCommonData::Load::Sqlldr->new({_login => $login,
+                                                     _password => $password,
+                                                     _database => $db,
+                                                     _direct => 0,
+                                                     _controlFilePrefix => 'sqlldrUndo',
+                                                     _quiet => 1,
+                                                     _infile_name => $sqlldrUndoInfileFn,
+                                                     _reenable_disabled_constraints => 1,
+                                                     _fields => [[$primaryKeyColumn, "CHAR($prec)"]],
+                                                     _table_name => "primarykey",
+                                                     _rows => 100000
+                                                    });
 
-    $self->error("Could not create named pipe for sqlloader undo file") unless(mkfifo($sqlldrUndoInfileFn, 0700));
+  $sqlldrUndo->writeConfigFile();
 
-    my $login       = $self->getConfig->getDatabaseLogin();
-    my $password    = $self->getConfig->getDatabasePassword();
-    my $dbiDsn      = $self->getConfig->getDbiDsn();
-    my ($dbi, $type, $db) = split(':', $dbiDsn);
+  my $fifo = ApiCommonData::Load::Fifo->new($sqlldrUndoInfileFn);
 
-    my $sqlldrUndoProcessString = "sqlldr $login/$password\@$db control=$sqlldrUndoFn rows=100000 bindsize=512000 readsize=512000 log=${sqlldrUndoFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
-    my $pid = open(my $sqlldrUndoProcess, $sqlldrUndoProcessString) or die "Cannot open pipe for sqlldr process:  $!";
-    $self->addActiveForkedProcess($pid);
-    open(my $sqlldrUndoInfileFh, ">$sqlldrUndoInfileFn") or die "Could not open named pipe $sqlldrUndoInfileFn for writing: $!";
+  my $sqlldrUndoProcessString = $sqlldrUndo->getCommandLine();
 
-    $tableReader->prepareTable($tableName, undef, $primaryKeyColumn, $maxPkOrig);
+  my $pid = $fifo->attachReader($sqlldrUndoProcessString);
+  $self->addActiveForkedProcess($pid);
+  my $sqlldrUndoInfileFh = $fifo->attachWriter();
+
+  $tableReader->prepareTable($tableName, undef, $primaryKeyColumn, $maxPkOrig);
     
-    while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
-      my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
-      print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
-    }
-
-    close $sqlldrUndoInfileFh;
-    close $sqlldrUndoProcess;
-    $self->error("sqlldr process failed!") if($?);
-    unlink($sqlldrUndoFn,$sqlldrUndoInfileFn);
+  while(my $row = $tableReader->nextRowAsHashref($tableInfo)) {
+    my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
+    print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
+  }
 }
 
 sub deleteFromTable {
@@ -770,7 +772,9 @@ sub queryForPKAggFxn {
 
 
 sub writeConfigFile {
-  my ($self, $configFh, $tableInfo, $tableName, $datFileName, $tableReader, $hasRowProjectId,$direct) = @_;
+  my ($self, $sqlldrObj, $tableInfo, $tableName, $datFileName, $tableReader, $hasRowProjectId) = @_;
+
+  my $direct = $sqlldrObj->getDirect();
 
   my $fullTableName = $tableInfo->{fullTableName};
 
@@ -779,6 +783,9 @@ sub writeConfigFile {
 
   my $eocLiteral = $END_OF_COLUMN_DELIMITER;
   $eocLiteral =~ s/\t/\\t/;
+
+  $sqlldrObj->setLineDelimiter($eorLiteral);
+  $sqlldrObj->setFieldDelimiter($eocLiteral);
 
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
@@ -896,28 +903,21 @@ sub writeConfigFile {
     push @fields, "global_natural_key_id SEQUENCE(MAX,1)";
   }
 
-  my $fieldsString = join(",\n", @fields);
+  $sqlldrObj->setFields(\@fields);
 
-
-  my $unrecoverable = !$direct || $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME ? "" : "UNRECOVERABLE\n";
-
-  # need to reenable constraints for core tables or the plugin won't fire up
-  my $reenableDisabledConstraints = "";
-  if($tableName =~ /GUS::Model::Core::Algorithm/ || $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
-    $reenableDisabledConstraints = "REENABLE DISABLED_CONSTRAINTS\n";
+  unless(!$direct || $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
+    $sqlldrObj->setUnrecoverable(1);
   }
 
-  print $configFh "${unrecoverable}LOAD DATA
-CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
-INFILE '$datFileName' \"str '$eorLiteral'\" 
-APPEND
-INTO TABLE $tableName
-${reenableDisabledConstraints}FIELDS TERMINATED BY '$eocLiteral'
-TRAILING NULLCOLS
-($fieldsString
-)
-";
+  # need to reenable constraints for core tables or the plugin won't fire up
+  if($tableName =~ /Core\.Algorithm/ || $tableName eq $MAPPING_TABLE_NAME || $tableName eq $GLOBAL_NATURAL_KEY_TABLE_NAME) {
+    $sqlldrObj->setReenableDisabledConstraints(1);
 
+  }
+
+  $sqlldrObj->setTableName($tableName);
+
+  $sqlldrObj->writeConfigFile();
 }
 
 
@@ -971,25 +971,26 @@ sub loadTable {
 
   my ($hasNewDatRows, $hasNewMapRows, $hasNewGlobalRows);
 
-  my ($sqlldrDatFh, $sqlldrDatFn, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcess, $sqlldrDatProcessString);
-  my ($sqlldrMapFh, $sqlldrMapFn, $sqlldrMapInfileFh, $sqlldrMapInfileFn, $sqlldrMapProcess, $sqlldrMapProcessString);
-  my ($sqlldrGlobFh, $sqlldrGlobFn, $sqlldrGlobInfileFh, $sqlldrGlobInfileFn, $sqlldrGlobProcess, $sqlldrGlobProcessString);
+  my ($datFifo, $sqlldrDat, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcessString);
 
-  my $direct = 0;
   if($loadDatWithSqlldr) {
-    ($sqlldrDatFh, $sqlldrDatFn) = tempfile("sqlldrDatXXXX", UNLINK => 0, SUFFIX => '.ctl');
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
-    $self->error("Could not create named pipe for sqlloader dat file") unless(mkfifo($sqlldrDatInfileFn, 0700));
+    $sqlldrDat = ApiCommonData::Load::Sqlldr->new({_login => $login,
+                                                   _password => $password,
+                                                   _database => $db,
+                                                   _direct => 0,
+                                                   _controlFilePrefix => 'sqlldrDat',
+                                                   _quiet => 1,
+                                                   _infile_name => $sqlldrDatInfileFn,
+                                                  });
 
-    my $skipIndexMaintenance = $tableName =~ /GUS::Model::Core::Algorithm/ ? "false" : "true";
-    if($alreadyMappedMaxOrigPk) {
-      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn rows=10000 bindsize=512000 readsize=512000 log=${sqlldrDatFn}.log discardmax=0 errors=0 |";
-    }
-    else {
-      $sqlldrDatProcessString = "sqlldr $login/$password\@$db control=$sqlldrDatFn streamsize=512000 direct=TRUE skip_index_maintenance=$skipIndexMaintenance log=${sqlldrDatFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
-      $direct = 1;
-    }
+    $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn);
 
+    if(!$alreadyMappedMaxOrigPk) {
+      $sqlldrDat->direct(1);
+      $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
+    }
+    $sqlldrDatProcessString = $sqlldrDat->getCommandLine();
   }
   else {
     $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
@@ -999,19 +1000,35 @@ sub loadTable {
     $self->error($@) if $@;
   }
 
-  ($sqlldrMapFh, $sqlldrMapFn) = tempfile("sqlldrMapXXXX", UNLINK => 0, SUFFIX => '.ctl');
-  $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
-  $self->writeConfigFile($sqlldrMapFh, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
-  $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrMapInfileFn, 0700));
-  $sqlldrMapProcessString = "sqlldr $login/$password\@$db control=$sqlldrMapFn rows=10000 bindsize=512000 readsize=512000 log=${sqlldrMapFn}.log discardmax=0 errors=0 |";
+  my $sqlldrMapInfileFh;
+  my $sqlldrMapInfileFn = "${abbreviatedTablePeriod}_map.dat";
+  my $sqlldrMap = ApiCommonData::Load::Sqlldr->new({_login => $login,
+                                                    _password => $password,
+                                                    _database => $db,
+                                                    _direct => 0,
+                                                    _controlFilePrefix => 'sqlldrMap',
+                                                    _quiet => 1,
+                                                    _infile_name => $sqlldrMapInfileFn,
+                                                    });
 
-  ($sqlldrGlobFh, $sqlldrGlobFn) = tempfile("sqlldrGlobXXXX", UNLINK => 0, SUFFIX => '.ctl');
-  $sqlldrGlobInfileFn = "${abbreviatedTablePeriod}_global.dat";
-  $self->writeConfigFile($sqlldrGlobFh, $tableInfo, $GLOBAL_NATURAL_KEY_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
-  $self->error("Could not create named pipe for sqlloader map file") unless(mkfifo($sqlldrGlobInfileFn, 0700));
-  $sqlldrGlobProcessString = "sqlldr $login/$password\@$db control=$sqlldrGlobFn rows=10000 bindsize=512000 readsize=512000 log=${sqlldrGlobFn}.log discardmax=0 errors=0 >/dev/null 2>&1 |";
+  $self->writeConfigFile($sqlldrMap, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
+  my $mapFifo = ApiCommonData::Load::Fifo->new($sqlldrMapInfileFn);
+  my $sqlldrMapProcessString = $sqlldrMap->getCommandLine();
 
+  my $sqlldrGlobInfileFh;
+  my $sqlldrGlobInfileFn = "${abbreviatedTablePeriod}_global.dat";
+  my $sqlldrGlob = ApiCommonData::Load::Sqlldr->new({_login => $login,
+                                                    _password => $password,
+                                                    _database => $db,
+                                                    _direct => 0,
+                                                    _controlFilePrefix => 'sqlldrGlob',
+                                                    _quiet => 1,
+                                                    _infile_name => $sqlldrGlobInfileFn,
+                                                    });
 
+  $self->writeConfigFile($sqlldrGlob, $tableInfo, $GLOBAL_NATURAL_KEY_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
+  my $globFifo = ApiCommonData::Load::Fifo->new($sqlldrGlobInfileFn);
+  my $sqlldrGlobProcessString = $sqlldrGlob->getCommandLine();
 
   my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
 
@@ -1056,9 +1073,9 @@ sub loadTable {
       if($primaryKey && !$idMappings->{$tableName}->{$origPrimaryKey}) {
 
         unless($hasNewMapRows) {
-          my $pid = open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+          my $pid = $mapFifo->attachReader($sqlldrMapProcessString);
           $self->addActiveForkedProcess($pid);
-          open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
+          $sqlldrMapInfileFh = $mapFifo->attachWriter();
         }
 
         $hasNewMapRows = 1;
@@ -1071,29 +1088,20 @@ sub loadTable {
 
     if(!$primaryKey && $abbreviatedTablePeriod ne $TABLE_INFO_TABLE) {
       unless($hasNewMapRows) {
-        my $pid = open($sqlldrMapProcess, $sqlldrMapProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+        my $pid = $mapFifo->attachReader($sqlldrMapProcessString);
         $self->addActiveForkedProcess($pid);
         unless($sqlldrMapInfileFh){
-          open($sqlldrMapInfileFh, ">$sqlldrMapInfileFn") or die "Could not open named pipe $sqlldrMapInfileFn for writing: $!";
+          $sqlldrMapInfileFh = $mapFifo->attachWriter();
         }
       }
 
 
       if($loadDatWithSqlldr) {
         unless($hasNewDatRows) {
-          $self->writeConfigFile($sqlldrDatFh, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId, $direct);
-          my $pid = open($sqlldrDatProcess, $sqlldrDatProcessString) or die "Cannot open pipe for sqlldr process:  $!";
-          if($pid){
-            $self->addActiveForkedProcess($pid);
-            $self->log("EXECUTING, sqlldr pid=$pid");
-            $self->log("OPENING FIFO $sqlldrDatInfileFn");
-            open($sqlldrDatInfileFh, ">$sqlldrDatInfileFn") or die "Could not open named pipe $sqlldrDatInfileFn for writing: $!";
-            $self->log("OK, $sqlldrDatInfileFn is open for writing");
-          }
-          else {
-            $self->log("sqlldr did not run");
-            die;
-          }
+          $self->writeConfigFile($sqlldrDat, $tableInfo, $abbreviatedTablePeriod, $sqlldrDatInfileFn, $tableReader, $hasRowProjectId);
+          my $pid = $datFifo->attachReader($sqlldrDatProcessString);
+          $self->addActiveForkedProcess($pid);
+          $sqlldrDatInfileFh = $datFifo->attachWriter();
         }
       }
       else {
@@ -1168,9 +1176,9 @@ sub loadTable {
         $globalLookup->{$globalNaturalKey} = $primaryKey;
 
 	      unless($hasNewGlobalRows) {
-	        my $pidGlob = open($sqlldrGlobProcess, $sqlldrGlobProcessString) or die "Cannot open pipe for sqlldr process:  $!";
+                my $pidGlob = $globFifo->attachReader($sqlldrGlobProcessString);
 	        $self->addActiveForkedProcess($pidGlob);
-	        open($sqlldrGlobInfileFh, ">$sqlldrGlobInfileFn") or die "Could not open named pipe $sqlldrGlobInfileFn for writing: $!";
+	        $sqlldrGlobInfileFh = $globFifo->attachWriter();
 	      }
 	
 	      my @globalRow = ($abbreviatedTableColumn, $primaryKey, $globalNaturalKey);
@@ -1193,31 +1201,7 @@ sub loadTable {
 
   $tableReader->finishTable();
 
-  if($hasNewMapRows) {
-    close $sqlldrMapInfileFh;
-    close $sqlldrMapProcess;
-    $self->error("sqlldr process failed!") if($?);
-	}
-	unlink($sqlldrMapFn,$sqlldrMapInfileFn);
-
-  if($hasNewGlobalRows) {
-    close $sqlldrGlobInfileFh;
-    close $sqlldrGlobProcess;
-    $self->error("sqlldr process failed!") if($?);
-	}
-	unlink($sqlldrGlobFn,$sqlldrGlobInfileFn);
-
   if($loadDatWithSqlldr) {
-    $self->log("closing fifo $sqlldrDatInfileFn");
-    if($hasNewDatRows) {
-      close $sqlldrDatInfileFh;
-      close $sqlldrDatProcess;
-      if($?) {
-        $self->error("sqlldr process for databasemapping failed!\nCheck $sqlldrDatFn.log");
-      }
-    }
-    unlink($sqlldrDatFn,$sqlldrDatInfileFn);
-
     # update the sequence
     my $sequenceName = "${abbreviatedTablePeriod}_sq";
     my $dbh = $self->getQueryHandle();  
