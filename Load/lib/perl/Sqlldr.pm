@@ -44,7 +44,7 @@ my $CHARACTER_SET = "UTF8";
 my $LENGTH_SEMANTICS = "CHAR";
 my $LINE_DELIMITER = "\\n";
 my $FIELD_DELIMITER = "\\t";
-
+my $APPEND = 1;
 
 sub getQuiet {$_[0]->{_quiet}}
 sub setQuiet {$_[0]->{_quiet} = $_[1]}
@@ -112,7 +112,7 @@ sub setLineDelimiter {$_[0]->{_line_delimiter} = $_[1]}
 sub getFieldDelimiter {$_[0]->{_field_delimiter} || $FIELD_DELIMITER}
 sub setFieldDelimiter {$_[0]->{_field_delimiter} = $_[1]}
 
-sub getAppend {$_[0]->{_append}}
+sub getAppend {$_[0]->{_append} || $APPEND}
 sub setAppend {$_[0]->{_append} = $_[1]}
 
 sub getTableName {$_[0]->{_table_name}}
@@ -124,12 +124,12 @@ sub setReenableDisabledConstraints {$_[0]->{_reenable_disabled_constraints} = $_
 sub getTrailingNullCols {$_[0]->{_trailing_null_cols}}
 sub setTrailingNullCols {$_[0]->{_trailing_null_cols} = $_[1]}
 
-sub getFields {$_[0]->{_fields} || [[]]}
+sub getFields {$_[0]->{_fields} || []}
 sub setFields {$_[0]->{_fields} = $_[1]}
 sub addField {
   my ($self, $field, $dataType) = @_;
 
-  push @{$self->{_fields}}, [$field, $dataType];
+  push @{$self->{_fields}}, "$field $dataType";
 }
 
 
@@ -199,19 +199,23 @@ sub writeConfigFile {
   my $lineDelimiter = $self->getLineDelimiter();
   my $fieldDelimiter = $self->getFieldDelimiter();
 
+  # make sure common line and field delimiters are printed correctly
+  $lineDelimiter =~ s/\n/\\n/;
+  $fieldDelimiter =~ s/\t/\\t/;
+
   my $unrecoverable = $self->getUnrecoverable() ? "UNRECOVERABLE\n" : "";
   my $reenableDisabledConstraints = $self->getReenableDisabledConstraints() ? "REENABLE DISABLED_CONSTRAINTS\n" : "";
+  my $append = $self->getAppend() ? "APPEND\n" : "";
 
   my $fields = $self->getFields();
-  my $fieldsString = join(",\n", map {$_->[0] . " " . $_->[1]} @$fields);
+  my $fieldsString = join(",\n", @$fields);
 
   my $controlFileHandle = $self->getControlFileHandle();
 
-  print  "${unrecoverable}LOAD DATA
+  print $controlFileHandle "${unrecoverable}LOAD DATA
 CHARACTERSET $characterSet LENGTH SEMANTICS $lengthSemantics
 INFILE '$infileName' \"str '$lineDelimiter'\"
-APPEND
-INTO TABLE $tableName
+${append}INTO TABLE $tableName
 ${reenableDisabledConstraints}FIELDS TERMINATED BY '$fieldDelimiter'
 TRAILING NULLCOLS
 ($fieldsString
