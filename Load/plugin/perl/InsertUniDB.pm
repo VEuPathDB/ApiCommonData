@@ -471,10 +471,21 @@ sub loadPrimaryKeyTableForUndo {
                                                      _quiet => 1,
                                                      _infile_name => $sqlldrUndoInfileFn,
                                                      _reenable_disabled_constraints => 1,
-                                                     _fields => [[$primaryKeyColumn, "CHAR($prec)"]],
+                                                     _fields => ["primary_key CHAR($prec)"],
                                                      _table_name => "primarykey",
                                                      _rows => 100000
                                                     });
+
+
+  my $eorLiteral = $END_OF_RECORD_DELIMITER;
+  $eorLiteral =~ s/\n/\\n/;
+
+  my $eocLiteral = $END_OF_COLUMN_DELIMITER;
+  $eocLiteral =~ s/\t/\\t/;
+
+  $sqlldrObj->setLineDelimiter($eorLiteral);
+  $sqlldrObj->setFieldDelimiter($eocLiteral);
+
 
   $sqlldrUndo->writeConfigFile();
 
