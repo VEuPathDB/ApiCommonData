@@ -997,7 +997,7 @@ sub loadTable {
     $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn);
 
     if(!$alreadyMappedMaxOrigPk) {
-      $sqlldrDat->direct(1);
+      $sqlldrDat->setDirect(1);
       $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
     }
     $sqlldrDatProcessString = $sqlldrDat->getCommandLine();
