@@ -483,9 +483,8 @@ sub loadPrimaryKeyTableForUndo {
   my $eocLiteral = $END_OF_COLUMN_DELIMITER;
   $eocLiteral =~ s/\t/\\t/;
 
-  $sqlldrObj->setLineDelimiter($eorLiteral);
-  $sqlldrObj->setFieldDelimiter($eocLiteral);
-
+  $sqlldrUndo->setLineDelimiter($eorLiteral);
+  $sqlldrUndo->setFieldDelimiter($eocLiteral);
 
   $sqlldrUndo->writeConfigFile();
 
