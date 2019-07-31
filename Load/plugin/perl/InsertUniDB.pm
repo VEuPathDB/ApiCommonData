@@ -455,7 +455,7 @@ sub loadPrimaryKeyTableForUndo {
   my ($pkInfo) = grep { lc($_->{'col'}) eq lc($primaryKeyColumn) } @$attributeInfo;
   my $prec = $pkInfo->{'prec'} || 12; ## a default precision for primary key
 
-  $dbh->do("create table $primaryKeyTableName ($primaryKeyColumn number($prec), primary key($primaryKeyColumn))")  or die $dbh->errstr;;
+  $dbh->do("create table $primaryKeyTableName (primary_key number($prec), primary key($primaryKeyColumn))")  or die $dbh->errstr;;
 
   my $login       = $self->getConfig->getDatabaseLogin();
   my $password    = $self->getConfig->getDatabasePassword();
@@ -504,7 +504,7 @@ sub loadPrimaryKeyTableForUndo {
     print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
   }
 
-#  $fifo->cleanup();
+  $fifo->cleanup();
 }
 
 sub deleteFromTable {
@@ -1214,11 +1214,11 @@ sub loadTable {
 
   $tableReader->finishTable();
 
-#  $mapFifo->cleanup();
-#  $globFifo->cleanup();
+  $mapFifo->cleanup();
+  $globFifo->cleanup();
 
   if($loadDatWithSqlldr) {
-#    $datFifo->cleanup();
+    $datFifo->cleanup();
 
     # update the sequence
     my $sequenceName = "${abbreviatedTablePeriod}_sq";
