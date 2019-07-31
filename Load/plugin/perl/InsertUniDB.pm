@@ -558,6 +558,7 @@ sub undoTable {
   my $primaryKeyTableName = "primarykey";
   $self->loadPrimaryKeyTableForUndo($tableInfo, $primaryKeyTableName, $tableReader, $maxPkOrig, $dbh);
 
+
   my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
              where database_orig = '$database'
              and table_name = '$abbreviatedTable'
@@ -569,13 +570,16 @@ sub undoTable {
     $deleteSql = "delete from $abbreviatedTablePeriod
           where $primaryKeyColumn in (
             select $primaryKeyColumn from $abbreviatedTablePeriod
-              MINUS select primary_key 
+              MINUS 
+                (select primary_key 
                 from $MAPPING_TABLE_NAME
                 where table_name = '$abbreviatedTable'
-              MINUS select t.$primaryKeyColumn 
+                UNION
+                select t.$primaryKeyColumn 
                 from $abbreviatedTablePeriod t, core.projectinfo p
                 where t.row_project_id = p.project_id
-                and p.name in ('UniDB', 'Database administration')
+                and p.name in ('Database administration')
+                )
         )
 ";        
 
@@ -585,9 +589,11 @@ sub undoTable {
         where $primaryKeyColumn in (
           select $primaryKeyColumn 
             from $abbreviatedTablePeriod
-            minus select primary_key from ApiDB.DatabaseTableMapping
-            where table_name = '$abbreviatedTable')
-        ";
+            minus 
+            select primary_key from $MAPPING_TABLE_NAME
+            where table_name = '$abbreviatedTable'
+          )
+      ";
 
   }
 
@@ -600,7 +606,6 @@ sub undoTable {
             where table_name = '$abbreviatedTable')
           and table_name='$abbreviatedTable'
         ";
-
 
 
   $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
