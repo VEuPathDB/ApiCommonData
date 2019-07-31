@@ -227,7 +227,6 @@ TRAILING NULLCOLS
 
 sub DESTROY {
   my $self = shift;
-  print STDERR "Closing file handles\n";
 
   my $controlFileHandle = $self->getControlFileHandle();
   my $controlFileName = $self->getControlFileName();

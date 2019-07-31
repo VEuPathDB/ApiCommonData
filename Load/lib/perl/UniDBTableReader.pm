@@ -33,7 +33,7 @@ sub finishTable {}
 
 sub nextRowAsHashref {}
 
-sub isGlobalRow {}
+sub isRowGlobal {}
 
 sub skipRow {}
 sub loadRow {}
@@ -61,7 +61,8 @@ B<Return type:>
 
 sub getDistinctTablesForTableIdField {}
 
-=item C<getDistinctValuesForTableField>
+
+=item C<getDistinctValuesForField>
 
 Foreign Key Helper.  For a table and field, lookup distinct possible values and return a hash
 
@@ -70,7 +71,6 @@ B<Parameters:>
  $self(TableReader): a table reader object
  $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
  $field(string): this field is a foreign key field in the gus $table
- $onlyGlobalRows(boolean): results hash value for non global rows will be zero
 
 B<Return type:> 
 
@@ -78,7 +78,7 @@ B<Return type:>
 
 =cut
 
-sub getDistinctValuesForTableField {}
+sub getDistinctValuesForField {}
 
 
 =item C<getMaxLobLength>
@@ -100,6 +100,24 @@ B<Return type:>
 sub getMaxLobLength {}
 
 
+=item C<getTableCount>
+
+count how many rows are in the table with primary key value <= some value
+
+B<Parameters:>
+
+ $self(TableReader): a table reader object
+ $fullTableName(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
+ $primaryKeyColumn(string): name of of the primary key field
+ $maxPrimaryKey(number): do not count rows with pk greater than this value
+
+B<Return type:> 
+
+ C<number> $count
+
+=cut
+
+sub getTableCount {}
 
 
 1;

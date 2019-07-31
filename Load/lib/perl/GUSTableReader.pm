@@ -285,36 +285,24 @@ and d.database_id = t.database_id
 
 
 
-sub getDistinctValuesForTableFields {
-  my ($self, $fullTableName, $fields, $onlyGlobalRows) = @_;
+sub getDistinctValuesForField {
+  my ($self, $fullTableName, $field) = @_;
 
   my $tableName = $self->getTableNameFromPackageName($fullTableName);
 
   my $addRowAlgInvocationId = "";
-  if($onlyGlobalRows) {
-    $addRowAlgInvocationId = ",row_alg_invocation_id";
-  }
 
   my %rv;
   my $dbh = $self->getDatabaseHandle();
 
-  my $fieldsString = join(",", @$fields);
-
-  my $sql = "select distinct $fieldsString $addRowAlgInvocationId from $tableName";
+  my $sql = "select distinct $field from $tableName";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
   while(my $row = $sh->fetchrow_hashref()) {
-    my @values = map { $row->{lc($_)} } @$fields;
+    my $value = $row->{lc($field)};
 
-    my $key = join("_", @values);
-
-    if($onlyGlobalRows && $self->isRowGlobal($row)) {
-      $rv{$key} = 1;
-    }
-    else {
-      $rv{$key} = 1;
-    }
+    $rv{$value} = 1;
   }
   $sh->finish();
 
@@ -337,5 +325,22 @@ sub getMaxLobLength {
 
   return $length;
 }
+
+sub getTableCount {
+  my ($self, $fullTableName, $primaryKeyColumn, $maxPrimaryKey) = @_;
+
+  my $tableName = $self->getTableNameFromPackageName($fullTableName);
+
+  my $dbh = $self->getDatabaseHandle();
+  my $sql = "select count(*) from $tableName where $primaryKeyColumn <= $maxPrimaryKey";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my ($count) = $sh->fetchrow_array();
+  $sh->finish();
+
+  return $count;
+}
+
 
 1;
