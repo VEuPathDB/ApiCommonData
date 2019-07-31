@@ -104,23 +104,39 @@ sub new {
   return $self; 
 }
 
+sub cleanup  {
+  my $self = shift;
+
+  $self->{_cleanup} = 1;
+
+  my $fifoName = $self->getFifoName();
+  my $fh = $self->getFileHandle();
+  my $readerFh = $self->getReaderProcessFileHandle();
+
+  close $fh if($fh);
+
+  if($readerFh) {
+    close $readerFh ;
+    if($?) {
+      kill(9, $self->getReaderProcessId()); 
+      unlink $fifoName if(-e $fifoName);
+      die "Error with process reading the FIFO";
+    }
+  }
+
+  unlink $fifoName if(-e $fifoName);
+}
 
 sub DESTROY {
   my $self = shift;
-  print STDERR "Closing file handles and removing fifo\n";
-  my $fifoName = $self->getFifoName();
-  my $readerFh = $self->getReaderProcessFileHandle();
 
-  my $fh = $self->getFileHandle();
-  close $fh;
+  unless($self->{_cleanup}) {
+    print STDERR "WARNING:  you have not called fifo->cleanup().  Child processes may exit without throwing errors";
 
-  # kill the process if close doesn't work
-  close $readerFh;
-  if($?) {
-    kill(9, $self->getReaderProcessId()); 
+    # the die in the cleanup method will be ignored in this context
+    $self->cleanup();
   }
-
-  unlink $fifoName;
 }
+
 
 1;

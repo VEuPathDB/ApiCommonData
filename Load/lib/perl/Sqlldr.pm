@@ -232,7 +232,7 @@ sub DESTROY {
   my $controlFileHandle = $self->getControlFileHandle();
   my $controlFileName = $self->getControlFileName();
 
-  close $controlFileHandle;
+  close $controlFileHandle if($controlFileHandle);
 
   unlink $controlFileName;
 }

@@ -430,9 +430,10 @@ sub hasRowsToDelete {
   # count from input db where pk <= maxPkValue already mapped
   my $inputTableRowCount = $tableReader->getTableCount($tableName, $primaryKeyColumn, $maxPkOrig);
 
-  my $countPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'count');
+#  my $countPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'count');
 
-  if($inputTableRowCount == $countAlreadyMapped && $inputTableRowCount == $countPrimaryKey) {
+#  if($inputTableRowCount == $countAlreadyMapped && $inputTableRowCount == $countPrimaryKey) {
+  if($inputTableRowCount == $countAlreadyMapped) {
     return 0;
   }
   return 1;
@@ -502,6 +503,8 @@ sub loadPrimaryKeyTableForUndo {
     my $origPrimaryKey = $row->{lc($primaryKeyColumn)};
     print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
   }
+
+#  $fifo->cleanup();
 }
 
 sub deleteFromTable {
@@ -661,7 +664,7 @@ sub getIdMappings {
 
     my @tableNames;
 
-    my $keepIds = $tableReader->getDistinctValuesForTableFields($tableName, [$field], 0);
+    my $keepIds = $tableReader->getDistinctValuesForField($tableName, $field);
 
     if(ref($pr->[0]) eq 'ARRAY') {
       push @tableNames, @{$pr->[0]};
@@ -1211,7 +1214,12 @@ sub loadTable {
 
   $tableReader->finishTable();
 
+#  $mapFifo->cleanup();
+#  $globFifo->cleanup();
+
   if($loadDatWithSqlldr) {
+#    $datFifo->cleanup();
+
     # update the sequence
     my $sequenceName = "${abbreviatedTablePeriod}_sq";
     my $dbh = $self->getQueryHandle();  
