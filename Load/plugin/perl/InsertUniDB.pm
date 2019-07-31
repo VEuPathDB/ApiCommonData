@@ -561,7 +561,7 @@ sub undoTable {
   my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
              where database_orig = '$database'
              and table_name = '$abbreviatedTable'
-             and primary_key_orig not in (select $primaryKeyColumn from $primaryKeyTableName)";
+             and primary_key_orig not in (select primary_key from $primaryKeyTableName)";
 
 
   my $deleteSql;
