@@ -885,7 +885,9 @@ sub writeConfigFile {
           $datatypeMap->{$col} = " CHAR";
         }
         elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
-          $datatypeMap->{$col} = " CHAR($length)";
+          my $charLength = $tableReader->getMaxFieldLength($fullTableName, $col);
+          $charLength = 1 unless($charLength);
+          $datatypeMap->{$col} = " CHAR($charLength)";
         }
         elsif($type eq 'DATE') {
           $datatypeMap->{$col} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
@@ -893,9 +895,8 @@ sub writeConfigFile {
         elsif($type eq 'FLOAT') {
           $datatypeMap->{$col} = " CHAR(255)";
         }
-
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
-          my $charLength = $tableReader->getMaxLobLength($fullTableName, $col);
+          my $charLength = $tableReader->getMaxFieldLength($fullTableName, $col);
           $charLength = 1 unless($charLength);
           $datatypeMap->{$col} = " CHAR($charLength) ENCLOSED BY '$START_OF_LOB_DELIMITER' AND '$END_OF_LOB_DELIMITER'";
         }

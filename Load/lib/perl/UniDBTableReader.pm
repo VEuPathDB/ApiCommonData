@@ -81,7 +81,7 @@ B<Return type:>
 sub getDistinctValuesForField {}
 
 
-=item C<getMaxLobLength>
+=item C<getMaxFieldLength>
 
 For memory allocation we need to know the biggest possible length for the field
 
@@ -89,7 +89,7 @@ B<Parameters:>
 
  $self(TableReader): a table reader object
  $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(string): lob field
+ $field(string): field name
 
 B<Return type:> 
 
@@ -97,7 +97,7 @@ B<Return type:>
 
 =cut
 
-sub getMaxLobLength {}
+sub getMaxFieldLength {}
 
 
 =item C<getTableCount>

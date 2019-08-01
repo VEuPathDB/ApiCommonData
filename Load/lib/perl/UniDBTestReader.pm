@@ -67,7 +67,7 @@ sub getDistinctValuesForField {
 }
 
 
-sub getMaxLobLength {
+sub getMaxFieldLength {
   return 3000; #more characters than I plan to type
 }
 
