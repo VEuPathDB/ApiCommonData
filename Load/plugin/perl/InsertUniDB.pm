@@ -1122,9 +1122,6 @@ sub loadTable {
           $sqlldrDatInfileFh = $datFifo->attachWriter();
         }
       }
-      else {
-        $self->log("NOT loading with Sqlldr");
-      }
 
       $hasNewDatRows = 1;
       $hasNewMapRows = 1;
@@ -1138,7 +1135,6 @@ sub loadTable {
         foreach my $ancestorField (@$fieldsToSetToPk) {
           $mappedRow->{lc($ancestorField)} = $primaryKey;
         }
-        #$self->log("Loading with Sqlldr: " . join(",",@attributeList));
 
         my @columns = map { $lobColumns{$_} ? $START_OF_LOB_DELIMITER . $mappedRow->{$_} . $END_OF_LOB_DELIMITER : $mappedRow->{$_} } grep { !$housekeepingFieldsHash{$_} } @attributeList;
 
@@ -1152,7 +1148,6 @@ sub loadTable {
         print $sqlldrDatInfileFh join($END_OF_COLUMN_DELIMITER, @columns) . $END_OF_RECORD_DELIMITER; # note the special line terminator
       }
       else { # Load with GUS Objects
-        $self->log("Loading with GUS Objects");
         $mappedRow->{lc($primaryKeyColumn)} = undef;
         $mappedRow->{row_user_id} = undef;
         $mappedRow->{row_group_id} = undef;
