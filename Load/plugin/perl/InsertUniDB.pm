@@ -31,6 +31,7 @@ my $PROJECT_INFO_TABLE = "Core.ProjectInfo";
 my $TABLE_INFO_TABLE = "Core.TableInfo";
 
 my $PLACEHOLDER_STRING = "PLACEHOLDER_STRING";
+my $OWNER_STRING = "OWNER_STRING";
 
 # CLOB data in here requires some hand holding
 my $NA_SEQUENCE_TABLE_NAME = "DoTS.NASequenceImp";
@@ -286,9 +287,9 @@ sub rebuildIndexesAndEnableConstraints {
 sub rebuildIndexes {
   my ($self, $owner, $tableName) = @_;
 
-  my $sql = "select index_name from all_indexes where upper(table_owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
+  my $sql = "select index_name, owner from all_indexes where upper(table_owner) = '$owner' and upper(table_name) = '$tableName' and upper(status) = 'UNUSABLE'";
 
-  my $alterSql = "alter index ${owner}.${PLACEHOLDER_STRING} rebuild nologging";
+  my $alterSql = "alter index ${OWNER_STRING}.${PLACEHOLDER_STRING} rebuild nologging";
 
   $self->doConstraintsSql($sql, $alterSql);
 
@@ -298,9 +299,9 @@ sub rebuildIndexes {
 sub enablePrimaryKeyConstraint {
   my ($self, $owner, $tableName) = @_;
 
-  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'P'  and upper(status) = 'DISABLED'";
+  my $sql = "select constraint_name, owner from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'P'  and upper(status) = 'DISABLED'";
 
-  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+  my $alterSql = "alter table ${OWNER_STRING}.${tableName} enable constraint $PLACEHOLDER_STRING";
 
   $self->doConstraintsSql($sql, $alterSql);
 }
@@ -308,9 +309,9 @@ sub enablePrimaryKeyConstraint {
 sub enableUniqueConstraints {
   my ($self, $owner, $tableName) = @_;
 
-  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'U'  and upper(status) = 'DISABLED'";
+  my $sql = "select constraint_name, owner from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'U'  and upper(status) = 'DISABLED'";
 
-  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+  my $alterSql = "alter table ${OWNER_STRING}.${tableName} enable constraint $PLACEHOLDER_STRING";
 
   $self->doConstraintsSql($sql, $alterSql);
 }
@@ -320,9 +321,9 @@ sub enableUniqueConstraints {
 sub enableReferentialConstraints {
   my ($self, $owner, $tableName) = @_;
 
-  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'  and upper(status) = 'DISABLED'";
+  my $sql = "select constraint_name, owner from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'  and upper(status) = 'DISABLED'";
 
-  my $alterSql = "alter table ${owner}.${tableName} enable constraint $PLACEHOLDER_STRING";
+  my $alterSql = "alter table ${OWNER_STRING}.${tableName} enable constraint $PLACEHOLDER_STRING";
 
   $self->doConstraintsSql($sql, $alterSql);
 }
@@ -332,7 +333,7 @@ sub disableReferentialConstraintsFromTable {
 
   my ($owner, $tableName) = split(/\./, uc($tableNamePeriod));
 
-  my $sql = "select constraint_name from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'";
+  my $sql = "select constraint_name, owner from all_constraints where upper(owner) = '$owner' and upper(table_name) = '$tableName' and upper(CONSTRAINT_TYPE) = 'R'";
 
   my $alterSql = "alter table $tableNamePeriod disable constraint $PLACEHOLDER_STRING";
 
@@ -347,10 +348,11 @@ sub doConstraintsSql {
   my $sh = $dbh->prepare($constraintSelect) or die $dbh->errstr;
   $sh->execute() or die $dbh->errstr;
 
-  while(my ($constraintName) = $sh->fetchrow_array()) {
+  while(my ($constraintName, $ownerName) = $sh->fetchrow_array()) {
     my $tmpSql = $doSql;
 
     $tmpSql =~ s/$PLACEHOLDER_STRING/$constraintName/;
+    $tmpSql =~ s/$OWNER_STRING/$ownerName/;
 
     $self->log("Running SQL:  $tmpSql");
 
