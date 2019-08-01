@@ -79,7 +79,7 @@ create index dots.as_submod_ix
   on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id)
   tablespace indx;
 
-create index char_info_ix
+create index study.char_info_ix
   on study.Characteristic
      (protocol_app_node_id, qualifier_id, unit_id, table_id, characteristic_id, ontology_term_id, value)
   tablespace indx;
@@ -321,7 +321,7 @@ alter table results.NaFeatureExpression add (percentile_channel2 FLOAT(126));
 alter table results.ReporterExpression add (percentile_channel2 FLOAT(126));
 alter table results.RnaExpression add (percentile_channel2 FLOAT(126));
 
-create index pan_info_ix
+create index study.pan_info_ix
   on study.ProtocolAppNode
      (protocol_app_node_id, isa_type, type_id, name,
       external_database_release_id, source_id, subtype_id, node_order_num)
