@@ -882,7 +882,7 @@ sub writeConfigFile {
         my $type = $att->{'type'};
 
         if($type eq 'NUMBER') {
-          $datatypeMap->{$col} = " CHAR";
+          $datatypeMap->{$col} = " CHAR" . $precString;
         }
         elsif($type eq 'CHAR' || $type eq 'VARCHAR2') {
           my $charLength = $tableReader->getMaxFieldLength($fullTableName, $col);
@@ -893,7 +893,8 @@ sub writeConfigFile {
           $datatypeMap->{$col} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
         }
         elsif($type eq 'FLOAT') {
-          $datatypeMap->{$col} = " CHAR(255)";
+          # just use the default for these (255) which is a bit bigger than needed
+          $datatypeMap->{$col} = " CHAR"; 
         }
         elsif($type eq 'BLOB' || $type eq 'CLOB') {
           my $charLength = $tableReader->getMaxFieldLength($fullTableName, $col);
