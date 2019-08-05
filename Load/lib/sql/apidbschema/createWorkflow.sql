@@ -56,7 +56,7 @@ create table apidb.WorkflowStep (
   step_class          varchar(200),
   params_digest       varchar(100),
   depends_string      clob,
-  depth_first_order   number(5)
+  depth_first_order   number(6)
 );
 
 ALTER TABLE apidb.WorkflowStep
