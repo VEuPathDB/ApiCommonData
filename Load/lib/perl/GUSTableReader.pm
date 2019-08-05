@@ -72,9 +72,7 @@ sub getTableSql {
   $tableName = $self->getTableNameFromPackageName($tableName);
 
 
-
-
-  my $orderBy = "order by $primaryKeyColumn";
+  my $orderBy = $isSelfReferencing ? "order by $primaryKeyColumn" : "";
 
   if(lc($tableName) eq "sres.ontologyterm") {
     $orderBy = "order by case when ancestor_term_id = ontology_term_id then 0 else 1 end";
@@ -92,6 +90,7 @@ sub getTableSql {
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
 
+
   my $sql = "select * from $tableName $where $orderBy";
 
   return $sql;
@@ -101,6 +100,8 @@ sub prepareTable {
   my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
   my $dbh = $self->getDatabaseHandle();
+
+  $self->{_lob_locator_size} = undef;
 
   my $sql = $self->getTableSql($tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk);
 
