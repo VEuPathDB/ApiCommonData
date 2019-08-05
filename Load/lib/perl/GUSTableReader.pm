@@ -44,7 +44,13 @@ sub readClob {
 
   my $dbh = $self->getDatabaseHandle();
 
-  my $chunkSize = 1034;   # Arbitrary chunk size, for example
+  my $chunkSize = $self->{_lob_locator_size};
+
+  unless($chunkSize) {
+    $self->{_lob_locator_size} = $dbh->ora_lob_chunk_size($lobLocator);
+    $chunkSize = $self->{_lob_locator_size};
+  }
+
   my $offset = 1;   # Offsets start at 1, not 0
 
   my $output;
