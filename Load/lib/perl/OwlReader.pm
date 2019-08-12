@@ -25,6 +25,10 @@ sub new {
 	return $self;
 }
 
+sub getQueries{
+	return $_[0]->{config}->{queries};
+}
+
 sub loadQueries{
 	my ($self) = @_;
 	print STDERR "Loading queries in $SPARQLPATH\n";
