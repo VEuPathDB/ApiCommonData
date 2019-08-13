@@ -6,7 +6,7 @@ SELECT distinct ?entity ?parent ?column ?label ?order
 WHERE { 
 	?entity a owl:Class .
 	OPTIONAL {
-  	?entity obo:EUPATH_0000755 ?column . 
+  	?entity obo:EUPATH_0000755 ?scolumn . 
 	}
 	OPTIONAL {
   	?entity rdfs:label ?slabel. 
@@ -19,5 +19,6 @@ WHERE {
 	}
 	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
 	BIND (str(?slabel) AS ?label) .
+	BIND (str(?scolumn) AS ?column) .
 }
 
