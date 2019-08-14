@@ -320,7 +320,10 @@ sub run {
 
   ###### Load into CompoundMassSpecResults ######
   my $resultsFile = 'data.tab';
-  my $profileSetName = $self->getArg('studyName') . $self->getExtDbRlsId($self->getArg('extDbSpec'));
+  my $profileSetName = $self->getArg('studyName');
+  $profileSetName =~ s/^compoundMassSpec_//;
+  $profileSetName =~ s/_RSRC$//;
+  $profileSetName = $profileSetName . ' [metaboliteProfiles]';
   my $params;
 
   my $mappingFile = 'mapping.tab';
