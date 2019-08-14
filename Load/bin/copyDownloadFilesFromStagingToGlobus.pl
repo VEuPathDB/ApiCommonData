@@ -45,11 +45,20 @@ while(<DATA>) {
 __DATA__
 #FungiDB|29|AochraceoroseusIBT24754|40 ??
 #
-FungiDB|29|CimmundaCBS83496|44
-FungiDB|29|AmnigerUAMH3544|44
-FungiDB|29|RirregularisDAOM181602|44
-GiardiaDB|29|GintestinalisAssemblageAAS175|44
-GiardiaDB|29|GintestinalisAssemblageBBAH15c1|44
+FungiDB|29|BceratinophilaUAMH5669|45
+FungiDB|29|CqueenslandicumCBS280.77|45
+FungiDB|29|Cgeophilum1.58|45
+FungiDB|29|CduobushaemulonisB09383|45
+FungiDB|29|EmesophilaCBS40295|45
+FungiDB|29|TvirensGv29-8|45
+GiardiaDB|29|GmurisRobertsThomson|45
+ToxoDB|27|CcayetanensisNF1_C8|45
+#
+#FungiDB|29|CimmundaCBS83496|44
+#FungiDB|29|AmnigerUAMH3544|44
+#FungiDB|29|RirregularisDAOM181602|44
+#GiardiaDB|29|GintestinalisAssemblageAAS175|44
+#GiardiaDB|29|GintestinalisAssemblageBBAH15c1|44
 #
 #FungiDB|29|Ptriticina1-1BBBDRace1|43
 #FungiDB|29|EoligospermaCBS72588|43
