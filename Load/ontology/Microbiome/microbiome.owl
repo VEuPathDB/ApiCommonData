@@ -234,6 +234,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000452">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000755>Location</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">village</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The geographical origin of the sample as defined by the country or sea name followed by specific region name. Country or sea names should be chosen from the INSDC country list (http://insdc.org/country.html), or the GAZ ontology (v 1.512)  (http://purl.bioontology.org/ontology/GAZ)</obo:IAO_0000115>
         <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MixS</MIxS_package>
@@ -290,6 +291,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000512">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
         <obo:EUPATH_0000755 xml:lang="en">host_common_name</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>species common name</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">common name of the host, e.g. human</obo:IAO_0000115>
         <Env_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">host-associated</Env_package>
         <MIxS_package rdf:datatype="http://www.w3.org/2001/XMLSchema#string">environmental package</MIxS_package>
@@ -573,6 +575,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000604">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000603"/>
+        <obo:EUPATH_0000755>miseq_run_number</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">run_prefix_prep</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In which batch were samples sequenced together</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sequencing batch</rdfs:label>
@@ -595,6 +598,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000606">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000611"/>
+        <obo:EUPATH_0000755>Child ID</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">host_subject_id</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">subject</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subject ID</rdfs:label>
@@ -967,6 +971,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000733 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000733">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>WAZ</obo:EUPATH_0000755>
+        <rdfs:label>Weight-for-age z-score</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000747 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000747">
@@ -1142,6 +1156,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009018">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000755>SRA Accession #</obo:EUPATH_0000755>
         <obo:IAO_0000115>An accession number assigned to DNA sequencing data by Sequence Read Archive (SRA).</obo:IAO_0000115>
         <rdfs:label>SRA Accession ID</rdfs:label>
     </owl:Class>
@@ -1152,6 +1167,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009019">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
+        <obo:EUPATH_0000755>genus</obo:EUPATH_0000755>
         <rdfs:label>Host genus</rdfs:label>
     </owl:Class>
     
@@ -1161,6 +1177,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009020">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
+        <obo:EUPATH_0000755>subspecies</obo:EUPATH_0000755>
         <rdfs:label>Host subspecies</rdfs:label>
     </owl:Class>
     
@@ -1170,6 +1187,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009021">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000755>extraction_kit</obo:EUPATH_0000755>
         <rdfs:label>DNA extraction kit</rdfs:label>
     </owl:Class>
     
@@ -1179,6 +1197,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009022">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>Weight_to_use</obo:EUPATH_0000755>
         <rdfs:label>Host weight (g)</rdfs:label>
     </owl:Class>
     
@@ -1188,6 +1207,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009023">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>habitat</obo:EUPATH_0000755>
         <rdfs:label>Host habitat</rdfs:label>
     </owl:Class>
     
@@ -1197,7 +1217,38 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009024">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000589"/>
+        <obo:EUPATH_0000755>species</obo:EUPATH_0000755>
         <rdfs:label>Host species</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009025 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009025">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000755>SRA_Sample</obo:EUPATH_0000755>
+        <rdfs:label>SRA Sample ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009026 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009026">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000603"/>
+        <obo:EUPATH_0000755>Run</obo:EUPATH_0000755>
+        <rdfs:label>SRA Run ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009027 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009027">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0600047"/>
+        <obo:EUPATH_0000755>Experiment</obo:EUPATH_0000755>
+        <rdfs:label>SRA Experiment ID</rdfs:label>
     </owl:Class>
     
 
@@ -1222,10 +1273,31 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011894 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011894">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>HAZ</obo:EUPATH_0000755>
+        <rdfs:label>Height-for-age z-score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011895 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011895">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>WHZ</obo:EUPATH_0000755>
+        <rdfs:label>Weight-for-height z-score</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015400 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015400">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755>Age of donor at time of fecal sample collection (months)</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">age_months</obo:EUPATH_0000755>
         <rdfs:label xml:lang="en">Age (months)</rdfs:label>
     </owl:Class>
@@ -1345,6 +1417,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:EUPATH_0000266>specimen collection time measurement datum</obo:EUPATH_0000266>
         <obo:EUPATH_0000755 xml:lang="en">Collection date</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>Date Collected</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">collection_timestamp</obo:EUPATH_0000755>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The time of sampling, either as an instance (single point in time) or interval. In case no exact time is available, the date/time can be right truncated i.e. all of these are valid times: 2008-01-23T19:23:10+00:00; 2008-01-23T19:23:10; 2008-01-23; 2008-01</obo:IAO_0000115>
         <obo:MICRO_0000562>http://purl.obolibrary.org/obo/OBI_0001619</obo:MICRO_0000562>
