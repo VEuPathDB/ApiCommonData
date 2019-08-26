@@ -6,98 +6,33 @@
 
   <target name="GUS-Installation">
     <ant antfile="../GUS/build.xml" target="GUS-Installation">
-      <property name="project" value="GUS"/>
-      <property name="version" value="2.1.2"/>
+      <property name="project" value="GUS" />
+      <property name="version" value="2.1.2" />
     </ant>
-  </target>  
+  </target>
 
   <target name="DoTS-Installation">
     <ant antfile="../DoTS/build.xml" target="DoTS-Installation">
-      <property name="project" value="DoTS"/>
-      <property name="version" value="3.0.1"/>
+      <property name="project" value="DoTS" />
+      <property name="version" value="3.0.1" />
     </ant>
-  </target>  
+  </target>
 
   <target name="FgpUtil-Installation">
     <ant antfile="../FgpUtil/build.xml" target="FgpUtil-Installation">
-      <property name="project" value="FgpUtil"/>
-      <property name="version" value=""/>
+      <property name="project" value="FgpUtil" />
+      <property name="version" value="" />
     </ant>
-  </target>  
+  </target>
 
   <target name="TuningManager-Installation">
-    <ant antfile="../TuningManager/build.xml" target="TuningManager-Installation">
-      <property name="project" value="TuningManager"/>
-      <property name="version" value=""/>
-    </ant>
-  </target>  
-
-  <target name="GUS-Checkout" unless="GUS.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false"> 
-      <property name="svnurl" value="https://cbilsvn.pmacs.upenn.edu/svn/gus/GusAppFramework" />
-      <property name="project" value="GUS"/>
-      <property name="version" value="internal/plasmodb_5-0beta-0"/>
-    </ant>
-  </target>    
-
-  <target name="DoTS-Checkout" unless="DoTS.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://cbilsvn.pmacs.upenn.edu/svn/apidb/DoTS" />
-      <property name="project" value="DoTS"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>  
-
-  <target name="FgpUtil-Checkout" unless="FgpUtil.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://cbilsvn.pmacs.upenn.edu/svn/gus/FgpUtil" />
-      <property name="project" value="FgpUtil"/>
-      <property name="version" value="trunk"/>
+    <ant antfile="../TuningManager/build.xml"
+         target="TuningManager-Installation">
+      <property name="project" value="TuningManager" />
+      <property name="version" value="" />
     </ant>
   </target>
 
-  <target name="TuningManager-Checkout" unless="TuningManager.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://cbilsvn.pmacs.upenn.edu/svn/gus/TuningManager" />
-      <property name="project" value="TuningManager"/>
-      <property name="version" value="trunk"/>
-    </ant>
-  </target>
-
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ApiCommonData-ChildCheckout">
-    <available file="../FgpUtil" type="dir" property="FgpUtil.present" />
-    <available file="../TuningManager" type="dir" property="TuningManager.present" />
-    <available file="../GUS" type="dir" property="GUS.present" />
-    <available file="../DoTS" type="dir" property="DoTS.present" />
-    <antcall target="FgpUtil-Checkout" />
-    <antcall target="TuningManager-Checkout" />
-    <antcall target="GUS-Checkout" />
-    <antcall target="DoTS-Checkout" />
-  </target>
-  
-  
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo    Update    oooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ApiCommonData-ChildUpdate" >
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="FgpUtil"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="TuningManager"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="GUS"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="DoTS"/>
-    </ant>
-  </target>
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Installation  oooooooooooooooooooooooooo -->
@@ -110,26 +45,26 @@
                                             ApiCommonData-MavenInstallation,
                                             ApiCommonData/Load-Installation">
 
-    <ant target="defaultProjectInstall"/>
+    <ant target="defaultProjectInstall" />
   </target>
 
   <target name="ApiCommonData-MavenInstallation">
     <ant target="mavenBuildProject">
-      <property name="project" value="ApiCommonData"/>
+      <property name="project" value="ApiCommonData" />
     </ant>
-    <property name="alreadyBuilt" value="true"/>
+    <property name="alreadyBuilt" value="true" />
   </target>
 
   <!-- oooooooooooooooooo  Installation Postprocess  ooooooooooooooooooooo -->
 
   <target name="ApiCommonData-Installation-postprocess">
-    <echo message="Postprocessing the ApiCommonData installation"/>
+    <echo message="Postprocessing the ApiCommonData installation" />
 
-    <replace dir="${targetDir}/bin" 
-             propertyFile="${targetDir}/config/replacements.prop" > 
+    <replace dir="${targetDir}/bin"
+             propertyFile="${targetDir}/config/replacements.prop">
       <include name="**/*" />
-      <replacefilter token="@perl@" property="perl"/>
-    </replace> 
+      <replacefilter token="@perl@" property="perl" />
+    </replace>
 
   </target>
 
@@ -138,46 +73,46 @@
 
   <target name="ApiCommonData/Load-Installation" depends="ProjectTree">
     <ant target="defaultComponentInstall">
-      <property name="project" value="ApiCommonData"/>
-      <property name="component" value="Load"/>
+      <property name="project" value="ApiCommonData" />
+      <property name="component" value="Load" />
     </ant>
-  </target>  
+  </target>
 
   <target name="ApiCommonData/Datasources-Installation" depends="ProjectTree">
-    <property name="loadresources" value="${targetDir}/lib/xml/loadresources"/>
-    <property name="cache" value="${targetDir}/config/.cache/datasources"/>
-    <property name="datasources" value="${targetDir}/lib/xml/datasources"/>
-    <mkdir dir="${cache}"/>
-    <mkdir dir="${datasources}"/>
+    <property name="loadresources" value="${targetDir}/lib/xml/loadresources" />
+    <property name="cache" value="${targetDir}/config/.cache/datasources" />
+    <property name="datasources" value="${targetDir}/lib/xml/datasources" />
+    <mkdir dir="${cache}" />
+    <mkdir dir="${datasources}" />
     <copy todir="${loadresources}">
       <fileset dir="${projectsDir}/ApiCommonData/Load/lib/xml">
-        <include name="*Resources.xml"/>
+        <include name="*Resources.xml" />
       </fileset>
     </copy>
-    <echo message="Running updateResourcesWithPubmed"/>
-    <apply executable="${targetDir}/bin/updateResourcesWithPubmed" 
+    <echo message="Running updateResourcesWithPubmed" />
+    <apply executable="${targetDir}/bin/updateResourcesWithPubmed"
            dest="${cache}"
            verbose="true">
-        <srcfile/>
-        <targetfile/>
-        <fileset dir="${loadresources}">
-          <include name="*Resources.xml"/>
-        </fileset>
-        <mapper type="glob" from="*.xml" to="*-pubmed.xml"/>
+      <srcfile />
+      <targetfile />
+      <fileset dir="${loadresources}">
+        <include name="*Resources.xml" />
+      </fileset>
+      <mapper type="glob" from="*.xml" to="*-pubmed.xml" />
     </apply>
     <copy todir="${datasources}">
       <fileset dir="${cache}">
-        <include name="*-pubmed.xml"/>
+        <include name="*-pubmed.xml" />
       </fileset>
     </copy>
-    <delete dir="${loadresources}"/>
+    <delete dir="${loadresources}" />
 
     <ant target="buildInfo">
-      <property name="component" value="updateResourcesWithPubmed"/>
+      <property name="component" value="updateResourcesWithPubmed" />
     </ant>
 
   </target>
- 
+
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Distributable  ooooooooooooooooooooooooo -->
@@ -186,11 +121,11 @@
   <target name="ApiCommonData-Distributable" depends="ProjectTree">
 
     <copy todir="${targetDir}">
-      <fileset dir="${projectsDir}" >
+      <fileset dir="${projectsDir}">
         <exclude name="**/CVS/*" />
       </fileset>
-    </copy>  
-  </target>  
+    </copy>
+  </target>
 
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -198,8 +133,8 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ProjectTree" if="${checkout}">
-    <ant target="projectCheckOut"/>
-  </target>  
+    <ant target="projectCheckOut" />
+  </target>
 
 </project>
 

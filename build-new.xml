@@ -5,100 +5,34 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonModel-Installation">
-    <ant antfile="../ApiCommonModel/build.xml" target="ApiCommonModel-Installation">
-      <property name="project" value="ApiCommonModel"/>
-      <property name="version" value="??"/>
+    <ant antfile="../ApiCommonModel/build.xml"
+         target="ApiCommonModel-Installation">
+      <property name="project" value="ApiCommonModel" />
+      <property name="version" value="??" />
     </ant>
-  </target>  
+  </target>
 
   <target name="GUS-Installation">
     <ant antfile="../GUS/build.xml" target="GUS-Installation">
-      <property name="project" value="GUS"/>
-      <property name="version" value="2.1.2"/>
+      <property name="project" value="GUS" />
+      <property name="version" value="2.1.2" />
     </ant>
-  </target>  
+  </target>
 
   <target name="DJob-Installation">
     <ant antfile="../DJob/build.xml" target="DJob-Installation">
-      <property name="project" value="DJob"/>
-      <property name="version" value="3.0.1"/>
+      <property name="project" value="DJob" />
+      <property name="version" value="3.0.1" />
     </ant>
-  </target>  
+  </target>
 
   <target name="DoTS-Installation">
     <ant antfile="../DoTS/build.xml" target="DoTS-Installation">
-      <property name="project" value="DoTS"/>
-      <property name="version" value="3.0.1"/>
-    </ant>
-  </target>  
-
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ApiCommonModel-Checkout" unless="ApiCommonModel.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false"> 
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/ApiCommonModel" />
-      <property name="project" value="ApiCommonModel"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>    
-
-  <target name="GUS-Checkout" unless="GUS.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false"> 
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/GusAppFramework" />
-      <property name="project" value="GUS"/>
-      <property name="version" value="internal/plasmodb_5-0beta-0"/>
-    </ant>
-  </target>    
-
-  <target name="DJob-Checkout" unless="DJob.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/DJob" />
-      <property name="project" value="DJob"/>
-      <property name="version" value="expect"/>
-    </ant>
-  </target>  
-
-  <target name="DoTS-Checkout" unless="DoTS.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/DoTS" />
-      <property name="project" value="DoTS"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>  
-
-  
-  <target name="ApiCommonData-ChildCheckout">
-    <available file="../ApiCommonModel" type="dir" property="ApiCommonModel.present" />
-    <available file="../GUS" type="dir" property="GUS.present" />
-    <available file="../DJob" type="dir" property="DJob.present" />
-    <available file="../DoTS" type="dir" property="DoTS.present" />
-    <antcall target="ApiCommonModel-Checkout" />
-    <antcall target="GUS-Checkout" />
-    <antcall target="DJob-Checkout" />
-    <antcall target="DoTS-Checkout" />
-  </target>
-  
-  
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooo    Update    oooooooooooooooooooooooooo -->
-  <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
-
-  <target name="ApiCommonData-ChildUpdate" >
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="ApiCommonModel"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="GUS"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="DJob"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="DoTS"/>
+      <property name="project" value="DoTS" />
+      <property name="version" value="3.0.1" />
     </ant>
   </target>
+
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Installation  oooooooooooooooooooooooooo -->
@@ -110,20 +44,20 @@
                                             DoTS-Installation,
                                             ApiCommonData/Load-Installation">
 
-    <ant target="defaultProjectInstall"/>
-  </target>  
-   
+    <ant target="defaultProjectInstall" />
+  </target>
+
 
   <!-- oooooooooooooooooo  Installation Postprocess  ooooooooooooooooooooo -->
 
   <target name="ApiCommonData-Installation-postprocess">
-    <echo message="Postprocessing the ApiCommonData installation"/>
+    <echo message="Postprocessing the ApiCommonData installation" />
 
-    <replace dir="${targetDir}/bin" 
-             propertyFile="${targetDir}/config/replacements.prop" > 
+    <replace dir="${targetDir}/bin"
+             propertyFile="${targetDir}/config/replacements.prop">
       <include name="**/*" />
-      <replacefilter token="@perl@" property="perl"/>
-    </replace> 
+      <replacefilter token="@perl@" property="perl" />
+    </replace>
 
   </target>
 
@@ -132,11 +66,11 @@
 
   <target name="ApiCommonData/Load-Installation" depends="ProjectTree">
     <ant target="defaultComponentInstall">
-      <property name="project" value="ApiCommonData"/>
-      <property name="component" value="Load"/>
+      <property name="project" value="ApiCommonData" />
+      <property name="component" value="Load" />
     </ant>
-  </target>  
- 
+  </target>
+
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Distributable  ooooooooooooooooooooooooo -->
@@ -145,11 +79,11 @@
   <target name="ApiCommonData-Distributable" depends="ProjectTree">
 
     <copy todir="${targetDir}">
-      <fileset dir="${projectsDir}" >
+      <fileset dir="${projectsDir}">
         <exclude name="**/CVS/*" />
       </fileset>
-    </copy>  
-  </target>  
+    </copy>
+  </target>
 
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -157,8 +91,8 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ProjectTree" if="${checkout}">
-    <ant target="projectCheckOut"/>
-  </target>  
+    <ant target="projectCheckOut" />
+  </target>
 
 </project>
 
