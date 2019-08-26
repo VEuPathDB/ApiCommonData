@@ -876,8 +876,8 @@ sub writeConfigFile {
       my $col = lc($att->{'col'});
 
       unless($datatypeMap->{$col}) {
-        my $prec = $att->{'prec'} + 5; # add a bit of padding for negative number and decimal points (maybe commas?)
-        my $precString = $prec ? "($prec)" : "";
+        my $prec = $att->{'prec'}; 
+        my $precString = $prec ? "(" . $prec + 10 . ")" : "";# add a bit of padding for negative number and decimal points (maybe commas?)
         my $length = $att->{'length'};
         my $type = $att->{'type'};
 
