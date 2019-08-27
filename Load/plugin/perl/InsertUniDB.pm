@@ -1147,7 +1147,7 @@ sub loadTable {
 
 
         if($hasRowProjectId && $abbreviatedTablePeriod ne $PROJECT_INFO_TABLE) {
-          $self->error("Could not map row") unless $mappedRow->{row_project_id};
+          $self->error("Could not map row_project_id") unless $mappedRow->{row_project_id};
           push @columns, $mappedRow->{row_project_id};
         }
       
