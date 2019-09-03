@@ -35,7 +35,7 @@ $sqlldr->wrietControlFile();
 # DEFAULT VALUES
 my $ROWS = 100000;
 my $BIND_SIZE = 512000;
-my $READ_SIZE = 512000;
+my $READ_SIZE = 1048576;
 my $DISCARD_MAX = 0;
 my $ERROR_COUNT = 0;
 my $STREAM_SIZE = 512000;
@@ -221,6 +221,7 @@ TRAILING NULLCOLS
 ($fieldsString
 )
 ";
+
 
 }
 
