@@ -33,7 +33,7 @@ $sqlldr->wrietControlFile();
 =cut
 
 # DEFAULT VALUES
-my $ROWS = 100000;
+my $ROWS = 5000;
 my $BIND_SIZE = 512000;
 my $READ_SIZE = 1048576;
 my $DISCARD_MAX = 0;
