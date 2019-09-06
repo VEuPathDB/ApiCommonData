@@ -19,6 +19,8 @@ Under test directory
 
 Example:
 java -jar OWLconverter.jar -settingFilename test/setting.txt 
+java -jar OWLconverter.jar -settingFilename test/setting2.txt 
+java -jar OWLconverter.jar -settingFilename test/setting3.txt 
 
 Notes: please update path to your script/test directory in the setting.txt before run the command.
 
