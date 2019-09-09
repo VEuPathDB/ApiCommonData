@@ -54,7 +54,7 @@ my $ncbiTaxId;
 my $sequenceLengths = {};
 
 my $sql = "select gf.NAME, t.NAME, ns.SOURCE_ID as seq_source_id, ns.LENGTH, gf.SOURCE_ID as gene_source_id, 
-t.SOURCE_ID as transcript_source_id, ta.NCBI_TAX_ID, t.is_pseudo, t.TRANSL_TABLE, t.ANTICODON
+t.SOURCE_ID as transcript_source_id, ta.NCBI_TAX_ID, t.is_pseudo, t.TRANSL_TABLE, t.ANTICODON, t.TRANSL_EXCEPT
 from DOTS.EXTERNALNASEQUENCE ns, DOTS.GENEFEATURE gf, DOTS.TRANSCRIPT t, SRES.TAXON ta
 where ns.NA_SEQUENCE_ID=gf.NA_SEQUENCE_ID and gf.NA_FEATURE_ID=t.PARENT_ID
 and ns.TAXON_ID=ta.TAXON_ID
@@ -64,18 +64,23 @@ and gf.EXTERNAL_DATABASE_RELEASE_ID= ?
 
 my $sh = $dbh->prepare($sql);
 $sh->execute($extDbRlsId);
-while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $transcriptSourceId, $ncbi, $isPseudo, $translTable, $anticodon ) = $sh->fetchrow_array()) {
+while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $transcriptSourceId, $ncbi, $isPseudo, $translTable, $anticodon, $translExcept ) = $sh->fetchrow_array()) {
   $ncbiTaxId = $ncbi if($ncbi);
 
   $geneAnnotations->{$geneSourceId} = {
                                        ncbi_tax_id => $ncbiTaxId,
+                                       eupathdb_id => $geneSourceId,
+                                       ebi_id => 'null',    # a place holder for EBI unique ID
   };
 
   $transcriptAnnotations->{$transcriptSourceId} = {
                                    so_term_name => $soTermName,
                                    is_pseudo => $isPseudo,
                                    transl_table => $translTable,
+                                   transl_except => $translExcept,
                                    anticodon => $anticodon,
+                                   eupathdb_id => $transcriptSourceId,
+                                   ebi_id => 'null',    # a place holder for EBI unique ID
 #                                   translation => $translation,
   };
 
@@ -126,7 +131,12 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
 
     if($feature->primary_tag eq 'gene') {
+#      my $eupathdbId= $geneAnnotations->{$geneSourceId}->{eupathdb_id};
+#      my $ebiId = $geneAnnotations->{$geneSourceId}->{ebi_id};
 #      $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
+
+      $feature->add_tag_value("eupathdb_id", $geneAnnotations->{$geneSourceId}->{eupathdb_id});
+      $feature->add_tag_value("ebi_id", $geneAnnotations->{$geneSourceId}->{ebi_id});
     }
 
     if($feature->primary_tag eq 'transcript') {
@@ -137,12 +147,18 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       my $soTermName = $transcriptAnnotations->{$transcriptId}->{so_term_name};
       my $isPseudo = $transcriptAnnotations->{$transcriptId}->{is_pseudo};
       my $translTable = $transcriptAnnotations->{$transcriptId}->{transl_table};
+      my $translExcept = $transcriptAnnotations->{$transcriptId}->{transl_except};
       my $anticodon = $transcriptAnnotations->{$transcriptId}->{anticodon};
+#      my $eupathdbId= $transcriptAnnotations->{$transcriptId}->{eupathdb_id};
+#      my $ebiId = $transcriptAnnotations->{$transcriptId}->{ebi_id};
 #      my $translation = $transcriptAnnotations->{$transcriptId}->{translation};
 
       $feature->primary_tag($soTermName);
+      $feature->add_tag_value("eupathdb_id", $transcriptAnnotations->{$transcriptId}->{eupathdb_id});
+      $feature->add_tag_value("ebi_id", $transcriptAnnotations->{$transcriptId}->{ebi_id});
       $feature->add_tag_value("is_pseudo", $isPseudo) if($isPseudo);
       $feature->add_tag_value("transl_table", $translTable) if($translTable);
+      $feature->add_tag_value("transl_except", $translExcept) if($translExcept);
       $feature->add_tag_value("anticodon", $anticodon) if($anticodon);
 #      $feature->add_tag_value("translation", $translation) if($translation);
 
