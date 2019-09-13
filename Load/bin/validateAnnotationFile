@@ -34,21 +34,11 @@ if (!$outputFileDir) {
   $outputFileDir = ".";
 }
 
-my $wholeGenomeFile = ($inputFileFormat =~ /gff/i) ? "$outputFileDir/whole_genome.gff" : "$inputFileOrDir";
 my ($idSymbol);
 
 ## pre1. if gff3, run makeCustomFastaAndGffFromGff3 and preprocessGFF3o
 if ($inputFileFormat =~ /gff/i) {
-  my $pGC1 = "makeCustomFastaAndGffFromGff3 --input_dir $inputFileOrDir --output_fasta $outputFileDir/whole_genome.fasta --output_gff $outputFileDir/whole_genome.noseq.gff3";
-  print STDERR "running...\n  $pGC1\n";
-  &runCmd($pGC1);
-  print STDERR "Done:\n  $pGC1\n";
-
-  my $pGC2 = "preprocessGFF3 --input_gff $outputFileDir/whole_genome.noseq.gff3 --output_gff $wholeGenomeFile ";
-  print STDERR "running...\n  $pGC2\n";
-  &runCmd($pGC2);
-  print STDERR "Done:\n  $pGC2\n";
-
+  $inputFileOrDir = &preprocessGFF3File2Pseudo($inputFileOrDir, $outputFileDir);
 }
 
 ## if genbank, check the organims names are same in the DEFINITION line 
@@ -58,10 +48,11 @@ if ($inputFileFormat =~ /genbank/i) {
 
 
 ## 1. run reportFeatureQualifiers
-&runReportFeatureQualifiers($inputFileFormat, $wholeGenomeFile, $outputFileDir);
+&runReportFeatureQualifiers($inputFileFormat, $inputFileOrDir, $outputFileDir);
 
 ## 2. check gene model
-my $bioperlSeqIO = ApiCommonData::Load::AnnotationUtils::getSeqIO($wholeGenomeFile, $inputFileFormat);
+print STDERR "\$inputFileOrDir = $inputFileOrDir\n";
+my $bioperlSeqIO = ApiCommonData::Load::AnnotationUtils::getSeqIO($inputFileOrDir, $inputFileFormat);
 while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
   my $seqType = 'DNA';
   print STDERR "Processing ...\n";
@@ -109,6 +100,32 @@ while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
 
 }
 
+sub preprocessGFF3File2Pseudo {
+  my ($inputFile, $outputFileDir) = @_;
+
+  $outputFileDir = "." if (!$outputFileDir);
+
+  my $outFasta = $inputFile;
+  $outFasta =~ s/\.gff3/\.fasta/i;
+
+  my $pseudoGff = $inputFile;
+  $pseudoGff =~ s/\.gff3/\.gff/i;
+
+  my $woSeqGff = $inputFile;
+  $woSeqGff =~ s/\.gff3/\.noseq\.gff3/i;
+
+  my $pGC1 = "makeCustomFastaAndGffFromGff3 --input_dir $inputFile --output_fasta $outputFileDir/$outFasta --output_gff $outputFileDir/$woSeqGff";
+  print STDERR "running...\n  $pGC1\n";
+  &runCmd($pGC1);
+  print STDERR "Done:\n  $pGC1\n";
+
+  my $pGC2 = "preprocessGFF3 --input_gff $outputFileDir/$woSeqGff --output_gff $outputFileDir/$pseudoGff";
+  print STDERR "running...\n  $pGC2\n";
+  &runCmd($pGC2);
+  print STDERR "Done:\n  $pGC2\n";
+
+  return "$outputFileDir/$pseudoGff";
+}
 
 sub printTagValuePairData {
   my ($geneFeature, $prefix) = @_;
