@@ -335,7 +335,7 @@ while($merger->hasNext()) {
 
     $variation->{ref_na_sequence_id} = $naSequenceId;
 
-    my $varSequenceSourceId = "$sequenceId.$strain";
+    my $varSequenceSourceId = "$sequenceId";
     my $varNaSequenceId = $naSequenceIds->{$varSequenceSourceId};
 
     if(!$varNaSequenceId && !$isLegacyVariations) {
