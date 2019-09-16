@@ -14,14 +14,14 @@ GRANT select ON ApiDBUserDatasets.UD_GeneId TO gus_r;
 create table ApiDBUserDatasets.UD_ProfileSet (
  profile_set_id number(20),
  user_dataset_id number(20),
- NAME VARCHAR2(200) not null,  
+ name varchar2(200) not null,  
  foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
  primary key (profile_set_id)
 );
  
 create index ApiDBUserDatasets.pset_idx1
   on ApiDBUserDatasets.UD_ProfileSet
-     (profile_set_id, user_dataset_id)
+     (profile_set_id, user_dataset_id, name)
   tablespace indx;
 
 create sequence ApiDBUserDatasets.UD_profileset_sq;
@@ -31,7 +31,7 @@ grant select on ApiDBUserDatasets.UD_ProfileSet to gus_r;
 grant select on ApiDBUserDatasets.UD_profileSet_sq to gus_w;
 
 ----------------------------------------------------------------------------
-create table ApiDBUserDatasets.UD_PROTOCOLAPPNODE (
+create table ApiDBUserDatasets.UD_ProtocolAppNode (
 PROTOCOL_APP_NODE_ID                  NUMBER(10) not null,     
 TYPE_ID                               NUMBER(10),     
 NAME                                  VARCHAR2(200) not null,  
@@ -43,14 +43,16 @@ SUBTYPE_ID                            NUMBER(10),
 TAXON_ID                              NUMBER(10),     
 NODE_ORDER_NUM                        NUMBER(10),     
 ISA_TYPE                              VARCHAR2(50),   
- FOREIGN KEY (profile_set_id) REFERENCES ApiDBUserDatasets.UD_profileset,
- PRIMARY KEY (protocol_app_node_id)
+FOREIGN KEY (profile_set_id) REFERENCES ApiDBUserDatasets.UD_profileset,
+PRIMARY KEY (protocol_app_node_id)
 );
 
 CREATE INDEX ApiDBUserDatasets.UD_PAN_idx1 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (type_id) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_PAN_idx2 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (profile_set_id) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_PAN_idx3 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (subtype_id) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_PAN_idx4 ON ApiDBUserDatasets.UD_PROTOCOLAPPNODE (taxon_id, protocol_app_node_id) tablespace indx;
+CREATE INDEX apidbUserDatasets.ud_pan_idx5 on apidbUserDatasets.ud_ProtocolAppNode (protocol_app_node_id, profile_set_id, name);
+
 
 create sequence ApiDBUserDatasets.UD_ProtocolAppNode_sq;
 
@@ -74,9 +76,9 @@ PERCENTILE_CHANNEL2            FLOAT(126),
  PRIMARY KEY (NA_FEAT_EXPRESSION_ID)
 );
 
-CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id, na_feature_id, value) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_NFE_idx2 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id) tablespace indx;
-CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id) tablespace indx;
+CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id, value) tablespace indx;
 
 create sequence ApiDBUserDatasets.UD_NaFeatureExpression_sq;
 

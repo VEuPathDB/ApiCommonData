@@ -9,15 +9,16 @@ use List::Util qw[min max];  ## include the min and max subroutine that take min
 ## usage: min ($ends{$cGene}, $items[3], $items[4])
 use Bio::SeqIO;
 use Bio::Tools::GFF;
-
+use Bio::Seq::RichSeq;
+use GUS::Supported::SequenceIterator;
 
 sub getSeqIO {
-  my ($inputFile, $format) = @_;
+  my ($inputFile, $format, $gff2GroupTag) = @_;
   my $bioperlSeqIO;
 
   if ($format =~ m/^gff([2|3])$/i) {
     print STDERR "pre-processing GFF file ...\n";
-    $bioperlSeqIO = convertGFFStreamToSeqIO($1);
+    $bioperlSeqIO = convertGFFStreamToSeqIO($inputFile,$1,$gff2GroupTag);
     print STDERR "done pre-processing gff file\n";
   } else {
     $bioperlSeqIO = Bio::SeqIO->new (-format => $format,
@@ -320,6 +321,26 @@ sub convertGFFStreamToSeqIO {
   }
 
   return GUS::Supported::SequenceIterator->new(\@seqs);
+}
+
+sub makeAggregators {
+  my ($inputFile, $gffVersion,$gff2GroupTag) = @_;
+
+  return undef if ($gffVersion != 2);
+
+  die("Must supply --gff2GroupTag if using GFF2 format") unless $gff2GroupTag;
+
+  # a list of "standard" feature aggregator types for GFF2 support;
+  # only "processed_transcript" for now, but leaving room for others
+  # if necessary.
+  my @aggregators = qw(Bio::DB::GFF::Aggregator::processed_transcript Bio::DB::GFF::Aggregator::transcript);
+
+  # build Feature::Aggregator objects for each aggregator type:
+  @aggregators =
+    map {
+      Feature::Aggregator->new($_, $gff2GroupTag);
+    } @aggregators;
+  return @aggregators;
 }
 
 1;
