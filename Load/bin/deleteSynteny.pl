@@ -70,9 +70,9 @@ my @relid = sort keys %relids; ## not used, but could be useful for debugging
 
 #########################################################
 ## delete rows from apidb.syntentyanchor
-printf STDERR ("Deleting from apidb.syntenyanchor by synteny_id for %s\n", $organismAbbrev);
+printf STDERR ("Deleting from apidb.syntenicgene by synteny_id for %s\n", $organismAbbrev);
 $sql = <<SQL;
-delete from apidb.syntenyanchor where synteny_id in (
+delete from apidb.syntenicgene where synteny_id in (
 	select distinct(s.synteny_id)
 	from apidb.organism o
 		, dots.nasequence nas
@@ -89,7 +89,7 @@ my $start = time();
 $sh = $dbh->prepare($sql);
 $sh->execute($organismAbbrev) or die $sh->errstr;
 my $took = time() - $start;
-printf STDERR ("Deleted %d rows from apidb.syntenyanchor (%d seconds\n", $sh->rows, $took);
+printf STDERR ("Deleted %d rows from apidb.syntenicgene (%d seconds\n", $sh->rows, $took);
 
 
 #########################################################
