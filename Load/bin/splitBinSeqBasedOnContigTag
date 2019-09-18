@@ -45,7 +45,10 @@ while (<IN>) {
 close IN;
 close LOC;
 
-my $fastaOutFile = $fastaFile . "_split.fa";
+my $fastaOutFile = $fastaFile;
+$fastaOutFile =~ s/^(.+\/)//g;
+$fastaOutFile .= "_split";
+
 open (FOUT, ">$fastaOutFile") || die "can not open fasta outFile to read\n";
 
 my $binSeq;
