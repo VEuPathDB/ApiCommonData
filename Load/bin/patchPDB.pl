@@ -19,6 +19,7 @@ my %hash;
 
 open F, $file;
 open MM, ">mismatch.list";
+open LOG, ">log";
 
 while(<F>){
   chomp;
@@ -101,7 +102,7 @@ EOSQL
   my $sth = $dbh->prepare($sql);
   $sth->bind_param(1, $desc);
   $sth->bind_param(2, $id);
-  print $sql. "DESC $desc | $id\n\n";
+  print LOG $sql. "DESC $desc | $id\n\n";
   $sth->execute();
   $sth->finish;
 }
@@ -116,7 +117,7 @@ EOSQL
   my $sth = $dbh->prepare($sql);
   $sth->bind_param(1, $new_id);
   $sth->bind_param(2, $id);
-  print $sql. "ID $new_id | $id\n\n";
+  print LOG $sql. "ID $new_id | $id\n\n";
   $sth->execute();
   $sth->finish;
 }
