@@ -8,13 +8,13 @@ use GUS::Supported::GusConfig;
 # such issue, and update database with correct PDB description/ids.
 # pdb_def_file is the definition line of latest PDB data
 
-my $usage = "checkPDB.pl pdb_def_file\n";
+my $usage = "patchPDB.pl pdb_def_file\n";
 my $config = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
 
 my $sid  = $config->getDbiDsn();
 my $user = $config->getDatabaseLogin();
 my $pass = $config->getDatabasePassword();
-my $file = "pdb_seqres.header";
+my $file = shift or die $usage;
 my %hash;
 
 open F, $file;
