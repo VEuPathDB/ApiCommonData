@@ -41,6 +41,7 @@ GRANT SELECT ON apidb.TranscriptProduct TO gus_r;
 CREATE INDEX apidb.transc_prod_idx ON apidb.TranscriptProduct (na_feature_id, is_preferred, product);
 CREATE INDEX apidb.tfp_mod_idx ON apidb.TranscriptProduct (modification_date, transcript_product_id);
 CREATE INDEX apidb.tfp_revidx ON apidb.TranscriptProduct (external_database_release_id, transcript_product_id);
+CREATE INDEX apidb.tfp_revidx2 ON apidb.TranscriptProduct (evidence_code, transcript_product_id);
 
 ------------------------------------------------------------------------------
 

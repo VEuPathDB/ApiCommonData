@@ -28,7 +28,9 @@ create table ApiDB.PhenotypeGrowthRate (
 );
 
 create index apidb.phengrowthrate_1
-  on apidb.phenotypegrowthrate (na_feature_id, phenotype_growth_rate_id) tablespace indx;
+  on apidb.PhenotypeGrowthRate (na_feature_id, phenotype_growth_rate_id) tablespace indx;
+create index apidb.phengrowthrate_2
+  on apidb.PhenotypeGrowthRate (protocol_app_node_id, phenotype_growth_rate_id) tablespace indx;
 
 CREATE SEQUENCE apidb.PhenotypeGrowthRate_sq;
 

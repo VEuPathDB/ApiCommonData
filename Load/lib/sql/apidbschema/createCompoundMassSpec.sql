@@ -23,7 +23,7 @@ CREATE TABLE ApiDB.CompoundPeaks (
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundPeaks TO gus_w;  
 GRANT SELECT ON ApiDB.CompoundPeaks TO gus_r;  
 
---CREATE INDEX cp_external_database_release_id_idx ON apidb.CompoundPeaks(external_database_release_id);
+CREATE INDEX apidb.cp_extDbRlsIx ON apidb.CompoundPeaks(external_database_release_id, compound_peaks_id) TABLESPACE indx;
 
 -----------
 CREATE SEQUENCE ApiDB.CompoundPeaks_SQ;    
@@ -56,6 +56,9 @@ CREATE TABLE ApiDB.CompoundPeaksChebi (
    FOREIGN KEY (COMPOUND_ID) REFERENCES chEBI.Compounds (ID),
    FOREIGN KEY (COMPOUND_PEAKS_ID) REFERENCES ApiDB.CompoundPeaks (COMPOUND_PEAKS_ID)
 );
+
+CREATE INDEX apidb.cpc_cmppIx ON apidb.CompoundPeaksChebi(compound_peaks_id, compound_peaks_chebi_id) TABLESPACE indx;
+CREATE INDEX apidb.cpc_cmpIx ON apidb.CompoundPeaksChebi(compound_id, compound_peaks_chebi_id) TABLESPACE indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundPeaksChebi TO gus_w;  
 GRANT SELECT ON ApiDB.CompoundPeaksChebi TO gus_r;  
@@ -92,6 +95,9 @@ CREATE TABLE ApiDB.CompoundMassSpecResult (
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.CompoundMassSpecResult TO gus_w;  
 GRANT SELECT ON ApiDB.CompoundMassSpecResult TO gus_r;  
+
+CREATE INDEX apidb.cmsr_panIx ON apidb.CompoundMassSpecResult(protocol_app_node_id, compound_mass_spec_result_id) TABLESPACE indx;
+CREATE INDEX apidb.cmsr_cpiIx ON apidb.CompoundMassSpecResult(compound_peaks_id, compound_mass_spec_result_id) TABLESPACE indx;
 
 -----------
 CREATE SEQUENCE ApiDB.CompoundMassSpecResult_SQ;  

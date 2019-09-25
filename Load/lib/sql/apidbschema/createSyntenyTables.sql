@@ -127,6 +127,14 @@ WHERE 'SyntenicGene' NOT IN (SELECT name FROM core.TableInfo
         ON apidb.SyntenicGene (na_sequence_id, start_min, end_max, synteny_id, syn_na_feature_id, syn_organism_abbrev)
  TABLESPACE INDX;
 
+ CREATE INDEX apidb.SyntGene_featix
+        ON apidb.SyntenicGene (syn_na_feature_id, syntenic_gene_id)
+ TABLESPACE INDX;
+
+ CREATE INDEX apidb.SyntGene_synix
+        ON apidb.SyntenicGene (synteny_id, syntenic_gene_id)
+ TABLESPACE INDX;
+
 
 ------------------------------------------------------------------------------
 
