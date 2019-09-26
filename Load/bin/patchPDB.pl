@@ -89,7 +89,6 @@ while (my $row = $sth->fetchrow_arrayref) {
   }
 }
 $sth->finish;
-$dbh->commit;
 $dbh->disconnect;
 
 sub update_desc() {
