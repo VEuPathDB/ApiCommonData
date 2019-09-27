@@ -33,6 +33,11 @@ FOREIGN KEY (user_dataset_id) REFERENCES ApiDBUserDatasets.InstalledUserDataset
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_w;
 GRANT select ON ApiDBUserDatasets.UserDatasetSharedWith TO gus_r;
 
+create index udshareix_01
+   on ApiDBUserDatasets.UserDatasetSharedWith (user_dataset_id, owner_user_id, recipient_user_id)
+   tablespace indx;
+
+
 ---------------------------------------------------------------------------------
 
 

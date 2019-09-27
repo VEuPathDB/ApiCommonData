@@ -23,6 +23,10 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.TaxonString TO gus_w;
 GRANT SELECT ON apidb.TaxonString TO gus_r;
 GRANT SELECT ON apidb.TaxonString_sq TO gus_w;
 
+CREATE INDEX apidb.tx_ix
+  ON apidb.TaxonString (taxon_id, taxon_string_id)
+  TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable,
