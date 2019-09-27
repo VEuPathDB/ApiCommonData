@@ -117,6 +117,6 @@ EOSQL
   $sth->bind_param(1, $new_id);
   $sth->bind_param(2, $id);
   print LOG $sql. "ID $new_id | $id\n\n";
-  $sth->execute();
+#  $sth->execute();
   $sth->finish;
 }
