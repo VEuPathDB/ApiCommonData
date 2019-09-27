@@ -60,7 +60,7 @@ while (my $row = $sth->fetchrow_arrayref) {
   } else { # key does not exist
 
     # test if O|J exists
-    if($id =~ /X/) { 
+    if($id =~ /_X$/) { 
       (my $j_id = $id) =~ s/X/J/;
       (my $o_id = $id) =~ s/X/O/;
 
