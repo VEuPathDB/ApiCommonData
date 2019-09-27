@@ -61,8 +61,8 @@ while (my $row = $sth->fetchrow_arrayref) {
 
     # test if O|J exists
     if($id =~ /_X$/) { 
-      (my $j_id = $id) =~ s/X/J/;
-      (my $o_id = $id) =~ s/X/O/;
+      (my $j_id = $id) =~ s/X$/J/;
+      (my $o_id = $id) =~ s/X$/O/;
 
       if (exists $hash{$j_id} && exists $hash{$o_id}) {
         print MM "JO $id $j_id $hash{$j_id} $desc | $o_id $hash{$j_id} $desc\n"; # 
@@ -117,6 +117,6 @@ EOSQL
   $sth->bind_param(1, $new_id);
   $sth->bind_param(2, $id);
   print LOG $sql. "ID $new_id | $id\n\n";
-#  $sth->execute();
+  $sth->execute();
   $sth->finish;
 }
