@@ -144,6 +144,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   my $taxaToLoad = $self->getArg('taxaToLoad');
   my $projectName = $self->getArg('projectName');
 
