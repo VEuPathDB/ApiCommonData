@@ -1,5 +1,6 @@
 package ApiCommonData::Load::CalculationsForCNVs;
 
+use lib "$ENV{GUS_HOME}/lib/perl";
 use strict;
 use warnings;
 use Statistics::Descriptive;
@@ -41,8 +42,29 @@ sub getChrsForCalcs {
     return $chrs;
 }
 
+sub getGeneInfo  {
+    my ($geneFootprintFile, $chrHash) = @_;
+    open (FOOTPRINT, $geneFootprintFile) or die "Cannot read file of gene footprints\n$!\n";
+    my $chrData = {};
+    while (<FOOTPRINT>) {
+        my $line = $_;
+        chomp ($line);
+        next if ($line=~/^PROJECT\t/);
+        my @data = split(/\t/, $line);
+        die "Bad line count [$geneFootprintFile line $. ".scalar(@data)."\n" unless (scalar(@data)) == 5;
+        my ($gene, $length, $chr) = ($data[1], $data[2], $data[3]);
+        die "Cannot extract data from $geneFootprintFile line $. \n" unless (defined($gene) && defined($length) && defined($chr));
+        if (exists $chrHash->{$chr}) {
+            $chrData->{$gene}->{'length'} = $length;
+            $chrData->{$gene}->{'chr'} = $chr;
+        }
+    }
+    close FOOTPRINT;
+    return $chrData;
+}
+
 sub getChrFPKMVals {
-    my ($fpkmFile, $chrHash) = @_;
+    my ($fpkmFile, $chrHash, $geneData) = @_;
     my $chrValues = {};
     open (FPKM, $fpkmFile) or die "Cannot read file of FPKM values $fpkmFile\n$!\n";
     while (<FPKM>) {
@@ -50,16 +72,17 @@ sub getChrFPKMVals {
         chomp($line);
         next if ($line=~/^tracking_id\t/);
         my @data = split(/\t/, $line);
-        die "Bad line count [$fpkmFile line $. ".scalar(@data)."]\n" unless (scalar(@data)) >11;
-        my ($chr, $fpkmVal) = ($data[6], $data[9]);
-        $chr=~s/\:\d+\-\d+$//;
-        die "Cannot extract chromosome and FPKM values from $fpkmFile line $.\n" unless (defined($chr) && defined($fpkmVal));
-        # Remove empty SL RNAs that bias chromosomes to 0
-        next if ($fpkmVal == 0);
-        if (exists $chrHash->{$chr}) {
-            push @{$chrValues->{$chr}},$fpkmVal;
+        my ($gene, $fpkmVal) = ($data[0], $data[1]);
+        die "Cannot extract chromosome and FPKM values from $fpkmFile line $.\n" unless (defined($gene) && defined($fpkmVal));
+        my $chr;
+        if (exists $geneData->{$gene}) {
+            $chr = $geneData->{$gene}->{'chr'};
+            if (exists $chrHash->{$chr}) {
+                push @{$chrValues->{$chr}},$fpkmVal;
+            }
         }
     }
+    close FPKM;
     return $chrValues;
 }
 
