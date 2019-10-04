@@ -300,6 +300,7 @@ sub _makeOrthologExperiment {
         });
 
   $orthologExperiment->submit();
+  $self->undefPointerCache();
 
   my $id = $orthologExperiment->getId();
 
