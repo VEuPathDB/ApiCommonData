@@ -5,15 +5,16 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$sql,$outFile,$verbose,$outDelimiter,$includeHeader);
+my ($gusConfigFile,$sql,$outFile,$verbose,$outDelimiter,$includeHeader,$noEmptyFile);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "sql=s" => \$sql,
 	    "outFile=s" => \$outFile,
             "outDelimiter=s" => \$outDelimiter,
             "includeHeader!" => \$includeHeader,
-	    "verbose!" => \$verbose);
+	    "verbose!" => \$verbose,
+	    "noEmptyFile!" => \$noEmptyFile);
 
-die "makeFileWithSql --sql <sql to be run> --outFile <fullpath of file to be made> {--verbose} {--gusConfigFile <file>}\n" if (!$sql || !$outFile );
+die "makeFileWithSql --sql <sql to be run> --outFile <fullpath of file to be made> {--verbose} {--gusConfigFile <file>} {--noEmptyFile}\n" if (!$sql || !$outFile );
 
 if($outDelimiter && $outDelimiter ne '\t' && $outDelimiter ne ',') {
   die "ERROR:  Only '\\t' and ',' are supported as output delimiters:  user provided '$outDelimiter'\n";
@@ -47,13 +48,20 @@ if($includeHeader) {
   print OUT join($outDelimiter, @$fields) . "\n";
 }
 
+my $rowCount = 0;
 while (my @a = $sth->fetchrow_array()) {
   print OUT join($outDelimiter, @a) . "\n";
+  $rowCount++;
 }
 
 $sth->finish();
 
 close OUT;
+
+if($rowCount == 0 && $noEmptyFile){
+  print STDERR "No results: $outFile not created\n";
+  unlink($outFile);
+}
 
 
 
