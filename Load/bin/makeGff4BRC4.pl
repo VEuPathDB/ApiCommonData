@@ -8,6 +8,7 @@ use DBD::Oracle;
 use Getopt::Long;
 
 use CBIL::Util::PropertySet;
+use GUS::ObjRelP::DbiDbHandle;
 use GUS::Community::GeneModelLocations;
 
 use Bio::Tools::GFF;
@@ -21,12 +22,15 @@ my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev);
             'outputFile=s' => \$outputFile,
     );
 
+&usage("Missing a required argument.") unless (defined $orgAbbrev);
 
 if(!$gusConfigFile) {
   $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
 }
 
-&usage("Missing a required argument.") unless (defined $orgAbbrev || $extDbRlsId);
+if (!$outputFile) {
+  $outputFile = $orgAbbrev . ".gff3";
+}
 
 my @properties;
 my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
@@ -35,14 +39,14 @@ my $dbiDsn = $gusconfig->{props}->{dbiDsn};
 my $dbiUser = $gusconfig->{props}->{databaseLogin};
 my $dbiPswd = $gusconfig->{props}->{databasePassword};
 
-my $dbh = DBI->connect($dbiDsn, $dbiUser, $dbiPswd) or die DBI->errstr;
+my $dbh = GUS::ObjRelP::DbiDbHandle->new($dbiDsn, $dbiUser, $dbiPswd);
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 $dbh->{LongTruncOk} = 1;
 
 
 if (!$extDbRlsId) {
-  $extDbRlsId = getExtDbRlsIdForAnnot ($orgAbbrev);
+  $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($orgAbbrev);
 }
 
 
@@ -64,6 +68,7 @@ and gf.EXTERNAL_DATABASE_RELEASE_ID= ?
 
 my $sh = $dbh->prepare($sql);
 $sh->execute($extDbRlsId);
+
 while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $transcriptSourceId, $ncbi, $isPseudo, $translTable, $anticodon, $translExcept ) = $sh->fetchrow_array()) {
   $ncbiTaxId = $ncbi if($ncbi);
 
@@ -189,6 +194,39 @@ close GFF;
 
 1;
 
+############
+sub getExtDbRlsIdFormOrgAbbrev {
+  my ($abbrev) = @_;
+
+  my $extDb = $abbrev. "_primary_genome_RSRC";
+
+  my $extDbRls = getExtDbRlsIdFromExtDbName ($extDb);
+}
+
+sub getExtDbRlsIdFromExtDbName {
+  my ($extDbRlsName) = @_;
+
+#  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select edr.external_database_release_id from sres.externaldatabaserelease edr, sres.externaldatabase ed
+             where ed.name = '$extDbRlsName'
+             and edr.external_database_id = ed.external_database_id";
+  my $stmt = $dbh->prepareAndExecute($sql);
+  my @rlsIdArray;
+
+  while ( my($extDbRlsId) = $stmt->fetchrow_array()) {
+      push @rlsIdArray, $extDbRlsId;
+    }
+
+  die "No extDbRlsId found for '$extDbRlsName'" unless(scalar(@rlsIdArray) > 0);
+
+  die "trying to find unique extDbRlsId for '$extDbRlsName', but more than one found" if(scalar(@rlsIdArray) > 1);
+
+  return @rlsIdArray[0];
+
+}
+
+
 sub usage {
   die
 "
@@ -197,7 +235,7 @@ Usage:
 where
   --orgAbbrev:  required, organims abbreviation
   --extDbRlsId: optional, the externalDatabaseRleaseId that have database name like '*_primary_genome_RSRC'
-  --outputFile: required, the ouput file and/or dir
+  --outputFile: optional, the ouput file and/or dir
   --gusConfigFile: optional, use the current GUS_HOME gusConfigFile if not specify
 ";
 }
