@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+# extract a record from apidb.Organism as XML
+#
+# usage: dumpOrganism -ncbi_tax_id <ncbi_tax_id> [ -gus_config <gus_config_file> ]
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use DBI;
+use CBIL::Util::PropertySet;
+use Data::Dumper;
+
+my ($gusConfigFile, $ncbiTaxId);
+
+&GetOptions('gus_config=s' => \$gusConfigFile,
+            'ncbi_tax_id=s' => \$ncbiTaxId,
+            );
+
+unless ($ncbiTaxId) {
+  die "usage: dumpOrganism -ncbi_tax_id <ncbi_tax_id> [ -gus_config <gus_config_file> ]\n";
+}
+
+unless (-e $gusConfigFile) {
+  $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
+  print STDERR "using default GUS config file $gusConfigFile\n";
+}
+
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $u = $gusconfig->{props}->{databaseLogin};
+my $pw = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+
+my $dbh = DBI->connect("dbi:Oracle:plas-inc", "apidb", "po34weep")
+  or die DBI->errstr;
+
+my $query = $dbh->prepare(<<SQL) or die $dbh->errstr;
+      select  o.*
+      from apidb.Organism o, sres.Taxon t
+      where t.ncbi_tax_id = $ncbiTaxId
+        and o.taxon_id = t.taxon_id
+SQL
+
+$query->execute();
+
+
+while(my $row = $query->fetchrow_hashref()){
+  print "<organism>\n";
+  print "  <public_abbrev>" . $row->{PUBLIC_ABBREV} . "</public_abbrev>\n";
+  print "  <project_name>" . $row->{PROJECT_NAME} . "</project_name>\n";
+  print "  <taxon_id>" . $row->{TAXON_ID} . "</taxon_id>\n";
+  print "  <abbrev>" . $row->{ABBREV} . "</abbrev>\n";
+  print "  <name_for_filenames>" . $row->{NAME_FOR_FILENAMES} . "</name_for_filenames>\n";
+  print "  <genome_source>" . $row->{GENOME_SOURCE} . "</genome_source>\n";
+  print "  <orthomcl_abbrev>" . $row->{ORTHOMCL_ABBREV} . "</orthomcl_abbrev>\n";
+  print "  <strain_abbrev>" . $row->{STRAIN_ABBREV} . "</strain_abbrev>\n";
+  print "  <ref_strain_abbrev>" . $row->{REF_STRAIN_ABBREV} . "</ref_strain_abbrev>\n";
+  print "  <is_reference_strain>" . $row->{IS_REFERENCE_STRAIN} . "</is_reference_strain>\n";
+  print "  <is_annotated_genome>" . $row->{IS_ANNOTATED_GENOME} . "</is_annotated_genome>\n";
+  print "  <is_family_representative>" . $row->{IS_FAMILY_REPRESENTATIVE} . "</is_family_representative>\n";
+  print "  <family_representative_abbrev>" . $row->{FAMILY_REPRESENTATIVE_ABBREV} . "</family_representative_abbrev>\n";
+  print "  <family_ncbi_taxon_ids>" . $row->{FAMILY_NCBI_TAXON_IDS} . "</family_ncbi_taxon_ids>\n";
+  print "  <family_name_for_files>" . $row->{FAMILY_NAME_FOR_FILES} . "</family_name_for_files>\n";
+  print "  <has_temporary_ncbi_taxon_id>" . $row->{HAS_TEMPORARY_NCBI_TAXON_ID} . "</has_temporary_ncbi_taxon_id>\n";
+  print "</organism>\n";
+}
+
+$query->finish();
+
+
