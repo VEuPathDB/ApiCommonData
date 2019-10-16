@@ -43,7 +43,7 @@ my $argsDeclaration =
             isList         => 0, }),
 
    stringArg({name           => 'investigationBaseName',
-            descr          => 'directory where to find directories of isa tab files',
+            descr          => 'name of the investigation file',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
