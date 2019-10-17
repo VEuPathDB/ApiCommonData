@@ -211,6 +211,19 @@ sub getBioTypeAndUpdatePrimaryTag {
   my $type = $$feat->primary_tag;
 #  print STDERR "processing $type, '$id'......\n";
 
+  ## for those primary_tag = transcript, assign with gene soTerm
+  if ($$feat->primary_tag eq "transcript") {
+    my ($parentID) = $$feat->get_tag_values('Parent');
+    my $transcriptType = $geneAnnotations->{$parentID}->{so_term_name};
+    if ($transcriptType eq "coding_gene") {
+      $transcriptType = "mRNA";
+    } else {
+      $transcriptType =~ s/\_gene$//;
+      $transcriptType =~ s/\_encoding$//;
+    }
+    $$feat->primary_tag($transcriptType);
+  }
+
   if ($$feat->primary_tag eq "gene") {
     $bioType = $geneAnnotations->{$id}->{so_term_name};
     foreach my $transcriptHash (@{$gene2TranscriptHash->{$id}}) {
@@ -223,7 +236,8 @@ sub getBioTypeAndUpdatePrimaryTag {
     }
     $bioType = "protein_coding" if ($bioType eq "coding_gene");
     $bioType =~ s/\_gene$/\_encoding/i;
-  } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/) {
+
+  } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {
     $bioType = $transcriptAnnotations->{$id}->{so_term_name};
     if ($$feat->has_tag("is_pseudo") && ($$feat->get_tag_values("is_pseudo")) == 1) {
       if ($$feat->primary_tag =~ /tRNA/) {
