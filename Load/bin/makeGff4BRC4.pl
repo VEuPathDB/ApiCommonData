@@ -56,6 +56,7 @@ my $geneAnnotations = {};
 my $transcriptAnnotations = {};
 my $ncbiTaxId;
 my $sequenceLengths = {};
+my $gene2TranscriptHash = {};
 
 my $sql = "select gf.NAME, t.NAME, ns.SOURCE_ID as seq_source_id, ns.LENGTH, gf.SOURCE_ID as gene_source_id, 
 t.SOURCE_ID as transcript_source_id, ta.NCBI_TAX_ID, t.is_pseudo, t.TRANSL_TABLE, t.ANTICODON, t.TRANSL_EXCEPT
@@ -74,6 +75,7 @@ while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $gen
 
   $geneAnnotations->{$geneSourceId} = {
                                        ncbi_tax_id => $ncbiTaxId,
+                                       so_term_name => $geneSoTermName,
                                        eupathdb_id => $geneSourceId,
                                        ebi_id => 'null',    # a place holder for EBI unique ID
   };
@@ -90,6 +92,7 @@ while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $gen
   };
 
   $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
+  push @{$gene2TranscriptHash->{$geneSourceId}}, $transcriptAnnotations->{$transcriptSourceId};
 }
 
 my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $extDbRlsId, 1);
@@ -136,8 +139,6 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
 
     if($feature->primary_tag eq 'gene') {
-#      my $eupathdbId= $geneAnnotations->{$geneSourceId}->{eupathdb_id};
-#      my $ebiId = $geneAnnotations->{$geneSourceId}->{ebi_id};
 #      $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
 
       $feature->add_tag_value("eupathdb_id", $geneAnnotations->{$geneSourceId}->{eupathdb_id});
@@ -154,8 +155,6 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       my $translTable = $transcriptAnnotations->{$transcriptId}->{transl_table};
       my $translExcept = $transcriptAnnotations->{$transcriptId}->{transl_except};
       my $anticodon = $transcriptAnnotations->{$transcriptId}->{anticodon};
-#      my $eupathdbId= $transcriptAnnotations->{$transcriptId}->{eupathdb_id};
-#      my $ebiId = $transcriptAnnotations->{$transcriptId}->{ebi_id};
 #      my $translation = $transcriptAnnotations->{$transcriptId}->{translation};
 
       $feature->primary_tag($soTermName);
@@ -169,6 +168,8 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
     }
 
+    my $bioType = getBioTypeAndUpdatePrimaryTag(\$feature, $geneSourceId);
+    $feature->add_tag_value ("biotype", $bioType) if ($bioType);
 
     if($feature->primary_tag eq 'utr3prime') {
       $feature->primary_tag('three_prime_UTR');
@@ -182,6 +183,13 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       $feature->frame('.');
     }
 
+#    print STDERR "$feature->primary_tag\n" if ($feature->primary_tag ne "gene" 
+#					       || $feature->primary_tag =~ /RNA$/
+#					       || $feature->primary_tag ne "CDS"
+#					       || $feature->primary_tag ne "pseudogene"
+#					       || $feature->primary_tag ne "pseudogenic_transcript"
+#					       || $feature->primary_tag ne "pseudogenic_exon"
+#					       || $feature->primary_tag ne "exon");
 
 
     $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
@@ -195,12 +203,65 @@ close GFF;
 1;
 
 ############
+sub getBioTypeAndUpdatePrimaryTag {
+  my ($feat, $geneSourceId) = @_;
+  my $bioType;
+
+  my ($id) = $$feat->get_tag_values("ID");
+  my $type = $$feat->primary_tag;
+#  print STDERR "processing $type, '$id'......\n";
+
+  if ($$feat->primary_tag eq "gene") {
+    $bioType = $geneAnnotations->{$id}->{so_term_name};
+    foreach my $transcriptHash (@{$gene2TranscriptHash->{$id}}) {
+      if ($transcriptHash->{so_term_name} eq "mRNA" || $transcriptHash->{so_term_name} eq "transcript") {
+	if ($transcriptHash->{is_pseudo} == 1) {
+	  $bioType = "pseudogene";
+	  $$feat->primary_tag("pseudogene");
+	}
+      }
+    }
+    $bioType = "protein_coding" if ($bioType eq "coding_gene");
+    $bioType =~ s/\_gene$/\_encoding/i;
+  } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/) {
+    $bioType = $transcriptAnnotations->{$id}->{so_term_name};
+    if ($$feat->has_tag("is_pseudo") && ($$feat->get_tag_values("is_pseudo")) == 1) {
+      if ($$feat->primary_tag =~ /tRNA/) {
+	$bioType = "pseudogenic_tRNA";
+	$$feat->primary_tag("pseudogenic_tRNA");
+      } elsif ($$feat->primary_tag =~ /rRNA/) {
+	$bioType = "pseudogenic_rRNA";
+	$$feat->primary_tag("pseudogenic_rRNA");
+      } else {
+	$bioType = "pseudogenic_transcript";
+	$$feat->primary_tag("pseudogenic_transcript");
+      }
+    }
+
+  } elsif ($$feat->primary_tag eq "exon" ) {
+    my @parentIDs = $$feat->get_tag_values('Parent');
+    foreach my $parentID (@parentIDs) {
+      if ($transcriptAnnotations->{$parentID}->{is_pseudo} == 1) {
+	$bioType = "pseudogenic_exon";
+	$$feat->primary_tag("pseudogenic_exon");
+      } else {
+	$bioType = $$feat->primary_tag;
+      }
+    }
+  } else {
+    ## do not need it for CDS and others
+  }
+  return $bioType;
+}
+
 sub getExtDbRlsIdFormOrgAbbrev {
   my ($abbrev) = @_;
 
   my $extDb = $abbrev. "_primary_genome_RSRC";
 
   my $extDbRls = getExtDbRlsIdFromExtDbName ($extDb);
+
+  return $extDbRls;
 }
 
 sub getExtDbRlsIdFromExtDbName {
