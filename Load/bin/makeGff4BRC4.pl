@@ -104,7 +104,7 @@ print GFF "##gff-version 3\n";
 foreach(sort keys %$sequenceLengths) {
   my $length = $sequenceLengths->{$_};
 
-  print GFF "##sequence-region $_ 1 $length\n";
+#  print GFF "##sequence-region $_ 1 $length\n";   ## sequence query from dots.externalNaFeature table are not top level
 }
 
 my $date = HTTP::Date::time2iso();
