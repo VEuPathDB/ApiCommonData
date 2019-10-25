@@ -81,13 +81,32 @@ elsif($query eq 'order'){
 	}
 }
 elsif($query eq 'test'){
-	my $it = $owl->execute('all_subclasses', {ENTITY=>'http://purl.obolibrary.org/obo/EUPATH_0015399'});
+	my $it = $owl->execute('all_subclasses', {ENTITY=>'<http://purl.obolibrary.org/obo/EUPATH_0015399>'});
 	my @fields = $it->binding_names;
 	printf("%s\n", join("\t", @fields));
 	while( my $row = $it->next ){
 		my @vals = map { $row->{$_} ? $row->{$_}->as_sparql : "" } @fields;
 		printf("%s\n", join("\t", @vals));
 	}
+}
+elsif($query eq 'sidbytype'){
+  my %categories = (
+    household => '<http://purl.obolibrary.org/obo/PCO_0000024>',
+    observation => '<http://purl.obolibrary.org/obo/EUPATH_0000738>',
+    participant => '<http://purl.obolibrary.org/obo/EUPATH_0000096>',
+    sample => '<http://purl.obolibrary.org/obo/EUPATH_0000609>'
+  );
+
+  my %iri;
+  while( my($cat, $ent) = each %categories){
+  	my $it = $owl->execute('all_subclasses', {ENTITY=>$ent});
+  	while( my $row = $it->next ){
+      my $uri = $row->{entity}->as_hash()->{iri}|| $row->{entity}->as_hash()->{URI};
+      my $sid = basename($owl->getSourceIdFromIRI($uri));
+      $iri{$sid} = $cat;
+    }
+  }
+  printf("$_\t$iri{$_}\n") for sort { $iri{$a} cmp $iri{$b} } keys %iri;
 }
 else {
 	my $it = $owl->execute($query);
