@@ -47,10 +47,22 @@ EOSQL
 my $sth = $dbh->prepare($sql);
 $sth->execute;
 
+my %PDBs;
+
 while (my $row = $sth->fetchrow_arrayref) {
   my ($source_id, $desc) = @$row;
   my $id = uc($source_id);
-  
+
+  $PDBs{$id} = "$source_id\t$desc";
+}
+$sth->finish;
+
+foreach my $k (sort keys %PDBs) {
+  my $id = $k;
+  my ($source_id, $desc) = split (/\t/, $PDBs{$k});
+
+#  print STDERR "$source_id, $desc\n";
+
   if(exists $hash{$id}) {
     if($hash{$id} ne $desc) { 
       print MM "MM $source_id $hash{$id} | $desc\n";
@@ -64,16 +76,19 @@ while (my $row = $sth->fetchrow_arrayref) {
       (my $j_id = $id) =~ s/X$/J/;
       (my $o_id = $id) =~ s/X$/O/;
 
-      if (exists $hash{$j_id} && exists $hash{$o_id}) {
-        print MM "JO $id $j_id $hash{$j_id} $desc | $o_id $hash{$j_id} $desc\n"; # 
-        # in eupath database, there is only unique id, such '1a8r_X', 
-        # but PDB has both 1a8r_J and 1a8r_O
-        # in such case, update to J id arbitrarily? or ignore it
-        (my $new_id = $source_id) =~ s/X/J/;
-        ## update id to J ID
-        &update_id($dbh, $new_id, $id);
-      } elsif (exists $hash{$j_id}) {
-        print MM "J $id $j_id\n";
+      if (exists $hash{$j_id}) {
+	if (exists $hash{$o_id}) {
+	  print MM "JO $id $j_id $hash{$j_id} $desc | $o_id $hash{$j_id} $desc\n"; # 
+	  # in eupath database, there is only unique id, such '1a8r_X', 
+	  # but PDB has both 1a8r_J and 1a8r_O
+	  # in such case, update to J id arbitrarily? or ignore it
+	} else {
+#        (my $new_id = $source_id) =~ s/X/J/;
+#        ## update id to J ID
+#        &update_id($dbh, $new_id, $id);
+#      } elsif (exists $hash{$j_id}) {
+	  print MM "J $id $j_id\n";
+	}
         (my $new_id = $source_id) =~ s/X/J/;
         &update_id($dbh, $new_id, $id);
         ## update id to J ID
@@ -88,7 +103,6 @@ while (my $row = $sth->fetchrow_arrayref) {
     }
   }
 }
-$sth->finish;
 $dbh->disconnect;
 
 sub update_desc() {
