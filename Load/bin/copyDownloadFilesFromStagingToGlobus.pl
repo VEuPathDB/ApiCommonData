@@ -57,7 +57,7 @@ TriTrypDB|29|LbraziliensisMHOMBR75M2904_2019|46
 TriTrypDB|29|TcongolenseIL3000_2019|46
 TriTrypDB|29|LdonovaniLV9|46
 GiardiaDB|29|MexilisPA203|46
-CryptoDB|29|CparvumIOWA-ATC|46
+CryptoDB|29|CparvumIOWA-ATCC|46
 ToxoDB|27|TgondiiCAST|46
 ToxoDB|27|TgondiiCOUG|46
 ToxoDB|27|TgondiiTgCATBr9|46
