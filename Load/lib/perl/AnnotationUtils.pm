@@ -11,6 +11,8 @@ use Bio::SeqIO;
 use Bio::Tools::GFF;
 use Bio::Seq::RichSeq;
 use GUS::Supported::SequenceIterator;
+use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
+
 
 sub getSeqIO {
   my ($inputFile, $format, $gff2GroupTag) = @_;
@@ -46,6 +48,308 @@ sub printTabDelimitedLine {
   return 0;
 }
 
+## read bioperl features from a gff3 file
+sub readFeaturesFromGff {
+  my ($inFile) = @_;
+  my @bioFeats;
+  my $gffio = Bio::Tools::GFF->new(-file => $inFile, -gff_version => 3);
+  while (my $feature = $gffio->next_feature()) {
+    $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3));
+    my $type = $feature->primary_tag();
+    my ($id) = $feature->get_tag_values("ID") if ($feature->has_tag("ID"));
+    push @bioFeats, $feature;
+  }
+  $gffio->close();
+
+  return \@bioFeats;
+}
+
+sub nestGeneHierarchy{ ## gene -> transcript -> exon
+  my ($feature) = @_;
+
+  ## use ID/Parent hierarchy to re-nest GFF3 features
+  my %top;          # associative list of top-level features
+  my %children;     # mapping of parents to children
+  my @keep;         # list of features to replace flat feature list
+
+  foreach my $feat (@{$feature}) {
+    my $seqId = $feat->seq_id;
+    my $id;
+    if ($feat->has_tag("ID")) {
+      ($id) = $feat->get_tag_values("ID");
+    } else {
+      my $start = $feat->location->start();
+      my $end = $feat->location->end();
+      warn "For '$seqId', no ID found at position: $start ... $end\n";
+    }
+
+    if ($feat->has_tag("Parent")) {
+      foreach my $parent($feat->get_tag_values("Parent")) {
+        push @{$children{$parent}}, [$id, $feat];
+      }
+    } elsif ($feat->has_tag("Derives_from")) {
+      foreach my $parent($feature->get_tag_values("Derives_from")) {
+        push @{$children{$parent}}, [$id, $feat];
+      }
+    } else {
+      push @keep, $feat;
+      $top{$id} = $feat if ($id);   # only features with ID can have children
+    }
+  }  # end of foreach my $feat 
+
+  # build a stack of children to be associated with their parent feature
+  foreach my $k (sort keys %top) {
+    my @children;
+    if ($children{$k}) {
+      foreach my $col (@{$children{$k}}) {
+        push @children, [@$col, $top{$k}];
+      }
+    }
+    delete($children{$k});
+
+    # now iterate over the stack until empty
+    foreach my $child (@children) {
+      my ($child_id, $child, $parent) = @$child;
+
+      # make the association
+      if ($parent->location->start() > $child->location->start() ) {
+        warn "Child feature $child_id does not lie (start) within parent boundaries\n";
+        $parent->location->start($child->location->start());
+      }
+      if ($parent->location->end() < $child->location->end() ) {
+        warn "Child feature $child_id does not lie (end) within parent boundaries\n";
+        $parent->location->end($child->location->end());
+      }
+      $parent->add_SeqFeature($child);
+
+      # add to the stack any nested children of this child
+      if ($children{$child_id}) {
+        foreach my $col (@{$children{$child_id}}) {
+          push @children, [@$col, $child];
+        }
+      }
+      delete ($children{$child_id});
+    }
+  }
+
+  # the entire contents of %children should now have been processed
+  if ( keys %children) {
+    warn "Unassociated children features (missing parents):\n";
+    warn join ("    \n", keys %children), "\n";
+  }
+
+  # replace original feature list with new nested versions
+  @{$feature} = @keep;
+
+  return $feature;
+}
+
+sub flatGeneHierarchySortBySeqId {
+  my ($feat) = @_;
+
+  # sort by seq_id, then bioFeat->location
+  my %sortedFeats;
+  foreach my $eachFeat (@{$feat}) {
+    my $seqId = $eachFeat->seq_id();
+    push @{$sortedFeats{$seqId}}, $eachFeat;
+  }
+
+  my $flatFeature;
+  foreach my $k (sort keys %sortedFeats) {
+    foreach my $gene ( sort {$a->location->start <=> $b->location->start
+                               || $a->location->end <=> $b->location->end} @{$sortedFeats{$k}}) {
+      push @{$flatFeature}, $gene;
+
+      # gene->mRNA1->exon(/CDS)->mRNA2->exon(CDS)->mRNA3 ...
+      foreach my $transcript ($gene->get_SeqFeatures()) {
+        push @{$flatFeature}, $transcript;
+        foreach my $exon ($transcript->get_SeqFeatures()) {
+          push @{$flatFeature}, $exon;
+        }
+      }
+
+      # gene->mRNA1->mRNA2->mRNA3 ... ->exon ... ->CDS ... ## not working because it also delete some CDS and utr features
+#      my (%subFeats, $exonK);
+#      foreach my $transcript ($gene->get_SeqFeatures()) {
+#        push @{$flatFeature}, $transcript;
+#        foreach my $exon ($transcript->get_SeqFeatures()) {
+#	  $exonK = $seqId."_".$exon->primary_tag()."_".$exon->location->start."-". $exon->location->end;
+#          push @{$flatFeature}, $exon; #if (!$subFeats{$exonK});
+#	  $subFeats{$exonK} = $exon;
+#	}
+#      }
+    }
+  }
+
+  return $flatFeature;
+}
+
+
+sub writeFeaturesToGffBySeqId {
+  my ($bioFeat, $out) = @_;
+
+  my $gffout= Bio::Tools::GFF->new(-file => ">$out", -gff_version => 3);
+
+  # sort by seq_id
+  my %sortedBioFeats;
+  foreach my $feat (@{$bioFeat}) {
+    my $seqId = $feat->seq_id();
+    push @{$sortedBioFeats{$seqId}}, $feat;
+  }
+
+  foreach my $k (sort keys %sortedBioFeats) {
+    foreach my $sortedFeat (@{$sortedBioFeats{$k}}) {
+      $gffout->write_feature($sortedFeat);
+    }
+  }
+
+  $gffout->close();
+
+  return 0;
+}
+
+sub verifyFeatureLocation {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    foreach my $gene (@{$bioFeatureHash{$k}}) {
+
+      my ($gene_id) = $gene->get_tag_values("ID") if ($gene->has_tag("ID"));
+      my $gstart = $gene->location->start;
+      my $gend = $gene->location->end;
+#      print STDERR "gene $gene_id starts at $gstart, and ends at $gend\n"
+#	if ($gene_id eq "AMAG_10791" || $gene_id eq "AMAG_16866");
+
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my ($mRNA_id) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+	my $tstart = $transcript->location->start;
+	my $tend = $transcript->location->end;
+#	print STDERR "transcript $mRNA_id starts at $tstart, and ends at $tend\n"
+#	  if ($mRNA_id eq "AMAG_10791-t26_1" || $mRNA_id eq "AMAG_16866-t26_1");
+
+	&checkFeatureLocation ($gene, $transcript);
+
+	foreach my $exon ($transcript->get_SeqFeatures) {
+	  my ($exon_id) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
+	  my $estart = $exon->location->start;
+	  my $eend = $exon->location->end;
+	  print STDERR "exon $exon_id starts at $estart, and ends at $eend\n"
+	    if ($exon_id eq "exon_AMAG_10791-E1" || $exon_id eq "exon_AMAG_16866-E1");
+
+	  &checkFeatureLocation ($transcript, $exon);
+	}
+      }
+    }
+  }
+}
+
+sub checkFeatureLocation {
+  my ($parent, $child) = @_;
+
+  my ($parent_id) = $parent->get_tag_values("ID") if ($parent->has_tag("ID"));
+  my ($child_id) = $child->get_tag_values("ID") if ($child->has_tag("ID"));
+  if ($parent->location->start() > $child->location->start() ) {
+    warn "Child feature '$child_id' does not lie (start) within parent '$parent_id' boundaries\n";
+    $parent->location->start($child->location->start());
+  }
+  if ($parent->location->end() < $child->location->end() ) {
+    warn "Child feature '$child_id' does not lie (end) within parent '$parent_id' boundaries\n";
+    $parent->location->end($child->location->end());
+  }
+}
+
+sub checkGff3Format {
+  my ($bioFeature) = @_;
+
+  my (%geneIds, %exonFeats);
+  foreach my $bioFeat (@{$bioFeature}) {
+    my $seqId = $bioFeat->seq_id;
+    my $type = $bioFeat->primary_tag;
+    my $start = $bioFeat->location->start;
+    my $end = $bioFeat->location->end;
+    my $strand = $bioFeat->strand;
+    my $frame = $bioFeat->frame;
+    my ($id) = $bioFeat->get_tag_values("ID") if ($bioFeat->has_tag("ID"));
+
+#    print STDERR "For $type: $id, \$strand = $strand\n";
+
+    ## 1) check if gene ID is unique and not null
+    if ($id eq "") {
+      warn "At $seqId, $start ... $end, gene ID can not be null.\n";
+    }
+
+    if ($type eq "gene" || $type eq "pseudogene") {
+      #($geneIds{$id}) ? warn "At $seqId, $start ... $end, gene ID has been duplicated.\n" : $geneIds{$id} = $id;
+      if ($geneIds{$id}) {
+	warn "At $seqId, $start ... $end, gene ID: '$id' has been duplicated.\n";
+      } else {
+	$geneIds{$id} = $id;
+      }
+    }
+
+    # 2) check the lenght of sequence ID is not hit the max 50 characters
+    my $seqIdLength = length ("$seqId");
+    warn "For '$seqId', the length of sequence ID can not hit the max 50 characters.\n" if ($seqIdLength > 50);
+
+    # 3) check if frame should be 0, 1, 2 for CDS, should be . for all others
+    if ($type eq "CDS") {
+      unless ($frame eq "0" || $frame eq "1" || $frame eq "2") {
+	warn "For the CDS: $id at $seqId, $start ... $end, the frame at the 8th column can not be '$frame'. It should be 0|1|2\n";
+      }
+    } else {
+      if ($frame ne "\.") {
+	warn "For $type: $id at $seqId, $start ... $end, the frame at the 8th column can not be '$frame'. It should be an '.'\n";
+      }
+    }
+
+    # 4) check if the strand is + or -
+    unless ($strand eq "1"  || $strand eq "-1") {
+      warn "For $type $id, the 7th column is strand info. It can not be $strand. It should be +|-\n";
+    }
+
+    # check if overlapped exons for each transcript
+    # check if there is any duplicated exons for each transcript
+    if ($type =~ /exon$/) {
+      my @parentIds = $bioFeat->get_tag_values("Parent") if ($bioFeat->has_tag("Parent"));
+      foreach my $parentId (@parentIds) {
+	push @{$exonFeats{$parentId}}, $bioFeat;
+	print STDERR "In exon, the parent ID = $parentId\n";
+      }
+    }
+
+    # if all subFeatures of a gene are located at the same strand
+    # check if there is internal UTR, the UTRs is inside the CDS
+    # check if duplicated genes happen in the same sequence at the same position
+    # check the length of transcript is not shorter than the sum of the exons's length
+
+  }
+
+  # 4) check if overlapped exons or duplicated exons for each transcript
+  foreach my $k (sort keys %exonFeats) {
+    my ($preStart, $preEnd);
+    foreach my $exon ( sort {$a->location->start <=> $b->location->start
+                               || $a->location->end <=> $b->location->end} @{$exonFeats{$k}}) {
+      if ($preEnd > $exon->location->start && defined ($preStart && $preEnd)) {
+	my ($sid) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
+	my $sStart = $exon->location->start;
+	my $sEnd = $exon->location->end;
+	warn "overlapped exons found at $sid: $sStart ... $sEnd for $k\n";
+      } else {
+	$preStart = $exon->location->start;
+	$preEnd = $exon->location->end;
+      }
+    }
+  }
+}
+
+## if the length of aa sequence < 10 aa
+## check if gene location is located outside the naSequence length
 
 
 ## usage: $aspect = getAspectForGo ($value);
