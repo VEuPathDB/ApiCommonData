@@ -135,7 +135,7 @@ sub nestGeneHierarchy{ ## gene -> transcript -> exon
   # the entire contents of %children should now have been processed
   if ( keys %children) {
     warn "Unassociated children features (missing parents):\n";
-    warn join ("    \n", keys %children), "\n";
+    warn join ("\n    ", keys %children), "\n";
   }
 
   # replace original feature list with new nested versions
@@ -300,11 +300,11 @@ sub checkGff3Format {
     # 3) check if frame should be 0, 1, 2 for CDS, should be . for all others
     if ($type eq "CDS") {
       unless ($frame eq "0" || $frame eq "1" || $frame eq "2") {
-	warn "For the CDS: $id at $seqId, $start ... $end, the frame at the 8th column can not be '$frame'. It should be 0|1|2\n";
+	warn "For the CDS: $id at $seqId, the frame at the 8th column should be 0|1|2\n";
       }
     } else {
       if ($frame ne "\.") {
-	warn "For $type: $id at $seqId, $start ... $end, the frame at the 8th column can not be '$frame'. It should be an '.'\n";
+	warn "For $type: $id at $seqId, the frame at the 8th column should be an '.'\n";
       }
     }
 
@@ -313,24 +313,19 @@ sub checkGff3Format {
       warn "For $type $id, the 7th column is strand info. It can not be $strand. It should be +|-\n";
     }
 
-    # check if overlapped exons for each transcript
-    # check if there is any duplicated exons for each transcript
+    # 5) check if overlapped exons for each transcript
+    # 5) check if there is any duplicated exons for each transcript
     if ($type =~ /exon$/) {
       my @parentIds = $bioFeat->get_tag_values("Parent") if ($bioFeat->has_tag("Parent"));
       foreach my $parentId (@parentIds) {
 	push @{$exonFeats{$parentId}}, $bioFeat;
-	print STDERR "In exon, the parent ID = $parentId\n";
       }
     }
 
-    # if all subFeatures of a gene are located at the same strand
-    # check if there is internal UTR, the UTRs is inside the CDS
-    # check if duplicated genes happen in the same sequence at the same position
-    # check the length of transcript is not shorter than the sum of the exons's length
 
   }
 
-  # 4) check if overlapped exons or duplicated exons for each transcript
+  # 5) check if overlapped exons or duplicated exons for each transcript
   foreach my $k (sort keys %exonFeats) {
     my ($preStart, $preEnd);
     foreach my $exon ( sort {$a->location->start <=> $b->location->start
@@ -348,7 +343,74 @@ sub checkGff3Format {
   }
 }
 
-## if the length of aa sequence < 10 aa
+
+sub checkGff3FormatNestedFeature {
+  my ($bioFeature) = @_;
+
+  my (%geneIds, %exonFeats, %dupGenes);
+  foreach my $bioFeat (@{$bioFeature}) {
+    my $seqId = $bioFeat->seq_id;
+    my $type = $bioFeat->primary_tag;
+    my $start = $bioFeat->location->start;
+    my $end = $bioFeat->location->end;
+    my $strand = $bioFeat->strand;
+    my $frame = $bioFeat->frame;
+    my ($id) = $bioFeat->get_tag_values("ID") if ($bioFeat->has_tag("ID"));
+
+    # 6) check if all subFeatures of a gene are located at the same strand
+    foreach my $transcript ($bioFeat->get_SeqFeatures) {
+      my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      my $tStrand = $transcript->strand;
+      my $tLength = abs($transcript->location->end - $transcript->location->start) +1;
+      my ($eLength, $cdsLen);
+
+      if ($transcript->strand ne $strand) {
+	warn "Feature gene $id ($strand) and transcript $tId ($tStrand) are not located at the same strand\n";
+	next;
+      }
+      foreach my $exon ($transcript->get_SeqFeatures) {
+	my ($eId) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
+
+	if ($exon->strand ne $transcript->strand) {
+	  warn "Feature exon $eId and transcript $tId are not loacated at the same strand\n";
+	}
+
+	if ($exon->primary_tag eq "exon") {
+	  $eLength += abs($exon->location->end - $exon->location->start) + 1;
+	}
+	if ($exon->primary_tag eq "CDS") {
+	  $cdsLen += abs($exon->location->end - $exon->location->start) + 1;
+	}
+      }
+
+      # 8) check the length of transcript is not shorter than the sum of the exons's length
+      if ($tLength < $eLength) {
+	warn "Feature transcript: $tId, the length of transcript is shorter than the sum of the exons\n";
+	warn "    double check the number of exons and locations of exons\n";
+      }
+
+      # 9) check if the length of aa sequence < 10 aa
+      if ($cdsLen < 30) {
+	warn "Feature transcript: $tId, the length of translation < 10 aa\n";
+      }
+
+    } # end of foreach my $transcript
+
+    # 7) check if duplicated genes happen in the same sequence at the same position
+    # use geneStart, geneEnd, and strand as a key, the value is the strand
+    my $geneKey = $seq_id."-".$start."-".$end;
+    if ($dupGenes{$geneKey}) {
+      ($dupGenes{$geneKey} eq $strand) ? warn "Duplicated gene found at $seqId: $start ... $end at the same strand\n" 
+	: warn "Duplicated gene found at $seqId: $start ... $end, but at a different strand\n";
+    } else {
+      $dupGenes{$geneKey} = $strand;
+    }
+
+  } # end of foreach my $bioFeat
+}
+
+
+# check if there is internal UTR, the UTRs is inside the CDS
 ## check if gene location is located outside the naSequence length
 
 
