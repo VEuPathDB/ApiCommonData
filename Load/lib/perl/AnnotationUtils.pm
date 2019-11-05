@@ -12,6 +12,7 @@ use Bio::Tools::GFF;
 use Bio::Seq::RichSeq;
 use GUS::Supported::SequenceIterator;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
+use CBIL::Bio::SequenceUtils;
 
 
 sub getSeqIO {
@@ -239,8 +240,8 @@ sub verifyFeatureLocation {
 	  my ($exon_id) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
 	  my $estart = $exon->location->start;
 	  my $eend = $exon->location->end;
-	  print STDERR "exon $exon_id starts at $estart, and ends at $eend\n"
-	    if ($exon_id eq "exon_AMAG_10791-E1" || $exon_id eq "exon_AMAG_16866-E1");
+#	  print STDERR "exon $exon_id starts at $estart, and ends at $eend\n"
+#	    if ($exon_id eq "exon_AMAG_10791-E1" || $exon_id eq "exon_AMAG_16866-E1");
 
 	  &checkFeatureLocation ($transcript, $exon);
 	}
@@ -409,10 +410,99 @@ sub checkGff3FormatNestedFeature {
   } # end of foreach my $bioFeat
 }
 
+sub checkGff3GeneModel {
+  my ($bioFeature, $fastaFile, $codon_table) = @_;
 
-# check if there is internal UTR, the UTRs is inside the CDS
-## check if gene location is located outside the naSequence length
+  my (%seqs, $key);
+  open (FA, "$fastaFile") || die "can not open fastaFile to read\n";
+  while (<FA>) {
+    chomp;
+    if ($_ =~ /^>(\S+)/) {
+      $key = $1;
+    } else {
+      $seqs{$key} .= $_;
+    }
+  }
+  close FA;
 
+  ## 10) check if gene location is located outside the naSequence length
+  my $flatBioFeature = flatGeneHierarchySortBySeqId($bioFeature);
+  foreach my $feat (@{$flatBioFeature}) {
+    my $seqId = $feat->seq_id();
+    if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
+      my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
+      my $fstart = $feat->location->start;
+      my $fend = $feat->location->end;
+      my $seqLen = length ($seqs{$seqId});
+      warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
+    }
+  }
+
+  ## 11) check if internal stop codon
+  my (%CDSs);
+  foreach my $subFeat (@{$bioFeature}) {
+    foreach my $transcript ($subFeat->get_SeqFeatures) {
+      my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      foreach my $exon (sort {$a->location->start <=> $b->location->start
+				|| $a->location->end <=> $b->location->end} $transcript->get_SeqFeatures ) {
+
+	if ($exon->primary_tag() eq "CDS") {
+	  push @{$CDSs{$tId}}, $exon;
+	}
+      }
+    }
+  }
+
+  foreach my $tId (sort keys %CDSs) {
+    my ($cdsSeq, $tStrand);
+    my $c = 0;
+    foreach my $exon (sort {$a->location->start <=> $b->location->start
+                                || $a->location->end <=> $b->location->end} @{$CDSs{$tId}}) {
+
+      my $seqId = $exon->seq_id;
+      my $estart = $exon->location->start;
+      my $eend = $exon->location->end;
+      my $eframe = $exon->frame;
+      $tStrand = $exon->strand;
+
+      ## only the 1st CDS for plus strand and the last CDS for minus strand need to deal with frame
+      if ($exon->strand == 1 && $c == 0) {
+	$cdsSeq .= substr ($seqs{$seqId}, $estart+$eframe-1, ($eend-$estart-$eframe+1) );
+      } elsif ($exon->strand == -1 && $c == $#{$CDSs{$tId}} ) {
+	$cdsSeq .= substr ($seqs{$seqId}, $estart-1, ($eend-$eframe-$estart+1) );
+      } else {
+	$cdsSeq .= substr ($seqs{$seqId}, $estart-1, ($eend-$estart+1) );
+      }
+      $c++;
+    }
+
+    ## get translation
+    if ($tStrand == -1) {
+      $cdsSeq = revcomp ($cdsSeq);
+    }
+    my $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
+    print STDERR ">$tId\n$proteinSeq\n";
+    $proteinSeq =~ s/\*+$//;
+
+    ## check
+    if ($proteinSeq =~ /\*/) {
+      warn "WARNING: transcript $tId contains internal stop codons\n";
+    }
+  }
+  # end of checking if internal stop codon.
+
+
+  # check if there is internal UTR, the UTRs is inside the CDS
+
+}
+
+
+sub revcomp {
+  my $seq = shift;
+  my $rev = reverse($seq);
+  $rev =~ tr/ACGT/TGCA/;
+  return $rev;
+}
 
 ## usage: $aspect = getAspectForGo ($value);
 sub getAspectForGo {
