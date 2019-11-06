@@ -14,18 +14,23 @@ use ApiCommonData::Load::Unflattener;
 use Bio::Tools::GFF;
 
 my ($inputFileOrDir, $fastaInputFile, $outputFileDir, $outputGffFileName,
-    $printReportFeatureQualifiers, $organismGeneticCode, $help);
+    $printReportFeatureQualifiers, $organismGeneticCode, $specialGeneticCode,
+    $help);
 
 &GetOptions('inputFileOrDir=s' => \$inputFileOrDir,
 	    'fastaInputFile=s' => \$fastaInputFile,
 	    'outputFileDir=s' => \$outputFileDir,
 	    'outputGffFileName=s' => \$outputGffFileName,
 	    'organismGeneticCode=s' => \$organismGeneticCode,
+	    'specialGeneticCode=s' => \$specialGeneticCode,
 	    'printReportFeatureQualifiers=s' => \$printReportFeatureQualifiers,
 	    'help|h' => \$help
 	    );
 &usage() if ($help);
 &usage("Missing a Required Argument") unless (defined $inputFileOrDir && $outputGffFileName);
+if (!$organismGeneticCode && $specialGeneticCode) {
+  die "\nMissing a Required Argument: --organismGeneticCode is required when --specialGeneticCode is presented.\n\n";
+}
 
 if (!$outputFileDir) {
   $outputFileDir = ".";
@@ -55,7 +60,7 @@ ApiCommonData::Load::AnnotationUtils::checkGff3Format ($bioperlFeaturesFlatted);
 ApiCommonData::Load::AnnotationUtils::checkGff3FormatNestedFeature ($bioperlFeaturesNested);
 
 my $codonTable = $organismGeneticCode;  ## TODO: need to pass in codon_table
-ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $fastaInputFile, $codonTable);
+ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $fastaInputFile, $codonTable, $specialGeneticCode);
 
 # write to a new gff3 output file
 if ($outputGffFileName) {
@@ -125,7 +130,10 @@ where:
   --outputFileDir: optional, the directory name for output file
   --outputGffFileName: required, output file name
   --printReportFeatureQualifiers: optional, Yes|No
-  --organismGeneticCode: required if check gene model
+  --organismGeneticCode: required if check gene model, numerical value that can get from NCBI taxonomy.
+                         The default is 1
+  --specialGeneticCode: special genetic code for mitochondrial and plastid sequence, eg. Pf_M76611|4,Pf3D7_API_v3|11
+                        It has to be provided together with --organismGeneticCode. Otherwise it will be ignored
 
 ";
 }
