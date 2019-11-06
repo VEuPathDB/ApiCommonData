@@ -411,7 +411,7 @@ sub checkGff3FormatNestedFeature {
 }
 
 sub checkGff3GeneModel {
-  my ($bioFeature, $fastaFile, $codon_table) = @_;
+  my ($bioFeature, $fastaFile, $codon_table, $specialCodonTable) = @_;
 
   my (%seqs, $key);
   open (FA, "$fastaFile") || die "can not open fastaFile to read\n";
@@ -424,6 +424,15 @@ sub checkGff3GeneModel {
     }
   }
   close FA;
+
+  my %specialCodonTables;
+  if ($specialCodonTable) {
+    my @tables = split (/\,/, $specialCodonTable);
+    foreach my $table (@tables) {
+      my ($seq, $table) = split (/\|/, $table);
+      $specialCodonTables{$seq} = $table;
+    }
+  }
 
   ## 10) check if gene location is located outside the naSequence length
   my $flatBioFeature = flatGeneHierarchySortBySeqId($bioFeature);
@@ -454,12 +463,12 @@ sub checkGff3GeneModel {
   }
 
   foreach my $tId (sort keys %CDSs) {
-    my ($cdsSeq, $tStrand);
+    my ($cdsSeq, $tStrand, $seqId);
     my $c = 0;
     foreach my $exon (sort {$a->location->start <=> $b->location->start
                                 || $a->location->end <=> $b->location->end} @{$CDSs{$tId}}) {
 
-      my $seqId = $exon->seq_id;
+      $seqId = $exon->seq_id;
       my $estart = $exon->location->start;
       my $eend = $exon->location->end;
       my $eframe = $exon->frame;
@@ -480,7 +489,14 @@ sub checkGff3GeneModel {
     if ($tStrand == -1) {
       $cdsSeq = revcomp ($cdsSeq);
     }
-    my $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
+
+    my $proteinSeq;
+    if ($specialCodonTables{$seqId}) {
+      $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$specialCodonTables{$seqId});
+    } else {
+      $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
+    }
+
     print STDERR ">$tId\n$proteinSeq\n";
     $proteinSeq =~ s/\*+$//;
 
