@@ -23,8 +23,7 @@ my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $help)
 &usage("Missing a Required Argument") unless (defined $organismAbbrev && $genomeSummaryFile);
 
 
-
-my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
+$gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
 my $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
