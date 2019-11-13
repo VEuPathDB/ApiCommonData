@@ -37,7 +37,6 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle();
 
 
-my %seqRegions;
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
@@ -46,19 +45,18 @@ my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
 
-my $sql = <<SQL;
-               select source_id, SEQUENCE_TYPE, LENGTH
+my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
                from apidbtuning.genomicseqattributes
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
-               and is_top_level = 1
-SQL
+               and is_top_level = 1";
+
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
-my (%seqDetails, $c);
+my (%seqRegions, $c);
 while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
-  %seqDetails = (
+  %seqRegions = (
 		 'name' => $seqSourceId,
 		 'coord_system_level' => $seqType,
 		 'length' => $seqLen,
@@ -66,15 +64,15 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
   my $synonyms = getSeqAliasesFromSeqSourceid($seqSourceId);
   if ($synonyms) {
-    $seqDetails{$synonyms} = @{$synonyms};
+    $seqRegions{synonyms} = \@{$synonyms};
   }
 
   my $geneticCode = getGeneticCodeFromOrganismAbbrev($organismAbbrev, $seqType);
   if ($geneticCode != 1) {
-    $seqDetails{codon_table} = $geneticCode;
+    $seqRegions{codon_table} = $geneticCode;
   }
 
-  my $json = encode_json \%seqDetails;
+  my $json = encode_json \%seqRegions;
   ($c < 1) ? print OUT "$json" : print OUT ",$json";
   $c++;
 }
@@ -187,18 +185,16 @@ sub getGeneticCodeFromOrganismAbbrev {
 
   my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
   $organismInfo->retrieveFromDB();
-  my $projectId = $organismInfo->getProjectName();
-
-  print STDERR "\$projectId = $projectId\n";
+  my $projectName = $organismInfo->getProjectName();
 
   my $sql;
   if ($seqType =~ /api/i) {
     ## due to no plastid genetic code availabe in db,
     ## checked ncbi taxonomy, all plas- and piro- are 11, and toxo- is 4
     ## manually code here
-    if ($projectId =~ /^piro/i || $projectId =~ /^plas/i) {
+    if ($projectName =~ /^piro/i || $projectName =~ /^plas/i) {
       return "11";
-    } elsif ($projectId =~ /^toxo/) {
+    } elsif ($projectName =~ /^toxo/) {
       return "4";
     } else {
       die "can not decide apicoplast genetic code \n";
@@ -232,8 +228,19 @@ sub getSeqAliasesFromSeqSourceid {
   my ($sourceId) = @_;
 
   my $aliases;
+  my $sql = "select df.PRIMARY_IDENTIFIER 
+             from DOTS.NASEQUENCE ns, SRes.DbRef df, DoTS.DbRefNASequence dns
+             where ns.NA_SEQUENCE_ID=dns.NA_SEQUENCE_ID and dns.DB_REF_ID=df.DB_REF_ID
+             and ns.SOURCE_ID like '$sourceId'";
 
-  ## TODO, use sequence source ID get all aliases
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($alias) = $stmt->fetchrow_array()) {
+    push @{$aliases}, $alias;
+  }
+
+  $stmt->finish();
+
   return $aliases;
 }
 
