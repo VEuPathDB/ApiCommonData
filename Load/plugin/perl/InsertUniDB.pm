@@ -50,6 +50,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::Core::AlgorithmParamKey" => ["algorithm_implementation_id", "algorithm_param_key"], 
                             "GUS::Model::DoTS::AASequenceImp" => ["source_id", "external_database_release_id"],
                             "GUS::Model::DoTS::BLATAlignmentQuality" => ["name"],
+                            "GUS::Model::DoTS::GOAssociationInstanceLOE" => ["name"], 
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
                             "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"], # TODO:  WHy is name included here??
