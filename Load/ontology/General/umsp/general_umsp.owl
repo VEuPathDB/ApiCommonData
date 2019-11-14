@@ -374,20 +374,22 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011800 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011800">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology tests performed</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020005 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020125 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020125">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology tests procedures</rdfs:label>
     </owl:Class>
     
 
@@ -600,7 +602,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0040010 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0040010">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011800"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020125"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">malariatestdone</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">umsp</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sample</obo:EUPATH_0001002>
