@@ -40,7 +40,6 @@ my $dbh = $db->getQueryHandle();
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
-print OUT "[";
 my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
@@ -53,10 +52,10 @@ my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
-my (%seqRegions, $c);
+my @seqRegionsArray;
 while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
-  %seqRegions = (
+  my %seqRegions = (
 		 'name' => $seqSourceId,
 		 'coord_system_level' => $seqType,
 		 'length' => $seqLen,
@@ -72,79 +71,18 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
     $seqRegions{codon_table} = $geneticCode;
   }
 
-  my $json = encode_json \%seqRegions;
-  ($c < 1) ? print OUT "$json" : print OUT ",$json";
-  $c++;
+  push @seqRegionsArray, \%seqRegions;
 }
 
 $stmt->finish();
 
-print OUT "]";
+my $json = encode_json \@seqRegionsArray;
+
+print OUT "$json\n";
 
 close OUT;
 
 $dbh->disconnect();
-
-
-q{
-open (IN, "$genomeSummaryFile") || die "can not open $genomeSummaryFile to read.\n";
-while (<IN>) {
-  chomp;
-  my @items = split (/\t/, $_);
-
-  if ($items[1] eq $organismAbbrev) {
-    %organismDetails = ('project_id' => $items[2],
-			'species' => {
-				       'organismAbbrev' => $items[1],
-				       'scientific_name' => $items[3]." ".$items[4],
-				       'strain' => $items[5],
-				       'taxonomy_id' => $items[11]
-				      },
-			'provider' => {
-				       'url' => $items[29],
-				       'genome_source' => $items[12],
-				       'genome_version' => $items[14]
-				       },
-			'genebuild' => {
-					'structural_annotation_source' => $items[21],
-					'structural_annotation_version' => $items[20],
-					'functional_annotation_source' => $items[22],
-					'functional_annotation_version' => $items[23]
-					},
-			'assembly' => {
-				       'accession' => $items[16],
-				       'version' => $items[15],
-				       'WGS_project' => $items[17],
-				       'BioProject' => $items[18],
-				       'organellar' => $items[27]
-				       }
-			);
-  }
-}
-close IN;
-
-$organismDetails{provider}{url} =~ s/wget\s*//;
-
-$organismDetails{genebuild}{structural_annotation_source} = $organismDetails{provider}{genome_source}
-  if ($organismDetails{genebuild}{structural_annotation_source} == "");
-$organismDetails{genebuild}{structural_annotation_version} = $organismDetails{provider}{genome_version}
-  if ($organismDetails{genebuild}{structural_annotation_version} == "");
-
-if ($organismDetails{assembly}{version} == "") {
-  $organismDetails{assembly}{version} = $organismDetails{assembly}{accession};
-  $organismDetails{assembly}{version} =~ s/(\S+)\.(\d)/$2/;
-}
-
-if ($organismDetails{species}{taxonomy_id} == "") {
-  $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
-}
-
-
-#my $json = encode_json (array_filter((array) \%organismDetails, 'is_not_null'));
-#json_encode(array_filter((array) $object, 'is_not_null'));
-
-#$json = del(.[][] | select(. == null));
-};
 
 
 ###########
@@ -242,20 +180,6 @@ sub getSeqAliasesFromSeqSourceid {
   $stmt->finish();
 
   return $aliases;
-}
-
-sub getNcbiTaxonIdFromOrganismName {
-  my ($orgnaismName) = @_;
-
-  my $taxonName = GUS::Model::SRes::TaxonName->new({name=>$orgnaismName,name_class=>'scientific name'});
-  $taxonName->retrieveFromDB 
-    || die "The organism name '$orgnaismName' provided on the command line or as a regex is not found in the database";
-
-  my $taxonId = $taxonName->getTaxonId();
-  my $taxon = GUS::Model::SRes::Taxon->new ({taxon_id=>$taxonId});
-  $taxon->retrieveFromDB || die "The taxon_id '$taxonId' is not found in the database\n";
-
-  return $taxon->getNcbiTaxId();
 }
 
 
