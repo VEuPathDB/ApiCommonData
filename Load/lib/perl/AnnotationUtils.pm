@@ -391,7 +391,7 @@ sub checkGff3FormatNestedFeature {
       }
 
       # 9) check if the length of aa sequence < 10 aa
-      if ($cdsLen < 30) {
+      if ($cdsLen > 0 && $cdsLen < 30) {
 	warn "Feature transcript: $tId, the length of translation < 10 aa\n";
       }
 
