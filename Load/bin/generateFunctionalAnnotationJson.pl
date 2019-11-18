@@ -32,6 +32,8 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                        );
 my $dbh = $db->getQueryHandle();
 
+my $primaryExtDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+
 my $outputFileName = $organismAbbrev . "_functional_annotation.json" unless($outputFileName);
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
@@ -69,29 +71,21 @@ my $products = getProductName ($organismAbbrev);
 my %goAnnots;
 
 
+## contruct transcripts
+my $transcripts = getTranscriptsInfos ($primaryExtDbRlsId);
+
+
 ## main flow
-my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
-my $sql = "select gf.SOURCE_ID, t.SOURCE_ID
-             from dots.genefeature gf, dots.transcript t
-             where gf.NA_FEATURE_ID=t.PARENT_ID
-             and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
-
-my $stmt = $dbh->prepareAndExecute($sql);
-
 my (@functAnnotInfos, $c);
-while (my ($gSourceId, $tSourceId)
-	 = $stmt->fetchrow_array()) {
-
+foreach my $k (sort keys %{$geneIdHash}) {
 
   my %functAnnot = (
 		 'object_type' => "gene",
-		 'id' => $gSourceId,
-		 'transcript_id' => $tSourceId
+		 'id' => $k,
+		 'transcripts' => \@{$transcripts->{$k}}
 		 );
 
-  $functAnnot{xrefs} = \@{$dbxrefs{$gSourceId}} if ($dbxrefs{$gSourceId});
-  $functAnnot{description} = $products->{$tSourceId} if ($products->{$tSourceId});
-  $functAnnot{GO} = \@{$goAnnots{$tSourceId}} if ($goAnnots{$tSourceId});
+  $functAnnot{xrefs} = \@{$dbxrefs{$k}} if ($dbxrefs{$k});
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -99,7 +93,6 @@ while (my ($gSourceId, $tSourceId)
 #  last if ($c > 10);
 }
 
-$stmt->finish();
 
 my $json = encode_json(\@functAnnotInfos);
 
@@ -111,6 +104,35 @@ $dbh->disconnect();
 
 
 ###########
+sub getTranscriptsInfos {
+  my ($extDbRlsId) = @_;
+
+  my %transcriptInfos;
+
+  my $sql = "select gf.SOURCE_ID, t.SOURCE_ID, t.name
+             from dots.genefeature gf, dots.transcript t
+             where gf.NA_FEATURE_ID=t.PARENT_ID
+             and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($gSourceId, $tSourceId, $type)
+	 = $stmt->fetchrow_array()) {
+
+    my %transcriptInfo = (
+			  'id' => $tSourceId,
+			  'type' => $type,
+			  'description' => $products->{$tSourceId}
+			 );
+
+    push @{$transcriptInfos{$gSourceId}}, \%transcriptInfo;
+
+  }
+  $stmt->finish();
+
+  return \%transcriptInfos;
+}
+
 sub getProductName {
   my ($orgnaismAbbrev) = @_;
 
