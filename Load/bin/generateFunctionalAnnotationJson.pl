@@ -8,8 +8,6 @@ use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
 
 
-## TODO, better to ignore null record
-
 my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
@@ -37,8 +35,8 @@ my $dbh = $db->getQueryHandle();
 my $outputFileName = $organismAbbrev . "_functional_annotation.json" unless($outputFileName);
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
+## grep dbxrefs info of EntrezGene and UniProt
 my %dbxrefs;
-
 my $geneIdHash = getGeneFeatureSourceId($organismAbbrev);
 my $uniprotHash = getDbxRefs($organismAbbrev, "UniProt");
 my $entrezGeneHash = getDbxRefs($organismAbbrev, "EntrezGene");
@@ -63,42 +61,42 @@ foreach my $k (sort keys %{$geneIdHash}) {
   }
 }
 
-my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+## grep product info
+my $products = getProductName ($organismAbbrev);
 
-my $sql = "select gf.SOURCE_ID, t.SOURCE_ID, tp.product,
-             tp.IS_PREFERRED, tp.PUBLICATION, tp.EVIDENCE_CODE, tp.WITH_FROM
-             from dots.genefeature gf, dots.transcript t, ApiDB.TranscriptProduct tp
-             where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=tp.NA_FEATURE_ID
+
+## grep GO annotation
+my %goAnnots;
+
+
+## main flow
+my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+my $sql = "select gf.SOURCE_ID, t.SOURCE_ID
+             from dots.genefeature gf, dots.transcript t
+             where gf.NA_FEATURE_ID=t.PARENT_ID
              and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
 
 my $stmt = $dbh->prepareAndExecute($sql);
 
 my (@functAnnotInfos, $c);
-
-while (my ($gSourceId, $tSourceId, $product, $isPreferred, $publication, $evidencdCode, $withFrom)
+while (my ($gSourceId, $tSourceId)
 	 = $stmt->fetchrow_array()) {
+
 
   my %functAnnot = (
 		 'object_type' => "gene",
 		 'id' => $gSourceId,
-		 'transcripts' => {
-				  'id' => $tSourceId,
-				  'description' => {
-						    'description' => $product,
-						    'isPreferred' => $isPreferred,
-						    }
-				 },
+		 'transcript_id' => $tSourceId
 		 );
 
-  $functAnnot{transcripts}{description}{publication} = $publication if ($publication);
-  $functAnnot{transcripts}{description}{evidencdCode} = $evidencdCode if ($evidencdCode);
-  $functAnnot{transcripts}{description}{withFrom} = $withFrom if ($withFrom);
   $functAnnot{xrefs} = \@{$dbxrefs{$gSourceId}} if ($dbxrefs{$gSourceId});
+  $functAnnot{description} = $products->{$tSourceId} if ($products->{$tSourceId});
+  $functAnnot{GO} = \@{$goAnnots{$tSourceId}} if ($goAnnots{$tSourceId});
 
   push @functAnnotInfos, \%functAnnot;
 
   $c++;
-#  last if ($c == 2);
+#  last if ($c > 10);
 }
 
 $stmt->finish();
@@ -107,13 +105,68 @@ my $json = encode_json(\@functAnnotInfos);
 
 print OUT "$json\n";
 
-#print "]";
-
 close OUT;
 
 $dbh->disconnect();
 
+
 ###########
+sub getProductName {
+  my ($orgnaismAbbrev) = @_;
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+
+  ## grep the preferred product name
+  my $sql = "select t.SOURCE_ID, tp.product,
+             tp.IS_PREFERRED, tp.PUBLICATION, tp.EVIDENCE_CODE, tp.WITH_FROM
+             from dots.transcript t, ApiDB.TranscriptProduct tp
+             where t.NA_FEATURE_ID=tp.NA_FEATURE_ID
+             and tp.IS_PREFERRED = 1
+             and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %products;
+
+  while (my ($tSourceId, $product, $isPreferred, $publication, $evidencdCode, $withFrom)
+	 = $stmt->fetchrow_array()) {
+
+    $products{$tSourceId} = $product;
+
+    if ($publication || $evidencdCode || $withFrom) {
+      $products{$tSourceId} .= " [";
+      $products{$tSourceId} .= "isPreferred=$isPreferred, " if ($isPreferred);
+      $products{$tSourceId} .= "publication=$publication, " if ($publication);
+      if ($evidencdCode) {
+	my $eviCodeName = getEvidenceCodeName ($evidencdCode);
+	$products{$tSourceId} .= "evidencdCode=$eviCodeName, ";
+      }
+      $products{$tSourceId} .= "withFrom=$withFrom" if ($withFrom);
+      $products{$tSourceId} =~ s/\,\s*$//;
+      $products{$tSourceId} .= "]";
+    }
+  }
+
+  $stmt->finish();
+
+  return \%products;
+}
+
+sub getEvidenceCodeName {
+  my ($eviCode) = @_;
+
+  my $eviCodeName;
+
+  my $sqll = "select NAME from SRES.ONTOLOGYTERM where ONTOLOGY_TERM_ID=$eviCode";
+
+  my $stmtt = $dbh->prepareAndExecute($sqll);
+
+  my($eviCodeName) = $stmtt->fetchrow_array();
+
+  $stmtt->finish();
+
+  return $eviCodeName;
+}
 
 sub getDbxRefs {
   my ($orgnaismAbbrev, $name) = @_;
@@ -143,31 +196,6 @@ sub getDbxRefs {
   $stmt->finish();
 
   return \%dbxrefs;
-}
-
-sub getProductName {
-  my ($orgnaismAbbrev) = @_;
-
-  my @productInfo;
-
-  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($orgnaismAbbrev);
-
-  my $sql = "select gf.SOURCE_ID, t.SOURCE_ID, tp.product, 
-             tp.IS_PREFERRED, tp.PUBLICATION, tp.EVIDENCE_CODE, tp.WITH_FROM
-             from dots.genefeature gf, dots.transcript t, ApiDB.TranscriptProduct tp
-             where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=tp.NA_FEATURE_ID
-             and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
-
-  my $stmt = $dbh->prepareAndExecute($sql);
-
-  while (my ($gSourceId, $tSourceId, $product, $isPreferred, $publication, $evidencdCode, $withFrom)
-             = $stmt->fetchrow_array()) {
-    push @productInfo, "$gSourceId, $tSourceId, $product, $isPreferred, $publication, $evidencdCode, $withFrom";
-
-  }
-  $stmt->finish();
-
-  return \@productInfo;
 }
 
 sub getGeneFeatureSourceId {
