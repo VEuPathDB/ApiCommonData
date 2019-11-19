@@ -61,8 +61,8 @@ while (<IN>) {
 			'genebuild' => {
 					'structural_annotation_source' => $items[21],
 					'structural_annotation_version' => $items[20],
-					'functional_annotation_source' => $items[22],
-					'functional_annotation_version' => $items[23]
+#					'functional_annotation_source' => $items[22],
+#					'functional_annotation_version' => $items[23]
 					},
 			'assembly' => {
 				       'accession' => $items[16],
