@@ -14,12 +14,13 @@ use GUS::Community::GeneModelLocations;
 use Bio::Tools::GFF;
 
 
-my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev);
+my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'orgAbbrev=s' => \$orgAbbrev,
             'extDbRlsId=s' => \$extDbRlsId,
             'outputFile=s' => \$outputFile,
+            'outputFileDir=s' => \$outputFileDir,
     );
 
 &usage("Missing a required argument.") unless (defined $orgAbbrev);
@@ -30,6 +31,10 @@ if(!$gusConfigFile) {
 
 if (!$outputFile) {
   $outputFile = $orgAbbrev . ".gff3";
+}
+
+if ($outputFileDir) {
+  $outputFile = "\./" . $outputFileDir. "\/".$outputFile;
 }
 
 my @properties;

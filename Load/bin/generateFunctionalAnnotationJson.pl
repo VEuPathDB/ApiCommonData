@@ -8,11 +8,12 @@ use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
 
 
-my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $help);
+my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
+            'outputFileDir=s' => \$outputFileDir,
             'help|h' => \$help
             );
 
@@ -35,6 +36,10 @@ my $dbh = $db->getQueryHandle();
 my $primaryExtDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 my $outputFileName = $organismAbbrev . "_functional_annotation.json" unless($outputFileName);
+
+if ($outputFileDir) {
+  $outputFileName = "\./". $outputFileDir . "\/". $outputFileName;
+}
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
 ## grep dbxrefs info of EntrezGene and UniProt
