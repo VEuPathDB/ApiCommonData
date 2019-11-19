@@ -12,12 +12,13 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::ApiDB::Organism;
 
 
-my ($organismAbbrev, $gusConfigFile, $outputFileName, $help);
+my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
 #            'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
+            'outputFileDir=s' => \$outputFileDir,
             'help|h' => \$help
             );
 
@@ -38,6 +39,9 @@ my $dbh = $db->getQueryHandle();
 
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
+if ($outputFileDir) {
+  $outputFileName = "\./". $outputFileDir . "\/" . $outputFileName;
+}
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
 my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
