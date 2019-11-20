@@ -266,6 +266,7 @@ sub parseSpeciesFile {
 	  $species->setSpeciesOrder($speciesOrder++);
 	  $species->setName($taxonName);
 	  $species->setDepthFirstIndex($clade->getDepthFirstIndex());
+	  $species->setCorePeripheral('C');
 	}  else {
 	  $self->userError("invalid line in species file: '$_'");
 	}
