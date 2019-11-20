@@ -84,6 +84,7 @@ CREATE TABLE apidb.OrthomclTaxon (
  taxon_id                      NUMBER(12),
  name                          VARCHAR(255),
  three_letter_abbrev           VARCHAR(6) NOT NULL,
+ core_peripheral	       VARCHAR2(1) NOT NULL,
  is_species                    NUMBER(1) NOT NULL,
  species_order                 NUMBER(4),
  depth_first_index             NUMBER(10) NOT NULL,
