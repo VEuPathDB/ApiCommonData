@@ -70,7 +70,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
   ## 2) make gff3 and protein file
   if ($isAnnotated{$abbrev} == 1) {
-    my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
+    my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
 
     my $makeProteinFastaCmd;
