@@ -6,7 +6,7 @@ use Getopt::Long;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
-
+#use ApiCommonData::Load::AnnotationUtils;
 
 ## TODO, better to ignore null record
 
@@ -37,20 +37,8 @@ my $dbh = $db->getQueryHandle();
 
 my (%isAnnotated);
 
-my $sql = "select abbrev, is_annotated_genome from apidb.organism";
+if ($organismListFile) {    ## extract organisms that listed in the organismListFile
 
-my $stmt = $dbh->prepareAndExecute($sql);
-
-while (my ($abbrev, $isAnnot) = $stmt->fetchrow_array()) {
-  $isAnnotated{$abbrev} = $isAnnot;
-}
-$stmt->finish();
-
-$dbh->disconnect();
-
-## in case do not need to export whole set of organism, then give a list of organism abbrev
-if ($organismListFile) {
-  my %isAnnotated = {};
   open (IN, "$organismListFile") || die "can not open $organismListFile file to read\n";
   while (<IN>) {
     chomp;
@@ -58,22 +46,41 @@ if ($organismListFile) {
     $isAnnotated{$items[0]} = $items[1];
   }
   close IN;
+
+} else {    ## extract from whole set of organisms from the database
+
+  my $sql = "select abbrev, is_annotated_genome from apidb.organism";
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($abbrev, $isAnnot) = $stmt->fetchrow_array()) {
+    $isAnnotated{$abbrev} = $isAnnot;
+  }
+
+  $stmt->finish();
 }
+
 
 my $c = 0;
 foreach my $abbrev (sort keys %isAnnotated) {
 
   print STDERR "processing $abbrev ......\n";
 
+  my $primaryExtDbRlsId = getPrimaryExtDbRlsIdFromOrganismAbbrev($abbrev);
+  print STDERR "For $abbrev, \$primaryExtDbRlsId = $primaryExtDbRlsId\n";
+
   ## 1) make genome fasta file
-  my $makeGenomeFastaCmd;
+  my $dnaFastaFile = $outputFileDir . "\/". $abbrev . "_dna.fa";
+  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and s.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";
+  system($makeGenomeFastaCmd);
 
   ## 2) make gff3 and protein file
   if ($isAnnotated{$abbrev} == 1) {
     my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
 
-    my $makeProteinFastaCmd;
+    my $proteinFastaFileName = $outputFileDir . "\/" . $abbrev . "_protein.fa";
+    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select SOURCE_ID, SEQUENCE from DOTS.TRANSLATEDAASEQUENCE where external_database_release_id=$primaryExtDbRlsId'";
+    system($makeProteinFastaCmd);
 
     my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
     system($functAnnotJsonCmd);
@@ -97,8 +104,32 @@ foreach my $abbrev (sort keys %isAnnotated) {
 }
 
 
+$dbh->disconnect();
 
 ###########
+sub getPrimaryExtDbRlsIdFromOrganismAbbrev{
+  my ($abbrev) = @_;
+
+  my $extDbRlsName = $abbrev . "_primary_genome_RSRC";
+
+  my $sql = "select edr.external_database_release_id from sres.externaldatabaserelease edr, sres.externaldatabase ed
+             where ed.name = '$extDbRlsName'
+             and edr.external_database_id = ed.external_database_id";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my @rlsIdArray;
+  while ( my($extDbRlsId) = $stmt->fetchrow_array()) {
+      push @rlsIdArray, $extDbRlsId;
+    }
+
+  die "No extDbRlsId found for '$extDbRlsName'" unless(scalar(@rlsIdArray) > 0);
+
+  die "trying to find unique extDbRlsId for '$extDbRlsName', but more than one found" if(scalar(@rlsIdArray) > 1);
+
+  return @rlsIdArray[0];
+}
+
 
 sub usage {
   die
