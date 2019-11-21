@@ -441,12 +441,17 @@ sub checkGff3GeneModel {
   my $flatBioFeature = flatGeneHierarchySortBySeqId($bioFeature);
   foreach my $feat (@{$flatBioFeature}) {
     my $seqId = $feat->seq_id();
-    if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
-      my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
-      my $fstart = $feat->location->start;
-      my $fend = $feat->location->end;
-      my $seqLen = length ($seqs{$seqId});
-      warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
+
+    if (!$seqs{$seqId}) {
+      warn "Sequence: $seqId found in GFF3 file, but not found in '$fastaFile' file\n";
+    } else {
+      if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
+	my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
+	my $fstart = $feat->location->start;
+	my $fend = $feat->location->end;
+	my $seqLen = length ($seqs{$seqId});
+	warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
+      }
     }
   }
 
@@ -500,7 +505,7 @@ sub checkGff3GeneModel {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
     }
 
-    print STDERR ">$tId\n$proteinSeq\n";
+#    print STDERR ">$tId\n$proteinSeq\n";
     $proteinSeq =~ s/\*+$//;
 
     ## check
