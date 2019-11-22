@@ -109,12 +109,12 @@ sub getCentromereInfo {
 
   my %centromereInfo;
   while (my ($seqId, $centromereId, $cStart, $cEnd) = $stmt->fetchrow_array()) {
-    $centromereInfo{$seqId} = "$centromereId-$cStart...$cEnd";
-#    $centromereInfo{$seqId} = (
-#			       "centromereId" => $centromereId,
-#			       "start" => $cStart,
-#			       "end" => $cEnd
-#			       );
+
+    %{$centromereInfo{$seqId}} = (
+			       "centromereId" => $centromereId,
+			       "start" => $cStart,
+			       "end" => $cEnd
+			       );
   }
 
   return \%centromereInfo;
