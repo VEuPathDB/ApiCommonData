@@ -37,6 +37,9 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                        );
 my $dbh = $db->getQueryHandle();
 
+my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+
+my $centormere = getCentromereInfo($extDbRlsId);
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 if ($outputFileDir) {
@@ -44,7 +47,6 @@ if ($outputFileDir) {
 }
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
-my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
 
@@ -75,6 +77,10 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
     $seqRegions{codon_table} = $geneticCode;
   }
 
+  if ($centormere->{$seqSourceId}) {
+    $seqRegions{centromere} = $centormere->{$seqSourceId};
+  }
+
   push @seqRegionsArray, \%seqRegions;
 }
 
@@ -90,7 +96,31 @@ $dbh->disconnect();
 
 
 ###########
-sub getExtDbRlsIdFormOrgAbbrev {
+sub getCentromereInfo {
+  my ($extDbRlsId) = @_;
+
+  my $sql = "select ns.SOURCE_ID, m.SOURCE_ID, nl.START_MIN, nl.END_MAX 
+             from DOTS.MISCELLANEOUS m, DOTS.NASEQUENCE ns, DOTS.NALOCATION nl
+             where ns.NA_SEQUENCE_ID=m.NA_SEQUENCE_ID and m.NA_FEATURE_ID=nl.NA_FEATURE_ID
+             and m.name like 'centromere' and m.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+            ";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %centromereInfo;
+  while (my ($seqId, $centromereId, $cStart, $cEnd) = $stmt->fetchrow_array()) {
+    $centromereInfo{$seqId} = "$centromereId-$cStart...$cEnd";
+#    $centromereInfo{$seqId} = (
+#			       "centromereId" => $centromereId,
+#			       "start" => $cStart,
+#			       "end" => $cEnd
+#			       );
+  }
+
+  return \%centromereInfo;
+}
+
+sub getPrimaryExtDbRlsIdFormOrgAbbrev {
   my ($abbrev) = @_;
 
   my $extDb = $abbrev. "_primary_genome_RSRC";
