@@ -12,12 +12,13 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::ApiDB::Organism;
 
 
-my ($organismAbbrev, $gusConfigFile, $outputFileName, $help);
+my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
 #            'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
+            'outputFileDir=s' => \$outputFileDir,
             'help|h' => \$help
             );
 
@@ -37,28 +38,28 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle();
 
 
-my %seqRegions;
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
+if ($outputFileDir) {
+  $outputFileName = "\./". $outputFileDir . "\/" . $outputFileName;
+}
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
-print OUT "[";
 my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 print STDERR "\$extDbRlsId = $extDbRlsId\n";
 
-my $sql = <<SQL;
-               select source_id, SEQUENCE_TYPE, LENGTH
+my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
                from apidbtuning.genomicseqattributes
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
-               and is_top_level = 1
-SQL
+               and is_top_level = 1";
+
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
-my (%seqDetails, $c);
+my @seqRegionsArray;
 while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
-  %seqDetails = (
+  my %seqRegions = (
 		 'name' => $seqSourceId,
 		 'coord_system_level' => $seqType,
 		 'length' => $seqLen,
@@ -66,87 +67,26 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
   my $synonyms = getSeqAliasesFromSeqSourceid($seqSourceId);
   if ($synonyms) {
-    $seqDetails{$synonyms} = @{$synonyms};
+    $seqRegions{synonyms} = \@{$synonyms};
   }
 
   my $geneticCode = getGeneticCodeFromOrganismAbbrev($organismAbbrev, $seqType);
   if ($geneticCode != 1) {
-    $seqDetails{codon_table} = $geneticCode;
+    $seqRegions{codon_table} = $geneticCode;
   }
 
-  my $json = encode_json \%seqDetails;
-  ($c < 1) ? print OUT "$json" : print OUT ",$json";
-  $c++;
+  push @seqRegionsArray, \%seqRegions;
 }
 
 $stmt->finish();
 
-print OUT "]";
+my $json = encode_json \@seqRegionsArray;
+
+print OUT "$json\n";
 
 close OUT;
 
 $dbh->disconnect();
-
-
-q{
-open (IN, "$genomeSummaryFile") || die "can not open $genomeSummaryFile to read.\n";
-while (<IN>) {
-  chomp;
-  my @items = split (/\t/, $_);
-
-  if ($items[1] eq $organismAbbrev) {
-    %organismDetails = ('project_id' => $items[2],
-			'species' => {
-				       'organismAbbrev' => $items[1],
-				       'scientific_name' => $items[3]." ".$items[4],
-				       'strain' => $items[5],
-				       'taxonomy_id' => $items[11]
-				      },
-			'provider' => {
-				       'url' => $items[29],
-				       'genome_source' => $items[12],
-				       'genome_version' => $items[14]
-				       },
-			'genebuild' => {
-					'structural_annotation_source' => $items[21],
-					'structural_annotation_version' => $items[20],
-					'functional_annotation_source' => $items[22],
-					'functional_annotation_version' => $items[23]
-					},
-			'assembly' => {
-				       'accession' => $items[16],
-				       'version' => $items[15],
-				       'WGS_project' => $items[17],
-				       'BioProject' => $items[18],
-				       'organellar' => $items[27]
-				       }
-			);
-  }
-}
-close IN;
-
-$organismDetails{provider}{url} =~ s/wget\s*//;
-
-$organismDetails{genebuild}{structural_annotation_source} = $organismDetails{provider}{genome_source}
-  if ($organismDetails{genebuild}{structural_annotation_source} == "");
-$organismDetails{genebuild}{structural_annotation_version} = $organismDetails{provider}{genome_version}
-  if ($organismDetails{genebuild}{structural_annotation_version} == "");
-
-if ($organismDetails{assembly}{version} == "") {
-  $organismDetails{assembly}{version} = $organismDetails{assembly}{accession};
-  $organismDetails{assembly}{version} =~ s/(\S+)\.(\d)/$2/;
-}
-
-if ($organismDetails{species}{taxonomy_id} == "") {
-  $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
-}
-
-
-#my $json = encode_json (array_filter((array) \%organismDetails, 'is_not_null'));
-#json_encode(array_filter((array) $object, 'is_not_null'));
-
-#$json = del(.[][] | select(. == null));
-};
 
 
 ###########
@@ -187,18 +127,16 @@ sub getGeneticCodeFromOrganismAbbrev {
 
   my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
   $organismInfo->retrieveFromDB();
-  my $projectId = $organismInfo->getProjectName();
-
-  print STDERR "\$projectId = $projectId\n";
+  my $projectName = $organismInfo->getProjectName();
 
   my $sql;
   if ($seqType =~ /api/i) {
     ## due to no plastid genetic code availabe in db,
     ## checked ncbi taxonomy, all plas- and piro- are 11, and toxo- is 4
     ## manually code here
-    if ($projectId =~ /^piro/i || $projectId =~ /^plas/i) {
+    if ($projectName =~ /^piro/i || $projectName =~ /^plas/i) {
       return "11";
-    } elsif ($projectId =~ /^toxo/) {
+    } elsif ($projectName =~ /^toxo/) {
       return "4";
     } else {
       die "can not decide apicoplast genetic code \n";
@@ -232,23 +170,20 @@ sub getSeqAliasesFromSeqSourceid {
   my ($sourceId) = @_;
 
   my $aliases;
+  my $sql = "select df.PRIMARY_IDENTIFIER 
+             from DOTS.NASEQUENCE ns, SRes.DbRef df, DoTS.DbRefNASequence dns
+             where ns.NA_SEQUENCE_ID=dns.NA_SEQUENCE_ID and dns.DB_REF_ID=df.DB_REF_ID
+             and ns.SOURCE_ID like '$sourceId'";
 
-  ## TODO, use sequence source ID get all aliases
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($alias) = $stmt->fetchrow_array()) {
+    push @{$aliases}, $alias;
+  }
+
+  $stmt->finish();
+
   return $aliases;
-}
-
-sub getNcbiTaxonIdFromOrganismName {
-  my ($orgnaismName) = @_;
-
-  my $taxonName = GUS::Model::SRes::TaxonName->new({name=>$orgnaismName,name_class=>'scientific name'});
-  $taxonName->retrieveFromDB 
-    || die "The organism name '$orgnaismName' provided on the command line or as a regex is not found in the database";
-
-  my $taxonId = $taxonName->getTaxonId();
-  my $taxon = GUS::Model::SRes::Taxon->new ({taxon_id=>$taxonId});
-  $taxon->retrieveFromDB || die "The taxon_id '$taxonId' is not found in the database\n";
-
-  return $taxon->getNcbiTaxId();
 }
 
 

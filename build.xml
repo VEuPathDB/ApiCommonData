@@ -4,35 +4,10 @@
   <!-- oooooooooooooooooooooooooo  Dependencies  oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
-  <target name="GUS-Installation">
-    <ant antfile="../GUS/build.xml" target="GUS-Installation">
-      <property name="project" value="GUS" />
-      <property name="version" value="2.1.2" />
-    </ant>
-  </target>
-
-  <target name="DoTS-Installation">
-    <ant antfile="../DoTS/build.xml" target="DoTS-Installation">
-      <property name="project" value="DoTS" />
-      <property name="version" value="3.0.1" />
-    </ant>
-  </target>
-
-  <target name="FgpUtil-Installation">
-    <ant antfile="../FgpUtil/build.xml" target="FgpUtil-Installation">
-      <property name="project" value="FgpUtil" />
-      <property name="version" value="" />
-    </ant>
-  </target>
-
-  <target name="TuningManager-Installation">
-    <ant antfile="../TuningManager/build.xml"
-         target="TuningManager-Installation">
-      <property name="project" value="TuningManager" />
-      <property name="version" value="" />
-    </ant>
-  </target>
-
+  <import file="${projectsDir}/FgpUtil/build.xml" />
+  <import file="${projectsDir}/GUS/build.xml" />
+  <import file="${projectsDir}/TuningManager/build.xml" />
+  <import file="${projectsDir}/DoTS/build.xml" />
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Installation  oooooooooooooooooooooooooo -->

@@ -75,13 +75,16 @@ sub nestGeneHierarchy{ ## gene -> transcript -> exon
 
   foreach my $feat (@{$feature}) {
     my $seqId = $feat->seq_id;
+    my $type = $feat->primary_tag;
     my $id;
-    if ($feat->has_tag("ID")) {
-      ($id) = $feat->get_tag_values("ID");
-    } else {
-      my $start = $feat->location->start();
-      my $end = $feat->location->end();
-      warn "For '$seqId', no ID found at position: $start ... $end\n";
+    if ($type =~ /gene/i || $type =~ /RNA/i || $type =~ /transcript/) {
+      if ($feat->has_tag("ID")) {
+	($id) = $feat->get_tag_values("ID");
+      } else {
+	my $start = $feat->location->start();
+	my $end = $feat->location->end();
+	warn "For '$seqId', no ID found at position: $start ... $end\n";
+      }
     }
 
     if ($feat->has_tag("Parent")) {
@@ -281,7 +284,7 @@ sub checkGff3Format {
 #    print STDERR "For $type: $id, \$strand = $strand\n";
 
     ## 1) check if gene ID is unique and not null
-    if ($id eq "") {
+    if ($id eq "" && ($type =~ /gene/i || $type =~ /RNA/i || $type =~ /transcript/ )) {
       warn "At $seqId, $start ... $end, gene ID can not be null.\n";
     }
 
@@ -391,7 +394,7 @@ sub checkGff3FormatNestedFeature {
       }
 
       # 9) check if the length of aa sequence < 10 aa
-      if ($cdsLen < 30) {
+      if ($cdsLen > 0 && $cdsLen < 30) {
 	warn "Feature transcript: $tId, the length of translation < 10 aa\n";
       }
 
@@ -401,8 +404,8 @@ sub checkGff3FormatNestedFeature {
     # use geneStart, geneEnd, and strand as a key, the value is the strand
     my $geneKey = $seq_id."-".$start."-".$end;
     if ($dupGenes{$geneKey}) {
-      ($dupGenes{$geneKey} eq $strand) ? warn "Duplicated gene found at $seqId: $start ... $end at the same strand\n" 
-	: warn "Duplicated gene found at $seqId: $start ... $end, but at a different strand\n";
+      ($dupGenes{$geneKey} eq $strand) ? warn "Duplicated gene '$id' found at $seqId: $start ... $end at the same strand\n" 
+	: warn "Duplicated gene '$id' found at $seqId: $start ... $end, but at a different strand\n";
     } else {
       $dupGenes{$geneKey} = $strand;
     }
@@ -414,7 +417,7 @@ sub checkGff3GeneModel {
   my ($bioFeature, $fastaFile, $codon_table, $specialCodonTable) = @_;
 
   my (%seqs, $key);
-  open (FA, "$fastaFile") || die "can not open fastaFile to read\n";
+  open (FA, "$fastaFile") || die "can not open genome sequence fasta File to read\n";
   while (<FA>) {
     chomp;
     if ($_ =~ /^>(\S+)/) {
@@ -438,12 +441,17 @@ sub checkGff3GeneModel {
   my $flatBioFeature = flatGeneHierarchySortBySeqId($bioFeature);
   foreach my $feat (@{$flatBioFeature}) {
     my $seqId = $feat->seq_id();
-    if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
-      my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
-      my $fstart = $feat->location->start;
-      my $fend = $feat->location->end;
-      my $seqLen = length ($seqs{$seqId});
-      warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
+
+    if (!$seqs{$seqId}) {
+      warn "Sequence: $seqId found in GFF3 file, but not found in '$fastaFile' file\n";
+    } else {
+      if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
+	my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
+	my $fstart = $feat->location->start;
+	my $fend = $feat->location->end;
+	my $seqLen = length ($seqs{$seqId});
+	warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
+      }
     }
   }
 
@@ -497,7 +505,7 @@ sub checkGff3GeneModel {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
     }
 
-    print STDERR ">$tId\n$proteinSeq\n";
+#    print STDERR ">$tId\n$proteinSeq\n";
     $proteinSeq =~ s/\*+$//;
 
     ## check

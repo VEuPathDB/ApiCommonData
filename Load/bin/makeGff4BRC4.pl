@@ -14,12 +14,14 @@ use GUS::Community::GeneModelLocations;
 use Bio::Tools::GFF;
 
 
-my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev);
+my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir, $ifSeparateParents);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
             'orgAbbrev=s' => \$orgAbbrev,
             'extDbRlsId=s' => \$extDbRlsId,
             'outputFile=s' => \$outputFile,
+            'ifSeparateParents=s' => \$ifSeparateParents,
+            'outputFileDir=s' => \$outputFileDir
     );
 
 &usage("Missing a required argument.") unless (defined $orgAbbrev);
@@ -30,6 +32,14 @@ if(!$gusConfigFile) {
 
 if (!$outputFile) {
   $outputFile = $orgAbbrev . ".gff3";
+}
+
+if ($outputFileDir) {
+  $outputFile = "\./" . $outputFileDir. "\/".$outputFile;
+}
+
+if (!$ifSeparateParents) {
+  $ifSeparateParents = "No";
 }
 
 my @properties;
@@ -191,9 +201,35 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 #					       || $feature->primary_tag ne "pseudogenic_exon"
 #					       || $feature->primary_tag ne "exon");
 
+    ## separate features if there are more than one parent
+    if ($ifSeparateParents =~ /^y/i) {
+      if ($feature->has_tag("Parent") && scalar ($feature->get_tag_values("Parent")) > 1 ) {
 
-    $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
-    print GFF $feature->gff_string . "\n";
+	my @parents = $feature->get_tag_values("Parent");
+
+	my $c = 0;
+	foreach my $pant (@parents) {
+	  $c++;
+	  $feature->remove_tag("Parent");
+	  $feature->add_tag_value('Parent', $pant);
+	  if ($feature->has_tag("ID")) {
+	    my ($nid) = $feature->remove_tag("ID");
+	    $nid =~ s/\.\d//;
+	    $nid .= ".$c";
+	    $feature->add_tag_value("ID", $nid);
+	  }
+
+	  $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3));
+	  print GFF $feature->gff_string . "\n";
+	}
+      } else {
+	$feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3));
+	print GFF $feature->gff_string . "\n";
+      }
+    } else {
+      $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3));
+      print GFF $feature->gff_string . "\n";
+    }
   }
 }
 
@@ -311,6 +347,8 @@ where
   --orgAbbrev:  required, organims abbreviation
   --extDbRlsId: optional, the externalDatabaseRleaseId that have database name like '*_primary_genome_RSRC'
   --outputFile: optional, the ouput file and/or dir
+  --outputFileDir: optional, the ouput file dir that holds all output file
   --gusConfigFile: optional, use the current GUS_HOME gusConfigFile if not specify
+  --ifSeparateParents: optional, Yes|No, default is No
 ";
 }

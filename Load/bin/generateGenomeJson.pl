@@ -10,12 +10,13 @@ use GUS::Supported::GusConfig;
 
 ## TODO, better to ignore null record
 
-my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $help);
+my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
             'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
+            'outputFileDir=s' => \$outputFileDir,
             'help|h' => \$help
             );
 
@@ -38,6 +39,9 @@ my $dbh = $db->getQueryHandle();
 
 my %organismDetails;
 my $outputFileName = $organismAbbrev . "_genome.json" unless($outputFileName);
+if ($outputFileDir) {
+  $outputFileName = "\./" . $outputFileDir. "\/". $outputFileName;
+}
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
 open (IN, "$genomeSummaryFile") || die "can not open $genomeSummaryFile to read.\n";
@@ -61,8 +65,8 @@ while (<IN>) {
 			'genebuild' => {
 					'structural_annotation_source' => $items[21],
 					'structural_annotation_version' => $items[20],
-					'functional_annotation_source' => $items[22],
-					'functional_annotation_version' => $items[23]
+#					'functional_annotation_source' => $items[22],
+#					'functional_annotation_version' => $items[23]
 					},
 			'assembly' => {
 				       'accession' => $items[16],
