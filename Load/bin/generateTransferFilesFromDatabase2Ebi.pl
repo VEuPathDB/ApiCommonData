@@ -117,12 +117,23 @@ foreach my $abbrev (sort keys %isAnnotated) {
   system ($validationCmd);
 
   ## 6) remove unnecessary files
+  my $removeFileCmd = "rm $gff3FileNameBefore";
+  system ($removeFileCmd);
 
   ## 7) make manifest file
   my $runManifestCmd;
   my $makeManifestFileCmd;
 
   ## 8) tar and gzip files
+  my $tarFileName = $outputFileDir . "\/" . $abbrev .".tar.gz";
+  my $filesToTar = $outputFileDir . "\/" . $abbrev . "*";
+
+  my $tarFilesCmd = "tar -czf $tarFileName $filesToTar";
+  system ($tarFilesCmd);
+
+  my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $outputFileDir . "\/" . $abbrev . "_readme.txt";
+  system ($echoCmd);
+
 }
 
 $dbh->disconnect();
