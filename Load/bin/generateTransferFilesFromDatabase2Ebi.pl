@@ -81,7 +81,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and s.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";
   system($makeGenomeFastaCmd);
 
-  ## 2) make gff3 and protein file
+  ## 2) make gff3, protein, and etc. files that related with annotation
   if ($isAnnotated{$abbrev} == 1) {
     my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --outputFile $gff3FileNameBefore --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
@@ -92,6 +92,9 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
     my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
     system($functAnnotJsonCmd);
+
+    my $geneTransProteinIdsCmd = "generateGeneTransciptProteinIdMapping.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
+    system($geneTransProteinIdsCmd);
 
   }
 
@@ -131,6 +134,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $tarFilesCmd = "tar -czf $tarFileName $filesToTar";
   system ($tarFilesCmd);
 
+  $tarFileName =~ s/^.*\///;
   my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $outputFileDir . "\/" . $abbrev . "_readme.txt";
   system ($echoCmd);
 
