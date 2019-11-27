@@ -85,7 +85,7 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
   ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
   if ($transposableElement->{$seqSourceId}) {
-    @{$seqRegions{transposableElement}} = $transposableElement->{$seqSourceId};
+    $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
   }
 
   push @seqRegionsArray, \%seqRegions;
@@ -140,12 +140,14 @@ sub getTransposableElementInfo {
   my %teInfo;
   while (my ($seqId, $teId, $teStart, $teEnd, $teName) = $stmt->fetchrow_array()) {
 
-    %{$teInfo{$seqId}} = (
+#    %{$teInfo{$seqId}} = (
+    my %info =  (
 			       "id" => $teId,
 			       "start" => $teStart,
 			       "end" => $teEnd,
 			       "name" => $teName
 			       );
+    push @{$teInfo{$seqId}}, \%info;
   }
 
   return \%teInfo;
