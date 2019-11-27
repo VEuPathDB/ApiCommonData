@@ -115,13 +115,15 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameAfter = $outputFileDir . "\/" . $abbrev.".gff3";
   my $dnaFastaFile = $outputFileDir . "\/". $abbrev . "_dna.fa";
 
-  ## 5) validateGff3
-  my $validationCmd = "gff3Validator.pl --inputFileOrDir $gff3FileNameBefore --fastaInputFile $dnaFastaFile --outputGffFileName $gff3FileNameAfter";
-  system ($validationCmd);
+  if ($isAnnotated{$abbrev} == 1) {
+    ## 5) validateGff3
+    my $validationCmd = "gff3Validator.pl --inputFileOrDir $gff3FileNameBefore --fastaInputFile $dnaFastaFile --outputGffFileName $gff3FileNameAfter";
+    system ($validationCmd);
 
-  ## 6) remove unnecessary files
-  my $removeFileCmd = "rm $gff3FileNameBefore";
-  system ($removeFileCmd);
+    ## 6) remove unnecessary files
+    my $removeFileCmd = "rm $gff3FileNameBefore";
+    system ($removeFileCmd);
+  }
 
   ## 7) make manifest file
   my $runManifestCmd;
