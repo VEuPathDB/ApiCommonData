@@ -458,12 +458,18 @@ sub checkGff3GeneModel {
   ## 11) check if internal stop codon
   my (%CDSs);
   foreach my $subFeat (@{$bioFeature}) {
+    my $gType = $subFeat->primary_tag;
     foreach my $transcript ($subFeat->get_SeqFeatures) {
       my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      my $tType = $transcript->primary_tag;
       foreach my $exon (sort {$a->location->start <=> $b->location->start
 				|| $a->location->end <=> $b->location->end} $transcript->get_SeqFeatures ) {
 
 	if ($exon->primary_tag() eq "CDS") {
+	  if ($gType =~ /pseudo/i || $tType =~ /pseudo/i) {
+	    $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	    $exon->add_tag_value("biotype", "pseudogenic_exon");
+	  }
 	  push @{$CDSs{$tId}}, $exon;
 	}
       }
@@ -471,12 +477,13 @@ sub checkGff3GeneModel {
   }
 
   foreach my $tId (sort keys %CDSs) {
-    my ($cdsSeq, $tStrand, $seqId);
+    my ($cdsSeq, $tStrand, $seqId, $cdsType);
     my $c = 0;
     foreach my $exon (sort {$a->location->start <=> $b->location->start
                                 || $a->location->end <=> $b->location->end} @{$CDSs{$tId}}) {
 
       $seqId = $exon->seq_id;
+      ($cdsType) = $exon->get_tag_values("biotype") if ($exon->has_tag("biotype"));
       my $estart = $exon->location->start;
       my $eend = $exon->location->end;
       my $eframe = $exon->frame;
@@ -510,7 +517,7 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n";
+      warn "WARNING: transcript $tId contains internal stop codons\n" if ($cdsType !~ /pseudo/i);
     }
   }
   # end of checking if internal stop codon.

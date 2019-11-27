@@ -52,7 +52,7 @@ while(my $row = $query->fetchrow_hashref()){
   print "<organism>\n";
   print "  <public_abbrev>" . $row->{PUBLIC_ABBREV} . "</public_abbrev>\n";
   print "  <project_name>" . $row->{PROJECT_NAME} . "</project_name>\n";
-  print "  <taxon_id>" . $row->{TAXON_ID} . "</taxon_id>\n";
+  print "  <ncbi_tax_id>" . $ncbiTaxId . "</ncbi_tax_id>\n";
   print "  <abbrev>" . $row->{ABBREV} . "</abbrev>\n";
   print "  <name_for_filenames>" . $row->{NAME_FOR_FILENAMES} . "</name_for_filenames>\n";
   print "  <genome_source>" . $row->{GENOME_SOURCE} . "</genome_source>\n";
