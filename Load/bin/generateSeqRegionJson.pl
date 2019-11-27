@@ -40,6 +40,7 @@ my $dbh = $db->getQueryHandle();
 my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 my $centormere = getCentromereInfo($extDbRlsId);
+my $transposableElement = getTransposableElementInfo($extDbRlsId);
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 if ($outputFileDir) {
@@ -77,8 +78,14 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
     $seqRegions{codon_table} = $geneticCode;
   }
 
+  ## for some organisms in PlasmoDB
   if ($centormere->{$seqSourceId}) {
     $seqRegions{centromere} = $centormere->{$seqSourceId};
+  }
+
+  ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
+  if ($transposableElement->{$seqSourceId}) {
+    @{$seqRegions{transposableElement}} = $transposableElement->{$seqSourceId};
   }
 
   push @seqRegionsArray, \%seqRegions;
@@ -118,6 +125,30 @@ sub getCentromereInfo {
   }
 
   return \%centromereInfo;
+}
+
+sub getTransposableElementInfo {
+  my ($extDbRlsId) = @_;
+
+  my $sql = "select ns.SOURCE_ID, te.SOURCE_ID, nl.START_MIN, nl.END_MAX, te.NAME
+             from DoTS.TransposableElement te, DOTS.NASEQUENCE ns, DOTS.NALOCATION nl
+             where ns.NA_SEQUENCE_ID=te.NA_SEQUENCE_ID and te.NA_FEATURE_ID=nl.NA_FEATURE_ID
+             and ns.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %teInfo;
+  while (my ($seqId, $teId, $teStart, $teEnd, $teName) = $stmt->fetchrow_array()) {
+
+    %{$teInfo{$seqId}} = (
+			       "id" => $teId,
+			       "start" => $teStart,
+			       "end" => $teEnd,
+			       "name" => $teName
+			       );
+  }
+
+  return \%teInfo;
 }
 
 sub getPrimaryExtDbRlsIdFormOrgAbbrev {
