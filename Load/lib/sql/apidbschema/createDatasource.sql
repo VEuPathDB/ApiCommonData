@@ -37,6 +37,8 @@ CREATE INDEX apidb.ds_tax_ix
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Datasource TO gus_w;
 GRANT SELECT ON apidb.Datasource TO gus_r;
 
+GRANT SELECT ON apidb.Datasource_sq TO gus_w;
+
 CREATE SEQUENCE apidb.Datasource_sq;
 
 INSERT INTO core.TableInfo
