@@ -15,6 +15,7 @@ use Bio::Tools::GFF;
 
 my ($inputFileOrDir, $fastaInputFile, $outputFileDir, $outputGffFileName,
     $printReportFeatureQualifiers, $organismGeneticCode, $specialGeneticCode,
+    $agpFile, $lowLevelAgpFile,
     $help);
 
 &GetOptions('inputFileOrDir=s' => \$inputFileOrDir,
@@ -23,6 +24,8 @@ my ($inputFileOrDir, $fastaInputFile, $outputFileDir, $outputGffFileName,
 	    'outputGffFileName=s' => \$outputGffFileName,
 	    'organismGeneticCode=s' => \$organismGeneticCode,
 	    'specialGeneticCode=s' => \$specialGeneticCode,
+	    'agpFile=s' => \$agpFile,
+	    'lowLevelAgpFile=s' => \$lowLevelAgpFile,
 	    'printReportFeatureQualifiers=s' => \$printReportFeatureQualifiers,
 	    'help|h' => \$help
 	    );
@@ -60,7 +63,10 @@ ApiCommonData::Load::AnnotationUtils::checkGff3Format ($bioperlFeaturesFlatted);
 ApiCommonData::Load::AnnotationUtils::checkGff3FormatNestedFeature ($bioperlFeaturesNested);
 
 my $codonTable = $organismGeneticCode;  ## TODO: need to pass in codon_table
-ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $fastaInputFile, $codonTable, $specialGeneticCode);
+if ($fastaInputFile) {
+  my $seqDataHash = ApiCommonData::Load::AnnotationUtils::getSequenceHash ($fastaInputFile, $lowLevelAgpFile, $agpFile);
+  ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $seqDataHash, $codonTable, $specialGeneticCode);
+}
 
 # write to a new gff3 output file
 if ($outputGffFileName) {
@@ -130,6 +136,8 @@ where:
   --outputFileDir: optional, the directory name for output file
   --outputGffFileName: required, output file name
   --printReportFeatureQualifiers: optional, Yes|No
+  --agpFile: required if the sequence IDs in gff3 and fasta file are at different level
+  --lowLevelAgpFile: required if there are more than one agp file
   --organismGeneticCode: required if check gene model, numerical value that can get from NCBI taxonomy.
                          The default is 1
   --specialGeneticCode: special genetic code for mitochondrial and plastid sequence, eg. Pf_M76611|4,Pf3D7_API_v3|11
