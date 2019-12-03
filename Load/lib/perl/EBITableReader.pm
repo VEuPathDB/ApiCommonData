@@ -1,4 +1,5 @@
 package ApiCommonData::Load::EBITableReader;
+use base qw(ApiCommonData::Load::UniDBTableReader);
 
 use strict;
 
@@ -32,13 +33,35 @@ sub getDataDir { $_[0]->{_data_dir} }
 sub setDataDir { $_[0]->{_data_dir} = $_[1] }
 
 sub new {
-  my ($class) = @_; # TODO.. add applicable variables here
+  my ($class, $organismAbbrev, $schemaDefinitionFile, $chromosomeMapFile, $ebi2gusTag, $ncbiTaxon, $datasetName, $datasetVersion, $mysqlInitDir, $mysqlDataDir) = @_; 
 
-  my $self = $class->SUPER::new($class, "todo", undef, undef);
+  die "ERROR:  required param for organismAbbrev is missing" unless($organismAbbrev);
+  die "ERROR:  required param for ebi2gusTag is missing" unless($ebi2gusTag);
+  die "ERROR:  required param for ncbiTaxon is missing" unless($ncbiTaxon);
+  die "ERROR:  required param for datasetName is missing" unless($datasetName);
+  die "ERROR:  required param for datasetVersion is missing" unless($datasetVersion);
 
-   # unless($containerName) {
-   #   die "required container name is missing";
-   # }
+  die "ERROR:  schemaDefinition file does not exist" unless(-e $schemaDefinitionFile);
+  die "ERROR:  chromosomeMapFile file does not exist" unless(-e $chromosomeMapFile);
+
+  die "ERROR:  mysqlInitDir directory does not exist" unless(-d $mysqlInitDir);
+  die "ERROR:  mysqlDataDir directory does not exist" unless(-d $mysqlDataDir);
+
+  my $containerName = "ebi_wf_${organismAbbrev}";
+
+  my $self = $class->SUPER::new($class, $containerName, undef, undef);
+
+  $self->setContainerName($containerName);
+  $self->setSchemaDefinitionFile($schemaDefinitionFile);
+  $self->setChromosomeMapFile($chromosomeMapFile);
+  $self->setEbi2gusVersion($ebi2gusTag);
+  $self->setOrganismDatasetName($datasetName);
+  $self->setOrganismDatasetVersion($datasetVersion);
+  $self->setNcbiTaxon($ncbiTaxon);
+  $self->setInitDir($mysqlInitDir);
+  $self->setDataDir($mysqlDataDir);
+
+  return $self;
  }
 
 sub connectDatabase {
@@ -76,7 +99,7 @@ new Bio::EnsEMBL::DBSQL::DBAdaptor(
   -host    => 'localhost',
   -pass    => '$randomPassword',
   -user    => 'root',
-  -group   => 'core',
+  -group   => '$databaseName',
   -driver => 'mysql',
   -dbname  => '$databaseName'
 );
@@ -93,8 +116,7 @@ sub dupmEbi {
   my $organismDatasetVersion = $self->getOrganismDatasetVersion();
   my $containerName = $self->getContainerName();
 
-  # TODO:  check status of output
-  system("docker exec $containerName dumpGUS.pl -d $organismDatasetName -v $organismDatasetVersion -n $ncbiTaxon");
+  system("singularity exec instance://$containerName dumpGUS.pl -d $organismDatasetName -v $organismDatasetVersion -n $ncbiTaxon");
 }
 
 sub startService {
@@ -107,30 +129,34 @@ sub startService {
   my $chromosomeMapFile = $self->getChromosomeMapFile();
   my $ebi2gusVersion = $self->getEbi2gusVersion();
 
-  my $containerExists = `docker ps -a |grep $containerName`;
+  my $containerExists = `singularity instance list |grep $containerName`;
   if($containerExists) {
     die "There is an existing container named $containerName";
   }
 
-  my $mysqlServiceCommand = "docker run --name $containerName --health-cmd='mysqladmin ping --silent' -v ${chromosomeMapFile}:/usr/local/etc/chromosomeMap.conf -v ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml -v ${registryFn}:/usr/local/etc/ensembl_registry.conf -v ${initDir}:/docker-entrypoint-initdb.d -v ${dataDir}:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${randomPassword} -e MYSQL_DATABASE=${databaseName} veupathdb/ebi2gus:${ebi2gusVersion}";
+  my $mysqlServiceCommand = "singularity instance start --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus $containerName";
 
-  my $servicePid = open(SERVICE, "-|", $mysqlServiceCommand) or die "Could not start service: $!";
-  
-  print "Service Starting....\n";
-  sleep(5); # let the service start before checking health
+  system($mysqlServiceCommand);
 
-  my $healthCheckCommand = "docker inspect --format='{{json .State.Health.Status}}' $containerName";
+  my $runscript = "SINGULARITYENV_MYSQL_ROOT_PASSWORD=${randomPassword} SINGULARITYENV_MYSQL_DATABASE=${databaseName} singularity run instance://${containerName} mysqld --defaults-file=/etc/mysql/my.cnf --basedir=/usr --datadir=/var/lib/mysql";
+
+  my $servicePid = open(SERVICE, "-|", $runscript) or die "Could not start service: $!";
+
+  sleep(5); # entrypoint script startup
+
+  my $healthCheckCommand = "singularity exec instance://${containerName} ps -aux |grep docker-entrypoint.sh";
+  # could also ping mysql db... but i don't think this is needed
+  #  my $healthCheckCommand2 = "singularity exec instance://ebi2gus  mysqladmin --defaults-extra-file=<(cat <<-EOF\n[client]\npassword=\"${randomPassword}\"\nEOF) ping -u root --silent";
+
   my $healthStatus = `$healthCheckCommand`;
   chomp $healthStatus;
 
-  while($healthStatus ne "\"healthy\"") {
-    unless($healthStatus eq "\"starting\"") {
-      die "Docker image failed to start up propery:  Health Status = $healthStatus";
-    }
-    print "Service status = $healthStatus ... \n";    
-    sleep(3);
-    $healthStatus = `$healthCheckCommand`;
-    chomp $healthStatus;
+  # the docker-entrypoint.sh process will go away
+  while($healthStatus) {
+     print "Entrypoint script is running... \n";    
+     sleep(3);
+     $healthStatus = `$healthCheckCommand`;
+     chomp $healthStatus;
   }
 }
 
@@ -147,8 +173,7 @@ sub disconnectDatabase {
   my ($self) = @_;
 
   my $containerName = $self->getContainerName();
-  system("docker stop $containerName");
-  system("docker rm $containerName");
+  system("singularity instance stop $containerName");
 
   $self->{_cleanup} = 1;
 }
