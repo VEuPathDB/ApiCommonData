@@ -413,8 +413,11 @@ sub checkGff3FormatNestedFeature {
   } # end of foreach my $bioFeat
 }
 
-sub checkGff3GeneModel {
-  my ($bioFeature, $fastaFile, $codon_table, $specialCodonTable) = @_;
+sub getSequenceHash {
+  my ($fastaFile, $lowAgpFile, $agpFile) = @_;
+
+  ## $agpFile is lower level agp file
+  ## if $agpFile2, it should be the top level agp file
 
   my (%seqs, $key);
   open (FA, "$fastaFile") || die "can not open genome sequence fasta File to read\n";
@@ -427,6 +430,64 @@ sub checkGff3GeneModel {
     }
   }
   close FA;
+
+  if ($lowAgpFile) {
+    open (AGP, "$lowAgpFile") || die "can not open lowAgpFile file to read\n";
+    while (<AGP>) {
+      chomp;
+      my @items = split (/\t/, $_);
+      if ($seqs{$items[5]}) {
+#	my $subS = substr ($seqs{$items[5]}, $items[6]-1, $items[7] - $items[6]);
+	$seqs{$items[0]} .= ($items[8] =~ /^\+$/) ? $seqs{$items[5]} : revcomp ($seqs{$items[5]});
+      } else {
+	foreach my $i ($items[1]..$items[2]) {
+	  $seqs{$items[0]} .= $items[4];
+	}
+      }
+    }
+    close AGP;
+  }
+
+  if ($agpFile) {
+    open (AGPP, "$agpFile") || die "can not open agp file to read\n";
+    while (<AGPP>) {
+      chomp;
+      my @items = split (/\t/, $_);
+      if ($seqs{$items[5]}) {
+	#my $subS = substr ($seqs{$items[5]}, $items[6]-1, $items[7] - $items[6]+1);
+	$seqs{$items[0]} .= ($items[8] =~ /^\+$/) ? $seqs{$items[5]} : revcomp ($seqs{$items[5]});
+      } else {
+	foreach my $i ($items[1]..$items[2]) {
+	  $seqs{$items[0]} .= $items[4];
+	}
+      }
+    }
+    close AGPP;
+  }
+
+#  foreach my $k (sort keys %seqs) {
+#    my $seqLen = length ($seqs{$k});
+#    print STDERR "$k, length = $seqLen\n";
+#  }
+
+  return \%seqs;
+}
+
+sub checkGff3GeneModel {
+  my ($bioFeature, $seqHash, $codon_table, $specialCodonTable) = @_;
+
+#  my (%seqs, $key);
+#  open (FA, "$fastaFile") || die "can not open genome sequence fasta File to read\n";
+#  while (<FA>) {
+#    chomp;
+#    if ($_ =~ /^>(\S+)/) {
+#      $key = $1;
+#    } else {
+#      $seqs{$key} .= $_;
+#    }
+#  }
+#  close FA;
+
 
   my %specialCodonTables;
   if ($specialCodonTable) {
@@ -442,14 +503,15 @@ sub checkGff3GeneModel {
   foreach my $feat (@{$flatBioFeature}) {
     my $seqId = $feat->seq_id();
 
-    if (!$seqs{$seqId}) {
+#    if (!$seqs{$seqId}) {
+    if (!$seqHash->{$seqId}) {
       warn "Sequence: $seqId found in GFF3 file, but not found in '$fastaFile' file\n";
     } else {
-      if ($feat->location->start > length ($seqs{$seqId}) || $feat->location->end > length ($seqs{$seqId}) ) {
+      if ($feat->location->start > length ($seqHash->{$seqId}) || $feat->location->end > length ($seqHash->{$seqId}) ) {
 	my ($fid) = $feat->get_tag_values("ID") if ($feat->has_tag("ID"));
 	my $fstart = $feat->location->start;
 	my $fend = $feat->location->end;
-	my $seqLen = length ($seqs{$seqId});
+	my $seqLen = length ($seqHash->{$seqId});
 	warn "Feature $fid $fstart ... $fend is located outside sequence boundary $seqId: $seqLen\n";
       }
     }
@@ -458,12 +520,18 @@ sub checkGff3GeneModel {
   ## 11) check if internal stop codon
   my (%CDSs);
   foreach my $subFeat (@{$bioFeature}) {
+    my $gType = $subFeat->primary_tag;
     foreach my $transcript ($subFeat->get_SeqFeatures) {
       my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      my $tType = $transcript->primary_tag;
       foreach my $exon (sort {$a->location->start <=> $b->location->start
 				|| $a->location->end <=> $b->location->end} $transcript->get_SeqFeatures ) {
 
 	if ($exon->primary_tag() eq "CDS") {
+	  if ($gType =~ /pseudo/i || $tType =~ /pseudo/i) {
+	    $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	    $exon->add_tag_value("biotype", "pseudogenic_exon");
+	  }
 	  push @{$CDSs{$tId}}, $exon;
 	}
       }
@@ -471,12 +539,13 @@ sub checkGff3GeneModel {
   }
 
   foreach my $tId (sort keys %CDSs) {
-    my ($cdsSeq, $tStrand, $seqId);
+    my ($cdsSeq, $tStrand, $seqId, $cdsType);
     my $c = 0;
     foreach my $exon (sort {$a->location->start <=> $b->location->start
                                 || $a->location->end <=> $b->location->end} @{$CDSs{$tId}}) {
 
       $seqId = $exon->seq_id;
+      ($cdsType) = $exon->get_tag_values("biotype") if ($exon->has_tag("biotype"));
       my $estart = $exon->location->start;
       my $eend = $exon->location->end;
       my $eframe = $exon->frame;
@@ -484,11 +553,11 @@ sub checkGff3GeneModel {
 
       ## only the 1st CDS for plus strand and the last CDS for minus strand need to deal with frame
       if ($exon->strand == 1 && $c == 0) {
-	$cdsSeq .= substr ($seqs{$seqId}, $estart+$eframe-1, ($eend-$estart-$eframe+1) );
+	$cdsSeq .= substr ($seqHash->{$seqId}, $estart+$eframe-1, ($eend-$estart-$eframe+1) );
       } elsif ($exon->strand == -1 && $c == $#{$CDSs{$tId}} ) {
-	$cdsSeq .= substr ($seqs{$seqId}, $estart-1, ($eend-$eframe-$estart+1) );
+	$cdsSeq .= substr ($seqHash->{$seqId}, $estart-1, ($eend-$eframe-$estart+1) );
       } else {
-	$cdsSeq .= substr ($seqs{$seqId}, $estart-1, ($eend-$estart+1) );
+	$cdsSeq .= substr ($seqHash->{$seqId}, $estart-1, ($eend-$estart+1) );
       }
       $c++;
     }
@@ -510,7 +579,7 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n";
+      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i);
     }
   }
   # end of checking if internal stop codon.

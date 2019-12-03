@@ -689,7 +689,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urinary iodine concentration (mcg/L). Source=IAR.</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;10 unique values</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine iodine (ug/L)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iodine (ug/L)</rdfs:label>
     </owl:Class>
     
 
@@ -10181,7 +10181,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0= IARCONC&gt;100; 1= 50&lt;=IARCONC&lt;=100; 2= IARCONC&lt;50. Source=calculated.</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, 1, 2, NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine iodine level</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iodine level</rdfs:label>
     </owl:Class>
     
 
@@ -14955,7 +14955,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target/scheduled month. Source=FRQ/FSQ/BRF/UCF/SRF/FSE/MOA.</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 to 8</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target month for qualitative dietary intake questionnaire</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Target month for diet diversity survey</rdfs:label>
     </owl:Class>
     
 
@@ -17267,6 +17267,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OGMS_0000015 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000015">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label>Clinical history</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OGMS_0000056 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
@@ -17355,11 +17366,11 @@
     <!-- http://www.ebi.ac.uk/efo/EFO_0004344 -->
 
     <owl:Class rdf:about="http://www.ebi.ac.uk/efo/EFO_0004344">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">zscores_all::b_wei</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">zscores_all</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable, derived</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth weight (kg)</rdfs:label>
     </owl:Class>

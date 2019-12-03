@@ -6,8 +6,15 @@ use lib $ENV{GUS_HOME} . '/lib/perl';
 use ApiCommonData::Load::OwlReader;
 use Data::Dumper;
 use File::Basename;
+use Getopt::Long;
 
-my ($ont, $query) = @ARGV;
+my ($ont, $query, $outFile);
+
+GetOptions(
+  'o|ontology=s' => \$ont,
+  'q|query=s' => \$query,
+  'f|outputFile=s' => \$outFile,
+);
 
 my $ontdir = $ENV{PROJECT_HOME} . "/ApiCommonData/Load/ontology/release/production";
 
@@ -55,6 +62,11 @@ unless($query){
 		unless($opt){ print "\n"; exit; }
 	}while($opt && !$choice{$opt});
 	$query = $choice{$opt};
+}
+
+if($outFile){
+  open(FH, ">$outFile") or die "Cannot write $outFile:$!\n";
+  select(FH);
 }
 
 if($query eq 'rel'){
