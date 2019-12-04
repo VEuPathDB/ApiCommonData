@@ -32,8 +32,11 @@ sub setInitDir { $_[0]->{_init_dir} = $_[1] }
 sub getDataDir { $_[0]->{_data_dir} }
 sub setDataDir { $_[0]->{_data_dir} = $_[1] }
 
+sub getOutputDir { $_[0]->{_output_dir} }
+sub setOutputDir { $_[0]->{_output_dir} = $_[1] }
+
 sub new {
-  my ($class, $organismAbbrev, $schemaDefinitionFile, $chromosomeMapFile, $ebi2gusTag, $ncbiTaxon, $datasetName, $datasetVersion, $mysqlInitDir, $mysqlDataDir) = @_; 
+  my ($class, $organismAbbrev, $schemaDefinitionFile, $chromosomeMapFile, $ebi2gusTag, $ncbiTaxon, $datasetName, $datasetVersion, $mysqlInitDir, $mysqlDataDir, $mysqlOutputDir) = @_; 
 
   die "ERROR:  required param for organismAbbrev is missing" unless($organismAbbrev);
   die "ERROR:  required param for ebi2gusTag is missing" unless($ebi2gusTag);
@@ -60,6 +63,7 @@ sub new {
   $self->setNcbiTaxon($ncbiTaxon);
   $self->setInitDir($mysqlInitDir);
   $self->setDataDir($mysqlDataDir);
+  $self->setOutputDir($mysqlOutputDir);
 
   return $self;
  }
@@ -77,16 +81,11 @@ sub connectDatabase {
   my ($registryFh, $registryFn) = tempfile("${containerName}XXXX", UNLINK => 1, SUFFIX => '.conf');
 
   $self->writeRegistryConf($randomPassword, $databaseName, $registryFh);
-  $self->startService($registryFn, $randomPassword, $databaseName);
+  $self->startService($registryFn, $randomPassword, $databaseName, $registryFn);
 
   $self->dumpEbi();
 }
 
-sub dumpEbi {
-  my ($self) = @_;
-
-  my $containerName = $self->getContainerName();
-}
 
 sub writeRegistryConf {
   my ($self, $randomPassword, $databaseName, $registryFh) = @_;
@@ -108,7 +107,7 @@ new Bio::EnsEMBL::DBSQL::DBAdaptor(
   
 }
 
-sub dupmEbi {
+sub dumpEbi {
   my ($self) = @_;
 
   my $ncbiTaxon = $self->getNcbiTaxon();
@@ -120,11 +119,12 @@ sub dupmEbi {
 }
 
 sub startService {
-  my ($self, $registryFn, $randomPassword, $databaseName) = @_;
+  my ($self, $registryFn, $randomPassword, $databaseName, $registryFile) = @_;
 
   my $containerName = $self->getContainerName();
   my $initDir = $self->getInitDir();
   my $dataDir = $self->getDataDir();
+  my $outputDir = $self->getOutputDir();
   my $schemaDefinitionFile = $self->getSchemaDefinitionFile();
   my $chromosomeMapFile = $self->getChromosomeMapFile();
   my $ebi2gusVersion = $self->getEbi2gusVersion();
@@ -134,7 +134,7 @@ sub startService {
     die "There is an existing container named $containerName";
   }
 
-  my $mysqlServiceCommand = "singularity instance start --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus $containerName";
+  my $mysqlServiceCommand = "singularity instance start --bind ${outputDir}:/tmp --bind ${registryFile}:/usr/local/etc/ensembl_registry.conf --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus $containerName";
 
   system($mysqlServiceCommand);
 
