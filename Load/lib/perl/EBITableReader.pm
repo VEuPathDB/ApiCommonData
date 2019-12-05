@@ -3,7 +3,18 @@ use base qw(ApiCommonData::Load::UniDBTableReader);
 
 use strict;
 
+use Data::Dumper;
+
 use File::Temp qw/ tempfile /;
+
+$/ = "#EOR#\n";
+my $FIELD_DELIMITER = "#EOC#\t";
+
+sub setTableFileHandle { $_[0]->{_table_file_handle} = $_[1] }
+sub getTableFileHandle { $_[0]->{_table_file_handle} }
+
+sub setTableHeader { $_[0]->{_table_header} = $_[1] }
+sub getTableHeader { $_[0]->{_table_header} }
 
 sub getContainerName { $_[0]->{_container_name} }
 sub setContainerName { $_[0]->{_container_name} = $_[1] }
@@ -69,6 +80,9 @@ sub new {
  }
 
 sub connectDatabase {
+}
+
+sub _connectDatabase {
   my ($self) = @_;
 
   my $databaseName = "core";
@@ -178,104 +192,185 @@ sub disconnectDatabase {
   $self->{_cleanup} = 1;
 }
 
-sub prepareTable {}
 
-sub finishTable {}
+sub getTableNameFromPackageName {
+  my ($self, $fullTableName) = @_;
 
-sub nextRowAsHashref {}
-
-sub isRowGlobal {}
-
-sub skipRow {}
-sub loadRow {}
+  $fullTableName =~ /GUS::Model::(.+)::(.+)/i;
+  my $tableName = $1 . "." . $2;
+  return uc $tableName;
+}
 
 
-=head2 Helpers for Caching Foreign Keys
+sub prepareTable {
+  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
-=over 4
+  my $fileName = $self->getTableNameFromPackageName($tableName);
 
-=item C<getDistinctTablesForTableIdField>
+  my $outputDir = $self->getOutputDir();
 
-Soft Key Helper.  For a field which is a foreign key to Core::TableInfo, get distinct table_id->TableName mappings
+  my $fullFilePath = "$outputDir/$fileName";
 
-B<Parameters:>
+  my $fh;
+  open($fh, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
 
- $self(TableReader): a table reader object
- $field(string): database filed which is a fk to Core::TableInfo (example query_table_id)
- $table(string): database table name like "DoTS.Similarity"
+  my $header = <$fh>;
+  chomp $header;
 
-B<Return type:> 
+  my @a = split($FIELD_DELIMITER, $header);
+  $self->setTableFileHandle($fh);
+  $self->setTableHeader(\@a);
+}
 
- C<hashref> key is table_id and value is gus model table string.  example:  GUS::Model::DoTS::Similarity
+sub finishTable {
+  my ($self) = @_;
 
-=cut
+  my $fh = $self->getTableFileHandle();
+
+  close $fh;
+
+  $self->setTableFileHandle(undef);
+  $self->setTableHeader(undef);
+}
+
+sub nextRowAsHashref {
+  my ($self) = @_;
+
+  my $fh = $self->getTableFileHandle();
+
+  my $row = <$fh>;
+  chomp $row;
+
+  my @a = split($FIELD_DELIMITER, $row);
+
+  my $header = $self->getTableHeader();
+
+  my %hash;
+  @hash{@$header} = @a;
+
+  return \%hash;
+}
+
+# rows will only be global if entire table is
+sub isRowGlobal {
+  return 0; 
+}
+
+sub skipRow {
+  return 0;
+}
+
+sub loadRow {
+  return 1;
+}
 
 sub getDistinctTablesForTableIdField {
   my ($self, $field, $table) = @_;
+
+  my $fileName = "CORE.TABLEINFO";
+  my $nameField = "name";
+  my $tableIdField = "table_id";
+
+
+  my $outputDir = $self->getOutputDir();
+  my $fullFilePath = "$outputDir/$fileName";
+  
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+  my $header = <FILE>;
+  chomp $header;
+  my @header = split($FIELD_DELIMITER, $header);
+
+  my ($nameIndex) = grep { lc($header[$_]) eq lc($nameField) } 0 .. $#header;
+  my ($tableIdIndex) = grep { lc($header[$_]) eq lc($tableIdField) } 0 .. $#header;
+  my %rv;
+
+  if(uc($table) eq "DOTS.GOASSOCIATION") {
+    my $softTable = "TranslatedAASequence";
+
+    while(<FILE>) {
+      my @a = split($FIELD_DELIMITER, $_);
+
+      my $name = $a[$nameIndex];
+      my $tableId = $a[$tableIdIndex];
+
+      if($name eq $softTable) {
+        $rv{$tableId} = "GUS::Model::DoTS::${softTable}";
+      }
+    }
+    
+  }
+  else {
+    die "Table $table is not handled for soft keys"
+  }
+  
+  close FILE;
+
+  unless(scalar(keys(%rv)) > 0) {
+    die "Could not identify tables for soft key for $table, $field";
+  }
+
+  return \%rv;
 }
 
 
-=item C<getDistinctValuesForField>
-
-Foreign Key Helper.  For a table and field, lookup distinct possible values and return a hash
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(string): this field is a foreign key field in the gus $table
-
-B<Return type:> 
-
- C<hash> $seen{$id} = 1;
-
-=cut
 
 sub getDistinctValuesForField {
   my ($self, $table, $field) = @_;
+
+  my $fileName = $self->getTableNameFromPackageName($table);
+
+  my $outputDir = $self->getOutputDir();
+  my $fullFilePath = "$outputDir/$fileName";
+
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+
+  <FILE>;
+
+  my @header = @{$self->getTableHeader()};
+  my ($index) = grep { lc($header[$_]) eq lc($field) } 0 .. $#header;
+
+  my %seen;
+  while(<FILE>) {
+    my @a = split($FIELD_DELIMITER, $_);
+    my $value = $a[$index];
+    $seen{$value} = 1;
+  }
+  close FILE;
+
+  return \%seen;
 }
 
-
-=item C<getMaxFieldLength>
-
-For memory allocation we need to know the biggest possible length for the field
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(string): field name
-
-B<Return type:> 
-
- C<hash> $length
-
-=cut
 
 sub getMaxFieldLength {
   my ($self, $table, $field) = @_;
+
+  my $fileName = $self->getTableNameFromPackageName($table);
+
+  my $outputDir = $self->getOutputDir();
+  my $fullFilePath = "$outputDir/$fileName";
+
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+
+  <FILE>;
+  my @header = @{$self->getTableHeader()};
+  my ($index) = grep { lc($header[$_]) eq lc($field) } 0 .. $#header;
+
+  my $length = 0;
+  while(<FILE>) {
+    my @a = split($FIELD_DELIMITER, $_);
+    my $value = $a[$index];
+    my $l = length $value;
+    $length = $l if($l > $length);
+  }
+  close FILE;
+
+  return $length;
 }
 
 
-=item C<getTableCount>
-
-count how many rows are in the table with primary key value <= some value
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $fullTableName(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $primaryKeyColumn(string): name of of the primary key field
- $maxPrimaryKey(number): do not count rows with pk greater than this value
-
-B<Return type:> 
-
- C<number> $count
-
-=cut
-
+# not used
 sub getTableCount {
-  my ($self, $fullTableName, $primaryKeyColumn, $maxPrimaryKey) = @_;
+  die "";
 }
 
 
