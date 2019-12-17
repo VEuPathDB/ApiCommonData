@@ -504,7 +504,9 @@ sub loadNodes {
       my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
+    }
 
+    if ($node->hasAttribute("Characteristic")) {
       my $characteristics = $node->getCharacteristics();
 
       foreach my $characteristic (@$characteristics) {
