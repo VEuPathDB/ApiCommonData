@@ -4,12 +4,10 @@ use strict;
 use Getopt::Long;
 use File::Temp qw/ tempfile /;
 
-$/ = "#EOR#\n";
-my $FIELD_DELIMITER = "#EOC#\t";
 
 my $databaseName = "core";
 
-my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion);
+my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease);
 
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
@@ -20,6 +18,8 @@ my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile
             'chromosome_map_file=s' => \$chromosomeMapFile,
             'dataset_name=s' => \$datasetName,
             'dataset_version=s' => \$datasetVersion,
+            'project_name=s' => \$projectName,
+            'project_release=s' => \$projectRelease,
             'ncbi_tax_id=s' => \$ncbiTaxId,
             'ebi2gus_tag=s' => \$ebi2gusVersion,
             );
@@ -38,7 +38,7 @@ foreach($schemaDefinitionFile, $chromosomeMapFile) {
   }
 }
 
-foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId) {
+foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease) {
   unless(defined $_) {
     &usage();
     die "container, dataset name and version and ncbi taxonomy are all required";
@@ -88,7 +88,7 @@ while($healthStatus) {
   chomp $healthStatus;
 }
 
-system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId") == 0
+system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName") == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
 &stopContainer($containerName);
