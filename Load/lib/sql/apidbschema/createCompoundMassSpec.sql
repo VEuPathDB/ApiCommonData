@@ -32,8 +32,6 @@ GRANT SELECT ON ApiDB.CompoundPeaks_SQ TO gus_r;
 GRANT SELECT ON ApiDB.CompoundPeaks_SQ TO gus_w;
 ----------------------
 
-GRANT REFERENCES ON chEBI.Compounds to ApiDB;
-
 CREATE TABLE ApiDB.CompoundPeaksChebi (
    COMPOUND_PEAKS_CHEBI_ID      NUMBER(12)      NOT NULL,
    COMPOUND_ID                  NUMBER(15),
@@ -53,7 +51,6 @@ CREATE TABLE ApiDB.CompoundPeaksChebi (
    ROW_PROJECT_ID               NUMBER(4)       NOT NULL,
    ROW_ALG_INVOCATION_ID        NUMBER(12)      NOT NULL,
    PRIMARY KEY (COMPOUND_PEAKS_CHEBI_ID),
-   FOREIGN KEY (COMPOUND_ID) REFERENCES chEBI.Compounds (ID),
    FOREIGN KEY (COMPOUND_PEAKS_ID) REFERENCES ApiDB.CompoundPeaks (COMPOUND_PEAKS_ID)
 );
 
