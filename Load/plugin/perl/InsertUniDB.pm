@@ -1027,7 +1027,7 @@ sub loadTable {
     $sqlldrDatProcessString = $sqlldrDat->getCommandLine();
   }
   else {
-    $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
+#    $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
 
     $self->getDb()->manageTransaction(0, 'begin');
     eval "require $tableName";
