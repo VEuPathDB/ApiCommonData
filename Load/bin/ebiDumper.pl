@@ -1,13 +1,20 @@
 #!/usr/bin/perl
 
 use strict;
+
+use lib $ENV{GUS_HOME} . "/lib/perl";
+
 use Getopt::Long;
 use File::Temp qw/ tempfile /;
 
+use DBI;
+use DBD::Oracle;
+
+use CBIL::Util::PropertySet;
 
 my $databaseName = "core";
 
-my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease);
+my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile);
 
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
@@ -22,7 +29,38 @@ my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile
             'project_release=s' => \$projectRelease,
             'ncbi_tax_id=s' => \$ncbiTaxId,
             'ebi2gus_tag=s' => \$ebi2gusVersion,
+            'gusConfigFile=s' => \$gusConfigFile,
             );
+
+##Create db handle
+if(!$gusConfigFile) {
+  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+}
+
+&usage("Config file $gusConfigFile does not exist.") unless -e $gusConfigFile;
+
+my @properties;
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $dbiDsn = $gusconfig->{props}->{dbiDsn};
+my $dbiUser = $gusconfig->{props}->{databaseLogin};
+my $dbiPswd = $gusconfig->{props}->{databasePassword};
+
+my $dbh = DBI->connect($dbiDsn, $dbiUser, $dbiPswd) or die DBI->errstr;
+$dbh->{RaiseError} = 1;
+$dbh->{AutoCommit} = 0;
+
+
+my $GO_NAME = "GO_RSRC";
+my $SO_NAME = "SO_RSRC";
+my $GOEVID_NAME = "GO_evidence_codes_RSRC";
+
+my $GO_VERSION = &getDatabaseRelease($dbh, $GO_NAME);
+my $GOEVID_VERSION = &getDatabaseRelease($dbh, $GOEVID_NAME);
+my $SO_VERSION = &getDatabaseRelease($dbh, $SO_NAME);
+
+$dbh->disconnect();
+
 
 foreach($initDir,$dataDir,$outputDir) {
   unless(-d $_) {
@@ -88,7 +126,7 @@ while($healthStatus) {
   chomp $healthStatus;
 }
 
-system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName") == 0
+system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION'") == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
 &stopContainer($containerName);
@@ -125,6 +163,24 @@ new Bio::EnsEMBL::DBSQL::DBAdaptor(
 1;
 ";
   
+}
+
+sub getDatabaseRelease {
+  my ($dbh, $dbName) = @_;
+
+  my $sql = "select r.version 
+from sres.externaldatabase d, sres.externaldatabaserelease r 
+where d.name = ?
+and d.external_database_id = r.external_database_id";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($dbName);
+
+  my ($rv) = $sh->fetchrow_array();
+
+  $sh->finish();
+
+  return $rv;
 }
 
 1;

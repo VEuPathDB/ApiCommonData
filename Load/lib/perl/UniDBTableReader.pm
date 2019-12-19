@@ -1,12 +1,16 @@
 package ApiCommonData::Load::UniDBTableReader;
 
+use strict;
 
 sub getDatabase {$_[0]->{_database}}
+sub getDatabaseDirectory {$_[0]->{_database_directory}}
 
 sub new {
-  my ($class, $database, $forceSkipDatasetFile, $forceLoadDatasetFile) = @_;
+  my ($class, $database, $forceSkipDatasetFile, $forceLoadDatasetFile, $optionalDatabaseDirectory) = @_;
+
 	my $obj = {
 		_database => $database,
+		_database_directory =>  $optionalDatabaseDirectory &&  -d $optionalDatabaseDirectory ? $optionalDatabaseDirectory : undef,
 		_force_skip_datasets => &readListFromFile($forceSkipDatasetFile),
 		_force_load_datasets => &readListFromFile($forceLoadDatasetFile),
 	};

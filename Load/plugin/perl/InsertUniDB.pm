@@ -53,7 +53,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::DoTS::GOAssociationInstanceLOE" => ["name"], 
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
-                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"], # TODO:  WHy is name included here??
+                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
                             "GUS::Model::SRes::OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologyTermType" => ["name"],
@@ -141,6 +141,13 @@ sub getArgsDeclaration {
             constraintFunc => undef,
             isList         => 0, }),
 
+   fileArg({name           => 'databaseDir',
+            descr          => 'directory for input database files',
+            reqd           => 0,
+            mustExist      => 0,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
 
     ];
 
@@ -251,13 +258,13 @@ sub error {
 
 
 sub makeReaderObj {
-  my ($database, $readerClass, $forceSkipDatasetFile, $forceLoadDatasetFile) = @_;
+  my ($database, $readerClass, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir) = @_;
 
   eval "require $readerClass";
   die $@ if $@;  
 
   my $reader = eval {
-    $readerClass->new($database, $forceSkipDatasetFile, $forceLoadDatasetFile);
+    $readerClass->new($database, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir);
   };
   die $@ if $@;
 
@@ -374,12 +381,11 @@ sub run {
   my $tableReaderClass = $self->getArg('table_reader');
   my $forceSkipDatasetFile = $self->getArg('forceSkipDatasetFile');
   my $forceLoadDatasetFile = $self->getArg('forceLoadDatasetFile');
+  my $databaseDir = $self->getArg('databaseDir');
 
-  my $tableReader = &makeReaderObj($database, $tableReaderClass, $forceSkipDatasetFile, $forceLoadDatasetFile);
-
+  my $tableReader = &makeReaderObj($database, $tableReaderClass, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir);
 
   $tableReader->connectDatabase();
-
 
   $self->log("Getting Table Dependencies and Ordering Tables by Foreign Keys...");
 
@@ -460,9 +466,9 @@ sub loadPrimaryKeyTableForUndo {
 
   $dbh->do("create table $primaryKeyTableName (primary_key number($prec), primary key(primary_key))")  or die $dbh->errstr;;
 
-  my $login       = $self->getConfig->getDatabaseLogin();
-  my $password    = $self->getConfig->getDatabasePassword();
-  my $dbiDsn      = $self->getConfig->getDbiDsn();
+  my $login       = $self->getDb->getLogin();
+  my $password    = $self->getDb->getPassword();
+  my $dbiDsn      = $self->getDb->getDSN();
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   my $sqlldrUndoInfileFn = "${abbreviatedTablePeriod}_pk.dat";
@@ -980,9 +986,10 @@ sub loadTable {
     $hasRowProjectId = 0;
   }
 
-  my $login       = $self->getConfig->getDatabaseLogin();
-  my $password    = $self->getConfig->getDatabasePassword();
-  my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+  my $login       = $self->getDb->getLogin();
+  my $password    = $self->getDb->getPassword();
+  my $dbiDsn      = $self->getDb->getDSN();
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
@@ -1012,10 +1019,11 @@ sub loadTable {
 
     $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn);
 
-    if(!$alreadyMappedMaxOrigPk) {
-      $sqlldrDat->setDirect(1);
-      $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
-    }
+    # TODO:set back
+    # if(!$alreadyMappedMaxOrigPk) {
+    #   $sqlldrDat->setDirect(1);
+    #   $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
+    # }
     $sqlldrDatProcessString = $sqlldrDat->getCommandLine();
   }
   else {
@@ -1234,9 +1242,9 @@ sub loadTable {
     my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
     my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
     if($sequenceDifference > 0) {
-      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
-      $dbh->do("select ${sequenceName}.nextval from dual");
-      $dbh->do("alter sequence $sequenceName increment by 1");
+      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
+      $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
+      $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
     }
   }
   else {
@@ -1549,16 +1557,6 @@ sub foundValueInArray {
 }
 
 
-sub getConfig {
-  my ($self) = @_;
-
-  if (!$self->{config}) {
-    my $gusConfigFile = $self->getArg('gusconfigfile');
-     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
-   }
-
-  $self->{config};
-}
 
 sub undoTables {
 
