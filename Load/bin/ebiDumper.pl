@@ -77,7 +77,7 @@ foreach($schemaDefinitionFile, $chromosomeMapFile) {
   }
 }
 
-foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease) {
+foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease, $organismAbbrev) {
   unless(defined $_) {
     &usage();
     die "container, dataset name and version and ncbi taxonomy are all required";
