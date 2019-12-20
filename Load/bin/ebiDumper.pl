@@ -14,7 +14,7 @@ use CBIL::Util::PropertySet;
 
 my $databaseName = "core";
 
-my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile);
+my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile, $chromosomeMapFile, $datasetName, $datasetVersion, $ncbiTaxId, $ebi2gusVersion, $projectName, $projectRelease, $gusConfigFile, $organismAbbrev);
 
 &GetOptions('help|h' => \$help,
             'container_name=s' => \$containerName,
@@ -30,6 +30,7 @@ my ($help, $containerName, $initDir, $dataDir, $outputDir, $schemaDefinitionFile
             'ncbi_tax_id=s' => \$ncbiTaxId,
             'ebi2gus_tag=s' => \$ebi2gusVersion,
             'gusConfigFile=s' => \$gusConfigFile,
+            'organism_abbrev=s' => \$organismAbbrev,
             );
 
 ##Create db handle
@@ -126,7 +127,7 @@ while($healthStatus) {
   chomp $healthStatus;
 }
 
-system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION'") == 0
+system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION' -a $organismAbbrev") == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
 &stopContainer($containerName);
