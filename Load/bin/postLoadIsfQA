@@ -203,7 +203,7 @@ my ($codingGeneCount) = $stmt->fetchrow_array();
 $stmt->finish();
 
 my $sql = <<SQL;
-  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId)
+  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where (name like 'coding_gene' OR name like 'protein_coding') and external_database_release_id=$extDbRlsId)
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
