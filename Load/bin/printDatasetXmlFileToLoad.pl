@@ -237,6 +237,11 @@ printConstantName ($ofh, \%excelInfo, "genomeSource");
 printConstantName ($ofh, \%excelInfo, "genomeVersion");
 printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
 printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion");
+if ($isEbiGenome =~ /^y/i) {
+  printConstantName ($ofh, \%excelInfo, "ebiOrganismName");
+  printConstantName ($ofh, \%excelInfo, "ebiVersion");
+}
+
 print $ofh "\n";
 
 printValidateOrganismInfo($ofh);
