@@ -37,6 +37,7 @@ my (
     $secondaryAnnot,
     $sourceIdRegex,
     $isfMappingFile,
+    $isEbiGenome,
 
     $help);
 
@@ -66,6 +67,7 @@ my (
 	    'secondaryAnnot=s' => \$secondaryAnnot,
 	    'sourceIdRegex=s' => \$sourceIdRegex,
 	    'isfMappingFile=s' => \$isfMappingFile,
+	    'isEbiGenome=s' => \$isEbiGenome,
 
 	    'help|h' => \$help,
 	    );
@@ -195,6 +197,12 @@ printRegularLine (\%excelInfo, $organismAbbrev, "strainAbbrev");
 printRegularLine (\%excelInfo, $organismAbbrev, "genomeSource");
 printRegularLine (\%excelInfo, $organismAbbrev, "taxonHierarchyForBlastxFilter");
 
+if ($isEbiGenome =~ /^y/i ) {
+  print PO "    <prop name=\"isNotEbiGenome\">false</prop>\n";
+} else {
+  print PO "    <prop name=\"isNotEbiGenome\">true</prop>\n";
+}
+
 printTrueOrFalseLine (\%excelInfo, $organismAbbrev, "annotationIncludesTRNAs");
 printLinesBasedProject ($projectName);
 
@@ -235,6 +243,10 @@ printValidateOrganismInfo($ofh);
 
 printAnnotation($ofh, $format, $secondaryAnnot) if ($format);
 
+if ($isEbiGenome =~ /^y/i ) {
+  printEbiGenome($ofh);
+}
+
 printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasProduct'} =~ /^y/i);
 
 printGOClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasGO'} =~ /^y/i);
@@ -269,6 +281,22 @@ close $ofh;
 
 
 ##################### subroutine ###################
+sub printEbiGenome {
+  my ($fh, $ebiOrganismName, $ebiVersion) = @_;
+
+  print $fh "  <dataset class=\"ebi_primary_genome\">\n";
+  printNameWithDollarSign ($fh, 'projectName');
+  printNameWithDollarSign ($fh, 'organismAbbrev');
+  printNameWithDollarSign ($fh, 'ncbiTaxonId');
+  printNameWithDollarSign ($fh, 'ebiOrganismName');
+  printNameWithDollarSign ($fh, 'ebiVersion');
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  print $fh "  </dataset>\n";
+  print $fh "\n";
+
+  return 0;
+}
+
 sub printSecondaryFasta {
   my ($fh, $secondAnnot) = @_;
 
