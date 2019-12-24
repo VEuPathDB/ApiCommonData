@@ -71,9 +71,11 @@ foreach my $ebi (sort keys %ebiAbbrev) {
   $organismDetails{$abbrev}{orthomclAbbrev} = getOrthomclAbbrevFromOrtho6 ($ortho6File, $abbrev);
   $organismDetails{$abbrev}{isReferenceGenome} = getReferenceGenomeInfo ($ortho6File, $abbrev);
 
-  $organismDetails{$abbrev}{genomeSource} = $text->{assembly}->{name};
-  $organismDetails{$abbrev}{genomeVersion} = ($text->{assembly}->{date}) ? $text->{assembly}->{date} : $text->{assembly}->{version};
+  $organismDetails{$abbrev}{ebiAssemblyName} = $text->{assembly}->{name};
+  $organismDetails{$abbrev}{ebiAssemblyVersion} = ($text->{assembly}->{date}) ? $text->{assembly}->{date} : $text->{assembly}->{version};
   $organismDetails{$abbrev}{genbankAccession} = $text->{assembly}->{accession};
+  $organismDetails{$abbrev}{genebuildVersion} = $text->{genebuild}->{version};
+  $organismDetails{$abbrev}{ebiOrganismName} = $ebi;
 
 #print STDERR "\$genus = \'$genus\', \$species = \'$species\', \$strain = \'$strain\'\n";
 #    print STDERR "\$speciesName = $speciesName\n";
@@ -109,6 +111,19 @@ print "haveSupercontig\t";
 print "haveContig\t";
 print "hasMito\t";
 print "hasApicoplast\t";
+print "hasProduct\t";
+print "hasGO\t";
+print "hasEC\t";
+print "hasName\t";
+print "hasSynonym\t";
+print "hasNote\t";
+print "ebiOrganismName\t";
+print "ebiVersion\t";
+print "ebiAssemblyName\t";
+print "ebiAssemblyVersion\t";
+print "ebiGeneBuildVersion\t";
+print "genbankAccession\t";
+
 print "\n";
 
 my $c = 0;
@@ -128,11 +143,21 @@ foreach my $k (sort keys %organismDetails) {
   print "$organismDetails{$k}{ncbiTaxon}\t";
   print "$organismDetails{$k}{speciesNcbiTaxon}\t";
 
-  print "$organismDetails{$k}{genomeSource}\t";
-  print "$organismDetails{$k}{genomeVersion}\t";
+  print "\t"; ##  print "$organismDetails{$k}{genomeSource}\t";
+  print "\t"; ## print "$organismDetails{$k}{genomeVersion}\t";
   print "Yes\t"; ## always set yes for organisms from VB: "$organismDetails{$k}{annotationIncludesTRNAs}\t";
   print "$organismDetails{$k}{isReferenceGenome}\t";
 
+  ($organismDetails{$k}{isReferenceGenome} =~ /^y/i) ? print "$k\t" : print "\t";  ## referenceStrainOrganisAbbrev
+
+  print "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"; ## total 17 tabs
+
+  print "$organismDetails{$k}{ebiOrganismName}\t";  ## ebiOrganismName
+  print "build_47\t";  ## ebiVersion always build_47 on Dec. 2019
+  print "$organismDetails{$k}{ebiAssemblyName}\t";  ## ebiAssemblyName, for presenter
+  print "$organismDetails{$k}{ebiAssemblyVersion}\t";  ## ebiAssemblyVersion, for presenter
+  print "$organismDetails{$k}{genebuildVersion}\t";  ## ebiGenebuildVersion, for presenter
+  print "$organismDetails{$k}{genbankAccession}\t";  ## genbankAccession, for presenter
   print "\n";
 }
 
@@ -166,7 +191,7 @@ sub getReferenceGenomeInfo {
     chomp;
     my @items = split (/\t/, $_);
     if ($items[2] eq $abbrev) {
-      $isReferenceGenome = $items[3];
+      $isReferenceGenome = ($items[3] == 1) ? "Yes" : "No";
     }
   }
   close IN;
