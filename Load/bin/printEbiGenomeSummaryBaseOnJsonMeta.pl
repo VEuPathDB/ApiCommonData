@@ -66,7 +66,7 @@ foreach my $ebi (sort keys %ebiAbbrev) {
                          ApiCommonData::Load::NCBIToolsUtils::getGeneticCodeFromNcbiTaxonomy($organismFullName, "taxonomy");
 
 
-  $organismDetails{$abbrev}{ifAnnotatedGenome} = ($text->{genebuild}->{version}) ? 1: 0;
+  $organismDetails{$abbrev}{ifAnnotatedGenome} = ($text->{genebuild}->{version}) ? "Yes" : "No";
 
   $organismDetails{$abbrev}{orthomclAbbrev} = getOrthomclAbbrevFromOrtho6 ($ortho6File, $abbrev);
   $organismDetails{$abbrev}{isReferenceGenome} = getReferenceGenomeInfo ($ortho6File, $abbrev);
@@ -143,9 +143,9 @@ foreach my $k (sort keys %organismDetails) {
   print "$organismDetails{$k}{ncbiTaxon}\t";
   print "$organismDetails{$k}{speciesNcbiTaxon}\t";
 
-  print "\t"; ##  print "$organismDetails{$k}{genomeSource}\t";
-  print "\t"; ## print "$organismDetails{$k}{genomeVersion}\t";
-  print "Yes\t"; ## always set yes for organisms from VB: "$organismDetails{$k}{annotationIncludesTRNAs}\t";
+  print "VectorBase\t";      ##  print "$organismDetails{$k}{genomeSource}\t";
+  print "$organismDetails{$k}{ebiAssemblyName}\t";        ## print "$organismDetails{$k}{genomeVersion}\t";
+  print "Yes\t";   ## always set yes for organisms from VB: "$organismDetails{$k}{annotationIncludesTRNAs}\t";
   print "$organismDetails{$k}{isReferenceGenome}\t";
 
   ($organismDetails{$k}{isReferenceGenome} =~ /^y/i) ? print "$k\t" : print "\t";  ## referenceStrainOrganisAbbrev
