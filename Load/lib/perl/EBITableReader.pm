@@ -120,6 +120,7 @@ sub getDistinctTablesForTableIdField {
 
   if(uc($table) eq "DOTS.GOASSOCIATION") {
     my $softTable = "TranslatedAASequence";
+    my $impTable = "AASequenceImp";
 
     while(<FILE>) {
       chomp;
@@ -129,7 +130,7 @@ sub getDistinctTablesForTableIdField {
       my $tableId = $a[$tableIdIndex];
 
       if($name eq $softTable) {
-        $rv{$tableId} = "GUS::Model::DoTS::${softTable}";
+        $rv{$tableId} = "GUS::Model::DoTS::${impTable}";
       }
     }
     
