@@ -77,10 +77,10 @@ foreach($schemaDefinitionFile, $chromosomeMapFile) {
   }
 }
 
-foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease, $organismAbbrev) {
+foreach($containerName, $datasetName, $datasetVersion, $ncbiTaxId, $projectName, $projectRelease, $organismAbbrev, $ebi2gusVersion) {
   unless(defined $_) {
     &usage();
-    die "container, dataset name and version and ncbi taxonomy are all required";
+    die "container, dataset name and version,  ncbi taxonomy, project name, project release, organism abbrev and ebi2gusversion are all required";
   }
 }
 
