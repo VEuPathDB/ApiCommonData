@@ -26,7 +26,7 @@ sub getGeneticCodeFromNcbiTaxonomy {
     $query =~ s/\s+/\+/g;  ## replace space " " with a plus sign +
 
     ## using esearch to find uid
-    $esearch = "$utils/esearch.fcgi?db=$database&term=$query";
+    $esearch = "$utils/esearch.fcgi?api_key=f2006d7a9fa4e92b2931d964bb75ada85a08&db=$database&term=$query&usehistory=y";
     print STDERR "\$esearch = $esearch\n";
 
     $result = get($esearch);
@@ -34,7 +34,8 @@ sub getGeneticCodeFromNcbiTaxonomy {
 
     $uid = $1 if ($result =~ /<Id>(\d+)<\/Id>/);
     if (!$uid) {
-      die "Can not find NCBI taxonomy ID for '$query', please try an upper level\n";
+#      die "Can not find NCBI taxonomy ID for '$query', please try an upper level\n";
+      warn "Can not find NCBI taxonomy ID for '$query', please try an upper level\n";
     }
   }
 

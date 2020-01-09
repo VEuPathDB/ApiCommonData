@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_provide.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_provide.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_provide.owl"/>
     
 
@@ -1578,7 +1578,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=Yes; 2=No; 99=not available/done</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">If diarrhea reported, assessed for each day of diarrheal episode.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrheal sample collected at visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrheal stool collected at visit</rdfs:label>
     </owl:Class>
     
 
@@ -1616,6 +1616,21 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= Yes, -9= Not applicable; NA=Not available</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rotavirus ELISA performed</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010781 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010781">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011844"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_pcr::norct</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_pcr</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Noro Ct Value</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-9 = Missing&apos;</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Norovirus Ct value, by qRT-PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -2132,7 +2147,7 @@ surface water</obo:EUPATH_0001004>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011800"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fecal viral tests</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool virus testing</rdfs:label>
     </owl:Class>
     
 
@@ -2277,6 +2292,21 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic administration</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011892 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011892">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_tacd::eaecar</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_tacd</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC_aar</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">35 = no detection,  &gt;0 &amp; &lt; 35 =Positive,  -9 = NA</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aggR-activated regulator (aar) Ct value, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -2551,7 +2581,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ancyclostoma</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">35 = no detection,  &gt;0 &amp; &lt; 35 =Positive,  -9 = NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ancyclostoma Ct value, by TAC result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ancylostoma Ct value, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -2738,7 +2768,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC_aatA</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Negative,  &gt;0 &amp; &lt; 35=Positive,  -9 = Missing</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Escherichia coli aatA-pos Ct value, by TAC result</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aatA Ct value, by TAC result</rdfs:label>
     </owl:Class>
     
 
@@ -4806,7 +4836,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first marriage</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mother&apos;s age a first marriage</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mother&apos;s age at first marriage</rdfs:label>
     </owl:Class>
     
 
@@ -5387,7 +5417,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">99 = missing</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participants were given a standard solution with 250 mg/mL lactulose and 50 mg/ml mannitol at 12, 24, 40, and 104 weeks.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L/M solution volume (mL)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L:M solution volume (mL)</rdfs:label>
     </owl:Class>
     
 
@@ -8886,21 +8916,6 @@ surface water</obo:EUPATH_0001004>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0036317 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036317">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011844"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_pcr::norct</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_pcr</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Noro Ct Value</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-9 = Missing&apos;</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Norovirus Ct value, by qPCR result</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0036318 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036318">
@@ -9681,21 +9696,6 @@ surface water</obo:EUPATH_0001004>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0036366 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036366">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011843"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_tacd::eaecar</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_lab_bv_tacd</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC_aar</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">35 = no detection,  &gt;0 &amp; &lt; 35 =Positive,  -9 = NA</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EAEC aggR-activated regulator (aar) Ct value, by TAC result</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0036367 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036367">
@@ -10261,7 +10261,7 @@ surface water</obo:EUPATH_0001004>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urinary Lactulose:Mannitol ratio. Derived  Recovery of lactulose [LRECV] √ñ Recovery of Mannitol [MRECV]</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assessed at 12, 24, 40, and 104 weeks.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lactulose-to-mannitol excretion ratio</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L:M excretion ratio</rdfs:label>
     </owl:Class>
     
 
@@ -11624,7 +11624,7 @@ Seroconversion failure if (SNAwk40 - SNAwk18_adjust)&lt;2
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036487">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036010"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_bv_ses::surft</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_bv_ses::surfd</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ext_bv_ses</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">20a1.Source of Water before feeding infant</obo:EUPATH_0001003>
@@ -12616,5 +12616,5 @@ Seroconversion failure if (SNAwk40 - SNAwk18_adjust)&lt;2
 
 
 
-<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 
