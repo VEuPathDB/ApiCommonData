@@ -106,7 +106,7 @@ my $mysqlServiceCommand = "singularity instance start --bind ${outputDir}:/tmp -
 system($mysqlServiceCommand) == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
-my $runscript = "SINGULARITYENV_MYSQL_ROOT_PASSWORD=${randomPassword} SINGULARITYENV_MYSQL_DATABASE=${databaseName} singularity run instance://${containerName} mysqld --defaults-file=/etc/mysql/my.cnf --basedir=/usr --datadir=/var/lib/mysql";
+my $runscript = "SINGULARITYENV_MYSQL_ROOT_PASSWORD=${randomPassword} SINGULARITYENV_MYSQL_DATABASE=${databaseName} singularity run instance://${containerName} mysqld --skip-networking --defaults-file=/etc/mysql/my.cnf --basedir=/usr --datadir=/var/lib/mysql";
 
 my $servicePid = open(SERVICE, "-|", $runscript) or die "Could not start service: $!";
 
