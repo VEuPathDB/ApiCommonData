@@ -220,6 +220,7 @@ sub parseCladeLine {
       $clade->setCommonName($commonName) if $commonName;
       $clade->setIsSpecies(0);
       $clade->setTaxonId(undef);
+      $clade->setCorePeripheral('Z');
       $self->{clades}->{$clade->getThreeLetterAbbrev()} = $clade;
     } else {
       $self->userError("invalid line in clade file: '$line'");
