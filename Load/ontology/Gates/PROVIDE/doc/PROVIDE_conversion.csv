@@ -830,3 +830,148 @@ http://purl.obolibrary.org/obo/EUPATH_0011980,Norovirus in stool,,,,,Sample,Viru
 http://purl.obolibrary.org/obo/EUPATH_0011982,Rotavirus in stool,,,,,Sample,Virus in stool,http://purl.obolibrary.org/obo/EUPATH_0011959,,,category
 http://purl.obolibrary.org/obo/EUPATH_0015713,Sapovirus in stool,,,,,Sample,Virus in stool,http://purl.obolibrary.org/obo/EUPATH_0011959,,,category
 http://purl.obolibrary.org/obo/EUPATH_0036491,Enterovirus in stool aggregate data,,,,,Sample,Virus in stool detection aggregate data,http://purl.obolibrary.org/obo/EUPATH_0036028,,,category
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_bv_neb_st::pid,ext_bv_neb_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Identification number,,variable
+http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,,ext_bv_neb_st::date,ext_bv_neb_st,,Observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Date of nebulization (derived by ST by restructing 8 variables into 1),,variable
+http://purl.obolibrary.org/obo/EUPATH_0000579,Age (days),3,ext_bv_neb_st::aged,ext_bv_neb_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Age in days at nebulization treatment (derived by ST by restructuring 8 variables into 1),,variable
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_bv_neb_st::vstnum,ext_bv_neb_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,,variable
+,Nebulizer treatment,,ext_bv_neb_st::nebulizer,ext_bv_neb_st,Whether the participant received treatment with a nebulizer that day.,Observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,Derived by ST to indicate nebulizer treatment was provided,,variable
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_bv_pdv_st::pid,ext_bv_pdv_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,CHILDID,,variable
+http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,,ext_bv_pdv_st::pdvdt,ext_bv_pdv_st,,Observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,3. Date of Protocol Deviation,,variable
+,Adverse event due to protocol deviation ,5,ext_bv_pdv_st::pdvae,ext_bv_pdv_st,Did the participant experience an adverse event due to this protocol deviation.,Observation,Protocol deviations,,7.  Is the deviation restult in Adverse event?,1=Yes; 2=No,variable
+,Protocol deviation observation week,6,ext_bv_pdv_st::pdvstwk_infant,ext_bv_pdv_st,The observation week associated with the protocol deviation.,Observation,Protocol deviations,,4. Visit week associated with protocol deviation,"01=Enrollment , 02=Week 06 , 03=Week 10, 04=Week 12, 05=Week 14,  06=Week 17, 07=Week 18 , 08=Week 24, 09=Week 39, 10=Week 40, 11=Week 52, 12=Week 53, 13=Week 104, 14=Week 65, 15=Week 78, 16= Week 91, 99=Not applicable",variable
+,Maternal protocol deviation observation week,12,ext_bv_pdv_st::pdvstwk_mother,ext_bv_pdv_st,The observation week associated with the mother's protocol deviation.,Observation,Protocol deviations,,4. Visit week associated with protocol deviation,"01=Enrollment , 02=Week 06 , 03=Week 10, 04=Week 12, 05=Week 14,  06=Week 17, 07=Week 18 , 08=Week 24, 09=Week 39, 10=Week 40, 11=Week 52, 12=Week 53, 13=Week 104, 14=Week 65, 15=Week 78, 16= Week 91, 99=Not applicable",variable
+,Protocol deviation report date,7,ext_bv_pdv_st::pdvrdt_infant,ext_bv_pdv_st,The date the participant's deviation was reported.,Observation,Protocol deviations,,1. Date of Report,,variable
+,Maternal protocol deviation report date,13,ext_bv_pdv_st::pdvrdt_mother,ext_bv_pdv_st,The date the mother's protocol deviation was reported.,Observation,Protocol deviations,,1. Date of Report,,variable
+,Protocol deviation type,1,ext_bv_pdv_st::pdvtype_infant,ext_bv_pdv_st,Type of protocol deviation that occurred that day.,Observation,Protocol deviations,,5. Type of devaiton?,"01=Missed visit, 02=Missed specimen, 03=Missed shedding specimen, 04=Missed procedure, 05=Missed specimen + procedure, 06=Blood specimen collected outside visit window, 07=Urine specimen collected outside visit window, 08=Stool specimen collected outside visit window, 09=Breast milk specimen collected outside visit window, 10=Visit occurred outside of window, 11=Vaccination outside clinic, 12=Incorrectly vaccinated, 13=Child received additional dose of OPV, 14=Other",variable
+,Maternal protocol deviation type,8,ext_bv_pdv_st::pdvtype_mother,ext_bv_pdv_st,Type of protocol deviation that occurred that day for the mother.,Observation,Protocol deviations,,5. Type of devaiton?,"01=Missed visit, 02=Missed specimen, 03=Missed shedding specimen, 04=Missed procedure, 05=Missed specimen + procedure, 06=Blood specimen collected outside visit window, 07=Urine specimen collected outside visit window, 08=Stool specimen collected outside visit window, 09=Breast milk specimen collected outside visit window, 10=Visit occurred outside of window, 11=Vaccination outside clinic, 12=Incorrectly vaccinated, 13=Child received additional dose of OPV, 14=Other",variable
+,Other protocol deviation type,2,ext_bv_pdv_st::pdtyspec_infant,ext_bv_pdv_st,Other type of protocol deviation that occurred that day specified.,Observation,Protocol deviations,,"5a. If deviation type other, please specify",,variable
+,Other maternal protocol deviation type,9,ext_bv_pdv_st::pdtyspec_mother,ext_bv_pdv_st,Other type of protocol deviation that occurred that day for the mother specified.,Observation,Protocol deviations,,"5a. If deviation type other, please specify",,variable
+,Protocol deviation reason,3,ext_bv_pdv_st::pdvres_infant,ext_bv_pdv_st,,Observation,Protocol deviations,,6. Reason for deviation?,1= Subject Illness; 2 = Suject unable; 3= Subject refusal; 4 = Clerical error; 5 = Investigator decision; 6 = Other,variable
+,Maternal protocol deviation reason,10,ext_bv_pdv_st::pdvres_mother,ext_bv_pdv_st,,Observation,Protocol deviations,,6. Reason for deviation?,1= Subject Illness; 2 = Suject unable; 3= Subject refusal; 4 = Clerical error; 5 = Investigator decision; 6 = Other,variable
+,Other protocol deviation reason,4,ext_bv_pdv_st::pdrespec_infant,ext_bv_pdv_st,Other reason for deviation specified.,Observation,Protocol deviations,,"6a. If reason other, please specify",,variable
+,Other maternal protocol deviation reason,11,ext_bv_pdv_st::pdrespec_mother,ext_bv_pdv_st,Other reason for deviation for mother specified.,Observation,Protocol deviations,,"6a. If reason other, please specify",,variable
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_bv_pdv_st::vstnum,ext_bv_pdv_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,,variable
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_bv_ptreat_st::pid,ext_bv_ptreat_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Child Identification,,variable
+http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,,ext_bv_ptreat_st::dov,ext_bv_ptreat_st,,Observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Date of visit (Drug received date),,variable
+,Nystatin suspension,,ext_bv_ptreat_st::nystatin_suspension,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Flucloxacillin syrup,,ext_bv_ptreat_st::syp__flucloxacillin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Clotrimazole cream,,ext_bv_ptreat_st::clotrimazole_cream,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Paracetamol syrup,,ext_bv_ptreat_st::syp__paracetamol,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Chlorpheniramine maleate syrup,,ext_bv_ptreat_st::syp__chlorpheniramine_m,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Erythromycin syrup,,ext_bv_ptreat_st::syp__erythromycin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ranitidine syrup,,ext_bv_ptreat_st::ranitidine_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Norsol nasal drops,,ext_bv_ptreat_st::norsal_nasal_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cefixime suspension,,ext_bv_ptreat_st::cefixime_sup_.cef.3.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Glycerine suppository,,ext_bv_ptreat_st::glycerine_suppository,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Salbutamol syrup,,ext_bv_ptreat_st::syp__sulbutamol,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Azithromycin syrup,,ext_bv_ptreat_st::syp__azythromycin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Nebulization,,ext_bv_ptreat_st::nabulization,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Amoxicillin syrup,,ext_bv_ptreat_st::syp__amoxycillin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Levosalbutamol syrup,,ext_bv_ptreat_st::syp__levosulbutamol,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ambrox drops,,ext_bv_ptreat_st::ambrox_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cephradine,,ext_bv_ptreat_st::cephradin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Chloramphenicol eye drops,,ext_bv_ptreat_st::cloramphenical_eye_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Oral rehydration salts ORS,,ext_bv_ptreat_st::ors,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Folic acid tablet,,ext_bv_ptreat_st::tab__folic_acid,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Baby zinc tablet,,ext_bv_ptreat_st::tab__baby_zinc,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Multi vitamin drops,,ext_bv_ptreat_st::multi_vitamin_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ciprofloxacin syrup,,ext_bv_ptreat_st::syp__ciprofloxacin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Metronidazole syrup,,ext_bv_ptreat_st::syp__metronidzole,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ondansetron syrup,,ext_bv_ptreat_st::ondensetron_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Betson cream,,ext_bv_ptreat_st::betson_cream,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Oxicone,,ext_bv_ptreat_st::oxicone,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ceftriaxone injection,,ext_bv_ptreat_st::inj__ceftriaxone,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Omidon syrup,,ext_bv_ptreat_st::omidon_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ketotifen,,ext_bv_ptreat_st::ketotifen,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Riboflavin tablet,,ext_bv_ptreat_st::tab__riboflavin,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Flacol drops,,ext_bv_ptreat_st::flacol_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cetirizine alatrol,,ext_bv_ptreat_st::cetrizine_.alatrol.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Calamine lotion,,ext_bv_ptreat_st::calamine_lotion,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Povidone ointment,,ext_bv_ptreat_st::povidon_ointment,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Silver sulfadiazine (Burnsil),,ext_bv_ptreat_st::silver_sulfazidine_._burmsil.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Aquaphen syrup,,ext_bv_ptreat_st::aquaphen_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Miconazole oral gel,,ext_bv_ptreat_st::miconazole_oral_gel,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cefpodoxime,,ext_bv_ptreat_st::cefodoxime,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Prednisolone tablet,,ext_bv_ptreat_st::tab_prednisolone,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Nebanol powder,,ext_bv_ptreat_st::nebanol_powder,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Gentin ointment,,ext_bv_ptreat_st::gentin_ointment,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Iron supplement (Compiron),,ext_bv_ptreat_st::iron_supplement_.comperon.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cotrimoxazole syrup,,ext_bv_ptreat_st::syp__cotrimoxasole,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Dicycloverine hydrochloride,,ext_bv_ptreat_st::dycyclovarine_hcl,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Dexamethasone injection,,ext_bv_ptreat_st::inj__dexamethasone,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Amlexanox (Apsol gel),,ext_bv_ptreat_st::amlexanox_.apsol_gel.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ceevit,,ext_bv_ptreat_st::ceevit,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Theophylline,,ext_bv_ptreat_st::theophyline,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Hydroxyzine hydrochloride syrup,,ext_bv_ptreat_st::syp__hydroxyzine_hcl,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ibruprofen syrup,,ext_bv_ptreat_st::ibruprofen_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Permethrin cream,,ext_bv_ptreat_st::permethrin_cream,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Moxclav syrup,,ext_bv_ptreat_st::syp__moxaclave,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Diazepam tablet,,ext_bv_ptreat_st::tab_diazepam,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Xylometazoline drop,,ext_bv_ptreat_st::xylometazoline_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Potassium syrup (Electro K),,ext_bv_ptreat_st::syp__pottasium_.electrok.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Cipro ear drops,,ext_bv_ptreat_st::cipro_ear_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Pushtikona,,ext_bv_ptreat_st::pustikona,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Konakion injection (vitamin K),,ext_bv_ptreat_st::inj__konakion_._vit.k.,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Gentamicin injection,,ext_bv_ptreat_st::gentamycine_inj_,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Fungidal ointment,,ext_bv_ptreat_st::fungidal_ointment,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Betapen tablet,,ext_bv_ptreat_st::tab__butapen,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Moxifloxacin eye drops,,ext_bv_ptreat_st::moxifloxacine_eye_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Montelukast,,ext_bv_ptreat_st::montelukast,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Tobramycin eye drops,,ext_bv_ptreat_st::tobramicine_eye_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Fexofenadine,,ext_bv_ptreat_st::fexiphenadine,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Nitazoxanide syrup,,ext_bv_ptreat_st::syp__nitazoxanide,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Compound benzoic acid,,ext_bv_ptreat_st::compound_benzoic_acid,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Antacid tablet,,ext_bv_ptreat_st::tab__antacid,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Lactulose syrup,,ext_bv_ptreat_st::lactulose_syp,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Tetrasol,,ext_bv_ptreat_st::tetrasol,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Ketoconazole shampoo,,ext_bv_ptreat_st::ketakonazole_shampoo,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Clotrimazole ear drops,,ext_bv_ptreat_st::cotrimazole_ear_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Mefenamic acid,,ext_bv_ptreat_st::mefenamic_acid,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Nitrazepam tablet,,ext_bv_ptreat_st::tab_nitrazipum,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Naproxen syrup,,ext_bv_ptreat_st::syp_naproxen,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Desloratadine syrup,,ext_bv_ptreat_st::syp__desloratadine,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Fluconazole syrup,,ext_bv_ptreat_st::syp__fluconazole,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Gentamicin ear drops,,ext_bv_ptreat_st::gentamycinr_ear_drop,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Acyclovir syrup,,ext_bv_ptreat_st::syp__acyclovir,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+,Mebendazole syrup,,ext_bv_ptreat_st::syp._mebendazole,ext_bv_ptreat_st,,Observation,Medication,http://purl.obolibrary.org/obo/EUPATH_0025092,,,value
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_bv_ptreat_st::vstnum,ext_bv_ptreat_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,,variable
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_bv_ref_st::pid,ext_bv_ref_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,CHILDID,,variable
+http://purl.obolibrary.org/obo/EUPATH_0004991,Observation date,,ext_bv_ref_st::refdt,ext_bv_ref_st,,Observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,1. Date of Referral,,variable
+,Referral reason,,ext_bv_ref_st::refreas,ext_bv_ref_st,The reason the participant was referrred to a clinic or hospital that day.,Observation,Hospitalization,http://purl.obolibrary.org/obo/EUPATH_0000308,2. Reason for referral,1= Dehydration or diarrhea; 2= Malnutrition; 3= Respiratory illness; 4= Other,variable
+,Clinic referred to ,,ext_bv_ref_st::refto,ext_bv_ref_st,Which clinic or hospital the participant was referrred to that day.,Observation,Hospitalization,http://purl.obolibrary.org/obo/EUPATH_0000308,3. Place child referred to,1= ICDDRB Mirpur Hospital;  2=ICDDRB (Mohakhali); 3 =Mirpur Shishu/Children Hospital (Private); 4=Dhaka Shishu Hospital (Government); 5 =Radda Clinic; 6= Other,variable
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_bv_ref_st::vstnum,ext_bv_ref_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,,variable
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_bv_sae_st::pid,ext_bv_sae_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,Child ID,,variable
+,Adverse event report date,1,ext_bv_sae_st::saedov,ext_bv_sae_st,,Observation,Adverse events,,1. Today’s Date   ,,variable
+,Adverse event start date,2,ext_bv_sae_st::saerdt,ext_bv_sae_st,,Observation,Adverse events,,2. Date of earliest symptom(s) onset,,variable
+,Serious adverse event subject,12,ext_bv_sae_st::saewho,ext_bv_sae_st,Indicates whether the SAE was experienced by the participant or their mother. Only collected for serious adverse events.,Observation,Adverse events,,3. Form completed for ,1= Mother; 2= infant,variable
+,Serious adverse event,10,ext_bv_sae_st::saeyes,ext_bv_sae_st,Indicates if the adverse event was considered a serious adverse event.,Observation,Adverse events,,4.Did the event result in any of the following: Death; Life-Threatening event; Hospitalization or prolongatin in existing hospitalization; Significant disability or incapacity,1=Yes; 2=No,variable
+,Seriousness criteria,11,ext_bv_sae_st::saevnt,ext_bv_sae_st,Only collected for serious adverse events.,Observation,Adverse events,,"4a.If the answer to # 4 is YES, which event was the final outcome?",1 = Death; 2 = Life-threatening event; 3 = Hospitalization or prolongationof existing hospitalizatio; 4 = Significant disability or incapacity,variable
+,Adverse event name,3,ext_bv_sae_st::saename,ext_bv_sae_st,,Observation,Adverse events,,"4b. Specify the primary illness related to the event
+","1=Diarrheal illness, 2=Respiratory illness; 3=Febrile illness, 4= Malnutrition, 5=Inguinal hernia, 6= Convulsion, 7=Cyanosis, 8= Lethargy, 9= Sepsis,10 = Vomiting, 11=Respiratory distress, 88= other",variable
+,Adverse event name,,ext_bv_sae_st::saespec,ext_bv_sae_st,,Observation,Adverse events,," 4b1. If the answer to question 4b is ‘other’ (88), please specify
+",,variable
+,Serious adverse event hospitalization date,13,ext_bv_sae_st::saespdt,ext_bv_sae_st,Date hospitaized for severe adverse event (SAE). Only collected for serious adverse events.,Observation,Adverse events,,4c. Date of hospitalization ,,variable
+,Adverse event severity,4,ext_bv_sae_st::saegrd,ext_bv_sae_st,,Observation,Adverse events,,5a. Severity of symptoms,1 = Mild; 2 = Moderate; 3 = Severe,variable
+,Relationship to study intervention,5,ext_bv_sae_st::saerlt,ext_bv_sae_st,,Observation,Adverse events,,5b. Relationship to study interventions,1 = Definitely related; 2 = Possibly related; 3 = Unrelated,variable
+,Action taken,6,ext_bv_sae_st::saeact,ext_bv_sae_st,,Observation,Adverse events,,5c. Actions,"1 = None; 2 = Remedial therapy; 3 = Permanently discontinued from study participation
+4 = Hospitalization
+5 = Other",variable
+,Adverse event outcome,7,ext_bv_sae_st::saeotc,ext_bv_sae_st,,Observation,Adverse events,,5d. Outcome,"1 = Resolved ; 2 = Continuing, do not anticipate resolution; 3 = Death; 4 = Unknown/ lost to follow up",variable
+,Adverse event end date,8,ext_bv_sae_st::saersdt,ext_bv_sae_st,,Observation,Adverse events,,6. Date of SAE resolution,NA,variable
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_bv_sae_st::vstnum,ext_bv_sae_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,NA,variable
+http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,ext_mgmt_bv_aed_st::pid,ext_mgmt_bv_aed_st,,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,ChildID,,variable
+,Adverse event report date,,ext_mgmt_bv_aed_st::aerepdt,ext_mgmt_bv_aed_st,,Observation,Adverse events,,AE report date,09/09/1999=not done,variable
+,Associated study procedure,9,ext_mgmt_bv_aed_st::type,ext_mgmt_bv_aed_st,Indicates which study procedure occurred up to 48 hours before the reported adverse event. Not collected for serious adverse events (SAEs).,Observation,Adverse events,,AE type,L/M administration; Phlebotomy; Vaccination,variable
+,Adverse event name,,ext_mgmt_bv_aed_st::category,ext_mgmt_bv_aed_st,,Observation,Adverse events,,AE Category,Diarrhea; Fever; Redness; Stools; Swelling; Vomiting,variable
+,Adverse event start date,,ext_mgmt_bv_aed_st::aedt,ext_mgmt_bv_aed_st,,Observation,Adverse events,,AE onset date,,variable
+,Adverse event end date,,ext_mgmt_bv_aed_st::aeresdt,ext_mgmt_bv_aed_st,,Observation,Adverse events,,AE resolution date,,variable
+,Adverse event severity,,ext_mgmt_bv_aed_st::severity,ext_mgmt_bv_aed_st,,Observation,Adverse events,,Severity of AE,"1 = Mild, 2 = Moderate; 3= severe",variable
+,Relationship to study intervention,,ext_mgmt_bv_aed_st::relation,ext_mgmt_bv_aed_st,,Observation,Adverse events,,Relationship to intervention,1=  Definitely; 2= Possibly; 3= Unrelated,variable
+,Action taken,,ext_mgmt_bv_aed_st::action,ext_mgmt_bv_aed_st,,Observation,Adverse events,,Action taken,"1 = None; 2 = Remedial therapy; 3 = Discontinuation 4= Hospitalization
+5 = Other",variable
+,Adverse event outcome,,ext_mgmt_bv_aed_st::outcome,ext_mgmt_bv_aed_st,,Observation,Adverse events,,Outcome of AE,1 = Resolved; 2 = Continuing; 3 = Death;  4= Unknown/Lost to FU,variable
+http://purl.obolibrary.org/obo/BFO_0000015,Observation type,,ext_mgmt_bv_aed_st::vstnum,ext_mgmt_bv_aed_st,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Derived by ST for loading with daily surveillance data,,variable
+,Protocol deviations,,,,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,category
+http://purl.obolibrary.org/obo/EUPATH_0025092,Medication,,,,Whether the participant received treatment with the indicated drugs that day. Extracted from participants medical records.,Observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,,,multifilter
+http://purl.obolibrary.org/obo/OGMS_0000090,Treatment,,,,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,category
+,Adverse events,,,,,Observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,category
