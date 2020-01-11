@@ -90,15 +90,41 @@ EOT
     my $studyToSamples = $dbh->prepare($studyToSamplesSql);
     $studyToSamples->execute($studyId);
     # foreach sample
-    while (my ($panId) = $studyToSamples->fetchrow_array()) {
-      my $sample = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $panId});
+    while (my ($samplePanId) = $studyToSamples->fetchrow_array()) {
+      my $sample = GUS::Model::Study::ProtocolAppNode->new({protocol_app_node_id => $samplePanId});
       $sample->retrieveFromDB();
 
-      $self->log("LOG\tGot a sample named '".$sample->getName."'");
+      $self->log("LOG\tGot a sample: '".$sample->getName()."'");
 
-      ## get all PANs that are immediate outputs of sample with characteristics with qualifier "species assay result" --> species_PANs
-      ## exclude those with deprecated term
+      # get all PANs that are immediate outputs of sample
+      # that have characteristics with qualifier "species assay result"
+      # and get the characteristic.ontology_term_id results of those
+      my $sampleToSpeciesAssayResultsSql = << 'EOT';
+select spt.ontology_term_id
+from study.protocolappnode ni, study.output i, study.protocolapp a, study.input o, study.protocolappnode no,
+     study.characteristic noc, sres.ontologyterm qt, sres.ontologyterm spt
+where ni.protocol_app_node_id = o.protocol_app_node_id and
+      o.protocol_app_id = a.protocol_app_id and
+      i.protocol_app_id = a.protocol_app_id and
+      no.protocol_app_node_id = i.protocol_app_node_id and
+      ni.protocol_app_node_id = ? and
+      no.protocol_app_node_id = noc.protocol_app_node_id and
+      noc.qualifier_id = qt.ontology_term_id and
+      qt.name = 'species assay result' and
+      noc.ontology_term_id = spt.ontology_term_id
+EOT
+
+      my $sampleToSpeciesAssayResults = $dbh->prepare($sampleToSpeciesAssayResultsSql);
+      $sampleToSpeciesAssayResults->execute($samplePanId);
+      # foreach species term
+      while (my ($speciesTermId) = $sampleToSpeciesAssayResults->fetchrow_array()) {
+	my $speciesTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $speciesTermId});
+	$speciesTerm->retrieveFromDB();
+
+	$self->log("LOG\t\tRaw species: '".$speciesTerm->getName()."'");
+      }
       ## perform business logic with the ontology term values of the species_PANs and end up with one species term --> final_species
+
       ## add new characteristic to 'sample' with value final_species
 
     }
