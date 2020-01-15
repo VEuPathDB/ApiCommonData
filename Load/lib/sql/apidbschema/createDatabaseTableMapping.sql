@@ -1,6 +1,6 @@
 CREATE TABLE apidb.DatabaseTableMapping (
        database_table_mapping_id number(20),
-       database_orig varchar2(10), 
+       database_orig varchar2(30), 
        table_name varchar2(35), 
        primary_key_orig number(20), 
        primary_key number(20),

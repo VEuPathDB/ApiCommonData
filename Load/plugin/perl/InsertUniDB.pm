@@ -860,7 +860,7 @@ sub writeConfigFile {
 
     push @$attributeList, keys %$datatypeMap;
 
-    $datatypeMap->{'database_orig'} = " CHAR(10)";
+    $datatypeMap->{'database_orig'} = " CHAR(30)";
     $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
     $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
