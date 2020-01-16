@@ -513,6 +513,8 @@ sub loadPrimaryKeyTableForUndo {
     print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
   }
 
+  $tableReader->finishTable();
+
   $fifo->cleanup();
 }
 
