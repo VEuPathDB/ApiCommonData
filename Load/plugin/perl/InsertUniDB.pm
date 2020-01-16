@@ -513,6 +513,8 @@ sub loadPrimaryKeyTableForUndo {
     print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
   }
 
+  $tableReader->finishTable();
+
   $fifo->cleanup();
 }
 
@@ -568,58 +570,59 @@ sub undoTable {
   $self->loadPrimaryKeyTableForUndo($tableInfo, $primaryKeyTableName, $tableReader, $maxPkOrig, $dbh);
 
 
-  my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
-             where database_orig = '$database'
-             and table_name = '$abbreviatedTable'
-             and primary_key_orig not in (select primary_key from $primaryKeyTableName)";
+  #  from iodice:  "could replace the "INTERSECT (. . . having count(*) = 1)" with "MINUS ( . .  where database_orig != '$database')". I'm not clear on which is better."
+  my $deleteGlobSql = "delete $GLOBAL_NATURAL_KEY_TABLE_NAME 
+                       where table_name = '$abbreviatedTable' 
+                        and primary_key in (select a.primary_key
+                                            from (select primary_key, primary_key_orig
+                                                  from $MAPPING_TABLE_NAME
+                                                  where table_name = '$abbreviatedTable'
+                                                   and database_orig = '$database') a,
+                                                 (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                            where a.primary_key_orig = k.primary_key_orig (+)
+                                             and k.primary_key_orig is null
+                                            INTERSECT -- find rows which are unique to this database
+                                            select primary_key
+                                            from $MAPPING_TABLE_NAME
+                                            where table_name = '$abbreviatedTable'
+                                            group by primary_key
+                                            having count(*) = 1)";
 
 
-  my $deleteSql;
-  if($tableName =~ /GUS::Model::Core/) {
-    $deleteSql = "delete from $abbreviatedTablePeriod
-          where $primaryKeyColumn in (
-            select $primaryKeyColumn from $abbreviatedTablePeriod
-              MINUS 
-                (select primary_key 
-                from $MAPPING_TABLE_NAME
-                where table_name = '$abbreviatedTable'
-                UNION
-                select t.$primaryKeyColumn 
-                from $abbreviatedTablePeriod t, core.projectinfo p
-                where t.row_project_id = p.project_id
-                and p.name in ('Database administration')
-                )
-        )
-";        
 
-  }
-  else {
-  $deleteSql = "delete from $abbreviatedTablePeriod
-        where $primaryKeyColumn in (
-          select $primaryKeyColumn 
-            from $abbreviatedTablePeriod
-            minus 
-            select primary_key from $MAPPING_TABLE_NAME
-            where table_name = '$abbreviatedTable'
-          )
-      ";
-
-  }
+  my $deleteSql = "delete $abbreviatedTablePeriod 
+                   where $primaryKeyColumn in (select a.primary_key
+                                               from (select primary_key, primary_key_orig
+                                                     from $MAPPING_TABLE_NAME
+                                                     where table_name = '$abbreviatedTable'
+                                                      and database_orig = '$database') a,
+                                                    (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                               where a.primary_key_orig = k.primary_key_orig (+)
+                                                and k.primary_key_orig is null
+                                               MINUS -- remaining in globalnaturalkey
+                                               select primary_key
+                                               from $GLOBAL_NATURAL_KEY_TABLE_NAME 
+                                               where table_name = '$abbreviatedTable')";
 
 
-  my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
-        where primary_key in (
-          select primary_key from $GLOBAL_NATURAL_KEY_TABLE_NAME
-            minus select primary_key 
-            from $MAPPING_TABLE_NAME
-            where table_name = '$abbreviatedTable')
-          and table_name='$abbreviatedTable'
-        ";
 
+  my $deleteMapSql = "delete $MAPPING_TABLE_NAME
+                      where table_name = '$abbreviatedTable'
+                       and database_orig = '$database'
+                       and primary_key in(select a.primary_key
+                                               from (select primary_key, primary_key_orig
+                                                     from $MAPPING_TABLE_NAME
+                                                     where table_name = '$abbreviatedTable'
+                                                      and database_orig = '$database') a,
+                                                    (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                               where a.primary_key_orig = k.primary_key_orig (+)
+                                                and k.primary_key_orig is null)";
+
+  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
+
+  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
 
   $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
-  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
-  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
 
   $dbh->do("drop table $primaryKeyTableName") or die $dbh->errstr;;
 }
