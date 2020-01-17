@@ -12,3 +12,5 @@ sub getTableCount {
 sub nextRowAsHashref {
   return undef;
 }
+
+1;
