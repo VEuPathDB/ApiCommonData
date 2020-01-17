@@ -520,21 +520,22 @@ sub loadPrimaryKeyTableForUndo {
 
 sub deleteFromTable {
   my ($self, $dbh, $deleteSql, $tableName) = @_;
-  my $chunkSize = 100000;
-  $deleteSql = $deleteSql . " and rownum <= $chunkSize";
+
+#  my $chunkSize = 100000;
+#  $deleteSql = $deleteSql . " and rownum <= $chunkSize";
 
   my $deleteStmt = $dbh->prepare($deleteSql) or die $dbh->errstr;
   my $rowsDeleted = 0;
     
-  while (1) {
-    my $rtnVal = $deleteStmt->execute() or die $dbh->errstr;
-    $rowsDeleted += $rtnVal;
-    $self->log("Deleted $rowsDeleted rows from $tableName");
-    $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
-    last if $rtnVal < $chunkSize;
-  }
-
+#  while (1) {
+  my $rtnVal = $deleteStmt->execute() or die $dbh->errstr;
+  $rowsDeleted += $rtnVal;
+  $self->log("Deleted $rowsDeleted rows from $tableName");
   $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
+#    last if $rtnVal < $chunkSize;
+#  }
+
+#  $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
 
   return $rowsDeleted;
 }
@@ -602,7 +603,8 @@ sub undoTable {
                                                MINUS -- remaining in globalnaturalkey
                                                select primary_key
                                                from $GLOBAL_NATURAL_KEY_TABLE_NAME 
-                                               where table_name = '$abbreviatedTable')";
+                                               where table_name = '$abbreviatedTable')
+                   and row_alg_invocation_id in (select distinct row_alg_invocation_id from $MAPPING_TABLE_NAME where table_name = '$abbreviatedTable')";
 
 
 
