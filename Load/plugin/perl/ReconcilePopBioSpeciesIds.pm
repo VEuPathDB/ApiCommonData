@@ -32,10 +32,16 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList         => 0, }),
 
+   stringArg({name           => 'fallbackSpeciesAccession',
+	      descr          => 'A tiny handful of datasets have some samples with no species ID assay performed on them. This option provides the ontology term accession for the fallback/default species to be assigned to these samples.',
+	      reqd           => 0,
+	      constraintFunc => undef,
+	      isList         => 0, }),
+
   ];
 
-my $documentation = { purpose          => "",
-                      purposeBrief     => "",
+my $documentation = { purpose          => "Merges multiple species identification results into one and adds this as a Sample Characteristic",
+                      purposeBrief     => "Merges multiple species identification results into one and adds this as a Sample Characteristic",
                       notes            => "",
                       tablesAffected   => "",
                       tablesDependedOn => "",
@@ -86,8 +92,6 @@ and sl.protocol_app_node_id = pan.protocol_app_node_id
 and pan.isa_type = 'Sample'
 EOT
 
-    $self->log("TODO\thandle project fallback species<<<<<");
-
     my $dbh = $self->getQueryHandle();
     my $studyToSamples = $dbh->prepare($studyToSamplesSql);
     $studyToSamples->execute($studyId);
@@ -126,6 +130,7 @@ EOT
 
       ## perform business logic with the ontology term values of the species_PANs and end up with one species term id --> $result
       while (my ($speciesTermId) = $sampleToSpeciesAssayResults->fetchrow_array()) {
+	next; #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 	# retrieve the term just for human-readable logging purposes
 	my $speciesTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $speciesTermId});
@@ -147,6 +152,21 @@ EOT
 	}
       }
 
+      if (!defined $result) {
+	my $fallbackSpeciesAccession = $self->getArg('fallbackSpeciesAccession');
+	if ($fallbackSpeciesAccession) {
+	  $fallbackSpeciesAccession =~ s/:/_/; # colon to underscore, if needed
+	  my $fallbackTerm = GUS::Model::SRes::OntologyTerm->new({source_id => $fallbackSpeciesAccession});
+	  if ($fallbackTerm->retrieveFromDB()) {
+	    $result = $fallbackTerm->getOntologyTermId();
+	    $qualifier = 'fallback';
+	  } else {
+	    $self->error("Could not find ontology term with source_id = fallbackSpeciesAccession '$fallbackSpeciesAccession'");
+	  }
+	} else {
+	  $self->error("No species reconciliation result and no --fallbackSpeciesAccession option provided");
+	}
+      }
 
       my $finalTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $result});
       $finalTerm->retrieveFromDB();
