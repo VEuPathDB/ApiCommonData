@@ -271,8 +271,8 @@ sub undoTables {
   my ($self) = @_;
 
   return (
-#    'Study.Characteristic',
-     );
+    'Study.Characteristic',
+      );
 }
 
 1;
