@@ -73,6 +73,13 @@ sub run {
   my ($self) = @_;
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  my %countQualifiers = ();
+
+  my $computed_taxonomy_term = GUS::Model::SRes::OntologyTerm->new({source_id => 'VBcv_0001151'});
+  $computed_taxonomy_term->retrieveFromDB() || $self->error("No ontology term found for computed_taxonomy_term/VBcv_0001151");
+
+  my $computed_taxonomy_qualifier = GUS::Model::SRes::OntologyTerm->new({source_id => 'VBcv_0001152'});
+  $computed_taxonomy_qualifier->retrieveFromDB() || $self->error("No ontology term found for computed_taxonomy_qualifier/VBcv_0001152");
 
   my $investigation = GUS::Model::Study::Study->new({investigation_id=>undef, external_database_release_id=>$extDbRlsId});
 
@@ -130,8 +137,6 @@ EOT
 
       ## perform business logic with the ontology term values of the species_PANs and end up with one species term id --> $result
       while (my ($speciesTermId) = $sampleToSpeciesAssayResults->fetchrow_array()) {
-	next; #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 	# retrieve the term just for human-readable logging purposes
 	my $speciesTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $speciesTermId});
 	$speciesTerm->retrieveFromDB();
@@ -168,19 +173,37 @@ EOT
 	}
       }
 
-      my $finalTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $result});
-      $finalTerm->retrieveFromDB();
-      $self->log("LOG\t\tFinal species: '".$finalTerm->getName()."' ($qualifier)") if ($self->getArg('verbose'));
+      if ($self->getArg('verbose')) {
+	my $finalTerm = GUS::Model::SRes::OntologyTerm->new({ontology_term_id => $result});
+	$finalTerm->retrieveFromDB();
+	$self->log("LOG\t\tFinal species: '".$finalTerm->getName()."' ($qualifier)");
+      }
 
       ## add new characteristic to 'sample' with value final_species
 
+      my $characteristic =
+	GUS::Model::Study::Characteristic->new({protocol_app_node_id => $samplePanId,
+						qualifier_id => $computed_taxonomy_term->getOntologyTermId(),
+						ontology_term_id => $result,
+					       });
+      $characteristic->submit();
+
+      ## store the qualifier also
+      my $characteristic2 =
+	GUS::Model::Study::Characteristic->new({protocol_app_node_id => $samplePanId,
+						qualifier_id => $computed_taxonomy_qualifier->getOntologyTermId(),
+						value => $qualifier,
+					       });
+      $characteristic2->submit();
+
+      $countQualifiers{$qualifier}++;
     }
 
   } else {
     $self->error("could not find Study with extDbRlsSpec '$extDbRlsSpec'");
   }
-
-  return("TO DO: Add return value/message here.");
+  my $summary = join ", ", map { "$countQualifiers{$_} $_" } keys %countQualifiers;
+  return("Added computed taxonomy terms: $summary (samples)");
 }
 
 
