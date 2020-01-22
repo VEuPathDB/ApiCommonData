@@ -1,7 +1,8 @@
-CREATE TABLE apidb.OrthologGroup (
+ CREATE TABLE apidb.OrthologGroup (
  ortholog_group_id            NUMBER(12) NOT NULL,
  subclass_view                VARCHAR2(30) NOT NULL,
  name                         VARCHAR2(500),
+ core_peripheral_residual     VARCHAR2(1) NOT NULL,
  description                  VARCHAR2(2000),
  number_of_members            NUMBER(12) NOT NULL,
  avg_percent_identity         FLOAT,
@@ -44,6 +45,7 @@ GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 
 CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id) tablespace indx;
 CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name) tablespace indx;
+CREATE INDEX apidb.og_core_ix ON apidb.OrthologGroup (core_peripheral_residual, ortholog_group_id, name) tablespace indx;
 
 CREATE INDEX apidb.og_match_ix ON apidb.OrthologGroup (avg_percent_match, ortholog_group_id, name) tablespace indx;
 CREATE INDEX apidb.og_pct_ix ON apidb.OrthologGroup (percent_match_pairs, ortholog_group_id, name) tablespace indx;
@@ -82,6 +84,7 @@ CREATE TABLE apidb.OrthomclTaxon (
  taxon_id                      NUMBER(12),
  name                          VARCHAR(255),
  three_letter_abbrev           VARCHAR(6) NOT NULL,
+ core_peripheral	       VARCHAR2(1) NOT NULL,
  is_species                    NUMBER(1) NOT NULL,
  species_order                 NUMBER(4),
  depth_first_index             NUMBER(10) NOT NULL,
