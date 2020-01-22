@@ -69,6 +69,7 @@ The speciesFile is a columnar file with these columns:
   - four_letter_abbrev
   - ncbi_tax_id
   - clade_four_letter_abbrev  # an index into the cladeFile
+  - C or P (core or peripheral species)
 
 The cladesFile is a depth first serialization of the clade tree.  Each clade has a four letter abbreviation, a display name, and a depth indicated by pipe characters
 
@@ -250,12 +251,14 @@ sub parseSpeciesFile {
 	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
 
 	# pfa APIC 1233.5
-	if (/([a-z]{4})\t([A-Z]{4})\t(\d+)/) {
+	if (/([a-z]{4})\t([A-Z]{4})\t(\d+)\t(\w)/) {
 	  my $speciesAbbrev = $1;
 	  my $cladeAbbrev = $2;
 	  my $ncbiTaxonId = $3;
-	  $self->error("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
-	  $self->error("species abbreviation must have 4 letters") if length($speciesAbbrev) != 4;
+	  my $corePeripheral = $4;
+	  $self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
+	  $self->userError("species abbreviation must have 4 letters") if length($speciesAbbrev) != 4;
+	  $self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
 	  $speciesAbbrevs->{$speciesAbbrev} = 1;
 	  $species->setThreeLetterAbbrev($speciesAbbrev);
 	  my $clade = $self->{clades}->{$cladeAbbrev};
@@ -267,7 +270,7 @@ sub parseSpeciesFile {
 	  $species->setSpeciesOrder($speciesOrder++);
 	  $species->setName($taxonName);
 	  $species->setDepthFirstIndex($clade->getDepthFirstIndex());
-	  $species->setCorePeripheral('C');
+	  $species->setCorePeripheral($corePeripheral);
 	}  else {
 	  $self->userError("invalid line in species file: '$_'");
 	}
@@ -281,7 +284,7 @@ sub getTaxonId {
   my @ids = $self->sqlAsArray( Handle => $stmt, Bind => [$ncbiTaxId] );
 
   if(scalar @ids != 2) {
-    $self->error("Should return one value for ncbi_tax_id '$ncbiTaxId'");
+    $self->userError("Should return one value for ncbi_tax_id '$ncbiTaxId'");
   }
   return @ids;
 
