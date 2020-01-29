@@ -1,4 +1,4 @@
-package ApiCommonData::Load::IntronJunctions;
+package ApiCommonData::Load::IntronJunctionsEbi;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 
 use strict;
@@ -35,14 +35,8 @@ sub munge {
   my ($self) = @_;
 
   my $inputs = $self->getInputs();
-  print "Intron junctions inputs: \n";
-  print Dumper $inputs;
   my $suffix = $self->getSuffix();
-  print "Intron junctions suffix: \n";
-  print Dumper $suffix;
   my $sampleName = $self->getSampleName();
-  print "Intron junctions Sample Name: \n";
-  print Dumper $sampleName;
 
   my $outputFile = $self->getOutputFile();
 
@@ -54,8 +48,6 @@ sub munge {
   foreach my $input (@$inputs) {
     #my $inputFile = $input . $suffix;
     my $inputFile = "$input/$suffix";
-    print "Intron junctions input file: \n";
-    print Dumper $inputFile;
 
     open(INPUT, $inputFile) or die "Cannot open input file $inputFile for reading:$!";
 
