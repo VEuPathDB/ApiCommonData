@@ -290,6 +290,8 @@ sub printEbiGenome {
   my ($fh, $ebiOrganismName, $ebiVersion) = @_;
 
   print $fh "  <dataset class=\"ebi_primary_genome\">\n";
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithValue ($fh, 'ebi2gusTag', '99');
   printNameWithDollarSign ($fh, 'projectName');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
