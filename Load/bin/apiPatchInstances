@@ -62,14 +62,14 @@ Run an SQL script in multiple instances. Uses apiTnsSummary to find instances.
 usage:
 $scriptname [ -list ]
                   [ -regex <expression> ]
-                  [ -propfile <file> [ -script <file without .sql suffix> ] ]
+                  [ -propfile <file> [ -script <SQL script> ] ]
                   [ -help ]
 
 options:
  list     list instances that match regex (or all instances if no regex is supplied)
  regex    regular expression for instance names
  propfile tuning-manager-style property XML file
- script   SQL script (without .sql extension). The script must end with an sqlplus "exit" command.
+ script   SQL script. The script must end with the sqlplus "exit" command.
  help     print this usage message
 
 USAGE
