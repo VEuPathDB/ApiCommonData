@@ -42,6 +42,7 @@ sub getProfileSetName          { $_[0]->{profileSetName} }
 sub getSamples                 { $_[0]->{samples} }
 
 sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
+sub getSeqIdPrefix             { $_[0]->{seqIdPrefix}}
 #-------------------------------------------------------------------------------
 sub new {
     my ($class, $args) = @_;
@@ -75,6 +76,7 @@ sub munge {
 									 mainDirectory => $self->getMainDirectory,
 									 profileSetName => $profileSetName,
 									 samplesHash => $samplesHash,
+                                     sourceIdPrefix => $self->getSeqIdPrefix,
 									 suffix => 'junctions.tab'});
 	$intronJunctions->setProtocolName("GSNAP/Junctions");
 	$intronJunctions->setDisplaySuffix(" [junctions]");
