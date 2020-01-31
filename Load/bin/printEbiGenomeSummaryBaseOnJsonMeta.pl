@@ -19,7 +19,8 @@ my ($genomeSummaryFile, $help);
 
 &usage() if ($help);
 
-my ($ebiInput, $ortho6File) = @ARGV;
+my ($ebiInput, $ortho6File, $jsonFilesDir) = @ARGV;
+$jsonFilesDir = "genomeJsonFiles" if (!$jsonFilesDir);
 
 my %ebiAbbrev;
 open (EBI, $ebiInput) || die "can not open $ebiInput to read\n";
@@ -32,7 +33,8 @@ close EBI;
 my %organismDetails;
 
 foreach my $ebi (sort keys %ebiAbbrev) {
-  my $jsonFile = "genomeJsonFiles/" . $ebi . "_genome.json";
+#  my $jsonFile = "genomeJsonFiles/" . $ebi . "_genome.json";
+  my $jsonFile = $jsonFilesDir . "\/" . $ebi . "_genome.json";
 
   open (IN, $jsonFile) || die "can not open $jsonFile to read\n";
   my $json = <IN>;
