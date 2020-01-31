@@ -8,15 +8,6 @@ use Getopt::Long;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
-#TODO: take in experiment dir and isStranded param instead of file names
-#my ($verbose,$geneFootprintFile,$countFile,$tpmFile,$antisenseCountFile,$antisenseTpmFile);
-#&GetOptions("verbose!"=>\$verbose,
-#            "geneFootprintFile=s"=> \$geneFootprintFile,
-#            "countFile=s" => \$countFile,
-#            "tpmFile=s" => \$tpmFile,
-#            "antisenseCountFile=s" => \$antisenseCountFile,
-#            "antisenseTpmFile=s" => \$antisenseTpmFile,
-#    ); 
 
 my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $isStranded);
 &GetOptions("verbose!"=>\$verbose,
@@ -25,33 +16,25 @@ my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $isStranded);
             "isStranded!"=>\$isStranded
     );
 
-#if(!$geneFootprintFile || !$countFile || !$tpmFile){
 if(!$geneFootprintFile || !$studyDir) {
 	die "usage: makeTpmFromhtseqCounts.pl --geneFootprintFile <geneFootprintFile> --studyDir <study directory for this experiment> --isStranded <use this flag if the data is stranded>\n";
 }
 
 
-##need to test this with a correct gene footprint file but should work
-##TODO: add back when I have a footprint file
-##my %geneLengths;
-##open(IN, "<$geneFootprintFile");
-##my $line = <IN>;
-##while ($line=<IN>) {
-##    chomp($line);
-##    my ($project, $gene, $length, @rest) = split(/\t/, $line);
-##    $geneLengths{$gene} = $length;
-##}
-##close(IN);
+my $geneLengths;
+open(IN, "<$geneFootprintFile");
+my $line = <IN>;
+while ($line=<IN>) {
+    chomp($line);
+    my ($project, $gene, $length, @rest) = split(/\t/, $line);
+    $geneLengths->{$gene} = $length;
+}
+close(IN);
 
-
-
-#TODO: hard coded because I don't have a footprint file to read from
-#will need to read from hash
-my $geneLength = 10;
 
 #TODO: figure out directory structure (hard coded from example)                                                                    
 my $samplesHash;
-foreach my $analysisConfig (glob "$studyDir/../../../analysis_configs/anopheles_gambiae/SRP013741.xml") {
+foreach my $analysisConfig (glob "$studyDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
     $samplesHash = displayAndBaseName($analysisConfig);
 }
 
@@ -69,26 +52,26 @@ foreach my $sample (@{$samples}) {
     else {
         #TODO: determine best location for these output files
         my $countFile = "$studyDir/$sample/genes.htseq-union.unstranded.counts";
-        my $tpmFile = "$studyDir/$sample/TPM_unique.txt";
-        &doTPMCalculation($geneLength, $countFile, $tpmFile);
+        my $tpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.tpm";
+        &doTPMCalculation($geneLengths, $countFile, $tpmFile);
         my $nonUniqueCountFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.counts";
-        my $nonUniqueTpmFile = "$studyDir/$sample/TPM_nonunique.txt";
-        &doTPMCalculation($geneLength, $nonUniqueCountFile, $nonUniqueTpmFile);
+        my $nonUniqueTpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.tpm";
+        &doTPMCalculation($geneLengths, $nonUniqueCountFile, $nonUniqueTpmFile);
     }
 }
 
 
 
 sub _calcRPK {
-    #TODO: will need to take gene lengths hash and find length for each gene
     my %specialCounters = ('__no_feature'=>1, '__ambiguous'=>1, '__too_low_aQual'=>1, '__not_aligned'=>1, '__alignment_not_unique'=>1);
-    my($geneLength, $countFile) = @_;
+    my($geneLengths, $countFile) = @_;
     my $rpkHash;
     my $rpkSum = 0;
     open (IN, "<$countFile") or die "Cannot open file $countFile. Please check and try again\n$!\n";
     while (<IN>) {
         my($geneId, $count) = split /\t/, $_;
         next if ($specialCounters{$geneId});
+        my $geneLength = $geneLengths->{$geneId};
         $rpkSum += $count;
         my $rpk = $count/$geneLength;
         $rpkHash->{$geneId} = $rpk;
