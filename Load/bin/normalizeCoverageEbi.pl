@@ -28,11 +28,11 @@ my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix);
 
 my $usage =<<endOfUsage;
 Usage:
-  normalizeCoverage.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --strandSpecific --isPairedEnd --organismAbbrev
+  normalizeCoverage.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --seqIdPrefix
 
     inputDir: top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     topLevelSeqSizeFile: chromosome size text file e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/topLevelSeqSizes.txt
-    seqIdPrefix: required sequence source ids are prefixed in GUS to ensure uniqueness (e.g., VB seqeuences are prefixed with the organism abbreviation
+    seqIdPrefix: prefix for sequence source ids in GUS to ensure uniqueness (e.g., VB seqeuences are prefixed with the organism abbreviation)
 endOfUsage
 
 die $usage unless -e $inputDir;
@@ -41,7 +41,7 @@ die $usage unless -e $topLevelSeqSizeFile;
 my $samplesHash;
 #foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
 #TODO: figure out directory structure (hard coded from example)
-foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_gambiae/SRP013741.xml") {
+foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
     $samplesHash = displayAndBaseName($analysisConfig);	
 
 }    
