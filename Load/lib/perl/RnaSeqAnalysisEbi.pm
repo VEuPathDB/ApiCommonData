@@ -176,7 +176,8 @@ sub munge {
             if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
                 continue;
             #TODO: come back to this as we aren't using for b47 vector datasets
-            #if($doDegSeq) {
+            if($doDegSeq) {
+                die "DEGseq is not yet available for EBI RNAseq.  Please contact data dev.\n";
             #    print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
     #	#		my $suffix = 'differentialExpressionDEGseq';
             #    my $dataframeHashref = \%dataframeHash;
@@ -197,7 +198,7 @@ sub munge {
     #			$DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
     #			$DEGseqAnalysis->munge();
     #		    }
-    #		}
+    		}
     #		else {
     #		    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
     #		}
