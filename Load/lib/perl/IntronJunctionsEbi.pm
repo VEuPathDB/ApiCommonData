@@ -9,6 +9,7 @@ sub getSampleName {$_[0]->{sampleName}}
 
 sub getInputs {$_[0]->{inputs}}
 sub getSuffix {$_[0]->{suffix}}
+sub getSourceIdPrefix {$_[0]->{sourceIdPrefix}}
 
 sub new {
   my ($class, $args) = @_;
@@ -46,7 +47,6 @@ sub munge {
   my %data;
 
   foreach my $input (@$inputs) {
-    #my $inputFile = $input . $suffix;
     my $inputFile = "$input/$suffix";
 
     open(INPUT, $inputFile) or die "Cannot open input file $inputFile for reading:$!";
@@ -74,9 +74,12 @@ sub munge {
 
     $key =~ /(.+):(\d+)\-(\d+)(\+|\-)/;
 
+    my $sourceIdPrefix = $self->getSourceIdPrefix();
+    my $sequenceSourceId = defined ($sourceIdPrefix) ? "$sourceIdPrefix:$1" : $1;
+
     my $isReversed = $4 eq '+' ? 0 : 1;
 
-    print OUT "$1\t$2\t$3\t$isReversed\t$averageUnique\t$averageNonUnique\n";
+    print OUT "$sequenceSourceId\t$2\t$3\t$isReversed\t$averageUnique\t$averageNonUnique\n";
   }
 
   close OUT;
