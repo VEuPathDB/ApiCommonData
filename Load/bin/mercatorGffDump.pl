@@ -60,7 +60,7 @@ my $dbh = DBI->connect($dsn, $u, $pw) ||  die "Couldn't connect to database: " .
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $extDbRlsIds = &lookupExtDbRlsFromOrganismAbbrev("protein_coding", $organismAbbrev, $dbh);
+my $extDbRlsIds = &lookupExtDbRlsFromOrganismAbbrev("protein_coding%", $organismAbbrev, $dbh);
 
 
 my $GFFFile = "$outputFile";
@@ -100,7 +100,7 @@ from apidb.organism o
 where o.taxon_id = s.taxon_id
 and s.na_sequence_id = gf.na_sequence_id
 and gf.sequence_ontology_id = ot.ontology_term_id
-and ot.name = ?
+and ot.name like ?
 and o.abbrev = ?";
 
   my $qh = $dbh->prepare($query);
