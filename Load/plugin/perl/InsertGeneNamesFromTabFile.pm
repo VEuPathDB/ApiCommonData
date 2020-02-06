@@ -169,7 +169,7 @@ sub run{
 
       my ($sourceId, $geneName) = split(/\t/,$_);
 
-      my $preferred = 0;
+      my $preferred = 1;
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $geneNameReleaseId});
 
@@ -177,7 +177,7 @@ sub run{
       if($geneFeature->retrieveFromDB()){
 	  my $geneNameFeat = $geneFeature->getChild('ApiDB::GeneFeatureName',1);
 
-	  $preferred = 1 unless $geneNameFeat;
+#	  $preferred = 1 unless $geneNameFeat;
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();	       
     
