@@ -9,15 +9,16 @@ use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 
 
-my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $isStranded);
+my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $analysisConfig, $isStranded);
 &GetOptions("verbose!"=>\$verbose,
             "geneFootprintFile=s"=> \$geneFootprintFile,
             "studyDir=s"=>\$studyDir,
+            "analysidConfig=s"=>\$analysisConfig,
             "isStranded!"=>\$isStranded
     );
 
-if(!$geneFootprintFile || !$studyDir) {
-	die "usage: makeTpmFromhtseqCounts.pl --geneFootprintFile <geneFootprintFile> --studyDir <study directory for this experiment> --isStranded <use this flag if the data is stranded>\n";
+if(!$geneFootprintFile || !$studyDir || !$analysisConfig) {
+	die "usage: makeTpmFromhtseqCounts.pl --geneFootprintFile <geneFootprintFile> --studyDir <study directory for this experiment> --analysisConfig <analysisConfigFile> --isStranded <use this flag if the data is stranded>\n";
 }
 
 
@@ -32,11 +33,7 @@ while ($line=<IN>) {
 close(IN);
 
 
-#TODO: figure out directory structure (hard coded from example)                                                                    
-my $samplesHash;
-foreach my $analysisConfig (glob "$studyDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
-    $samplesHash = displayAndBaseName($analysisConfig);
-}
+my $samplesHash = displayAndBaseName($analysisConfig);
 
 my $samples;
 foreach my $group (keys %{$samplesHash}) {
@@ -46,14 +43,27 @@ foreach my $group (keys %{$samplesHash}) {
 foreach my $sample (@{$samples}) {
     my $sampleDir = "$studyDir/$sample";
     if ($isStranded) {
-        #TODO: not sure what dir structure looks like here so come back to this
-        continue
+        my $firstStrandCountFile = "$studyDir/$sample/genes.htseq-union.firststrand.counts";
+        my $firstStrandTpmFile = "$studyDir/$sample/genes.htseq-union.firststrand.tpm";
+        &doTPMCalculation($geneLengths, $firstStrandCountFile, $firstStrandTpmFile);
+
+        my $firstStrandNUCountFile = "$studyDir/$sample/genes.htseq-union.firststrand.nonunique.counts";
+        my $firstStrandNUTpmFile = "$studyDir/$sample/genes.htseq-union.firststrand.nonunique.tpm";
+        &doTPMCalculation($geneLengths, $firstStrandNUCountFile, $firstStrandNUTpmFile);
+
+        my $secondStrandCountFile = "$studyDir/$sample/genes.htseq-union.secondstrand.counts";
+        my $secondStrandTpmFile = "$studyDir/$sample/genes.htseq-union.secondstrand.tpm";
+        &doTPMCalculation($geneLengths, $secondStrandCountFile, $secondStrandTpmFile);
+
+        my $secondStrandNUCountFile = "$studyDir/$sample/genes.htseq-union.secondstrand.nonunique.counts";
+        my $secondStrandNUTpmFile = "$studyDir/$sample/genes.htseq-union.secondstrand.nonunique.tpm";
+        &doTPMCalculation($geneLengths, $secondStrandNUCountFile, $secondStrandNUTpmFile);
     }
     else {
-        #TODO: determine best location for these output files
         my $countFile = "$studyDir/$sample/genes.htseq-union.unstranded.counts";
         my $tpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.tpm";
         &doTPMCalculation($geneLengths, $countFile, $tpmFile);
+
         my $nonUniqueCountFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.counts";
         my $nonUniqueTpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.tpm";
         &doTPMCalculation($geneLengths, $nonUniqueCountFile, $nonUniqueTpmFile);
