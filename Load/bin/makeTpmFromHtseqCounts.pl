@@ -13,7 +13,7 @@ my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $analysisConfig, $isStr
 &GetOptions("verbose!"=>\$verbose,
             "geneFootprintFile=s"=> \$geneFootprintFile,
             "studyDir=s"=>\$studyDir,
-            "analysidConfig=s"=>\$analysisConfig,
+            "analysisConfig=s"=>\$analysisConfig,
             "isStranded!"=>\$isStranded
     );
 
