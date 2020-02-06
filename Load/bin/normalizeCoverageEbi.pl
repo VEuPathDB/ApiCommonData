@@ -19,32 +19,35 @@ use Data::Dumper;
 
 my %hash;
 
-my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix);
+my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix, $analysisConfig);
 
 &GetOptions("inputDir=s"            => \$inputDir,
             "topLevelSeqSizeFile=s" => \$topLevelSeqSizeFile,
-            "seqIdPrefix=s"        => \$seqIdPrefix
+            "analysisConfig=s"      => \$analysisConfig,
+            "seqIdPrefix=s"         => \$seqIdPrefix
  );
 
 my $usage =<<endOfUsage;
 Usage:
-  normalizeCoverage.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --seqIdPrefix
+  normalizeCoverage.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --analysisConfig analysisConfigFile --seqIdPrefix
 
     inputDir: top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     topLevelSeqSizeFile: chromosome size text file e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/topLevelSeqSizes.txt
-    seqIdPrefix: prefix for sequence source ids in GUS to ensure uniqueness (e.g., VB seqeuences are prefixed with the organism abbreviation)
+    analysisConfig: analysisConfig file
+    seqIdPrefix: prefix for sequence source ids (e.g., VB seqeuences are prefixed with the organism abbreviation in GUS to ensure uniqueness)
 endOfUsage
 
 die $usage unless -e $inputDir;
 die $usage unless -e $topLevelSeqSizeFile;
+die $usage unless -e $analysisConfig;
 
-my $samplesHash;
+my $samplesHash = displayAndBaseName($analysisConfig);
 #foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
 #TODO: figure out directory structure (hard coded from example)
-foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
-    $samplesHash = displayAndBaseName($analysisConfig);	
-
-}    
+#foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
+#    $samplesHash = displayAndBaseName($analysisConfig);	
+#
+#}    
 
 my %dealingWithReps;
 
@@ -83,45 +86,45 @@ foreach my $expWithReps (keys %dealingWithReps) {
     &makeMappingFile($dealingWithReps{$expWithReps}, $exp_dir, $mappingStatsBasename);
 #need to add here dealing with the stand etc.     
     foreach my $replicateDir (@{$dealingWithReps{$expWithReps}}) {
-        foreach my $bwFile (glob "$replicateDir/*.bw") {
-            my $baseBed = basename $bwFile;
- 	    #foreach	my $file_to_open (glob "$replicateDir/*.bed") {
-        #    my $baseBed = basename $file_to_open;
-        #    my $bwFile = $baseBed; 	    
-        #    $bwFile =~ s/\.bed$/.bw/;
-        #    $bwFile =~ s/\.bed$/.bw/;
+        #foreach my $bwFile (glob "$replicateDir/*.bw") {
+        #    my $baseBed = basename $bwFile;
+ 	    foreach	my $file_to_open (glob "$replicateDir/*.bed") {
+            my $baseBed = basename $file_to_open;
+            my $bwFile = $baseBed; 	    
+            $bwFile =~ s/\.bed$/.bw/;
+            $bwFile =~ s/\.bed$/.bw/;
 
             #TODO: we receive bigwig files from EBI so we may not need to run these two commands
             #check this
-        #    &sortBedGraph("$replicateDir/$baseBed");
-        #    &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
+            &sortBedGraph("$replicateDir/$baseBed");
+            &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 
             if ($baseBed =~ /^unique/) {
                 if ($baseBed =~/firststrand/)  {
-                    #$listOfUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    $listOfUniqueFirstStrandFiles.= "$bwFile ";
+                    $listOfUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
+                    #$listOfUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
-                    #$listOfUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    $listOfUniqueSecondStrandFiles.= "$bwFile ";
+                    $listOfUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
+                    #$listOfUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
-                    #$listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    $listOfUniqueRepBwFiles.= "$bwFile ";
+                    $listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+                    #$listOfUniqueRepBwFiles.= "$bwFile ";
                 }
             }
             elsif ($baseBed =~ /^non_unique/) {
                 if ($baseBed =~/firststrand/)  {
-                    #$listOfNonUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    $listOfNonUniqueFirstStrandFiles.= "$bwFile ";
+                    $listOfNonUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
+                    #$listOfNonUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
-                    #$listOfNonUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    $listOfNonUniqueSecondStrandFiles.= "$bwFile ";
+                    $listOfNonUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
+                    #$listOfNonUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
-                    #$listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    $listOfNonUniqueRepBwFiles.= "$bwFile ";
+                    $listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
+                    #$listOfNonUniqueRepBwFiles.= "$bwFile ";
                 }
             }
         }
