@@ -1092,7 +1092,7 @@ sub loadTable {
     # first time we see data
     unless($idMappings) {
       $idMappings = $self->getIdMappings($database, $tableName, $tableInfo, $tableReader);
-      $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database, $isAllGlobalTable);
+      $globalLookup = $self->globalLookupForTable($primaryKeyColumn, $tableName, $database);
     }
 
 
@@ -1100,7 +1100,7 @@ sub loadTable {
 
     my $primaryKey;
 
-    my $isGlobal = $isAllGlobalTable || $tableReader->isRowGlobal($mappedRow);
+    my $isGlobal = $isAllGlobalTable || $tableReader->isRowGlobal($mappedRow, $tableName);
 
     if($isGlobal) {
       $primaryKey = $self->lookupPrimaryKey($tableName, $mappedRow, $globalLookup);
@@ -1288,7 +1288,7 @@ sub lookupPrimaryKey {
 
 
 sub globalLookupForTable  {
-  my ($self, $primaryKeyColumn, $tableName, $database, $isAllGlobalTable) = @_;
+  my ($self, $primaryKeyColumn, $tableName, $database) = @_;
 
   my $dbh = $self->getQueryHandle();  
 
@@ -1299,37 +1299,21 @@ sub globalLookupForTable  {
   my $abbreviatedTableColumn = &getAbbreviatedTableName($tableName, "::");
   $self->log("Preparing Global Lookup for table $abbreviatedTableColumn from database $database");
 
-  my $sql;
-  if($isAllGlobalTable) {
-    my $fieldsString = join(",", map { $_ } @$fields);
-    $tableName = &getAbbreviatedTableName($tableName, ".");
-
-    $sql = "select $primaryKeyColumn, $fieldsString from $tableName";
-  }
-  else {
-    $tableName = &getAbbreviatedTableName($tableName, "::");
-    $sql = "select primary_key, global_natural_key from $GLOBAL_NATURAL_KEY_TABLE_NAME where table_name = '$tableName' and global_natural_key is not null";
-  }
+  my $sql = "select primary_key, global_natural_key from $GLOBAL_NATURAL_KEY_TABLE_NAME where table_name = '$tableName'";
+  $tableName = &getAbbreviatedTableName($tableName, "::");
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my %lookup;
 
-  my $rowCount = 0;
-  while(my ($pk, @a) = $sh->fetchrow_array()) {
+  while(my ($pk, $globalNaturalKey) = $sh->fetchrow_array()) {
 
-    my @values = map { lc($_) } @a;
-    my $key = join("_", @values);
+    $self->error("GlobalNaturalKey cannot be null for $pk in table $tableName") unless(defined $globalNaturalKey);;
 
-    $lookup{$key} = $pk;
-    $rowCount++
+    $lookup{$globalNaturalKey} = $pk;
   }
   $sh->finish();
 
-  
-  unless($rowCount == scalar(keys(%lookup))) {
-      $self->log("The GLOBAL UNIQUE FIELDS for table $tableName resulted in nonunique key when concatenated... choosing one");
-  }
 
   $self->log("Finished caching Global Lookup for table $abbreviatedTableColumn from database $database");
 

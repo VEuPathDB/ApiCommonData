@@ -82,8 +82,14 @@ sub nextRowAsHashref {
   return \%hash;
 }
 
-# rows will only be global if entire table is
+# db ref is a special case in the unidb pluin
 sub isRowGlobal {
+  my ($self, $mappedRow, $tableName) = @_;
+
+  if($tableName eq "GUS::Model::SRes::DbRef") {
+    return 1;
+  }
+
   return 0; 
 }
 
