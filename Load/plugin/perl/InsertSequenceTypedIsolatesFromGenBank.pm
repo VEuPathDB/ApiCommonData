@@ -325,6 +325,7 @@ sub loadIsolates {
 
     $study->submit;
     $self->undefPointerCache();
+    $study->undefPointerCache(); # HW test - exceeded the maximum number of allowable objects in memory
   }
 
   return $count;
