@@ -16,6 +16,7 @@ use GUS::Model::Study::Characteristic;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::SRes::BibliographicReference;
+use GUS::Supported::Util; 
 use Data::Dumper;
 
 #use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
@@ -243,6 +244,12 @@ sub loadIsolates {
       # skip loading duplicate isolate - https://redmine.apidb.org/issues/28720
       if($node->retrieveFromDB()) {
         print STDERR "\nWarning: found duplicate isolate $id, skip loading this isolate!\n\n";
+        next;
+      }
+
+      # skip loading isolate with the same sound_id which is probably loaded under other organims 
+      if(GUS::Supported::Util::getNASequenceId ($self, $id)) {
+        print STDERR "\nWarning: found douplice isolate $id, probably loaded under different organism, skip loading this isolate!\n\n";
         next;
       }
 
