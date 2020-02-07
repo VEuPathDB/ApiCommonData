@@ -29,7 +29,7 @@ my ($inputDir, $topLevelSeqSizeFile, $seqIdPrefix, $analysisConfig);
 
 my $usage =<<endOfUsage;
 Usage:
-  normalizeCoverage.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --analysisConfig analysisConfigFile --seqIdPrefix
+  normalizeCoverageEbi.pl --inputDir input_directory --topLevelSeqSizeFile chromosome_size_file --analysisConfig analysisConfigFile --seqIdPrefix
 
     inputDir: top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     topLevelSeqSizeFile: chromosome size text file e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/topLevelSeqSizes.txt
