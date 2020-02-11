@@ -174,7 +174,7 @@ sub munge {
             my $degComp = $Crep1;
 
             if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
-                continue;
+                next;
             #TODO: come back to this as we aren't using for b47 vector datasets
             #if($doDegSeq) {
             #    die "DEGseq is not yet available for EBI RNAseq.  Please contact data dev.\n";
