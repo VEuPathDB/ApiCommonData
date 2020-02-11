@@ -61,9 +61,9 @@ foreach my $groupKey (keys %$samplesHash) {
         push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;
     }
     else {
-        #TODO: check this
         my $directory_short = $mappingStatsFiles[0];
         $directory_short=~ s/$inputDir\///;
+        $directory_short = "analyze_$directory_short";
         $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
     } 
 }
@@ -86,45 +86,35 @@ foreach my $expWithReps (keys %dealingWithReps) {
     &makeMappingFile($dealingWithReps{$expWithReps}, $exp_dir, $mappingStatsBasename);
 #need to add here dealing with the stand etc.     
     foreach my $replicateDir (@{$dealingWithReps{$expWithReps}}) {
-        #foreach my $bwFile (glob "$replicateDir/*.bw") {
-        #    my $baseBed = basename $bwFile;
  	    foreach	my $file_to_open (glob "$replicateDir/*.bed") {
             my $baseBed = basename $file_to_open;
             my $bwFile = $baseBed; 	    
             $bwFile =~ s/\.bed$/.bw/;
             $bwFile =~ s/\.bed$/.bw/;
 
-            #TODO: we receive bigwig files from EBI so we may not need to run these two commands
-            #check this
             &sortBedGraph("$replicateDir/$baseBed");
             &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 
             if ($baseBed =~ /^unique/) {
                 if ($baseBed =~/firststrand/)  {
                     $listOfUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
                     $listOfUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
                     $listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueRepBwFiles.= "$bwFile ";
                 }
             }
             elsif ($baseBed =~ /^non_unique/) {
                 if ($baseBed =~/firststrand/)  {
                     $listOfNonUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
                     $listOfNonUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
                     $listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueRepBwFiles.= "$bwFile ";
                 }
             }
         }
