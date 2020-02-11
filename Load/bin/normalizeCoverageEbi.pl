@@ -210,7 +210,7 @@ sub update_coverage {
             }
         
         foreach my $f (@fs) {
-            next if $f !~ /\.bed/i;
+            next if $f !~ /\.bed$/i;
             open(F, "$inputDir/$k/$f");
             open OUT, ">$out_dir/$f";
             my $outputFile = $f;
@@ -228,7 +228,7 @@ sub update_coverage {
             next unless ($chr && $start && $stop && $score);
 
             $chr = $seqIdPrefix ? "$seqIdPrefix:$chr" : $chr;
-            
+                        
             my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", (($score * (($stop-$start)/$avgReadLength)) / (($coverage /1000000) * (($stop - $start)/1000)))/$normFactor );
             #we want to set any that have a normalized score to <1 to 0 for only the score. 
             my $normalized_score_for_log = $normalized_score;
