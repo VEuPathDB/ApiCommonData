@@ -88,7 +88,7 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 
   ## for some organisms in PlasmoDB
   if ($karyotypeBands->{$seqSourceId}) {
-    $seqRegions{karyotype_bands} = $karyotypeBands->{$seqSourceId};
+    push @{$seqRegions{karyotype_bands}}, $karyotypeBands->{$seqSourceId};
   }
 
   ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
