@@ -39,7 +39,7 @@ my $dbh = $db->getQueryHandle();
 
 my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
-my $centormere = getCentromereInfo($extDbRlsId);
+my $karyotypeBands = getCentromereInfo($extDbRlsId);
 my $transposableElement = getTransposableElementInfo($extDbRlsId);
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
@@ -68,6 +68,13 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 		 'length' => $seqLen,
 		 );
 
+  $seqRegions{length} += 0;  ## change string to integer
+
+  if ($seqType =~ /mitochondrial_chromosome/i || $seqType =~ /apicoplast_chromosome/i) {
+    $seqRegions{coord_system_level} = "chromosome";
+    $seqRegions{location} = $seqType;
+  }
+
   my $synonyms = getSeqAliasesFromSeqSourceid($seqSourceId);
   if ($synonyms) {
     $seqRegions{synonyms} = \@{$synonyms};
@@ -76,11 +83,12 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
   my $geneticCode = getGeneticCodeFromOrganismAbbrev($organismAbbrev, $seqType);
   if ($geneticCode != 1) {
     $seqRegions{codon_table} = $geneticCode;
+    $seqRegions{codon_table} += 0;
   }
 
   ## for some organisms in PlasmoDB
-  if ($centormere->{$seqSourceId}) {
-    $seqRegions{centromere} = $centormere->{$seqSourceId};
+  if ($karyotypeBands->{$seqSourceId}) {
+    $seqRegions{karyotype_bands} = $karyotypeBands->{$seqSourceId};
   }
 
   ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
@@ -118,10 +126,14 @@ sub getCentromereInfo {
   while (my ($seqId, $centromereId, $cStart, $cEnd) = $stmt->fetchrow_array()) {
 
     %{$centromereInfo{$seqId}} = (
-			       "centromereId" => $centromereId,
+			       "name" => $centromereId,
+			       "stain" => "ACEN",
+			       "structure" => "centromere",
 			       "start" => $cStart,
 			       "end" => $cEnd
 			       );
+    ${$centromereInfo{$seqId}}{start} += 0;
+    ${$centromereInfo{$seqId}}{end} += 0;
   }
 
   return \%centromereInfo;
@@ -240,8 +252,20 @@ sub getSeqAliasesFromSeqSourceid {
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
+  my $curSource; 
   while (my ($alias) = $stmt->fetchrow_array()) {
-    push @{$aliases}, $alias;
+#    if ($alias =~ /^CM/ || $alias =~ /^NC/) {
+    if ($alias =~ /^[A-Z]{2}\_?\d{5,6}/ || $alias =~ /^[A-Z]{4}\d{8}/) {
+      $curSource = "INSDC";
+    } else {
+      $curSource = "Community_Symbol";
+    }
+    my %curAlias = (
+		    "source" => $curSource,
+		    "name" => $alias
+		    );
+    push @{$aliases}, \%curAlias;
+#    push @{$aliases}, $alias;
   }
 
   $stmt->finish();
