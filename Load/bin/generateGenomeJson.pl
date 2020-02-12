@@ -49,53 +49,48 @@ while (<IN>) {
   chomp;
   my @items = split (/\t/, $_);
 
+  my $providerUrl = getProviderUrlFromGenomeSource($items[12]);
+  my $genebuildVersion = $items[20] ? $items[20] : $items[14];
+  my $assemblyVersion = $items[15];
+  if ($items[15] == "") {
+    $assemblyVersion = $items[16];
+    $assemblyVersion =~ s/(\S+)\.(\d)/$2/;
+  }
+  $assemblyVersion += 0;  ## change string to integer
+
+
   if ($items[1] eq $organismAbbrev) {
-    %organismDetails = ('project_id' => $items[2],
+    %organismDetails = (#'project_id' => $items[2],
 			'species' => {
-				       'organismAbbrev' => $items[1],
+#                                      'organismAbbrev' => $items[1],
+				       'alias' => $items[1],
 				       'scientific_name' => $items[3]." ".$items[4],
 				       'strain' => $items[5],
 				       'taxonomy_id' => $items[11]
 				      },
 			'provider' => {
-				       'url' => $items[29],
-				       'genome_source' => $items[12],
-				       'genome_version' => $items[14]
+				       'url' => $providerUrl,
+				       'name' => $items[12]
 				       },
 			'genebuild' => {
-					'structural_annotation_source' => $items[21],
-					'structural_annotation_version' => $items[20],
-#					'functional_annotation_source' => $items[22],
-#					'functional_annotation_version' => $items[23]
+					'version' => $genebuildVersion,
+					'start_date' => $genebuildVersion
 					},
 			'assembly' => {
 				       'accession' => $items[16],
-				       'version' => $items[15],
-				       'WGS_project' => $items[17],
-				       'BioProject' => $items[18],
-				       'organellar' => $items[27]
+				       'version' => $assemblyVersion
 				       }
 			);
   }
 }
 close IN;
 
-$organismDetails{provider}{url} =~ s/wget\s*//;
-
-$organismDetails{genebuild}{structural_annotation_source} = $organismDetails{provider}{genome_source}
-  if ($organismDetails{genebuild}{structural_annotation_source} == "");
-$organismDetails{genebuild}{structural_annotation_version} = $organismDetails{provider}{genome_version}
-  if ($organismDetails{genebuild}{structural_annotation_version} == "");
-
-if ($organismDetails{assembly}{version} == "") {
-  $organismDetails{assembly}{version} = $organismDetails{assembly}{accession};
-  $organismDetails{assembly}{version} =~ s/(\S+)\.(\d)/$2/;
-}
 
 if ($organismDetails{species}{taxonomy_id} == "") {
   $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
 }
 
+#$organismDetails{assembly}{version} += 0;
 
 my $json = encode_json \%organismDetails;
 #my $json = encode_json (array_filter((array) \%organismDetails, 'is_not_null'));
@@ -110,6 +105,28 @@ close OUT;
 $dbh->disconnect();
 
 ###########
+sub getProviderUrlFromGenomeSource {
+  my ($genomeSource) = @_;
+  $genomeSource = lc($genomeSource);
+
+  my %urls = (
+	      aspgd => "http://www.aspgd.org",
+	      broad => "https://www.broadinstitute.org",
+	      cgd => "http://www.candidagenome.org/download",
+	      ensembl => "https://ensembl.org",
+	      jcvi => "https://www.jcvi.org",
+	      jgi => "https://jgi.doe.gov",
+	      ucsf => "https://www.ucsf.edu",
+	      ubc => "https://www.ubc.ca",
+	      genedb => "https://www.genedb.org",
+	      sanger => "ftp://ftp.sanger.ac.uk/pub/project/pathogens",
+	      gb => "https://www.ncbi.nlm.nih.gov/assembly",
+	      genbank => "https://www.ncbi.nlm.nih.gov/assembly"
+	      );
+
+  return $urls{$genomeSource};
+}
+
 sub getNcbiTaxonIdFromOrganismName {
   my ($orgnaismName) = @_;
 
