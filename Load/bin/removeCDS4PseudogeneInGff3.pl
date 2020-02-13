@@ -1,4 +1,4 @@
-#!/usr/bin/perl5.8.0
+#!/usr/bin/perl
 
 use strict;
 
