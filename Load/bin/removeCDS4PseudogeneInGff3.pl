@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+## this script contain all special requirements that EBI wants for gff3
+
 use strict;
 
 my $input = $ARGV[0];
@@ -11,6 +13,11 @@ while (<IN>) {
 
   next if ($items[2] eq "CDS" && $items[8] =~ /biotype=pseudogenic_exon;/);
 
+  if ($items[2] eq "CDS" ) {
+    $_ =~ s/ID=(\S+?)-CDS\d+;/ID=$1;/i;
+  }
+
   print "$_\n";
+
 }
 close IN;
