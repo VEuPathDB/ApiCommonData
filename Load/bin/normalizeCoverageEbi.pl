@@ -11,11 +11,6 @@ use Data::Dumper;
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
-#
-#  ... Su_strand_specific/analyze_lateTroph/master/mainresult
-#  ... Su_strand_specific/analyze_schizont/master/mainresult
-#  ... Su_strand_specific/analyze_gametocyteII/master/mainresult
-#  ... Su_strand_specific/analyze_gametocyteV/master/mainresult
 
 my %hash;
 
@@ -63,7 +58,7 @@ foreach my $groupKey (keys %$samplesHash) {
     else {
         my $directory_short = $mappingStatsFiles[0];
         $directory_short=~ s/$inputDir\///;
-        $directory_short = "analyze_$directory_short";
+        $directory_short = "$directory_short";
         $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
     } 
 }
@@ -72,7 +67,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
 
     my $count = 0;
     my %scoreHash;
-    my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
+    my $exp_dir = "$inputDir/$expWithReps"."_combined";
     #TODO: remove -p - added for testing
     my $cmd = "mkdir -p $exp_dir";
     &runCmd($cmd);
@@ -190,7 +185,7 @@ sub update_coverage {
 
             my $normFactor = 1;
 
-            if($k =~ /analyze_(.+)_combined/) {
+            if($k =~ /(.+)_combined/) {
               if($samplesHash->{$1}->{samples}) {
                 $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
               }
