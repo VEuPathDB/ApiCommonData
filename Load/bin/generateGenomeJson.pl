@@ -89,8 +89,10 @@ close IN;
 if ($organismDetails{species}{taxonomy_id} == "") {
   $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
 }
+$organismDetails{species}{taxonomy_id} += 0;
 
-#$organismDetails{assembly}{version} += 0;
+$organismDetails{assembly}{accession} = "" if ($organismDetails{assembly}{accession} eq "N/A");
+
 
 my $json = encode_json \%organismDetails;
 #my $json = encode_json (array_filter((array) \%organismDetails, 'is_not_null'));
