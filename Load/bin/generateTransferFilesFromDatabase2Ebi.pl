@@ -114,6 +114,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
 foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameBefore = $outputFileDir . "\/" . $abbrev . ".gff3.before";
   my $gff3FileNameAfter = $outputFileDir . "\/" . $abbrev.".gff3";
+  my $gff3FileNameWoPseudoCDS = $outputFileDir . "\/" . $abbrev. ".woPseudoCDS". ".gff3";
   my $dnaFastaFile = $outputFileDir . "\/". $abbrev . "_dna.fa";
 
   if ($isAnnotated{$abbrev} == 1) {
@@ -124,6 +125,10 @@ foreach my $abbrev (sort keys %isAnnotated) {
     ## 6) remove unnecessary files
     my $removeFileCmd = "rm $gff3FileNameBefore";
     system ($removeFileCmd);
+
+    ## make gff3 file without CDS for pseudogene
+    my $removeCDS4Pseudo = "removeCDS4PseudogeneInGff3.pl $gff3FileNameAfter > $gff3FileNameWoPseudoCDS ";
+    system ($removeCDS4Pseudo);
   }
 
   ## 7) make manifest file
