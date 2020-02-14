@@ -37,12 +37,7 @@ die $usage unless -e $topLevelSeqSizeFile;
 die $usage unless -e $analysisConfig;
 
 my $samplesHash = displayAndBaseName($analysisConfig);
-#foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
-#TODO: figure out directory structure (hard coded from example)
-#foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
-#    $samplesHash = displayAndBaseName($analysisConfig);	
-#
-#}    
+   
 
 my %dealingWithReps;
 
@@ -58,7 +53,7 @@ foreach my $groupKey (keys %$samplesHash) {
     else {
         my $directory_short = $mappingStatsFiles[0];
         $directory_short=~ s/$inputDir\///;
-        $directory_short = "$directory_short";
+        $directory_short = "analyze_$directory_short";
         $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
     } 
 }
@@ -67,8 +62,7 @@ foreach my $expWithReps (keys %dealingWithReps) {
 
     my $count = 0;
     my %scoreHash;
-    my $exp_dir = "$inputDir/$expWithReps"."_combined";
-    #TODO: remove -p - added for testing
+    my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
     my $cmd = "mkdir -p $exp_dir";
     &runCmd($cmd);
     my $listOfUniqueRepBwFiles;
@@ -173,30 +167,35 @@ sub update_coverage {
 
     foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
         my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
-        my $dir_open = $inputDir."/".$k;
+        my $kIn;
+        if ($k =~ /analyze_(.+)_combined/) {
+            $kIn = $k;
+        } else {
+            (my $kIn = $k) =~ s/analyze_//;
+        }
+        my $out_dir = "$inputDir/$k/normalized";;
+        my $dir_open = $inputDir."/".$kIn;
         opendir(D, $dir_open);
         my @fs = readdir(D);
-        my $cmd = "mkdir $inputDir/$k/normalized";
-        if(!-e "$inputDir/$k/normalized") {
+        my $cmd = "mkdir -p $out_dir";
+        if(!-e $out_dir) {
             &runCmd($cmd);
         }
         
-        my $out_dir = "$inputDir/$k/normalized";
+        my $normFactor = 1;
 
-            my $normFactor = 1;
-
-            if($k =~ /(.+)_combined/) {
-              if($samplesHash->{$1}->{samples}) {
-                $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
-              }
-              else {
-                die "Could not determine number of reps for combined file $k";
-              }
-            }
+        if($k =~ /analyze_(.+)_combined/) {
+          if($samplesHash->{$1}->{samples}) {
+            $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
+          }
+          else {
+            die "Could not determine number of reps for combined file $k";
+          }
+        }
         
         foreach my $f (@fs) {
             next if $f !~ /\.bed$/i;
-            open(F, "$inputDir/$k/$f");
+            open(F, "$inputDir/$kIn/$f");
             open OUT, ">$out_dir/$f";
             my $outputFile = $f;
             my $bamfile = $f;
