@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #vvvvvvvvvvvvvvvvvvvvvvvvv GUS4_STATUS vvvvvvvvvvvvvvvvvvvvvvvvv
-  # GUS4_STATUS | SRes.OntologyTerm              | auto   | alyzebsent
+  # GUS4_STATUS | SRes.OntologyTerm              | auto   | absent
   # GUS4_STATUS | SRes.SequenceOntology          | auto   | absent
   # GUS4_STATUS | Study.OntologyEntry            | auto   | absent
   # GUS4_STATUS | SRes.GOTerm                    | auto   | absent
@@ -131,7 +131,7 @@ foreach my $key (keys %$sampleHash) {
   }
 
 
-  my $d = -e "$inputDir/analyze_$sampleDirName/master/mainresult" ? "$inputDir/analyze_$sampleDirName/master/mainresult" : "$inputDir/$sampleDirName/";
+  my $d = -e "$inputDir/analyze_$sampleDirName/master/mainresult" ? "$inputDir/analyze_$sampleDirName/master/mainresult" : "$inputDir/analyze_$sampleDirName/";
 
     $inputDir =~ s/\/$//;
     my $exp_dir = "$d/normalized/final";
