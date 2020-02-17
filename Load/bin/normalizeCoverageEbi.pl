@@ -170,8 +170,8 @@ sub update_coverage {
         my $kIn;
         if ($k =~ /analyze_(.+)_combined/) {
             $kIn = $k;
-        } else {
-            (my $kIn = $k) =~ s/analyze_//;
+        } elsif ($k =~ /analyze_(.+)/) {
+            ($kIn = $k) =~ s/analyze_//;
         }
         my $out_dir = "$inputDir/$k/normalized";;
         my $dir_open = $inputDir."/".$kIn;
