@@ -85,7 +85,10 @@ $GFFString->close();
 
 $dbh->disconnect;
 
-
+unless(-s $GFFFile) {
+  print STDERR "GFF file is empty! \n";
+  exit;
+}
 
 sub lookupExtDbRlsFromOrganismAbbrev {
   my ($sequenceOntology, $organismAbbrev, $dbh) = @_;
