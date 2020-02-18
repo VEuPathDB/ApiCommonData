@@ -43,4 +43,34 @@ WHERE lower('ApidbTuning') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 
 alter user ApidbTuning quota unlimited on indx;
 
+--------------------------------------------------------------------------------
+--
+-- create empty Sanger tuning tables, so they can be referenced even in
+-- instances for which we don't run the Sanger feed
+--
+create table apidbTuning.AnnotationChange0000
+ (
+  gene        varchar2(60),
+  mrnaid      varchar2(80),
+  change      varchar2(400),
+  change_date date,
+  name        varchar2(60),
+  product     varchar2(800)
+);
+
+create or replace synonym apidbTuning.AnnotationChange
+  for apidbTuning.AnnotationChange0000;
+
+create table apidbTuning.ChangedGeneProduct0000
+  (
+   gene    varchar2(80),
+   product varchar2(800),
+   name    varchar2(60)
+  );
+
+create or replace synonym apidbTuning.ChangedGeneProduct
+  for apidbTuning.ChangedGeneProduct0000;
+
+--------------------------------------------------------------------------------
+
 exit
