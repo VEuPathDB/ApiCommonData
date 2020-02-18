@@ -81,7 +81,7 @@ sub _calcRPK {
     while (<IN>) {
         my($geneId, $count) = split /\t/, $_;
         next if ($specialCounters{$geneId});
-        my $geneLength = $geneLengths->{$geneId};
+        my $geneLength = $geneLengths->{$geneId}/1000;
         $rpkSum += $count;
         my $rpk = $count/$geneLength;
         $rpkHash->{$geneId} = $rpk;
