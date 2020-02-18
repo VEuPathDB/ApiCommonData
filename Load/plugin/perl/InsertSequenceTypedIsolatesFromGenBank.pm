@@ -292,8 +292,10 @@ sub loadIsolates {
       } # end load terms
 
       my $link = GUS::Model::Study::StudyLink->new();
-      $link->setParent($study);
-      $link->setParent($node);
+      if($study->getStudyId()) { 
+        $link->setParent($study);
+        $link->setParent($node);
+      }
 
       my $segmentResult = GUS::Model::Results::SegmentResult->new();
       ## need to handle feature location
@@ -326,7 +328,7 @@ sub loadIsolates {
 
     $study->submit;
     $self->undefPointerCache();
-    $study->undefPointerCache(); # HW test - exceeded the maximum number of allowable objects in memory
+    $study->undefPointerCache(); # exceeded the maximum number of allowable objects in memory
   }
 
   return $count;
