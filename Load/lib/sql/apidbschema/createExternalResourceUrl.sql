@@ -2,7 +2,7 @@ CREATE TABLE ApiDB.ExternalResourceUrl (
   EXTERNAL_RESOURCE_URL_ID	 NUMBER(6)   NOT NULL,
   CORE_VERSION               VARCHAR(50)  NOT NULL,
   DATABASE_NAME              VARCHAR(100)  NOT NULL,
-  ID_URL                     VARCHAR(200)  NOT NULL,
+  ID_URL                     VARCHAR(300)  NOT NULL,
   MODIFICATION_DATE       DATE,
   USER_READ               NUMBER(1),
   USER_WRITE              NUMBER(1),
