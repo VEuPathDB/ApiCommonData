@@ -48,11 +48,11 @@ my $error;
 open(FILE, $mapFile) or die "Cannot open file $mapFile for reading:$!";
 while(<FILE>) {
   chomp;
-  my ($sourceId, $chrom, $chrOrderNumber) = split(/\t/, $_);
+  my ($sourceIdPrefix, $chrom, $chrOrderNumber) = split(/\t/, $_);
 
   next unless($chrom);
 
-  $sourceId = $organismAbbrev . "_" . $sourceId;  ## in the case sourceId = organismAbbrev_2L
+  my $sourceId = $organismAbbrev . "_" . $sourceIdPrefix;  ## in the case sourceId = organismAbbrev_2L
 
   $chrOrderNumber = $chrom unless $chrOrderNumber;
 
@@ -61,7 +61,7 @@ while(<FILE>) {
   my $rowCount = $sh->rows;
 
   if ($rowCount == 0) { ## if the sourceId = assemblyId_2L
-    $sourceId = $genomeVersion . "_" . $sourceId;
+    $sourceId = $genomeVersion . "_" . $sourceIdPrefix;
     $sh->execute($chrom, $chrOrderNumber, $sourceId);
     $rowCount = $sh->rows;
   }
