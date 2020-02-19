@@ -23,9 +23,8 @@ my ($help, $mapFile, $gusConfigFile, $extDbRlsId, $organismAbbrev, $genomeVersio
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 $sequenceTable = "ExternalNaSequence" unless ($sequenceTable);
 
-unless(-e $mapFile && -e $mapFile) {
-  print STDERR "usage --chromosomeMapFile chromosomeMapFile --sequenceTable 'ExternalNaSequence|VirtualSequence' [--gusConfigFile]\n";
-  exit;
+unless($mapFile && -e $mapFile) {
+  die "usage --chromosomeMapFile chromosomeMapFile --sequenceTable 'ExternalNaSequence|VirtualSequence' [--gusConfigFile]\n";
 }
 
 my @properties = ();
