@@ -37,7 +37,8 @@ foreach my $k3 (sort keys %chrMapNum2Id) {
   $chrCount++;
 
   foreach my $id (@{$chrMapNum2Id{$k3}}) {
-    print "$id\t$k3\t$chrCount\n";
+#    print "$id\t$k3\t$chrCount\n";
+    print "$k3\t$k3\t$chrCount\n";
   }
 }
 
