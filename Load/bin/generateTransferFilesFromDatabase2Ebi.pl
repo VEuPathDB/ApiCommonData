@@ -91,11 +91,13 @@ foreach my $abbrev (sort keys %isAnnotated) {
     my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select tas.SOURCE_ID, tas.SEQUENCE from dots.transcript t, dots.translatedaafeature taf, DOTS.translatedaasequence tas where t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_SEQUENCE_ID=tas.AA_SEQUENCE_ID and t.is_pseudo is null and t.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";  ## only export protein sequence for non-pseudogene
     system($makeProteinFastaCmd);
 
-    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
-    system($functAnnotJsonCmd);
+# temp comment out because the schema has not been finalized yet
+#    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
+#    system($functAnnotJsonCmd);
 
-    my $geneTransProteinIdsCmd = "generateGeneTransciptProteinIdMapping.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
-    system($geneTransProteinIdsCmd);
+# do not need geneIdMapping.tab anymore
+#    my $geneTransProteinIdsCmd = "generateGeneTransciptProteinIdMapping.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
+#    system($geneTransProteinIdsCmd);
 
   }
 
