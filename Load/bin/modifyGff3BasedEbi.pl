@@ -12,6 +12,7 @@ while (<IN>) {
   my @items=split (/\t/, $_);
 
   next if ($items[2] eq "CDS" && $items[8] =~ /biotype=pseudogenic_exon;/);
+  next if (($items[2] eq "three_prime_UTR" || $items[2] eq "five_prime_UTR") && $items[8] =~ /biotype=pseudogenic_exon;/);
 
   if ($items[2] eq "CDS" ) {
     $_ =~ s/ID=(\S+?)-CDS\d+;/ID=$1;/i;
