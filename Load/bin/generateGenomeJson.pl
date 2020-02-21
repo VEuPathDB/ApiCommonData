@@ -92,6 +92,7 @@ if ($organismDetails{species}{taxonomy_id} == "") {
 $organismDetails{species}{taxonomy_id} += 0;
 
 $organismDetails{assembly}{accession} = "" if ($organismDetails{assembly}{accession} eq "N/A");
+$organismDetails{assembly}{version} = 1 if ($organismDetails{assembly}{version} == 0);
 
 
 my $json = encode_json \%organismDetails;
