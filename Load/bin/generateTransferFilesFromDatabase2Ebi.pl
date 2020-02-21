@@ -102,13 +102,14 @@ foreach my $abbrev (sort keys %isAnnotated) {
   }
 
   ## 3) make genome metadata json file
-  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile GenomeSummary.txt --organismAbbrev $abbrev --outputFileDir $outputFileDir";
+  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $outputFileDir";
   system($genomeJsonCmd);
 
   ## 4) make seq region metadata json file
   my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
   system($seqRegionJsonCmd);
 
+  $db->undefPointerCache();
 #  $c++;
 #  last if ($c > 2);
 }
