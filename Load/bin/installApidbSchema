@@ -159,6 +159,7 @@ my @create = qw(
                createUserDatasetCoreTables.sql
                createUserDatasetTypeTables.sql
                createDatabaseTableMapping.sql
+               createExternalResourceUrl.sql
 	     );
 
 
@@ -172,8 +173,9 @@ my @delete = qw( restoreNullConstraintsFromSimilarityTables.sql
                  dropApidbTuningSchema.sql
                  dropApidbUserDatasetsSchema.sql
                  dropApidbSchema.sql
-								 dropChebiSchema.sql
-								 dropHMDBSchema.sql
+			     dropChebiSchema.sql
+				 dropHMDBSchema.sql
+                 dropExternalResourceUrl.sql
                );
 
 if ($create) {

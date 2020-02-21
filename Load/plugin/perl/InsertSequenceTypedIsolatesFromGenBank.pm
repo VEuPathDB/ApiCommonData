@@ -243,13 +243,13 @@ sub loadIsolates {
       
       # skip loading duplicate isolate - https://redmine.apidb.org/issues/28720
       if($node->retrieveFromDB()) {
-        print STDERR "\nWarning: found duplicate isolate $id, skip loading this isolate!\n\n";
+        print STDERR "\nWarning: found duplicate isolate $id, skip loading this isolate!\n";
         next;
       }
 
       # skip loading isolate with the same sound_id which is probably loaded under other organims 
       if(GUS::Supported::Util::getNASequenceId ($self, $id)) {
-        print STDERR "\nWarning: found douplice isolate $id, probably loaded under different organism, skip loading this isolate!\n\n";
+        print STDERR "\nWarning: found douplice isolate $id, probably loaded under different organism, skip loading this isolate!\n";
         next;
       }
 
@@ -288,11 +288,14 @@ sub loadIsolates {
 
         $characteristic->setQualifierId($qualifierId);
         $characteristic->setParent($node);
+        $characteristic->undefPointerCache(); # exceeded the maximum number of allowable objects in memory
       } # end load terms
 
       my $link = GUS::Model::Study::StudyLink->new();
-      $link->setParent($study);
-      $link->setParent($node);
+      if($study->getStudyId()) { 
+        $link->setParent($study);
+        $link->setParent($node);
+      }
 
       my $segmentResult = GUS::Model::Results::SegmentResult->new();
       ## need to handle feature location
@@ -325,7 +328,7 @@ sub loadIsolates {
 
     $study->submit;
     $self->undefPointerCache();
-    $study->undefPointerCache(); # HW test - exceeded the maximum number of allowable objects in memory
+    $study->undefPointerCache(); # exceeded the maximum number of allowable objects in memory
   }
 
   return $count;

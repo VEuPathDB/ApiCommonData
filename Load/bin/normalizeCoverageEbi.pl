@@ -11,11 +11,6 @@ use Data::Dumper;
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
-#
-#  ... Su_strand_specific/analyze_lateTroph/master/mainresult
-#  ... Su_strand_specific/analyze_schizont/master/mainresult
-#  ... Su_strand_specific/analyze_gametocyteII/master/mainresult
-#  ... Su_strand_specific/analyze_gametocyteV/master/mainresult
 
 my %hash;
 
@@ -42,12 +37,7 @@ die $usage unless -e $topLevelSeqSizeFile;
 die $usage unless -e $analysisConfig;
 
 my $samplesHash = displayAndBaseName($analysisConfig);
-#foreach my $analysis_config (glob "$inputDir/*/final/analysisConfig.xml") {
-#TODO: figure out directory structure (hard coded from example)
-#foreach my $analysisConfig (glob "$inputDir/../../../analysis_configs/anopheles_epiroticus/SRP043018.xml") {
-#    $samplesHash = displayAndBaseName($analysisConfig);	
-#
-#}    
+   
 
 my %dealingWithReps;
 
@@ -61,9 +51,9 @@ foreach my $groupKey (keys %$samplesHash) {
         push @{$dealingWithReps{$groupKey}}, @mappingStatsFiles;
     }
     else {
-        #TODO: check this
         my $directory_short = $mappingStatsFiles[0];
         $directory_short=~ s/$inputDir\///;
+        $directory_short = "analyze_$directory_short";
         $hash{$directory_short} = &getCountHash($mappingStatsFiles[0], $mappingStatsBasename);
     } 
 }
@@ -73,7 +63,6 @@ foreach my $expWithReps (keys %dealingWithReps) {
     my $count = 0;
     my %scoreHash;
     my $exp_dir = "$inputDir/analyze_$expWithReps"."_combined";
-    #TODO: remove -p - added for testing
     my $cmd = "mkdir -p $exp_dir";
     &runCmd($cmd);
     my $listOfUniqueRepBwFiles;
@@ -86,45 +75,35 @@ foreach my $expWithReps (keys %dealingWithReps) {
     &makeMappingFile($dealingWithReps{$expWithReps}, $exp_dir, $mappingStatsBasename);
 #need to add here dealing with the stand etc.     
     foreach my $replicateDir (@{$dealingWithReps{$expWithReps}}) {
-        #foreach my $bwFile (glob "$replicateDir/*.bw") {
-        #    my $baseBed = basename $bwFile;
  	    foreach	my $file_to_open (glob "$replicateDir/*.bed") {
             my $baseBed = basename $file_to_open;
             my $bwFile = $baseBed; 	    
             $bwFile =~ s/\.bed$/.bw/;
             $bwFile =~ s/\.bed$/.bw/;
 
-            #TODO: we receive bigwig files from EBI so we may not need to run these two commands
-            #check this
             &sortBedGraph("$replicateDir/$baseBed");
             &runCmd("bedGraphToBigWig $replicateDir/$baseBed $topLevelSeqSizeFile $replicateDir/$bwFile"); 
 
             if ($baseBed =~ /^unique/) {
                 if ($baseBed =~/firststrand/)  {
                     $listOfUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
                     $listOfUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
                     $listOfUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    #$listOfUniqueRepBwFiles.= "$bwFile ";
                 }
             }
             elsif ($baseBed =~ /^non_unique/) {
                 if ($baseBed =~/firststrand/)  {
                     $listOfNonUniqueFirstStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueFirstStrandFiles.= "$bwFile ";
                 }
                 elsif ($baseBed =~/secondstrand/) {
                     $listOfNonUniqueSecondStrandFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueSecondStrandFiles.= "$bwFile ";
                 }
                 else{
                     $listOfNonUniqueRepBwFiles.= "$replicateDir/$bwFile ";
-                    #$listOfNonUniqueRepBwFiles.= "$bwFile ";
                 }
             }
         }
@@ -188,30 +167,35 @@ sub update_coverage {
 
     foreach my $k (keys %hash2) {  # $k is exp directory; $v is sum_coverage  
         my @sorted = sort {$a <=> $b } values %{$hash2{$k}};
-        my $dir_open = $inputDir."/".$k;
+        my $kIn;
+        if ($k =~ /analyze_(.+)_combined/) {
+            $kIn = $k;
+        } elsif ($k =~ /analyze_(.+)/) {
+            ($kIn = $k) =~ s/analyze_//;
+        }
+        my $out_dir = "$inputDir/$k/normalized";;
+        my $dir_open = $inputDir."/".$kIn;
         opendir(D, $dir_open);
         my @fs = readdir(D);
-        my $cmd = "mkdir $inputDir/$k/normalized";
-        if(!-e "$inputDir/$k/normalized") {
+        my $cmd = "mkdir -p $out_dir";
+        if(!-e $out_dir) {
             &runCmd($cmd);
         }
         
-        my $out_dir = "$inputDir/$k/normalized";
+        my $normFactor = 1;
 
-            my $normFactor = 1;
-
-            if($k =~ /analyze_(.+)_combined/) {
-              if($samplesHash->{$1}->{samples}) {
-                $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
-              }
-              else {
-                die "Could not determine number of reps for combined file $k";
-              }
-            }
+        if($k =~ /analyze_(.+)_combined/) {
+          if($samplesHash->{$1}->{samples}) {
+            $normFactor = scalar @{$samplesHash->{$1}->{samples}} * $normFactor;
+          }
+          else {
+            die "Could not determine number of reps for combined file $k";
+          }
+        }
         
         foreach my $f (@fs) {
-            next if $f !~ /\.bed/i;
-            open(F, "$inputDir/$k/$f");
+            next if $f !~ /\.bed$/i;
+            open(F, "$inputDir/$kIn/$f");
             open OUT, ">$out_dir/$f";
             my $outputFile = $f;
             my $bamfile = $f;
@@ -228,7 +212,7 @@ sub update_coverage {
             next unless ($chr && $start && $stop && $score);
 
             $chr = $seqIdPrefix ? "$seqIdPrefix:$chr" : $chr;
-            
+                        
             my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", (($score * (($stop-$start)/$avgReadLength)) / (($coverage /1000000) * (($stop - $start)/1000)))/$normFactor );
             #we want to set any that have a normalized score to <1 to 0 for only the score. 
             my $normalized_score_for_log = $normalized_score;
