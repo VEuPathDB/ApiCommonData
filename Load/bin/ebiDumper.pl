@@ -127,7 +127,7 @@ while($healthStatus) {
   chomp $healthStatus;
 }
 
-system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION' -a $organismAbbrev") == 0
+system("singularity exec instance://$containerName dumpGUS.pl -w -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION' -a $organismAbbrev") == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
 &stopContainer($containerName);
