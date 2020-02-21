@@ -97,6 +97,7 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
   }
 
   push @seqRegionsArray, \%seqRegions;
+  $db->undefPointerCache();
 }
 
 $stmt->finish();
