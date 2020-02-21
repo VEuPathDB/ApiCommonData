@@ -70,6 +70,14 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
   print STDERR "processing $abbrev ......\n";
 
+  my $orgOutputFileDir = $outputFileDir."\/".$abbrev . "\/";
+
+  unless (-e $orgOutputFileDir) {
+    my $mkOutputDirCmd = "mkdir $orgOutputFileDir";
+    system ($mkOutputDirCmd);
+    print STDERR "making the dir $orgOutputFileDir\n";
+  }
+
   my $primaryExtDbRlsId = getPrimaryExtDbRlsIdFromOrganismAbbrev($abbrev);
   print STDERR "For $abbrev, \$primaryExtDbRlsId = $primaryExtDbRlsId\n";
 
@@ -77,23 +85,22 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameAfter = $abbrev.".gff3";
 
   ## 1) make genome fasta file
-  my $dnaFastaFile = $outputFileDir . "\/". $abbrev . "_dna.fa";
+  my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
   my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and s.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";
   system($makeGenomeFastaCmd);
 
   ## 2) make gff3, protein, and etc. files that related with annotation
   if ($isAnnotated{$abbrev} == 1) {
-    my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --outputFile $gff3FileNameBefore --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir --ifSeparateParents Y";
+    my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --outputFile $gff3FileNameBefore --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
 
-    my $proteinFastaFileName = $outputFileDir . "\/" . $abbrev . "_protein.fa";
+    my $proteinFastaFileName = $orgOutputFileDir . "\/" . $abbrev . "_protein.fa";
 #    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select SOURCE_ID, SEQUENCE from DOTS.TRANSLATEDAASEQUENCE where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from dots.translatedaafeature where EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId)'";
     my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select tas.SOURCE_ID, tas.SEQUENCE from dots.transcript t, dots.translatedaafeature taf, DOTS.translatedaasequence tas where t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_SEQUENCE_ID=tas.AA_SEQUENCE_ID and t.is_pseudo is null and t.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";  ## only export protein sequence for non-pseudogene
     system($makeProteinFastaCmd);
 
-# temp comment out because the schema has not been finalized yet
-#    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
-#    system($functAnnotJsonCmd);
+    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+    system($functAnnotJsonCmd);
 
 # do not need geneIdMapping.tab anymore
 #    my $geneTransProteinIdsCmd = "generateGeneTransciptProteinIdMapping.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
@@ -102,11 +109,11 @@ foreach my $abbrev (sort keys %isAnnotated) {
   }
 
   ## 3) make genome metadata json file
-  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $outputFileDir";
+  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir";
   system($genomeJsonCmd);
 
   ## 4) make seq region metadata json file
-  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
+  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
   system($seqRegionJsonCmd);
 
   $db->undefPointerCache();
@@ -115,10 +122,13 @@ foreach my $abbrev (sort keys %isAnnotated) {
 }
 
 foreach my $abbrev (sort keys %isAnnotated) {
-  my $gff3FileNameBefore = $outputFileDir . "\/" . $abbrev . ".gff3.before";
-  my $gff3FileNameAfter = $outputFileDir . "\/" . $abbrev.".gff3";
-  my $gff3FileNameWoPseudoCDS = $outputFileDir . "\/" . $abbrev. ".modified". ".gff3";
-  my $dnaFastaFile = $outputFileDir . "\/". $abbrev . "_dna.fa";
+
+  my $orgOutputFileDir = $outputFileDir . "\/" . $abbrev ."\/";
+
+  my $gff3FileNameBefore = $orgOutputFileDir. "\/" . $abbrev . ".gff3.before";
+  my $gff3FileNameAfter = $orgOutputFileDir. "\/" . $abbrev.".gff3";
+  my $gff3FileNameWoPseudoCDS = $orgOutputFileDir. "\/" . $abbrev. ".modified". ".gff3";
+  my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
 
   if ($isAnnotated{$abbrev} == 1) {
     ## 5) validateGff3
@@ -139,14 +149,14 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $makeManifestFileCmd;
 
   ## 8) tar and gzip files
-  my $tarFileName = $outputFileDir . "\/" . $abbrev .".tar.gz";
-  my $filesToTar = $outputFileDir . "\/" . $abbrev . "*";
+  my $tarFileName = $orgOutputFileDir . "\/" . $abbrev .".tar.gz";
+  my $filesToTar = $orgOutputFileDir . "\/" . $abbrev . "*";
 
   my $tarFilesCmd = "tar -czf $tarFileName $filesToTar";
   system ($tarFilesCmd);
 
   $tarFileName =~ s/^.*\///;
-  my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $outputFileDir . "\/" . $abbrev . "_readme.txt";
+  my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $orgOutputFileDir . "\/" . $abbrev . "_readme.txt";
   system ($echoCmd);
 
 }
