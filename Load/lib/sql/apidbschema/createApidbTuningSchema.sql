@@ -1,10 +1,11 @@
-CREATE USER ApidbTuning
-IDENTIFIED BY VALUES 'BBA8A2E0BB2D7072'   -- encoding of standard password
-QUOTA UNLIMITED ON users 
-QUOTA UNLIMITED ON gus
-QUOTA UNLIMITED ON indx
-DEFAULT TABLESPACE users
-TEMPORARY TABLESPACE temp;
+-- deprecated; have the DBAs do this
+-- CREATE USER ApidbTuning
+-- IDENTIFIED BY "<password>"   -- deprecated
+-- QUOTA UNLIMITED ON users 
+-- QUOTA UNLIMITED ON gus
+-- QUOTA UNLIMITED ON indx
+-- DEFAULT TABLESPACE users
+-- TEMPORARY TABLESPACE temp;
 
 GRANT GUS_R TO ApidbTuning;
 GRANT GUS_W TO ApidbTuning;

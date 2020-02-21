@@ -1,10 +1,11 @@
-CREATE USER ApidbUserDatasets
-IDENTIFIED BY VALUES 'DCB802868A9EF9F9'   -- encoding of standard password
-QUOTA UNLIMITED ON users 
-QUOTA UNLIMITED ON gus
-QUOTA UNLIMITED ON indx
-DEFAULT TABLESPACE users
-TEMPORARY TABLESPACE temp;
+-- deprecated; have the DBAs do this
+-- CREATE USER ApidbUserDatasets
+-- IDENTIFIED BY VALUES "<password>"
+-- QUOTA UNLIMITED ON users 
+-- QUOTA UNLIMITED ON gus
+-- QUOTA UNLIMITED ON indx
+-- DEFAULT TABLESPACE users
+-- TEMPORARY TABLESPACE temp;
 
 GRANT GUS_R TO ApidbUserDatasets;
 GRANT GUS_W TO ApidbUserDatasets;
