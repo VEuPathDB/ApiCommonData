@@ -403,11 +403,14 @@ sub checkGff3FormatNestedFeature {
     # 7) check if duplicated genes happen in the same sequence at the same position
     # use geneStart, geneEnd, and strand as a key, the value is the strand
     my $geneKey = $seq_id."-".$start."-".$end;
+    my $geneKey = $seqId."-".$start."-".$end;
+    my %dupGenesStrand;
     if ($dupGenes{$geneKey}) {
-      ($dupGenes{$geneKey} eq $strand) ? warn "Duplicated gene '$id' found at $seqId: $start ... $end at the same strand\n" 
-	: warn "Duplicated gene '$id' found at $seqId: $start ... $end, but at a different strand\n";
+      ($dupGenesStrand{$geneKey} eq $strand) ? warn "Duplicated gene '$id' found at $seqId: $start ... $end ($geneKey) at the same strand\n  the other gene is $dupGenes{$geneKey}\n" 
+	: warn "Duplicated gene '$id' found at $seqId: $start ... $end ($geneKey), but at a different strand\n  the other gene is $dupGenes{$geneKey}\n";
     } else {
-      $dupGenes{$geneKey} = $strand;
+      $dupGenesStrand{$geneKey} = $strand;
+      $dupGenes{$geneKey} = $id;
     }
 
   } # end of foreach my $bioFeat
