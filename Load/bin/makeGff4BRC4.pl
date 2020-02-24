@@ -262,14 +262,24 @@ sub getBioTypeAndUpdatePrimaryTag {
 
   if ($$feat->primary_tag eq "gene") {
     $bioType = $geneAnnotations->{$id}->{so_term_name};
+    my $isPseudoString = "";
     foreach my $transcriptHash (@{$gene2TranscriptHash->{$id}}) {
       if ($transcriptHash->{so_term_name} eq "mRNA" || $transcriptHash->{so_term_name} eq "transcript") {
-	if ($transcriptHash->{is_pseudo} == 1) {
-	  $bioType = "pseudogene";
-	  $$feat->primary_tag("pseudogene");
-	}
+
+#	## this will assign gene as pseudogene when partial of transcripts are pseudo-, which is incorrect
+#	if ($transcriptHash->{is_pseudo} == 1) {
+#	  $bioType = "pseudogene";
+#	  $$feat->primary_tag("pseudogene");
+#	}
+	my $isP = ($transcriptHash->{is_pseudo} == 1) ? 1 : 0;
+	$isPseudoString .= $isP;
       }
     }
+    if ($isPseudoString =~ /^1+$/) {
+      $bioType = "pseudogene";
+      $$feat->primary_tag("pseudogene");
+    }
+
     $bioType = "protein_coding" if ($bioType eq "coding_gene");
     $bioType =~ s/\_gene$/\_encoding/i;
 
