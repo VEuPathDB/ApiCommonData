@@ -75,9 +75,11 @@ $c = 0;
 foreach my $k2 (sort keys %{$transcriptHash}) {
   my %functAnnot = (
 		 'object_type' => "transcript",
-		 'id' => $k2,
-                 'description' => $products->{$k2}
+		 'id' => $k2
+#                 'description' => $products->{$k2}
 		    );
+
+  $functAnnot{description} = $products->{$k2} if ($products->{$k2});
   $functAnnot{xrefs} = \@{$dbxrefs->{$k2}} if ($dbxrefs->{$k2});
 
   push @functAnnotInfos, \%functAnnot;
@@ -127,9 +129,13 @@ sub getTranscriptsInfos {
 
     my %transcriptInfo = (
 			  'object_type' => "transcript",
-			  'id' => $tSourceId,
-			  'description' => $products->{$tSourceId}
+			  'id' => $tSourceId
+#			  'description' => $products->{$tSourceId}
 			 );
+
+    if ($products->{$tSourceId}) {
+      $transcriptInfo{description} = $products->{$tSourceId};
+    }
 
     push @{$transcriptInfos{$gSourceId}}, \%transcriptInfo;
 
@@ -191,7 +197,7 @@ sub getProductName {
 
 #    push @{$products{$tSourceId}}, $productHash;
 
-    $products{$tSourceId} = $product if ($isPreferred == 1);
+    $products{$tSourceId} = $product if ($isPreferred == 1 && $product);
   }
 
   $stmt->finish();
@@ -291,16 +297,17 @@ sub getGeneTranscriptTranslation {
   my (%geneIds, %transcriptIds, %translationIds);
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
-  my $sql = "select g.source_id, t.source_id, aa.source_id from dots.genefeature g, dots.transcript t, dots.translatedaafeature aa
+  my $sql = "select g.source_id, t.source_id, aa.source_id, t.is_pseudo
+             from dots.genefeature g, dots.transcript t, dots.translatedaafeature aa
              where g.na_feature_id = t.parent_id and t.na_feature_id = aa.na_feature_id
              and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
-  while (my ($geneId, $trcpIds, $trsltIds) = $stmt->fetchrow_array()) {
+  while (my ($geneId, $trcpIds, $trsltIds, $isPseudo) = $stmt->fetchrow_array()) {
     $geneIds{$geneId} = $geneId;
     $transcriptIds{$trcpIds} = $trcpIds;
-    $translationIds{$trsltIds} = $trsltIds;
+    $translationIds{$trsltIds} = $trsltIds if ($isPseudo != 1);
   }
 
   return \%geneIds, \%transcriptIds, \%translationIds;
