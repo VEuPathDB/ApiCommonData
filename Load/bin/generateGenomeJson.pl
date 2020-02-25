@@ -68,10 +68,10 @@ while (<IN>) {
 				       'strain' => $items[5],
 				       'taxonomy_id' => $items[11]
 				      },
-			'provider' => {
-				       'url' => $providerUrl,
-				       'name' => $items[12]
-				       },
+#			'provider' => {
+#				       'url' => $providerUrl,
+#				       'name' => $items[12]
+#				       },
 			'genebuild' => {
 					'version' => $genebuildVersion,
 					'start_date' => $genebuildVersion
@@ -81,6 +81,19 @@ while (<IN>) {
 				       'version' => $assemblyVersion
 				       }
 			);
+
+    $organismDetails{assembly}{accession} =~ s/^\s+//;
+    $organismDetails{assembly}{accession} =~ s/\s+$//;
+
+    if ($providerUrl && $items[12]) {
+      $organismDetails{provider}{url} = $providerUrl;
+      $organismDetails{provider}{name} = $items[12];
+    } elsif (!$providerUrl && $items[12]) {
+      $organismDetails{provider}{url} = "https://eupathdb.org";
+      $organismDetails{provider}{name} = $items[12];
+    }
+
+
   }
 }
 close IN;
@@ -127,6 +140,7 @@ sub getProviderUrlFromGenomeSource {
 	      genedb => "https://www.genedb.org",
 	      sanger => "ftp://ftp.sanger.ac.uk/pub/project/pathogens",
 	      gb => "https://www.ncbi.nlm.nih.gov/assembly",
+	      wittwer => "https://www.babs.admin.ch/",
 	      genbank => "https://www.ncbi.nlm.nih.gov/assembly"
 	      );
 
