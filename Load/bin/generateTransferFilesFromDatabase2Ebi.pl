@@ -159,6 +159,19 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $orgOutputFileDir . "\/" . $abbrev . "_readme.txt";
   system ($echoCmd);
 
+
+  ## run json validator
+  my $genomeJsonFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_genome.json";
+  my $seqRegionFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_seq_region.json";
+  my $functAnnotFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_functional_annotation.json";
+  my $validateGenomeCmd = "jsonschema -i $genomeJsonFile /home/sufenhu/jsonSchema/genome_schema.json";
+  system ($validateGenomeCmd);
+  my $validateSeqRegionCmd = "jsonschema -i $seqRegionFile /home/sufenhu/jsonSchema/seq_region_schema.json";
+  system ($validateSeqRegionCmd);
+  if (-e $functAnnotFile) {
+    my $validateFunctAnnotCmd = "jsonschema -i $functAnnotFile /home/sufenhu/jsonSchema/functional_annotation_schema.json";
+    system ($validateFunctAnnotCmd);
+  }
 }
 
 $dbh->disconnect();
