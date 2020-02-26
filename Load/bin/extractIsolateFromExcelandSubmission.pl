@@ -18,7 +18,6 @@
   # GUS4_STATUS | ApiDB Tuning Gene              | auto   | absent
   # GUS4_STATUS | Rethink                        | auto   | absent
   # GUS4_STATUS | dots.gene                      | manual | unreviewed
-die 'This file has broken or unreviewed GUS4_STATUS rules.  Please remove this line when all are fixed or absent';
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
 use strict;
 
@@ -167,7 +166,7 @@ curl -F 'first_name=$first_name'
 EOL
 
 $cmd =~ s/\r|\n//igc;
-system($cmd);
+#system($cmd);
 
 
 while(my ($k, $v) = each %hash) {
@@ -479,11 +478,14 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[bio-material=$material]" if $material;
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
-    #$modifier .= "[gcode=4]"; 
     $modifier .= "[breed=$breed]" if $breed;
     $modifier .= "[lat-lon=$lat $lon]" if ($lat && $lon) ;
     $modifier .= "[note=$note$seqnote]" if $note;
-    $modifier .= "[protein=$product]" if $product;
+ 
+    # the following three modifiers need to change based on the data
+    #$modifier .= "[gene=$product]" if $product;
+    #$modifier .= "[product=cytochrome b]" if $product;
+    #$modifier .= "[gcode=4]"; 
 
     if ($#primer_names > 0) {
       for(my $i = 0; $i <= $#primer_names; $i=$i+2) {
@@ -521,7 +523,7 @@ while(my ($k, $v) = each %hash) {
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
+my $cmd = "./linux.tbl2asn -t template.sbt -p . -k cm -V vb";
 # don't allow tbl2asn annotate the longest ORF
 #my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
 system($cmd);

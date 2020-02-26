@@ -1,3 +1,3 @@
-DROP USER chebi CASCADE;
+-- DROP USER chebi CASCADE;
 
 exit;

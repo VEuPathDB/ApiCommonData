@@ -12,13 +12,14 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::ApiDB::Organism;
 
 
-my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
+my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $taxonId, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
 #            'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
             'outputFileDir=s' => \$outputFileDir,
+            'taxonId=s' => \$taxonId,
             'help|h' => \$help
             );
 
@@ -55,6 +56,10 @@ my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
                from apidbtuning.genomicseqattributes
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
                and is_top_level = 1";
+
+if ($taxonId) {
+  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from apidbtuning.genomicseqattributes where taxon_id = $taxonId and is_top_level = 1";
+}
 
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();

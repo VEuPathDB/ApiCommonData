@@ -1,3 +1,3 @@
-DROP USER hmdb CASCADE;
+-- DROP USER hmdb CASCADE;
 
 exit;

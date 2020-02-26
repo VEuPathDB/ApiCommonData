@@ -1,4 +1,4 @@
-DROP USER apidb CASCADE;
+-- DROP USER apidb CASCADE;
 
 DELETE FROM core.TableInfo
 WHERE database_id IN (SELECT database_id
