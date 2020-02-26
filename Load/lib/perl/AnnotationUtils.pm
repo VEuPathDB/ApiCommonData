@@ -477,7 +477,7 @@ sub getSequenceHash {
 }
 
 sub checkGff3GeneModel {
-  my ($bioFeature, $seqHash, $codon_table, $specialCodonTable) = @_;
+  my ($bioFeature, $seqHash, $fastaFile, $codon_table, $specialCodonTable) = @_;
 
 #  my (%seqs, $key);
 #  open (FA, "$fastaFile") || die "can not open genome sequence fasta File to read\n";
