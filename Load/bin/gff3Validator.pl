@@ -65,7 +65,7 @@ ApiCommonData::Load::AnnotationUtils::checkGff3FormatNestedFeature ($bioperlFeat
 my $codonTable = $organismGeneticCode;  ## TODO: need to pass in codon_table
 if ($fastaInputFile) {
   my $seqDataHash = ApiCommonData::Load::AnnotationUtils::getSequenceHash ($fastaInputFile, $lowLevelAgpFile, $agpFile);
-  ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $seqDataHash, $codonTable, $specialGeneticCode);
+  ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $seqDataHash, $fastaInputFile, $codonTable, $specialGeneticCode);
 }
 
 # write to a new gff3 output file
