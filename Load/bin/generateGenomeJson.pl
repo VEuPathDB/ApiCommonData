@@ -89,10 +89,9 @@ while (<IN>) {
       $organismDetails{provider}{url} = $providerUrl;
       $organismDetails{provider}{name} = $items[12];
     } elsif (!$providerUrl && $items[12]) {
-      $organismDetails{provider}{url} = "https://eupathdb.org";
+      $organismDetails{provider}{url} = "https://veupathdb.org";
       $organismDetails{provider}{name} = $items[12];
     }
-
 
   }
 }
@@ -141,6 +140,7 @@ sub getProviderUrlFromGenomeSource {
 	      sanger => "ftp://ftp.sanger.ac.uk/pub/project/pathogens",
 	      gb => "https://www.ncbi.nlm.nih.gov/assembly",
 	      wittwer => "https://www.babs.admin.ch/",
+	      painlab => "https://www.kaust.edu.sa",
 	      genbank => "https://www.ncbi.nlm.nih.gov/assembly"
 	      );
 
