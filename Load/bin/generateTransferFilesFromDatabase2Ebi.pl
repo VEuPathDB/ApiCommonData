@@ -84,9 +84,11 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameBefore = $abbrev . ".gff3.before";
   my $gff3FileNameAfter = $abbrev.".gff3";
 
+  my $taxonId = getInternalTaxonId ($abbrev);
+
   ## 1) make genome fasta file
   my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
-  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and s.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";
+  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and sa.TAXON_ID=$taxonId'";
   system($makeGenomeFastaCmd);
 
   ## 2) make gff3, protein, and etc. files that related with annotation
@@ -113,7 +115,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   system($genomeJsonCmd);
 
   ## 4) make seq region metadata json file
-  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --taxonId $taxonId --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
   system($seqRegionJsonCmd);
 
   $db->undefPointerCache();
@@ -177,6 +179,26 @@ foreach my $abbrev (sort keys %isAnnotated) {
 $dbh->disconnect();
 
 ###########
+sub getInternalTaxonId {
+  my ($abbrev) = @_;
+
+  my $sql = "select taxon_id from apidb.organism where abbrev like '$abbrev'";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my @taxonArray;
+
+  while ( my($taxonId) = $stmt->fetchrow_array()) {
+      push @taxonArray, $taxonId;
+    }
+
+  die "No taxon_id found for '$abbrev'" unless(scalar(@taxonArray) > 0);
+
+  die "trying to find unique taxon_id for '$abbrev', but more than one found" if(scalar(@taxonArray) > 1);
+
+  return @taxonArray[0];
+}
+
 sub getPrimaryExtDbRlsIdFromOrganismAbbrev{
   my ($abbrev) = @_;
 
