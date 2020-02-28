@@ -84,11 +84,11 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameBefore = $abbrev . ".gff3.before";
   my $gff3FileNameAfter = $abbrev.".gff3";
 
-  my $taxonId = getInternalTaxonId ($abbrev);
+  my $ncbiTaxonId = getNcbiTaxonId ($abbrev);
 
   ## 1) make genome fasta file
   my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
-  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and sa.TAXON_ID=$taxonId'";
+  my $makeGenomeFastaCmd = "gusExtractSequences --outputFile $dnaFastaFile --gusConfigFile $gusConfigFile --idSQL 'select s.source_id, s.SEQUENCE from apidbtuning.genomicseqattributes sa, dots.nasequence s where s.na_sequence_id = sa.na_sequence_id and sa.is_top_level = 1 and sa.NCBI_TAX_ID=$ncbiTaxonId'";
   system($makeGenomeFastaCmd);
 
   ## 2) make gff3, protein, and etc. files that related with annotation
@@ -115,7 +115,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   system($genomeJsonCmd);
 
   ## 4) make seq region metadata json file
-  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --taxonId $taxonId --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+  my $seqRegionJsonCmd = "generateSeqRegionJson.pl --organismAbbrev $abbrev --ncbiTaxId $ncbiTaxonId --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
   system($seqRegionJsonCmd);
 
   $db->undefPointerCache();
@@ -179,17 +179,17 @@ foreach my $abbrev (sort keys %isAnnotated) {
 $dbh->disconnect();
 
 ###########
-sub getInternalTaxonId {
+sub getNcbiTaxonId {
   my ($abbrev) = @_;
 
-  my $sql = "select taxon_id from apidb.organism where abbrev like '$abbrev'";
+  my $sql = "select t.NCBI_TAX_ID from apidb.organism o, SRES.TAXON t where o.TAXON_ID=t.TAXON_ID and o.abbrev like '$abbrev'";
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
   my @taxonArray;
 
-  while ( my($taxonId) = $stmt->fetchrow_array()) {
-      push @taxonArray, $taxonId;
+  while ( my($ncbiTaxonId) = $stmt->fetchrow_array()) {
+      push @taxonArray, $ncbiTaxonId;
     }
 
   die "No taxon_id found for '$abbrev'" unless(scalar(@taxonArray) > 0);
