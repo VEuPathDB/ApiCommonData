@@ -12,14 +12,14 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::ApiDB::Organism;
 
 
-my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $taxonId, $help);
+my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $ncbiTaxId, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
 #            'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
             'outputFileDir=s' => \$outputFileDir,
-            'taxonId=s' => \$taxonId,
+            'ncbiTaxId=s' => \$ncbiTaxId,
             'help|h' => \$help
             );
 
@@ -57,8 +57,8 @@ my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
                and is_top_level = 1";
 
-if ($taxonId) {
-  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from apidbtuning.genomicseqattributes where taxon_id = $taxonId and is_top_level = 1";
+if ($ncbiTaxId) {
+  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from apidbtuning.genomicseqattributes where ncbi_tax_id = $ncbiTaxId and is_top_level = 1";
 }
 
 my $stmt = $dbh->prepare($sql);
@@ -217,7 +217,7 @@ sub getGeneticCodeFromOrganismAbbrev {
     ## manually code here
     if ($projectName =~ /^piro/i || $projectName =~ /^plas/i) {
       return "11";
-    } elsif ($projectName =~ /^toxo/) {
+    } elsif ($projectName =~ /^toxo/i) {
       return "4";
     } else {
       die "can not decide apicoplast genetic code \n";
