@@ -220,7 +220,7 @@ sub getGeneticCodeFromOrganismAbbrev {
     } elsif ($projectName =~ /^toxo/i) {
       return "4";
     } else {
-      die "can not decide apicoplast genetic code \n";
+      die "ERROR: all plastid should be coded. Something is wrong. Should check here.\n";
     }
   } elsif ($seqType =~ /mito/i) {
     $sql = "select gt.NCBI_GENETIC_CODE_ID
