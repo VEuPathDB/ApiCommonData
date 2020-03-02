@@ -101,6 +101,12 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
     $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
   }
 
+  ## to correct a random_sequence issue in plas-
+  if (($organismAbbrev eq "pyoeyoeliiYM" || $organismAbbrev eq "preiCDC" || $organismAbbrev eq "pknoH" )
+      && $seqRegions{coord_system_level} =~ /random_sequence/i) {
+    $seqRegions{coord_system_level} = "contig";
+  }
+
   push @seqRegionsArray, \%seqRegions;
   $db->undefPointerCache();
 }
