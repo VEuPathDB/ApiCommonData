@@ -52,6 +52,8 @@ my $products = getProductName ($organismAbbrev);
 ## get dbxrefs
 my $dbxrefs = getDbxRefsAll ($organismAbbrev);
 
+## get GO
+my $gaAnnot = getGOAnnotAll ($organismAbbrev);
 
 
 ## main flow
@@ -94,7 +96,11 @@ foreach my $k3 (sort keys %{$translationHash}) {
 		 'object_type' => "translation",
 		 'id' => $k3,
 		    );
+
+  push @{$dbxrefs->{$k3}} , @{$gaAnnot->{$k3}} if ($gaAnnot->{$k3});
+
   $functAnnot{xrefs} = \@{$dbxrefs->{$k3}} if ($dbxrefs->{$k3});
+
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -220,6 +226,40 @@ sub getEvidenceCodeName {
 
   return $eviCodeName;
 }
+
+sub getGOAnnotAll {
+  my ($abbrev) = @_;
+
+  my (%goAnnots);
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+
+  my $sql = "select tas.SOURCE_ID, ot.SOURCE_ID
+from DOTS.GOASSOCIATION ga, SRES.ONTOLOGYTERM ot, DOTS.TRANSLATEDAASEQUENCE tas
+where ot.ONTOLOGY_TERM_ID=ga.GO_TERM_ID and ga.ROW_ID=tas.AA_SEQUENCE_ID
+and tas.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($aaSourceId, $goId) = $stmt->fetchrow_array()) {
+
+    if ($aaSourceId && $goId) {
+      $goId =~ s/\_/\:/g;
+
+      my %xrefs = (
+		   "dbname" => "GO",
+		   "id" => $goId
+		  );
+
+      push @{$goAnnots{$aaSourceId}}, \%xrefs;
+    }
+  }
+  $db->undefPointerCache();
+  $stmt->finish();
+
+  return \%goAnnots;
+}
+
 
 sub getDbxRefsAll {
   my ($orgnaismAbbrev) = @_;
