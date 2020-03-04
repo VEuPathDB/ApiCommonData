@@ -51,7 +51,8 @@ while(<FILE>) {
 
   next unless($chrom);
 
-  my $sourceId = $organismAbbrev . "_" . $sourceIdPrefix;  ## in the case sourceId = organismAbbrev_2L
+#  my $sourceId = $organismAbbrev . "_" . $sourceIdPrefix;  ## in the case sourceId = organismAbbrev_2L
+  my $sourceId = $sourceIdPrefix;  ## not need add prefix anymore
 
   $chrOrderNumber = $chrom unless $chrOrderNumber;
 
