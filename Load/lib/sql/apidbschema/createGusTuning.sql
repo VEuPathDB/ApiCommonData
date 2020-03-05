@@ -486,11 +486,11 @@ WHERE 'nafeaturehostresponse' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 GRANT REFERENCES on sres.taxon to results;
 
-create table Results.OtuAbundance
+create table Results.LineageAbundance
   (
-    otu_abundance_id    number(12) not null,
+    lineage_abundance_id    number(12) not null,
     PROTOCOL_APP_NODE_ID  number(10) not null,
-    taxon_id             number(12) not null,
+    lineage             varchar2(254) not null,
     raw_count                  number(20),
     relative_abundance         float(126),
     MODIFICATION_DATE     date not null,
@@ -505,15 +505,14 @@ create table Results.OtuAbundance
     ROW_PROJECT_ID        number(4) not null,
     ROW_ALG_INVOCATION_ID number(12) not null,
     foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    foreign key (taxon_id) references SRES.TAXON,
-    primary key (otu_abundance_id)
+    primary key (lineage_abundance_id)
   );
 
-create sequence RESULTS.OtuAbundance_SQ;
+create sequence RESULTS.LineageAbundance_SQ;
 
-GRANT insert, select, update, delete ON  RESULTS.OtuAbundance TO gus_w;
-GRANT select ON RESULTS.OtuAbundance TO gus_r;
-GRANT select ON RESULTS.OtuAbundance_sq TO gus_w;
+GRANT insert, select, update, delete ON  RESULTS.LineageAbundance TO gus_w;
+GRANT select ON RESULTS.LineageAbundance TO gus_r;
+GRANT select ON RESULTS.LineageAbundance_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -521,49 +520,43 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      ROW_ALG_INVOCATION_ID)
-select CORE.TABLEINFO_SQ.NEXTVAL, 'OtuAbundance',
-       'Standard', 'otu_abundance_id',
+select CORE.TABLEINFO_SQ.NEXTVAL, 'LineageAbundance',
+       'Standard', 'lineage_abundance_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
-WHERE 'otuabundance' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'lineageabundance' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
 
-CREATE INDEX results.otuabun_revix1 ON results.OtuAbundance (protocol_app_node_id, otu_abundance_id) TABLESPACE indx;
-CREATE INDEX results.otuabun_revix2 ON results.OtuAbundance (taxon_id, otu_abundance_id) TABLESPACE indx;
+CREATE INDEX results.lineageabun_revix1 ON results.LineageAbundance (protocol_app_node_id, lineage_abundance_id) TABLESPACE indx;
+CREATE INDEX results.lineageabun_revix2 ON results.LineageAbundance (lineage, lineage_abundance_id) TABLESPACE indx;
 
---------------------------------------------------------------------------------
-
-create table Results.AlphaDiversity
+create table Results.LineageTaxon
   (
-    alpha_diversity_id      number(12) not null,
-    PROTOCOL_APP_NODE_ID    number(10) not null,
-    observed_otus           number(20),
-    chao_1                  float(126),
-    shannon                 float(126),
-    simpson                 float(126),
-    MODIFICATION_DATE       date not null,
-    USER_READ               number(1) not null,
-    USER_WRITE              number(1) not null,
-    GROUP_READ              number(1) not null,
-    GROUP_WRITE             number(1) not null,
-    OTHER_READ              number(1) not null,
-    OTHER_WRITE             number(1) not null,
-    ROW_USER_ID             number(12) not null,
-    ROW_GROUP_ID            number(4) not null,
-    ROW_PROJECT_ID          number(4) not null,
-    ROW_ALG_INVOCATION_ID   number(12) not null,
-    foreign key (PROTOCOL_APP_NODE_ID) references STUDY.PROTOCOLAPPNODE,
-    primary key (alpha_diversity_id)
+    lineage_taxon_id    number(12) not null,
+    lineage             varchar2(254) not null,
+    taxon_id                  number(12) not null,
+    MODIFICATION_DATE     date not null,
+    USER_READ             number(1) not null,
+    USER_WRITE            number(1) not null,
+    GROUP_READ            number(1) not null,
+    GROUP_WRITE           number(1) not null,
+    OTHER_READ            number(1) not null,
+    OTHER_WRITE           number(1) not null,
+    ROW_USER_ID           number(12) not null,
+    ROW_GROUP_ID          number(4) not null,
+    ROW_PROJECT_ID        number(4) not null,
+    ROW_ALG_INVOCATION_ID number(12) not null,
+    foreign key (taxon_id) references SRES.TAXON,
+    primary key (lineage_taxon_id)
   );
 
-create sequence RESULTS.AlphaDiversity_SQ;
+GRANT insert, select, update, delete ON  RESULTS.LineageTaxon TO gus_w;
+GRANT select ON RESULTS.LineageTaxon TO gus_r;
 
-GRANT insert, select, update, delete ON  RESULTS.AlphaDiversity TO gus_w;
-GRANT select ON RESULTS.AlphaDiversity TO gus_r;
-GRANT select ON RESULTS.AlphaDiversity_sq TO gus_w;
+create sequence RESULTS.LineageTaxon_SQ;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -571,17 +564,15 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      ROW_ALG_INVOCATION_ID)
-select CORE.TABLEINFO_SQ.NEXTVAL, 'AlphaDiversity',
-       'Standard', 'alpha_diverisity_id',
+select CORE.TABLEINFO_SQ.NEXTVAL, 'LineageTaxon',
+       'Standard', 'lineage_taxon_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (select DATABASE_ID from CORE.DATABASEINFO where name = 'Results') D
-WHERE 'alphadiversity' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'lineagetaxon' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where DATABASE_ID = D.DATABASE_ID);
-
-CREATE INDEX results.alphad_revix1 ON results.AlphaDiversity (protocol_app_node_id, alpha_diversity_id) TABLESPACE indx;
 
 -------------------------------------------------------------------------------------------
 -- unique constraints in the Results schema
@@ -639,6 +630,12 @@ create unique index results.uqSegmentDiffResult
 
 create unique index results.uqSegmentResult
       on results.SegmentResult (na_sequence_id, segment_start, segment_end, protocol_app_node_id) tablespace indx;
+
+create unique index results.uqPanLineage
+      on results.LineageAbundance (protocol_app_node_id, lineage) tablespace indx;
+
+create unique index results.uqLineage
+      on results.LineageTaxon (lineage) tablespace indx;
 
 --------------------------------------------------------------------------------
 -- needed to run pivot() function on NaFeatureExpression
