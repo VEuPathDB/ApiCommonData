@@ -2,10 +2,12 @@
 
 PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT ?label
   (COUNT(DISTINCT ?sid) AS ?sid_count)
   (GROUP_CONCAT(DISTINCT ?sid;separator="|") AS ?SIDs)
+  (GROUP_CONCAT(DISTINCT ?termType;separator="|") AS ?termTypes)
   (GROUP_CONCAT(DISTINCT ?parent_label;separator="|") AS ?Parent_labels)
 WHERE {
   ?entity a owl:Class .
@@ -13,6 +15,9 @@ WHERE {
   OPTIONAL {
 	?entity rdfs:subClassOf ?parent_entity . 
 	?parent_entity rdfs:label ?plabel .
+  }
+  OPTIONAL {
+	?entity obo:EUPATH_0001005 ?termType .
   }
   BIND (str(?org_label) AS ?label) .
   BIND (str(?plabel) AS ?parent_label) .
@@ -23,4 +28,4 @@ WHERE {
 }
 GROUP BY ?label
 HAVING (?sid_count > 1)
-ORDER BY ASC(?label)
+ORDER BY ASC(?termTypes) ASC(?label)
