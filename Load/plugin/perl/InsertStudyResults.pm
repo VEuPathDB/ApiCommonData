@@ -2,8 +2,8 @@ package ApiCommonData::Load::Plugin::InsertStudyResults;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
-use utf8;
-use open ":std", ":encoding(UTF-8)";
+use locale;
+use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
@@ -126,7 +126,7 @@ sub run {
   $dbiDatabase->setDoNotUpdateAlgoInvoId(1);
 
   my $configFile = $self->getArg('configFile');
-  open(CONFIG, '<:utf8', $configFile) or $self->error("Could not open $configFile for reading: $!");
+  open(CONFIG, $configFile) or $self->error("Could not open $configFile for reading: $!");
 
   my $header = <CONFIG>;
 
