@@ -501,6 +501,19 @@ sub checkGff3GeneModel {
     }
   }
 
+  ## get codon_table, transl_except from $bioFeature
+  my (%translTable, %translExcept);
+  foreach my $subFeat (@{$bioFeature}) {
+    foreach my $transcript ($subFeat->get_SeqFeatures) {
+      my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      my $seqId = $transcript->seq_id;
+
+      ($translTable{$seqId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $seqId);
+      ($translTable{$tId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $tId);
+      ($translExcept{$tId}) = $transcript->get_tag_values("transl_except") if ($transcript->has_tag("transl_except") && $tId);
+    }
+  }
+
   ## 10) check if gene location is located outside the naSequence length
   my $flatBioFeature = flatGeneHierarchySortBySeqId($bioFeature);
   foreach my $feat (@{$flatBioFeature}) {
@@ -573,6 +586,8 @@ sub checkGff3GeneModel {
     my $proteinSeq;
     if ($specialCodonTables{$seqId}) {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$specialCodonTables{$seqId});
+    } elsif ($translTable{$seqId}) {
+      $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$translTable{$seqId});
     } else {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
     }
@@ -582,7 +597,7 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i);
+      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i && !$translExcept{$seqId});
     }
   }
   # end of checking if internal stop codon.
