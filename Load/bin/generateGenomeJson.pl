@@ -93,6 +93,12 @@ while (<IN>) {
       $organismDetails{provider}{name} = $items[12];
     }
 
+    if ($organismAbbrev eq "gassAWB" || $organismAbbrev eq "gassBGS" || $organismAbbrev eq "gassEP15"
+	|| $organismAbbrev eq "gassA2DH" || $organismAbbrev eq "gassAAS175"
+	|| $organismAbbrev eq "gassBGS_B" || $organismAbbrev eq "gassBBAH15c1"
+       ) {
+      $organismDetails{species}{taxonomy_id} = 5740;
+    }
   }
 }
 close IN;
@@ -103,7 +109,12 @@ if ($organismDetails{species}{taxonomy_id} == "") {
 }
 $organismDetails{species}{taxonomy_id} += 0;
 
-$organismDetails{assembly}{accession} = "" if ($organismDetails{assembly}{accession} eq "N/A");
+if ($organismDetails{assembly}{accession} =~ /n\/a/i || $organismDetails{assembly}{accession} =~ /note/i
+    || $organismDetails{assembly}{accession} =~ /\?\?/i || $organismDetails{assembly}{accession} =~ /exist/i
+   ) {
+  $organismDetails{assembly}{accession} = "";
+}
+
 $organismDetails{assembly}{version} = 1 if ($organismDetails{assembly}{version} == 0);
 
 
