@@ -1,5 +1,21 @@
-colOrder,overallOrder,displayOrder,variable,dataFile,IRI,label,definition,category,parentLabel,parentIRI,codebookDescription,codebookValues,termType,notesForOnt,notesForProvider,notesForDL,newLabel
-1,,,site,umsp,http://purl.obolibrary.org/obo/EUPATH_0000406,Clinic location,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Site or health facility,"11 - Aduku
+IRI,label,displayOrder,variable,dataFile,definition,category,parentLabel,parentIRI,codebookDescription,codebookValues,termType
+http://purl.obolibrary.org/obo/PCO_0000024,Household,,,,,,,http://www.w3.org/2002/07/owl#Thing,,,
+http://purl.obolibrary.org/obo/EUPATH_0000738,Observation,,,,,,,http://www.w3.org/2002/07/owl#Thing,,,
+http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,,,,,http://www.w3.org/2002/07/owl#Thing,,,
+http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,,,,,http://www.w3.org/2002/07/owl#Thing,,,
+http://purl.obolibrary.org/obo/EUPATH_0033307,Eukaryota in blood,,,,,,Blood microbiology test,http://purl.obolibrary.org/obo/EUPATH_0020005,,,
+http://purl.obolibrary.org/obo/EUPATH_0033308,Plasmodium in blood,,,,,,Eukaryota in blood,http://purl.obolibrary.org/obo/EUPATH_0033307,,,
+http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,,,,,,Household,http://purl.obolibrary.org/obo/PCO_0000024,,,
+http://purl.obolibrary.org/obo/EUPATH_0020005,Blood microbiology test,,,,,,Laboratory test,http://purl.obolibrary.org/obo/OGMS_0000056,,,
+http://purl.obolibrary.org/obo/EUPATH_0000649,Anthropometry,,,,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,
+http://purl.obolibrary.org/obo/OGMS_0000073,Diagnosis,,,,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,
+http://purl.obolibrary.org/obo/EUPATH_0000310,Observation details,,,,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,
+http://purl.obolibrary.org/obo/EUPATH_0000309,Signs and symptoms,,,,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,
+http://purl.obolibrary.org/obo/OGMS_0000090,Treatment,,,,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,
+http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,,,,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,,,
+http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,,,
+http://purl.obolibrary.org/obo/EUPATH_0021002,Symptoms,,,,,,Signs and symptoms,http://purl.obolibrary.org/obo/EUPATH_0000309,,,
+http://purl.obolibrary.org/obo/EUPATH_0000406,Clinic location,,site,umsp,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Site or health facility,"11 - Aduku
 15 - Kamwezi
 16 - Kasambya
 17 - Kihihi
@@ -33,104 +49,73 @@ colOrder,overallOrder,displayOrder,variable,dataFile,IRI,label,definition,catego
 62 - Toroma
 63 - Lobule
 64 - Nadunget
-65 - Koch Goma",variable,,,,
-2,,,date,umsp,http://purl.obolibrary.org/obo/EUPATH_0000091,Clinical visit date,,observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Date of visit,,variable,,,,
-3,,,parish,umsp,http://purl.obolibrary.org/obo/EUPATH_0040014,Parish,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Village code,,variable,,,,
-3,,,village,umsp,http://purl.obolibrary.org/obo/EUPATH_0000452,Village,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Village code,,variable,,,,
-4,,,age,umsp,http://purl.obolibrary.org/obo/EUPATH_0000113,Age,Age since birth at time of visit,participant,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Age in years,,variable,,,,
-5,,,agecategories,umsp,http://purl.obolibrary.org/obo/EUPATH_0000113,Age category,,participant,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Age categories,"0 - < 5 years 
+65 - Koch Goma",variable
+http://purl.obolibrary.org/obo/EUPATH_0040014,Parish,,parish,umsp,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Village code,,variable
+http://purl.obolibrary.org/obo/ENVO_01000773,Village,,village,umsp,,Household,Geographic location,http://purl.obolibrary.org/obo/GAZ_00000448,Village code,,variable
+http://purl.obolibrary.org/obo/EUPATH_0020125,Blood microbiology tests procedures,,,,,Sample,Blood microbiology test,http://purl.obolibrary.org/obo/EUPATH_0020005,,,category
+http://purl.obolibrary.org/obo/EUPATH_0000175,Height (cm),,height,umsp,,observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,Height in cm,0 - missing,variable
+http://purl.obolibrary.org/obo/EUPATH_0000732,Weight (kg),,weight,umsp,,observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,Weight in kg,0 - missing,variable
+http://purl.obolibrary.org/obo/EUPATH_0040001,Amodiaquine prescribed,,AQ,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether amodiaquine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040002,Aremether prescribed,,AR,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether aremether prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040005,Artemether-lumefantrine prescribed,,AL,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether artemether-lumefantrine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040009,Artemisinin-naphthoquine prescribed,,Arco,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether artemisinin-naphthoquine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040003,Artesunate prescribed,,AS,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether artesunate prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040004,Chloroquine prescribed,,CQ,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether chloroquine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040006,Diydroartemisinin-piperaquine prescribed,,DP,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether diydroartemisinin-piperaquine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040007,Quinine prescribed,,Quinine,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether quinine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040008,Sulfadoxine-pyrimethamine prescribed,,SP,umsp,,observation,Antimalarial category,http://purl.obolibrary.org/obo/EUPATH_0040022,Whether sulfadoxine-pyrimethamine prescribed,"0 - No
+1 - Yes",value
+http://purl.obolibrary.org/obo/EUPATH_0040019,Malaria diagnosis,,clinicalmalaria,umsp,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,Whether given a clinical diagnosis of malaria,"0 - No
+1 - Yes",variable
+http://purl.obolibrary.org/obo/EUPATH_0040013,Malaria diagnosis in pregnancy,,malariapreg,umsp,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,Whether malaria in pregnancy diagnosed,"0 - No
+1 - Yes",variable
+http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,diagnosis8 | diagnosis2 | diagnosis3 | diagnosis4 | diagnosis5 | diagnosis6 | diagnosis1 | diagnosis7,umsp,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,7th diagnosis given | 8th diagnosis given | 2nd diagnosis given | 5th diagnosis given | 1st diagnosis given | 4th diagnosis given | 3rd diagnosis given | 6th diagnosis given,0 - No diagnosos,
+http://purl.obolibrary.org/obo/EUPATH_0040012,Disability present,,disability,umsp,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Any form of disability present,"0 - No
+1 - Yes
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0040018,Malaria suspected,,malariasuspected,umsp,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Whether malaria was suspected = any malaria test result OR clinical diagnosis of malaria without test result,"0 - No
+1 - Yes",variable
+http://purl.obolibrary.org/obo/EUPATH_0040015,New presumed tb case,,newpresumedtbcase,umsp,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,New presumed TB case,,variable
+http://purl.obolibrary.org/obo/EUPATH_0040011,Palliative care referal,,paliativecare,,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Whether patient refered for palliative care,"1 - Yes
+0 - No
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0040017,Reported alcohol use,,alcoholuse,,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Alcohol use,"1 - Yes
+0 - No
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0040016,Reported tobacco use,,tobaccouse,,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Tobacco use,"1 - Yes
+0 - No
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0000091,Visit date,,date,umsp,,observation,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Date of visit,,variable
+http://purl.obolibrary.org/obo/EUPATH_0000100,Subjective fever,,fever,umsp,,observation,Symptoms,http://purl.obolibrary.org/obo/EUPATH_0021002,Subjective fever,"1 - Yes
+0 - No
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0040022,Antimalarial category,,antimalarialcat,umsp,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,Antimalarial drug category,"1 - artemether-lumefantrine
+2 - quinine
+3 - other antimalarial",variable | multifilter
+http://purl.obolibrary.org/obo/EUPATH_0040021,Antimalarial treatment prescribed,,antimalarial,umsp,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,Whether any anitmalarial prescribed,"0 - No
+1 - Yes",variable
+http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,treatment7 | treatment1 | treatment4 | treatment6 | treatment3 | treatment8 | treatment2 | treatment5,umsp,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,3rd medication prescribed | 2nd medication prescribed | 5th medication prescribed | 1st medication prescribed | 8th medication prescribed | 4th medication prescribed | 6th medication prescribed | 7th medication prescribed,0 - No treatment,
+http://purl.obolibrary.org/obo/PATO_0000047,Sex,,sex,umsp,,participant,Demographics,http://purl.obolibrary.org/obo/EUPATH_0010981,Sex of patient,"0 - Male
+1 - Female
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0000113,Age at visit (years),,age,umsp,Age since birth at time of visit,participant,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Age in years,,variable
+http://purl.obolibrary.org/obo/EUPATH_0040020,Age category,,agecategories,umsp,,participant,Observation details,http://purl.obolibrary.org/obo/EUPATH_0000310,Age categories,"0 - < 5 years 
 1 - 5-15 years
 2 - > 15 years
-3 - age missing",variable,,,,
-6,,,sex,umsp,http://purl.obolibrary.org/obo/PATO_0000047,Sex,,participant,Demographics,http://purl.obolibrary.org/obo/EUPATH_0010981,Sex of patient,"0 - Male
-1 - Female
-9 - Missing",variable,,,,
-7,,,weight,umsp,http://purl.obolibrary.org/obo/EUPATH_0000732,Weight (kg),,observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,Weight in kg,0 - missing,variable,,,,
-8,,,height,umsp,http://purl.obolibrary.org/obo/EUPATH_0000175,Height (cm),,observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,Height in cm,0 - missing,variable,,,,
-9,,,paliativecare,,http://purl.obolibrary.org/obo/EUPATH_0040011,Palliative care referal ,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Whether patient refered for palliative care,"1 - Yes
-0 - No
-9 - Missing",variable,,,,
-11,,,tobaccouse,,http://purl.obolibrary.org/obo/EUPATH_0040016,Reported tobacco use,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Tobacco use,"1 - Yes
-0 - No
-9 - Missing",variable,,,,
-12,,,alcoholuse,,http://purl.obolibrary.org/obo/EUPATH_0040017,Reported alcohol use,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Alcohol use,"1 - Yes
-0 - No
-9 - Missing",variable,,,,
-13,,,fever,umsp,http://purl.obolibrary.org/obo/EUPATH_0000100,Subjective fever,,observation,Symptoms,http://purl.obolibrary.org/obo/EUPATH_0021002,Subjective fever,"1 - Yes
-0 - No
-9 - Missing",variable,,,,
-14,,,malariatestdone,umsp,http://purl.obolibrary.org/obo/EUPATH_0040010,Plasmodium test type,,sample,Microbiology tests performed,http://purl.obolibrary.org/obo/EUPATH_0011800,Type of malaria test done,"1 - Microscopy
+3 - age missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0040010,Plasmodium test type,,malariatestdone,umsp,,sample,Blood microbiology tests procedures,http://purl.obolibrary.org/obo/EUPATH_0020125,Type of malaria test done,"1 - Microscopy
 2 - RDT
 3 - Not Done
-9 - Missing",variable,,can a person have both?,,
-16,,,malariatestresult,umsp,http://purl.obolibrary.org/obo/EUPATH_0033244,"Plasmodium, by multiple methods",,sample,Plasmodium in blood,http://purl.obolibrary.org/obo/EUPATH_0033308,Malaria test result,"0 - Negative
+9 - Missing",variable
+http://purl.obolibrary.org/obo/EUPATH_0033244,"Plasmodium, by multiple methods",,malariatestresult,umsp,,sample,Plasmodium in blood,http://purl.obolibrary.org/obo/EUPATH_0033308,Malaria test result,"0 - Negative
 1 - Positive
 2 - Missing
-9 - Not applicable",variable,,,,
-18,,,newpresumedtbcase,umsp,http://purl.obolibrary.org/obo/EUPATH_0040015,New presumed tb case,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,New presumed TB case,,variable,,,,
-19,,,diagnosis1,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,1st diagnosis given,0 - No diagnosos,,,,,
-20,,,diagnosis2,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,2nd diagnosis given,0 - No diagnosos,,,,,
-21,,,diagnosis3,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,3rd diagnosis given,0 - No diagnosos,,,,,
-22,,,diagnosis4,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,4th diagnosis given,0 - No diagnosos,,,,,
-23,,,diagnosis5,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,5th diagnosis given,0 - No diagnosos,,,,,
-24,,,diagnosis6,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,6th diagnosis given,0 - No diagnosos,,,,,
-25,,,diagnosis7,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,7th diagnosis given,0 - No diagnosos,,,,,
-26,,,diagnosis8,umsp,http://purl.obolibrary.org/obo/EUPATH_0000317,Other diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,8th diagnosis given,0 - No diagnosos,,,,,
-27,,,treatment1,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,1st medication prescribed,0 - No treatment,,,,,
-28,,,treatment2,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,2nd medication prescribed,0 - No treatment,,,,,
-29,,,treatment3,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,3rd medication prescribed,0 - No treatment,,,,,
-30,,,treatment4,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,4th medication prescribed,0 - No treatment,,,,,
-31,,,treatment5,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,5th medication prescribed,0 - No treatment,,,,,
-32,,,treatment6,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,6th medication prescribed,0 - No treatment,,,,,
-33,,,treatment7,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,7th medication prescribed,0 - No treatment,,,,,
-34,,,treatment8,umsp,http://purl.obolibrary.org/obo/EUPATH_0000059,Non-malaria medication,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,8th medication prescribed,0 - No treatment,,,,,
-35,,,disability,umsp,http://purl.obolibrary.org/obo/EUPATH_0040012,Disability present,,observation,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,Any form of disability present,"0 - No
-1 - Yes
-9 - Missing",variable,,,,
-38,,,malariapreg,umsp,http://purl.obolibrary.org/obo/EUPATH_0040013,Malaria diagnosis in pregnancy,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,Whether malaria in pregnancy diagnosed,"0 - No
-1 - Yes",variable,,,,
-39,,,clinicalmalaria,umsp,http://purl.obolibrary.org/obo/EUPATH_0000036,Malaria diagnosis,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,Whether given a clinical diagnosis of malaria,"0 - No
-1 - Yes",variable,,,,
-40,,,antimalarial,umsp,http://purl.obolibrary.org/obo/EUPATH_0023040,Initiated antimalerial treatment,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,Whether any anitmalarial prescribed,"0 - No
-1 - Yes",variable,,,,
-41,,,AQ,umsp,http://purl.obolibrary.org/obo/EUPATH_0040001,Amodiaquine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether amodiaquine prescribed,"0 - No
-1 - Yes",value,,,,
-42,,,AR,umsp,http://purl.obolibrary.org/obo/EUPATH_0040002,Aremether prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether aremether prescribed,"0 - No
-1 - Yes",value,,,,
-43,,,AS,umsp,http://purl.obolibrary.org/obo/EUPATH_0040003,Artesunate prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether artesunate prescribed,"0 - No
-1 - Yes",value,,,,
-44,,,CQ,umsp,http://purl.obolibrary.org/obo/EUPATH_0040004,Chloroquine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether chloroquine prescribed,"0 - No
-1 - Yes",value,,,,
-45,,,AL,umsp,http://purl.obolibrary.org/obo/EUPATH_0040005,Artemether-lumefantrine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether artemether-lumefantrine prescribed,"0 - No
-1 - Yes",value,,,,
-46,,,DP,umsp,http://purl.obolibrary.org/obo/EUPATH_0040006,Diydroartemisinin-piperaquine prescribed ,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether diydroartemisinin-piperaquine prescribed ,"0 - No
-1 - Yes",value,,,,
-47,,,Quinine,umsp,http://purl.obolibrary.org/obo/EUPATH_0040007,Quinine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether quinine prescribed,"0 - No
-1 - Yes",value,,,,
-48,,,SP,umsp,http://purl.obolibrary.org/obo/EUPATH_0040008,Sulfadoxine-pyrimethamine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether sulfadoxine-pyrimethamine prescribed,"0 - No
-1 - Yes",value,,,,
-49,,,Arco,umsp,http://purl.obolibrary.org/obo/EUPATH_0040009,Artemisinin-naphthoquine prescribed,,observation,Malaria treatment,http://purl.obolibrary.org/obo/EUPATH_0000740,Whether artemisinin-naphthoquine prescribed,"0 - No
-1 - Yes",value,,,,
-51,,,malariasuspected,umsp,http://purl.obolibrary.org/obo/EUPATH_0000090,Malaria suspected,,observation,Diagnosis,http://purl.obolibrary.org/obo/OGMS_0000073,Whether malaria was suspected = any malaria test result OR clinical diagnosis of malaria without test result,"0 - No
-1 - Yes",variable,,,,
-53,,,antimalarialcat,umsp,http://purl.obolibrary.org/obo/EUPATH_0000058,Antimalarial drug category,,observation,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,Antimalarial drug category,"1 - artemether-lumefantrine
-2 - quinine
-3 - other antimalarial",variable,,,,
-,,,,,http://purl.obolibrary.org/obo/OGMS_0000073,Diagnosis,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0000740,Malaria treatment,,,Treatment,http://purl.obolibrary.org/obo/OGMS_0000090,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/OGMS_0000090,Treatment,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,,,Household,http://purl.obolibrary.org/obo/PCO_0000024,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/PCO_0000024,Household,,,,http://www.w3.org/2002/07/owl#Thing,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0000738,Observation,,,,http://www.w3.org/2002/07/owl#Thing,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0021002,Symptoms,,,Signs and symptoms,http://purl.obolibrary.org/obo/EUPATH_0000309,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0000309,Signs and symptoms,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,,,,,
-,,,,,,Observation details,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,,,,,
-,,,,,,Anthropometry,,,Observation,http://purl.obolibrary.org/obo/EUPATH_0000738,,,,,,,
-,,,,,,Plasmodium in blood,,,Eukaryota in blood,http://purl.obolibrary.org/obo/EUPATH_0033307,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0033307,Eukaryota in blood,,,Blood microbiology test,http://purl.obolibrary.org/obo/EUPATH_0020005,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0020005,Blood microbiology test,,,Laboratory test,http://purl.obolibrary.org/obo/OGMS_0000056,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,,http://www.w3.org/2002/07/owl#Thing,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0000096,Participant,,,,http://www.w3.org/2002/07/owl#Thing,,,,,,,
-,,,,,http://purl.obolibrary.org/obo/EUPATH_0011800,Microbiology tests performed,,,Blood microbiology test,http://purl.obolibrary.org/obo/EUPATH_0020005,,,,,,,
+9 - Not applicable",variable
