@@ -597,7 +597,7 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i && !$translExcept{$seqId});
+      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i && !$translExcept{$tId});
     }
   }
   # end of checking if internal stop codon.
