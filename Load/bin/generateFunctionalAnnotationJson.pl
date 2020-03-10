@@ -62,7 +62,7 @@ foreach my $k (sort keys %{$geneHash}) {
 
   my %functAnnot = (
 		 'object_type' => "gene",
-		 'id' => $k,
+		 'id' => $k
 		 );
 
   $functAnnot{xrefs} = \@{$dbxrefs->{$k}} if ($dbxrefs->{$k});
@@ -94,7 +94,7 @@ $c = 0;
 foreach my $k3 (sort keys %{$translationHash}) {
   my %functAnnot = (
 		 'object_type' => "translation",
-		 'id' => $k3,
+		 'id' => $k3
 		    );
 
   push @{$dbxrefs->{$k3}} , @{$gaAnnot->{$k3}} if ($gaAnnot->{$k3});
