@@ -1,4 +1,4 @@
-DROP USER TestTuning CASCADE;
+-- DROP USER TestTuning CASCADE;
 
 DELETE FROM core.TableInfo
 WHERE database_id IN (SELECT database_id

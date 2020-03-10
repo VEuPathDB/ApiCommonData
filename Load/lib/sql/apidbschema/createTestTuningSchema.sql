@@ -1,10 +1,12 @@
-CREATE USER TestTuning
-IDENTIFIED BY VALUES 'F7CDFE1532397A1C'   -- encoding of standard password
-QUOTA UNLIMITED ON users 
-QUOTA UNLIMITED ON gus
-QUOTA UNLIMITED ON indx
-DEFAULT TABLESPACE users
-TEMPORARY TABLESPACE temp;
+-- deprecated; havethe DBA do this
+--
+-- CREATE USER TestTuning
+-- IDENTIFIED BY "<password>"
+-- QUOTA UNLIMITED ON users 
+-- QUOTA UNLIMITED ON gus
+-- QUOTA UNLIMITED ON indx
+-- DEFAULT TABLESPACE users
+-- TEMPORARY TABLESPACE temp;
 
 GRANT GUS_R TO TestTuning;
 GRANT GUS_W TO TestTuning;
