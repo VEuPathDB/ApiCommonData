@@ -147,13 +147,53 @@ foreach my $abbrev (sort keys %isAnnotated) {
   }
 
   ## 7) make manifest file
-  my $runManifestCmd;
-  my $makeManifestFileCmd;
+  my $runMd5sumCmd = "md5sum $orgOutputFileDir/* > md5sumList";
+  system ($runMd5sumCmd);
+
+  my %md5sumValues;
+  open (MDIN, "md5sumList") || die "can not open md5sumList of $abbrev file to read\n";
+  while (<MDIN>) {
+    chomp;
+    my @items = split (/\s+/, $_);
+    if ($items[0] && length($items[0]) == 32) {
+      $items[1] =~ s/.*\///;
+      my %md5sumValue = (
+			  'md5sum' => $items[0],
+			  'file' => $items[1]
+			  );
+
+      if ($items[1] =~ /genome\.json/ ) {
+	$md5sumValues{genome} = \%md5sumValue;
+      } elsif ($items[1] =~ /seq_region\.json/) {
+	$md5sumValues{seq_region} = \%md5sumValue;
+      } elsif ($items[1] =~ /functional_annotation\.json/) {
+	$md5sumValues{functional_annotation} = \%md5sumValue;
+      } elsif ($items[1] =~ /functional_annotation\.json/) {
+	$md5sumValues{functional_annotation} = \%md5sumValue;
+      } elsif ($items[1] =~ /dna\.fa/) {
+	$md5sumValues{fasta_dna} = \%md5sumValue;
+      } elsif ($items[1] =~ /protein\.fa/) {
+	$md5sumValues{fasta_pep} = \%md5sumValue;
+      } elsif ($items[1] =~ /modified\.gff3/) {
+	$md5sumValues{gff3} = \%md5sumValue;
+      } elsif ($items[1] =~ /$abbrev\.gff3/) {
+      } else {
+	die "ERROR: non-except file found $items[1]\n";
+      }
+    }
+  }
+  close MDIN;
+
+  my $md5sumJson = encode_json(\%md5sumValues);
+  my $md5sumJsonFile = $orgOutputFileDir . "\/manifest.json";
+  open (MDOUT, ">$md5sumJsonFile") || die "can not open $md5sumJsonFile of $abbrev file to write\n";
+  print MDOUT "$md5sumJson\n";
+  close MDOUT;
+
 
   ## 8) tar and gzip files
   my $tarFileName = $orgOutputFileDir . "\/" . $abbrev .".tar.gz";
   my $filesToTar = $orgOutputFileDir . "\/" . $abbrev . "*";
-
   my $tarFilesCmd = "tar -czf $tarFileName $filesToTar";
   system ($tarFilesCmd);
 
