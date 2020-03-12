@@ -44,7 +44,9 @@ open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write
 
 
 ## get all Ids hash
-my ($geneHash, $transcriptHash, $translationHash) = getGeneTranscriptTranslation ($organismAbbrev);
+#my ($geneHash, $transcriptHash, $translationHash) = getGeneTranscriptTranslation ($organismAbbrev);
+my ($geneHash, $transcriptHash) = getGeneTranscriptIdHash ($organismAbbrev);
+my ($translationHash) = getTranslationIdHash ($organismAbbrev);
 
 ## grep product info
 my $products = getProductName ($organismAbbrev);
@@ -331,10 +333,31 @@ sub getDbxrefsNameHash {
   return \%nameHash;
 }
 
-sub getGeneTranscriptTranslation {
+sub getGeneTranscriptIdHash {
   my ($abbrev) = @_;
 
-  my (%geneIds, %transcriptIds, %translationIds);
+  my (%geneIds, %transcriptIds);
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+  my $sql = "select g.source_id, t.source_id, t.is_pseudo
+             from dots.genefeature g, dots.transcript t
+             where g.na_feature_id = t.parent_id
+             and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($geneId, $trcpIds, $isPseudo) = $stmt->fetchrow_array()) {
+    $geneIds{$geneId} = $geneId;
+    $transcriptIds{$trcpIds} = $trcpIds;
+  }
+
+  return \%geneIds, \%transcriptIds;
+}
+
+sub getTranslationIdHash {
+  my ($abbrev) = @_;
+
+  my (%translationIds);
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
   my $sql = "select g.source_id, t.source_id, aa.source_id, t.is_pseudo
@@ -345,12 +368,12 @@ sub getGeneTranscriptTranslation {
   my $stmt = $dbh->prepareAndExecute($sql);
 
   while (my ($geneId, $trcpIds, $trsltIds, $isPseudo) = $stmt->fetchrow_array()) {
-    $geneIds{$geneId} = $geneId;
-    $transcriptIds{$trcpIds} = $trcpIds;
+#    $geneIds{$geneId} = $geneId;
+#    $transcriptIds{$trcpIds} = $trcpIds;
     $translationIds{$trsltIds} = $trsltIds if ($isPseudo != 1);
   }
 
-  return \%geneIds, \%transcriptIds, \%translationIds;
+  return \%translationIds;
 }
 
 sub getExtDbRlsIdFormOrgAbbrev {
