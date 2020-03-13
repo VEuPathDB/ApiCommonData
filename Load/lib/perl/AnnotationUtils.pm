@@ -212,6 +212,47 @@ sub writeFeaturesToGffBySeqId {
   return 0;
 }
 
+sub verifyFeatureConsistency {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    foreach my $gene (@{$bioFeatureHash{$k}}) {
+      my ($gId) = $gene->get_tag_values("ID") if ($gene->has_tag("ID"));
+
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+	my $tType = $transcript->primary_tag;
+
+	foreach my $exon ($transcript->get_SeqFeatures) {
+	  my ($eId) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
+	  if ($tType eq "pseudogenic_transcript" ) {
+	    if ($exon->primary_tag eq "exon") {
+	      $exon->primary_tag('pseudogenic_exon');
+	      $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	      $exon->add_tag_value("biotype", "pseudogenic_exon");
+	      warn "inconsistency primary_tag found at $tId, $eId. Corrected it, exon to exoeudogenic_exonn";
+	     }
+	  } else {
+	    if ($exon->primary_tag eq "pseudogenic_exon") {
+	      $exon->primary_tag('exon');
+	      $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	      $exon->add_tag_value("biotype", "exon");
+	      warn "inconsistency primary_tag found at $tId, $eId. Corrected it, pseudogenic_exon to exon\n";
+	    }
+	  }
+
+	}
+      }
+    }
+  }
+}
+
 sub verifyFeatureLocation {
   my ($bioFeatures) = @_;
 
