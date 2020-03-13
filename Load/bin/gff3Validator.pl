@@ -68,6 +68,8 @@ if ($fastaInputFile) {
   ApiCommonData::Load::AnnotationUtils::checkGff3GeneModel ($bioperlFeaturesNested, $seqDataHash, $fastaInputFile, $codonTable, $specialGeneticCode);
 }
 
+ApiCommonData::Load::AnnotationUtils::verifyFeatureConsistency ($bioperlFeaturesFlatted);  ## use $bioperlFeaturesFlatted because it used for writeFeaturesToGffBySeqId
+
 # write to a new gff3 output file
 if ($outputGffFileName) {
   ApiCommonData::Load::AnnotationUtils::writeFeaturesToGffBySeqId ($bioperlFeaturesFlatted, $outputGffFileName);
