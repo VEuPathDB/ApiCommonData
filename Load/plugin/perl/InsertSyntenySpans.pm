@@ -167,10 +167,9 @@ sub run {
   my $count = 0;
 
   my $dbh = $self->getQueryHandle(); 
-  $self->{_syntenic_genes_sh} = $dbh->prepare("select sequence_source_id, feature_source_id, feature_type, na_feature_id, start_min, end_max, is_reversed, parent_id
-                                                 from apidb.featurelocation
+  $self->{_syntenic_genes_sh} = $dbh->prepare("select sequence_source_id, feature_source_id, na_feature_id, start_min, end_max, is_reversed
+                                                 from apidb.genelocation
                                                 where na_sequence_id = ? and end_max >= ? and start_min <= ?
-                                                 and feature_type in ('GeneFeature')
                                                  and is_top_level = 1");
 
 
@@ -776,7 +775,6 @@ sub getSyntenicGenes {
   my (%locations, %rows);
   while(my $hash = $sh->fetchrow_hashref()) {
     my $id = $hash->{NA_FEATURE_ID};
-    my $parent = $hash->{PARENT_ID};
 
     my $start = $hash->{START_MIN};
     my $end = $hash->{END_MAX};
