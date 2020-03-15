@@ -43,6 +43,8 @@ sub getSamples                 { $_[0]->{samples} }
 
 sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
 sub getSeqIdPrefix             { $_[0]->{seqIdPrefix}}
+
+sub getSkipDeSeq                { $_[0]->{skipDeSeq} }
 #-------------------------------------------------------------------------------
 sub new {
     my ($class, $args) = @_;
@@ -69,6 +71,7 @@ sub munge {
     my $samplesHash = $self->groupListHashRef($self->getSamples());
     my $profileSetName = $self->getProfileSetName();
 
+    my $skipDeSeq = $self->getSkipDeSeq();
     
     foreach my $sampleName (keys %$samplesHash) {
 	my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
@@ -103,7 +106,7 @@ sub munge {
     }
     
 #DESeq2 Analysis starts here  
-    if (keys %{$samplesHash} <2) {
+    if (keys %{$samplesHash} <2 || $skipDeSeq) {
         print Dumper  "note: there are less than two conditions DESeq2 analysis  and or DEGseq analysis can not be done\n";
         next;
     }
