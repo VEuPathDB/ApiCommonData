@@ -10,13 +10,15 @@ use GUS::Supported::GusConfig;
 
 ## TODO, better to ignore null record
 
-my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $help);
+my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $annotationFile, $transpIdSuffix, $help);
 
 &GetOptions(
             'genomeSummaryFile=s' => \$genomeSummaryFile,
             'outputFileDir=s' => \$outputFileDir,
             'gusConfigFile=s' => \$gusConfigFile,
             'organismListFile=s' => \$organismListFile,
+            'annotationFile=s' => \$annotationFile,
+            'transpIdSuffix=s' => \$transpIdSuffix,
             'help|h' => \$help
             );
 
@@ -95,6 +97,14 @@ foreach my $abbrev (sort keys %isAnnotated) {
   if ($isAnnotated{$abbrev} == 1) {
     my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --outputFile $gff3FileNameBefore --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
+
+    if ($abbrev eq "ccayNF1_C8") {
+      my $rmGff3BeforeCmd = "rm $orgOutputFileDir" . "\/" . $gff3FileNameBefore;
+      system ($rmGff3BeforeCmd);
+      my $gff3FromAnnotation = $orgOutputFileDir . "\/" . $gff3FileNameBefore;
+      my $makeGff3CmdFromAnnot = "convertGenbank2Gff3Simply.pl --inputFile $annotationFile --outputFile $gff3FromAnnotation --transpIdSuffix $transpIdSuffix";
+      system ($makeGff3CmdFromAnnot);
+    }
 
     my $proteinFastaFileName = $orgOutputFileDir . "\/" . $abbrev . "_protein.fa";
 #    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select SOURCE_ID, SEQUENCE from DOTS.TRANSLATEDAASEQUENCE where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from dots.translatedaafeature where EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId)'";
@@ -198,8 +208,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
   system ($tarFilesCmd);
 
   $tarFileName =~ s/^.*\///;
-  my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $orgOutputFileDir . "\/" . $abbrev . "_readme.txt";
-  system ($echoCmd);
+#  my $echoCmd = "echo \"To untar the files, \ntar -xvf $tarFileName\n\" ". "\>" . $orgOutputFileDir . "\/" . $abbrev . "_readme.txt";
+#  system ($echoCmd);
 
 
   ## run json validator
@@ -274,6 +284,8 @@ where:
   --genomeSummaryFile: required, the txt file that include all genome info that loaded in EuPathDB
   --outputFileDir: required, the directory that hold all output file
   --organismListFile: optional, the list of organisms that want to export
+  --annotationFile: optional, an annotation file that need to be extracted separately
+  --transpIdSuffix: optional, only need when --annotationFile called and need to add a suffix for transcript ID
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
 
 ";
