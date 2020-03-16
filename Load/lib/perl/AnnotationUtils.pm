@@ -543,7 +543,7 @@ sub checkGff3GeneModel {
   }
 
   ## get codon_table, transl_except from $bioFeature
-  my (%translTable, %translExcept);
+  my (%translTable, %translExcept, %exception);
   foreach my $subFeat (@{$bioFeature}) {
     foreach my $transcript ($subFeat->get_SeqFeatures) {
       my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
@@ -552,6 +552,7 @@ sub checkGff3GeneModel {
       ($translTable{$seqId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $seqId);
       ($translTable{$tId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $tId);
       ($translExcept{$tId}) = $transcript->get_tag_values("transl_except") if ($transcript->has_tag("transl_except") && $tId);
+      ($exception{$tId}) = $transcript->get_tag_values("exception") if ($transcript->has_tag("exception") && $tId);
     }
   }
 
@@ -638,7 +639,12 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i && !$translExcept{$tId});
+      my $except;
+      if ($exception{$tId}) {
+	$except = "Exception ";
+      }
+      warn "WARNING: $except transcript $tId contains internal stop codons\n    $proteinSeq\n" 
+	if ($cdsType !~ /pseudo/i && !$translExcept{$tId} && !$exception{$tId});
     }
   }
   # end of checking if internal stop codon.
