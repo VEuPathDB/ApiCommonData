@@ -172,6 +172,8 @@ sub run {
                                                 where na_sequence_id = ? and end_max >= ? and start_min <= ?
                                                  and is_top_level = 1");
 
+  $self->getDb()->manageTransaction(0, 'begin');
+
 
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
   while(<MAP>) {
@@ -244,23 +246,29 @@ sub run {
       }
 
       my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId, $organismAbbrevB);
-      $syntenyObjA->submit();
-      $self->undefPointerCache();
+      $syntenyObjA->submit(undef, 1);
 
       my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId, $organismAbbrevA);
-      $syntenyObjB->submit();
-      $self->undefPointerCache();
+      $syntenyObjB->submit(undef, 1);
 
       if($count && $count % 500 == 0) {
         $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
       }
 
+      if($count && $count % 1000 == 0) {
+        $self->getDb()->manageTransaction(0, 'commit');
+        $self->getDb()->manageTransaction(0, 'begin');
+      }
+
+      $self->undefPointerCache();
+
       $count++;
+
     }
 
   }
   close MAP;
-
+  $self->getDb()->manageTransaction(0, 'commit');
   my $syntenicGeneCount = $self->getSyntenicGeneCount();
 
   return "inserted $count synteny spans and $syntenicGeneCount syntenic genes ";
