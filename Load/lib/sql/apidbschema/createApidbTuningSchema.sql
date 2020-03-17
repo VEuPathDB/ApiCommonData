@@ -59,6 +59,8 @@ create table apidbTuning.AnnotationChange0000
   product     varchar2(800)
 );
 
+grant insert, select, update, delete on apidbTuning.AnnotationChange0000 to public;
+
 create or replace synonym apidbTuning.AnnotationChange
   for apidbTuning.AnnotationChange0000;
 
@@ -68,6 +70,8 @@ create table apidbTuning.ChangedGeneProduct0000
    product varchar2(800),
    name    varchar2(60)
   );
+
+grant insert, select, update, delete on apidbTuning.ChangedGeneProduct0000 to public;
 
 create or replace synonym apidbTuning.ChangedGeneProduct
   for apidbTuning.ChangedGeneProduct0000;
