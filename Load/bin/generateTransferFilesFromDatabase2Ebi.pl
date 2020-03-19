@@ -98,13 +98,13 @@ foreach my $abbrev (sort keys %isAnnotated) {
     my $makeGff3Cmd = "makeGff4BRC4.pl --orgAbbrev $abbrev --outputFile $gff3FileNameBefore --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --ifSeparateParents Y";
     system($makeGff3Cmd);
 
-    if ($abbrev eq "ccayNF1_C8") {
-      my $rmGff3BeforeCmd = "rm $orgOutputFileDir" . "\/" . $gff3FileNameBefore;
-      system ($rmGff3BeforeCmd);
-      my $gff3FromAnnotation = $orgOutputFileDir . "\/" . $gff3FileNameBefore;
-      my $makeGff3CmdFromAnnot = "convertGenbank2Gff3Simply.pl --inputFile $annotationFile --outputFile $gff3FromAnnotation --transpIdSuffix $transpIdSuffix";
-      system ($makeGff3CmdFromAnnot);
-    }
+#    if ($abbrev eq "ccayNF1_C8") {
+#      my $rmGff3BeforeCmd = "rm $orgOutputFileDir" . "\/" . $gff3FileNameBefore;
+#      system ($rmGff3BeforeCmd);
+#      my $gff3FromAnnotation = $orgOutputFileDir . "\/" . $gff3FileNameBefore;
+#      my $makeGff3CmdFromAnnot = "convertGenbank2Gff3Simply.pl --inputFile $annotationFile --outputFile $gff3FromAnnotation --transpIdSuffix $transpIdSuffix";
+#      system ($makeGff3CmdFromAnnot);
+#    }
 
     my $proteinFastaFileName = $orgOutputFileDir . "\/" . $abbrev . "_protein.fa";
 #    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select SOURCE_ID, SEQUENCE from DOTS.TRANSLATEDAASEQUENCE where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from dots.translatedaafeature where EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId)'";
@@ -203,7 +203,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
   ## 8) tar and gzip files
   my $tarFileName = $orgOutputFileDir . "\/" . $abbrev .".tar.gz";
-  my $filesToTar = $orgOutputFileDir . "\/" . $abbrev . "*";
+#  my $filesToTar = $orgOutputFileDir . "\/" . $abbrev . "*";
+  my $filesToTar = $orgOutputFileDir . "\/"  . "*";
   my $tarFilesCmd = "tar -czf $tarFileName $filesToTar";
   system ($tarFilesCmd);
 
