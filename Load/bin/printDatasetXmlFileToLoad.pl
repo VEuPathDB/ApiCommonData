@@ -38,6 +38,7 @@ my (
     $sourceIdRegex,
     $isfMappingFile,
     $isEbiGenome,
+    $ebiVersion,
 
     $help);
 
@@ -68,6 +69,7 @@ my (
 	    'sourceIdRegex=s' => \$sourceIdRegex,
 	    'isfMappingFile=s' => \$isfMappingFile,
 	    'isEbiGenome=s' => \$isEbiGenome,
+	    'ebiVersion=s' => \$ebiVersion,
 
 	    'help|h' => \$help,
 	    );
@@ -270,7 +272,7 @@ printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $exc
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
 printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);  ## 2020-03-23 will put in general dataset
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStraindbEST ($ofh, \%excelInfo);
@@ -297,7 +299,7 @@ sub printEbiGenome {
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
   printNameWithDollarSign ($fh, 'ebiOrganismName');
   printNameWithDollarSign ($fh, 'ebiVersion');
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'releaseDate', 'functAnnotVersion');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -990,6 +992,7 @@ where
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
   --sourceIdRegex: optional, it is required if format is gff3 or fasta
   --isfMappingFile: optional, it is required if format is gff3 or embl. Also required if it doesn't use genbankGenbank2Gus.xml
+  --isEbiGenome: optional, Yes|No
 
 ";
 }
