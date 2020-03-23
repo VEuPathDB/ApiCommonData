@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use ApiCommonData::Load::Biom;
+
+my ($userDatasetId, $biomPath, $projectId, $summary) = @ARGV;
+
+usage() unless $userDatasetId and -f $biomPath and $projectId and $summary;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+$dbh->{RaiseError} = 1;
+#$dbh->trace(1);
+eval {
+  ApiCommonData::Load::Biom->new($dbh)->storeFileUnderUserDatasetId($biomPath, $userDatasetId, $summary);
+};
+if($@){
+  $dbh->rollback;
+  die $@;
+}
+$dbh->commit;
+
+
+sub usage {
+  die "
+
+Install a BIOM user dataset in the user dataset schema.
+
+Usage $0 user_dataset_id data.biom project_id summary
+
+Where:
+  user_dataset_id:  a user dataset id
+  data.biom:        a BIOM file
+  project_id:       MicrobiomeDB, etc.
+  summary:          Summary of the dataset
+
+Finds gus.config in \$GUS_HOME/config/project_id/gus.config
+
+";
+}
