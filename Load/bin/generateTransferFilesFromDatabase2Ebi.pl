@@ -108,7 +108,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
     my $proteinFastaFileName = $orgOutputFileDir . "\/" . $abbrev . "_protein.fa";
 #    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select SOURCE_ID, SEQUENCE from DOTS.TRANSLATEDAASEQUENCE where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from dots.translatedaafeature where EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId)'";
-    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select tas.SOURCE_ID, tas.SEQUENCE from dots.transcript t, dots.translatedaafeature taf, DOTS.translatedaasequence tas where t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_SEQUENCE_ID=tas.AA_SEQUENCE_ID and t.is_pseudo is null and t.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";  ## only export protein sequence for non-pseudogene
+#    my $makeProteinFastaCmd = "gusExtractSequences --outputFile $proteinFastaFileName --gusConfigFile $gusConfigFile --idSQL 'select tas.SOURCE_ID, tas.SEQUENCE from dots.transcript t, dots.translatedaafeature taf, DOTS.translatedaasequence tas where t.NA_FEATURE_ID=taf.NA_FEATURE_ID and taf.AA_SEQUENCE_ID=tas.AA_SEQUENCE_ID and t.is_pseudo is null and t.EXTERNAL_DATABASE_RELEASE_ID=$primaryExtDbRlsId'";  ## only export protein sequence for non-pseudogene
+    my $makeProteinFastaCmd = "gusExtractProteinSequence4Ebi.pl --outputFile $proteinFastaFileName --extDbRlsId $primaryExtDbRlsId --gusConfigFile $gusConfigFile";
     system($makeProteinFastaCmd);
 
     my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
