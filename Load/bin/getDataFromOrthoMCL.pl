@@ -13,7 +13,7 @@ my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 
 die "cannot open output files\n" unless ($outputAllOrthoGrps && $outputOrthoSeqsWithECs);
 
-my $url = "http://orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
+my $url = "https://qa.orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
 
 my $cmd = qq(wget "$url" -qO- > $outputAllOrthoGrps.tmp);
 print STDERR "\nRunning\n$cmd\n";
@@ -51,7 +51,7 @@ close OUT;
 open OUT, ">$outputOrthoSeqsWithECs";
 print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
-$url = "http://orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,group_size"; 
+$url = "https://qa.orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,peripheral_group_size"; 
 
 $cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
 print STDERR "Running\n$cmd\n";
@@ -66,7 +66,7 @@ foreach my $v (@{$ref->{recordset}->{record}}) {
   my $source_id  = $v->{field}->{source_id}->{content};
   my $ec_numbers = $v->{field}->{ec_numbers}->{content};
   my $group_name = $v->{field}->{group_name}->{content};
-  my $group_size = $v->{field}->{group_size}->{content};
+  my $group_size = $v->{field}->{peripheral_group_size}->{content};
 
   next unless ($ec_numbers && $group_name);
   next unless (!exists $uniq{$source_id});
