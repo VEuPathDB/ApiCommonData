@@ -121,7 +121,7 @@ sub printSequence{
   $defline .= "\n";
 
   my $pId = shift (@row);
-  print STDERR "$pId\n$sequence\n";
+ # print STDERR "$pId\n$sequence\n";
 
   ## 1. remove the stop codon at the end if has it
   $sequence =~ s/\*+$//;
@@ -138,9 +138,9 @@ sub printSequence{
     $sequence =~ s/(.*?)\*.*/$1/;
 #    print STDERR "after pseudo_process:\n$sequence\n";
   } else {
-#    my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
+    my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
     $sequence =~ s/\*/X/g;
-#    print STDERR "after replace * to X:\n$sequence\n" if ($seqEdit == 1);
+    print STDERR "after replace * to X:\n$sequence\n" if ($seqEdit == 1);
   }
 
   ## TODO 5. should we set up the minLenth for the truncated protein sequence?
