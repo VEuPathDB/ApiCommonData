@@ -16,7 +16,7 @@ begin
       --  prefer the match with greater N.
 
       execute immediate
-         'select max( project_id) ' ||
+         'select nvl(max( project_id), ''PiroplasmaDB'') ' ||
          'from ApidbTuning.ProjectTaxon pt ' ||
          'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;
