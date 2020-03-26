@@ -288,7 +288,7 @@ sub loadIsolates {
 
         $characteristic->setQualifierId($qualifierId);
         $characteristic->setParent($node);
-        $characteristic->undefPointerCache(); # exceeded the maximum number of allowable objects in memory
+        #$characteristic->undefPointerCache(); # exceeded the maximum number of allowable objects in memory
       } # end load terms
 
       my $link = GUS::Model::Study::StudyLink->new();
