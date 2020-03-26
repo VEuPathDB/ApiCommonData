@@ -8,7 +8,7 @@ begin
 
    begin
       execute immediate
-         'select distinct project_id ' ||
+         'select max( project_id) ' ||
          'from ApidbTuning.ProjectTaxon pt ' ||
          'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;

@@ -438,7 +438,7 @@ begin
 
    begin
       execute immediate
-         'select distinct project_id ' ||
+         'select min(project_id) ' ||
          'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
          'where pt.taxon like substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;
