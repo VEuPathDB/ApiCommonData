@@ -57,6 +57,8 @@ my $dbxrefs = getDbxRefsAll ($organismAbbrev);
 ## get GO
 my $gaAnnot = getGOAnnotAll ($organismAbbrev);
 
+## get synonyms
+my $synonym = getSynonymAll ($organismAbbrev);
 
 ## main flow
 my (@functAnnotInfos, $c);
@@ -68,6 +70,7 @@ foreach my $k (sort keys %{$geneHash}) {
 		 );
 
   $functAnnot{xrefs} = \@{$dbxrefs->{$k}} if ($dbxrefs->{$k});
+  $functAnnot{synonyms} = \@{$synonym->{$k}} if ($synonym->{$k});
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -262,6 +265,53 @@ and tas.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
   return \%goAnnots;
 }
 
+
+sub getSynonymAll {
+  my ($abbrev) = @_;
+
+  my (%synonyms);
+
+  ## get geneName
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+
+  my $sql = "select g.SOURCE_ID, n.NAME from ApiDB.GeneFeatureName n, dots.genefeature g
+where g.NA_FEATURE_ID=n.NA_FEATURE_ID and n.IS_PREFERRED=1
+and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+  while (my ($sourceId, $name) = $stmt->fetchrow_array()) {
+    if ($sourceId && $name) {
+      my %geneName= (
+		     "synonym" => $name,
+		     "default" => \1
+		    );
+      push @{$synonyms{$sourceId}}, \%geneName;
+    }
+  }
+  $stmt->finish();
+
+  ## get synonyms
+  my $synExtDbName = $abbrev. "%_synonym_RSRC";
+  my $sqll = "select nf.SOURCE_ID, df.PRIMARY_IDENTIFIER
+from dots.nafeature nf, DOTS.DBREFNAFEATURE dnf, SRES.DBREF df,
+SRES.EXTERNALDATABASERELEASE edr, SRES.EXTERNALDATABASE ed
+where nf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID
+and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+and ed.name like '$synExtDbName'
+";
+  my $stmtt = $dbh->prepareAndExecute($sqll);
+  while (my ($sourceId, $name) = $stmtt->fetchrow_array()) {
+    if ($sourceId && $name) {
+      push @{$synonyms{$sourceId}}, $name;
+    }
+  }
+  $stmtt->finish();
+
+  $db->undefPointerCache();
+
+  return \%synonyms;
+}
 
 sub getDbxRefsAll {
   my ($orgnaismAbbrev) = @_;
