@@ -142,6 +142,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $gff3FileNameAfter = $orgOutputFileDir. "\/" . $abbrev.".gff3";
   my $gff3FileNameWoPseudoCDS = $orgOutputFileDir. "\/" . $abbrev. ".modified". ".gff3";
   my $dnaFastaFile = $orgOutputFileDir. "\/". $abbrev . "_dna.fa";
+  my $proteinFastaFileName = $orgOutputFileDir . "\/" . $abbrev . "_protein.fa";
 
   if ($isAnnotated{$abbrev} == 1) {
     ## 5) validateGff3
@@ -153,7 +154,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
     system ($removeFileCmd);
 
     ## make gff3 file without CDS for pseudogene
-    my $modifyGff3BasedEbiCmd = "modifyGff3BasedEbi.pl $gff3FileNameAfter > $gff3FileNameWoPseudoCDS ";
+#    my $modifyGff3BasedEbiCmd = "modifyGff3BasedEbi.pl $gff3FileNameAfter > $gff3FileNameWoPseudoCDS ";
+    my $modifyGff3BasedEbiCmd = "modifyGff3BasedEbi.pl --inputFileOrDir $gff3FileNameAfter --proteinFile $proteinFastaFileName --outputGffFileName $gff3FileNameWoPseudoCDS";
     system ($modifyGff3BasedEbiCmd);
   }
 
