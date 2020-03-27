@@ -274,18 +274,23 @@ sub getSynonymAll {
   ## get geneName
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
 
-  my $sql = "select g.SOURCE_ID, n.NAME from ApiDB.GeneFeatureName n, dots.genefeature g
-where g.NA_FEATURE_ID=n.NA_FEATURE_ID and n.IS_PREFERRED=1
+  my $sql = "select g.SOURCE_ID, n.NAME, n.IS_PREFERRED
+from ApiDB.GeneFeatureName n, dots.genefeature g
+where g.NA_FEATURE_ID=n.NA_FEATURE_ID
 and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
 
   my $stmt = $dbh->prepareAndExecute($sql);
-  while (my ($sourceId, $name) = $stmt->fetchrow_array()) {
+  while (my ($sourceId, $name, $isPrefer) = $stmt->fetchrow_array()) {
     if ($sourceId && $name) {
-      my %geneName= (
-		     "synonym" => $name,
-		     "default" => \1
-		    );
-      push @{$synonyms{$sourceId}}, \%geneName;
+      if ($isPrefer == 1) {
+	my %geneName= (
+		       "synonym" => $name,
+		       "default" => \1
+		      );
+	push @{$synonyms{$sourceId}}, \%geneName;
+      } else {
+	push @{$synonyms{$sourceId}}, $name;
+      }
     }
   }
   $stmt->finish();
