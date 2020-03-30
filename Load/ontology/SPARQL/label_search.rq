@@ -1,0 +1,7 @@
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?caretaker_label
+WHERE {
+  ?IRI rdfs:label ?caretaker_label .
+  FILTER regex(str(?caretaker_label), "Caretaker") .
+}
