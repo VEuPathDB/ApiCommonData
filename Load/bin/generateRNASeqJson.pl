@@ -5,6 +5,8 @@ use strict;
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 use DBI;
+use Data::Dumper;
+#use Tie::IxHash;
 
 my %hash;
 my %manual;
@@ -23,7 +25,7 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 while(<DATA>) {
   chomp;
   my($p, $o, $d, $status) = split/\|/,$_;
-  $manual{"$o$d"} = $status;
+  $manual{$o}{$d} = $status;
   #print "$p, $o, $d, $status\n";
 }
 
@@ -47,42 +49,27 @@ while(my $row = $sth->fetchrow_arrayref) {
   my($name, $p, $v) = @$row;
   my($organism, $dataset) = $name =~ /([^_]+)_(.*)_rnaSeq_RSRC/;
   #print "$organism, $dataset, $p, $v\n";
-  #push @{$hash{$name}}, {$p => $v};
-  $hash{$organism}{$dataset}{$p} = $v;
+  #push @{$hash{$organism}{$dataset}{props}}, {$p => $v};
+  $hash{$organism}{$dataset}{props}{$p} = $v;
+  $hash{$organism}{$dataset}{toEBI} = 0; # flag to indicate if send to ebi
+  #$hash{$organism}{$dataset}{$p} = $v;
 }
 
-&getJSONFromDataset(%hash);
-&getJSONFromManual(%hash);
 
-sub getJSONFromDataset {
-  my (%hash) = @_;
-
-
+# get data from existing datasets with SRA accessions
 while(my($k, $v) = each %hash) {
-
   my $organism = $k;
 
-print <<EOL;
-{
-  "species": "$organism",
-   "datasets": [
-EOL
-  
   while(my ($dataset, $v2) = each %$v) {
 
-    next if (exists $manual{"$organism$dataset"});
+    next if (exists $manual{$organism}{$dataset});
 
-print <<EOL;
-      {
-         "name" : "$dataset",
-         "runs" : [
-EOL
-  
+    $hash{$organism}{$dataset}{toEBI} = 1; 
     my $path = '/eupath/data/EuPathDB/manualDelivery';
-    my $project = $v2->{projectName};
-    my $version = $v2->{version};
-    my $paired  = $v2->{hasPairedEnds};
-    my $strand  = $v2->{isStrandSpecific};
+    my $project = $v2->{props}->{projectName};
+    my $version = $v2->{props}->{version};
+    my $paired  = $v2->{props}->{hasPairedEnds};
+    my $strand  = $v2->{props}->{isStrandSpecific};
 
     $path .= "/$project/$organism/rnaSeq/$dataset/$version/final/analysisConfig.xml";
     open F, $path;
@@ -91,66 +78,31 @@ EOL
       if(/<value>(.*)\|(.*)<\/value>/) {
         my $sample = $1;
         my $sra    = $2;
-print <<EOL;
-            {
-               "accession" : "$sra",
-               "isStrandSpecific" : true,
-               "hasPairedEnds" : true
-            }
-EOL
-
+        $sra =~ s/\s//g;
+        push @{$hash{$organism}{$dataset}{samples}}, $sra;
+        #$hash{$organism}{$dataset}{samples}{$sra} = $sample;
       } 
 
-    } # end of samples 
+    } 
     close F;
-
-print <<EOL
-         ]
-      }
-EOL
-
   } # end of datasets
-
-print <<EOL;
-   ]
-}
-EOL
-
 }
 
-} # end sub getJSONFromDataset
-
-# EuPathDB did not load SRA dynamically in early release, their SRA accessions 
-# have been meanully collected and will be reloaded using SRA 
-sub getJSONFromManual {
-  my (%hash) = @_;
-
-
+# legacy data
 while(my($k, $v) = each %hash) {
 
   my $organism = $k;
 
-print <<EOL;
-{
-  "species": "$organism",
-   "datasets": [
-EOL
-  
   while(my ($dataset, $v2) = each %$v) {
 
-    next if ((not exists $manual{"$organism$dataset"}) || ($manual{"$organism$dataset"} !~ /done/i));
+    next if ((not exists $manual{$organism}{$dataset}) || ($manual{$organism}{$dataset} !~ /done/i));
 
-print <<EOL;
-      {
-         "name" : "$dataset",
-         "runs" : [
-EOL
-  
+    $hash{$organism}{$dataset}{toEBI} = 1; 
     my $path = '/eupath/data/EuPathDB/manualDelivery';
-    my $project = $v2->{projectName};
-    my $version = $v2->{version};
-    my $paired  = $v2->{hasPairedEnds};
-    my $strand  = $v2->{isStrandSpecific};
+    my $project = $v2->{props}->{projectName};
+    my $version = $v2->{props}->{version};
+    my $paired  = $v2->{props}->{hasPairedEnds};
+    my $strand  = $v2->{props}->{isStrandSpecific};
 
     $path .= "/$project/$organism/rnaSeq/$dataset/$version/workSpace/sampleList.txt";
     print "## does not exist $path\n" and die unless (-e $path);
@@ -158,34 +110,70 @@ EOL
     while(<F>) {
       chomp;
       my($sample, $sra) = split /\|/, $_;
-print <<EOL;
-            {
-               "accession" : "$sra",
-               "isStrandSpecific" : true,
-               "hasPairedEnds" : true
-            }
-EOL
+      $sra =~ s/\s//g;
+      push @{$hash{$organism}{$dataset}{samples}}, $sra;
+      #$hash{$organism}{$dataset}{samples}{$sra} = $sample;
 
     } # end of samples 
     close F;
 
-print <<EOL
-         ]
-      }
+  } 
+}
+
+# print out in json format
+while(my($organism, $v) = each %hash) {
+
+print <<EOL;
+{
+  "species": "$organism",
+   "datasets": [
 EOL
 
-  } # end of datasets
+  while(my ($dataset, $h) = each %$v) {
+
+    if( $h->{toEBI} ) {
+      my $paired  = $h->{props}->{hasPairedEnds};
+      my $strand  = $h->{props}->{isStrandSpecific};
+
+print <<EOL;
+      {
+         "name" : "$dataset",
+         "runs" : [
+EOL
+
+     my @samples = @{$h->{samples}};
+     my $size = @samples;
+     my $count = 0;
+     my $comma = ',';
+     foreach my $sra (@samples) { 
+       $count++; 
+       $comma = '' if ($count == $size);
+        
+print <<EOL;
+            {
+               "accession" : "$sra",
+               "isStrandSpecific" : $strand,
+               "hasPairedEnds" : $paired
+            }$comma
+EOL
+     } # end foreach
+
+print <<EOL
+         ]
+      },
+EOL
+
+    }  # end if
+  } # end while datasets
 
 print <<EOL;
    ]
-}
+},
 EOL
 
 }
 
-} # end sub getJSONFromDataset 
-
-# legacy data manaully prepared - 
+# legacy rnaSeq data with manaully updated SRA accessions - 
 # https://docs.google.com/spreadsheets/d/1ymvtGhzjhJr6VIHxBoXozjdQ8U1DQi3_ocnx1P7ZNIA/edit?pli=1#gid=0
 __DATA__
 FungiDB|afumAf293|Lind_SecondaryMetabolism_Afum|DONE
@@ -269,7 +257,7 @@ ToxoDB|tgonME49|Gregory_VEG_mRNA|N/A
 ToxoDB|tgonME49|Hassan_intra_extra_ribo_profiling|DONE
 ToxoDB|tgonME49|Knoll_Laura_Pittman|DONE
 ToxoDB|tgonME49|ME49_bradyzoite|N/A
-ToxoDB|tgonME49|RamakrishnanTachyzoiteAndMerozoite|DONE
+ToxoDB|tgonME49|RamakrishnanTachyzoiteAndMerozoite|N/A
 ToxoDB|tgonME49|Reid_tachy|DONE
 ToxoDB|tgonME49|Saeij_Jeroen_25_strains|N/A
 ToxoDB|tgonME49|Saeij_Jeroen_strains|N/A
