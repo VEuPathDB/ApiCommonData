@@ -1,12 +1,8 @@
 #!/usr/bin/perl
 
 use strict;
-
 use CBIL::Util::PropertySet;
-use Getopt::Long;
 use DBI;
-use Data::Dumper;
-#use Tie::IxHash;
 
 my %hash;
 my %manual;
@@ -19,14 +15,12 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, [], 1);
 my $u   = $gusconfig->{props}->{databaseLogin};
 my $pw  = $gusconfig->{props}->{databasePassword};
 my $dsn = $gusconfig->{props}->{dbiDsn};
-
 my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 
 while(<DATA>) {
   chomp;
   my($p, $o, $d, $status) = split/\|/,$_;
   $manual{$o}{$d} = $status;
-  #print "$p, $o, $d, $status\n";
 }
 
 my $sql =<<EOL;
@@ -48,30 +42,25 @@ $sth->execute();
 while(my $row = $sth->fetchrow_arrayref) {
   my($name, $p, $v) = @$row;
   my($organism, $dataset) = $name =~ /([^_]+)_(.*)_rnaSeq_RSRC/;
-  #print "$organism, $dataset, $p, $v\n";
   #push @{$hash{$organism}{$dataset}{props}}, {$p => $v};
   $hash{$organism}{$dataset}{props}{$p} = $v;
   $hash{$organism}{$dataset}{toEBI} = 0; # flag to indicate if send to ebi
-  #$hash{$organism}{$dataset}{$p} = $v;
 }
 
-
 # get data from existing datasets with SRA accessions
-while(my($k, $v) = each %hash) {
-  my $organism = $k;
+while(my($organism, $v) = each %hash) {
 
   while(my ($dataset, $v2) = each %$v) {
 
-    next if (exists $manual{$organism}{$dataset});
+    next if (exists $manual{$organism}{$dataset}); # skip if legacy
 
     $hash{$organism}{$dataset}{toEBI} = 1; 
-    my $path = '/eupath/data/EuPathDB/manualDelivery';
     my $project = $v2->{props}->{projectName};
     my $version = $v2->{props}->{version};
     my $paired  = $v2->{props}->{hasPairedEnds};
     my $strand  = $v2->{props}->{isStrandSpecific};
+    my $path = "/eupath/data/EuPathDB/manualDelivery/$project/$organism/rnaSeq/$dataset/$version/final/analysisConfig.xml";
 
-    $path .= "/$project/$organism/rnaSeq/$dataset/$version/final/analysisConfig.xml";
     open F, $path;
     while(<F>) {
       chomp;
@@ -82,30 +71,26 @@ while(my($k, $v) = each %hash) {
         push @{$hash{$organism}{$dataset}{samples}}, $sra;
         #$hash{$organism}{$dataset}{samples}{$sra} = $sample;
       } 
-
     } 
     close F;
   } # end of datasets
 }
 
 # legacy data
-while(my($k, $v) = each %hash) {
-
-  my $organism = $k;
+while(my($organism, $v) = each %hash) {
 
   while(my ($dataset, $v2) = each %$v) {
 
     next if ((not exists $manual{$organism}{$dataset}) || ($manual{$organism}{$dataset} !~ /done/i));
 
     $hash{$organism}{$dataset}{toEBI} = 1; 
-    my $path = '/eupath/data/EuPathDB/manualDelivery';
     my $project = $v2->{props}->{projectName};
     my $version = $v2->{props}->{version};
     my $paired  = $v2->{props}->{hasPairedEnds};
     my $strand  = $v2->{props}->{isStrandSpecific};
 
-    $path .= "/$project/$organism/rnaSeq/$dataset/$version/workSpace/sampleList.txt";
-    print "## does not exist $path\n" and die unless (-e $path);
+    my $path = "/eupath/data/EuPathDB/manualDelivery/$project/$organism/rnaSeq/$dataset/$version/workSpace/sampleList.txt";
+    print "$path does not exist\n" and die unless (-e $path);
     open F, $path;
     while(<F>) {
       chomp;
@@ -116,12 +101,21 @@ while(my($k, $v) = each %hash) {
 
     } # end of samples 
     close F;
-
   } 
 }
 
 # print out in json format
+my $org_count = 0;
+my $org_size  = keys %hash;
+my $org_comma = ',';
+
+print "[\n";
 while(my($organism, $v) = each %hash) {
+  $org_count++;
+  $org_comma = '' if ($org_size == $org_count);
+
+  # organism has no rnaseq with sra accessions, e.g crypto vbraCCMP3155
+  # $hash{$organism}{$dataset}{toEBI} = 1; 
 
 print <<EOL;
 {
@@ -129,9 +123,20 @@ print <<EOL;
    "datasets": [
 EOL
 
-  while(my ($dataset, $h) = each %$v) {
+  my $ds_count  = 0;
+  my $ds_size   = 0;
+  my $ds_comma  = ',';
 
+  while(my ($dataset, $h) = each %$v) {
     if( $h->{toEBI} ) {
+      $ds_size++;
+    }
+  }
+
+  while(my ($dataset, $h) = each %$v) {
+    if( $h->{toEBI} ) {
+      $ds_count++;
+      $ds_comma = '' if ($ds_count == $ds_size);
       my $paired  = $h->{props}->{hasPairedEnds};
       my $strand  = $h->{props}->{isStrandSpecific};
 
@@ -142,36 +147,37 @@ print <<EOL;
 EOL
 
      my @samples = @{$h->{samples}};
-     my $size = @samples;
-     my $count = 0;
-     my $comma = ',';
+     my $s_size = @samples;
+     my $s_count = 0;
+     my $s_comma = ',';
      foreach my $sra (@samples) { 
-       $count++; 
-       $comma = '' if ($count == $size);
+       $s_count++; 
+       $s_comma = '' if ($s_count == $s_size);
         
 print <<EOL;
             {
                "accession" : "$sra",
                "isStrandSpecific" : $strand,
                "hasPairedEnds" : $paired
-            }$comma
+            }$s_comma
 EOL
      } # end foreach
 
 print <<EOL
          ]
-      },
+      }$ds_comma
 EOL
 
-    }  # end if
+    } # end if
   } # end while datasets
 
 print <<EOL;
    ]
-},
+}$org_comma
 EOL
-
 }
+
+print "]\n";
 
 # legacy rnaSeq data with manaully updated SRA accessions - 
 # https://docs.google.com/spreadsheets/d/1ymvtGhzjhJr6VIHxBoXozjdQ8U1DQi3_ocnx1P7ZNIA/edit?pli=1#gid=0
