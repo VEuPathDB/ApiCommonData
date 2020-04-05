@@ -100,8 +100,8 @@ foreach my $gene (@{$bioperlFeaturesNested}) {
 	    $remainCdsLen -= $cdsLen;
 	  } else {
 	    my $e = $pCDS->location->start + $remainCdsLen - 1;
-	    $pCDS->location->end($e);
 	    $doneCds = 1;
+	    ($e >= $pCDS->location->start) ? $pCDS->location->end($e) : next;
 	  }
 
 	  &renameCdsIdWithProteinId($pCDS);
@@ -121,8 +121,8 @@ foreach my $gene (@{$bioperlFeaturesNested}) {
 	    #print STDERR "\$remainCdsLen=$remainCdsLen\n";
 	  } else {
 	    my $s = $pCDS->location->end() - $remainCdsLen + 1;
-	    $pCDS->location->start($s);
 	    $doneCds = 1;
+	    ($s <= $pCDS->location->end) ? $pCDS->location->start($s) : next;
 	  }
 
 	  push @unSortedCDS, $pCDS;
