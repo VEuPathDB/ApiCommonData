@@ -127,7 +127,7 @@ sub printSequence{
   $sequence =~ s/\*+$//;
 
   ## 2. If a known selenocysteine, replacd * to U
-  if ($isSeleno->{$pId} == 1) {
+  if ($isSeleno->{$pId} == 1 && $sequence =~ /\*/) {
     $sequence =~ s/\*/U/;
     print STDERR "processed selenocysteine: $pId ... replace * to U.\n";
   }
@@ -146,7 +146,7 @@ sub printSequence{
   ## TODO 5. should we set up the minLenth for the truncated protein sequence?
 
   if(!$noSeq && length($sequence) < $minLength){
-    print STDERR "Skipping: $row[0] too short: ",length($sequence),"\n";
+    print STDERR "Skipping: $pId, too short: ",length($sequence),"\n";
     $skip++;
     return;
   }
