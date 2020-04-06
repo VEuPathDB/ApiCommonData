@@ -56,16 +56,21 @@ my $accessionVersion = getAccessionVersionFromAccession ($accession);
 				  'strain' => $strain,
 				  'taxonomy_id' => $ncbiTaxonId
 				  },
-		    'genebuild' => {
-				    'version' => $geneBuildVersion,
-				    'start_date' => $geneBuildVersion
-				    },
+#		    'genebuild' => {
+#				    'version' => $geneBuildVersion,
+#				    'start_date' => $geneBuildVersion
+#				    },
 		    'assembly' => {
 				   'accession' => $accession,
 				   'version' => $accessionVersion
 				   }
 		    );
 
+## genebuild
+if ($geneBuildVersion) {
+  $organismDetails{genebuild}{version} = $geneBuildVersion;
+  $organismDetails{genebuild}{start_date} = $geneBuildVersion;
+}
 
 ## INSDC accession number
 $organismDetails{assembly}{accession} =~ s/^\s+//;
@@ -155,7 +160,7 @@ sub getOrganismInformation {
     my @items = split (/\t/, $_);
     if ($items[2] eq $abbrev) {
       $organismName = $items[0];
-      $geneVersion = $items[9];
+      $geneVersion = $items[9] if ($items[1] =~ /^y/i);
       $ncbiTaxonId = (length($items[6]) < 10) ? $items[6] : $items[7];
       $acce = $items[10];
     }
