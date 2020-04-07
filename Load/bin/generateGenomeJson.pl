@@ -50,7 +50,10 @@ while (<IN>) {
   my @items = split (/\t/, $_);
 
   my $providerUrl = getProviderUrlFromGenomeSource($items[12]);
-  my $genebuildVersion = $items[20] ? $items[20] : $items[14];
+  my $genebuildVersion;
+  if ($items[19] == 1) {
+    $genebuildVersion = $items[20] ? $items[20] : $items[14];
+  }
   my $assemblyVersion = $items[15];
   if ($items[15] == "") {
     $assemblyVersion = $items[16];
@@ -72,15 +75,21 @@ while (<IN>) {
 #				       'url' => $providerUrl,
 #				       'name' => $items[12]
 #				       },
-			'genebuild' => {
-					'version' => $genebuildVersion,
-					'start_date' => $genebuildVersion
-					},
+#			'genebuild' => {
+#					'version' => $genebuildVersion,
+#					'start_date' => $genebuildVersion
+#					},
 			'assembly' => {
 				       'accession' => $items[16],
 				       'version' => $assemblyVersion
 				       }
 			);
+
+    ## only has genebuild if is_annotated = 1
+    if ($genebuildVersion) {
+      $organismDetails{genebuild}{version} = $genebuildVersion;
+      $organismDetails{genebuild}{start_date} = $genebuildVersion;
+    }
 
     $organismDetails{assembly}{accession} =~ s/^\s+//;
     $organismDetails{assembly}{accession} =~ s/\s+$//;
