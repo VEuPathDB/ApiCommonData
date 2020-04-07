@@ -440,7 +440,7 @@ begin
       execute immediate
          'select max(project_id) ' ||
          'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
-         'where pt.taxon like substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
+         'where pt.taxon = substr(lower(''' || replace(organism, 'unclassified ', '') || '''), 1, length(pt.taxon)) '
       into project;
       exception
          when NO_DATA_FOUND then
