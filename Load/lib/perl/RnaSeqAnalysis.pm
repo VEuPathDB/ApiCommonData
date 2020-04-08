@@ -65,7 +65,7 @@ sub munge {
     my ($self) = @_;
     
     my $featureType = 'genes';
-    my $valueType = 'fpkm';
+    my $valueType = 'tpm';
     my $makePercentiles = 1;
     my $isStrandSpecific = $self->getIsStrandSpecific();
     my $doDegSeq = $self->getDoDegSeq();
