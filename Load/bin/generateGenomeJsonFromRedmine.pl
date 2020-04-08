@@ -51,7 +51,7 @@ my $accessionVersion = getAccessionVersionFromAccession ($accession);
 
 %organismDetails = (
 		    'species' => {
-				  'alias' => $organismAbbrev,
+				  'BRC4_organism_abbrev' => $organismAbbrev,
 				  'scientific_name' =>  $species,
 				  'strain' => $strain,
 				  'taxonomy_id' => $ncbiTaxonId

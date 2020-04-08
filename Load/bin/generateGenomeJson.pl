@@ -66,7 +66,7 @@ while (<IN>) {
     %organismDetails = (#'project_id' => $items[2],
 			'species' => {
 #                                      'organismAbbrev' => $items[1],
-				       'alias' => $items[1],
+				       'BRC4_organism_abbrev' => $items[1],
 				       'scientific_name' => $items[3]." ".$items[4],
 				       'strain' => $items[5],
 				       'taxonomy_id' => $items[11]
