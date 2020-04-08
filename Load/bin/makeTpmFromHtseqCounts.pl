@@ -82,8 +82,8 @@ sub _calcRPK {
         my($geneId, $count) = split /\t/, $_;
         next if ($specialCounters{$geneId});
         my $geneLength = $geneLengths->{$geneId}/1000;
-        $rpkSum += $count;
         my $rpk = $count/$geneLength;
+        $rpkSum += $rpk;
         $rpkHash->{$geneId} = $rpk;
     }
     close IN;
@@ -104,7 +104,7 @@ sub _writeTPM {
     my ($tpmFile, $tpmHash) = @_;
     open (OUT, ">$tpmFile") or die "Cannot open TPM file $tpmFile for writing. Please check and try again.\n$!\n";
     while (my ($geneId, $tpm) = each %{$tpmHash}) {
-        print OUT ("$geneId\t$tpm\n") 
+        print OUT ("$geneId\t$tpm\n") ;
     }
     close OUT;
 }
