@@ -140,7 +140,7 @@ sub printSequence{
   } else {
     my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
     $sequence =~ s/\*/X/g;
-    print STDERR "after replace * to X:\n$sequence\n" if ($seqEdit == 1);
+    print STDERR "For $pId, after replace * to X:\n$sequence\n" if ($seqEdit == 1);
   }
 
   ## TODO 5. should we set up the minLenth for the truncated protein sequence?
