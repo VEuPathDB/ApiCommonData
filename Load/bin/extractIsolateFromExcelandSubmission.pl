@@ -477,7 +477,7 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[host=$host]" if $host;
     $modifier .= "[bio-material=$material]" if $material;
     $modifier .= "[country=$country]" if $country;
-    $modifier .= "[sex=$sex]" if $sex;
+    $modifier .= "[sex=$sex]" if ($sex && $sex =~ /male|female/i);
     $modifier .= "[breed=$breed]" if $breed;
     $modifier .= "[lat-lon=$lat $lon]" if ($lat && $lon) ;
     $modifier .= "[note=$note$seqnote]" if $note;
@@ -509,23 +509,20 @@ while(my ($k, $v) = each %hash) {
     my $out = Bio::SeqIO->new(-file => ">$file_name.fsa", -format => 'Fasta' );
     $out->write_seq($seq);
 
-    #open  (F, ">$file_name.tbl");
-    #print F ">Feature\t$file_name\n";
-    #print F "<1\t>$length\tgene\n";
-    #print F "\t\t\tgene\tgene_name\n"; ?
-    #print F "<1\t>$length\tCDS\n";
-    #print F "\t\t\tproduct\t$product\n" if $product;
-    #print F "\t\t\tnote\t$seq_description\n";
-    #close F;
+    open  (F, ">$file_name.tbl");
+    print F ">Feature\t$file_name\n";
+    print F "<1\t>$length\tCDS\n" if $product;
+    print F "\t\t\tproduct\t$product\n" if $product;
+    close F;
 
     $count++;
   }
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-my $cmd = "./linux.tbl2asn -t template.sbt -p . -k cm -V vb";
+#my $cmd = "./linux.tbl2asn -t template.sbt -p . -k cm -V vb";
 # don't allow tbl2asn annotate the longest ORF
-#my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
+my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
 system($cmd);
 
 __DATA__
