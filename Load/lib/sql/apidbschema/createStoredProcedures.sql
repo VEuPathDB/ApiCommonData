@@ -589,6 +589,39 @@ GRANT execute ON apidb.compute_startm TO gus_r;
 GRANT execute ON apidb.compute_startm TO gus_w;
 
 -------------------------------------------------------------------------------
+
+create or replace function apidb.arcsinh (x number)
+return number
+is
+    idx       number;
+begin
+    return ln( (1+(50*x)) + sqrt(power(1+(x*50), 2) + 1));
+end arcsinh;
+/
+
+show errors;
+
+GRANT execute ON apidb.arcsinh TO gus_r;
+GRANT execute ON apidb.arcsinh TO gus_w;
+
+-------------------------------------------------------------------------------
+
+create or replace function apidb.arcsinh_to_linear (x number)
+return number
+is
+    idx       number;
+begin
+    return (-1+(exp(x)-exp(-x))/2)/50;
+end arcsinh_to_linear;
+/
+
+show errors;
+
+GRANT execute ON apidb.arcsinh_to_linear TO gus_r;
+GRANT execute ON apidb.arcsinh_to_linear TO gus_w;
+
+-------------------------------------------------------------------------------
+
 create or replace function apidb.compute_end (syn_is_reversed in number,
                                               start_min in number,
                                               end_max in number,
