@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+## generate genome json file passed to EBI
+## using either genomeSummaryFile from google sheet or redmine output
+
 use strict;
 use JSON;
 use Getopt::Long;
@@ -22,7 +25,7 @@ my ($genomeSummaryFile, $redmineFile, $organismAbbrev, $gusConfigFile, $outputFi
             );
 
 &usage() if ($help);
-&usage("Missing a Required Argument") unless (defined $organismAbbrev && $genomeSummaryFile && $redmineFile);
+&usage("Missing a Required Argument") unless (defined $organismAbbrev && ($genomeSummaryFile || $redmineFile));
 
 
 $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
@@ -45,9 +48,19 @@ if ($outputFileDir) {
 }
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
+my ($species, $strain, $geneBuildVersion, $ncbiTaxonId, $accession, $accessionVersion);
+
+if ($genomeSummaryFile) {
+  ($species, $strain, $geneBuildVersion, $ncbiTaxonId, $accession) = getOrganismInformation($organismAbbrev, $genomeSummaryFile);
+} elsif ($redmineFile) {
+  ($species, $strain, $geneBuildVersion, $ncbiTaxonId, $accession) = getInformationFromRedmine($organismAbbrev, $redmineFile);
+} else {
+  die "missing required argument: --genomeSummaryFile $genomeSummaryFile OR --redmineFile $redmineFile\n";
+}
+
+$accessionVersion = getAccessionVersionFromAccession ($accession);
+
 #my $accession = getAccessionFromRedmine ($organismAbbrev, $redmineFile); ## not working yet
-my ($species, $strain, $geneBuildVersion, $ncbiTaxonId, $accession) = getOrganismInformation($organismAbbrev, $genomeSummaryFile);
-my $accessionVersion = getAccessionVersionFromAccession ($accession);
 
 %organismDetails = (
 		    'species' => {
@@ -104,21 +117,23 @@ $dbh->disconnect();
 
 
 ###########
-sub getAccessionFromRedmine {
+sub getInformationFromRedmine {
   my ($abbrev, $inFile) = @_;
 
-  my $acce;
-  my $c = 0;
+  my ($project, $isAnnot, $organismName, $species, $strain, $acce);
   open (IN, "$inFile") || die "can not open inFile to read\n";
   while (<IN>) {
-    $c++;
     chomp;
     my @items = split (/\,/, $_);
-    if ($c == 1) {
-      foreach my $i (0..$#items) {
-	print STDERR "$i, $items[$i]\n";
-      }
+
+    foreach my $i (0..$#items) {
+      $items[$i] =~ s/^\s+//;
+      $items[$i] =~ s/\s+$//;
     }
+    $project = $items[1];
+    $isAnnot = ($items[2] =~ /sequence and annotation/i) ? 1 : 0;
+    $organismName = $items[3];
+    $acce = $items[4];
   }
   close IN;
   return $acce;
@@ -162,7 +177,7 @@ sub getOrganismInformation {
       $organismName = $items[0];
       $geneVersion = $items[9] if ($items[1] =~ /^y/i);
       $ncbiTaxonId = (length($items[6]) < 10) ? $items[6] : $items[7];
-      $acce = $items[10];
+      $acce = $items[32];
     }
   }
   close IN;
@@ -171,7 +186,7 @@ sub getOrganismInformation {
   my $species = shift @organismArray;
   $species = $species . " " . shift @organismArray;
   $strain = join (" ", @organismArray);
-  $strain =~ s/\s*strain\s+//i;
+  $strain =~ s/\s*strain\s*//i;
 
   return $species, $strain, $geneVersion, $ncbiTaxonId, $acce;
 }
