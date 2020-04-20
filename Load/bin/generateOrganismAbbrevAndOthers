@@ -91,7 +91,7 @@ my $checkError = `$check`;
 
 my $check2 = "grep $orthomclAbbrev /eupath/data/EuPathDB/manualDelivery/common/orthology/orthoAbbrevFile/orthomcl6_three_letter_abbrev.txt";
 my $check2Error = `$check2`;
-($check2Error) ? print "  orthomclAbbrev '$orthomclAbbrev' already been used. Check orthoMCL6 at apidb.orthomcltaxon table\n    $check2Error\n\n"
+($check2Error) ? print "  orthomclAbbrev '$orthomclAbbrev' already been used. Check orthoMCL6 at apidb.orthomcltaxon table\n    $check2\n      $check2Error\n\n"
               : print "  orthomclAbbrev '$orthomclAbbrev' is OK\n\n";
 
 
