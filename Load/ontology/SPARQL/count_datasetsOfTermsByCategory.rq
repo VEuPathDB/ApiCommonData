@@ -1,0 +1,142 @@
+# Number of datasets the ontology classes(terms) were used and indicate whether they have same labels among multiple datasets
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?entity 
+	(count(distinct ?g) as ?Num_datasets) 
+	(if(count(distinct ?label_str)<2, "Yes", "No") as ?same_label)
+  	(GROUP_CONCAT(DISTINCT ?label_str;separator=" | ") AS ?labels)
+  	(GROUP_CONCAT(DISTINCT ?p_label_str;separator=" | ") AS ?parent_label)
+  	(GROUP_CONCAT(DISTINCT ?cate_str;separator=" | ") AS ?category)
+	(GROUP_CONCAT(DISTINCT ?category_defined;separator=" | ") AS ?category_assigned)
+  	(GROUP_CONCAT(DISTINCT ?type_str;separator=" | ") AS ?termType)
+WHERE {
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:PCO_0000024 } .
+	BIND ("Household" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+	UNION
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:EUPATH_0000738 } .
+	BIND ("Observation" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+	UNION
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:EUPATH_0000327 } .
+	BIND ("Entomology" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+	UNION
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:EUPATH_0025169 } .
+	BIND ("Insect sample" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+	UNION
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:EUPATH_0000096 } .
+	BIND ("Participant" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+	UNION
+	{<http://purl.obolibrary.org/obo/projects.owl> owl:imports ?g . 
+	?entity a owl:Class . 
+	graph ?g {?entity rdfs:subClassOf* obo:EUPATH_0000609 } .
+	BIND ("Sample" AS ?category_defined) .
+	?entity rdfs:label ?label
+	BIND (str(?label) AS ?label_str) .
+	optional {
+		?entity rdfs:subClassOf ?parent .
+		?parent rdfs:label ?p_label .
+		BIND (str(?p_label) AS ?p_label_str) .		
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cate .
+		BIND (lcase(str(?cate)) AS ?cate_str) .	
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001005 ?type .
+		BIND (lcase(str(?type)) AS ?type_str) .	
+	}
+	}
+}
+GROUP BY ?entity
+ORDER BY DESC(?Num_datasets) ASC(?category_assigned) 

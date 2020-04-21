@@ -305,6 +305,15 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_datasetsOfTerms.rq ./query_results/allProjects_count_datasetsOfTerms.csv
 
 
+————————————————————————————————————————————————————————————
+# Number of datasets the ontology classes(terms) were used including term label, parent label, term type, category, category assigned in the ontology and also indicate whether they have same labels 
+#	count_datasetsOfTermsByCategory.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/count_datasetsOfTermsByCategory.rq ./query_results/clinEpi_count_datasetsOfTerms.csv
+
+
+
 —————————————————————————————————————————————————————————————————————————————
 # SOLR QUERY
 
