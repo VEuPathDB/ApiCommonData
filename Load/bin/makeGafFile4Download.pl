@@ -106,13 +106,13 @@ from apidbtuning.${tuningTablePrefix}GeneGoTerms
 
     my $transType = ($transTypeRef->{$tSourceId}) ? ($transTypeRef->{$tSourceId}) : "gene_product";
 
-    $reference = "EuPathDB:".$gSourceId if (!$reference);
+    $reference = "VEuPathDB:".$gSourceId if (!$reference);
 
-    $source = "EuPathDB" if (!$source);
+    $source = "VEuPathDB" if (!$source);
     $source =~ s/Interpro/InterPro/g;
     $reference = "GO_REF:0000002" if ($source =~ /InterPro/i);  ## required by Achchuthan
                                                                 ## https://www.ebi.ac.uk/GOA/InterPro2GO
-    $source = "EuPathDB" if ($source =~ /InterPro/);  ## required by Achchuthan
+    $source = "VEuPathDB" if ($source =~ /InterPro/);  ## required by Achchuthan
 
     my $withOrFrom = $eviCodeParameter;  ## required by Achchuthan
     #if ($evidenceCode eq "IEA") {  ## is $eviCodeParameter if $evidenceCode eq "IEA"
@@ -127,16 +127,16 @@ from apidbtuning.${tuningTablePrefix}GeneGoTerms
     #}
 
     my @items;
-    $items[0] = "EuPathDB";
+    $items[0] = "VEuPathDB";
     $items[1] = $gSourceId;                        ## gene source id
     $items[2] = $geneName;                         ## "Symbol"
     $items[3] = uc($isNot);                        ## Qualifier, optional
     $items[4] = $goId;                             ## GO ID
     $items[5] = $reference;                        ## DB:Reference
     $items[6] = $evidenceCode;                     ## Evidence Code
-    $items[7] = $withOrFrom;                       ## With (or) From, optional, Can be evidence_code_parameter in EuPathDB
+    $items[7] = $withOrFrom;                       ## With (or) From, optional, Can be evidence_code_parameter in VEuPathDB
     $items[8] = $ontology;                         ## Aspect
-    $items[9] = $product;                          ## DB Object Name, productName in EuPathDB
+    $items[9] = $product;                          ## DB Object Name, productName in VEuPathDB
     $items[10] = $synonym;                         ## DB Object Synonym, optional
     $items[11] = $transType;                       ## DB Object Type, eg. protein, tRNA, rRNA, ncRNA ...
     $items[12] = "taxon:$taxonId";                 ## Taxon: taxon:9606
