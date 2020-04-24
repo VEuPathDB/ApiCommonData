@@ -79,6 +79,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label>replaces</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -480,21 +488,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0020005 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020125 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020125">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology tests procedures</rdfs:label>
@@ -1011,7 +1008,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033307 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033307">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eukaryota in blood</rdfs:label>
@@ -1088,6 +1085,18 @@
 3, no, Mali</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002649 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002649">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006>EUPATH_0020005</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
     </owl:Class>
     
 
