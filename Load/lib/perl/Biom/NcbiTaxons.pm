@@ -40,6 +40,7 @@ sub idOfAncestorThatHasName {
 sub findTaxonForLineage {
   my ($self, $lineage) = @_;
   return unless $lineage;
+
   my ($l, @ls) = map {
     # Make sure a few popular results get mapped as we want them to
     $_ =~ s{^Escherichia[-/]Shigella$}{Escherichia};

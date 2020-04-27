@@ -8,6 +8,10 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use ApiCommonData::Load::Biom;
 
+
+use Log::Log4perl qw(:easy);
+Log::Log4perl->easy_init($INFO);
+
 my ($userDatasetId, $projectId) = @ARGV;
 
 usage() unless $userDatasetId && $projectId;
@@ -19,17 +23,8 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getDatabasePassword(),
                                         0,0,1,
                                         $gusconfig->getCoreSchemaName());
-my $dbh = $db->getQueryHandle(0);
-$dbh->{RaiseError} = 1;
 
-eval {
-  ApiCommonData::Load::Biom->new($dbh)->deleteDataForUserDatasetId($userDatasetId);
-};
-if($@){
-  $dbh->rollback;
-  die $@;
-}
-$dbh->commit;
+ApiCommonData::Load::Biom->new($db)->deleteDataForUserDatasetId($userDatasetId);
 
 sub usage {
   die "

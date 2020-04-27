@@ -34,7 +34,7 @@ sub expandSampleDetailsByName {
       {
         property => $property,
         date_value => $propertyDetails{$property}{type} eq "date" ? strftime ("%Y-%m-%d", map {$_//0} strptime($value)) : undef,
-        number_value => looks_like_number($value)? $value : undef,
+        number_value => $propertyDetails{$property}{type} eq "number" ? $value : undef,
         string_value => $value,
       }
     } grep {$sampleDetailsByName{$sampleName}{$_}} @properties;
@@ -67,8 +67,8 @@ sub propertyDetails {
   my @valuesThatAreNotDates = grep {not (looks_like_date $_)} @distinctValues;
 
   # heuristic, tries to skip empty values and outliers
-  my $isProbablyADate = @valuesThatAreDates && @valuesThatAreNotDates < 5;
-  my $isProbablyANumber = @valuesThatAreNumbers && @valuesThatAreNotNumbers < 5;
+  my $isProbablyADate = $property ne "Unannotated sample" && @valuesThatAreDates && @valuesThatAreNotDates < 5;
+  my $isProbablyANumber = $property ne "Unannotated sample" && @valuesThatAreNumbers && @valuesThatAreNotNumbers < 5;
 
   my $type = $isProbablyADate ? "date" : $isProbablyANumber ? "number" : "string";
 

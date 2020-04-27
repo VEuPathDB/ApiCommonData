@@ -2,6 +2,9 @@ use strict;
 use warnings;
 
 package ApiCommonData::Load::Biom;
+
+use GUS::ObjRelP::DbiDatabase;
+
 use ApiCommonData::Load::Biom::Lineages;
 use ApiCommonData::Load::Biom::NcbiTaxons;
 use ApiCommonData::Load::Biom::SampleDetails;
@@ -10,95 +13,144 @@ use ApiCommonData::Load::Biom::UserDatasetsStorage;
 
 use File::Find;
 use File::Basename;
-use List::Util qw/sum/;
+use List::Util qw/sum uniq/;
 
-use Bio::Community::IO;
-use YAML; 
+use JSON qw/decode_json/;
+
+use Log::Log4perl;
+my $log = Log::Log4perl->get_logger(__PACKAGE__);
 
 sub new {
-  my ($class, $dbh) = @_;
+  my ($class, $db) = @_;
   return bless {
-    ncbiTaxons => ApiCommonData::Load::Biom::NcbiTaxons->new($dbh), 
-    userDatasetsStorage => ApiCommonData::Load::Biom::UserDatasetsStorage->new($dbh),
+    ncbiTaxons => ApiCommonData::Load::Biom::NcbiTaxons->new($db->getQueryHandle(0)), 
+    userDatasetsStorage => ApiCommonData::Load::Biom::UserDatasetsStorage->new($db),
   }, $class;
 }
 sub deleteDataForUserDatasetId {
   my ($self, $userDatasetId) = @_;
+  $log->info("deleteDataForUserDatasetId $userDatasetId");
   $self->{userDatasetsStorage}->deleteUserDataset($userDatasetId);
 }
 sub storeFileUnderUserDatasetId {
-  my ($self, $biomPath, $userDatasetId, $datasetSummary) = @_;
+  my ($self, $biomPath, $dataPath, $userDatasetId) = @_;
+
+  $log->info("storeFileUnderUserDatasetId $biomPath, $dataPath, $userDatasetId");
 
   $self->{userDatasetsStorage}->storeUserDataset(
-    $userDatasetId, $datasetSummary,
-    biomFileContents(sub {$self->{ncbiTaxons}->findTaxonForLineage(@_)}, $biomPath)
+    $userDatasetId,
+    biomFileContents(sub {$self->{ncbiTaxons}->findTaxonForLineage(@_)}, $biomPath, $dataPath)
   );
 }
+
 # This sub has a callback instead of $self so as not to depend on the database 
 sub biomFileContents {
-  my ($findTaxonForLineageCb, $biomPath) = @_;
+  my ($findTaxonForLineageCb, $biomPath, $dataPath) = @_;
 
   my $unassignedLevel = "unassigned";
   my @levelNames = qw/kingdom phylum class order family genus species/;
 
-  my $lineages = ApiCommonData::Load::Biom::Lineages->new($unassignedLevel, \@levelNames, 200, 250);
+  my $lineages = ApiCommonData::Load::Biom::Lineages->new($unassignedLevel, \@levelNames, 200);
 
-  my $in = Bio::Community::IO->new(
-	-file   =>  $biomPath,
-	-format => 'biom',
-	-ab_type => 'fraction', # does nothing?
-     );
+  open my $fh, '<', $biomPath or die "Can't open file $!: $biomPath";
+  my $doc = decode_json(do{local $/;<$fh>});
+  close $fh;
 
-  # https://metacpan.org/release/Bio-Community/source/lib/Bio/Community/IO/Driver/biom.pm#L374
-  # doesn't quite cut the cheese for the one file which said Taxonomy instead of taxonomy
+  $log->info("read doc from $biomPath");
 
-  my @communities;
-  while(my $community = $in->next_community){
-    push @communities, $community;
+  my %dataByColumnIndexThenRowIndex;
+  if ($dataPath) {
+    open my $fh2, '<', $dataPath or die "Can't open file $!: $dataPath";
+    while(<$fh2>){
+      chomp;
+      my ($r, $c, $v) = split "\t";
+      $dataByColumnIndexThenRowIndex{$c}{$r} = $v;
+    }
+    $log->info("read data from TSV $dataPath");
+  } else {
+    $log->logdie("The installer is only supporting sparse JSON") if $doc->{matrix_type} eq "dense";
+    my $dataSparse = $doc->{data} or $log->logdie("No data path and doc $biomPath also missing data?");
+    for my $t (@{$dataSparse}){
+      my ($r, $c, $v)  =@{$t};
+      $dataByColumnIndexThenRowIndex{$c}{$r} = $v;
+    }
+    $log->info("read data from doc");
   }
+
+  my @rows = @{$doc->{rows}};
   my %rowMetadataByName = map {
     (
       $_->{id} => ($_->{metadata} // {})
     )x!!$_->{id}
-  } @{$in->_get_json()->{rows}};
+  } @rows;
 
+  $log->info(sprintf ("%s / %s rows have metadata for taxonomy info", (scalar @rows), (scalar keys %rowMetadataByName)));
 
+  my %lineages;
+  for my $taxonName (sort keys %rowMetadataByName){
+      $lineages{$taxonName} = $lineages->getTermsFromObject($taxonName, $rowMetadataByName{$taxonName});
+  }
+  
+  my @lineagesThatMightHaveTaxons = uniq map {$_->{lineage}} values %lineages;
+  my %ncbiTaxonsByLineage;
+  for my $i (0..$#lineagesThatMightHaveTaxons){
+    $log->info("Checked $i / $#lineagesThatMightHaveTaxons lineages against NCBI")
+      if $i and not $i %1000;
+    my $lineage = $lineagesThatMightHaveTaxons[$i];
+
+    $ncbiTaxonsByLineage{$lineage} = $findTaxonForLineageCb->($lineage);
+  }
+  $log->info(sprintf("Found ncbi taxa for %s / %s lineages checked", (scalar grep {$_} values %ncbiTaxonsByLineage), (scalar @lineagesThatMightHaveTaxons)));
+
+  my @columns = @{$doc->{columns}};
   my %columnMetadataByName = map {
     (
       $_->{id} => ($_->{metadata} // {})
     )x!!$_->{id}
-  } @{$in->_get_json()->{columns}};
+  } @columns;
+ 
+  $log->info(sprintf ("%s / %s columns have metadata for sample details", (scalar @columns), (scalar keys %columnMetadataByName)));
+
   my ($propertyDetailsByName, $sampleDetailsByName) = ApiCommonData::Load::Biom::SampleDetails::expandSampleDetailsByName(\%columnMetadataByName);
 
   my @sampleNamesInOrder;
   my %abundancesBySampleName;
   my %aggregatedAbundancesBySampleName;
 
-  my %lineages;
-  my %ncbiTaxons;
+  for my $columnIndex (0..$#columns){
+    $log->info("Aggregated abundances for $columnIndex / $#columns columns")
+      if $columnIndex and not $columnIndex % 1000;
 
-  for my $community (@communities){
-    push @sampleNamesInOrder, $community->name;
+    my $sampleName = $columns[$columnIndex]->{id};
+
+    push @sampleNamesInOrder, $sampleName;
+
+    my $totalCountForSample = sum values %{$dataByColumnIndexThenRowIndex{$columnIndex}};
+
     my @abundances;
-    while(my $member = $community->next_member()){
+    for my $rowIndex (sort keys %{$dataByColumnIndexThenRowIndex{$columnIndex}}){
+      my $taxonName = $rows[$rowIndex]->{id};
+      my $count = $dataByColumnIndexThenRowIndex{$columnIndex}{$rowIndex};
 
-      $lineages{$member->id} //= $lineages->getTermsFromObject($member->id, $rowMetadataByName{$member->id});
-
-      $ncbiTaxons{$member->id} //= $findTaxonForLineageCb->($lineages{$member->id}{lineage});
-
-      my @ls = map {$lineages{$member->id}{$_}} @levelNames;
+      my @levels = map {$lineages{$taxonName}{$_}} @levelNames;
+      my $hasLevels = grep {$_} @levels;
       push @abundances, {
-         lineage => $lineages{$member->id}{lineage},
-         ((grep {$_} @ls) ? (levels  =>\@ls) : ()),
-         ncbi_taxon_id => $ncbiTaxons{$member->id},
-	 absolute_abundance => $community->get_count($member),
-	 relative_abundance =>  $community->get_rel_ab($member)/100,
+         lineage => $lineages{$taxonName}{lineage},
+         ($hasLevels ? (levels  =>\@levels) : ()),
+         ncbi_taxon_id => $ncbiTaxonsByLineage{$lineages{$taxonName}{lineage}},
+	 absolute_abundance => $count,
+	 relative_abundance =>  $count / $totalCountForSample,
       }; 
     }
-    $abundancesBySampleName{$community->name} = \@abundances;
-    $aggregatedAbundancesBySampleName{$community->name} = aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
+    $abundancesBySampleName{$sampleName} = [sort {$a->{lineage} cmp $b->{lineage}} @abundances];
+    $aggregatedAbundancesBySampleName{$sampleName} = aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
   }
-  return $propertyDetailsByName, \@sampleNamesInOrder, $sampleDetailsByName, \%abundancesBySampleName, \%aggregatedAbundancesBySampleName;
+  $log->info("Aggregated abundances for $#columns columns");
+
+  # samples/observations are BIOM2 verbiage
+  my $datasetSummary = sprintf("Dataset with %s %s in %s sample%s", (scalar @rows),(@rows == 1 ? "taxon" : "different taxa"),(scalar @columns), (@columns==1 ? "": "s"));
+
+  return $datasetSummary, $propertyDetailsByName, \@sampleNamesInOrder, $sampleDetailsByName, \%abundancesBySampleName, \%aggregatedAbundancesBySampleName;
 }
 
 sub aggregateAbundances {
@@ -111,8 +163,7 @@ sub aggregateAbundances {
   for my $taxonLevel ((0..$#levelNames)){
     my %groups;
     for my $abundance (@abundancesWithLevels){
-       my $l = join(";", map {$abundance->{levels}[$_] // ""} 0..$taxonLevel);
-       push @{$groups{$l}}, $abundance;
+       push @{$groups{join(";", map {$abundance->{levels}[$_] // ""} 0..$taxonLevel)}}, $abundance;
     }
     push @result, aggregateAbundanceGroups($taxonLevel, $levelNames[$taxonLevel], \%groups);
   }

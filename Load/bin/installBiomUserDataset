@@ -8,9 +8,12 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use ApiCommonData::Load::Biom;
 
-my ($userDatasetId, $biomPath, $projectId, $summary) = @ARGV;
+use Log::Log4perl qw(:easy);
+Log::Log4perl->easy_init($INFO);
 
-usage() unless $userDatasetId and -f $biomPath and $projectId and $summary;
+my ($userDatasetId, $biomPath, $dataPath, $projectId) = @ARGV;
+
+usage() unless $userDatasetId and -f $biomPath and $projectId and (-f $dataPath or not $dataPath);
 
 my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
 
@@ -20,33 +23,22 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         0,0,1,
                                         $gusconfig->getCoreSchemaName());
 
-my $dbh = $db->getQueryHandle(0);
-$dbh->{RaiseError} = 1;
-#$dbh->trace(1);
-eval {
-  ApiCommonData::Load::Biom->new($dbh)->storeFileUnderUserDatasetId($biomPath, $userDatasetId, $summary);
-};
-if($@){
-  $dbh->rollback;
-  die $@;
-}
-$dbh->commit;
-
+ApiCommonData::Load::Biom->new($db)->storeFileUnderUserDatasetId($biomPath, $dataPath, $userDatasetId);
 
 sub usage {
   die "
 
 Install a BIOM user dataset in the user dataset schema.
 
-Usage $0 user_dataset_id data.biom project_id summary
+Usage $0 user_dataset_id in.biom1 in-data.tsv project_id summary
 
 Where:
   user_dataset_id:  a user dataset id
-  data.biom:        a BIOM file
-  project_id:       MicrobiomeDB, etc.
-  summary:          Summary of the dataset
+  in.biom1:         a BIOM file, JSON/BIOM1 flavour
+  in-data.tsv:      data from the file, in TSV (use \"\" to tell the program to read it from the BIOM1 file)
+  project_id:       ., MicrobiomeDB, or wherever the right gus.config is
 
-Finds gus.config in \$GUS_HOME/config/project_id/gus.config
+Finds gus.config in \$GUS_HOME/config/\$project_id/gus.config
 
 ";
 }

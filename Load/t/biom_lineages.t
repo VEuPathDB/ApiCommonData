@@ -7,11 +7,11 @@ use ApiCommonData::Load::Biom::Lineages;
 use Test::More;
 
 my $maxLengthLevel = 200;
-my $maxLengthLineage = 150;
-my $t = ApiCommonData::Load::Biom::Lineages->new("unassigned", ["l1", "l2", "l3"], $maxLengthLevel, $maxLengthLineage);
+my $t = ApiCommonData::Load::Biom::Lineages->new("unassigned", ["l1", "l2", "l3"], $maxLengthLevel);
 
 is_deeply($t->getTermsFromObject("id",{}), {unassigned => "id", lineage => "id"}, "Use id if taxonomy missing");
 is_deeply($t->getTermsFromObject("id",{taxonomy => "pancake"}), {unassigned => "pancake", lineage => "pancake"}, "No semicolons means unassigned");
+is_deeply($t->getTermsFromObject("id",{taxonomy => "Bacteria"}), {l1 => "Bacteria", lineage => "Bacteria"}, "We recognise kingdoms as valid lineages");
 is_deeply($t->getTermsFromObject("id",{Taxonomy => "pancake"}), $t->getTermsFromObject("id",{taxonomy => "pancake"}), "Uppercase taxonomy dict key");
 
 is_deeply($t->getTermsFromObject("id",{l1=>"a", l2=>"b"}),{lineage => "a;b", l1 => "a", l2 => "b"}, "If terms are provided then use them");
@@ -22,8 +22,6 @@ is_deeply($t->getTermsFromObject("id",{l1=>{k=>1}}),{lineage => "id", unassigned
 is_deeply($t->getTermsFromObject("id",{taxonomy =>"a;b;c"}),{lineage => "a;b;c", l1 => "a", l2 => "b", l3 => "c"}, "Simple case");
 is_deeply($t->getTermsFromObject("id",{taxonomy =>"a;b"}),{lineage => "a;b", l1 => "a", l2 => "b"}, "Not enough terms is also okay");
 
-is_deeply($t->getTermsFromObject("a" x 666, {})->{"lineage"}, "a" x $maxLengthLineage, "Limit lineage length");
-is_deeply($t->getTermsFromObject("id", {taxonomy => "a" x 666})->{"lineage"}, "a" x $maxLengthLineage, "Limit lineage length 2");
 is_deeply($t->getTermsFromObject("a" x 666, {})->{"unassigned"}, "a" x $maxLengthLevel, "Limit level length");
 is_deeply($t->getTermsFromObject("id", {taxonomy => ("a" x 666).";b"})->{"l1"},"a" x $maxLengthLevel, "Limit level length 2");
 is_deeply($t->getTermsFromObject("id", {taxonomy => "a;" .("b" x 666)})->{"l2"},"b" x $maxLengthLevel, "Limit level length 3");
@@ -40,8 +38,13 @@ is_deeply($t->splitLineageString("g__a;s__b"),["a","b"], "Strip prefixes");
 is_deeply($t->splitLineageString("sk__a;k__b"),["a","b"], "Strip prefixes 2");
 is_deeply($t->splitLineageString("g__a;s__"),["a"], "Skip empty terms at the end");
 is_deeply($t->splitLineageString("sk__a;k__;s__b"),["a","b"], "Ignore superkingdoms");
+is_deeply($t->splitLineageString("sk__Bacteria"),["Bacteria"], "Ignore superkingdoms when it's just the root node: seen in an EBI metagenomics file");
 is_deeply($t->splitLineageString("cellular organisms;a"),["a"], "Ignore ncbi root node");
 is_deeply($t->splitLineageString("cellular organisms;a;b"),["a","b"], "Ignore ncbi root node 2");
+
+# Earth Microbiome Project
+is_deeply($t->splitLineageString("D_1__a;D_2__b"), ["a", "b"], "Remove ^D_[1-6]__");
+is_deeply($t->splitLineageString("a;uncultured;uncultured bacterium"), ["a"], "Remove terms uncultured or uncultured bacterium");
 
 is_deeply($t->splitLineageString("a;b;c;d"),["a","b","c d"], "Extra terms - store in the last term, separated by space");
 is_deeply($t->splitLineageString("a;b;c;c"),["a","b", "c"], "Extra terms - drop if they're repeated");

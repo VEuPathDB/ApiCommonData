@@ -42,6 +42,8 @@ is_deeply(sampleDetails({s1 => {}}),{
     }
   ]
 }, "Default values sample details");
+is_deeply(sampleDetails({"123" => {}})->{123}[0]{number_value}, undef, "Default values sample detail is never a number");
+is_deeply(sampleDetails({$exampleDate => {}})->{$exampleDate}[0]{date_value}, undef, "Default values sample detail is never a date");
 is_deeply(propertyDetails({s1 => {p=>1}}), {p => {
      'description' => 'p: 1',
      'distinct_values' => 1,

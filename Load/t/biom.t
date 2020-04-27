@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 
-use lib "/home/wbazant/perl5/lib/perl5"; #Wojtek has Bio::Community there
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 use ApiCommonData::Load::Biom;
@@ -52,14 +51,27 @@ my $in = <<EOF;
            ]
 }
 EOF
-# Bio::Community::IO doesn't read from scalars :( 
-use File::Temp qw/ tempfile/;
-my ($fh, $filename) = tempfile();
-print $fh $in;
-close $fh;
 
-my @out = ApiCommonData::Load::Biom::biomFileContents(sub {""}, $filename);
-diag explain @out;
-ok(\@out);
+my $data = <<EOF;
+0	2	1
+1	0	5
+1	1	1
+1	3	2
+1	4	3
+1	5	1
+2	2	1
+2	3	4
+2	4	2
+3	0	2
+3	1	1
+3	2	1
+3	5	1
+4	1	1
+4	2	1
+EOF
 
+my @out1 = ApiCommonData::Load::Biom::biomFileContents(sub {""}, \$in, "");
+
+my @out2 = ApiCommonData::Load::Biom::biomFileContents(sub {""}, \$in, \$data);
+is_deeply(\@out1, \@out2, "Reading from provided TSV and from the data element is the same");
 done_testing;

@@ -9,12 +9,11 @@ use List::Util qw/all/;
 use List::MoreUtils qw/zip/;
 
 sub new {
-  my ($class, $unassignedLevelString, $levelNames, $maxStringLengthLevel, $maxStringLengthLineage) = @_;
+  my ($class, $unassignedLevelString, $levelNames, $maxStringLengthLevel) = @_;
   return bless {
     unassigned_level => $unassignedLevelString,
     level_names => $levelNames,
     level_max_length => $maxStringLengthLevel,
-    lineage_max_length => $maxStringLengthLineage,
   }, $class;
 }
 
@@ -41,7 +40,7 @@ sub getTermsFromObject {
   my $lineageString = unpackLineageTerm(\@levelNames, $lineageTerm);
 
   return $self->lineageO([$unassignedLevel], [$lineageString])
-    unless $lineageString =~ m{;};
+    unless ($lineageString =~ m{;} or $lineageString =~ m{(Bacteria|Archaea|Eukarya)$}i);
 
   return $self->lineageO(\@levelNames, $self->splitLineageString($lineageString));
 }
@@ -62,7 +61,7 @@ sub lineageO {
   @vs = map {substr($_,0,$self->{level_max_length})} @vs;
 
   my %result = zip @ks, @vs;
-  $result{lineage} = substr(join(";",@vs),0,$self->{lineage_max_length});
+  $result{lineage} = join(";",@vs);
   return \%result;
 }
 
@@ -99,7 +98,7 @@ sub splitLineageString {
 
 # Understand and ignore superkingdoms
 # EBI metagenomics and doubtlessly elsewhere
-  if ($lineage[0] =~ /^sk__/ and $lineage[1] eq "k__"){
+  if ($lineage[0] =~ /^sk__/ and (not $lineage[1] or $lineage[1] eq "k__")){
     @lineage = grep {$_ ne "k__"} @lineage;
     $lineage[0] =~ s/^sk__/k__/;
   }
@@ -108,6 +107,8 @@ sub splitLineageString {
   for (@lineage){
     s/^[kpcofgs]__//;
     s/^sk__//;
+    s/D_[0-6]__//;
+    s/^uncultured( bacterium)?$//;
   }
   
 # Remove empty terms
@@ -119,23 +120,26 @@ sub splitLineageString {
   }
 
 # Make sure there are at most $numMaxTerms
-  my ($lastTerm, @extraTerms) = reverse splice @lineage, ($numMaxTerms-1);
-  if($lastTerm){
-    # If exactly the right number of terms or the most specific term has all the information put it back into @lineage, ignoring the rest
-    if (all {index($lastTerm, $_)>-1} @extraTerms){
-      push @lineage, $lastTerm;
-    } else {
-    # Otherwise put everything else back into @lineage, but with a space instead of ";"
-      push @lineage, join (" ", reverse (@extraTerms), $lastTerm);
+  do {
+    my ($lastTerm, @extraTerms) = reverse splice @lineage, ($numMaxTerms-1);
+    if($lastTerm){
+      # If exactly the right number of terms or the most specific term has all the information put it back into @lineage, ignoring the rest
+      if (all {index($lastTerm, $_)>-1} @extraTerms){
+        push @lineage, $lastTerm;
+      } else {
+      # Otherwise put everything else back into @lineage, but with a space instead of ";"
+        push @lineage, join (" ", reverse (@extraTerms), $lastTerm);
+      }
     }
-  }
+  };
 # Make sure the last term - assuming this is species, we have a leaky abstraction here - is in binomial
 # Uses capital letters for predicting what is what
-
-  my ($lastTerm, $penultimateTerm, @terms) = reverse @lineage;
-  if ($lastTerm && $penultimateTerm && $lastTerm =~ /^[a-z]/ && $penultimateTerm =~ /^[A-Z]/ && $lastTerm !~ /$penultimateTerm/i){
-     @lineage = ((reverse @terms), $penultimateTerm, "$penultimateTerm $lastTerm");
-  }
+  do {
+    my ($lastTerm, $penultimateTerm, @terms) = reverse @lineage;
+    if ($lastTerm && $penultimateTerm && $lastTerm =~ /^[a-z]/ && $penultimateTerm =~ /^[A-Z]/ && $lastTerm !~ /$penultimateTerm/i){
+      @lineage = ((reverse @terms), $penultimateTerm, "$penultimateTerm $lastTerm");
+    }
+  };
   return \@lineage;
 }
 1;
