@@ -305,6 +305,38 @@ robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPAR
 robot query --use-graphs true --input ./harmonization/web_display.owl --query ./SPARQL/count_datasetsOfTerms.rq ./query_results/allProjects_count_datasetsOfTerms.csv
 
 
+————————————————————————————————————————————————————————————
+# Number of datasets the ontology classes(terms) were used including term label, parent label, term type, category, category assigned in the ontology and also indicate whether they have same labels 
+#	count_datasetsOfTermsByCategory.rq
+————————————————————————————————————————————————————————————
+# ClinEpi
+robot query --use-graphs true --input ./harmonization/clinEpi.owl --query ./SPARQL/count_datasetsOfTermsByCategory.rq ./query_results/clinEpi_count_datasetsOfTerms.csv
+
+
+—————————————————————————————————————————————————————————————————————————————
+# UPDATE QUERY
+
+————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————————
+UPDATE category annotation setting values based on category of terms asserted in the
+Ontology hierarchy 
+————————————————————————————————————————————————————————————
+robot query --input ./Gates/VIDA/gates_vida.owl \
+	--update ./SPARQL/update_category_participant.rq \
+	--update ./SPARQL/update_category_household.rq \
+	--update ./SPARQL/update_category_observation.rq \
+	--update ./SPARQL/update_category_sample.rq \
+	--update ./SPARQL/update_category_insectSample.rq \
+	--update ./SPARQL/update_category_entomology.rq \
+ 	--output ./Gates/VIDA/gates_vida_new.owl
+
+
+
+
+
+
+
 —————————————————————————————————————————————————————————————————————————————
 # SOLR QUERY
 

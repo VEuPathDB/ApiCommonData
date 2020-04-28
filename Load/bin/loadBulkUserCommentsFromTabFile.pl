@@ -29,12 +29,13 @@ use WDK::Model::ModelConfig;
 
 
 my (%hash, @comments);
-my ($input, $project_id, $review_status_id, $commit);
+my ($input, $project_id, $submitter_email, $review_status_id, $commit);
 
 my $comment_target_id = 'gene';
 
 GetOptions( "inpute=s"           => \$input,
             "project_id=s"       => \$project_id,
+            "submitter_email=s"  => \$submitter_email,
             "review_status_id=s" => \$review_status_id,
             "commit!"            => \$commit);
 
@@ -51,9 +52,7 @@ For example
   insertBulkUserComments.pl --input BulkUserComment_Atashi.xls --project_id ToxoDB --review_status_id community 
 EOL
 
-die $usage unless ($input && $project_id && $review_status_id);
-
-my $submitter_email = 'ingo.bauer@i-med.ac.at';
+die $usage unless ($input && $project_id && $submitter_email && $review_status_id);
 
 my @other_authors = ();
 
@@ -83,8 +82,6 @@ print "email: $email | $project_id | submitter_id $submitter_id\n";
 
 die "There is no user $submitter_email in the database.\n" unless $submitter_id;
 
-
-
 print "input: $input\n";
 
 open(IN, $input);
@@ -92,21 +89,20 @@ while(<IN>){
   chomp;
   next if /^#/;
 
-  my ($c1, $c2, $c3, $c4, $c5, $c6, $c7, $c8, @misc) = split /\t/, $_;
+  my ($gene_id, $headline, $content, $category, $loc, $pmid, $doi, $genbank_acc, $associated_genes, @misc) = split /\t/, $_;
   
-  my $gene_id     = $c1;
-  my $headline    = $c2;
-  my $pmid        = ""; 
-  my $doi         = $c5;
-  my $content     = $c3;
-  my $seq         = ""; 
-  my $category    = "function"; 
-  my $genbank_acc = "";
-  my $associated_genes = "";
+  my $seq = ""; 
 
+  $category = "function" unless $category;
   $gene_id =~ s/\s//g;
-  $content .= " $c8";
+  $content =~ s/^"//;
+  $content =~ s/"$//;
+  $pmid    =~ s/PMID:\s+//i;
 
+  $associated_genes =~ s/\s+$//g;
+  $associated_genes =~ s/\,$//g;
+  $associated_genes =~ s/^"//;
+  $associated_genes =~ s/"$//;
 
   my $sql = <<EOSQL;
 SELECT gf.source_id, bfmv.start_min, bfmv.end_max, bfmv.is_reversed,
@@ -235,13 +231,12 @@ VALUES (userlogins5.commentTargetCategory_pkseq.nextval, $comment_id, $target_ca
 EOL
   $userDb->do($sql) if $commit;
 
-  $associated_genes =~ s/\s+$//g;
-  $associated_genes =~ s/\,$//g;
   if($associated_genes ne "") {
 
     my @genes = split/\,|\s/, $associated_genes;
     foreach my $gene (@genes) {
       $gene =~ s/\s+//g;
+      next if $gene eq "";
       $sql =<<EOL;
 INSERT INTO userlogins5.CommentStableId 
         (comment_stable_id, stable_id, comment_id)
