@@ -1,0 +1,408 @@
+overallOrder,variable,dataset,keepDiscard,notesForDL,codebookDescription,codebookValues,Data.Dictionary.Label..en.,file_name_in_box.net,IRI,label,duplicated,dateTime,flag
+1,cod_casa,Peru_household,keep,,Household ID,free text,,,,,,,
+2,comun,Peru_household,keep,,Study site,"1 - Cahuide, 2 - Lupuna",,,,,,,
+3,comunidad,Peru_household,keep,,Community,"12 DE ABRIL - 12 de Abril, CAHUIDE - Cahuide, HABANA - Habana, SAN JOSE DE LUPUNA - San Jose de Lupuna, SAN PEDRO - San Pedro, SANTA RITA - Santa Rita",,,,,,,
+4,fec_enrol,Peru_household,keep,,Date of enrollment,yyyy-mm-dd,,,,,,yes,
+5,areatotal,Peru_household,keep,,Total area (square meters),numeric,,,,,,,
+6,areate,Peru_household,keep,,Total roofed area (square meters),numeric,Covered Area (m2),censo_exel_proy1.xlsx,EUPATH_0000380,Covered Area (m2),,,
+7,cuardor,Peru_household,keep,,Number of bedrooms,numeric,Number of sleeping places,censo_exel_proy1.xlsx,EUPATH_0000201,# bedrooms,,,
+8,cuacom,Peru_household,keep,,Number of common rooms,numeric,Number of common areas,censo_exel_proy1.xlsx,EUPATH_0000379,# Common Areas,,,
+9,coci,Peru_household,keep,,Kitchen type,"1 - Outdoor, 2 - Indoor",Location of kitchen,censo_exel_proy1.xlsx,EUPATH_0000381,Location of kitchen,,,
+10,elec,Peru_household,keep,,Electrical installation,code,Electricity supply,,EUPATH_0000176,Electric,,,
+11,aguua,Peru_household,keep,,Potable water,"1- Yes, 2 - No",,,,,,,
+12,fueagu,Peru_household,keep,,Source of water,"1 - Public network intrad.connection, 2 - Public network extra connection, 3 - Public tap or pylon, 7 - River/creek, 8 - Artesian well, 9- Simple well, 10-Rainwater",Drinking water source,censo_exel_proy1.xlsx,ENVO_00003064,Drinking water source,,,
+13,tencas,Peru_household,keep,,House ownership,"1- Own, 2 - Rent, 3 - Given, 4 - House guardian, ",Type of housing,censo_exel_proy1.xlsx,EUPATH_0000383,Rent or own?,,,
+14,tencotr,Peru_household,discard,all data is NA,House ownership (other),,,,,,,,
+15,pared_ext,Peru_household,keep,,External wall material,"1- Mat/aguaje palm, 2 - Wood, 3 - Brick with cement, 4 - Brick with no cement, 6 - Plastic, 7 - Calamina (plastic and corrugated tin), 8 - Palm tree, 9 - Pona/ripa (local material similar to wood), 10 - Other",Wall material,censo_exel_proy1.xlsx,EUPATH_0000009,Wall material,,,
+16,parotr,Peru_household,keep,,Internal wall material,"1. Mat/aguaje palm
+2. Wood
+3. Brick with cement
+4. Brick with no cement
+5. Adobe
+6. Plastic
+7. Calamina (like a plastic, corrugated tin)
+8. Palm tree
+9. Pona / Ripa (local material similar to wood)
+10. Other
+11. TRIPLAY
+12. Does not have
+99. No data",,,,,,,
+17,techo,Peru_household,keep,,Roof material,"1 - Palm , 2 - Calamina (plastic and corrugated tin), 3 - Plastic, 4 - Other",Roof material,censo_exel_proy1.xlsx,EUPATH_0000003,Roof material,,,
+18,tecot,Peru_household,discard,all data is NA,Other roof material,,,,,,,,
+19,piso,Peru_household,keep,,Floor material,"1 - Dirt, 2 - Concrete - false floor, 3 - Polished concrete, 4 - Wood, 5 - Pona (local material similar to wood), 7 - Other",Floor material,censo_exel_proy1.xlsx,EUPATH_0000006,Floor material,,,
+20,pisotr,Peru_household,discard,all data is NA,Other floor material,,,,,,,,
+21,fumi,Peru_household,keep,,Date of last fumigation,yyyy-mm-dd,Date of last fumigation,censo_exel_proy1.xlsx,EUPATH_0000390,Last fumigation date,,yes,
+22,basu,Peru_household,keep,,Waste disposal,"2 - Burn, 3 - Bury, 4 - Open field, 5 - River 6 - Other",Garbage disposal,censo_exel_proy1.xlsx,EUPATH_0000368,Garbage disposal,,,
+23,basuotr,Peru_household,keep,collapse with basu,Other waste disposal,"BASURERO COMUNAL - Communal garbage dump, DEPOSITO ALBERGUE - , LLEVA ALBERGUE - ,  LLEVAN A BOTADERO - Take to a dump",,,,,,,
+24,combus,Peru_household,keep,,Cookfuel,"1 - Gas, 2 - Kerosene, 3 - Coal, 4 - Firewood, 5 - Other",Cooking fuel,censo_exel_proy1.xlsx,EUPATH_0000023,Cooking fuel,,,
+25,comotr,Peru_household,discard,all data is NA,Cookfuel (other),,,,,,,,
+26,excre,Peru_household,keep,,Toilet type,"1 - Drain, 2 - Own latrine, 3 - Shared latrine, 4 - Cesspool - silo, 5 - Open field, 6 - River/stream, 7 - Other",Excreta disposal,censo_exel_proy1.xlsx,EUPATH_0000335,Human waste disposal,,,
+27,excotr,Peru_household,discard,all data is NA,Toilet type (other),,,,,,,,
+28,numcam,Peru_household,keep,,Number of beds in hh,numeric,Number of beds in household,censo_exel_proy1.xlsx,EUPATH_0000201,# sleeping places,,,
+29,cammos,Peru_household,keep,,Number of beds with mosquito net,numeric,,,,,,,
+30,matmos,Peru_household,keep,,Mosquito net material,"1 - Tocuyo cotton, 2 - Nylon, 3 - Olyset/PermaNet, 4 - Other",Bed Net Material,censo_exel_proy1.xlsx,EUPATH_0000389,Bednet material,,,
+31,matmosot,Peru_household,keep,,Mosquito net material (other),code,,,,,,,
+32,ultimpr,Peru_household,keep,,Last treatment of mosquito net,"1 - Never treated, 2 - Less than 6 months ago, 3 - 6-12 months ago, 4 - 13-24 months ago, 5 - More than 24 months ago, 6 - Factory treated",Bednets Last Treated,censo_exel_proy1.xlsx,EUPATH_0000344,Bednet Treatment,,,
+33,imprmo,Peru_household,keep,,Who treated mosquito net,"1 - Factory, 2 - Household member, 3 - MINSA, 4 - Other",Responsible of treated bednets,censo_exel_proy1.xlsx,EUPATH_0000391,Responsible of treated bednets,,,
+34,imprmootr,Peru_household,discard,all data is NA,Who treated mosquito net (other),,,,,,,,
+35,silla,Peru_household,keep,,Chair,binary,Chair - bench,,EUPATH_0000173,Chair,,,
+36,sillon,Peru_household,keep,,Couch,binary,Sofa,,ENVO_01000588,Sofa,,,
+37,telefono,Peru_household,keep,,Telephone,binary,Telephone - cell phone,,,Phone,,,
+38,camas,Peru_household,keep,,Beds,binary,Beds,,EUPATH_0000168,Bed,,,
+39,armarios,Peru_household,keep,,Cabinets,binary,Cabinets,,,Cabinet,,,
+40,roperos,Peru_household,keep,,Closets,binary,Closet,,,Closet,,,
+41,mesa,Peru_household,keep,,Table,binary,Table,,EUPATH_0000184,Table,,,
+42,refrigeradora,Peru_household,keep,,Refrigerator,binary,Refrigerator,,ENVO_01000583,Refrigerator,,,
+43,congeladora,Peru_household,keep,,Freezer,binary,Freezer,,,Freezer,,,
+44,licuadora,Peru_household,keep,,Blender,binary,Blender,,,Blender,,,
+45,cocelec,Peru_household,keep,,Electric stove,binary,Electric stove,,,Electric stove,,,
+46,cocgas,Peru_household,keep,,Gas stove,binary,Gas stove,,,Gas stove,,,
+47,cockero,Peru_household,keep,,Kerosene stove,binary,Kerosene stove,,,Kerosene stove,,,
+48,coccar,Peru_household,keep,,Coal stove,binary,Coal stove,,,Coal stove,,,
+49,radio,Peru_household,keep,,Radio,binary,Radio,,EUPATH_0000181,Radio,,,
+50,TV_BN,Peru_household,keep,,TV black and white,binary,,,,,,,
+51,TV_COL,Peru_household,keep,,TV color,binary,,,,,,,
+52,DVD,Peru_household,keep,,DVD,binary,,,,,,,
+53,Min,Peru_household,keep,,Stereo,binary,,,,,,,
+54,vacas,Peru_household,keep,,Cows,binary,cows,,,Cow,,,
+55,cabras,Peru_household,keep,,Goats,binary,goats,,,Goat,,,
+56,pollos,Peru_household,keep,,Chicks,binary,chickens,,,Chicken,,,
+57,gallina,Peru_household,keep,,Hens,binary,,,,,,,
+58,gallos,Peru_household,keep,,Roosters,binary,roosters,,,Rooster,,,
+59,pavo,Peru_household,keep,,Turkeys,binary,turkeys,,,Turkey,,,
+60,patos,Peru_household,keep,,Ducks,binary,ducks,,,Duck,,,
+61,pericos,Peru_household,keep,,Parakeet,binary,parakeets,,,Parakeet,,,
+62,loros,Peru_household,keep,,Parrots,binary,,,,,,,
+63,mono,Peru_household,keep,,Monkey,binary,monkey,,,Monkey,,,
+64,chancho,Peru_household,keep,,Pigs,binary,pig,,,Pig,,,
+65,conejo,Peru_household,keep,,Rabbits,binary,rabbit,,,Rabbit,,,
+66,perro,Peru_household,keep,,Dog,binary,,,,,,,
+67,gato,Peru_household,keep,,Cat,binary,,,,,,,
+68,tortuga,Peru_household,keep,,Turtle,binary,tortoise,,,Tortoise,,,
+69,cod_per,Peru_individual,keep,"Same as cod_casa, but has extra letter added to indicate individual",Individual ID,free text,,,,,,,
+70,cod_casa,Peru_individual,discard,Already noted in Peru_household,Household ID,free text,,,,,,,
+71,comun,Peru_individual,discard,Already noted in Peru_household,Study site,,,,,,,,
+72,comunidad,Peru_individual,discard,Already noted in Peru_household,Community,,,,,,,,
+73,fec_enrol,Peru_individual,discard,Already noted in Peru_household,Date of enrollment,,,,,,,yes,
+74,fec_naci,Peru_individual,keep,Need to obfuscate,Date of birth,numeric,Date of Birth,censo_exel_proy1.xlsx,EUPATH_0000032,Date of Birth,,yes,
+75,edad,Peru_individual,keep,participant,Age,numeric,Age at time of enrollment,censo_exel_proy1.xlsx,EUPATH_0000120,Age at time of enrollment,,,
+76,sexo,Peru_individual,keep,participant,Sex,"1 - Male, 2 - Female",Sex,censo_exel_proy1.xlsx,PATO_0000047,Sex,,,
+77,gestante,Peru_individual,keep,participant,Pregnant,"1 - Yes, 2 - No, NA - Not applicable",Pregnant,censo_exel_proy1.xlsx,UBERON_0009097,Pregnant,,,
+78,estciv,Peru_individual,keep,participant,Marital status,1. Single 2. Married/cohabitating 3. Divorced 4. Separated 5. Widowed ,Marital status,censo_exel_proy1.xlsx,EUPATH_0000374,Marital status,,,
+79,tiecom,Peru_individual,keep,participant,Time living in community (years),numeric,Time living in the community (in years),censo_exel_proy1.xlsx,EUPATH_0000378,Time living in the community (year),,,
+80,tiehog,Peru_individual,keep,participant,Time living in household (years),numeric,Time living in the dwelling (in years),censo_exel_proy1.xlsx,EUPATH_0000377,Time living in the dwelling (year),,,
+81,instruc,Peru_individual,keep,participant,Education level,"00.Pre-school, 01 - 06. Primary school, 07-11. Secondary school, 12-15. Technical school, 16-20. College or higher, 21. Illiterate, 22. Literate but no formal education",Educational level,censo_exel_proy1.xlsx,EUPATH_0000345,Education level,,,
+82,mud,Peru_individual,keep,participant,Plan to move within 2 years,"1 - Yes, 2 - No, .n - Not applicable, .d - Don't know",Plan to move,censo_exel_proy1.xlsx,EUPATH_0000375,Plan to move,,,
+83,reljefam,Peru_individual,keep,participant - may remove this variable later,Relationship to head of household,"1. Head of household, 2. Spouse, 3. Child, 4. Sibling, 5. Aunt or uncle, 6. Niece or nephew, 7. Parent, 8. Cousin, 9. Stepchild, 10. Grandchild, 11. Other",Relationship to head of Family,censo_exel_proy1.xlsx,EUPATH_0000376,Family head relationship,,,
+84,malviv,Peru_individual,keep,participant,Lifetime episodes malaria vivax,numerical/77=not remember),Number of infections with P. vivax in lifetime,censo_exel_proy1.xlsx,EUPATH_0000346,Infections w/ p. viv,,,
+85,malvivano,Peru_individual,keep,participant,Past year episodes malaria vivax,numerical/77=not remember),Number of infections with P. vivax in the last year,censo_exel_proy1.xlsx,EUPATH_0000347,Infections w/ p. viv last year,,,
+86,malfal,Peru_individual,keep,participant,Lifetime episodes malaria falciparum,numerical/77=not remember),Number of infections with P. falciparum in lifetime,censo_exel_proy1.xlsx,EUPATH_0000348,Infections w/ p.fal,,,
+87,malfalano,Peru_individual,keep,participant,Past year episodes malaria falciparum,numerical/77=not remember),Number of infections with P. falciparum in the last year,censo_exel_proy1.xlsx,EUPATH_0000349,Infections w/ p.fal last year,,,
+88,viaantenf1,Peru_individual,keep,,Travel in the 2 weeks before most recent malaria episode,"1. Yes, 2. No, 77. Don't know, 99. Not applicable",,,,,,,
+89,viaantenf2,Peru_individual,keep,,Travel in the 2 weeks before penultimate malaria episode,"1. Yes, 2. No, 77. Don't know, 99. Not applicable",,,,,,,
+90,viaantenf3,Peru_individual,keep,,Travel in the 2 weeks before third most recent malaria episode,"1. Yes, 2. No, 77. Don't know, 99. Not applicable",,,,,,,
+91,viaantenf4,Peru_individual,keep,,Travel in the 2 weeks before fourth most recent malaria episode,"1. Yes, 2. No, 77. Don't know, 99. Not applicable",,,,,,,
+92,viaultimes,Peru_individual,keep,only at enrollment,Past month traveled further than 10 km from community,numeric,Travel in the last month (more than 10 km away from the community),censo_exel_proy1.xlsx,EUPATH_0000387,Travel in the last month,,,
+93,durviaje1,Peru_individual,keep,,Number of days trip 1,numeric,,,,,,,
+94,durviaje2,Peru_individual,keep,,Number of days trip 2,numeric,,,,,,,
+95,durviaje3,Peru_individual,keep,,Number of days trip 3,numeric,,,,,,,
+96,durviaje4,Peru_individual,keep,,Number of days trip 4,numeric,,,,,,,
+97,naveviaje1,Peru_individual,keep,Collapse with viaotro1,Rivers traveled for trip 1,"1. Chambira, 2. Pintuyacu, 3. Ucayali, 4. Tigre, 5. Putumayo, 5. Pastaza, 7. Napo, 8. Nanay, 9. Morona, 10. Momon, 11. Maranon, 12. Huallaga, 13. Amazonas, 14. Itaya, 15. Mazan, 16. Others (specify), 77. Don't know, 99. Not applicable",,,,,,,
+98,viaotro1,Peru_individual,keep,collapse with naveviaje1,Other river (specify),code,,,,,,,
+99,naveviaje2,Peru_individual,discard,All data is NA,Rivers traveled for trip 2,,,,,,,,
+100,viaotro2,Peru_individual,discard,All data is NA,Other river (specify),,,,,,,,
+101,naveviaje3,Peru_individual,discard,All data is NA,Rivers traveled for trip 3,,,,,,,,
+102,viaotro3,Peru_individual,discard,All data is NA,Other river (specify),,,,,,,,
+103,naveviaje4,Peru_individual,discard,All data is NA,Rivers traveled for trip 4,,,,,,,,
+104,viaotro4,Peru_individual,discard,"All data is NA except 1, but given that naveviaje2-4 is all NA, this is probably a data entry error",Other river (specify),,,,,,,,
+105,lugcom1,Peru_individual,keep,Collapse with comotr1,Place/community trip 1 (code),"262 - Gallito, 264 - Gamitana Cocha, 312 - IQUITOS, 396 - Mazan, 401 - Miraflores, 1042 - Other (specify), 99 - Not applicable",,,,,,,
+106,comotr1,Peru_individual,keep,Collapse with lugcom1,Other community (specify),code,,,,,,,
+107,lugcom2,Peru_individual,keep,Collapse with comotr2,Place/community trip 2 (code),"262 - Gallito, 264 - Gamitana Cocha, 312 - IQUITOS, 396 - Mazan, 401 - Miraflores, 1042 - Other (specify), 99 - Not applicable",,,,,,,
+108,comotr2,Peru_individual,keep,Collapse with lugcom2,Other community (specify),code,,,,,,,
+109,lugcom3,Peru_individual,keep,Collapse with comotr3,Place/community trip 3 (code),"262 - Gallito, 264 - Gamitana Cocha, 312 - IQUITOS, 396 - Mazan, 401 - Miraflores, 1042 - Other (specify), 99 - Not applicable",,,,,,,
+110,comotr3,Peru_individual,keep,Collapse with lugcom3,Other community (specify),code,,,,,,,
+111,lugcom4,Peru_individual,keep,,Place/community trip 4 (code),"262 - Gallito, 264 - Gamitana Cocha, 312 - IQUITOS, 396 - Mazan, 401 - Miraflores, 1042 - Other (specify), 99 - Not applicable",,,,,,,
+112,trabaj,Peru_individual,keep,participant,Employment status,"1. Permanent, 2. Temporary/seasonal, 3. Unemployed, 4. Student, 5. Minor, 6. Housewife",Type of occuaption,censo_exel_proy1.xlsx,EUPATH_0000359,Occupation,,,
+113,destra,Peru_individual,discard,Asks for description of work. Too identifying when combined with age and village area,Description of work past month,text/99=NA,Job description,censo_exel_proy1.xlsx,EUPATH_0000356,Job description (Primary),,,
+114,traprin,Peru_individual,keep,participant,Main occupation category,"1. Logger/lumberjack, 2. Urban work, 3. Fisherman, 4. Woodsman/coal merchant, 5. Farmer, 6. Boatman, 7. Debt collector, 8. Artisan, 9. Merchant, 10. Housekeeper, 11. Retired, 12. Dock worker/longshoreman, 13. Motorist/motorcylcist, 14. Fisherman/hunter, 15. Guard, 16. Worker, toiler, 17. Techincal, professional, 77. No data, 99. Not applicable",Primary economic activity,censo_exel_proy1.xlsx,EUPATH_0000354,Job (Primary),,,
+115,traprinotr,Peru_individual,discard,"all participants have data entered for traprin, only 24 participants have some extra explanation added here. Likely too identifying, so will remove",Other occupation type(14),,,,,,,,
+116,diassemp,Peru_individual,keep,participant,Days work per week main occupation,numerical/99=NA,Number of days per week at job,censo_exel_proy1.xlsx,EUPATH_0000350,Days worked per week (Primary),,,
+117,hordiap,Peru_individual,keep,participant,Hours work per day main occupation,numerical/99=NA,Number of hours per day at job,censo_exel_proy1.xlsx,EUPATH_0000366,Work Hours/Day (Primary),,,
+118,tieanop,Peru_individual,keep,,Time in main occupation (years),numeric,,,,,,,
+119,recpagp,Peru_individual,keep,participant,Receive pay main occupation,"1. Yes, 2. No, 77. No data (missing?), 99. Not applicable",Received payment (primary activity),censo_exel_proy1.xlsx,EUPATH_0000362,Received payment (Primary),,,
+120,cantip,Peru_individual,keep,May discard later as too identifying. ,Amount of pay main occupation,numerical/99=NA,Salary in soles (primary activity),censo_exel_proy1.xlsx,EUPATH_0000364,Salary in soles (Primary),,,
+121,frepagp,Peru_individual,keep,participant,Frequency of pay main occupation,"1. Daily, 2. Weekly, 3. Monthly, 4. Piecework/stint, 5. Other, 77. No data (missing), 99.Not applicable",Pay period (primary activity),censo_exel_proy1.xlsx,EUPATH_0000360,Pay period (Primary),,,
+122,otrlab,Peru_individual,keep,participant,Other job past month,"1. Yes, 2. No, 99. Not applicable",Other economic activity in the last month (secondary activity),censo_exel_proy1.xlsx,EUPATH_0000358,Job in the last month (Secondary),,,
+123,lab,Peru_individual,keep,participant,Other job category,"1. Logger/lumberjack, 2. Urban work, 3. Fisherman, 4. Woodsman/coal merchant, 5. Farmer, 6. Boatman, 7. Debt collector, 8. Artisan, 9. Merchant, 10. Housekeeper, 11. Retired, 12. Dock worker/longshoreman, 13. Motorist/motorcylcist, 14. Fisherman/hunter, 15. Guard, 16. Worker, toiler, 17. Techincal, professional, 77. No data, 99. Not applicable",Secondary activity,censo_exel_proy1.xlsx,EUPATH_0000355,Job (Secondary),,,
+124,labotr,Peru_individual,discard,"only one participant has anything entered, and this matches data for lab",Other job type (specify),text,Other job description ,censo_exel_proy1.xlsx,EUPATH_0000357,Job description (Secondary),,,
+125,diasseml,Peru_individual,keep,participant,Days work other job per week,numeric,Number of days per week at other job,censo_exel_proy1.xlsx,EUPATH_0000351,Days worked per week (Secondary),,,
+126,hordial,Peru_individual,keep,participant,Hours work other job per day,numerical/99=NA,Number of hours per day at other job,censo_exel_proy1.xlsx,EUPATH_0000367,Work Hours/Day (Secondary),,,
+127,tieanol,Peru_individual,keep,,Time in other job (years),numeric,,,,,,,
+128,recpagl,Peru_individual,keep,participant,Receive pay other job,"1. Yes, 2. No, 77. No data (missing?), 99. Not applicable",Received payment (Other job),censo_exel_proy1.xlsx,EUPATH_0000363,Received payment (Secondary),,,
+129,cantil,Peru_individual,keep,May discard later as too identifying. ,Amount of pay other job,numerical/99=NA,Salary in soles (Other job),censo_exel_proy1.xlsx,EUPATH_0000365,Salary in soles (Secondary),,,
+130,frepagl,Peru_individual,keep,participant,Frequency of pay other job,"1. Daily, 2. Weekly, 3. Monthly, 4. Piecework/stint, 5. Other, 77. No data (missing), 99.Not applicable",Pay period (Other job),censo_exel_proy1.xlsx,EUPATH_0000361,Pay period (Secondary),,,
+131,cod_uni,Peru_F2,discard,"Use this and ""aa"" to identify each individual observation",Unique code (created for merge),,,,,,,,
+132,cod_per,Peru_F2,discard,already noted in Peru_individual,Individual ID,free text,,,,,,,
+133,dd,Peru_F2,keep,merge with mm and aa,Day of month,numeric,,,,,,yes,
+134,mm,Peru_F2,keep,merge with dd and aa,Month of year,numeric,,,,,,yes,
+135,aa,Peru_F2,keep,merge with dd and mm,Year,numeric,,,,,,yes,
+136,dias,Peru_F2,discard,"Not for display on website, may be useful in calculating days ",Original days variable,text,Day,F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx,EUPATH_0000091,Date of visit,,,
+137,nauseas,Peru_F2,keep,observation - asked about each day ,Nausea,"1. Yes, 2. No, -1. No data available",,,,,,,
+138,vomitos,Peru_F2,keep,observation - asked about each day ,Vomiting,"1. Yes, 2. No, -1. No data available",,,,,,,
+139,anorexia,Peru_F2,keep,observation - asked about each day ,Loss of appetite,"1. Yes, 2. No, -1. No data available",,,,,,,
+140,mareos,Peru_F2,keep,observation - asked about each day ,Dizziness,"1. Yes, 2. No, -1. No data available",,,,,,,
+141,diarrea,Peru_F2,keep,observation - asked about each day ,Diarrhea,"1. Yes, 2. No, -1. No data available",,,,,,,
+142,tos,Peru_F2,keep,observation - asked about each day ,Cough,"1. Yes, 2. No, -1. No data available",,,,,,,
+143,gotagruesa,Peru_F2,keep,observation - asked about each day ,Thick smear sample collected,"1. Yes, 2. No",,,,,,,
+144,frotis,Peru_F2,keep,observation - asked about each day ,Smear,"N = negative, F = P. falciparum, V = P. vivax, M = mixta, -1. Not applicable (smear not taken)",,,,,,,
+145,filtro,Peru_F2,keep,observation - asked about each day ,Filter paper,"1. Yes, 2. No, -1. No data available",,,,,,,
+146,medicamento1,Peru_F2,keep,observation - asked about each day ,Take medication,"1. Yes, 2. No, -1. No data available",,,,,,,
+147,medicamento2,Peru_F2,keep,observation - asked about each day ,Type medication,"C = cloroquine
+P = primaquine
+A + artesunate
+M = mefloquine
+Q = quinine
+L = clindamicine
+-1. No data available",,,,,,,
+148,medicamento3,Peru_F2,keep,observation - asked about each day ,Type medication,"C = cloroquine
+P = primaquine
+A + artesunate
+M = mefloquine
+Q = quinine
+L = clindamicine
+-1. No data available",,,,,,,
+149,contactomalaria,Peru_F2,keep,observation - asked about each day ,Contact with malaria,"1. Yes, 2. No, -1. No data available",,,,,,,
+150,presencia,Peru_F2,keep,"may discard later, but asked only at every attempted visit",Present at time of hh visit,"1. Yes
+2. Traveling
+3. Outside of the community
+4. Refused
+5. Deceased
+6. Moved
+7. Hospitalized
+-1. Not applicable (because not a visit day)",,,,,,,
+151,fiebre,Peru_F2,keep,observation - asked about each day ,Fever,"1. Yes, 2. No, -1. No data available",,,,,,,
+152,escalofrios,Peru_F2,keep,observation - asked about each day ,Chills,"1. Yes, 2. No, -1. No data available",,,,,,,
+153,dolordecabeza,Peru_F2,keep,observation - asked about each day ,Headache,"1. Yes, 2. No, -1. No data available",,,,,,,
+154,dolorabdominal,Peru_F2,keep,observation - asked about each day ,Abdominal pain,"1. Yes, 2. No, -1. No data available",,,,,,,
+155,dolordeespalda,Peru_F2,keep,observation - asked about each day ,Back pain,"1. Yes, 2. No, -1. No data available",,,,,,,
+156,rasherupcion,Peru_F2,keep,observation - asked about each day ,Rash,"1. Yes, 2. No, -1. No data available",,,,,,,
+157,otros_sintomas,Peru_F2,keep,"observation - asked about each day , will require translation",Other symptoms,code,,,,,,,
+158,comentarios,Peru_F2,discard,Comments on why people weren't there at the time of the visit. Not necessary for data display and would require translation,Comments,,,,,,,,
+159,lug_vje1,Peru_F2,keep,link to date via presencia,Place of travel 1,code,,,,,,,
+160,lug_vje2,Peru_F2,keep,link to date via presencia,Place of travel 2,code,,,,,,,
+161,lug_vje3,Peru_F2,discard,All data is NA,Place of travel 3,,,,,,,,
+162,temperatura,Peru_F2,keep,only measured at a visit,Temperature,numeric,Temperature at visit,F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx,EUPATH_0000110,Temperature,,,
+163,cod_mues,Peru_F2,keep,,Sample ID,free text,,,,,,,
+164,razon,Peru_F2,keep,only measured at a visit,Reason for sample,"1. Monthly
+2. Febrile
+3. Other (specify)
+NA = not applicable",Type of visit,F2_2012_13.xlsx; F2_2014_15.xlsx; F2_2015_jan_jul.xlsx,EUPATH_0000311,Visit type,,,
+165,desrazon,Peru_F2,keep,will need to decide whether to keep and translate or discard,Description of reason,code,,,,,,,
+166,gg_result,Peru_F2,keep,,Thick smear result,"1. Negative
+2. Positive - vivax
+3. Positive - falciparum
+4. Mixed
+5=Not readable
+NA = not applicable",,,,,,,
+167,v_cruces,Peru_F2,discard,"raw counts, will only display densities",Asexual stage - p. vivax,,,,,,,,
+168,f_cruces,Peru_F2,discard,"raw counts, will only display densities",Asexual stage - p. falciparum,,,,,,,,
+169,dens_v_asex,Peru_F2,keep,only done when blood smear done,"Density of asexual stage vivax, parasite/microliter",numeric,,,,,,,
+170,dens_v_gam,Peru_F2,keep,only done when blood smear done,"Density of asexual stage vivax, parasite/microliter",numeric,,,,,,,
+171,dens_f_asex,Peru_F2,keep,only done when blood smear done,"Density of asexual stage falciparum, parasite/microliter",numeric,,,,,,,
+172,dens_f_gam,Peru_F2,keep,only done when blood smear done,"Density of sexual stage falciparum, parasite/microliter",numeric,,,,,,,
+173,pcr_result,Peru_F2,keep,,PCR result,"1. Negative
+2. Positive - vivax
+3. Positive - falciparum
+4. Mixed
+5=Not readable
+NA = not applicable",,,,,,,
+174,ct_v,Peru_F2,keep,,CT/CQ value - p. vivax,numeric,,,,,,,
+175,ct_f,Peru_F2,keep,,CT/CQ value - p. falciparum,numeric,,,,,,,
+176,qtf_crx_v,Peru_F2,keep,,Density p. vivax - PCR result copies per rxn,numeric,,,,,,,
+177,qtf_crx_f,Peru_F2,keep,,Density p. falciprarum - PCR result copies per rxn,numeric,,,,,,,
+178,comun,Peru_F2,discard,Already noted in Peru_household,Study site,,,,,,yes,,
+179,cod_per,Peru_F3,discard,Already noted in Peru_individual,Individual ID,,,,,,yes,,
+180,cod_casa,Peru_F3,discard,Already noted in Peru_household,HHID,,,,,,yes,,
+181,fec_nac,Peru_F3,keep,"Already noted in Peru_individual, but data doesn't always match",Date of birth,,,,,,,yes,
+182,edad,Peru_F3,keep,,Age,numeric,Age at time of enrollment,censo_exel_proy1.xlsx,EUPATH_0000120,Age at time of enrollment,yes,,
+183,sexo,Peru_F3,discard,Already noted in Peru_household,Sex,"categorical, 1-2",Sex,censo_exel_proy1.xlsx,PATO_0000047,Sex,yes,,
+184,fecinc,Peru_F3,keep,"Might be a duplicate of dd, mm, and aa in F2",Date of enrollment,,,,,,yes,yes,
+185,ocup,Peru_F3,keep,Slightly different answer choices than traprin in ind,Occupation category,"1. Lumberjack
+2. Urban worker
+3. Fisherman
+4. Woodcutter/coal merchant
+5. Farmer
+6. Boatman
+7. Debt collector
+8. Artisan/craftsman
+9. Merchant
+10. Housekeeper
+11. Retired
+12. Dock worker/longshoreman
+13. Motorist/motorcyclist
+14. Other (specify)
+15. Student
+16. Minor
+17. Housewife
+18. Does not work 
+99. Not applicable",,,,,yes,,
+186,otrocup,Peru_F3,keep,,Other occupation,,,,,,yes,,
+187,grains,Peru_F3,keep,,Education level,"1. Pre-school
+2. Primary
+3. Secondary
+4. Technical
+5. College or higher
+6. Not literate
+7. Literate but no formal education",,,,,instruc,,
+188,grado,Peru_F3,discard,"Codes to the variable grains above, and 21 and 22 actually mean illiterate and literate with no formal training respectively. Therefore don't need to display this variable since that information is captured above",Years of education,,,,,,,,
+189,estciv,Peru_F3,keep,,Marital status,"1. Single
+2. Married/cohabitating
+3. Divorced
+4. Separated
+5. Widowed
+99. No data",Marital status,censo_exel_proy1.xlsx,EUPATH_0000374,Marital status,yes,,
+190,cod_mues,Peru_F3,discard,Already noted in Peru_F2. Would load from both datasets,Sample code,,,,,,cod_mues,,
+191,fec_dia0,Peru_F3,keep,,Date day 0 (Stata format dd/mm/yy),,,,,,,,
+192,fiebre,Peru_F3,keep,,Days with fever,numeric,,,,,,,
+193,escalo,Peru_F3,keep,,Days with chills,numeric,,,,,,,
+194,dolcab,Peru_F3,keep,,Days with headache,numeric,,,,,,,
+195,dolabd,Peru_F3,keep,,Days with abdominal pain,numeric,,,,,,,
+196,dolesp,Peru_F3,keep,,Days with back pain,numeric,,,,,,,
+197,rash,Peru_F3,keep,,Days with rash,numeric,,,,,,,
+198,nau,Peru_F3,keep,,Days with nausea,numeric,,,,,,,
+199,vom,Peru_F3,keep,,Days with vomiting,numeric,,,,,,,
+200,ano,Peru_F3,keep,,Days with reduced appetite,numeric,,,,,,,
+201,mar,Peru_F3,keep,,Days with dizziness,numeric,,,,,,,
+202,dia,Peru_F3,keep,,Days with diarrhea,numeric,,,,,,,
+203,tos,Peru_F3,keep,,Days with cough,numeric,,,,,,,
+204,otro1,Peru_F3,,"Don't know what other symptoms are, so may discard",Other symptom (1),,,,,,,,
+205,otro2,Peru_F3,,"Don't know what other symptoms are, so may discard",Other symptom (2),,,,,,,,
+206,fecres,Peru_F3,discard,,Date of result,,,,,,,yes,
+207,resMIN,Peru_F3,discard,"Supposed to code to WHO standards (pg 81, http://apps.who.int/iris/bitstream/handle/10665/44208/9789241547826_eng.pdf?sequence=1) but codes don't make sense, probably entered incorrectly",Thick smear result - ministry of health,,,,,,yes,,
+208,resPro,Peru_F3,keep,,Thick smear result - ICEMR project,,"1 - Negative, 2 - Plasmodium vivax, 3 - Plasmodium falciparum",,,,yes,,
+209,vivano,Peru_F3,keep,"Doesn�t usually equal tiecom, combine with viaja below",Years lived in community,,,,,,tiecom,yes,
+210,vivme,Peru_F3,keep,combine with vivano,Days lived in community,,,,,,yes,yes,
+211,viaja,Peru_F3,keep,,Do you travel?,,"1 - Yes, 2 - No",,,,,,
+212,frec,Peru_F3,keep,Combine with valfreq,"Frequency of travel, unit",,"Days, months, years",,,,,,
+213,valfrec,Peru_F3,keep,combine with frec,"Frequency of travel, numeric",,numeric,,,,,,
+214,motvia,Peru_F3,keep,,Reason for travels,,,,,,,,
+215,ultvia,Peru_F3,keep,,Traveled in the past 30 days,,,,,,,,
+216,reg,Peru_F3,keep,,When returned from travels,,,,,,,,
+217,durvia1,Peru_F3,keep,,Number of days each trip (1),,,,,,,,
+218,durvia2,Peru_F3,discard,No data available,Number of days each trip (2),,,,,,,,
+219,durvia3,Peru_F3,discard,No data available,Number of days each trip (3),,,,,,,,
+220,durvia4,Peru_F3,discard,No data available,Number of days each trip (4),,,,,,,,
+221,rio1,Peru_F3,keep,,River used for travel on each trip (1),"1. Chambira
+2. Pintuyacu
+3. Ucayali
+4. Tigre
+5. Putumayo
+5. Pastaza
+7. Napo
+8. Nanay
+9. Morona
+10. Momon
+11. Maranon
+12. Huallaga
+13. Amazonas
+14. Itaya
+15. Mazan
+16. Others (specify)
+77. Don't know
+99. Not applicable",,,,,yes,,
+222,rio2,Peru_F3,discard,No data available,River used for travel on each trip (2),,,,,,,,
+223,rio3,Peru_F3,discard,No data available,River used for travel on each trip (3),,,,,,,,
+224,rio4,Peru_F3,discard,No data available,River used for travel on each trip (4),,,,,,,,
+225,lug1,Peru_F3,keep,,Place or community  visited on each trip or the closest one (1),,,,,,yes,,
+226,lug2,Peru_F3,discard,No data available,Place or community  visited on each trip or the closest one (2),,,,,,,,
+227,lug3,Peru_F3,discard,No data available,Place or community  visited on each trip or the closest one (3),,,,,,,,
+228,lug4,Peru_F3,discard,No data available,Place or community  visited on each trip or the closest one (4),,,,,,,,
+229,mal,Peru_F3,keep,,Ever had malaria,1 Yes 2 No,,,,,,,
+230,vecmal,Peru_F3,keep,,Number of times had malaria,,,,,,yes,,
+231,fecmal1,Peru_F3,keep,,Date malaria 1,,,,,,,,
+232,tipmal1,Peru_F3,keep,,Type malaria 1,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+233,fecmal2,Peru_F3,keep,,Date malaria 2,,,,,,,,
+234,tipmal2,Peru_F3,keep,,Type malaria 2,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+235,fecmal3,Peru_F3,keep ,,Date malaria 3,,,,,,,,
+236,tipmal3,Peru_F3,keep,,Type malaria 3,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+237,fecmal4,Peru_F3,keep,,Date malaria 4,,,,,,,,
+238,tipmal4,Peru_F3,keep,,Type malaria 4,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+239,fecmal5,Peru_F3,keep,,Date malaria 5,,,,,,,,
+240,tipmal5,Peru_F3,keep,,Type malaria 5,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+241,fecmal6,Peru_F3,keep,,Date malaria 6,,,,,,,,
+242,tipmal6,Peru_F3,keep,,Type malaria 6,"1. Vivax
+2. Falciparum
+3. Mixed
+77. Don't know/refused",,,,,,,
+243,tto,Peru_F3,keep,,Antimalarial treatment last episode,1 Yes 2 No,,,,,,,
+244,famsin,Peru_F3,keep,,"Anyone else in the family currently have fever, headache, or chills",1 Yes 2 No,,,,,,,
+245,fammal,Peru_F3,keep,,Anyone else in the family currently have malaria,1 Yes 2 No,,,,,,,
+246,mos,Peru_F3,keep,,Have malaria net,1 Yes 2 No,,,,,yes,,
+247,mat,Peru_F3,keep,,Mosquito net material,"1 - Tocuyo cotton, 2 - Nylon, 3 - Olyset/PermaNet, 4 - Other",,,,,matmos,,
+248,otrmat,Peru_F3,keep,,Other material (specify),,,,,,matmosot,,
+249,impmos,Peru_F3,keep,,Malaria net ever treated,1 Yes 2 No,,,,,,,
+250,ultimp,Peru_F3,keep,,Last time malaria net treated,"1. Less than 6 months
+2. 6-12 months
+3. 13-24 months
+4. More than 24 months
+5. Never treated (since purchase from factory)",,,,,ultimpr,,
+251,quimpmos,Peru_F3,keep,,Who treated mosquito net,"1 - Factory, 2 - Household member, 3 - MINSA, 4 - Other",,,,,imprmo,,
+252,marca,Peru_F3,keep,combine with otrimp,Brand of mosquito net,,,,,,,,
+253,otrimp,Peru_F3,keep,combine with marca,Other brand (specify),,,,,,,,
+254,uso,Peru_F3,keep,,How often use mosquito net - past 15 days,"1. Daily
+2. 10-14 days
+3. 7-8 days
+4. Less than 7 days",,,,,,,
+255,tiemosaho,Peru_F3,keep,,Years had mosquito net,,,,,,,,
+256,tiemosmes,Peru_F3,keep,,Months had mosquito net,,,,,,,,
+257,tiemosdia,Peru_F3,keep,,Days had mosquito net,,,,,,,,
+258,evimos,Peru_F3,keep,,Prevent mosquitoes biting when use net,1 Yes 2 No,,,,,,,
+259,lavmosaho,Peru_F3,keep,,How often wash mosquito net – years,,,,,,,,
+260,lavmosmes,Peru_F3,keep,,How often wash mosquito net – months,,,,,,,,
+261,lavmosdias,Peru_F3,keep,,How often wash mosquito net – days,,,,,,,,
+262,fecfum,Peru_F3,keep,,Date of last fumigation,,,,,,,,
+263,coc,Peru_F3,keep,,Main cooking location,"1. Outside
+2. Inside the house
+3. Other",,,,,,,
+264,otrcoc,Peru_F3,keep,,Other cooking location (specify),,,,,,,,
+265,com,Peru_F3,keep,,Type of cookfuel used,,,,,,combus,,
+266,otrcom,Peru_F3,discard,"few answers, most conflict with answer in com",Other cookfuel (specify),,,,,,comotr,,
+267,fec_mues,Peru_F3,keep,,Sample date,,,,,,,,
+268,dd,Peru_F3,discard,same as in fec_mues,Day of sample,,,,,,,,
+269,mm,Peru_F3,discard,same as in fec_mues,Month of sample,,,,,,,,
+270,aa,Peru_F3,discard,same as in fec_mues,Year of sample,,,,,,,,
+271,gg_result,Peru_F3,keep,,Thick smear result,"1. Negative
+2. Positive - vivax
+3. Positive - falciparum
+",,,,,,,
+272,v_cruces,Peru_F3,discard,,Asexual stage - p. vivax,,,,,,gg_result,,
+273,f_cruces,Peru_F3,discard,,Asexual stage - p. falciparum,,,,,,v_cruces,,
+274,dens_v_asex,Peru_F3,keep,,"Density of asexual stage vivax, parasite/microliter",,,,,,f_cruces,,
+275,dens_v_gam,Peru_F3,keep,,"Density of sexual stage vivax, parasite/microliter",,,,,,dens_v_asex,,
+276,dens_f_asex,Peru_F3,keep,,"Density of asexual stage falciparum, parasite/microliter",,,,,,dens_v_gam,,
+277,dens_f_gam,Peru_F3,keep,,"Density of sexual stage falciparum, parasite/microliter",,,,,,dens_f_asex,,
+278,pcr_result,Peru_F3,keep,,PCR result,"1. Negative
+2. Positive - vivax
+3. Positive - falciparum
+4. Mixed
+",,,,,dens_f_gam,,
+279,ct_v,Peru_F3,keep,,CT/CQ Value - p. falciparum,,,,,,pcr_result,,
+280,ct_f,Peru_F3,keep,,CT/CQ Value - p. vivax,,,,,,ct_v,,
+281,qtf_crx_v,Peru_F3,keep,,Density p. falciparum - PCR result copies per rxn,,,,,,ct_f,,
+282,qtf_crx_f,Peru_F3,keep,,Density p. vivax - PCR result copies per rxn,,,,,,qtf_crx_v,,
+283,observaciones,Peru_F3,discard,,Lab notes,,,,,,qtf_crx_f,,
