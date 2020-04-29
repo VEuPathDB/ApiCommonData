@@ -1,0 +1,384 @@
+variable,dataFile,dataSet,keepDiscard,colOrder,type,example,dateTime,formatCode,minValue,maxValue,values,uniqueValueCount,percentMissing,timeVarying,flag,Notes
+Assay_Id,diagnostics assay,South Asia,discard,17,chr,01/01/0001,date?,%d/%m/%Y,n/a,n/a,>10 unique values,2319,0,once,NA,"Seems to be Participant ID, but sometimes was autochanged to date format. Have Participant ID in file anyway, so don't need"
+Bacteria_seen_in_slide,diagnostics assay,South Asia,keep,16,chr,NA,NA,NA,n/a,n/a,"Missing, No, Yes, NA",3,0,once,NA,Possible values: Missing      No     Yes
+Date,diagnostics assay,South Asia,discard,2,chr,4/23/12,date?,%Y-%m-%d,n/a,n/a,>10 unique values,902,0,once,NA,"Date the sample was processed, not date it was collected"
+Gametocyte_Density,diagnostics assay,South Asia,keep,10,int,88888888,NA,NA,0,99999999,0 to 99999999,255,0,once,NA,
+Hematocrit,diagnostics assay,South Asia,keep,12,dbl,0,NA,NA,0,99,0 to 99,121,0,once,NA,
+HemoCue_report,samp_coll_form_3,South Asia,discard,7,chr,[document],NA,NA,n/a,n/a,"[document], NA",1,0,once,NA,
+Initial_Gametocytemia,diagnostics assay,South Asia,keep,9,dbl,88.88,NA,NA,0,99.99,0 to 99.99,41,0,once,NA,
+Initial_Pf_Parasitemia,diagnostics assay,South Asia,keep,6,dbl,0.03,NA,NA,0,99.99,0 to 99.99,283,0,once,NA,
+Initial_Pm_Parasitemia,diagnostics assay,South Asia,keep,7,dbl,0,NA,NA,0,99.99,0 to 99.99,4,0,once,NA,
+Initial_Pv_Parasitemia,diagnostics assay,South Asia,keep,5,dbl,0,NA,NA,0,99.99,0 to 99.99,212,0,once,NA,
+Measurement_Time,diagnostics assay,South Asia,discard,3,chr,11:00PM,NA,NA,n/a,n/a,>10 unique values,123,0,once,NA,Time the sample was processed
+Parasite_Density,diagnostics assay,South Asia,keep,8,int,88888888,NA,NA,0,99999999,0 to 99999999,1072,0,once,NA,
+Participant_ID,diagnostics assay,South Asia,keep,1,int,1010001,NA,NA,1010001,1050079,1010001 to 1050079,2319,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,enrollment_form,South Asia,NA,1,int,1010001,NA,NA,1010001,1012132,1010001 to 1012132,2132,0,once,duplicated variable,NA
+Participant_ID,enrollment_form_labkey_correctid,South Asia,NA,1,int,1010001,NA,NA,1010001,1050079,1010001 to 1050079,2933,0,once,duplicated variable,NA
+Participant_ID,inpatient_care_chart_review,South Asia,keep,1,int,101199,NA,NA,101199,1050079,101199 to 1050079,853,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,inpatient_treatment_drug_1,South Asia,keep,1,int,1010003,NA,NA,1010003,1050079,1010003 to 1050079,904,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,inpatient_treatment_drug_2,South Asia,keep,1,int,1010003,NA,NA,1010003,1050079,1010003 to 1050079,834,0,once,duplicated variable,
+Participant_ID,inpatient_treatment_drug_3,South Asia,keep,1,int,1010003,NA,NA,1010003,1050079,1010003 to 1050079,594,0,once,duplicated variable,
+Participant_ID,inpatient_treatment_drug_4,South Asia,keep,1,int,1010003,NA,NA,1010003,1050079,1010003 to 1050079,401,0,once,duplicated variable,
+Participant_ID,inpatient_treatment_drug_5,South Asia,keep,1,int,1010003,NA,NA,1010003,1050079,1010003 to 1050079,282,0,once,duplicated variable,
+Participant_ID,questionnaire_form_1,South Asia,keep,1,int,1010001,NA,NA,103134,1050079,103134 to 1050079,2613,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,questionnaire_form_2,South Asia,keep,1,int,1010001,NA,NA,101597,1050079,101597 to 1050079,2563,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,questionnaire_form_3,South Asia,keep,1,int,1010001,NA,NA,101295,10200423,101295 to 10200423,2560,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,samp_coll_form_2,South Asia,keep,1,int,1010001,NA,NA,4,1050079,4 to 1050079,2623,0,once,duplicated variable,
+Participant_ID,samp_coll_form_3,South Asia,keep,1,int,1010001,NA,NA,1010001,1050079,1010001 to 1050079,2494,0,once,duplicated variable,Same as X1._Participant_ID
+Participant_ID,sample_collection_form,South Asia,keep,1,int,10011895,NA,NA,10077,10011895,10077 to 10011895,2547,0,once,duplicated variable,Same as X1._Participant_ID
+Patient_Hemoglobin,diagnostics assay,South Asia,keep,11,dbl,0,NA,NA,0,23.1,0 to 23.1,138,0,once,NA,
+Processing_Protocol,diagnostics assay,South Asia,discard,4,int,1,NA,NA,0,13,0 to 13,11,0,once,NA,
+RDT,diagnostics assay,South Asia,keep,15,chr,Pf,NA,NA,n/a,n/a,"Pf, Pv, mixed_Pf/Pv, negative",4,0,once,NA,possible values: mixed_Pf/Pv    negative          Pf          Pv 
+RDT_scan,samp_coll_form_3,South Asia,discard,3,chr,[document],NA,NA,n/a,n/a,"[document], NA",1,0,once,NA,
+Smear_Report,samp_coll_form_3,South Asia,discard,5,chr,NA,NA,NA,n/a,n/a,"[document], NA",1,0,once,NA,
+Thick_blood,diagnostics assay,South Asia,keep,13,chr,Pf,NA,NA,n/a,n/a,"Pf, Pv, mixed_Pf/Pv, negative",4,0,once,NA,possible values: mixed_Pf/Pv    negative          Pf          Pv 
+Thin_blood,diagnostics assay,South Asia,keep,14,chr,Pf,NA,NA,n/a,n/a,"Pf, Pv, mixed_Pf/Pv, negative",4,0,once,NA,possible values: mixed_Pf/Pv    negative          Pf          Pv 
+X1._Participant_ID,enrollment_form,NA,discard,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Same as Participant_ID
+X10._Temperature_.deg_Fahrenheit.,sample_collection_form,South Asia,keep,2,dbl,98.8,NA,NA,0,107.6,0 to 107.6,137,0,once,NA,"If no temp, 000.0"
+X100._Discharge,inpatient_care_chart_review,South Asia,keep,32,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, 01-Yes, 02-No, NA",3,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
+X101._Death,inpatient_care_chart_review,South Asia,keep,33,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, 01-Yes, 02-No, NA",3,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
+X11._Temperature_reading_time_.24h.,sample_collection_form,South Asia,keep,3,chr,1:16_PM,NA,NA,n/a,n/a,>10 unique values,425,0,once,NA,
+X12._Temperature_reading_date,sample_collection_form,South Asia,keep,4,chr,12/31/16,date?,%Y-%m-%d,n/a,n/a,>10 unique values,997,0,once,NA,
+X13._Thermometer_used,sample_collection_form,South Asia,discard,5,int,1,NA,NA,0,3,0 to 3,4,0,once,NA,"This seems to be too specific to the study, the number of the thermometer used to record temperature"
+X14._Blood_volume_collected_.ml.,sample_collection_form,South Asia,keep,6,dbl,6.2,NA,NA,0,99.9,0 to 99.9,60,0,once,NA,"If not collected, 00.0"
+X15._Collection_time_.24h.,sample_collection_form,South Asia,keep,7,chr,1:15_PM,NA,NA,n/a,n/a,>10 unique values,382,0,once,NA,
+X16._Collection_date,sample_collection_form,South Asia,keep,8,chr,12/31/16,date?,%Y-%m-%d,n/a,n/a,>10 unique values,1001,0,once,NA,
+X17._Collected_at_off.site_clinic.,samp_coll_form_2,South Asia,discard,2,chr,02_-_No,NA,NA,n/a,n/a,", 00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0.123783965,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X18._Clinic_Name,samp_coll_form_2,South Asia,discard,3,chr,NA,NA,NA,n/a,n/a,>10 unique values,36,0.123783965,once,NA,
+X19._Time_sent_to_lab_.24h.,samp_coll_form_2,South Asia,discard,4,chr,NA,NA,NA,n/a,n/a,>10 unique values,53,0.123783965,once,NA,
+X2._Inclusion_._Patient_age_between_12_months_and_65_years.,enrollment_form,South Asia,discard,2,int,1,NA,NA,0,99,0 to 99,4,0,once,duplicated variable,
+X2._Inclusion_._Patient_age_between_12_months_and_65_years.,enrollment_form_labkey_correctid,South Asia,NA,2,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_No_answer, 01_-_Yes, 02_-_No, 99_-_Uncertain, NA",4,0,once,duplicated variable,NA
+X20._Date_sent_to_lab,samp_coll_form_2,South Asia,discard,5,chr,NA,date?,NA,n/a,n/a,>10 unique values,107,0.123783965,once,NA,
+X21._Time_received_at_lab_.24h.,samp_coll_form_2,South Asia,discard,6,chr,NA,NA,NA,n/a,n/a,>10 unique values,121,0.123783965,once,NA,
+X22._Date_received_at_lab,samp_coll_form_2,South Asia,discard,7,chr,NA,date?,NA,n/a,n/a,>10 unique values,108,0.123783965,once,NA,
+X23._Consistent_storage_conditions,samp_coll_form_2,South Asia,discard,8,chr,NA,NA,NA,n/a,n/a,>10 unique values,91,0.123783965,once,NA,
+X24._Storage_Temperature_C_degree,samp_coll_form_2,South Asia,discard,9,chr,NA,NA,NA,n/a,n/a,>10 unique values,16,0.123783965,once,NA,
+X26._Hospital_RDT_.._Species_of_malaria.,samp_coll_form_3,South Asia,keep,2,chr,01_-_Pf,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Pf, 02_-_Pv, 05_-_mixed_Pf/Pv, 07_-_negative, NA",5,0,once,NA,"01, 01 - Pf | 02, 02 - Pv | 03, 03 - Pm | 04, 04 - Po | 05, 05 - mixed Pf/Pv | 06, 06 - mixed Pf/Pm | 07, 07 - negative | 00, 00 - Missing | 99, 99 - Uncertain"
+X27._Hospital_Smear_.._Species_of_malaria,samp_coll_form_3,South Asia,keep,4,chr,00_-_Missing,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Pf, 02_-_Pv, 05_-_mixed_Pf/Pv, 07_-_negative",5,0,once,NA,"01, 01 - Pf | 02, 02 - Pv | 03, 03 - Pm | 04, 04 - Po | 05, 05 - mixed Pf/Pv | 06, 06 - mixed Pf/Pm | 07, 07 - negative | 00, 00 - Missing | 99, 99 - Uncertain"
+X28._Hospital_Hb_.g.dl.,samp_coll_form_3,South Asia,keep,6,dbl,14.7,NA,NA,0,19.4,0 to 19.4,107,0,once,NA,In g/dL. No count performed = 00.0
+X29._Antimalarial_therapy_initiation_at_GMC.,samp_coll_form_3,South Asia,keep,8,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X3._Inclusion_.._All_required_consent_forms_completed.,enrollment_form,South Asia,discard,3,int,1,NA,NA,1,2,1 to 2,2,0,once,duplicated variable,
+X3._Inclusion_.._All_required_consent_forms_completed.,enrollment_form_labkey_correctid,South Asia,NA,3,chr,01_-_Yes,NA,NA,n/a,n/a,"01_-_Yes, 02_-_No, NA",2,0,once,duplicated variable,NA
+X30._Antimalarial_therapy_initiation_at_GMC_date,samp_coll_form_3,South Asia,keep,9,chr,NA,date?,NA,n/a,n/a,>10 unique values,351,0,once,NA,
+X31._Antimalarial_therapy_initiation_at_GMC_time,samp_coll_form_3,South Asia,keep,10,chr,NA,NA,NA,n/a,n/a,>10 unique values,162,0,once,NA,
+X32._Inpatient,samp_coll_form_3,South Asia,keep,11,chr,01_-_Yes,NA,NA,n/a,n/a,"01_-_Yes, 02_-_No, 99_-_Uncertain, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X33._Gender,questionnaire_form_1,South Asia,keep,2,chr,01_-_Male,NA,NA,n/a,n/a,"01_-_Male, 02_-_Female, NA",2,0,once,NA,"01, 01 - Male | 02, 02 - Female | 03, 03 - Transgender | 00, 00 - Missing | 99, 99 - Uncertain"
+X34._Age_.at_enrollment.,questionnaire_form_1,South Asia,keep,3,int,38,NA,NA,1,66,1 to 66,66,0,once,NA,"2 digits, in years.  Missing = 00, uncertain = 99"
+X35._Tribal_.self.reported.,questionnaire_form_1,South Asia,keep,4,chr,02_-_No,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X36._State_of_residence,questionnaire_form_1,South Asia,keep,5,chr,15_-_Karnataka,NA,NA,n/a,n/a,>10 unique values,18,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X37._State_of_birth,questionnaire_form_1,South Asia,keep,6,chr,28_-_Rajasthan,NA,NA,n/a,n/a,>10 unique values,33,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X38._Move_in_last_1_m.,questionnaire_form_2,South Asia,keep,2,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X39._State,questionnaire_form_2,South Asia,keep,3,chr,15_-_Karnataka,NA,NA,n/a,n/a,>10 unique values,18,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X4._Inclusion_.._Patient_is_positive_for_malaria.,enrollment_form,South Asia,discard,4,int,1,NA,NA,1,1,1 to 1,1,0,once,duplicated variable,
+X4._Inclusion_.._Patient_is_positive_for_malaria.,enrollment_form_labkey_correctid,South Asia,NA,4,chr,01_-_Yes,NA,NA,n/a,n/a,"01_-_Yes, 02_-_No, NA",2,0,once,duplicated variable,NA
+X40._Move_in_last_12_m.,questionnaire_form_2,South Asia,keep,4,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X41._State_1,questionnaire_form_2,South Asia,keep,5,chr,00_-_Missing,NA,NA,n/a,n/a,>10 unique values,22,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X42._State_2,questionnaire_form_2,South Asia,keep,6,chr,00_-_Missing,NA,NA,n/a,n/a,>10 unique values,15,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X43._State_3,questionnaire_form_2,South Asia,keep,7,chr,NA,NA,NA,n/a,n/a,"00_-_Missing, 05_-_Bihar, 09_-_Goa, 19_-_Maharashtra, 27_-_Punjab, 28_-_Rajasthan, 30_-_Tamil_Nadu, NA",7,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X44._Occupation,questionnaire_form_2,South Asia,keep,8,chr,15_-_other,NA,NA,n/a,n/a,>10 unique values,14,0,once,NA,"01, 01 - not employed | 02, 02 - don't know | 03, 03 - farmer | 04, 04 - office worker | 05, 05 - housewife | 06, 06 - local trade | 07, 07 - plantation worker | 08, 08 - construction worker | 09, 09 - factory worker | 10, 10 - student | 11, 11 - soldier | 12, 12 - miner | 13, 13 - police | 14, 14 - forest worker | 15, 15 - other | 00, 00 - missing | 99, 99 - uncertain"
+X45._Travel_in_last_1_m.,questionnaire_form_3,South Asia,keep,2,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X46._State,questionnaire_form_3,South Asia,keep,3,chr,NA,NA,NA,n/a,n/a,>10 unique values,27,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X47._Travel_in_last_12_m.,questionnaire_form_3,South Asia,keep,4,chr,01_-_Yes,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,NA,"01, 01 - Yes | 02, 02 - No | 00, 00 - Missing | 99, 99 - Uncertain"
+X48._State_1,questionnaire_form_3,South Asia,keep,5,chr,15_-_Karnataka,NA,NA,n/a,n/a,>10 unique values,29,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X49._State_2,questionnaire_form_3,South Asia,keep,6,chr,00_-_Missing,NA,NA,n/a,n/a,>10 unique values,21,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X5._Exclusion_.._Patient_Hb_less_than_7_g.dl_.severe_anemia..,enrollment_form,South Asia,discard,5,int,2,NA,NA,0,2,0 to 2,3,0,once,duplicated variable,
+X5._Exclusion_.._Patient_Hb_less_than_7_g.dl_.severe_anemia..,enrollment_form_labkey_correctid,South Asia,NA,5,chr,02_-_No,NA,NA,n/a,n/a,"00_-_Missing, 01_-_Yes, 02_-_No, NA",3,0,once,duplicated variable,NA
+X50._State_3,questionnaire_form_3,South Asia,keep,7,chr,00_-_Missing,NA,NA,n/a,n/a,>10 unique values,13,0,once,NA,"01, 01 - Andaman & Car Nicobar Island | 02, 02 - Andhra Pradesh | 03, 03 - Arunachal Pradesh | 04, 04 - Assam | 05, 05 - Bihar | 06, 06 - Chandigarh | 07, 07 - Chhattisgarh | 08, 08 - Daman Diu and Nagra Haveli | 09, 09 - Goa | 10, 10 - Gujarat | 11, 11 - Haryana | 12, 12 - Himachal Pradesh | 13, 13 - Jammu and Kashmir | 14, 14 - Jharkhand | 15, 15 - Karnataka | 16, 16 - Kerala | 17, 17 - Lakhshyadweep | 18, 18 - Madhya Pradesh | 19, 19 - Maharashtra | 20, 20 - Manipur | 21, 21 - Meghalaya | 22, 22 - Mizoram | 23, 23 - Nagaland | 24, 24 - National Capital Delhi | 25, 25 - Orissa | 26, 26 - Pondicherry | 27, 27 - Punjab | 28, 28 - Rajasthan | 29, 29 - Sikkim | 30, 30 - Tamil Nadu | 31, 31 - Telangana | 32, 32 - Tripura | 33, 33 - Uttarakhand | 34, 34 - Uttar Pradesh | 35, 35 - West Bengal | 36, 36 - Outside of India | 00, 00 - Missing | 99, 99 - Uncertain"
+X51._Rx_name,inpatient_treatment_drug_1,South Asia,keep,2,chr,04_-_AS,NA,NA,n/a,n/a,>10 unique values,11,0,once,NA,
+X51a._Name_of_other_antimalarial,inpatient_treatment_drug_1,South Asia,discard,3,chr,NA,NA,NA,n/a,n/a,>10 unique values,39,0,once,NA,
+X52A._Timepoint,inpatient_treatment_drug_1,South Asia,keep,4,dbl,2,NA,NA,-3.5,5,-3.5 to 5,6,0,once,NA,
+X52B._Timepoint,inpatient_treatment_drug_1,South Asia,keep,7,dbl,2.5,NA,NA,-3,6,-3 to 6,12,0,once,NA,
+X52C._Timepoint,inpatient_treatment_drug_1,South Asia,keep,10,dbl,3,NA,NA,-2.5,4,-2.5 to 4,10,0,once,NA,
+X52D._Timepoint,inpatient_treatment_drug_1,South Asia,keep,13,dbl,4,NA,NA,-2,4,-2 to 4,7,0,once,NA,
+X52E._Timepoint,inpatient_treatment_drug_1,South Asia,keep,16,dbl,NA,NA,NA,-1.5,5,-1.5 to 5,9,0,once,NA,
+X52F._Timepoint,inpatient_treatment_drug_1,South Asia,keep,19,dbl,NA,NA,NA,-1,6,-1 to 6,9,0,once,NA,
+X52G._Timepoint,inpatient_treatment_drug_1,South Asia,keep,22,dbl,NA,NA,NA,0,7,0 to 7,9,0,once,NA,
+X52H._Timepoint,inpatient_treatment_drug_1,South Asia,keep,25,dbl,NA,NA,NA,0.5,8,0.5 to 8,9,0,once,NA,
+X52I._Timepoint,inpatient_treatment_drug_1,South Asia,keep,28,dbl,NA,NA,NA,1,9,1 to 9,8,0,once,NA,
+X52J._Timepoint,inpatient_treatment_drug_1,South Asia,keep,31,dbl,NA,NA,NA,1.5,10,1.5 to 10,6,0,once,NA,
+X52K._Timepoint,inpatient_treatment_drug_1,South Asia,keep,34,dbl,NA,NA,NA,2,11,2 to 11,6,0,once,NA,
+X52L._Timepoint,inpatient_treatment_drug_1,South Asia,keep,37,dbl,NA,NA,NA,2.5,12,2.5 to 12,4,0,once,NA,
+X52M._Timepoint,inpatient_treatment_drug_1,South Asia,keep,40,int,NA,NA,NA,3,13,3 to 13,3,0,once,NA,
+X52N._Timepoint,inpatient_treatment_drug_1,South Asia,keep,43,dbl,NA,NA,NA,3.5,14,3.5 to 14,3,0,once,NA,
+X52O._Timepoint,inpatient_treatment_drug_1,South Asia,keep,46,int,NA,NA,NA,14,14,14 to 14,1,0,once,NA,
+X53A._Dose,inpatient_treatment_drug_1,South Asia,keep,5,dbl,120,NA,NA,3.15,1000,3.15 to 1000,55,0,once,NA,
+X53B._Dose,inpatient_treatment_drug_1,South Asia,keep,8,dbl,120,NA,NA,4,600,4 to 600,51,0,once,NA,
+X53C._Dose,inpatient_treatment_drug_1,South Asia,keep,11,dbl,120,NA,NA,2,600,2 to 600,50,0,once,NA,
+X53D._Dose,inpatient_treatment_drug_1,South Asia,keep,14,dbl,200,NA,NA,2,1210,2 to 1210,38,0,once,NA,
+X53E._Dose,inpatient_treatment_drug_1,South Asia,keep,17,dbl,NA,NA,NA,2.5,600,2.5 to 600,30,0,once,NA,
+X53F._Dose,inpatient_treatment_drug_1,South Asia,keep,20,dbl,NA,NA,NA,5,600,5 to 600,21,0,once,NA,
+X53G._Dose,inpatient_treatment_drug_1,South Asia,keep,23,dbl,NA,NA,NA,5,480,5 to 480,17,0,once,NA,
+X53H._Dose,inpatient_treatment_drug_1,South Asia,keep,26,int,NA,NA,NA,5,480,5 to 480,13,0,once,NA,
+X53I._Dose,inpatient_treatment_drug_1,South Asia,keep,29,int,NA,NA,NA,5,250,5 to 250,11,0,once,NA,
+X53J._Dose,inpatient_treatment_drug_1,South Asia,keep,32,int,NA,NA,NA,15,200,15 to 200,7,0,once,NA,
+X53K._Dose,inpatient_treatment_drug_1,South Asia,keep,35,int,NA,NA,NA,15,120,15 to 120,5,0,once,NA,
+X53L._Dose,inpatient_treatment_drug_1,South Asia,keep,38,int,NA,NA,NA,15,120,15 to 120,3,0,once,NA,
+X53M._Dose,inpatient_treatment_drug_1,South Asia,keep,41,int,NA,NA,NA,15,100,15 to 100,2,0,once,NA,
+X53N._Dose,inpatient_treatment_drug_1,South Asia,keep,44,int,NA,NA,NA,15,100,15 to 100,2,0,once,NA,
+X53O._Dose,inpatient_treatment_drug_1,South Asia,keep,47,int,NA,NA,NA,15,15,15 to 15,1,0,once,NA,
+X54A._Method,inpatient_treatment_drug_1,South Asia,keep,6,chr,01_-_IV,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54B._Method,inpatient_treatment_drug_1,South Asia,keep,9,chr,01_-_IV,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54C._Method,inpatient_treatment_drug_1,South Asia,keep,12,chr,01_-_IV,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54D._Method,inpatient_treatment_drug_1,South Asia,keep,15,chr,02_-_PO,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54E._Method,inpatient_treatment_drug_1,South Asia,keep,18,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54F._Method,inpatient_treatment_drug_1,South Asia,keep,21,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54G._Method,inpatient_treatment_drug_1,South Asia,keep,24,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X54H._Method,inpatient_treatment_drug_1,South Asia,keep,27,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X54I._Method,inpatient_treatment_drug_1,South Asia,keep,30,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X54J._Method,inpatient_treatment_drug_1,South Asia,keep,33,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X54K._Method,inpatient_treatment_drug_1,South Asia,keep,36,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X54L._Method,inpatient_treatment_drug_1,South Asia,keep,39,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X54M._Method,inpatient_treatment_drug_1,South Asia,keep,42,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X54N._Method,inpatient_treatment_drug_1,South Asia,keep,45,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X54O._Method,inpatient_treatment_drug_1,South Asia,keep,48,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X55._Additional_antimalarial.,inpatient_treatment_drug_2,South Asia,keep,2,int,1,NA,NA,1,2,1 to 2,2,0,once,NA,
+X56._Rx_name,inpatient_treatment_drug_2,South Asia,keep,3,chr,06_-_MQ,NA,NA,n/a,n/a,>10 unique values,11,0,once,NA,
+X56a._Name_of_other_antimalarial,inpatient_treatment_drug_2,South Asia,discard,4,chr,NA,NA,NA,n/a,n/a,>10 unique values,21,0,once,NA,
+X57A._Timepoint,inpatient_treatment_drug_2,South Asia,keep,5,dbl,4,NA,NA,0,8,0 to 8,18,0,once,NA,
+X57B._Timepoint,inpatient_treatment_drug_2,South Asia,keep,8,dbl,NA,NA,NA,0.25,8.5,0.25 to 8.5,30,0,once,NA,
+X57C._Timepoint,inpatient_treatment_drug_2,South Asia,keep,11,dbl,NA,NA,NA,0,9,0 to 9,24,0,once,NA,
+X57D._Timepoint,inpatient_treatment_drug_2,South Asia,keep,14,dbl,NA,NA,NA,0.5,9.5,0.5 to 9.5,26,0,once,NA,
+X57E._Timepoint,inpatient_treatment_drug_2,South Asia,keep,17,dbl,NA,NA,NA,1,10,1 to 10,18,0,once,NA,
+X57F._Timepoint,inpatient_treatment_drug_2,South Asia,keep,20,dbl,NA,NA,NA,1.5,10.5,1.5 to 10.5,20,0,once,NA,
+X57G._Timepoint,inpatient_treatment_drug_2,South Asia,keep,23,dbl,NA,NA,NA,2,11,2 to 11,12,0,once,NA,
+X57H._Timepoint,inpatient_treatment_drug_2,South Asia,keep,26,dbl,NA,NA,NA,2.33,12,2.33 to 12,12,0,once,NA,
+X57I._Timepoint,inpatient_treatment_drug_2,South Asia,keep,29,dbl,NA,NA,NA,2.66,13,2.66 to 13,12,0,once,NA,
+X57J._Timepoint,inpatient_treatment_drug_2,South Asia,keep,32,dbl,NA,NA,NA,3,14,3 to 14,12,0,once,NA,
+X57K._Timepoint,inpatient_treatment_drug_2,South Asia,keep,35,int,NA,NA,NA,4,15,4 to 15,11,0,once,NA,
+X57L._Timepoint,inpatient_treatment_drug_2,South Asia,keep,38,dbl,NA,NA,NA,4.5,16,4.5 to 16,11,0,once,NA,
+X57M._Timepoint,inpatient_treatment_drug_2,South Asia,keep,41,int,NA,NA,NA,5,17,5 to 17,11,0,once,NA,
+X57N._Timepoint,inpatient_treatment_drug_2,South Asia,keep,44,dbl,NA,NA,NA,5.5,18,5.5 to 18,10,0,once,NA,
+X57O._Timepoint,inpatient_treatment_drug_2,South Asia,keep,47,int,NA,NA,NA,6,17,6 to 17,6,0,once,NA,
+X57P._Timepoint,inpatient_treatment_drug_2,South Asia,keep,50,dbl,NA,NA,NA,6.5,14,6.5 to 14,4,0,once,NA,
+X57Q._Timepoint,inpatient_treatment_drug_2,South Asia,keep,53,int,NA,NA,NA,7,15,7 to 15,2,0,once,NA,
+X57R._Timepoint,inpatient_treatment_drug_2,South Asia,keep,56,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X57S._Timepoint,inpatient_treatment_drug_2,South Asia,keep,59,int,NA,NA,NA,8,8,8 to 8,1,0,once,NA,
+X57T._Timepoint,inpatient_treatment_drug_2,South Asia,keep,62,dbl,NA,NA,NA,8.5,8.5,8.5 to 8.5,1,0,once,NA,
+X57U._Timepoint,inpatient_treatment_drug_2,South Asia,keep,65,int,NA,NA,NA,9,9,9 to 9,1,0,once,NA,
+X57V._Timepoint,inpatient_treatment_drug_2,South Asia,keep,68,dbl,NA,NA,NA,9.5,9.5,9.5 to 9.5,1,0,once,NA,
+X58A._Dose,inpatient_treatment_drug_2,South Asia,keep,6,dbl,500,NA,NA,-88,2625,-88 to 2625,48,0,once,NA,
+X58B._Dose,inpatient_treatment_drug_2,South Asia,keep,9,dbl,NA,NA,NA,1.5,1500,1.5 to 1500,39,0,once,NA,
+X58C._Dose,inpatient_treatment_drug_2,South Asia,keep,12,dbl,NA,NA,NA,1.5,1500,1.5 to 1500,35,0,once,NA,
+X58D._Dose,inpatient_treatment_drug_2,South Asia,keep,15,dbl,NA,NA,NA,2.5,4800,2.5 to 4800,33,0,once,NA,
+X58E._Dose,inpatient_treatment_drug_2,South Asia,keep,18,dbl,NA,NA,NA,2.5,600,2.5 to 600,25,0,once,NA,
+X58F._Dose,inpatient_treatment_drug_2,South Asia,keep,21,dbl,NA,NA,NA,2.5,800,2.5 to 800,21,0,once,NA,
+X58G._Dose,inpatient_treatment_drug_2,South Asia,keep,24,dbl,NA,NA,NA,2.5,600,2.5 to 600,19,0,once,NA,
+X58H._Dose,inpatient_treatment_drug_2,South Asia,keep,27,dbl,NA,NA,NA,2.5,600,2.5 to 600,15,0,once,NA,
+X58I._Dose,inpatient_treatment_drug_2,South Asia,keep,30,dbl,NA,NA,NA,2.5,600,2.5 to 600,14,0,once,NA,
+X58J._Dose,inpatient_treatment_drug_2,South Asia,keep,33,dbl,NA,NA,NA,2.5,600,2.5 to 600,14,0,once,NA,
+X58K._Dose,inpatient_treatment_drug_2,South Asia,keep,36,dbl,NA,NA,NA,2.5,600,2.5 to 600,13,0,once,NA,
+X58L._Dose,inpatient_treatment_drug_2,South Asia,keep,39,dbl,NA,NA,NA,2.5,705,2.5 to 705,13,0,once,NA,
+X58M._Dose,inpatient_treatment_drug_2,South Asia,keep,42,dbl,NA,NA,NA,2.5,600,2.5 to 600,12,0,once,NA,
+X58N._Dose,inpatient_treatment_drug_2,South Asia,keep,45,dbl,NA,NA,NA,2.5,600,2.5 to 600,11,0,once,NA,
+X58O._Dose,inpatient_treatment_drug_2,South Asia,keep,48,dbl,NA,NA,NA,3.5,100,3.5 to 100,5,0,once,NA,
+X58P._Dose,inpatient_treatment_drug_2,South Asia,keep,51,dbl,NA,NA,NA,7.5,100,7.5 to 100,3,0,once,NA,
+X58Q._Dose,inpatient_treatment_drug_2,South Asia,keep,54,dbl,NA,NA,NA,7.5,15,7.5 to 15,2,0,once,NA,
+X58R._Dose,inpatient_treatment_drug_2,South Asia,keep,57,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X58S._Dose,inpatient_treatment_drug_2,South Asia,keep,60,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X58T._Dose,inpatient_treatment_drug_2,South Asia,keep,63,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X58U._Dose,inpatient_treatment_drug_2,South Asia,keep,66,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X58V._Dose,inpatient_treatment_drug_2,South Asia,keep,69,dbl,NA,NA,NA,7.5,7.5,7.5 to 7.5,1,0,once,NA,
+X59A._Method,inpatient_treatment_drug_2,South Asia,keep,7,chr,02_-_PO,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59B._Method,inpatient_treatment_drug_2,South Asia,keep,10,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59C._Method,inpatient_treatment_drug_2,South Asia,keep,13,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59D._Method,inpatient_treatment_drug_2,South Asia,keep,16,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59E._Method,inpatient_treatment_drug_2,South Asia,keep,19,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59F._Method,inpatient_treatment_drug_2,South Asia,keep,22,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59G._Method,inpatient_treatment_drug_2,South Asia,keep,25,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59H._Method,inpatient_treatment_drug_2,South Asia,keep,28,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59I._Method,inpatient_treatment_drug_2,South Asia,keep,31,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59J._Method,inpatient_treatment_drug_2,South Asia,keep,34,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, 03_-_IM, NA",3,0,once,NA,
+X59K._Method,inpatient_treatment_drug_2,South Asia,keep,37,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X59L._Method,inpatient_treatment_drug_2,South Asia,keep,40,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X59M._Method,inpatient_treatment_drug_2,South Asia,keep,43,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X59N._Method,inpatient_treatment_drug_2,South Asia,keep,46,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X59O._Method,inpatient_treatment_drug_2,South Asia,keep,49,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59P._Method,inpatient_treatment_drug_2,South Asia,keep,52,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59Q._Method,inpatient_treatment_drug_2,South Asia,keep,55,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59R._Method,inpatient_treatment_drug_2,South Asia,keep,58,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59S._Method,inpatient_treatment_drug_2,South Asia,keep,61,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59T._Method,inpatient_treatment_drug_2,South Asia,keep,64,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59U._Method,inpatient_treatment_drug_2,South Asia,keep,67,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X59V._Method,inpatient_treatment_drug_2,South Asia,keep,70,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X6._Exclusion.._Patient_pregnant.,enrollment_form,South Asia,discard,6,int,2,NA,NA,2,2,2 to 2,1,0,once,duplicated variable,
+X6._Exclusion.._Patient_pregnant.,enrollment_form_labkey_correctid,South Asia,NA,6,chr,02_-_No,NA,NA,n/a,n/a,"01_-_Yes, 02_-_No, NA",2,0,once,duplicated variable,NA
+X60._Additional_antimalarial.,inpatient_treatment_drug_3,South Asia,keep,2,int,2,NA,NA,1,2,1 to 2,2,0,once,NA,
+X61._Rx_name,inpatient_treatment_drug_3,South Asia,keep,3,chr,NA,NA,NA,n/a,n/a,"01_-_CQ, 02_-_PQ, 04_-_AS, 05_-_SF, 06_-_MQ, 07_-_Lum, 08_-_QN, 09_-_ART, 12_-_PY, NA",9,0,once,NA,
+X61a._Name_of_other_antimalarial,inpatient_treatment_drug_3,South Asia,discard,4,chr,NA,NA,NA,n/a,n/a,>10 unique values,16,0,once,NA,
+X62A._Timepoint,inpatient_treatment_drug_3,South Asia,keep,5,dbl,NA,NA,NA,0,10,0 to 10,14,0,once,NA,
+X62B._Timepoint,inpatient_treatment_drug_3,South Asia,keep,8,dbl,NA,NA,NA,0,10.5,0 to 10.5,26,0,once,NA,
+X62C._Timepoint,inpatient_treatment_drug_3,South Asia,keep,11,dbl,NA,NA,NA,0.83,11,0.83 to 11,14,0,once,NA,
+X62D._Timepoint,inpatient_treatment_drug_3,South Asia,keep,14,dbl,NA,NA,NA,1.33,11.5,1.33 to 11.5,20,0,once,NA,
+X62E._Timepoint,inpatient_treatment_drug_3,South Asia,keep,17,dbl,NA,NA,NA,1.83,12,1.83 to 12,13,0,once,NA,
+X62F._Timepoint,inpatient_treatment_drug_3,South Asia,keep,20,dbl,NA,NA,NA,2.33,12.5,2.33 to 12.5,18,0,once,NA,
+X62G._Timepoint,inpatient_treatment_drug_3,South Asia,keep,23,int,NA,NA,NA,3,13,3 to 13,7,0,once,NA,
+X62H._Timepoint,inpatient_treatment_drug_3,South Asia,keep,26,dbl,NA,NA,NA,6.5,14,6.5 to 14,8,0,once,NA,
+X62I._Timepoint,inpatient_treatment_drug_3,South Asia,keep,29,int,NA,NA,NA,8,15,8 to 15,7,0,once,NA,
+X62J._Timepoint,inpatient_treatment_drug_3,South Asia,keep,32,int,NA,NA,NA,9,16,9 to 16,7,0,once,NA,
+X62K._Timepoint,inpatient_treatment_drug_3,South Asia,keep,35,int,NA,NA,NA,10,17,10 to 17,7,0,once,NA,
+X62L._Timepoint,inpatient_treatment_drug_3,South Asia,keep,38,int,NA,NA,NA,11,18,11 to 18,7,0,once,NA,
+X62M._Timepoint,inpatient_treatment_drug_3,South Asia,keep,41,int,NA,NA,NA,12,19,12 to 19,7,0,once,NA,
+X62N._Timepoint,inpatient_treatment_drug_3,South Asia,keep,44,int,NA,NA,NA,13,20,13 to 20,7,0,once,NA,
+X62O._Timepoint,inpatient_treatment_drug_3,South Asia,keep,47,int,NA,NA,NA,14,20,14 to 20,4,0,once,NA,
+X63A._Dose,inpatient_treatment_drug_3,South Asia,keep,6,dbl,NA,NA,NA,-88,2375,-88 to 2375,41,0,once,NA,
+X63B._Dose,inpatient_treatment_drug_3,South Asia,keep,9,dbl,NA,NA,NA,-88,625,-88 to 625,25,0,once,NA,
+X63C._Dose,inpatient_treatment_drug_3,South Asia,keep,12,dbl,NA,NA,NA,2.5,625,2.5 to 625,21,0,once,NA,
+X63D._Dose,inpatient_treatment_drug_3,South Asia,keep,15,dbl,NA,NA,NA,2.5,480,2.5 to 480,13,0,once,NA,
+X63E._Dose,inpatient_treatment_drug_3,South Asia,keep,18,dbl,NA,NA,NA,2.5,480,2.5 to 480,11,0,once,NA,
+X63F._Dose,inpatient_treatment_drug_3,South Asia,keep,21,dbl,NA,NA,NA,2.5,480,2.5 to 480,11,0,once,NA,
+X63G._Dose,inpatient_treatment_drug_3,South Asia,keep,24,dbl,NA,NA,NA,2.5,480,2.5 to 480,7,0,once,NA,
+X63H._Dose,inpatient_treatment_drug_3,South Asia,keep,27,dbl,NA,NA,NA,2.5,480,2.5 to 480,6,0,once,NA,
+X63I._Dose,inpatient_treatment_drug_3,South Asia,keep,30,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63J._Dose,inpatient_treatment_drug_3,South Asia,keep,33,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63K._Dose,inpatient_treatment_drug_3,South Asia,keep,36,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63L._Dose,inpatient_treatment_drug_3,South Asia,keep,39,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63M._Dose,inpatient_treatment_drug_3,South Asia,keep,42,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63N._Dose,inpatient_treatment_drug_3,South Asia,keep,45,dbl,NA,NA,NA,2.5,45,2.5 to 45,4,0,once,NA,
+X63O._Dose,inpatient_treatment_drug_3,South Asia,keep,48,dbl,NA,NA,NA,2.5,15,2.5 to 15,3,0,once,NA,
+X64A._Method,inpatient_treatment_drug_3,South Asia,keep,7,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64B._Method,inpatient_treatment_drug_3,South Asia,keep,10,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64C._Method,inpatient_treatment_drug_3,South Asia,keep,13,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64D._Method,inpatient_treatment_drug_3,South Asia,keep,16,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64E._Method,inpatient_treatment_drug_3,South Asia,keep,19,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64F._Method,inpatient_treatment_drug_3,South Asia,keep,22,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64G._Method,inpatient_treatment_drug_3,South Asia,keep,25,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64H._Method,inpatient_treatment_drug_3,South Asia,keep,28,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X64I._Method,inpatient_treatment_drug_3,South Asia,keep,31,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64J._Method,inpatient_treatment_drug_3,South Asia,keep,34,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64K._Method,inpatient_treatment_drug_3,South Asia,keep,37,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64L._Method,inpatient_treatment_drug_3,South Asia,keep,40,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64M._Method,inpatient_treatment_drug_3,South Asia,keep,43,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64N._Method,inpatient_treatment_drug_3,South Asia,keep,46,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X64O._Method,inpatient_treatment_drug_3,South Asia,keep,49,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X65._Additional_Antimalarial,inpatient_treatment_drug_4,South Asia,keep,2,int,2,NA,NA,1,2,1 to 2,2,0,once,NA,
+X66._Generic_antimalarial_name,inpatient_treatment_drug_4,South Asia,keep,3,chr,NA,NA,NA,n/a,n/a,"02_-_PQ, 05_-_SF, 06_-_MQ, 07_-_Lum, 08_-_QN, 09_-_ART, 12_-_PY, 13_-_DX, NA",8,0,once,NA,
+X66a._Name_of_other_antimalarial,inpatient_treatment_drug_4,South Asia,discard,4,chr,NA,NA,NA,n/a,n/a,"Primaquine, Pyrimethamie, Pyrimethamine, Sulfadoxine, Sviz_LFD, NA",5,0,once,NA,
+X67A._Timepoint,inpatient_treatment_drug_4,South Asia,keep,5,int,NA,NA,NA,0,10,0 to 10,10,0,once,NA,
+X67B._Timepoint,inpatient_treatment_drug_4,South Asia,keep,8,dbl,NA,NA,NA,0.5,10.16,0.5 to 10.16,15,0,once,NA,
+X67C._Timepoint,inpatient_treatment_drug_4,South Asia,keep,11,dbl,NA,NA,NA,1,10.49,1 to 10.49,10,0,once,NA,
+X67D._Timepoint,inpatient_treatment_drug_4,South Asia,keep,14,dbl,NA,NA,NA,1.5,10,1.5 to 10,13,0,once,NA,
+X67E._Timepoint,inpatient_treatment_drug_4,South Asia,keep,17,int,NA,NA,NA,4,11,4 to 11,8,0,once,NA,
+X67F._Timepoint,inpatient_treatment_drug_4,South Asia,keep,20,dbl,NA,NA,NA,4.5,12,4.5 to 12,12,0,once,NA,
+X67G._Timepoint,inpatient_treatment_drug_4,South Asia,keep,23,int,NA,NA,NA,6,13,6 to 13,8,0,once,NA,
+X67H._Timepoint,inpatient_treatment_drug_4,South Asia,keep,26,int,NA,NA,NA,7,14,7 to 14,8,0,once,NA,
+X67I._Timepoint,inpatient_treatment_drug_4,South Asia,keep,29,int,NA,NA,NA,8,15,8 to 15,8,0,once,NA,
+X67J._Timepoint,inpatient_treatment_drug_4,South Asia,keep,32,int,NA,NA,NA,9,16,9 to 16,8,0,once,NA,
+X67K._Timepoint,inpatient_treatment_drug_4,South Asia,keep,35,int,NA,NA,NA,10,17,10 to 17,7,0,once,NA,
+X67L._Timepoint,inpatient_treatment_drug_4,South Asia,keep,38,int,NA,NA,NA,11,18,11 to 18,7,0,once,NA,
+X67M._Timepoint,inpatient_treatment_drug_4,South Asia,keep,41,int,NA,NA,NA,12,19,12 to 19,7,0,once,NA,
+X67N._Timepoint,inpatient_treatment_drug_4,South Asia,keep,44,int,NA,NA,NA,13,20,13 to 20,7,0,once,NA,
+X67O._Timepoint,inpatient_treatment_drug_4,South Asia,keep,47,int,NA,NA,NA,14,20,14 to 20,3,0,once,NA,
+X67P._Timepoint,inpatient_treatment_drug_4,South Asia,keep,50,int,NA,NA,NA,18,18,18 to 18,1,0,once,NA,
+X68._Date_of_observation_collection,inpatient_care_chart_review,South Asia,keep,2,chr,6/29/17,date?,%Y-%m-%d,n/a,n/a,>10 unique values,1443,0,repeated,NA,
+X68A._Dose,inpatient_treatment_drug_4,South Asia,keep,6,dbl,NA,NA,NA,-88,1500,-88 to 1500,29,0,once,NA,
+X68B._Dose,inpatient_treatment_drug_4,South Asia,keep,9,dbl,NA,NA,NA,-88,500,-88 to 500,16,0,once,NA,
+X68C._Dose,inpatient_treatment_drug_4,South Asia,keep,12,dbl,NA,NA,NA,2.5,500,2.5 to 500,13,0,once,NA,
+X68D._Dose,inpatient_treatment_drug_4,South Asia,keep,15,dbl,NA,NA,NA,2.5,360,2.5 to 360,11,0,once,NA,
+X68E._Dose,inpatient_treatment_drug_4,South Asia,keep,18,dbl,NA,NA,NA,2.5,200,2.5 to 200,10,0,once,NA,
+X68F._Dose,inpatient_treatment_drug_4,South Asia,keep,21,dbl,NA,NA,NA,2.5,200,2.5 to 200,10,0,once,NA,
+X68G._Dose,inpatient_treatment_drug_4,South Asia,keep,24,dbl,NA,NA,NA,2.5,200,2.5 to 200,8,0,once,NA,
+X68H._Dose,inpatient_treatment_drug_4,South Asia,keep,27,dbl,NA,NA,NA,2.5,200,2.5 to 200,8,0,once,NA,
+X68I._Dose,inpatient_treatment_drug_4,South Asia,keep,30,dbl,NA,NA,NA,2.5,200,2.5 to 200,8,0,once,NA,
+X68J._Dose,inpatient_treatment_drug_4,South Asia,keep,33,dbl,NA,NA,NA,2.5,200,2.5 to 200,8,0,once,NA,
+X68K._Dose,inpatient_treatment_drug_4,South Asia,keep,36,dbl,NA,NA,NA,2.5,45,2.5 to 45,6,0,once,NA,
+X68L._Dose,inpatient_treatment_drug_4,South Asia,keep,39,dbl,NA,NA,NA,2.5,45,2.5 to 45,6,0,once,NA,
+X68M._Dose,inpatient_treatment_drug_4,South Asia,keep,42,dbl,NA,NA,NA,2.5,45,2.5 to 45,6,0,once,NA,
+X68N._Dose,inpatient_treatment_drug_4,South Asia,keep,45,dbl,NA,NA,NA,2.5,45,2.5 to 45,6,0,once,NA,
+X68O._Dose,inpatient_treatment_drug_4,South Asia,keep,48,dbl,NA,NA,NA,3.75,15,3.75 to 15,2,0,once,NA,
+X68P._Dose,inpatient_treatment_drug_4,South Asia,keep,51,int,NA,NA,NA,15,15,15 to 15,1,0,once,NA,
+X69._Time_of_observation,inpatient_care_chart_review,South Asia,keep,3,chr,4:00PM,NA,NA,n/a,n/a,>10 unique values,316,0.000707214,repeated,NA,
+X69A._Method,inpatient_treatment_drug_4,South Asia,keep,7,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X69B._Method,inpatient_treatment_drug_4,South Asia,keep,10,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X69C._Method,inpatient_treatment_drug_4,South Asia,keep,13,chr,NA,NA,NA,n/a,n/a,"01_-_IV, 02_-_PO, NA",2,0,once,NA,
+X69D._Method,inpatient_treatment_drug_4,South Asia,keep,16,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69E._Method,inpatient_treatment_drug_4,South Asia,keep,19,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69F._Method,inpatient_treatment_drug_4,South Asia,keep,22,chr,NA,NA,NA,n/a,n/a,"02_-_PO, 03_-_IM, NA",2,0,once,NA,
+X69G._Method,inpatient_treatment_drug_4,South Asia,keep,25,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69H._Method,inpatient_treatment_drug_4,South Asia,keep,28,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69I._Method,inpatient_treatment_drug_4,South Asia,keep,31,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69J._Method,inpatient_treatment_drug_4,South Asia,keep,34,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69K._Method,inpatient_treatment_drug_4,South Asia,keep,37,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69L._Method,inpatient_treatment_drug_4,South Asia,keep,40,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69M._Method,inpatient_treatment_drug_4,South Asia,keep,43,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69N._Method,inpatient_treatment_drug_4,South Asia,keep,46,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69O._Method,inpatient_treatment_drug_4,South Asia,keep,49,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X69P._Method,inpatient_treatment_drug_4,South Asia,keep,52,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X7._Patient_meets_all_enrollment_criteria.,enrollment_form,South Asia,discard,7,int,1,NA,NA,1,2,1 to 2,2,0,once,duplicated variable,May be useful to identify which participant IDs to load. 01 - Yes | 02 - No | 00 - Missing | 99 - Uncertain
+X7._Patient_meets_all_enrollment_criteria.,enrollment_form_labkey_correctid,South Asia,NA,7,chr,01_-_Yes,NA,NA,n/a,n/a,"01_-_Yes, 02_-_No, NA",2,0,once,duplicated variable,NA
+X70._Additional_antimalarial,inpatient_treatment_drug_5,South Asia,keep,2,int,2,NA,NA,1,2,1 to 2,2,0,once,NA,
+X71._Generic_antimalarial_name,inpatient_treatment_drug_5,South Asia,keep,3,chr,NA,NA,NA,n/a,n/a,"02_-_PQ, 07_-_Lum, 09_-_ART, 11_-_Other, 12_-_PY, 13_-_DX, NA",6,0,once,NA,
+X71._Temperature,inpatient_care_chart_review,South Asia,keep,4,dbl,101,NA,NA,-99,110,-99 to 110,90,0,repeated,NA,In F
+X71a._Name_of_other_antimalarial,inpatient_treatment_drug_5,South Asia,discard,4,chr,NA,NA,NA,n/a,n/a,"Pyrimethamine, Sviz_LFD, NA",2,0,once,NA,
+X72._Temperature_method,inpatient_care_chart_review,South Asia,keep,5,chr,01-Axillary,NA,NA,n/a,n/a,"-88-Missing, -99, 01-Axillary, 02-Oral, 05-Other",5,0,repeated,NA,"01, 01 - Axillary | 02, 02 - Oral | 03, 03 - Rectal | 04, 04 - Tympanic | 05, 05 - Other | -88, -88 - Missing | -99, -99 - Uncertain"
+X72A._Timepoint,inpatient_treatment_drug_5,South Asia,keep,5,int,NA,NA,NA,0,5,0 to 5,5,0,once,NA,
+X72B._Timepoint,inpatient_treatment_drug_5,South Asia,keep,8,dbl,NA,NA,NA,0.5,4,0.5 to 4,5,0,once,NA,
+X72C._Timepoint,inpatient_treatment_drug_5,South Asia,keep,11,int,NA,NA,NA,1,5,1 to 5,4,0,once,NA,
+X72D._Timepoint,inpatient_treatment_drug_5,South Asia,keep,14,dbl,NA,NA,NA,1.5,6,1.5 to 6,5,0,once,NA,
+X72E._Timepoint,inpatient_treatment_drug_5,South Asia,keep,17,int,NA,NA,NA,3,7,3 to 7,4,0,once,NA,
+X72F._Timepoint,inpatient_treatment_drug_5,South Asia,keep,20,dbl,NA,NA,NA,3.5,8,3.5 to 8,4,0,once,NA,
+X72G._Timepoint,inpatient_treatment_drug_5,South Asia,keep,23,int,NA,NA,NA,7,9,7 to 9,2,0,once,NA,
+X72H._Timepoint,inpatient_treatment_drug_5,South Asia,keep,26,int,NA,NA,NA,10,10,10 to 10,1,0,once,NA,
+X72I._Timepoint,inpatient_treatment_drug_5,South Asia,keep,29,int,NA,NA,NA,11,11,11 to 11,1,0,once,NA,
+X72J._Timepoint,inpatient_treatment_drug_5,South Asia,keep,32,int,NA,NA,NA,12,12,12 to 12,1,0,once,NA,
+X72K._Timepoint,inpatient_treatment_drug_5,South Asia,keep,35,int,NA,NA,NA,13,13,13 to 13,1,0,once,NA,
+X72L._Timepoint,inpatient_treatment_drug_5,South Asia,keep,38,int,NA,NA,NA,14,14,14 to 14,1,0,once,NA,
+X72M._Timepoint,inpatient_treatment_drug_5,South Asia,keep,41,int,NA,NA,NA,15,15,15 to 15,1,0,once,NA,
+X72N._Timepoint,inpatient_treatment_drug_5,South Asia,keep,44,int,NA,NA,NA,16,16,16 to 16,1,0,once,NA,
+X73._Blood_pressure_._systolic,inpatient_care_chart_review,South Asia,keep,6,int,90,NA,NA,-88,230,-88 to 230,83,0,repeated,NA,(XXX mmHg)
+X73A._Dose,inpatient_treatment_drug_5,South Asia,keep,6,int,NA,NA,NA,5,480,5 to 480,7,0,once,NA,
+X73B._Dose,inpatient_treatment_drug_5,South Asia,keep,9,int,NA,NA,NA,5,480,5 to 480,5,0,once,NA,
+X73C._Dose,inpatient_treatment_drug_5,South Asia,keep,12,int,NA,NA,NA,5,480,5 to 480,5,0,once,NA,
+X73D._Dose,inpatient_treatment_drug_5,South Asia,keep,15,int,NA,NA,NA,5,480,5 to 480,5,0,once,NA,
+X73E._Dose,inpatient_treatment_drug_5,South Asia,keep,18,int,NA,NA,NA,5,480,5 to 480,4,0,once,NA,
+X73F._Dose,inpatient_treatment_drug_5,South Asia,keep,21,int,NA,NA,NA,5,480,5 to 480,4,0,once,NA,
+X73G._Dose,inpatient_treatment_drug_5,South Asia,keep,24,int,NA,NA,NA,5,100,5 to 100,2,0,once,NA,
+X73H._Dose,inpatient_treatment_drug_5,South Asia,keep,27,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73I._Dose,inpatient_treatment_drug_5,South Asia,keep,30,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73J._Dose,inpatient_treatment_drug_5,South Asia,keep,33,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73K._Dose,inpatient_treatment_drug_5,South Asia,keep,36,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73L._Dose,inpatient_treatment_drug_5,South Asia,keep,39,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73M._Dose,inpatient_treatment_drug_5,South Asia,keep,42,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X73N._Dose,inpatient_treatment_drug_5,South Asia,keep,45,int,NA,NA,NA,5,5,5 to 5,1,0,once,NA,
+X74._Blood_pressure_._diastolic,inpatient_care_chart_review,South Asia,keep,7,int,70,NA,NA,-88,120,-88 to 120,63,0,repeated,NA,(XXX mmHg)
+X74A._Method,inpatient_treatment_drug_5,South Asia,keep,7,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74B._Method,inpatient_treatment_drug_5,South Asia,keep,10,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74C._Method,inpatient_treatment_drug_5,South Asia,keep,13,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74D._Method,inpatient_treatment_drug_5,South Asia,keep,16,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74E._Method,inpatient_treatment_drug_5,South Asia,keep,19,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74F._Method,inpatient_treatment_drug_5,South Asia,keep,22,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74G._Method,inpatient_treatment_drug_5,South Asia,keep,25,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74H._Method,inpatient_treatment_drug_5,South Asia,keep,28,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74I._Method,inpatient_treatment_drug_5,South Asia,keep,31,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74J._Method,inpatient_treatment_drug_5,South Asia,keep,34,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74K._Method,inpatient_treatment_drug_5,South Asia,keep,37,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74L._Method,inpatient_treatment_drug_5,South Asia,keep,40,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74M._Method,inpatient_treatment_drug_5,South Asia,keep,43,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X74N._Method,inpatient_treatment_drug_5,South Asia,keep,46,chr,NA,NA,NA,n/a,n/a,"02_-_PO, NA",1,0,once,NA,
+X75._Heart_rate,inpatient_care_chart_review,South Asia,keep,8,int,110,NA,NA,-88,180,-88 to 180,87,0,repeated,NA,(XXX beats/min)
+X76._Respiration_rate,inpatient_care_chart_review,South Asia,keep,9,int,22,NA,NA,-88,80,-88 to 80,43,0,repeated,NA,(XX breaths/min)
+X77._Glascow_coma_score_._eye,inpatient_care_chart_review,South Asia,keep,10,int,4,NA,NA,-88,5,-88 to 5,6,0,repeated,NA,(1-4)
+X78._Glascow_coma_score_._verbal,inpatient_care_chart_review,South Asia,keep,11,int,5,NA,NA,-88,5,-88 to 5,7,0,repeated,NA,(1-5)
+X79._Glascow_coma_score_._motor,inpatient_care_chart_review,South Asia,keep,12,int,6,NA,NA,-88,6,-88 to 6,7,0,repeated,NA,(1-6)
+X8._Date_enrolled,enrollment_form,South Asia,keep,8,chr,4/23/12,date?,%Y-%m-%d,n/a,n/a,>10 unique values,862,0.209662289,once,duplicated variable,
+X8._Date_enrolled,enrollment_form_labkey_correctid,South Asia,NA,8,chr,4/23/12,date?,%Y-%m-%d,n/a,n/a,>10 unique values,1002,0,once,duplicated variable,NA
+X80._Glascow_coma_score_._total,inpatient_care_chart_review,South Asia,keep,13,int,15,NA,NA,-88,15,-88 to 15,14,0,repeated,NA,(3-15)
+X81._Blantyre_coma_score_._eye,inpatient_care_chart_review,South Asia,keep,14,int,-88,NA,NA,-88,1,-88 to 1,3,0,repeated,NA,(0-1)
+X82._Blantyre_coma_score_._verbal,inpatient_care_chart_review,South Asia,keep,15,int,-88,NA,NA,-88,2,-88 to 2,4,0,repeated,NA,(0-2)
+X83._Blantyre_coma_score_._motor,inpatient_care_chart_review,South Asia,keep,16,int,-88,NA,NA,-88,2,-88 to 2,4,0,repeated,NA,(0-2)
+X84._Blantyre_coma_score_._total,inpatient_care_chart_review,South Asia,keep,17,int,-88,NA,NA,-88,5,-88 to 5,6,0,repeated,NA,(0-5)
+X86._Hemoglobin,inpatient_care_chart_review,South Asia,keep,18,dbl,9.2,NA,NA,-88,19.4,-88 to 19.4,132,0,repeated,NA,(XX.X g/dl)
+X87._Total_WBC_count,inpatient_care_chart_review,South Asia,keep,19,int,6500,NA,NA,-99,49000,-99 to 49000,211,0,repeated,NA,(XXXX units/mm^3)
+X88._Hematocrit.PCV,inpatient_care_chart_review,South Asia,keep,20,dbl,28,NA,NA,-88,88,-88 to 88,240,0,repeated,NA,(XX %)
+X89._Fasting_blood_sugar_level,inpatient_care_chart_review,South Asia,keep,21,dbl,-88,NA,NA,-88,523,-88 to 523,211,0,repeated,NA,(XXX mg %)
+X9._Time_enrolled,enrollment_form,South Asia,keep,9,chr,0:00,NA,NA,n/a,n/a,>10 unique values,169,0.209662289,once,duplicated variable,
+X9._Time_enrolled,enrollment_form_labkey_correctid,South Asia,NA,9,chr,0:00AM,NA,NA,n/a,n/a,>10 unique values,244,0,once,duplicated variable,NA
+X90._Blood_urea,inpatient_care_chart_review,South Asia,keep,22,dbl,13,NA,NA,-88,469,-88 to 469,365,0,repeated,NA,(XX mg %)
+X91._Serum_creatinine,inpatient_care_chart_review,South Asia,keep,23,dbl,0.5,NA,NA,-88,38,-88 to 38,291,0,repeated,NA,(X.X mg %)
+X92._Serum_bilirubin_._total,inpatient_care_chart_review,South Asia,keep,24,dbl,1,NA,NA,-88,127,-88 to 127,309,0,repeated,NA,(X.X mg %)
+X93._PO2,inpatient_care_chart_review,South Asia,keep,25,dbl,-88,NA,NA,-99,250,-99 to 250,337,0,repeated,NA,(XXX mmHg)
+X94._Bicarbonates,inpatient_care_chart_review,South Asia,keep,26,dbl,-88,NA,NA,-99,98.8,-99 to 98.8,171,0,repeated,NA,(XX mmol/l)
+X95._Platelet_count,inpatient_care_chart_review,South Asia,keep,27,dbl,90000,NA,NA,-88,4.00E+05,-88 to 4e+05,102,0,repeated,NA,platelets per uL blood
+X96._Pulmonary_oedema,inpatient_care_chart_review,South Asia,keep,28,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, 01-Yes, 02-No, NA",3,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
+X97._Enlarged_spleen,inpatient_care_chart_review,South Asia,keep,29,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, -99-Uncertain, 01-Yes, 02-No, NA",4,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
+X98._Altered_levels_of_consciousness,inpatient_care_chart_review,South Asia,keep,30,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, 01-Yes, 02-No",3,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
+X99._Abnormal_bleeding,inpatient_care_chart_review,South Asia,keep,31,chr,02-No,NA,NA,n/a,n/a,"-88-Missing, 01-Yes, 02-No, NA",3,0,repeated,NA,"01, 01 - Yes | 02, 02 - No | -88, -88 - Missing | -99, -99 - Uncertain"
