@@ -138,9 +138,17 @@ sub printSequence{
     $sequence =~ s/(.*?)\*.*/$1/;
 #    print STDERR "after pseudo_process:\n$sequence\n";
   } else {
-    my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
-    $sequence =~ s/\*/X/g;
-    print STDERR "For $pId, after replace * to X:\n$sequence\n" if ($seqEdit == 1);
+    my $sCount = $sequence =~ tr/\*//;
+
+    if ($sCount > 3) {
+      ## taked with Brian and Omar, in such a case truncate the protein sequence at the first stop codon
+      $sequence =~ s/(.*?)\*.*/$1/;
+      print STDERR "COLLECTION: $pId, the protein sequence has been truncated to the first stop codon due to multiple stop codons\n";
+    } else {
+      my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
+      $sequence =~ s/\*/X/g;
+      print STDERR "For $pId, after replace $sCount * to X:\n$sequence\n" if ($seqEdit == 1);
+    }
   }
 
   ## TODO 5. should we set up the minLenth for the truncated protein sequence?
