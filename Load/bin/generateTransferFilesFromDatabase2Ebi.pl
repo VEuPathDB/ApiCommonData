@@ -190,6 +190,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
       } elsif ($items[1] =~ /modified\.gff3/) {
 	$md5sumValues{gff3} = \%md5sumValue;
       } elsif ($items[1] =~ /$abbrev\.gff3/) {
+      } elsif ($items[1] =~ /note\.txt/) {  ## dont validate the file because it not need to pass over
       } else {
 	die "ERROR: non-except file found $items[1]\n";
       }
