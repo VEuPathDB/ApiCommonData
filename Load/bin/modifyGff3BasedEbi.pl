@@ -7,6 +7,7 @@ use strict;
 ## 1. adjust CDS coords for pseudogenic_transcript to truncate to the 1st stop codon
 ## 2. remove three_prime_UTR and five_prime_UTR for pseudogenic_transcript
 ## 3. change CDS ID to use the protein_id instead
+## 4. adjust CDS coords to the first stop codon for protein_coding gene that has more than 3 stop codons
 
 
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -32,6 +33,12 @@ my ($inputFileOrDir, $proteinFile, $outputFileDir, $outputGffFileName,
 if (!$outputFileDir) {
   $outputFileDir = ".";
 }
+
+## if there are truncated protein sequences, there should be a noteFile in the folder
+my $noteFile = $proteinFile;
+$noteFile =~ s/_protein\.fa$//;
+$noteFile .= "_note.txt";
+my $isTruncated = getIfProteinTruncated($noteFile) if (-e $noteFile);
 
 my (%pSeqs, %pLength, $pId);
 
@@ -63,11 +70,13 @@ my $bioperlFeaturesNested = ApiCommonData::Load::AnnotationUtils::nestGeneHierar
 foreach my $gene (@{$bioperlFeaturesNested}) {
   my $seqId = $gene->seq_id;
   my $type = $gene->primary_tag;
-  my $id;
+  my $gId;
   foreach my $transcript ($gene->get_SeqFeatures()) {
     my $tType = $transcript->primary_tag;
     my $tStrand = $transcript->strand;
-    if ($tType eq "pseudogenic_transcript") {
+    my ($tId) = $transcript->get_tag_values('ID') if ($transcript->has_tag('ID'));
+
+    if ($tType eq "pseudogenic_transcript" || $isTruncated->{$tId}) {
       my @exons = $transcript->remove_SeqFeatures;
       my ($pId, %pseudoCdsFeats);
       foreach my $exon (@exons) {
@@ -155,6 +164,22 @@ if ($outputGffFileName) {
 
 
 #########
+sub getIfProteinTruncated {
+  my ($inFile) = @_;
+
+  my %isT;
+  open (IN, $inFile) || die "can not open inFile to read.\n";
+  while (<IN>) {
+    my @items = split (/\t/, $_);
+    $items[0] =~ s/\s+//g;
+    $items[0] =~ s/-p\d+$//;
+    $isT{$items[0]} = 1;
+  }
+  close IN;
+
+  return \%isT;
+}
+
 sub renameCdsIdWithProteinId {
   my ($feature) = @_;
 
