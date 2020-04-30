@@ -81,6 +81,8 @@ if(-e $outFile){
 my $isPseudo = getIsPseudoFromProtein($extDbRlsId);
 my $isSeleno = getIsSelenoFromProtein($extDbRlsId);
 
+my %isProteinTruncated;
+
 open(OUT,">>$outFile") || die "Can't open $outFile to append output\n Check write permission\n";
 
 my $count = 0;
@@ -109,6 +111,22 @@ my $countSeqInOutFile=`grep -c '>' $outFile`;
 die "Inconsistant number of sequences between query results and outputs in $outFile. Please check log file.\n" unless (($countSeqInOutFile + $skip)==$count);
 
 die "No sequences extracted. (Check your idSQL.)" unless ($count || $allowEmptyOutput);
+
+## in case there are truncated protein_coding gene, print out a note file
+if (%isProteinTruncated) {
+  my $noteFile = $outFile;
+  $noteFile =~ s/_protein\.fa$//;
+  $noteFile .= "_note.txt";
+
+  open (NF, ">$noteFile") || die "cannot open noteFile to write.\n";
+  foreach my $k (sort keys %isProteinTruncated) {
+    print NF "$k\t";
+    print NF "the protein sequence has been truncated to the first stop codon due to multiple stop codons\n";
+  }
+  close NF;
+}
+
+close OUT;
 
 ###### subRoutine ######
 
@@ -144,6 +162,7 @@ sub printSequence{
       ## taked with Brian and Omar, in such a case truncate the protein sequence at the first stop codon
       $sequence =~ s/(.*?)\*.*/$1/;
       print STDERR "COLLECTION: $pId, the protein sequence has been truncated to the first stop codon due to multiple stop codons\n";
+      $isProteinTruncated{$pId} = 1;
     } else {
       my $seqEdit = ($sequence =~ /\*/) ? 1 : 0;
       $sequence =~ s/\*/X/g;
@@ -176,6 +195,7 @@ sub printSequence{
     my $negSeq = CBIL::Bio::SequenceUtils::reverseComplementSequence($sequence);
     print OUT $defline . CBIL::Bio::SequenceUtils::breakSequence($negSeq,60) unless $noSeq;
   }
+
 }
 
 sub getIsPseudoFromProtein {
