@@ -155,6 +155,9 @@ foreach my $gene (@{$bioperlFeaturesNested}) {
   }
 }
 
+## remove utr that has only 1 or 2 basepairs
+$bioperlFeaturesNested = ApiCommonData::Load::AnnotationUtils::removeShortUtrs($bioperlFeaturesNested);
+
 my $bioperlFeaturesFlatted = ApiCommonData::Load::AnnotationUtils::flatGeneHierarchySortBySeqId($bioperlFeaturesNested);
 
 # write to a new gff3 output file
