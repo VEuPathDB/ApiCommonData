@@ -139,6 +139,10 @@ EOL
       $ds_comma = '' if ($ds_count == $ds_size);
       my $paired  = $h->{props}->{hasPairedEnds};
       my $strand  = $h->{props}->{isStrandSpecific};
+      my $trim    = "false";
+
+      # only this datasets needs trim reads in bld-49. 
+      $trim = "true" if $dataset eq "Hassan_intra_extra_ribo_profiling";
 
 print <<EOL;
       {
@@ -158,7 +162,8 @@ print <<EOL;
             {
                "accession" : "$sra",
                "isStrandSpecific" : $strand,
-               "hasPairedEnds" : $paired
+               "hasPairedEnds" : $paired,
+               "trim_reads" : $trim
             }$s_comma
 EOL
      } # end foreach
