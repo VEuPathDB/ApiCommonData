@@ -64,7 +64,7 @@ print O1 <<EOL;
 
 EOL
 
-unless ($project =~/FungiDB/) {
+#unless ($project =~/FungiDB/) {
 print O1 <<EOL;
   <dataset class="copyNumberVariationSamples">
     <prop name="projectName">$project</prop>
@@ -75,7 +75,7 @@ print O1 <<EOL;
   </dataset>
 
 EOL
-}
+#}
 
 system("touch ../final/$sample");
 system("touch ../final/$sample.paired");
