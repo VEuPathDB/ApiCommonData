@@ -654,6 +654,40 @@ sub checkGff3GeneModel {
 
 }
 
+## remove UTR that only has 1 or 2 basepairs
+sub removeShortUtrs {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    foreach my $gene (@{$bioFeatureHash{$k}}) {
+      my ($gId) = $gene->get_tag_values("ID") if ($gene->has_tag('ID'));
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my @exons = $transcript->remove_SeqFeatures();
+	foreach my $exon (@exons) {
+	  my ($eId) = $exon->get_tag_values('ID') if ($exon->has_tag('ID'));
+	  my $eType = $exon->primary_tag();
+	  my $utrStart = $exon->location->start;
+	  my $utrEnd = $exon->location->end;
+	  my $utrLength = $exon->location->end - $exon->location->start + 1;
+	  if (($eType eq 'five_prime_UTR' || $eType eq 'three_prime_UTR' ) && $utrLength < 3) {
+	    print STDERR "SKIPPED urt for $gId, at $utrStart ... $utrEnd\n";
+	    next;
+	  } else {
+	    $transcript->add_SeqFeature($exon);
+	  }
+	}
+      }
+    }
+  }
+
+  return $bioFeatures;
+}
 
 sub revcomp {
   my $seq = shift;
