@@ -266,7 +266,7 @@ ToxoDB|tgonME49|Gregory_ME49_mRNA|N/A
 ToxoDB|tgonME49|Gregory_RH_mRNA|N/A
 ToxoDB|tgonME49|Gregory_VEG_mRNA|N/A
 ToxoDB|tgonME49|Hassan_intra_extra_ribo_profiling|DONE
-ToxoDB|tgonME49|Knoll_Laura_Pittman|DONE
+ToxoDB|tgonME49|Knoll_Laura_Pittman|N/A
 ToxoDB|tgonME49|ME49_bradyzoite|N/A
 ToxoDB|tgonME49|RamakrishnanTachyzoiteAndMerozoite|N/A
 ToxoDB|tgonME49|Reid_tachy|DONE
