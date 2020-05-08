@@ -183,7 +183,7 @@ sub getOrganismInformation {
       $organismName = $items[0];
       $geneVersion = $items[9] if ($items[1] =~ /^y/i);
       $ncbiTaxonId = (length($items[6]) < 10) ? $items[6] : $items[7];
-      $acce = $items[32];
+      $acce = $items[31];
     }
   }
   close IN;
