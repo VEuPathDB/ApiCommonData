@@ -62,6 +62,8 @@ my ($taxonId) = getTaxonId($orgAbbrev, $dbh);
 
 my $genes = getLocusTags($taxonId);
 
+my ($uniprot2Gene) = getUniprot2Gene();
+
 parseInputAndPrint($genes);
 
 sub getTaxonId {
@@ -131,6 +133,17 @@ sub parseInputAndPrint {
       $ec = getECNums(\@line);
     }
     printFile($tags,$ec,$genes);
+
+    ## if has not tag but has ec
+    if ($line[3] && $line[1] !~ /Gene/ && $line[1] !~ /names/ && !$line[1]) {
+#      print STDERR "$_\n";
+      printFile ($uniprot2Gene->{$line[0]}, $ec, $genes);
+      foreach my $g (@{$uniprot2Gene->{$line[0]}}) {
+	foreach my $e (@{$ec}) {
+	  print STDERR "$g, $e\n";
+	}
+      }
+    }
   }
 }
 
@@ -164,5 +177,31 @@ sub printFile {
   }
 }
 
+
+sub getUniprot2Gene {
+  my ($taxonId) = @_;
+
+  my (%uniprot2Gene);
+
+  my $sql = "select gf.SOURCE_ID, dr.PRIMARY_IDENTIFIER
+from SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr, sres.dbref dr,
+DOTS.DBREFAAFEATURE daf, DOTS.aafeature af, DOTS.genefeature gf, dots.transcript t, dots.nasequence ns
+where ed.EXTERNAL_DATABASE_ID=edr.EXTERNAL_DATABASE_ID and edr.EXTERNAL_DATABASE_RELEASE_ID=dr.EXTERNAL_DATABASE_RELEASE_ID
+and dr.DB_REF_ID=daf.DB_REF_ID and daf.AA_FEATURE_ID=af.AA_FEATURE_ID and af.NA_FEATURE_ID=t.NA_FEATURE_ID
+and t.PARENT_ID=gf.NA_FEATURE_ID and t.NA_SEQUENCE_ID=ns.NA_SEQUENCE_ID
+and ed.name like 'Uniprot%'";
+
+   my $stmt2 = $dbh->prepare($sql);
+   $stmt2->execute();
+   while (my ($sourceId, $primaryId) = $stmt2->fetchrow_array()){
+     if ($sourceId && $primaryId) {
+#       $gene2Uniprot{$sourceId} = $primaryId;
+       push (@{$uniprot2Gene{$primaryId}}, $sourceId);
+     }
+   }
+
+  return \%uniprot2Gene;
+
+}
 
 
