@@ -13,7 +13,7 @@ use GUS::Supported::GusConfig;
 
 ## TODO, better to ignore null record
 
-my ($genomeSummaryFile, $redmineFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
+my ($genomeSummaryFile, $redmineFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $component, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
             'genomeSummaryFile=s' => \$genomeSummaryFile,
@@ -21,11 +21,13 @@ my ($genomeSummaryFile, $redmineFile, $organismAbbrev, $gusConfigFile, $outputFi
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
             'outputFileDir=s' => \$outputFileDir,
+            'component=s' => \$component,
             'help|h' => \$help
             );
 
 &usage() if ($help);
-&usage("Missing a Required Argument") unless (defined $organismAbbrev && ($genomeSummaryFile || $redmineFile));
+&usage("Missing a Required Argument") unless (defined $organismAbbrev && $component && ($genomeSummaryFile || $redmineFile));
+
 
 
 $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
@@ -64,11 +66,15 @@ $accessionVersion = getAccessionVersionFromAccession ($accession);
 
 %organismDetails = (
 		    'species' => {
-				  'BRC4_organism_abbrev' => $organismAbbrev,
+#				  'BRC4_organism_abbrev' => $organismAbbrev,
 				  'scientific_name' =>  $species,
 				  'strain' => $strain,
 				  'taxonomy_id' => $ncbiTaxonId
 				  },
+		    'BRC4' => {
+			       'component' => $component,
+			       'organism_abbrev' => $organismAbbrev
+			       },
 #		    'genebuild' => {
 #				    'version' => $geneBuildVersion,
 #				    'start_date' => $geneBuildVersion
@@ -177,7 +183,7 @@ sub getOrganismInformation {
       $organismName = $items[0];
       $geneVersion = $items[9] if ($items[1] =~ /^y/i);
       $ncbiTaxonId = (length($items[6]) < 10) ? $items[6] : $items[7];
-      $acce = $items[32];
+      $acce = $items[31];
     }
   }
   close IN;
@@ -211,11 +217,12 @@ sub usage {
 "
 A script to generate genome.json file that required by EBI
 
-Usage: perl generateGenomeJson.pl --genomeSummaryFile GenomeSummary.txt --organismAbbrev pfalCD01
+Usage: perl generateGenomeJson.pl --genomeSummaryFile GenomeSummary.txt --organismAbbrev pfalCD01 --component PlasmoDB
 
 where:
   --organismAbbrev: required, eg. pfal3D7
   --genomeSummaryFile: required, the txt file that include all genome info that loaded in EuPathDB
+  --component: required if genomeSummaryFile presents
   --redmineFile: required, the tabl delimited file export from redmine
   --outputFileName: optional, default is organismAbbrev_genome.json
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
