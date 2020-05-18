@@ -51,7 +51,7 @@ close OUT;
 open OUT, ">$outputOrthoSeqsWithECs";
 print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
-$url = "https://qa.orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,peripheral_group_size"; 
+$url = "https://qa.orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,num_core,num_peripheral"; 
 
 $cmd = qq(wget "$url" -qO- > $outputOrthoSeqsWithECs.tmp);
 print STDERR "Running\n$cmd\n";
@@ -66,7 +66,10 @@ foreach my $v (@{$ref->{recordset}->{record}}) {
   my $source_id  = $v->{field}->{source_id}->{content};
   my $ec_numbers = $v->{field}->{ec_numbers}->{content};
   my $group_name = $v->{field}->{group_name}->{content};
-  my $group_size = $v->{field}->{peripheral_group_size}->{content};
+  my $num_core = $v->{field}->{num_core}->{content};
+  my $num_peripheral = $v->{field}->{num_peripheral}->{content};
+
+  my $group_size = $num_core + $num_peripheral;
 
   next unless ($ec_numbers && $group_name);
   next unless (!exists $uniq{$source_id});
