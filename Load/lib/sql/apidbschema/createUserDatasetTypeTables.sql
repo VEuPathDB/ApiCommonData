@@ -67,7 +67,7 @@ create table apidbUserDatasets.UD_NaFeatureExpression (
   protocol_app_node_id  NUMBER(10) NOT NULL,
   na_feature_id         NUMBER(10) NOT NULL,
   value                 FLOAT(126),
-  unit                  VARCHAR(2),
+  unit                  VARCHAR2(4),
   confidence            FLOAT(126),
   standard_error        FLOAT(126),
   categorical_value     VARCHAR2(100),
