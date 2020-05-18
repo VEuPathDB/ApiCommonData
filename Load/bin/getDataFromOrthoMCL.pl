@@ -13,7 +13,7 @@ my ($outputAllOrthoGrps, $outputOrthoSeqsWithECs);
 
 die "cannot open output files\n" unless ($outputAllOrthoGrps && $outputOrthoSeqsWithECs);
 
-my $url = "https://qa.orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?sequence_count_min=1&sequence_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
+my $url = "https://qa.orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?core_count_min=0&core_count_max=100000&peripheral_count_min=0&peripheral_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
 
 my $cmd = qq(wget "$url" -qO- > $outputAllOrthoGrps.tmp);
 print STDERR "\nRunning\n$cmd\n";
