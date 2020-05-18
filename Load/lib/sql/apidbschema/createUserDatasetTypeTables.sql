@@ -62,23 +62,24 @@ GRANT select ON ApiDBUserDatasets.UD_ProtocolAppNode_sq TO gus_w;
 
 -----------------------------------------------------------------------------------------------------
 
-create table ApiDBUserDatasets.UD_NaFeatureExpression (
-NA_FEAT_EXPRESSION_ID NUMBER(12) NOT NULL,    
-PROTOCOL_APP_NODE_ID  NUMBER(10) NOT NULL,    
-NA_FEATURE_ID         NUMBER(10) NOT NULL,    
-VALUE                          FLOAT(126),    
-CONFIDENCE                     FLOAT(126),    
-STANDARD_ERROR                 FLOAT(126),    
-CATEGORICAL_VALUE              VARCHAR2(100), 
-PERCENTILE_CHANNEL1            FLOAT(126),    
-PERCENTILE_CHANNEL2            FLOAT(126),   
- FOREIGN KEY (PROTOCOL_APP_NODE_ID) REFERENCES ApiDBUserDatasets.UD_PROTOCOLAPPNODE,
- PRIMARY KEY (NA_FEAT_EXPRESSION_ID)
+create table apidbUserDatasets.UD_NaFeatureExpression (
+  na_feat_expression_id NUMBER(12) NOT NULL,
+  protocol_app_node_id  NUMBER(10) NOT NULL,
+  na_feature_id         NUMBER(10) NOT NULL,
+  value                 FLOAT(126),
+  unit                  VARCHAR(2),
+  confidence            FLOAT(126),
+  standard_error        FLOAT(126),
+  categorical_value     VARCHAR2(100),
+  percentile_channel1   FLOAT(126),
+  percentile_channel2   FLOAT(126),
+  FOREIGN KEY (protocol_app_node_id) REFERENCES ApiDBUserDatasets.ud_ProtocolAppNode,
+  PRIMARY KEY (na_feat_expression_id)
 );
 
-CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id, na_feature_id, value) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id, na_feature_id, value, unit) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_NFE_idx2 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id) tablespace indx;
-CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id, value) tablespace indx;
+CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id, value, unit) tablespace indx;
 
 create sequence ApiDBUserDatasets.UD_NaFeatureExpression_sq;
 
