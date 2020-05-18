@@ -221,12 +221,12 @@ foreach my $abbrev (sort keys %isAnnotated) {
   my $genomeJsonFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_genome.json";
   my $seqRegionFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_seq_region.json";
   my $functAnnotFile = $outputFileDir. "\/" . $abbrev . "\/" . $abbrev . "_functional_annotation.json";
-  my $validateGenomeCmd = "jsonschema -i $genomeJsonFile /home/sufenhu/jsonSchema/genome_schema.json";
+  my $validateGenomeCmd = "jsonschema -i $genomeJsonFile /eupath/data/EuPathDB/manualDelivery/common/jsonSchema/genome_schema.json";
   system ($validateGenomeCmd);
-  my $validateSeqRegionCmd = "jsonschema -i $seqRegionFile /home/sufenhu/jsonSchema/seq_region_schema.json";
+  my $validateSeqRegionCmd = "jsonschema -i $seqRegionFile /eupath/data/EuPathDB/manualDelivery/common/jsonSchema/seq_region_schema.json";
   system ($validateSeqRegionCmd);
   if (-e $functAnnotFile) {
-    my $validateFunctAnnotCmd = "jsonschema -i $functAnnotFile /home/sufenhu/jsonSchema/functional_annotation_schema.json";
+    my $validateFunctAnnotCmd = "jsonschema -i $functAnnotFile /eupath/data/EuPathDB/manualDelivery/common/jsonSchema/functional_annotation_schema.json";
     system ($validateFunctAnnotCmd);
   }
 }
