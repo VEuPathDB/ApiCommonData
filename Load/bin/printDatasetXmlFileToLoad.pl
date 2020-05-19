@@ -241,7 +241,8 @@ printConstantName ($ofh, \%excelInfo, "genomeVersion");
 printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
 printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion") if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 if ($isEbiGenome =~ /^y/i) {
-  printConstantName ($ofh, \%excelInfo, "ebiOrganismName");
+#  printConstantName ($ofh, \%excelInfo, "ebiOrganismName");
+  printConstantNameWithValue ($ofh, 'ebiOrganismName',$organismAbbrev);
   printConstantNameWithValue ($ofh, 'ebiVersion', $ebiVersion);
 }
 
