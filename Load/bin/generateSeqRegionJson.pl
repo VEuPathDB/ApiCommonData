@@ -41,7 +41,7 @@ my $dbh = $db->getQueryHandle();
 my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 my $karyotypeBands = getCentromereInfo($extDbRlsId);
-my $transposableElement = getTransposableElementInfo($extDbRlsId);
+#my $transposableElement = getTransposableElementInfo($extDbRlsId);
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 if ($outputFileDir) {
@@ -97,9 +97,9 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
   }
 
   ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
-  if ($transposableElement->{$seqSourceId}) {
-    $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
-  }
+#  if ($transposableElement->{$seqSourceId}) {
+#    $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
+#  }
 
   ## to correct a random_sequence issue in plas-
   if (($organismAbbrev eq "pyoeyoeliiYM" || $organismAbbrev eq "preiCDC" || $organismAbbrev eq "pknoH" )
