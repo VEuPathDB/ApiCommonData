@@ -31,7 +31,7 @@ sub getTermsFromObject {
   }
 
   return $self->lineageO(\@levelNames, \@levels)
-    if (grep {$_} @levels) and (all {not ref $_ } @levels);
+    if (grep {$_} @levels) && (all {not ref $_ } @levels);
 
   my $lineageTerm = $o->{taxonomy} // $o->{Taxonomy};
   return $self->lineageO([$unassignedLevel], [$id])
@@ -98,7 +98,7 @@ sub splitLineageString {
 
 # Understand and ignore superkingdoms
 # EBI metagenomics and doubtlessly elsewhere
-  if ($lineage[0] =~ /^sk__/ and (not $lineage[1] or $lineage[1] eq "k__")){
+  if ($lineage[0] =~ /^sk__/ && (! $lineage[1] || $lineage[1] eq "k__")){
     @lineage = grep {$_ ne "k__"} @lineage;
     $lineage[0] =~ s/^sk__/k__/;
   }

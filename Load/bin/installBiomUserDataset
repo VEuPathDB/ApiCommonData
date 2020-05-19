@@ -13,7 +13,7 @@ Log::Log4perl->easy_init($INFO);
 
 my ($userDatasetId, $biomPath, $dataPath, $projectId) = @ARGV;
 
-usage() unless $userDatasetId and -f $biomPath and $projectId and (-f $dataPath or not $dataPath);
+usage() unless $userDatasetId && -f $biomPath && $projectId && (-f $dataPath || ! $dataPath);
 
 my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
 

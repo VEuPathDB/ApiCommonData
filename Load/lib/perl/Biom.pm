@@ -95,7 +95,7 @@ sub biomFileContents {
   my %ncbiTaxonsByLineage;
   for my $i (0..$#lineagesThatMightHaveTaxons){
     $log->info("Checked $i / $#lineagesThatMightHaveTaxons lineages against NCBI")
-      if $i and not $i %1000;
+      if $i && ! $i %1000;
     my $lineage = $lineagesThatMightHaveTaxons[$i];
 
     $ncbiTaxonsByLineage{$lineage} = $findTaxonForLineageCb->($lineage);
@@ -119,7 +119,7 @@ sub biomFileContents {
 
   for my $columnIndex (0..$#columns){
     $log->info("Aggregated abundances for $columnIndex / $#columns columns")
-      if $columnIndex and not $columnIndex % 1000;
+      if $columnIndex && ! $columnIndex % 1000;
 
     my $sampleName = $columns[$columnIndex]->{id};
 

@@ -14,7 +14,7 @@ sub expandSampleDetailsByName {
 
   for my $sampleName (keys %sampleDetailsByName){
     $sampleDetailsByName{$sampleName} = {"Unannotated sample" => $sampleName}
-      unless $sampleDetailsByName{$sampleName} and %{$sampleDetailsByName{$sampleName}};
+      unless $sampleDetailsByName{$sampleName} && %{$sampleDetailsByName{$sampleName}};
   }
 
   my @properties = uniq map {keys %$_} values %sampleDetailsByName;
@@ -46,7 +46,7 @@ sub expandSampleDetailsByName {
 
 sub looks_like_date {
   my ($ss,$mm,$hh,$day,$month,$year,$zone) = strptime(shift); 
-  defined $day and defined $month and defined $year
+  defined $day && defined $month && defined $year
 }
 sub propertyDetails {
   my ($property, $values) = @_;
@@ -75,12 +75,12 @@ sub propertyDetails {
   my $numDistinctValues = @distinctValues;
   my $filter;
   my ($valuesSummary, $propertyType, $propertyTypeOntologyTerm);
-  if (@distinctValues == 1 and not $numBlankValues){
+  if (@distinctValues == 1 && not $numBlankValues){
     $propertyTypeOntologyTerm = "NCIT_C64359";
     $propertyType = "Common value";
     $valuesSummary =  $distinctValues[0];
     $filter = "membership";
-  } elsif (@distinctValues < 10 and (@valuesThatAreNumbers < 2) and (@valuesThatAreDates < 2)){
+  } elsif (@distinctValues < 10 && (@valuesThatAreNumbers < 2) && (@valuesThatAreDates < 2)){
     $propertyTypeOntologyTerm = "wojtek_made_up_categorical_value";
     $propertyType = "Categorical value";
     $valuesSummary =  join (", ", sort @distinctValues);
