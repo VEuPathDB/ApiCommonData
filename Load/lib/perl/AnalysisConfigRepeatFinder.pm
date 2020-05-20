@@ -47,6 +47,7 @@ sub displayAndBaseName {
       $sample = $group if (! $sample);  # if group name is not specified; can be used when group has just 1 sample
       my $key = "${nodeCount}_${group}";
       $key =~ s/\s/_/g;
+      $key =~ s/;/_/g;
 
       $order++ unless($rv{$key});
 
