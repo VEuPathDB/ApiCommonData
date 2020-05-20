@@ -32,22 +32,26 @@ my $panPkSh = $dbh->prepare($panPkSql);
 my $psPkSql = "select ApiDBUserDatasets.UD_ProfileSet_sq.nextval from dual";
 my $psPkSh = $dbh->prepare($psPkSql);
 
-
 my $insertProfileSet = $dbh->prepare(<<EOF);
-    INSERT INTO ApiDBUserDatasets.UD_PROFILESET
+    INSERT INTO apidbUserDatasets.UD_ProfileSet
     (user_dataset_id, profile_set_id, name)
     VALUES (?,?,?)
 EOF
 
+my $updateProfileSetUnit = $dbh->prepare(<<EOF);
+    UPDATE apidbUserDatasets.UD_ProfileSet
+    SET unit = ?
+    WHERE profile_set_id = ?
+EOF
 
 my $insertProtocolAppNode = $dbh->prepare(<<EOF);
-    INSERT INTO ApiDBUserDatasets.UD_PROTOCOLAPPNODE
+    INSERT INTO apidbUserDatasets.UD_ProtocolAppNode
     (protocol_app_node_id, profile_set_id, name, node_order_num)
     VALUES (?,?,?,?)
 EOF
 
 my $insertNaFeatureExpression = $dbh->prepare(<<EOF);
-    INSERT INTO ApiDBUserDatasets.UD_NAFeatureExpression
+    INSERT INTO apidbUserDatasets.UD_NaFeatureExpression
     (na_feat_expression_id, protocol_app_node_id, na_feature_id, value)
     VALUES (ApiDBUserDatasets.UD_NaFeatureExpression_sq.nextval,?,?,?)
 EOF
@@ -125,6 +129,7 @@ while(<$fh>) { # TODO:  need example of how this looks
   open(DAT, $filename) or die "Cannot open file $filename for reading: $!";
 
   # check header to distinguish file type
+  my $unit;
   my $header = <DAT>;
   chomp($header);
 
@@ -132,13 +137,22 @@ while(<$fh>) { # TODO:  need example of how this looks
     # Cufflinks FPKM file
     $idIndex = 0;
     $fpkmIndex = 9;
+    $unit = "FPKM";
   } elsif ($header eq "gene_id\tFPKM") {
     # FPKMtool file
     $idIndex = 0;
     $fpkmIndex = 1;
+    $unit = "FPKM";
+  } elsif ($header eq "gene_id\tTPM") {
+    # TPMtool file
+    $idIndex = 0;
+    $fpkmIndex = 1;
+    $unit = "TPM";
   } else {
-    markDatasetInvalid($dbh, $userDatasetId, "unrecognized header record. Not a valid FPKM file.");
+    markDatasetInvalid($dbh, $userDatasetId, "unrecognized header record. Not a valid transcript abundance file.");
   }
+
+  $updateProfileSetUnit->execute($unit, $psId);
 
   while(<DAT>) {
     chomp;
