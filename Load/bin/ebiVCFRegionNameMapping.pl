@@ -8,28 +8,20 @@ use ApiCommonData::Load::EBIUtils;
 use CBIL::Util::Utils;
 
 use File::Temp qw/ tempfile /;
-use CBIL::Util::PropertySet;
 use File::Copy;
 
-my ($help, $vcf, $samplesDirectory, $gusConfigFile, $organismAbbrev);
+my ($help, $vcf, $samplesDirectory, $organismAbbrev);
 
 &GetOptions('help|h' => \$help,
             'VCF_file=s' => \$vcf,
-            'gusConfigFile=s' => \$gusConfigFile,
             'organism_abbrev=s' => \$organismAbbrev,
             );
       
-if(!$gusConfigFile) {
-  $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
-}
-
-&usage("Config file $gusConfigFile does not exist.") unless -e $gusConfigFile;
-#&usage("Sample directory does not exist") unless -d $samplesDirectory;
 &usage("organismAbbrev not defined") unless $organismAbbrev;
 
 chomp $organismAbbrev;
 
-my $map = ApiCommonData::Load::EBIUtils::getGenomicSequenceIdMapSql($organismAbbrev);
+my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 
 
   my $oldVcf = "$vcf.old";
@@ -57,10 +49,15 @@ my $map = ApiCommonData::Load::EBIUtils::getGenomicSequenceIdMapSql($organismAbb
   close OLD;
 
 ### bzip vcf and create index ###
-my $zip_cmd = "bgzip ".$vcf;
-&runCmd($zip_cmd);
-my $index_cmd = "tabix -p vcf ".$vcf."\.gz";
-&runCmd($index_cmd);
+
+if ( -e "$vcf.gz") {
+    die "Zipped vcf file $vcf.gz already exists.\n";
+} else {
+    my $zip_cmd = "bgzip ".$vcf;
+    &runCmd($zip_cmd);
+    my $index_cmd = "tabix -p vcf ".$vcf."\.gz";
+    &runCmd($index_cmd);
+}
 
 sub usage {
   die "ebiVCFRegionNameMapping.pl --VCF_File=FILE --organism_abbrev=s\n";
