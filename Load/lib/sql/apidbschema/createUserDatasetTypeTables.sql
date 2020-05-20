@@ -12,16 +12,17 @@ GRANT select ON ApiDBUserDatasets.UD_GeneId TO gus_r;
 ----------------------------------------------------------------------------
 
 create table ApiDBUserDatasets.UD_ProfileSet (
- profile_set_id number(20),
+ profile_set_id  number(20),
  user_dataset_id number(20),
- name varchar2(200) not null,  
+ name            varchar2(200) not null,  
+ unit            varchar2(4),
  foreign key (user_dataset_id) references ApiDBUserDatasets.InstalledUserDataset,
  primary key (profile_set_id)
 );
  
 create index ApiDBUserDatasets.pset_idx1
   on ApiDBUserDatasets.UD_ProfileSet
-     (profile_set_id, user_dataset_id, name)
+     (profile_set_id, user_dataset_id, name, unit)
   tablespace indx;
 
 create sequence ApiDBUserDatasets.UD_profileset_sq;
@@ -67,7 +68,6 @@ create table apidbUserDatasets.UD_NaFeatureExpression (
   protocol_app_node_id  NUMBER(10) NOT NULL,
   na_feature_id         NUMBER(10) NOT NULL,
   value                 FLOAT(126),
-  unit                  VARCHAR2(4),
   confidence            FLOAT(126),
   standard_error        FLOAT(126),
   categorical_value     VARCHAR2(100),
@@ -77,9 +77,9 @@ create table apidbUserDatasets.UD_NaFeatureExpression (
   PRIMARY KEY (na_feat_expression_id)
 );
 
-CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id, na_feature_id, value, unit) tablespace indx;
+CREATE INDEX ApiDBUserDatasets.UD_NFE_idx1 ON ApiDBUserDatasets.UD_NaFeatureExpression (protocol_app_node_id, na_feature_id, value) tablespace indx;
 CREATE INDEX ApiDBUserDatasets.UD_NFE_idx2 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id) tablespace indx;
-CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id, value, unit) tablespace indx;
+CREATE unique INDEX ApiDBUserDatasets.UD_NFE_idx3 ON ApiDBUserDatasets.UD_NaFeatureExpression (na_feature_id, protocol_app_node_id, value) tablespace indx;
 
 create sequence ApiDBUserDatasets.UD_NaFeatureExpression_sq;
 
