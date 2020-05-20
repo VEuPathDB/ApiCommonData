@@ -7,8 +7,16 @@ is
 begin
 
    begin
+
+      -- find a TAXON in ProjectTaxon that matches the first N characters of the
+      --  organism name passed as an argument, where N is the length of that
+      --  ProjectTaxon.TAXON. Use MAX() to resolve any collisions, because as of
+      --  now (March 2020) the only collision between taxa of different projects
+      --  is HostDB's "mus" vs. VectorBase's "musca". A better fix would be to
+      --  prefer the match with greater N.
+
       execute immediate
-         'select distinct project_id ' ||
+         'select nvl(max( project_id), ''PiroplasmaDB'') ' ||
          'from ApidbTuning.ProjectTaxon pt ' ||
          'where pt.taxon = substr(lower(''' || organism || '''), 1, length(pt.taxon)) '
       into project;

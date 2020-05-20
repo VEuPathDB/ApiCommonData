@@ -1,4 +1,5 @@
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+# Number of datasets the ontology classes(terms) were used and indicate whether they have same labels among multiple datasets
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
@@ -6,7 +7,6 @@ SELECT distinct ?IRI
   (GROUP_CONCAT(DISTINCT ?slabel;separator=" | ") AS ?label)
   (GROUP_CONCAT(DISTINCT ?dOrder;separator=" | ") AS ?displayOrder)
   (GROUP_CONCAT(DISTINCT ?var;separator=" | ") AS ?variable)
-
   (GROUP_CONCAT(DISTINCT ?dFile;separator=" | ") AS ?dataFile)
   (GROUP_CONCAT(DISTINCT ?def;separator=" | ") AS ?definition)
   (GROUP_CONCAT(DISTINCT ?cate;separator=" | ") AS ?category)
@@ -15,9 +15,10 @@ SELECT distinct ?IRI
   (GROUP_CONCAT(DISTINCT ?cDescription;separator=" | ") AS ?codebookDescription)
   (GROUP_CONCAT(DISTINCT ?cValues;separator=" | ") AS ?codebookValues)
   (GROUP_CONCAT(DISTINCT ?tType;separator=" | ") AS ?termType)
-WHERE { 
-	?IRI a owl:Class .
-	?IRI rdfs:label ?tlabel .
+WHERE {
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:PCO_0000024 .
+	BIND ("Household" AS ?cate) .
     	FILTER not exists { 
       		?IRI owl:deprecated ?dep .
     	}
@@ -28,15 +29,11 @@ WHERE {
      	OPTIONAL {
         	?IRI obo:EUPATH_0000755 ?var .
     	} 
-
     	OPTIONAL {
         	?IRI obo:EUPATH_0001001 ?dFile .
     	}
     	OPTIONAL {
         	?IRI obo:IAO_0000115 ?def .
-    	}
-    	OPTIONAL {
-        	?IRI obo:EUPATH_0001002 ?cate .
     	}
 	OPTIONAL {
 		?IRI rdfs:subClassOf ?pIRI .
@@ -54,6 +51,193 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0000738 .
+	BIND ("Observation" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0000327 .
+	BIND ("Entomology" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0025169 .
+	BIND ("Insect sample" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0000096 .
+	BIND ("Participant" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	}
+
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0000609 .
+	BIND ("Sample" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+	}
 }
-GROUP BY ?IRI 
+GROUP BY ?IRI
 ORDER BY ASC(?category) ASC(?parentLabel) ASC(?label)

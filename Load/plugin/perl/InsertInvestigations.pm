@@ -15,6 +15,7 @@ use GUS::Model::Study::ProtocolAppParam;
 use GUS::Model::Study::Input;
 use GUS::Model::Study::Output;
 use GUS::Model::Study::Protocol;
+use GUS::Model::Study::ProtocolSeriesLink;
 use GUS::Model::Study::ProtocolParam;
 use GUS::Model::Study::Characteristic;
 use GUS::Model::Study::StudyLink;
@@ -417,7 +418,7 @@ sub checkProtocolsAndSetIds {
       $protocol->{_PROTOCOL_ID} = $protocols{$protocolName};
     }
     else {
-      $self->log("WARNING:  Protocol [$protocolName] Not found in the database ... adding") ;
+      $self->log("WARNING:  Protocol [$protocolName] Not found in the database") ;
     }
   }
 }
@@ -503,7 +504,9 @@ sub loadNodes {
       my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
+    }
 
+    if ($node->hasAttribute("Characteristic")) {
       my $characteristics = $node->getCharacteristics();
 
       foreach my $characteristic (@$characteristics) {
@@ -653,7 +656,7 @@ sub loadProtocols {
     my @gusProtocolParams = $gusProtocol->getChildren("Study::ProtocolParam", 1);
     my $protocolParams = $protocol->getProtocolParameters();
 
-    next if (scalar (@$protocolParams) == 0);
+#    next if (scalar (@$protocolParams) == 0);
 
 
     foreach my $protocolParam (@$protocolParams) {
@@ -681,7 +684,7 @@ sub loadProtocols {
         $gusProtocolParam->setParent($gusProtocol);
       }
     }
-
+    $self->log("Adding protocol $protocolName to the database");
     $gusProtocol->submit();
     $pNameToId->{$protocolName} = $gusProtocol->getId();
 
@@ -723,11 +726,16 @@ sub loadEdges {
       my $protocolName;
 
       my $gusProtocol;
+      my @seriesProtocolNames;
 
       if($protocolCount > 1) {
-        my @protocolNames = map { $_->getProtocol()->getProtocolName() } @{$edge->getProtocolApplications()};
+        @seriesProtocolNames = map { $_->getProtocol()->getProtocolName() } @{$edge->getProtocolApplications()};
+	# check they have already been loaded
+	my @ok = grep { $protocolNamesToIdMap->{$_} } @seriesProtocolNames;
+	$self->error("ERROR: one or more protocolSeries component protocol not already loaded (@seriesProtocolNames)") unless (@ok == @seriesProtocolNames);
 
-        $protocolName = join("; ", @protocolNames);
+	# now make the name for the 'parent' protocol
+        $protocolName = join("; ", @seriesProtocolNames);
       }
       else {
         $protocolName = $edge->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
@@ -750,6 +758,13 @@ sub loadEdges {
 
         $gusProtocolId = $gusProtocol->getId();
         $protocolNamesToIdMap->{$protocolName} = $gusProtocolId;
+
+	for (my $i=0; $i<@seriesProtocolNames; $i++) {
+	  my $protocolSeriesLink = GUS::Model::Study::ProtocolSeriesLink->new({order_num => $i+1});
+	  $protocolSeriesLink->setProtocolSeriesId($gusProtocolId);
+	  $protocolSeriesLink->setProtocolId($protocolNamesToIdMap->{$seriesProtocolNames[$i]});
+	  $protocolSeriesLink->submit();
+	}
       }
 
       $gusProtocolApp->setProtocolId($gusProtocolId);

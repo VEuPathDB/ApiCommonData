@@ -53,7 +53,7 @@ my %GLOBAL_UNIQUE_FIELDS = ("GUS::Model::Core::ProjectInfo" => ["name", "release
                             "GUS::Model::DoTS::GOAssociationInstanceLOE" => ["name"], 
                             "GUS::Model::SRes::ExternalDatabase" => ["name"],
                             "GUS::Model::SRes::ExternalDatabaseRelease" => ["external_database_id", "version"],
-                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"], # TODO:  WHy is name included here??
+                            "GUS::Model::SRes::OntologyTerm" => ["source_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologySynonym" => ["ontology_term_id", "ontology_synonym"],
                             "GUS::Model::SRes::OntologyRelationship" => ["subject_term_id", "object_term_id", "predicate_term_id", "external_database_release_id"],
                             "GUS::Model::SRes::OntologyTermType" => ["name"],
@@ -141,6 +141,13 @@ sub getArgsDeclaration {
             constraintFunc => undef,
             isList         => 0, }),
 
+   fileArg({name           => 'databaseDir',
+            descr          => 'directory for input database files',
+            reqd           => 0,
+            mustExist      => 0,
+            format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
 
     ];
 
@@ -251,13 +258,13 @@ sub error {
 
 
 sub makeReaderObj {
-  my ($database, $readerClass, $forceSkipDatasetFile, $forceLoadDatasetFile) = @_;
+  my ($database, $readerClass, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir) = @_;
 
   eval "require $readerClass";
   die $@ if $@;  
 
   my $reader = eval {
-    $readerClass->new($database, $forceSkipDatasetFile, $forceLoadDatasetFile);
+    $readerClass->new($database, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir);
   };
   die $@ if $@;
 
@@ -374,12 +381,11 @@ sub run {
   my $tableReaderClass = $self->getArg('table_reader');
   my $forceSkipDatasetFile = $self->getArg('forceSkipDatasetFile');
   my $forceLoadDatasetFile = $self->getArg('forceLoadDatasetFile');
+  my $databaseDir = $self->getArg('databaseDir');
 
-  my $tableReader = &makeReaderObj($database, $tableReaderClass, $forceSkipDatasetFile, $forceLoadDatasetFile);
-
+  my $tableReader = &makeReaderObj($database, $tableReaderClass, $forceSkipDatasetFile, $forceLoadDatasetFile, $databaseDir);
 
   $tableReader->connectDatabase();
-
 
   $self->log("Getting Table Dependencies and Ordering Tables by Foreign Keys...");
 
@@ -460,9 +466,9 @@ sub loadPrimaryKeyTableForUndo {
 
   $dbh->do("create table $primaryKeyTableName (primary_key number($prec), primary key(primary_key))")  or die $dbh->errstr;;
 
-  my $login       = $self->getConfig->getDatabaseLogin();
-  my $password    = $self->getConfig->getDatabasePassword();
-  my $dbiDsn      = $self->getConfig->getDbiDsn();
+  my $login       = $self->getDb->getLogin();
+  my $password    = $self->getDb->getPassword();
+  my $dbiDsn      = $self->getDb->getDSN();
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   my $sqlldrUndoInfileFn = "${abbreviatedTablePeriod}_pk.dat";
@@ -507,26 +513,29 @@ sub loadPrimaryKeyTableForUndo {
     print $sqlldrUndoInfileFh $origPrimaryKey . $END_OF_RECORD_DELIMITER; # note the special line terminator
   }
 
+  $tableReader->finishTable();
+
   $fifo->cleanup();
 }
 
 sub deleteFromTable {
   my ($self, $dbh, $deleteSql, $tableName) = @_;
-  my $chunkSize = 100000;
-  $deleteSql = $deleteSql . " and rownum <= $chunkSize";
+
+#  my $chunkSize = 100000;
+#  $deleteSql = $deleteSql . " and rownum <= $chunkSize";
 
   my $deleteStmt = $dbh->prepare($deleteSql) or die $dbh->errstr;
   my $rowsDeleted = 0;
     
-  while (1) {
-    my $rtnVal = $deleteStmt->execute() or die $dbh->errstr;
-    $rowsDeleted += $rtnVal;
-    $self->log("Deleted $rowsDeleted rows from $tableName");
-    $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
-    last if $rtnVal < $chunkSize;
-  }
-
+#  while (1) {
+  my $rtnVal = $deleteStmt->execute() or die $dbh->errstr;
+  $rowsDeleted += $rtnVal;
+  $self->log("Deleted $rowsDeleted rows from $tableName");
   $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
+#    last if $rtnVal < $chunkSize;
+#  }
+
+#  $dbh->commit() || $self->error("Committing deletions from $tableName failed: " . $self->{dbh}->errstr());
 
   return $rowsDeleted;
 }
@@ -562,58 +571,60 @@ sub undoTable {
   $self->loadPrimaryKeyTableForUndo($tableInfo, $primaryKeyTableName, $tableReader, $maxPkOrig, $dbh);
 
 
-  my $deleteMapSql = "delete from $MAPPING_TABLE_NAME
-             where database_orig = '$database'
-             and table_name = '$abbreviatedTable'
-             and primary_key_orig not in (select primary_key from $primaryKeyTableName)";
+  #  from iodice:  "could replace the "INTERSECT (. . . having count(*) = 1)" with "MINUS ( . .  where database_orig != '$database')". I'm not clear on which is better."
+  my $deleteGlobSql = "delete $GLOBAL_NATURAL_KEY_TABLE_NAME 
+                       where table_name = '$abbreviatedTable' 
+                        and primary_key in (select a.primary_key
+                                            from (select primary_key, primary_key_orig
+                                                  from $MAPPING_TABLE_NAME
+                                                  where table_name = '$abbreviatedTable'
+                                                   and database_orig = '$database') a,
+                                                 (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                            where a.primary_key_orig = k.primary_key_orig (+)
+                                             and k.primary_key_orig is null
+                                            INTERSECT -- find rows which are unique to this database
+                                            select primary_key
+                                            from $MAPPING_TABLE_NAME
+                                            where table_name = '$abbreviatedTable'
+                                            group by primary_key
+                                            having count(*) = 1)";
 
 
-  my $deleteSql;
-  if($tableName =~ /GUS::Model::Core/) {
-    $deleteSql = "delete from $abbreviatedTablePeriod
-          where $primaryKeyColumn in (
-            select $primaryKeyColumn from $abbreviatedTablePeriod
-              MINUS 
-                (select primary_key 
-                from $MAPPING_TABLE_NAME
-                where table_name = '$abbreviatedTable'
-                UNION
-                select t.$primaryKeyColumn 
-                from $abbreviatedTablePeriod t, core.projectinfo p
-                where t.row_project_id = p.project_id
-                and p.name in ('Database administration')
-                )
-        )
-";        
 
-  }
-  else {
-  $deleteSql = "delete from $abbreviatedTablePeriod
-        where $primaryKeyColumn in (
-          select $primaryKeyColumn 
-            from $abbreviatedTablePeriod
-            minus 
-            select primary_key from $MAPPING_TABLE_NAME
-            where table_name = '$abbreviatedTable'
-          )
-      ";
-
-  }
+  my $deleteSql = "delete $abbreviatedTablePeriod 
+                   where $primaryKeyColumn in (select a.primary_key
+                                               from (select primary_key, primary_key_orig
+                                                     from $MAPPING_TABLE_NAME
+                                                     where table_name = '$abbreviatedTable'
+                                                      and database_orig = '$database') a,
+                                                    (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                               where a.primary_key_orig = k.primary_key_orig (+)
+                                                and k.primary_key_orig is null
+                                               MINUS -- remaining in globalnaturalkey
+                                               select primary_key
+                                               from $GLOBAL_NATURAL_KEY_TABLE_NAME 
+                                               where table_name = '$abbreviatedTable')
+                   and row_alg_invocation_id in (select distinct row_alg_invocation_id from $MAPPING_TABLE_NAME where table_name = '$abbreviatedTable')";
 
 
-  my $deleteGlobSql = "delete from $GLOBAL_NATURAL_KEY_TABLE_NAME
-        where primary_key in (
-          select primary_key from $GLOBAL_NATURAL_KEY_TABLE_NAME
-            minus select primary_key 
-            from $MAPPING_TABLE_NAME
-            where table_name = '$abbreviatedTable')
-          and table_name='$abbreviatedTable'
-        ";
 
+  my $deleteMapSql = "delete $MAPPING_TABLE_NAME
+                      where table_name = '$abbreviatedTable'
+                       and database_orig = '$database'
+                       and primary_key in(select a.primary_key
+                                               from (select primary_key, primary_key_orig
+                                                     from $MAPPING_TABLE_NAME
+                                                     where table_name = '$abbreviatedTable'
+                                                      and database_orig = '$database') a,
+                                                    (select primary_key as primary_key_orig from $primaryKeyTableName) k
+                                               where a.primary_key_orig = k.primary_key_orig (+)
+                                                and k.primary_key_orig is null)";
+
+  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
+
+  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
 
   $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
-  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
-  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
 
   $dbh->do("drop table $primaryKeyTableName") or die $dbh->errstr;;
 }
@@ -854,7 +865,7 @@ sub writeConfigFile {
 
     push @$attributeList, keys %$datatypeMap;
 
-    $datatypeMap->{'database_orig'} = " CHAR(10)";
+    $datatypeMap->{'database_orig'} = " CHAR(30)";
     $datatypeMap->{'table_name'} = " CHAR(35)";
     $datatypeMap->{'primary_key_orig'} = " INTEGER EXTERNAL(20)";
     $datatypeMap->{'primary_key'} = " INTEGER EXTERNAL(20)";
@@ -980,9 +991,10 @@ sub loadTable {
     $hasRowProjectId = 0;
   }
 
-  my $login       = $self->getConfig->getDatabaseLogin();
-  my $password    = $self->getConfig->getDatabasePassword();
-  my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+  my $login       = $self->getDb->getLogin();
+  my $password    = $self->getDb->getPassword();
+  my $dbiDsn      = $self->getDb->getDSN();
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
@@ -1012,14 +1024,15 @@ sub loadTable {
 
     $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn);
 
-    if(!$alreadyMappedMaxOrigPk) {
-      $sqlldrDat->setDirect(1);
-      $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
-    }
+    # TODO:set back
+    # if(!$alreadyMappedMaxOrigPk) {
+    #   $sqlldrDat->setDirect(1);
+    #   $sqlldrDat->setSkipIndexMaintenance(1) if($tableName !~ /GUS::Model::Core::Algorithm/);
+    # }
     $sqlldrDatProcessString = $sqlldrDat->getCommandLine();
   }
   else {
-    $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
+#    $self->disableReferentialConstraintsFromTable($NA_SEQUENCE_TABLE_NAME);
 
     $self->getDb()->manageTransaction(0, 'begin');
     eval "require $tableName";
@@ -1234,9 +1247,9 @@ sub loadTable {
     my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
     my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
     if($sequenceDifference > 0) {
-      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
-      $dbh->do("select ${sequenceName}.nextval from dual");
-      $dbh->do("alter sequence $sequenceName increment by 1");
+      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
+      $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
+      $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
     }
   }
   else {
@@ -1549,16 +1562,6 @@ sub foundValueInArray {
 }
 
 
-sub getConfig {
-  my ($self) = @_;
-
-  if (!$self->{config}) {
-    my $gusConfigFile = $self->getArg('gusconfigfile');
-     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
-   }
-
-  $self->{config};
-}
 
 sub undoTables {
 

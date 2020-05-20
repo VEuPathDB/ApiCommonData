@@ -224,10 +224,8 @@ sub addResults {
     $tableString = "Results::NaFeatureHostResponse";
   }
   elsif ($protocolName =~ /taxonomic_diversity_assessment_by_targeted_gene_survey/) {
-    $tableString = "Results::OtuAbundance";
-  }
-  elsif ($protocolName =~ /alpha_diversity/ ) {
-    $tableString = "Results::AlphaDiversity";
+    $tableString = "Results::LineageAbundance";
+    warn "You seem to be using " .__PACKAGE__ . ", have you seen ApiCommonData::Load::LineageAbundances?";
   }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
@@ -278,6 +276,7 @@ sub addResults {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
   else {
+# TODO check what protocol this is for, and die in the else clause
     $tableString = "Results::NAFeatureExpression";
   }
 
@@ -310,14 +309,6 @@ sub addResults {
         }
     }
 
-    elsif ($sourceIdType =~ /16s_rrna/ || $sourceIdType =~ /taxon_string/) {
-      my $taxonId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
-      #double check. may want to require this be found rather than skip
-      next unless $taxonId;
-      $hash = { taxon_id => $taxonId, };
-      $start = 1;
-    }
-
     elsif ($sourceIdType =~ /reporter/) {
       my $reporterId = $self->lookupIdFromSourceId($a[0], $sourceIdType);
       $hash = { reporter_id => $reporterId };
@@ -329,17 +320,6 @@ sub addResults {
         $hash = { ontology_term_id => $ontologyTermId };
         $start = 1;
     }
-
-#    elsif ($sourceIdType =~ /compound/) { #ROSS - need to delete this? Only for Llinas?
-	#
-	# my ($chebi, $isotopomer) = split(/\|/, $a[0]);
-	#
-	# my $reporterId = $self->lookupIdFromSourceId($chebi, $sourceIdType);
-	# $hash = { compound_id => $reporterId ,
-	#           isotopomer => $isotopomer,
-	# };
-	# $start = 1;
-	# }
 
     elsif ($sourceIdType =~ /literal/) {
 	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
@@ -419,31 +399,6 @@ sub lookupIdFromSourceId {
   elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
   }
-  elsif ($sourceIdType eq 'taxon_string') {
-   my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
-                                            from apidb.TaxonString ts
-                                            where ts.taxon_string = '$sourceId'");
-    unless (scalar @taxonIds == 1) {
-        die "Number of taxon IDs returned should be 1\n";
-    }
-
-    $rv = @taxonIds[0];
-  }
-  elsif ($sourceIdType eq '16s_rrna') {
-   my @taxonIds = $self->sqlAsArray(Sql => "select ts.taxon_id
-                                            from apidb.TaxonString ts
-                                            , apidb.SequenceTaxonString sts
-                                            , dots.externalnasequence ns
-                                            where ns.source_id = to_char($sourceId)
-                                            and ns.na_sequence_id = sts.na_sequence_id
-                                            and sts.taxon_string_id = ts.taxon_string_id");
-    unless (scalar @taxonIds == 1) {
-        die "Number of taxon IDs returned should be 1\n";
-    }
-
-    $rv = @taxonIds[0];
-  }
-
   elsif ($sourceIdType eq 'reporter') {
     my $probeExtDbRlsSpec = $self->getArg('platformExtDbSpec');
     my $probeExtDbRlsId = $self->getExtDbRlsId($probeExtDbRlsSpec);
@@ -681,8 +636,7 @@ sub undoTables {
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
     'Results.CompoundMassSpec',
-    'Results.OtuAbundance',
-    'Results.AlphaDiversity',
+    'Results.LineageAbundance',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',
@@ -698,9 +652,9 @@ sub undoTables {
     'ApiDB.PhenotypeGrowthRate',
     'ApiDB.WHOSTANDARDS',
     'ApiDB.NAFeatureMetaCycle',
-	'ApiDB.CompoundMassSpecResult',  
-	'ApiDB.CompoundPeaksChebi',  
-	'ApiDB.CompoundPeaks',  
+    'ApiDB.CompoundMassSpecResult',
+    'ApiDB.CompoundPeaksChebi',
+    'ApiDB.CompoundPeaks',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',

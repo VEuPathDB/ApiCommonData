@@ -2,7 +2,14 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON chebi.compounds  TO gus_w;
 GRANT SELECT ON chebi.compounds  TO gus_r;
 
 
--- This has to be here because
+-- these foreign keys must be added here because the chebi schema install is done later than other installs
+-- so ApiDB.CompoundPeaksChebi and Results.CompoundMassSpec have nothing to refer to when they are created
+
+GRANT REFERENCES ON chEBI.Compounds to ApiDB;
+alter table ApiDB.CompoundPeaksChebi
+ADD CONSTRAINT fk_cpdpks_cid
+foreign key (compound_ID) references chEBI.compound (id);
+
 GRANT REFERENCES ON chEBI.Compounds to Results;
 alter table Results.CompoundMassSpec 
 ADD CONSTRAINT fk_cpdms_cid

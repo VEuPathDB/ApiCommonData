@@ -33,7 +33,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                        );
 my $dbh = $db->getQueryHandle();
 
-my $primaryExtDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+#my $primaryExtDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
 my $outputFileName = $organismAbbrev . "_functional_annotation.json" unless($outputFileName);
 
@@ -42,55 +42,35 @@ if ($outputFileDir) {
 }
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
-## grep dbxrefs info of EntrezGene and UniProt
-my %dbxrefs;
-my $geneIdHash = getGeneFeatureSourceId($organismAbbrev);
-my $uniprotHash = getDbxRefs($organismAbbrev, "UniProt");
-my $entrezGeneHash = getDbxRefs($organismAbbrev, "EntrezGene");
 
-foreach my $k (sort keys %{$geneIdHash}) {
-
-  if ($entrezGeneHash->{$k}) {
-    my %dbxrefEG = (
-		  'id' => $entrezGeneHash->{$k},
-		  'dbname' => "EntrezGene"
-		  );
-    push @{$dbxrefs{$k}}, \%dbxrefEG;
-  }
-
-  if ($uniprotHash->{$k}) {
-    my %dbxref = (
-		  'id' => $uniprotHash->{$k},
-		  'dbname' => "UniProt"
-		 );
-
-    push @{$dbxrefs{$k}}, \%dbxref;
-  }
-}
+## get all Ids hash
+#my ($geneHash, $transcriptHash, $translationHash) = getGeneTranscriptTranslation ($organismAbbrev);
+my ($geneHash, $transcriptHash) = getGeneTranscriptIdHash ($organismAbbrev);
+my ($translationHash) = getTranslationIdHash ($organismAbbrev);
 
 ## grep product info
 my $products = getProductName ($organismAbbrev);
 
+## get dbxrefs
+my $dbxrefs = getDbxRefsAll ($organismAbbrev);
 
-## grep GO annotation
-my %goAnnots;
+## get GO
+my $gaAnnot = getGOAnnotAll ($organismAbbrev);
 
-
-## contruct transcripts
-my $transcripts = getTranscriptsInfos ($primaryExtDbRlsId);
-
+## get synonyms
+my $synonym = getSynonymAll ($organismAbbrev);
 
 ## main flow
 my (@functAnnotInfos, $c);
-foreach my $k (sort keys %{$geneIdHash}) {
+foreach my $k (sort keys %{$geneHash}) {
 
   my %functAnnot = (
 		 'object_type' => "gene",
-		 'id' => $k,
-		 'transcripts' => \@{$transcripts->{$k}}
+		 'id' => $k
 		 );
 
-  $functAnnot{xrefs} = \@{$dbxrefs{$k}} if ($dbxrefs{$k});
+  $functAnnot{xrefs} = \@{$dbxrefs->{$k}} if ($dbxrefs->{$k});
+  $functAnnot{synonyms} = \@{$synonym->{$k}} if ($synonym->{$k});
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -98,6 +78,40 @@ foreach my $k (sort keys %{$geneIdHash}) {
 #  last if ($c > 10);
 }
 
+$c = 0;
+foreach my $k2 (sort keys %{$transcriptHash}) {
+  my %functAnnot = (
+		 'object_type' => "transcript",
+		 'id' => $k2
+#                 'description' => $products->{$k2}
+		    );
+
+  $functAnnot{description} = $products->{$k2} if ($products->{$k2});
+  $functAnnot{xrefs} = \@{$dbxrefs->{$k2}} if ($dbxrefs->{$k2});
+
+  push @functAnnotInfos, \%functAnnot;
+
+  $c++;
+#  last if ($c > 10);
+}
+
+$c = 0;
+foreach my $k3 (sort keys %{$translationHash}) {
+  my %functAnnot = (
+		 'object_type' => "translation",
+		 'id' => $k3
+		    );
+
+  push @{$dbxrefs->{$k3}} , @{$gaAnnot->{$k3}} if ($gaAnnot->{$k3});
+
+  $functAnnot{xrefs} = \@{$dbxrefs->{$k3}} if ($dbxrefs->{$k3});
+
+
+  push @functAnnotInfos, \%functAnnot;
+
+  $c++;
+#  last if ($c > 10);
+}
 
 my $json = encode_json(\@functAnnotInfos);
 
@@ -125,10 +139,14 @@ sub getTranscriptsInfos {
 	 = $stmt->fetchrow_array()) {
 
     my %transcriptInfo = (
-			  'id' => $tSourceId,
-			  'type' => $type,
-			  'description' => $products->{$tSourceId}
+			  'object_type' => "transcript",
+			  'id' => $tSourceId
+#			  'description' => $products->{$tSourceId}
 			 );
+
+    if ($products->{$tSourceId}) {
+      $transcriptInfo{description} = $products->{$tSourceId};
+    }
 
     push @{$transcriptInfos{$gSourceId}}, \%transcriptInfo;
 
@@ -143,7 +161,7 @@ sub getProductName {
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
-  ## grep the preferred product name
+  ## only grep the preferred product name
   my $sql = "select t.SOURCE_ID, tp.product,
              tp.IS_PREFERRED, tp.PUBLICATION, tp.EVIDENCE_CODE, tp.WITH_FROM
              from dots.transcript t, ApiDB.TranscriptProduct tp
@@ -158,20 +176,39 @@ sub getProductName {
   while (my ($tSourceId, $product, $isPreferred, $publication, $evidencdCode, $withFrom)
 	 = $stmt->fetchrow_array()) {
 
-    $products{$tSourceId} = $product;
-
-    if ($publication || $evidencdCode || $withFrom) {
-      $products{$tSourceId} .= " [";
-      $products{$tSourceId} .= "isPreferred=$isPreferred, " if ($isPreferred);
-      $products{$tSourceId} .= "publication=$publication, " if ($publication);
-      if ($evidencdCode) {
-	my $eviCodeName = getEvidenceCodeName ($evidencdCode);
-	$products{$tSourceId} .= "evidencdCode=$eviCodeName, ";
-      }
-      $products{$tSourceId} .= "withFrom=$withFrom" if ($withFrom);
-      $products{$tSourceId} =~ s/\,\s*$//;
-      $products{$tSourceId} .= "]";
+    my %evidence = (
+		   'isPreferred' => $isPreferred
+		   );
+    if ($publication) {
+      $publication =~ s/PMID://;
+      %evidence = (
+		   'PMID' => $publication
+		   );
     }
+    if ($evidencdCode) {
+      my $eviCodeName = getEvidenceCodeName ($evidencdCode);
+      %evidence = (
+		   'evidencdCode' => $eviCodeName
+		   );
+    }
+    if ($withFrom) {
+      %evidence = (
+		   'withFrom' => $withFrom
+		   );
+    }
+
+#    my $evidenceJson = encode_json(\%evidence);
+#    print STDERR $evidenceJson. "\n";
+
+#    my $productFull = $product . " " . $evidenceJson;
+
+#    my $productHash = (
+#		       'description' => $productFull
+#		       );
+
+#    push @{$products{$tSourceId}}, $productHash;
+
+    $products{$tSourceId} = $product if ($isPreferred == 1 && $product);
   }
 
   $stmt->finish();
@@ -195,51 +232,203 @@ sub getEvidenceCodeName {
   return $eviCodeName;
 }
 
-sub getDbxRefs {
-  my ($orgnaismAbbrev, $name) = @_;
+sub getGOAnnotAll {
+  my ($abbrev) = @_;
 
-  my %dbxrefs;
-  my $dbName;
-  if ($name =~ /uniprot/i) {
-    $dbName = $orgnaismAbbrev. "_dbxref_gene2Uniprot_RSRC";
-  } elsif ($name =~ /entrezgene/i) {
-    $dbName = $orgnaismAbbrev. "_dbxref_gene2Entrez_RSRC";
-  } else {
-    die "dbxref db name has not been configured yet\n";
-  }
+  my (%goAnnots);
 
-  my $dbRlsId = getExtDbRlsIdFromExtDbName($dbName);
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
 
-  my $sql = "select gf.SOURCE_ID, df.PRIMARY_IDENTIFIER
-             from dots.genefeature gf, DOTS.DBREFNAFEATURE dnf, SRES.DBREF df,
-             SRES.EXTERNALDATABASERELEASE edr
-             where gf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID
-             and df.EXTERNAL_DATABASE_RELEASE_ID=$dbRlsId";
+  my $sql = "select tas.SOURCE_ID, ot.SOURCE_ID
+from DOTS.GOASSOCIATION ga, SRES.ONTOLOGYTERM ot, DOTS.TRANSLATEDAASEQUENCE tas
+where ot.ONTOLOGY_TERM_ID=ga.GO_TERM_ID and ga.ROW_ID=tas.AA_SEQUENCE_ID
+and tas.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
 
   my $stmt = $dbh->prepareAndExecute($sql);
-  while (my ($sourceId, $dbxref) = $stmt->fetchrow_array()) {
-    $dbxrefs{$sourceId}= $dbxref;
+
+  while (my ($aaSourceId, $goId) = $stmt->fetchrow_array()) {
+
+    if ($aaSourceId && $goId) {
+      $goId =~ s/\_/\:/g;
+
+      my %xrefs = (
+		   "dbname" => "GO",
+		   "id" => $goId
+		  );
+
+      push @{$goAnnots{$aaSourceId}}, \%xrefs;
+    }
+  }
+  $db->undefPointerCache();
+  $stmt->finish();
+
+  return \%goAnnots;
+}
+
+
+sub getSynonymAll {
+  my ($abbrev) = @_;
+
+  my (%synonyms);
+
+  ## get geneName
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+
+  my $sql = "select g.SOURCE_ID, n.NAME, n.IS_PREFERRED
+from ApiDB.GeneFeatureName n, dots.genefeature g
+where g.NA_FEATURE_ID=n.NA_FEATURE_ID
+and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+  while (my ($sourceId, $name, $isPrefer) = $stmt->fetchrow_array()) {
+    if ($sourceId && $name) {
+      if ($isPrefer == 1) {
+	my %geneName= (
+		       "synonym" => $name,
+		       "default" => \1
+		      );
+	push @{$synonyms{$sourceId}}, \%geneName;
+      } else {
+	push @{$synonyms{$sourceId}}, $name;
+      }
+    }
   }
   $stmt->finish();
+
+  ## get synonyms
+  my $synExtDbName = $abbrev. "%_synonym_RSRC";
+  my $sqll = "select nf.SOURCE_ID, df.PRIMARY_IDENTIFIER
+from dots.nafeature nf, DOTS.DBREFNAFEATURE dnf, SRES.DBREF df,
+SRES.EXTERNALDATABASERELEASE edr, SRES.EXTERNALDATABASE ed
+where nf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID
+and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+and ed.name like '$synExtDbName'
+";
+  my $stmtt = $dbh->prepareAndExecute($sqll);
+  while (my ($sourceId, $name) = $stmtt->fetchrow_array()) {
+    if ($sourceId && $name) {
+      push @{$synonyms{$sourceId}}, $name;
+    }
+  }
+  $stmtt->finish();
+
+  $db->undefPointerCache();
+
+  return \%synonyms;
+}
+
+sub getDbxRefsAll {
+  my ($orgnaismAbbrev) = @_;
+
+  my (%dbxrefs, $dbName);
+
+  my $dbNameHash = getDbxrefsNameHash ($orgnaismAbbrev);
+
+  foreach my $k (sort keys %{$dbNameHash}) {
+    foreach my $extDbName (@{$dbNameHash->{$k}}) {
+#      print STDERR "processing $extDbName ... \n";
+
+      my $sql = "select nf.SOURCE_ID, df.PRIMARY_IDENTIFIER, ed.name
+from dots.nafeature nf, DOTS.DBREFNAFEATURE dnf, SRES.DBREF df,
+SRES.EXTERNALDATABASERELEASE edr, SRES.EXTERNALDATABASE ed
+where nf.NA_FEATURE_ID=dnf.NA_FEATURE_ID and dnf.DB_REF_ID=df.DB_REF_ID 
+and df.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+and edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+and ed.name like '$extDbName'";
+
+      my $stmt = $dbh->prepareAndExecute($sql);
+
+      while (my ($sourceId, $prmyId, $edName) = $stmt->fetchrow_array()) {
+
+	if ($sourceId && $prmyId) {
+	  my %xrefs = (
+		       "id" => $prmyId,
+		       "dbname" => $k
+		      );
+
+	  push @{$dbxrefs{$sourceId}}, \%xrefs;
+	}
+      }
+      $stmt->finish();
+    }
+    $db->undefPointerCache();
+  }
 
   return \%dbxrefs;
 }
 
-sub getGeneFeatureSourceId {
+sub getDbxrefsNameHash {
   my ($abbrev) = @_;
 
-  my %sourceIds;
+  my (%nameHash, $dbName);
+
+  $dbName = $abbrev . "_dbxref_gene2Entrez_RSRC";
+  push @{$nameHash{"EntrezGene"}}, $dbName;
+
+  $dbName = $abbrev . "_dbxref_gene2Uniprot_RSRC";
+  push @{$nameHash{"Uniprot"}}, $dbName;
+  $dbName = $abbrev . "_dbxref_uniprot_from_annotation_RSRC";
+  push @{$nameHash{"Uniprot"}}, $dbName;
+
+  $dbName = $abbrev . "_dbxref_gene2PubmedFromNcbi_RSRC";
+  push @{$nameHash{"PubMed"}}, $dbName;
+  $dbName = $abbrev . "_dbxref_pmid_from_annotation_RSRC";
+  push @{$nameHash{"PubMed"}}, $dbName;
+
+  $dbName = $abbrev . "_gbProteinId_NAFeature_aliases_RSRC";
+  push @{$nameHash{"NCBI protein db"}}, $dbName;
+
+  $dbName = $abbrev . "_dbxref_unity_GeneDB_RSRC";
+  push @{$nameHash{"GeneDB"}}, $dbName;
+
+  $dbName = $abbrev . "_dbxref_rfam_from_annotation_RSRC";
+  push @{$nameHash{"Rfam"}}, $dbName;
+
+  return \%nameHash;
+}
+
+sub getGeneTranscriptIdHash {
+  my ($abbrev) = @_;
+
+  my (%geneIds, %transcriptIds);
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
-  my $sql = "select source_id from dots.genefeature where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+  my $sql = "select g.source_id, t.source_id, t.is_pseudo
+             from dots.genefeature g, dots.transcript t
+             where g.na_feature_id = t.parent_id
+             and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
-  while (my ($sourceId) = $stmt->fetchrow_array()) {
-    $sourceIds{$sourceId} = $sourceId;
+  while (my ($geneId, $trcpIds, $isPseudo) = $stmt->fetchrow_array()) {
+    $geneIds{$geneId} = $geneId;
+    $transcriptIds{$trcpIds} = $trcpIds;
   }
 
-  return \%sourceIds;
+  return \%geneIds, \%transcriptIds;
+}
+
+sub getTranslationIdHash {
+  my ($abbrev) = @_;
+
+  my (%translationIds);
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+  my $sql = "select g.source_id, t.source_id, aa.source_id, t.is_pseudo
+             from dots.genefeature g, dots.transcript t, dots.translatedaafeature aa
+             where g.na_feature_id = t.parent_id and t.na_feature_id = aa.na_feature_id
+             and g.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  while (my ($geneId, $trcpIds, $trsltIds, $isPseudo) = $stmt->fetchrow_array()) {
+#    $geneIds{$geneId} = $geneId;
+#    $transcriptIds{$trcpIds} = $trcpIds;
+    $translationIds{$trsltIds} = $trsltIds if ($isPseudo != 1);
+  }
+
+  return \%translationIds;
 }
 
 sub getExtDbRlsIdFormOrgAbbrev {

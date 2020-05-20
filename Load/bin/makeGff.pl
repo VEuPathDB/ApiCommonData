@@ -91,7 +91,7 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
   my $features = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
 
   foreach my $feature (@$features) {
-    $feature->source_tag("EuPathDB");
+    $feature->source_tag("VEuPathDB");
     foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "SEQUENCE_IS_PIECE") {
       $feature->remove_tag($extraTag) if($feature->has_tag($extraTag));
     }

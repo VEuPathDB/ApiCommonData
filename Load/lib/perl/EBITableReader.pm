@@ -1,256 +1,214 @@
 package ApiCommonData::Load::EBITableReader;
+use base qw(ApiCommonData::Load::UniDBTableReader);
 
 use strict;
 
-use File::Temp qw/ tempfile /;
+use Data::Dumper;
 
-sub getContainerName { $_[0]->{_container_name} }
-sub setContainerName { $_[0]->{_container_name} = $_[1] }
+$/ = "#EOR#\n";
+my $FIELD_DELIMITER = "#EOC#\t";
 
-sub getSchemaDefinitionFile { $_[0]->{_schema_definition_file} }
-sub setSchemaDefinitionFile { $_[0]->{_schema_definition_file} = $_[1] }
 
-sub getChromosomeMapFile { $_[0]->{_chromosome_map_file} }
-sub setChromosomeMapFile { $_[0]->{_chromosome_map_file} = $_[1] }
+sub setTableFileHandle { $_[0]->{_table_file_handle} = $_[1] }
+sub getTableFileHandle { $_[0]->{_table_file_handle} }
 
-sub getEbi2gusVersion { $_[0]->{_ebi2gus_version} }
-sub setEbi2gusVersion { $_[0]->{_ebi2gus_version} = $_[1] }
+sub setTableHeader { $_[0]->{_table_header} = $_[1] }
+sub getTableHeader { $_[0]->{_table_header} }
 
-sub getNcbiTaxon { $_[0]->{_ncbi_taxon} }
-sub setNcbiTaxon { $_[0]->{_ncbi_taxon} = $_[1] }
+sub getTableNameFromPackageName {
+  my ($self, $fullTableName) = @_;
 
-sub getOrganismDatasetName { $_[0]->{_organism_dataset_name} }
-sub setOrganismDatasetName { $_[0]->{_organism_dataset_name} = $_[1] }
-
-sub getOrganismDatasetVersion { $_[0]->{_organism_dataset_version} }
-sub setOrganismDatasetVersion { $_[0]->{_organism_dataset_version} = $_[1] }
-
-sub getInitDir { $_[0]->{_init_dir} }
-sub setInitDir { $_[0]->{_init_dir} = $_[1] }
-
-sub getDataDir { $_[0]->{_data_dir} }
-sub setDataDir { $_[0]->{_data_dir} = $_[1] }
-
-sub new {
-  my ($class) = @_; # TODO.. add applicable variables here
-
-  my $self = $class->SUPER::new($class, "todo", undef, undef);
-
-   # unless($containerName) {
-   #   die "required container name is missing";
-   # }
- }
-
-sub connectDatabase {
-  my ($self) = @_;
-
-  my $databaseName = "core";
-
-  my $containerName = $self->getContainerName();
-
-  my @alphanumeric = ('a'..'z', 'A'..'Z', 0..9);
-  my $randomPassword = join '', map $alphanumeric[rand @alphanumeric], 0..8;
-
-  my ($registryFh, $registryFn) = tempfile("${containerName}XXXX", UNLINK => 1, SUFFIX => '.conf');
-
-  $self->writeRegistryConf($randomPassword, $databaseName, $registryFh);
-  $self->startService($registryFn, $randomPassword, $databaseName);
-
-  $self->dumpEbi();
+  $fullTableName =~ /GUS::Model::(.+)::(.+)/i;
+  my $tableName = $1 . "." . $2;
+  return uc $tableName;
 }
 
-sub dumpEbi {
-  my ($self) = @_;
+sub prepareTable {
+  my ($self, $tableName, $isSelfReferencing, $primaryKeyColumn, $maxAlreadyLoadedPk) = @_;
 
-  my $containerName = $self->getContainerName();
-}
+  my $fileName = $self->getTableNameFromPackageName($tableName);
 
-sub writeRegistryConf {
-  my ($self, $randomPassword, $databaseName, $registryFh) = @_;
+  my $databaseDir = $self->getDatabaseDirectory();
 
-  print $registryFh "use strict;
-use Bio::EnsEMBL::DBSQL::DBAdaptor;
-use Bio::EnsEMBL::Utils::ConfigRegistry;
+  my $fullFilePath = "$databaseDir/$fileName";
 
-new Bio::EnsEMBL::DBSQL::DBAdaptor(
-  -host    => 'localhost',
-  -pass    => '$randomPassword',
-  -user    => 'root',
-  -group   => 'core',
-  -driver => 'mysql',
-  -dbname  => '$databaseName'
-);
-1;
-";
-  
-}
-
-sub dupmEbi {
-  my ($self) = @_;
-
-  my $ncbiTaxon = $self->getNcbiTaxon();
-  my $organismDatasetName = $self->getOrganismDatasetName();
-  my $organismDatasetVersion = $self->getOrganismDatasetVersion();
-  my $containerName = $self->getContainerName();
-
-  # TODO:  check status of output
-  system("docker exec $containerName dumpGUS.pl -d $organismDatasetName -v $organismDatasetVersion -n $ncbiTaxon");
-}
-
-sub startService {
-  my ($self, $registryFn, $randomPassword, $databaseName) = @_;
-
-  my $containerName = $self->getContainerName();
-  my $initDir = $self->getInitDir();
-  my $dataDir = $self->getDataDir();
-  my $schemaDefinitionFile = $self->getSchemaDefinitionFile();
-  my $chromosomeMapFile = $self->getChromosomeMapFile();
-  my $ebi2gusVersion = $self->getEbi2gusVersion();
-
-  my $containerExists = `docker ps -a |grep $containerName`;
-  if($containerExists) {
-    die "There is an existing container named $containerName";
+  unless(-e $fullFilePath) {
+    $self->setTableFileHandle(undef);
+    $self->setTableHeader(undef);
+    return;
   }
 
-  my $mysqlServiceCommand = "docker run --name $containerName --health-cmd='mysqladmin ping --silent' -v ${chromosomeMapFile}:/usr/local/etc/chromosomeMap.conf -v ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml -v ${registryFn}:/usr/local/etc/ensembl_registry.conf -v ${initDir}:/docker-entrypoint-initdb.d -v ${dataDir}:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${randomPassword} -e MYSQL_DATABASE=${databaseName} veupathdb/ebi2gus:${ebi2gusVersion}";
 
-  my $servicePid = open(SERVICE, "-|", $mysqlServiceCommand) or die "Could not start service: $!";
-  
-  print "Service Starting....\n";
-  sleep(5); # let the service start before checking health
+  my $fh;
+  open($fh, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
 
-  my $healthCheckCommand = "docker inspect --format='{{json .State.Health.Status}}' $containerName";
-  my $healthStatus = `$healthCheckCommand`;
-  chomp $healthStatus;
+  my $header = <$fh>;
+  chomp $header;
 
-  while($healthStatus ne "\"healthy\"") {
-    unless($healthStatus eq "\"starting\"") {
-      die "Docker image failed to start up propery:  Health Status = $healthStatus";
-    }
-    print "Service status = $healthStatus ... \n";    
-    sleep(3);
-    $healthStatus = `$healthCheckCommand`;
-    chomp $healthStatus;
-  }
+  my @a = split($FIELD_DELIMITER, $header);
+  $self->setTableFileHandle($fh);
+  $self->setTableHeader(\@a);
 }
 
-sub DESTROY {
-  my $self = shift;
-
-  unless($self->{_cleanup}) {
-    $self->disconnectDatabase();
-  }
-}
-
-
-sub disconnectDatabase {
+sub finishTable {
   my ($self) = @_;
 
-  my $containerName = $self->getContainerName();
-  system("docker stop $containerName");
-  system("docker rm $containerName");
+  my $fh = $self->getTableFileHandle();
 
-  $self->{_cleanup} = 1;
+  close $fh if($fh);
+
+  $self->setTableFileHandle(undef);
+  $self->setTableHeader(undef);
 }
 
-sub prepareTable {}
+sub nextRowAsHashref {
+  my ($self, $tableInfo) = @_; #tableInfo is not used in this context
 
-sub finishTable {}
+  my $fh = $self->getTableFileHandle();
+  return undef unless($fh);
 
-sub nextRowAsHashref {}
+  my $row = <$fh>;
+  chomp $row;
 
-sub isRowGlobal {}
+  return undef unless($row);
 
-sub skipRow {}
-sub loadRow {}
+  my @a = split($FIELD_DELIMITER, $row);
 
+  my $header = $self->getTableHeader();
 
-=head2 Helpers for Caching Foreign Keys
+  my %hash;
+  @hash{@$header} = @a;
 
-=over 4
+  return \%hash;
+}
 
-=item C<getDistinctTablesForTableIdField>
+# rows will only be global if entire table is
+sub isRowGlobal {
+  return 0; 
+}
 
-Soft Key Helper.  For a field which is a foreign key to Core::TableInfo, get distinct table_id->TableName mappings
+sub skipRow {
+  return 0;
+}
 
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $field(string): database filed which is a fk to Core::TableInfo (example query_table_id)
- $table(string): database table name like "DoTS.Similarity"
-
-B<Return type:> 
-
- C<hashref> key is table_id and value is gus model table string.  example:  GUS::Model::DoTS::Similarity
-
-=cut
+sub loadRow {
+  return 1;
+}
 
 sub getDistinctTablesForTableIdField {
   my ($self, $field, $table) = @_;
+
+  print "Field=$field, table=$table\n";
+
+  my $fileName = "CORE.TABLEINFO";
+  my $nameField = "name";
+  my $tableIdField = "table_id";
+
+
+  my $outputDir = $self->getDatabaseDirectory();
+
+  my $fullFilePath = "$outputDir/$fileName";
+  
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+  my $header = <FILE>;
+  chomp $header;
+  my @header = split($FIELD_DELIMITER, $header);
+
+  my ($nameIndex) = grep { lc($header[$_]) eq lc($nameField) } 0 .. $#header;
+  my ($tableIdIndex) = grep { lc($header[$_]) eq lc($tableIdField) } 0 .. $#header;
+  my %rv;
+
+  if(uc($table) eq "DOTS.GOASSOCIATION") {
+    my $softTable = "TranslatedAASequence";
+    my $impTable = "AASequenceImp";
+
+    while(<FILE>) {
+      chomp;
+      my @a = split($FIELD_DELIMITER, $_);
+
+      my $name = $a[$nameIndex];
+      my $tableId = $a[$tableIdIndex];
+
+      if($name eq $softTable) {
+        $rv{$tableId} = "GUS::Model::DoTS::${impTable}";
+      }
+    }
+    
+  }
+  else {
+    print STDERR "Table $table is not handled for soft keys\n"
+  }
+  
+  close FILE;
+
+  unless(scalar(keys(%rv)) > 0) {
+    print STDERR  "Could not identify tables for soft key for $table, $field\n";
+  }
+
+  return \%rv;
 }
 
 
-=item C<getDistinctValuesForField>
-
-Foreign Key Helper.  For a table and field, lookup distinct possible values and return a hash
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(string): this field is a foreign key field in the gus $table
-
-B<Return type:> 
-
- C<hash> $seen{$id} = 1;
-
-=cut
 
 sub getDistinctValuesForField {
   my ($self, $table, $field) = @_;
+
+  my $fileName = $self->getTableNameFromPackageName($table);
+
+  my $outputDir = $self->getDatabaseDirectory();
+  my $fullFilePath = "$outputDir/$fileName";
+
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+
+  <FILE>;
+
+  my @header = @{$self->getTableHeader()};
+  my ($index) = grep { lc($header[$_]) eq lc($field) } 0 .. $#header;
+
+  my %seen;
+  while(<FILE>) {
+    chomp;
+    my @a = split($FIELD_DELIMITER, $_);
+    my $value = $a[$index];
+    $seen{$value} = 1;
+  }
+  close FILE;
+
+  return \%seen;
 }
 
-
-=item C<getMaxFieldLength>
-
-For memory allocation we need to know the biggest possible length for the field
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $table(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $field(string): field name
-
-B<Return type:> 
-
- C<hash> $length
-
-=cut
 
 sub getMaxFieldLength {
   my ($self, $table, $field) = @_;
+
+  my $fileName = $self->getTableNameFromPackageName($table);
+
+  my $outputDir = $self->getDatabaseDirectory();
+  my $fullFilePath = "$outputDir/$fileName";
+
+  open(FILE, $fullFilePath) or die "Cannot open file $fullFilePath: $!";
+
+  <FILE>;
+  my @header = @{$self->getTableHeader()};
+  my ($index) = grep { lc($header[$_]) eq lc($field) } 0 .. $#header;
+
+  my $length = 0;
+  while(<FILE>) {
+    chomp;
+    my @a = split($FIELD_DELIMITER, $_);
+    my $value = $a[$index];
+    my $l = length $value;
+    $length = $l if($l > $length);
+  }
+  close FILE;
+
+  return $length;
 }
 
 
-=item C<getTableCount>
-
-count how many rows are in the table with primary key value <= some value
-
-B<Parameters:>
-
- $self(TableReader): a table reader object
- $fullTableName(string): gus model table string.  example:  GUS::Model::DoTS::Similarity
- $primaryKeyColumn(string): name of of the primary key field
- $maxPrimaryKey(number): do not count rows with pk greater than this value
-
-B<Return type:> 
-
- C<number> $count
-
-=cut
-
+# not used
 sub getTableCount {
-  my ($self, $fullTableName, $primaryKeyColumn, $maxPrimaryKey) = @_;
+  die "";
 }
 
 

@@ -1,8 +1,19 @@
+-- This script drops "orphan" tuning tables.
 --
--- these look like tuning tables (their names end in four digits) but no synonym points at them.
+-- Tuning tables always consist of a table with a name like "GeneAttributes1234",
+-- together with a synonym, like "GeneAttributes", pointing at it. That's what
+-- makes it possible to make a new GeneAttributes while the web site is using the
+-- current GeneAttributes.
 --
+-- If a tuning table build fails, the table can be left behind. This script drops
+-- these orphaned tuning tables. They can be recognized because their names end
+-- in four digits but no synonym points at them.
+--
+-- this script must be run as the apidbTuning user
 
 set pagesize 50000 linesize 100
+
+spool o.sql
 
 SELECT 'drop table ' || owner || '.' || table_name || ';'
        AS "-- orphaned tuning tables"
@@ -26,4 +37,8 @@ WHERE table_name IN (SELECT table_name
   AND owner != 'WMSYS'
 ORDER BY owner, table_name;
 
--- exit
+spool off
+
+@o
+
+exit
