@@ -6,7 +6,7 @@ use lib $ENV{GUS_HOME} . "/lib/perl";
 use Getopt::Long;
 use ApiCommonData::Load::EBIUtils;
 use CBIL::Util::Utils;
-
+use IO::Zlib;
 use File::Temp qw/ tempfile /;
 use File::Copy;
 
@@ -27,8 +27,10 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
   my $oldVcf = "$vcf.old";
 
   move($vcf, $oldVcf);
-
-  open(OLD, $oldVcf) or die "Cannot open file $oldVcf for reading: $!";
+  ### Remove .gz suffix ###
+  $vcf = substr($vcf, 0, -3);
+#  open(OLD,  $oldVcf) or die "Cannot open file $oldVcf for reading: $!";
+  tie (*OLD, 'IO::Zlib', $oldVcf, "rb") or die "Cannot open file $oldVcf for reading: $!";
   open(VCF, ">$vcf") or die "Cannot open file $vcf for writing: $!";
 
   while(<OLD>) {
@@ -53,10 +55,12 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 if ( -e "$vcf.gz") {
     die "Zipped vcf file $vcf.gz already exists.\n";
 } else {
+
     my $zip_cmd = "bgzip ".$vcf;
     &runCmd($zip_cmd);
     my $index_cmd = "tabix -p vcf ".$vcf."\.gz";
     &runCmd($index_cmd);
+
 }
 
 sub usage {
