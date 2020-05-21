@@ -10,7 +10,7 @@ use GUS::Supported::GusConfig;
 
 ## TODO, better to ignore null record
 
-my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $annotationFile, $transpIdSuffix, $help);
+my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $annotationFile, $transpIdSuffix, $component, $help);
 
 &GetOptions(
             'genomeSummaryFile=s' => \$genomeSummaryFile,
@@ -19,6 +19,7 @@ my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $anno
             'organismListFile=s' => \$organismListFile,
             'annotationFile=s' => \$annotationFile,
             'transpIdSuffix=s' => \$transpIdSuffix,
+            'component=s' => \$component,
             'help|h' => \$help
             );
 
@@ -113,6 +114,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
     system($makeProteinFastaCmd);
 
     my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+    $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --component $component" if ($component =~ /vector/i);
+
     system($functAnnotJsonCmd);
 
 # do not need geneIdMapping.tab anymore
@@ -292,6 +295,7 @@ where:
   --annotationFile: optional, an annotation file that need to be extracted separately
   --transpIdSuffix: optional, only need when --annotationFile called and need to add a suffix for transcript ID
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
+  --component: optional, maybe need for VectorBase
 
 ";
 }
