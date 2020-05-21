@@ -8,12 +8,13 @@ use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
 
 
-my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
+my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $component, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
             'outputFileDir=s' => \$outputFileDir,
+            'component=s' => \$component,
             'help|h' => \$help
             );
 
@@ -50,6 +51,7 @@ my ($translationHash) = getTranslationIdHash ($organismAbbrev);
 
 ## grep product info
 my $products = getProductName ($organismAbbrev);
+$products = getProductNameFromTuningTable ($organismAbbrev) if ($component =~ /vector/i);
 
 ## get dbxrefs
 my $dbxrefs = getDbxRefsAll ($organismAbbrev);
@@ -154,6 +156,31 @@ sub getTranscriptsInfos {
   $stmt->finish();
 
   return \%transcriptInfos;
+}
+
+sub getProductNameFromTuningTable {
+  my ($orgnaismAbbrev) = @_;
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+
+  ## only grep the preferred product name
+  my $sql = "select TRANSCRIPT_SOURCE_ID, TRANSCRIPT_PRODUCT
+             from apidbtuning.transcriptAttributes
+             where EXTERNAL_DB_RLS_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %products;
+
+  while (my ($tSourceId, $product)
+	 = $stmt->fetchrow_array()) {
+
+    $products{$tSourceId} = $product if ($product);
+  }
+
+  $stmt->finish();
+
+  return \%products;
 }
 
 sub getProductName {
@@ -473,6 +500,7 @@ Usage: perl bin/generateFunctionalAnnotationJson.pl --organismAbbrev pfal3D7 --g
 where:
   --organismAbbrev: required, eg. pfal3D7
   --outputFileName: optional, default is organismAbbrev_genome.json
+  --component: optional, only need when it is VectorBase
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
 
 ";
