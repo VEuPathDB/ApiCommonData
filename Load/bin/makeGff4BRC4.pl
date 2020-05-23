@@ -251,7 +251,7 @@ sub getBioTypeAndUpdatePrimaryTag {
   if ($$feat->primary_tag eq "transcript") {
     my ($parentID) = $$feat->get_tag_values('Parent');
     my $transcriptType = $geneAnnotations->{$parentID}->{so_term_name};
-    if ($transcriptType eq "coding_gene") {
+    if ($transcriptType eq "coding_gene" || $transcriptType eq "protein_coding" || $transcriptType eq "pseudogene") {
       $transcriptType = "mRNA";
     } else {
       $transcriptType =~ s/\_gene$//;
