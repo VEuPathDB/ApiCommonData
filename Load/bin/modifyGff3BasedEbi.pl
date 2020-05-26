@@ -98,51 +98,54 @@ foreach my $gene (@{$bioperlFeaturesNested}) {
 
       my ($doneCds, $cdsOne);
       my $remainCdsLen = $pLength{$pId};
-      if ($tStrand == 1) {
-	foreach my $pCDS (sort {$a->location->start() <=> $b->location->start()} @{$pseudoCdsFeats{$pId}}) {
-	  next if ($doneCds == 1);
-	  $cdsOne++;
-	  my $cFrame = $pCDS->frame();
-	  my $cdsLen = $pCDS->location->end() - $pCDS->location->start() + 1;
-	  $remainCdsLen += $pCDS->frame() if ($cdsOne == 1);
-	  if ($remainCdsLen > $cdsLen ) {
-	    $remainCdsLen -= $cdsLen;
-	  } else {
-	    my $e = $pCDS->location->start + $remainCdsLen - 1;
-	    $doneCds = 1;
-	    ($e >= $pCDS->location->start) ? $pCDS->location->end($e) : next;
+      if ($pseudoCdsFeats{$pId}) {
+	if ($tStrand == 1) {
+	  foreach my $pCDS (sort {$a->location->start() <=> $b->location->start()} @{$pseudoCdsFeats{$pId}}) {
+	    next if ($doneCds == 1);
+	    $cdsOne++;
+	    my $cFrame = $pCDS->frame();
+	    my $cdsLen = $pCDS->location->end() - $pCDS->location->start() + 1;
+	    $remainCdsLen += $pCDS->frame() if ($cdsOne == 1);
+	    if ($remainCdsLen > $cdsLen ) {
+	      $remainCdsLen -= $cdsLen;
+	    } else {
+	      my $e = $pCDS->location->start + $remainCdsLen - 1;
+	      $doneCds = 1;
+	      ($e >= $pCDS->location->start) ? $pCDS->location->end($e) : next;
+	    }
+
+	    &renameCdsIdWithProteinId($pCDS);
+	    $transcript->add_SeqFeature($pCDS);
+	  }
+	} else {
+	  my @unSortedCDS;
+	  foreach my $pCDS (sort {$b->location->start() <=> $a->location->start()} @{$pseudoCdsFeats{$pId}}) {
+	    next if ($doneCds == 1);
+	    $cdsOne++;
+	    my $cFrame = $pCDS->frame();
+	    my $cdsLen = $pCDS->location->end() - $pCDS->location->start() + 1;
+	    $remainCdsLen += $pCDS->frame() if ($cdsOne == 1);
+	    #print STDERR "\$cdsLen = $cdsLen\n\$remainCdsLen=$remainCdsLen\n";
+	    if ($remainCdsLen > $cdsLen ) {
+	      $remainCdsLen -= $cdsLen;
+	      #print STDERR "\$remainCdsLen=$remainCdsLen\n";
+	    } else {
+	      my $s = $pCDS->location->end() - $remainCdsLen + 1;
+	      $doneCds = 1;
+	      ($s <= $pCDS->location->end) ? $pCDS->location->start($s) : next;
+	    }
+
+	    push @unSortedCDS, $pCDS;
 	  }
 
-	  &renameCdsIdWithProteinId($pCDS);
-	  $transcript->add_SeqFeature($pCDS);
-	}
-      } else {
-	my @unSortedCDS;
-	foreach my $pCDS (sort {$b->location->start() <=> $a->location->start()} @{$pseudoCdsFeats{$pId}}) {
-	  next if ($doneCds == 1);
-	  $cdsOne++;
-	  my $cFrame = $pCDS->frame();
-	  my $cdsLen = $pCDS->location->end() - $pCDS->location->start() + 1;
-	  $remainCdsLen += $pCDS->frame() if ($cdsOne == 1);
-	  #print STDERR "\$cdsLen = $cdsLen\n\$remainCdsLen=$remainCdsLen\n";
-	  if ($remainCdsLen > $cdsLen ) {
-	    $remainCdsLen -= $cdsLen;
-	    #print STDERR "\$remainCdsLen=$remainCdsLen\n";
-	  } else {
-	    my $s = $pCDS->location->end() - $remainCdsLen + 1;
-	    $doneCds = 1;
-	    ($s <= $pCDS->location->end) ? $pCDS->location->start($s) : next;
+	  ## resort the truncated CDSs
+	  foreach my $pCDS (sort {$a->location->start() <=> $b->location->start()} @unSortedCDS ) {
+	    &renameCdsIdWithProteinId($pCDS);
+	    $transcript->add_SeqFeature($pCDS);
 	  }
-
-	  push @unSortedCDS, $pCDS;
 	}
 
-	## resort the truncated CDSs
-	foreach my $pCDS (sort {$a->location->start() <=> $b->location->start()} @unSortedCDS ) {
-	  &renameCdsIdWithProteinId($pCDS);
-	  $transcript->add_SeqFeature($pCDS);
-	}
-      }
+      } # end of if ($pseudoCdsFeats{$pId})
 
     } # end of if ($tType eq "pseudogenic_transcript")
     else {
