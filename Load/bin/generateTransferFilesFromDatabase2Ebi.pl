@@ -38,6 +38,12 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                        );
 my $dbh = $db->getQueryHandle();
 
+my $gusDbName= $gusconfig->getDbiDsn();
+my @nameArray = split (/\:/, $gusDbName);
+$gusDbName = pop @nameArray;
+print STDERR "gusDatabaseName = $gusDbName\n";
+die "Missing a Required Argument \'--component VectorBase\', when \$gusDbName = $gusDbName\n" if (!$component && $gusDbName eq 'vect-inc');
+
 my (%isAnnotated);
 
 if ($organismListFile) {    ## extract organisms that listed in the organismListFile
