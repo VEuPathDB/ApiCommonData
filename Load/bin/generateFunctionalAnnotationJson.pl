@@ -51,7 +51,7 @@ my ($translationHash) = getTranslationIdHash ($organismAbbrev);
 
 ## grep product info
 my $products = getProductName ($organismAbbrev);
-$products = getProductNameFromTuningTable ($organismAbbrev) if ($component =~ /vector/i);
+$products = getProductNameFromGene ($organismAbbrev) if ($component =~ /vector/i);
 
 ## get dbxrefs
 my $dbxrefs = getDbxRefsAll ($organismAbbrev);
@@ -73,6 +73,7 @@ foreach my $k (sort keys %{$geneHash}) {
 
   $functAnnot{xrefs} = \@{$dbxrefs->{$k}} if ($dbxrefs->{$k});
   $functAnnot{synonyms} = \@{$synonym->{$k}} if ($synonym->{$k});
+  $functAnnot{description} = $products->{$k} if ($products->{$k} && $component =~ /vector/i);
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -156,6 +157,34 @@ sub getTranscriptsInfos {
   $stmt->finish();
 
   return \%transcriptInfos;
+}
+
+sub getProductNameFromGene {
+  my ($orgnaismAbbrev) = @_;
+
+  my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
+
+  ## only grep the preferred product name
+  my $sql = "select SOURCE_ID, PRODUCT from dots.genefeature 
+             where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %products;
+
+  while (my ($gSourceId, $product)
+	 = $stmt->fetchrow_array()) {
+
+    if ($product) {
+      $products{$gSourceId} = $product;
+    } else {
+      $products{$gSourceId} = "unspecified product";
+    }
+  }
+
+  $stmt->finish();
+
+  return \%products;
 }
 
 sub getProductNameFromTuningTable {
