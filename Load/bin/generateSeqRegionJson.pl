@@ -43,6 +43,8 @@ my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 my $karyotypeBands = getCentromereInfo($extDbRlsId);
 #my $transposableElement = getTransposableElementInfo($extDbRlsId);
 
+my $ebiSeqRegionName = getEbiSeqRegionName($extDbRlsId);
+
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 if ($outputFileDir) {
   $outputFileName = "\./". $outputFileDir . "\/" . $outputFileName;
@@ -74,6 +76,9 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 		 );
 
   $seqRegions{length} += 0;  ## change string to integer
+
+  $seqRegions{EBI_seq_region_name} = $ebiSeqRegionName->{$seqSourceId} if ($ebiSeqRegionName->{$seqSourceId});
+  $seqRegions{BRC4_seq_region_name} = $seqSourceId;
 
   if ($seqType =~ /mitochondrial_chromosome/i || $seqType =~ /apicoplast_chromosome/i) {
     $seqRegions{coord_system_level} = "chromosome";
@@ -123,6 +128,24 @@ $dbh->disconnect();
 
 
 ###########
+sub getEbiSeqRegionName {
+  my ($extDbRlsId) = @_;
+
+  my $sql = "select SOURCE_ID, SECONDARY_IDENTIFIER, name from DOTS.EXTERNALNASEQUENCE
+             where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+            ";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %ebiSeqName;
+  while (my ($seqId, $secondId) = $stmt->fetchrow_array()) {
+
+    $ebiSeqName{$seqId} = $secondId if ($seqId && $secondId);
+  }
+
+  return \%ebiSeqName;
+}
+
 sub getCentromereInfo {
   my ($extDbRlsId) = @_;
 
