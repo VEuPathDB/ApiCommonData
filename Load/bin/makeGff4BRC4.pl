@@ -101,6 +101,10 @@ while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $gen
 #                                   translation => $translation,
   };
 
+  ## GUS is using lncRNA, which should be lnc_RNA in gene ontology
+  $geneAnnotations->{$geneSourceId}->{so_term_name} = "lnc_RNA" if ($geneAnnotations->{$geneSourceId}->{so_term_name} eq "lncRNA");
+  $transcriptAnnotations->{$transcriptSourceId}->{so_term_name} = "lnc_RNA" if ($transcriptAnnotations->{$transcriptSourceId}->{so_term_name} eq "lncRNA");
+
   $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
   push @{$gene2TranscriptHash->{$geneSourceId}}, $transcriptAnnotations->{$transcriptSourceId};
 }
