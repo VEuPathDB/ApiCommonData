@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/general/general_crompton.owl">
-        <owl:versionInfo>2020-05-06</owl:versionInfo>
+        <owl:versionInfo>2020-06-01</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -1249,6 +1249,7 @@
         <obo:EUPATH_0001003>1. Date of missed visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>Visit Date</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Adverse events and concomitant medications without a known start date were given the observation date of 01 January 1900.</obo:IAO_0000115>
         <rdfs:label>Observation date</rdfs:label>
     </owl:Class>
     
@@ -6875,6 +6876,7 @@
         <obo:EUPATH_0001003>1. AE start date</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>1b. Start Date</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Adverse events without a known start date were given the start date of 01 January 1900.</obo:IAO_0000115>
         <rdfs:label>Adverse event start date</rdfs:label>
     </owl:Class>
     
@@ -7067,6 +7069,7 @@
         <obo:EUPATH_0001003>1.7 Start Date</obo:EUPATH_0001003>
         <obo:EUPATH_0001003>1h. Start date</obo:EUPATH_0001003>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Concomitant medications without a known start date were given the start date of 01 January 1900.</obo:IAO_0000115>
         <rdfs:label>Concomitant medication start date</rdfs:label>
     </owl:Class>
     
@@ -7138,6 +7141,40 @@
         <obo:EUPATH_0001002>Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001005>derived</obo:EUPATH_0001005>
         <rdfs:label>Concomitant medication duration (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0041172 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0041172">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OAE_0000001"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>226plate300::aestdtunknown</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>227plate300::aestdtunknown</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>226plate300</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001>227plate300</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>derived</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Adverse events without a known start date were give the start date of 01 January 1900.</obo:IAO_0000115>
+        <rdfs:label>Adverse event start date unknown</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0041173 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0041173">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0041151"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755>126plate100::conmedstdtunknown</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755>226plate400::conmedstdtunknown</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001>126plate100</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001>226plate400</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002>Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>derived</obo:EUPATH_0001005>
+        <obo:IAO_0000115>Concomitant medications without a known start date were given the start date of 01 January 1900.</obo:IAO_0000115>
+        <rdfs:label xml:lang="en">Concomitant medication start date unknown</rdfs:label>
     </owl:Class>
     
 
