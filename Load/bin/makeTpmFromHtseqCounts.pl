@@ -7,6 +7,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use Data::Dumper;
 use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
+use CBIL::TranscriptExpression::CalculationsForTPM qw(doTPMCalculation);
 
 
 my ($verbose, $geneFootprintFile, $studyDir, $outputDir, $analysisConfig, $isStranded);
@@ -42,77 +43,27 @@ foreach my $group (keys %{$samplesHash}) {
 
 foreach my $sample (@{$samples}) {
     my $sampleDir = "$studyDir/$sample";
+
+    my ($senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
     if ($isStranded) {
-        my $firstStrandCountFile = "$studyDir/$sample/genes.htseq-union.firststrand.counts";
-        my $firstStrandTpmFile = "$studyDir/$sample/genes.htseq-union.firststrand.tpm";
-        &doTPMCalculation($geneLengths, $firstStrandCountFile, $firstStrandTpmFile);
+        $senseUniqueCountFile = "$sampleDir/genes.htseq-union.firststrand.counts";
+        $senseUniqueTpmFile = "$sampleDir/genes.htseq-union.firststrand.tpm";
 
-        my $firstStrandNUCountFile = "$studyDir/$sample/genes.htseq-union.firststrand.nonunique.counts";
-        my $firstStrandNUTpmFile = "$studyDir/$sample/genes.htseq-union.firststrand.nonunique.tpm";
-        &doTPMCalculation($geneLengths, $firstStrandNUCountFile, $firstStrandNUTpmFile);
+        $senseNUCountFile = "$sampleDir/genes.htseq-union.firststrand.nonunique.counts";
+        $senseNUTpmFile = "$sampleDir/genes.htseq-union.firststrand.nonunique.tpm";
 
-        my $secondStrandCountFile = "$studyDir/$sample/genes.htseq-union.secondstrand.counts";
-        my $secondStrandTpmFile = "$studyDir/$sample/genes.htseq-union.secondstrand.tpm";
-        &doTPMCalculation($geneLengths, $secondStrandCountFile, $secondStrandTpmFile);
+        $antisenseUniqueCountFile = "$sampleDir/genes.htseq-union.secondstrand.counts";
+        $antisenseUniqueTpmFile = "$sampleDir/genes.htseq-union.secondstrand.tpm";
 
-        my $secondStrandNUCountFile = "$studyDir/$sample/genes.htseq-union.secondstrand.nonunique.counts";
-        my $secondStrandNUTpmFile = "$studyDir/$sample/genes.htseq-union.secondstrand.nonunique.tpm";
-        &doTPMCalculation($geneLengths, $secondStrandNUCountFile, $secondStrandNUTpmFile);
+        $antisenseNUCountFile = "$sampleDir/genes.htseq-union.secondstrand.nonunique.counts";
+        $antisenseNUTpmFile = "$sampleDir/genes.htseq-union.secondstrand.nonunique.tpm";
     }
     else {
-        my $countFile = "$studyDir/$sample/genes.htseq-union.unstranded.counts";
-        my $tpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.tpm";
-        &doTPMCalculation($geneLengths, $countFile, $tpmFile);
+        $senseUniqueCountFile = "$sampleDir/genes.htseq-union.unstranded.counts";
+        $senseUniqueTpmFile = "$sampleDir/genes.htseq-union.unstranded.tpm";
 
-        my $nonUniqueCountFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.counts";
-        my $nonUniqueTpmFile = "$studyDir/$sample/genes.htseq-union.unstranded.nonunique.tpm";
-        &doTPMCalculation($geneLengths, $nonUniqueCountFile, $nonUniqueTpmFile);
+        $senseNUCountFile = "$sampleDir/genes.htseq-union.unstranded.nonunique.counts";
+        $senseNUTpmFile = "$sampleDir/genes.htseq-union.unstranded.nonunique.tpm";
     }
-}
-
-
-
-sub _calcRPK {
-    my %specialCounters = ('__no_feature'=>1, '__ambiguous'=>1, '__too_low_aQual'=>1, '__not_aligned'=>1, '__alignment_not_unique'=>1);
-    my($geneLengths, $countFile) = @_;
-    my $rpkHash;
-    my $rpkSum = 0;
-    open (IN, "<$countFile") or die "Cannot open file $countFile. Please check and try again\n$!\n";
-    while (<IN>) {
-        my($geneId, $count) = split /\t/, $_;
-        next if ($specialCounters{$geneId});
-        my $geneLength = $geneLengths->{$geneId}/1000;
-        my $rpk = $count/$geneLength;
-        $rpkSum += $rpk;
-        $rpkHash->{$geneId} = $rpk;
-    }
-    close IN;
-    return ($rpkSum, $rpkHash);
-}
-
-sub _calcTPM {
-    my ($rpkHash, $rpkSum) = @_;
-    my $tpmHash;
-    while (my($geneId, $rpk) = each %{$rpkHash}) {
-        my $tpm = $rpk/$rpkSum;
-        $tpmHash->{$geneId} = $tpm;
-    }
-    return $tpmHash;
-}
-
-sub _writeTPM {
-    my ($tpmFile, $tpmHash) = @_;
-    open (OUT, ">$tpmFile") or die "Cannot open TPM file $tpmFile for writing. Please check and try again.\n$!\n";
-    while (my ($geneId, $tpm) = each %{$tpmHash}) {
-        print OUT ("$geneId\t$tpm\n") ;
-    }
-    close OUT;
-}
-
-sub doTPMCalculation {
-    my ($geneLengths, $countFile, $tpmFile) = @_;
-    my ($rpkSum, $rpkHash) = &_calcRPK($geneLengths, $countFile);
-    $rpkSum = $rpkSum/1000000;
-    my $tpmHash = &_calcTPM($rpkHash, $rpkSum);
-    &_writeTPM($tpmFile, $tpmHash);
+    &doTPMCalculation($geneLengths, $senseUniqueCountFile, $senseNUCountFile, $antisenseUniqueCountFile, $antisenseNUCountFile, $senseUniqueTpmFile, $senseNUTpmFile, $antisenseUniqueTpmFile, $antisenseNUTpmFile);
 }
