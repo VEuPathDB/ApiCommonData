@@ -9,7 +9,7 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:microbiome="http://purl.obolibrary.org/obo/microbiome.owl#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionInfo>2020-01-29</owl:versionInfo>
+        <owl:versionInfo>2020-06-01</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -209,16 +209,6 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000087"/>
         <obo:EUPATH_0000755 xml:lang="en">number_residents_human</obo:EUPATH_0000755>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Persons living in house</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000049 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000049">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
-        <obo:IAO_0000115>Visit 1-3 (pretreatment, treated, post treatment)</obo:IAO_0000115>
-        <rdfs:label xml:lang="en">Visit type</rdfs:label>
     </owl:Class>
     
 
@@ -984,6 +974,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000662 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000662">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BMI-for-age z-score at the last measurement point</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BMI-for-age z-score</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000724 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
@@ -1325,6 +1325,515 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009033">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetes-associated autoantibodies measurement</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009034 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009034">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal age at birth</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal age at birth</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009035 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009035">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported gestational diabetes</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported gestational diabetes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009036 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009036">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported antibiotic use during pregnancy</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mom reported antibiotic use during pregnancy</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009037 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009037">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0022067"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HLA (human leukocyte antigen) risk class for T1D and autoimmunity determined by HLA haplotyping, value between 1-4, 1=slightly increase risk, 4=high risk</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HLA risk, by HLA haplotyping</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009038 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009038">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011730"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Length of breastfeeding in days, i.e. total days of breastfeeding until weaning</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breastfed duration (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009039 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009039">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011730"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Length of exclusive breastfeeding, i.e. days until infant was introduced to solid food(s)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exclusive breastfed duration (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009040 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009040">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Milk feeding during the first three days of life: mother&apos;s breast milk, formula or something else (e.g. combination of beast milk and formula, or not reported)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child&apos;s diet first three days</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009041 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009041">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0022067"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when two different autoantibodies were measured positive, i.e. Seroconversion</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at two autoantibodies positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009042 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009042">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0022067"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the child was dianosed type 1 diabetes</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at diagnosis of type 1 diabetes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009043 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009043">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0022067"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type 1 diabetes diagnosed, TRUE/FALSE</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type 1 diabetes diagnosed</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009044 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009044">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009033"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for insulin autoantibodies (IAA)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulin autoantibodies positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009045 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009045">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009033"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Glutamic acid decarboxylase antibodies (GADA)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Glutamic acid decarboxylase antibodies positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009046 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009046">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009033"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for insulinoma-associated protein 2 autoantibody (IA2A)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insulinoma-associated protein 2 autoantibody positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009047 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009047">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009033"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Zinc transporter 8 autoantibody (ZnT8A)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc transporter 8 autoantibody positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009048 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009048">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009033"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child has measured positive for Islet cell autoantibodies (ICA)</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Islet cell autoantibodies positive</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009049 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009049">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Average weight gain during first three years, kilograms / year</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yearly average weight gain during first three years (kg/year)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009050 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009050">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Average linear growth pace during first three years, centimeters / year</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yearly average linear growth during first three years (cm/year)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009051 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009051">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight gain during the first year of life, kilograms</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight gain during first year (kg)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009052 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009052">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear growth during the first year of life, centimeters</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear growth during first year (cm)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009053 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009053">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last height-for-age z-score was measured in days</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at height-for-age z-score measured (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009054 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009054">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last weight-for-age z-score was measured in days</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at weight-for-age z-score measured (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009055 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009055">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age when the last BMI-for-age z-score was measured in days</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at BMI-for-age z-score measured (days)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009056 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009056">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Approximate age in months when the child first received solid food or non-human milk.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received solid food or non-human milk (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009057 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009057">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received apple (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009058 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009058">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received banana (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009059 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009059">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received barley (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009060 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009060">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received beef (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009061 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009061">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received beetroot (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009062 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009062">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received berries (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009063 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009063">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received cabbs (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009064 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009064">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received carrot (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009065 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009065">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received corn (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009066 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009066">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received cowsmilk (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009067 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009067">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received egg (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009068 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009068">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received fish (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009069 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009069">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received icecream (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009070 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009070">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received mango (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009071 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009071">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received milk products (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009072 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009072">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received oat (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009073 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009073">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received pear (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009074 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009074">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received peas (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009075 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009075">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received plum (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009076 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009076">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received pork (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009077 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009077">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received potato (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009078 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009078">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received poultry (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009079 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009079">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received rice (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009080 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009080">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received rye (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009081 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009081">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received soymilk (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009082 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009082">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received spinach (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009083 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009083">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received sweet potato (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009084 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009084">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received tomato (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009085 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009085">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received turnip (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009086 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009086">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009056"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at first received wheat (months)</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010016 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010016">
@@ -1378,7 +1887,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011732">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-        <rdfs:label xml:lang="en">Diet diversity</rdfs:label>
+        <rdfs:label xml:lang="en">Diet</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diet</rdfs:label>
     </owl:Class>
     
 
@@ -1403,6 +1913,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011928 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011928">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location of the household when the child was born, urban or rural</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urban or rural site</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0015400 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015400">
@@ -1410,6 +1930,24 @@
         <obo:EUPATH_0000755>age in months</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 xml:lang="en">age_months</obo:EUPATH_0000755>
         <rdfs:label xml:lang="en">Age (months)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0022067 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0022067">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnosis history</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0036493 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036493">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal clinical history</rdfs:label>
     </owl:Class>
     
 
