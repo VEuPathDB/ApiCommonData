@@ -10,8 +10,6 @@ use DBD::Oracle;
 
 use GUS::Model::ApiDB::DATABASETABLEMAPPING;
 
-use File::Temp qw/ tempfile /;
-
 use Data::Dumper;
 
 use ApiCommonData::Load::Fifo;
