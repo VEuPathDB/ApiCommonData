@@ -20,6 +20,7 @@ my (
     $primaryContactId,
     $assemblyId,
     $bioprojectId,
+    $ifPrintContactIdFile,
     $help);
 
 &GetOptions(
@@ -34,6 +35,7 @@ my (
 	    'primaryContactId=s' => \$primaryContactId,
 	    'assemblyId=s' => \$assemblyId,
 	    'bioprojectId=s' => \$bioprojectId,
+	    'ifPrintContactIdFile=s' => \$ifPrintContactIdFile,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
@@ -49,28 +51,24 @@ print "                    projectName=\"$projectName\">\n";
 print "    <displayName><![CDATA[$plainText]]></displayName>\n";  ## need change by $isAnnot
 print "    <shortDisplayName></shortDisplayName>\n";
 print "    <shortAttribution></shortAttribution>\n";
-
-print "    <summary><![CDATA[$plainText for ";
-&printOrganismFullName($organismFullName) if ($organismFullName);
-print "\n                  ]]></summary>\n";
-
-print "    <description><![CDATA[\n";
-print "\n                  ]]><\/description>\n";
+&printSummary();
+&printDescription();
 
 print "    <protocol><\/protocol>\n";
 print "    <caveat><\/caveat>\n";
 print "    <acknowledgement><\/acknowledgement>\n";
 print "    <releasePolicy><\/releasePolicy>\n";
-&printHistory($buildNumber);
-print "    <primaryContactId><\/primaryContactId>\n";
 
+&printHistory();
+&printPrimaryContactId();
 &printExternalLinks();
-print "    <pubmedId></pubmedId>\n";
+&printPubMedId();
 
 ($isAnnotatedGenome =~ /^y/i) ? &printAnnotatedGenome : &printUnAnnotatedGenome;
 
 print "  </datasetPresenter>\n";
 
+print printContactInformation($primaryContactId) if ($ifPrintContactIdFile =~ /^y/i);
 
 ##################### subroutine ###################
 sub printAnnotatedGenome {
@@ -90,6 +88,48 @@ sub printAnnotatedGenome {
   return 0;
 }
 
+sub printSummary {
+  my ($id) = @_;
+  print "    <summary><![CDATA[$plainText for ";
+  &printOrganismFullName($organismFullName) if ($organismFullName);
+  print "\n                  ]]></summary>\n";
+  return 0;
+}
+
+sub printDescription {
+  my ($id) = @_;
+  print "    <description><![CDATA[\n";
+  print "                    $plainText for ";
+  &printOrganismFullName($organismFullName) if ($organismFullName);
+  print "\n\n                  ]]><\/description>\n";
+}
+
+sub printPubMedId {
+  my ($id) = @_;
+  print "    <pubmedId>$pubMedId</pubmedId>\n";
+  return 0;
+}
+
+sub printPrimaryContactId {
+
+  my $name = optimizedContactId ($primaryContactId);
+
+  ($primaryContactId) ? print "    <primaryContactId>$name<\/primaryContactId>\n"
+                      : print "    <primaryContactId>TODO<\/primaryContactId>\n";
+  return 0;
+}
+
+sub optimizedContactId {
+  my ($name) = @_;
+
+  $name = lc ($name);
+  $name =~ s/^\s+//;
+  $name =~ s/\s+$//;
+  $name =~ s/\s+/\./g;
+
+  return $name;
+}
+
 sub printUnAnnotatedGenome {
   my ($temp) = @_;
 
@@ -100,9 +140,10 @@ sub printUnAnnotatedGenome {
 sub printHistory {
   my ($bld, $source, $version) = @_;
 
-  print "    <history buildNumber=\"$bld\"\n";
-  print "             genomeSource=\"$source\" genomeVersion=\"$version\"\n";
-  print "             annotationSource=\"$source\" annotationVersion=\"$version\"\/>\n";
+  print "    <history buildNumber=\"$buildNumber\"\n";
+  ($genomeSource eq "INSDC" || $genomeSource =~ /genbank/i) ? print "             genomeSource=\"$genomeSource\" genomeVersion=\"$assemblyId\"\n"
+                                                            : print "             genomeSource=\"$genomeSource\" genomeVersion=\"$genomeVersion\"\n";
+  print "             annotationSource=\"\" annotationVersion=\"\"\/>\n";
   return 0;
 }
 
@@ -111,11 +152,11 @@ sub printExternalLinks {
 
   print "    <link>\n";
   print "      <text>NCBI Bioproject<\/text>\n";
-  print "      <url><\/url>\n";
+  ($bioprojectId) ? print "      <url>https:\/\/www.ncbi.nlm.nih.gov\/bioproject\/$bioprojectId<\/url>\n" : print "      <url><\/url>\n";
   print "    </link>\n";
   print "    <link>\n";
   print "      <text>GenBank Assembly page<\/text>\n";
-  print "      <url></url>\n";
+  ($assemblyId) ? print "      <url>https:\/\/www.ncbi.nlm.nih.gov\/assembly\/$assemblyId</url>\n" : print "      <url></url>\n";
   print "    </link>\n";
 
   return 0;
@@ -130,6 +171,25 @@ sub printOrganismFullName {
   my $strain = join (" ", @items);
 
   print "<i>$genus $species</i> $strain";
+
+  return 0;
+}
+sub printContactInformation {
+  my ($fullName) = @_;
+  my $id = optimizedContactId ($fullName);
+
+  print "\n\n\n";
+  print "  <contact>\n";
+  print "    <contactId>$id<\/contactId>\n";
+  print "    <name>$fullName<\/name>\n";
+  print "    <institution><\/institution>\n";
+  print "    <email><\/email>\n";
+  print "    <address\/>\n";
+  print "    <city\/>\n";
+  print "    <state\/>\n";
+  print "    <zip\/>\n";
+  print "    <country\/>\n";
+  print "  <\/contact>\n";
 
   return 0;
 }
@@ -153,6 +213,7 @@ where
   --primaryContactId: optional
   --assemblyId: optional
   --bioprojectId: optional
+  --ifPrintContactIdFile: optional, Yes|yes|Y|y, No|no|N|n
 
 ";
 }
