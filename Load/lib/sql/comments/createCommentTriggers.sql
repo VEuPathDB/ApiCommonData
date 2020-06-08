@@ -37,7 +37,7 @@ declare
   userinfo varchar2(1000);
 begin
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
+  if :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -74,7 +74,7 @@ begin
   delete from apidb.TextSearchableComment
   where comment_id = :old.comment_id;
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
+  if :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -127,7 +127,6 @@ begin
           headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
   from userlogins5.Comments
   where comment_id = :new.comment_id
-    and comment_target_id = 'gene'
     and is_visible = 1
     and stable_id != :new.stable_id; -- don't duplicate comment-gene pairs
 end;
@@ -179,7 +178,6 @@ begin
           headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
   from userlogins5.Comments
   where comment_id = :new.comment_id
-    and comment_target_id = 'gene'
         and is_visible = 1;
 
 end;
