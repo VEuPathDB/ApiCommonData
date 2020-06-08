@@ -101,6 +101,10 @@ while(my ($geneSoTermName, $soTermName, $sequenceSourceId, $sequenceLength, $gen
 #                                   translation => $translation,
   };
 
+  ## GUS is using lncRNA, which should be lnc_RNA in gene ontology
+  $geneAnnotations->{$geneSourceId}->{so_term_name} = "lnc_RNA" if ($geneAnnotations->{$geneSourceId}->{so_term_name} eq "lncRNA");
+  $transcriptAnnotations->{$transcriptSourceId}->{so_term_name} = "lnc_RNA" if ($transcriptAnnotations->{$transcriptSourceId}->{so_term_name} eq "lncRNA");
+
   $sequenceLengths->{$sequenceSourceId} = $sequenceLength;
   push @{$gene2TranscriptHash->{$geneSourceId}}, $transcriptAnnotations->{$transcriptSourceId};
 }
@@ -251,7 +255,7 @@ sub getBioTypeAndUpdatePrimaryTag {
   if ($$feat->primary_tag eq "transcript") {
     my ($parentID) = $$feat->get_tag_values('Parent');
     my $transcriptType = $geneAnnotations->{$parentID}->{so_term_name};
-    if ($transcriptType eq "coding_gene") {
+    if ($transcriptType eq "coding_gene" || $transcriptType eq "protein_coding" || $transcriptType eq "pseudogene") {
       $transcriptType = "mRNA";
     } else {
       $transcriptType =~ s/\_gene$//;
@@ -262,14 +266,24 @@ sub getBioTypeAndUpdatePrimaryTag {
 
   if ($$feat->primary_tag eq "gene") {
     $bioType = $geneAnnotations->{$id}->{so_term_name};
+    my $isPseudoString = "";
     foreach my $transcriptHash (@{$gene2TranscriptHash->{$id}}) {
       if ($transcriptHash->{so_term_name} eq "mRNA" || $transcriptHash->{so_term_name} eq "transcript") {
-	if ($transcriptHash->{is_pseudo} == 1) {
-	  $bioType = "pseudogene";
-	  $$feat->primary_tag("pseudogene");
-	}
+
+#	## this will assign gene as pseudogene when partial of transcripts are pseudo-, which is incorrect
+#	if ($transcriptHash->{is_pseudo} == 1) {
+#	  $bioType = "pseudogene";
+#	  $$feat->primary_tag("pseudogene");
+#	}
+	my $isP = ($transcriptHash->{is_pseudo} == 1) ? 1 : 0;
+	$isPseudoString .= $isP;
       }
     }
+    if ($isPseudoString =~ /^1+$/) {
+      $bioType = "pseudogene";
+      $$feat->primary_tag("pseudogene");
+    }
+
     $bioType = "protein_coding" if ($bioType eq "coding_gene");
     $bioType =~ s/\_gene$/\_encoding/i;
 

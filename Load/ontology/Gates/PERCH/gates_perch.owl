@@ -78,6 +78,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label>replaces</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
@@ -755,6 +763,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0010947 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010947">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Immunization and prevention</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010981 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010981">
@@ -787,7 +806,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011267">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_hibdoses_enr</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -803,14 +822,14 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011394">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_pcvdoses_enr</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total number of PCV doses received, at enrollment</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of doses received at the point of enrollment, regardless of timing of the dose.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total pneumococcal conjugate (PCV) vaccine doses</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total pneumococcal conjugate vaccine (PCV) doses</rdfs:label>
     </owl:Class>
     
 
@@ -997,18 +1016,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0020005 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021001">
@@ -1062,7 +1069,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0021143 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021143">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -4511,7 +4518,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 - &lt;10, 2 - 10-25, 3 - &gt;25</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of epithelial cells per representative low powered field (x10 objective)</obo:IAO_0000115>
-        <rdfs:label>Epithelial cells categorization</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epithelial cells categorization</rdfs:label>
     </owl:Class>
     
 
@@ -4520,9 +4527,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032386">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label>Induced sputum test</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Induced sputum test</rdfs:label>
     </owl:Class>
     
 
@@ -4531,9 +4538,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032387">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Endotracheal tube aspirate test</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endotracheal tube aspirate test</rdfs:label>
     </owl:Class>
     
 
@@ -4542,9 +4549,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032388">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Induced sputum sample</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Induced sputum sample</rdfs:label>
     </owl:Class>
     
 
@@ -4553,9 +4560,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032389">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0032388"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Induced sputum characteristics</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Induced sputum characteristics</rdfs:label>
     </owl:Class>
     
 
@@ -4564,9 +4571,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032390">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Endotracheal tube aspirate sample</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endotracheal tube aspirate sample</rdfs:label>
     </owl:Class>
     
 
@@ -4575,9 +4582,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0032391">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0032390"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Endotracheal tube aspirate characteristics</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endotracheal tube aspirate characteristics</rdfs:label>
     </owl:Class>
     
 
@@ -4592,7 +4599,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mucus seen</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0 - No, 1 - Yes</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Mucus present</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mucus present</rdfs:label>
     </owl:Class>
     
 
@@ -4608,7 +4615,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 - &lt;10, 2 - 10-25, 3 - &gt;25</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of neutrophils per representative low powered field (x10 objective).</obo:IAO_0000115>
-        <rdfs:label xml:lang="en">Neutrophils categorization</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Neutrophils categorization</rdfs:label>
     </owl:Class>
     
 
@@ -11052,7 +11059,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033092">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0032014"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lrg1serp_1</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrg1serp_fin_1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PF Serotype Spn1</obo:EUPATH_0001003>
@@ -11216,7 +11223,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Acute respiratory infection (ARI)</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0 = No 1 = Yes</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory tract illness was defined as presence of cough or runny nose, or if a child had (1) at least 1 of ear discharge, wheezing, or difficulty breathing and (2) either a measured temperature of &gt;38.0°C within the previous 48 hours or a history of sore throat.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory tract illness was defined as presence of cough or runny nose, or if a child had (1) at least 1 of ear discharge, wheezing, or difficulty breathing and (2) either a measured temperature of &gt;38.0¬∞C within the previous 48 hours or a history of sore throat.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory tract infection</rdfs:label>
     </owl:Class>
     
@@ -11258,7 +11265,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033107">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_adjhibdoses_bio</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -11274,14 +11281,14 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033108">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">12</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_adjpcvdoses_bio</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adjusted number of PCV doses received</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of doses received. Excludes doses given within 14 days of enrollment and doses not properly spaced (at least 25 days apart) as they may not have had a biologic impact.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adjusted Pneumococcal conjugate (PCV) vaccine doses 14 days before enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adjusted Pneumococcal conjugate vaccine (PCV) doses 14 days before enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -11837,7 +11844,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033142 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033142">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_contam_st</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -11853,7 +11860,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033143 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033143">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lrbalarm</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -11932,7 +11939,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033149 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033149">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lrbsubcu</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -12024,7 +12031,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case-control sub-classification</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=Control without RTI 2=Control with RIT</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory tract illness (RTI) was defined as presence of cough or runny nose, or if a child had (1) at least 1 of ear discharge, wheezing, or difficulty breathing and (2) either a measured temperature of &gt;38.0¬∞C within the previous 48 hours or a history of sore throat.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory tract illness (RTI) was defined as presence of cough or runny nose, or if a child had (1) at least 1 of ear discharge, wheezing, or difficulty breathing and (2) either a measured temperature of &gt;38.0¬¨‚àûC within the previous 48 hours or a history of sore throat.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case-control sub-classification</rdfs:label>
     </owl:Class>
     
@@ -12498,7 +12505,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033188">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_hibdoses_bio</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -12514,7 +12521,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033189">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_hib_vax_status</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -12703,7 +12710,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Leukocytosis (elevated WBC)</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0 = No 1 = Yes</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Increased number of white blood cells (WBC) defined as WBC ≥15 (0-11 months) or WBC ≥13 (12-59 months). Available for all cases but only a subset of controls (Thailand only).</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Increased number of white blood cells (WBC) defined as WBC ‚â•15 (0-11 months) or WBC ‚â•13 (12-59 months). Available for all cases but only a subset of controls (Thailand only).</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Leukocytosis</rdfs:label>
     </owl:Class>
     
@@ -13021,7 +13028,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033223 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033223">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrb02org_lab</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -13038,14 +13045,14 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033224">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_pcvdoses_bio</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total number of PCV doses received, biologic</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Excludes doses given within the 14 days of enrollment since these may not have been able to protect against the pneumonia episode</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pneumococcal conjugate (PCV) vaccine doses 14 days before enrollment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pneumococcal conjugate vaccine (PCV) doses 14 days before enrollment</rdfs:label>
     </owl:Class>
     
 
@@ -13054,7 +13061,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033225">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_pcv_vax_status</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -13062,7 +13069,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Not vaccinated; 1=Partially vaccinated; 2=Fully vaccinated</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated defined as 1) 3 doses, or 2) 2 doses if the child was 12 months or older at receipt or the doses were given at least 8 weeks apart for a child less than 9 months, or 3) 1 dose if age at any dose or child&apos;s age at introduction was 24 months or older. Partially vaccinated defined as 1 or 2 doses, unless fell into above catch-up categories.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pneumococcal conjugate (PCV) vaccine status</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pneumococcal conjugate vaccine (PCV) status</rdfs:label>
     </owl:Class>
     
 
@@ -13070,7 +13077,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033226 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033226">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrb02org_fin</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -13086,7 +13093,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033227 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033227">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrb01org_lab</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -13102,7 +13109,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033228 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033228">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrb01org_fin</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
@@ -14033,7 +14040,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033293 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033293">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
@@ -14202,7 +14209,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033307 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033307">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
@@ -15375,7 +15382,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Septicaemia</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 - Yes</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Septicaemia</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Septicemia</rdfs:label>
     </owl:Class>
     
 
@@ -15742,6 +15749,39 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033429 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033429">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_dtp_vax_status_age</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">At least one dose and being up to date for age on the basis of the child’s age at enrolment, doses received, and country schedule (allowing a 4-week window for each dose)</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2= Fully vaccinated; 1= Partially vaccinated: 1 or 2 doses; 0 = No vaccine (0 doses)</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DPT vaccination status given the child’s age at enrolment and country schedule (allowing a 4-week window for each dose).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diphtheria, pertussis, and tetanus (DPT) vaccine status, age adjusted</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033430 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033430">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010947"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_dtp_3_dosecat</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of DTP doses received at enrolment</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3 = 3 or more doses; 2 = 1 or 2 doses; 0 = 0 doses</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of DTP doses received by enrolment.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diphtheria, pertussis, and tetanus (DPT) vaccine dose categorization</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033431 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033431">
@@ -15757,6 +15797,40 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other 3 dx specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other diagnosis at hospitalization</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033432 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033432">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_dtpfullvaxall</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for DTP. For children younger than 1 year, full vaccination was defined as having received at least one dose and being up to date for age on the basis of the child’s age at enrolment, doses received, and country schedule (allowing a 4-week window for each dose); for children aged 1 year or older, full vaccination was defined as having received three or more doses.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= Yes, 0 = No</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for DTP. For children younger than 1 year, full vaccination was defined as having received at least one dose and being up to date for age on the basis of the child’s age at enrolment, doses received, and country schedule (allowing a 4-week window for each dose); for children aged 1 year or older, full vaccination was defined as having received three or more doses.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for diphtheria, pertussis, and tetanus (DPT), age adjusted</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033433 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033433">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">17</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_meas_vax_status_age</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measles vacation status at enrollment</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2 = Fully vaccinated: At least one dose of measles containing vaccine; 1 = Too young to be vaccinated (any child &lt; 10 months [10.5 months in Bangladesh] without a dose received); 0 = Not vaccinated</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measles vacation status at enrollment</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measles vaccine status, age adjusted</rdfs:label>
     </owl:Class>
     
 
@@ -15996,7 +16070,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033449">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0032022"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lrg1serp_2</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lrg1serp_fin_2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_lab_rev_de</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PF Serotype Spn1</obo:EUPATH_0001003>
@@ -16053,6 +16127,56 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033453 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033453">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">16</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_meas_1</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Received at least one dose of measles vaccine at enrollment</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= Yes, 0 = No</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Received at least one dose of measles vaccine by enrollment</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">At least one measles vaccine dose</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033454 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033454">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010947"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_pcv_3_dosecat</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of PCV doses received at enrollment</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3 = 3 or more doses; 2 = 1 or 2 doses; 0 = 0 doses</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of PCV doses received by enrollment</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pneumococcal conjugate vaccine (PCV) dose categorization</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0033455 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033455">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011471"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">15</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_pcvfullvaxall</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">_clin_rev_de</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for PCV. For children younger than 1 year, full vaccination was defined as having received at least one dose and being up to date for age on the basis of the child’s age at enrolment, doses received, and country schedule (allowing a 4-week window for each dose); for children aged 1 year or older in all sites except Kenya, full vaccination was defined as having received three or more doses; for children older than 1 year in Kenya (which introduced PCV with catch-up campaign), full vaccination was defined as having received three or more doses, two doses if given at least 8 weeks apart and the child was older than 1 year of age at first dose, and one dose if the child was older than 2 years at any dose or at introduction.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= Yes, 0 = No</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for PCV. For children younger than 1 year, full vaccination was defined as having received at least one dose and being up to date for age on the basis of the child’s age at enrolment, doses received, and country schedule (allowing a 4-week window for each dose); for children aged 1 year or older in all sites except Kenya, full vaccination was defined as having received three or more doses; for children older than 1 year in Kenya (which introduced PCV with catch-up campaign), full vaccination was defined as having received three or more doses, two doses if given at least 8 weeks apart and the child was older than 1 year of age at first dose, and one dose if the child was older than 2 years at any dose or at introduction.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fully vaccinated for pneumococcal conjugate vaccine (PCV), age adjusted</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -16099,6 +16223,19 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002649 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002649">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006>EUPATH:0020005</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
     </owl:Class>
     
 
@@ -16223,26 +16360,6 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotations
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000117">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">term editor</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000118">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">alternative term</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition source</rdfs:label>
-    </rdf:Description>
 </rdf:RDF>
 
 

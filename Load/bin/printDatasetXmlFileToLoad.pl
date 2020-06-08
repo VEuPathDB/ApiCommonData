@@ -38,6 +38,7 @@ my (
     $sourceIdRegex,
     $isfMappingFile,
     $isEbiGenome,
+    $ebiVersion,
 
     $help);
 
@@ -68,6 +69,7 @@ my (
 	    'sourceIdRegex=s' => \$sourceIdRegex,
 	    'isfMappingFile=s' => \$isfMappingFile,
 	    'isEbiGenome=s' => \$isEbiGenome,
+	    'ebiVersion=s' => \$ebiVersion,
 
 	    'help|h' => \$help,
 	    );
@@ -77,6 +79,7 @@ my (
 &usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
 &usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
 &usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
+&usage("Missing a Required Argument --ebiVersion") if ($isEbiGenome && !$ebiVersion);
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -151,7 +154,7 @@ if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
 
 ## check format is consistant with %excelInfo
 if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^n/i ) {
-  unless ($format =~ /fasta/i) {
+  unless ($format =~ /fasta/i || $isEbiGenome =~ /^y/i) {
     die "ERROR: The format argument is fasta, but isAnnotatedGenome in Excel file is not no\n";
   }
 }
@@ -236,10 +239,11 @@ printConstantName ($ofh, \%excelInfo, "soTerm", "soTerm");
 printConstantName ($ofh, \%excelInfo, "genomeSource");
 printConstantName ($ofh, \%excelInfo, "genomeVersion");
 printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
-printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion");
+printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion") if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 if ($isEbiGenome =~ /^y/i) {
-  printConstantName ($ofh, \%excelInfo, "ebiOrganismName");
-  printConstantName ($ofh, \%excelInfo, "ebiVersion");
+#  printConstantName ($ofh, \%excelInfo, "ebiOrganismName");
+  printConstantNameWithValue ($ofh, 'ebiOrganismName',$organismAbbrev);
+  printConstantNameWithValue ($ofh, 'ebiVersion', $ebiVersion);
 }
 
 print $ofh "\n";
@@ -270,7 +274,7 @@ printGenbankProteinIdClass ($ofh, \%excelInfo) if ($format =~ /genbank/i && $exc
 print STDERR "\$dbxrefVersion= $dbxrefVersion\n";
 printGene2Entrez ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+#printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);  ## 2020-03-23 will put in general dataset
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
 printRefStraindbEST ($ofh, \%excelInfo);
@@ -290,12 +294,14 @@ sub printEbiGenome {
   my ($fh, $ebiOrganismName, $ebiVersion) = @_;
 
   print $fh "  <dataset class=\"ebi_primary_genome\">\n";
+  printNameWithDollarSign ($fh, 'genomeVersion');
+  printNameWithValue ($fh, 'ebi2gusTag', '99');
   printNameWithDollarSign ($fh, 'projectName');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
   printNameWithDollarSign ($fh, 'ebiOrganismName');
   printNameWithDollarSign ($fh, 'ebiVersion');
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  printNameWithDollarSign ($fh, 'releaseDate', 'functAnnotVersion') if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
   print $fh "  </dataset>\n";
   print $fh "\n";
 
@@ -882,6 +888,12 @@ sub printConstantName {
   return 0;
 }
 
+sub printConstantNameWithValue {
+  my ($fh, $itemName, $value) = @_;
+  print $fh "  <constant name=\"$itemName\" value=\"$value\"\>\n";
+  return 0;
+}
+
 sub printHeaderLine {
   print PO "  <dataset class=\"organism\">\n";
 }
@@ -977,7 +989,7 @@ sub usage {
 Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
        printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-03-06
                                     --format gff3 --sourceIdRegex '^>(\\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
- 
+       printDatasetXmlFileToLoad.pl --organismAbbrev ngruNEG-M --excelFile organismExcelFile.txt --projectName AmoebaDB --dbxrefVersion 2020-03-17 --isEbiGenome y --ebiVersion build_49
 
 where
   --organismAbbrev: required, the organism abbrev
@@ -988,6 +1000,8 @@ where
   --secondaryAnnot: optional, the soTerm of secondary annotation, separated by ",", such as 'contig, api-, mito-'
   --sourceIdRegex: optional, it is required if format is gff3 or fasta
   --isfMappingFile: optional, it is required if format is gff3 or embl. Also required if it doesn't use genbankGenbank2Gus.xml
+  --isEbiGenome: optional, Yes|No
+  --ebiVersion: required if isEbiGenome=Yes
 
 ";
 }

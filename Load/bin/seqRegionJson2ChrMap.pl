@@ -20,25 +20,29 @@ my %chrMap;
 foreach my $t (@{$text}) {
   foreach my $k (sort keys %{$t}) {
     if ($t->{coord_system_level} =~ /chromosome/i) {
-      foreach my $synonym (@{$t->{synonyms}}) {
-	$chrMap{$synonym} = $t->{name};
-      }
+#      foreach my $synonym (@{$t->{synonyms}}) {
+#	$chrMap{$synonym} = $t->{name};
+#      }
+      $chrMap{$t->{name}} = $t->{name} if ($t->{name} !~ /^mt/i);
     }
   }
 }
 
-my %chrMapNum2Id;
-foreach my $kk (sort keys %chrMap) {
-  push @{$chrMapNum2Id{$chrMap{$kk}}}, $kk;
-}
+#my %chrMapNum2Id;
+#foreach my $kk (sort keys %chrMap) {
+#  push @{$chrMapNum2Id{$chrMap{$kk}}}, $kk;
+#}
 
 my $chrCount;
-foreach my $k3 (sort keys %chrMapNum2Id) {
+#foreach my $k3 (sort keys %chrMapNum2Id) {
+foreach my $k (sort keys %chrMap) {
   $chrCount++;
+  print "$k\t$k\t$chrCount\n";
 
-  foreach my $id (@{$chrMapNum2Id{$k3}}) {
-    print "$id\t$k3\t$chrCount\n";
-  }
+#  foreach my $id (@{$chrMapNum2Id{$k3}}) {
+#    print "$id\t$k3\t$chrCount\n";
+#    print "$k3\t$k3\t$chrCount\n";
+#  }
 }
 
 #print STDERR Dumper($text);

@@ -37,7 +37,7 @@ declare
   userinfo varchar2(1000);
 begin
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
+  if :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -48,8 +48,8 @@ begin
         userinfo := ' ()'; -- literals from userinfo string
     end;
 
-    insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-    values (:new.comment_id, :new.stable_id, :new.project_name, :new.organism,
+    insert into apidb.TextSearchableComment (comment_id, comment_target_type, source_id, project_id, organism, content)
+    values (:new.comment_id, :new.comment_target_id, :new.stable_id, :new.project_name, :new.organism,
             :new.headline || '|' || :new.content || '|' || userinfo || apidb.author_list(:new.comment_id));
   end if;
 end;
@@ -74,7 +74,7 @@ begin
   delete from apidb.TextSearchableComment
   where comment_id = :old.comment_id;
 
-  if :new.comment_target_id = 'gene' and :new.is_visible = 1 then
+  if :new.is_visible = 1 then
     begin
       select first_name || ' ' || last_name || '(' || organization || ')'
       into userinfo
@@ -89,12 +89,12 @@ begin
     into authorinfo
     from dual;
 
-    insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-    values (:new.comment_id, :new.stable_id, :new.project_name, :new.organism,
+    insert into apidb.TextSearchableComment (comment_id, comment_target_type, source_id, project_id, organism, content)
+    values (:new.comment_id, :new.comment_target_id, :new.stable_id, :new.project_name, :new.organism,
             :new.headline || '|' || :new.content || '|' || userinfo || apidb.author_list(:new.comment_id));
 
-    insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-    select :new.comment_id, stable_id, :new.project_name, :new.organism,
+    insert into apidb.TextSearchableComment (comment_id, comment_target_type, source_id, project_id, organism, content)
+    select :new.comment_id, :new.comment_target_id, stable_id, :new.project_name, :new.organism,
             :new.headline || '|' || :new.content || '|' || userinfo || apidb.author_list(:new.comment_id)
     from userlogins5.CommentStableId
     where comment_id = :new.comment_id
@@ -122,16 +122,17 @@ begin
         userinfo := ' ()'; -- literals from userinfo string
     end;
 
-  insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-  select comment_id, :new.stable_id, project_name, organism,
+  insert into apidb.TextSearchableComment (comment_id, comment_target_type, source_id, project_id, organism, content)
+  select comment_id, comment_target_id, :new.stable_id, project_name, organism,
           headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
   from userlogins5.Comments
   where comment_id = :new.comment_id
-    and comment_target_id = 'gene'
     and is_visible = 1
-    and stable_id != :new.stable_id; -- don't duplicate comment-gene pairs
+    and stable_id != :new.stable_id; -- don't duplicate comment-target pairs
 end;
 /
+
+show errors
 
 create or replace trigger userlogins5.csi_delete
   after delete on userlogins5.CommentStableId
@@ -174,12 +175,11 @@ begin
       userinfo := ' ()'; -- literals from userinfo string
   end;
 
-  insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-  select comment_id, :new.stable_id, project_name, organism,
+  insert into apidb.TextSearchableComment (comment_id, comment_target_type, source_id, project_id, organism, content)
+  select comment_id, comment_target_id, :new.stable_id, project_name, organism,
           headline || '|' || content || '|' || userinfo || apidb.author_list(comment_id)
   from userlogins5.Comments
   where comment_id = :new.comment_id
-    and comment_target_id = 'gene'
         and is_visible = 1;
 
 end;

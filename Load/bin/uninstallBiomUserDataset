@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use ApiCommonData::Load::Biom;
+
+
+use Log::Log4perl qw(:easy);
+Log::Log4perl->easy_init($INFO);
+
+my ($userDatasetId, $projectId) = @ARGV;
+
+usage() unless $userDatasetId && $projectId;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/$projectId/gus.config");
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+ApiCommonData::Load::Biom->new($db)->deleteDataForUserDatasetId($userDatasetId);
+
+sub usage {
+  die "
+
+Uninstall a BIOM user dataset from the user datasets schema.
+
+Usage: $0 user_dataset_id project_id
+
+Where:
+  user_dataset_id:  a user dataset id
+  project_id:       MicrobiomeDB, etc.
+
+Finds gus.config in \$GUS_HOME/config/project_id/gus.config
+
+";
+}

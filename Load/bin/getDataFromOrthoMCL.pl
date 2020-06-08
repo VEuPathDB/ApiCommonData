@@ -15,7 +15,10 @@ die "cannot open output files\n" unless ($outputAllOrthoGrps && $outputOrthoSeqs
 
 my $url = "https://qa.orthomcl.org/webservices/GroupQuestions/BySequenceCount.xml?core_count_min=0&core_count_max=100000&peripheral_count_min=0&peripheral_count_max=100000&o-fields=group_name,ec_numbers,number_of_members,avg_connectivity,avg_percent_identity";
 
-my $cmd = qq(wget "$url" -o $outputAllOrthoGrps.log > $outputAllOrthoGrps.tmp);
+
+#my $cmd = qq(wget "$url" -o $outputAllOrthoGrps.log > $outputAllOrthoGrps.tmp);
+my $cmd = qq(wget "$url" -o $outputAllOrthoGrps.log -O $outputAllOrthoGrps.tmp);
+
 print STDERR "\nRunning\n$cmd\n";
 
 system($cmd);
@@ -53,7 +56,9 @@ print OUT "[Accession]\t[Source ID]\t[EC Numbers]\t[Group]\t[Group Size]\n";
 
 $url = "https://qa.orthomcl.org/webservices/SequenceQuestions/ByEcAssignment.xml?o-fields=primary_key,source_id,ec_numbers,group_name,num_core,num_peripheral"; 
 
-$cmd = qq(wget "$url" -o $outputOrthoSeqsWithECs.log > $outputOrthoSeqsWithECs.tmp);
+
+$cmd = qq(wget "$url" -o $outputOrthoSeqsWithECs.log -O $outputOrthoSeqsWithECs.tmp);
+
 print STDERR "Running\n$cmd\n";
 system($cmd);
 $ref = XMLin("$outputOrthoSeqsWithECs.tmp");
