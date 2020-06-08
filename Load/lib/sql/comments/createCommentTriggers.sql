@@ -1,3 +1,5 @@
+grant select on userlogins5.CommentReference to apidb;
+
 alter table userlogins5.comment_users
 add (constraint pk_users primary key (user_id) validate);
 
