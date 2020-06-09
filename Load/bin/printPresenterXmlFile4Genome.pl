@@ -20,6 +20,7 @@ my (
     $primaryContactId,
     $assemblyId,
     $bioprojectId,
+    $ifPrintContactIdFile,
     $help);
 
 &GetOptions(
@@ -34,6 +35,7 @@ my (
 	    'primaryContactId=s' => \$primaryContactId,
 	    'assemblyId=s' => \$assemblyId,
 	    'bioprojectId=s' => \$bioprojectId,
+	    'ifPrintContactIdFile=s' => \$ifPrintContactIdFile,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
@@ -66,6 +68,7 @@ print "    <releasePolicy><\/releasePolicy>\n";
 
 print "  </datasetPresenter>\n";
 
+print printContactInformation($primaryContactId) if ($ifPrintContactIdFile =~ /^y/i);
 
 ##################### subroutine ###################
 sub printAnnotatedGenome {
@@ -108,16 +111,23 @@ sub printPubMedId {
 }
 
 sub printPrimaryContactId {
-  my ($name) = @_;
 
-  $primaryContactId = lc ($primaryContactId);
-  $primaryContactId =~ s/^\s+//;
-  $primaryContactId =~ s/\s+$//;
-  $primaryContactId =~ s/\s+/\./g;
+  my $name = optimizedContactId ($primaryContactId);
 
-  ($primaryContactId) ? print "    <primaryContactId>$primaryContactId<\/primaryContactId>\n"
+  ($primaryContactId) ? print "    <primaryContactId>$name<\/primaryContactId>\n"
                       : print "    <primaryContactId>TODO<\/primaryContactId>\n";
   return 0;
+}
+
+sub optimizedContactId {
+  my ($name) = @_;
+
+  $name = lc ($name);
+  $name =~ s/^\s+//;
+  $name =~ s/\s+$//;
+  $name =~ s/\s+/\./g;
+
+  return $name;
 }
 
 sub printUnAnnotatedGenome {
@@ -164,6 +174,25 @@ sub printOrganismFullName {
 
   return 0;
 }
+sub printContactInformation {
+  my ($fullName) = @_;
+  my $id = optimizedContactId ($fullName);
+
+  print "\n\n\n";
+  print "  <contact>\n";
+  print "    <contactId>$id<\/contactId>\n";
+  print "    <name>$fullName<\/name>\n";
+  print "    <institution><\/institution>\n";
+  print "    <email><\/email>\n";
+  print "    <address\/>\n";
+  print "    <city\/>\n";
+  print "    <state\/>\n";
+  print "    <zip\/>\n";
+  print "    <country\/>\n";
+  print "  <\/contact>\n";
+
+  return 0;
+}
 
 
 sub usage {
@@ -184,6 +213,7 @@ where
   --primaryContactId: optional
   --assemblyId: optional
   --bioprojectId: optional
+  --ifPrintContactIdFile: optional, Yes|yes|Y|y, No|no|N|n
 
 ";
 }

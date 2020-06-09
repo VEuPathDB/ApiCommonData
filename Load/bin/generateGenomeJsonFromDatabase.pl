@@ -43,11 +43,12 @@ my $component = getComponentName ($organismAbbrev);
 
 my $ebiOrganismName = getEbiOrganismName ($organismAbbrev);
 my ($accessionNumber, $genebuildVersion) = getInfoFromPresenter ($organismAbbrev);
-my $assemblyVersion;
 
-#my $karyotypeBands = getCentromereInfo($extDbRlsId);
-#my $ebiSeqRegionName = getEbiSeqRegionName($extDbRlsId);
+my $assemblyVersion = getAssemblyVersionFromAnnotatinVersion($genebuildVersion);
+my $assemblyName = getAssemblyNameFromAnnotatinVersion($genebuildVersion);
+my ($providerName, $providerUrl) = getProviderNameAndUrl($component);
 
+my $genebuildStartDate;
 
 my %organismDetails = (#'project_id' => $items[2],
 			'species' => {
@@ -64,32 +65,42 @@ my %organismDetails = (#'project_id' => $items[2],
 #				       'url' => $providerUrl,
 #				       'name' => $items[12]
 #				       },
-#			'genebuild' => {
-#					'version' => $genebuildVersion,
-#					'start_date' => $genebuildVersion
-#					},
 			'assembly' => {
 				       'accession' => $accessionNumber,
 				       'version' => $assemblyVersion
 				       }
 		       );
 
-## only has genebuild if is_annotated = 1
+
+
+## genebuild, only happen if is_annotated = 1
 if ($genebuildVersion) {
   $organismDetails{genebuild}{version} = $genebuildVersion;
-  $organismDetails{genebuild}{start_date} = $genebuildVersion;
+  $organismDetails{genebuild}{start_date} = $genebuildStartDate if ($genebuildStartDate);
 }
 
+## assembly->version
+$organismDetails{assembly}{version} += 0;
+$organismDetails{assembly}{version} = 1 if ($organismDetails{assembly}{version} == 0);
+
+## assembly->accession
 $organismDetails{assembly}{accession} =~ s/^\s+//;
 $organismDetails{assembly}{accession} =~ s/\s+$//;
 
-#if ($providerUrl && $items[12]) {
-#  $organismDetails{provider}{url} = $providerUrl;
-#  $organismDetails{provider}{name} = $items[12];
-#} elsif (!$providerUrl && $items[12]) {
-#  $organismDetails{provider}{url} = "https://veupathdb.org";
-#  $organismDetails{provider}{name} = $items[12];
-#}
+if ($organismDetails{assembly}{accession} !~ /^GCA_/i && $organismDetails{assembly}{accession} !~ /^GCF_/i
+   ) {
+  $organismDetails{assembly}{accession} = "";
+}
+
+## assembly extra item
+$organismDetails{assembly}{name} = $assemblyName if ($assemblyName);
+$organismDetails{assembly}{provider_url} = $providerUrl if ($providerUrl);
+$organismDetails{assembly}{provider_name} = $providerName if ($providerName);
+
+## species->taxonomy_id
+if ($organismDetails{species}{taxonomy_id} == "") {
+  $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
+}
 
 if ($organismAbbrev eq "gassAWB" || $organismAbbrev eq "gassBGS" || $organismAbbrev eq "gassEP15"
     || $organismAbbrev eq "gassA2DH" || $organismAbbrev eq "gassAAS175"
@@ -97,19 +108,11 @@ if ($organismAbbrev eq "gassAWB" || $organismAbbrev eq "gassBGS" || $organismAbb
 ) {
   $organismDetails{species}{taxonomy_id} = 5740;
 }
-
-if ($organismDetails{species}{taxonomy_id} == "") {
-  $organismDetails{species}{taxonomy_id} = getNcbiTaxonIdFromOrganismName($organismDetails{species}{scientific_name});
-}
-
 $organismDetails{species}{taxonomy_id} += 0;
 
-if ($organismDetails{assembly}{accession} !~ /^GCA_/i && $organismDetails{assembly}{accession} !~ /^GCF_/i
-   ) {
-  $organismDetails{assembly}{accession} = "";
-}
 
-$organismDetails{assembly}{version} = 1 if ($organismDetails{assembly}{version} == 0);
+
+
 
 
 my $json = encode_json \%organismDetails;
@@ -127,6 +130,38 @@ close OUT;
 $dbh->disconnect();
 
 ###########
+sub getProviderNameAndUrl {
+  my ($component) = @_;
+  my ($name, $url);
+
+  if ($component =~ /vector/i ) {
+    $name = "VectorBase";
+    $url = "http://www.vectorbase.org";
+  } else {
+    ## need more coding
+  }
+
+  return $name, $url;
+}
+
+sub getAssemblyVersionFromAnnotatinVersion {
+  my ($annotVersion) = @_;
+  my $assemblyVersion = $annotVersion;
+  $assemblyVersion =~ s/\.\d+$//;
+  $assemblyVersion =~ s/^.+(\d+)$/$1/;
+
+  return $assemblyVersion;
+}
+
+sub getAssemblyNameFromAnnotatinVersion {
+  my ($annotVersion) = @_;
+  my $assemblyName = $annotVersion;
+  $assemblyName =~ s/\.\d+$//;
+
+  return $assemblyName;
+}
+
+
 sub getComponentName {
   my ($abbrev) = @_;
 
