@@ -29,10 +29,9 @@ GRANT insert, select, update, delete ON apidb.IntronJunction TO gus_w;
 GRANT select ON apidb.IntronJunction TO gus_r;
 GRANT select ON apidb.IntronJunction_sq TO gus_w;
 
-CREATE INDEX apidb.rif_rls_ix
+CREATE INDEX apidb.IntJunc_loc_ix
 ON apidb.IntronJunction
-   (na_sequence_id, protocol_app_node_id, segment_start, 
-    segment_end, intron_junction_id, is_reversed, unique_reads, nu_reads)
+   (na_sequence_id, segment_start, segment_end, is_reversed)
    TABLESPACE indx;
 
 CREATE INDEX apidb.injun_revix0 ON apidb.IntronJunction (protocol_app_node_id, intron_junction_id) TABLESPACE indx;

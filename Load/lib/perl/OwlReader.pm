@@ -224,6 +224,24 @@ sub getDisplayOrder {
 	return \%seen;
 }
 
+sub getVariable {
+	my ($self) = @_;
+	my %seen;
+ 	my $it = $self->execute('get_variable');
+	while (my $row = $it->next) {
+		my $uri = $row->{entity}->as_hash()->{iri}|| $row->{entity}->as_hash()->{URI};
+	  next unless($uri);
+		my $sid = $self->getSourceIdFromIRI($uri);
+		die "Cannot get source id from $uri" unless $sid;
+    $seen{$sid} ||= [];
+		push(@{$seen{$sid}}, $row->{variable}->as_hash()->{literal});
+	}
+  while(my($sid,$vars) = each %seen){
+    $seen{$sid} = join(",", sort @$vars);
+  }
+	return \%seen;
+}
+
 sub getSourceIdFromIRI {
 	my($self,$iri) = @_;
 	if($iri =~ /#(.+)$/){ return $1; } # http://domain/owl#Thing => Thing

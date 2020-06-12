@@ -212,6 +212,47 @@ sub writeFeaturesToGffBySeqId {
   return 0;
 }
 
+sub verifyFeatureConsistency {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    foreach my $gene (@{$bioFeatureHash{$k}}) {
+      my ($gId) = $gene->get_tag_values("ID") if ($gene->has_tag("ID"));
+
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+	my $tType = $transcript->primary_tag;
+
+	foreach my $exon ($transcript->get_SeqFeatures) {
+	  my ($eId) = $exon->get_tag_values("ID") if ($exon->has_tag("ID"));
+	  if ($tType eq "pseudogenic_transcript" ) {
+	    if ($exon->primary_tag eq "exon") {
+	      $exon->primary_tag('pseudogenic_exon');
+	      $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	      $exon->add_tag_value("biotype", "pseudogenic_exon");
+	      warn "inconsistency primary_tag found at $tId, $eId. Corrected it, exon to exoeudogenic_exonn";
+	     }
+	  } else {
+	    if ($exon->primary_tag eq "pseudogenic_exon") {
+	      $exon->primary_tag('exon');
+	      $exon->remove_tag("biotype") if ($exon->has_tag("biotype"));
+	      $exon->add_tag_value("biotype", "exon");
+	      warn "inconsistency primary_tag found at $tId, $eId. Corrected it, pseudogenic_exon to exon\n";
+	    }
+	  }
+
+	}
+      }
+    }
+  }
+}
+
 sub verifyFeatureLocation {
   my ($bioFeatures) = @_;
 
@@ -403,11 +444,14 @@ sub checkGff3FormatNestedFeature {
     # 7) check if duplicated genes happen in the same sequence at the same position
     # use geneStart, geneEnd, and strand as a key, the value is the strand
     my $geneKey = $seq_id."-".$start."-".$end;
+    my $geneKey = $seqId."-".$start."-".$end;
+    my %dupGenesStrand;
     if ($dupGenes{$geneKey}) {
-      ($dupGenes{$geneKey} eq $strand) ? warn "Duplicated gene '$id' found at $seqId: $start ... $end at the same strand\n" 
-	: warn "Duplicated gene '$id' found at $seqId: $start ... $end, but at a different strand\n";
+      ($dupGenesStrand{$geneKey} eq $strand) ? warn "Duplicated gene '$id' found at $seqId: $start ... $end ($geneKey) at the same strand\n  the other gene is $dupGenes{$geneKey}\n" 
+	: warn "Duplicated gene '$id' found at $seqId: $start ... $end ($geneKey), but at a different strand\n  the other gene is $dupGenes{$geneKey}\n";
     } else {
-      $dupGenes{$geneKey} = $strand;
+      $dupGenesStrand{$geneKey} = $strand;
+      $dupGenes{$geneKey} = $id;
     }
 
   } # end of foreach my $bioFeat
@@ -474,7 +518,7 @@ sub getSequenceHash {
 }
 
 sub checkGff3GeneModel {
-  my ($bioFeature, $seqHash, $codon_table, $specialCodonTable) = @_;
+  my ($bioFeature, $seqHash, $fastaFile, $codon_table, $specialCodonTable) = @_;
 
 #  my (%seqs, $key);
 #  open (FA, "$fastaFile") || die "can not open genome sequence fasta File to read\n";
@@ -495,6 +539,20 @@ sub checkGff3GeneModel {
     foreach my $table (@tables) {
       my ($seq, $table) = split (/\|/, $table);
       $specialCodonTables{$seq} = $table;
+    }
+  }
+
+  ## get codon_table, transl_except from $bioFeature
+  my (%translTable, %translExcept, %exception);
+  foreach my $subFeat (@{$bioFeature}) {
+    foreach my $transcript ($subFeat->get_SeqFeatures) {
+      my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
+      my $seqId = $transcript->seq_id;
+
+      ($translTable{$seqId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $seqId);
+      ($translTable{$tId}) = $transcript->get_tag_values("transl_table") if ($transcript->has_tag("transl_table") && $tId);
+      ($translExcept{$tId}) = $transcript->get_tag_values("transl_except") if ($transcript->has_tag("transl_except") && $tId);
+      ($exception{$tId}) = $transcript->get_tag_values("exception") if ($transcript->has_tag("exception") && $tId);
     }
   }
 
@@ -570,6 +628,8 @@ sub checkGff3GeneModel {
     my $proteinSeq;
     if ($specialCodonTables{$seqId}) {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$specialCodonTables{$seqId});
+    } elsif ($translTable{$seqId}) {
+      $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$translTable{$seqId});
     } else {
       $proteinSeq = CBIL::Bio::SequenceUtils::translateSequence($cdsSeq,$codon_table);
     }
@@ -579,7 +639,12 @@ sub checkGff3GeneModel {
 
     ## check
     if ($proteinSeq =~ /\*/) {
-      warn "WARNING: transcript $tId contains internal stop codons\n    $proteinSeq\n" if ($cdsType !~ /pseudo/i);
+      my $except;
+      if ($exception{$tId}) {
+	$except = "Exception ";
+      }
+      warn "WARNING: $except transcript $tId contains internal stop codons\n    $proteinSeq\n" 
+	if ($cdsType !~ /pseudo/i && !$translExcept{$tId} && !$exception{$tId});
     }
   }
   # end of checking if internal stop codon.
@@ -589,6 +654,40 @@ sub checkGff3GeneModel {
 
 }
 
+## remove UTR that only has 1 or 2 basepairs
+sub removeShortUtrs {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    foreach my $gene (@{$bioFeatureHash{$k}}) {
+      my ($gId) = $gene->get_tag_values("ID") if ($gene->has_tag('ID'));
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my @exons = $transcript->remove_SeqFeatures();
+	foreach my $exon (@exons) {
+	  my ($eId) = $exon->get_tag_values('ID') if ($exon->has_tag('ID'));
+	  my $eType = $exon->primary_tag();
+	  my $utrStart = $exon->location->start;
+	  my $utrEnd = $exon->location->end;
+	  my $utrLength = $exon->location->end - $exon->location->start + 1;
+	  if (($eType eq 'five_prime_UTR' || $eType eq 'three_prime_UTR' ) && $utrLength < 3) {
+	    print STDERR "SKIPPED urt for $gId, at $utrStart ... $utrEnd\n";
+	    next;
+	  } else {
+	    $transcript->add_SeqFeature($exon);
+	  }
+	}
+      }
+    }
+  }
+
+  return $bioFeatures;
+}
 
 sub revcomp {
   my $seq = shift;

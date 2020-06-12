@@ -12,13 +12,14 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::ApiDB::Organism;
 
 
-my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $help);
+my ($organismAbbrev, $gusConfigFile, $outputFileName, $outputFileDir, $ncbiTaxId, $help);
 
 &GetOptions('organismAbbrev=s' => \$organismAbbrev,
 #            'genomeSummaryFile=s' => \$genomeSummaryFile,
             'gusConfigFile=s' => \$gusConfigFile,
             'outputFileName=s' => \$outputFileName,
             'outputFileDir=s' => \$outputFileDir,
+            'ncbiTaxId=s' => \$ncbiTaxId,
             'help|h' => \$help
             );
 
@@ -39,8 +40,10 @@ my $dbh = $db->getQueryHandle();
 
 my $extDbRlsId = getPrimaryExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
-my $centormere = getCentromereInfo($extDbRlsId);
-my $transposableElement = getTransposableElementInfo($extDbRlsId);
+my $karyotypeBands = getCentromereInfo($extDbRlsId);
+#my $transposableElement = getTransposableElementInfo($extDbRlsId);
+
+my $ebiSeqRegionName = getEbiSeqRegionName($extDbRlsId);
 
 my $outputFileName = $organismAbbrev . "_seq_region.json" unless($outputFileName);
 if ($outputFileDir) {
@@ -56,6 +59,10 @@ my $sql = "    select source_id, SEQUENCE_TYPE, LENGTH
                where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
                and is_top_level = 1";
 
+if ($ncbiTaxId) {
+  $sql = "select source_id, SEQUENCE_TYPE, LENGTH from apidbtuning.genomicseqattributes where ncbi_tax_id = $ncbiTaxId and is_top_level = 1";
+}
+
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
@@ -68,6 +75,16 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
 		 'length' => $seqLen,
 		 );
 
+  $seqRegions{length} += 0;  ## change string to integer
+
+  $seqRegions{EBI_seq_region_name} = $ebiSeqRegionName->{$seqSourceId} if ($ebiSeqRegionName->{$seqSourceId});
+  $seqRegions{BRC4_seq_region_name} = $seqSourceId;
+
+  if ($seqType =~ /mitochondrial_chromosome/i || $seqType =~ /apicoplast_chromosome/i) {
+    $seqRegions{coord_system_level} = "chromosome";
+    $seqRegions{location} = $seqType;
+  }
+
   my $synonyms = getSeqAliasesFromSeqSourceid($seqSourceId);
   if ($synonyms) {
     $seqRegions{synonyms} = \@{$synonyms};
@@ -76,19 +93,27 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
   my $geneticCode = getGeneticCodeFromOrganismAbbrev($organismAbbrev, $seqType);
   if ($geneticCode != 1) {
     $seqRegions{codon_table} = $geneticCode;
+    $seqRegions{codon_table} += 0;
   }
 
   ## for some organisms in PlasmoDB
-  if ($centormere->{$seqSourceId}) {
-    $seqRegions{centromere} = $centormere->{$seqSourceId};
+  if ($karyotypeBands->{$seqSourceId}) {
+    push @{$seqRegions{karyotype_bands}}, $karyotypeBands->{$seqSourceId};
   }
 
   ## for tvagG3 in TrichDB and cfasCfCl in TriTrypDB
-  if ($transposableElement->{$seqSourceId}) {
-    $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
+#  if ($transposableElement->{$seqSourceId}) {
+#    $seqRegions{transposableElement} = $transposableElement->{$seqSourceId};
+#  }
+
+  ## to correct a random_sequence issue in plas-
+  if (($organismAbbrev eq "pyoeyoeliiYM" || $organismAbbrev eq "preiCDC" || $organismAbbrev eq "pknoH" )
+      && $seqRegions{coord_system_level} =~ /random_sequence/i) {
+    $seqRegions{coord_system_level} = "contig";
   }
 
   push @seqRegionsArray, \%seqRegions;
+  $db->undefPointerCache();
 }
 
 $stmt->finish();
@@ -103,6 +128,24 @@ $dbh->disconnect();
 
 
 ###########
+sub getEbiSeqRegionName {
+  my ($extDbRlsId) = @_;
+
+  my $sql = "select SOURCE_ID, SECONDARY_IDENTIFIER, name from DOTS.EXTERNALNASEQUENCE
+             where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+            ";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my %ebiSeqName;
+  while (my ($seqId, $secondId) = $stmt->fetchrow_array()) {
+
+    $ebiSeqName{$seqId} = $secondId if ($seqId && $secondId);
+  }
+
+  return \%ebiSeqName;
+}
+
 sub getCentromereInfo {
   my ($extDbRlsId) = @_;
 
@@ -118,10 +161,14 @@ sub getCentromereInfo {
   while (my ($seqId, $centromereId, $cStart, $cEnd) = $stmt->fetchrow_array()) {
 
     %{$centromereInfo{$seqId}} = (
-			       "centromereId" => $centromereId,
+			       "name" => $centromereId,
+			       "stain" => "ACEN",
+			       "structure" => "centromere",
 			       "start" => $cStart,
 			       "end" => $cEnd
 			       );
+    ${$centromereInfo{$seqId}}{start} += 0;
+    ${$centromereInfo{$seqId}}{end} += 0;
   }
 
   return \%centromereInfo;
@@ -199,10 +246,10 @@ sub getGeneticCodeFromOrganismAbbrev {
     ## manually code here
     if ($projectName =~ /^piro/i || $projectName =~ /^plas/i) {
       return "11";
-    } elsif ($projectName =~ /^toxo/) {
+    } elsif ($projectName =~ /^toxo/i) {
       return "4";
     } else {
-      die "can not decide apicoplast genetic code \n";
+      die "ERROR: all plastid should be coded. Something is wrong. Should check here.\n";
     }
   } elsif ($seqType =~ /mito/i) {
     $sql = "select gt.NCBI_GENETIC_CODE_ID
@@ -240,8 +287,20 @@ sub getSeqAliasesFromSeqSourceid {
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
+  my $curSource; 
   while (my ($alias) = $stmt->fetchrow_array()) {
-    push @{$aliases}, $alias;
+#    if ($alias =~ /^CM/ || $alias =~ /^NC/) {
+    if ($alias =~ /^[A-Z]{2}\_?\d{5,6}/ || $alias =~ /^[A-Z]{4}\d{8}/) {
+      $curSource = "INSDC";
+    } else {
+      $curSource = "Community_Symbol";
+    }
+    my %curAlias = (
+		    "source" => $curSource,
+		    "name" => $alias
+		    );
+    push @{$aliases}, \%curAlias;
+#    push @{$aliases}, $alias;
   }
 
   $stmt->finish();

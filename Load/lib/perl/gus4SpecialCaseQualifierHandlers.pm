@@ -433,7 +433,10 @@ sub _undoPartial{
 sub transcriptTranslExcept {
   my ($self, $tag, $bioperlFeature, $transcript) = @_;
   #my $transcript = $geneFeature->getChild("DoTS::Transcript");
-  my ($transl_except) = $bioperlFeature->get_tag_values($tag);
+
+  ## some transcrips may have more than one transl_except,
+  my $transl_except = join (",", $bioperlFeature->get_tag_values($tag));
+
   $transcript->setTranslExcept($transl_except);
   return [];
 }

@@ -7,7 +7,9 @@
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_prism2.owl"/>
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_prism2.owl">
+        <owl:versionInfo>2020-05-13</owl:versionInfo>
+    </owl:Ontology>
     
 
 
@@ -25,7 +27,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000274 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000274">
-        <rdfs:label>display order</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">displayOrder</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -109,7 +111,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1- Routine visit (done every 28 days)
 2- Non-routine visit(all unsheduled days)</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Information about clincial history, anthropometry, vital signs, symptoms, samples, and treatment were collected at enrollment as well as routine and non-routine visits to the cinic. Information about sleeping habits and mosquito traps were collected at entomology visits to the participant&apos;s home, which occured every 2 weeks.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Information about clincial history, anthropometry, vital signs, symptoms, samples, and treatment were collected at enrollment as well as routine and non-routine visits to the cinic. Information about sleeping habits and mosquito traps were collected at entomology visits to the participant&apos;s home, which occured every 2 weeks.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation type</rdfs:label>
     </owl:Class>
     
@@ -330,11 +332,25 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_01000744 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_01000744">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">housetype</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dwelling type</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000003 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000003">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mmroof</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -348,7 +364,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000006">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mmfloor</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -372,11 +388,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000014 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000014">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wealthindex</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household wealth index, numerical</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000015 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000015">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">eaves</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -417,7 +446,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000025">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhrooms</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rooms</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
@@ -491,7 +520,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incident malaria</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malaria-related diagnosis</rdfs:label>
     </owl:Class>
     
 
@@ -595,40 +624,6 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plasmodium asexual stages (per uL blood), by microscopy</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000094 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000094">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhid</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household screening FINAL.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household ID</obo:EUPATH_0001003>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household code</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household ID</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000095 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000095">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cohortid</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study ID</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant ID</rdfs:label>
     </owl:Class>
     
 
@@ -752,11 +747,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000143 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000143">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wealthcat</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household wealth index, categorical</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
     </owl:Class>
     
@@ -1219,7 +1227,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000201">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhspaces</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -1339,7 +1347,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-Yes
 0-No</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked at clinic visits</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked at clinic visits</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ITN last night</rdfs:label>
     </owl:Class>
     
@@ -1631,11 +1639,11 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000433">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0033308"/>
-        <obo:EUPATH_0000755>speciesPCR</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>Plasmodium species, by qPCR</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">speciesPCR</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plasmodium species, by qPCR</rdfs:label>
     </owl:Class>
     
 
@@ -1708,9 +1716,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000667">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000671"/>
-        <obo:EUPATH_0000755>death</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <rdfs:label>Deceased</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">death</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Deceased</rdfs:label>
     </owl:Class>
     
 
@@ -1894,6 +1902,19 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011161 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011161">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anemia11</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anemia (hemoglobin less than 11g/dL)</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011683 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011683">
@@ -1946,17 +1967,6 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Collection date</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0020005 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
     </owl:Class>
     
 
@@ -2029,7 +2039,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020059 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020059">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">childbearing</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
@@ -2307,10 +2317,24 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020122 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020122">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020228"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">totalanopheles</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total number of female anopheles caught in light trap</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total female Anopheles count</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020125 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020125">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology tests procedures</rdfs:label>
@@ -2457,7 +2481,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Approximate time they went out of bed</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Out of bed time</rdfs:label>
     </owl:Class>
     
@@ -2522,7 +2546,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sleeping Area (Letter)</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sleeping area ID</rdfs:label>
     </owl:Class>
     
@@ -2538,7 +2562,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Room Number for the individual</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sleeping room number</rdfs:label>
     </owl:Class>
     
@@ -2548,7 +2572,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020171">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">windows</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
@@ -2822,7 +2846,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020212">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">covered</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household level data FINAL.dta</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -3234,19 +3258,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0020244 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020244">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">uniqueid</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation ID</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020247 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020247">
@@ -3363,15 +3374,15 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020257">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
-        <obo:EUPATH_0000755>llin</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 xml:lang="en">Did they or someone else report them sleeping under an LLIN 
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">llin</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Did they or someone else report them sleeping under an LLIN 
 Last night?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004>1 - Yes
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1 - Yes
 0 - No              2- Unknown</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when setting light traps at participant’s home</obo:IAO_0000115>
-        <rdfs:label>LLIN last night</rdfs:label>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when setting light traps at participant’s home</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LLIN last night</rdfs:label>
     </owl:Class>
     
 
@@ -3381,10 +3392,10 @@ Last night?</obo:EUPATH_0001003>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020258">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reenrolldate</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>Re-enrollment date</rdfs:label>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Re-enrollment date</rdfs:label>
     </owl:Class>
     
 
@@ -3393,13 +3404,13 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020259">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
-        <obo:EUPATH_0000755>dow</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003>date of withdrawal</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004>NA</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>Withdrawal date</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dow</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">date of withdrawal</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Withdrawal date</rdfs:label>
     </owl:Class>
     
 
@@ -3408,10 +3419,10 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020260">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020228"/>
-        <obo:EUPATH_0000755>sporozoitetested</obo:EUPATH_0000755>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Number of Anopheles female mosquitos that came from the room where the participant was sleeping and were tested for sporozoites.</obo:IAO_0000115>
-        <rdfs:label>Mosquitos tested for sporozoites (count)</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sporozoitetested</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of Anopheles female mosquitos that came from the room where the participant was sleeping and were tested for sporozoites.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquitos tested for sporozoites (count)</rdfs:label>
     </owl:Class>
     
 
@@ -3420,10 +3431,10 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020261">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020228"/>
-        <obo:EUPATH_0000755>sporozoitepositive</obo:EUPATH_0000755>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Number of Anopheles female mosquitos that came from the room where the participant was sleeping and were found to have sporozoites.</obo:IAO_0000115>
-        <rdfs:label>Mosquitos with sporozoites (count)</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sporozoitepositive</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of Anopheles female mosquitos that came from the room where the participant was sleeping and were found to have sporozoites.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mosquitos with sporozoites (count)</rdfs:label>
     </owl:Class>
     
 
@@ -3432,13 +3443,13 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020262">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000323"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>totalforspeciesID</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>A subset of Anopheles gambiae sl were tested for subspecies identification by PCR. This variable indicates the number of Anopheles gambiae sl from the collection that was tested.</obo:IAO_0000115>
-        <rdfs:label>Number Anopheles gambiae sl tested by PCR</rdfs:label>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">totalforspeciesID</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A subset of Anopheles gambiae sl were tested for subspecies identification by PCR. This variable indicates the number of Anopheles gambiae sl from all collections done within a household on a given day. Note, this data is ony linked to the first reported collection within a household on a given day, not each collection that potentially contributed to it.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number Anopheles gambiae sl tested by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3447,13 +3458,13 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020263">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000323"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>arabiensis</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>The number of Anopheles gambiae sl that were tested for subspecies identification by PCR and found to be Anopheles arabiensis.</obo:IAO_0000115>
-        <rdfs:label>Anopheles arabiensis count, by PCR</rdfs:label>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">arabiensis</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The number of Anopheles gambiae sl that were tested for subspecies identification by PCR and found to be Anopheles arabiensis per household on a given day. Note, this data is ony linked to the first reported collection within a household on a given day, not each collection that potentially contributed to it.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles arabiensis count, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3462,13 +3473,13 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020264">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000323"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>gambiaess</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>The number of Anopheles gambiae sl that were tested for subspecies identification by PCR and found to be Anopheles gambiae s.s.</obo:IAO_0000115>
-        <rdfs:label>Anopheles gambiae s.s. count, by PCR</rdfs:label>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gambiaess</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC LT data through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The number of Anopheles gambiae sl that were tested for subspecies identification by PCR and found to be Anopheles gambiae s.s. per household on a given day. Note, this data is ony linked to the first reported collection within a household on a given day, not each collection that potentially contributed to it.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles gambiae s.s. count, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -3477,11 +3488,11 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020265">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
-        <obo:EUPATH_0000755>dow2nd</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>Withdrawal date, 2</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dow2nd</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Withdrawal date, 2</rdfs:label>
     </owl:Class>
     
 
@@ -3490,11 +3501,11 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020266">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000307"/>
-        <obo:EUPATH_0000755>withdrawnreason2nd</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <rdfs:label>Reason for withdrawal, 2</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">withdrawnreason2nd</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reason for withdrawal, 2</rdfs:label>
     </owl:Class>
     
 
@@ -3503,12 +3514,12 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020268">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020255"/>
-        <obo:EUPATH_0000755>slept</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001>PRISM 2 expanded database</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002>Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when collecting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
-        <rdfs:label>Slept in dwelling last night</rdfs:label>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">slept</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when collecting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Slept in dwelling last night</rdfs:label>
     </owl:Class>
     
 
@@ -3692,9 +3703,9 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021130">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020125"/>
-        <obo:EUPATH_0001002>Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label>Blood eukaryote testing</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood eukaryote testing</rdfs:label>
     </owl:Class>
     
 
@@ -3715,43 +3726,12 @@ Last night?</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0024218 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024218">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pregnant</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Is the woman pregnant</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-Yes
-0-No</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pregnant</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0025004 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025004">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020228"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">totalanopheles</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total number of female anopheles caught in light trap</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles count</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0025053 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025053">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles results</rdfs:label>
     </owl:Class>
     
@@ -3784,9 +3764,9 @@ Last night?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025170">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label>Entomology collection</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology collection</rdfs:label>
     </owl:Class>
     
 
@@ -3794,7 +3774,7 @@ Last night?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033307 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033307">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eukaryota in blood</rdfs:label>
@@ -3809,6 +3789,24 @@ Last night?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plasmodium in blood</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0042002 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0042002">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Obstetrics</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0042004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0042004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pregnancy</rdfs:label>
     </owl:Class>
     
 
@@ -3890,7 +3888,7 @@ Last night?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Approximate time they went to bed</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115>Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asked when setting light traps at participant’s home during entomology observations.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bed time</rdfs:label>
     </owl:Class>
     
@@ -3899,7 +3897,7 @@ Last night?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/NCIT_C69121 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C69121">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">trimister</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
@@ -3914,17 +3912,13 @@ Last night?</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
+    <!-- http://purl.obolibrary.org/obo/OBI_0002649 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">barcode</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002649">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Barcode for Samples</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NA</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample ID</rdfs:label>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
     </owl:Class>
     
 
@@ -4131,6 +4125,23 @@ Last night?</obo:EUPATH_0001003>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/UBERON_0009097 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0009097">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pregnant</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Is the woman pregnant</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-Yes
+0-No</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pregnant</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://www.ebi.ac.uk/efo/EFO_0004326 -->
 
     <owl:Class rdf:about="http://www.ebi.ac.uk/efo/EFO_0004326">
@@ -4159,6 +4170,23 @@ Last night?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000117">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">term editor</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition source</rdfs:label>
+    </rdf:Description>
 </rdf:RDF>
 
 

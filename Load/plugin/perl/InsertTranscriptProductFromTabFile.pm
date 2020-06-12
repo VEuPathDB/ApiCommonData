@@ -158,6 +158,7 @@ sub run {
       $totalNum++;
 
       my ($sourceId, $product, $preferred, $pmid, $evCode, $with) = split(/\t/,$_);
+      next if ($sourceId =~ /^\s*$/ || $product =~ /^\s*$/);
       if ($preferred =~ /true/i || $preferred == 1) {
 	$preferred = 1;
       } else {

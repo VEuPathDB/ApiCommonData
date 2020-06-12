@@ -418,7 +418,7 @@ sub checkProtocolsAndSetIds {
       $protocol->{_PROTOCOL_ID} = $protocols{$protocolName};
     }
     else {
-      $self->log("WARNING:  Protocol [$protocolName] Not found in the database ... adding") ;
+      $self->log("WARNING:  Protocol [$protocolName] Not found in the database") ;
     }
   }
 }
@@ -684,7 +684,7 @@ sub loadProtocols {
         $gusProtocolParam->setParent($gusProtocol);
       }
     }
-
+    $self->log("Adding protocol $protocolName to the database");
     $gusProtocol->submit();
     $pNameToId->{$protocolName} = $gusProtocol->getId();
 
