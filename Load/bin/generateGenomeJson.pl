@@ -54,11 +54,8 @@ while (<IN>) {
   if ($items[19] == 1) {
     $genebuildVersion = $items[20] ? $items[20] : $items[14];
   }
-  my $assemblyVersion = $items[15];
-  if ($items[15] == "") {
-    $assemblyVersion = $items[16];
-    $assemblyVersion =~ s/(\S+)\.(\d)/$2/;
-  }
+  my $assemblyVersion = $items[16];
+  $assemblyVersion =~ s/(\S+)\.(\d)/$2/;
   $assemblyVersion += 0;  ## change string to integer
 
 
