@@ -298,6 +298,9 @@ sub readFromDatabase {
   $stmt->execute();
   my (@arrays);
   while (my @fetchs = $stmt->fetchrow_array()) {
+    foreach my $i (0..$#fetchs) {
+      $fetchs[$i] =~ s/\|/\,/g;
+    }
     my $oneline= join ('|', @fetchs);
     push @arrays, $oneline;
   }
@@ -314,6 +317,7 @@ sub printGoInfo {
     my @items = split (/\|/, $arrayRef->[$j]);
     foreach my $i (0..16) {
       $items[10] =~ s/\,/\|/g; ## column 11, synomys needs to be separated by "|"
+      $items[5] =~ s/\,/\|/g; ## column 5, pmid needs to be separated by "|";
       ($i == 16) ? $fileH->print ("$items[$i]\n") : $fileH->print ("$items[$i]\t");
     }
   }
