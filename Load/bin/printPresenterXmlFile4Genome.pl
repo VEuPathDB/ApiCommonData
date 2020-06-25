@@ -141,9 +141,11 @@ sub printHistory {
   my ($bld, $source, $version) = @_;
 
   print "    <history buildNumber=\"$buildNumber\"\n";
-  ($genomeSource eq "INSDC" || $genomeSource =~ /genbank/i) ? print "             genomeSource=\"$genomeSource\" genomeVersion=\"$assemblyId\"\n"
-                                                            : print "             genomeSource=\"$genomeSource\" genomeVersion=\"$genomeVersion\"\n";
-  print "             annotationSource=\"\" annotationVersion=\"\"\/>\n";
+  ($assemblyId) ? print "             genomeSource=\"INSDC\" genomeVersion=\"$assemblyId\"\n"
+                : print "             genomeSource=\"$genomeSource\" genomeVersion=\"$genomeVersion\"\n";
+
+  ($isAnnotatedGenome =~ /^y/i) ? print "             annotationSource=\"$genomeSource\" annotationVersion=\"$genomeVersion\"\/>\n"
+                                : print "             annotationSource=\"\" annotationVersion=\"\"\/>\n";
   return 0;
 }
 
@@ -200,6 +202,10 @@ sub usage {
 "
 Usage: printPresenterXmlFile4Genome.pl --organismAbbrev tgonME49 --projectName ToxoDB --isAnnotatedGenome Y
                                        --organismFullName \"Toxoplasma gondii ME49\" --buildNumber 49
+
+       printPresenterXmlFile4Genome.pl --organismAbbrev tgonRH88 --projectName ToxoDB --isAnnotatedGenome Y --organismFullName \"Toxoplasma gondii RH-88\"
+                                       --buildNumber 50 --genomeSource GenBank --genomeVersion \"May 15, 2020\" --primaryContactId \"Hernan Lorenzi\"
+                                       --assemblyId GCA_013099955.1 --bioprojectId PRJNA279557
 
 where
   --organismAbbrev: required, the organism abbrev
