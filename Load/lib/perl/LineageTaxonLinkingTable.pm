@@ -134,8 +134,7 @@ sub run {
   for my $lineage (map {@{$_}} @{$lineages}){
      my ($taxonId) = findTaxonForLineage(@taxonSths, $lineage);
      next LINEAGE unless $taxonId;
-     my $lineageTaxon = GUS::Model::Results::LineageTaxon->new({lineage => $lineage, taxon_id => $taxonId});
-     $lineageTaxon->submit;
+     GUS::Model::Results::LineageTaxon->new({lineage => $lineage, taxon_id => $taxonId})->submit;
      $lineageTaxonSubmitted++;
   }
   if ($lineageTaxonSubmitted){
