@@ -300,7 +300,7 @@ sub printEbiGenome {
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
   printNameWithDollarSign ($fh, 'ebiOrganismName');
   printNameWithDollarSign ($fh, 'ebiVersion');
-  printNameWithDollarSign ($fh, 'releaseDate', 'functAnnotVersion') if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
+  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
