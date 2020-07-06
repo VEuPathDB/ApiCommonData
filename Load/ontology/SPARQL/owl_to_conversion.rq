@@ -15,6 +15,7 @@ SELECT distinct ?IRI
   (GROUP_CONCAT(DISTINCT ?cDescription;separator=" | ") AS ?codebookDescription)
   (GROUP_CONCAT(DISTINCT ?cValues;separator=" | ") AS ?codebookValues)
   (GROUP_CONCAT(DISTINCT ?tType;separator=" | ") AS ?termType)
+  (GROUP_CONCAT(DISTINCT ?rep;separator=" | ") AS ?replaces)
 WHERE {
 	{?IRI rdfs:label ?tlabel .
 	?IRI rdfs:subClassOf* obo:PCO_0000024 .
@@ -51,6 +52,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -88,6 +92,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -125,6 +132,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -162,6 +172,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -199,6 +212,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 
 	UNION
@@ -237,6 +253,9 @@ WHERE {
     	OPTIONAL {
         	?IRI obo:EUPATH_0001005 ?tType .
     	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
 	}
 }
 GROUP BY ?IRI
