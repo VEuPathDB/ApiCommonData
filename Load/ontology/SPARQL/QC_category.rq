@@ -1,0 +1,50 @@
+# Check category annotation is different from its parent in the ontology hierarchy
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?s ?category ?correct_category
+WHERE { 
+   {
+	?s rdfs:subClassOf* obo:EUPATH_0000327 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'entomology' )
+	BIND("Entomology" AS ?correct_category)
+   }
+   UNION
+   {
+	?s rdfs:subClassOf* obo:PCO_0000024 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'household' )
+	BIND("Household" AS ?correct_category)
+   }
+   UNION
+   {
+	?s rdfs:subClassOf* obo:EUPATH_0025169 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'insect sample' )
+	BIND("Insect sample" AS ?correct_category)
+   }
+   UNION
+   {
+	?s rdfs:subClassOf* obo:EUPATH_0000738 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'observation' )
+	BIND("Observation" AS ?correct_category)
+   }
+   UNION
+   {
+	?s rdfs:subClassOf* obo:EUPATH_0000096 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'participant' )
+	BIND("Participant" AS ?correct_category)
+   }
+   UNION
+   {
+	?s rdfs:subClassOf* obo:EUPATH_0000609 .
+	?s obo:EUPATH_0001002 ?category .
+	FILTER ( lcase(str(?category)) != 'sample' )
+	BIND("Sample" AS ?correct_category)
+   }
+}

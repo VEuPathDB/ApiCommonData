@@ -8,8 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_malawi.owl">
-        <rdfs:comment>Built on SVN revision 99590</rdfs:comment>
-        <owl:versionInfo>2019-07-15</owl:versionInfo>
+        <owl:versionInfo>2020-06-12</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -77,6 +76,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001005">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">termType</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -237,7 +244,7 @@ Where do you get your drinking water?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3, Finished floor</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4, Other</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Floor material type</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Floor material</rdfs:label>
     </owl:Class>
     
 
@@ -436,7 +443,7 @@ Where do you get your drinking water?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specify the duration of headache</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Headache duration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Headache duration (days)</rdfs:label>
     </owl:Class>
     
 
@@ -451,7 +458,7 @@ Where do you get your drinking water?</obo:EUPATH_0001003>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specify the duration of fever</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever duration</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fever, subjective duration (days)</rdfs:label>
     </owl:Class>
     
 
@@ -565,7 +572,7 @@ Where do you get your drinking water?</obo:EUPATH_0001003>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000596"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">toilet</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>toiletsp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">toiletsp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;font color=&quot;blue&quot;&gt;Kodi muli ndi chimbudzi chotani?&lt;/font&gt; 
@@ -932,47 +939,6 @@ Do you have a toilet?</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011800 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011800">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microbiology tests performed</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011802 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011802">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011800"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microscopy</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011928 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011928">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000340"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">tr1areatp</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Trip 1 Area type</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-9, Unknown</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Urban</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2, Rural</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Information collected at household visit</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urban or rural site</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0020002 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020002">
@@ -988,13 +954,13 @@ Do you have a toilet?</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0020005 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020125 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020005">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020125">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology tests procedures</rdfs:label>
     </owl:Class>
     
 
@@ -1150,6 +1116,17 @@ Do you have a toilet?</obo:EUPATH_0001003>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0021130 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0021130">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020125"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood eukaryote testing</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0022034 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0022034">
@@ -1246,7 +1223,7 @@ Do you have a toilet?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Yes</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Information collected at household visit</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Always use bednet</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Use bednet</rdfs:label>
     </owl:Class>
     
 
@@ -1311,7 +1288,7 @@ Do you have a toilet?</obo:EUPATH_0001003>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000340"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reason_travel</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>reason_travelsp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reason_travelsp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;font color=&quot;blue&quot;&gt;Anachoka chifukwa chani?&lt;/font&gt;</obo:EUPATH_0001003>
@@ -1462,7 +1439,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025003">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10abid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1abid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof2abid</obo:EUPATH_0000755>
@@ -1474,7 +1451,7 @@ How many of them have received treatment for the last month of the month which i
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof8abid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof9abid</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #10: Mosquito abdomen ID</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #1: Mosquito abdomen ID</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #2: Mosquito abdomen ID</obo:EUPATH_0001003>
@@ -1513,7 +1490,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025005">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10gono</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1gono</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1gono_cup</obo:EUPATH_0000755>
@@ -1533,7 +1510,7 @@ How many of them have received treatment for the last month of the month which i
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof8gono</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof9gono</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #10: Gonotrophic status</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #1: Gonotrophic status</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #2: Gonotrophic status</obo:EUPATH_0001003>
@@ -1558,7 +1535,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025006">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10hthid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1hthid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof2hthid</obo:EUPATH_0000755>
@@ -1570,7 +1547,7 @@ How many of them have received treatment for the last month of the month which i
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof8hthid</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof9hthid</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #10: Mosquito head + thorax ID</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #1: Mosquito head + thorax ID</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #2: Mosquito head + thorax ID</obo:EUPATH_0001003>
@@ -1591,7 +1568,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025007">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10morph</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10morph_trap</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof11morph_trap</obo:EUPATH_0000755>
@@ -1638,7 +1615,7 @@ How many of them have received treatment for the last month of the month which i
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anom2morph</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anom2morph_cup</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #10: Morphological identification</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #11: Morphological identification</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #12: Morphological identification</obo:EUPATH_0001003>
@@ -1799,7 +1776,7 @@ How many of them have received treatment for the last month of the month which i
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">net_sorc</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>net_sorcother</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">net_sorcother</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;font color=&quot;blue&quot;&gt;Kodi masikito amene (tchulani dzina la odwala) akugwiritsa ntchito munawapeza kuti?&lt;/font&gt; Where did you get the net that (name) is using?</obo:EUPATH_0001003>
@@ -1825,7 +1802,7 @@ How many of them have received treatment for the last month of the month which i
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021097"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nettype</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>nettypesp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nettypesp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observe the type of net</obo:EUPATH_0001003>
@@ -2022,7 +1999,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025029">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025171"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof10tubes</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1tubes</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof2tubes</obo:EUPATH_0000755>
@@ -2034,7 +2011,7 @@ How many of them have received treatment for the last month of the month which i
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof8tubes</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof9tubes</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #10: Head + thorax and abdomen separated and placed into tubes?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #1: Head + thorax and abdomen separated and placed into tubes?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #2: Head + thorax and abdomen separated and placed into tubes?</obo:EUPATH_0001003>
@@ -2057,11 +2034,11 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025030">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025171"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof1tubes_trap</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anof2tubes_trap</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #1: Head + thorax, a leg, and abdomen separated and placed into 3 separate tubes?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Female #2: Head + thorax, a leg, and abdomen separated and placed into 3 separate tubes?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, No</obo:EUPATH_0001004>
@@ -2092,11 +2069,11 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025032">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anom1id</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">anom2id</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Male #1: Whole male &lt;i&gt;Anopheles&lt;/i&gt; barcode</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Male #2: Whole male &lt;i&gt;Anopheles&lt;/i&gt; barcode</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
@@ -2404,7 +2381,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025052">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aedes results</rdfs:label>
     </owl:Class>
@@ -2415,7 +2392,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025053">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anopheles results</rdfs:label>
     </owl:Class>
@@ -2456,7 +2433,7 @@ How many of them have received treatment for the last month of the month which i
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025056">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Culex results</rdfs:label>
     </owl:Class>
@@ -2559,7 +2536,7 @@ How many of them have received treatment for the last month of the month which i
     <!-- http://purl.obolibrary.org/obo/EUPATH_0025063 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025063">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011800"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021130"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dnaext</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -2766,7 +2743,7 @@ Apart from patients who have gone to the hospital, are there some who have recei
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">finalres</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>finalsp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">finalsp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Final result of the household visit</obo:EUPATH_0001003>
@@ -2824,7 +2801,7 @@ Apart from patients who have gone to the hospital, are there some who have recei
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010037"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mccmarital</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>mccmaritalsp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mccmaritalsp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;font color=&quot;blue&quot;&gt;Kodi muli pa banja?&lt;/font &gt; What is your marital status? &lt;i&gt;(Probe to establish the marital status to select the correct option.)&lt;/i&gt; Are you married?</obo:EUPATH_0001003>
@@ -2871,12 +2848,12 @@ Where did you go to school?</obo:EUPATH_0001003>
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010037"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mctearn</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755>mctearnsp</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mctearnsp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;font color=&quot;blue&quot;&gt; Kodi ndalama zanu mumazipeza bwanji?&lt;/font&gt; How do you get your money?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-9, Unknown</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, Adult patient/mother/caretaker doesn&apos;t earn money</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, Adult patient/mother/caregiver doesn&apos;t earn money</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Working for wages</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2, Vending/selling items</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3, Farming</obo:EUPATH_0001004>
@@ -2892,7 +2869,7 @@ Where did you go to school?</obo:EUPATH_0001003>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025081">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010037"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755>spo_inc</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">spo_inc</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">spouse</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -3094,7 +3071,7 @@ Where did you go to school?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0025095 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025095">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011802"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021130"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specdate1r</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -3601,7 +3578,7 @@ How many of those who have had a fever last month are over twelve?</obo:EUPATH_0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0025132 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025132">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011800"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021130"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">specdate0r</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -3615,7 +3592,7 @@ How many of those who have had a fever last month are over twelve?</obo:EUPATH_0
     <!-- http://purl.obolibrary.org/obo/EUPATH_0025134 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025134">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011802"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021130"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">thicksmnd1r</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -3668,7 +3645,7 @@ How many of those who have had a fever last month are over twelve?</obo:EUPATH_0
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025137">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">asprooms</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
@@ -4146,7 +4123,7 @@ How many of them have received treatment for malaria last month that is not more
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000073"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specific diagnosis</rdfs:label>
     </owl:Class>
     
@@ -4158,7 +4135,7 @@ How many of them have received treatment for malaria last month that is not more
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specific dwelling environment</rdfs:label>
     </owl:Class>
     
@@ -4217,7 +4194,8 @@ How many of them have received treatment for malaria last month that is not more
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025169">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</rdfs:label>
     </owl:Class>
     
@@ -4227,8 +4205,8 @@ How many of them have received treatment for malaria last month that is not more
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025170">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000327"/>
-        <obo:EUPATH_0001002>Entomology</obo:EUPATH_0001002>
-        <rdfs:label>Entomology collection</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology</obo:EUPATH_0001002>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entomology collection</rdfs:label>
     </owl:Class>
     
 
@@ -4237,29 +4215,28 @@ How many of them have received treatment for malaria last month that is not more
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025171">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0025169"/>
-        <obo:EUPATH_0001002>Insect sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label>Insect sample collection process</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insect sample collection process</rdfs:label>
     </owl:Class>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0031049 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0025172 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0031049">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">floor_fin</obo:EUPATH_0000755>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025172">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000340"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">tr1areatp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_URBAN_MALARIA_ABAULENI_2019-02-28-11-43-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Select the type of finished floor</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">31, Parquet or polished wood</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">32, Vinyl or asphalt strips</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">33, Ceramic tiles</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">34, Cement</obo:EUPATH_0001004>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">35, Carpet</obo:EUPATH_0001004>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Trip 1 Area type</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-9, Unknown</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Urban</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2, Rural</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Finished floor material</rdfs:label>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Information collected at household visit</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urban or rural area visited</rdfs:label>
     </owl:Class>
     
 
@@ -4284,7 +4261,7 @@ How many of them have received treatment for malaria last month that is not more
     <!-- http://purl.obolibrary.org/obo/EUPATH_0033307 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033307">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0020005"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0002649"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eukaryota in blood</rdfs:label>
@@ -4315,9 +4292,9 @@ How many of them have received treatment for malaria last month that is not more
     
 
 
-    <!-- http://purl.obolibrary.org/obo/HP_0002098 -->
+    <!-- http://purl.obolibrary.org/obo/HP_0002094 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0002098">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0002094">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reasonvis___6</obo:EUPATH_0000755>
@@ -4376,6 +4353,18 @@ How many of them have received treatment for malaria last month that is not more
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0002649 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002649">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH:0020005</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OGMS_0000056 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OGMS_0000056">
@@ -4429,7 +4418,7 @@ How many of them have received treatment for malaria last month that is not more
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gender_ses</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_SCREENING_ABAULENI_2019-02-28-11-41-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sex</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0, Male</obo:EUPATH_0001004>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1, Female</obo:EUPATH_0001004>
@@ -4501,11 +4490,28 @@ How many of them have received treatment for malaria last month that is not more
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dob_ses</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DATA_WHICEMR_PROJECT_3_SCREENING_ABAULENI_2019-02-28-11-41-09.csv</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;span class=noToday&gt;Child&apos;s date of birth&lt;/span&gt;</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000117">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">term editor</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition source</rdfs:label>
+    </rdf:Description>
 </rdf:RDF>
 
 

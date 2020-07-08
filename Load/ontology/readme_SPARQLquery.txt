@@ -119,7 +119,7 @@ robot query --input ./Microbiome/microbiome.owl --query ./SPARQL/get_variable_so
 #   owl_to_conversion.rq
 ------------------------------------------------------------------------------------------
 # Gates MALED
-robot query --use-graphs true --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/owl_to_conversion.rq ./Gates/MALED/gates_maled_conversion.csv
+robot query --use-graphs true --input ./Gates/MALED/gates_maled.owl --query ./SPARQL/owl_to_conversion.rq ./Gates/MALED/doc/gates_maled_conversion.csv
 —————————————————————————————————————————————————————————————————————————————
 # QC QUERY
 
