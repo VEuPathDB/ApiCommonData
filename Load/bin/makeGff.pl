@@ -130,9 +130,9 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
       my $soTermName = $transcriptAnnotations->{$transcriptId}->{so_term_name};
 
-      $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
-      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
-      $soTermName =~ s/_encoding$//;
+#      $soTermName = 'mRNA' if($soTermName eq 'protein_coding');
+#      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
+#      $soTermName =~ s/_encoding$//;
 
       $feature->primary_tag($soTermName);
 
