@@ -1169,7 +1169,6 @@ sub undoTables {
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
     'Study.ProtocolParam',
-    'Study.StudyCharacteristic',
     'Study.Study',
      );
 }
