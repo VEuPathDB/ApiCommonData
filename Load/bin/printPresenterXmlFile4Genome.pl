@@ -105,8 +105,16 @@ sub printDescription {
 }
 
 sub printPubMedId {
-  my ($id) = @_;
-  print "    <pubmedId>$pubMedId</pubmedId>\n";
+
+  if (!$pubMedId) {
+    print "    <pubmedId>$pubMedId</pubmedId>\n";
+  } else {
+    my @ids = split (/\,/, $pubMedId);
+    foreach my $id (@ids) {
+      $id =~ s/\s+//g;
+      print "    <pubmedId>$id</pubmedId>\n";
+    }
+  }
   return 0;
 }
 
