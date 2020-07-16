@@ -20,6 +20,8 @@ my (
     $primaryContactId,
     $assemblyId,
     $bioprojectId,
+    $ifWithNonNuclear,
+    $ifWithCentromere,
     $ifPrintContactIdFile,
     $help);
 
@@ -35,6 +37,8 @@ my (
 	    'primaryContactId=s' => \$primaryContactId,
 	    'assemblyId=s' => \$assemblyId,
 	    'bioprojectId=s' => \$bioprojectId,
+	    'ifWithNonNuclear=s' => \$ifWithNonNuclear,
+	    'ifWithCentromere=s' => \$ifWithCentromere,
 	    'ifPrintContactIdFile=s' => \$ifPrintContactIdFile,
 	    'help|h' => \$help,
 	    );
@@ -74,7 +78,15 @@ print printContactInformation($primaryContactId) if ($ifPrintContactIdFile =~ /^
 sub printAnnotatedGenome {
   my ($temp) = @_;
 
-  print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenome\">\n";
+  if ($ifWithNonNuclear =~ /^y/i && $ifWithCentromere !~ /^y/i) {
+    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeWithNonNuclear\">\n";
+  } elsif ($ifWithNonNuclear !~ /^y/i && $ifWithCentromere =~ /^y/i) {
+    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereTelomere\">\n";
+  } elsif ($ifWithNonNuclear =~ /^y/i && $ifWithCentromere =~ /^y/i) {
+    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenomeCentromereWithNonNuclear\">\n";
+  } else {
+    print "    <templateInjector className=\"org.apidb.apicommon.model.datasetInjector.AnnotatedGenome\">\n";
+  }
 
   print "      <prop name=\"isEuPathDBSite\">true<\/prop>\n";
   print "      <prop name=\"optionalSpecies\"><\/prop>\n";
@@ -227,6 +239,8 @@ where
   --primaryContactId: optional
   --assemblyId: optional
   --bioprojectId: optional
+  --ifWithNonNuclear: optional, Yes|yes|Y|y, No|no|N|n, if include annotation for non-nuclear sequences (i.e. mitochondrial or apicoplast sequence)
+  --ifWithCentromere: optional, Yes|yes|Y|y, No|no|N|n, if include annotation for centromere and/or telomere region
   --ifPrintContactIdFile: optional, Yes|yes|Y|y, No|no|N|n
 
 ";
