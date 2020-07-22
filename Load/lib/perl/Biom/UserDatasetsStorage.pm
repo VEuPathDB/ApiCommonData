@@ -54,9 +54,18 @@ SQL
        (user_dataset_id, sample_id, taxon_level_name, taxon_level, taxon_name, lineage, relative_abundance, absolute_abundance)
     values (?,?,?,?,?,?,?,?)
 SQL
+
+  $self->{getSamplesForUserDatasetIdSth} = $dbh->prepare(<<SQL) or $log->logdie($dbh->errstr);
+  select sample_id from ApiDBUserDatasets.ud_Sample where  user_dataset_id=?
+SQL
+
+  $self->{deleteForSampleIdSths} = [map {
+    $dbh->prepare("delete from apidbUserDatasets.$_ where sample_id=?") or $log->logdie($dbh->errstr)
+  } reverse qw/ud_Abundance ud_AggregatedAbundance/];
+
   $self->{deleteForUserDatasetIdSths} = [map {
     $dbh->prepare("delete from apidbUserDatasets.$_ where user_dataset_id=?") or $log->logdie($dbh->errstr)
-  } reverse qw/ud_Presenter ud_Sample ud_Property ud_SampleDetail ud_Abundance ud_AggregatedAbundance ud_AggregatedAbundance/];
+  } reverse qw/ud_Presenter ud_Sample ud_Property ud_SampleDetail ud_Abundance ud_AggregatedAbundance/];
 
   $self->{commit} = sub {
     $dbh->commit;
@@ -272,10 +281,38 @@ sub storeUserDataset {
 sub deleteUserDataset {
   my ($self, $userDatasetId) = @_;
   $log->info("deleteUserDataset $userDatasetId");
+  my @samples;
+  $self->{getSamplesForUserDatasetIdSth}->execute($userDatasetId);
+  while (my ($sampleId) = $self->{getSamplesForUserDatasetIdSth}->fetchrow_array ){
+    push @samples, $sampleId;
+  }
+  my $numSamples = scalar @samples;
+  $log->info("Retrieved $numSamples samples");
+  if ($numSamples < 100){
+    goto DELETE_BY_USER_DATASET_ID;
+  }
   my $numDeletedRows;
+  for my $ix (0 .. $#samples){
+    my $sampleId = $samples[$ix];
+    for my $sth (@{$self->{deleteForSampleIdSths}}){
+      $numDeletedRows += $sth->execute($sampleId);
+    }
+    if ($ix % 100 == 0 && $ix > 0){
+      $self->{commit}->();
+      $log->info("$ix/$numSamples samples: committed delete of $numDeletedRows rows");
+      $numDeletedRows = 0;
+    }
+  }
+
+  $self->{commit}->();
+  $log->info("$numSamples samples: committed delete of $numDeletedRows rows");
+  $numDeletedRows = 0;
+
+  DELETE_BY_USER_DATASET_ID:
   for my $sth (@{$self->{deleteForUserDatasetIdSths}}){
     $numDeletedRows += $sth->execute($userDatasetId);
   }
+  $self->{commit}->();
   $log->info("deleted $numDeletedRows entries in tables with user dataset id $userDatasetId");
 }
 1;
