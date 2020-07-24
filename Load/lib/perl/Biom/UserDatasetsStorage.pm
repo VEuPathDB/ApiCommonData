@@ -255,10 +255,9 @@ sub storeUserDataset {
   $self->{commit}->();
   
   my ($writeAbundanceCb, $closeAbundanceCb) = $self->{insertAbundanceCreateWriter}->();
-  my ($writeAggregatedAbundanceCb, $closeAggregatedAbundanceCb) = $self->{insertAggregatedAbundanceCreateWriter}->();
 
   for my $i (0.. $#$sampleNamesInOrder){
-    $log->info("Wrote abundances+aggregatedAbundances for $i / $numSamplesTotal samples")
+    $log->info("Wrote abundances for $i / $numSamplesTotal samples")
       if $i and not $i % 1000;
     my $sampleName = $sampleNamesInOrder->[$i];
     my $sampleId = $sampleIdsBySampleName{$sampleName};
@@ -268,11 +267,23 @@ sub storeUserDataset {
     for my $abundance (@{$abundances}){
       writeAbundance($writeAbundanceCb, $userDatasetId, $sampleId, $abundance);
     }
+  }
+  $closeAbundanceCb->();
+
+  my ($writeAggregatedAbundanceCb, $closeAggregatedAbundanceCb) = $self->{insertAggregatedAbundanceCreateWriter}->();
+
+  for my $i (0.. $#$sampleNamesInOrder){
+    $log->info("Wrote aggregatedAbundances for $i / $numSamplesTotal samples")
+      if $i and not $i % 1000;
+    my $sampleName = $sampleNamesInOrder->[$i];
+    my $sampleId = $sampleIdsBySampleName{$sampleName};
+
+    my ($abundances, $aggregatedAbundances) = $getAbundancesByIndex->($i);
+
     for my $aggregatedAbundance (@{$aggregatedAbundances}){
       writeAggregatedAbundance($writeAggregatedAbundanceCb, $userDatasetId, $sampleId, $aggregatedAbundance);
     }
   }
-  $closeAbundanceCb->();
   $closeAggregatedAbundanceCb->();
 
   $log->info("Added data for $numSamplesTotal samples");
