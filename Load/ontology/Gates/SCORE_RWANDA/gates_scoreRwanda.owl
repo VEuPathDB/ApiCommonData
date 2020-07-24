@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_scoreRwanda.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_scoreRwanda.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_scoreRwanda.owl"/>
     
 
@@ -447,7 +447,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Identity code for each school formatted as 
 District/Commune/School</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">School Id</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">School ID</rdfs:label>
     </owl:Class>
     
 
@@ -553,7 +553,7 @@ District/Commune/School</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Binary flag to indicate S.mansoni infection through CCA with trace counted as postive</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Binary flag to indicate S.mansoni infection through CCA with trace counted as postive</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Schistosoma mansoni infection, by CCA</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Schistosoma mansoni, by CCA</rdfs:label>
     </owl:Class>
     
 
@@ -576,14 +576,14 @@ District/Commune/School</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0030159 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030159">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030101"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030175"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score_rwanda_mapping_dataset::cca</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">score_rwanda_mapping_dataset</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Results of CCA (urine test for Schistosoma mansoni)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Results of CCA test</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CCA test</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Schistosoma mansoni, by CCA result</rdfs:label>
     </owl:Class>
     
 
@@ -682,6 +682,28 @@ District/Commune/School</obo:EUPATH_0001003>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030174 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030174">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030101"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Raw test result for urine</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0030175 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030175">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0030174"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Raw eukaryota data for urine</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
@@ -751,5 +773,5 @@ District/Commune/School</obo:EUPATH_0001003>
 
 
 
-<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 
