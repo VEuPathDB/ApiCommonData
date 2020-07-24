@@ -207,7 +207,13 @@ sub writeAggregatedAbundance {
 }
 
 sub storeUserDataset {
-  my ($self, $userDatasetId, $datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $abundancesBySampleName, $aggregatedAbundancesBySampleName) = @_;
+  my ($self, $userDatasetId, $datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $getAbundancesByIndex) = @_;
+
+#$abundancesBySampleName, $aggregatedAbundancesBySampleName) = @_;
+
+#  my($datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $getAbundancesByIndex)
+#   = biomFileContentsLazy(@_);
+
   return unless @{$sampleNamesInOrder};
 
   $log->info("storeUserDataset $userDatasetId");
@@ -249,29 +255,24 @@ sub storeUserDataset {
   $self->{commit}->();
   
   my ($writeAbundanceCb, $closeAbundanceCb) = $self->{insertAbundanceCreateWriter}->();
+  my ($writeAggregatedAbundanceCb, $closeAggregatedAbundanceCb) = $self->{insertAggregatedAbundanceCreateWriter}->();
+
   for my $i (0.. $#$sampleNamesInOrder){
-    $log->info("Wrote abundances for $i / $numSamplesTotal samples")
+    $log->info("Wrote abundances+aggregatedAbundances for $i / $numSamplesTotal samples")
       if $i and not $i % 1000;
     my $sampleName = $sampleNamesInOrder->[$i];
     my $sampleId = $sampleIdsBySampleName{$sampleName};
 
-    for my $abundance (@{$abundancesBySampleName->{$sampleName}}){
+    my ($abundances, $aggregatedAbundances) = $getAbundancesByIndex->($i);
+
+    for my $abundance (@{$abundances}){
       writeAbundance($writeAbundanceCb, $userDatasetId, $sampleId, $abundance);
+    }
+    for my $aggregatedAbundance (@{$aggregatedAbundances}){
+      writeAggregatedAbundance($writeAggregatedAbundanceCb, $userDatasetId, $sampleId, $aggregatedAbundance);
     }
   }
   $closeAbundanceCb->();
-
-  my ($writeAggregatedAbundanceCb, $closeAggregatedAbundanceCb) = $self->{insertAggregatedAbundanceCreateWriter}->();
-  for my $i (0.. $#$sampleNamesInOrder){
-    $log->info("Wrote aggregated abundances for $i / $numSamplesTotal samples")
-      if $i and not $i % 1000;
-    my $sampleName = $sampleNamesInOrder->[$i];
-    my $sampleId = $sampleIdsBySampleName{$sampleName};
-
-    for my $aggregatedAbundance (@{$aggregatedAbundancesBySampleName->{$sampleName}}){
-      writeAggregatedAbundance($writeAggregatedAbundanceCb, $userDatasetId, $sampleId, $aggregatedAbundance);
-    }
-  } 
   $closeAggregatedAbundanceCb->();
 
   $log->info("Added data for $numSamplesTotal samples");
