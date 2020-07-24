@@ -16,9 +16,9 @@
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_gems1a.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_gems1a_huas.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_gems_huas.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_llineup.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_maled.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_maled_phase3.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_llineup.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_perch.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_provide.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreBurundi.owl"/>
@@ -26,14 +26,19 @@
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreFiveCountry.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreMoz.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreNig.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreRwanda.owl"/>	        	<owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreSeasonal.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreRwanda.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreSeasonal.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreSmCohort.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_scoreZanzibar.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_vida.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_washbBangladesh.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/gates/gates_washbKenya.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_classifications.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_crompton.owl"/>
-        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_umsp.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_hcq_non_randomized.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_nhs.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_promote_mothers.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/general/general_umsp.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_amazoniaBrazil.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_amazoniaPeru_long.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_india_feverSurv.owl"/>
@@ -47,35 +52,7 @@
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_southeastAsia.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_southernAfrica.owl"/>
         <owl:imports rdf:resource="http://purl.obolibrary.org/obo/icemr/icemr_westAfrica.owl"/>
-        <rdfs:comment># SPARQL used to find terms with multiple labels
-
-PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-
-SELECT ?s
-  (COUNT(DISTINCT ?label) AS ?label_count)
-  (GROUP_CONCAT(DISTINCT ?label;separator=&quot;|&quot;) AS ?labels)
-WHERE {
-  ?s rdfs:label ?org_label .
-  BIND (str(?org_label) AS ?label)
-}
-GROUP BY ?s
-HAVING (?label_count &gt; 1)
-ORDER BY DESC(?label_count)</rdfs:comment>
-        <rdfs:comment># SPARQL used to get all terms and count of projects used the terms and their labels
-
-PREFIX rdfs:  &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-
-SELECT ?s
-  (COUNT(?label) AS ?label_count)
-  (GROUP_CONCAT(DISTINCT ?label;separator=&quot;|&quot;) AS ?labels)
-WHERE {
-  ?s rdfs:label ?label .
-}
-GROUP BY ?s
-ORDER BY DESC(?label_count)</rdfs:comment>
-        <rdfs:comment>This is an OWL file that imports all EuPathDB web display terminologies, including:
-
-Genomics project:
+        <rdfs:comment>Genomics project:
 - eupath_isa.owl
 - protein_array.owl (ICEMR protein array)
 
@@ -116,14 +93,14 @@ Gates foundation projects:
 - gates_scoreSmCohort.owl
 - gates_scoreZanzibar.owl
 - gates_vida.owl
-- gates_washbBangladesh.owl
+- gates_washbKenya.owl
 
 General
+- classifications.owl
 - general_crompton.owl
 - general_hcq_non_randomized.owl
-- general_umsp.owl
-
-	</rdfs:comment>
+- general_nhs.owl
+- general_umsp.owl</rdfs:comment>
     </owl:Ontology>
 </rdf:RDF>
 
