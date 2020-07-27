@@ -41,7 +41,7 @@ SQL
   $self->{insertSampleDetailSth} = $dbh->prepare(<<SQL) or $log->logdie($dbh->errstr);
     insert into ApiDBUserDatasets.ud_SampleDetail
       (user_dataset_id, sample_id, property_id, date_value, number_value, string_value)
-    values (?,?,?,?,?,?)
+    values (?,?,?,to_date(?, 'yy-mm-dd'),?,?)
 SQL
   $self->{insertAbundanceSth} = $dbh->prepare(<<SQL) or $log->logdie($dbh->errstr);
     insert into apidbUserDatasets.ud_Abundance

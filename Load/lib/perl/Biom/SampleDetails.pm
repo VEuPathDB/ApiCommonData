@@ -45,7 +45,7 @@ sub expandSampleDetailsByName {
       my $value = $sampleDetailsByName{$sampleName}{$property};
       {
         property => $property,
-        date_value => $propertyDetails{$property}{type} eq "date" && looks_nonblank($value) ? strftime ("%Y-%m-%d", map {$_//0} strptime($value)) : undef,
+        date_value => $propertyDetails{$property}{type} eq "date" && looks_nonblank($value) ? strftime ("%y-%m-%d", map {$_//0} strptime($value)) : undef,
         number_value => $propertyDetails{$property}{type} eq "number" && looks_nonblank($value) ? $value : undef,
         string_value => $value,
       }
