@@ -33,9 +33,7 @@ sub getTermsFromObject {
   return $self->lineageO(\@levelNames, \@levels)
     if (grep {$_} @levels) && (all {not ref $_ } @levels);
 
-  my $lineageTerm = $o->{taxonomy} // $o->{Taxonomy};
-  return $self->lineageO([$unassignedLevel], [$id])
-    unless defined $lineageTerm;
+  my $lineageTerm = $o->{taxonomy} // $o->{Taxonomy} // $id;
 
   my $lineageString = unpackLineageTerm(\@levelNames, $lineageTerm);
 
@@ -111,13 +109,21 @@ sub splitLineageString {
     s/^uncultured( bacterium)?$//;
   }
   
-# Remove empty terms
+# Remove blank terms
+# Not sure if this is desired for empty terms from the middle
   @lineage = grep {$_} @lineage;
 
 # Remove NCBI root node
   if($lineage[0] eq 'cellular organisms'){
      shift @lineage;
   }
+
+# Remove from the end terms that are just whitespace or underscores
+  @lineage = reverse @lineage;
+  while($lineage[0] =~ /^[\s_]*$/){
+    shift @lineage;
+  }
+  @lineage = reverse @lineage;
 
 # Make sure there are at most $numMaxTerms
   do {
