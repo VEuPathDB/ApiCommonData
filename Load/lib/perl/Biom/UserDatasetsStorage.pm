@@ -299,7 +299,7 @@ sub deleteUserDataset {
     push @samples, $sampleId;
   }
   my $numSamples = scalar @samples;
-  $log->info("Retrieved $numSamples samples");
+  $log->info("Retrieved $numSamples samples present under user dataset id $userDatasetId");
   if ($numSamples < 100){
     goto DELETE_BY_USER_DATASET_ID;
   }
@@ -325,6 +325,6 @@ sub deleteUserDataset {
     $numDeletedRows += $sth->execute($userDatasetId);
   }
   $self->{commit}->();
-  $log->info("deleted $numDeletedRows entries in tables with user dataset id $userDatasetId");
+  $log->info("Deleted $numDeletedRows entries in tables with user dataset id $userDatasetId");
 }
 1;
