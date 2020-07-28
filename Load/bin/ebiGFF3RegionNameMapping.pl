@@ -57,11 +57,16 @@ my $map = getGenomicSequenceIdMapSql($organismAbbrev);
 #if ( -e "$gff3.gz") {
 #    die "Zipped gff3 file $gff3.gz already exists.\n";
 #} else {
-
+    my $sort_cmd = "(grep ^\"\#\" ".$gff3."; grep -v ^\"\#\" ".$gff3." | sort -k1,1 -k4,4n) > ".$gff3."\.sorted";
+    &runCmd($sort_cmd);
+    my $rm_cmd = "rm -f ".$gff3;
+    &runCmd($rm_cmd);  
+    my $replace_cmd = "mv ".$gff3."\.sorted ".$gff3;    
+    &runCmd($replace_cmd);
     my $zip_cmd = "bgzip -f ".$gff3;
     &runCmd($zip_cmd);
-#    my $index_cmd = "tabix -p gff ".$gff3."\.gz";
-#    &runCmd($index_cmd);
+    my $index_cmd = "tabix -p gff ".$gff3."\.gz";
+    &runCmd($index_cmd);
 
 #}
 
