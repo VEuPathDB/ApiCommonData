@@ -45,7 +45,7 @@ sub expandSampleDetailsByName {
       my $value = $sampleDetailsByName{$sampleName}{$property};
       {
         property => $property,
-        date_value => $propertyDetails{$property}{type} eq "date" && looks_nonblank($value) ? strftime ("%Y-%m-%d", map {$_//0} strptime($value)) : undef,
+        date_value => $propertyDetails{$property}{type} eq "date" && looks_nonblank($value) ? strftime ("%y-%m-%d", map {$_//0} strptime($value)) : undef,
         number_value => $propertyDetails{$property}{type} eq "number" && looks_nonblank($value) ? $value : undef,
         string_value => $value,
       }
@@ -86,29 +86,29 @@ sub propertyDetails {
   my ($valuesSummary, $propertyType, $propertyTypeOntologyTerm);
   if (@distinctValues == 1 && not $numBlankValues){
     $propertyTypeOntologyTerm = "NCIT_C64359";
-    $propertyType = "Common value";
+    $propertyType = "Singleton";
     $valuesSummary =  $distinctValues[0];
     $filter = "membership";
   } elsif (@distinctValues < 10 && (@valuesThatAreNumbers < 2) && (@valuesThatAreDates < 2)){
     $propertyTypeOntologyTerm = "OT_categorical_value";
-    $propertyType = "Categorical value";
+    $propertyType = "Category";
     $valuesSummary =  join (", ", sort @distinctValues);
     $filter = "membership";
   } elsif ($isProbablyADate){
     $propertyTypeOntologyTerm =  "OT_date_value";
-    $propertyType = "Date value";
+    $propertyType = "Date";
     $valuesSummary = sprintf("%s different dates", scalar @valuesThatAreDates);
     $valuesSummary .= ", no data for $numBlankValues/$numAllValues samples" if $numBlankValues;
     $filter = "range";
   } elsif ($isProbablyANumber){
     $propertyTypeOntologyTerm = "NCIT_C81274";
-    $propertyType = "Numeric value";
+    $propertyType = "Number";
     $valuesSummary = sprintf("%s to %s", min(@valuesThatAreNumbers), max(@valuesThatAreNumbers));
     $valuesSummary .= ", no data for $numBlankValues/$numAllValues samples" if $numBlankValues;
     $filter = "range";
   } else {
     $propertyTypeOntologyTerm = "OT_text_value";
-    $propertyType = "Text value";
+    $propertyType = "Text";
     $valuesSummary =  sprintf("%s different values", scalar @distinctValues);
     $filter = "membership";
   }

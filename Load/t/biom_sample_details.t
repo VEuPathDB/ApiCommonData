@@ -16,7 +16,7 @@ sub sampleDetails {
 #  diag explain $sd;
   return $sd;
 }
-my $exampleDate = "1991-11-17"; # Wojtek's birthday
+my $exampleDate = "91-11-17"; # Wojtek's birthday
 
 is_deeply(propertyDetails({}), {}, "Null case property details");
 is_deeply(sampleDetails({}), {}, "Null case sample details");
@@ -137,8 +137,10 @@ valueParsedAsNumber(1,"n/a");
 
 
 valueParsedAsDate($exampleDate);
+# valueParsedAsDate("6/1/18");
 valueParsedAsDate($exampleDate, "");
 valueParsedAsDate($exampleDate, "NA");
+
 
 is_deeply(propertyDetails({s1 => {p=>1, p2=>2}})->{"p"}, propertyDetails({s1 => {p=>1}})->{"p"}, "properties don't collide");
 
