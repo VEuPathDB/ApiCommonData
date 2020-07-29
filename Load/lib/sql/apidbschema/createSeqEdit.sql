@@ -8,6 +8,7 @@ CREATE TABLE ApiDB.SeqEdit (
    START_MIN                    NUMBER(12)      NOT NULL,
    END_MAX                      NUMBER(12)      NOT NULL,
    SEQUENCE                     VARCHAR2(4000)  NOT NULL,
+   ORIG_SEQUENCE                VARCHAR2(4000)  NOT NULL,
    LENGTH_DIFF                  NUMBER(10),
    MODIFICATION_DATE            DATE,
    USER_READ                    NUMBER(1),
