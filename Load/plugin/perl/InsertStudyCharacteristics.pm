@@ -13,6 +13,7 @@ use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyCharacteristic;
 use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
+use Text::CSV_XS;
 
 use Digest::SHA qw/sha1_hex/;
 
@@ -93,7 +94,10 @@ sub run {
   my $datasetName = $self->getArg('datasetName');
   my $commit = $self->getArg('commit');
 
-  my $cfg = $self->readConfig($file);
+  my $cfg = $self->readConfig($file,$datasetName);
+
+printf STDERR Dumper $cfg;
+  unless (0 < keys %$cfg){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
 
   # fetch all 
   
@@ -297,6 +301,7 @@ SQL
       unless($row->[1]){ # qualifier_id cannot be null
         printf STDERR ("ERROR in row: %s\nQualifier ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
         $rownum++;
+        next;
       }
       
       my %data = (
@@ -338,20 +343,31 @@ sub selectHashRef {
 
 sub readConfig {
 # Not using  CBIL::Config::PropertySet because it doesn't handle variables with spaces
-  my ($self, $file) = @_;
-  my $cfg = {};
+  my ($self, $file, $datasetName) = @_;
+  my $csv = Text::CSV_XS->new({ binary => 1, sep_char => ",", quote_char => '"', allow_loose_quotes => 1 }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
+  my @fields;
   open(FH, "<$file") or die "$file $!\n";
+  my $line = <FH>;
+  if($csv->parse($line)) {
+    @fields = $csv->fields();
+  }
+  my %data;
   while(my $line = <FH>){
-    chomp $line;
-    my($k,$v) = split(/=/, $line);
-    
-    $k =~ s/^\s+|\s+$//g;
-    $v =~ s/^\s+|\s+$//g;
-    my @values = split(/\s*,\s*/, $v);
-    $cfg->{$k} = \@values;
+    next if $line =~ /^[\w\r\l\n,]*$/;
+    $csv->parse($line);
+    my @row = $csv->fields();
+    if($datasetName eq $row[0]){
+      @data{@fields} = @row;
+      last;
+    }
   }
   close(FH);
-  return $cfg;
+  foreach my $k (keys %data){
+    $data{$k} =~ s/^\s*|\s*$//g;
+    my @values = split(/\s*,\s*/, $data{$k});
+    $data{$k} = \@values;
+  }
+  return \%data;
 }
 
 sub undoTables {
