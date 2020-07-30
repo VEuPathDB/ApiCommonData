@@ -51,6 +51,7 @@ if ($organismListFile) {    ## extract organisms that listed in the organismList
   open (IN, "$organismListFile") || die "can not open $organismListFile file to read\n";
   while (<IN>) {
     chomp;
+    next if ($_ =~ /^\#/);
     my @items = split (/\t/, $_);
     $isAnnotated{$items[0]} = $items[1];
   }
