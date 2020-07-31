@@ -13,16 +13,16 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 12,consent,hucs_gambia_mali,,,,Parent verbal consent,"0=No, 1=Yes",,,,NA,CONSENT,hucs_gambia_mali::consent,int,1,NA,NA,0 to 1,2,once,0,NA
 13,status,hucs_gambia_mali,,,,Interview status,"1=Conducted, 2=Not conducted",,,,NA,STATUS,hucs_gambia_mali::status,int,1,NA,NA,1 to 2,2,once,0,NA
 14,reason,hucs_gambia_mali,,,,"Interview not conducted, reason","1=""Primary caretaker not available"", 2=""Refused"", 3=""Moved away"", 4=""Child died more than 7 days ago (including today)"", 5=""Cannot locate child"", 9=""Other""",,,,.,REASON,hucs_gambia_mali::reason,chr,4,NA,NA,"., 1, 2, 3, 4, 5, 9",7,once,0.8631144,NA
-15,rsn_specify,hucs_gambia_mali,,,,NA,NA,,,,NA,RSN_SPECIFY,hucs_gambia_mali::rsn_specify,chr,MIGRATED TO MALI. THE ORIGIN,NA,NA,>10 unique values,132,once,0.944698025,NA
+15,rsn_specify,hucs_gambia_mali,discard,,,NA,NA,,,,NA,RSN_SPECIFY,hucs_gambia_mali::rsn_specify,chr,MIGRATED TO MALI. THE ORIGIN,NA,NA,>10 unique values,132,once,0.944698025,NA
 16,relationship,hucs_gambia_mali,,,,Relationship with child,"1=""Mother"", 2=""Father"", 3=""Sister"", 5=Grandmother"", 6=""Grandfather"", 7=""Aunt"", 8=""Uncle"", 9=""No relation""",,,,.,RELATIONSHIP,hucs_gambia_mali::relationship,chr,1,NA,NA,"., 1, 10, 2, 3, 5, 6, 7, 8, 9",10,once,0.1368856,NA
-17,relation_sp,hucs_gambia_mali,,,,NA,NA,,,,NA,RELATION_SP,hucs_gambia_mali::relation_sp,chr,CO WIFE,NA,NA,", CO WIFE, CO-WIFE DAUGHTER., COUSIN SISTER, GADMOTHER, NAMESAKE, STEP MOTHER, STEPMOTHER",7,once,0.999327343,NA
+17,relation_sp,hucs_gambia_mali,discard,,,NA,NA,,,,NA,RELATION_SP,hucs_gambia_mali::relation_sp,chr,CO WIFE,NA,NA,", CO WIFE, CO-WIFE DAUGHTER., COUSIN SISTER, GADMOTHER, NAMESAKE, STEP MOTHER, STEPMOTHER",7,once,0.999327343,NA
 18,prim_schl,hucs_gambia_mali,,,,Primary caretaker education,"1=""No formal schooling"", 2=""Less than primary"", 3=""Completed secondary"", 4=""Post-secondary"", 5=""Completed primary"", 6=""Religious education only"", 7=""Don't know""",,,,.,PRIM_SCHL,hucs_gambia_mali::prim_schl,chr,1,NA,NA,"., 1, 2, 3, 4, 5, 6, 7",8,once,0.1368856,NA
 19,ppl_house,hucs_gambia_mali,,,,NA,NA,,,,NA,PPL_HOUSE,hucs_gambia_mali::ppl_house,chr,20,NA,NA,>10 unique values,153,once,0.1368856,NA
 20,natfl,hucs_gambia_mali,,,,Predominant floor natural,"1=""Earth/Sand"", 2=""Dung""",,,,.,NATFL,hucs_gambia_mali::natfl,chr,2,NA,NA,"., 1, 2",3,once,0.911305434,NA
 21,rudfl,hucs_gambia_mali,discard,,,Predominant floor rudimentary,NA,,,,.,RUDFL,hucs_gambia_mali::rudfl,chr,NA,NA,NA,.,1,once,1,no data
 22,finfl,hucs_gambia_mali,,,,Predominant floor finished,"2=""Vinyl or asphalt strips"", 3=""Ceramic tile"", 4=""Cement"", 5=""Carpet""",,,,.,FINFL,hucs_gambia_mali::finfl,chr,4,NA,NA,"., 2, 3, 4, 5",5,once,0.225484072,NA
-23,othfl,hucs_gambia_mali,,,,"House floor, other","1=""Selected""",,,,.,OTHFL,hucs_gambia_mali::othfl,chr,1,NA,NA,"., 1",2,once,0.999951953,NA
-24,floor_spec,hucs_gambia_mali,,,,NA,NA,,,,NA,FLOOR_SPEC,hucs_gambia_mali::floor_spec,chr,MAT,NA,NA,", MAT",1,once,0.999951953,NA
+23,othfl,hucs_gambia_mali,discard,,,"House floor, other","1=""Selected""",,,,.,OTHFL,hucs_gambia_mali::othfl,chr,1,NA,NA,"., 1",2,once,0.999951953,NA
+24,floor_spec,hucs_gambia_mali,discard,,,NA,NA,,,,NA,FLOOR_SPEC,hucs_gambia_mali::floor_spec,chr,MAT,NA,NA,", MAT",1,once,0.999951953,NA
 25,house_elec,hucs_gambia_mali,,,,Do you have electricity,"0=""Not selected"", 1=""Selected""",,,,.,HOUSE_ELEC,hucs_gambia_mali::house_elec,chr,1,NA,NA,"., 0, 1",3,once,0.1368856,NA
 26,house_bike,hucs_gambia_mali,,,,Do you have a bicycle,"0=""Not selected"", 1=""Selected""",,,,.,HOUSE_BIKE,hucs_gambia_mali::house_bike,chr,1,NA,NA,"., 0, 1",3,once,0.1368856,NA
 27,house_phone,hucs_gambia_mali,,,,Do you have a telephone,"0=""Not selected"", 1=""Selected""",,,,.,HOUSE_PHONE,hucs_gambia_mali::house_phone,chr,1,NA,NA,"., 0, 1",3,once,0.1368856,NA
@@ -61,9 +61,9 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 60,seek_friend,hucs_gambia_mali,,,,Sought care from friend,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_FRIEND,hucs_gambia_mali::seek_friend,chr,0,NA,NA,"., 0, 1",3,once,0.951328497,NA
 61,seek_healer,hucs_gambia_mali,,,,Sought care traditional healer,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_HEALER,hucs_gambia_mali::seek_healer,chr,0,NA,NA,"., 0, 1",3,once,0.951328497,NA
 62,seek_ctr1,hucs_gambia_mali,,,,Center of 1st choice,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_CTR1,hucs_gambia_mali::seek_ctr1,chr,1,NA,NA,"., 0, 1",3,once,0.951328497,NA
-63,seek_ctr1_code,hucs_gambia_mali,,,,NA,NA,,,,NA,SEEK_CTR1_CODE,hucs_gambia_mali::seek_ctr1_code,chr,109,NA,NA,>10 unique values,24,once,0.982751165,NA
+63,seek_ctr1_code,hucs_gambia_mali,discard,,,NA,NA,,,,NA,SEEK_CTR1_CODE,hucs_gambia_mali::seek_ctr1_code,chr,109,NA,NA,>10 unique values,24,once,0.982751165,NA
 64,seek_ctr2,hucs_gambia_mali,,,,Center of 2nd choice,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_CTR2,hucs_gambia_mali::seek_ctr2,chr,0,NA,NA,"., 0, 1",3,once,0.951328497,NA
-65,seek_ctr2_code,hucs_gambia_mali,,,,NA,NA,,,,NA,SEEK_CTR2_CODE,hucs_gambia_mali::seek_ctr2_code,chr,109,NA,NA,>10 unique values,11,once,0.999039062,NA
+65,seek_ctr2_code,hucs_gambia_mali,discard,,,NA,NA,,,,NA,SEEK_CTR2_CODE,hucs_gambia_mali::seek_ctr2_code,chr,109,NA,NA,>10 unique values,11,once,0.999039062,NA
 66,seek_ctr3,hucs_gambia_mali,,,,Center of 3rd choice,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_CTR3,hucs_gambia_mali::seek_ctr3,chr,0,NA,NA,"., 0",2,once,0.951328497,NA
 67,seek_ctr3_code,hucs_gambia_mali,discard,,,NA,NA,,,,NA,SEEK_CTR3_CODE,hucs_gambia_mali::seek_ctr3_code,chr,NA,NA,NA,.,1,once,1,no data
 68,seek_remedy,hucs_gambia_mali,,,,Remedy medicine from shop,"0=""Not selected"", 1=""Selected""",,,,.,SEEK_REMEDY,hucs_gambia_mali::seek_remedy,chr,0,NA,NA,"., 0, 1",3,once,0.951328497,NA
@@ -78,7 +78,7 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 77,hosp_advise,hucs_gambia_mali,,,,Hospitalization advised,"0=""No"", 1= ""Yes""",,,,.,HOSP_ADVISE,hucs_gambia_mali::hosp_advise,chr,0,NA,NA,"., 0, 1",3,once,0.981646087,NA
 78,admit,hucs_gambia_mali,,,,Admitted to facility for treatment,"0=""No"", 1= ""Yes""",,,,.,ADMIT,hucs_gambia_mali::admit,chr,0,NA,NA,"., 0, 1",3,once,0.953730841,NA
 79,admit_ctr,hucs_gambia_mali,,,,NA,NA,,,,NA,ADMIT_CTR,hucs_gambia_mali::admit_ctr,chr,107,NA,NA,"., 107, 108, 203",4,once,0.999759766,NA
-80,admit_spec,hucs_gambia_mali,,,,NA,NA,,,,NA,ADMIT_SPEC,hucs_gambia_mali::admit_spec,int,0,NA,NA,0 to 0,1,once,0.999951953,NA
+80,admit_spec,hucs_gambia_mali,discard,,,NA,NA,,,,NA,ADMIT_SPEC,hucs_gambia_mali::admit_spec,int,0,NA,NA,0 to 0,1,once,0.999951953,NA
 81,recommend_iv,hucs_gambia_mali,,,,IV fluids advised,"0=""Not selected"", 1=""Selected""",,,,.,RECOMMEND_IV,hucs_gambia_mali::recommend_iv,chr,1,NA,NA,"., 0, 1",3,once,0.9195695,NA
 82,rec_ivfluid,hucs_gambia_mali,,,,Received intravenous fluids,"0=""Not selected"", 1=""Selected""",,,,.,REC_IVFLUID,hucs_gambia_mali::rec_ivfluid,chr,0,NA,NA,"., 0, 1",3,once,0.9195695,NA
 83,rec_homemade,hucs_gambia_mali,,,,Received homemade fluids,"0=""Not selected"", 1=""Selected""",,,,.,REC_HOMEMADE,hucs_gambia_mali::rec_homemade,chr,0,NA,NA,"., 0, 1",3,once,0.9195695,NA
@@ -88,7 +88,7 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 87,no_treatment,hucs_gambia_mali,,,,Received no treatment diarrhea,"0=""Not selected"", 1=""Selected""",,,,.,NO_TREATMENT,hucs_gambia_mali::no_treatment,chr,0,NA,NA,"., 0, 1",3,once,0.9195695,NA
 88,rec_vax,hucs_gambia_mali,,,,Child had any vaccination,"0=""No"", 1= ""Yes""",,,,.,REC_VAX,hucs_gambia_mali::rec_vax,chr,1,NA,NA,"., 0, 1",3,once,0.324412627,NA
 89,vax_card,hucs_gambia_mali,,,,Immunization card,"0=""No"", 1= ""Yes""",,,,.,VAX_CARD,hucs_gambia_mali::vax_card,chr,1,NA,NA,"., 0, 1",3,once,0.143131697,NA
-90,vax_soth,hucs_gambia_mali,,,,NA,NA,,,,NA,VAX_SOTH,hucs_gambia_mali::vax_soth,chr,DSS,NA,NA,", ANTENATAL CARD, BASE DE DONNEES VACCINALES CVD, DSS, ORDINATEUR, lost, waiting for response",6,once,0.999711719,NA
+90,vax_soth,hucs_gambia_mali,discard,,,NA,NA,,,,NA,VAX_SOTH,hucs_gambia_mali::vax_soth,chr,DSS,NA,NA,", ANTENATAL CARD, BASE DE DONNEES VACCINALES CVD, DSS, ORDINATEUR, lost, waiting for response",6,once,0.999711719,NA
 91,dpt1,hucs_gambia_mali,,,,DPT/Pentavalent 1,"0=""No"", 1= ""Yes"", 9=""DK""",,,,.,DPT1,hucs_gambia_mali::dpt1,chr,1,NA,NA,"., 0, 1, 9",4,once,0.215346178,NA
 92,dpt1_date,hucs_gambia_mali,,,,NA,NA,,,,NA,DPT1_DATE,hucs_gambia_mali::dpt1_date,chr,6/8/15,date?,NA,>10 unique values,1936,once,0.237303608,NA
 93,dpt1_hc,hucs_gambia_mali,,,,NA,NA,,,,NA,DPT1_HC,hucs_gambia_mali::dpt1_hc,chr,GAMBISSARA,NA,NA,>10 unique values,560,once,0.23696728,NA
@@ -157,11 +157,11 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 156,qc_staffcode,hucs_gambia_mali,discard,,,NA,NA,,,,NA,QC_STAFFCODE,hucs_gambia_mali::qc_staffcode,int,202,NA,NA,2 to 320,25,once,0,NA
 157,qc_date,hucs_gambia_mali,discard,,,NA,NA,,,,NA,QC_DATE,hucs_gambia_mali::qc_date,chr,7/4/15,date?,NA,>10 unique values,819,once,0,NA
 158,agegroup,hucs_gambia_mali,,,,NA,NA,,,,NA,AGEGROUP,hucs_gambia_mali::agegroup,int,1,NA,NA,1 to 3,3,once,0,NA
-159,reason_noint,hucs_gambia_mali,,,,NA,NA,,,,NA,REASON_NOINT,hucs_gambia_mali::reason_noint,chr,CHILD CANNOT BE SEEN,NA,NA,>10 unique values,680,once,0.959400375,NA
+159,reason_noint,hucs_gambia_mali,discard,,,NA,NA,,,,NA,REASON_NOINT,hucs_gambia_mali::reason_noint,chr,CHILD CANNOT BE SEEN,NA,NA,>10 unique values,680,once,0.959400375,NA
 160,round,hucs_gambia_mali,,,,NA,NA,,,,NA,ROUND,hucs_gambia_mali::round,int,1,NA,NA,1 to 7,7,once,0,NA
 161,rnd_start,hucs_gambia_mali,,,,NA,NA,,,,NA,RND_START,hucs_gambia_mali::rnd_start,chr,5/15/15,date?,NA,>10 unique values,13,once,0,NA
 162,rnd_stop,hucs_gambia_mali,,,,NA,NA,,,,NA,RND_STOP,hucs_gambia_mali::rnd_stop,chr,6/30/15,date?,NA,>10 unique values,13,once,0,NA
-163,aswt,hucs_gambia_mali,,,,NA,NA,,,,NA,ASWT,hucs_gambia_mali::aswt,dbl,38.75,NA,NA,6.27 to 170.4,76,once,0,NA
+163,aswt,hucs_gambia_mali,skip,,,NA,NA,,,,NA,ASWT,hucs_gambia_mali::aswt,dbl,38.75,NA,NA,6.27 to 170.4,76,once,0,NA
 164,site_split,hucs_gambia_mali,,,,NA,NA,,,,NA,SITE_SPLIT,hucs_gambia_mali::site_split,int,1,NA,NA,1 to 4,3,once,0,NA
 165,vax_source,hucs_gambia_mali,,,,NA,NA,,,,NA,VAX_SOURCE,hucs_gambia_mali::vax_source,chr,1,NA,NA,"., 0, 1, 2, 3",5,once,0.918464421,NA
-166,aswt_site_split,hucs_gambia_mali,,,,NA,NA,,,,NA,ASWT_SITE_SPLIT,hucs_gambia_mali::aswt_site_split,dbl,36.63,NA,NA,6.27 to 204.1,117,once,0,NA
+166,aswt_site_split,hucs_gambia_mali,skip,,,NA,NA,,,,NA,ASWT_SITE_SPLIT,hucs_gambia_mali::aswt_site_split,dbl,36.63,NA,NA,6.27 to 204.1,117,once,0,NA
