@@ -88,7 +88,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory system disease</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory system disease</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory condition</rdfs:label>
     </owl:Class>
     
 
@@ -356,6 +356,23 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000782 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000782">
+        <rdfs:label>Study name</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000783 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000783">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:label>Nasopharyngeal/oropharyngeal swab</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010035 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010035">
@@ -439,10 +456,10 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0000651 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000651">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine sample</rdfs:label>
     </owl:Class>
     
 
@@ -473,7 +490,7 @@
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study name</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study name</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Project</rdfs:label>
     </owl:Class>
     
 
@@ -503,10 +520,37 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0002503 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002503">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool sample</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002504 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002504">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:label>Gastric fluid</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002507 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002507">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:label>Saliva</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002515 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002515">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:label>Pleural fluid</rdfs:label>
     </owl:Class>
     
 
@@ -529,6 +573,15 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case series</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case series</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0002746 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0002746">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0100051"/>
+        <rdfs:label>Induced sputum</rdfs:label>
     </owl:Class>
     
 
