@@ -120,10 +120,9 @@ foreach my $abbrev (sort keys %isAnnotated) {
     my $makeProteinFastaCmd = "gusExtractProteinSequence4Ebi.pl --outputFile $proteinFastaFileName --extDbRlsId $primaryExtDbRlsId --gusConfigFile $gusConfigFile";
     system($makeProteinFastaCmd);
 
-    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
-    $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --component $component" if ($component =~ /vector/i);
-
-    system($functAnnotJsonCmd);
+#    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+#    $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --component $component" if ($component =~ /vector/i);
+#    system($functAnnotJsonCmd);
 
 # do not need geneIdMapping.tab anymore
 #    my $geneTransProteinIdsCmd = "generateGeneTransciptProteinIdMapping.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $outputFileDir";
@@ -168,6 +167,10 @@ foreach my $abbrev (sort keys %isAnnotated) {
 #    my $modifyGff3BasedEbiCmd = "modifyGff3BasedEbi.pl $gff3FileNameAfter > $gff3FileNameWoPseudoCDS ";
     my $modifyGff3BasedEbiCmd = "modifyGff3BasedEbi.pl --inputFileOrDir $gff3FileNameAfter --proteinFile $proteinFastaFileName --outputGffFileName $gff3FileNameWoPseudoCDS";
     system ($modifyGff3BasedEbiCmd);
+
+    my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
+    $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --component $component" if ($component =~ /vector/i);
+    system($functAnnotJsonCmd);
   }
 
   ## 7) make manifest file
