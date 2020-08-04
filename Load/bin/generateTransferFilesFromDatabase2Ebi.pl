@@ -171,6 +171,9 @@ foreach my $abbrev (sort keys %isAnnotated) {
     my $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir";
     $functAnnotJsonCmd = "generateFunctionalAnnotationJson.pl --organismAbbrev $abbrev --gusConfigFile $gusConfigFile --outputFileDir $orgOutputFileDir --component $component" if ($component =~ /vector/i);
     system($functAnnotJsonCmd);
+
+    my $modifiedProteinSeqBasedGffCmd = "modifyProteinSeqBasedGff.pl --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir";
+    system($modifiedProteinSeqBasedGffCmd);
   }
 
   ## 7) make manifest file
