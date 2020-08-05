@@ -3,11 +3,14 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT ?entity
-  (GROUP_CONCAT(DISTINCT ?name;separator="; ") AS ?label)
-  (GROUP_CONCAT(DISTINCT ?defs;separator="; ") AS ?definition)
-  (GROUP_CONCAT(DISTINCT ?variable;separator="; ") AS ?variables)
-  (GROUP_CONCAT(DISTINCT ?parentLabel;separator="; ") AS ?parent_label)
-  (GROUP_CONCAT(DISTINCT ?parent_entity;separator="; ") AS ?parent_IRI)
+  (GROUP_CONCAT(DISTINCT ?name;separator=" | ") AS ?label)
+  (GROUP_CONCAT(DISTINCT ?defs;separator=" | ") AS ?definition)
+  (GROUP_CONCAT(DISTINCT ?vars;separator=" | ") AS ?variable)
+  (GROUP_CONCAT(DISTINCT ?parentLabel;separator=" | ") AS ?parent_label)
+  (GROUP_CONCAT(DISTINCT ?parent_entity;separator=" | ") AS ?parent_IRI)
+  (GROUP_CONCAT(DISTINCT ?desc;separator=" | ") AS ?codebook_description)
+  (GROUP_CONCAT(DISTINCT ?vals;separator=" | ") AS ?codebook_values)
+  (GROUP_CONCAT(DISTINCT ?cate;separator=" | ") AS ?category)
 WHERE {
    	?entity a owl:Class .
    	?entity rdfs:label ?slabel . 
@@ -19,11 +22,23 @@ WHERE {
 	OPTIONAL {
 		?entity obo:IAO_0000115 ?def .
 	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001003 ?des .
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001004 ?val .
+	}
+	OPTIONAL {
+		?entity obo:EUPATH_0001002 ?cat .
+	}
 	BIND (str(?slabel) AS ?name) .
 	BIND (str(?var) AS ?var_str) .
-	BIND (REPLACE(?var_str, "_", " ") AS ?variable) .
+	BIND (REPLACE(?var_str, "_", " ") AS ?vars) .
 	BIND (str(?def) AS ?defs) .
 	BIND (str(?plabel) AS ?parentLabel) .
+	BIND (str(?des) AS ?desc) .
+	BIND (str(?val) AS ?vals) .
+	BIND (str(?cat) AS ?cate) .
 }
 GROUP BY ?entity
 ORDER BY ASC(?entity)
