@@ -229,13 +229,13 @@ SQL
         }
       }
       elsif (defined($v) && $v ne "") { # derived or free text
-          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$v]);
-          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$v]);
-          printf ("\tReady: %s (free text)\n", $v);
+        push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
+        push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
+        printf ("\tReady: %s (free text)\n", $valueLabels{$v});
       }
-      else {
-        push(@derived,$qualifierSourceId);
-      }
+#     else {
+#       push(@derived,$qualifierSourceId);
+#     }
     }
   }
   
@@ -264,36 +264,33 @@ SQL
     $materialTypeCounts->{$sourceId}->{COUNT} -= $subTypeCounts->{$sourceId}->{COUNT};
   }
   
-  my %counterSourceIds = (
-    EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
-    OMIABIS_0001011 => 'EUPATH_0000096', # participants
-    EUPATH_0000774 => 'EUPATH_0000738', # observations
-    EUPATH_0000775 => 'EUPATH_0000609', # samples
-    EUPATH_0000773 => 'PCO_0000024', # households
-  );
-  my %subCounterSourceIds = (EUPATH_0000776 => 'PCO_0000024');
-  # EUPATH_0000776 household observations
-  
-  foreach my $derivedSourceId (keys %counterSourceIds){
-    unless($counterSourceIds{$derivedSourceId}){
-      printf STDERR ("Derived: no match for %s\n", $derivedSourceId);
-      next;
-    }
-    my $count = $materialTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-    $count ||= $subTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-    push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-    push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-  }
-  foreach my $derivedSourceId (keys %subCounterSourceIds){
-    next unless $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}};
-    my $count = $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}}->{COUNT};
-    next unless $count;
-    push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-    push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-  }
-    
-  
-  
+# my %counterSourceIds = (
+#   EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
+#   OMIABIS_0001011 => 'EUPATH_0000096', # participants
+#   EUPATH_0000774 => 'EUPATH_0000738', # observations
+#   EUPATH_0000775 => 'EUPATH_0000609', # samples
+#   EUPATH_0000773 => 'PCO_0000024', # households
+# );
+# my %subCounterSourceIds = (EUPATH_0000776 => 'PCO_0000024');
+# # EUPATH_0000776 household observations
+# 
+# foreach my $derivedSourceId (keys %counterSourceIds){
+#   unless($counterSourceIds{$derivedSourceId}){
+#     printf STDERR ("Derived: no match for %s\n", $derivedSourceId);
+#     next;
+#   }
+#   my $count = $materialTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
+#   $count ||= $subTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
+#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
+#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
+# }
+# foreach my $derivedSourceId (keys %subCounterSourceIds){
+#   next unless $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}};
+#   my $count = $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}}->{COUNT};
+#   next unless $count;
+#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
+#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
+# }
   
   if($commit){
     my $rownum = 0;
@@ -306,10 +303,10 @@ SQL
       
       my %data = (
         #row_user_id => $userId, row_alg_invocation_id => $algInvocationId,
-         study_id => $row->[0], qualifier_id => $row->[1], value_id => $row->[2]);
+         study_id => $row->[0], qualifier_id => $row->[1], value_id => $row->[2], value => $row->[3]);
       my $sc = GUS::Model::Study::StudyCharacteristic->new(\%data);
-      $sc->retrieveFromDB();
-      $sc->setValue($row->[3]);
+      # $sc->retrieveFromDB();
+      # $sc->setValue($row->[3]);
       $sc->submit;
       $rownum++;
     }
@@ -364,7 +361,7 @@ sub readConfig {
   close(FH);
   foreach my $k (keys %data){
     $data{$k} =~ s/^\s*|\s*$//g;
-    my @values = split(/\s*,\s*/, $data{$k});
+    my @values = split(/\s*;\s*/, $data{$k});
     $data{$k} = \@values;
   }
   return \%data;
