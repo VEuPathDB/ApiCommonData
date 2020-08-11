@@ -120,7 +120,9 @@ close OUT;
 
 $dbh->disconnect();
 
-
+## run json validator
+my $validateGenomeCmd = "jsonschema -i $outputFileName /eupath/data/EuPathDB/manualDelivery/common/jsonSchema/genome_schema.json";
+system ($validateGenomeCmd);
 
 ###########
 sub getInformationFromRedmine {
@@ -217,13 +219,14 @@ sub usage {
 "
 A script to generate genome.json file that required by EBI
 
-Usage: perl generateGenomeJson.pl --genomeSummaryFile GenomeSummary.txt --organismAbbrev pfalCD01 --component PlasmoDB
+Usage: generateGenomeJsonFromRedmine.pl --organismAbbrev caurB11220 --genomeSummaryFile fungi_bld50/FungiOrganismInfo.txt --outputFileDir fungi_bld50 --component FungiDB 
 
 where:
   --organismAbbrev: required, eg. pfal3D7
   --genomeSummaryFile: required, the txt file that include all genome info that loaded in EuPathDB
   --component: required if genomeSummaryFile presents
-  --redmineFile: required, the tabl delimited file export from redmine
+  --redmineFile: optional, the tabl delimited file export from redmine
+  --outputFileDir: optional, the directory to save output file
   --outputFileName: optional, default is organismAbbrev_genome.json
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
 

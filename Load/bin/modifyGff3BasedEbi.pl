@@ -161,6 +161,9 @@ foreach my $gene (@{$bioperlFeaturesNested}) {
 ## remove utr that has only 1 or 2 basepairs
 $bioperlFeaturesNested = ApiCommonData::Load::AnnotationUtils::removeShortUtrs($bioperlFeaturesNested);
 
+## for gene without CDS feature, reset them as pseudogene
+$bioperlFeaturesNested = ApiCommonData::Load::AnnotationUtils::setAsPseudogeneIfmRNAWithoutCDS($bioperlFeaturesNested);
+
 my $bioperlFeaturesFlatted = ApiCommonData::Load::AnnotationUtils::flatGeneHierarchySortBySeqId($bioperlFeaturesNested);
 
 # write to a new gff3 output file

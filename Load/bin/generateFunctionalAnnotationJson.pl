@@ -38,8 +38,11 @@ my $dbh = $db->getQueryHandle();
 
 my $outputFileName = $organismAbbrev . "_functional_annotation.json" unless($outputFileName);
 
+my $finalGffFile =  $organismAbbrev . ".modified.gff3";
+
 if ($outputFileDir) {
   $outputFileName = "\./". $outputFileDir . "\/". $outputFileName;
+  $finalGffFile = "\./". $outputFileDir . "\/". $finalGffFile;
 }
 open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write.\n";
 
@@ -47,7 +50,7 @@ open (OUT, ">$outputFileName") || die "cannot open $outputFileName file to write
 ## get all Ids hash
 #my ($geneHash, $transcriptHash, $translationHash) = getGeneTranscriptTranslation ($organismAbbrev);
 my ($geneHash, $transcriptHash) = getGeneTranscriptIdHash ($organismAbbrev);
-my ($translationHash) = getTranslationIdHash ($organismAbbrev);
+my ($translationHash) = getTranslationIdHash ($organismAbbrev, $finalGffFile);
 
 ## grep product info
 my $products = getProductName ($organismAbbrev);
@@ -466,11 +469,14 @@ sub getGeneTranscriptIdHash {
 }
 
 sub getTranslationIdHash {
-  my ($abbrev) = @_;
+  my ($abbrev, $gffFile) = @_;
 
   my (%translationIds);
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($abbrev);
+
+  my $isPseudoFromGff = checkIfIsPseudoBasedGff ($gffFile);
+
   my $sql = "select g.source_id, t.source_id, aa.source_id, t.is_pseudo
              from dots.genefeature g, dots.transcript t, dots.translatedaafeature aa
              where g.na_feature_id = t.parent_id and t.na_feature_id = aa.na_feature_id
@@ -481,10 +487,35 @@ sub getTranslationIdHash {
   while (my ($geneId, $trcpIds, $trsltIds, $isPseudo) = $stmt->fetchrow_array()) {
 #    $geneIds{$geneId} = $geneId;
 #    $transcriptIds{$trcpIds} = $trcpIds;
-    $translationIds{$trsltIds} = $trsltIds if ($isPseudo != 1);
+    $translationIds{$trsltIds} = $trsltIds if ($isPseudo != 1 && $isPseudoFromGff->{$trcpIds} != 1);
+#    print STDERR "checking hash for $trcpIds = $isPseudoFromGff->{$trcpIds} ...\n";
   }
 
   return \%translationIds;
+}
+
+sub checkIfIsPseudoBasedGff {
+  my ($gffFile) = @_;
+
+  my %isPseudo;
+  my $c;
+  open (IN, $gffFile) || die "can not open file \"$gffFile\" to read\n";
+  while (<IN>) {
+    my @items = split (/\t/, $_);
+    if ($items[2] eq "mRNA" || $items[2] eq "pseudogenic_transcript") {
+      my ($idTag) = split (/\;/, $items[8]);
+      my ($tag, $id) = split(/\=/, $idTag);
+      if ($items[2] eq "pseudogenic_transcript" || $items[8] =~ /is_pseudo\=1/) {
+	$isPseudo{$id} = 1;
+	$c++;
+      } else {
+	$isPseudo{$id} = 0;
+      }
+    }
+  }
+  close IN;
+
+  return \%isPseudo;
 }
 
 sub getExtDbRlsIdFormOrgAbbrev {

@@ -41,7 +41,7 @@ SQL
   $self->{insertSampleDetailSth} = $dbh->prepare(<<SQL) or $log->logdie($dbh->errstr);
     insert into ApiDBUserDatasets.ud_SampleDetail
       (user_dataset_id, sample_id, property_id, date_value, number_value, string_value)
-    values (?,?,?,?,?,?)
+    values (?,?,?,to_date(?, 'yy-mm-dd'),?,?)
 SQL
   $self->{insertAbundanceSth} = $dbh->prepare(<<SQL) or $log->logdie($dbh->errstr);
     insert into apidbUserDatasets.ud_Abundance
@@ -207,7 +207,13 @@ sub writeAggregatedAbundance {
 }
 
 sub storeUserDataset {
-  my ($self, $userDatasetId, $datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $abundancesBySampleName, $aggregatedAbundancesBySampleName) = @_;
+  my ($self, $userDatasetId, $datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $getAbundancesByIndex) = @_;
+
+#$abundancesBySampleName, $aggregatedAbundancesBySampleName) = @_;
+
+#  my($datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $getAbundancesByIndex)
+#   = biomFileContentsLazy(@_);
+
   return unless @{$sampleNamesInOrder};
 
   $log->info("storeUserDataset $userDatasetId");
@@ -249,29 +255,35 @@ sub storeUserDataset {
   $self->{commit}->();
   
   my ($writeAbundanceCb, $closeAbundanceCb) = $self->{insertAbundanceCreateWriter}->();
+
   for my $i (0.. $#$sampleNamesInOrder){
     $log->info("Wrote abundances for $i / $numSamplesTotal samples")
       if $i and not $i % 1000;
     my $sampleName = $sampleNamesInOrder->[$i];
     my $sampleId = $sampleIdsBySampleName{$sampleName};
 
-    for my $abundance (@{$abundancesBySampleName->{$sampleName}}){
+    my ($abundances, $aggregatedAbundances) = $getAbundancesByIndex->($i);
+
+    for my $abundance (@{$abundances}){
       writeAbundance($writeAbundanceCb, $userDatasetId, $sampleId, $abundance);
     }
   }
   $closeAbundanceCb->();
 
   my ($writeAggregatedAbundanceCb, $closeAggregatedAbundanceCb) = $self->{insertAggregatedAbundanceCreateWriter}->();
+
   for my $i (0.. $#$sampleNamesInOrder){
-    $log->info("Wrote aggregated abundances for $i / $numSamplesTotal samples")
+    $log->info("Wrote aggregatedAbundances for $i / $numSamplesTotal samples")
       if $i and not $i % 1000;
     my $sampleName = $sampleNamesInOrder->[$i];
     my $sampleId = $sampleIdsBySampleName{$sampleName};
 
-    for my $aggregatedAbundance (@{$aggregatedAbundancesBySampleName->{$sampleName}}){
+    my ($abundances, $aggregatedAbundances) = $getAbundancesByIndex->($i);
+
+    for my $aggregatedAbundance (@{$aggregatedAbundances}){
       writeAggregatedAbundance($writeAggregatedAbundanceCb, $userDatasetId, $sampleId, $aggregatedAbundance);
     }
-  } 
+  }
   $closeAggregatedAbundanceCb->();
 
   $log->info("Added data for $numSamplesTotal samples");
@@ -287,7 +299,7 @@ sub deleteUserDataset {
     push @samples, $sampleId;
   }
   my $numSamples = scalar @samples;
-  $log->info("Retrieved $numSamples samples");
+  $log->info("Retrieved $numSamples samples present under user dataset id $userDatasetId");
   if ($numSamples < 100){
     goto DELETE_BY_USER_DATASET_ID;
   }
@@ -313,6 +325,6 @@ sub deleteUserDataset {
     $numDeletedRows += $sth->execute($userDatasetId);
   }
   $self->{commit}->();
-  $log->info("deleted $numDeletedRows entries in tables with user dataset id $userDatasetId");
+  $log->info("Deleted $numDeletedRows entries in tables with user dataset id $userDatasetId");
 }
 1;

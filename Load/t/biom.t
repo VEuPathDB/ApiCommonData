@@ -75,4 +75,5 @@ ok(scalar @out1, "Check we actually got something and not an empty array");
 
 my @out2 = ApiCommonData::Load::Biom::biomFileContents(sub {""}, \$in, \$data);
 is_deeply(\@out1, \@out2, "Reading from provided TSV and from the data element is the same");
+
 done_testing;

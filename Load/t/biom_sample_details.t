@@ -16,7 +16,7 @@ sub sampleDetails {
 #  diag explain $sd;
   return $sd;
 }
-my $exampleDate = "1991-11-17"; # Wojtek's birthday
+my $exampleDate = "91-11-17"; # Wojtek's birthday
 
 is_deeply(propertyDetails({}), {}, "Null case property details");
 is_deeply(sampleDetails({}), {}, "Null case sample details");
@@ -44,6 +44,8 @@ is_deeply(sampleDetails({s1 => {}}),{
 }, "Default values sample details");
 is_deeply(sampleDetails({"123" => {}})->{123}[0]{number_value}, undef, "Default values sample detail is never a number");
 is_deeply(sampleDetails({$exampleDate => {}})->{$exampleDate}[0]{date_value}, undef, "Default values sample detail is never a date");
+
+
 is_deeply(propertyDetails({s1 => {p=>1}}), {p => {
      'description' => 'p: 1',
      'distinct_values' => 1,
@@ -71,26 +73,74 @@ is_deeply(propertyDetails({s1 => {p=>$exampleDate}}), {p => {
      'type' => 'date'
 }}, "One value date pd");
 
-is_deeply(sampleDetails({s1 => {p=>"v"}}), {s1 => [{
-  'date_value' => undef,
-  'number_value' => undef,
-  'property' => 'p',
-  'string_value' => 'v'
-}]}, "One value string sd");
+sub valueParsedAsText {
+  my (@values) = @_;
+  my $in;
+  my $out;
+  for my $i (0 .. $#values){
+    my $k = "s$i";
+    $in->{$k} = {p => $values[$i]};
+    $out->{$k} = [{
+      'date_value' => undef,
+      'number_value' => undef,
+      'property' => 'p',
+      'string_value' => $values[$i],
+    }];
+  }
+  is_deeply(sampleDetails($in), $out, "Value as text: " . join ",", @values);
+}
 
-is_deeply(sampleDetails({s1 => {p=>1}}), {s1 => [{
-  'date_value' => undef,
-  'number_value' => 1,
-  'property' => 'p',
-  'string_value' => '1'
-}]}, "One value number sd");
+sub valueParsedAsNumber {
+  my (@values) = @_;
+  my $in;
+  my $out;
+  for my $i (0 .. $#values){
+    my $k = "s$i";
+    $in->{$k} = {p => $values[$i]};
+    $out->{$k} = [{
+      'date_value' => undef,
+      'number_value' => ApiCommonData::Load::Biom::SampleDetails::looks_nonblank($values[$i]) ? $values[$i] :  undef,
+      'property' => 'p',
+      'string_value' => $values[$i],
+    }];
+  }
+  is_deeply(sampleDetails($in), $out, "Value as number: " . join ",", @values);
+}
+sub valueParsedAsDate {
+  my (@values) = @_;
+  my $in;
+  my $out;
+  for my $i (0 .. $#values){
+    my $k = "s$i";
+    $in->{$k} = {p => $values[$i]};
+    $out->{$k} = [{
+      'date_value' => ApiCommonData::Load::Biom::SampleDetails::looks_nonblank($values[$i]) ? $values[$i] :  undef,
+      'number_value' => undef,
+      'property' => 'p',
+      'string_value' => $values[$i],
+    }];
+  }
+  is_deeply(sampleDetails($in), $out, "Value as date: " . join ",", @values);
+}
+valueParsedAsText("v");
+valueParsedAsText("v1", "v2");
+valueParsedAsText("1", "pancake");
+valueParsedAsText($exampleDate, "pancake");
 
-is_deeply(sampleDetails({s1 => {p=>"$exampleDate"}}), {s1 => [{
-  'date_value' => "$exampleDate",
-  'number_value' => undef,
-  'property' => 'p',
-  'string_value' => $exampleDate
-}]}, "One value date sd");
+valueParsedAsNumber(1);
+valueParsedAsNumber(1,2);
+valueParsedAsNumber(1,"");
+valueParsedAsNumber(1,"NA");
+valueParsedAsNumber(1,"N/A");
+valueParsedAsNumber(1,"na");
+valueParsedAsNumber(1,"n/a");
+
+
+valueParsedAsDate($exampleDate);
+# valueParsedAsDate("6/1/18");
+valueParsedAsDate($exampleDate, "");
+valueParsedAsDate($exampleDate, "NA");
+
 
 is_deeply(propertyDetails({s1 => {p=>1, p2=>2}})->{"p"}, propertyDetails({s1 => {p=>1}})->{"p"}, "properties don't collide");
 
