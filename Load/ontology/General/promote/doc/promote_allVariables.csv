@@ -721,7 +721,7 @@ endograde,BC-3 mothers all visits database FINAL,keep,,Endo Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",,,,,,endograde|BC-3 mothers all visits database FINAL,,,,,,,
-enrollage,Individual level database FINAL,keep,,Age at enrollment in years,,,,,,,enrollage|Individual level database FINAL,,,,,,,
+enrollage,Individual level database FINAL,discard,,Age at enrollment in years,,,,,,DROP - Use enrollment,enrollage|Individual level database FINAL,,,,,,,
 enrolldate,BC-3 mothers expanded database FINAL,keep,,Date of enrollment,Date,,,,,,enrolldate|BC-3 mothers expanded database FINAL,,,,,,,
 enrolldate,Individual level database FINAL,discard,,Date of enrollment,date,,,,,DROP use expanded,enrolldate|Individual level database FINAL,http://purl.obolibrary.org/obo/EUPATH_0000151,Enrollment date,,Participant,Participant study details,http://purl.obolibrary.org/obo/EUPATH_0000307,variable
 enrollgestage,BC-3 mothers expanded database FINAL,keep,,Gestational age at enollment (wks),age in weeks,,,,,,enrollgestage|BC-3 mothers expanded database FINAL,,,,,,,
@@ -953,12 +953,12 @@ gugrade,BC-3 mothers all visits database FINAL,keep,,GU Grade,"0 = absent,
 9 = unable to assess",,,,,,gugrade|BC-3 mothers all visits database FINAL,,,,,,,
 hampm,BC-3 mothers delivery database FINAL,keep,,AM/PM hospital,"0=AM,
 1=PM",,,,,????,hampm|BC-3 mothers delivery database FINAL,,,,,,,
-hb,BC-3 enrollment database FINAL,keep,,Hemoglobin,,,,,,,hb|BC-3 enrollment database FINAL,,,,,,,
-hb,BC-3 mothers all visits database FINAL,keep,,hemoglobin result,,,,,,,hb|BC-3 mothers all visits database FINAL,,,,,,,
+hb,BC-3 enrollment database FINAL,discard,,Hemoglobin,,,,,,DROP - Use expanded,hb|BC-3 enrollment database FINAL,,,,,,,
+hb,BC-3 mothers all visits database FINAL,discard,,hemoglobin result,,,,,,DROP - Use expanded,hb|BC-3 mothers all visits database FINAL,,,,,,,
 hb,BC-3 mothers delivery database FINAL,keep,,Hemoglobin,,,,,,,hb|BC-3 mothers delivery database FINAL,,,,,,,
 hb,BC-3 mothers expanded database FINAL,keep,,hemoglobin result,,,,,,,hb|BC-3 mothers expanded database FINAL,,,,,,,
 hbcord,BC-3 mothers delivery database FINAL,keep,,Hemoglobin measurement from cord blood,"0=Not made, 1=Done",,,,,Cord blood,hbcord|BC-3 mothers delivery database FINAL,,,,,,,
-HBenroll,Individual level database FINAL,keep,,Hemoglobin g/dL at enrollment,,,,,,,HBenroll|Individual level database FINAL,,,,,,,
+HBenroll,Individual level database FINAL,discard,,Hemoglobin g/dL at enrollment,,,,,,DROP - Use expanded,HBenroll|Individual level database FINAL,,,,,,,
 hbgrade,BC-3 enrollment database FINAL,keep,,Hemoglobin grade,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -995,7 +995,7 @@ headgrade,BC-3 mothers all visits database FINAL,keep,,Headache Grade,"0 = absen
 height,BC-3 enrollment database FINAL,keep,,Height(cm),,,,,,,height|BC-3 enrollment database FINAL,,,,,,,
 height,BC-3 mothers all visits database FINAL,discard,,Height(cm),,,,,,DROP - Use enrollment,height|BC-3 mothers all visits database FINAL,,,,Observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,variable
 height,BC-3 mothers expanded database FINAL,discard,,Height(cm),,,,,,DROP - Use enrollment,height|BC-3 mothers expanded database FINAL,,,,Observation,Anthropometry,http://purl.obolibrary.org/obo/EUPATH_0000649,variable
-hemocue,BC-3 enrollment database FINAL,keep,,Urgent Hb(hemocue),,,,,,,hemocue|BC-3 enrollment database FINAL,,,,,,,
+hemocue,BC-3 enrollment database FINAL,discard,,Urgent Hb(hemocue),,,,,,DROP - Use expanded,hemocue|BC-3 enrollment database FINAL,,,,,,,
 hemocue,BC-3 mothers all visits database FINAL,discard,,hemocue,,,,,,DROP - Use expanded,hemocue|BC-3 mothers all visits database FINAL,,,,Observation,Blood test,http://purl.obolibrary.org/obo/EUPATH_0011795,variable
 hemocue,BC-3 mothers expanded database FINAL,keep,,hemocue,,,,,,,hemocue|BC-3 mothers expanded database FINAL,,,,,,,
 hemograde,BC-3 enrollment database FINAL,keep,,Urgent Hb(hemocue) grade,"0 = no grade,
@@ -1036,13 +1036,13 @@ hrate,BC-3 mothers all visits database FINAL,keep,,Heart rate (maternal),,,,,,,h
 htable,BC3_Household_Survey_Data,SKIP,,table?,"1=Yes, 2=No, -9=Skipped",,,,,,htable|BC3_Household_Survey_Data,http://purl.obolibrary.org/obo/ENVO_01000584,Table,,,Assets,http://purl.obolibrary.org/obo/EUPATH_0000144,variable
 hyperten,BC-3 enrollment database FINAL,keep,,Medical History: Hypertension,"0 = No,
 1=Yes",,,,,,hyperten|BC-3 enrollment database FINAL,,,,,,,
-id,BC-3 enrollment database FINAL,keep,,Study ID,5-digit number,,,,,,id|BC-3 enrollment database FINAL,,,,,,,
-id,BC-3 mothers all visits database FINAL,keep,,Study Id,5 digit number,,,,,,id|BC-3 mothers all visits database FINAL,,,,,,,
-id,BC-3 mothers delivery database FINAL,keep,,Study ID,5 digit number,,,,,,id|BC-3 mothers delivery database FINAL,,,,,,,
-id,BC-3 mothers expanded database FINAL,keep,,Patient ID number,5-digit number,,,,,,id|BC-3 mothers expanded database FINAL,,,,,,,
-id,BC-3 screening database FINAL,SKIP,,Study ID,numeric,,,,,,id|BC-3 screening database FINAL,http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,The unique identifier used within the study to identify a participant,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,variable
-id,BC3_Household_Survey_Data,SKIP,,"to ensure data integrity, please re-enter the participant id.",5 digits,,,,,,id|BC3_Household_Survey_Data,http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,variable
-id,Individual level database FINAL,keep,,Study ID,5 digits,,,,,,id|Individual level database FINAL,,,,,,,
+id,BC-3 enrollment database FINAL,discard,,Study ID,5-digit number,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC-3 enrollment database FINAL,,,,,,,
+id,BC-3 mothers all visits database FINAL,discard,,Study Id,5 digit number,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC-3 mothers all visits database FINAL,,,,,,,
+id,BC-3 mothers delivery database FINAL,discard,,Study ID,5 digit number,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC-3 mothers delivery database FINAL,,,,,,,
+id,BC-3 mothers expanded database FINAL,discard,,Patient ID number,5-digit number,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC-3 mothers expanded database FINAL,,,,,,,
+id,BC-3 screening database FINAL,discard,,Study ID,numeric,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC-3 screening database FINAL,http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,The unique identifier used within the study to identify a participant,Participant,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,variable
+id,BC3_Household_Survey_Data,discard,,"to ensure data integrity, please re-enter the participant id.",5 digits,,,,,"DROP - not loading participant ID as a variable, just as key",id|BC3_Household_Survey_Data,http://purl.obolibrary.org/obo/EUPATH_0000095,Participant ID,,,Participant,http://purl.obolibrary.org/obo/EUPATH_0000096,variable
+id,Individual level database FINAL,discard,,Study ID,5 digits,,,,,"DROP - not loading participant ID as a variable, just as key",id|Individual level database FINAL,,,,,,,
 immuno,BC-3 mothers delivery database FINAL,keep,,Immunology studies,"0=Not collect, 
 1=Collected
 ",,,,,,immuno|BC-3 mothers delivery database FINAL,,,,,,,
@@ -1787,7 +1787,7 @@ qPCRcat,BC-3 mothers all visits database FINAL,discard,,qPCR parasite density ca
 qPCRcat,BC-3 mothers expanded database FINAL,keep,,qPCR parasite density categories,"0=Negative, 1=0.001-<0.01, 2=0.01-<0.05, 3=0.05-<0.1, 4=0.1-<1, 5=1-<10, 6=10-<100, 7=100-<1000, 8=>1000",,,,,,qPCRcat|BC-3 mothers expanded database FINAL,,,,,,,
 qPCRdich,BC-3 mothers all visits database FINAL,discard,,qPCR dichotomized,"0=Negative(<0.001),1=Positive(=>0.001)",,,,,DROP - Use expanded,qPCRdich|BC-3 mothers all visits database FINAL,,,qPCR dichotomized,,,,variable
 qPCRdich,BC-3 mothers expanded database FINAL,keep,,qPCR dichotomized,"0= Negative (<0.001), 1=Positive (>=0.001)",,,,,,qPCRdich|BC-3 mothers expanded database FINAL,,,,,,,
-qPCRdichenroll,Individual level database FINAL,keep,,qPCR dichotomized,"0= Negative (<0.001), 1=Positive (>=0.001)",,,,,,qPCRdichenroll|Individual level database FINAL,,,,,,,
+qPCRdichenroll,Individual level database FINAL,discard,,qPCR dichotomized,"0= Negative (<0.001), 1=Positive (>=0.001)",,,,,DROP - Use expanded,qPCRdichenroll|Individual level database FINAL,,,,,,,
 qPCRparsdens,BC-3 mothers all visits database FINAL,discard,,qPCR parasite density,,,,,,DROP - Use expanded,qPCRparsdens|BC-3 mothers all visits database FINAL,,,Parasite species count,,,,variable
 qPCRparsdens,BC-3 mothers expanded database FINAL,keep,,qPCR parasite density,,,,,,,qPCRparsdens|BC-3 mothers expanded database FINAL,,,,,,,
 QTcprolongation,Individual level database FINAL,SKIP,,(sum) QTcprolongation,"0,1",,,,,SKIP need more info,QTcprolongation|Individual level database FINAL,,QTcprolongation,,,,,variable
@@ -1992,11 +1992,11 @@ tsmnet8,BC3_Household_Survey_Data,SKIP,,how many months ago was the net8 last so
 tsmnet9,BC3_Household_Survey_Data,SKIP,,how many months ago was the net9 last soaked or dipped?,,,,,,,tsmnet9|BC3_Household_Survey_Data,,,,,,,variable
 tspray,BC3_Household_Survey_Data,SKIP,,"how many months ago was the dwelling last sprayed?if less than 1 month, enter 0",,,,,,,tspray|BC3_Household_Survey_Data,http://purl.obolibrary.org/obo/EUPATH_0000390,Last fumigation date,,,Household vector intervention,http://purl.obolibrary.org/obo/EUPATH_0000341,variable
 tv,BC3_Household_Survey_Data,SKIP,,television?,"1=Yes, 2=No, -9=Skipped",,,,,,tv|BC3_Household_Survey_Data,http://purl.obolibrary.org/obo/ENVO_01000579,Television,,,Assets,http://purl.obolibrary.org/obo/EUPATH_0000144,variable
-Txarm,BC-3 mothers all visits database FINAL,discard,,Mothers Treatment Assignment,"1=SP, 2=DP",,,,,DROP  - Use individual,Txarm|BC-3 mothers all visits database FINAL,,,,,,,variable
-Txarm,BC-3 mothers expanded database FINAL,discard,,Mothers Treatment Assignment,"0=SP, 1=DP",,,,,DROP- Use individual,Txarm|BC-3 mothers expanded database FINAL,,,,,,,variable
-Txarm,Individual level database FINAL,keep,,Mothers Treatment Assignment,"0=SP, 1=DP",,,,,,Txarm|Individual level database FINAL,,,,,,,
-uniqueid,BC-3 mothers all visits database FINAL,keep,,Unique ID number (id + date),id number + 5-digit number,,,,,,uniqueid|BC-3 mothers all visits database FINAL,,,,,,,
-uniqueid,BC-3 mothers expanded database FINAL,keep,,Unique ID number = participant ID number + date,id number + 5-digit number,,,,,,uniqueid|BC-3 mothers expanded database FINAL,,,,,,,
+Txarm,BC-3 mothers all visits database FINAL,discard,,Mothers Treatment Assignment,"1=SP, 2=DP",,,,,DROP  - Use expanded database,Txarm|BC-3 mothers all visits database FINAL,,,,,,,variable
+Txarm,BC-3 mothers expanded database FINAL,keep,,Mothers Treatment Assignment,"0=SP, 1=DP",,,,,,Txarm|BC-3 mothers expanded database FINAL,,,,,,,variable
+Txarm,Individual level database FINAL,discard,,Mothers Treatment Assignment,"0=SP, 1=DP",,,,,DROP  - Use expanded database,Txarm|Individual level database FINAL,,,,,,,
+uniqueid,BC-3 mothers all visits database FINAL,discard,,Unique ID number (id + date),id number + 5-digit number,,,,,"DROP - not loading observation ID as a variable, just as key",uniqueid|BC-3 mothers all visits database FINAL,,,,,,,
+uniqueid,BC-3 mothers expanded database FINAL,discard,,Unique ID number = participant ID number + date,id number + 5-digit number,,,,,"DROP - not loading observation ID as a variable, just as key",uniqueid|BC-3 mothers expanded database FINAL,,,,,,,
 uprotein,BC-3 enrollment database FINAL,keep,,,"0=0,
 1=1+,
 2=2+,
@@ -2616,39 +2616,3 @@ withdrawalreason,BC-3 children individual level database FINAL,keep,,Reason for 
 9=Participant completed the study ",,,,,,withdrawalreason|BC-3 children individual level database FINAL,,,,,,,
 wksage,BC-3 childs all visit database FINAL,keep,,if routine visit weeks of age,,,,,,,wksage|BC-3 childs all visit database FINAL,,,,,,,
 wksage,BC-3 childs expanded database FINAL,keep,,if routine visit weeks of age,,,,,,,wksage|BC-3 childs expanded database FINAL,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
