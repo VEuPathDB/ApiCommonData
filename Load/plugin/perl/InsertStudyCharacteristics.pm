@@ -104,12 +104,24 @@ printf STDERR Dumper $cfg;
   my %name2study;
   
   my $sql = <<SQL;
-  SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
+SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
   FROM study.study s1
-  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
   LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
   LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
-  WHERE s0.STUDY_ID!=s1.STUDY_ID
+  WHERE s1.STUDY_ID IN (SELECT s1.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
+union
+SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
+  FROM study.study s1
+  LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+  LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+  WHERE s1.STUDY_ID NOT IN (SELECT s1.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
+  AND s1.STUDY_ID NOT IN (SELECT s0.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
 SQL
 
   my $dbh = $self->getQueryHandle();
