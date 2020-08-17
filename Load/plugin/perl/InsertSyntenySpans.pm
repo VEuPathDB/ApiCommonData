@@ -157,32 +157,12 @@ sub getOutputFileHandles {$_[0]->{_output_file_handles}}
 
 sub getAgpCoords {$_[0]->{_agp_coords}}
 
-sub getSyntenyFields {
-  return ('synteny_id',
-          'external_database_release_id',
-          'a_na_sequence_id',
-          'b_na_sequence_id',
-          'a_start',
-          'a_end',
-          'b_start',
-          'b_end',
-          'is_reversed'
-      );
-}
 
-sub getSyntenicGeneFields {
-  return ('syntenic_gene_id',
-          'synteny_id',
-          'na_sequence_id',
-          'start_min',
-          'end_max',
-          'is_reversed',
-          'syn_na_feature_id',
-          'syn_organism_abbrev',
-      );
-}
+sub setSyntenyFields {$_[0]->{_synteny_fields} = $_[1]}
+sub getSyntenyFields {$_[0]->{_synteny_fields} }
 
-
+sub setSyntenicGeneFields {$_[0]->{_syntenic_gene_fields} = $_[1]}
+sub getSyntenicGeneFields {$_[0]->{_syntenic_gene_fields} }
 
 
 #--------------------------------------------------------------------------------
@@ -448,7 +428,7 @@ sub makeSynteny {
 
   if($self->getArg('writeSqlldrFiles')) {
     $synteny->getNextID();
-    my @values = map { $synteny->get($_)} $self->getSyntenyFields();
+    my @values = map { $synteny->get($_)} @{$self->getSyntenyFields()};
     my $fh = $self->getOutputFileHandles()->{'synteny.dat'};
     print $fh join("\t", @values) . "\n";
   }
@@ -886,7 +866,7 @@ sub loadSyntenicGene {
   if($self->getArg('writeSqlldrFiles')) {
     $syntenicGeneObj->getNextID();
     $syntenicGeneObj->setSyntenyId($syntenyObj->getId());
-    my @values = map { $syntenicGeneObj->get($_)} $self->getSyntenicGeneFields();
+    my @values = map { $syntenicGeneObj->get($_)} @{$self->getSyntenicGeneFields()};
     my $fh = $self->getOutputFileHandles()->{'syntenic_gene.dat'};
     print $fh join("\t", @values) . "\n";
   }
@@ -1003,18 +983,7 @@ sub writeConfigFile {
   my $otherRead = $database->getDefaultOtherRead();
   my $otherWrite = $database->getDefaultOtherWrite();
 
-  my $datatypeMap = {'user_read' => " constant $userRead", 
-                     'user_write' => " constant $userWrite", 
-                     'group_read' => " constant $groupRead", 
-                     'group_write' => " constant $groupWrite", 
-                     'other_read' => " constant $otherRead", 
-                     'other_write' => " constant $otherWrite", 
-                     'row_user_id' => " constant $userId", 
-                     'row_group_id' => " constant $groupId", 
-                     'row_alg_invocation_id' => " constant $algInvocationId",
-                     'row_project_id' => " constant $projectId",
-                     'modification_date' => " constant \"$modDate\"",
-                     'synteny_id' => " CHAR(10)",
+  my $datatypeMap = {'synteny_id' => " CHAR(10)",
                      'external_database_release_id' => " CHAR(10)",
                      'a_na_sequence_id' => " CHAR(10)",
                      'b_na_sequence_id' => " CHAR(10)",
@@ -1031,6 +1000,38 @@ sub writeConfigFile {
                      'syn_na_feature_id' => " CHAR(10)",
                      'syn_organism_abbrev' => " CHAR(40)",
   };
+
+  my $housekeeping ={'user_read' => " constant $userRead", 
+                     'user_write' => " constant $userWrite", 
+                     'group_read' => " constant $groupRead", 
+                     'group_write' => " constant $groupWrite", 
+                     'other_read' => " constant $otherRead", 
+                     'other_write' => " constant $otherWrite", 
+                     'row_user_id' => " constant $userId", 
+                     'row_group_id' => " constant $groupId", 
+                     'row_alg_invocation_id' => " constant $algInvocationId",
+                     'row_project_id' => " constant $projectId",
+                     'modification_date' => " constant \"$modDate\"",
+  };
+
+  my @dataFields = map { lc($_) } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
+  if($tableName eq 'ApiDB.Synteny') {
+    $self->setSyntenyFields(\@dataFields);
+  }
+  elsif($tableName eq 'ApiDB.SyntenicGene') {
+    $self->setSyntenicGeneFields(\@dataFields);
+  }
+  else {
+    $self->error("Invalid tableName $tableName:  expected ApiDB.Synteny or ApiDB.SynetenicGene");
+  }
+
+  # add housekeeping to datatypeMap
+  foreach(keys %$housekeeping) {
+    $datatypeMap->{$_} = $housekeeping->{$_};
+  }
+
+
+
 
   my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
   my $fieldsString = join(",\n", @fields);
