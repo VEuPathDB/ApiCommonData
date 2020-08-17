@@ -29,8 +29,10 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::NASequence;
 
 use GUS::Model::ApiDB::Synteny;
+use GUS::Model::ApiDB::Synteny_Table;
 #use GUS::Model::ApiDB::SyntenyAnchor;
 use GUS::Model::ApiDB::SyntenicGene;
+use GUS::Model::ApiDB::SyntenicGene_Table;
 #use GUS::Model::ApiDB::SyntenicScale;
 
 use CBIL::Util::V;
@@ -65,6 +67,48 @@ my $argsDeclaration =
 	      reqd => 1,
 	      isList => 0
 	     }),
+
+   fileArg({ name           => 'outputSyntenyDatFile',
+             descr          => '',
+             reqd           => 0,
+             mustExist      => 0,
+             format         => 'custom',
+             constraintFunc => undef,
+             isList         => 0,
+           }),
+
+   fileArg({ name           => 'outputSyntenyCtrlFile',
+             descr          => '',
+             reqd           => 0,
+             mustExist      => 0,
+             format         => 'custom',
+             constraintFunc => undef,
+             isList         => 0,
+           }),
+   fileArg({ name           => 'outputSyntenicGeneDatFile',
+             descr          => '',
+             reqd           => 0,
+             mustExist      => 0,
+             format         => 'custom',
+             constraintFunc => undef,
+             isList         => 0,
+           }),
+   fileArg({ name           => 'outputSyntenicGeneCtrlFile',
+             descr          => '',
+             reqd           => 0,
+             mustExist      => 0,
+             format         => 'custom',
+             constraintFunc => undef,
+             isList         => 0,
+           }),
+
+booleanArg({name => 'writeSqlldrFiles',
+       descr => 'write files for sqlloader',
+       constraintFunc=> undef,
+       reqd  => 0,
+       isList => 0,
+       default => 0,
+      }),
 
 
   ];
@@ -108,7 +152,38 @@ my $documentation = { purpose=>$purpose,
 sub setGeneLocations {$_[0]->{_gene_locations} = $_[1]}
 sub getGeneLocations {$_[0]->{_gene_locations}}
 
+sub setOutputFileHandles {$_[0]->{_output_file_handles} = $_[1]}
+sub getOutputFileHandles {$_[0]->{_output_file_handles}}
+
 sub getAgpCoords {$_[0]->{_agp_coords}}
+
+sub getSyntenyFields {
+  return ('synteny_id',
+          'external_database_release_id',
+          'a_na_sequence_id',
+          'b_na_sequence_id',
+          'a_start',
+          'a_end',
+          'b_start',
+          'b_end',
+          'is_reversed'
+      );
+}
+
+sub getSyntenicGeneFields {
+  return ('syntenic_gene_id',
+          'synteny_id',
+          'na_sequence_id',
+          'start_min',
+          'end_max',
+          'is_reversed',
+          'syn_na_feature_id',
+          'syn_organism_abbrev',
+      );
+}
+
+
+
 
 #--------------------------------------------------------------------------------
 
@@ -136,6 +211,38 @@ sub run {
   $dbiDb->setMaximumNumberOfObjects(100000);
 
   my $dirname = $self->getArg('inputDirectory');
+
+  my ($sdat, $sgdat);
+
+  if($self->getArg('writeSqlldrFiles')) {
+
+    my $syntenyDatFile = $self->getArg('outputSyntenyDatFile');
+    my $syntenyCtrlFile = $self->getArg('outputSyntenyCtrlFile');
+    
+    my $syntenicGeneDatFile = $self->getArg('outputSyntenicGeneDatFile');
+    my $syntenicGeneCtrlFile = $self->getArg('outputSyntenicGeneCtrlFile');
+
+    open($sdat, ">$syntenyDatFile") or die "Cannot open synteny data file for writing";
+    open($sgdat, ">$syntenicGeneDatFile") or die "Cannot open syntenic_gene data file for writing";
+
+    open(my $sctrl, ">$syntenyCtrlFile") or die "Cannot open synteny ctrl file for writing";
+    open(my $sgctrl, ">$syntenicGeneCtrlFile") or die "Cannot open syntenic_gene ctrl file for writing";
+
+    my %fileHandles;
+    $fileHandles{'synteny.dat'} = $sdat;
+    $fileHandles{'syntenic_gene.dat'} = $sgdat;
+
+    $self->setOutputFileHandles(\%fileHandles);
+
+    my $syntenyTable = GUS::Model::ApiDB::Synteny_Table->new();
+    $self->writeConfigFile('ApiDB.Synteny', $syntenyDatFile, $syntenyTable->getAttributeList(), $sctrl);
+
+    my $syntenicGeneTable = GUS::Model::ApiDB::SyntenicGene_Table->new();
+    $self->writeConfigFile('ApiDB.SyntenicGene', $syntenicGeneDatFile, $syntenicGeneTable->getAttributeList(), $sgctrl);
+
+    close $sctrl;
+    close $sgctrl;
+  }
 
   my $alignDir = "$dirname/alignments";
   my $genomesFile = "$alignDir/genomes";
@@ -172,7 +279,8 @@ sub run {
                                                 where na_sequence_id = ? and end_max >= ? and start_min <= ?
                                                  and is_top_level = 1");
 
-  $self->getDb()->manageTransaction(0, 'begin');
+
+  $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('writeSqlldrFiles'));
 
 
   open(MAP, $mapFile) or die "Cannot open map file $mapFile for reading:$!";
@@ -246,29 +354,32 @@ sub run {
       }
 
       my $syntenyObjA = $self->makeSynteny($syntenyA, $syntenyB, \@pairs, 0, $synDbRlsId, $organismAbbrevB);
-      $syntenyObjA->submit(undef, 1);
+      $syntenyObjA->submit(undef, 1) unless($self->getArg('writeSqlldrFiles'));
 
       my $syntenyObjB = $self->makeSynteny($syntenyB, $syntenyA, \@pairs, 1, $synDbRlsId, $organismAbbrevA);
-      $syntenyObjB->submit(undef, 1);
+      $syntenyObjB->submit(undef, 1) unless($self->getArg('writeSqlldrFiles'));
 
       if($count && $count % 500 == 0) {
         $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
       }
 
       if($count && $count % 1000 == 0) {
-        $self->getDb()->manageTransaction(0, 'commit');
-        $self->getDb()->manageTransaction(0, 'begin');
+        $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('writeSqlldrFiles'));
+        $self->getDb()->manageTransaction(0, 'begin') unless($self->getArg('writeSqlldrFiles'));
       }
 
       $self->undefPointerCache();
 
       $count++;
-
     }
 
   }
   close MAP;
-  $self->getDb()->manageTransaction(0, 'commit');
+
+  close $sdat;
+  close $sgdat;
+
+  $self->getDb()->manageTransaction(0, 'commit') unless($self->getArg('writeSqlldrFiles'));
   my $syntenicGeneCount = $self->getSyntenicGeneCount();
 
   return "inserted $count synteny spans and $syntenicGeneCount syntenic genes ";
@@ -334,6 +445,13 @@ sub makeSynteny {
 						  external_database_release_id => $synDbRlsId,
 						});
 
+
+  if($self->getArg('writeSqlldrFiles')) {
+    $synteny->getNextID();
+    my @values = map { $synteny->get($_)} $self->getSyntenyFields();
+    my $fh = $self->getOutputFileHandles()->{'synteny.dat'};
+    print $fh join("\t", @values) . "\n";
+  }
 
   my @sortedPairs = sort {$a->[$index] <=> $b->[$index]} @$pairs;
 
@@ -764,6 +882,17 @@ sub loadSyntenicGene {
                                                              syn_organism_abbrev => $synOrganismAbbrev});
 
 
+
+  if($self->getArg('writeSqlldrFiles')) {
+    $syntenicGeneObj->getNextID();
+    $syntenicGeneObj->setSyntenyId($syntenyObj->getId());
+    my @values = map { $syntenicGeneObj->get($_)} $self->getSyntenicGeneFields();
+    my $fh = $self->getOutputFileHandles()->{'syntenic_gene.dat'};
+    print $fh join("\t", @values) . "\n";
+  }
+
+
+
   $syntenyObj->addChild($syntenicGeneObj);
   $self->countSyntenicGenes();
 }
@@ -852,6 +981,76 @@ sub addAnchorToGusObj {
 }
 
 #--------------------------------------------------------------------------------
+
+
+
+sub writeConfigFile {
+  my ($self, $tableName, $datFileName, $attributeList, $ctrlFh) = @_;
+
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
+  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+
+  my $database = $self->getDb();
+  my $projectId = $database->getDefaultProjectId();
+  my $userId = $database->getDefaultUserId();
+  my $groupId = $database->getDefaultGroupId();
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+  my $userRead = $database->getDefaultUserRead();
+  my $userWrite = $database->getDefaultUserWrite();
+  my $groupRead = $database->getDefaultGroupRead();
+  my $groupWrite = $database->getDefaultGroupWrite();
+  my $otherRead = $database->getDefaultOtherRead();
+  my $otherWrite = $database->getDefaultOtherWrite();
+
+  my $datatypeMap = {'user_read' => " constant $userRead", 
+                     'user_write' => " constant $userWrite", 
+                     'group_read' => " constant $groupRead", 
+                     'group_write' => " constant $groupWrite", 
+                     'other_read' => " constant $otherRead", 
+                     'other_write' => " constant $otherWrite", 
+                     'row_user_id' => " constant $userId", 
+                     'row_group_id' => " constant $groupId", 
+                     'row_alg_invocation_id' => " constant $algInvocationId",
+                     'row_project_id' => " constant $projectId",
+                     'modification_date' => " constant \"$modDate\"",
+                     'synteny_id' => " CHAR(10)",
+                     'external_database_release_id' => " CHAR(10)",
+                     'a_na_sequence_id' => " CHAR(10)",
+                     'b_na_sequence_id' => " CHAR(10)",
+                     'a_start' => " CHAR(12)",
+                     'a_end' => " CHAR(12)",
+                     'b_start' => " CHAR(12)",
+                     'b_end' => " CHAR(12)",
+                     'is_reversed' => " CHAR(3)",
+                     'syntenic_gene_id' => " CHAR(10)",
+                     'na_sequence_id' => " CHAR(10)",
+                     'start_min' => " CHAR(12)",
+                     'end_max' => " CHAR(12)",
+                     'is_reversed' => " CHAR(3)",
+                     'syn_na_feature_id' => " CHAR(10)",
+                     'syn_organism_abbrev' => " CHAR(40)",
+  };
+
+  my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
+  my $fieldsString = join(",\n", @fields);
+  print $ctrlFh "UNRECOVERABLE
+LOAD DATA
+CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
+INFILE '$datFileName' \"str '\\n'\"
+APPEND
+INTO TABLE $tableName
+REENABLE DISABLED_CONSTRAINTS
+FIELDS TERMINATED BY '\\t'
+TRAILING NULLCOLS
+($fieldsString
+)
+";
+
+}
+
+
+
 
 sub undoTables {
   return (#"ApiDB.SyntenyAnchor",
