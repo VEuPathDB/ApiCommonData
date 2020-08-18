@@ -34,15 +34,8 @@ sub getArgsDeclaration {
 my $argsDeclaration  =
 [
 
-stringArg({name => 'extDbRlsName',
+stringArg({name => 'extDbRlsSpec',
        descr => 'List of External Database names for the scaffolds or chromosomes',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 1
-      }),
-
-stringArg({name => 'extDbRlsVer',
-       descr => 'List of version of each External Database, corresponding to the names',
        constraintFunc=> undef,
        reqd  => 1,
        isList => 1
@@ -148,13 +141,12 @@ sub run {
   my $SOTermId = $SOTerm->getId();
 
   # the array of External Database Names and their corresponding versions
-  my @extDbNameArr = @{$self->getArg('extDbRlsName')};
-  my @extDbVerArr  = @{$self->getArg('extDbRlsVer')};
+  my @extDbNameArr = @{$self->getArg('extDbRlsSpec')};
 
   for (my $i=0; $i<=$#extDbNameArr; $i++) {
     my $extDbName = $extDbNameArr[$i];
     my $extDbVer  = $extDbVerArr[$i];
-    my $extDbRlsId = $self->getExtDbRlsId($extDbName, $extDbVer)
+    my $extDbRlsId = $self->getExtDbRlsId($extDbSpec)
       or die "Couldn't find source db: $extDbName, $extDbVer\n";
     $self->log("External Database Name: $extDbName, Version: $extDbVer, ReleaseID: $extDbRlsId");
 
