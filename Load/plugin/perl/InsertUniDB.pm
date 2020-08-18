@@ -147,6 +147,9 @@ sub getArgsDeclaration {
             constraintFunc => undef,
             isList         => 0, }),
 
+
+
+
     ];
 
   return $argsDeclaration;
@@ -411,6 +414,10 @@ sub run {
 
   if($mode eq 'undo') {
     foreach my $tableName (reverse @$orderedTables) {
+      # For loading EBI Core DB into Genomics sites... we cannot undo Global tables;  (DBRef is the only current example);
+      # should the reader class provide a list of tables to skip?  may add that in future
+      next if($tableReaderClass eq 'ApiCommonData::Load::EBIReaderForUndo' && $GLOBAL_UNIQUE_FIELDS{$tableName});
+
       $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
   }
@@ -1007,9 +1014,14 @@ sub loadTable {
 
   my ($hasNewDatRows, $hasNewMapRows, $hasNewGlobalRows);
 
-  my ($datFifo, $sqlldrDat, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcessString);
+  my ($datFifo, $sqlldrDat, $sqlldrDatInfileFh, $sqlldrDatInfileFn, $sqlldrDatProcessString, $sequenceSh);
 
   if($loadDatWithSqlldr) {
+    my $dbh = $self->getQueryHandle();  
+    my $sequenceName = "${abbreviatedTablePeriod}_sq";
+    my $sequenceSql = "select ${sequenceName}.nextval from dual";
+    $sequenceSh = $dbh->prepare($sequenceSql);
+
     $sqlldrDatInfileFn = "${abbreviatedTablePeriod}.dat";
     $sqlldrDat = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                    _password => $password,
@@ -1067,7 +1079,8 @@ sub loadTable {
   my $globFifo = ApiCommonData::Load::Fifo->new($sqlldrGlobInfileFn);
   my $sqlldrGlobProcessString = $sqlldrGlob->getCommandLine();
 
-  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
+  # may add this back if using the sequence is too slow for all cases
+#  my $maxPrimaryKey = $self->queryForPKAggFxn($abbreviatedTablePeriod, $primaryKeyColumn, 'max');
 
   $tableReader->prepareTable($tableName, $isSelfReferencing, $primaryKeyColumn, $alreadyMappedMaxOrigPk);
 
@@ -1147,7 +1160,9 @@ sub loadTable {
       $rowCount++;
 
       if($loadDatWithSqlldr) {
-        $primaryKey = ++$maxPrimaryKey;
+        $sequenceSh->execute();
+        ($primaryKey) = $sequenceSh->fetchrow_array();
+#        $primaryKey = ++$maxPrimaryKey;
         $mappedRow->{lc($primaryKeyColumn)} = $primaryKey;
 
         # If the table is self referencing AND the fk is to the same row
@@ -1239,16 +1254,18 @@ sub loadTable {
   if($loadDatWithSqlldr) {
     $datFifo->cleanup();
 
-    # update the sequence
-    my $sequenceName = "${abbreviatedTablePeriod}_sq";
-    my $dbh = $self->getQueryHandle();  
-    my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
-    my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-    if($sequenceDifference > 0) {
-      $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
-      $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
-      $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
-    }
+    $sequenceSh->finish();
+
+    # update the sequence;  may add this back if using sequence for pk is too slow
+    # my $sequenceName = "${abbreviatedTablePeriod}_sq";
+    # my $dbh = $self->getQueryHandle();  
+    # my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual"); 
+    # my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
+    # if($sequenceDifference > 0) {
+    #   $dbh->do("alter sequence $sequenceName increment by $sequenceDifference") or die $dbh->errstr;
+    #   $dbh->do("select ${sequenceName}.nextval from dual") or die $dbh->errstr;
+    #   $dbh->do("alter sequence $sequenceName increment by 1") or die $dbh->errstr;
+    # }
   }
   else {
     $self->getDb()->manageTransaction(0, 'commit');
