@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use File::Basename;
+
+
+my ($ctrlFile, $silent, $test);
+my %options = ('ctrlFile=s' => \$ctrlFile, 'silent=s' =>\$silent, 'test!' => \$test);
+
+unless(@ARGV){
+  printf("\t--%s\n", join("\n\t--", keys %options));
+  exit;
+}
+
+GetOptions(%options);
+
+die "File not found: $ctrlFile" unless(-e $ctrlFile || $test);
+
+my $gusconfig = GUS::Supported::GusConfig->new();
+
+my $dbVendor = $gusconfig->getDatabaseVendor;
+my $dsn = $gusconfig->getDbiDsn();
+my ($dbi, $type, $dbName) = split(':', $dsn);
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+
+my $logFile = basename($ctrlFile, qw/.ctrl/) . ".log";
+
+my $cmd = ("sqlldr $login/$password\@$dbName  silent=ALL control=$ctrlFile log=$logFile");
+if($silent){ $cmd .= " silent=$silent" } 
+if($test){
+  print "$cmd\n";
+}
+else {
+  system($cmd);
+}
