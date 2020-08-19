@@ -31,7 +31,7 @@ my $password = $gusconfig->getDatabasePassword();
 
 my $logFile = basename($ctrlFile, qw/.ctrl/) . ".log";
 
-my $cmd = ("sqlldr $login/$password\@$dbName  silent=ALL control=$ctrlFile log=$logFile");
+my $cmd = ("sqlldr $login/$password\@$dbName control=$ctrlFile log=$logFile");
 if($silent){ $cmd .= " silent=$silent" } 
 if($test){
   print "$cmd\n";
