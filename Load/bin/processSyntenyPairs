@@ -1,0 +1,33 @@
+#!/usr/bin/env nextflow
+
+Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0).set{ directory_pairs_ch }
+
+process processPairs {
+  input:
+  file pair_dir from directory_pairs_ch
+
+  output:
+  file 'synteny.dat' into synteny_dat_ch
+  file 'synteny.dat.ctrl' into synteny_ctrl_ch
+  file 'syntenic_gene.dat' into syntenic_gene_dat_ch
+  file 'syntenic_gene.dat.ctrl' into syntenic_gene_ctrl_ch
+
+  shell:
+  '''
+  echo Running processSynteny --pair_dir !{pair_dir}
+  processSynteny --pair_dir !{pair_dir} --test
+  '''
+}
+process loader {
+  input:
+  file synteny_dat_ch
+  file synteny_ctrl_ch
+  file syntenic_gene_dat_ch
+  file syntenic_gene_ctrl_ch
+
+  shell:
+  '''
+  runSqlldr --ctrlFile synteny_ctrl_ch --silent ALL --test
+  runSqlldr --ctrlFile syntenic_gene_ctrl_ch --silent ALL --test
+  '''
+}
