@@ -26,8 +26,8 @@ $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
 my $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $test = $gusconfig->getDbiDsn();
-print STDERR "The test db is $test.\n";
+#my $test = $gusconfig->getDbiDsn();
+#print STDERR "The test db is $test.\n";
 
 my @orgs = ($organismList) ? split (/\,\s*/, $organismList) : @{getOrganismList($dbA)};
 
@@ -40,10 +40,11 @@ foreach my $org (@orgs) {
   my $dbh = $db->getQueryHandle();
 
   my $ncbiTaxonId = getNcbiTaxonId ($org, $dbh);
+  #print STDERR "For $org, at $dbA, get ncbiTaxonId = $ncbiTaxonId\n";
+
   if ($ncbiTaxonId) {
     $seqA{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
     $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
-    $pseudoA{$org} = getPseudoGeneCount ($ncbiTaxonId, $dbh);
   }
 
   $dbh->disconnect();
@@ -55,21 +56,46 @@ foreach my $org(@orgs) {
   my $dbh = $db->getQueryHandle();
 
   my $ncbiTaxonId = getNcbiTaxonId ($org, $dbh);
+  #print STDERR "For $org, at $dbB, get ncbiTaxonId = $ncbiTaxonId\n";
+
   if ($ncbiTaxonId) {
     $seqB{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
     $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
-    $pseudoB{$org} = getPseudoGeneCount ($ncbiTaxonId, $dbh);
   }
 
   $dbh->disconnect();
 }
 
 foreach my $k (sort keys %seqA) {
-  print STDERR "$k, sequence number, $dbA = $seqA{$k}, $dbB = $seqB{$k}\n";
-  print STDERR "$k, pseudogene, $dbA = $pseudoA{$k}, $dbB = $pseudoB{$k}\n";
 
-  print STDERR "Warning... for $k, sequence number, $dbA = $seqA{$k}, NOT EQUAL $dbB = $seqB{$k}.\n" if ($seqA{$k} != $seqB{$k});
-  print STDERR "Warning... for $k, pseudogene, $dbA = $pseudoA{$k} NOT EQUAL $dbB = $pseudoB{$k}.\n" if ($pseudoA{$k} != $pseudoB{$k});
+  ## 1. check if organism available in $dbB
+  if (!$seqB{$k}) {
+    print STDERR "ERROR ... $k only available in $dbA, but not in $dbB\n";
+    next;
+  }
+
+  ## 2. check if the total number of sequence is same
+  print STDERR "\n";
+  print STDERR "$k in $dbA\n";
+  print STDERR "  sequence number = $seqA{$k}\n";
+  print STDERR "ERROR ... for $k, sequence number, $dbA = $seqA{$k}, NOT EQUAL $dbB = $seqB{$k}.\n" if ($seqA{$k} != $seqB{$k});
+
+  ## 3. check the total number of gene feature
+  foreach my $kk (sort keys %{$geneA{$k}}) {
+    print STDERR "    $kk = $geneA{$k}->{$kk}\n";
+  }
+
+  print STDERR "$k in $dbB\n";
+  print STDERR "  sequence number = $seqB{$k}\n";
+  foreach my $kk (sort keys %{$geneB{$k}}) {
+    print STDERR "    $kk = $geneB{$k}->{$kk}\n";
+  }
+
+  foreach my $t ("protein coding", "rRNA", "snRNA", "snoRNA", "", "tRNA") {
+    my $diff = ($t eq "protein coding") ? $geneA{$k}->{"$t"} + $geneA{$k}->{"pseudogene"} - $geneB{$k}->{$t} - $geneB{$k}->{"pseudogene"} : $geneA{$k}->{$t} - $geneB{$k}->{$t};
+    #print STDERR "for $k, the diff of $t = $geneA{$k}->{$t} - $geneB{$k}->{$t}\n";
+    print STDERR "ERROR ... for $k, $dbA = $geneA{$k}->{$t} NOT EQUAL $dbB = $geneB{$k}->{$t}.\n" if ($diff != 0);
+  }
 }
 
 ############
@@ -124,8 +150,6 @@ sub getNcbiTaxonId {
     $ncbiTaxonId = $val;
   }
 
-  print STDERR "For $org, get ncbiTaxonId = $ncbiTaxonId\n";
-
   return $ncbiTaxonId;
 }
 
@@ -149,8 +173,8 @@ sub getGeneFeature {
   my $sql = "select DISTINCT GENE_TYPE, count(*) from APIDBTUNING.GENEATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId group by GENE_TYPE";
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($type, $count) = $stmt->fetchrow_array()) {
-    $type =~ s/\s*encoding//;
-    $type =~ s/\s*gene$//;
+    $type =~ s/\s+encoding//;
+    $type =~ s/\s+gene$//;
     if ($type =~ /protein coding/) {
       $type = "protein coding";
     }
@@ -184,29 +208,23 @@ sub getGeneFeatureFromDotsTable {
   my $sql = "select DISTINCT name, count(*) from dots.genefeature where EXTERNAL_DATABASE_RELEASE_ID=$edrId group by name";
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($type, $count) = $stmt->fetchrow_array()) {
+#    print STDERR "in $extDbName, $type, $count\n";
     $type =~ s/\_gene$//;
-    $type =~ s/\s*gene$//;
+    $type =~ s/\s+gene$//;
     if ($type =~ /protein_coding/
         || $type =~ /coding/) {
       $type = "protein coding";
+    } elsif ($type =~ /pseudogene/i) {
+      $type = "pseudogene";
+    } elsif ($type =~ /RNA$/i) {
+    } else {
+      print STDERR "ERROR: \$type = $type has not been configured yet\n";
     }
+
     $genes{$type} = $count;
   }
 
   return \%genes;
-}
-
-sub getPseudoGeneCount {
-  my ($ncbiTaxonId, $dbh) = @_;
-  my $pseudoCount;
-
-  my $sql = "select count(*) from APIDBTUNING.GENEATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId and IS_PSEUDO=1";
-  my $stmt = $dbh->prepareAndExecute($sql);
-  while ( my ($c) = $stmt->fetchrow_array()) {
-    $pseudoCount = $c;
-  }
-
-  return $pseudoCount;
 }
 
 sub usage {
@@ -220,7 +238,7 @@ where:
   --dbA: required, e.g. inc instance
   --dbB: required, e.g. rbld instance
   --organismList: optional, comma delimited list, e.g. tgonME49, ccayNF1_C8
-  --useDotsTable: optional, Yes|yes|Y|y|No|no|N|n
+  --useDotsTable: optional, Yes|yes|Y|y|No|no|N|n, use DoTS.genefeature table instead of apidbtuning tables for gene features
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
 
 ";
