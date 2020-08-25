@@ -7,13 +7,14 @@ use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
 
 
-my ($dbA, $dbB, $gusConfigFile, $organismList, $help);
+my ($dbA, $dbB, $gusConfigFile, $organismList, $useDotsTable, $help);
 
 &GetOptions(
             'dbA=s' => \$dbA,
             'dbB=s' => \$dbB,
             'organismList=s' => \$organismList,
             'gusConfigFile=s' => \$gusConfigFile,
+            'useDotsTable=s' => \$useDotsTable,
             'help|h' => \$help
             );
 
@@ -41,7 +42,7 @@ foreach my $org (@orgs) {
   my $ncbiTaxonId = getNcbiTaxonId ($org, $dbh);
   if ($ncbiTaxonId) {
     $seqA{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
-    $geneA{$org} = getGeneFeature ($ncbiTaxonId, $dbh);
+    $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
     $pseudoA{$org} = getPseudoGeneCount ($ncbiTaxonId, $dbh);
   }
 
@@ -56,7 +57,7 @@ foreach my $org(@orgs) {
   my $ncbiTaxonId = getNcbiTaxonId ($org, $dbh);
   if ($ncbiTaxonId) {
     $seqB{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
-    $geneB{$org} = getGeneFeature ($ncbiTaxonId, $dbh);
+    $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
     $pseudoB{$org} = getPseudoGeneCount ($ncbiTaxonId, $dbh);
   }
 
@@ -149,6 +150,46 @@ sub getGeneFeature {
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($type, $count) = $stmt->fetchrow_array()) {
     $type =~ s/\s*encoding//;
+    $type =~ s/\s*gene$//;
+    if ($type =~ /protein coding/) {
+      $type = "protein coding";
+    }
+    $genes{$type} = $count;
+  }
+
+  return \%genes;
+}
+
+sub getGeneFeatureFromDotsTable {
+  my ($ncbiTaxonId, $dbh) = @_;
+  my (%genes, $abbrev, $edrId);
+
+  my $sql1 = "select o.ABBREV from SRES.TAXON t, APIDB.ORGANISM o
+              where o.TAXON_ID=t.TAXON_ID and t.NCBI_TAX_ID=$ncbiTaxonId";
+
+  my $stmt1 = $dbh->prepareAndExecute($sql1);
+  while (my ($value) = $stmt1->fetchrow_array()) {
+    $abbrev = $value;
+  }
+
+  my $extDbName = $abbrev . "_primary_genome_RSRC";
+
+  my $sql2 = "select edr.EXTERNAL_DATABASE_RELEASE_ID from SRES.EXTERNALDATABASE ed, SRES.EXTERNALDATABASERELEASE edr
+              where ed.EXTERNAL_DATABASE_ID=edr.EXTERNAL_DATABASE_ID and ed.name like '$extDbName'";
+  my $stmt2 = $dbh->prepareAndExecute($sql2);
+  while (my ($value) = $stmt2->fetchrow_array()) {
+    $edrId = $value;
+  }
+
+  my $sql = "select DISTINCT name, count(*) from dots.genefeature where EXTERNAL_DATABASE_RELEASE_ID=$edrId group by name";
+  my $stmt = $dbh->prepareAndExecute($sql);
+  while ( my ($type, $count) = $stmt->fetchrow_array()) {
+    $type =~ s/\_gene$//;
+    $type =~ s/\s*gene$//;
+    if ($type =~ /protein_coding/
+        || $type =~ /coding/) {
+      $type = "protein coding";
+    }
     $genes{$type} = $count;
   }
 
@@ -179,6 +220,7 @@ where:
   --dbA: required, e.g. inc instance
   --dbB: required, e.g. rbld instance
   --organismList: optional, comma delimited list, e.g. tgonME49, ccayNF1_C8
+  --useDotsTable: optional, Yes|yes|Y|y|No|no|N|n
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
 
 ";
