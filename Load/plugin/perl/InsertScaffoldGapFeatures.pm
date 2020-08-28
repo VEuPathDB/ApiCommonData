@@ -203,6 +203,7 @@ sub makeGapFeatureAssignments {
       $count++;
 
       $prev_pos = $pos + $gapSize;
+      $self->undefPointerCache();
     }
   }
   return $count;
