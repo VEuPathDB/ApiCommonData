@@ -40,7 +40,7 @@ foreach my $file (glob "$inputDirectory/*$suffix") {
   close FILE;
 }
 
-foreach my $suffix ('.fpkm', '.counts') {
+foreach my $suffix ('.fpkm', '.counts', '.tpm') {
     foreach my $file (glob "$inputDirectory/*$suffix") {
 	open(FILE, $file) or die "Cannot open file $file for reading: $!";
 
