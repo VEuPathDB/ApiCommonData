@@ -79,8 +79,6 @@ CREATE TABLE ApiDB.SyntenicGene (
  start_min                   number,
  end_max                     number,
  is_reversed                 number(1),
- tstarts                     VARCHAR2(4000),
- blocksizes                  VARCHAR2(1200),
  syn_na_feature_id          number(10),
  syn_organism_abbrev         varchar2(40),
  modification_date           DATE,

@@ -416,7 +416,7 @@ sub run {
     foreach my $tableName (reverse @$orderedTables) {
       # For loading EBI Core DB into Genomics sites... we cannot undo Global tables;  (DBRef is the only current example);
       # should the reader class provide a list of tables to skip?  may add that in future
-      next if($tableReaderClass eq 'ApiCommonData::Load::EBIReaderForUndo' && $GLOBAL_UNIQUE_FIELDS{$tableName});
+      next if($tableReaderClass eq 'ApiCommonData::Load::EBIReaderForUndo' && $GLOBAL_UNIQUE_FIELDS{$tableName} && $tableName ne 'GUS::Model::DoTS::AASequenceImp');
 
       $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
