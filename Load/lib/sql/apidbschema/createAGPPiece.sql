@@ -13,6 +13,7 @@ CREATE TABLE ApiDB.AGPPiece (
  gap_type varchar2(20),
  has_linkage number(1),
  linkage_evidence varchar2(20),
+ external_database_release_id NUMBER(10) NOT NULL,
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
  USER_WRITE            NUMBER(1),
