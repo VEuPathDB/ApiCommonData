@@ -12,6 +12,8 @@ use GUS::Model::ApiDB::AGPPiece;
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 use GUS::Supported::Util;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -25,6 +27,19 @@ fileArg({name => 'agpFile',
          mustExist => 1,
          format=>'Text'
         }),
+stringArg({name => 'AGPPieceExtDbName',
+       descr => 'External database name for AGP Piece',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
+stringArg({name => 'AGPPieceExtDbRlsVer',
+       descr => 'Version of external database for AGP Piece',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
 ];
 
 return $argsDeclaration;
@@ -65,6 +80,8 @@ Apidb.AGPPiece
 AFFECT
 
 my $tablesDependedOn = <<TABD;
+sres.externaldatabase
+sres.externaldatabaserelease
 TABD
 
 my $howToRestart = <<RESTART;
@@ -121,6 +138,7 @@ sub run {
 sub processFile {
   my ($self, $file) = @_;
 
+  my $AGPDbRlsId = $self->getVirDbRlsId($self->getArg('AGPPieceExtDbName'),$self->getArg('AGPPieceExtDbRlsVer'));
   open(FILE, "<$file") or die "Couldn't open file '$file':\n";
 
   my $count;
@@ -176,6 +194,7 @@ sub processFile {
                                                      gap_type => $gapType,
                                                      has_linkage => $hasLinkage,
                                                      linkage_evidence => $linkageEvidence,
+                                                     external_database_release_id => $AGPDbRlsId,
                                                     });
 
     $agpPiece->submit();
