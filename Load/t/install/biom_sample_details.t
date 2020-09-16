@@ -27,7 +27,7 @@ is_deeply(propertyDetails({s1 => {}}),
     'description' => 'Unannotated sample: s1',
     'distinct_values' => 1,
     'filter' => 'membership',
-    'parent' => 'Common value',
+    'parent' => 'Singleton',
     'parent_source_id' => 'NCIT_C64359',
     'type' => 'string'
   }
@@ -50,7 +50,7 @@ is_deeply(propertyDetails({s1 => {p=>1}}), {p => {
      'description' => 'p: 1',
      'distinct_values' => 1,
      'filter' => 'membership',
-     'parent' => 'Common value',
+     'parent' => 'Singleton',
      'parent_source_id' => 'NCIT_C64359',
      'type' => 'number'
 }}, "One value number pd");
@@ -59,7 +59,7 @@ is_deeply(propertyDetails({s1 => {p=>"v"}}), {p => {
      'description' => 'p: v',
      'distinct_values' => 1,
      'filter' => 'membership',
-     'parent' => 'Common value',
+     'parent' => 'Singleton',
      'parent_source_id' => 'NCIT_C64359',
      'type' => 'string'
 }}, "One value string pd");
@@ -68,7 +68,7 @@ is_deeply(propertyDetails({s1 => {p=>$exampleDate}}), {p => {
      'description' => "p: $exampleDate",
      'distinct_values' => 1,
      'filter' => 'membership',
-     'parent' => 'Common value',
+     'parent' => 'Singleton',
      'parent_source_id' => 'NCIT_C64359',
      'type' => 'date'
 }}, "One value date pd");
@@ -150,16 +150,16 @@ is_deeply(propertyDetails({s1 => {p=>1}, s2 => {p=>2}})->{"p"}, {
   'description' => 'p: 1 to 2',
   'distinct_values' => 2,
   'filter' => 'range',
-  'parent' => 'Numeric value',
+  'parent' => 'Number',
   'parent_source_id' => 'NCIT_C81274',
   'type' => 'number'
 }, "Two values example");
 
-is_deeply(propertyDetails({s1 => {p=>"2001-01-01"}, s2 => {p=>"2002-02-02"}})->{"p"}{"parent"}, "Date value", "Two values date");
-is_deeply(propertyDetails({s1 => {p=>"v1"}, s2 => {p=>"v2"}})->{"p"}{"parent"}, "Categorical value", "Two values text is a categorical value");
-is_deeply(propertyDetails({s1 => {p=>"v1"}, s2 => {}})->{"p"}{"parent"}, "Categorical value", "One value and one missing text is a categorical value");
-is_deeply(propertyDetails({s1 => {p=>1}, s2 => {}})->{"p"}{"parent"}, "Categorical value", "One value and one missing number is a categorical value");
+is_deeply(propertyDetails({s1 => {p=>"2001-01-01"}, s2 => {p=>"2002-02-02"}})->{"p"}{"parent"}, "Date", "Two values date");
+is_deeply(propertyDetails({s1 => {p=>"v1"}, s2 => {p=>"v2"}})->{"p"}{"parent"}, "Category", "Two values text is a categorical value");
+is_deeply(propertyDetails({s1 => {p=>"v1"}, s2 => {}})->{"p"}{"parent"}, "Category", "One value and one missing text is a categorical value");
+is_deeply(propertyDetails({s1 => {p=>1}, s2 => {}})->{"p"}{"parent"}, "Category", "One value and one missing number is a categorical value");
 my %h = map {("s$_" => {p => "v$_"})} 0..1000;
-is_deeply(propertyDetails(\%h)->{"p"}{"parent"}, "Text value", "Lots of values text is a Text value");
+is_deeply(propertyDetails(\%h)->{"p"}{"parent"}, "Text", "Lots of values text is a Text");
 
 done_testing;
