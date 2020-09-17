@@ -138,7 +138,8 @@ sub run {
 sub processFile {
   my ($self, $file) = @_;
 
-  my $AGPDbRlsId = $self->getVirDbRlsId($self->getArg('AGPPieceExtDbName'),$self->getArg('AGPPieceExtDbRlsVer'));
+  my $AGPDbRlsId = $self->getExtDbRlsId($self->getArg('AGPPieceExtDbName'),$self->getArg('AGPPieceExtDbRlsVer'));
+
   open(FILE, "<$file") or die "Couldn't open file '$file':\n";
 
   my $count;
