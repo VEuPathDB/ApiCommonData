@@ -92,9 +92,9 @@ foreach my $k (sort keys %seqA) {
   }
 
   foreach my $t ("protein coding", "rRNA", "snRNA", "snoRNA", "", "tRNA") {
-    my $diff = ($t eq "protein coding") ? $geneA{$k}->{"$t"} + $geneA{$k}->{"pseudogene"} - $geneB{$k}->{$t} - $geneB{$k}->{"pseudogene"} : $geneA{$k}->{$t} - $geneB{$k}->{$t};
-    #print STDERR "for $k, the diff of $t = $geneA{$k}->{$t} - $geneB{$k}->{$t}\n";
-    print STDERR "ERROR ... for $k, $dbA = $geneA{$k}->{$t} NOT EQUAL $dbB = $geneB{$k}->{$t}.\n" if ($diff != 0);
+    my $aTotal = ($t eq "protein coding") ? $geneA{$k}->{"$t"} + $geneA{$k}->{"pseudogene"} : $geneA{$k}->{$t};
+    my $bTotal = ($t eq "protein coding") ? $geneB{$k}->{"$t"} + $geneB{$k}->{"pseudogene"} : $geneB{$k}->{$t};
+    print STDERR "ERROR ... for $k, '$t' in $dbA = $aTotal NOT EQUAL $dbB = $bTotal.\n" if ($aTotal != $bTotal);
   }
 }
 
@@ -214,14 +214,14 @@ sub getGeneFeatureFromDotsTable {
     if ($type =~ /protein_coding/
         || $type =~ /coding/) {
       $type = "protein coding";
-    } elsif ($type =~ /pseudogene/i) {
+    } elsif ($type =~ /pseudogene/i || $type =~ /pseudogene_with_CDS/i) {
       $type = "pseudogene";
     } elsif ($type =~ /RNA$/i) {
     } else {
       print STDERR "ERROR: \$type = $type has not been configured yet\n";
     }
 
-    $genes{$type} = $count;
+    $genes{$type} += $count;
   }
 
   return \%genes;
@@ -232,7 +232,7 @@ sub usage {
 "
 A script to compare database A with database B regarding genome and annotation
 
-Usage: perl compareDatabaseForQA.pl --dbA toxo-inc --dbB toxo-rbld --organismList \"tgonME49, ccayNF1_C8\"
+Usage: perl compareDatabaseForQA.pl --dbA toxo-inc --dbB toxo-rbld --organismList 'tgonME49, ccayNF1_C8' --useDotsTable y
 
 where:
   --dbA: required, e.g. inc instance
