@@ -17,6 +17,7 @@ my @skipDatasets = (
   'metaboliteProfiles%',
   'MetaboliteProfiles%',
   'Pathways_%',
+  '%_PostLoadGenome.genomeAnalysis.loadOrfFile',
 );
 
 my @globalDatasets = (
