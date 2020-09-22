@@ -7,7 +7,7 @@ use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use CBIL::Util::PropertySet;
 use GUS::Community::GeneModelLocations;
-
+use File::Basename;
 use Data::Dumper;
 
 my ($gusConfigFile,$verbose,$outFile,$project,$genomeExtDbRlsSpec,$soTermName,$soExclude);
@@ -55,29 +55,39 @@ my $genomeExtDbRlsId = &getExtDbRlsIdFromSpec($dbh, $genomeExtDbRlsSpec);
 my $geneModelLocations = GUS::Community::GeneModelLocations->new($dbh, $genomeExtDbRlsId, 1, $soTermName, $soExclude);
 my @geneSourceIds = sort @{$geneModelLocations->getAllGeneIds()};
 
+my $maxIntronLen = 0;
+
 foreach my $geneSourceId (@geneSourceIds) {
     my $seqId;
     my $exons;
     my $feature = $geneModelLocations->bioperlFeaturesFromGeneSourceId($geneSourceId);
     
     foreach my $subFeature (@{$feature}) {
-        if ($subFeature->primary_tag() ne 'exon') {
-	    next;
-	}
-	
-	if (!defined($seqId)) {
-	    $seqId = $subFeature->seq_id(); 
-	}
-	elsif ($seqId ne $subFeature->seq_id()) {
-	    die "More than one sequence_id for gene $geneSourceId\n";
-	}
-	my $start = $subFeature->start();
-	my $end = $subFeature->end();
-	push(@{$exons}, "$start\t$end");
+        if ($subFeature->primary_tag() eq 'exon'){
+            if (!defined($seqId)) {
+                $seqId = $subFeature->seq_id(); 
+            }
+            elsif ($seqId ne $subFeature->seq_id()) {
+                die "More than one sequence_id for gene $geneSourceId\n";
+            }
+            my $start = $subFeature->start();
+            my $end = $subFeature->end();
+            push(@{$exons}, "$start\t$end");
+        }
+        elsif ($subFeature->primary_tag() eq 'transcript') {
+            foreach my $intron ($subFeature->introns()) {
+                my $intronLocation = $intron->location();
+                my $intronLength = abs($intronLocation->end() - $intronLocation->start());
+                $maxIntronLen = ($intronLength > $maxIntronLen) ? $intronLength : $maxIntronLen;
+            }
+        }
     }
     printFootprint($project, $geneSourceId, $seqId, $exons);
- 
 }
+$maxIntronLen = $maxIntronLen * 1.5;
+$maxIntronLen = ($maxIntronLen > 500000) ? 500000 : $maxIntronLen;
+$maxIntronLen = int($maxIntronLen + 0.5);
+printIntronLen($maxIntronLen, $outFile);
 
 ##subroutines
 
@@ -153,6 +163,14 @@ sub printFootprint {
 	}
     }
     print OUT ("$project\t$geneSourceId\t$length\t$seqId\t$span\n");
+}
+
+sub printIntronLen {
+    my ($maxIntronLen, $outFile) = @_;
+    my $dir = dirname($outFile);
+    open(INTRON,">$dir/maxIntronLen");
+    print INTRON $maxIntronLen;
+    close(INTRON);
 }
 
 sub exonSort {
