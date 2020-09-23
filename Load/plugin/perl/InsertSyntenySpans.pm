@@ -1035,8 +1035,7 @@ sub writeConfigFile {
 
   my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } grep { lc($_) ne 'tstarts' && lc($_) ne 'blocksizes'} @$attributeList;
   my $fieldsString = join(",\n", @fields);
-  print $ctrlFh "UNRECOVERABLE
-LOAD DATA
+  print $ctrlFh "LOAD DATA
 CHARACTERSET UTF8 LENGTH SEMANTICS CHAR
 INFILE '$datFileName' \"str '\\n'\"
 APPEND
