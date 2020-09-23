@@ -27,7 +27,7 @@ process loader {
 
   shell:
   '''
-  runSqlldr --ctrlFile synteny_ctrl_ch --silent ALL
-  runSqlldr --ctrlFile syntenic_gene_ctrl_ch --silent ALL
+  runSqlldr --ctrlFile !{synteny_ctrl_ch} --silent ALL
+  runSqlldr --ctrlFile !{syntenic_gene_ctrl_ch} --silent ALL
   '''
 }
