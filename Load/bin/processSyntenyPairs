@@ -3,6 +3,8 @@
 Channel.fromPath(params.mercatorPairsDir + '/**', type: 'dir', maxDepth: 0).set{ directory_pairs_ch }
 
 process processPairs {
+  errorStrategy 'terminate'
+  maxErrors 1
   input:
   file pair_dir from directory_pairs_ch
 
@@ -14,11 +16,13 @@ process processPairs {
 
   shell:
   '''
-  echo Running processSynteny --pair_dir !{pair_dir}
-  processSynteny --pair_dir !{pair_dir}
+  echo Running processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
+  processSynteny --pair_dir !{params.mercatorPairsDir}/!{pair_dir}
   '''
 }
 process loader {
+  errorStrategy 'terminate'
+  maxErrors 1
   input:
   file synteny_dat_ch
   file synteny_ctrl_ch
