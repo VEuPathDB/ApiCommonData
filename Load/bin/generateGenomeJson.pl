@@ -103,12 +103,37 @@ while (<IN>) {
       $organismDetails{provider}{name} = $items[12];
     }
 
-    if ($organismAbbrev eq "gassAWB" || $organismAbbrev eq "gassBGS" || $organismAbbrev eq "gassEP15"
-	|| $organismAbbrev eq "gassA2DH" || $organismAbbrev eq "gassAAS175"
-	|| $organismAbbrev eq "gassBGS_B" || $organismAbbrev eq "gassBBAH15c1"
-       ) {
+#    if ($organismAbbrev eq "gassAWB" || $organismAbbrev eq "gassBGS" || $organismAbbrev eq "gassEP15"
+#	|| $organismAbbrev eq "gassA2DH" || $organismAbbrev eq "gassAAS175"
+#	|| $organismAbbrev eq "gassBGS_B" || $organismAbbrev eq "gassBBAH15c1"
+#       ) {
+#      $organismDetails{species}{taxonomy_id} = 5740;
+#    }
+    # hard-code for GiardiaDB
+    if ($organismAbbrev eq "gassAWB") {
+      $organismDetails{species}{taxonomy_id} = 184922;
+      $organismDetails{species}{strain} = "isolate WB";
+    } elsif ($organismAbbrev eq "gassBGS") {
+      $organismDetails{species}{taxonomy_id} = 598745;
+      $organismDetails{species}{strain} = "isolate GS";
+    } elsif ($organismAbbrev eq "gassEP15") {
+      $organismDetails{species}{taxonomy_id} = 658858;
+      $organismDetails{species}{strain} = "isolate P15";
+    } elsif ($organismAbbrev eq "gassA2DH") {
+      $organismDetails{species}{scientific_name} = "Giardia Assemblage A2";
+      $organismDetails{species}{taxonomy_id} = 5741;
+      $organismDetails{species}{strain} = "isolate DH";
+    } elsif ($organismAbbrev eq "gassAAS175") {
+      $organismDetails{species}{taxonomy_id} = 5741;
+      $organismDetails{species}{strain} = "isolate AS175";
+    } elsif ($organismAbbrev eq "gassBGS_B") {
       $organismDetails{species}{taxonomy_id} = 5740;
+      $organismDetails{species}{strain} = "isolate GS_B";
+    } elsif ($organismAbbrev eq "gassBBAH15c1") {
+      $organismDetails{species}{taxonomy_id} = 5740;
+      $organismDetails{species}{strain} = "isolate BAH15c1";
     }
+
   }
 }
 close IN;
