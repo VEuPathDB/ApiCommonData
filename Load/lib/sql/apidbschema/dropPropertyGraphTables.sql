@@ -17,15 +17,39 @@ WHERE lower(name) =  'vertexattributes'
 
 
 
-
-DROP TABLE apidb.EdgeLabel;
-DROP SEQUENCE apidb.EdgeLabel_sq;
+DROP TABLE apidb.EdgeAttributeUnit;
+DROP SEQUENCE apidb.EdgeAttributeUnit_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'edgelabel'
+WHERE lower(name) =  'edgeattributeunit'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
+DROP TABLE apidb.VertexAttributeUnit;
+DROP SEQUENCE apidb.VertexAttributeUnit_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'vertexattributeunit'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+
+DROP TABLE apidb.EdgeType;
+DROP SEQUENCE apidb.EdgeType_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'edgetype'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+
+DROP TABLE apidb.VertexType;
+DROP SEQUENCE apidb.VertexType_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'vertextype'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
 
 
 DROP TABLE apidb.PropertyGraph;
