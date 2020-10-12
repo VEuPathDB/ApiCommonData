@@ -100,4 +100,13 @@ unlike($out, qr/UNGROUPED/, "Filters out artifact rows");
 like($out, qr/description: homolactic fermentation/, "Description");
 unlike($out, qr/description: NO_NAME/, "NO_NAME skipped as description");
 
+like($out, qr/Escherichia coli/, "Fix the underscore in species name");
+
+diag ("Do these look okay?"); 
+diag (ApiCommonData::Load::MBioResults::unmessBiobakerySpecies("Enterobacter_cloacae_complex"));
+diag (ApiCommonData::Load::MBioResults::unmessBiobakerySpecies("Veillonella_sp_T11011_6"));
+diag (ApiCommonData::Load::MBioResults::unmessBiobakerySpecies("Actinomyces_sp_oral_taxon_181"));
+diag (ApiCommonData::Load::MBioResults::unmessBiobakerySpecies("[Collinsella]_massiliensis"));
+diag (ApiCommonData::Load::MBioResults::maybeGoodMetaphlanRow("k__Bacteria|p__Actinobacteria|c__Actinobacteria|o__Actinomycetales|f__Actinomycetaceae|g__Varibaculum|s__Varibaculum_cambriense
+"));
 done_testing;

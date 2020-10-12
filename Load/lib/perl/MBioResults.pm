@@ -202,7 +202,7 @@ sub detailsFromRowName {
     $species = $row;
     $species =~ s{^.*\|}{};
     $species =~ s{^.*s__}{};
-    $species =~ tr{_}{ };
+    $species = unmessBiobakerySpecies($species);
   }
 
   return {name => $name, description => $description, species => $species};
@@ -217,12 +217,36 @@ sub prepareWgsTaxa {
   my @dataPairsResult;
   for my $p (@{$dataPairs}) {
     my ($row, $h) = @$p;
-    next if $row eq 'UNKNOWN';
-    next unless $row =~ s{k__(.*)\|p__(.*)\|c__(.*)\|o__(.*)\|f__(.*)\|g__(.*)\|s__(.*)}{$1;$2;$3;$4;$5;$6;$7};
+    $row = maybeGoodMetaphlanRow($row);
+    next unless $row;
     push @rows, $row;
     push @dataPairsResult, [$row, $h];
   }
   return \@rows, \@dataPairsResult;
+}
+
+# Biobakery tools use mangled species names, with space, dash, and a few others changed to underscore
+# Try make them good enough again
+sub unmessBiobakerySpecies {
+  my ($species) = @_;
+# Species with IDs
+  $species =~ s{_sp_}{ sp. };
+
+# genus, maybe a different genus in []
+  $species =~ s{^(\[?[A-Z][a-z]+\]?)_}{$1 };
+
+# last word, like "Ruminococcus gnavus group"
+  $species =~ s{_([a-z]+)$}{ $1};
+
+  $species =~ s{oral_taxon_(\d+)$}{oral taxon $1};
+  return $species;
+}
+
+sub maybeGoodMetaphlanRow {
+  my ($row) = @_;
+  return if $row eq 'UNKNOWN';
+  return unless $row =~ m{k__(.*)\|p__(.*)\|c__(.*)\|o__(.*)\|f__(.*)\|g__(.*)\|s__(.*)};
+  return join(";", $1, $2, $3, $4, $5, $6, unmessBiobakerySpecies($7));
 }
 
 sub prepareFunctionAbundance {
