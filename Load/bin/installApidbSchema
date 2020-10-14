@@ -166,10 +166,11 @@ if ($create) {
   }
 
 } elsif ($dropApiDB) {
-  &dropSchemaSet($login, $password, $db, "'APIDB','APIDBTUNING'");
+  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','CHEBI','HMDB'");
 
 } elsif ($dropGUS) {
-  &dropSchemaSet($login, $password, $db, "'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY'");
+  &dropSchemaSet($login, $password, $db,
+                 "'CORE','DOTS','MODEL','PLATFORM','RESULTS','SRES','STUDY','COREVER','DOTSVER','MODELVER','PLATFORMVER','RESULTSVER','SRESVER','STUDYVER'");
 
 }
 
@@ -214,6 +215,37 @@ sub runCmd {
     }
 }
 
+sub dropSchemaSetTables {
+  my ($login, $password, $db, $schemaSet) = @_;
+
+  my $dsn = "dbi:Oracle:" . $db;
+  my $dbh = DBI->connect(
+                $dsn,
+                $login,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  print STDERR "\nfixing to drop tables in schema set \"$schemaSet\"\n" if $verbose;
+
+  my $stmt = $dbh->prepare(<<SQL);
+    select 'drop ' || object_type || ' ' || owner || '.' || object_name
+           || decode(object_type, 'TABLE', ' CASCADE CONSTRAINTS', '')
+    from all_objects
+    where owner in ($schemaSet)
+      and object_type not in ('INDEX', 'TRIGGER')
+SQL
+
+  $stmt->execute()
+    or addErrorLog("\n" . $dbh->errstr . "\n");
+
+  while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
+    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+    $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+  }
+
+}
+
 sub dropSchemaSet {
   my ($login, $password, $db, $schemaSet) = @_;
 
@@ -225,13 +257,12 @@ sub dropSchemaSet {
                 { PrintError => 1, RaiseError => 0}
                 ) or die "Can't connect to the database: $DBI::errstr\n";
 
-  print STDERR "\nfixing to drop tables in schema set\"$schemaSet\"\n" if $verbose;
+  print STDERR "\nfixing to drop schemas in set \"$schemaSet\"\n" if $verbose;
 
   my $stmt = $dbh->prepare(<<SQL);
-    select 'drop ' || object_type || ' ' || owner || '.' || object_name
-           || decode(object_type, 'TABLE', ' CASCADE CONSTRAINTS', '')
-    from all_objects
-    where owner in ($schemaSet)
+    select 'drop user ' || username || ' cascade'
+    from all_users
+    where username in ($schemaSet)
 SQL
 
   $stmt->execute()
