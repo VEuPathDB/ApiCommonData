@@ -43,6 +43,7 @@ sub getSamples                 { $_[0]->{samples} }
 
 sub getIsStrandSpecific        { $_[0]->{isStrandSpecific} }
 sub getSeqIdPrefix             { $_[0]->{seqIdPrefix}}
+sub getPatch                   {$_[0]->{patch} }
 
 sub getSkipDeSeq                { $_[0]->{skipDeSeq} }
 #-------------------------------------------------------------------------------
@@ -72,21 +73,24 @@ sub munge {
     my $profileSetName = $self->getProfileSetName();
 
     my $skipDeSeq = $self->getSkipDeSeq();
+    my $patch = $self->getPatch();
     
-    foreach my $sampleName (keys %$samplesHash) {
-	my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
-									 inputs => $samplesHash->{$sampleName},
-									 mainDirectory => $self->getMainDirectory,
-									 profileSetName => $profileSetName,
-									 samplesHash => $samplesHash,
-                                     sourceIdPrefix => $self->getSeqIdPrefix,
-									 suffix => 'junctions.tab'});
-	$intronJunctions->setProtocolName("GSNAP/Junctions");
-	$intronJunctions->setDisplaySuffix(" [junctions]");
-	$intronJunctions->setTechnologyType($self->getTechnologyType());
-	
-	$intronJunctions->munge();
-       }
+    if (! $patch) {
+        foreach my $sampleName (keys %$samplesHash) {
+        my $intronJunctions = ApiCommonData::Load::IntronJunctionsEbi->new({sampleName => $sampleName,
+                                         inputs => $samplesHash->{$sampleName},
+                                         mainDirectory => $self->getMainDirectory,
+                                         profileSetName => $profileSetName,
+                                         samplesHash => $samplesHash,
+                                         sourceIdPrefix => $self->getSeqIdPrefix,
+                                         suffix => 'junctions.tab'});
+        $intronJunctions->setProtocolName("GSNAP/Junctions");
+        $intronJunctions->setDisplaySuffix(" [junctions]");
+        $intronJunctions->setTechnologyType($self->getTechnologyType());
+        
+        $intronJunctions->munge();
+        }
+    }
     
     foreach my $quantificationType ('htseq-union') {    
     
@@ -177,34 +181,7 @@ sub munge {
             my $degComp = $Crep1;
 
             if((@{$dataframeHash{$reference}} < 2) || (@{$dataframeHash{$comparator}} < 2 )) {
-                next;
-            #TODO: come back to this as we aren't using for b47 vector datasets
-            #if($doDegSeq) {
-            #    die "DEGseq is not yet available for EBI RNAseq.  Please contact data dev.\n";
-            #    print Dumper "$reference or $comparator do not have enough replicates to be anaylsed via DESeq2....so will be analysed via DEGseq\n";
-    #	#		my $suffix = 'differentialExpressionDEGseq';
-            #    my $dataframeHashref = \%dataframeHash;
-            #    
-            #    if ($isStrandSpecific) {
-        #		die, "TO DO - DEGSeq is not currently set to work on strand specific datasets. Please contact dataDev";
-    #		    }
-        #	    else {
-        #		my $DEGseqAnalysis = ApiCommonData::Load::DEGseqAnalysis->new({sampleName => $sampleNameClean,
-    #										       mainDirectory => $self->getMainDirectory,
-    #										       samplesHash => $dataframeHashref,
-    #										       reference => $degRef,
-    #										       comparator => $degComp,
-    #										       suffix => 'UnstrandedDEGseqAnalysis',
-    #										       profileSetName => $profileSetName});
-    #			$DEGseqAnalysis->setProtocolName("GSNAP/DEGseqAnalysis");
-    #			$DEGseqAnalysis->setDisplaySuffix( ' [DEGseqAnalysis - unstranded - unique]');
-    #			$DEGseqAnalysis->setTechnologyType($self->getTechnologyType());
-    #			$DEGseqAnalysis->munge();
-    #		    }
-    		#}
-    #		else {
-    #		    print Dumper "skipping those that we dont want to run DEGSeq analysis for";
-    #		}
+                next; #placeholder for DEGseq
             }
             else { 
                 my $suffix = 'differentialExpression';
