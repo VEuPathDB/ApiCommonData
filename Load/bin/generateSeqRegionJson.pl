@@ -239,6 +239,30 @@ sub getGeneticCodeFromOrganismAbbrev {
   $organismInfo->retrieveFromDB();
   my $projectName = $organismInfo->getProjectName();
 
+  ## manually set up $projectName for those annotation loaded into EuTestDB
+  if ($projectName eq "EuTestDB") {
+    if ($organismAbbrev eq "pberANKA"
+	|| $organismAbbrev eq "pchachabaudi"
+	|| $organismAbbrev eq "pfal3D7"
+	|| $organismAbbrev eq "pgal8A"
+	|| $organismAbbrev eq "pknoH"
+	|| $organismAbbrev eq "pmalUG01"
+	|| $organismAbbrev eq "povaGH01"
+	|| $organismAbbrev eq "preiCDC"
+	|| $organismAbbrev eq "prelSGS1-like"
+	|| $organismAbbrev eq "pvivP01"
+	|| $organismAbbrev eq "pyoeyoelii17X"
+       ) {
+      $projectName = "PlasmoDB";
+    } elsif ( $organismAbbrev eq "mbalATCC30984") {
+      $projectName = "AmoebaDB";
+    } elsif ( $organismAbbrev eq "treeQM6a2017") {
+      $projectName = "FungiDB";
+    } else {
+      die "ERROR: projectName EuTestDB found. Please reset projectName.........\n";
+    }
+  }
+
   my $sql;
   if ($seqType =~ /api/i) {
     ## due to no plastid genetic code availabe in db,

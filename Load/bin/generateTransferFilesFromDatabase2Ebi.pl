@@ -131,7 +131,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   }
 
   ## 3) make genome metadata json file
-  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir";
+  my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir --gusConfigFile $gusConfigFile";
   $genomeJsonCmd = "generateGenomeJsonFromDatabase.pl --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir" if ($component =~ /vector/i);
   system($genomeJsonCmd);
 

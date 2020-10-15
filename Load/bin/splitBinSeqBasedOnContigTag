@@ -28,7 +28,7 @@ while (<IN>) {
   my @items = split(/\t/, $_);
   if ( ($items[0] eq $binSeqName) && ($items[2] eq $tagName) ) {
     my $id;
-    if ($items[8] =~ /ID=(.+?)\;/ || $items[8] =~ /Name=(.+?)(;|$)/) {
+    if ($items[8] =~ /ID=(.+?)(\;|$)/ || $items[8] =~ /Name=(.+?)(;|$)/) {
       $id = $1;
       $id =~ s/\:/\_/g;
     }
