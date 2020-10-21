@@ -137,6 +137,20 @@ SQL
   $stmt->finish();
 }
 
+## extraA: check if na_sequence_id is not null in DOTS.EXONFEATURE
+my $sql = <<SQL;
+            select ef.SOURCE_ID from DOTS.EXONFEATURE ef where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId and ef.NA_SEQUENCE_ID is null
+            and EXISTS (SELECT 1 FROM   dots.nafeature gf WHERE  gf.na_feature_id = ef.parent_id)
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($errorSourceId) = $stmt->fetchrow_array();
+if ($errorSourceId) {
+  die "ERROR... die in talbe DOTS.EXONFEATURE, NA_SEQUENCE_ID is NULL for $errorSourceId. Double check the loading.......\n";
+}
+$stmt->finish();
+
+
 ## C. check the total number of sequence
 ## select * from dots.externalnasequence where external_database_release_id=358
 my $sql = <<SQL;
