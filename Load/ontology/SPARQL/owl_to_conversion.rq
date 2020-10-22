@@ -216,11 +216,50 @@ WHERE {
             ?IRI obo:EUPATH_0001006 ?rep .
         }
 	}
-
 	UNION
 	{?IRI rdfs:label ?tlabel .
 	?IRI rdfs:subClassOf* obo:EUPATH_0000609 .
 	BIND ("Sample" AS ?cate) .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001003 ?cDescription .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
+	}
+	UNION
+	{?IRI rdfs:label ?tlabel .
+	?IRI rdfs:subClassOf* obo:EUPATH_0035127 .
+	BIND ("Community" AS ?cate) .
     	FILTER not exists { 
       		?IRI owl:deprecated ?dep .
     	}

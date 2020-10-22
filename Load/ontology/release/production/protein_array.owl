@@ -7,7 +7,9 @@
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/protein_array.owl"/>
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/protein_array.owl">
+        <owl:versionInfo>2020-09-11</owl:versionInfo>
+    </owl:Ontology>
     
 
 
@@ -148,6 +150,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/ENVO_00000004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
+        <obo:IAO_0000115>Country of sample collection</obo:IAO_0000115>
+        <obo:ICEMR_temp>Country</obo:ICEMR_temp>
+        <rdfs:label>Country</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000047 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000047">
@@ -248,7 +261,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000309">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
-        <rdfs:label xml:lang="en">Symptoms or signs</rdfs:label>
+        <rdfs:label xml:lang="en">Signs and symptoms</rdfs:label>
     </owl:Class>
     
 
@@ -842,7 +855,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000659"/>
         <obo:IAO_0000115>Date sample collected</obo:IAO_0000115>
         <obo:ICEMR_temp>Date sample collected</obo:ICEMR_temp>
-        <rdfs:label>Collection date</rdfs:label>
+        <rdfs:label>Sample collection date</rdfs:label>
     </owl:Class>
     
 
@@ -865,17 +878,6 @@
         <obo:IAO_0000115>GPS coordinates of sample colleciton - longitude in decimal degrees (DD)</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS latitude</obo:ICEMR_temp>
         <rdfs:label>Longitude (degrees)</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OBI_0001627 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
-        <obo:IAO_0000115>Country of sample collection</obo:IAO_0000115>
-        <obo:ICEMR_temp>Country</obo:ICEMR_temp>
-        <rdfs:label>Country</rdfs:label>
     </owl:Class>
     
 
@@ -978,7 +980,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
         <obo:IAO_0000115>Date of birth if available and known to be accurate</obo:IAO_0000115>
         <obo:ICEMR_temp>Date of birth</obo:ICEMR_temp>
-        <rdfs:label>Date of birth</rdfs:label>
+        <rdfs:label>Birth date</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 

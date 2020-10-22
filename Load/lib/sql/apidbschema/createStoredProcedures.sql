@@ -869,5 +869,28 @@ show errors;
 GRANT execute ON apidb.delete_by_invocation_id TO public;
 
 -------------------------------------------------------------------------------
+create or replace procedure apidb.insert_user_allstudies (userid IN NUMBER)
+is
+begin
+    for i in (select vu.dataset_presenter_id
+                from apidbtuning.datasetpresenter dp, studyaccess.ValidDatasetUser@acctdbn.profile vu  
+               where dp.dataset_presenter_id = vu.dataset_presenter_id
+              MINUS
+              select dataset_presenter_id
+                from studyaccess.ValidDatasetUser@acctdbn.profile vu  
+               where vu.user_id = userid
+             )
+    loop
+       dbms_output.put_line( ' Inserting:  ' || i.dataset_presenter_id);
+       insert into studyaccess.ValidDatasetUser@acctdbn.profile (dataset_presenter_id, user_id, restriction_level)
+       values(i.dataset_presenter_id,userid,'public');
+    end loop;
+end;
+/
+
+show errors
+GRANT execute ON apidb.insert_user_allstudies TO public;
+
+-------------------------------------------------------------------------------
 
 exit

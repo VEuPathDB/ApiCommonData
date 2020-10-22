@@ -39,16 +39,34 @@ sub storeFileUnderUserDatasetId {
 
   $self->{userDatasetsStorage}->storeUserDataset(
     $userDatasetId,
-    biomFileContents(sub {$self->{ncbiTaxons}->findTaxonForLineage(@_)}, $biomPath, $dataPath)
+    biomFileContentsLazy(sub {$self->{ncbiTaxons}->findTaxonForLineage(@_)}, $biomPath, $dataPath)
   );
 }
 
 # This sub has a callback instead of $self so as not to depend on the database 
+# Used for the unit test
 sub biomFileContents {
+
+  my($datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, $getAbundancesByIndex)
+   = biomFileContentsLazy(@_);
+
+  my %abundancesBySampleName;
+  my %aggregatedAbundancesBySampleName;
+
+  for my $ix (0 .. $#$sampleNamesInOrder) {
+    my $sampleName = $sampleNamesInOrder->[$ix];
+    my ($abundances, $aggregatedAbundances) = $getAbundancesByIndex->($ix);
+    $abundancesBySampleName{$sampleName} = $abundances;
+    $aggregatedAbundancesBySampleName{$sampleName} = $aggregatedAbundances;
+  }
+  
+  return $datasetSummary, $propertyDetailsByName, $sampleNamesInOrder, $sampleDetailsByName, \%abundancesBySampleName, \%aggregatedAbundancesBySampleName;
+}
+sub biomFileContentsLazy {
   my ($findTaxonForLineageCb, $biomPath, $dataPath) = @_;
 
-  my $unassignedLevel = "unassigned";
-  my @levelNames = qw/kingdom phylum class order family genus species/;
+  our $unassignedLevel = "unassigned";
+  our @levelNames = qw/kingdom phylum class order family genus species/;
 
   my $lineages = ApiCommonData::Load::Biom::Lineages->new($unassignedLevel, \@levelNames, 200);
 
@@ -58,7 +76,7 @@ sub biomFileContents {
 
   $log->info("read doc from $biomPath");
 
-  my %dataByColumnIndexThenRowIndex;
+  our %dataByColumnIndexThenRowIndex;
   if ($dataPath) {
     open my $fh2, '<', $dataPath or die "Can't open file $!: $dataPath";
     while(<$fh2>){
@@ -77,8 +95,8 @@ sub biomFileContents {
     $log->info("read data from doc");
   }
 
-  my @rows = @{$doc->{rows}};
-  my %rowMetadataByName = map {
+  our @rows = @{$doc->{rows}};
+  our %rowMetadataByName = map {
     (
       $_->{id} => ($_->{metadata} // {})
     )x!!$_->{id}
@@ -86,13 +104,13 @@ sub biomFileContents {
 
   $log->info(sprintf ("%s / %s rows have metadata for taxonomy info", (scalar @rows), (scalar keys %rowMetadataByName)));
 
-  my %lineages;
+  our %lineages;
   for my $taxonName (sort keys %rowMetadataByName){
       $lineages{$taxonName} = $lineages->getTermsFromObject($taxonName, $rowMetadataByName{$taxonName});
   }
   
   my @lineagesThatMightHaveTaxons = uniq map {$_->{lineage}} values %lineages;
-  my %ncbiTaxonsByLineage;
+  our %ncbiTaxonsByLineage;
   for my $i (0..$#lineagesThatMightHaveTaxons){
     $log->info("Checked $i / $#lineagesThatMightHaveTaxons lineages against NCBI")
       if $i && ! $i %1000;
@@ -102,7 +120,7 @@ sub biomFileContents {
   }
   $log->info(sprintf("Found ncbi taxa for %s / %s lineages checked", (scalar grep {$_} values %ncbiTaxonsByLineage), (scalar @lineagesThatMightHaveTaxons)));
 
-  my @columns = @{$doc->{columns}};
+  our @columns = @{$doc->{columns}};
   my %columnMetadataByName = map {
     (
       $_->{id} => ($_->{metadata} // {})
@@ -113,17 +131,11 @@ sub biomFileContents {
 
   my ($propertyDetailsByName, $sampleDetailsByName) = ApiCommonData::Load::Biom::SampleDetails::expandSampleDetailsByName(\%columnMetadataByName);
 
-  my @sampleNamesInOrder;
-  my %abundancesBySampleName;
-  my %aggregatedAbundancesBySampleName;
-
-  for my $columnIndex (0..$#columns){
-    $log->info("Aggregated abundances for $columnIndex / $#columns columns")
-      if $columnIndex && ! $columnIndex % 1000;
+  my @sampleNamesInOrder = map {$columns[$_]->{id}}  0..$#columns;
+  sub getAbundancesByIndex {
+    my ($columnIndex) = @_; 
 
     my $sampleName = $columns[$columnIndex]->{id};
-
-    push @sampleNamesInOrder, $sampleName;
 
     my $totalCountForSample = sum values %{$dataByColumnIndexThenRowIndex{$columnIndex}};
 
@@ -142,15 +154,13 @@ sub biomFileContents {
 	 relative_abundance =>  $count / $totalCountForSample,
       }; 
     }
-    $abundancesBySampleName{$sampleName} = [sort {$a->{lineage} cmp $b->{lineage}} @abundances];
-    $aggregatedAbundancesBySampleName{$sampleName} = aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
+    return [sort {$a->{lineage} cmp $b->{lineage}} @abundances], aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
   }
-  $log->info("Aggregated abundances for $#columns columns");
 
   # samples/observations are BIOM2 verbiage
   my $datasetSummary = sprintf("Dataset with %s %s in %s sample%s", (scalar @rows),(@rows == 1 ? "taxon" : "different taxa"),(scalar @columns), (@columns==1 ? "": "s"));
 
-  return $datasetSummary, $propertyDetailsByName, \@sampleNamesInOrder, $sampleDetailsByName, \%abundancesBySampleName, \%aggregatedAbundancesBySampleName;
+  return $datasetSummary, $propertyDetailsByName, \@sampleNamesInOrder, $sampleDetailsByName, \&getAbundancesByIndex;
 }
 
 sub aggregateAbundances {

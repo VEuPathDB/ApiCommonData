@@ -106,7 +106,7 @@ print "isFamilyRepresentative\t";
 print "familyRepOrganismAbbrev\t";
 print "familyNcbiTaxonIds\t";
 print "familyNameForFiles\t";
-print "taxonHierarchyForBlastxFilter\t";
+print "taxonFilterForNRProteinsAlignedToGenome\t";
 print "soTerm\t";
 print "haveChromosome\t";
 print "haveSupercontig\t";

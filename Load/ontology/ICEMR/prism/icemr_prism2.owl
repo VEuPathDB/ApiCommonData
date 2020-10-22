@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/icemr/icemr_prism2.owl#"
      xml:base="http://purl.obolibrary.org/obo/icemr/icemr_prism2.owl"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_prism2.owl"/>
     
 
@@ -78,6 +78,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
@@ -131,19 +139,13 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/DOID_13250 -->
+    <!-- http://purl.obolibrary.org/obo/ENVO_00000004 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_13250">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diarrhea</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diarrhea</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-Yes
-0-No
-9-Cannot assess</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea</rdfs:label>
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">country</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable, derived</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
     </owl:Class>
     
 
@@ -1933,9 +1935,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011932">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <obo:EUPATH_0001002>household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
-        <rdfs:label xml:lang="en">Socioeconomic status</rdfs:label>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Socioeconomic status</rdfs:label>
     </owl:Class>
     
 
@@ -3823,6 +3825,15 @@ Last night?</obo:EUPATH_0001003>
     
 
 
+    <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/HP_0000952 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0000952">
@@ -3853,6 +3864,24 @@ Last night?</obo:EUPATH_0001003>
 9-Cannot assess</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vomiting</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/HP_0002014 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0002014">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0021002"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diarrhea</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PRISM 2 expanded database through February 28th 2019.dta</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diarrhea</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-Yes
+0-No
+9-Cannot assess</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DOID_13250</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea</rdfs:label>
     </owl:Class>
     
 
@@ -4199,9 +4228,26 @@ Last night?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000117">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">term editor</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/IAO_0000119">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition source</rdfs:label>
+    </rdf:Description>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
 

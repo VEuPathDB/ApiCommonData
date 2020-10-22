@@ -689,6 +689,67 @@ sub removeShortUtrs {
   return $bioFeatures;
 }
 
+## for mRNA without CDS feature, set the gene as pseudogene
+sub setAsPseudogeneIfmRNAWithoutCDS {
+  my ($bioFeatures) = @_;
+
+  my (%bioFeatureHash);
+  foreach my $bioFeature (@{$bioFeatures}) {
+    my $seqId = $bioFeature->seq_id();
+    push @{$bioFeatureHash{$seqId}}, $bioFeature;
+  }
+
+  foreach my $k (sort keys %bioFeatureHash) {
+    OUTER: foreach my $gene (@{$bioFeatureHash{$k}}) {
+      my ($gId) = $gene->get_tag_values("ID") if ($gene->has_tag('ID'));
+      my $gType = $gene->primary_tag();
+      next if ($gType ne "gene"); ## only for gene
+      my $mRNACount = 0;
+      foreach my $transcript ($gene->get_SeqFeatures) {
+	my $tType = $transcript->primary_tag();
+
+	## only check mRNAs
+	if ($tType ne "mRNA") {
+	  next OUTER;
+	}
+
+	my @exons = $transcript->get_SeqFeatures;
+	my $cdsCount = 0;
+	foreach my $exon (@exons) {
+	  my ($eId) = $exon->get_tag_values('ID') if ($exon->has_tag('ID'));
+	  my $eType = $exon->primary_tag();
+	  $cdsCount++ if ($eType eq "CDS");
+	}
+
+	if ($cdsCount == 0) {
+	  # if no CDS, assign mRNA to pseudogenic_transcript, and exon to pseudogenic_exon
+	  foreach my $exon (@exons) {
+	    # assign exon to pseudogenic_exon
+	    $exon->primary_tag('pseudogenic_exon');
+	  }
+	  # assign mRNA to pseudogenic_transcript
+	  $transcript->primary_tag('pseudogenic_transcript');
+	  $transcript->remove_tag('biotype');
+	  $transcript->add_tag_value('biotype', "pseudogenic_transcript");
+	  $transcript->add_tag_value('is_pseudo', "1");
+	} else {
+	  $mRNACount++;
+	}
+      } # endo of each transcript
+
+      # if no mRNA, assign gene to pseudogene
+      if ($mRNACount == 0) {
+	# assign gene to pseudogene
+	$gene->primary_tag('pseudogene');
+	$gene->remove_tag('biotype');
+	$gene->add_tag_value('biotype', "pseudogene");
+      }
+    } # end of each gene
+
+  }
+  return $bioFeatures;
+}
+
 sub revcomp {
   my $seq = shift;
   my $rev = reverse($seq);

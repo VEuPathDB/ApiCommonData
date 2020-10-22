@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_gems1a.owl">
-        <owl:versionInfo>2020-07-15</owl:versionInfo>
+        <owl:versionInfo>2020-09-21</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -133,6 +133,22 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Num</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Respiratory rate (breaths/min)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ENVO_00000004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000004">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SITE</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Categorical</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
     </owl:Class>
     
 
@@ -4831,8 +4847,8 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011932">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
-        <obo:EUPATH_0001002>Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Socioeconomic status</rdfs:label>
     </owl:Class>
     
@@ -4857,7 +4873,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NCBITaxon_10239</obo:EUPATH_0001006>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Virus in stool</rdfs:label>
     </owl:Class>
@@ -4922,7 +4938,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NCBITaxon_2</obo:EUPATH_0001006>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bacteria in stool</rdfs:label>
     </owl:Class>
@@ -6809,24 +6825,6 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bipedal edema</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0015118 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0015118">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_ABN_HAIR</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F5_ABN_HAIR</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F7_ABN_HAIR</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical findings: Abnormal hair: sparse, loose, straight</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abnormal hair</rdfs:label>
     </owl:Class>
     
 
@@ -10927,7 +10925,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NCBITaxon_2759</obo:EUPATH_0001006>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Eukaryota in stool</rdfs:label>
     </owl:Class>
@@ -10964,13 +10962,13 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0033155">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enrolled in MSD Study or LSD Study</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case-control subclassification</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case-control sub-classification</rdfs:label>
     </owl:Class>
     
 
@@ -10983,6 +10981,25 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Geographic location</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/HP_0001595 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0001595">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F4B_ABN_HAIR</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F5_ABN_HAIR</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F7_ABN_HAIR</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical findings: Abnormal hair: sparse, loose, straight</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0015118</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abnormal hair</rdfs:label>
     </owl:Class>
     
 
@@ -11027,22 +11044,6 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visit date for Stool Collection</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample collection date</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/OBI_0001627 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001627">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SITE</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gems1a_case_control_study_data</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Categorical</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
     </owl:Class>
     
 

@@ -1,0 +1,33 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT * {
+	{
+    SELECT distinct ?entity ?parent ?type ?label ?variable
+    WHERE { 
+    	?entity a owl:Class .
+      ?entity obo:EUPATH_0001005 ?stype. 
+      ?entity rdfs:label ?slabel. 
+    	?entity rdfs:subClassOf ?parent_entity .
+      ?entity obo:EUPATH_0000755 ?svariable. 
+    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
+    	BIND (str(?slabel) AS ?label) .
+    	BIND (str(?svariable) AS ?variable) .
+    	BIND (str(?stype) AS ?type) .
+    }
+  }
+  UNION
+  {
+    SELECT distinct ?entity ?parent ?type ?label ?variable
+    WHERE { 
+    	?entity a owl:Class .
+      ?entity obo:EUPATH_0001005 ?stype. 
+      ?entity rdfs:label ?slabel. 
+    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
+    	BIND (str(?slabel) AS ?label) .
+    	BIND (str(?svariable) AS ?variable) .
+    	BIND (str(?stype) AS ?type) .
+    }
+  }
+}

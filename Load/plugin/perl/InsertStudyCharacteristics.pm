@@ -13,6 +13,7 @@ use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyCharacteristic;
 use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
+use Text::CSV_XS;
 
 use Digest::SHA qw/sha1_hex/;
 
@@ -93,19 +94,34 @@ sub run {
   my $datasetName = $self->getArg('datasetName');
   my $commit = $self->getArg('commit');
 
-  my $cfg = $self->readConfig($file);
+  my $cfg = $self->readConfig($file,$datasetName);
+
+printf STDERR Dumper $cfg;
+  unless (0 < keys %$cfg){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
 
   # fetch all 
   
   my %name2study;
   
   my $sql = <<SQL;
-  SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
+SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
   FROM study.study s1
-  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
   LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
   LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
-  WHERE s0.STUDY_ID!=s1.STUDY_ID
+  WHERE s1.STUDY_ID IN (SELECT s1.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
+union
+SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
+  FROM study.study s1
+  LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
+  LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
+  WHERE s1.STUDY_ID NOT IN (SELECT s1.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
+  AND s1.STUDY_ID NOT IN (SELECT s0.study_id FROM study.study s1
+  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
+  WHERE s0.STUDY_ID!=s1.STUDY_ID)
 SQL
 
   my $dbh = $self->getQueryHandle();
@@ -225,13 +241,13 @@ SQL
         }
       }
       elsif (defined($v) && $v ne "") { # derived or free text
-          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$v]);
-          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$v]);
-          printf ("\tReady: %s (free text)\n", $v);
+        push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
+        push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
+        printf ("\tReady: %s (free text)\n", $valueLabels{$v});
       }
-      else {
-        push(@derived,$qualifierSourceId);
-      }
+#     else {
+#       push(@derived,$qualifierSourceId);
+#     }
     }
   }
   
@@ -260,36 +276,33 @@ SQL
     $materialTypeCounts->{$sourceId}->{COUNT} -= $subTypeCounts->{$sourceId}->{COUNT};
   }
   
-  my %counterSourceIds = (
-    EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
-    OMIABIS_0001011 => 'EUPATH_0000096', # participants
-    EUPATH_0000774 => 'EUPATH_0000738', # observations
-    EUPATH_0000775 => 'EUPATH_0000609', # samples
-    EUPATH_0000773 => 'PCO_0000024', # households
-  );
-  my %subCounterSourceIds = (EUPATH_0000776 => 'PCO_0000024');
-  # EUPATH_0000776 household observations
-  
-  foreach my $derivedSourceId (keys %counterSourceIds){
-    unless($counterSourceIds{$derivedSourceId}){
-      printf STDERR ("Derived: no match for %s\n", $derivedSourceId);
-      next;
-    }
-    my $count = $materialTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-    $count ||= $subTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-    push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-    push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-  }
-  foreach my $derivedSourceId (keys %subCounterSourceIds){
-    next unless $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}};
-    my $count = $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}}->{COUNT};
-    next unless $count;
-    push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-    push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-  }
-    
-  
-  
+# my %counterSourceIds = (
+#   EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
+#   OMIABIS_0001011 => 'EUPATH_0000096', # participants
+#   EUPATH_0000774 => 'EUPATH_0000738', # observations
+#   EUPATH_0000775 => 'EUPATH_0000609', # samples
+#   EUPATH_0000773 => 'PCO_0000024', # households
+# );
+# my %subCounterSourceIds = (EUPATH_0000776 => 'PCO_0000024');
+# # EUPATH_0000776 household observations
+# 
+# foreach my $derivedSourceId (keys %counterSourceIds){
+#   unless($counterSourceIds{$derivedSourceId}){
+#     printf STDERR ("Derived: no match for %s\n", $derivedSourceId);
+#     next;
+#   }
+#   my $count = $materialTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
+#   $count ||= $subTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
+#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
+#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
+# }
+# foreach my $derivedSourceId (keys %subCounterSourceIds){
+#   next unless $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}};
+#   my $count = $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}}->{COUNT};
+#   next unless $count;
+#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
+#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
+# }
   
   if($commit){
     my $rownum = 0;
@@ -297,14 +310,15 @@ SQL
       unless($row->[1]){ # qualifier_id cannot be null
         printf STDERR ("ERROR in row: %s\nQualifier ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
         $rownum++;
+        next;
       }
       
       my %data = (
         #row_user_id => $userId, row_alg_invocation_id => $algInvocationId,
-         study_id => $row->[0], qualifier_id => $row->[1], value_id => $row->[2]);
+         study_id => $row->[0], qualifier_id => $row->[1], value_id => $row->[2], value => $row->[3]);
       my $sc = GUS::Model::Study::StudyCharacteristic->new(\%data);
-      $sc->retrieveFromDB();
-      $sc->setValue($row->[3]);
+      # $sc->retrieveFromDB();
+      # $sc->setValue($row->[3]);
       $sc->submit;
       $rownum++;
     }
@@ -338,20 +352,31 @@ sub selectHashRef {
 
 sub readConfig {
 # Not using  CBIL::Config::PropertySet because it doesn't handle variables with spaces
-  my ($self, $file) = @_;
-  my $cfg = {};
+  my ($self, $file, $datasetName) = @_;
+  my $csv = Text::CSV_XS->new({ binary => 1, sep_char => ",", quote_char => '"', allow_loose_quotes => 1 }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
+  my @fields;
   open(FH, "<$file") or die "$file $!\n";
+  my $line = <FH>;
+  if($csv->parse($line)) {
+    @fields = $csv->fields();
+  }
+  my %data;
   while(my $line = <FH>){
-    chomp $line;
-    my($k,$v) = split(/=/, $line);
-    
-    $k =~ s/^\s+|\s+$//g;
-    $v =~ s/^\s+|\s+$//g;
-    my @values = split(/\s*,\s*/, $v);
-    $cfg->{$k} = \@values;
+    next if $line =~ /^[\w\r\l\n,]*$/;
+    $csv->parse($line);
+    my @row = $csv->fields();
+    if($datasetName eq $row[0]){
+      @data{@fields} = @row;
+      last;
+    }
   }
   close(FH);
-  return $cfg;
+  foreach my $k (keys %data){
+    $data{$k} =~ s/^\s*|\s*$//g;
+    my @values = split(/\s*;\s*/, $data{$k});
+    $data{$k} = \@values;
+  }
+  return \%data;
 }
 
 sub undoTables {

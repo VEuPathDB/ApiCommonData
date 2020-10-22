@@ -9,6 +9,18 @@ use Scalar::Util qw/looks_like_number/;
 use Date::Parse qw/strptime/;
 use POSIX qw(strftime);
 
+sub looks_nonblank {
+  my ($v) = @_;
+  return 1 if $v eq 0;
+  return 0 if not $v;
+  return 0 if $v =~ /na|n\/a/i;
+  return 1;
+}
+sub looks_like_date {
+  my ($ss,$mm,$hh,$day,$month,$year,$zone) = strptime(shift); 
+  defined $day && defined $month && defined $year
+}
+
 sub expandSampleDetailsByName {
   my %sampleDetailsByName = %{$_[0]};
 
@@ -33,23 +45,20 @@ sub expandSampleDetailsByName {
       my $value = $sampleDetailsByName{$sampleName}{$property};
       {
         property => $property,
-        date_value => $propertyDetails{$property}{type} eq "date" ? strftime ("%Y-%m-%d", map {$_//0} strptime($value)) : undef,
-        number_value => $propertyDetails{$property}{type} eq "number" ? $value : undef,
+        date_value => $propertyDetails{$property}{type} eq "date" && looks_nonblank($value) ? strftime ("%y-%m-%d", map {$_//0} strptime($value)) : undef,
+        number_value => $propertyDetails{$property}{type} eq "number" && looks_nonblank($value) ? $value : undef,
         string_value => $value,
       }
-    } grep {$sampleDetailsByName{$sampleName}{$_}} @properties;
+    } grep {defined $sampleDetailsByName{$sampleName}{$_}} @properties;
 
     $sampleName => \@sampleDetailsAnnotated
   } keys %sampleDetailsByName;
   return \%propertyDetails, \%sampleDetails;
 }
 
-sub looks_like_date {
-  my ($ss,$mm,$hh,$day,$month,$year,$zone) = strptime(shift); 
-  defined $day && defined $month && defined $year
-}
 sub propertyDetails {
   my ($property, $values) = @_;
+  my $numAllValues = scalar @{$values};
   my $numBlankValues;
   my %h;
   for my $value (@{$values}){
@@ -61,14 +70,14 @@ sub propertyDetails {
   }
   my @distinctValues = keys %h;
   my @valuesThatAreNumbers = grep {looks_like_number $_} @distinctValues;
-  my @valuesThatAreNotNumbers = grep {not (looks_like_number $_)} @distinctValues;
+  my @valuesThatAreNotBlanksOrNumbers = grep { looks_nonblank($_) && not (looks_like_number $_)} @distinctValues;
 
   my @valuesThatAreDates = grep {looks_like_date $_} @distinctValues;
-  my @valuesThatAreNotDates = grep {not (looks_like_date $_)} @distinctValues;
+  my @valuesThatAreNotBlanksOrDates = grep {looks_nonblank($_) && not (looks_like_date $_)} @distinctValues;
 
-  # heuristic, tries to skip empty values and outliers
-  my $isProbablyADate = $property ne "Unannotated sample" && @valuesThatAreDates && @valuesThatAreNotDates < 5;
-  my $isProbablyANumber = $property ne "Unannotated sample" && @valuesThatAreNumbers && @valuesThatAreNotNumbers < 5;
+  # heuristic, tries to skip empty values
+  my $isProbablyADate = $property ne "Unannotated sample" && @valuesThatAreDates && not @valuesThatAreNotBlanksOrDates;
+  my $isProbablyANumber = $property ne "Unannotated sample" && @valuesThatAreNumbers && not @valuesThatAreNotBlanksOrNumbers;
 
   my $type = $isProbablyADate ? "date" : $isProbablyANumber ? "number" : "string";
 
@@ -77,29 +86,29 @@ sub propertyDetails {
   my ($valuesSummary, $propertyType, $propertyTypeOntologyTerm);
   if (@distinctValues == 1 && not $numBlankValues){
     $propertyTypeOntologyTerm = "NCIT_C64359";
-    $propertyType = "Common value";
+    $propertyType = "Singleton";
     $valuesSummary =  $distinctValues[0];
     $filter = "membership";
   } elsif (@distinctValues < 10 && (@valuesThatAreNumbers < 2) && (@valuesThatAreDates < 2)){
-    $propertyTypeOntologyTerm = "wojtek_made_up_categorical_value";
-    $propertyType = "Categorical value";
+    $propertyTypeOntologyTerm = "OT_categorical_value";
+    $propertyType = "Category";
     $valuesSummary =  join (", ", sort @distinctValues);
     $filter = "membership";
   } elsif ($isProbablyADate){
-    $propertyTypeOntologyTerm =  "wojtek_made_up_date_value";
-    $propertyType = "Date value";
+    $propertyTypeOntologyTerm =  "OT_date_value";
+    $propertyType = "Date";
     $valuesSummary = sprintf("%s different dates", scalar @valuesThatAreDates);
-    $valuesSummary = join (", ", sort @valuesThatAreNotDates).", $valuesSummary" if @valuesThatAreNotDates;
+    $valuesSummary .= ", no data for $numBlankValues/$numAllValues samples" if $numBlankValues;
     $filter = "range";
   } elsif ($isProbablyANumber){
     $propertyTypeOntologyTerm = "NCIT_C81274";
-    $propertyType = "Numeric value";
+    $propertyType = "Number";
     $valuesSummary = sprintf("%s to %s", min(@valuesThatAreNumbers), max(@valuesThatAreNumbers));
-    $valuesSummary = join (", ", sort @valuesThatAreNotNumbers).", $valuesSummary" if @valuesThatAreNotNumbers;
+    $valuesSummary .= ", no data for $numBlankValues/$numAllValues samples" if $numBlankValues;
     $filter = "range";
   } else {
-    $propertyTypeOntologyTerm = "wojtek_made_up_text_value";
-    $propertyType = "Text value";
+    $propertyTypeOntologyTerm = "OT_text_value";
+    $propertyType = "Text";
     $valuesSummary =  sprintf("%s different values", scalar @distinctValues);
     $filter = "membership";
   }
