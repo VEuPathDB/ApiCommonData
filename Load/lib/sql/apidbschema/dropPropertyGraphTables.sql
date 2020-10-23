@@ -25,6 +25,17 @@ WHERE lower(name) =  'edgeattributeunit'
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
+
+DROP TABLE apidb.EdgeTypeComponent;
+DROP SEQUENCE apidb.EdgeTypeComponent_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'edgetypecomponent'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+
+
 DROP TABLE apidb.VertexAttributeUnit;
 DROP SEQUENCE apidb.VertexAttributeUnit_sq;
 DELETE FROM core.TableInfo
