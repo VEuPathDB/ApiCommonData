@@ -1,0 +1,41 @@
+# Check whether any terms with same ID use different labels in different projects
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?sid
+  (COUNT(DISTINCT ?dataset) AS ?dataset_count)
+  (GROUP_CONCAT(DISTINCT ?label;separator=" | ") AS ?labels)
+  (GROUP_CONCAT(DISTINCT ?term_type;separator=" | ") AS ?termTypes)
+  (GROUP_CONCAT(DISTINCT ?plabel;separator=" | ") AS ?pLabels)
+  (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?datasets)
+WHERE {
+  <http://purl.obolibrary.org/obo/datasets.owl> owl:imports ?file .
+  GRAPH ?file {
+  	?entity a owl:Class .
+	?entity rdfs:label ?org_label .
+  	?entity rdfs:subClassOf ?parent_entity .
+  	?parent_entity rdfs:label ?parent_label .
+	BIND (str(?parent_label) AS ?plabel) .
+	OPTIONAL {
+	?entity obo:EUPATH_0001005 ?term_type.
+	}
+	} .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	?f2) AS ?dataset) .
+  BIND(COALESCE(
+ 	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
+	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+ 	IF(CONTAINS(STR(?entity), "#"), STRAFTER(STR(?entity), "#"), ?c),
+  	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid) .
+  BIND (str(?org_label) AS ?label) .
+}
+GROUP BY ?sid 
+HAVING (?dataset_count > 1)
+ORDER BY ASC(?term_type) DESC(?dataset_count) 
