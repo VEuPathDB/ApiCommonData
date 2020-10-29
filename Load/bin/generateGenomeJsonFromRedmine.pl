@@ -112,6 +112,16 @@ $organismDetails{species}{taxonomy_id} += 0;  ## change string to integer
 ## provider
 ($organismDetails{provider}{url}, $organismDetails{provider}{name}) = getProviderUrlAndName($organismDetails{assembly}{accession});
 
+
+## special codes for species and strain names
+if ($organismAbbrev eq "hpil2019") {
+  $organismDetails{species}{scientific_name} = "Hepatocystis sp. ex Piliocolobus tephrosceles";
+  $organismDetails{species}{strain} = "2019";
+} elsif ($organismAbbrev eq "afarNo4-7-10-11") {
+  $organismDetails{species}{scientific_name} = "Anopheles farauti No. 4";
+  $organismDetails{species}{strain} = "isolate 7_10-11";
+}
+
 my $json = encode_json \%organismDetails;
 
 print OUT "$json\n";
