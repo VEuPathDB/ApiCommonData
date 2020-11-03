@@ -46,7 +46,7 @@ SQL
     where t.taxon_id = ?
       and tn.taxon_id = t.taxon_id
 SQL
-  return $taxonsByNameSth, $taxonByIdSth;
+  return $taxonsByNameSth, $taxonsByNameFuzzySth, $taxonByIdSth;
 }
 
 sub idOfAncestorThatHasName {
