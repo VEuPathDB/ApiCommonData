@@ -108,11 +108,18 @@ foreach my $table (@tables) {
               where external_database_release_id=$extDbRlsId and source_id is null
 SQL
 
+  if ($table eq "DOTS.translatedaasequence") {
+    $sql = <<SQL;
+              select $priKeys{$table} from $table
+              where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId) and source_id is null
+SQL
+  }
+
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
   my ($vldtr) = $stmt->fetchrow_array();
   if ($vldtr) {
-    die "ERROR... die in the table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n";
+    die "ERROR... die in the table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n$sql\n";
   }
   #print STDERR "checked table $table for source_id is not null\n";
   $stmt->finish();
@@ -220,7 +227,7 @@ my ($codingGeneCount) = $stmt->fetchrow_array();
 $stmt->finish();
 
 my $sql = <<SQL;
-  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where (name like 'coding_gene' OR name like 'protein_coding') and external_database_release_id=$extDbRlsId)
+  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where (name like 'coding_gene' OR name like 'protein_coding' OR name like 'pseudogene_with_CDS') and external_database_release_id=$extDbRlsId)
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -281,6 +288,7 @@ $stmt->finish();
 ## J. check the seq # in translatedaaSequence table and translatedaaFeature table
 my $sql = <<SQL;
   select count(*) from dots.translatedaasequence where external_database_release_id=$extDbRlsId
+  and AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId)
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
