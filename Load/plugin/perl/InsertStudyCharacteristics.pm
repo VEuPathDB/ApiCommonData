@@ -164,7 +164,7 @@ SQL
       if($uri){
         $pid = $owl->getSourceIdFromIRI($uri);
       }
-      else { $pid = "Thing" }
+      else { $pid = "" }
     }
     else{
       $pid = "";
@@ -260,26 +260,26 @@ SQL
   # printf("%s\n", join("\t", @{$_})) for @rows;
   
   my $prefix = "APIDBTUNING.D" . substr(sha1_hex($datasetName),0,10);
-  printf STDERR ("%s\t%s\n",$datasetName,$prefix);
-  
-  
-  ### count all types
-  $sql = "SELECT PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanRecord GROUP BY PAN_TYPE_SOURCE_ID";
-  # $sql = "select ot.source_id SOURCE_ID, count(1) COUNT from study.studylink sl left join study.protocolappnode pan on sl.protocol_app_node_id=pan.protocol_app_node_id left join sres.ontologyterm ot on pan.type_id=ot.ontology_term_id where sl.study_id=$study_id group by ot.source_id";
-  my $materialTypeCounts = $self->selectHashRef($dbh,$sql);
-  # printf STDERR "Material types:\n" . Dumper $materialTypeCounts;
-  
-  
-  ### number of subtypes to subtract
-  $sql = "SELECT  INPUT_PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanIO where INPUT_PAN_TYPE_SOURCE_ID=OUTPUT_PAN_TYPE_SOURCE_ID GROUP BY INPUT_PAN_TYPE_SOURCE_ID";
-  my $subTypeCounts = $self->selectHashRef($dbh,$sql);
-  # printf STDERR "Sub types:\n" . Dumper $subTypeCounts;
-  
-  ### make count corrections
-  foreach my $sourceId (keys %$subTypeCounts){
-    $materialTypeCounts->{$sourceId}->{COUNT} -= $subTypeCounts->{$sourceId}->{COUNT};
-  }
-  
+ # printf STDERR ("%s\t%s\n",$datasetName,$prefix);
+ # 
+ # 
+ # ### count all types
+ # $sql = "SELECT PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanRecord GROUP BY PAN_TYPE_SOURCE_ID";
+ # # $sql = "select ot.source_id SOURCE_ID, count(1) COUNT from study.studylink sl left join study.protocolappnode pan on sl.protocol_app_node_id=pan.protocol_app_node_id left join sres.ontologyterm ot on pan.type_id=ot.ontology_term_id where sl.study_id=$study_id group by ot.source_id";
+ # my $materialTypeCounts = $self->selectHashRef($dbh,$sql);
+ # # printf STDERR "Material types:\n" . Dumper $materialTypeCounts;
+ # 
+ # 
+ # ### number of subtypes to subtract
+ # $sql = "SELECT  INPUT_PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanIO where INPUT_PAN_TYPE_SOURCE_ID=OUTPUT_PAN_TYPE_SOURCE_ID GROUP BY INPUT_PAN_TYPE_SOURCE_ID";
+ # my $subTypeCounts = $self->selectHashRef($dbh,$sql);
+ # # printf STDERR "Sub types:\n" . Dumper $subTypeCounts;
+ # 
+ # ### make count corrections
+ # foreach my $sourceId (keys %$subTypeCounts){
+ #   $materialTypeCounts->{$sourceId}->{COUNT} -= $subTypeCounts->{$sourceId}->{COUNT};
+ # }
+ # 
 # my %counterSourceIds = (
 #   EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
 #   OMIABIS_0001011 => 'EUPATH_0000096', # participants
@@ -307,6 +307,13 @@ SQL
 #   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
 #   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
 # }
+
+  foreach my $iri (qw/OBI_0001169/){
+    my $range = $self->getRange($prefix,$iri);
+    if($range){
+      push(@rows, [$studyId, $qualifierIds{$iri}, "", $range]);
+    }
+  }
   
   if($commit){
     my $rownum = 0;
@@ -393,5 +400,20 @@ sub undoTables {
     'Study.StudyCharacteristic',
      );
 }
+sub getRange {
+  my ($self,$prefix,$iri) = @_;
+  my $sql = sprintf("SELECT MIN,MAX FROM %sMETADATASUMMARY WHERE PROPERTY_SOURCE_ID='%s'",$prefix,$iri);
+  print STDERR "DEBUG: $sql\n";
+  my $dbh = $self->getQueryHandle();
+  my $sth = $dbh->prepare($sql);
+  $sth->execute();
+  my $result = $sth->fetchrow_hashref();
+  if($result){
+  print STDERR "DEBUG: " . Dumper($result);
+    return sprintf("%s - %s", $result->{MIN}, $result->{MAX});
+  }
+  return "";
+} 
+
 1;
 
