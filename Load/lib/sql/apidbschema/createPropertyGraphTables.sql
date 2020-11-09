@@ -90,7 +90,6 @@ CREATE TABLE apidb.EdgeType (
  name                         VARCHAR2(200) NOT NULL,
  description                  VARCHAR2(4000),
  type_id                      NUMBER(10),
- parent_id                    NUMBER(12),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -103,7 +102,6 @@ CREATE TABLE apidb.EdgeType (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (parent_id) REFERENCES apidb.edgetype,
  PRIMARY KEY (edge_type_id)
 );
 
