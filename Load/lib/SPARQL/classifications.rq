@@ -12,9 +12,9 @@ SELECT * {
     	?entity rdfs:subClassOf ?parent_entity .
       ?entity obo:EUPATH_0000755 ?svariable. 
     	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
-    	BIND (str(?slabel) AS ?label) .
-    	BIND (str(?svariable) AS ?variable) .
-    	BIND (str(?stype) AS ?type) .
+    	BIND (IF(BOUND(?slabel),str(?slabel), "") AS ?label) .
+    	BIND (IF(BOUND(?svariable),str(?svariable),"") AS ?variable) .
+    	BIND (IF(BOUND(?type),str(?stype),"") AS ?type) .
     }
   }
   UNION
@@ -25,9 +25,9 @@ SELECT * {
       ?entity obo:EUPATH_0001005 ?stype. 
       ?entity rdfs:label ?slabel. 
     	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
-    	BIND (str(?slabel) AS ?label) .
-    	BIND (str(?svariable) AS ?variable) .
-    	BIND (str(?stype) AS ?type) .
+    	BIND (IF(BOUND(?slabel),str(?slabel), "") AS ?label) .
+    	BIND (IF(BOUND(?svariable),str(?svariable),"") AS ?variable) .
+    	BIND (IF(BOUND(?type),str(?stype),"") AS ?type) .
     }
   }
 }
