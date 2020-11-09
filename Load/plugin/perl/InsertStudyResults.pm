@@ -223,10 +223,6 @@ sub addResults {
   elsif ($protocolName =~ /Antibody Microarray/) {
     $tableString = "Results::NaFeatureHostResponse";
   }
-  elsif ($protocolName =~ /taxonomic_diversity_assessment_by_targeted_gene_survey/) {
-    $tableString = "Results::LineageAbundance";
-    warn "You seem to be using " .__PACKAGE__ . ", have you seen ApiCommonData::Load::LineageAbundances?";
-  }
   elsif ($protocolName =~ /Ploidy/) {
     $tableString = "ApiDB::ChrCopyNumber";
   }
@@ -636,7 +632,6 @@ sub undoTables {
     'Results.SegmentResult',
     'Results.NAFeatureHostResponse',
     'Results.CompoundMassSpec',
-    'Results.LineageAbundance',
     'ApiDB.GeneCopyNumber',
     'ApiDB.ChrCopyNumber',
     'ApiDB.ONTOLOGYTERMRESULT',

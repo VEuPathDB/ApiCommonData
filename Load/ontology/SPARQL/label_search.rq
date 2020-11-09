@@ -1,7 +1,10 @@
 PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT ?caretaker_label
+SELECT ?IRI ?presence_label ?parent
 WHERE {
-  ?IRI rdfs:label ?caretaker_label .
-  FILTER regex(str(?caretaker_label), "Caretaker") .
+  ?IRI rdfs:label ?presence_label .
+  ?IRI rdfs:subClassOf ?parentIRI .
+  ?parentIRI rdfs:label ?parent .
+  FILTER regex(str(?presence_label), ", by") .
 }

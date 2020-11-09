@@ -81,7 +81,7 @@ $stmtSpe->finish();
 
 ## check if orthomclAbbrev already been used by other organism
 #my $orthomclAbbrev = "afub";
-my $check = "grep orthomclAbbrev $ENV{PROJECT_HOME}/ApiCommonDatasets/Datasets/lib/xml/datasets/*.xml | grep $orthomclAbbrev";
+my $check = "grep orthomclAbbrev /home/sufenhu/gusApps/b_ebibrc4/project_home/ApiCommonDatasets/Datasets/lib/xml/datasets/*.xml | grep $orthomclAbbrev";
 print "\n  start checking orthomclAbbrev...... \n  $check\n";
 
 my $checkError = `$check`;
@@ -89,7 +89,7 @@ my $checkError = `$check`;
 ($checkError) ? print "  orthomclAbbrev '$orthomclAbbrev' already been used. See\n    $checkError\n\n"
               : print "  orthomclAbbrev '$orthomclAbbrev' is OK\n\n";
 
-my $check2 = "grep $orthomclAbbrev /eupath/data/EuPathDB/manualDelivery/common/orthology/orthoAbbrevFile/orthomcl6_three_letter_abbrev.txt";
+my $check2 = "grep $orthomclAbbrev -i /eupath/data/EuPathDB/manualDelivery/common/orthology/orthoAbbrevFile/orthomcl6_three_letter_abbrev.txt";
 my $check2Error = `$check2`;
 ($check2Error) ? print "  orthomclAbbrev '$orthomclAbbrev' already been used. Check orthoMCL6 at apidb.orthomcltaxon table\n    $check2\n      $check2Error\n\n"
               : print "  $check2\n  orthomclAbbrev '$orthomclAbbrev' is OK\n\n";

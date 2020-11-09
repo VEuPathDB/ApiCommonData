@@ -34,13 +34,19 @@ sub taxonSths {
     where tn.name = ?
       and tn.taxon_id = t.taxon_id
 SQL
+  my $taxonsByNameFuzzySth = $dbh->prepare(<<SQL) or die $dbh->errstr;
+    select t.taxon_id, t.parent_id, t.ncbi_tax_id
+    from sres.TaxonName tn, sres.Taxon t
+    where REGEXP_REPLACE(tn.name, '[^[:alnum:]]', '_', 0) = REGEXP_REPLACE(?, '[^[:alnum:]]', '_', 0)
+      and tn.taxon_id = t.taxon_id
+SQL
   my $taxonByIdSth = $dbh->prepare(<<SQL)  or die $dbh->errstr;
     select tn.name, t.parent_id
     from sres.TaxonName tn, sres.Taxon t
     where t.taxon_id = ?
       and tn.taxon_id = t.taxon_id
 SQL
-  return $taxonsByNameSth, $taxonByIdSth;
+  return $taxonsByNameSth, $taxonsByNameFuzzySth, $taxonByIdSth;
 }
 
 sub idOfAncestorThatHasName {
@@ -59,7 +65,7 @@ sub idOfAncestorThatHasName {
 }
 
 sub findTaxonForLineage {
-  my ($taxonsByNameSth, $taxonByIdSth, $lineage) = @_;
+  my ($taxonsByNameSth, $taxonByNameFuzzySth, $taxonByIdSth, $lineage) = @_;
   my ($l, @ls) = map {
     # Make sure a few popular results get mapped as we want them to
     $_ =~ s{^Escherichia[-/]Shigella$}{Escherichia};
@@ -67,11 +73,13 @@ sub findTaxonForLineage {
     $_ =~ s{^Clostridium sensu stricto \d+$}{Clostridium};
     $_ } reverse split ";", $lineage;
 
+  # if there are underscores in the name, it might be the messed-up one from MetaPhlan - gotta use fuzzy match
+  my $lastPartOfLineageSth = ($l =~ m{_} ? $taxonByNameFuzzySth : $taxonsByNameSth);
   # Get taxon nodes whose name matches the last part of the lineage
-  $taxonsByNameSth->execute($l);
+  $lastPartOfLineageSth->execute($l);
   my @results = map {
     ({resultTaxonId => $_->[0], ancestorIdAux => $_->[1], resultNcbiTaxId => $_->[2], lastNameMatchedAux => $ls[0]})
-  } @{$taxonsByNameSth->fetchall_arrayref};
+  } @{$lastPartOfLineageSth->fetchall_arrayref};
 
   # If a single node matches the last part of the lineage, take it, even if the rest doesn't match
   # but if there are multiple nodes returned, resolve it by looking at names of their parents

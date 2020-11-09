@@ -42,7 +42,8 @@ use CBIL::Util::PropertySet;
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-my ($verbose, $help, $organismAbbrev, $genomeVersion, $extDbName, $extDbRlsVer, 
+my ($verbose, $help, $organismAbbrev, $genomeVersion, $extDbName, $extDbRlsVer,
+    $instanceName,
 	$extDbRlsId, $reportFile);
 
 &GetOptions('verbose' => \$verbose,
@@ -52,6 +53,7 @@ my ($verbose, $help, $organismAbbrev, $genomeVersion, $extDbName, $extDbRlsVer,
             'extDbName=s' => \$extDbName,
 	    'extDbRlsVer=s' => \$extDbRlsVer,
 	    'extDbRlsId=s' => \$extDbRlsId,
+	    'instanceName=s' => \$instanceName,
            );
 
 &usage() if($help);
@@ -65,6 +67,7 @@ my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
 my $u = $gusconfig->{props}->{databaseLogin}; 
 my $pw = $gusconfig->{props}->{databasePassword}; 
 my $dsn = $gusconfig->{props}->{dbiDsn}; 
+$dsn = "dbi:Oracle:".$instanceName if ($instanceName);
 my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{LongTruncOk} = 1;
@@ -105,11 +108,18 @@ foreach my $table (@tables) {
               where external_database_release_id=$extDbRlsId and source_id is null
 SQL
 
+  if ($table eq "DOTS.translatedaasequence") {
+    $sql = <<SQL;
+              select $priKeys{$table} from $table
+              where AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId) and source_id is null
+SQL
+  }
+
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
   my ($vldtr) = $stmt->fetchrow_array();
   if ($vldtr) {
-    die "ERROR... die in the table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n";
+    die "ERROR... die in the table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n$sql\n";
   }
   #print STDERR "checked table $table for source_id is not null\n";
   $stmt->finish();
@@ -149,6 +159,19 @@ if ($errorSourceId) {
   die "ERROR... die in talbe DOTS.EXONFEATURE, NA_SEQUENCE_ID is NULL for $errorSourceId. Double check the loading.......\n";
 }
 $stmt->finish();
+
+## extraB: check the chromosome and chromosome_order_number for SO=chromosome in dots.externalNaSequence
+my $sql = <<SQL;
+            select s.SOURCE_ID, s.CHROMOSOME, s.CHROMOSOME_ORDER_NUM, o.NAME from DOTS.EXTERNALNASEQUENCE s, SRES.ONTOLOGYTERM o
+            where s.SEQUENCE_ONTOLOGY_ID=o.ONTOLOGY_TERM_ID and o.name like 'chromosome' and s.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($errorSourceId, $chrNum, $chrOrderNum, $so) = $stmt->fetchrow_array() ) {
+  die "ERROR... for chromosome $errorSourceId, the chromosome and chromosome_order_number have not been set up yet!\n$sql\n" if (!$chrNum || !$chrOrderNum);
+}
+$stmt->finish();
+
 
 
 ## C. check the total number of sequence
@@ -209,7 +232,7 @@ $stmt->finish();
 
 ## E-2. check the transcript number that has been loaded
 my $sql = <<SQL;
-  select count(*) from DOTS.genefeature where name like 'coding_gene' and external_database_release_id=$extDbRlsId
+  select count(*) from DOTS.genefeature where (name like 'coding_gene' OR name like 'protein_coding' OR name like 'pseudogene_with_CDS') and external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -217,7 +240,8 @@ my ($codingGeneCount) = $stmt->fetchrow_array();
 $stmt->finish();
 
 my $sql = <<SQL;
-  select count(*) from dots.transcript where parent_id in (select na_feature_id from dots.genefeature where (name like 'coding_gene' OR name like 'protein_coding') and external_database_release_id=$extDbRlsId)
+  select count(*) from dots.transcript where parent_id in
+  (select na_feature_id from dots.genefeature where (name like 'coding_gene' OR name like 'protein_coding' OR name like 'pseudogene_with_CDS') and external_database_release_id=$extDbRlsId)
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -225,7 +249,9 @@ my ($codingTransCount) = $stmt->fetchrow_array();
 $stmt->finish();
 
 my $sqlp = <<SQL;
-  select count(taf.SOURCE_ID) from dots.genefeature gf, dots.transcript t, DOTS.TRANSLATEDAAFEATURE taf where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=taf.NA_FEATURE_ID and gf.name like 'coding_gene' and gf.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+  select count(taf.SOURCE_ID) from dots.genefeature gf, dots.transcript t, DOTS.TRANSLATEDAAFEATURE taf
+  where gf.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=taf.NA_FEATURE_ID
+  and (gf.name like 'coding_gene' OR gf.name like 'protein_coding' OR gf.name like 'pseudogene_with_CDS' ) and gf.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
 SQL
 my $stmtp = $dbh->prepare($sqlp);
 $stmtp->execute();
@@ -237,7 +263,8 @@ print STDERR "The number of coding_gene loaded = $codingGeneCount\nFor these cod
 ## G. check the pseudogene
 my $sql = <<SQL;
   select distinct t.is_pseudo, count(*) from dots.genefeature gf, dots.transcript t 
-where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and gf.name like 'coding_gene' group by t.is_pseudo
+  where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId
+  and (gf.name like 'coding_gene' OR gf.name like 'protein_coding' OR gf.name like 'pseudogene_with_CDS' OR gf.name like 'pseudogene' ) group by t.is_pseudo
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
@@ -278,6 +305,7 @@ $stmt->finish();
 ## J. check the seq # in translatedaaSequence table and translatedaaFeature table
 my $sql = <<SQL;
   select count(*) from dots.translatedaasequence where external_database_release_id=$extDbRlsId
+  and AA_SEQUENCE_ID in (select AA_SEQUENCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId)
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();

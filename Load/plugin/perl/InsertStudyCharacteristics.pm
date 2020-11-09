@@ -161,8 +161,10 @@ SQL
     my $pid;
     if($row->{parent}){
       $uri = $row->{parent}->as_hash()->{iri}|| $row->{parent}->as_hash()->{URI};
-      next unless($uri);
-      $pid = $owl->getSourceIdFromIRI($uri);
+      if($uri){
+        $pid = $owl->getSourceIdFromIRI($uri);
+      }
+      else { $pid = "Thing" }
     }
     else{
       $pid = "";
@@ -201,12 +203,14 @@ SQL
   my %valueIds;
   my @rows;
   my @decodedRows;
+  my $help_msg = 0;
   while( my ($k, $values) = each %{$cfg}){
     ###
     $k = uc($k);
     my $qualifierSourceId = $variableTerms{$k}; 
     unless($qualifierSourceId){
       printf STDERR ("INVALID classification: %s\n", $k);
+      $help_msg = 1;
       next;
     }
     my $ot = GUS::Model::SRes::OntologyTerm->new({source_id => $qualifierSourceId});
@@ -332,6 +336,9 @@ SQL
     foreach my $row (@rows){
       printf("%s\n", join("\t", @$row));
     }
+  }
+  if($help_msg){
+    printf STDERR ("Invalid classification labels were found. Valid labels (in uppercase, matching is case-insensitive):\n%s", Dumper \%variableTerms);
   }
 
 
