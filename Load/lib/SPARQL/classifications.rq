@@ -4,30 +4,29 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT * {
 	{
-    SELECT distinct ?entity ?parent ?type ?label ?variable
+    SELECT distinct ?entity ?parent ?type ?label
     WHERE { 
     	?entity a owl:Class .
       ?entity obo:EUPATH_0001005 ?stype. 
       ?entity rdfs:label ?slabel. 
     	?entity rdfs:subClassOf ?parent_entity .
-      ?entity obo:EUPATH_0000755 ?svariable. 
-    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
+    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "") AS ?parent) .
     	BIND (IF(BOUND(?slabel),str(?slabel), "") AS ?label) .
-    	BIND (IF(BOUND(?svariable),str(?svariable),"") AS ?variable) .
-    	BIND (IF(BOUND(?type),str(?stype),"") AS ?type) .
+    	BIND (IF(BOUND(?type),str(?stype),"variable") AS ?type) .
     }
   }
   UNION
   {
-    SELECT distinct ?entity ?parent ?type ?label ?variable
+    SELECT distinct ?entity ?parent ?type ?label
     WHERE { 
     	?entity a owl:Class .
-      ?entity obo:EUPATH_0001005 ?stype. 
-      ?entity rdfs:label ?slabel. 
-    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
+      filter not exists {
+        ?entity obo:EUPATH_0001005 ?stype  .
+      }  
+      ?entity rdfs:label ?slabel . 
+    	BIND (IF(BOUND(?parent_entity), ?parent_entity, "") AS ?parent) .
     	BIND (IF(BOUND(?slabel),str(?slabel), "") AS ?label) .
-    	BIND (IF(BOUND(?svariable),str(?svariable),"") AS ?variable) .
-    	BIND (IF(BOUND(?type),str(?stype),"") AS ?type) .
+    	BIND (str("TYPE NOT SET") AS ?type) .
     }
   }
 }
