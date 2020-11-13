@@ -13,11 +13,6 @@ my $PROTOCOL_NAME = 'Lopit';
  sub getSamples                 { $_[0]->{compartments} }
  sub setSamples                 { $_[0]->{compartments} = $_[1] }
 
-sub getProfileSetName          { $_[0]->{profileSetName} }
-
-sub setFileNames         { $_[0]->{_file_names} = $_[1] }
-sub setProtocolName         { $_[0]->{_protocol_name} = $_[1] }
-
 
 sub new {
     my ($class, $args) = @_;
