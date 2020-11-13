@@ -272,6 +272,9 @@ sub addResults {
   elsif ($protocolName =~ /MetaCycle/) {
     $tableString = "ApiDB::NAFeatureMetaCycle";
   }
+  elsif ($protocolName =~ /Lopit/) {
+    $tableString = "ApiDB::LopitResults";
+  }
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
@@ -652,6 +655,7 @@ sub undoTables {
     'ApiDB.PhenotypeGrowthRate',
     'ApiDB.WHOSTANDARDS',
     'ApiDB.NAFeatureMetaCycle',
+    'ApiDB.LopitResults',
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
