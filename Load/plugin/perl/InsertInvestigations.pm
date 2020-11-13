@@ -990,12 +990,14 @@ and tn.name_class = 'scientific name'
 
         $oeToName->{$os}->{$ota} = $ontologyTermName;
 
+      } elsif (not $count){
+        $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found in the database");
       }
       else {
-        $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found or were not found uniquely in the database");
+        $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found uniquely in the database");
 
       }
-    }
+  }
   }
 
   $self->{_ontology_term_to_identifiers} = $rv;

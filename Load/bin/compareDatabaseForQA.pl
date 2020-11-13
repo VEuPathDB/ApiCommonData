@@ -91,7 +91,8 @@ foreach my $k (sort keys %seqA) {
     print STDERR "    $kk = $geneB{$k}->{$kk}\n";
   }
 
-  foreach my $t ("protein coding", "rRNA", "snRNA", "snoRNA", "", "tRNA") {
+  foreach my $t ("protein coding", "rRNA", "snRNA", "snoRNA", "tRNA", "snRNA", "scRNA", "miRNA", "RNase_P_RNA",
+                 "RNase_MRP_RNA", "antisense_RNA", "telomerase_RNA", "SRP_RNA", "misc_RNA") {
     my $aTotal = ($t eq "protein coding") ? $geneA{$k}->{"$t"} + $geneA{$k}->{"pseudogene"} : $geneA{$k}->{$t};
     my $bTotal = ($t eq "protein coding") ? $geneB{$k}->{"$t"} + $geneB{$k}->{"pseudogene"} : $geneB{$k}->{$t};
     print STDERR "ERROR ... for $k, '$t' in $dbA = $aTotal NOT EQUAL $dbB = $bTotal.\n" if ($aTotal != $bTotal);
@@ -214,8 +215,11 @@ sub getGeneFeatureFromDotsTable {
     if ($type =~ /protein_coding/
         || $type =~ /coding/) {
       $type = "protein coding";
-    } elsif ($type =~ /pseudogene/i || $type =~ /pseudogene_with_CDS/i) {
+#    } elsif ($type =~ /pseudogene/i || $type =~ /pseudogene_with_CDS/i) {
+    } elsif ($type eq "pseudogene" || $type eq "pseudogene_with_CDS") {
       $type = "pseudogene";
+    } elsif ($type eq "tRNA_pseudogene") {
+      $type = "tRNA";
     } elsif ($type =~ /RNA$/i) {
     } else {
       print STDERR "ERROR: \$type = $type has not been configured yet\n";
