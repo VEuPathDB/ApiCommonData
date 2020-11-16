@@ -43,7 +43,7 @@ foreach my $org (@orgs) {
   #print STDERR "For $org, at $dbA, get ncbiTaxonId = $ncbiTaxonId\n";
 
   if ($ncbiTaxonId) {
-    $seqA{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
+    $seqA{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
     $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
   }
 
@@ -59,7 +59,7 @@ foreach my $org(@orgs) {
   #print STDERR "For $org, at $dbB, get ncbiTaxonId = $ncbiTaxonId\n";
 
   if ($ncbiTaxonId) {
-    $seqB{$org} = getSequenceCount ($ncbiTaxonId, $dbh);
+    $seqB{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
     $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
   }
 
@@ -77,8 +77,12 @@ foreach my $k (sort keys %seqA) {
   ## 2. check if the total number of sequence is same
   print STDERR "\n";
   print STDERR "$k in $dbA\n";
-  print STDERR "  sequence number = $seqA{$k}\n";
-  print STDERR "ERROR ... for $k, sequence number, $dbA = $seqA{$k}, NOT EQUAL $dbB = $seqB{$k}.\n" if ($seqA{$k} != $seqB{$k});
+  my ($seqACount, $seqBCount);
+  foreach my $ks (sort keys %{$seqA{$k}}) {
+    print STDERR "ERROR ... loaded sequences, in $dbA $ks = $seqA{$k}{$ks}, in $dbB $ks = $seqB{$k}{$ks}\n" if ($seqA{$k}{$ks} != $seqB{$k}{$ks});
+    $seqACount += $seqA{$k}{$ks};
+  }
+  print STDERR "  sequence number = $seqACount\n";
 
   ## 3. check the total number of gene feature
   foreach my $kk (sort keys %{$geneA{$k}}) {
@@ -86,7 +90,10 @@ foreach my $k (sort keys %seqA) {
   }
 
   print STDERR "$k in $dbB\n";
-  print STDERR "  sequence number = $seqB{$k}\n";
+  foreach my $ks (sort keys %{$seqB{$k}}) {
+    $seqBCount += $seqB{$k}{$ks};
+  }
+  print STDERR "  sequence number = $seqBCount\n";
   foreach my $kk (sort keys %{$geneB{$k}}) {
     print STDERR "    $kk = $geneB{$k}->{$kk}\n";
   }
@@ -154,18 +161,37 @@ sub getNcbiTaxonId {
   return $ncbiTaxonId;
 }
 
-sub getSequenceCount {
+sub getSequenceSummary {
   my ($ncbiTaxonId, $dbh) = @_;
-  my $count;
 
-  my $sql = "select count(*) from APIDBTUNING.GENOMICSEQATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId and IS_TOP_LEVEL=1";
+  my %seqSum;
+  my $sql = "select DISTINCT SEQUENCE_ONTOLOGY_ID, count(*)  from APIDBTUNING.GENOMICSEQATTRIBUTES where NCBI_TAX_ID=$ncbiTaxonId and IS_TOP_LEVEL=1
+             group by SEQUENCE_ONTOLOGY_ID";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+  while ( my ($so, $val) = $stmt->fetchrow_array()) {
+    my $type = getSequenceTypeFromSO($so, $dbh);
+     $seqSum{$type} = $val;
+  }
+  $stmt->finish();
+
+  return \%seqSum;
+}
+
+sub getSequenceTypeFromSO {
+  my ($soTerm, $dbh) = @_;
+
+  my $name;
+  my $sql = "select name from SRES.ONTOLOGYTERM where ONTOLOGY_TERM_ID=$soTerm";
+
   my $stmt = $dbh->prepareAndExecute($sql);
   while ( my ($val) = $stmt->fetchrow_array()) {
-     $count = $val;
+    $name = $val;
   }
-
-  return $count;
+  $stmt->finish();
+  return $name;
 }
+
 
 sub getGeneFeature {
   my ($ncbiTaxonId, $dbh) = @_;
