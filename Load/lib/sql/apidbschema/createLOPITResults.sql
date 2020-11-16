@@ -17,9 +17,10 @@ CREATE TABLE apidb.LopitResults (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
- FOREIGN KEY (na_feature_id) REFERENCES DoTS.NAFeature,
+ FOREIGN KEY (na_feature_id) REFERENCES dots.NaFeatureImp,
  PRIMARY KEY (lopit_result_id)
 );
+
 
 
 CREATE INDEX apidb.lopitres_1 ON apidb.LopitResults (na_feature_id) TABLESPACE indx;
