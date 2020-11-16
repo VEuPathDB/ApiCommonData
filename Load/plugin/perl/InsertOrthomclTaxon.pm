@@ -236,13 +236,17 @@ sub parseSpeciesFile {
     open(FILE, $speciesFile) || $self->userError("can't open species file '$speciesFile'");
 
     my $dbh = $self->getQueryHandle();
-    my $sql = "SELECT t.taxon_id, tn.name
-               FROM sres.taxon t, sres.taxonname tn
-               WHERE ncbi_tax_id = ?
-               AND t.taxon_id = tn.taxon_id
-               AND tn.name_class = 'scientific name'";
+    my $sql = "SELECT o.orthomcl_abbrev,o.taxon_id, tn.name
+FROM apidb.organism o, sres.taxonname tn
+WHERE o.taxon_id = tn.taxon_id
+      AND tn.name_class = 'scientific name'";
+    my $sth = $dbh->prepareAndExecute($sql);
+    my $abbrevNameTaxon;
+    while (my @row = $sth->fetchrow_array()) {
+	$abbrevNameTaxon->{$row[0]}->{taxonId} = $row[1];
+	$abbrevNameTaxon->{$row[0]}->{name} = $row[2];
+    }
 
-    my $stmt = $dbh->prepare($sql);
     my $speciesOrder = 1;
     my $speciesAbbrevs = {};
     while(<FILE>) {
@@ -251,43 +255,30 @@ sub parseSpeciesFile {
 	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
 
 	# pfa APIC 1233.5
-	if (/([a-z]{4})\t([A-Z]{4})\t(\d+)\t(\w)/) {
+	if (/([a-z]{4})\t([A-Z]{4})\t(\w)/) {
 	  my $speciesAbbrev = $1;
 	  my $cladeAbbrev = $2;
-	  my $ncbiTaxonId = $3;
-	  my $corePeripheral = $4;
+	  my $corePeripheral = $3;
 	  $self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
 	  $self->userError("species abbreviation must have 4 letters") if length($speciesAbbrev) != 4;
-	  $self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
+	  $self->userError("The third column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
 	  $speciesAbbrevs->{$speciesAbbrev} = 1;
-	  $species->setThreeLetterAbbrev($speciesAbbrev);
 	  my $clade = $self->{clades}->{$cladeAbbrev};
-	  my ($taxonId, $taxonName) = $self->getTaxonId($stmt, $ncbiTaxonId);
-	  $species->setTaxonId($taxonId);
-	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
+	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n"
+	  $self->userError("Can't get Taxon Id for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{taxonId});
+	  $self->userError("Can't get Taxon Name for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{name});
+	  $species->setTaxonId($abbrevNameTaxon->{$speciesAbbrev}->{taxonId});
+	  $species->setThreeLetterAbbrev($speciesAbbrev);
 	  $species->setParent($clade);
 	  $species->setIsSpecies(1);
 	  $species->setSpeciesOrder($speciesOrder++);
-	  $species->setName($taxonName);
+	  $species->setName($abbrevNameTaxon->{$speciesAbbrev}->{name});
 	  $species->setDepthFirstIndex($clade->getDepthFirstIndex());
 	  $species->setCorePeripheral($corePeripheral);
 	}  else {
 	  $self->userError("invalid line in species file: '$_'");
 	}
     }
-}
-
-sub getTaxonId {
-  my ($self, $stmt, $ncbiTaxId) = @_;
-
-
-  my @ids = $self->sqlAsArray( Handle => $stmt, Bind => [$ncbiTaxId] );
-
-  if(scalar @ids != 2) {
-    $self->userError("Should return one value for ncbi_tax_id '$ncbiTaxId'");
-  }
-  return @ids;
-
 }
 
 sub printCladeList {
