@@ -67,7 +67,7 @@ Both input files are both constructed manually as part of the Orthomcl-DB genome
 
 The speciesFile is a columnar file with these columns:
   - four_letter_abbrev
-  - ncbi_tax_id
+#  - ncbi_tax_id  (this used to be required but no longer as of 11/16/2020
   - clade_four_letter_abbrev  # an index into the cladeFile
   - C or P (core or peripheral species)
 
@@ -252,13 +252,12 @@ WHERE o.taxon_id = tn.taxon_id
     while(<FILE>) {
 	chomp;
 
-	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
-
-	# pfa APIC 1233.5
+	# pfal APIC C
 	if (/([a-z]{4})\t([A-Z]{4})\t(\w)/) {
 	  my $speciesAbbrev = $1;
 	  my $cladeAbbrev = $2;
 	  my $corePeripheral = $3;
+	  next if (! exists $abbrevNameTaxon->{$speciesAbbrev});
 	  $self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
 	  $self->userError("species abbreviation must have 4 letters") if length($speciesAbbrev) != 4;
 	  $self->userError("The third column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
@@ -267,6 +266,7 @@ WHERE o.taxon_id = tn.taxon_id
 	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n"
 	  $self->userError("Can't get Taxon Id for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{taxonId});
 	  $self->userError("Can't get Taxon Name for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{name});
+	  my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
 	  $species->setTaxonId($abbrevNameTaxon->{$speciesAbbrev}->{taxonId});
 	  $species->setThreeLetterAbbrev($speciesAbbrev);
 	  $species->setParent($clade);
