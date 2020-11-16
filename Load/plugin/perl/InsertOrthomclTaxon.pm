@@ -263,7 +263,7 @@ WHERE o.taxon_id = tn.taxon_id
 	  $self->userError("The third column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
 	  $speciesAbbrevs->{$speciesAbbrev} = 1;
 	  my $clade = $self->{clades}->{$cladeAbbrev};
-	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n"
+	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
 	  $self->userError("Can't get Taxon Id for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{taxonId});
 	  $self->userError("Can't get Taxon Name for '$speciesAbbrev'") if (! exists $abbrevNameTaxon->{$speciesAbbrev}->{name});
 	  my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
