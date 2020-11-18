@@ -275,6 +275,9 @@ sub addResults {
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
+  elsif ($protocolName eq "Lopit") {
+    $tableString = "ApiDB::LopitResults";
+  }
   else {
 # TODO check what protocol this is for, and die in the else clause
     $tableString = "Results::NAFeatureExpression";
@@ -655,6 +658,7 @@ sub undoTables {
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
+    'ApiDB.LopitResults',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
