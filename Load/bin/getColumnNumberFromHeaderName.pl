@@ -12,13 +12,14 @@ unless (0 < @ARGV){
     "\t-e exact match (default is not case-sensitive and allows partial match)",
     "\t-v get unique values in this column with count for each value (implies -e even if it is not specified)",
     "\t-t tab delimiter (default is comma)",
+    "\t-I identifiers only (first column)",
     "")));
   exit;
 }
 
-my ($values,$exact,$tab,$delim);
+my ($values,$exact,$tab,$identifiers,$delim);
 
-GetOptions('v|values' => \$values, 'e|exact' => \$exact, 't|tab', \$tab);
+GetOptions('v|values!' => \$values, 'e|exact' => \$exact, 't|tab', \$tab, 'I|identifiers!' => \$identifiers);
 
 $exact = 1 if $values;
 
@@ -62,6 +63,7 @@ foreach my $filename (@files){
   
   if( $values && defined($colNum)){
     my %vals;
+    my @ids;
     while(my $line = <FILE>){
       chomp $line;
       my @data; # = split(/$delim/, $line);
@@ -75,12 +77,17 @@ foreach my $filename (@files){
       next unless defined($data[$colNum]);
       $vals{ $data[$colNum] } ||= 0;
       $vals{ $data[$colNum] }++;
+      push(@ids, $data[0]) if ($data[$colNum] ne "");
     }
     print STDERR ("\nvalue\tcount\n-----\t-----\n");
 		printf ("%s\n", join("\n", map { sprintf("%s\t%5d", $_, $vals{$_}) } sort keys %vals));
 		my $nonempty = 0;
 		map { $nonempty += $vals{$_} if ($_ ne "")  } keys %vals;
     printf STDERR ("-----\nNon-empty\t%d\n", $nonempty);
+    if($identifiers){
+      printf STDERR ("%d identifiers\n", scalar @ids);
+      printf STDERR ("%s\n", join("\n", @ids)) if (20 > @ids);
+    }
   }
   elsif(!defined($colNum)){
     printf STDERR ("Column \"%s\" not found in %s\n", $headerName, $filename);
