@@ -129,6 +129,7 @@ my @create = qw(
                createOntologyTermResult.sql
                createSubjectResult.sql
                createWHOStandards.sql
+               createLOPITResults.sql
                createNAFeatureMetaCycle.sql
                createCNVTables.sql
                createRflpTables.sql
@@ -140,6 +141,7 @@ my @create = qw(
                createUserDatasetCoreTables.sql
                createUserDatasetTypeTables.sql
                createDatabaseTableMapping.sql
+               createSeqEdit.sql
 	     );
 
 
@@ -166,7 +168,7 @@ if ($create) {
   }
 
 } elsif ($dropApiDB) {
-  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','CHEBI','HMDB'");
+  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB'");
 
 } elsif ($dropGUS) {
   &dropSchemaSet($login, $password, $db,
@@ -228,6 +230,23 @@ sub dropSchemaSetTables {
 
   print STDERR "\nfixing to drop tables in schema set \"$schemaSet\"\n" if $verbose;
 
+  # drop tables
+  my $stmt = $dbh->prepare(<<SQL);
+    select 'drop table ' || owner || '.' || table_name
+           || ' cascade constraints'
+    from all_tables
+    where owner in ($schemaSet)
+SQL
+
+  $stmt->execute()
+    or addErrorLog("\n" . $dbh->errstr . "\n");
+
+  while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
+    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
+    $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+  }
+
+  # drop everything
   my $stmt = $dbh->prepare(<<SQL);
     select 'drop ' || object_type || ' ' || owner || '.' || object_name
            || decode(object_type, 'TABLE', ' CASCADE CONSTRAINTS', '')

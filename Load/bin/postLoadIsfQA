@@ -168,7 +168,7 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($errorSourceId, $chrNum, $chrOrderNum, $so) = $stmt->fetchrow_array() ) {
-  die "ERROR... for chromosome $errorSourceId, the chromosome and chromosome_order_number have not been set up yet!\n$sql\n" if (!$chrNum || !$chrOrderNum);
+  print STDERR "ERROR... for chromosome $errorSourceId, the chromosome and chromosome_order_number have not been set up yet!\n$sql\n" if (!$chrNum || !$chrOrderNum);
 }
 $stmt->finish();
 

@@ -39,7 +39,7 @@ print STDERR "SQL: $sql\n";
 
 open (OUT,"> $outFile");
 
-$dbh->prepareAndExecute("alter SESSION set NLS_DATE_FORMAT = 'DD-MM-YYYY'");
+$dbh->prepareAndExecute("alter SESSION set NLS_DATE_FORMAT = 'YYYY-MM-DD'");
 
 my $sth = $dbh->prepareAndExecute($sql);
 
