@@ -295,6 +295,10 @@ sub loadPropertyGraph {
 
   $self->loadEdges($study->getEdges, $nodeNameToIdMap, $edgeTypeNamesToIdMap);
 
+  if($self->{_max_attr_value} > $gusPropertyGraph->getMaxAttrLength()) {
+    $gusPropertyGraph->setMaxAttrLength($self->{_max_attr_value});
+    $gusPropertyGraph->submit();
+  }
 }
 
 
@@ -347,19 +351,9 @@ sub loadNodes {
   $self->getDb()->manageTransaction(0, 'begin');
 
   foreach my $node (@$nodes) {
-    my $vertex;
-
     my $charsForLoader = {};
 
-    if(my $vertexId = $node->{_NODE_ID}) {
-      $vertex = GUS::Model::ApiDB::VertexAttributes->new({vertex_attributes_id => $vertexId});
-      unless($vertex->retrieveFromDB()) {
-        $self->error("Could not retrieve ProtocolAppNode [$vertexId] w/ name " . $node->getValue());
-      }
-    }
-    else {
-      $vertex = GUS::Model::ApiDB::VertexAttributes->new({name => $node->getValue()});
-    }
+    my $vertex = GUS::Model::ApiDB::VertexAttributes->new({name => $node->getValue()});
 
     my $vertexTypeId = $self->getVertexTypeId($node, $gusPropertyGraphId);
     $vertex->setVertexTypeId($vertexTypeId);
@@ -398,6 +392,11 @@ sub loadNodes {
           $self->error("Qualifier $charQualifierSourceId can only be used one time for node " . $vertex->getName());
         }
         $charsForLoader->{$charQualifierSourceId} = $charValue;
+
+        if(length $charValue > $self->{_max_attr_value}) {
+          $self->{_max_attr_value} = length $charValue;
+        }
+
       }
     }
 
@@ -475,14 +474,7 @@ sub loadEdgeTypes {
 
     my $protocolName = $protocol->getProtocolName();
 
-    if($edgeTypeId) {
-      $gusEdgeType = GUS::Model::ApiDB::EdgeType->new({edge_type_id => $edgeTypeId});
-
-      unless($gusEdgeType->retrieveFromDB()) {
-        $self->error("Could not retrieve ApiDB.EdgeType w/ id [$edgeTypeId]");
-      }
-    }
-    else {
+    unless($edgeTypeId) {
       my $protocolDescription = $protocol->getProtocolDescription();
       $gusEdgeType = GUS::Model::ApiDB::EdgeType->new({name => $protocolName, description => $protocolDescription});
 
@@ -490,12 +482,13 @@ sub loadEdgeTypes {
         my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType(), 0);
         $gusEdgeType->setParent($gusProtocolType);
       }
+
+      $self->log("Adding EdgeType $protocolName to the database");
+      $gusEdgeType->submit();
+      $edgeTypeId = $gusEdgeType->getId();
     }
 
-    $self->log("Adding EdgeType $protocolName to the database");
-    $gusEdgeType->submit();
-    $pNameToId->{$protocolName} = $gusEdgeType->getId();
-
+    $pNameToId->{$protocolName} = $edgeTypeId;
   }
 
   return $pNameToId;
@@ -569,8 +562,12 @@ sub getEdgeAttributesHash {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
       $rv{$protocolName}->{$ppQualifier} = $ppValue;
+      
+      if(length $ppValue > $self->{_max_attr_value}) {
+        $self->{_max_attr_value} = length $ppValue;
       }
     }
+  }
   return \%rv;
 }
 
@@ -617,7 +614,6 @@ sub loadEdges {
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
-# TODO: use synonym name preferentially for this dataset
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
