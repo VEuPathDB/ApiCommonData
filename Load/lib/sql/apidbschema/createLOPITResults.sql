@@ -1,9 +1,9 @@
 CREATE TABLE apidb.LopitResults (
  lopit_result_id         NUMBER(12) NOT NULL,
  na_feature_id         NUMBER(12) NOT NULL,
- probability_mean         NUMBER(12) NOT NULL,
- lower_CI                NUMBER(12),
- upper_CI                NUMBER(12),
+ probability_mean         FLOAT(126)  NOT NULL,
+ lower_CI                FLOAT(126),
+ upper_CI                FLOAT(126),
  protocol_app_node_id         NUMBER(10) NOT NULL,
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
