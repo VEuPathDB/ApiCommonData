@@ -6,6 +6,8 @@ use Getopt::Long;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 
 
 ## TODO, better to ignore null record
@@ -27,6 +29,9 @@ my ($genomeSummaryFile, $organismAbbrev, $gusConfigFile, $outputFileName, $outpu
 $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
 my $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $instanceName = $gusconfig->getDbiDsn();
+print STDERR "The current instance \$instanceName = $instanceName\n";
 
 my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getDatabaseLogin(),
@@ -88,6 +93,9 @@ while (<IN>) {
 
     ## only has genebuild if is_annotated = 1
     if ($genebuildVersion) {
+      if ($gusconfig->getDbiDsn() =~ /rm40341/ || $gusconfig->getDbiDsn() =~ /isfTest/ ) {
+	$genebuildVersion = getGeneBuildVersionFromDatabase ($organismAbbrev);
+      }
       $organismDetails{genebuild}{version} = $genebuildVersion;
       $organismDetails{genebuild}{start_date} = $genebuildVersion;
     }
@@ -233,6 +241,21 @@ sub getNcbiTaxonIdFromOrganismName {
   return $taxon->getNcbiTaxId();
 }
 
+sub getGeneBuildVersionFromDatabase {
+  my ($orgnaismName) = @_;
+
+  my $extDbName = $orgnaismName . "_primary_genome_RSRC";
+
+  my $extDb = GUS::Model::SRes::ExternalDatabase->new({name=>$extDbName});
+  $extDb->retrieveFromDB || die "ERROR: can not find database name as $extDbName\n";
+
+  my $extDbId = $extDb->getExternalDatabaseId();
+
+  my $extDbRls = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_id=>$extDbId});
+  $extDbRls->retrieveFromDB || die "ERROR: can not find externalDatabaseRelease table as $extDbId\n";
+
+  return $extDbRls->getVersion();
+}
 
 sub usage {
   die
