@@ -1,3 +1,19 @@
+DROP TABLE apidb.Attribute;
+DROP SEQUENCE apidb.Attribute_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'attribute'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+DROP TABLE apidb.AttributeValue;
+DROP SEQUENCE apidb.AttributeValue_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'attributevalue'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
 DROP TABLE apidb.EdgeAttributes;
 DROP SEQUENCE apidb.EdgeAttributes_sq;
 DELETE FROM core.TableInfo
@@ -16,16 +32,6 @@ WHERE lower(name) =  'vertexattributes'
                       WHERE lower(name) = 'apidb');
 
 
-
-DROP TABLE apidb.EdgeAttributeUnit;
-DROP SEQUENCE apidb.EdgeAttributeUnit_sq;
-DELETE FROM core.TableInfo
-WHERE lower(name) =  'edgeattributeunit'
-  AND database_id IN (SELECT database_id
-                      FROM core.DatabaseInfo
-                      WHERE lower(name) = 'apidb');
-
-
 DROP TABLE apidb.EdgeTypeComponent;
 DROP SEQUENCE apidb.EdgeTypeComponent_sq;
 DELETE FROM core.TableInfo
@@ -36,10 +42,10 @@ WHERE lower(name) =  'edgetypecomponent'
 
 
 
-DROP TABLE apidb.VertexAttributeUnit;
-DROP SEQUENCE apidb.VertexAttributeUnit_sq;
+DROP TABLE apidb.AttributeUnit;
+DROP SEQUENCE apidb.AttributeUnit_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'vertexattributeunit'
+WHERE lower(name) =  'attributeunit'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
