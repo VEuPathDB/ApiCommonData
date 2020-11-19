@@ -598,7 +598,7 @@ sub getOntologyTermGusObj {
     my $ontologyTermId;
     if($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic' && $isCharQualifier) {
       my $qualifier = $ontologyTerm->getQualifier();
-      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{CHARACTERISTIC_QUALIFIER}->{$qualifier};
+      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{QUALIFIER}->{$qualifier};
       $self->userError("No ontology entry found for qualifier [$qualifier]") unless($ontologyTermId);
     }
     elsif($ontologyTermAccessionNumber && $ontologyTermSourceRef) {

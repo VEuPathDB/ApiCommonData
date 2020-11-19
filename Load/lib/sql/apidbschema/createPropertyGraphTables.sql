@@ -226,8 +226,8 @@ WHERE 'edgeattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE apidb.VertexAttributeUnit (
- vertex_attribute_unit_id            NUMBER(12) NOT NULL,
+CREATE TABLE apidb.AttributeUnit (
+ attribute_unit_id                NUMBER(12) NOT NULL,
  vertex_type_id                      NUMBER(12) NOT NULL,
  attr_ontology_term_id               NUMBER(10) NOT NULL,
  unit_ontology_term_id               NUMBER(10) NOT NULL,
@@ -245,13 +245,13 @@ CREATE TABLE apidb.VertexAttributeUnit (
  FOREIGN KEY (vertex_type_id) REFERENCES apidb.VertexType,
  FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
  FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
- PRIMARY KEY (vertex_attribute_unit_id)
+ PRIMARY KEY (attribute_unit_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.VertexAttributeUnit TO gus_w;
-GRANT SELECT ON apidb.VertexAttributeUnit TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeUnit TO gus_w;
+GRANT SELECT ON apidb.AttributeUnit TO gus_r;
 
-CREATE SEQUENCE apidb.VertexAttributeUnit_sq;
+CREATE SEQUENCE apidb.AttributeUnit_sq;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -259,62 +259,18 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'VertexAttributeUnit',
-       'Standard', 'vertex_attribute_unit_id',
+SELECT core.tableinfo_sq.nextval, 'AttributeUnit',
+       'Standard', 'attribute_unit_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'vertexattributeunit' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'attributeunit' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 -----------------------------------------------------------
 
-CREATE TABLE apidb.EdgeAttributeUnit (
- edge_attribute_unit_id            NUMBER(12) NOT NULL,
- edge_type_id                      NUMBER(12) NOT NULL,
- attribute_ontology_term_id        NUMBER(10) NOT NULL,
- unit_ontology_term_id             NUMBER(10) NOT NULL,
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (edge_type_id) REFERENCES apidb.EdgeType,
- FOREIGN KEY (attribute_ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
- PRIMARY KEY (edge_attribute_unit_id)
-);
-
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EdgeAttributeUnit TO gus_w;
-GRANT SELECT ON apidb.EdgeAttributeUnit TO gus_r;
-
-CREATE SEQUENCE apidb.EdgeAttributeUnit_sq;
-
-INSERT INTO core.TableInfo
-    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
-     is_view, view_on_table_id, superclass_table_id, is_updatable, 
-     modification_date, user_read, user_write, group_read, group_write, 
-     other_read, other_write, row_user_id, row_group_id, row_project_id, 
-     row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'EdgeAttributeUnit',
-       'Standard', 'edge_attribute_unit_id',
-       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
-       p.project_id, 0
-FROM dual,
-     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'edgeattributeunit' NOT IN (SELECT lower(name) FROM core.TableInfo
-                                    WHERE database_id = d.database_id);
-
------------------------------------------------------------
 
 CREATE TABLE apidb.EdgeTypeComponent (
  edge_type_component_id       NUMBER(12) NOT NULL,

@@ -14,12 +14,11 @@ use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::ApiDB::PropertyGraph;
 use GUS::Model::ApiDB::VertexAttributes;
 use GUS::Model::ApiDB::VertexType;
-use GUS::Model::ApiDB::VertexAttributeUnit;
+use GUS::Model::ApiDB::AttributeUnit;
 
 use GUS::Model::ApiDB::EdgeAttributes;
 use GUS::Model::ApiDB::EdgeType;
 use GUS::Model::ApiDB::EdgeTypeComponent;
-use GUS::Model::ApiDB::EdgeAttributeUnit;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -340,6 +339,30 @@ sub getVertexTypeId {
 }
 
 
+sub addAttributeUnit {
+  my ($self, $vertexTypeId, $attrOntologyTermId, $unitOntologyTermId) = @_;
+
+  if($self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId}) {
+    return;
+  }
+
+  $self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId} = 1;
+  
+
+  if(keys %{$self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}} > 1) {
+    $self->error("Multiple Units found for VertexTypeId=$vertexTypeId and AttributeOntologyTermId=$attrOntologyTermId");
+  }
+
+  
+  my $attributeValue = GUS::Model::ApiDB::AttributeUnit->new({vertex_type_id => $vertexTypeId, 
+                                                              attr_ontology_term_id => $attrOntologyTermId,
+                                                              unit_ontology_term_id => $unitOntologyTermId
+                                                             });
+
+  $attributeValue->submit(undef, 1);
+}
+
+
 sub loadNodes {
   my ($self, $nodes, $gusPropertyGraph) = @_;
 
@@ -365,12 +388,10 @@ sub loadNodes {
         my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
         my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
 
-        # TODO: Handle Units
-        # my $charUnitId;
-        # if($characteristic->getUnit()) {
-        #   my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
-        #   $charUnitId = $unitOntologyTerm->getId();
-        # }
+        if($characteristic->getUnit()) {
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
+          $self->addAttributeUnit($vertexTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+         }
 
         my ($charValue);
 
@@ -408,7 +429,7 @@ sub loadNodes {
     # keep the cache up to date as we add new nodes
     $self->{_NODE_MAP}->{$vertex->getName()} = $vertex->getId();
 
-    $rv{$vertex->getName()} = $vertex->getId();
+    $rv{$vertex->getName()} = [$vertex->getId(), $vertex->getVertexTypeId()];
 
     $self->undefPointerCache();
 
@@ -424,7 +445,7 @@ sub loadNodes {
 }
 
 sub getOntologyTermGusObj {
-    my ($self, $ontologyTerm, $isCharQualifier) = @_;
+    my ($self, $ontologyTerm, $useQualifier) = @_;
 
     my $ontologyTermTerm = $ontologyTerm->getTerm();
     my $ontologyTermClass = blessed($ontologyTerm);
@@ -434,9 +455,9 @@ sub getOntologyTermGusObj {
     $self->logDebug("OntologyTerm=$ontologyTermTerm\tClass=$ontologyTermClass\tAccession=$ontologyTermAccessionNumber\tSource=$ontologyTermSourceRef\n");
 
     my $ontologyTermId;
-    if($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic' && $isCharQualifier) {
+    if(($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::ParameterValue' || $ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic') && $useQualifier) {
       my $qualifier = $ontologyTerm->getQualifier();
-      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{CHARACTERISTIC_QUALIFIER}->{$qualifier};
+      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{QUALIFIER}->{$qualifier};
       $self->userError("No ontology entry found for qualifier [$qualifier]") unless($ontologyTermId);
     }
     elsif($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
@@ -517,9 +538,7 @@ sub getOrMakeEdgeTypeId {
 
   unless($gusEdgeTypeId) {
     my $gusEdgeType = GUS::Model::ApiDB::EdgeType->new({name => $protocolName});
-    $self->getDb()->manageTransaction(0, 'commit');
-    $gusEdgeType->submit();
-    $self->getDb()->manageTransaction(0, 'begin');
+    $gusEdgeType->submit(undef, 1);
 
     $gusEdgeTypeId = $gusEdgeType->getId();
 
@@ -528,7 +547,7 @@ sub getOrMakeEdgeTypeId {
       my $edgeTypeComponent = GUS::Model::ApiDB::EdgeTypeComponent->new({order_num => $i+1});
       $edgeTypeComponent->setEdgeTypeId($gusEdgeTypeId);
       $edgeTypeComponent->setComponentId($edgeTypeNamesToIdMap->{$seriesProtocolNames[$i]});
-      $edgeTypeComponent->submit();
+      $edgeTypeComponent->submit(undef, 1);
     }
   }
 
@@ -540,7 +559,7 @@ sub getGusVertexId {
   my ($self, $node, $nodeNameToIdMap) = @_;
 
   my $name = $node->getValue();
-  my $id = $nodeNameToIdMap->{$name};
+  my $id = $nodeNameToIdMap->{$name}->[0];
   unless($id) {
     $self->error("No vertex_id found for $name");
   }
@@ -550,9 +569,19 @@ sub getGusVertexId {
 
 
 sub getEdgeAttributesHash {
-  my ($self, $edge) = @_;
+  my ($self, $edge, $nodeNameToIdMap) = @_;
 
   my %rv;
+
+  my %vertexTypeIds;
+
+  foreach my $output (@{$edge->getOutputs()}) {
+    my $name = $output->getValue();
+    my $id = $nodeNameToIdMap->{$name}->[1];
+    $vertexTypeIds{$id}++;
+  }
+
+  my @vtIds = keys %vertexTypeIds;
 
   foreach my $protocolApp (@{$edge->getProtocolApplications()}) {
     my $protocol = $protocolApp->getProtocol();
@@ -562,6 +591,15 @@ sub getEdgeAttributesHash {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
       $rv{$protocolName}->{$ppQualifier} = $ppValue;
+
+      if($parameterValue->getUnit()) {
+        my $qualifierOntologyTerm = $self->getOntologyTermGusObj($parameterValue, 1);
+        my $unitOntologyTerm = $self->getOntologyTermGusObj($parameterValue->getUnit(), 0);
+
+        foreach(@vtIds) {
+          $self->addAttributeUnit($_, $qualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+        }
+      }
       
       if(length $ppValue > $self->{_max_attr_value}) {
         $self->{_max_attr_value} = length $ppValue;
@@ -582,7 +620,7 @@ sub loadEdges {
   foreach my $edge (@$edges) {
     my $gusEdgeTypeId = $self->getOrMakeEdgeTypeId($edge, $edgeTypeNamesToIdMap);
 
-    my $edgeAttributesHash = $self->getEdgeAttributesHash($edge);
+    my $edgeAttributesHash = $self->getEdgeAttributesHash($edge, $nodeNameToIdMap);
 
     my $atts = encode_json($edgeAttributesHash);
 
