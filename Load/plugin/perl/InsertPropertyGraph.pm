@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertPropertyGraph;
+package ApiCommonData::Load::Plugin::InsertEntityGraph;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use GUS::PluginMgr::Plugin;
@@ -11,14 +11,14 @@ use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
 
-use GUS::Model::ApiDB::PropertyGraph;
-use GUS::Model::ApiDB::VertexAttributes;
-use GUS::Model::ApiDB::VertexType;
+use GUS::Model::ApiDB::EntityGraph;
+use GUS::Model::ApiDB::EntityAttributes;
+use GUS::Model::ApiDB::EntityType;
 use GUS::Model::ApiDB::AttributeUnit;
 
-use GUS::Model::ApiDB::EdgeAttributes;
-use GUS::Model::ApiDB::EdgeType;
-use GUS::Model::ApiDB::EdgeTypeComponent;
+use GUS::Model::ApiDB::ProcessAttributes;
+use GUS::Model::ApiDB::ProcessType;
+use GUS::Model::ApiDB::ProcessTypeComponent;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -202,7 +202,7 @@ sub run {
           next;
         }
 
-        $self->checkEdgeTypesAndSetIds($study->getProtocols());
+        $self->checkProcessTypesAndSetIds($study->getProtocols());
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
@@ -210,7 +210,7 @@ sub run {
 
         $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
 
-        $self->loadPropertyGraph($study);
+        $self->loadEntityGraph($study);
       }
 
       # clear out the protocol app node hash
@@ -252,25 +252,25 @@ sub checkMaterialEntitiesHaveMaterialType {
   }
 }
 
-sub checkEdgeTypesAndSetIds {
+sub checkProcessTypesAndSetIds {
   my ($self, $protocols) = @_;
 
-  my $sql = "select name, edge_type_id from apidb.edgetype";
+  my $sql = "select name, process_type_id from apidb.processtype";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute();
-  my %edgeTypes;
-  while(my ($edgeType, $edgeTypeId) = $sh->fetchrow_array()) {
-    $edgeTypes{$edgeType} = $edgeTypeId;
+  my %processTypes;
+  while(my ($processType, $processTypeId) = $sh->fetchrow_array()) {
+    $processTypes{$processType} = $processTypeId;
   }
   $sh->finish();
 
   foreach my $protocol (@$protocols) {
     my $protocolName = $protocol->getProtocolName();
 
-    if($edgeTypes{$protocolName}) {
-      $protocol->{_EDGE_TYPE_ID} = $edgeTypes{$protocolName};
+    if($processTypes{$protocolName}) {
+      $protocol->{_PROCESS_TYPE_ID} = $processTypes{$protocolName};
     }
     else {
       $self->log("WARNING:  Protocol [$protocolName] Not found in the database") ;
@@ -278,7 +278,7 @@ sub checkEdgeTypesAndSetIds {
   }
 }
 
-sub loadPropertyGraph {
+sub loadEntityGraph {
   my ($self, $study) = @_;
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
@@ -286,23 +286,23 @@ sub loadPropertyGraph {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
 
-  my $gusPropertyGraph = GUS::Model::ApiDB::PropertyGraph->new({name => $identifier, external_database_release_id=>$extDbRlsId});
-  $gusPropertyGraph->submit() unless ($gusPropertyGraph->retrieveFromDB());
+  my $gusEntityGraph = GUS::Model::ApiDB::EntityGraph->new({name => $identifier, external_database_release_id=>$extDbRlsId});
+  $gusEntityGraph->submit() unless ($gusEntityGraph->retrieveFromDB());
 
-  my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusPropertyGraph);
-  my $edgeTypeNamesToIdMap = $self->loadEdgeTypes($study->getProtocols());
+  my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusEntityGraph);
+  my $processTypeNamesToIdMap = $self->loadProcessTypes($study->getProtocols());
 
-  $self->loadEdges($study->getEdges, $nodeNameToIdMap, $edgeTypeNamesToIdMap);
+  $self->loadProcesss($study->getProcesss, $nodeNameToIdMap, $processTypeNamesToIdMap);
 
-  if($self->{_max_attr_value} > $gusPropertyGraph->getMaxAttrLength()) {
-    $gusPropertyGraph->setMaxAttrLength($self->{_max_attr_value});
-    $gusPropertyGraph->submit();
+  if($self->{_max_attr_value} > $gusEntityGraph->getMaxAttrLength()) {
+    $gusEntityGraph->setMaxAttrLength($self->{_max_attr_value});
+    $gusEntityGraph->submit();
   }
 }
 
 
-sub getVertexTypeId {
-  my ($self, $node, $gusPropertyGraphId) = @_;
+sub getEntityTypeId {
+  my ($self, $node, $gusEntityGraphId) = @_;
 
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
@@ -311,50 +311,50 @@ sub getVertexTypeId {
 
   my $mtKey = $materialType . "_" . $isaType;
 
-  if($self->{_VERTEX_TYPE_IDS}->{$mtKey}) {
-    return $self->{_VERTEX_TYPE_IDS}->{$mtKey};
+  if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
+    return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
   }
 
-  my $vertexType = GUS::Model::ApiDB::VertexType->new();
-  $vertexType->setPropertyGraphId($gusPropertyGraphId);
-  $vertexType->setIsaType($isaType);
+  my $entityType = GUS::Model::ApiDB::EntityType->new();
+  $entityType->setEntityGraphId($gusEntityGraphId);
+  $entityType->setIsaType($isaType);
 
   if($node->hasAttribute("MaterialType")) {
     my $materialTypeOntologyTerm = $node->getMaterialType();
     my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
-    $vertexType->setTypeId($gusOntologyTerm->getId());
-    $vertexType->setName($gusOntologyTerm->getName());
+    $entityType->setTypeId($gusOntologyTerm->getId());
+    $entityType->setName($gusOntologyTerm->getName());
   }
   else {
-    $vertexType->setName($isaType);
+    $entityType->setName($isaType);
   }
 
-  $vertexType->submit(undef, 1);
+  $entityType->submit(undef, 1);
 
-  my $id = $vertexType->getId();
+  my $id = $entityType->getId();
 
-  $self->{_VERTEX_TYPE_IDS}->{$mtKey} = $id;
+  $self->{_ENTITY_TYPE_IDS}->{$mtKey} = $id;
 
   return $id;
 }
 
 
 sub addAttributeUnit {
-  my ($self, $vertexTypeId, $attrOntologyTermId, $unitOntologyTermId) = @_;
+  my ($self, $entityTypeId, $attrOntologyTermId, $unitOntologyTermId) = @_;
 
-  if($self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId}) {
+  if($self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId}) {
     return;
   }
 
-  $self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId} = 1;
+  $self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId} = 1;
   
 
-  if(keys %{$self->{_attribute_units}->{$vertexTypeId}->{$attrOntologyTermId}} > 1) {
-    $self->error("Multiple Units found for VertexTypeId=$vertexTypeId and AttributeOntologyTermId=$attrOntologyTermId");
+  if(keys %{$self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}} > 1) {
+    $self->error("Multiple Units found for EntityTypeId=$entityTypeId and AttributeOntologyTermId=$attrOntologyTermId");
   }
 
   
-  my $attributeValue = GUS::Model::ApiDB::AttributeUnit->new({vertex_type_id => $vertexTypeId, 
+  my $attributeValue = GUS::Model::ApiDB::AttributeUnit->new({entity_type_id => $entityTypeId, 
                                                               attr_ontology_term_id => $attrOntologyTermId,
                                                               unit_ontology_term_id => $unitOntologyTermId
                                                              });
@@ -364,11 +364,11 @@ sub addAttributeUnit {
 
 
 sub loadNodes {
-  my ($self, $nodes, $gusPropertyGraph) = @_;
+  my ($self, $nodes, $gusEntityGraph) = @_;
 
   my %rv;
 
-  my $gusPropertyGraphId = $gusPropertyGraph->getId();
+  my $gusEntityGraphId = $gusEntityGraph->getId();
 
   my $nodeCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -376,10 +376,10 @@ sub loadNodes {
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
 
-    my $vertex = GUS::Model::ApiDB::VertexAttributes->new({name => $node->getValue()});
+    my $entity = GUS::Model::ApiDB::EntityAttributes->new({name => $node->getValue()});
 
-    my $vertexTypeId = $self->getVertexTypeId($node, $gusPropertyGraphId);
-    $vertex->setVertexTypeId($vertexTypeId);
+    my $entityTypeId = $self->getEntityTypeId($node, $gusEntityGraphId);
+    $entity->setEntityTypeId($entityTypeId);
 
     if ($node->hasAttribute("Characteristic")) {
       my $characteristics = $node->getCharacteristics();
@@ -390,7 +390,7 @@ sub loadNodes {
 
         if($characteristic->getUnit()) {
           my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
-          $self->addAttributeUnit($vertexTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+          $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
          }
 
         my ($charValue);
@@ -410,7 +410,7 @@ sub loadNodes {
         $charValue =~ s/\r//;
 
         if($charsForLoader->{$charQualifierSourceId}) {
-          $self->error("Qualifier $charQualifierSourceId can only be used one time for node " . $vertex->getName());
+          $self->error("Qualifier $charQualifierSourceId can only be used one time for node " . $entity->getName());
         }
         $charsForLoader->{$charQualifierSourceId} = $charValue;
 
@@ -422,14 +422,14 @@ sub loadNodes {
     }
 
     my $atts = encode_json($charsForLoader);
-    $vertex->setAtts($atts);
+    $entity->setAtts($atts);
 
-    $vertex->submit(undef, 1);
+    $entity->submit(undef, 1);
 
     # keep the cache up to date as we add new nodes
-    $self->{_NODE_MAP}->{$vertex->getName()} = $vertex->getId();
+    $self->{_NODE_MAP}->{$entity->getName()} = $entity->getId();
 
-    $rv{$vertex->getName()} = [$vertex->getId(), $vertex->getVertexTypeId()];
+    $rv{$entity->getName()} = [$entity->getId(), $entity->getEntityTypeId()];
 
     $self->undefPointerCache();
 
@@ -483,107 +483,107 @@ sub getOntologyTermGusObj {
 }
 
 
-sub loadEdgeTypes {
+sub loadProcessTypes {
   my ($self, $protocols) = @_;
 
   my $pNameToId = {};
 
   foreach my $protocol (@$protocols) {
-    my $edgeTypeId = $protocol->{_EDGE_TYPE_ID};
+    my $processTypeId = $protocol->{_PROCESS_TYPE_ID};
 
-    my $gusEdgeType;
+    my $gusProcessType;
 
     my $protocolName = $protocol->getProtocolName();
 
-    unless($edgeTypeId) {
+    unless($processTypeId) {
       my $protocolDescription = $protocol->getProtocolDescription();
-      $gusEdgeType = GUS::Model::ApiDB::EdgeType->new({name => $protocolName, description => $protocolDescription});
+      $gusProcessType = GUS::Model::ApiDB::ProcessType->new({name => $protocolName, description => $protocolDescription});
 
       if($protocol->getProtocolType()) {
         my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType(), 0);
-        $gusEdgeType->setParent($gusProtocolType);
+        $gusProcessType->setParent($gusProtocolType);
       }
 
-      $self->log("Adding EdgeType $protocolName to the database");
-      $gusEdgeType->submit();
-      $edgeTypeId = $gusEdgeType->getId();
+      $self->log("Adding ProcessType $protocolName to the database");
+      $gusProcessType->submit();
+      $processTypeId = $gusProcessType->getId();
     }
 
-    $pNameToId->{$protocolName} = $edgeTypeId;
+    $pNameToId->{$protocolName} = $processTypeId;
   }
 
   return $pNameToId;
 }
 
 
-sub getOrMakeEdgeTypeId {
-  my ($self, $edge, $edgeTypeNamesToIdMap) = @_;
+sub getOrMakeProcessTypeId {
+  my ($self, $process, $processTypeNamesToIdMap) = @_;
 
-  my $protocolCount = scalar @{$edge->getProtocolApplications()};
+  my $protocolCount = scalar @{$process->getProtocolApplications()};
   my $protocolName;
 
   my @seriesProtocolNames;
   if($protocolCount > 1) {
-    @seriesProtocolNames = map { $_->getProtocol()->getProtocolName() } @{$edge->getProtocolApplications()};
+    @seriesProtocolNames = map { $_->getProtocol()->getProtocolName() } @{$process->getProtocolApplications()};
     # check they have already been loaded and make a name for the series
-    my @ok = grep { $edgeTypeNamesToIdMap->{$_} } @seriesProtocolNames;
+    my @ok = grep { $processTypeNamesToIdMap->{$_} } @seriesProtocolNames;
     $self->error("ERROR: one or more protocolSeries component protocol not already loaded (@seriesProtocolNames)") unless (@ok == @seriesProtocolNames);
     $protocolName = join("; ", @seriesProtocolNames);
   }
   else {
-    $protocolName = $edge->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
+    $protocolName = $process->getProtocolApplications()->[0]->getProtocol()->getProtocolName();
   }
   
-  my $gusEdgeTypeId = $edgeTypeNamesToIdMap->{$protocolName};
+  my $gusProcessTypeId = $processTypeNamesToIdMap->{$protocolName};
 
-  unless($gusEdgeTypeId) {
-    my $gusEdgeType = GUS::Model::ApiDB::EdgeType->new({name => $protocolName});
-    $gusEdgeType->submit(undef, 1);
+  unless($gusProcessTypeId) {
+    my $gusProcessType = GUS::Model::ApiDB::ProcessType->new({name => $protocolName});
+    $gusProcessType->submit(undef, 1);
 
-    $gusEdgeTypeId = $gusEdgeType->getId();
+    $gusProcessTypeId = $gusProcessType->getId();
 
-    $edgeTypeNamesToIdMap->{$protocolName} = $gusEdgeTypeId;
+    $processTypeNamesToIdMap->{$protocolName} = $gusProcessTypeId;
     for (my $i=0; $i<@seriesProtocolNames; $i++) {
-      my $edgeTypeComponent = GUS::Model::ApiDB::EdgeTypeComponent->new({order_num => $i+1});
-      $edgeTypeComponent->setEdgeTypeId($gusEdgeTypeId);
-      $edgeTypeComponent->setComponentId($edgeTypeNamesToIdMap->{$seriesProtocolNames[$i]});
-      $edgeTypeComponent->submit(undef, 1);
+      my $processTypeComponent = GUS::Model::ApiDB::ProcessTypeComponent->new({order_num => $i+1});
+      $processTypeComponent->setProcessTypeId($gusProcessTypeId);
+      $processTypeComponent->setComponentId($processTypeNamesToIdMap->{$seriesProtocolNames[$i]});
+      $processTypeComponent->submit(undef, 1);
     }
   }
 
-  return $gusEdgeTypeId;
+  return $gusProcessTypeId;
 }
 
 
-sub getGusVertexId {
+sub getGusEntityId {
   my ($self, $node, $nodeNameToIdMap) = @_;
 
   my $name = $node->getValue();
   my $id = $nodeNameToIdMap->{$name}->[0];
   unless($id) {
-    $self->error("No vertex_id found for $name");
+    $self->error("No entity_id found for $name");
   }
 
   return $id;
 }
 
 
-sub getEdgeAttributesHash {
-  my ($self, $edge, $nodeNameToIdMap) = @_;
+sub getProcessAttributesHash {
+  my ($self, $process, $nodeNameToIdMap) = @_;
 
   my %rv;
 
-  my %vertexTypeIds;
+  my %entityTypeIds;
 
-  foreach my $output (@{$edge->getOutputs()}) {
+  foreach my $output (@{$process->getOutputs()}) {
     my $name = $output->getValue();
     my $id = $nodeNameToIdMap->{$name}->[1];
-    $vertexTypeIds{$id}++;
+    $entityTypeIds{$id}++;
   }
 
-  my @vtIds = keys %vertexTypeIds;
+  my @vtIds = keys %entityTypeIds;
 
-  foreach my $protocolApp (@{$edge->getProtocolApplications()}) {
+  foreach my $protocolApp (@{$process->getProtocolApplications()}) {
     my $protocol = $protocolApp->getProtocol();
     my $protocolName = $protocol->getProtocolName();
 
@@ -611,34 +611,34 @@ sub getEdgeAttributesHash {
 
 
 
-sub loadEdges {
-  my ($self, $edges, $nodeNameToIdMap, $edgeTypeNamesToIdMap) = @_;
+sub loadProcesss {
+  my ($self, $processs, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
 
-  my $edgeCount;
+  my $processCount;
   $self->getDb()->manageTransaction(0, 'begin');
 
-  foreach my $edge (@$edges) {
-    my $gusEdgeTypeId = $self->getOrMakeEdgeTypeId($edge, $edgeTypeNamesToIdMap);
+  foreach my $process (@$processs) {
+    my $gusProcessTypeId = $self->getOrMakeProcessTypeId($process, $processTypeNamesToIdMap);
 
-    my $edgeAttributesHash = $self->getEdgeAttributesHash($edge, $nodeNameToIdMap);
+    my $processAttributesHash = $self->getProcessAttributesHash($process, $nodeNameToIdMap);
 
-    my $atts = encode_json($edgeAttributesHash);
+    my $atts = encode_json($processAttributesHash);
 
-    foreach my $output (@{$edge->getOutputs()}) {
-      foreach my $input (@{$edge->getInputs()}) {
-        my $inId = $self->getGusVertexId($input, $nodeNameToIdMap);
-        my $outId = $self->getGusVertexId($output, $nodeNameToIdMap);
+    foreach my $output (@{$process->getOutputs()}) {
+      foreach my $input (@{$process->getInputs()}) {
+        my $inId = $self->getGusEntityId($input, $nodeNameToIdMap);
+        my $outId = $self->getGusEntityId($output, $nodeNameToIdMap);
 
-        my $gusEdgeAttributes = GUS::Model::ApiDB::EdgeAttributes->new({edge_type_id => $gusEdgeTypeId, 
-                                                                        in_vertex_id => $inId,
-                                                                        out_vertex_id => $outId,
+        my $gusProcessAttributes = GUS::Model::ApiDB::ProcessAttributes->new({process_type_id => $gusProcessTypeId, 
+                                                                        in_entity_id => $inId,
+                                                                        out_entity_id => $outId,
                                                                         atts => $atts,
                                                                        });
 
-        $gusEdgeAttributes->submit(undef, 1);
+        $gusProcessAttributes->submit(undef, 1);
         $self->undefPointerCache();
 
-        if($edgeCount++ % 1000 == 0) {
+        if($processCount++ % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
           $self->getDb()->manageTransaction(0, 'begin');
         }
@@ -721,14 +721,13 @@ sub undoTables {
   my ($self) = @_;
 
   return (
-    'ApiDB.EdgeAttributes',
-    'ApiDB.VertexAttributes',
-    'ApiDB.EdgeAttributeUnit',
-    'ApiDB.EdgeTypeComponent',
-    'ApiDB.VertexAttributeUnit',
-    'ApiDB.EdgeType',
-    'ApiDB.VertexType',
-    'ApiDB.PropertyGraph',
+    'ApiDB.ProcessAttributes',
+    'ApiDB.EntityAttributes',
+    'ApiDB.AttributeUnit',
+    'ApiDB.ProcessTypeComponent',
+    'ApiDB.ProcessType',
+    'ApiDB.EntityType',
+    'ApiDB.EntityGraph',
      );
 
 
