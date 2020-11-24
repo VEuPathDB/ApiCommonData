@@ -63,4 +63,14 @@ is_deeply($t->getTermsFromObject("a;b",{}), {l1 => "a", l2 => "b", lineage => "a
 
 # $t = ApiCommonData::Load::Biom::Lineages->new("unassigned", ["kingdom", "phylum", "class", "order", "family", "genus", "species"], $maxLengthLevel);
 #diag explain $t->splitLineageString("D_0__Archaea;D_1__Euryarchaeota;D_2__Methanobacteria;D_3__Methanobacteriales;D_4__Methanobacteriaceae;D_5__Methanobrevibacter");
+#
+
+is_deeply($t->splitLineageString("a;Saccharibacteria_(TM7)_[G-1]"),["a", "Saccharibacteria_(TM7)_[G-1]"], "terms can be accidental regexs");
+is_deeply($t->splitLineageString("Saccharibacteria_(TM7)_[G-1];Unknown Saccharibacteria"),["Saccharibacteria_(TM7)_[G-1]","Unknown Saccharibacteria"], "terms can be accidental regexs 2");
+
+# Files sent by Poorani from Nephele, with DADA2 run with HOMD as reference
+is_deeply($t->splitLineageString("a;none"), ["a"], "none is blank");
+is_deeply($t->splitLineageString("a;None"), ["a"], "None is blank");
+is_deeply($t->splitLineageString("a;none;none"), ["a"], "none is blank 2");
+is_deeply($t->splitLineageString("a;none;c"), ["a","none", "c"], "none is okay in the middle");
 done_testing;
