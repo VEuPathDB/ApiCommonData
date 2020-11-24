@@ -1,11 +1,10 @@
-package ApiCommonData::Load::Plugin::LoadAttributesFromPropertyGraph;
+package ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use strict;
 use GUS::PluginMgr::Plugin;
 
-#use GUS::Model::ApiDB::Attribute;
-#use GUS::Model::ApiDB::AttributeValue;
+use GUS::Model::ApiDB::Attribute;
 
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Sqlldr;
@@ -18,13 +17,11 @@ use JSON;
 
 use Data::Dumper;
 
-
-
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $argsDeclaration =[];
-my $purposeBrief = 'Read PropertyGraph tables and insert tall table for attribute values and attribute table';
+my $purposeBrief = 'Read EntityGraph tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
 my $tablesAffected =
@@ -34,14 +31,13 @@ my $tablesAffected =
 
 my $tablesDependedOn =
     [['ApiDB::PropetyGraph',''],
-     ['ApiDB::VertexAttributes',  ''],
-     ['ApiDB::EdgeAttributes',  ''],
-     ['ApiDB::EdgeType',  ''],
-     ['ApiDB::VertexType',  ''],
-     ['ApiDB::VertexAttributeUnit',  ''],
-     ['ApiDB::EdgeAttributeUnit',  ''],
+     ['ApiDB::EntityAttributes',  ''],
+     ['ApiDB::ProcessAttributes',  ''],
+     ['ApiDB::ProcessType',  ''],
+     ['ApiDB::EntityType',  ''],
+     ['ApiDB::AttributeUnit',  ''],
      ['SRes::OntologyTerm',  ''],
-     ['ApiDB::EdgeType',  ''],
+     ['ApiDB::ProcessType',  ''],
     ];
 
 my $howToRestart = ""; 
@@ -68,7 +64,7 @@ my $argsDeclaration =
             isList         => 0, }),
 
  stringArg({ name            => 'extDbRlsSpec',
-	     descr           => 'ExternalDatabaseSpec for the Property Graph',
+	     descr           => 'ExternalDatabaseSpec for the Entity Graph',
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
@@ -125,27 +121,75 @@ sub run {
 
 
   
-  my $propertyGraphs = $self->sqlAsDictionary( Sql  => "select property_graph_id, max_attr_length from apidb.propertygraph where external_database_release_id = $extDbRlsId");
+  my $entityGraphs = $self->sqlAsDictionary( Sql  => "select entity_graph_id, max_attr_length from apidb.entitygraph where external_database_release_id = $extDbRlsId");
 
-  print Dumper $propertyGraphs;
-  exit;
-
-  $self->error("Expected one propertyGraph row.  Found ". scalar @propertyGraphIds) unless(scalar keys %$propertyGraphIds == 1);
+  $self->error("Expected one entityGraph row.  Found ". scalar @entityGraphIds) unless(scalar keys %$entityGraphIds == 1);
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
   my $ontologyTerms = $self->queryForOntologyTerms();
 
   my $attributeValueCount;
-  while(my ($propertyGraphId, $maxAttrLength) = each (%$propertyGraphs)) {
-    my $ct = $self->loadAttributeValues($propertyGraphId, $ontologyTerms, $maxAttrLength);
+  while(my ($entityGraphId, $maxAttrLength) = each (%$entityGraphs)) {
+    my $ct = $self->loadAttributeValues($entityGraphId, $ontologyTerms, $maxAttrLength);
     $attributeValueCount = $attributeValueCount + $ct;
+
+    $self->addUnitsToOntologyTerms($entityGraphId, $ontologyTerms);
   }
 
-  # TODO: Load values from $ontologyTerms hash into ApiDB.Attribute table
+
+  $self->loadAttributeTerms($ontologyTerms);
 
   return "Loaded $attributeValueCount rows into ApiDB.AttributeValue";
 }
+
+
+sub loadAttributeTerms {
+  my ($self, $ontologyTerms) = @_;
+
+  foreach my $sourceId (keys %$ontologyTerms) {
+    my $ontologyTerm = $ontologyTerms->{$sourceId};
+
+    my $sourceId
+
+    
+  }
+
+
+
+}
+
+
+
+sub addUnitsToOntologyTerms {
+  my ($self, $entityGraphId, $ontologyTerms) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select  att.source_id, unit.ontology_term_id, unit.name
+from apidb.entitygraph pg
+   , apidb.entitytype vt
+   , apidb.attributeunit au
+   , sres.ontologyterm att
+   , sres.ontologyterm unit
+where pg.entity_graph_id = ?
+and pg.entity_graph_id = vt.entity_graph_id
+and vt.entity_type_id = au.entity_type_id
+and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
+and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($entityGraphId);
+
+  while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
+    $ontologyTerms->{SsourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
+    $ontologyTerms->{SsourceId}->{UNIT_NAME} = $unitName;
+  }
+
+  $sh->finish();
+}
+
+
 
 sub queryForOntologyTerms {
   my ($self) = @_;
@@ -192,7 +236,7 @@ and r.EXTERNAL_DATABASE_RELEASE_ID = ?";
 }
 
 sub loadAttributeValues {
-  my ($self, $propertyGraphId, $ontologyTerms, $maxAttrLength) = @_;
+  my ($self, $entityGraphId, $ontologyTerms, $maxAttrLength) = @_;
 
   my $timestamp = int (gettimeofday * 1000);
   my $fifoName = "apidb_attributevalue_${timestamp}.dat";
@@ -200,22 +244,22 @@ sub loadAttributeValues {
   my $fields = $self->fields();
 
   my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength, $maxAttrLength);
-  $self->loadAttributesFromVertex($propertyGraphId, $fifo, $ontologyTerms);
-  $self->loadAttributesFromIncomingEdge($propertyGraphId, $fifo, $ontologyTerms);
+  $self->loadAttributesFromEntity($entityGraphId, $fifo, $ontologyTerms);
+  $self->loadAttributesFromIncomingProcess($entityGraphId, $fifo, $ontologyTerms);
 
   $fifo->cleanup();
   unlink $fifoName;
 }
 
 sub loadAttributes {
-  my ($self, $propertyGraphId, $fifo, $ontologyTerms, $sql) = @_;
+  my ($self, $entityGraphId, $fifo, $ontologyTerms, $sql) = @_;
 
   my $dbh = $self->getQueryHandle();
 
   my $fh = $fifo->getFileHandle();
 
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
-  $sh->execute($propertyGraphId);
+  $sh->execute($entityGraphId);
 
   while(my ($vaId, $vtId, $etId, $lobLocator) = $sh->fetchrow_array()) {
     my $json = $self->readClob($lobLocator);
@@ -226,6 +270,9 @@ sub loadAttributes {
 
       my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
       my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
+
+      $ontologyTerm->{ENTITY_TYPE_ID}->{$vtId} = 1;
+      $ontologyTerm->{PROCESS_TYPE_ID}->{$etId} = 1;
 
       unless($ontologyTermId) {
         $self->error("No ontology_term_id found for:  $ontologySourceId");
@@ -303,29 +350,29 @@ sub readClob {
 }
 
 
-sub loadAttributesFromVertex {
-  my ($self, $propertyGraphId, $fifo, $ontologyTerms) = @_;
+sub loadAttributesFromEntity {
+  my ($self, $entityGraphId, $fifo, $ontologyTerms) = @_;
 
-  my $sql = "select va.vertex_attributes_id, va.vertex_type_id, null as edge_type_id, va.atts from apidb.vertexattributes va, apidb.vertextype vt where to_char(va.atts) != '{}' and vt.vertex_type_id = va.vertex_type_id and vt.property_graph_id = ?";
+  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(va.atts) != '{}' and vt.entity_type_id = va.entity_type_id and vt.entity_graph_id = ?";
 
-  $self->loadAttributes($propertyGraphId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($entityGraphId, $fifo, $ontologyTerms, $sql);
 }
 
 
-sub loadAttributesFromIncomingEdge {
-  my ($self, $propertyGraphId, $fifo, $ontologyTerms) = @_;
+sub loadAttributesFromIncomingProcess {
+  my ($self, $entityGraphId, $fifo, $ontologyTerms) = @_;
 
-  my $sql = "select va.vertex_attributes_id, va.vertex_type_id, ea.edge_type_id, ea.atts
-from apidb.edgeattributes ea
-   , apidb.vertexattributes va
-   , apidb.vertextype vt
+  my $sql = "select va.entity_attributes_id, va.entity_type_id, ea.process_type_id, ea.atts
+from apidb.processattributes ea
+   , apidb.entityattributes va
+   , apidb.entitytype vt
 where to_char(ea.atts) != '{}'
-and vt.vertex_type_id = va.vertex_type_id
-and va.vertex_attributes_id = ea.out_vertex_id
-and vt.property_graph_id = ?
+and vt.entity_type_id = va.entity_type_id
+and va.entity_attributes_id = ea.out_entity_id
+and vt.entity_graph_id = ?
 ";
 
-  $self->loadAttributes($propertyGraphId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($entityGraphId, $fifo, $ontologyTerms, $sql);
 }
 
 sub fields {
@@ -360,9 +407,9 @@ sub fields {
   };
 
 
-  my $attributeList = ["vertex_attributes_id",
-                       "vertex_type_id",
-                       "incoming_edge_type_id",
+  my $attributeList = ["entity_attributes_id",
+                       "entity_type_id",
+                       "incoming_process_type_id",
                        "attribute_ontology_term_id",
                        "string_value",
                        "number_value",
@@ -373,9 +420,9 @@ sub fields {
   push @$attributeList, keys %$datatypeMap;
 
   $datatypeMap->{'attribute_value_id'} = " SEQUENCE(MAX,1)";
-  $datatypeMap->{'vertex_attributes_id'} = " CHAR(12)";
-  $datatypeMap->{'vertex_type_id'} = "  CHAR(12)";
-  $datatypeMap->{'incoming_edge_type_id'} = "  CHAR(12)";
+  $datatypeMap->{'entity_attributes_id'} = " CHAR(12)";
+  $datatypeMap->{'entity_type_id'} = "  CHAR(12)";
+  $datatypeMap->{'incoming_process_type_id'} = "  CHAR(12)";
   $datatypeMap->{'attribute_ontology_term_id'} = "  CHAR(10)";
   $datatypeMap->{'string_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'number_value'} = "  CHAR($maxAttrLength)";
