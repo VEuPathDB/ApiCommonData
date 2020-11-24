@@ -4,62 +4,77 @@ use strict;
 
 use lib $ENV{GUS_HOME} . "/lib/perl";
 use Getopt::Long;
-use ApiCommonData::Load::EBIUtils;
 use CBIL::Util::Utils;
-use IO::Zlib;
-use File::Temp qw/ tempfile /;
-use File::Copy;
+use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
+use Data::Dumper;
 
-my ($help, $dir, $outdir, $samplesDirectory, $organismAbbrev, $chromSize, $pattern);
+my ($help, $dir, $experimentName, $chromSize, $analysisConfig);
 
 &GetOptions('help|h' => \$help,
             'dir=s' => \$dir,
-	    'outdir=s' => \$outdir,
-            'organism_abbrev=s' => \$organismAbbrev,
-	    'chromSize=s' => \$chromSize,
+            'experimentName=s' => \$experimentName,
+	        'chromSize=s' => \$chromSize,
+            'analysisConfig=s' => \$analysisConfig,
             );
       
 &usage("RNAseq samples directory not defined") unless $dir;
 
 chomp $dir;
-chomp $outdir;
 
-my @list = glob $dir.'analyze*/normalized/final/*';
-@list = grep !/logged/, @list;
-foreach (@list){
-print $_."\n";
+my $sampleHash;
+if (-e $analysisConfig) {
+    $sampleHash = displayAndBaseName($analysisConfig);
+} else {
+    die "Analysis config file $analysisConfig cannot be opened for reading\n";
 }
 
+my @list;
+my $sampleDirName;
+foreach my $key (keys %$sampleHash) {
+    my $samples = $sampleHash->{$key}->{samples};
+    if (scalar @$samples > 1) {
+        $sampleDirName = $key ."_combined";
+    } elsif (scalar @$samples == 1) {
+        $sampleDirName = $samples->[0]
+    } else {
+        die "No samples found for key $key\n";
+    }
 
-if ( grep( /first/, @list ) ) {
-  $pattern = "firststrand";
-  &convertBigwig($dir, $outdir, $pattern, $chromSize);
+    my $sampleDirName = -e "$dir/analyze_$sampleDirName/master/mainresult" ? "$dir/analyze_$sampleDirName/master/mainresult" : "$dir/analyze_$sampleDirName";
+    my @files = glob "$sampleDirName/normalized/final/*";
+    my @files = grep !/logged/, @files;
+    my @files = grep !/non_unique/, @files;
+    push @list, @files;
 }
-if ( grep( /second/, @list ) ) {
-  $pattern = "secondstrand";
-  &convertBigwig($dir, $outdir, $pattern, $chromSize);
+    
+
+my $outDir = "$dir/mergedBigwigs";
+&runCmd("mkdir -p $outDir");
+
+if ( grep( /firststrand/, @list ) ) {
+  my @firstStrandFileList = grep /firststrand/, @list;
+  print Dumper @firstStrandFileList;
+  &convertBigwig(\@firstStrandFileList, $outDir, $chromSize, $experimentName, "firststrand");
+}
+if ( grep( /secondstrand/, @list ) ) {
+  my @secondStrandFileList = grep /secondstrand/, @list;
+  print Dumper @secondStrandFileList;
+  &convertBigwig(\@secondStrandFileList, $outDir, $chromSize, $experimentName, "secondstrand");
 }
 else{
-print "THERES NO STRANDED DATA!!\n";
-  $pattern = "";
-  &convertBigwig($dir, $outdir, $pattern, $chromSize);
+  print Dumper @list;
+  &convertBigwig(\@list, $outDir, $chromSize, $experimentName, "unstranded");
 }
-#my $pattern = "firststrand";
 
-#&convertBigwig($dir, $outdir, $pattern, $chromSize);
 
 sub convertBigwig {
-  my ($dir,$outdir,$pattern,$chromSize) = @_;
-  my @files = glob $dir.'analyze*/normalized/final/*results\.'.$pattern.'*'; 
-  @files = grep !/logged/, @files;
-  my $filenames = join(' ', map { "$_" } @files);
-  #Create bigWigMerge command
-  my $cmd = "bigWigMerge ".$filenames." ".$outdir."out.bedGraph";
-  &runCmd($cmd);
-  #Convert out.bedGraph to bigwig format
-  my $convert_cmd = "bedGraphToBigWig ".$outdir."out.bedGraph ".$chromSize." merged_".$pattern."_".$organismAbbrev."\.bw";
-  #print $convert_cmd."\n";
-  &runCmd($convert_cmd);
+    my ($fileList, $outDir, $chromSize, $experimentName, $pattern) = @_;
+    my $fileNames = join ' ', @$fileList;
+    my $cmd = "bigWigMerge $fileNames $outDir/out.bedGraph";
+    &runCmd($cmd);
+    my $convertCmd = "bedGraphToBigWig $outDir/out.bedGraph $chromSize $outDir/$experimentName\_$pattern\_merged.bw";
+    &runCmd($convertCmd);
+    unlink "$outDir/out.bedGraph";
 }
 
 sub usage {
