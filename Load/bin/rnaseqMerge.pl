@@ -53,16 +53,13 @@ my $outDir = "$dir/mergedBigwigs";
 
 if ( grep( /firststrand/, @list ) ) {
   my @firstStrandFileList = grep /firststrand/, @list;
-  print Dumper @firstStrandFileList;
   &convertBigwig(\@firstStrandFileList, $outDir, $chromSize, $experimentName, "firststrand");
 }
 if ( grep( /secondstrand/, @list ) ) {
   my @secondStrandFileList = grep /secondstrand/, @list;
-  print Dumper @secondStrandFileList;
   &convertBigwig(\@secondStrandFileList, $outDir, $chromSize, $experimentName, "secondstrand");
 }
 else{
-  print Dumper @list;
   &convertBigwig(\@list, $outDir, $chromSize, $experimentName, "unstranded");
 }
 
