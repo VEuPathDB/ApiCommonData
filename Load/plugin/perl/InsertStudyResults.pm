@@ -2,6 +2,8 @@ package ApiCommonData::Load::Plugin::InsertStudyResults;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
+use locale;
+use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
