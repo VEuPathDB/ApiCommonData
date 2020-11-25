@@ -122,8 +122,6 @@ sub undoTables {
     my ($self) = @_;
     
     return (
-        'Study.Input',
-        'Study.Output',
         'Results.NAFeatureExpression',
         'Results.NAFeatureDiffResult',
         );
