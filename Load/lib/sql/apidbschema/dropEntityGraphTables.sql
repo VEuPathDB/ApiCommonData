@@ -14,28 +14,28 @@ WHERE lower(name) =  'attributevalue'
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
-DROP TABLE apidb.EdgeAttributes;
-DROP SEQUENCE apidb.EdgeAttributes_sq;
+DROP TABLE apidb.ProcessAttributes;
+DROP SEQUENCE apidb.ProcessAttributes_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'edgeattributes'
+WHERE lower(name) =  'processattributes'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.VertexAttributes;
-DROP SEQUENCE apidb.VertexAttributes_sq;
+DROP TABLE apidb.EntityAttributes;
+DROP SEQUENCE apidb.EntityAttributes_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'vertexattributes'
+WHERE lower(name) =  'entityattributes'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.EdgeTypeComponent;
-DROP SEQUENCE apidb.EdgeTypeComponent_sq;
+DROP TABLE apidb.ProcessTypeComponent;
+DROP SEQUENCE apidb.ProcessTypeComponent_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'edgetypecomponent'
+WHERE lower(name) =  'processtypecomponent'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
@@ -51,28 +51,29 @@ WHERE lower(name) =  'attributeunit'
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.EdgeType;
-DROP SEQUENCE apidb.EdgeType_sq;
+
+DROP TABLE apidb.ProcessType;
+DROP SEQUENCE apidb.ProcessType_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'edgetype'
+WHERE lower(name) =  'processtype'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.VertexType;
-DROP SEQUENCE apidb.VertexType_sq;
+DROP TABLE apidb.EntityType;
+DROP SEQUENCE apidb.EntityType_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'vertextype'
+WHERE lower(name) =  'entitytype'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.PropertyGraph;
-DROP SEQUENCE apidb.PropertyGraph_sq;
+DROP TABLE apidb.EntityGraph;
+DROP SEQUENCE apidb.EntityGraph_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'propertygraph'
+WHERE lower(name) =  'entitygraph'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');

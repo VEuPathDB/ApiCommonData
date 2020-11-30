@@ -237,12 +237,58 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
   }
 }
 
+## get info of transposable_element
+my $tes = getTransposableElement($dbh);
+foreach my $k (sort keys %{$tes}) {
+  foreach my $i (0..$#{$tes->{$k}}) {
+    ($i == $#{$tes->{$k}}) ? print GFF "$tes->{$k}[$i]\n" : print GFF "$tes->{$k}[$i]\t";
+  }
+}
+
 $dbh->disconnect();
 close GFF;
 
 1;
 
 ############
+sub getTransposableElement {
+  my ($dbh) = @_;
+  my %elements;
+
+  my $sql = "
+            select te.SOURCE_ID, ot.name, ns.SOURCE_ID, nl.START_MIN, nl.END_MAX, nl.IS_REVERSED
+            from DOTS.TRANSPOSABLEELEMENT te, DOTS.EXTERNALNASEQUENCE ns, dots.nalocation nl, SRES.ONTOLOGYTERM ot
+            where te.NA_FEATURE_ID=nl.NA_FEATURE_ID and te.NA_SEQUENCE_ID=ns.NA_SEQUENCE_ID and te.SEQUENCE_ONTOLOGY_ID=ot.ONTOLOGY_TERM_ID
+            and ot.name like 'transposable_element'
+           ";
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($eSourceId, $eProduct, $sSourceId, $start, $end, $std) = $stmt->fetchrow_array()) {
+    if ($eSourceId) {
+
+      my $strand = ($std == 0) ? "+" : "-";
+
+      $eSourceId .= ".2" if ($elements{$eSourceId}); ## temp fix for id
+      $eSourceId =~ s/TEG/TE/ if ($eSourceId eq "TVAG_TEG_DS113326_1");
+
+      my $idColumn = "ID=$eSourceId";
+      $idColumn .= ";biotype=transposable_element";
+
+      push (@{$elements{$eSourceId}}, $sSourceId, 'EuPathDB', 'transposable_element', $start, $end, '.', $strand, '.', $idColumn);
+    }
+  }
+  $stmt->finish();
+
+  foreach my $k (sort keys %elements) {
+    foreach my $i (0..$#{$elements{$k}}) {
+#      ($i == $#{$elements{$k}}) ? print STDERR "$elements{$k}[$i]\n" : print STDERR "$elements{$k}[$i]\t";
+    }
+  }
+
+  return \%elements;
+}
+
 sub getBioTypeAndUpdatePrimaryTag {
   my ($feat, $geneSourceId) = @_;
   my $bioType;
