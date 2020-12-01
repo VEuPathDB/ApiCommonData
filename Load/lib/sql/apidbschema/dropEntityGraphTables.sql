@@ -1,3 +1,12 @@
+DROP TABLE apidb.AttributeGraph;
+DROP SEQUENCE apidb.AttributeGraph_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'attributegraph'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+
 DROP TABLE apidb.Attribute;
 DROP SEQUENCE apidb.Attribute_sq;
 DELETE FROM core.TableInfo

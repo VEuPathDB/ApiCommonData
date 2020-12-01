@@ -369,19 +369,15 @@ WHERE 'attributevalue' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 CREATE TABLE apidb.Attribute (
   attribute_id                  NUMBER(12) NOT NULL,
-  entity_type_id                NUMBER(12) NOT NULL,
+  entity_type_id                NUMBER(12),
   process_type_id                 NUMBER(12),
-  attr_ontology_term_id         NUMBER(10) NOT NULL,
-  attr_source_id                NUMBER(10) NOT NULL,
-  attr_type                     varchar2(10) not null,
-  parent_source_id              NUMBER(10) NOT NULL,
-  parent_ontology_term_id       NUMBER(10) NOT NULL,
-  provider_label                varchar(30) not null,
-  display_name                  varchar(30) not null,
-  has_values                    integer,
-  is_continuous                 integer,
-  unit                          varchar(30),
-  unit_ontology_term_id         NUMBER(10) NOT NULL,
+  ontology_term_id         NUMBER(10) NOT NULL,
+  source_id                varchar2(255) NOT NULL,
+  data_type                    varchar2(10) not null,
+  has_multiple_values_per_entity            integer,
+  data_shape                     varchar2(30),
+  unit                          varchar2(30),
+  unit_ontology_term_id         NUMBER(10),
   precision                     integer,
   modification_date            DATE NOT NULL,
   user_read                    NUMBER(1) NOT NULL,
@@ -396,8 +392,7 @@ CREATE TABLE apidb.Attribute (
   row_alg_invocation_id        NUMBER(12) NOT NULL,
   FOREIGN KEY (entity_type_id) REFERENCES apidb.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES apidb.ProcessType,
-  FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
   PRIMARY KEY (attribute_id)
 );
@@ -421,6 +416,58 @@ FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
 WHERE 'attribute' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+
+-----------------------------------------------------------
+
+CREATE TABLE apidb.AttributeGraph (
+  attribute_graph_id                  NUMBER(12) NOT NULL,
+  entity_graph_id            NUMBER(12) NOT NULL, 
+  ontology_term_id         NUMBER(10) NOT NULL,
+  source_id                varchar2(255) NOT NULL,
+  parent_source_id              varchar2(255) NOT NULL,
+  parent_ontology_term_id       NUMBER(10) NOT NULL,
+  provider_label                varchar(30),
+  display_name                  varchar(1500) not null,
+  term_type                    varchar2(20),
+  modification_date            DATE NOT NULL,
+  user_read                    NUMBER(1) NOT NULL,
+  user_write                   NUMBER(1) NOT NULL,
+  group_read                   NUMBER(1) NOT NULL,
+  group_write                  NUMBER(1) NOT NULL,
+  other_read                   NUMBER(1) NOT NULL,
+  other_write                  NUMBER(1) NOT NULL,
+  row_user_id                  NUMBER(12) NOT NULL,
+  row_group_id                 NUMBER(3) NOT NULL,
+  row_project_id               NUMBER(4) NOT NULL,
+  row_alg_invocation_id        NUMBER(12) NOT NULL,
+  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
+  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+  FOREIGN KEY (entity_graph_id) REFERENCES apidb.entitygraph,
+  PRIMARY KEY (attribute_graph_id)
+);
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeGraph TO gus_w;
+GRANT SELECT ON apidb.AttributeGraph TO gus_r;
+
+CREATE SEQUENCE apidb.AttributeGraph_sq;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'AttributeGraph',
+       'Standard', 'attribute_graph_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
+WHERE 'attributegraph' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 

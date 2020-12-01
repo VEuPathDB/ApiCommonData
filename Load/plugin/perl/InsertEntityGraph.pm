@@ -292,7 +292,7 @@ sub loadEntityGraph {
   my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusEntityGraph);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($study->getProtocols());
 
-  $self->loadProcesss($study->getProcesss, $nodeNameToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesss($study->getEdges(), $nodeNameToIdMap, $processTypeNamesToIdMap);
 
   if($self->{_max_attr_value} > $gusEntityGraph->getMaxAttrLength()) {
     $gusEntityGraph->setMaxAttrLength($self->{_max_attr_value});
@@ -409,10 +409,7 @@ sub loadNodes {
 
         $charValue =~ s/\r//;
 
-        if($charsForLoader->{$charQualifierSourceId}) {
-          $self->error("Qualifier $charQualifierSourceId can only be used one time for node " . $entity->getName());
-        }
-        $charsForLoader->{$charQualifierSourceId} = $charValue;
+        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
 
         if(length $charValue > $self->{_max_attr_value}) {
           $self->{_max_attr_value} = length $charValue;
@@ -590,7 +587,7 @@ sub getProcessAttributesHash {
     foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
-      $rv{$protocolName}->{$ppQualifier} = $ppValue;
+      push @{$rv{$ppQualifier}}, $ppValue;
 
       if($parameterValue->getUnit()) {
         my $qualifierOntologyTerm = $self->getOntologyTermGusObj($parameterValue, 1);

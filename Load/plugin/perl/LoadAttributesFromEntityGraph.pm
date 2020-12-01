@@ -5,6 +5,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::ApiDB::Attribute;
+use GUS::Model::ApiDB::AttributeGraph;
 
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Sqlldr;
@@ -118,45 +119,121 @@ sub run {
   chdir $self->getArg('logDir');
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
-
-
   
   my $entityGraphs = $self->sqlAsDictionary( Sql  => "select entity_graph_id, max_attr_length from apidb.entitygraph where external_database_release_id = $extDbRlsId");
 
-  $self->error("Expected one entityGraph row.  Found ". scalar @entityGraphIds) unless(scalar keys %$entityGraphIds == 1);
+  $self->error("Expected one entityGraph row.  Found ". scalar keys %{$entityGraphs}) unless(scalar keys %$entityGraphs == 1);
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
-  my $ontologyTerms = $self->queryForOntologyTerms();
-
-  my $attributeValueCount;
+  my ($attributeCount, $attributeValueCount);
   while(my ($entityGraphId, $maxAttrLength) = each (%$entityGraphs)) {
+    my $ontologyTerms = $self->queryForOntologyTerms();
+
     my $ct = $self->loadAttributeValues($entityGraphId, $ontologyTerms, $maxAttrLength);
     $attributeValueCount = $attributeValueCount + $ct;
 
     $self->addUnitsToOntologyTerms($entityGraphId, $ontologyTerms);
+
+    my $act = $self->loadAttributeTerms($ontologyTerms, $entityGraphId);
+    $attributeCount = $attributeCount + $act;
+
+
   }
 
-
-  $self->loadAttributeTerms($ontologyTerms);
-
-  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue";
+  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue and $attributeCount rows into ApiDB.Attribute";
 }
 
 
 sub loadAttributeTerms {
-  my ($self, $ontologyTerms) = @_;
+  my ($self, $ontologyTerms, $entityGraphId) = @_;
+
+  my $attributeCount;
 
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
 
-    my $sourceId
+    my $hasValues = $ontologyTerm->{_COUNT} > 0 ? 1 : 0;
+
+    my ($dataType, $dataShape, $hasMultipleValuesPerEntity, $precision);
+    if($hasValues) {
+
+      $hasMultipleValuesPerEntity = $self->{_multi_valued_term}->{$sourceId} ? 1 : 0;
+
+      $precision = 1; # THis is the default; probably never changed
+      my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
+      my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
+      my $valueCount = scalar(keys(%{$ontologyTerm->{_VALUES}}));
+      my $isBoolean = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_BOOLEAN_COUNT};
+
+      if($ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_ORDINAL_COUNT}) {
+        $dataShape = 'ordinal';
+      }
+      elsif($isDate || ($isNumber && $valueCount > 10)) {
+        $dataShape = 'continuous';
+      }
+      else {
+        $dataShape = 'categorical'; 
+      }
+
+      if($isDate) {
+        $dataType = 'date';
+      }
+      elsif($isNumber) {
+        $dataType = 'number';
+      }
+      elsif($isBoolean) {
+        $dataType = 'boolean';
+      }
+      else {
+        $dataType = 'string';
+      }
+
+
+
+      foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
+        my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
+
+
+        my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
+                                                           process_type_id => $ptId,
+                                                           ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
+                                                           source_id => $sourceId,
+                                                           data_type => $dataType,
+                                                           has_multiple_values_per_entity => $hasMultipleValuesPerEntity,
+                                                           data_shape => $dataShape,
+                                                           unit => $ontologyTerm->{UNIT_NAME},
+                                                           unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
+                                                           precision => $precision,
+                                                          });
+
+
+
+        $attribute->submit();
+
+      }
+    }
+
 
     
+        my $attributeGraph = GUS::Model::ApiDB::AttributeGraph->new({entity_graph_id => $entityGraphId,
+                                                                     ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
+                                                                     source_id => $sourceId,
+                                                                     parent_source_id => $ontologyTerm->{PARENT_SOURCE_ID},
+                                                                     parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
+                                                                     provider_label => $ontologyTerm->{PROVIDER_LABEL},
+                                                                     display_name => $ontologyTerm->{DISPLAY_NAME}, 
+                                                                     term_type => $ontologyTerm->{TERM_TYPE}, 
+                                                          });
+
+
+
+        $attributeGraph->submit();
+
+
   }
 
-
-
+  return $attributeCount;
 }
 
 
@@ -182,8 +259,8 @@ and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
   $sh->execute($entityGraphId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
-    $ontologyTerms->{SsourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
-    $ontologyTerms->{SsourceId}->{UNIT_NAME} = $unitName;
+    $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
+    $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
   }
 
   $sh->finish();
@@ -204,21 +281,35 @@ sub queryForOntologyTerms {
                   , o.name parent_name
                   , o.source_id parent_source_id
                   , o.ontology_term_id parent_ontology_term_id
-                  , os.ontology_synonym
+                  , nvl(os.ontology_synonym, s.name) as display_name
+                  , os.variable as provider_label
                   , os.is_preferred
                   , os.definition
+                  , tt.term_type
 from sres.ontologyrelationship r
    , sres.ontologyterm s
    , sres.ontologyterm o
    , sres.ontologyterm p
    , sres.ontologysynonym os
+   , (select r.external_database_release_id, s.ontology_term_id, o.name as term_type
+from sres.ontologyrelationship r
+   , sres.ontologyterm s
+   , sres.ontologyterm o
+   , sres.ontologyterm p
+where r.subject_term_id = s.ontology_term_id
+and r.predicate_term_id = p.ontology_term_id
+and r.object_term_id = o.ontology_term_id
+and p.SOURCE_ID = 'EUPATH_0000271' -- termType
+) tt
 where r.subject_term_id = s.ontology_term_id
 and r.predicate_term_id = p.ontology_term_id
 and r.object_term_id = o.ontology_term_id
 and p.SOURCE_ID = 'subClassOf'
 and s.ontology_term_id = os.ontology_term_id (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = ?";
+and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
+and s.ontology_term_id = tt.ontology_term_id (+)
+and r.EXTERNAL_DATABASE_RELEASE_ID = tt.EXTERNAL_DATABASE_RELEASE_ID (+)    
+and r.external_database_release_id = ?";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute($extDbRlsId);
@@ -241,9 +332,9 @@ sub loadAttributeValues {
   my $timestamp = int (gettimeofday * 1000);
   my $fifoName = "apidb_attributevalue_${timestamp}.dat";
 
-  my $fields = $self->fields();
+  my $fields = $self->fields($maxAttrLength);
 
-  my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength, $maxAttrLength);
+  my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength);
   $self->loadAttributesFromEntity($entityGraphId, $fifo, $ontologyTerms);
   $self->loadAttributesFromIncomingProcess($entityGraphId, $fifo, $ontologyTerms);
 
@@ -266,30 +357,35 @@ sub loadAttributes {
 
     my $attsHash = decode_json($json);
 
-    while(my ($ontologySourceId, $value) = each (%$attsHash)) {
+    while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
-      my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
-      my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
+      my $valueCount;
+      foreach my $value (@$valueArray) {
+        $self->{_multi_valued_term}->{$ontologySourceId} = 1 if($valueCount); 
+        $valueCount++;
 
-      $ontologyTerm->{ENTITY_TYPE_ID}->{$vtId} = 1;
-      $ontologyTerm->{PROCESS_TYPE_ID}->{$etId} = 1;
+        my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
+        my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
 
-      unless($ontologyTermId) {
-        $self->error("No ontology_term_id found for:  $ontologySourceId");
+        $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
+
+        unless($ontologyTermId) {
+          $self->error("No ontology_term_id found for:  $ontologySourceId");
+        }
+
+        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value);
+
+        my @a = ($vaId,
+                 $vtId,
+                 undef,
+                 $ontologyTermId,
+                 $value,
+                 $numberValue,
+                 $dateValue
+            );
+
+        print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
       }
-
-      my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value);
-
-      my @a = ($vaId,
-               $vtId,
-               undef,
-               $ontologyTermId,
-               $value,
-               $numberValue,
-               $dateValue
-          );
-
-      print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
     }
   }
 }
@@ -300,22 +396,29 @@ sub ontologyTermValues {
 
   my ($dateValue, $numberValue);
 
+  $ontologyTerm->{_VALUES}->{$value}++;
+
   $ontologyTerm->{_COUNT}++;
 
-  if(looks_like_number($value)) {
-    $numberValue = $value;
+  my $valueNoCommas = $value;
+  $valueNoCommas =~ tr/,//d;
+
+  if(looks_like_number($valueNoCommas)) {
+    $numberValue = $valueNoCommas;
     $ontologyTerm->{_IS_NUMBER_COUNT}++;
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
     $ontologyTerm->{_IS_DATE_COUNT}++;
   }
+  elsif($value =~ /^\d/) {
+    $ontologyTerm->{_IS_ORDINAL_COUNT}++;
+  }
   else {
     my $lcValue = lc $value;
     if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
       $ontologyTerm->{_IS_BOOLEAN_COUNT}++;
     }
-    $ontologyTerm->{_IS_STRING_COUNT}++;
   }
 
 
@@ -435,7 +538,7 @@ sub fields {
 
 
 sub makeFifo {
-  my ($self, $fields, $fifoName, $maxAttrLength) = @_;
+  my ($self, $fields, $fifoName) = @_;
 
   my $eorLiteral = $END_OF_RECORD_DELIMITER;
   $eorLiteral =~ s/\n/\\n/;
