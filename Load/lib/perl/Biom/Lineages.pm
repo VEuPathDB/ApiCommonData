@@ -125,6 +125,13 @@ sub splitLineageString {
   }
   @lineage = reverse @lineage;
 
+# Remove from the end terms that are just the word 'none'
+  @lineage = reverse @lineage;
+  while($lineage[0] =~ /^none$/i){
+    shift @lineage;
+  }
+  @lineage = reverse @lineage;
+
 # Make sure there are at most $numMaxTerms
   do {
     my ($lastTerm, @extraTerms) = reverse splice @lineage, ($numMaxTerms-1);
@@ -142,7 +149,7 @@ sub splitLineageString {
 # Uses capital letters for predicting what is what
   do {
     my ($lastTerm, $penultimateTerm, @terms) = reverse @lineage;
-    if ($lastTerm && $penultimateTerm && $lastTerm =~ /^[a-z]/ && $penultimateTerm =~ /^[A-Z]/ && $lastTerm !~ /$penultimateTerm/i){
+    if ($lastTerm && $penultimateTerm && $lastTerm =~ /^[a-z]/ && $penultimateTerm =~ /^[A-Z]/ && index (lc $lastTerm , lc $penultimateTerm) == -1){
       @lineage = ((reverse @terms), $penultimateTerm, "$penultimateTerm $lastTerm");
     }
   };
