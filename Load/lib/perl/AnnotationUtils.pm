@@ -402,6 +402,8 @@ sub checkGff3FormatNestedFeature {
     my $frame = $bioFeat->frame;
     my ($id) = $bioFeat->get_tag_values("ID") if ($bioFeat->has_tag("ID"));
 
+    next if ($type eq "transposable_element");  ## skip transposable_element
+
     # 6) check if all subFeatures of a gene are located at the same strand
     foreach my $transcript ($bioFeat->get_SeqFeatures) {
       my ($tId) = $transcript->get_tag_values("ID") if ($transcript->has_tag("ID"));
