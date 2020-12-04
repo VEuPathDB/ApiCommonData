@@ -258,6 +258,8 @@ sub getGeneticCodeFromOrganismAbbrev {
       $projectName = "AmoebaDB";
     } elsif ( $organismAbbrev eq "treeQM6a2017") {
       $projectName = "FungiDB";
+    } elsif ( $organismAbbrev eq "tbruTREU927") {
+      $projectName = "TriTrypDB";
     } else {
       die "ERROR: projectName EuTestDB found. Please reset projectName.........\n";
     }
