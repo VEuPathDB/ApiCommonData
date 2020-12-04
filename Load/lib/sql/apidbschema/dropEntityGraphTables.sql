@@ -70,6 +70,19 @@ WHERE lower(name) =  'processtype'
                       WHERE lower(name) = 'apidb');
 
 
+
+
+DROP TABLE apidb.EntityTypeGraph;
+DROP SEQUENCE apidb.EntityTypeGraph_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'entitytypegraph'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+
+
+
 DROP TABLE apidb.EntityType;
 DROP SEQUENCE apidb.EntityType_sq;
 DELETE FROM core.TableInfo
@@ -79,10 +92,10 @@ WHERE lower(name) =  'entitytype'
                       WHERE lower(name) = 'apidb');
 
 
-DROP TABLE apidb.EntityGraph;
-DROP SEQUENCE apidb.EntityGraph_sq;
+DROP TABLE apidb.Study;
+DROP SEQUENCE apidb.Study_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'entitygraph'
+WHERE lower(name) =  'study'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');

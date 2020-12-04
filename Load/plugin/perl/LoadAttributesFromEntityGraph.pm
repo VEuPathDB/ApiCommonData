@@ -6,6 +6,7 @@ use GUS::PluginMgr::Plugin;
 
 use GUS::Model::ApiDB::Attribute;
 use GUS::Model::ApiDB::AttributeGraph;
+use GUS::Model::ApiDB::EntityTypeGraph;
 
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Sqlldr;
@@ -22,7 +23,7 @@ my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $argsDeclaration =[];
-my $purposeBrief = 'Read EntityGraph tables and insert tall table for attribute values and attribute table';
+my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
 my $tablesAffected =
@@ -120,33 +121,80 @@ sub run {
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   
-  my $entityGraphs = $self->sqlAsDictionary( Sql  => "select entity_graph_id, max_attr_length from apidb.entitygraph where external_database_release_id = $extDbRlsId");
+  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from apidb.study where external_database_release_id = $extDbRlsId");
 
-  $self->error("Expected one entityGraph row.  Found ". scalar keys %{$entityGraphs}) unless(scalar keys %$entityGraphs == 1);
+  $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
-  my ($attributeCount, $attributeValueCount);
-  while(my ($entityGraphId, $maxAttrLength) = each (%$entityGraphs)) {
+  my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
+  while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = $self->queryForOntologyTerms();
 
-    my $ct = $self->loadAttributeValues($entityGraphId, $ontologyTerms, $maxAttrLength);
+    my $ct = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
     $attributeValueCount = $attributeValueCount + $ct;
 
-    $self->addUnitsToOntologyTerms($entityGraphId, $ontologyTerms);
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    my $act = $self->loadAttributeTerms($ontologyTerms, $entityGraphId);
+    my $act = $self->loadAttributeTerms($ontologyTerms, $studyId);
     $attributeCount = $attributeCount + $act;
 
+    my $etg = $self->loadEntityTypeGraph($studyId);
+    $entityTypeGraphCount = $entityTypeGraphCount + $etg;
 
   }
 
-  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue and $attributeCount rows into ApiDB.Attribute";
+  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue, $attributeCount rows into ApiDB.Attribute and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
+}
+
+sub loadEntityTypeGraph {
+  my ($self, $studyId) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select et.in_entity_type_id parent_entity_type_id, et.in_entity_name parent_entity_type, t.entity_type_id, t.name entity_type
+from (
+select distinct it.study_id, it.entity_type_id in_entity_type_id, it.name in_entity_name, ot.entity_type_id out_entity_type_id, ot.name out_entity_name
+from apidb.processattributes p
+   , apidb.entityattributes i
+   , apidb.entityattributes o
+   , apidb.entitytype it
+   , apidb.entitytype ot
+where it.STUDY_ID = $studyId
+and ot.STUDY_ID = $studyId
+and it.ENTITY_TYPE_ID = i.entity_type_id
+and ot.entity_type_id = o.entity_type_id
+and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
+and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID
+) et, apidb.entitytype t
+where t.study_id = et.study_id (+)
+ and t.entity_type_id = out_entity_type_id (+)
+";
+
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my $ct;
+
+  while(my ($parentEntityTypeId, $parentEntityType, $entityTypeId, $entityType) = $sh->fetchrow_array()) {
+
+    my $etg = GUS::Model::ApiDB::EntityTypeGraph->new({ parent_entity_type_id => $parentEntityTypeId,
+                                                        parent_entity_type => $parentEntityType,
+                                                        entity_type_id => $entityTypeId,
+                                                        entity_type => $entityType
+                                                      });
+
+
+    $etg->submit();
+    $ct++
+  }
+
+  return $ct;
 }
 
 
 sub loadAttributeTerms {
-  my ($self, $ontologyTerms, $entityGraphId) = @_;
+  my ($self, $ontologyTerms, $studyId) = @_;
 
   my $attributeCount;
 
@@ -216,7 +264,7 @@ sub loadAttributeTerms {
 
 
     
-        my $attributeGraph = GUS::Model::ApiDB::AttributeGraph->new({entity_graph_id => $entityGraphId,
+        my $attributeGraph = GUS::Model::ApiDB::AttributeGraph->new({study_id => $studyId,
                                                                      ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                                      source_id => $sourceId,
                                                                      parent_source_id => $ontologyTerm->{PARENT_SOURCE_ID},
@@ -239,24 +287,24 @@ sub loadAttributeTerms {
 
 
 sub addUnitsToOntologyTerms {
-  my ($self, $entityGraphId, $ontologyTerms) = @_;
+  my ($self, $studyId, $ontologyTerms) = @_;
 
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select  att.source_id, unit.ontology_term_id, unit.name
-from apidb.entitygraph pg
+from apidb.study pg
    , apidb.entitytype vt
    , apidb.attributeunit au
    , sres.ontologyterm att
    , sres.ontologyterm unit
-where pg.entity_graph_id = ?
-and pg.entity_graph_id = vt.entity_graph_id
+where pg.study_id = ?
+and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
 and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($entityGraphId);
+  $sh->execute($studyId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
@@ -327,7 +375,7 @@ and r.external_database_release_id = ?";
 }
 
 sub loadAttributeValues {
-  my ($self, $entityGraphId, $ontologyTerms, $maxAttrLength) = @_;
+  my ($self, $studyId, $ontologyTerms, $maxAttrLength) = @_;
 
   my $timestamp = int (gettimeofday * 1000);
   my $fifoName = "apidb_attributevalue_${timestamp}.dat";
@@ -335,22 +383,22 @@ sub loadAttributeValues {
   my $fields = $self->fields($maxAttrLength);
 
   my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength);
-  $self->loadAttributesFromEntity($entityGraphId, $fifo, $ontologyTerms);
-  $self->loadAttributesFromIncomingProcess($entityGraphId, $fifo, $ontologyTerms);
+  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms);
+  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms);
 
   $fifo->cleanup();
   unlink $fifoName;
 }
 
 sub loadAttributes {
-  my ($self, $entityGraphId, $fifo, $ontologyTerms, $sql) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $sql) = @_;
 
   my $dbh = $self->getQueryHandle();
 
   my $fh = $fifo->getFileHandle();
 
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
-  $sh->execute($entityGraphId);
+  $sh->execute($studyId);
 
   while(my ($vaId, $vtId, $etId, $lobLocator) = $sh->fetchrow_array()) {
     my $json = $self->readClob($lobLocator);
@@ -454,16 +502,16 @@ sub readClob {
 
 
 sub loadAttributesFromEntity {
-  my ($self, $entityGraphId, $fifo, $ontologyTerms) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
 
-  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(va.atts) != '{}' and vt.entity_type_id = va.entity_type_id and vt.entity_graph_id = ?";
+  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(va.atts) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
 
-  $self->loadAttributes($entityGraphId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
 }
 
 
 sub loadAttributesFromIncomingProcess {
-  my ($self, $entityGraphId, $fifo, $ontologyTerms) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
 
   my $sql = "select va.entity_attributes_id, va.entity_type_id, ea.process_type_id, ea.atts
 from apidb.processattributes ea
@@ -472,10 +520,10 @@ from apidb.processattributes ea
 where to_char(ea.atts) != '{}'
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
-and vt.entity_graph_id = ?
+and vt.study_id = ?
 ";
 
-  $self->loadAttributes($entityGraphId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
 }
 
 sub fields {
@@ -603,3 +651,5 @@ sub undoTables {
 }
 
 1;
+
+
