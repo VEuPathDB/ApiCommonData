@@ -238,7 +238,7 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 }
 
 ## get info of transposable_element
-my $tes = getTransposableElement($dbh);
+my $tes = getTransposableElement($dbh, $extDbRlsId);
 foreach my $k (sort keys %{$tes}) {
   foreach my $i (0..$#{$tes->{$k}}) {
     ($i == $#{$tes->{$k}}) ? print GFF "$tes->{$k}[$i]\n" : print GFF "$tes->{$k}[$i]\t";
@@ -252,14 +252,14 @@ close GFF;
 
 ############
 sub getTransposableElement {
-  my ($dbh) = @_;
+  my ($dbh, $extDbRlsId) = @_;
   my %elements;
 
   my $sql = "
             select te.SOURCE_ID, ot.name, ns.SOURCE_ID, nl.START_MIN, nl.END_MAX, nl.IS_REVERSED
             from DOTS.TRANSPOSABLEELEMENT te, DOTS.EXTERNALNASEQUENCE ns, dots.nalocation nl, SRES.ONTOLOGYTERM ot
             where te.NA_FEATURE_ID=nl.NA_FEATURE_ID and te.NA_SEQUENCE_ID=ns.NA_SEQUENCE_ID and te.SEQUENCE_ONTOLOGY_ID=ot.ONTOLOGY_TERM_ID
-            and ot.name like 'transposable_element'
+            and ot.name like 'transposable_element' and te.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
            ";
 
   my $stmt = $dbh->prepare($sql);
@@ -271,6 +271,7 @@ sub getTransposableElement {
 
       $eSourceId .= ".2" if ($elements{$eSourceId}); ## temp fix for id
       $eSourceId =~ s/TEG/TE/ if ($eSourceId eq "TVAG_TEG_DS113326_1");
+      next if ($eSourceId eq "TVAG_TE_DS113443_3"); ## skip TVAG_TE_DS113443_3 because it has been annotated at a wrong sequence
 
       my $idColumn = "ID=$eSourceId";
       $idColumn .= ";biotype=transposable_element";
