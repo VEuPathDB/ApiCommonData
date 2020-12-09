@@ -10,6 +10,8 @@ my $maxLengthLevel = 200;
 my $t = ApiCommonData::Load::Biom::Lineages->new("unassigned", ["l1", "l2", "l3"], $maxLengthLevel);
 
 is_deeply($t->getTermsFromObject("id",{}), {unassigned => "id", lineage => "id"}, "Use id if taxonomy missing");
+is_deeply($t->getTermsFromObject("id",{taxonomy => ""}), {unassigned => "id", lineage => "id"}, "Use id if taxonomy missing 2");
+is_deeply($t->getTermsFromObject("id",{taxonomy => "none;"}), {unassigned => "id", lineage => "id"}, "Use id if taxonomy missing 3");
 is_deeply($t->getTermsFromObject("id",{taxonomy => "pancake"}), {unassigned => "pancake", lineage => "pancake"}, "No semicolons means unassigned");
 is_deeply($t->getTermsFromObject("id",{taxonomy => "Bacteria"}), {l1 => "Bacteria", lineage => "Bacteria"}, "We recognise kingdoms as valid lineages");
 is_deeply($t->getTermsFromObject("id",{Taxonomy => "pancake"}), $t->getTermsFromObject("id",{taxonomy => "pancake"}), "Uppercase taxonomy dict key");
@@ -73,4 +75,5 @@ is_deeply($t->splitLineageString("a;none"), ["a"], "none is blank");
 is_deeply($t->splitLineageString("a;None"), ["a"], "None is blank");
 is_deeply($t->splitLineageString("a;none;none"), ["a"], "none is blank 2");
 is_deeply($t->splitLineageString("a;none;c"), ["a","none", "c"], "none is okay in the middle");
+is_deeply($t->splitLineageString("none;none;none"), [], "none everywhere is just mad");
 done_testing;
