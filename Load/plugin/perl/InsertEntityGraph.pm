@@ -11,7 +11,7 @@ use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
 
-use GUS::Model::ApiDB::EntityGraph;
+use GUS::Model::ApiDB::Study;
 use GUS::Model::ApiDB::EntityAttributes;
 use GUS::Model::ApiDB::EntityType;
 use GUS::Model::ApiDB::AttributeUnit;
@@ -210,7 +210,7 @@ sub run {
 
         $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
 
-        $self->loadEntityGraph($study);
+        $self->loadStudy($study);
       }
 
       # clear out the protocol app node hash
@@ -278,7 +278,7 @@ sub checkProcessTypesAndSetIds {
   }
 }
 
-sub loadEntityGraph {
+sub loadStudy {
   my ($self, $study) = @_;
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
@@ -286,23 +286,23 @@ sub loadEntityGraph {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
 
-  my $gusEntityGraph = GUS::Model::ApiDB::EntityGraph->new({name => $identifier, external_database_release_id=>$extDbRlsId});
-  $gusEntityGraph->submit() unless ($gusEntityGraph->retrieveFromDB());
+  my $gusStudy = GUS::Model::ApiDB::Study->new({name => $identifier, external_database_release_id=>$extDbRlsId});
+  $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
-  my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusEntityGraph);
+  my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($study->getProtocols());
 
-  $self->loadProcesss($study->getProcesss, $nodeNameToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesss($study->getEdges(), $nodeNameToIdMap, $processTypeNamesToIdMap);
 
-  if($self->{_max_attr_value} > $gusEntityGraph->getMaxAttrLength()) {
-    $gusEntityGraph->setMaxAttrLength($self->{_max_attr_value});
-    $gusEntityGraph->submit();
+  if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
+    $gusStudy->setMaxAttrLength($self->{_max_attr_value});
+    $gusStudy->submit();
   }
 }
 
 
 sub getEntityTypeId {
-  my ($self, $node, $gusEntityGraphId) = @_;
+  my ($self, $node, $gusStudyId) = @_;
 
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
@@ -316,7 +316,7 @@ sub getEntityTypeId {
   }
 
   my $entityType = GUS::Model::ApiDB::EntityType->new();
-  $entityType->setEntityGraphId($gusEntityGraphId);
+  $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
   if($node->hasAttribute("MaterialType")) {
@@ -364,11 +364,11 @@ sub addAttributeUnit {
 
 
 sub loadNodes {
-  my ($self, $nodes, $gusEntityGraph) = @_;
+  my ($self, $nodes, $gusStudy) = @_;
 
   my %rv;
 
-  my $gusEntityGraphId = $gusEntityGraph->getId();
+  my $gusStudyId = $gusStudy->getId();
 
   my $nodeCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -378,7 +378,7 @@ sub loadNodes {
 
     my $entity = GUS::Model::ApiDB::EntityAttributes->new({name => $node->getValue()});
 
-    my $entityTypeId = $self->getEntityTypeId($node, $gusEntityGraphId);
+    my $entityTypeId = $self->getEntityTypeId($node, $gusStudyId);
     $entity->setEntityTypeId($entityTypeId);
 
     if ($node->hasAttribute("Characteristic")) {
@@ -409,10 +409,7 @@ sub loadNodes {
 
         $charValue =~ s/\r//;
 
-        if($charsForLoader->{$charQualifierSourceId}) {
-          $self->error("Qualifier $charQualifierSourceId can only be used one time for node " . $entity->getName());
-        }
-        $charsForLoader->{$charQualifierSourceId} = $charValue;
+        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
 
         if(length $charValue > $self->{_max_attr_value}) {
           $self->{_max_attr_value} = length $charValue;
@@ -590,7 +587,7 @@ sub getProcessAttributesHash {
     foreach my $parameterValue (@{$protocolApp->getParameterValues()}) {
       my $ppValue = $parameterValue->getTerm();
       my $ppQualifier = $parameterValue->getQualifier();
-      $rv{$protocolName}->{$ppQualifier} = $ppValue;
+      push @{$rv{$ppQualifier}}, $ppValue;
 
       if($parameterValue->getUnit()) {
         my $qualifierOntologyTerm = $self->getOntologyTermGusObj($parameterValue, 1);
@@ -727,7 +724,7 @@ sub undoTables {
     'ApiDB.ProcessTypeComponent',
     'ApiDB.ProcessType',
     'ApiDB.EntityType',
-    'ApiDB.EntityGraph',
+    'ApiDB.Study',
      );
 
 

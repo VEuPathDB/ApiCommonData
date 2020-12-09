@@ -33,14 +33,19 @@ sub getTermsFromObject {
   return $self->lineageO(\@levelNames, \@levels)
     if (grep {$_} @levels) && (all {not ref $_ } @levels);
 
-  my $lineageTerm = $o->{taxonomy} // $o->{Taxonomy} // $id;
+  my $lineageTerm = $o->{taxonomy} || $o->{Taxonomy} || $id;
 
   my $lineageString = unpackLineageTerm(\@levelNames, $lineageTerm);
 
   return $self->lineageO([$unassignedLevel], [$lineageString])
     unless ($lineageString =~ m{;} or $lineageString =~ m{(Bacteria|Archaea|Eukarya)$}i);
 
-  return $self->lineageO(\@levelNames, $self->splitLineageString($lineageString));
+  my $lineage = $self->splitLineageString($lineageString);
+ 
+  return $self->lineageO(\@levelNames, $lineage)
+   if @$lineage;
+
+  return $self->lineageO([$unassignedLevel], [$id])
 }
 
 sub lineageO {
@@ -114,20 +119,20 @@ sub splitLineageString {
   @lineage = grep {$_} @lineage;
 
 # Remove NCBI root node
-  if($lineage[0] eq 'cellular organisms'){
+  if(@lineage && $lineage[0] eq 'cellular organisms'){
      shift @lineage;
   }
 
 # Remove from the end terms that are just whitespace or underscores
   @lineage = reverse @lineage;
-  while($lineage[0] =~ /^[\s_]*$/){
+  while(@lineage && $lineage[0] =~ /^[\s_]*$/){
     shift @lineage;
   }
   @lineage = reverse @lineage;
 
 # Remove from the end terms that are just the word 'none'
   @lineage = reverse @lineage;
-  while($lineage[0] =~ /^none$/i){
+  while(@lineage && $lineage[0] =~ /^none$/i){
     shift @lineage;
   }
   @lineage = reverse @lineage;
