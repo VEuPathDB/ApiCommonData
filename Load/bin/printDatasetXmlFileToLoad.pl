@@ -242,7 +242,7 @@ printConstantName ($ofh, \%excelInfo, "source", "genomeSource");
 printConstantName ($ofh, \%excelInfo, "functAnnotVersion", "genomeVersion") if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 if ($isEbiGenome =~ /^y/i) {
   printConstantNameWithValue ($ofh, 'ebiOrganismName',$organismAbbrev);
-  printConstantNameWithValue ($ofh, 'ebiVersion', $ebiVersion);
+#  printConstantNameWithValue ($ofh, 'ebiVersion', $ebiVersion);
 }
 
 print $ofh "\n";
@@ -252,7 +252,7 @@ printValidateOrganismInfo($ofh);
 printAnnotation($ofh, $format, $secondaryAnnot) if ($format);
 
 if ($isEbiGenome =~ /^y/i ) {
-  printEbiGenome($ofh);
+  printEbiGenome($ofh, $organismAbbrev, $ebiVersion);
 }
 
 printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasProduct'} =~ /^y/i);
@@ -299,7 +299,7 @@ sub printEbiGenome {
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
   printNameWithDollarSign ($fh, 'ebiOrganismName');
-  printNameWithDollarSign ($fh, 'ebiVersion');
+  printNameWithValue ($fh, 'ebiVersion', $ebiVersion);
   printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
   print $fh "  </dataset>\n";
   print $fh "\n";
