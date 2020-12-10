@@ -22,7 +22,6 @@ use Data::Dumper;
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
-my $argsDeclaration =[];
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
@@ -32,7 +31,7 @@ my $tablesAffected =
     ];
 
 my $tablesDependedOn =
-    [['ApiDB::PropetyGraph',''],
+    [['ApiDB::Study',''],
      ['ApiDB::EntityAttributes',  ''],
      ['ApiDB::ProcessAttributes',  ''],
      ['ApiDB::ProcessType',  ''],
