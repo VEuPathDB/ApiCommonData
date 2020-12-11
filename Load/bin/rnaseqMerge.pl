@@ -42,11 +42,11 @@ foreach my $key (keys %$sampleHash) {
 
     my $sampleDirName = -e "$dir/analyze_$sampleDirName/master/mainresult" ? "$dir/analyze_$sampleDirName/master/mainresult" : "$dir/analyze_$sampleDirName";
     my @files = glob "$sampleDirName/normalized/final/*";
+
     my @files = grep !/logged/, @files;
     my @files = grep !/non_unique/, @files;
     push @list, @files;
 }
-    
 
 my $outDir = "$dir/mergedBigwigs";
 &runCmd("mkdir -p $outDir");
@@ -63,15 +63,22 @@ else{
   &convertBigwig(\@list, $outDir, $chromSize, $experimentName, "unstranded");
 }
 
-
 sub convertBigwig {
     my ($fileList, $outDir, $chromSize, $experimentName, $pattern) = @_;
     my $fileNames = join ' ', @$fileList;
+    #Check if more than 1 input bigwig file
+    if (scalar @$fileList > 1){ 
     my $cmd = "bigWigMerge $fileNames $outDir/out.bedGraph";
     &runCmd($cmd);
     my $convertCmd = "bedGraphToBigWig $outDir/out.bedGraph $chromSize $outDir/$experimentName\_$pattern\_merged.bw";
     &runCmd($convertCmd);
     unlink "$outDir/out.bedGraph";
+    }
+    #If only one bigwig file copy to outdir
+    else{
+    my $cpCmd = "cp $fileNames $outDir/$experimentName\_$pattern\_merged.bw";
+    &runCmd($cpCmd);   
+    } 
 }
 
 sub usage {
