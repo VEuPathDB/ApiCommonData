@@ -56,14 +56,19 @@ sub getRowAlgInvId {
                                          $gusConfig->{props}->{coreSchemaName},
                                          );
     my $dbh = $db->getQueryHandle();
-    my $sql = "select distinct pan.row_alg_invocation_id
+    my $sql = "select distinct wsai.algorithm_invocation_id
                from study.protocolappnode pan
                , study.studylink sl
                , study.study s
+               , apidb.workflowstepalginvocation wsai
+               , apidb.workflowstep ws
                where s.name = '$datasetName'
                and sl.study_id = s.study_id
                and pan.protocol_app_node_id = sl.protocol_app_node_id
-               and pan.name like '%(RNASeqEbi)'";
+               and pan.name like '%(RNASeqEbi)'
+               and wsai.algorithm_invocation_id = pan.row_alg_invocation_id
+               and ws.workflow_step_id = wsai.workflow_step_id
+               and ws.name like '%_ebi_rnaseq_topLevel.%_ebi_rnaSeq_experiment.loadStudyResultsFromConfig'";
 
     my $sqlStmt = $dbh->prepare($sql);
     $sqlStmt->execute();
