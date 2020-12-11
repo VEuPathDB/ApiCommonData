@@ -80,7 +80,7 @@ while (my ($seqSourceId, $seqType, $seqLen) = $stmt->fetchrow_array()) {
   $seqRegions{EBI_seq_region_name} = $ebiSeqRegionName->{$seqSourceId} if ($ebiSeqRegionName->{$seqSourceId});
   $seqRegions{BRC4_seq_region_name} = $seqSourceId;
 
-  if ($seqType =~ /mitochondrial_chromosome/i || $seqType =~ /apicoplast_chromosome/i) {
+  if ($seqType =~ /mitochondrial_chromosome/i || $seqType =~ /apicoplast_chromosome/i || $seqType =~ /maxicircle/i) {
     $seqRegions{coord_system_level} = "chromosome";
     $seqRegions{location} = $seqType;
   }
