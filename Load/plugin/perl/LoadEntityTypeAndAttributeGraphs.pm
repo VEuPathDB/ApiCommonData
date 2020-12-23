@@ -149,17 +149,17 @@ sub loadEntityTypeGraph {
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
   # TODO: Add Plural when available
-  my $sql = "select et.study_id
-                  , et.study_stable_id
-                  , et.parent_id
+  my $sql = "select et.parent_id
                   , et.parent_stable_id
                   , t.name display_name
                   , t.entity_type_id
                   , t.internal_abbrev
                   ,  ot.source_id as stable_id
                   , nvl(os.definition, ot.definition) as description
+                  , s.study_id
+                  , s.stable_id as study_stable_id
 from (
-select distinct s.study_id, s.stable_id as study_stable_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
+select distinct s.study_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
 from apidb.processattributes p
    , apidb.entityattributes i
    , apidb.entityattributes o
@@ -176,9 +176,11 @@ and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
 and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID 
 and it.type_id = iot.ontology_term_id (+)
 ) et, apidb.entitytype t
+   , apidb.study s
    , sres.ontologyterm ot
    , (select * from sres.ontologysynonym where external_database_release_id = $extDbRlsId) os
-where t.study_id = $studyId 
+where s.study_id = $studyId 
+ and s.study_id = t.study_id
  and t.study_id = et.study_id (+)
  and t.entity_type_id = out_entity_type_id (+)
  and t.type_id = ot.ontology_term_id (+)
