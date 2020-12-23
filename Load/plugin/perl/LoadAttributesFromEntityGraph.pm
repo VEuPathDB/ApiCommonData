@@ -5,8 +5,6 @@ use strict;
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::ApiDB::Attribute;
-use GUS::Model::ApiDB::AttributeGraph;
-use GUS::Model::ApiDB::EntityTypeGraph;
 
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Sqlldr;
@@ -14,6 +12,8 @@ use ApiCommonData::Load::Sqlldr;
 use Scalar::Util qw(looks_like_number);
 
 use Time::HiRes qw(gettimeofday);
+
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
 
 use JSON;
 
@@ -128,72 +128,50 @@ sub run {
 
   my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
-    my $ontologyTerms = $self->queryForOntologyTerms();
+    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+
+    my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
     my $ct = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
     $attributeValueCount = $attributeValueCount + $ct;
 
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    my $act = $self->loadAttributeTerms($ontologyTerms, $studyId);
+    my $act = $self->loadAttributeTerms($ontologyTerms, $studyId, $entityTypeIds);
     $attributeCount = $attributeCount + $act;
-
-    my $etg = $self->loadEntityTypeGraph($studyId);
-    $entityTypeGraphCount = $entityTypeGraphCount + $etg;
-
   }
 
   return "Loaded $attributeValueCount rows into ApiDB.AttributeValue, $attributeCount rows into ApiDB.Attribute and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
 }
 
-sub loadEntityTypeGraph {
+
+sub queryForEntityTypeIds {
   my ($self, $studyId) = @_;
+
+  my %rv;
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "select et.in_entity_type_id parent_entity_type_id, et.in_entity_name parent_entity_type, t.entity_type_id, t.name entity_type
-from (
-select distinct it.study_id, it.entity_type_id in_entity_type_id, it.name in_entity_name, ot.entity_type_id out_entity_type_id, ot.name out_entity_name
-from apidb.processattributes p
-   , apidb.entityattributes i
-   , apidb.entityattributes o
-   , apidb.entitytype it
-   , apidb.entitytype ot
-where it.STUDY_ID = $studyId
-and ot.STUDY_ID = $studyId
-and it.ENTITY_TYPE_ID = i.entity_type_id
-and ot.entity_type_id = o.entity_type_id
-and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
-and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID
-) et, apidb.entitytype t
-where t.study_id = et.study_id (+)
- and t.entity_type_id = out_entity_type_id (+)
-";
-
+  my $sql = "select t.entity_type_id, ot.source_id
+from apidb.entitytype t, sres.ontologyterm ot
+where ot.ontology_term_id = t.type_id
+and study_id = $studyId";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
-  my $ct;
 
-  while(my ($parentEntityTypeId, $parentEntityType, $entityTypeId, $entityType) = $sh->fetchrow_array()) {
-
-    my $etg = GUS::Model::ApiDB::EntityTypeGraph->new({ parent_entity_type_id => $parentEntityTypeId,
-                                                        parent_entity_type => $parentEntityType,
-                                                        entity_type_id => $entityTypeId,
-                                                        entity_type => $entityType
-                                                      });
-
-
-    $etg->submit();
-    $ct++
+  while(my ($etId, $stableId) = $sh->fetchrow_array()) {
+    $rv{$etId} = $stableId;
   }
+  $sh->finish();
 
-  return $ct;
+  return \%rv;
 }
 
 
+
 sub loadAttributeTerms {
-  my ($self, $ontologyTerms, $studyId) = @_;
+  my ($self, $ontologyTerms, $studyId, $entityTypeIds) = @_;
 
   my $attributeCount;
 
@@ -241,11 +219,13 @@ sub loadAttributeTerms {
       foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
         my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
 
+        my $entityTypeStableId = $entityTypeIds->{$etId};
 
         my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
+                                                           entity_type_stable_id => $entityTypeStableId,
                                                            process_type_id => $ptId,
                                                            ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                           source_id => $sourceId,
+                                                           stable_id => $sourceId,
                                                            data_type => $dataType,
                                                            has_multiple_values_per_entity => $hasMultipleValuesPerEntity,
                                                            data_shape => $dataShape,
@@ -257,27 +237,9 @@ sub loadAttributeTerms {
 
 
         $attribute->submit();
-
+        $attributeCount++;
       }
     }
-
-
-    
-        my $attributeGraph = GUS::Model::ApiDB::AttributeGraph->new({study_id => $studyId,
-                                                                     ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                                     source_id => $sourceId,
-                                                                     parent_source_id => $ontologyTerm->{PARENT_SOURCE_ID},
-                                                                     parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
-                                                                     provider_label => $ontologyTerm->{PROVIDER_LABEL},
-                                                                     display_name => $ontologyTerm->{DISPLAY_NAME}, 
-                                                                     term_type => $ontologyTerm->{TERM_TYPE}, 
-                                                          });
-
-
-
-        $attributeGraph->submit();
-
-
   }
 
   return $attributeCount;
@@ -315,63 +277,6 @@ and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
 
 
 
-sub queryForOntologyTerms {
-  my ($self) = @_;
-
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
-
-  my $dbh = $self->getQueryHandle();
-
-  my $sql = "select s.name
-                  , s.source_id
-                  , s.ontology_term_id
-                  , o.name parent_name
-                  , o.source_id parent_source_id
-                  , o.ontology_term_id parent_ontology_term_id
-                  , nvl(os.ontology_synonym, s.name) as display_name
-                  , os.variable as provider_label
-                  , os.is_preferred
-                  , os.definition
-                  , tt.term_type
-from sres.ontologyrelationship r
-   , sres.ontologyterm s
-   , sres.ontologyterm o
-   , sres.ontologyterm p
-   , sres.ontologysynonym os
-   , (select r.external_database_release_id, s.ontology_term_id, o.name as term_type
-from sres.ontologyrelationship r
-   , sres.ontologyterm s
-   , sres.ontologyterm o
-   , sres.ontologyterm p
-where r.subject_term_id = s.ontology_term_id
-and r.predicate_term_id = p.ontology_term_id
-and r.object_term_id = o.ontology_term_id
-and p.SOURCE_ID = 'EUPATH_0000271' -- termType
-) tt
-where r.subject_term_id = s.ontology_term_id
-and r.predicate_term_id = p.ontology_term_id
-and r.object_term_id = o.ontology_term_id
-and p.SOURCE_ID = 'subClassOf'
-and s.ontology_term_id = os.ontology_term_id (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
-and s.ontology_term_id = tt.ontology_term_id (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = tt.EXTERNAL_DATABASE_RELEASE_ID (+)    
-and r.external_database_release_id = ?";
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($extDbRlsId);
-
-  my %ontologyTerms;
-
-  while(my $hash = $sh->fetchrow_hashref()) {
-    my $sourceId = $hash->{SOURCE_ID};
-
-    $ontologyTerms{$sourceId} = $hash;
-  }
-  $sh->finish();
-
-  return \%ontologyTerms;
-}
 
 sub loadAttributeValues {
   my ($self, $studyId, $ontologyTerms, $maxAttrLength) = @_;

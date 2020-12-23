@@ -286,7 +286,10 @@ sub loadStudy {
   my $identifier = $study->getIdentifier();
   my $description = $study->getDescription();
 
-  my $gusStudy = GUS::Model::ApiDB::Study->new({name => $identifier, external_database_release_id=>$extDbRlsId});
+  my $internalAbbrev = $identifier;
+  $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+
+  my $gusStudy = GUS::Model::ApiDB::Study->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
   my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
@@ -328,6 +331,13 @@ sub getEntityTypeId {
   else {
     $entityType->setName($isaType);
   }
+
+
+  my $internalAbbrev = $entityType->getName();
+  $internalAbbrev =~ s/([\w']+)/\u$1/g;
+  $internalAbbrev =~ s/\s//g;
+
+  $entityType->setInternalAbbrev($internalAbbrev);
 
   $entityType->submit(undef, 1);
 
@@ -376,7 +386,7 @@ sub loadNodes {
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
 
-    my $entity = GUS::Model::ApiDB::EntityAttributes->new({name => $node->getValue()});
+    my $entity = GUS::Model::ApiDB::EntityAttributes->new({stable_id => $node->getValue()});
 
     my $entityTypeId = $self->getEntityTypeId($node, $gusStudyId);
     $entity->setEntityTypeId($entityTypeId);
@@ -424,9 +434,9 @@ sub loadNodes {
     $entity->submit(undef, 1);
 
     # keep the cache up to date as we add new nodes
-    $self->{_NODE_MAP}->{$entity->getName()} = $entity->getId();
+    $self->{_NODE_MAP}->{$entity->getStableId()} = $entity->getId();
 
-    $rv{$entity->getName()} = [$entity->getId(), $entity->getEntityTypeId()];
+    $rv{$entity->getStableId()} = [$entity->getId(), $entity->getEntityTypeId()];
 
     $self->undefPointerCache();
 

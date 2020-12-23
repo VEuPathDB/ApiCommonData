@@ -1,7 +1,8 @@
 CREATE TABLE apidb.Study (
  study_id            NUMBER(12) NOT NULL,
- name                         VARCHAR2(200) NOT NULL,
+ stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
+ internal_abbrev              varchar2(15),
  max_attr_length              number(4),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -47,6 +48,7 @@ CREATE TABLE apidb.EntityType (
  type_id                   NUMBER(10),
  isa_type                     VARCHAR2(50),
  study_id            NUMBER(12) NOT NULL,
+ internal_abbrev              VARCHAR2(30) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -131,7 +133,7 @@ WHERE 'processtype' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 CREATE TABLE apidb.EntityAttributes (
  entity_attributes_id         NUMBER(12) NOT NULL,
- name                         VARCHAR2(200) NOT NULL,
+ stable_id                         VARCHAR2(200) NOT NULL,
  entity_type_id                    NUMBER(12) NOT NULL,
  atts                         CLOB,
  modification_date            DATE NOT NULL,
@@ -227,12 +229,19 @@ WHERE 'processattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
+
 CREATE TABLE apidb.EntityTypeGraph (
  entity_type_graph_id           NUMBER(12) NOT NULL,
- parent_entity_type_id          NUMBER(12),
- parent_entity_type              VARCHAR2(200),
- entity_type_id                 NUMBER(12) NOT NULL,
- entity_type                     VARCHAR2(200) NOT NULL,
+ study_id                       NUMBER(12) NOT NULL,
+ study_stable_id                varchar2(200),
+ parent_stable_id             varchar2(255),
+ parent_id                    NUMBER(12),
+ stable_id                    varchar2(255),
+ entity_type_id                NUMBER(12) NOT NULL,
+ display_name                 VARCHAR2(200) NOT NULL,
+ display_name_plural          VARCHAR2(200),
+ description                  VARCHAR2(4000),
+ internal_abbrev              VARCHAR2(30) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -244,7 +253,8 @@ CREATE TABLE apidb.EntityTypeGraph (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (parent_entity_type_id) REFERENCES apidb.entitytype,
+ FOREIGN KEY (study_id) REFERENCES apidb.study,
+ FOREIGN KEY (parent_id) REFERENCES apidb.entitytype,
  FOREIGN KEY (entity_type_id) REFERENCES apidb.entitytype,
  PRIMARY KEY (entity_type_graph_id)
 );
@@ -416,10 +426,11 @@ WHERE 'attributevalue' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 CREATE TABLE apidb.Attribute (
   attribute_id                  NUMBER(12) NOT NULL,
-  entity_type_id                NUMBER(12),
+  entity_type_id                NUMBER(12) not null,
+  entity_type_stable_id         varchar2(255),
   process_type_id                 NUMBER(12),
   ontology_term_id         NUMBER(10) NOT NULL,
-  source_id                varchar2(255) NOT NULL,
+  stable_id                varchar2(255) NOT NULL,
   data_type                    varchar2(10) not null,
   has_multiple_values_per_entity            integer,
   data_shape                     varchar2(30),
@@ -473,8 +484,8 @@ CREATE TABLE apidb.AttributeGraph (
   attribute_graph_id                  NUMBER(12) NOT NULL,
   study_id            NUMBER(12) NOT NULL, 
   ontology_term_id         NUMBER(10) NOT NULL,
-  source_id                varchar2(255) NOT NULL,
-  parent_source_id              varchar2(255) NOT NULL,
+  stable_id                varchar2(255) NOT NULL,
+  parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
   provider_label                varchar(30),
   display_name                  varchar(1500) not null,
