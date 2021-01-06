@@ -2,6 +2,8 @@ package ApiCommonData::Load::Plugin::InsertStudyResults;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
+use locale;
+use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
@@ -274,6 +276,9 @@ sub addResults {
   }
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
+  }
+  elsif ($protocolName eq "Lopit") {
+    $tableString = "ApiDB::LopitResults";
   }
   else {
 # TODO check what protocol this is for, and die in the else clause
@@ -655,6 +660,7 @@ sub undoTables {
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
+    'ApiDB.LopitResults',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',

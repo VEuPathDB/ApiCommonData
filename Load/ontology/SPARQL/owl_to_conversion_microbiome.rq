@@ -1,0 +1,51 @@
+# Convert OWL file to tab-delimited format file
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?IRI 
+  (GROUP_CONCAT(DISTINCT ?slabel;separator=" | ") AS ?label)
+  (GROUP_CONCAT(DISTINCT ?dOrder;separator=" | ") AS ?displayOrder)
+  (GROUP_CONCAT(DISTINCT ?var;separator=" | ") AS ?variable)
+  (GROUP_CONCAT(DISTINCT ?def;separator=" | ") AS ?definition)
+  (GROUP_CONCAT(DISTINCT ?cValues;separator=" | ") AS ?codebookValues)
+  (GROUP_CONCAT(DISTINCT ?pLabel;separator=" | ") AS ?parentLabel)
+  (GROUP_CONCAT(DISTINCT ?pIRI;separator=" | ") AS ?parentIRI)
+  (GROUP_CONCAT(DISTINCT ?tType;separator=" | ") AS ?termType)
+  (GROUP_CONCAT(DISTINCT ?rep;separator=" | ") AS ?replaces)
+WHERE {
+	?IRI a owl:Class .
+	?IRI rdfs:label ?tlabel .
+    	FILTER not exists { 
+      		?IRI owl:deprecated ?dep .
+    	}
+	BIND (str(?tlabel) AS ?slabel) .
+	OPTIONAL {
+		?IRI obo:EUPATH_0000274 ?dOrder .
+    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0000755 ?var .
+    	} 
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
+    	}
+    	OPTIONAL {
+        	?IRI obo:IAO_0000115 ?def .
+    	}
+	OPTIONAL {
+		?IRI rdfs:subClassOf ?pIRI .
+	}
+	OPTIONAL {
+		?pIRI rdfs:label ?palabel . 
+		BIND (str(?palabel) AS ?pLabel) .
+	}
+    	OPTIONAL {
+        	?IRI obo:EUPATH_0001005 ?tType .
+    	}
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001006 ?rep .
+        }
+}
+GROUP BY ?IRI
+ORDER BY ASC(?parentLabel) ASC(?label)

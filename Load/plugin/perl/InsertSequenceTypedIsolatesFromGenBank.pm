@@ -341,6 +341,10 @@ sub addOntologyCategory {
 
 sub findOntologyTermByCategory {
   my ($self, $name) = @_;
+  if (length($name)>247){
+     my $subLength = substr($name,0,247);
+     $name=$subLength;
+  }
   foreach my $term ( @{$self->{_ontology_category_terms}}) {
      return $term if ($term->getName eq $name);
   }
@@ -352,6 +356,10 @@ sub makeOntologyTerm {
   my ($self, $termHash, $extDbRlsId) = @_;
 
   foreach my $term( keys %$termHash) {
+        if (length($term)>247){
+           my $subLength = substr($term,0,247);
+           $term=$subLength;
+        }
     my $termObj = GUS::Model::SRes::OntologyTerm->new({ source_id => "GENISO $term" });
 
     unless  ($termObj->retrieveFromDB ){ 
