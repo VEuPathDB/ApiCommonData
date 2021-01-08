@@ -67,7 +67,8 @@ Both input files are both constructed manually as part of the Orthomcl-DB genome
 
 The speciesFile is a columnar file with these columns:
   - four_letter_abbrev
-  - ncbi_tax_id
+  - organism name
+#  - ncbi_tax_id  (this used to be required but no longer as of 11/16/2020
   - clade_four_letter_abbrev  # an index into the cladeFile
   - C or P (core or peripheral species)
 
@@ -230,64 +231,37 @@ sub parseCladeLine {
     return $clade;
 }
 
+# pfal    Plasmodium falciparum 3D7    APIC     C
 sub parseSpeciesFile {
     my ($self, $speciesFile) = @_;
 
     open(FILE, $speciesFile) || $self->userError("can't open species file '$speciesFile'");
 
-    my $dbh = $self->getQueryHandle();
-    my $sql = "SELECT t.taxon_id, tn.name
-               FROM sres.taxon t, sres.taxonname tn
-               WHERE ncbi_tax_id = ?
-               AND t.taxon_id = tn.taxon_id
-               AND tn.name_class = 'scientific name'";
-
-    my $stmt = $dbh->prepare($sql);
     my $speciesOrder = 1;
     my $speciesAbbrevs = {};
     while(<FILE>) {
-	chomp;
+	my $line = $_;
+	chomp($line);
+	my @columns = split("\t",$line);
+	my $numColumns = scalar @columns;
+	$self->userError("There should be 4 columns:\n$line\n") if ($numColumns != 4);
+	my ($speciesAbbrev,$name,$cladeAbbrev,$corePeripheral) = @columns;
+	$self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
+	$speciesAbbrevs->{$speciesAbbrev} = 1;
+	$self->userError("species abbreviation '$speciesAbbrev' must have 4 letters") if length($speciesAbbrev) != 4;
+	$self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
 
+	my $clade = $self->{clades}->{$cladeAbbrev};
+	$clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
 	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
-
-	# pfa APIC 1233.5
-	if (/([a-z]{4})\t([A-Z]{4})\t(\d+)\t(\w)/) {
-	  my $speciesAbbrev = $1;
-	  my $cladeAbbrev = $2;
-	  my $ncbiTaxonId = $3;
-	  my $corePeripheral = $4;
-	  $self->userError("duplicate species abbrev '$speciesAbbrev'") if $speciesAbbrevs->{$speciesAbbrev};
-	  $self->userError("species abbreviation must have 4 letters") if length($speciesAbbrev) != 4;
-	  $self->userError("The fourth column must be C or P for Core or Peripheral") if $corePeripheral !~ /^[CP]$/;
-	  $speciesAbbrevs->{$speciesAbbrev} = 1;
-	  $species->setThreeLetterAbbrev($speciesAbbrev);
-	  my $clade = $self->{clades}->{$cladeAbbrev};
-	  my ($taxonId, $taxonName) = $self->getTaxonId($stmt, $ncbiTaxonId);
-	  $species->setTaxonId($taxonId);
-	  $clade || die "can't find clade with code '$cladeAbbrev' for species '$speciesAbbrev'\n";
-	  $species->setParent($clade);
-	  $species->setIsSpecies(1);
-	  $species->setSpeciesOrder($speciesOrder++);
-	  $species->setName($taxonName);
-	  $species->setDepthFirstIndex($clade->getDepthFirstIndex());
-	  $species->setCorePeripheral($corePeripheral);
-	}  else {
-	  $self->userError("invalid line in species file: '$_'");
-	}
+	$species->setThreeLetterAbbrev($speciesAbbrev);
+	$species->setParent($clade);
+	$species->setIsSpecies(1);
+	$species->setSpeciesOrder($speciesOrder++);
+	$species->setName($name);
+	$species->setDepthFirstIndex($clade->getDepthFirstIndex());
+	$species->setCorePeripheral($corePeripheral);
     }
-}
-
-sub getTaxonId {
-  my ($self, $stmt, $ncbiTaxId) = @_;
-
-
-  my @ids = $self->sqlAsArray( Handle => $stmt, Bind => [$ncbiTaxId] );
-
-  if(scalar @ids != 2) {
-    $self->userError("Should return one value for ncbi_tax_id '$ncbiTaxId'");
-  }
-  return @ids;
-
 }
 
 sub printCladeList {
