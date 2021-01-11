@@ -180,10 +180,10 @@ sub loadAttributeTerms {
 
     my $hasValues = $ontologyTerm->{_COUNT} > 0 ? 1 : 0;
 
-    my ($dataType, $dataShape, $hasMultipleValuesPerEntity, $precision);
+    my ($dataType, $dataShape, $valuesPerEntity, $precision);
     if($hasValues) {
 
-      $hasMultipleValuesPerEntity = $self->{_multi_valued_term}->{$sourceId} ? 1 : 0;
+      $valuesPerEntity = scalar(keys(%{$self->{_ontology_term_values}->{$sourceId}}));
 
       $precision = 1; # THis is the default; probably never changed
       my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
@@ -227,7 +227,7 @@ sub loadAttributeTerms {
                                                            ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                            stable_id => $sourceId,
                                                            data_type => $dataType,
-                                                           has_multiple_values_per_entity => $hasMultipleValuesPerEntity,
+                                                           value_count_per_entity => $valuesPerEntity,
                                                            data_shape => $dataShape,
                                                            unit => $ontologyTerm->{UNIT_NAME},
                                                            unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
@@ -311,10 +311,8 @@ sub loadAttributes {
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
-      my $valueCount;
       foreach my $value (@$valueArray) {
-        $self->{_multi_valued_term}->{$ontologySourceId} = 1 if($valueCount); 
-        $valueCount++;
+        $self->{_ontology_term_values}->{$ontologySourceId}->{$value} = 1;
 
         my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
         my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
