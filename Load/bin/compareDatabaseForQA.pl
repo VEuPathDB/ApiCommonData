@@ -99,6 +99,7 @@ foreach my $k (sort keys %seqA) {
   }
 
   foreach my $t ("protein coding", "rRNA", "snRNA", "snoRNA", "tRNA", "snRNA", "scRNA", "miRNA", "RNase_P_RNA",
+		 "ncRNA",
                  "RNase_MRP_RNA", "antisense_RNA", "telomerase_RNA", "SRP_RNA", "misc_RNA") {
     my $aTotal = ($t eq "protein coding") ? $geneA{$k}->{"$t"} + $geneA{$k}->{"pseudogene"} : $geneA{$k}->{$t};
     my $bTotal = ($t eq "protein coding") ? $geneB{$k}->{"$t"} + $geneB{$k}->{"pseudogene"} : $geneB{$k}->{$t};
