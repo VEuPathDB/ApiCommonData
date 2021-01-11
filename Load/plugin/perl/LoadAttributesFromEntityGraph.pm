@@ -180,11 +180,8 @@ sub loadAttributeTerms {
 
     my $hasValues = $ontologyTerm->{_COUNT} > 0 ? 1 : 0;
 
-    my ($dataType, $dataShape, $valuesPerEntity, $precision);
+    my ($dataType, $dataShape, $precision);
     if($hasValues) {
-
-      $valuesPerEntity = scalar(keys(%{$self->{_ontology_term_values}->{$sourceId}}));
-
       $precision = 1; # THis is the default; probably never changed
       my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
       my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
@@ -196,6 +193,9 @@ sub loadAttributeTerms {
       }
       elsif($isDate || ($isNumber && $valueCount > 10)) {
         $dataShape = 'continuous';
+      }
+      elsif($valueCount == 2)) {
+        $dataShape = 'binary';
       }
       else {
         $dataShape = 'categorical'; 
@@ -227,7 +227,7 @@ sub loadAttributeTerms {
                                                            ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                            stable_id => $sourceId,
                                                            data_type => $dataType,
-                                                           value_count_per_entity => $valuesPerEntity,
+                                                           value_count_per_entity => $valuesCount,
                                                            data_shape => $dataShape,
                                                            unit => $ontologyTerm->{UNIT_NAME},
                                                            unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
@@ -312,8 +312,6 @@ sub loadAttributes {
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
       foreach my $value (@$valueArray) {
-        $self->{_ontology_term_values}->{$ontologySourceId}->{$value} = 1;
-
         my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
         my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
 
