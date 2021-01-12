@@ -87,6 +87,15 @@ sub preprocess {
 		}
 		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
+
+            if($type eq 'centromere'){
+	      if(!($bioperlFeatureTree->has_tag("ID"))){
+                    $bioperlFeatureTree->add_tag_value("ID",$bioperlSeq->accession());
+		  }
+
+                $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+            }
+
 	    if($type eq 'STS'){
 		if(!($bioperlFeatureTree->has_tag("ID"))){
 		    $bioperlFeatureTree->add_tag_value("ID",$bioperlSeq->accession());
