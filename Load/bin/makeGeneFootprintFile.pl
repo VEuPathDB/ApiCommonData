@@ -74,7 +74,8 @@ foreach my $geneSourceId (@geneSourceIds) {
             my $end = $subFeature->end();
             push(@{$exons}, "$start\t$end");
         }
-        elsif ($subFeature->primary_tag() eq 'transcript') {
+
+        elsif(GUS::Community::GeneModelLocations::getShortFeatureType($subFeature) eq 'Transcript') {
             foreach my $intron ($subFeature->introns()) {
                 my $intronLocation = $intron->location();
                 my $intronLength = abs($intronLocation->end() - $intronLocation->start());

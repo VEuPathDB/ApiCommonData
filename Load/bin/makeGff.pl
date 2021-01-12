@@ -113,15 +113,11 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
     }
 
 
-
-
-    if($feature->primary_tag eq 'gene') {
+    if(GUS::Community::GeneModelLocations::getShortFeatureType($feature) eq 'Gene') {
       $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
     }
 
-    if($feature->primary_tag eq 'transcript') {
-
-
+    if(GUS::Community::GeneModelLocations::getShortFeatureType($feature) eq 'Transcript') {
       my ($transcriptId) = $feature->get_tag_values("ID");
 
       my $product = $transcriptAnnotations->{$transcriptId}->{transcript_product};
@@ -134,7 +130,7 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 #      $soTermName = 'ncRNA' if($soTermName eq 'non_protein_coding');
 #      $soTermName =~ s/_encoding$//;
 
-      $feature->primary_tag($soTermName);
+#      $feature->primary_tag($soTermName);
 
       $feature->add_tag_value("description", $product) if($product);
       $feature->add_tag_value("Note", $ecNumbers) if($ecNumbers);
@@ -146,14 +142,13 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       }
     }
 
-
     if($feature->primary_tag eq 'utr3prime') {
       $feature->primary_tag('three_prime_UTR');
     }
+
     if($feature->primary_tag eq 'utr5prime') {
       $feature->primary_tag('five_prime_UTR');
     }
-
 
     unless($feature->primary_tag eq 'CDS') {
       $feature->frame('.');
