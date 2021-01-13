@@ -175,7 +175,7 @@ my $count;
     $entities{$parentTypeId} = $parentId;    
     $prevId = $entityId;
 
-    if($count++ % 1000 == 0) {
+    if(++$count % 1000 == 0) {
       $dbh->commit();
      }
   }
