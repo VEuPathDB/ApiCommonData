@@ -440,7 +440,7 @@ sub loadNodes {
 
     $self->undefPointerCache();
 
-    if($nodeCount++ % 1000 == 0) {
+    if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
       $self->getDb()->manageTransaction(0, 'begin');
     }
@@ -645,7 +645,7 @@ sub loadProcesss {
         $gusProcessAttributes->submit(undef, 1);
         $self->undefPointerCache();
 
-        if($processCount++ % 1000 == 0) {
+        if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
           $self->getDb()->manageTransaction(0, 'begin');
         }
