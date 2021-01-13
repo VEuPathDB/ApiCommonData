@@ -162,10 +162,10 @@ from apidb.entityattributes where entity_type_id = $entityTypeId";
   my %entities;
 
   my $prevId;
-my $count; 
+  my $count; 
 
   while(my ($entityId, $parentId, $parentTypeId) = $sh->fetchrow_array()) {
-    print STDERR  "Data fetching terminated early by error: $DBI::errstr\n" if $DBI::err;
+    $self->error("Data fetching terminated early by error: $DBI::errstr") if $DBI::err;
 
     if($prevId && $prevId ne $entityId) {
       $self->insertAncestorRow($insertSh, $prevId, \%entities, $ancestorEntityTypeIds);

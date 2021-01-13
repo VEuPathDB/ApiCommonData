@@ -368,7 +368,7 @@ sub ontologyTermValues {
   }
 
 
-  return $dateValue, $numberValue
+  return $dateValue, $numberValue;
 }
 
 
