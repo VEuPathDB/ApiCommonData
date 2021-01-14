@@ -101,11 +101,9 @@ sub run {
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
-    my $act = $self->loadAttributeGraph($ontologyTerms, $studyId);
-    $attributeCount = $attributeCount + $act;
+    $attributeCount = $attributeCount + $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
 
-    my $etg = $self->loadEntityTypeGraph($studyId);
-    $entityTypeGraphCount = $entityTypeGraphCount + $etg;
+    $entityTypeGraphCount = $entityTypeGraphCount + $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
   }
 
   return "Loaded $attributeValueCount rows into ApiDB.AttributeValue, $attributeCount rows into ApiDB.Attribute and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
@@ -113,8 +111,8 @@ sub run {
 
 
 
-sub loadAttributeGraph {
-  my ($self, $ontologyTerms, $studyId) = @_;
+sub constructAndSubmitAttributeGraphsForOntologyTerms {
+  my ($self, $studyId, $ontologyTerms) = @_;
 
   my $attributeCount;
 
@@ -130,8 +128,8 @@ sub loadAttributeGraph {
                                                                  display_name => $ontologyTerm->{DISPLAY_NAME}, 
                                                                  term_type => $ontologyTerm->{TERM_TYPE}, 
                                                                 });
-
     $attributeGraph->submit();
+    $attributeCount++;
   }
 
   return $attributeCount;
@@ -140,7 +138,7 @@ sub loadAttributeGraph {
 
 
 
-sub loadEntityTypeGraph {
+sub constructAndSubmitEntityTypeGraphsForStudy {
   my ($self, $studyId) = @_;
 
   my $dbh = $self->getQueryHandle();
