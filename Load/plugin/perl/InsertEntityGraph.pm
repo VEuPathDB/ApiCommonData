@@ -202,15 +202,18 @@ sub run {
           next;
         }
 
-        $self->checkProcessTypesAndSetIds($study->getProtocols());
+        my $identifier = $study->getIdentifier();
+        my $description = $study->getDescription();
+
+        my $nodes = $self->nodesCheckMaterialEntitiesHaveMaterialType($study->getNodes());
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
+        my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $study);
+        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges);
       }
 
       # clear out the protocol app node hash
@@ -240,7 +243,7 @@ sub countLines {
 
 
 
-sub checkMaterialEntitiesHaveMaterialType {
+sub nodesCheckMaterialEntitiesHaveMaterialType {
   my ($self, $nodes) = @_;
 
   foreach my $node (@$nodes) {
@@ -250,9 +253,10 @@ sub checkMaterialEntitiesHaveMaterialType {
       $self->logOrError("Material Entity $value is required to have a [Material Type]");
     }
   }
+  return $nodes;
 }
 
-sub checkProcessTypesAndSetIds {
+sub protocolsCheckProcessTypesAndSetIds {
   my ($self, $protocols) = @_;
 
   my $sql = "select name, process_type_id from apidb.processtype";
@@ -276,15 +280,15 @@ sub checkProcessTypesAndSetIds {
       $self->log("WARNING:  Protocol [$protocolName] Not found in the database") ;
     }
   }
+  return $protocols;
 }
 
 sub loadStudy {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $study) = @_;
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
+    $identifier, $description, $nodes, $protocols, $edges) = @_;
+
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
-
-  my $identifier = $study->getIdentifier();
-  my $description = $study->getDescription();
 
   my $internalAbbrev = $identifier;
   $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
@@ -292,10 +296,10 @@ sub loadStudy {
   my $gusStudy = GUS::Model::ApiDB::Study->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
-  my $nodeNameToIdMap = $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $study->getNodes(), $gusStudy);
-  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $study->getProtocols());
+  my $nodeNameToIdMap = $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy);
+  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
 
-  $self->loadProcesses($ontologyTermToIdentifiers, $study->getEdges(), $nodeNameToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeNameToIdMap, $processTypeNamesToIdMap);
 
   if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
@@ -414,7 +418,7 @@ sub loadNodes {
           $charValue = $valueOntologyTerm->getName();
         }
         else {
-              $charValue = $characteristic->getTerm();
+          $charValue = $characteristic->getTerm();
         }
 
         $charValue =~ s/\r//;
