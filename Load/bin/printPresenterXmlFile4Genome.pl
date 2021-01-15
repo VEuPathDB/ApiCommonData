@@ -102,7 +102,7 @@ sub printAnnotatedGenome {
 
 sub printSummary {
   my ($id) = @_;
-  print "    <summary><![CDATA[$plainText for ";
+  print "    <summary><![CDATA[$plainText of ";
   &printOrganismFullName($organismFullName) if ($organismFullName);
   print "\n                  ]]></summary>\n";
   return 0;
@@ -111,7 +111,7 @@ sub printSummary {
 sub printDescription {
   my ($id) = @_;
   print "    <description><![CDATA[\n";
-  print "                    $plainText for ";
+  print "                    $plainText of ";
   &printOrganismFullName($organismFullName) if ($organismFullName);
   print "\n\n                  ]]><\/description>\n";
 }
