@@ -21,29 +21,40 @@ my ($inputPresenterFile, $genomeJsonFile, $genomeJsonDir, $currentBuildNumber, $
             );
 
 &usage() if ($help);
-&usage("Missing a Required Argument") unless (defined $inputPresenterFile && $genomeJsonFile && $currentBuildNumber);
+&usage("Missing a Required Argument") unless (defined $inputPresenterFile && $currentBuildNumber);
 
 $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
 
 my $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my (%accessions, @orgAbbrevs);
+my (%accessions);
 
-@orgAbbrevs = qx{ls $genomeJsonDir};
-foreach my $abbrev (@orgAbbrevs) {
-  $abbrev =~ s/\n//;
-  my $jsonFile = $genomeJsonDir . "\/$abbrev\/$abbrev\_genome.json";
-#  print STDERR "$jsonFile\n";
+if ($genomeJsonDir) {
+  my @orgAbbrevs = qx{ls $genomeJsonDir};
+  foreach my $abbrev (@orgAbbrevs) {
+    $abbrev =~ s/\n//;
+    my $jsonFile = $genomeJsonDir . "\/$abbrev\/$abbrev\_genome.json";
 
-  open (JSN, $jsonFile) || die "can not open $jsonFile to read\n";
+    open (JSN, $jsonFile) || die "can not open $jsonFile to read\n";
+    my $json = <JSN>;
+    my $text = decode_json($json);
+
+    $accessions{$abbrev} = $text->{assembly}->{accession};
+    print STDERR "$abbrev, $text->{assembly}->{accession}\n";
+    close JSN;
+  }
+} elsif ($genomeJsonFile) {
+  my $abbrev = $genomeJsonFile;
+  $abbrev =~ s/.*\/(\S+?)_genome.json$/$1/;
+  print STDERR "\$abbrev = $abbrev\n";
+  open (JSN, $genomeJsonFile) || die "can not open $genomeJsonFile to read\n";
   my $json = <JSN>;
   my $text = decode_json($json);
-
   $accessions{$abbrev} = $text->{assembly}->{accession};
-
-  print STDERR "$abbrev, $text->{assembly}->{accession}\n";
-
+  close JSN;
+} else {
+  print STDERR "ERROR: Either --genomeJsonDir or --genomeJsonFile are required!\n";
 }
 
 
@@ -89,12 +100,13 @@ sub usage {
 "
 A script to add a block of codes of history, including INSDC accession to the presenter file
 
-Usage: 
+Usage: addHistoryWInsdcAccession2Presenter.pl --inputPresenterFile GiardiaDB.xml --currentBuildNumber 52 --genomeJsonDir \$genomeJsonFileDir/GiardiaDB_2020-09-22
 
 where:
   --inputPresenterFile: required, e.g. ToxoDB.xml
-  --genomeJsonFile: required, e.g. 
   --currentBuildNumber: required, e.g. 51
+  --genomeJsonFile: either genomeJsonFile or genomeJsonDir are required, e.g. \$genomeJsonFileDir/GiardiaDB_2020-09-22/gassAWB/gassAWB_genome.json
+  --genomeJsonDir:  either genomeJsonFile or genomeJsonDir are required, e.g. \$genomeJsonFileDir/GiardiaDB_2020-09-22/
 
 ";
 }
