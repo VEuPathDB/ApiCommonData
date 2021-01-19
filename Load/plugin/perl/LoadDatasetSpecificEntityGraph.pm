@@ -222,8 +222,14 @@ $fieldsDef
 PRIMARY KEY ($stableIdField)
 )";
 
-  # TODO:  Add indexes
+
   $dbh->do($createTableSql) or die $self->getDbHandle()->errstr;
+
+  # create a pair of indexes for each field
+  foreach my $field (@fields) {
+    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_1_ix ON $tableName ($stableIdField, ${field}${fieldSuffix}) TABLESPACE indx") or die $dbh->errstr;
+    $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
+  }
 
   return \@ancestorEntityTypeIds;
 }
@@ -269,7 +275,11 @@ FROM atg, att
 where atg.ontology_term_id = att.ontology_term_id (+)
 ";
 
-  $self->getDbHandle()->do($sql) or die $self->getDbHandle()->errstr;
+
+  my $dbh = $self->getDbHandle();
+  $dbh->do($sql) or die $dbh->errstr;
+
+  $dbh->do("CREATE INDEX attributegraph_${entityTypeId}_1_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
 }
 
 
@@ -292,7 +302,11 @@ and av.entity_attributes_id = ea.entity_attributes_id
 and av.attribute_ontology_term_id = ot.ontology_term_id
 ";
 
-  $self->getDbHandle()->do($sql) or die $self->getDbHandle()->errstr;
+  my $dbh = $self->getDbHandle();
+
+  $dbh->do($sql) or die $dbh->errstr;
+
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value) TABLESPACE indx") or die $dbh->errstr;
 }
 
 
@@ -323,9 +337,9 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
 
           $self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
 
-          $dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
-          $dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
-          $dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
+          $dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
+          $dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
+          $dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
         }
        } 
        else {

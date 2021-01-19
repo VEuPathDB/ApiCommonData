@@ -194,7 +194,7 @@ sub loadAttributeTerms {
       elsif($isDate || ($isNumber && $valueCount > 10)) {
         $dataShape = 'continuous';
       }
-      elsif($valueCount == 2)) {
+      elsif($valueCount == 2) {
         $dataShape = 'binary';
       }
       else {
@@ -227,7 +227,7 @@ sub loadAttributeTerms {
                                                            ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                            stable_id => $sourceId,
                                                            data_type => $dataType,
-                                                           value_count_per_entity => $valuesCount,
+                                                           value_count_per_entity => $valueCount,
                                                            data_shape => $dataShape,
                                                            unit => $ontologyTerm->{UNIT_NAME},
                                                            unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
@@ -404,7 +404,7 @@ sub readClob {
 sub loadAttributesFromEntity {
   my ($self, $studyId, $fifo, $ontologyTerms) = @_;
 
-  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(va.atts) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
+  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(substr(va.atts, 1, 2)) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
 
   $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
 }
@@ -417,7 +417,7 @@ sub loadAttributesFromIncomingProcess {
 from apidb.processattributes ea
    , apidb.entityattributes va
    , apidb.entitytype vt
-where to_char(ea.atts) != '{}'
+where to_char(substr(ea.atts, 1, 2)) != '{}'
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
 and vt.study_id = ?

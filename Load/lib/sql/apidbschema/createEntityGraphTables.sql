@@ -511,7 +511,7 @@ CREATE TABLE apidb.AttributeGraph (
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
-  provider_label                varchar(30),
+  provider_label                varchar(1500),
   display_name                  varchar(1500) not null,
   term_type                    varchar2(20),
   modification_date            DATE NOT NULL,
