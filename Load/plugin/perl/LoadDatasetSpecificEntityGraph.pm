@@ -109,10 +109,10 @@ sub createAncestorsTable {
   $self->log("Creating TABLE $tableName");
 
   my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
-  $self->loadAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
+  $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
 }
 
-sub loadAncestorsTable {
+sub populateAncestorsTable {
   my ($self, $tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeAbbrevs) = @_;
 
   my $stableIdField = $entityTypeAbbrevs->{$entityTypeId} . $fieldSuffix;
@@ -162,10 +162,10 @@ from apidb.entityattributes where entity_type_id = $entityTypeId";
   my %entities;
 
   my $prevId;
-my $count; 
+  my $count; 
 
   while(my ($entityId, $parentId, $parentTypeId) = $sh->fetchrow_array()) {
-    print STDERR  "Data fetching terminated early by error: $DBI::errstr\n" if $DBI::err;
+    $self->error("Data fetching terminated early by error: $DBI::errstr") if $DBI::err;
 
     if($prevId && $prevId ne $entityId) {
       $self->insertAncestorRow($insertSh, $prevId, \%entities, $ancestorEntityTypeIds);
@@ -175,7 +175,7 @@ my $count;
     $entities{$parentTypeId} = $parentId;    
     $prevId = $entityId;
 
-    if($count++ % 1000 == 0) {
+    if(++$count % 1000 == 0) {
       $dbh->commit();
      }
   }
@@ -323,29 +323,24 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
 
     $sh->execute();
 
-     while(my ($extDbRlsSpec) = $sh->fetchrow_array()) {
-       if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
-         my $dbName = $1;
-         my $dbVersion = $2;
+    while(my ($extDbRlsSpec) = $sh->fetchrow_array()) {
+      my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
+      die "Failed to extract dbName and dbVersion from ExtDBRlsSpec found: $extDbRlsSpec"
+        unless $dbName && $dbVersion;
+      
+      my $sh2 = $dbh->prepare("select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, apidb.study s, apidb.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id");
         
-        my $sh2 = $dbh->prepare("select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, apidb.study s, apidb.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id");
+      $sh2->execute();
 
-        
-        $sh2->execute();
+      while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
 
-        while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
+        $self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
 
-          $self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
-
-          $dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
-          $dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
-          $dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or print STDERR $dbh->errstr . "\n";
-        }
-       } 
-       else {
-         die "Expected ExtDBRlsSpec but found $extDbRlsSpec";
-       }
-     }
+        $dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
+        $dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
+        $dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
+      }
+    }
     $sh->finish();
 }
 

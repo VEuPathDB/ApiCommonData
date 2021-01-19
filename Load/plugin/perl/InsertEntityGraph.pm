@@ -202,15 +202,18 @@ sub run {
           next;
         }
 
-        $self->checkProcessTypesAndSetIds($study->getProtocols());
+        my $identifier = $study->getIdentifier();
+        my $description = $study->getDescription();
+
+        my $nodes = $self->nodesCheckMaterialEntitiesHaveMaterialType($study->getNodes());
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
+        my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
-        $self->checkOntologyTermsAndSetIds($iOntologyTermAccessions);
+        my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->checkMaterialEntitiesHaveMaterialType($study->getNodes());
-
-        $self->loadStudy($study);
+        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges);
       }
 
       # clear out the protocol app node hash
@@ -240,19 +243,20 @@ sub countLines {
 
 
 
-sub checkMaterialEntitiesHaveMaterialType {
+sub nodesCheckMaterialEntitiesHaveMaterialType {
   my ($self, $nodes) = @_;
 
   foreach my $node (@$nodes) {
     my $value = $node->getValue();
     if($node->hasAttribute("Material Type")) {
       my $materialTypeOntologyTerm = $node->getMaterialType();
-      $self->logOrError("Material Entitiy $value is required to have a [Material Type]");
+      $self->logOrError("Material Entity $value is required to have a [Material Type]");
     }
   }
+  return $nodes;
 }
 
-sub checkProcessTypesAndSetIds {
+sub protocolsCheckProcessTypesAndSetIds {
   my ($self, $protocols) = @_;
 
   my $sql = "select name, process_type_id from apidb.processtype";
@@ -276,15 +280,15 @@ sub checkProcessTypesAndSetIds {
       $self->log("WARNING:  Protocol [$protocolName] Not found in the database") ;
     }
   }
+  return $protocols;
 }
 
 sub loadStudy {
-  my ($self, $study) = @_;
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
+    $identifier, $description, $nodes, $protocols, $edges) = @_;
+
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
-
-  my $identifier = $study->getIdentifier();
-  my $description = $study->getDescription();
 
   my $internalAbbrev = $identifier;
   $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
@@ -292,10 +296,10 @@ sub loadStudy {
   my $gusStudy = GUS::Model::ApiDB::Study->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
-  my $nodeNameToIdMap = $self->loadNodes($study->getNodes(), $gusStudy);
-  my $processTypeNamesToIdMap = $self->loadProcessTypes($study->getProtocols());
+  my $nodeNameToIdMap = $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy);
+  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
 
-  $self->loadProcesss($study->getEdges(), $nodeNameToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeNameToIdMap, $processTypeNamesToIdMap);
 
   if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
@@ -304,8 +308,8 @@ sub loadStudy {
 }
 
 
-sub getEntityTypeId {
-  my ($self, $node, $gusStudyId) = @_;
+sub addEntityTypeForNode {
+  my ($self, $ontologyTermToIdentifiers, $node, $gusStudyId) = @_;
 
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
@@ -324,7 +328,7 @@ sub getEntityTypeId {
 
   if($node->hasAttribute("MaterialType")) {
     my $materialTypeOntologyTerm = $node->getMaterialType();
-    my $gusOntologyTerm = $self->getOntologyTermGusObj($materialTypeOntologyTerm, 0);
+    my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialTypeOntologyTerm, 0);
     $entityType->setTypeId($gusOntologyTerm->getId());
     $entityType->setName($gusOntologyTerm->getName());
   }
@@ -374,7 +378,7 @@ sub addAttributeUnit {
 
 
 sub loadNodes {
-  my ($self, $nodes, $gusStudy) = @_;
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy) = @_;
 
   my %rv;
 
@@ -388,33 +392,33 @@ sub loadNodes {
 
     my $entity = GUS::Model::ApiDB::EntityAttributes->new({stable_id => $node->getValue()});
 
-    my $entityTypeId = $self->getEntityTypeId($node, $gusStudyId);
+    my $entityTypeId = $self->addEntityTypeForNode($ontologyTermToIdentifiers, $node, $gusStudyId);
     $entity->setEntityTypeId($entityTypeId);
 
     if ($node->hasAttribute("Characteristic")) {
       my $characteristics = $node->getCharacteristics();
       foreach my $characteristic (@$characteristics) {
 
-        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
         my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
 
         if($characteristic->getUnit()) {
-          my $unitOntologyTerm = $self->getOntologyTermGusObj($characteristic->getUnit(), 0);
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
           $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
          }
 
         my ($charValue);
 
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
-          my $value = $self->{_ontology_term_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+          my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
           $charValue = $value;
         }
         elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-          my $valueOntologyTerm = $self->getOntologyTermGusObj($characteristic, 0);
+          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
           $charValue = $valueOntologyTerm->getName();
         }
         else {
-              $charValue = $characteristic->getTerm();
+          $charValue = $characteristic->getTerm();
         }
 
         $charValue =~ s/\r//;
@@ -440,7 +444,7 @@ sub loadNodes {
 
     $self->undefPointerCache();
 
-    if($nodeCount++ % 1000 == 0) {
+    if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
       $self->getDb()->manageTransaction(0, 'begin');
     }
@@ -452,7 +456,7 @@ sub loadNodes {
 }
 
 sub getOntologyTermGusObj {
-    my ($self, $ontologyTerm, $useQualifier) = @_;
+    my ($self, $ontologyTermToIdentifiers, $ontologyTerm, $useQualifier) = @_;
 
     my $ontologyTermTerm = $ontologyTerm->getTerm();
     my $ontologyTermClass = blessed($ontologyTerm);
@@ -464,11 +468,11 @@ sub getOntologyTermGusObj {
     my $ontologyTermId;
     if(($ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::ParameterValue' || $ontologyTermClass eq 'CBIL::ISA::StudyAssayEntity::Characteristic') && $useQualifier) {
       my $qualifier = $ontologyTerm->getQualifier();
-      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{QUALIFIER}->{$qualifier};
+      $ontologyTermId = $ontologyTermToIdentifiers->{QUALIFIER}->{$qualifier};
       $self->userError("No ontology entry found for qualifier [$qualifier]") unless($ontologyTermId);
     }
     elsif($ontologyTermAccessionNumber && $ontologyTermSourceRef) {
-      $ontologyTermId = $self->{_ontology_term_to_identifiers}->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
+      $ontologyTermId = $ontologyTermToIdentifiers->{$ontologyTermSourceRef}->{$ontologyTermAccessionNumber};
       $self->userError("No ontology entry found for $ontologyTermSourceRef and $ontologyTermAccessionNumber") unless($ontologyTermId);
     }
     else {
@@ -491,7 +495,7 @@ sub getOntologyTermGusObj {
 
 
 sub loadProcessTypes {
-  my ($self, $protocols) = @_;
+  my ($self, $ontologyTermToIdentifiers, $protocols) = @_;
 
   my $pNameToId = {};
 
@@ -507,7 +511,7 @@ sub loadProcessTypes {
       $gusProcessType = GUS::Model::ApiDB::ProcessType->new({name => $protocolName, description => $protocolDescription});
 
       if($protocol->getProtocolType()) {
-        my $gusProtocolType = $self->getOntologyTermGusObj($protocol->getProtocolType(), 0);
+        my $gusProtocolType = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $protocol->getProtocolType(), 0);
         $gusProcessType->setParent($gusProtocolType);
       }
 
@@ -576,7 +580,7 @@ sub getGusEntityId {
 
 
 sub getProcessAttributesHash {
-  my ($self, $process, $nodeNameToIdMap) = @_;
+  my ($self,$ontologyTermToIdentifiers, $process, $nodeNameToIdMap) = @_;
 
   my %rv;
 
@@ -600,8 +604,8 @@ sub getProcessAttributesHash {
       push @{$rv{$ppQualifier}}, $ppValue;
 
       if($parameterValue->getUnit()) {
-        my $qualifierOntologyTerm = $self->getOntologyTermGusObj($parameterValue, 1);
-        my $unitOntologyTerm = $self->getOntologyTermGusObj($parameterValue->getUnit(), 0);
+        my $qualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $parameterValue, 1);
+        my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $parameterValue->getUnit(), 0);
 
         foreach(@vtIds) {
           $self->addAttributeUnit($_, $qualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
@@ -618,16 +622,16 @@ sub getProcessAttributesHash {
 
 
 
-sub loadProcesss {
-  my ($self, $processs, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
+sub loadProcesses {
+  my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
 
   my $processCount;
   $self->getDb()->manageTransaction(0, 'begin');
 
-  foreach my $process (@$processs) {
+  foreach my $process (@$processes) {
     my $gusProcessTypeId = $self->getOrMakeProcessTypeId($process, $processTypeNamesToIdMap);
 
-    my $processAttributesHash = $self->getProcessAttributesHash($process, $nodeNameToIdMap);
+    my $processAttributesHash = $self->getProcessAttributesHash($ontologyTermToIdentifiers, $process, $nodeNameToIdMap);
 
     my $atts = encode_json($processAttributesHash);
 
@@ -645,7 +649,7 @@ sub loadProcesss {
         $gusProcessAttributes->submit(undef, 1);
         $self->undefPointerCache();
 
-        if($processCount++ % 1000 == 0) {
+        if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
           $self->getDb()->manageTransaction(0, 'begin');
         }
@@ -656,7 +660,7 @@ sub loadProcesss {
   $self->getDb()->manageTransaction(0, 'commit');
 }
 
-sub checkOntologyTermsAndSetIds {
+sub checkOntologyTermsAndFetchIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
 
   my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
@@ -675,8 +679,8 @@ and tn.name_class = 'scientific name'
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
 
-  my $rv = {};
-  my $oeToName = {};
+  my $ontologyTermToIdentifiers = {};
+  my $ontologyTermToNames = {};
 
 
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
@@ -693,9 +697,9 @@ and tn.name_class = 'scientific name'
       }
       $sh->finish();
       if($count == 1) {
-        $rv->{$os}->{$ota} = $ontologyTermId;
+        $ontologyTermToIdentifiers->{$os}->{$ota} = $ontologyTermId;
 
-        $oeToName->{$os}->{$ota} = $ontologyTermName;
+        $ontologyTermToNames->{$os}->{$ota} = $ontologyTermName;
 
       }
       else {
@@ -704,9 +708,7 @@ and tn.name_class = 'scientific name'
       }
     }
   }
-
-  $self->{_ontology_term_to_identifiers} = $rv;
-  $self->{_ontology_term_to_names} = $oeToName;
+  return $ontologyTermToIdentifiers, $ontologyTermToNames;
 }
 
 

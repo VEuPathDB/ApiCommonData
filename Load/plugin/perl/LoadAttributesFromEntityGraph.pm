@@ -175,70 +175,66 @@ sub loadAttributeTerms {
 
   my $attributeCount;
 
+  SOURCE_ID:
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
-
-    my $hasValues = $ontologyTerm->{_COUNT} > 0 ? 1 : 0;
+    next SOURCE_ID unless $ontologyTerm->{_COUNT} > 0;
 
     my ($dataType, $dataShape, $precision);
-    if($hasValues) {
-      $precision = 1; # THis is the default; probably never changed
-      my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
-      my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
-      my $valueCount = scalar(keys(%{$ontologyTerm->{_VALUES}}));
-      my $isBoolean = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_BOOLEAN_COUNT};
+    $precision = 1; # THis is the default; probably never changed
+    my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
+    my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
+    my $valueCount = scalar(keys(%{$ontologyTerm->{_VALUES}}));
+    my $isBoolean = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_BOOLEAN_COUNT};
 
-      if($ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_ORDINAL_COUNT}) {
-        $dataShape = 'ordinal';
-      }
-      elsif($isDate || ($isNumber && $valueCount > 10)) {
-        $dataShape = 'continuous';
-      }
-      elsif($valueCount == 2) {
-        $dataShape = 'binary';
-      }
-      else {
-        $dataShape = 'categorical'; 
-      }
+    if($ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_ORDINAL_COUNT}) {
+      $dataShape = 'ordinal';
+    }
+    elsif($isDate || ($isNumber && $valueCount > 10)) {
+      $dataShape = 'continuous';
+    }
+    elsif($valueCount == 2)) {
+      $dataShape = 'binary';
+    }
+    else {
+      $dataShape = 'categorical'; 
+    }
 
-      if($isDate) {
-        $dataType = 'date';
-      }
-      elsif($isNumber) {
-        $dataType = 'number';
-      }
-      elsif($isBoolean) {
-        $dataType = 'boolean';
-      }
-      else {
-        $dataType = 'string';
-      }
-
-
-
-      foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
-        my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
-
-        my $entityTypeStableId = $entityTypeIds->{$etId};
-
-        my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
-                                                           entity_type_stable_id => $entityTypeStableId,
-                                                           process_type_id => $ptId,
-                                                           ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                           stable_id => $sourceId,
-                                                           data_type => $dataType,
-                                                           value_count_per_entity => $valueCount,
-                                                           data_shape => $dataShape,
-                                                           unit => $ontologyTerm->{UNIT_NAME},
-                                                           unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-                                                           precision => $precision,
-                                                          });
+    if($isDate) {
+      $dataType = 'date';
+    }
+    elsif($isNumber) {
+      $dataType = 'number';
+    }
+    elsif($isBoolean) {
+      $dataType = 'boolean';
+    }
+    else {
+      $dataType = 'string';
+    }
 
 
 
-        $attribute->submit();
-        $attributeCount++;
-      }
+    foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
+      my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
+
+      my $entityTypeStableId = $entityTypeIds->{$etId};
+
+      my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
+                                                         entity_type_stable_id => $entityTypeStableId,
+                                                         process_type_id => $ptId,
+                                                         ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
+                                                         stable_id => $sourceId,
+                                                         data_type => $dataType,
+                                                         value_count_per_entity => $valueCount,
+                                                         data_shape => $dataShape,
+                                                         unit => $ontologyTerm->{UNIT_NAME},
+                                                         unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
+                                                         precision => $precision,
+                                                        });
+
+      $attribute->submit();
+      $attributeCount++;
     }
   }
 
@@ -370,7 +366,7 @@ sub ontologyTermValues {
   }
 
 
-  return $dateValue, $numberValue
+  return $dateValue, $numberValue;
 }
 
 
