@@ -193,7 +193,7 @@ sub loadAttributeTerms {
     elsif($isDate || ($isNumber && $valueCount > 10)) {
       $dataShape = 'continuous';
     }
-    elsif($valueCount == 2)) {
+    elsif($valueCount == 2) {
       $dataShape = 'binary';
     }
     else {
