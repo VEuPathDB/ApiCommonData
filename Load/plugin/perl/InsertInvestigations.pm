@@ -511,7 +511,7 @@ sub loadNodes {
 
       foreach my $characteristic (@$characteristics) {
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
-          my $taxonId = $self->{_ontology_term_to_identifiers}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+          my $taxonId = $self->{_taxon_to_identifiers}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
           $pan->setTaxonId($taxonId);
         }
 
@@ -536,7 +536,7 @@ sub loadNodes {
         my ($charValue, $charOntologyTermId);
 
         if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
-          my $value = $self->{_ontology_term_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+          my $value = $self->{_taxon_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
     #     $gusChar->setValue($value);
           $charValue = $value;
         }
@@ -951,44 +951,35 @@ where dataset = ? ";
 
 sub checkOntologyTermsAndSetIds {
   my ($self, $iOntologyTermAccessionsHash) = @_;
+  my $dbh = $self->getQueryHandle();
 
-  my $sql = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
+  my $sqlOntologyTerms = "select 'OntologyTerm', ot.source_id, ot.ontology_term_id id, name
 from sres.ontologyterm ot
 where ot.source_id = ?
-and lower(ot.source_id) not like 'ncbitaxon%'
-UNION
-select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
-from sres.taxon t, sres.taxonname tn
-where 'NCBITaxon_' || t.ncbi_tax_id = ?
-and lower(?) like  'ncbitaxon%'
-and t.taxon_id = tn.taxon_id
-and tn.name_class = 'scientific name'
 ";
 
-  my $dbh = $self->getQueryHandle();
-  my $sh = $dbh->prepare($sql);
+  my $shOntologyTerms = $dbh->prepare($sqlOntologyTerms);
 
-  my $rv = {};
-  my $oeToName = {};
-
+  $self->{_ontology_term_to_identifiers} = {};
+  $self->{_ontology_term_to_names} = {};
 
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
 
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
-      $sh->execute($accessionOrName, $accessionOrName, $accessionOrName);
+      $shOntologyTerms->execute($accessionOrName);
       my $count=0;
       my ($ontologyTermId, $ontologyTermName);
-      while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
+      while(my ($dName, $sourceId, $id, $name) = $shOntologyTerms->fetchrow_array()) {
         $ontologyTermId = $id;
         $ontologyTermName = $name;
     $count++;
       }
-      $sh->finish();
+      $shOntologyTerms->finish();
       if($count == 1) {
-        $rv->{$os}->{$ota} = $ontologyTermId;
+        $self->{_ontology_term_to_identifiers}->{$os}->{$ota} = $ontologyTermId;
 
-        $oeToName->{$os}->{$ota} = $ontologyTermName;
+        $self->{_ontology_term_to_names}->{$os}->{$ota} = $ontologyTermName;
 
       } elsif (not $count){
         $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found in the database");
@@ -1000,8 +991,51 @@ and tn.name_class = 'scientific name'
   }
   }
 
-  $self->{_ontology_term_to_identifiers} = $rv;
-  $self->{_ontology_term_to_names} = $oeToName;
+
+  my $sqlTaxa = "select 'NCBITaxon', 'NCBITaxon_' || t.ncbi_tax_id, t.taxon_id id, tn.name
+from sres.taxon t, sres.taxonname tn
+where 'NCBITaxon_' || t.ncbi_tax_id = ?
+and t.taxon_id = tn.taxon_id
+and tn.name_class = 'scientific name'
+";
+
+  my $shTaxa = $dbh->prepare($sqlTaxa);
+
+
+  $self->{_taxon_to_identifiers} = {};
+  $self->{_taxon_to_names} = {};
+
+  OS:
+  foreach my $os (keys %$iOntologyTermAccessionsHash) {
+    OTA:
+    foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
+      my $accessionOrName = basename $ota;
+      next unless $accessionOrName =~ /^ncbitaxon/i;
+
+      $shTaxa->execute($accessionOrName);
+      my $count=0;
+      my ($taxonId, $taxonName);
+      while(my ($dName, $sourceId, $id, $name) = $shTaxa->fetchrow_array()) {
+        $taxonId = $id;
+        $taxonName = $name;
+    $count++;
+      }
+      $shTaxa->finish();
+      if($count == 1) {
+        $self->{_taxon_to_identifiers}->{$os}->{$ota} = $taxonId;
+
+        $self->{_taxon_to_names}->{$os}->{$ota} = $taxonName;
+
+      } 
+      elsif (not $count and not $self->{_ontology_term_to_identifiers}->{$os}->{$ota}){
+        $self->logOrError("ERROR:  Taxa with Accession Or Name [$accessionOrName] were not found in the database");
+      }
+      else {
+        $self->logOrError("ERROR:  Taxa with Accession Or Name [$accessionOrName] were not found uniquely in the database");
+
+      }
+  }
+  }
 }
 
 sub checkDatabaseNodesAreHandled {
