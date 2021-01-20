@@ -178,44 +178,45 @@ sub loadAttributeTerms {
   SOURCE_ID:
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
-    next SOURCE_ID unless $ontologyTerm->{_COUNT} > 0;
-
-    my ($dataType, $dataShape, $precision);
-    $precision = 1; # THis is the default; probably never changed
-    my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
-    my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
-    my $valueCount = scalar(keys(%{$ontologyTerm->{_VALUES}}));
-    my $isBoolean = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_BOOLEAN_COUNT};
-
-    if($ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_ORDINAL_COUNT}) {
-      $dataShape = 'ordinal';
-    }
-    elsif($isDate || ($isNumber && $valueCount > 10)) {
-      $dataShape = 'continuous';
-    }
-    elsif($valueCount == 2) {
-      $dataShape = 'binary';
-    }
-    else {
-      $dataShape = 'categorical'; 
-    }
-
-    if($isDate) {
-      $dataType = 'date';
-    }
-    elsif($isNumber) {
-      $dataType = 'number';
-    }
-    elsif($isBoolean) {
-      $dataType = 'boolean';
-    }
-    else {
-      $dataType = 'string';
-    }
-
-
 
     foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
+      next SOURCE_ID unless $ontologyTerm->{$etId}->{_COUNT} > 0;
+
+      my ($dataType, $dataShape, $precision);
+      $precision = 1; # THis is the default; probably never changed
+      my $isNumber = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
+      my $isDate = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
+      my $valueCount = scalar(keys(%{$ontologyTerm->{$etId}->{_VALUES}}));
+      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
+
+      my $isMultiValued = $ontologyTerm->{$etId}->{_IS_MULTI_VALUED};
+
+      if($ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT}) {
+        $dataShape = 'ordinal';
+      }
+      elsif($isDate || ($isNumber && $valueCount > 10)) {
+        $dataShape = 'continuous';
+      }
+      elsif($valueCount == 2) {
+        $dataShape = 'binary';
+      }
+      else {
+        $dataShape = 'categorical'; 
+      }
+
+      if($isDate) {
+        $dataType = 'date';
+      }
+      elsif($isNumber) {
+        $dataType = 'number';
+      }
+      elsif($isBoolean) {
+        $dataType = 'boolean';
+      }
+      else {
+        $dataType = 'string';
+      }
+
       my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
 
       my $entityTypeStableId = $entityTypeIds->{$etId};
@@ -226,7 +227,8 @@ sub loadAttributeTerms {
                                                          ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                          stable_id => $sourceId,
                                                          data_type => $dataType,
-                                                         value_count_per_entity => $valueCount,
+                                                         distinct_values_count => $valueCount,
+                                                         is_multi_valued => $isMultiValued ? 1 : 0,
                                                          data_shape => $dataShape,
                                                          unit => $ontologyTerm->{UNIT_NAME},
                                                          unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
@@ -307,21 +309,24 @@ sub loadAttributes {
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
+      my $hasMultipleValues = scalar(@$valueArray) > 1;
+
       foreach my $value (@$valueArray) {
         my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
         my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
 
         $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
+        $ontologyTerm->{$vtId}->{_IS_MULTI_VALUED} = 1 if($hasMultipleValues);
 
         unless($ontologyTermId) {
           $self->error("No ontology_term_id found for:  $ontologySourceId");
         }
 
-        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value);
+        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
 
         my @a = ($vaId,
                  $vtId,
-                 undef,
+                 $etId,
                  $ontologyTermId,
                  $value,
                  $numberValue,
@@ -336,32 +341,32 @@ sub loadAttributes {
 
 
 sub ontologyTermValues {
-  my ($self, $ontologyTerm, $value) = @_;
+  my ($self, $ontologyTerm, $value, $entityTypeId) = @_;
 
   my ($dateValue, $numberValue);
 
-  $ontologyTerm->{_VALUES}->{$value}++;
+  $ontologyTerm->{$entityTypeId}->{_VALUES}->{$value}++;
 
-  $ontologyTerm->{_COUNT}++;
+  $ontologyTerm->{$entityTypeId}->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
-    $ontologyTerm->{_IS_NUMBER_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_NUMBER_COUNT}++;
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
-    $ontologyTerm->{_IS_DATE_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_DATE_COUNT}++;
   }
   elsif($value =~ /^\d/) {
-    $ontologyTerm->{_IS_ORDINAL_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
   }
   else {
     my $lcValue = lc $value;
     if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
-      $ontologyTerm->{_IS_BOOLEAN_COUNT}++;
+      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
     }
   }
 

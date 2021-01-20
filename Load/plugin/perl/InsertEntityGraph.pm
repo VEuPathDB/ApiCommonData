@@ -162,9 +162,6 @@ sub run {
     my $dirname = dirname $investigationFile;
     $self->log("Processing ISA Directory:  $dirname");
 
-    # clear out the protocol app node hash
-    $self->{_NODE_MAP} = {};
-
     my $investigation;
     if($self->getArg('isSimpleConfiguration')) {
       my $valueMappingFile = $self->getArg('valueMappingFile');
@@ -191,6 +188,8 @@ sub run {
     my $investigationId = $investigation->getIdentifier();
     my $studies = $investigation->getStudies();
 
+    my $nodeToIdMap = {};
+    
     foreach my $study (@$studies) {
       while($study->hasMoreData()) {
         eval {
@@ -213,11 +212,8 @@ sub run {
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges);
+        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap);
       }
-
-      # clear out the protocol app node hash
-      $self->{_NODE_MAP} = {};
     }
 
     $investigationCount++;
@@ -285,7 +281,7 @@ sub protocolsCheckProcessTypesAndSetIds {
 
 sub loadStudy {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
-    $identifier, $description, $nodes, $protocols, $edges) = @_;
+    $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap) = @_;
 
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
@@ -296,10 +292,10 @@ sub loadStudy {
   my $gusStudy = GUS::Model::ApiDB::Study->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
-  my $nodeNameToIdMap = $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy);
+  $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
   my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
 
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeNameToIdMap, $processTypeNamesToIdMap);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
 
   if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
@@ -378,9 +374,7 @@ sub addAttributeUnit {
 
 
 sub loadNodes {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy) = @_;
-
-  my %rv;
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap) = @_;
 
   my $gusStudyId = $gusStudy->getId();
 
@@ -389,6 +383,13 @@ sub loadNodes {
 
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
+
+    if($nodeToIdMap->{$node->getValue()}) {
+      if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
+        $self->userError("Cannot append Characteristics to Existing Node". $node->getValue());
+      }
+      next;
+    }
 
     my $entity = GUS::Model::ApiDB::EntityAttributes->new({stable_id => $node->getValue()});
 
@@ -437,10 +438,8 @@ sub loadNodes {
 
     $entity->submit(undef, 1);
 
-    # keep the cache up to date as we add new nodes
-    $self->{_NODE_MAP}->{$entity->getStableId()} = $entity->getId();
 
-    $rv{$entity->getStableId()} = [$entity->getId(), $entity->getEntityTypeId()];
+    $nodeToIdMap->{$entity->getStableId()} = [$entity->getId(), $entity->getEntityTypeId()];
 
     $self->undefPointerCache();
 
@@ -451,8 +450,6 @@ sub loadNodes {
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
-
-  return \%rv;
 }
 
 sub getOntologyTermGusObj {
