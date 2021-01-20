@@ -152,7 +152,7 @@ form02_long::ifyesspecify	form02_long::ifyesspecify	sever malaria + thrmbocytopi
 form02_long::ifyesspecify	form02_long::ifyesspecify	CAP	
 form02_long::ifyesspecify	form02_long::ifyesspecify	PUD	
 form02_long::ifyesspecify	form02_long::ifyesspecify	Asthma	Asthma
-form02_long::ifyesspecify	form02_long::ifyesspecify	HIV Positive	HIV-positive
+form02_long::ifyesspecify	form02_long::ifyesspecify	HIV Positive	HIV positive
 form02_long::ifyesspecify	form02_long::ifyesspecify	IP ( intestinal paracit )	Intestinal parasite
 form02_long::ifyesspecify	form02_long::ifyesspecify	Epilepsy	Epilepsy
 form02_long::ifyesspecify	form02_long::ifyesspecify	gastrotes	Gastritis
@@ -316,7 +316,7 @@ form02_long::specify3	form02_long::specify3	PROM	PROM
 form02_long::specify3	form02_long::specify3	APH mother	Antepartum hemorrhage
 form02_long::specify3	form02_long::specify3	preterm + VLBW	"Preterm, very low birth weight"
 form02_long::specify3	form02_long::specify3	fistual repair	Fistula repair
-form02_long::specify3	form02_long::specify3	Twin Baby	Twins
+form02_long::specify3	form02_long::specify3	Twin Baby	Twin
 form02_long::specify3	form02_long::specify3	failed induction	Failed induction
 form02_long::specify3	form02_long::specify3	for fetal bradgcardia	Fetal bradycardia
 form02_long::specify3	form02_long::specify3	sever oligohydraminosis and death of twin B on the Utero	Oligohydramnios and death of twin b in utero
@@ -1302,16 +1302,16 @@ form03b::ifdysmorphicdescribe	form03b::ifdysmorphicdescribe	8	Mandibular hypopla
 form03b::ifdysmorphicdescribe	form03b::ifdysmorphicdescribe	9	Other
 form03b::specify2	form03b::specify2	Acondrpplasia	Achondroplasia
 form03b::specify2	form03b::specify2	Buaed	
-form03b::specify2	form03b::specify2	Enepholocele	
+form03b::specify2	form03b::specify2	Enepholocele	Encephalocele
 form03b::specify2	form03b::specify2	High Ached peut	
-form03b::specify2	form03b::specify2	Hnper Extend knejont lowset ear box	
+form03b::specify2	form03b::specify2	Hnper Extend knejont lowset ear box	Hyperextended knee joint, low set ear box	
 form03b::specify2	form03b::specify2	"Hogh earin frontal prominenc,stuby neck, high arc palat"	
 form03b::specify2	form03b::specify2	Larson syndram	Larsen syndrome
 form03b::specify2	form03b::specify2	Spinal Befida	Spina bifida
 form03b::specify2	form03b::specify2	hypochondna /absent kneest/	
-form03b::specify2	form03b::specify2	"microphtermia , anspohtalmia"	
-form03b::specify2	form03b::specify2	polydactly;imperfuratedanug	
-form03b::specify2	form03b::specify2	retrognodia	
+form03b::specify2	form03b::specify2	"microphtermia , anspohtalmia"	Anophthalmia, microphthalmia
+form03b::specify2	form03b::specify2	polydactly;imperfuratedanug	Imperforate anus, polydactyl
+form03b::specify2	form03b::specify2	retrognodia	Retrognathia
 form03b::specify2	form03b::specify2	turner syndtome	Turner syndrome
 form03b::normalposture	form03b::normalposture	1	Normal
 form03b::normalposture	form03b::normalposture	2	Abnormal
@@ -1529,6 +1529,7 @@ form03b::abdominalxray	form03b::abdominalxray	2	No
 form03b::ifdone1	form03b::ifdone1	Missing	Don't know
 form03b::ifdone1	form03b::ifdone1	No	Abnormal
 form03b::ifdone1	form03b::ifdone1	Yes	Normal
+form03b::ifdone1	form03b::ifdone1	NA	:::UNDEF:::
 form03b::otherxray	form03b::otherxray	1	Yes
 form03b::otherxray	form03b::otherxray	2	No
 form03b::n591ifdone	form03b::n591ifdone	Missing	Don't know
@@ -1586,22 +1587,35 @@ form03b::n67bilirubintest	form03b::n67bilirubintest	1	Yes
 form03b::n67bilirubintest	form03b::n67bilirubintest	2	No
 form03b::n68randombloodsugar	form03b::n68randombloodsugar	1	Yes
 form03b::n68randombloodsugar	form03b::n68randombloodsugar	2	No
+form03b::n651ifdone	form03b::n651ifdone	missing	Missing
+form03b::n661ifdone	form03b::n661ifdone	missing	Missing
+form03b::n671ifdone	form03b::n671ifdone	missing	Missing
 form03b::n681ifdone	form03b::n681ifdone	1	Yes
+form03b::n681ifdone	form03b::n681ifdone	missing	Missing
 form03b::n69bloodculture	form03b::n69bloodculture	1	Yes
 form03b::n69bloodculture	form03b::n69bloodculture	2	No
-form03b::n691ifdone	form03b::n691ifdone	2	No
+form03b::n691ifdone	form03b::n691ifdone	2	Negative
+form03b::n691ifdone	form03b::n691ifdone	No	Negative
+form03b::n691ifdone	form03b::n691ifdone	Yes	Positive
+form03b::n691ifdone	form03b::n691ifdone	NA	:::UNDEF:::
+form03b::n691ifdone	form03b::n691ifdone	missing	Missing
 form03b::n70csfanalysis	form03b::n70csfanalysis	1	Yes
 form03b::n70csfanalysis	form03b::n70csfanalysis	2	No
-form03b::n701ifdone	form03b::n701ifdone	2	No
+form03b::n701ifdone	form03b::n701ifdone	Yes	Normal
+form03b::n701ifdone	form03b::n701ifdone	No	Abnormal
+form03b::n701ifdone	form03b::n701ifdone	2	Abnormal
+form03b::n701ifdone	form03b::n701ifdone	missing	Missing
+form03b::n701ifdone	form03b::n701ifdone	NA	:::UNDEF:::
 form03b::n71csfculture	form03b::n71csfculture	1	Yes
 form03b::n71csfculture	form03b::n71csfculture	2	No
 form03b::n711ifdone	form03b::n711ifdone	2	No
+form03b::n711ifdone	form03b::n711ifdone	missing	Missing
 form03b::n711specify1	form03b::n711specify1	5 aureus	Staphylococcus aureus
 form03b::n711specify1	form03b::n711specify1	8/Nentrophil	
 form03b::n711specify1	form03b::n711specify1	AcitobacterSpp	Acinetobacter
-form03b::n711specify1	form03b::n711specify1	Collect	
-form03b::n711specify1	form03b::n711specify1	G -ve Rod	
-form03b::n711specify1	form03b::n711specify1	Glucose	
+form03b::n711specify1	form03b::n711specify1	Collect	Collected
+form03b::n711specify1	form03b::n711specify1	G -ve Rod	Gram negative rod
+form03b::n711specify1	form03b::n711specify1	Glucose	Glucose
 form03b::n711specify1	form03b::n711specify1	"High Proter,WBC-2cell"	
 form03b::n711specify1	form03b::n711specify1	No	No
 form03b::n711specify1	form03b::n711specify1	Pending	Pending
@@ -1620,46 +1634,55 @@ form03b::n731ifdonewhere	form03b::n731ifdonewhere	1	Eye
 form03b::n731ifdonewhere	form03b::n731ifdonewhere	2	Umbilicus
 form03b::n731ifdonewhere	form03b::n731ifdonewhere	3	Skin
 form03b::n731ifdonewhere	form03b::n731ifdonewhere	4	Cerebrospinal fluid
-form03b::n722specify	form03b::n722specify	2	
-form03b::n722specify	form03b::n722specify	C-ve shotlot	
+form03b::n722specify	form03b::n722specify	2	2
+form03b::n722specify	form03b::n722specify	C-ve shotlot	Coagulase negative
 form03b::n722specify	form03b::n722specify	K. pnemonic	Klebsiella pneumoniae
-form03b::n722specify	form03b::n722specify	No	
+form03b::n722specify	form03b::n722specify	No	No
 form03b::n722specify	form03b::n722specify	gram -ve	Gram negative
 form03b::n722specify	form03b::n722specify	urine culture	Urine culture
-form03b::n731specify	form03b::n731specify	2	
+form03b::n722ifdone	form03b::n722ifdone	missing	Missing
+form03b::n731specify	form03b::n731specify	2	2
 form03b::n731specify	form03b::n731specify	C-ve rod seen many pus cell	
-form03b::n731specify	form03b::n731specify	Gram -ve Rod seen many pus cell	
-form03b::n731specify	form03b::n731specify	Gram -ve lods & gram +ve loce	
-form03b::n731specify	form03b::n731specify	Gram positivedisplace	
+form03b::n731specify	form03b::n731specify	Gram -ve Rod seen many pus cell	Gram negative rod
+form03b::n731specify	form03b::n731specify	Gram -ve lods & gram +ve loce	Gram negative rod and gram positive rod
+form03b::n731specify	form03b::n731specify	Gram positivedisplace	Gram positive
 form03b::n731specify	form03b::n731specify	PROM skin =Grame positive lcci fromcsf-Normal	
-form03b::n731specify	form03b::n731specify	PUS-Gram Negativerod	
-form03b::n731specify	form03b::n731specify	Positive	
+form03b::n731specify	form03b::n731specify	PUS-Gram Negativerod	Gram negative rod
+form03b::n731specify	form03b::n731specify	Positive	Positive
 form03b::n731specify	form03b::n731specify	acinectobacter	Acinetobacter
-form03b::n731specify	form03b::n731specify	many pus cell	
+form03b::n731specify	form03b::n731specify	many pus cell	May pus cells
 form03b::n731specify	form03b::n731specify	no pending	Pending
 form03b::n731specify	form03b::n731specify	showed klebsella pnemonia	Klebsiella pneumoniae
+form03b::n731ifdone	form03b::n731ifdone	missing	Missing
 form03b::n74creactiveproteintest	form03b::n74creactiveproteintest	1	Yes
 form03b::n74creactiveproteintest	form03b::n74creactiveproteintest	2	No
 form03b::n741ifdone	form03b::n741ifdone	1	Yes
+form03b::n741ifdone	form03b::n741ifdone	missing	Missing
 form03b::n75esrdone	form03b::n75esrdone	#NAME?	
 form03b::n75esrdone	form03b::n75esrdone	1	Yes
 form03b::n75esrdone	form03b::n75esrdone	2	No
 form03b::n751ifdone	form03b::n751ifdone	2	No
+form03b::n751ifdone	form03b::n751ifdone	missing	Missing
 form03b::n76serumalbumin	form03b::n76serumalbumin	1	Yes
 form03b::n76serumalbumin	form03b::n76serumalbumin	2	No
 form03b::n761ifdone	form03b::n761ifdone	2	No
+form03b::n761ifdone	form03b::n761ifdone	missing	Missing
 form03b::n77vdrlinbaby	form03b::n77vdrlinbaby	1	Yes
 form03b::n77vdrlinbaby	form03b::n77vdrlinbaby	2	No
 form03b::n771ifdone	form03b::n771ifdone	2	No
+form03b::n771ifdone	form03b::n771ifdone	missing	Missing
 form03b::n78hivtestformother	form03b::n78hivtestformother	1	Yes
 form03b::n78hivtestformother	form03b::n78hivtestformother	2	No
 form03b::n781ifdone	form03b::n781ifdone	1	Yes
+form03b::n781ifdone	form03b::n781ifdone	missing	Missing
 form03b::n79liverfunctiontestlft	form03b::n79liverfunctiontestlft	1	Yes
 form03b::n79liverfunctiontestlft	form03b::n79liverfunctiontestlft	2	No
 form03b::n791ifdone	form03b::n791ifdone	2	No
+form03b::n791ifdone	form03b::n791ifdone	missing	Missing
 form03b::n80serumelectrolytes	form03b::n80serumelectrolytes	1	Yes
 form03b::n80serumelectrolytes	form03b::n80serumelectrolytes	2	No
 form03b::n801ifdone	form03b::n801ifdone	2	No
+form03b::n801ifdone	form03b::n801ifdone	missing	Missing
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	CL-116	
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	Cl-129	
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	"Cr-1.20, Ureo=34.1"	
@@ -1679,19 +1702,48 @@ form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrol
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	hyponatramia	Hyponatremia
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	no=122 hyponotenic	
 form03b::n802ifabnormalspecifyelectrolyte	form03b::n802ifabnormalspecifyelectrolyte	preterm+ELBW+SCA+RD2 to RDS hypothermic +Symetric IUCR	
+form03b::n621ifdone	form03b::n621ifdone	missing	:::UNDEF:::
+form03b::periodsofapneanotbreathingatall	form03b::periodsofapneanotbreathingatall	missing	:::UNDEF:::
+form03b::cyanosis	form03b::cyanosis	missing	:::UNDEF:::
+form03b::dontknow1	form03b::dontknow1	missing	:::UNDEF:::
+form03b::fastbreathing	form03b::fastbreathing	missing	:::UNDEF:::
+form03b::gaspingdifficultybreathing	form03b::gaspingdifficultybreathing	missing	:::UNDEF:::
+form03b::grunting1	form03b::grunting1	missing	:::UNDEF:::
+form03b::n602ivhdiagnosedbyus	form03b::n602ivhdiagnosedbyus	missing	:::UNDEF:::
+form03b::necdiagnosedbyxray	form03b::necdiagnosedbyxray	missing	:::UNDEF:::
 form06::bloodgroup	form06::bloodgroup	1	A
 form06::bloodgroup	form06::bloodgroup	2	B
 form06::bloodgroup	form06::bloodgroup	3	AB
 form06::bloodgroup	form06::bloodgroup	4	O
 form06::bloodgroup	form06::bloodgroup	5	Not done
 form06::bloodgroup	form06::bloodgroup	Not	Not done
+form06::bloodgroup	form06::bloodgroup	NA	:::UNDEF:::
 form06::rhfactor	form06::rhfactor	1	Positive
 form06::rhfactor	form06::rhfactor	2	Negative
 form06::rhfactor	form06::rhfactor	3	Not done
+form06::rhfactor	form06::rhfactor	NA	:::UNDEF:::
+form06::infantdiedpriortodischarge	form06::infantdiedpriortodischarge	No	No
+form06::infantdiedpriortodischarge	form06::infantdiedpriortodischarge	Yes	Yes
+form06::infantdiedpriortodischarge	form06::infantdiedpriortodischarge	Lost	Lost to follow up
+form06::infantdiedpriortodischarge	form06::infantdiedpriortodischarge	Withdrawals	Withdrew
+form06::infantaliveandinhospitalatday28	form06::infantaliveandinhospitalatday28	No	No
+form06::infantaliveandinhospitalatday28	form06::infantaliveandinhospitalatday28	Yes	Yes
+form06::infantaliveandinhospitalatday28	form06::infantaliveandinhospitalatday28	Missing	:::UNDEF:::
+form06::infantaliveandinhospitalatday28	form06::infantaliveandinhospitalatday28	NA	:::UNDEF:::
+form06::infantaliveanddischargedatbeforeday28	form06::infantaliveanddischargedatbeforeday28	No	No
+form06::infantaliveanddischargedatbeforeday28	form06::infantaliveanddischargedatbeforeday28	Yes	Yes
+form06::infantaliveanddischargedatbeforeday28	form06::infantaliveanddischargedatbeforeday28	Missing	:::UNDEF:::
+form06::infantaliveanddischargedatbeforeday28	form06::infantaliveanddischargedatbeforeday28	NA	:::UNDEF:::
+form06::infantdiedbeforeoratday28	form06::infantdiedbeforeoratday28	No	No
+form06::infantdiedbeforeoratday28	form06::infantdiedbeforeoratday28	Yes	Yes
+form06::infantdiedbeforeoratday28	form06::infantdiedbeforeoratday28	Missing	:::UNDEF:::
+form06::infantdiedbeforeoratday28	form06::infantdiedbeforeoratday28	NA	:::UNDEF:::
 form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	1	Positive
 form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	2	Negative
 form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	3	Indeterminate
 form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	4	Not done
+form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	NA	:::UNDEF:::
+form06_blood_cul::bloodcultureresults	form06_blood_cul::bloodcultureresults	missing	Missing
 form06_c_xray::chestxrayresults	form06_c_xray::chestxrayresults	1	Normal
 form06_c_xray::chestxrayresults	form06_c_xray::chestxrayresults	2	Abnormal
 form06_c_xray::chestxrayresults	form06_c_xray::chestxrayresults	3	Indeterminate
@@ -1709,18 +1761,23 @@ form06_c_xray::atanywasmasdiagnosed	form06_c_xray::atanywasmasdiagnosed	3	Don't 
 form06_c_xray::atanywasmasdiagnosed	form06_c_xray::atanywasmasdiagnosed	4	Not done
 form06_a_xray::abdominalxrayresults	form06_a_xray::abdominalxrayresults	1	Normal
 form06_a_xray::abdominalxrayresults	form06_a_xray::abdominalxrayresults	2	Abnormal
+form06_a_xray::abdominalxrayresults	form06_a_xray::abdominalxrayresults	3	Don't know
+form06_a_xray::abdominalxrayresults	form06_a_xray::abdominalxrayresults	NA	:::UNDEF:::
 form06::atanywasnecdiagnosed	form06::atanywasnecdiagnosed	1	Yes
 form06::atanywasnecdiagnosed	form06::atanywasnecdiagnosed	2	No
 form06::atanywasnecdiagnosed	form06::atanywasnecdiagnosed	3	Don't know
 form06::atanywasnecdiagnosed	form06::atanywasnecdiagnosed	4	Not done
+form06::atanywasnecdiagnosed	form06::atanywasnecdiagnosed	NA	:::UNDEF:::
 form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	1	Normal
 form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	2	Intraventricular hemorrhage
 form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	3	Periventricular leukomalacia
 form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	4	Indeterminate
 form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	5	Not done
+form06_ultrasound::cranialultrasoundresults	form06_ultrasound::cranialultrasoundresults	NA	:::UNDEF:::
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	1	Normal
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	2	Abnormal
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	3	Not done
+form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	NA	:::UNDEF:::
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	4	
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	Abnormal	Abnormal
 form06_csf::cerebralspinalfluid	form06_csf::cerebralspinalfluid	normal	Normal
@@ -1789,11 +1846,204 @@ form08a::specifymeningitis	form08a::specifymeningitis	There is focus of intmmaro
 form08a::specifymeningitis	form08a::specifymeningitis	only historiccal signs of serne anelope edemas	
 form08a::specifymeningitis	form08a::specifymeningitis	section from the mening shoms inflammatory infiltrate predominated by nentrphills and some menonuclear ells extending to the cerbellar hemisphates	
 form08a::specifymeningitis	form08a::specifymeningitis	tew sheet of neutrophills and mononuclear inflammatory intilgase in the menigis	
-form08a::isthereacongenitalheartdisease	form08a::isthereacongenitalheartdisease	Missing	Missing
+form08b::dic	form08b::dic	Missing	:::UNDEF:::
+form08a::dic	form08a::dic	Missing	:::UNDEF:::
+form08b::heartfailure	form08b::heartfailure	Missing	:::UNDEF:::
+form08a::heartfailure	form08a::heartfailure	Missing	:::UNDEF:::
+form08b::hyperbilirubinemiaacutebilirubinencephalopathyabe	form08b::hyperbilirubinemiaacutebilirubinencephalopathyabe	Missing	:::UNDEF:::
+form08a::hyperbilirubinemiaacutebilirubinencephalopathyabe	form08a::hyperbilirubinemiaacutebilirubinencephalopathyabe	Missing	:::UNDEF:::
+form08b::hypothermiaorcoldinjurysyndrome	form08b::hypothermiaorcoldinjurysyndrome	Missing	:::UNDEF:::
+form08a::hypothermiaorcoldinjurysyndrome	form08a::hypothermiaorcoldinjurysyndrome	Missing	:::UNDEF:::
+form08b::intraventricularhaemorrageivh	form08b::intraventricularhaemorrageivh	Missing	:::UNDEF:::
+form08a::intraventricularhaemorrageivh	form08a::intraventricularhaemorrageivh	Missing	:::UNDEF:::
+form08b::meconomiumaspirationsyndrome	form08b::meconomiumaspirationsyndrome	Missing	:::UNDEF:::
+form08a::meconomiumaspirationsyndrome	form08a::meconomiumaspirationsyndrome	Missing	:::UNDEF:::
+form08b::meningitis	form08b::meningitis	Missing	:::UNDEF:::
+form08a::meningitis	form08a::meningitis	Missing	:::UNDEF:::
+form08b::necrotizingenterocolitisnec	form08b::necrotizingenterocolitisnec	Missing	:::UNDEF:::
+form08a::necrotizingenterocolitisnec	form08a::necrotizingenterocolitisnec	Missing	:::UNDEF:::
+form08b::otherfindings11	form08b::otherfindings11	Missing	:::UNDEF:::
+form08a::otherfindings11	form08a::otherfindings11	Missing	:::UNDEF:::
+form08b::perinatalasphyxiawithmultipleorganinvolvementhie	form08b::perinatalasphyxiawithmultipleorganinvolvementhie	Missing	:::UNDEF:::
+form08a::perinatalasphyxiawithmultipleorganinvolvementhie	form08a::perinatalasphyxiawithmultipleorganinvolvementhie	Missing	:::UNDEF:::
+form08b::pneumonia	form08b::pneumonia	Missing	:::UNDEF:::
+form08a::pneumonia	form08a::pneumonia	Missing	:::UNDEF:::
+form08b::pulmonaryhemorrhage	form08b::pulmonaryhemorrhage	Missing	:::UNDEF:::
+form08a::pulmonaryhemorrhage	form08a::pulmonaryhemorrhage	Missing	:::UNDEF:::
+form08b::renalfailure	form08b::renalfailure	Missing	:::UNDEF:::
+form08a::renalfailure	form08a::renalfailure	Missing	:::UNDEF:::
+form08b::respiratorydistresssyndromerds	form08b::respiratorydistresssyndromerds	Missing	:::UNDEF:::
+form08a::respiratorydistresssyndromerds	form08a::respiratorydistresssyndromerds	Missing	:::UNDEF:::
+form08b::sepsis	form08b::sepsis	Missing	:::UNDEF:::
+form08a::sepsis	form08a::sepsis	Missing	:::UNDEF:::
+form08b::traumaticinjury	form08b::traumaticinjury	Missing	:::UNDEF:::
+form08a::traumaticinjury	form08a::traumaticinjury	Missing	:::UNDEF:::
+form08b::congenitalsyphilis	form08b::congenitalsyphilis	Missing	:::UNDEF:::
+form08a::congenitalsyphilis	form08a::congenitalsyphilis	Missing	:::UNDEF:::
+form08b::isthisstandardautopsycda	form08b::isthisstandardautopsycda	Missing	:::UNDEF:::
+form08a::isthisstandardautopsycda	form08a::isthisstandardautopsycda	Missing	:::UNDEF:::
+form08b::isthisminimallyinvasivetissuesamplingmits	form08b::isthisminimallyinvasivetissuesamplingmits	Missing	:::UNDEF:::
+form08a::isthisminimallyinvasivetissuesamplingmits	form08a::isthisminimallyinvasivetissuesamplingmits	Missing	:::UNDEF:::
+form08b::aretheregrossabnormalitiesseenexternally	form08b::aretheregrossabnormalitiesseenexternally	Missing	:::UNDEF:::
+form08a::aretheregrossabnormalitiesseenexternally	form08a::aretheregrossabnormalitiesseenexternally	Missing	:::UNDEF:::
+form08b::collapsedairspacesalternatingwithhyperexpandedareas	form08b::collapsedairspacesalternatingwithhyperexpandedareas	Missing	:::UNDEF:::
+form08a::collapsedairspacesalternatingwithhyperexpandedareas	form08a::collapsedairspacesalternatingwithhyperexpandedareas	Missing	:::UNDEF:::
+form08b::otherfindings	form08b::otherfindings	Missing	:::UNDEF:::
+form08a::otherfindings	form08a::otherfindings	Missing	:::UNDEF:::
+form08b::structuralimmaturityasmanifestbydecreasednumberofgasexchangeunit	form08b::structuralimmaturityasmanifestbydecreasednumberofgasexchangeunit	Missing	:::UNDEF:::
+form08a::structuralimmaturityasmanifestbydecreasednumberofgasexchangeunit	form08a::structuralimmaturityasmanifestbydecreasednumberofgasexchangeunit	Missing	:::UNDEF:::
+form08b::vascularcongestion	form08b::vascularcongestion	Missing	:::UNDEF:::
+form08a::vascularcongestion	form08a::vascularcongestion	Missing	:::UNDEF:::
+form08b::waxyappearinglayersofhyalinemembranescomposedoffibrincellulardeb	form08b::waxyappearinglayersofhyalinemembranescomposedoffibrincellulardeb	Missing	:::UNDEF:::
+form08a::waxyappearinglayersofhyalinemembranescomposedoffibrincellulardeb	form08a::waxyappearinglayersofhyalinemembranescomposedoffibrincellulardeb	Missing	:::UNDEF:::
+form08b::intraventricularhaemorrageacuteoroldinsectionsofthecerebrumatdee	form08b::intraventricularhaemorrageacuteoroldinsectionsofthecerebrumatdee	Missing	:::UNDEF:::
+form08a::intraventricularhaemorrageacuteoroldinsectionsofthecerebrumatdee	form08a::intraventricularhaemorrageacuteoroldinsectionsofthecerebrumatdee	Missing	:::UNDEF:::
+form08b::braincongestedwithcharacteristicinfarctionofthesubepydymalmatrix	form08b::braincongestedwithcharacteristicinfarctionofthesubepydymalmatrix	Missing	:::UNDEF:::
+form08a::braincongestedwithcharacteristicinfarctionofthesubepydymalmatrix	form08a::braincongestedwithcharacteristicinfarctionofthesubepydymalmatrix	Missing	:::UNDEF:::
+form08b::extensivematrixinfarction	form08b::extensivematrixinfarction	Missing	:::UNDEF:::
+form08a::extensivematrixinfarction	form08a::extensivematrixinfarction	Missing	:::UNDEF:::
+form08b::leakageofbloodintotheventricles	form08b::leakageofbloodintotheventricles	Missing	:::UNDEF:::
+form08a::leakageofbloodintotheventricles	form08a::leakageofbloodintotheventricles	Missing	:::UNDEF:::
+form08b::necropsyrevealsorganicchangesassociatedwithsystemiccirculatoryfa	form08b::necropsyrevealsorganicchangesassociatedwithsystemiccirculatoryfa	Missing	:::UNDEF:::
+form08a::necropsyrevealsorganicchangesassociatedwithsystemiccirculatoryfa	form08a::necropsyrevealsorganicchangesassociatedwithsystemiccirculatoryfa	Missing	:::UNDEF:::
+form08b::otherfindings1	form08b::otherfindings1	Missing	:::UNDEF:::
+form08a::otherfindings1	form08a::otherfindings1	Missing	:::UNDEF:::
+form08b::abdominaldistension	form08b::abdominaldistension	Missing	:::UNDEF:::
+form08a::abdominaldistension	form08a::abdominaldistension	Missing	:::UNDEF:::
+form08b::intestinalnecrosisandhemorrhage	form08b::intestinalnecrosisandhemorrhage	Missing	:::UNDEF:::
+form08a::intestinalnecrosisandhemorrhage	form08a::intestinalnecrosisandhemorrhage	Missing	:::UNDEF:::
+form08b::otherfindings2	form08b::otherfindings2	Missing	:::UNDEF:::
+form08a::otherfindings2	form08a::otherfindings2	Missing	:::UNDEF:::
+form08b::peritonitisduetoperforation	form08b::peritonitisduetoperforation	Missing	:::UNDEF:::
+form08a::peritonitisduetoperforation	form08a::peritonitisduetoperforation	Missing	:::UNDEF:::
+form08b::hyperandhypointenselesionsinthalamusandbasalgangliawhichrelateto	form08b::hyperandhypointenselesionsinthalamusandbasalgangliawhichrelateto	Missing	:::UNDEF:::
+form08a::hyperandhypointenselesionsinthalamusandbasalgangliawhichrelateto	form08a::hyperandhypointenselesionsinthalamusandbasalgangliawhichrelateto	Missing	:::UNDEF:::
+form08b::others	form08b::others	Missing	:::UNDEF:::
+form08a::others	form08a::others	Missing	:::UNDEF:::
+form08b::parasagittalhyperintensityextendingintothecoronaradiatacorrespon	form08b::parasagittalhyperintensityextendingintothecoronaradiatacorrespon	Missing	:::UNDEF:::
+form08a::parasagittalhyperintensityextendingintothecoronaradiatacorrespon	form08a::parasagittalhyperintensityextendingintothecoronaradiatacorrespon	Missing	:::UNDEF:::
+form08b::periventricularcentrifugalhypointensestripesinthecentrumsemioval	form08b::periventricularcentrifugalhypointensestripesinthecentrumsemioval	Missing	:::UNDEF:::
+form08a::periventricularcentrifugalhypointensestripesinthecentrumsemioval	form08a::periventricularcentrifugalhypointensestripesinthecentrumsemioval	Missing	:::UNDEF:::
+form08b::periventricularhyperintensitymainlyalongthelateralventriclesiepe	form08b::periventricularhyperintensitymainlyalongthelateralventriclesiepe	Missing	:::UNDEF:::
+form08a::periventricularhyperintensitymainlyalongthelateralventriclesiepe	form08a::periventricularhyperintensitymainlyalongthelateralventriclesiepe	Missing	:::UNDEF:::
+form08b::scatteredhyperintensityofbothhemispheresofthetelencephalonwithbl	form08b::scatteredhyperintensityofbothhemispheresofthetelencephalonwithbl	Missing	:::UNDEF:::
+form08a::scatteredhyperintensityofbothhemispheresofthetelencephalonwithbl	form08a::scatteredhyperintensityofbothhemispheresofthetelencephalonwithbl	Missing	:::UNDEF:::
+form08b::smallmultifocallesionsvaryingfromhypertohypointenseinterpretedas	form08b::smallmultifocallesionsvaryingfromhypertohypointenseinterpretedas	Missing	:::UNDEF:::
+form08a::smallmultifocallesionsvaryingfromhypertohypointenseinterpretedas	form08a::smallmultifocallesionsvaryingfromhypertohypointenseinterpretedas	Missing	:::UNDEF:::
+form08b::thestromaltissueofimmaturelungshaveacuteinflammatorylesions	form08b::thestromaltissueofimmaturelungshaveacuteinflammatorylesions	Missing	:::UNDEF:::
+form08a::thestromaltissueofimmaturelungshaveacuteinflammatorylesions	form08a::thestromaltissueofimmaturelungshaveacuteinflammatorylesions	Missing	:::UNDEF:::
+form08b::exudatefromvesselsasyetseparatedfromairspaceswouldbefound	form08b::exudatefromvesselsasyetseparatedfromairspaceswouldbefound	Missing	:::UNDEF:::
+form08a::exudatefromvesselsasyetseparatedfromairspaceswouldbefound	form08a::exudatefromvesselsasyetseparatedfromairspaceswouldbefound	Missing	:::UNDEF:::
+form08b::markedfibrinopurulentpleurisy	form08b::markedfibrinopurulentpleurisy	Missing	:::UNDEF:::
+form08a::markedfibrinopurulentpleurisy	form08a::markedfibrinopurulentpleurisy	Missing	:::UNDEF:::
+form08b::otherfindings4	form08b::otherfindings4	Missing	:::UNDEF:::
+form08a::otherfindings4	form08a::otherfindings4	Missing	:::UNDEF:::
+form08b::occasionallypolymorphswereseeninbronchiallymphnodesbuttheywereus	form08b::occasionallypolymorphswereseeninbronchiallymphnodesbuttheywereus	Missing	:::UNDEF:::
+form08a::occasionallypolymorphswereseeninbronchiallymphnodesbuttheywereus	form08a::occasionallypolymorphswereseeninbronchiallymphnodesbuttheywereus	Missing	:::UNDEF:::
+form08b::congestion	form08b::congestion	Missing	:::UNDEF:::
+form08a::congestion	form08a::congestion	Missing	:::UNDEF:::
+form08b::endothelialdamagenuclearswellingdetachmentapoptosis	form08b::endothelialdamagenuclearswellingdetachmentapoptosis	Missing	:::UNDEF:::
+form08a::endothelialdamagenuclearswellingdetachmentapoptosis	form08a::endothelialdamagenuclearswellingdetachmentapoptosis	Missing	:::UNDEF:::
+form08b::intravascularcoagulation	form08b::intravascularcoagulation	Missing	:::UNDEF:::
+form08a::intravascularcoagulation	form08a::intravascularcoagulation	Missing	:::UNDEF:::
+form08b::perivascularedema	form08b::perivascularedema	Missing	:::UNDEF:::
+form08a::perivascularedema	form08a::perivascularedema	Missing	:::UNDEF:::
+form08b::thrombosis	form08b::thrombosis	Missing	:::UNDEF:::
+form08a::thrombosis	form08a::thrombosis	Missing	:::UNDEF:::
+form08b::endotheliumofbloodvesselofsmallmediumsize	form08b::endotheliumofbloodvesselofsmallmediumsize	Missing	:::UNDEF:::
+form08a::endotheliumofbloodvesselofsmallmediumsize	form08a::endotheliumofbloodvesselofsmallmediumsize	Missing	:::UNDEF:::
+form08b::heart	form08b::heart	Missing	:::UNDEF:::
+form08a::heart	form08a::heart	Missing	:::UNDEF:::
+form08b::cardiomyocyteslesions	form08b::cardiomyocyteslesions	Missing	:::UNDEF:::
+form08a::cardiomyocyteslesions	form08a::cardiomyocyteslesions	Missing	:::UNDEF:::
+form08b::cytoplasmicvacuolizationintracellularedema	form08b::cytoplasmicvacuolizationintracellularedema	Missing	:::UNDEF:::
+form08a::cytoplasmicvacuolizationintracellularedema	form08a::cytoplasmicvacuolizationintracellularedema	Missing	:::UNDEF:::
+form08b::endothelialdamageofcoronaryarteriesandveins	form08b::endothelialdamageofcoronaryarteriesandveins	Missing	:::UNDEF:::
+form08a::endothelialdamageofcoronaryarteriesandveins	form08a::endothelialdamageofcoronaryarteriesandveins	Missing	:::UNDEF:::
+form08b::focalwavearrangement	form08b::focalwavearrangement	Missing	:::UNDEF:::
+form08a::focalwavearrangement	form08a::focalwavearrangement	Missing	:::UNDEF:::
+form08b::intercellularedema	form08b::intercellularedema	Missing	:::UNDEF:::
+form08a::intercellularedema	form08a::intercellularedema	Missing	:::UNDEF:::
+form08b::thrombosis1	form08b::thrombosis1	Missing	:::UNDEF:::
+form08a::thrombosis1	form08a::thrombosis1	Missing	:::UNDEF:::
+form08b::kidney	form08b::kidney	Missing	:::UNDEF:::
+form08a::kidney	form08a::kidney	Missing	:::UNDEF:::
+form08b::acutetubularnecrosisofproximaltubules	form08b::acutetubularnecrosisofproximaltubules	Missing	:::UNDEF:::
+form08a::acutetubularnecrosisofproximaltubules	form08a::acutetubularnecrosisofproximaltubules	Missing	:::UNDEF:::
+form08b::bloodextravasationintotheinterstitium	form08b::bloodextravasationintotheinterstitium	Missing	:::UNDEF:::
+form08a::bloodextravasationintotheinterstitium	form08a::bloodextravasationintotheinterstitium	Missing	:::UNDEF:::
+form08b::endothelialdamage	form08b::endothelialdamage	Missing	:::UNDEF:::
+form08a::endothelialdamage	form08a::endothelialdamage	Missing	:::UNDEF:::
+form08b::glomerulardamage	form08b::glomerulardamage	Missing	:::UNDEF:::
+form08a::glomerulardamage	form08a::glomerulardamage	Missing	:::UNDEF:::
+form08b::interstitialedema	form08b::interstitialedema	Missing	:::UNDEF:::
+form08a::interstitialedema	form08a::interstitialedema	Missing	:::UNDEF:::
+form08b::lossofpodocytes	form08b::lossofpodocytes	Missing	:::UNDEF:::
+form08a::lossofpodocytes	form08a::lossofpodocytes	Missing	:::UNDEF:::
+form08b::lung	form08b::lung	Missing	:::UNDEF:::
+form08a::lung	form08a::lung	Missing	:::UNDEF:::
+form08b::alveolardamage	form08b::alveolardamage	Missing	:::UNDEF:::
+form08a::alveolardamage	form08a::alveolardamage	Missing	:::UNDEF:::
+form08b::apoptosisofrespiratoryepithelium	form08b::apoptosisofrespiratoryepithelium	Missing	:::UNDEF:::
+form08a::apoptosisofrespiratoryepithelium	form08a::apoptosisofrespiratoryepithelium	Missing	:::UNDEF:::
+form08b::endothelialdamage1	form08b::endothelialdamage1	Missing	:::UNDEF:::
+form08a::endothelialdamage1	form08a::endothelialdamage1	Missing	:::UNDEF:::
+form08b::neutrophilleukocyteserythrocytesandedemaintoalveolarspaces	form08b::neutrophilleukocyteserythrocytesandedemaintoalveolarspaces	Missing	:::UNDEF:::
+form08a::neutrophilleukocyteserythrocytesandedemaintoalveolarspaces	form08a::neutrophilleukocyteserythrocytesandedemaintoalveolarspaces	Missing	:::UNDEF:::
+form08b::otherfindings3	form08b::otherfindings3	Missing	:::UNDEF:::
+form08a::otherfindings3	form08a::otherfindings3	Missing	:::UNDEF:::
+form08b::edemaoftheparenchymawiththeaccumulationofinflammatorycellsinthep	form08b::edemaoftheparenchymawiththeaccumulationofinflammatorycellsinthep	Missing	:::UNDEF:::
+form08a::edemaoftheparenchymawiththeaccumulationofinflammatorycellsinthep	form08a::edemaoftheparenchymawiththeaccumulationofinflammatorycellsinthep	Missing	:::UNDEF:::
+form08b::thecloseinviewoftheexudaterevealsthattheinflammatoryexudateiscom	form08b::thecloseinviewoftheexudaterevealsthattheinflammatoryexudateiscom	Missing	:::UNDEF:::
+form08a::thecloseinviewoftheexudaterevealsthattheinflammatoryexudateiscom	form08a::thecloseinviewoftheexudaterevealsthattheinflammatoryexudateiscom	Missing	:::UNDEF:::
+form08b::otherfindings5	form08b::otherfindings5	Missing	:::UNDEF:::
+form08a::otherfindings5	form08a::otherfindings5	Missing	:::UNDEF:::
+form08b::suppurativemeningitiswithinflammatorysignsofthemeninges	form08b::suppurativemeningitiswithinflammatorysignsofthemeninges	Missing	:::UNDEF:::
+form08a::suppurativemeningitiswithinflammatorysignsofthemeninges	form08a::suppurativemeningitiswithinflammatorysignsofthemeninges	Missing	:::UNDEF:::
+form08b::choanalatresia	form08b::choanalatresia	Missing	:::UNDEF:::
+form08a::choanalatresia	form08a::choanalatresia	Missing	:::UNDEF:::
+form08b::cleftlipandcleftpalate	form08b::cleftlipandcleftpalate	Missing	:::UNDEF:::
+form08a::cleftlipandcleftpalate	form08a::cleftlipandcleftpalate	Missing	:::UNDEF:::
+form08b::esophagealatresiatracheoesophagealfistula	form08b::esophagealatresiatracheoesophagealfistula	Missing	:::UNDEF:::
+form08a::esophagealatresiatracheoesophagealfistula	form08a::esophagealatresiatracheoesophagealfistula	Missing	:::UNDEF:::
+form08b::hypospadias	form08b::hypospadias	Missing	:::UNDEF:::
+form08a::hypospadias	form08a::hypospadias	Missing	:::UNDEF:::
+form08b::neuraltubedefectsandhydrocephalus	form08b::neuraltubedefectsandhydrocephalus	Missing	:::UNDEF:::
+form08a::neuraltubedefectsandhydrocephalus	form08a::neuraltubedefectsandhydrocephalus	Missing	:::UNDEF:::
+form08b::others1	form08b::others1	Missing	:::UNDEF:::
+form08a::others1	form08a::others1	Missing	:::UNDEF:::
+form08b::pierrerobinsyndrome	form08b::pierrerobinsyndrome	Missing	:::UNDEF:::
+form08a::pierrerobinsyndrome	form08a::pierrerobinsyndrome	Missing	:::UNDEF:::
+form08b::trisomiesdownsyndrome	form08b::trisomiesdownsyndrome	Missing	:::UNDEF:::
+form08a::trisomiesdownsyndrome	form08a::trisomiesdownsyndrome	Missing	:::UNDEF:::
+form08b::undescendedtestis	form08b::undescendedtestis	Missing	:::UNDEF:::
+form08a::undescendedtestis	form08a::undescendedtestis	Missing	:::UNDEF:::
+form08b::asd	form08b::asd	Missing	:::UNDEF:::
+form08a::asd	form08a::asd	Missing	:::UNDEF:::
+form08b::coarctationoftheaortaand	form08b::coarctationoftheaortaand	Missing	:::UNDEF:::
+form08a::coarctationoftheaortaand	form08a::coarctationoftheaortaand	Missing	:::UNDEF:::
+form08b::interruptedaorticarch	form08b::interruptedaorticarch	Missing	:::UNDEF:::
+form08a::interruptedaorticarch	form08a::interruptedaorticarch	Missing	:::UNDEF:::
+form08b::others2	form08b::others2	Missing	:::UNDEF:::
+form08a::others2	form08a::others2	Missing	:::UNDEF:::
+form08b::pda	form08b::pda	Missing	:::UNDEF:::
+form08a::pda	form08a::pda	Missing	:::UNDEF:::
+form08b::totalanomalouspulmonaryvenousdrainage	form08b::totalanomalouspulmonaryvenousdrainage	Missing	:::UNDEF:::
+form08a::totalanomalouspulmonaryvenousdrainage	form08a::totalanomalouspulmonaryvenousdrainage	Missing	:::UNDEF:::
+form08b::transposedgreatarterieshypoplasticleftheart	form08b::transposedgreatarterieshypoplasticleftheart	Missing	:::UNDEF:::
+form08a::transposedgreatarterieshypoplasticleftheart	form08a::transposedgreatarterieshypoplasticleftheart	Missing	:::UNDEF:::
+form08b::vsd	form08b::vsd	Missing	:::UNDEF:::
+form08a::vsd	form08a::vsd	Missing	:::UNDEF:::
+form08b::congenitalmalformationsandchromosomalanomaliestypicalofthefol	form08b::congenitalmalformationsandchromosomalanomaliestypicalofthefol	Missing	:::UNDEF:::
+form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	Missing	:::UNDEF:::
+form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	No	No
+form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	form08a::congenitalmalformationsandchromosomalanomaliestypicalofthefol	Yes	Yes
+form08b::isthereacongenitalheartdisease	form08b::isthereacongenitalheartdisease	Missing	:::UNDEF:::
+form08a::isthereacongenitalheartdisease	form08a::isthereacongenitalheartdisease	Missing	:::UNDEF:::
 form08a::isthereacongenitalheartdisease	form08a::isthereacongenitalheartdisease	No	No
 form08a::isthereacongenitalheartdisease	form08a::isthereacongenitalheartdisease	Turner syndrome	:::UNDEF:::
 form08a::isthereacongenitalheartdisease	form08a::isthereacongenitalheartdisease	Yes	Yes
-form08a::others2	form08a::others2	Missing	Missing
+form08a::others2	form08a::others2	Missing	:::UNDEF:::
 form08a::others2	form08a::others2	No	No
 form08a::others2	form08a::others2	Yes	Yes
 form08a::others2	form08a::others2	yes 	Yes
@@ -1809,7 +2059,7 @@ form08b::ifyesdescribe	form08b::ifyesdescribe	No gross abnormality seen external
 form08b::ifyesdescribe	form08b::ifyesdescribe	ecchymosis on needle punctwe siteis Izothy blood tigled nasal sheid that ozen more upen squeising the chast -In good bleeding from procedwice punctwe sites	
 form08b::ifyesdescribe	form08b::ifyesdescribe	fore hand erythmates&edematers which extend to the eye lesion	
 form08b::ifyesdescribe	form08b::ifyesdescribe	subgaleal hemorrhage	Subgaleal hemorrhage
-form08b::otherfindings	form08b::otherfindings	Missing	Missing
+form08b::otherfindings	form08b::otherfindings	Missing	:::UNDEF:::
 form08b::otherfindings	form08b::otherfindings	No	No
 form08b::otherfindings	form08b::otherfindings	Yes	Yes
 form08b::otherfindings	form08b::otherfindings	yes 	Yes
@@ -1828,23 +2078,21 @@ form08b::specifyivh	form08b::specifyivh	Extensive intraveuticular hemorrlage and
 form08b::specifyivh	form08b::specifyivh	Severe brain edema and subarachnoid hemorhage	
 form08b::specifyivh	form08b::specifyivh	The Sample was inadewuate for processing	Inadequate sample for processing
 form08b::specifyivh	form08b::specifyivh	seuere cerebral edema and kernicters	
-form08b::others	form08b::others	Missing	Missing
+form08b::others	form08b::others	Missing	:::UNDEF:::
 form08b::others	form08b::others	No	No
 form08b::others	form08b::others	Scatlered red Never intu brain	:::UNDEF:::
 form08b::others	form08b::others	Yes	Yes
 form08b::specifyhie	form08b::specifyhie	No	:::UNDEF:::
 form08b::specifyhie	form08b::specifyhie	None	:::UNDEF:::
 form08b::specifyhie	form08b::specifyhie	Scatterd Red neurons	Scattered red neurons
-form08b::otherfindings2	form08b::otherfindings2	Missing	Missing
+form08b::otherfindings2	form08b::otherfindings2	Missing	:::UNDEF:::
 form08b::otherfindings2	form08b::otherfindings2	No	No
-form08b::otherfindings2	form08b::otherfindings2	Yes	Yes
 form08b::otherfindings2	form08b::otherfindings2	yes 	Yes
 form08b::specifynec	form08b::specifynec	abdominal empty slide	
 form08b::specifynec	form08b::specifynec	none	:::UNDEF:::
-form08b::otherfindings4	form08b::otherfindings4	Missing	Missing
+form08b::otherfindings4	form08b::otherfindings4	Missing	:::UNDEF:::
 form08b::otherfindings4	form08b::otherfindings4	No	No
-form08b::otherfindings4	form08b::otherfindings4	Yes	Yes
-form08b::otherfindings4	form08b::otherfindings4	yes 	Yes
+form08b::otherfindings4	form08b::otherfindings4	yes	Yes
 form08b::specifypneumonia	form08b::specifypneumonia	No	:::UNDEF:::
 form08b::specifypneumonia	form08b::specifypneumonia	None	:::UNDEF:::
 form08b::specifypneumonia	form08b::specifypneumonia	Ther are area of alveion air space filled with exvelates and mixed	
@@ -1935,6 +2183,7 @@ form12a::wasconsentforautopsycontained	form12a::wasconsentforautopsycontained	1	
 form12a::wasconsentforautopsycontained	form12a::wasconsentforautopsycontained	2	No
 form12a::wasconsentforautopsycontained	form12a::wasconsentforautopsycontained	3	Don't know
 form12a::wasconsentforautopsycontained	form12a::wasconsentforautopsycontained	4	
+form12a::wasconsentforautopsycontained	form12a::wasconsentforautopsycontained	NA	:::UNDEF:::
 form12a::hyaliniemembranedisease1	form12a::hyaliniemembranedisease1	No	No
 form12a::hyaliniemembranedisease1	form12a::hyaliniemembranedisease1	Yes	Yes
 form12a::hyaliniemembranedisease1	form12a::hyaliniemembranedisease1	yes 	Yes
@@ -1957,6 +2206,7 @@ form12a::hypoglycaemia	form12a::hypoglycaemia	Yes	Yes
 form12a::hypoglycaemia	form12a::hypoglycaemia	yes 	Yes
 form12b::degreeofcertaintyforprimarycause	form12b::degreeofcertaintyforprimarycause	1	Probable
 form12b::degreeofcertaintyforprimarycause	form12b::degreeofcertaintyforprimarycause	2	Possible
+form12b::degreeofcertaintyforprimarycause	form12b::degreeofcertaintyforprimarycause	NA	:::UNDEF:::
 form12b::congenitalmalformation	form12b::congenitalmalformation	No	No
 form12b::congenitalmalformation	form12b::congenitalmalformation	Yes	Yes
 form12b::hyaliniemembranedisease	form12b::hyaliniemembranedisease	No	No
@@ -1980,6 +2230,7 @@ form12b::data	form12b::data	1	Acceptable
 form12b::data	form12b::data	2	Poor
 form12b::data	form12b::data	3	
 form12b::data	form12b::data	4	
+form12b::data	form12b::data	NA	:::UNDEF:::
 form12b::ivh	form12b::ivh	No	No
 form12b::ivh	form12b::ivh	YES	Yes
 form12b::sepsis	form12b::sepsis	No	No
@@ -2282,7 +2533,7 @@ form02_long::specify3	form02_long::specify3	Oligohydramionos	Oligohydramnios
 form02_long::specify3	form02_long::specify3	Extended necle	
 form02_long::specify3	form02_long::specify3	breech presentation tacute abdomen 2^ to Acute appendicitis	
 form02_long::specify3	form02_long::specify3	Thombocytopnea	Thrombocytopenia
-form02_long::specify3	form02_long::specify3	Anhydraminos	
+form02_long::specify3	form02_long::specify3	Anhydraminos	Anhydraminos
 form02_long::specify3	form02_long::specify3	Fatal Datrchardae	
 form02_long::specify3	form02_long::specify3	Failed indiatrom (chorioamutis)	"Chorioamnionitis, failed induction"
 form02_long::specify3	form02_long::specify3	Placebta previa	Placenta previa
@@ -2632,7 +2883,24 @@ form02_long::ifyesspecify2	form02_long::ifyesspecify2	prophylaxis
 form02_long::ifyesspecify2	form02_long::ifyesspecify2	Ampiciline 2gmIV	
 form02_long::ifyesspecify2	form02_long::ifyesspecify2	A Pneumonia	Aspiration pneumonia
 form02_long::ifyesspecify2	form02_long::ifyesspecify2	"Tramadol,Nefidipine"	
-form02_long::ifyesspecify2	form02_long::ifyesspecify2	Amoxilline	
+form02_long::ifyesspecify2	form02_long::ifyesspecify2	Amoxilline
+form02_long::breech	form02_long::breech	missing	:::UNDEF:::	
+form02_long::cordprolapse1	form02_long::cordprolapse1	missing	:::UNDEF:::
+form02_long::dontknow3	form02_long::dontknow3	missing	:::UNDEF:::
+form02_long::electivecesareansection	form02_long::electivecesareansection	missing	:::UNDEF:::
+form02_long::fetaldistress	form02_long::fetaldistress	missing	:::UNDEF:::
+form02_long::iugrsga	form02_long::iugrsga	missing	:::UNDEF:::
+form02_long::macrosomia	form02_long::macrosomia	missing	:::UNDEF:::
+form02_long::multiplepregnancy	form02_long::multiplepregnancy	missing	:::UNDEF:::
+form02_long::other	form02_long::other	missing	:::UNDEF:::
+form02_long::preeclampsiaeclampsia	form02_long::preeclampsiaeclampsia	missing	:::UNDEF:::
+form02_long::priorcesereansection	form02_long::priorcesereansection	missing	:::UNDEF:::
+form02_long::prolongedorobstructedlabor	form02_long::prolongedorobstructedlabor	missing	:::UNDEF:::
+form02_long::chronichypertension	form02_long::chronichypertension	missing	:::UNDEF:::
+form02_long::dontknow	form02_long::dontknow	missing	:::UNDEF:::
+form02_long::eclampsia	form02_long::eclampsia	missing	:::UNDEF:::
+form02_long::preeclampsia	form02_long::preeclampsia	missing	:::UNDEF:::
+form02_long::superimposedpreeclampsia	form02_long::superimposedpreeclampsia	missing	:::UNDEF:::
 form03a::azone	NCIT_C43428	N/s	
 form03a::azone	NCIT_C43428	Ambo	
 form03a::azone	NCIT_C43428	Bole	
@@ -4303,7 +4571,7 @@ form03b::specify1	form03b::specify1	cogenital malformation	Congenital malformati
 form03b::specify1	form03b::specify1	"Breach, Material Preeclamsia"	"Breech, preeclampsia"
 form03b::specify1	form03b::specify1	maternal preclamsia	Preeclampsia
 form03b::specify1	form03b::specify1	material eilarrsia	
-form03b::specify1	form03b::specify1	filure to breast feed	Failure to breast feed
+form03b::specify1	form03b::specify1	filure to breast feed	Failure to suckle
 form03b::specify1	form03b::specify1	Yellow Skin	Jaundice
 form03b::specify1	form03b::specify1	Resparatory Distress	Respiratory distress
 form03b::specify1	form03b::specify1	Congenital Malformation	Congenital malformation
@@ -5590,137 +5858,137 @@ form03b::kebele	EUPATH_0026002	Sodo
 form03b::kebele	EUPATH_0026002	W12	
 form03b::kebele	EUPATH_0026002	W/02	
 form03b::kebele	EUPATH_0026002	W/05	
-form03b::specify3	form03b::specify3	Cephalhematoma	
+form03b::specify3	form03b::specify3	Cephalhematoma	Cephalohematoma
 form03b::specify3	form03b::specify3	Capnt	
-form03b::specify3	form03b::specify3	caput Succedaneum	
-form03b::specify3	form03b::specify3	and Hydrocephalus	
-form03b::specify3	form03b::specify3	caput suceddeaun	
+form03b::specify3	form03b::specify3	caput Succedaneum	Caput succedaneum
+form03b::specify3	form03b::specify3	and Hydrocephalus	Hydrocephalus
+form03b::specify3	form03b::specify3	caput suceddeaun	Caput succedaneum
 form03b::specify3	form03b::specify3	fuel fotanell 4x5	
-form03b::specify3	form03b::specify3	Prowinent Occiput	
-form03b::specify3	form03b::specify3	provinant occiput	
+form03b::specify3	form03b::specify3	Prowinent Occiput	Prominent occiput
+form03b::specify3	form03b::specify3	provinant occiput	Prominent occiput
 form03b::specify3	form03b::specify3	absent lt parietal bone	
 form03b::specify3	form03b::specify3	of mall wel	
-form03b::specify3	form03b::specify3	Cephal hematoma	
+form03b::specify3	form03b::specify3	Cephal hematoma	Cephalohematoma
 form03b::specify3	form03b::specify3	caput andorminum	
 form03b::specify3	form03b::specify3	Edmetuls	
-form03b::specify3	form03b::specify3	Depressed Skull	
+form03b::specify3	form03b::specify3	Depressed Skull	Depressed skull
 form03b::specify3	form03b::specify3	Grad 2 Moulding	
 form03b::specify3	form03b::specify3	wide fontamel frontal bossing	
 form03b::specify3	form03b::specify3	Caput suclar	
 form03b::specify3	form03b::specify3	Craniosynostosis	
 form03b::specify3	form03b::specify3	capuf	
-form03b::specify3	form03b::specify3	Prominent occiput	
-form03b::specify3	form03b::specify3	Forceps	
-form03b::specify3	form03b::specify3	Holoprocephally	
-form03b::specify3	form03b::specify3	Sunken ant fontanel	
-form03b::specify3	form03b::specify3	Cephalohematone	
-form03b::specify3	form03b::specify3	Mandibular fracture	
-form03b::specify3	form03b::specify3	microcephally	
-form03b::specify3	form03b::specify3	Caput succendum	
-form03b::specify3	form03b::specify3	capput secundum	
+form03b::specify3	form03b::specify3	Prominent occiput	Prominent occiput
+form03b::specify3	form03b::specify3	Forceps	Forceps
+form03b::specify3	form03b::specify3	Holoprocephally	Holoprosencephaly
+form03b::specify3	form03b::specify3	Sunken ant fontanel	Sunken fontanel
+form03b::specify3	form03b::specify3	Cephalohematone	Cephalohematoma
+form03b::specify3	form03b::specify3	Mandibular fracture	Mandibular fracture
+form03b::specify3	form03b::specify3	microcephally	Microcephaly
+form03b::specify3	form03b::specify3	Caput succendum	Caput succedaneum
+form03b::specify3	form03b::specify3	capput secundum	Caput succedaneum
 form03b::specify3	form03b::specify3	Bulaed antericr fontaned	
-form03b::specify3	form03b::specify3	Flar head	
-form03b::specify3	form03b::specify3	Caput sucamdom	
-form03b::specify7	form03b::specify7	Respiratory Arest	
-form03b::specify7	form03b::specify7	Respiratory Failure	
-form03b::specify7	form03b::specify7	Transmitted sound	
-form03b::specify7	form03b::specify7	tachypenia	
-form03b::specify7	form03b::specify7	Techypenea/Fast beating	
-form03b::specify7	form03b::specify7	Fast ?	
-form03b::specify7	form03b::specify7	Apena	
-form03b::specify7	form03b::specify7	caspining type pf breathing	
-form03b::specify7	form03b::specify7	apnea /no breathing	
+form03b::specify3	form03b::specify3	Flar head	Flat head
+form03b::specify3	form03b::specify3	Caput sucamdom	Caput succedaneum
+form03b::specify7	form03b::specify7	Respiratory Arest	Respiratory arrest
+form03b::specify7	form03b::specify7	Respiratory Failure	Respiratory failure
+form03b::specify7	form03b::specify7	Transmitted sound	Transmitted sound
+form03b::specify7	form03b::specify7	tachypenia	Tachypnea
+form03b::specify7	form03b::specify7	Techypenea/Fast beating	Tachypnea
+form03b::specify7	form03b::specify7	Fast ?	Tachypnea
+form03b::specify7	form03b::specify7	Apena	Apnea
+form03b::specify7	form03b::specify7	caspining type pf breathing	Gasping
+form03b::specify7	form03b::specify7	apnea /no breathing	Apnea
 form03b::specify7	form03b::specify7	sternal veccssion	
 form03b::specify7	form03b::specify7	strenal recession	
 form03b::specify7	form03b::specify7	cipnea	
-form03b::specify7	form03b::specify7	fast breathing	
-form03b::specify7	form03b::specify7	Fast bresthing	
-form03b::specify7	form03b::specify7	Trabsmited Sounds	
+form03b::specify7	form03b::specify7	fast breathing	Tachypnea
+form03b::specify7	form03b::specify7	Fast bresthing	Tachypnea
+form03b::specify7	form03b::specify7	Trabsmited Sounds	Transmitted sound
 form03b::specify7	form03b::specify7	psoping type of breathing	
-form03b::specify7	form03b::specify7	Apnea	
+form03b::specify7	form03b::specify7	Apnea	Apnea
 form03b::specify7	form03b::specify7	Gaspia type of respirator	
-form03b::specify7	form03b::specify7	gasping	
+form03b::specify7	form03b::specify7	gasping	Gasping
 form03b::specify7	form03b::specify7	caspsy	
 form03b::specify7	form03b::specify7	gaspiy type of regular??	
-form03b::specify7	form03b::specify7	pasping	
+form03b::specify7	form03b::specify7	pasping	Gasping
 form03b::specify7	form03b::specify7	posping	
-form03b::specify7	form03b::specify7	tachipnic	
+form03b::specify7	form03b::specify7	tachipnic	Tachypnea
 form03b::specify7	form03b::specify7	pasping & being given bag & mask vaithlath	
-form03b::specify7	form03b::specify7	Clar	
-form03b::specify7	form03b::specify7	clear	
+form03b::specify7	form03b::specify7	Clar	Clear
+form03b::specify7	form03b::specify7	clear	Clear
 form03b::specify7	form03b::specify7	clear air e from	
-form03b::specify7	form03b::specify7	Dear	
-form03b::specify7	form03b::specify7	claer	
-form03b::specify7	form03b::specify7	Clean	
-form03b::specify7	form03b::specify7	Clenr	
-form03b::specify7	form03b::specify7	Fastbreatcis	
-form03b::specify7	form03b::specify7	cleir	
-form03b::specify7	form03b::specify7	Cear	
-form03b::specify7	form03b::specify7	Fast Breething	
-form03b::specify7	form03b::specify7	loberured breathing	
-form03b::specify7	form03b::specify7	n	
-form03b::specify7	form03b::specify7	Tochypinic	
-form03b::specify7	form03b::specify7	Fatbreathg	
-form03b::specify7	form03b::specify7	Fast brithing	
-form03b::specify7	form03b::specify7	Fast Buth	
-form03b::specify7	form03b::specify7	Tachypnea	
+form03b::specify7	form03b::specify7	Dear	Clear
+form03b::specify7	form03b::specify7	claer	Clear
+form03b::specify7	form03b::specify7	Clean	Clear
+form03b::specify7	form03b::specify7	Clenr	Clear
+form03b::specify7	form03b::specify7	Fastbreatcis	Tachypnea
+form03b::specify7	form03b::specify7	cleir	Clear
+form03b::specify7	form03b::specify7	Cear	Clear
+form03b::specify7	form03b::specify7	Fast Breething	Tachypnea
+form03b::specify7	form03b::specify7	loberured breathing	Difficulty breathing
+form03b::specify7	form03b::specify7	n	:::UNDEF:::
+form03b::specify7	form03b::specify7	Tochypinic	Tachypnea
+form03b::specify7	form03b::specify7	Fatbreathg	Tachypnea
+form03b::specify7	form03b::specify7	Fast brithing	Tachypnea
+form03b::specify7	form03b::specify7	Fast Buth	Tachypnea
+form03b::specify7	form03b::specify7	Tachypnea	Tachypnea
 form03b::specify7	form03b::specify7	Froaty blood from nose	
-form03b::specify7	form03b::specify7	Tachyprie	
+form03b::specify7	form03b::specify7	Tachyprie	Tachypnea
 form03b::specify7	form03b::specify7	SGA	Small for gestational age
-form03b::specify7	form03b::specify7	tachypnee	
-form03b::specify7	form03b::specify7	Transmited sound	
-form03b::specify7	form03b::specify7	acralcyanosis	
-form03b::specify7	form03b::specify7	fast beathing	
+form03b::specify7	form03b::specify7	tachypnee	Tachypnea
+form03b::specify7	form03b::specify7	Transmited sound	Transmitted sound
+form03b::specify7	form03b::specify7	acralcyanosis	Acrocyanosis
+form03b::specify7	form03b::specify7	fast beathing	Tachypnea
 form03b::specify7	form03b::specify7	no Breathing effect At all at admission	
-form03b::specify7	form03b::specify7	Gasping at the time of admission	
+form03b::specify7	form03b::specify7	Gasping at the time of admission	Gasping
 form03b::specify7	form03b::specify7	AP&27.58	
-form03b::specify7	form03b::specify7	Tachypma	
-form03b::specify7	form03b::specify7	fast breathy	
-form03b::specify7	form03b::specify7	Absent breathing	
-form03b::specify7	form03b::specify7	she was not having spontonis breathing bag mosk ventilation done at admission	
-form03b::specify7	form03b::specify7	Fast breathinng	
+form03b::specify7	form03b::specify7	Tachypma	Tachypnea
+form03b::specify7	form03b::specify7	fast breathy	Tachypnea
+form03b::specify7	form03b::specify7	Absent breathing	Apnea
+form03b::specify7	form03b::specify7	she was not having spontonis breathing bag mosk ventilation done at admission	Apnea, bag mask ventilation done at admission
+form03b::specify7	form03b::specify7	Fast breathinng	Tachypnea
 form03b::specify7	form03b::specify7	Bag mask venti done at arival to Nicy	
-form03b::specify7	form03b::specify7	difficulty of breathing (laboard)	
-form03b::specify7	form03b::specify7	Gosping	
-form03b::specify7	form03b::specify7	Shallow Breathing	
+form03b::specify7	form03b::specify7	difficulty of breathing (laboard)	Difficulty breathing
+form03b::specify7	form03b::specify7	Gosping	Gasping
+form03b::specify7	form03b::specify7	Shallow Breathing	Shallow breathing
 form03b::specify7	form03b::specify7	Cracle cluer bilateral lung field	
-form03b::specify7	form03b::specify7	cyanosis	
-form03b::specify7	form03b::specify7	Persistant shallow breath	
-form03b::specify7	form03b::specify7	Casping	
-form03b::specify9	form03b::specify9	bglsenal/hernia	
-form03b::specify9	form03b::specify9	epipostric Hernia	
-form03b::specify9	form03b::specify9	blood Seaked wibilicalcord	
-form03b::specify9	form03b::specify9	Anorectal malformation	
-form03b::specify9	form03b::specify9	Esophogeal otrenia	
-form03b::specify9	form03b::specify9	fluid collection	
-form03b::specify9	form03b::specify9	Ascitis	
+form03b::specify7	form03b::specify7	cyanosis	Cyanosis
+form03b::specify7	form03b::specify7	Persistant shallow breath	Shallow breathing
+form03b::specify7	form03b::specify7	Casping	Gasping
+form03b::specify9	form03b::specify9	bglsenal/hernia	Inguinal hernia
+form03b::specify9	form03b::specify9	epipostric Hernia	Epigastric hernia
+form03b::specify9	form03b::specify9	blood Seaked wibilicalcord	Blood soaked umbilical cord
+form03b::specify9	form03b::specify9	Anorectal malformation	Anorectal malformation
+form03b::specify9	form03b::specify9	Esophogeal otrenia	Esophageal atresia
+form03b::specify9	form03b::specify9	fluid collection	Fluid collection
+form03b::specify9	form03b::specify9	Ascitis	Ascites
 form03b::specify9	form03b::specify9	#NAME?	
 form03b::specify9	form03b::specify9	1	
 form03b::specify9	form03b::specify9	bloody content (NG)	
-form03b::specify9	form03b::specify9	abscent abdaminal well muscle	
-form03b::specify9	form03b::specify9	Tracheo Esophogial fistu	
-form03b::specify9	form03b::specify9	epigastric obd diistensi	
-form03b::specify9	form03b::specify9	Hepatomepal	
-form03b::specify9	form03b::specify9	firm to palpation	
-form03b::specify9	form03b::specify9	palpable kidney	
-form03b::specify9	form03b::specify9	Positive sign of fluid collection	
-form03b::specify9	form03b::specify9	Hypoactive	
-form03b::specify9	form03b::specify9	erythimatous abdomen minimal tendemess	
-form03b::specify9	form03b::specify9	Minimal Tendemess	
-form03b::specify9	form03b::specify9	Tender	
+form03b::specify9	form03b::specify9	abscent abdaminal well muscle	Absent abdominal wall muscle
+form03b::specify9	form03b::specify9	Tracheo Esophogial fistu	Tracheoesophageal fistula
+form03b::specify9	form03b::specify9	epigastric obd diistensi	Epigastric abdominal distension
+form03b::specify9	form03b::specify9	Hepatomepal	Hepatomegaly
+form03b::specify9	form03b::specify9	firm to palpation	Firm to palpation
+form03b::specify9	form03b::specify9	palpable kidney	Palpable kidney
+form03b::specify9	form03b::specify9	Positive sign of fluid collection	Fluid collection
+form03b::specify9	form03b::specify9	Hypoactive	Hypoactive
+form03b::specify9	form03b::specify9	erythimatous abdomen minimal tendemess	Erythematous abdomen with minimal tenderness
+form03b::specify9	form03b::specify9	Minimal Tendemess	Minimal tenderness
+form03b::specify9	form03b::specify9	Tender	Tender
 form03b::specify9	form03b::specify9	Protrded Intestine outside the skin	
-form03b::specify13	form03b::specify13	Club foot	
+form03b::specify13	form03b::specify13	Club foot	Club foot
 form03b::specify13	form03b::specify13	intlopemic amputated ettle loe (left)	
-form03b::specify13	form03b::specify13	polydacttly	
+form03b::specify13	form03b::specify13	polydacttly	Polydactyl
 form03b::specify13	form03b::specify13	pt lons amecie	
-form03b::specify13	form03b::specify13	syndactyly	
-form03b::specify13	form03b::specify13	polydacyly ......	
-form03b::specify13	form03b::specify13	hip dislocation	
-form03b::specify13	form03b::specify13	dub foot	
+form03b::specify13	form03b::specify13	syndactyly	Syndactyl
+form03b::specify13	form03b::specify13	polydacyly ......	Polydactyl
+form03b::specify13	form03b::specify13	hip dislocation	Hip dislocation
+form03b::specify13	form03b::specify13	dub foot	Club foot
 form03b::specify13	form03b::specify13	fist head (cachal)	
-form03b::specify13	form03b::specify13	( clup foot)	
-form03b::specify13	form03b::specify13	hip displasia	
-form03b::specify13	form03b::specify13	"Wrist Drop, Cyanotic left hand"	
+form03b::specify13	form03b::specify13	( clup foot)	Club foot
+form03b::specify13	form03b::specify13	hip displasia	Hip dysplasia
+form03b::specify13	form03b::specify13	"Wrist Drop, Cyanotic left hand"	Wrist drop, cyanotic left hand
 form03b::specify13	form03b::specify13	hyplatic left hand abscent finger	
 form03b::specify13	form03b::specify13	Haper extended of knce jont (both)	
 form03b::specify13	form03b::specify13	lacentio over left letchel thigh	
@@ -5729,10 +5997,10 @@ form03b::specify13	form03b::specify13	Hyper extenoin of joundis
 form03b::specify13	form03b::specify13	hyper external hip	
 form03b::specify13	form03b::specify13	Widegap b/n 1st & end tols	
 form03b::specify13	form03b::specify13	hypoplantic right thumbs	
-form03b::specify13	form03b::specify13	club too(postimal)	
+form03b::specify13	form03b::specify13	club too(postimal)	Club foot
 form03b::specify13	form03b::specify13	R+club foot H- valus depinity the lap	
-form03b::specify13	form03b::specify13	Short limbs	
-form03b::specify13	form03b::specify13	Baleted club foot	
+form03b::specify13	form03b::specify13	Short limbs	Short limbs
+form03b::specify13	form03b::specify13	Baleted club foot	Club feet
 form03b::specify13	form03b::specify13	hyper flxed whist	
 form03b::specify13	form03b::specify13	rocker botton feet	
 form03b::specify13	form03b::specify13	There 2*1cm Defect oval socral region covered by skin	
@@ -5741,15 +6009,15 @@ form03b::specify13	form03b::specify13	chanched fiest
 form03b::specify13	form03b::specify13	"Rocker botton feet, Clenclud fist"	
 form03b::specify13	form03b::specify13	Bilateral aducres foot	
 form03b::specify13	form03b::specify13	Left Upper extrimy injury 2^0 to birth traume	
-form03b::specify13	form03b::specify13	club foot on left Abscent thumb in left side	
-form03b::specify13	form03b::specify13	left club foot(medislly rotala)	
-form03b::specify13	form03b::specify13	club foot on left leg	
+form03b::specify13	form03b::specify13	club foot on left Abscent thumb in left side	Club foot, absent thumb
+form03b::specify13	form03b::specify13	left club foot(medislly rotala)	Club foot
+form03b::specify13	form03b::specify13	club foot on left leg	Club foot
 form03b::specify13	form03b::specify13	Right leg gangrin 2' to cold exposue	
-form03b::specify13	form03b::specify13	Syncactry	
+form03b::specify13	form03b::specify13	Syncactry	Syndactyl
 form03b::specify13	form03b::specify13	Post axial poldact bilatter	
-form03b::specify13	form03b::specify13	Bilateral club foot DDH left Hip	
+form03b::specify13	form03b::specify13	Bilateral club foot DDH left Hip	Club feet, developmental dysplasia of the hip
 form03b::specify13	form03b::specify13	Inetrnally rated left fare arm	
-form03b::specify13	form03b::specify13	Club feet	
+form03b::specify13	form03b::specify13	Club feet	Club feet
 form03b::specify13	form03b::specify13	congenital HIP dyplastic	
 form03b::specify13	form03b::specify13	spine ruptned swelling the lower back	
 form03b::specify13	form03b::specify13	Rocket bottom foat clencned fist	
@@ -5863,29 +6131,29 @@ form03b::n571specify	form03b::n571specify	broncho pnemonic
 form03b::n571specify	form03b::n571specify	Bilateral hyper inflated lunes(RDS)	"Bilateral hyperinflated lungs, respiratory distress syndrome"
 form03b::n571specify	form03b::n571specify	Bilateral Hyperinglated lung	Bilateral hyperinflated lungs
 form03b::n571specify	form03b::n571specify	Bilateral aivspace opacity with tnoreased lon volone	
-form03b::specify14	form03b::specify14	Distended bowel loops	
-form03b::specify14	form03b::specify14	Mutiple dilethd small boull 20 NEC	
-form03b::specify14	form03b::specify14	goseors abdominal boewl obstructia	
-form03b::specify14	form03b::specify14	distumend	
-form03b::specify14	form03b::specify14	Pending	
-form03b::specify14	form03b::specify14	large bowel obstruction	
-form03b::specify14	form03b::specify14	Daodinal Atnesia	
-form03b::specify14	form03b::specify14	Doduneal Atrese	
-form03b::specify14	form03b::specify14	dilated Stomach 20 obstruction 20	
-form03b::specify14	form03b::specify14	duodinoe atnesia	
-form03b::specify14	form03b::specify14	Heparo spleromgally	
-form03b::specify14	form03b::specify14	Jejunal atresia	
-form03b::specify14	form03b::specify14	"Multiple An liked, Distended bowl loops"	
-form03b::specify14	form03b::specify14	Dilated small bowl loop & stomach	
-form03b::specify14	form03b::specify14	Duodenal athesic sran of distended abd & bub	
-form03b::specify14	form03b::specify14	SBO-Jeujunal atresic	
-form03b::specify14	form03b::specify14	Dilated bowl loop	
-form03b::specify14	form03b::specify14	Teujinal Atresic	
-form03b::specify14	form03b::specify14	Distended lavge bowl loops	
+form03b::specify14	form03b::specify14	Distended bowel loops	Distended bowel loops
+form03b::specify14	form03b::specify14	Mutiple dilethd small boull 20 NEC	Necrotizing enterocolitis, multiple dilated small bowel
+form03b::specify14	form03b::specify14	goseors abdominal boewl obstructia	Bowel obstruction
+form03b::specify14	form03b::specify14	distumend	Distended
+form03b::specify14	form03b::specify14	Pending	Pending
+form03b::specify14	form03b::specify14	large bowel obstruction	Large bowel obstruction
+form03b::specify14	form03b::specify14	Daodinal Atnesia	Duodenal atresia
+form03b::specify14	form03b::specify14	Doduneal Atrese	Duodenal atresia
+form03b::specify14	form03b::specify14	dilated Stomach 20 obstruction 20	Obstruction
+form03b::specify14	form03b::specify14	duodinoe atnesia	Duodenal atresia
+form03b::specify14	form03b::specify14	Heparo spleromgally	Hepatosplenomegaly
+form03b::specify14	form03b::specify14	Jejunal atresia	Jejunal atresia
+form03b::specify14	form03b::specify14	"Multiple An liked, Distended bowl loops"	Distended bowel loops
+form03b::specify14	form03b::specify14	Dilated small bowl loop & stomach	Dilated small bowel loop and stomach
+form03b::specify14	form03b::specify14	Duodenal athesic sran of distended abd & bub	Duodenal atresia, distended abdomen
+form03b::specify14	form03b::specify14	SBO-Jeujunal atresic	Jejunal atresia
+form03b::specify14	form03b::specify14	Dilated bowl loop	Dilated bowel loop
+form03b::specify14	form03b::specify14	Teujinal Atresic	Jejunal atresia
+form03b::specify14	form03b::specify14	Distended lavge bowl loops	Distended large bowel loop
 form03b::specify14	form03b::specify14	Distended bowl loop with no air rectum 2 degree to CBO	
-form03b::specify14	form03b::specify14	distended esophagus stomach and bowl loops	
-form03b::specify14	form03b::specify14	distal bowl obstruction	
-form03b::specify14	form03b::specify14	SBO 2' to Didonal atresic	
+form03b::specify14	form03b::specify14	distended esophagus stomach and bowl loops	Distended esophagus, stomach, bowel loops
+form03b::specify14	form03b::specify14	distal bowl obstruction	Distal bowel obstruction
+form03b::specify14	form03b::specify14	SBO 2' to Didonal atresic	Duodenal atresia, SBO
 form03b::n601specify	form03b::n601specify	Cephal Hematoma	Cephalohematoma
 form03b::n601specify	form03b::n601specify	planred	Planned
 form03b::n601specify	form03b::n601specify	pendig	Pending
@@ -5931,6 +6199,7 @@ form03b::n601specify	form03b::n601specify	grade III	Grade 3
 form03b::n601specify	form03b::n601specify	IVH Grade 3	Intraventricular hemorrhage grade 3
 form03b::n601specify	form03b::n601specify	grade 2	Grade 2
 form03b::n601specify	form03b::n601specify	Grade 5 IVH	Intraventricular hemorrhage grade 5
+form03b::n601specify	form03b::n601specify	NA	:::UNDEF:::
 form03b::n611specify	form03b::n611specify	Ectopic kidneys	
 form03b::n611specify	form03b::n611specify	Mild to moderate left kidny Hydronephrosis	
 form03b::n611specify	form03b::n611specify	Acute renal paynelema insult	
@@ -7975,184 +8244,184 @@ form03b::n681specify	form03b::n681specify	decrease24mg/dl	24 mg/dL
 form03b::n681specify	form03b::n681specify	low 37	37 mg/dL
 form03b::n681specify	form03b::n681specify	Fungal yeast cell	Fungal yeast cell
 form03b::n691specify	form03b::n691specify	Klebsiella pneumonia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Gram negative rods	
-form03b::n691specify	form03b::n691specify	No bacterial Groneth	
-form03b::n691specify	form03b::n691specify	Gram Negative staphylococus	
-form03b::n691specify	form03b::n691specify	pending	
+form03b::n691specify	form03b::n691specify	Gram negative rods	Gram negative rods
+form03b::n691specify	form03b::n691specify	No bacterial Groneth	No growth
+form03b::n691specify	form03b::n691specify	Gram Negative staphylococus	Gram negative staphyl
+form03b::n691specify	form03b::n691specify	pending	Pending
 form03b::n691specify	form03b::n691specify	S.aureus	Staphylococcus aureus
 form03b::n691specify	form03b::n691specify	89MG/DL	
 form03b::n691specify	form03b::n691specify	Klebpialla	Klebsiella
 form03b::n691specify	form03b::n691specify	thereis growth tub difficeet to defecet	
 form03b::n691specify	form03b::n691specify	90mg/dl	
 form03b::n691specify	form03b::n691specify	Benidig	
-form03b::n691specify	form03b::n691specify	K.pheunaine	
-form03b::n691specify	form03b::n691specify	Ataph Acceses	
-form03b::n691specify	form03b::n691specify	Salmonala speies	
-form03b::n691specify	form03b::n691specify	Atraptococcus prelnanice	
-form03b::n691specify	form03b::n691specify	K.pneumia	
+form03b::n691specify	form03b::n691specify	K.pheunaine	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Ataph Acceses	Staphylococcus aureas
+form03b::n691specify	form03b::n691specify	Salmonala speies	Salmonella
+form03b::n691specify	form03b::n691specify	Atraptococcus prelnanice	Streptococcus
+form03b::n691specify	form03b::n691specify	K.pneumia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Remdig	
 form03b::n691specify	form03b::n691specify	Web 5- premour	
-form03b::n691specify	form03b::n691specify	"9 hm, tw-coci, s.areus"	
-form03b::n691specify	form03b::n691specify	negative	
-form03b::n691specify	form03b::n691specify	Reding	
-form03b::n691specify	form03b::n691specify	Not collected	
-form03b::n691specify	form03b::n691specify	K.pnenonia	
+form03b::n691specify	form03b::n691specify	"9 hm, tw-coci, s.areus"	Staphylococcus aureas
+form03b::n691specify	form03b::n691specify	negative	Negative
+form03b::n691specify	form03b::n691specify	Reding	Pending
+form03b::n691specify	form03b::n691specify	Not collected	Not done
+form03b::n691specify	form03b::n691specify	K.pnenonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsielle	Klebsiella
 form03b::n691specify	form03b::n691specify	Reshing	
 form03b::n691specify	form03b::n691specify	Klebral-pnemonia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	K-penumonia	
+form03b::n691specify	form03b::n691specify	K-penumonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	42gld	
 form03b::n691specify	form03b::n691specify	Klebsel Punon	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	No grouth	
+form03b::n691specify	form03b::n691specify	No grouth	No growth
 form03b::n691specify	form03b::n691specify	Staph Epidemion	
-form03b::n691specify	form03b::n691specify	Positive	
+form03b::n691specify	form03b::n691specify	Positive	Positive
 form03b::n691specify	form03b::n691specify	G negative rade seraria oderirera	
-form03b::n691specify	form03b::n691specify	No growth	
-form03b::n691specify	form03b::n691specify	cons	
-form03b::n691specify	form03b::n691specify	Goaglulase -ve staphylo cpccus specie	
-form03b::n691specify	form03b::n691specify	Pendl	
-form03b::n691specify	form03b::n691specify	G-Negative	
-form03b::n691specify	form03b::n691specify	G-ve-10d	
-form03b::n691specify	form03b::n691specify	K.Pneumonia	
-form03b::n691specify	form03b::n691specify	Nogrowth	
-form03b::n691specify	form03b::n691specify	K.Pnaumaia	
-form03b::n691specify	form03b::n691specify	pending/noguwli	
+form03b::n691specify	form03b::n691specify	No growth	No growth
+form03b::n691specify	form03b::n691specify	cons	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	Goaglulase -ve staphylo cpccus specie	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	Pendl	Pending
+form03b::n691specify	form03b::n691specify	G-Negative	Gram negative
+form03b::n691specify	form03b::n691specify	G-ve-10d	Gram negative rods
+form03b::n691specify	form03b::n691specify	K.Pneumonia	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Nogrowth	No growth
+form03b::n691specify	form03b::n691specify	K.Pnaumaia	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	pending/noguwli	Pending
 form03b::n691specify	form03b::n691specify	Kleysle	
 form03b::n691specify	form03b::n691specify	5	
-form03b::n691specify	form03b::n691specify	5 alleus	
-form03b::n691specify	form03b::n691specify	5 qureus * 6 wh	
-form03b::n691specify	form03b::n691specify	Negstive	
+form03b::n691specify	form03b::n691specify	5 alleus	Staphylococcus aureas
+form03b::n691specify	form03b::n691specify	5 qureus * 6 wh	Staphylococcus aureas
+form03b::n691specify	form03b::n691specify	Negstive	No growth
 form03b::n691specify	form03b::n691specify	Klepsumpnemia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	g-post-coci	
-form03b::n691specify	form03b::n691specify	Positiv	
-form03b::n691specify	form03b::n691specify	Negativ	
-form03b::n691specify	form03b::n691specify	Poitive	
-form03b::n691specify	form03b::n691specify	Grom-ve	
-form03b::n691specify	form03b::n691specify	c.+ve coci	
-form03b::n691specify	form03b::n691specify	Serratiaoderifera	
-form03b::n691specify	form03b::n691specify	G.Negativ	
-form03b::n691specify	form03b::n691specify	C-ve hods	
-form03b::n691specify	form03b::n691specify	C-velod	
-form03b::n691specify	form03b::n691specify	Negetive	
-form03b::n691specify	form03b::n691specify	Possitive	
-form03b::n691specify	form03b::n691specify	posetive	
-form03b::n691specify	form03b::n691specify	Negayive	
+form03b::n691specify	form03b::n691specify	g-post-coci	Gram positive cocci
+form03b::n691specify	form03b::n691specify	Positiv	Positive
+form03b::n691specify	form03b::n691specify	Negativ	No growth
+form03b::n691specify	form03b::n691specify	Poitive	Positive
+form03b::n691specify	form03b::n691specify	Grom-ve	Gram negative
+form03b::n691specify	form03b::n691specify	c.+ve coci	Coagulase-positive cocci
+form03b::n691specify	form03b::n691specify	Serratiaoderifera	Serratia odorifera
+form03b::n691specify	form03b::n691specify	G.Negativ	Gram negative
+form03b::n691specify	form03b::n691specify	C-ve hods	Coagulase-negative rods
+form03b::n691specify	form03b::n691specify	C-velod	Coagulase-negative rods
+form03b::n691specify	form03b::n691specify	Negetive	No growth
+form03b::n691specify	form03b::n691specify	Possitive	Positive
+form03b::n691specify	form03b::n691specify	posetive	Positive
+form03b::n691specify	form03b::n691specify	Negayive	No growth
 form03b::n691specify	form03b::n691specify	Post-cons	
 form03b::n691specify	form03b::n691specify	sehetin 0 dufela	
 form03b::n691specify	form03b::n691specify	selfnodlegane	
-form03b::n691specify	form03b::n691specify	Positive -Seratia oderfen	
-form03b::n691specify	form03b::n691specify	Serratio oderzere	
-form03b::n691specify	form03b::n691specify	S.odorifera	
+form03b::n691specify	form03b::n691specify	Positive -Seratia oderfen	Serratia odorifera
+form03b::n691specify	form03b::n691specify	Serratio oderzere	Serratia odorifera
+form03b::n691specify	form03b::n691specify	S.odorifera	Serratia odorifera
 form03b::n691specify	form03b::n691specify	sodorigena belacrona	
-form03b::n691specify	form03b::n691specify	Postive	
-form03b::n691specify	form03b::n691specify	Posetive But no Growth	
-form03b::n691specify	form03b::n691specify	s.oderifoa	
+form03b::n691specify	form03b::n691specify	Postive	Positive
+form03b::n691specify	form03b::n691specify	Posetive But no Growth	Positive
+form03b::n691specify	form03b::n691specify	s.oderifoa	Serratia odorifera
 form03b::n691specify	form03b::n691specify	Klebsella pneumonea grows	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	S.oderifera	
-form03b::n691specify	form03b::n691specify	Growth of serratia adenogen	
-form03b::n691specify	form03b::n691specify	Posidiue-Setatia oderater	
-form03b::n691specify	form03b::n691specify	coglse negative staph	
-form03b::n691specify	form03b::n691specify	5 odorifera	
-form03b::n691specify	form03b::n691specify	staph.spp	
+form03b::n691specify	form03b::n691specify	S.oderifera	Serratia odorifera
+form03b::n691specify	form03b::n691specify	Growth of serratia adenogen	Serratia odorifera
+form03b::n691specify	form03b::n691specify	Posidiue-Setatia oderater	Serratia odorifera
+form03b::n691specify	form03b::n691specify	coglse negative staph	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	5 odorifera	Serratia odorifera
+form03b::n691specify	form03b::n691specify	staph.spp	Staphylococcus
 form03b::n691specify	form03b::n691specify	semetro odomegnis	
 form03b::n691specify	form03b::n691specify	Klrbddrlr pnemone	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	S.aurews	Staphylococcus aureus
-form03b::n691specify	form03b::n691specify	5.odohjerua	
-form03b::n691specify	form03b::n691specify	K-pneumonia	
-form03b::n691specify	form03b::n691specify	K.preumoine	
-form03b::n691specify	form03b::n691specify	Gram Positive cocci	
+form03b::n691specify	form03b::n691specify	5.odohjerua	Serratia odorifera
+form03b::n691specify	form03b::n691specify	K-pneumonia	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	K.preumoine	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Gram Positive cocci	Gram positive cocci
 form03b::n691specify	form03b::n691specify	Klebsia pneu	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Media canot growth organism	
-form03b::n691specify	form03b::n691specify	Grom-Wrod	
-form03b::n691specify	form03b::n691specify	Gross negative Rode	
+form03b::n691specify	form03b::n691specify	Media canot growth organism	No growth
+form03b::n691specify	form03b::n691specify	Grom-Wrod	Gram negative rod
+form03b::n691specify	form03b::n691specify	Gross negative Rode	Gram negative rod
 form03b::n691specify	form03b::n691specify	#NAME?	
-form03b::n691specify	form03b::n691specify	Positive but abee to to be grown	
-form03b::n691specify	form03b::n691specify	Positive/Nogrowth	
+form03b::n691specify	form03b::n691specify	Positive but abee to to be grown	Positive
+form03b::n691specify	form03b::n691specify	Positive/Nogrowth	Positive
 form03b::n691specify	form03b::n691specify	S.hyremy	
-form03b::n691specify	form03b::n691specify	penday	
-form03b::n691specify	form03b::n691specify	5. Oderifera	
-form03b::n691specify	form03b::n691specify	K.pneumonale	
-form03b::n691specify	form03b::n691specify	Serratia oderefers	
-form03b::n691specify	form03b::n691specify	"Elebssele,K.Pneumanea"	
-form03b::n691specify	form03b::n691specify	Grow-WRods	
-form03b::n691specify	form03b::n691specify	K.pneumonie	
-form03b::n691specify	form03b::n691specify	K.Pneummion	
-form03b::n691specify	form03b::n691specify	Negativr	
-form03b::n691specify	form03b::n691specify	Pendiry	
-form03b::n691specify	form03b::n691specify	Enterobacter spro	
-form03b::n691specify	form03b::n691specify	Semati odorofce	
-form03b::n691specify	form03b::n691specify	the media was not abler to gram to organism	
-form03b::n691specify	form03b::n691specify	Nehativr	
-form03b::n691specify	form03b::n691specify	pendep	
-form03b::n691specify	form03b::n691specify	S.avres	
-form03b::n691specify	form03b::n691specify	Pedy	
-form03b::n691specify	form03b::n691specify	No	
-form03b::n691specify	form03b::n691specify	K.0 zenae	
+form03b::n691specify	form03b::n691specify	penday	Pending
+form03b::n691specify	form03b::n691specify	5. Oderifera	Serratia odorifera
+form03b::n691specify	form03b::n691specify	K.pneumonale	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Serratia oderefers	Serratia odorifera
+form03b::n691specify	form03b::n691specify	"Elebssele,K.Pneumanea"	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Grow-WRods	Gram negative rods
+form03b::n691specify	form03b::n691specify	K.pneumonie	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	K.Pneummion	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	Negativr	No growth
+form03b::n691specify	form03b::n691specify	Pendiry	Pending
+form03b::n691specify	form03b::n691specify	Enterobacter spro	Enterobacter
+form03b::n691specify	form03b::n691specify	Semati odorofce	Serratia odorifera
+form03b::n691specify	form03b::n691specify	the media was not abler to gram to organism	Positive
+form03b::n691specify	form03b::n691specify	Nehativr	Negative
+form03b::n691specify	form03b::n691specify	pendep	Pending
+form03b::n691specify	form03b::n691specify	S.avres	Staphylococcus aureus
+form03b::n691specify	form03b::n691specify	Pedy	Pending
+form03b::n691specify	form03b::n691specify	No	No growth
+form03b::n691specify	form03b::n691specify	K.0 zenae	Klebsiella ozaenae
 form03b::n691specify	form03b::n691specify	klebsele pnemunonia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	S.Veridan	
-form03b::n691specify	form03b::n691specify	K.Pneymonia	
-form03b::n691specify	form03b::n691specify	gm-ve	
+form03b::n691specify	form03b::n691specify	S.Veridan	Streptococcus viridans
+form03b::n691specify	form03b::n691specify	K.Pneymonia	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	gm-ve	Gram negative
 form03b::n691specify	form03b::n691specify	Klebsellc SPP	Klebsiella
 form03b::n691specify	form03b::n691specify	Klebsella	Klebsiella
-form03b::n691specify	form03b::n691specify	Acitinofacefer	
+form03b::n691specify	form03b::n691specify	Acitinofacefer	Acinetobacter
 form03b::n691specify	form03b::n691specify	klebselle oxytoas	Klebsiella oxytoca
-form03b::n691specify	form03b::n691specify	Klebs -ve	
-form03b::n691specify	form03b::n691specify	K.Pnuemona	
-form03b::n691specify	form03b::n691specify	klebsalle azena	
-form03b::n691specify	form03b::n691specify	K.Ozena	
-form03b::n691specify	form03b::n691specify	Klebsala Afena	
-form03b::n691specify	form03b::n691specify	Not yet arived	
-form03b::n691specify	form03b::n691specify	Contaminate	
-form03b::n691specify	form03b::n691specify	colus contaminant	
-form03b::n691specify	form03b::n691specify	No grwoth	
-form03b::n691specify	form03b::n691specify	K.ozenoe	
-form03b::n691specify	form03b::n691specify	no result pocumented	
-form03b::n691specify	form03b::n691specify	Acinobacter species	
+form03b::n691specify	form03b::n691specify	Klebs -ve	Klebsiella negative
+form03b::n691specify	form03b::n691specify	K.Pnuemona	Klebsiella pneumoniae
+form03b::n691specify	form03b::n691specify	klebsalle azena	Klebsiella ozaenae
+form03b::n691specify	form03b::n691specify	K.Ozena	Klebsiella ozaenae
+form03b::n691specify	form03b::n691specify	Klebsala Afena	Klebsiella ozaenae
+form03b::n691specify	form03b::n691specify	Not yet arived	Pending
+form03b::n691specify	form03b::n691specify	Contaminate	Contaminant
+form03b::n691specify	form03b::n691specify	colus contaminant	Contaminant
+form03b::n691specify	form03b::n691specify	No grwoth	No growth
+form03b::n691specify	form03b::n691specify	K.ozenoe	Klebsiella ozaenae
+form03b::n691specify	form03b::n691specify	no result pocumented	Missing
+form03b::n691specify	form03b::n691specify	Acinobacter species	Acinetobacter
 form03b::n691specify	form03b::n691specify	klebside preumeria resistant strain	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Entenobactor	
+form03b::n691specify	form03b::n691specify	Entenobactor	Enterobacter
 form03b::n691specify	form03b::n691specify	Klebsiala	Klebsiella
-form03b::n691specify	form03b::n691specify	K. pneumonia	
+form03b::n691specify	form03b::n691specify	K. pneumonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsila pnemoric seng for ciprofloce	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Positive.	
+form03b::n691specify	form03b::n691specify	Positive.	Positive
 form03b::n691specify	form03b::n691specify	Klebsila	Klebsiella
-form03b::n691specify	form03b::n691specify	E-coil/Postive/	
-form03b::n691specify	form03b::n691specify	staphlococus growth coaglulase Negative	
-form03b::n691specify	form03b::n691specify	Coaglucose Negative staphlococus	
-form03b::n691specify	form03b::n691specify	cagulase-ve stapn growth	
-form03b::n691specify	form03b::n691specify	gram-ve rods	
+form03b::n691specify	form03b::n691specify	E-coil/Postive/	Escherichia coli
+form03b::n691specify	form03b::n691specify	staphlococus growth coaglulase Negative	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	Coaglucose Negative staphlococus	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	cagulase-ve stapn growth	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	gram-ve rods	Gram negative rods
 form03b::n691specify	form03b::n691specify	Postive -Klebsila pnemonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsian pnemonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsiela pneuomonia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Congulase -ve staphylococus	
-form03b::n691specify	form03b::n691specify	Gram positive rod growth seen	
+form03b::n691specify	form03b::n691specify	Congulase -ve staphylococus	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	Gram positive rod growth seen	Gram positive rods
 form03b::n691specify	form03b::n691specify	Klebsila oxylate	Klebsiella oxytoca
-form03b::n691specify	form03b::n691specify	cagvlas -ve staph	
-form03b::n691specify	form03b::n691specify	coaglucose staph negative	
+form03b::n691specify	form03b::n691specify	cagvlas -ve staph	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	coaglucose staph negative	Coagulase-negative staphylococci
 form03b::n691specify	form03b::n691specify	Gram positive coca in cluster.-coagulose negative staph	
-form03b::n691specify	form03b::n691specify	Acinobactera	
-form03b::n691specify	form03b::n691specify	cagulose negative staphylococus	
-form03b::n691specify	form03b::n691specify	savreus	
+form03b::n691specify	form03b::n691specify	Acinobactera	Acinetobacter
+form03b::n691specify	form03b::n691specify	cagulose negative staphylococus	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	savreus	Staphylococcus aureus
 form03b::n691specify	form03b::n691specify	klebsilla pnemonia	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Yeast cell grow	
-form03b::n691specify	form03b::n691specify	Coaglucose negative staphlylococas growth	
-form03b::n691specify	form03b::n691specify	yeat cell growth	
-form03b::n691specify	form03b::n691specify	E-coli	
+form03b::n691specify	form03b::n691specify	Yeast cell grow	Yeast
+form03b::n691specify	form03b::n691specify	Coaglucose negative staphlylococas growth	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	yeat cell growth	Yeast
+form03b::n691specify	form03b::n691specify	E-coli	Escherichia coli
 form03b::n691specify	form03b::n691specify	Klebsilla phemonic	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	many yeast cell growth	
+form03b::n691specify	form03b::n691specify	many yeast cell growth	Yeast
 form03b::n691specify	form03b::n691specify	"S.Aureus .WBC-11,Lymp-63.6,"	Staphylococcus aureus
-form03b::n691specify	form03b::n691specify	K.pnemonia	
+form03b::n691specify	form03b::n691specify	K.pnemonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	S.aures	Staphylococcus aureus
-form03b::n691specify	form03b::n691specify	coaglucose negative staph	
-form03b::n691specify	form03b::n691specify	Many yeast cell	
-form03b::n691specify	form03b::n691specify	coaglucose negative staphcolocus	
+form03b::n691specify	form03b::n691specify	coaglucose negative staph	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	Many yeast cell	Yeast
+form03b::n691specify	form03b::n691specify	coaglucose negative staphcolocus	Coagulase-negative staphylococci
 form03b::n691specify	form03b::n691specify	Klebsilla Pnemone	Klebsiella pneumoniae
-form03b::n691specify	form03b::n691specify	Entrococus species	
+form03b::n691specify	form03b::n691specify	Entrococus species	Enterococcus
 form03b::n691specify	form03b::n691specify	klebsilla pneumonia	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsilla pnemonic	Klebsiella pneumoniae
 form03b::n691specify	form03b::n691specify	Klebsilla	Klebsiella
-form03b::n691specify	form03b::n691specify	coagulase -ve stapricocus	
-form03b::n691specify	form03b::n691specify	coahulase -ve stape	
-form03b::n691specify	form03b::n691specify	coagulase -ve staph coccus	
+form03b::n691specify	form03b::n691specify	coagulase -ve stapricocus	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	coahulase -ve stape	Coagulase-negative staphylococci
+form03b::n691specify	form03b::n691specify	coagulase -ve staph coccus	Coagulase-negative staphylococci
 form03b::n701specify	form03b::n701specify	Total proten High-175g	
 form03b::n701specify	form03b::n701specify	100 cells	
 form03b::n701specify	form03b::n701specify	csf gueloce=29mg/dl	
@@ -8170,12 +8439,12 @@ form03b::n701specify	form03b::n701specify	troumetic threetmes
 form03b::n701specify	form03b::n701specify	Gevc-82mg/dl photc-1064.7	
 form03b::n701specify	form03b::n701specify	"WBC-5,P=1505,GW-2.94"	
 form03b::n701specify	form03b::n701specify	Traumotic rufatly	
-form03b::n701specify	form03b::n701specify	Nocell	
+form03b::n701specify	form03b::n701specify	Nocell	No cells
 form03b::n701specify	form03b::n701specify	"55cell N=10%,GM=90%"	
 form03b::n701specify	form03b::n701specify	"Nocall, BW-48, protin-1594"	
-form03b::n701specify	form03b::n701specify	No cell	
+form03b::n701specify	form03b::n701specify	No cell	No cells
 form03b::n701specify	form03b::n701specify	"WBC=170,Gew=192 Prot=138.4"	
-form03b::n701specify	form03b::n701specify	Negative	
+form03b::n701specify	form03b::n701specify	Negative	No cells
 form03b::n701specify	form03b::n701specify	WBC=50 cells Gre=75% hy=25%	
 form03b::n701specify	form03b::n701specify	traumatic	
 form03b::n701specify	form03b::n701specify	Turbid csf(color) Glucose-36.9 Proten=126.8 LDH=51	
@@ -8416,38 +8685,38 @@ form03b::n761specify	form03b::n761specify	increase
 form03b::n761specify	form03b::n761specify	2.9g/dl	
 form03b::n761specify	form03b::n761specify	2.23	
 form03b::n761specify	form03b::n761specify	10w	
-form03b::n781specify	form03b::n781specify	Reactive	
+form03b::n781specify	form03b::n781specify	Reactive	Positive
 form03b::n781specify	form03b::n781specify	RR	
-form03b::n781specify	form03b::n781specify	RVI posetive	
-form03b::n781specify	form03b::n781specify	RVI exposed	
+form03b::n781specify	form03b::n781specify	RVI posetive	RVI positive
+form03b::n781specify	form03b::n781specify	RVI exposed	RVI exposed
 form03b::n781specify	form03b::n781specify	N-R	
 form03b::n781specify	form03b::n781specify	Sercreature	
-form03b::n781specify	form03b::n781specify	HIV exposed	
-form03b::n781specify	form03b::n781specify	HIV exposed infant	
-form03b::n781specify	form03b::n781specify	veactive	
+form03b::n781specify	form03b::n781specify	HIV exposed	Exposed
+form03b::n781specify	form03b::n781specify	HIV exposed infant	Exposed
+form03b::n781specify	form03b::n781specify	veactive	Positive
 form03b::n781specify	form03b::n781specify	#NAME?	
-form03b::n781specify	form03b::n781specify	HIV +ve	
-form03b::n781specify	form03b::n781specify	on ART	
-form03b::n781specify	form03b::n781specify	Known RVI Mother	
-form03b::n781specify	form03b::n781specify	Reaitive	
-form03b::n781specify	form03b::n781specify	Known RUI	
-form03b::n781specify	form03b::n781specify	know rui	
-form03b::n781specify	form03b::n781specify	HIV postive	
-form03b::n781specify	form03b::n781specify	Posetive	
-form03b::n781specify	form03b::n781specify	Negative	
-form03b::n781specify	form03b::n781specify	positive	
-form03b::n781specify	form03b::n781specify	HIV Positive	
-form03b::n781specify	form03b::n781specify	Exposed	
-form03b::n781specify	form03b::n781specify	Postive	
-form03b::n781specify	form03b::n781specify	RVS exposed	
-form03b::n781specify	form03b::n781specify	RVI exposed mfat	
-form03b::n781specify	form03b::n781specify	Yes	
-form03b::n781specify	form03b::n781specify	HIV +ve on HAART	
-form03b::n781specify	form03b::n781specify	Mother HIV +ve on HAART	
-form03b::n781specify	form03b::n781specify	raective(known and HAART for part 7 years)	
-form03b::n781specify	form03b::n781specify	HIV-postive	
-form03b::n781specify	form03b::n781specify	Positive newly )not on HAART	
-form03b::n781specify	form03b::n781specify	HIV-posetive	
+form03b::n781specify	form03b::n781specify	HIV +ve	Positive	Positive
+form03b::n781specify	form03b::n781specify	on ART	Positive
+form03b::n781specify	form03b::n781specify	Known RVI Mother	RVI positive
+form03b::n781specify	form03b::n781specify	Reaitive	Positive
+form03b::n781specify	form03b::n781specify	Known RUI	RVI positive
+form03b::n781specify	form03b::n781specify	know rui	RVI positive
+form03b::n781specify	form03b::n781specify	HIV postive	Positive
+form03b::n781specify	form03b::n781specify	Posetive	Positive
+form03b::n781specify	form03b::n781specify	Negative	Negative
+form03b::n781specify	form03b::n781specify	positive	Positive
+form03b::n781specify	form03b::n781specify	HIV Positive	Positive
+form03b::n781specify	form03b::n781specify	Exposed	Exposed
+form03b::n781specify	form03b::n781specify	Postive	Positive
+form03b::n781specify	form03b::n781specify	RVS exposed	RVI exposed
+form03b::n781specify	form03b::n781specify	RVI exposed mfat	RVI exposed
+form03b::n781specify	form03b::n781specify	Yes	Positive
+form03b::n781specify	form03b::n781specify	HIV +ve on HAART	Positive
+form03b::n781specify	form03b::n781specify	Mother HIV +ve on HAART	Positive
+form03b::n781specify	form03b::n781specify	raective(known and HAART for part 7 years)	Positive
+form03b::n781specify	form03b::n781specify	HIV-postive	Positive
+form03b::n781specify	form03b::n781specify	Positive newly )not on HAART	Positive
+form03b::n781specify	form03b::n781specify	HIV-posetive	Positive
 form03b::n791specify	form03b::n791specify	"SGPT = 644, SGOT = 52"	
 form03b::n791specify	form03b::n791specify	"SGPT 644, SGOT 52"	
 form03b::n791specify	form03b::n791specify	PT 20s	
@@ -9225,6 +9494,7 @@ form03b::n81specifytest	form03b::n81specifytest	"RFT-Creathin-010, urea-20.3"
 form03b::n81specifytest	form03b::n81specifytest	urinanalysis-Normal	Urinalysis normal
 form03b::n81specifytest	form03b::n81specifytest	RFT-urea-21 creat-1.6	
 form03b::n81specifytest	form03b::n81specifytest	Comb test-ve retic count-5	
+form03b::n81othertest	form03b::n81othertest	missing	Missing
 form03b::specify15	form03b::specify15	HMD	Respiratory distress syndrome
 form03b::specify15	form03b::specify15	N.Hyperbilirubmini	Hyperbilirubinemia
 form03b::specify15	form03b::specify15	HMD+TTN	"Respiratory distress syndrome, transient tachypnea of the newborn"
@@ -9332,8 +9602,8 @@ form03b::specify17	form03b::specify17	mothenal choviemiugs
 form03b::specify17	form03b::specify17	Mathrnal choriamionith	Chorioamnionitis
 form03b::specify17	form03b::specify17	Prom+mother chriomntotis	
 form03b::specify17	form03b::specify17	"mother chriomnotitis,mother APH"	
-form03b::specify17	form03b::specify17	Baby of mother with measil	Measle
-form03b::specify17	form03b::specify17	B.of mother with measil	
+form03b::specify17	form03b::specify17	Baby of mother with measil	Mother has measles
+form03b::specify17	form03b::specify17	B.of mother with measil	Mother has measles
 form03b::specify17	form03b::specify17	Moth PROM	PROM
 form03b::specify17	form03b::specify17	"Mother choriemert, Pnolegd prom"	"Chorioamnionitis, prolonged ROM"
 form03b::specify17	form03b::specify17	Mothernal cholienation	Chorioamnionitis
@@ -9361,7 +9631,7 @@ form03b::specify17	form03b::specify17	HVB exposed	Hepatitis B-exposed
 form03b::specify17	form03b::specify17	prolonged PROM	PROM
 form03b::specify17	form03b::specify17	Mother width UT!	Maternal urinary tract infection
 form03b::specify17	form03b::specify17	PROM maternal cholent	
-form03b::specify17	form03b::specify17	Mother chrionnots	
+form03b::specify17	form03b::specify17	Mother chrionnots	Chorioamnionitis
 form03b::specify17	form03b::specify17	PROM Choroutiv mothe	
 form03b::specify17	form03b::specify17	TORCH(cmrmetic)	TORCH syndrome
 form03b::specify17	form03b::specify17	Per term PROM	PROM
@@ -9379,7 +9649,7 @@ form03b::specify17	form03b::specify17	HBSAG exposed
 form03b::specify17	form03b::specify17	choremonontic mothe with proconged rupture of mebloe	"Chorioamnionitis, prolonged ROM"
 form03b::specify17	form03b::specify17	prologel ruple of merbra	Prolonged ROM
 form03b::specify17	form03b::specify17	No	No
-form03b::specify17	form03b::specify17	Phologed Rupthe of	
+form03b::specify17	form03b::specify17	Phologed Rupthe of	Prolonged ROM
 form03b::specify17	form03b::specify17	baby of PROM mother	PROM
 form03b::specify17	form03b::specify17	Hospital twses Infection	
 form03b::specify17	form03b::specify17	choriomnionitis	Chorioamnionitis
@@ -9392,7 +9662,7 @@ form03b::specify17	form03b::specify17	neonat of mother with prom	PROM
 form03b::specify17	form03b::specify17	Neonatof mother with Prom	PROM
 form03b::specify17	form03b::specify17	HAI	Hospital acquired infection
 form03b::specify17	form03b::specify17	Baby of mother with prolonged and Rom(72hrs)	Prolonged ROM
-form03b::specify17	form03b::specify17	Baby of mother with preferm Prom and chonbamosis	
+form03b::specify17	form03b::specify17	Baby of mother with preferm Prom and chonbamosis	Chorioamnionitis, PROM
 form03b::specify17	form03b::specify17	Neonatal conjectivits	Conjunctivitis
 form03b::specify17	form03b::specify17	RVI exposed	RVI-exposed
 form03b::specify17	form03b::specify17	preterm Prom 30hr	Prolonged PROM
@@ -9413,22 +9683,22 @@ form03b::specify18	form03b::specify18	thronbocytopenie	Thrombocytopenia
 form03b::specify18	form03b::specify18	Throbocygy????	
 form03b::specify18	form03b::specify18	Thrombocytopia	Thrombocytopenia
 form03b::specify18	form03b::specify18	thrombocytopmia	Thrombocytopenia
-form03b::specify18	form03b::specify18	Thrombocytop	Thrombocytopenia
+form03b::specify18	form03b::specify18	Thrombocytop	
 form03b::specify18	form03b::specify18	Thrombocytops??	
 form03b::specify18	form03b::specify18	Throbocytomia	
 form03b::specify18	form03b::specify18	Ma So4 Effect	Magnesium sulfate effect
-form03b::specify18	form03b::specify18	Hydropsfitali	
+form03b::specify18	form03b::specify18	Hydropsfitali	Hydrops fetalis
 form03b::specify18	form03b::specify18	Twin to twin transfion	Twin to twin transfusion syndrome
 form03b::specify18	form03b::specify18	Umblical bleeding 2o to united cord	
-form03b::specify18	form03b::specify18	Hydros fetalis	
+form03b::specify18	form03b::specify18	Hydros fetalis	Hydrops fetalis
 form03b::specify18	form03b::specify18	Thrombrocto print	
 form03b::specify18	form03b::specify18	Twin-Twin transtion	Twin to twin transfusion syndrome
 form03b::specify18	form03b::specify18	Twin=Twin tranfh	Twin to twin transfusion syndrome
 form03b::specify18	form03b::specify18	.	:::UNDEF:::
 form03b::specify18	form03b::specify18	Thunbotpnr	
 form03b::specify18	form03b::specify18	Hemolyisc Disule	
-form03b::specify18	form03b::specify18	Minor Incopatehiliy	
-form03b::specify18	form03b::specify18	Thrombocytopes	
+form03b::specify18	form03b::specify18	Minor Incopatehiliy	Minor incompatibility
+form03b::specify18	form03b::specify18	Thrombocytopes	Thrombocytosis
 form03b::specify18	form03b::specify18	Thorbytopica	
 form03b::specify18	form03b::specify18	Thrombocytopnia	Thrombocytopenia
 form03b::specify18	form03b::specify18	trombocytopes	
@@ -9438,29 +9708,29 @@ form03b::specify18	form03b::specify18	thromboysopere
 form03b::specify18	form03b::specify18	Thrombocytopnia Anemia	Thrombocytopenia
 form03b::specify18	form03b::specify18	Trombocytopensis	
 form03b::specify18	form03b::specify18	Thrombocytropeme	Thrombocytopenia
-form03b::specify18	form03b::specify18	Trnombcytpen	
-form03b::specify18	form03b::specify18	Tmorbaytopene	
+form03b::specify18	form03b::specify18	Trnombcytpen	Thrombocytopenia
+form03b::specify18	form03b::specify18	Tmorbaytopene	Thrombocytopenia
 form03b::specify18	form03b::specify18	Thrombocytopene	Thrombocytopenia
 form03b::specify18	form03b::specify18	RH -ve mother Twin A	"Rh-negative mother, twin"
 form03b::specify18	form03b::specify18	RV1 Exposed	RVI-exposed
-form03b::specify18	form03b::specify18	thrombocytopsis	
+form03b::specify18	form03b::specify18	thrombocytopsis	Thrombocytosis
 form03b::specify18	form03b::specify18	Subgalial hemorhage	Subgaleal hemorrhage
-form03b::specify18	form03b::specify18	thombogtopene	
+form03b::specify18	form03b::specify18	thombogtopene	Thrombocytopenia
 form03b::specify18	form03b::specify18	Thrombecy	
-form03b::specify18	form03b::specify18	RH-ul chother(unsemtized)	
+form03b::specify18	form03b::specify18	RH-ul chother(unsemtized)	Rh negative mother, unsensitized
 form03b::specify18	form03b::specify18	Thorbcytopene	
 form03b::specify18	form03b::specify18	Tmoretogspe	
 form03b::specify18	form03b::specify18	Thrombacytopene	Thrombocytopenia
 form03b::specify18	form03b::specify18	ds done for ppleus ds scal in labor	
-form03b::specify18	form03b::specify18	RH-Uemothen Cotwni death	
+form03b::specify18	form03b::specify18	RH-Uemothen Cotwni death	Rh negative mother, twin death
 form03b::specify18	form03b::specify18	Thrombocytopine.	Thrombocytopenia
 form03b::specify18	form03b::specify18	"Thrombocytopine, Severe ocfehydromnic with APH for C/s mother"	
 form03b::specify18	form03b::specify18	Plooged premothe ruputue of membran	
 form03b::specify18	form03b::specify18	Twin B	Twin
-form03b::specify18	form03b::specify18	Meternal Antepetal Hemnonag	
-form03b::specify18	form03b::specify18	Thombocytopine	
+form03b::specify18	form03b::specify18	Meternal Antepetal Hemnonag	Antenatal hemorrhage
+form03b::specify18	form03b::specify18	Thombocytopine	Thrombocytopenia
 form03b::specify18	form03b::specify18	thombocytopein RV1 exposed	
-form03b::specify18	form03b::specify18	thorubcytopin	
+form03b::specify18	form03b::specify18	thorubcytopin	Thrombocytopenia
 form03b::specify18	form03b::specify18	Rh negative mother unsensitized	Rh-negative mother (unsensitized)
 form03b::specify18	form03b::specify18	Twin A	Twin
 form03b::specify18	form03b::specify18	Thrombacyts	
@@ -9471,11 +9741,11 @@ form03b::specify18	form03b::specify18	Thrombigep
 form03b::specify18	form03b::specify18	thrombocy to pnia	Thrombocytopenia
 form03b::specify18	form03b::specify18	neutropia	Neutropenia
 form03b::specify18	form03b::specify18	No	No
-form03b::specify18	form03b::specify18	thonboytopina	
+form03b::specify18	form03b::specify18	thonboytopina	Thrombocytopenia
 form03b::specify18	form03b::specify18	Thrombocytoprea	Thrombocytopenia
 form03b::specify18	form03b::specify18	Thrombocy topria ploycythemia	
 form03b::specify18	form03b::specify18	Thrombocy	
-form03b::specify18	form03b::specify18	neutropnia thrombocy	
+form03b::specify18	form03b::specify18	neutropnia thrombocy	Neutropenia, thrombocytopenia
 form03b::specify18	form03b::specify18	"preterm,LBw"	"Low birth weight, preterm"
 form03b::specify18	form03b::specify18	throbocytopenia	Thrombocytopenia
 form03b::specify18	form03b::specify18	ABO-setup	ABO incompatibility
@@ -9486,36 +9756,36 @@ form03b::specify18	form03b::specify18	"leukopenia,thrombocytopenia"	"Leukopenia,
 form03b::specify18	form03b::specify18	Thrmbocypopenia	Thrombocytopenia
 form03b::specify18	form03b::specify18	ABO setup	ABO incompatibility
 form03b::specify18	form03b::specify18	RH-Sorup	Rh incompatibility
-form03b::specify18	form03b::specify18	Discardant twins	
+form03b::specify18	form03b::specify18	Discardant twins	Discordant twins	
 form03b::specify18	form03b::specify18	Thrombocy topenia	Thrombocytopenia
 form03b::specify18	form03b::specify18	Bneat feeding joundical	"Breast feeding, jaundice"
 form03b::specify18	form03b::specify18	baby of RH -ve mother	Rh-negative mother
 form03b::specify18	form03b::specify18	RH setup	Rh incompatibility
 form03b::specify18	form03b::specify18	Neonate of mother in APH	Antepartum hemorrhage
-form03b::specify18	form03b::specify18	Thrombocytopenia PLT decrease	
-form03b::neurologicspecify	form03b::neurologicspecify	n	
-form03b::neurologicspecify	form03b::neurologicspecify	TE-Fistula	
+form03b::specify18	form03b::specify18	Thrombocytopenia PLT decrease	Thrombocytopenia
+form03b::neurologicspecify	form03b::neurologicspecify	n	:::UNDEF:::
+form03b::neurologicspecify	form03b::neurologicspecify	TE-Fistula	Tracheoesophageal fistula
 form03b::neurologicspecify	form03b::neurologicspecify	CHD	
-form03b::neurologicspecify	form03b::neurologicspecify	wrist(lt) drop	
+form03b::neurologicspecify	form03b::neurologicspecify	wrist(lt) drop	Wrist drop
 form03b::neurologicspecify	form03b::neurologicspecify	Hypoplastic left hand	
-form03b::neurologicspecify	form03b::neurologicspecify	Hyper extended knel jont	
-form03b::neurologicspecify	form03b::neurologicspecify	Subgalael hge	
+form03b::neurologicspecify	form03b::neurologicspecify	Hyper extended knel jont	Hyperextended knee joint
+form03b::neurologicspecify	form03b::neurologicspecify	Subgalael hge	Subgaleal hemorrhage
 form03b::neurologicspecify	form03b::neurologicspecify	Subselea	
-form03b::neurologicspecify	form03b::neurologicspecify	Occuet spneBfdo	
+form03b::neurologicspecify	form03b::neurologicspecify	Occuet spneBfdo	Spina bifida
 form03b::neurologicspecify	form03b::neurologicspecify	Grade I periventricular/eu leubo	
-form03b::neurologicspecify	form03b::neurologicspecify	Subgalial hemorhage	
-form03b::neurologicspecify	form03b::neurologicspecify	hydrocephalus	
+form03b::neurologicspecify	form03b::neurologicspecify	Subgalial hemorhage	Subgaleal hemorrhage
+form03b::neurologicspecify	form03b::neurologicspecify	hydrocephalus	Hydrocephalus
 form03b::neurologicspecify	form03b::neurologicspecify	No	
 form03b::neurologicspecify	form03b::neurologicspecify	craniosyntosis	
-form03b::neurologicspecify	form03b::neurologicspecify	LOW APAGAR	
-form03b::neurologicspecify	form03b::neurologicspecify	Twin A	
-form03b::neurologicspecify	form03b::neurologicspecify	Global ischemia	
-form03b::neurologicspecify	form03b::neurologicspecify	stage 3 PNA	
+form03b::neurologicspecify	form03b::neurologicspecify	LOW APAGAR	Low APGAR score
+form03b::neurologicspecify	form03b::neurologicspecify	Twin A	Twin
+form03b::neurologicspecify	form03b::neurologicspecify	Global ischemia	Global ischemia
+form03b::neurologicspecify	form03b::neurologicspecify	stage 3 PNA	PNA stage 3
 form03b::neurologicspecify	form03b::neurologicspecify	subgaleal hemorhope	
-form03b::neurologicspecify	form03b::neurologicspecify	low Apgar scone	
-form03b::neurologicspecify	form03b::neurologicspecify	Hydraencephalos	
-form03b::neurologicspecify	form03b::neurologicspecify	Cephalone motome	
-form03b::neurologicspecify	form03b::neurologicspecify	Cephalohematoma	
+form03b::neurologicspecify	form03b::neurologicspecify	low Apgar scone	Low APGAR score
+form03b::neurologicspecify	form03b::neurologicspecify	Hydraencephalos	Hydrocephalus
+form03b::neurologicspecify	form03b::neurologicspecify	Cephalone motome	Cephalohematoma
+form03b::neurologicspecify	form03b::neurologicspecify	Cephalohematoma	Cephalohematoma
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	preeclamptic mother	Preeclampsia
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	LBW	Low birth weight
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	septic arthritis	Septic arthritis
@@ -9912,11 +10182,78 @@ form03b::miscellaneousspecify	form03b::miscellaneousspecify	Mother is pre eclamp
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	Hydrocephalus	Hydrocephalus
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	Left side clib foot	Club foot
 form03b::miscellaneousspecify	form03b::miscellaneousspecify	Caput succenum	Caput succedaneum
+form03b::n21aboincompatibility	form03b::n21aboincompatibility	missing	:::UNDEF:::
+form03b::n26acutebilirubinencephalopathyabe	form03b::n26acutebilirubinencephalopathyabe	missing	:::UNDEF:::
+form03b::n17anemia	form03b::n17anemia	missing	:::UNDEF:::
+form03b::n4apnea	form03b::n4apnea	missing	:::UNDEF:::
+form03b::chromosomalanomalies	form03b::chromosomalanomalies	missing	:::UNDEF:::
+form03b::circumcisions	form03b::circumcisions	missing	:::UNDEF:::
+form03b::congenitalmalformation	form03b::congenitalmalformation	missing	:::UNDEF:::
+form03b::congenitalheartdisease	form03b::congenitalheartdisease	missing	:::UNDEF:::
+form03b::n14congenitalsyphilis	form03b::n14congenitalsyphilis	missing	:::UNDEF:::
+form03b::congestiveheartfailure	form03b::congestiveheartfailure	missing	:::UNDEF:::
+form03b::n19dic	form03b::n19dic	missing	:::UNDEF:::
+form03b::n9earlyonsetneonatalsepsis72hours	form03b::n9earlyonsetneonatalsepsis72hours	missing	:::UNDEF:::
+form03b::n7electrolytedisorders	form03b::n7electrolytedisorders	missing	:::UNDEF:::
+form03b::feedingproblem	form03b::feedingproblem	missing	:::UNDEF:::
+form03b::n23hemorrhagicdiseaseofthenewborn	form03b::n23hemorrhagicdiseaseofthenewborn	missing	:::UNDEF:::
+form03b::n13hivexposed	form03b::n13hivexposed	missing	:::UNDEF:::
+form03b::n22hyperbilirubinemia	form03b::n22hyperbilirubinemia	missing	:::UNDEF:::
+form03b::n6hypoglycemica	form03b::n6hypoglycemica	missing	:::UNDEF:::
+form03b::hypothermia	form03b::hypothermia	missing	:::UNDEF:::
+form03b::intraventricularhemorrhageivh	form03b::intraventricularhemorrhageivh	missing	:::UNDEF:::
+form03b::n10lateonsetneonatalsepsis72hours	form03b::n10lateonsetneonatalsepsis72hours	missing	:::UNDEF:::
+form03b::n2meconomiumaspirationsyndrome	form03b::n2meconomiumaspirationsyndrome	missing	:::UNDEF:::
+form03b::n12meningitis	form03b::n12meningitis	missing	:::UNDEF:::
+form03b::necrotizingenterocolitisnec	form03b::necrotizingenterocolitisnec	missing	:::UNDEF:::
+form03b::neuraltubedefect	form03b::neuraltubedefect	missing	:::UNDEF:::
+form03b::ophthalmianeonatorum	form03b::ophthalmianeonatorum	missing	:::UNDEF:::
+form03b::other	form03b::other	missing	:::UNDEF:::
+form03b::n24otherhematologic	form03b::n24otherhematologic	missing	:::UNDEF:::
+form03b::n16otherinfection	form03b::n16otherinfection	missing	:::UNDEF:::
+form03b::n8othermetabolicdisorders	form03b::n8othermetabolicdisorders	missing	:::UNDEF:::
+form03b::n30otherneurologic	form03b::n30otherneurologic	missing	:::UNDEF:::
+form03b::n5otherrespiratory	form03b::n5otherrespiratory	missing	:::UNDEF:::
+form03b::n25perinatalasphyxiawithmultipleorganinvolvement	form03b::n25perinatalasphyxiawithmultipleorganinvolvement	missing	:::UNDEF:::
+form03b::n11pneumonia	form03b::n11pneumonia	missing	:::UNDEF:::
+form03b::n18polycythemia	form03b::n18polycythemia	missing	:::UNDEF:::
+form03b::n4pulmonaryhemorrhage	form03b::n4pulmonaryhemorrhage	missing	:::UNDEF:::
+form03b::renalfailure	form03b::renalfailure	missing	:::UNDEF:::
+form03b::n1respiratorydistresssyndrome	form03b::n1respiratorydistresssyndrome	missing	:::UNDEF:::
+form03b::n20rhincompatibility	form03b::n20rhincompatibility	missing	:::UNDEF:::
+form03b::seizuredisorder	form03b::seizuredisorder	missing	:::UNDEF:::
+form03b::shock	form03b::shock	missing	:::UNDEF:::
+form03b::traumaticbirthinjury	form03b::traumaticbirthinjury	missing	:::UNDEF:::
+form03b::uvelectomy	form03b::uvelectomy	missing	:::UNDEF:::
+form03b::n82wereanyconditionsdiagnosed	form03b::n82wereanyconditionsdiagnosed	missing	:::UNDEF:::
+form03b::breathingproblem	form03b::breathingproblem	missing	:::UNDEF:::
+form03b::coldtotouch	form03b::coldtotouch	missing	:::UNDEF:::
+form03b::feedingdifficulty	form03b::feedingdifficulty	missing	:::UNDEF:::
+form03b::dontknow	form03b::dontknow	missing	:::UNDEF:::
+form03b::fever	form03b::fever	missing	:::UNDEF:::
+form03b::lookedsick	form03b::lookedsick	missing	:::UNDEF:::
+form03b::other2	form03b::other2	missing	:::UNDEF:::
+form03b::preterm	form03b::preterm	missing	:::UNDEF:::
+form03b::referred	form03b::referred	missing	:::UNDEF:::
+form03b::seizure	form03b::seizure	missing	:::UNDEF:::
+form03b::ifo2satdonewasbabyonoxygen	form03b::ifo2satdonewasbabyonoxygen	missing	:::UNDEF:::
+form03b::bilateralcrepitations	form03b::bilateralcrepitations	missing	:::UNDEF:::
+form03b::bilateraldecreasedairentry	form03b::bilateraldecreasedairentry	missing	:::UNDEF:::
+form03b::chestindrawing	form03b::chestindrawing	missing	:::UNDEF:::
+form03b::chestretractions	form03b::chestretractions	missing	:::UNDEF:::
+form03b::grunting	form03b::grunting	missing	:::UNDEF:::
+form03b::nasalflaring	form03b::nasalflaring	missing	:::UNDEF:::
+form03b::other1	form03b::other1	missing	:::UNDEF:::
+form03b::periodicapnea	form03b::periodicapnea	missing	:::UNDEF:::
+form03b::unilateralcrepitations	form03b::unilateralcrepitations	missing	:::UNDEF:::
+form03b::unilateraldecreasedairentry	form03b::unilateraldecreasedairentry	missing	:::UNDEF:::
+form03b::imaginganyimagingdone	form03b::imaginganyimagingdone	missing	:::UNDEF:::
+form03b::laboratoryanalysesdone	form03b::laboratoryanalysesdone	missing	Missing
 form06_blood_cul::specify	form06_blood_cul::specify	NA	:::UNDEF:::
 form06_blood_cul::specify	form06_blood_cul::specify	Klebsiella Pneumonia	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Gram Negative Rods	Gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	E.Coli	Escherichia coli
-form06_blood_cul::specify	form06_blood_cul::specify	Gram-ve Staphlocacus	
+form06_blood_cul::specify	form06_blood_cul::specify	Gram-ve Staphlocacus	Gram negative Staphylococcus
 form06_blood_cul::specify	form06_blood_cul::specify	E-coli	Escherichia coli
 form06_blood_cul::specify	form06_blood_cul::specify	staph aureus	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	S- aureas	Staphylococcus aureus
@@ -9929,15 +10266,15 @@ form06_blood_cul::specify	form06_blood_cul::specify	klebsiella pneumoniae	Klebsi
 form06_blood_cul::specify	form06_blood_cul::specify	K.ozene seno for ...	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	"S.aureus, senive for CAF, ciprofloxacine, norfloxacin of vanconien"	
 form06_blood_cul::specify	form06_blood_cul::specify	"S.aureus se CAF, VAW"	Staphylococcus aureus
-form06_blood_cul::specify	form06_blood_cul::specify	Non-fermentive gram-- postive Rods	
+form06_blood_cul::specify	form06_blood_cul::specify	Non-fermentive gram-- postive Rods	Nonfermentative gram positive rods
 form06_blood_cul::specify	form06_blood_cul::specify	contamenation	Contaminant
 form06_blood_cul::specify	form06_blood_cul::specify	klebsiella Rhinose	Klebsiella rhinoscleromatis
-form06_blood_cul::specify	form06_blood_cul::specify	non-termentive gram positive rods	
+form06_blood_cul::specify	form06_blood_cul::specify	non-termentive gram positive rods	Nonfermentative gram positive rods
 form06_blood_cul::specify	form06_blood_cul::specify	Conegative staplylococei species	Coagulase-negative staphylococci
-form06_blood_cul::specify	form06_blood_cul::specify	Non lactose fermentor G-ve	
-form06_blood_cul::specify	form06_blood_cul::specify	K.Precumia	
+form06_blood_cul::specify	form06_blood_cul::specify	Non lactose fermentor G-ve	Nonfermentative gram negative
+form06_blood_cul::specify	form06_blood_cul::specify	K.Precumia	Klebsiella pneumonia
 form06_blood_cul::specify	form06_blood_cul::specify	S.aureus sensitive to Vancomycen	Vancomycin-sensitive Staphylococcus aureus
-form06_blood_cul::specify	form06_blood_cul::specify	sensime to vancomycie	
+form06_blood_cul::specify	form06_blood_cul::specify	sensime to vancomycie	Vancomycin-sensitive
 form06_blood_cul::specify	form06_blood_cul::specify	S.aures	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	S.aurecs	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	K.Pheumonine	Klebsiella pneumoniae
@@ -9947,15 +10284,15 @@ form06_blood_cul::specify	form06_blood_cul::specify	S.aureas	Staphylococcus aure
 form06_blood_cul::specify	form06_blood_cul::specify	klebsella pneumonia	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	K.ozenae	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	K.pnemonia	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	nontermented	
-form06_blood_cul::specify	form06_blood_cul::specify	Non-fermalation G-ve rods	
+form06_blood_cul::specify	form06_blood_cul::specify	nontermented	Nonfermentative
+form06_blood_cul::specify	form06_blood_cul::specify	Non-fermalation G-ve rods	Nonfermentative gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	Enterobocter spp	Enterobacter
 form06_blood_cul::specify	form06_blood_cul::specify	K.ozenaesensitive for CAF	
 form06_blood_cul::specify	form06_blood_cul::specify	k.pneumoniae	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	sensitive for ciprotloxacin	
 form06_blood_cul::specify	form06_blood_cul::specify	sensitive for Amikacieme	
 form06_blood_cul::specify	form06_blood_cul::specify	k.pneumonary	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	"non-lactore formenter, grom negative"	
+form06_blood_cul::specify	form06_blood_cul::specify	"non-lactore formenter, grom negative"	Nonfermentative gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	E.coil	Escherichia coli
 form06_blood_cul::specify	form06_blood_cul::specify	serratia.sppis	Serratia
 form06_blood_cul::specify	form06_blood_cul::specify	citrobacler	Citrobacter
@@ -9970,29 +10307,29 @@ form06_blood_cul::specify	form06_blood_cul::specify	K.ozeane	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	k.pnemoniae	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	k.pnemoniea	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	enterobacter	Enterobacter
-form06_blood_cul::specify	form06_blood_cul::specify	cocpuloge negotative stage	
-form06_blood_cul::specify	form06_blood_cul::specify	laclose ferne.... G-ve	
-form06_blood_cul::specify	form06_blood_cul::specify	Lactore for mentor Grom - ve	
-form06_blood_cul::specify	form06_blood_cul::specify	Lactose formlr gr-ve rods	
-form06_blood_cul::specify	form06_blood_cul::specify	Lactose fernely G-ve gode??	
-form06_blood_cul::specify	form06_blood_cul::specify	Laktose fermaentr. Gnemove Rods	
+form06_blood_cul::specify	form06_blood_cul::specify	cocpuloge negotative stage	Coagulase-negative staphylococcus
+form06_blood_cul::specify	form06_blood_cul::specify	laclose ferne.... G-ve	Lactose fermenting gram negative
+form06_blood_cul::specify	form06_blood_cul::specify	Lactore for mentor Grom - ve	Lactose fermenting gram negative
+form06_blood_cul::specify	form06_blood_cul::specify	Lactose formlr gr-ve rods	Lactose fermenting gram negative rods
+form06_blood_cul::specify	form06_blood_cul::specify	Lactose fernely G-ve gode??	Lactose fermenting gram negative rods
+form06_blood_cul::specify	form06_blood_cul::specify	Laktose fermaentr. Gnemove Rods	Lactose fermenting gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	staph species	Staphylococcus
-form06_blood_cul::specify	form06_blood_cul::specify	lactole fermenting errve....	
+form06_blood_cul::specify	form06_blood_cul::specify	lactole fermenting errve....	Lactose fermenting
 form06_blood_cul::specify	form06_blood_cul::specify	citrobacte	Citrobacter
-form06_blood_cul::specify	form06_blood_cul::specify	lactohe terminting G+ve r...	
+form06_blood_cul::specify	form06_blood_cul::specify	lactohe terminting G+ve r...	Lactose fermenting gram positive rods
 form06_blood_cul::specify	form06_blood_cul::specify	entero bactera	Enterobacter
 form06_blood_cul::specify	form06_blood_cul::specify	Klepseila pnemonia	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	Lactose ferney G-ve rods	
+form06_blood_cul::specify	form06_blood_cul::specify	Lactose ferney G-ve rods	Lactose fermenting gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	S.viridians	Streptococcus viridans
-form06_blood_cul::specify	form06_blood_cul::specify	Lactose fermentor G-ve rod	
+form06_blood_cul::specify	form06_blood_cul::specify	Lactose fermentor G-ve rod	Lactose fermenting gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	contaminated	Contaminant
-form06_blood_cul::specify	form06_blood_cul::specify	non ladese fermner G-ve rod	
+form06_blood_cul::specify	form06_blood_cul::specify	non ladese fermner G-ve rod	Non-fermenting gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	K.ozenace	Klebsiella ozaenae
-form06_blood_cul::specify	form06_blood_cul::specify	Gram nyeathe rods	
+form06_blood_cul::specify	form06_blood_cul::specify	Gram nyeathe rods	Gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	K.Rhines	Klebsiella rhinoscleromatis
 form06_blood_cul::specify	form06_blood_cul::specify	contamination	Contaminant
 form06_blood_cul::specify	form06_blood_cul::specify	Entobacter seppsis	Enterobacter
-form06_blood_cul::specify	form06_blood_cul::specify	Lactose formentr G-ve rods	
+form06_blood_cul::specify	form06_blood_cul::specify	Lactose formentr G-ve rods	Lactose fermenting gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	citrobacter sppsis	Citrobacter
 form06_blood_cul::specify	form06_blood_cul::specify	citrobactor sppsis	Citrobacter
 form06_blood_cul::specify	form06_blood_cul::specify	citrobelel	Citrobacter
@@ -10008,7 +10345,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	K.pnuinsie	Klebsiella pneumo
 form06_blood_cul::specify	form06_blood_cul::specify	K.oxytoca	Klebsiella oxytoca
 form06_blood_cul::specify	form06_blood_cul::specify	Enterobacler	Enterobacter
 form06_blood_cul::specify	form06_blood_cul::specify	gram	Gram
-form06_blood_cul::specify	form06_blood_cul::specify	Difficielt to spesifn	
+form06_blood_cul::specify	form06_blood_cul::specify	Difficielt to spesifn	Difficult to speciate
 form06_blood_cul::specify	form06_blood_cul::specify	Gram-veRods	Gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	K Pheumiua	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Log Negative s.epidermdi	
@@ -10037,11 +10374,11 @@ form06_blood_cul::specify	form06_blood_cul::specify	K.Nemoniya	Klebsiella pneumo
 form06_blood_cul::specify	form06_blood_cul::specify	/Pnunshis	
 form06_blood_cul::specify	form06_blood_cul::specify	actino sactar	Acinetobacter
 form06_blood_cul::specify	form06_blood_cul::specify	Klepeselle	Klebsiella
-form06_blood_cul::specify	form06_blood_cul::specify	Enterobacter Aenogens	
+form06_blood_cul::specify	form06_blood_cul::specify	Enterobacter Aenogens	Enterobacter aerogenes
 form06_blood_cul::specify	form06_blood_cul::specify	Klepsiu prmon	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	s.aules	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	Coogular positive sioply lococin	
-form06_blood_cul::specify	form06_blood_cul::specify	Staph Lugdunesis	
+form06_blood_cul::specify	form06_blood_cul::specify	Staph Lugdunesis	Staphylococcus lugdunensis
 form06_blood_cul::specify	form06_blood_cul::specify	K.pnemonoa	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Pending	Pending
 form06_blood_cul::specify	form06_blood_cul::specify	K-penomia	Klebsiella pneumoniae
@@ -10049,8 +10386,8 @@ form06_blood_cul::specify	form06_blood_cul::specify	K-pneumonia	Klebsiella pneum
 form06_blood_cul::specify	form06_blood_cul::specify	Kleper pneuon	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Stagh Epidemialis	Staphylococcus epidermidis
 form06_blood_cul::specify	form06_blood_cul::specify	G-ve cocci	Gram negative cocci
-form06_blood_cul::specify	form06_blood_cul::specify	Coaguloanegatusauth	
-form06_blood_cul::specify	form06_blood_cul::specify	Severia odoritermia	
+form06_blood_cul::specify	form06_blood_cul::specify	Coaguloanegatusauth	Coagulase-negative staphylococci
+form06_blood_cul::specify	form06_blood_cul::specify	Severia odoritermia	Serratia odorifera
 form06_blood_cul::specify	form06_blood_cul::specify	"coagluose -ve staptylo , coccus specoe"	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	stsphylococcus areus	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	loogleen negative	
@@ -10062,7 +10399,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	Staphylococcus aureus	Staphy
 form06_blood_cul::specify	form06_blood_cul::specify	No growth	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	klebsenopnemia	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	C.post coci	
-form06_blood_cul::specify	form06_blood_cul::specify	Mixed colony grouth	
+form06_blood_cul::specify	form06_blood_cul::specify	Mixed colony grouth	Mixed growth
 form06_blood_cul::specify	form06_blood_cul::specify	S.odrofera	Serratia odorifera
 form06_blood_cul::specify	form06_blood_cul::specify	G- +ve coci	Gram positive cocci
 form06_blood_cul::specify	form06_blood_cul::specify	G-ve lod	Gram negative rods
@@ -10075,7 +10412,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	Nogrowth on media	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	Enterobacter cloose	Enterobacter cloacae
 form06_blood_cul::specify	form06_blood_cul::specify	Positive No Growth on media	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	s.odefallo	Serratia odorifera
-form06_blood_cul::specify	form06_blood_cul::specify	Negative	
+form06_blood_cul::specify	form06_blood_cul::specify	Negative	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	"Nogrowith on BA,Mac,And Chococtemedin"	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	Enterobacter cloacae	Enterobacter cloacae
 form06_blood_cul::specify	form06_blood_cul::specify	Serrafia oderifere	Serratia odorifera
@@ -10102,7 +10439,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	Media can t growth organism	
 form06_blood_cul::specify	form06_blood_cul::specify	Grom negative Rod	Gram negative rods
 form06_blood_cul::specify	form06_blood_cul::specify	"Gram negative,K-pneumonia"	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Not able to	No growth
-form06_blood_cul::specify	form06_blood_cul::specify	Ne growth	
+form06_blood_cul::specify	form06_blood_cul::specify	Ne growth	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	Gram positive cocci	Gram positive cocci
 form06_blood_cul::specify	form06_blood_cul::specify	Nogrowth	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	S.Odenegere	Serratia odorifera
@@ -10114,22 +10451,22 @@ form06_blood_cul::specify	form06_blood_cul::specify	Gram negative	Gram negative
 form06_blood_cul::specify	form06_blood_cul::specify	K.Pneunones	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	K.Pneumonal	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	K.pneumonea	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	Pendy	
+form06_blood_cul::specify	form06_blood_cul::specify	Pendy	Pending
 form06_blood_cul::specify	form06_blood_cul::specify	K.pneunome	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	K.pneureone	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Baccilus	Gram positive rods
 form06_blood_cul::specify	form06_blood_cul::specify	No pronpity	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	gm negative rod	Gram negative rods
-form06_blood_cul::specify	form06_blood_cul::specify	Semetine odenagere	
+form06_blood_cul::specify	form06_blood_cul::specify	Semetine odenagere	Serratia odorifera
 form06_blood_cul::specify	form06_blood_cul::specify	the metia was not able to grow the organiom	No growth
 form06_blood_cul::specify	form06_blood_cul::specify	K-oxytoca	Klebsiella oxytoca
-form06_blood_cul::specify	form06_blood_cul::specify	s.aves	
+form06_blood_cul::specify	form06_blood_cul::specify	s.aves	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	K.Pneumo	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	K.ozena	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	K.Ozanal	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	K.Pnuomonia	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	k.penumonia	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	coagulase -ve staph-staph epidermis	
+form06_blood_cul::specify	form06_blood_cul::specify	coagulase -ve staph-staph epidermis	Staphylococcus epidermis
 form06_blood_cul::specify	form06_blood_cul::specify	S.Veriser	
 form06_blood_cul::specify	form06_blood_cul::specify	Klebsola obena	Klebsiella ozaenae
 form06_blood_cul::specify	form06_blood_cul::specify	Kipneumonin	Klebsiella pneumoniae
@@ -10155,7 +10492,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	Klepsia	Klebsiella
 form06_blood_cul::specify	form06_blood_cul::specify	K. pnemosens for ciplofio	
 form06_blood_cul::specify	form06_blood_cul::specify	S.Auleus	Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	Klebsilla	Klebsiella
-form06_blood_cul::specify	form06_blood_cul::specify	Coupu-ucstaph	
+form06_blood_cul::specify	form06_blood_cul::specify	Coupu-ucstaph	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	Klebsilas phem & psedomonic	
 form06_blood_cul::specify	form06_blood_cul::specify	negative coaglucose staphlococi	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	Coaglulag -ve stapn	Coagulase-negative staphylococci
@@ -10164,7 +10501,7 @@ form06_blood_cul::specify	form06_blood_cul::specify	K.pnemonic	Klebsiella pneumo
 form06_blood_cul::specify	form06_blood_cul::specify	Klepsia pneuminia	Klebsiella pneumoniae
 form06_blood_cul::specify	form06_blood_cul::specify	Coagulase -ve staphlococus	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	Gram+ve Rod growth	Gram positive rods
-form06_blood_cul::specify	form06_blood_cul::specify	Growth seen	
+form06_blood_cul::specify	form06_blood_cul::specify	Growth seen	Positive
 form06_blood_cul::specify	form06_blood_cul::specify	satph ugudness	
 form06_blood_cul::specify	form06_blood_cul::specify	coagulase negative staph	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	Klebsila Oxylate	Klebsiella oxytoca
@@ -10187,18 +10524,18 @@ form06_blood_cul::specify	form06_blood_cul::specify	S.averus	Staphylococcus aure
 form06_blood_cul::specify	form06_blood_cul::specify	Coaglucose staphylococsaneus	
 form06_blood_cul::specify	form06_blood_cul::specify	coagulose negative staphlococccus aureas	Coagulase-negative Staphylococcus aureus
 form06_blood_cul::specify	form06_blood_cul::specify	coaguase -ve staphcocci	Coagulase-negative staphylococci
-form06_blood_cul::specify	form06_blood_cul::specify	gram negative staphylococci	
+form06_blood_cul::specify	form06_blood_cul::specify	gram negative staphylococci	Gram negative Stapylococcus
 form06_blood_cul::specify	form06_blood_cul::specify	Enterococus species	Enterococcus
 form06_blood_cul::specify	form06_blood_cul::specify	Gram positive coca	Gram positive cocci
 form06_blood_cul::specify	form06_blood_cul::specify	Kelebsilla pnemonic	Klebsiella pneumoniae
-form06_blood_cul::specify	form06_blood_cul::specify	Coagulase Negative Staphauleus	
+form06_blood_cul::specify	form06_blood_cul::specify	Coagulase Negative Staphauleus	Coagulase-negative staphylococci
 form06_blood_cul::specify	form06_blood_cul::specify	Fungcl yeast glowth	Yeast
 form06_blood_cul::specify	form06_blood_cul::specify	Coagulase -ve staphylocous	Coagulase-negative staphylococci
 form06::specify9	form06::specify9	ABO set UP	ABO incompatibility
 form06::specify9	form06::specify9	HMD	Respiratory distress syndrome
 form06::specify9	form06::specify9	cogenital phenomonia	Congential pneumonia
-form06::specify9	form06::specify9	Birth truma	
-form06::specify9	form06::specify9	Pueumonia hemorage	
+form06::specify9	form06::specify9	Birth truma	Birth trauma
+form06::specify9	form06::specify9	Pueumonia hemorage	Pneumonia, hemorrhage
 form06::specify9	form06::specify9	Scarp obsecess	
 form06::specify9	form06::specify9	pulmonary hemorrage	Pulmonary hemorrhage
 form06::specify9	form06::specify9	Conqenifal Pnunimonia	Congential pneumonia
@@ -10213,8 +10550,8 @@ form06::specify9	form06::specify9	Mothernal choriemiul
 form06::specify9	form06::specify9	Mo 504-effet	Magnesium sulfate effect
 form06::specify9	form06::specify9	Moth PROM	PROM
 form06::specify9	form06::specify9	Mos 04 Effelt	Magnesium sulfate effect
-form06::specify9	form06::specify9	Baby of mother with Measils	
-form06::specify9	form06::specify9	PNA stage 3	
+form06::specify9	form06::specify9	Baby of mother with Measils	Mother has measles
+form06::specify9	form06::specify9	PNA stage 3	PNA stage 3
 form06::specify9	form06::specify9	n	:::UNDEF:::
 form06::specify9	form06::specify9	Chire chegis	
 form06::specify9	form06::specify9	Aspiration pnouminia	Aspiration pneumonia
@@ -10223,13 +10560,13 @@ form06::specify9	form06::specify9	PROM mother	PROM
 form06::specify9	form06::specify9	TEF+aspiration Pneumonia	"Aspiration pneumonia, tracheoesophageal fistula"
 form06::specify9	form06::specify9	"LBW,Preterm"	"Low birth weight, preterm"
 form06::specify9	form06::specify9	Preterm	Preterm
-form06::specify9	form06::specify9	choanal atresia	
+form06::specify9	form06::specify9	choanal atresia	Choanal atresia
 form06::specify9	form06::specify9	cognetal pneumonia	Congential pneumonia
 form06::specify9	form06::specify9	Pneumothorasc	Pneumothorax
 form06::specify9	form06::specify9	TTN+RDS	"Respiratory distress syndrome, transient tachypnea of the newborn"
 form06::specify9	form06::specify9	Aspiration Pneumonia	Aspiration pneumonia
 form06::specify9	form06::specify9	Respiaratory arrest	Respiratory arrest
-form06::specify9	form06::specify9	Tracheo escophagial fistule aspiration pmenomia	
+form06::specify9	form06::specify9	Tracheo escophagial fistule aspiration pmenomia	Aspiration pneumonia, tracheoesophageal fistule
 form06::specify9	form06::specify9	Aspiraton Pneumonia	Aspiration pneumonia
 form06::specify9	form06::specify9	Impending respiratory pallure	Impending respiratory failure
 form06::specify9	form06::specify9	Respiratory failu	Respiratory failure
@@ -10243,7 +10580,7 @@ form06::specify9	form06::specify9	Hypoplastic lung	Lung hypoplasia
 form06::specify9	form06::specify9	Regpiratory failure 2' to aspiration of injested milk	"Milk aspiration, respiratory failure"
 form06::specify9	form06::specify9	Aspiration premonia	Aspiration pneumonia
 form06::specify9	form06::specify9	Aspiration pmlumonid	Aspiration pneumonia
-form06::specify10	form06::specify10	"HBSA Exposed ,Heptitis B +"	
+form06::specify10	form06::specify10	"HBSA Exposed ,Heptitis B +"	HBSA-exposed, Hepatitis B positive
 form06::specify10	form06::specify10	HB exposed	Hepatitis B-exposed
 form06::specify10	form06::specify10	Neonatal conjuctivitis	Conjunctivitis
 form06::specify10	form06::specify10	HBSA Expsed	Hepatitis B-exposed
@@ -10297,7 +10634,7 @@ form06::specify10	form06::specify10	Hospital aqurd sepsin	Hospital acquired seps
 form06::specify10	form06::specify10	PROM+Mother chorioamnionitis	"Chorioamnionitis, PROM"
 form06::specify10	form06::specify10	"mother chriomnotitis,APH"	"Antepartum hemorrhage, chorioamnionitis"
 form06::specify10	form06::specify10	Hospital aqud sepr	Hospital acquired sepsis
-form06::specify10	form06::specify10	Baby of mother with Measils	Mother with measles 
+form06::specify10	form06::specify10	Baby of mother with Measils	Mother has measles 
 form06::specify10	form06::specify10	Mathrnal PROM	PROM
 form06::specify10	form06::specify10	"Mother chrismint, proleged prom"	
 form06::specify10	form06::specify10	Mother Chomln	Chorioamnionitis
@@ -10436,12 +10773,12 @@ form06::specify11	form06::specify11	Thronbocytopmia	Thrombocytopenia
 form06::specify11	form06::specify11	"Thrombocytop,ia"	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombcytopemia	Thrombocytopenia
 form06::specify11	form06::specify11	thrombocytopimia	Thrombocytopenia
-form06::specify11	form06::specify11	pancytopemia (Hct WBC Pletlet)	
-form06::specify11	form06::specify11	Bicytopemia	
+form06::specify11	form06::specify11	pancytopemia (Hct WBC Pletlet)	Pancytopenia
+form06::specify11	form06::specify11	Bicytopemia	Bicytopenia
 form06::specify11	form06::specify11	thromnocytopemia	Thrombocytopenia
 form06::specify11	form06::specify11	"Pancyto penia (WBC, HCT, Pletelet)"	
-form06::specify11	form06::specify11	Bla.thrombocytopemia (33000)	
-form06::specify11	form06::specify11	thornbocykpene	
+form06::specify11	form06::specify11	Bla.thrombocytopemia (33000)	Thrombocytopenia
+form06::specify11	form06::specify11	thornbocykpene	Thrombocytopenia
 form06::specify11	form06::specify11	throbocytopmia	Thrombocytopenia
 form06::specify11	form06::specify11	Thromnocytopmia	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocybopine??	Thrombocytopenia
@@ -10455,9 +10792,9 @@ form06::specify11	form06::specify11	Throbocytgen
 form06::specify11	form06::specify11	Strees Ulces	Stress ulcer
 form06::specify11	form06::specify11	Atress celcer	Stress ulcer
 form06::specify11	form06::specify11	Strees Ulcer	Stress ulcer
-form06::specify11	form06::specify11	None immun Hydrops fetar	
-form06::specify11	form06::specify11	hydrocephal	
-form06::specify11	form06::specify11	non immune hydrops	
+form06::specify11	form06::specify11	None immun Hydrops fetar	Non-immune hydrops fetalis
+form06::specify11	form06::specify11	hydrocephal	Hydrocephalus
+form06::specify11	form06::specify11	non immune hydrops	Non-immune hydrops fetalis
 form06::specify11	form06::specify11	Umblical cord bleed 2o to united cord	
 form06::specify11	form06::specify11	Twin B	Twin
 form06::specify11	form06::specify11	Thomboctpria	Thrombocytopenia
@@ -10467,13 +10804,13 @@ form06::specify11	form06::specify11	Twin-Twin thergh
 form06::specify11	form06::specify11	Thomboctoprin	
 form06::specify11	form06::specify11	Thromphlprin	
 form06::specify11	form06::specify11	Trombocytopenia	Thrombocytopenia
-form06::specify11	form06::specify11	Thumbocytopsis	
+form06::specify11	form06::specify11	Thumbocytopsis	Thrombocytosis
 form06::specify11	form06::specify11	Thoubutpnio	
 form06::specify11	form06::specify11	Thromboy tropine	
 form06::specify11	form06::specify11	Thromboy taspin	
 form06::specify11	form06::specify11	Thrombsgtopeme	
 form06::specify11	form06::specify11	Thrombocytopria	
-form06::specify11	form06::specify11	Chrombocytopsis	
+form06::specify11	form06::specify11	Chrombocytopsis	Thrombocytosis
 form06::specify11	form06::specify11	thrombocytopenia severe PE in mother with routed helpsis setomothel hemorhage	
 form06::specify11	form06::specify11	Thrombocytopnia	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombater	
@@ -10483,49 +10820,49 @@ form06::specify11	form06::specify11	urbre Heme thrombocytopnia
 form06::specify11	form06::specify11	Thrombocytopsis	Thrombocytosis
 form06::specify11	form06::specify11	Thromboytpenia	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombochtopera	
-form06::specify11	form06::specify11	Tromboocytopenia	
-form06::specify11	form06::specify11	Thrombcytepenio	
-form06::specify11	form06::specify11	Thrombecytopenie	
+form06::specify11	form06::specify11	Tromboocytopenia	Thrombocytopenia
+form06::specify11	form06::specify11	Thrombcytepenio	Thrombocytopenia
+form06::specify11	form06::specify11	Thrombecytopenie	Thrombocytopenia
 form06::specify11	form06::specify11	Thronbocgtypenia	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocytopsesis	Thrombocytosis
-form06::specify11	form06::specify11	Thombcydopenio	
+form06::specify11	form06::specify11	Thombcydopenio	Thrombocytopenia
 form06::specify11	form06::specify11	Throndecyto pene	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocytopente	Thrombocytopenia
 form06::specify11	form06::specify11	Thronbocy to oenia	Thrombocytopenia
 form06::specify11	form06::specify11	Trombocytopsis	
-form06::specify11	form06::specify11	RH -ve mother	
+form06::specify11	form06::specify11	RH -ve mother	Rh-negative mother
 form06::specify11	form06::specify11	thombcytopenc	
-form06::specify11	form06::specify11	Hyyper glycemia	
-form06::specify11	form06::specify11	tmombo cytopere	
-form06::specify11	form06::specify11	Thorbocytopene	
-form06::specify11	form06::specify11	thortocytopenin	
+form06::specify11	form06::specify11	Hyyper glycemia	Hyperglycemia
+form06::specify11	form06::specify11	tmombo cytopere	Thrombocytopenia
+form06::specify11	form06::specify11	Thorbocytopene	Thrombocytopenia
+form06::specify11	form06::specify11	thortocytopenin	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocyto pene	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocytopene	Thrombocytopenia
-form06::specify11	form06::specify11	thrombegtpeia	
-form06::specify11	form06::specify11	RH-uenothe	
+form06::specify11	form06::specify11	thrombegtpeia	Thrombocytopenia
+form06::specify11	form06::specify11	RH-uenothe	Rh-negative mother
 form06::specify11	form06::specify11	Nother with prologed ruptul of numberonl	
 form06::specify11	form06::specify11	throbcytopeine	Thrombocytopenia
-form06::specify11	form06::specify11	thombecytopenie	
+form06::specify11	form06::specify11	thombecytopenie	Thrombocytopenia
 form06::specify11	form06::specify11	Thrombocytopenia 2 degree exchange transfusion	
-form06::specify11	form06::specify11	Rh negative mother	
+form06::specify11	form06::specify11	Rh negative mother	Rh-negative mother
 form06::specify11	form06::specify11	Twin a	Twin
 form06::specify11	form06::specify11	2 Breast feeding	
-form06::specify11	form06::specify11	thrombocy peio	
+form06::specify11	form06::specify11	thrombocy peio	Thrombocytopenia
 form06::specify11	form06::specify11	thrambocy fopric plt 51*10^3	
-form06::specify11	form06::specify11	Thromboy topeid	
-form06::specify11	form06::specify11	Thromkoctopene	
-form06::specify11	form06::specify11	thropebocytopenie	
-form06::specify11	form06::specify11	Thromboy ropeno	
-form06::specify11	form06::specify11	neutropnia	
+form06::specify11	form06::specify11	Thromboy topeid	Thrombocytopenia
+form06::specify11	form06::specify11	Thromkoctopene	Thrombocytopenia
+form06::specify11	form06::specify11	thropebocytopenie	Thrombocytopenia
+form06::specify11	form06::specify11	Thromboy ropeno	Thrombocytopenia
+form06::specify11	form06::specify11	neutropnia	Neutropenia
 form06::specify11	form06::specify11	theonbocytepes	
 form06::specify11	form06::specify11	Thrombocytopnia levkopnia	
-form06::specify11	form06::specify11	Thrombocytopnce polycythemia	
+form06::specify11	form06::specify11	Thrombocytopnce polycythemia	Polycythemia, thrombocytopenia
 form06::specify11	form06::specify11	Thrombocy topros	
-form06::specify11	form06::specify11	thbrybytopena	
-form06::specify11	form06::specify11	thnonbocy pene	
-form06::specify11	form06::specify11	ABO-setup	
+form06::specify11	form06::specify11	thbrybytopena	Thrombocytopenia
+form06::specify11	form06::specify11	thnonbocy pene	Thrombocytopenia
+form06::specify11	form06::specify11	ABO-setup	ABO set-up
 form06::specify11	form06::specify11	breast feeding joundic	"Breast feeding, jaundice"
-form06::specify11	form06::specify11	RH-set UP	
+form06::specify11	form06::specify11	RH-set UP	Rh set-up
 form06::specify11	form06::specify11	thrombocytopeia(55000)	Thrombocytopenia
 form06::specify11	form06::specify11	physiologic inmdice	
 form06::specify11	form06::specify11	Leukopenia thrombocy toperia	
@@ -10533,24 +10870,24 @@ form06::specify11	form06::specify11	direct hynerbilirabiu
 form06::specify11	form06::specify11	Thrombocytopenic	Thrombocytopenia
 form06::specify11	form06::specify11	Shoek	Shock
 form06::specify11	form06::specify11	Stage 3 PNA+respiratory failure+extermly preterm	
-form06::specify11	form06::specify11	Thrombolytomenia	
+form06::specify11	form06::specify11	Thrombolytomenia	Thrombocytopenia	
 form06::specify11	form06::specify11	hypouolnia	
-form06::specify11	form06::specify11	RH-setup	
+form06::specify11	form06::specify11	RH-setup	Rh set-up
 form06::specify11	form06::specify11	apper GIbleedy(coffe ground mater)	
 form06::specify11	form06::specify11	thumbocytopemia	Thrombocytopenia
 form06::specify11	form06::specify11	bleeding from the mouth	
-form06::specify11	form06::specify11	thrombocytophene+leukoperia	
-form06::specify11	form06::specify11	Mild Thrombo y to penia	
-form06::specify11	form06::specify11	"Ceukopenia, thrombocytopenia"	
-form06::specify11	form06::specify11	Thrombocy topenid ceukopenia	
+form06::specify11	form06::specify11	thrombocytophene+leukoperia	Leukopenia, thrombocytopenia
+form06::specify11	form06::specify11	Mild Thrombo y to penia	Thrombocytopenia
+form06::specify11	form06::specify11	"Ceukopenia, thrombocytopenia"	Leukopenia, thrombocytopenia
+form06::specify11	form06::specify11	Thrombocy topenid ceukopenia	Leukopenia, thrombocytopenia
 form06::specify11	form06::specify11	GI bleed	GI bleed
-form06::specify11	form06::specify11	RH setup	
+form06::specify11	form06::specify11	RH setup	Rh set-up
 form06::specify11	form06::specify11	Sever Anemia	Severe anemia
 form06::specify11	form06::specify11	HBU exposed	
 form06::specify11	form06::specify11	Pulminary Hemorrage	Pulmonary hemorrhage
 form06::specify11	form06::specify11	Pulumunary hemorrhage	Pulmonary hemorrhage
 form06::specify11	form06::specify11	Thrompocytopenic	Thrombocytopenia
-form06::specify11	form06::specify11	RH-setup sever anemia	
+form06::specify11	form06::specify11	RH-setup sever anemia	Anemia, Rh set-up
 form06::specify11	form06::specify11	Thrombocytopnea	Thrombocytopenia
 form06::specify11	form06::specify11	congenital pneumonia	Congenital pneumonia
 form06::specify11	form06::specify11	Hyper bilirabinemia 2' to breast feeding Joundic	
@@ -10558,7 +10895,7 @@ form06::specify11	form06::specify11	Thrombocy to penia	Thrombocytopenia
 form06::specify13	form06::specify13	Hyperbilirubinemia	Hyperbilirubinemia
 form06::specify13	form06::specify13	APH mother	Antepartum hemorrhage
 form06::specify13	form06::specify13	n	:::UNDEF:::
-form06::specify13	form06::specify13	lyperpcycemia	
+form06::specify13	form06::specify13	lyperpcycemia	Hyperglycemia
 form06::specify13	form06::specify13	Hyperglycemia	Hyperglycemia
 form06::specify13	form06::specify13	Haperglycemia	Hyperglycemia
 form06::specify13	form06::specify13	Low Birth	Low birth weight
@@ -10567,49 +10904,49 @@ form06::specify13	form06::specify13	hypaglycemia
 form06::specify13	form06::specify13	Congenital Hypotandise	
 form06::specify13	form06::specify13	Hyperlycring	
 form06::specify13	form06::specify13	Infant disebutin mother	
-form06::specify13	form06::specify13	low corsisol	
+form06::specify13	form06::specify13	low corsisol	Low cortisol
 form06::specify13	form06::specify13	Stress Hyperglucomine	Stress hyperglycemia
-form06::specify13	form06::specify13	Hypothyroidism	
+form06::specify13	form06::specify13	Hypothyroidism	Hypothyroidism
 form06::specify13	form06::specify13	Stress Hyperglemice	Stress hyperglycemia
-form06::specify13	form06::specify13	Strees Hupergle	
-form06::specify13	form06::specify13	Stress Hyperelemin	
-form06::specify13	form06::specify13	Stress Hnpergleura	
+form06::specify13	form06::specify13	Strees Hupergle	Stress hyperglycemia
+form06::specify13	form06::specify13	Stress Hyperelemin	Stress hyperglycemia
+form06::specify13	form06::specify13	Stress Hnpergleura	Stress hyperglycemia
 form06::specify13	form06::specify13	Sterr-Hyeermian	
 form06::specify13	form06::specify13	Stees Hydreegen	
 form06::specify13	form06::specify13	Hyperglycone	
-form06::specify13	form06::specify13	Stress Hyperglass	
-form06::specify13	form06::specify13	Hypetbilirubineunia(diect)	
+form06::specify13	form06::specify13	Stress Hyperglass	Stress hyperglycemia
+form06::specify13	form06::specify13	Hypetbilirubineunia(diect)	Hyperbilirubinemia
 form06::specify13	form06::specify13	hypergnia	
-form06::specify13	form06::specify13	Hyperglycermia	
-form06::specify13	form06::specify13	Hypergrycemia	
+form06::specify13	form06::specify13	Hyperglycermia	Hyperglycemia
+form06::specify13	form06::specify13	Hypergrycemia	Hyperglycemia
 form06::specify13	form06::specify13	Hypothermia	Hypothermia
 form06::specify13	form06::specify13	Dehydration	Dehydration
-form06::specify13	form06::specify13	Res.acidosis	
+form06::specify13	form06::specify13	Res.acidosis	Respiratory acidosis
 form06::specify13	form06::specify13	Ca=0.9	
 form06::specify13	form06::specify13	VLBW	Very low birth weight
 form06::specify13	form06::specify13	"urea-47, cr-1.8"	
-form06::specify13	form06::specify13	Hynergly cemia	
-form06::specify13	form06::specify13	AKI	
+form06::specify13	form06::specify13	Hynergly cemia	Hyperglycemia
+form06::specify13	form06::specify13	AKI	Acute kidney injury
 form06::specify13	form06::specify13	thrombocytopenia 4*10^3 leupenia 1.18*1010^3	
 form06::specify13	form06::specify13	Dehayderation	Dehydration
 form06::specify13	form06::specify13	Hyperglycemic	Hyperglycemia
 form06::specify13	form06::specify13	Hypoglycema	Hypoglycemia
-form06::specify14	form06::specify14	Chiari II malfornotion	
+form06::specify14	form06::specify14	Chiari II malfornotion	Chiari II malformation
 form06::specify14	form06::specify14	subgecal hemorrhage	Subgaleal hemorrhage
 form06::specify14	form06::specify14	n	:::UNDEF:::
-form06::specify14	form06::specify14	Erb's pasy	
+form06::specify14	form06::specify14	Erb's pasy	Erb's palsy
 form06::specify14	form06::specify14	hydrocephales / ocecipita enephalocal (small)	
-form06::specify14	form06::specify14	ophthalmia neonatorum ??	
+form06::specify14	form06::specify14	ophthalmia neonatorum ??	Ophthalmia neonatorum
 form06::specify14	form06::specify14	Hydrocaphales	Hydrocephalus
-form06::specify14	form06::specify14	midhydrocepha	
+form06::specify14	form06::specify14	midhydrocepha	Hydrocephalus
 form06::specify14	form06::specify14	Wrist drop	Wrist drop
-form06::specify14	form06::specify14	mild hyohocephal	
+form06::specify14	form06::specify14	mild hyohocephal	Hydrocephalus
 form06::specify14	form06::specify14	hypoplastic left hand	
-form06::specify14	form06::specify14	Encepholocele	
-form06::specify14	form06::specify14	Meningomyelo cele	
+form06::specify14	form06::specify14	Encepholocele	Encephalocele
+form06::specify14	form06::specify14	Meningomyelo cele	Meningomyelocele
 form06::specify14	form06::specify14	transient deprmium	
-form06::specify14	form06::specify14	Aspintion (mergiue)	
-form06::specify14	form06::specify14	Subgelay hemonge	
+form06::specify14	form06::specify14	Aspintion (mergiue)	Aspiration
+form06::specify14	form06::specify14	Subgelay hemonge	Subgaleal hemorrhage
 form06::specify14	form06::specify14	Hydroceplelius 2' with oqueductsl stenos	
 form06::specify14	form06::specify14	PVL	
 form06::specify14	form06::specify14	Subgolial hemorhage	Subgaleal hemorrhage
@@ -10623,11 +10960,11 @@ form06::specify14	form06::specify14	Stage 3
 form06::specify14	form06::specify14	Neural tube defect	Neural tube defect
 form06::specify14	form06::specify14	Cephalhematoma subgalal hemarhope	
 form06::specify14	form06::specify14	Hypothermia	Hypothermia
-form06::specify14	form06::specify14	PNA	
+form06::specify14	form06::specify14	PNA	PNA
 form06::specify14	form06::specify14	Hydraecephalos	Hydrocephalus
 form06::specify14	form06::specify14	Communicating hydrocephieds	
 form06::specify14	form06::specify14	Hydrocepholous	Hydrocephalu
-form06::specify14	form06::specify14	Mossia IVH Grage-3	
+form06::specify14	form06::specify14	Mossia IVH Grage-3	Intraventricular hemorrhage (grade 3)
 form06::specify15	form06::specify15	LBW:APH mother	"Antepartum hemorrhage, low birth weight"
 form06::specify15	form06::specify15	LBW	Low birth weight
 form06::specify15	form06::specify15	Ectopic kidney	Ectopic kidney
@@ -10894,7 +11231,7 @@ form06::specify15	form06::specify15	Preclamptic mother maturnal pul edema + stag
 form06::specify15	form06::specify15	APH	Antepartum hemorrhage
 form06::specify15	form06::specify15	TEF Not aperated	Tracheoesophageal fistula
 form06::specify15	form06::specify15	SPE mother + HEELP syndrom RH-ve mother	"HELLP syndrome, Rh-negative mother, Superimposed preeclampsia"
-form06::specify15	form06::specify15	Birth Trauma erbspalsy	
+form06::specify15	form06::specify15	Birth Trauma erbspalsy	Birth trauma, Erb's palsy
 form06::specify15	form06::specify15	HCVexposed	Hepatitis C-exposed
 form06::specify15	form06::specify15	CHF 20'to CHD	"Congenital heart defect, congestive heart failure"
 form06::specify15	form06::specify15	Intestinal abstraction 2' to meconium plug	"Intestinal obstruction, meconium plug"
@@ -10982,6 +11319,107 @@ form06::specify15	form06::specify15	Baby Of mother with PROM	PROM
 form06::specify15	form06::specify15	Club foot + bulged fontanel	"Bulging fontanel, club foot"
 form06::specify15	form06::specify15	PROM Phecomeha	
 form06::specify15	form06::specify15	Baby of mother is preclampsic	Preeclampsia
+form06::specify10	form06::specify10	NA	:::UNDEF:::
+form06::specify11	form06::specify11	NA	:::UNDEF:::
+form06::specify12	form06::specify12	NA	:::UNDEF:::
+form06::specify13	form06::specify13	NA	:::UNDEF:::
+form06::specify14	form06::specify14	NA	:::UNDEF:::
+form06::specify15	form06::specify15	NA	:::UNDEF:::
+form06::specify16	form06::specify16	NA	:::UNDEF:::
+form06::specify17	form06::specify17	NA	:::UNDEF:::
+form06::specify18	form06::specify18	NA	:::UNDEF:::
+form06::aboincompatibility1	form06::aboincompatibility1	NA	:::UNDEF:::
+form06::aboincompatibility1	form06::aboincompatibility1	missing	:::UNDEF:::
+form06::acutebilirubinencephalopathyabe1	form06::acutebilirubinencephalopathyabe1	NA	:::UNDEF:::
+form06::acutebilirubinencephalopathyabe1	form06::acutebilirubinencephalopathyabe1	missing	:::UNDEF:::
+form06::anemia1	form06::anemia1	NA	:::UNDEF:::
+form06::anemia1	form06::anemia1	missing	:::UNDEF:::
+form06::apnea1	form06::apnea1	NA	:::UNDEF:::
+form06::apnea1	form06::apnea1	missing	:::UNDEF:::
+form06::chromosomalanomalies1	form06::chromosomalanomalies1	NA	:::UNDEF:::
+form06::chromosomalanomalies1	form06::chromosomalanomalies1	missing	:::UNDEF:::
+form06::circumcision1	form06::circumcision1	NA	:::UNDEF:::
+form06::circumcision1	form06::circumcision1	missing	:::UNDEF:::
+form06::congenitalmalformation1	form06::congenitalmalformation1	NA	:::UNDEF:::
+form06::congenitalmalformation1	form06::congenitalmalformation1	missing	:::UNDEF:::
+form06::congenitalheartdisease1	form06::congenitalheartdisease1	NA	:::UNDEF:::
+form06::congenitalheartdisease1	form06::congenitalheartdisease1	missing	:::UNDEF:::
+form06::congenitalsyphilis1	form06::congenitalsyphilis1	NA	:::UNDEF:::
+form06::congenitalsyphilis1	form06::congenitalsyphilis1	missing	:::UNDEF:::
+form06::congestive heart failure	form06::congestive heart failure	NA	:::UNDEF:::
+form06::congestive heart failure	form06::congestive heart failure	missing	:::UNDEF:::
+form06::dic1	form06::dic1	NA	:::UNDEF:::
+form06::dic1	form06::dic1	missing	:::UNDEF:::
+form06::disseminatedintravascularcoagulopathy1	form06::disseminatedintravascularcoagulopathy1	NA	:::UNDEF:::
+form06::disseminatedintravascularcoagulopathy1	form06::disseminatedintravascularcoagulopathy1	missing	:::UNDEF:::
+form06::earlyonsetneonatalsepsis72hours1	form06::earlyonsetneonatalsepsis72hours1	NA	:::UNDEF:::
+form06::earlyonsetneonatalsepsis72hours1	form06::earlyonsetneonatalsepsis72hours1	missing	:::UNDEF:::
+form06::electrolytedisorders1	form06::electrolytedisorders1	NA	:::UNDEF:::
+form06::electrolytedisorders1	form06::electrolytedisorders1	missing	:::UNDEF:::
+form06::feedingproblem1	form06::feedingproblem1	NA	:::UNDEF:::
+form06::feedingproblem1	form06::feedingproblem1	missing	:::UNDEF:::
+form06::hemorrhagediseaseofthenewborn1	form06::hemorrhagediseaseofthenewborn1	NA	:::UNDEF:::
+form06::hemorrhagediseaseofthenewborn1	form06::hemorrhagediseaseofthenewborn1	missing	:::UNDEF:::
+form06::hivexposed1	form06::hivexposed1	NA	:::UNDEF:::
+form06::hivexposed1	form06::hivexposed1	missing	:::UNDEF:::
+form06::hyperbilirubinemia1	form06::hyperbilirubinemia1	NA	:::UNDEF:::
+form06::hyperbilirubinemia1	form06::hyperbilirubinemia1	missing	:::UNDEF:::
+form06::hypoglycemica1	form06::hypoglycemica1	NA	:::UNDEF:::
+form06::hypoglycemica1	form06::hypoglycemica1	missing	:::UNDEF:::
+form06::hypothermiaorcoldinjurysyndrome1	form06::hypothermiaorcoldinjurysyndrome1	NA	:::UNDEF:::
+form06::hypothermiaorcoldinjurysyndrome1	form06::hypothermiaorcoldinjurysyndrome1	missing	:::UNDEF:::
+form06::intraventricularhemorrhageivh1	form06::intraventricularhemorrhageivh1	NA	:::UNDEF:::
+form06::intraventricularhemorrhageivh1	form06::intraventricularhemorrhageivh1	missing	:::UNDEF:::
+form06::lateonsetneonatalsepsis72hours1	form06::lateonsetneonatalsepsis72hours1	NA	:::UNDEF:::
+form06::lateonsetneonatalsepsis72hours1	form06::lateonsetneonatalsepsis72hours1	missing	:::UNDEF:::
+form06::meconiumaspirationsyndrome1	form06::meconiumaspirationsyndrome1	NA	:::UNDEF:::
+form06::meconiumaspirationsyndrome1	form06::meconiumaspirationsyndrome1	missing	:::UNDEF:::
+form06::meningitis1	form06::meningitis1	NA	:::UNDEF:::
+form06::meningitis1	form06::meningitis1	missing	:::UNDEF:::
+form06::necrotizingenterocolitisnec1	form06::necrotizingenterocolitisnec1	NA	:::UNDEF:::
+form06::necrotizingenterocolitisnec1	form06::necrotizingenterocolitisnec1	missing	:::UNDEF:::
+form06::other1	form06::other1	NA	:::UNDEF:::
+form06::other1	form06::other1	missing	:::UNDEF:::
+form06::otherhematologic1	form06::otherhematologic1	NA	:::UNDEF:::
+form06::otherhematologic1	form06::otherhematologic1	missing	:::UNDEF:::
+form06::otherinfectiondisorders1	form06::otherinfectiondisorders1	NA	:::UNDEF:::
+form06::otherinfectiondisorders1	form06::otherinfectiondisorders1	missing	:::UNDEF:::
+form06::othermetabolicdisorders1	form06::othermetabolicdisorders1	NA	:::UNDEF:::
+form06::othermetabolicdisorders1	form06::othermetabolicdisorders1	missing	:::UNDEF:::
+form06::otherneurologic1	form06::otherneurologic1	NA	:::UNDEF:::
+form06::otherneurologic1	form06::otherneurologic1	missing	:::UNDEF:::
+form06::otherrespiratory1	form06::otherrespiratory1	NA	:::UNDEF:::
+form06::otherrespiratory1	form06::otherrespiratory1	missing	:::UNDEF:::
+form06::perinatalasphyxiawithmultipleorganinvolvement1	form06::perinatalasphyxiawithmultipleorganinvolvement1	NA	:::UNDEF:::
+form06::perinatalasphyxiawithmultipleorganinvolvement1	form06::perinatalasphyxiawithmultipleorganinvolvement1	missing	:::UNDEF:::
+form06::persistentpulmonaryhypertensionpphn1	form06::persistentpulmonaryhypertensionpphn1	NA	:::UNDEF:::
+form06::persistentpulmonaryhypertensionpphn1	form06::persistentpulmonaryhypertensionpphn1	missing	:::UNDEF:::
+form06::pneumonia1	form06::pneumonia1	NA	:::UNDEF:::
+form06::pneumonia1	form06::pneumonia1	missing	:::UNDEF:::
+form06::polycythemia1	form06::polycythemia1	NA	:::UNDEF:::
+form06::polycythemia1	form06::polycythemia1	missing	:::UNDEF:::
+form06::pulmonaryhemorrhage1	form06::pulmonaryhemorrhage1	NA	:::UNDEF:::
+form06::pulmonaryhemorrhage1	form06::pulmonaryhemorrhage1	missing	:::UNDEF:::
+form06::renalfailure1	form06::renalfailure1	NA	:::UNDEF:::
+form06::renalfailure1	form06::renalfailure1	missing	:::UNDEF:::
+form06::respiratorydistresssyndrome1	form06::respiratorydistresssyndrome1	NA	:::UNDEF:::
+form06::respiratorydistresssyndrome1	form06::respiratorydistresssyndrome1	missing	:::UNDEF:::
+form06::rhincompatibility1	form06::rhincompatibility1	NA	:::UNDEF:::
+form06::rhincompatibility1	form06::rhincompatibility1	missing	:::UNDEF:::
+form06::seizuredisorder1	form06::seizuredisorder1	NA	:::UNDEF:::
+form06::seizuredisorder1	form06::seizuredisorder1	missing	:::UNDEF:::
+form06::shock1	form06::shock1	NA	:::UNDEF:::
+form06::shock1	form06::shock1	missing	:::UNDEF:::
+form06::tetanus1	form06::tetanus1	NA	:::UNDEF:::
+form06::tetanus1	form06::tetanus1	missing	:::UNDEF:::
+form06::transienttachypneaofthenewborn1	form06::transienttachypneaofthenewborn1	NA	:::UNDEF:::
+form06::transienttachypneaofthenewborn1	form06::transienttachypneaofthenewborn1	missing	:::UNDEF:::
+form06::traumaticinjury1	form06::traumaticinjury1	NA	:::UNDEF:::
+form06::traumaticinjury1	form06::traumaticinjury1	missing	:::UNDEF:::
+form06::uvelectomy1	form06::uvelectomy1	NA	:::UNDEF:::
+form06::uvelectomy1	form06::uvelectomy1	missing	:::UNDEF:::
+form06::wereanyconditiondiagnosed	form06::wereanyconditiondiagnosed	NA	:::UNDEF:::
+form06::wereanyconditiondiagnosed	form06::wereanyconditiondiagnosed	missing	:::UNDEF:::
 form08a::ifyesdescribe	form08a::ifyesdescribe	"Micrognathia,low sited ears, hydrocephalus(/edwards szndrome face)"	
 form08a::ifyesdescribe	form08a::ifyesdescribe	Mild nasal bleeding Abdominal cavity Aseites	
 form08a::ifyesdescribe	form08a::ifyesdescribe	Internal congebital malformation due to Hous shoe kidny	
@@ -11351,7 +11789,7 @@ form12a::specify3	form12a::specify3	Hosipital acquired sepsis	Hospital acquired 
 form12a::specify3	form12a::specify3	CHF 2 to PDA	"Congestive heart failure, patent ductus arteriosus"
 form12a::specify3	form12a::specify3	D/C	
 form12a::specify3	form12a::specify3	DIC	Disseminated intravascular coagulation
-form12a::specify3	form12a::specify3	wt= 700gm	
+form12a::specify3	form12a::specify3	wt= 700gm	Low birth weight
 form12a::specify3	form12a::specify3	Hypolycemia	Hypoglycemia
 form12a::specify3	form12a::specify3	Hyperkolemia	Hyperkalemia
 form12a::specify3	form12a::specify3	Hyperkalemia	Hyperkalemia
@@ -11550,7 +11988,7 @@ form12a::specify5	form12a::specify5	twin pregnaray	Twin
 form12a::specify5	form12a::specify5	Retained 2nd twins	Retained second twin
 form12a::specify5	form12a::specify5	Multiple pregnancy	Multiple pregnancy
 form12a::specify5	form12a::specify5	No Rish fuito idatifited	
-form12a::specify5	form12a::specify5	Maltiple Gestatia	Multiple gestations
+form12a::specify5	form12a::specify5	Maltiple Gestatia	Multiple gestation
 form12a::specify5	form12a::specify5	preteon labiar	Preterm labor
 form12a::specify5	form12a::specify5	P Rom-3 days	Prolonged ROM
 form12a::specify5	form12a::specify5	Tiwince Pregrance	Twin
@@ -11596,7 +12034,7 @@ form12a::specify5	form12a::specify5	co-twin IUFD
 form12a::specify5	form12a::specify5	Twin plus Beech Delivery	"Breech delivery, twin"
 form12a::specify5	form12a::specify5	Twin + Breech delivery	"Breech delivery, twin"
 form12a::specify5	form12a::specify5	IUGR	Intrauterine growth restriction
-form12a::specify5	form12a::specify5	Mutiple gestetion	Multiple gestations
+form12a::specify5	form12a::specify5	Mutiple gestetion	Multiple gestation
 form12a::specify5	form12a::specify5	Severe Oligohydromines PROM	"PROM, severe oligohydramnios"
 form12a::specify5	form12a::specify5	Rh.he mother	Rh-negative mother
 form12a::specify5	form12a::specify5	Mother with thutoticose	
@@ -11705,6 +12143,19 @@ form12a::specify5	form12a::specify5	APH 2 dgree to placent precie	"Antepartum he
 form12a::specify5	form12a::specify5	Partial help syndrom	Partial HELLP syndrome
 form12a::specify5	form12a::specify5	Prologed labor ROM	"Prolonged labor, ROM"
 form12a::specify5	form12a::specify5	"SGA, Oligoly"	"Oligohydramnios, small for gestational age"
+form12a::specify5	form12a::specify5	Abortion(sofe) tried and fauel
+form12a::specify5	form12a::specify5	maternal Bicytopemia	Bicytopenia
+form12a::specify5	form12a::specify5	multiple pestefior
+form12a::specify5	form12a::specify5	Olipohm....	Oligohydramnios
+form12a::specify5	form12a::specify5	olipohydraminias??	Oligohydramnios
+form12a::specify5	form12a::specify5	olipohydraminos	Oligohydramnios
+form12a::specify5	form12a::specify5	pataysyndrome	Patau syndrome (trisomy 13)
+form12a::specify5	form12a::specify5	Pretrm PROM	PROM
+form12a::specify5	form12a::specify5	prolonged PROM	Prolonged PROM
+form12a::specify5	form12a::specify5	prolonged Ruptue of menbron??	Prolonged ROM
+form12a::specify5	form12a::specify5	PROM	PROM
+form12a::specify5	form12a::specify5	PROM (36 hr)	PROM
+form12a::specify5	form12a::specify5	serve megabld.....???
 form12b::specify	form12b::specify	washiue aspiration	
 form12b::specify	form12b::specify	asplization	Aspiration
 form12b::specify	form12b::specify	suirgery related (anestajia related)	Surgery (anesthesia) related
@@ -11746,7 +12197,7 @@ form12b::specify2	form12b::specify2	DIC	Disseminated intravascular coagulation
 form12b::specify2	form12b::specify2	"Hypoglycemia, cacaclexia"	"Hypoglycemia, cachexia"
 form12b::specify2	form12b::specify2	"Hypogycemia, DIC"	"Disseminated intravascular coagulation, hypoglycemia"
 form12b::specify2	form12b::specify2	"club foot, absurt left thermb"	"Absent left thumb, club foot"
-form12b::specify2	form12b::specify2	Seizere disorder and subolural hematoma	
+form12b::specify2	form12b::specify2	Seizere disorder and subolural hematoma	Seizure disorder, subdural hematoma
 form12b::specify2	form12b::specify2	"Twin- A, Hypoglycemia"	"Hypoglycemia, twin"
 form12b::specify2	form12b::specify2	Hyperglycemia	Hyperglycemia
 form12b::specify2	form12b::specify2	Hpoglycemia	Hypoglycemia
@@ -11813,11 +12264,11 @@ form12b::specify2	form12b::specify2	"APH, Diabetes"	"Antepartum hemorrhage, diab
 form12b::specify2	form12b::specify2	triplets	Triplet
 form12b::specify2	form12b::specify2	discordnat twins	Discordant twins
 form12b::specify2	form12b::specify2	Young Mother 15 year	Young mother
-form12b::specify2	form12b::specify2	Referred	
+form12b::specify2	form12b::specify2	Referred	Referred
 form12b::specify2	form12b::specify2	Feeding problem	Feeding problem
-form12b::specify2	form12b::specify2	Polyeythem	
+form12b::specify2	form12b::specify2	Polyeythem	Polycythemia
 form12b::specify2	form12b::specify2	Polycythemra	Polycythemia
-form12b::specify2	form12b::specify2	Polyythromia	
+form12b::specify2	form12b::specify2	Polyythromia	Polycythemia
 form12b::specify2	form12b::specify2	Polycythermia	Polycythemia
 form12b::specify2	form12b::specify2	Syplibis infection	Syphilis
 form12b::specify2	form12b::specify2	Hep B Exposed	Hepatitis B-exposed
@@ -11837,9 +12288,9 @@ form12b::specify2	form12b::specify2	ly6R/	Intrauterine growth restriction
 form12b::specify2	form12b::specify2	LU6R	Intrauterine growth restriction
 form12b::specify2	form12b::specify2	specify2	:::UNDEF:::
 form12b::specify2	form12b::specify2	DEXAMETAZON NOT GIVEN	Dexamethasone not give
-form12b::specify2	form12b::specify2	wt= 700gm	
+form12b::specify2	form12b::specify2	wt= 700gm	Low birth weight
 form12b::specify2	form12b::specify2	Hypolycemia	Hypoglycemia
-form12b::specify2	form12b::specify2	polysatemiy sizer	
+form12b::specify2	form12b::specify2	polysatemiy sizer	Polycythemia, seizure
 form12b::specify2	form12b::specify2	Beizure	Seizure
 form12b::specify1	form12b::specify1	TWIN	Twin
 form12b::specify1	form12b::specify1	Fetal distress	Fetal distress
@@ -11944,8 +12395,8 @@ form12b::specify1	form12b::specify1	"Prologed labor, breach"	"Breech presentatio
 form12b::specify1	form12b::specify1	"Prolonged labor, breach"	"Breech presentation, prolonged labor"
 form12b::specify1	form12b::specify1	"PROM 4d, twins"	"Prolonged PROM, twin"
 form12b::specify1	form12b::specify1	Teeneger	Young mother
-form12b::specify1	form12b::specify1	Twins + prolonged abor	
-form12b::specify1	form12b::specify1	"Yang mother 17y, UPANC"	
+form12b::specify1	form12b::specify1	Twins + prolonged abor	Prolonged labor, twin
+form12b::specify1	form12b::specify1	"Yang mother 17y, UPANC"	Young mother, UPANC
 form12b::specify1	form12b::specify1	PROM 72hour	Prolonged PROM
 form12b::specify1	form12b::specify1	No ANC	No antenatal care
 form12b::specify1	form12b::specify1	PROM and Prolonged labour	"Prolonged labor, PROM"
@@ -11972,7 +12423,7 @@ form12b::specify1	form12b::specify1	Maternal diabetes	Diabetic mother
 form12b::specify1	form12b::specify1	twining	Twin
 form12b::specify1	form12b::specify1	"Anemia,Twin, Breach/CS"	"Anemia, breech presentation, cesaerean section, twin"
 form12b::specify1	form12b::specify1	UTT	
-form12b::specify1	form12b::specify1	teenye	
+form12b::specify1	form12b::specify1	teenye	Young mother
 form12b::specify1	form12b::specify1	"poly hydrominies, twin"	"Polyhydramnios, twin"
 form12b::specify1	form12b::specify1	PROM 26 hours	PROM
 form12b::specify1	form12b::specify1	Teeneger pleghon	Young mother
@@ -12004,17 +12455,20 @@ form12b::specify1	form12b::specify1	Sever Anemia	Severe anemia
 form12b::specify1	form12b::specify1	Abroptiul phxent	Abruptio placentae
 form12b::specify1	form12b::specify1	TWINE	Twin
 form12b::specify1	form12b::specify1	SIDH	
-form12b::specify1	form12b::specify1	HIV	HIV-positive
+form12b::specify1	form12b::specify1	HIV	HIV positive
 form12b::specify1	form12b::specify1	Mother has 5 still birth	
 form12b::specify1	form12b::specify1	abruptio	Abruptio placentae
 form12b::specify1	form12b::specify1	Abruption	Abruptio placentae
-form12b::specify1	form12b::specify1	MULTIOLEL GESTATION	Multiple gestations
+form12b::specify1	form12b::specify1	MULTIOLEL GESTATION	Multiple gestation
 form05_long::ifdieddateofdeath	form05_long::ifdieddateofdeath	na	:::UNDEF:::
 form03a::dateofbirth	form03a::dateofbirth	na	:::UNDEF:::
 form12a::ifinfantdiedatorpriortoday28dateofdeath	form12a::ifinfantdiedatorpriortoday28dateofdeath	na	:::UNDEF:::
 form12b::ifinfantdiedatorpriortoday28dateofdeath	form12b::ifinfantdiedatorpriortoday28dateofdeath	na	:::UNDEF:::
 form01::dateofscreening	form01::dateofscreening	na	:::UNDEF:::
 form01::dateofscreening	form01::dateofscreening	23/12/1932	23/12/2016
+form01::didmotherdeliveratoneoftheparticipatingstudyhospitalsandinfant	form01::didmotherdeliveratoneoftheparticipatingstudyhospitalsandinfant	missing	:::UNDEF:::
+form01::wasbabytransferredfromotherfacilitiesorhometooneoftheparticipa	form01::wasbabytransferredfromotherfacilitiesorhometooneoftheparticipa	missing	:::UNDEF:::
+form01::wasultrasoundperformed	form01::wasultrasoundperformed	missing	:::UNDEF:::
 form06::dateofdeath	form06::dateofdeath	na	:::UNDEF:::
 form01::dateballardexamdone	form01::dateballardexamdone	na	:::UNDEF:::
 form05_long::reasonforadmission	form05_long::reasonforadmission	na	:::UNDEF:::
@@ -12028,19 +12482,106 @@ form06_c_xray::atanywashmddiagnosed	form06_c_xray::atanywashmddiagnosed	na	:::UN
 form05_long::hlength	form05_long::hlength	na	:::UNDEF:::
 form05_long::temperature	form05_long::temperature	na	:::UNDEF:::
 form05_long::specify	form05_long::specify	na	:::UNDEF:::
-form05_long::specify	form05_long::specify	1	High-risk clinic
-form05_long::specify	form05_long::specify	2	Telephone (health worker)
-form05_long::specify	form05_long::specify	3	Telephone (family)
-form05_long::specify	form05_long::specify	4	Other
+form05_long::specify	form05_long::specify	B6
+form05_long::specify	form05_long::specify	Face to face Meeting	In person
+form05_long::specify	form05_long::specify	Face to face meeting	In person
+form05_long::specify	form05_long::specify	she has not tele.number .so,we can't follw her Baby	No follow up
+form05_long::specify	form05_long::specify	phone Not Available	No follow up
+form05_long::specify	form05_long::specify	Phone number is not working	No follow up
+form05_long::specify	form05_long::specify	faher face to face contact	In person
+form05_long::specify	form05_long::specify	NICU	In NICU
+form05_long::specify	form05_long::specify	No response	No follow up
+form05_long::specify	form05_long::specify	No Visit	No follow up
+form05_long::specify	form05_long::specify	returened to BLH	In hospital
+form05_long::specify	form05_long::specify	BLH hospital	In hospital
+form05_long::specify	form05_long::specify	BLH	In hospital
+form05_long::specify	form05_long::specify	follow up absent	No follow up
+form05_long::specify	form05_long::specify	No visit(Absent)	No follow up
+form05_long::specify	form05_long::specify	No visit(absent)	No follow up
+form05_long::specify	form05_long::specify	Follow up absent	No follow up
+form05_long::specify	form05_long::specify	Dide in NILLs	Died in NICU
+form05_long::specify	form05_long::specify	Dide in NICU	Died in NICU
+form05_long::specify	form05_long::specify	Died in NICU	Died in NICU
+form05_long::specify	form05_long::specify	followup Abscent	No follow up
+form05_long::specify	form05_long::specify	Follow up Abscent	No follow up
+form05_long::specify	form05_long::specify	Followup Abscent	No follow up
+form05_long::specify	form05_long::specify	Followup
+form05_long::specify	form05_long::specify	Followup Abscebt	No follow up
+form05_long::specify	form05_long::specify	Folloew up absent	No follow up
+form05_long::specify	form05_long::specify	Followup Absent	No follow up
+form05_long::specify	form05_long::specify	Complete 28 days in the Hospita	In hospital at 28 days
+form05_long::specify	form05_long::specify	infant in Hospital antill 28 days age	In hospital at 28 days
+form05_long::specify	form05_long::specify	Followup Abscent b\c phone not work	No follow up
+form05_long::specify	form05_long::specify	28 days 4 more in hospita	In hospital at 28 days
+form05_long::specify	form05_long::specify	Followup Absenet	No follow up
+form05_long::specify	form05_long::specify	Follwup Absent	No follow up
+form05_long::specify	form05_long::specify	Follow Up Absent	No follow up
+form05_long::specify	form05_long::specify	contact by vistr of the ward wher PT admitted
+form05_long::specify	form05_long::specify	Refered to other Hospital
+form05_long::specify	form05_long::specify	Did in NUCU	Died in NICU
+form05_long::specify	form05_long::specify	Sick baby	Sick baby
+form05_long::specify	form05_long::specify	Baby discharged at 26 days age	Discharged at 26 days
+form05_long::specify	form05_long::specify	Discharged on 28 days then has not follow up here	In hospital at 28 days
+form05_long::specify	form05_long::specify	Another baby admited to the hospital and baby is with the mother
+form05_long::specify	form05_long::specify	TB(Another baby admitted to the hospital and baby is with his mother)
+form05_long::specify	form05_long::specify	TB(Another baby adimitted to the hospital and baby is with his mother)
+form05_long::specify	form05_long::specify	Refer to other Hospital	Referred to another hospital
+form05_long::specify	form05_long::specify	Died At NICU	Died in NICU
+form05_long::specify	form05_long::specify	Net discharge	Still hospitalized
+form05_long::specify	form05_long::specify	Died un NICU	Died in NICU
+form05_long::specify	form05_long::specify	still in hosipital antill 28 day age
+form05_long::specify	form05_long::specify	Follow up abscent phone no not Network
+form05_long::specify	form05_long::specify	28 days in hospital	In hospital at 28 days
+form05_long::specify	form05_long::specify	1
+form05_long::specify	form05_long::specify	when ather twin b came for following	When twin came for follow-up
+form05_long::specify	form05_long::specify	Come because the neonate is sick	Sick neonate
+form05_long::specify	form05_long::specify	still in NICU	In NICU
+form05_long::specify	form05_long::specify	Discharged from the NICU at the 28th day
+form05_long::specify	form05_long::specify	at dicharge for the Hosipital	At discharge
+form05_long::specify	form05_long::specify	at discharge	At discharge
+form05_long::specify	form05_long::specify	at dischrage	At discharge
+form05_long::specify	form05_long::specify	still in the hosipital	Still hospitalized
+form05_long::specify	form05_long::specify	NICU (Readmission)	In NICU
+form05_long::specify	form05_long::specify	at hosipital	In hospital
+form05_long::specify	form05_long::specify	in the Hosipital		In hospital
+form05_long::specify	form05_long::specify	newborn in the hosipital	In hospital
+form05_long::specify	form05_long::specify	in the hosipital	In hospital
+form05_long::specify	form05_long::specify	neonate is still in the NICU ward	Still hospitalized
+form05_long::specify	form05_long::specify	at NICU	In NICU
+form05_long::specify	form05_long::specify	In the Hosipital	In hospital
+form05_long::specify	form05_long::specify	come to NICU	In NICU
+form05_long::specify	form05_long::specify	came to NICU	In NICU
+form05_long::specify	form05_long::specify	Srill in the ward	Still hospitalized
+form05_long::specify	form05_long::specify	in NICU	In NICU
+form05_long::specify	form05_long::specify	in Nicu (hosipital)	In NICU
+form05_long::specify	form05_long::specify	She was at Hospital at age of28 days	In hospital at 28 days
+form05_long::specify	form05_long::specify	She was in hospital	In hospital
+form05_long::specify	form05_long::specify	She was admited tall 28 days of age	In hospital at 28 days
+form05_long::specify	form05_long::specify	admited in Hospital fill 28 days	In hospital at 28 days
+form05_long::specify	form05_long::specify	Nicu	In NICU
+form05_long::specify	form05_long::specify	the was stile admited in Hospitale	Still hospitalized
+form05_long::specify	form05_long::specify	she was staved 28th at hospitale	In hospital at 28 days
+form05_long::specify	form05_long::specify	baby was admited till 28th days at JMC	In hospital at 28 days
+form05_long::specify	form05_long::specify	Stillion NICU	Still hospitalized
+form05_long::specify	form05_long::specify	Still in NICU	Still hospitalized
+form05_long::specify	form05_long::specify	Still in Nicu	Still hospitalized
+form05_long::specify	form05_long::specify	At NICU	In NICU
+form05_long::specify	form05_long::specify	NICU admited	In NICU
+form05_long::specify	form05_long::specify	Nlcu	In NICU
+form05_long::specify	form05_long::specify	NLcu	In NICU
 form05_long::capillaryrefill	form05_long::capillaryrefill	na	:::UNDEF:::
 form05_long::ifyeslocation	form05_long::ifyeslocation	na	:::UNDEF:::
 form05_long::apicalheartrate	form05_long::apicalheartrate	na	:::UNDEF:::
 form05_long::obs_number	form05_long::obs_number	na	:::UNDEF:::
-form05_long::obs_number	form05_long::obs_number	1	Follow-up visit 1
-form05_long::obs_number	form05_long::obs_number	2	Follow-up visit 2
-form05_long::obs_number	form05_long::obs_number	3	Follow-up visit 3
-form05_long::obs_number	form05_long::obs_number	4	Follow-up visit 4
+form05_long::obs_number	form05_long::obs_number	0	Follow-up visit 1
+form05_long::obs_number	form05_long::obs_number	1	Follow-up visit 2
+form05_long::obs_number	form05_long::obs_number	2	Follow-up visit 3
+form05_long::obs_number	form05_long::obs_number	3	Follow-up visit 4
 form05_long::followupmethodofthisvisit	form05_long::followupmethodofthisvisit	na	:::UNDEF:::
+form05_long::followupmethodofthisvisit	form05_long::followupmethodofthisvisit	1	High-risk clinic
+form05_long::followupmethodofthisvisit	form05_long::followupmethodofthisvisit	2	Telephone (health worker)
+form05_long::followupmethodofthisvisit	form05_long::followupmethodofthisvisit	3	Telephone (family)
+form05_long::followupmethodofthisvisit	form05_long::followupmethodofthisvisit	4	Other
 form05_long::visit	form05_long::visit	na	:::UNDEF:::
 form06_c_xray::atanywaspneumoniadiagnosed	form06_c_xray::atanywaspneumoniadiagnosed	na	:::UNDEF:::
 form06_c_xray::atanywasmasdiagnosed	form06_c_xray::atanywasmasdiagnosed	na	:::UNDEF:::
@@ -12133,61 +12674,149 @@ form12a::researcherobservationbasedonclinicandotherfindings	form12a::researchero
 form12a::researcherobservationbasedonclinicandotherfindings	form12a::researcherobservationbasedonclinicandotherfindings	17	Tetanus
 form12a::researcherobservationbasedonclinicandotherfindings	form12a::researcherobservationbasedonclinicandotherfindings	18	Other
 form09_long::csfpos	form09_long::csfpos	na	:::UNDEF:::
+form09_long::csfpos	form09_long::csfpos	missing	Missing
 form09_long::staphaureus	form09_long::staphaureus	na	:::UNDEF:::
+form09_long::staphaureus	form09_long::staphaureus	missing	Missing
 form09_long::kanamycin	form09_long::kanamycin	na	:::UNDEF:::
 form09_long::amikacin	form09_long::amikacin	na	:::UNDEF:::
 form09_long::candidaalbicans	form09_long::candidaalbicans	na	:::UNDEF:::
-form06_cbc::plateletcount	form06_cbc::plateletcount	na	:::UNDEF:::
+form09_long::candidaalbicans	form09_long::candidaalbicans	missing	Missing
+form06_cbc::plateletcount	form06_cbc::plateletcount	NA	:::UNDEF:::
 form09_long::psudomonas	form09_long::psudomonas	na	:::UNDEF:::
+form09_long::psudomonas	form09_long::psudomonas	missing	Missing
 form09_long::erythromycin	form09_long::erythromycin	na	:::UNDEF:::
 form09_long::pusfromeyedischarge	form09_long::pusfromeyedischarge	na	:::UNDEF:::
+form09_long::pusfromeyedischarge	form09_long::pusfromeyedischarge	missing	Missing
 form09_long::enterobacter	form09_long::enterobacter	na	:::UNDEF:::
+form09_long::enterobacter	form09_long::enterobacter	missing	Missing
 form09_long::pusfromumbilicus	form09_long::pusfromumbilicus	na	:::UNDEF:::
+form09_long::pusfromumbilicus	form09_long::pusfromumbilicus	missing	Missing
 form09_long::ampicillin	form09_long::ampicillin	na	:::UNDEF:::
 form09_long::klebsiellapneumoniae	form09_long::klebsiellapneumoniae	na	:::UNDEF:::
+form09_long::klebsiellapneumoniae	form09_long::klebsiellapneumoniae	missing	Missing
 form09_long::listeriamonocytogenes	form09_long::listeriamonocytogenes	na	:::UNDEF:::
+form09_long::listeriamonocytogenes	form09_long::listeriamonocytogenes	missing	Missing
 form09_long::methicillin	form09_long::methicillin	na	:::UNDEF:::
 form09_long::pusfromskin	form09_long::pusfromskin	na	:::UNDEF:::
+form09_long::pusfromskin	form09_long::pusfromskin	missing	Missing
 form09_long::coagulasenegativestaphstaphepidermidis	form09_long::coagulasenegativestaphstaphepidermidis	na	:::UNDEF:::
+form09_long::coagulasenegativestaphstaphepidermidis	form09_long::coagulasenegativestaphstaphepidermidis	missing	Missing
 form09_long::otherpos	form09_long::otherpos	na	:::UNDEF:::
-form06_cbc::wbc	form06_cbc::wbc	na	:::UNDEF:::
+form09_long::otherpos	form09_long::otherpos	missing	Missing
+form06_cbc::wbc	form06_cbc::wbc	NA	:::UNDEF:::
 form09_long::norfloxacine	form09_long::norfloxacine	na	:::UNDEF:::
 form09_long::groupbstreptococcus	form09_long::groupbstreptococcus	na	:::UNDEF:::
+form09_long::groupbstreptococcus	form09_long::groupbstreptococcus	missing	Missing
 form09_long::vancomycin	form09_long::vancomycin	na	:::UNDEF:::
 form09_long::doxycyclin	form09_long::doxycyclin	na	:::UNDEF:::
 form09_long::specifyorganism	form09_long::specifyorganism	na	:::UNDEF:::
+form09_long::specifyorganism	form09_long::specifyorganism	NA	:::UNDEF:::
+form09_long::specifyorganism	form09_long::specifyorganism	No Growth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Klebsiella Ozenae	Klebsiella ozaenae
+form09_long::specifyorganism	form09_long::specifyorganism	No.Growth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	No growth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Negative on batec	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Negative on Bacte	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Negative	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Postive bactec but nogrouth on media	Bactec positive, media negative
+form09_long::specifyorganism	form09_long::specifyorganism	Postive Bactec but no Growth on media	Bactec positive, media negative
+form09_long::specifyorganism	form09_long::specifyorganism	no Growth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Negative or bactet	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	S.Viridan	Streptococcus viridans
+form09_long::specifyorganism	form09_long::specifyorganism	Unidentified grown negative rods grow a BA&CHE only may be spingowanass	Gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	CONS	Coagulase-negative staphylococci
+form09_long::specifyorganism	form09_long::specifyorganism	Gram negative rods grows only BA,CHE way be spingomonal	Gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	Grm negative rods don't growon on endiary media,yeast cell	Gram negative rods, yeast
+form09_long::specifyorganism	form09_long::specifyorganism	Coagulase -ve staphiococ	Coagulase-negative staphylococci
+form09_long::specifyorganism	form09_long::specifyorganism	Fungal yeast glowth	Yeast
+form09_long::specifyorganism	form09_long::specifyorganism	Klebsella ezena	Klebsiella ozaenae
+form09_long::specifyorganism	form09_long::specifyorganism	Entrococus speacies	Enterococcus
+form09_long::specifyorganism	form09_long::specifyorganism	Negative on Bacteria	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Enterococus SPP	Enterococcus
+form09_long::specifyorganism	form09_long::specifyorganism	k.oxytopa	Klebsiella oxytoca
+form09_long::specifyorganism	form09_long::specifyorganism	Yeast cell Growth	Yeast
+form09_long::specifyorganism	form09_long::specifyorganism	No Growh	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Gram Positive incluster	Gram positive
+form09_long::specifyorganism	form09_long::specifyorganism	no growth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	baccilus SPP may be coutemination3	Bacillus (possible contamination)
+form09_long::specifyorganism	form09_long::specifyorganism	Posetive but no growth with available culture media	Bactec positive, media negative
+form09_long::specifyorganism	form09_long::specifyorganism	Klebsiella ozena	Klebsiella ozaenae
+form09_long::specifyorganism	form09_long::specifyorganism	Yeast cell	Yeast
+form09_long::specifyorganism	form09_long::specifyorganism	Enterococus species	Enterococcus
+form09_long::specifyorganism	form09_long::specifyorganism	Yeast cell growth	Yeast
+form09_long::specifyorganism	form09_long::specifyorganism	Achromobacter xylosoxidans	Achromobacter xylosoxidans
+form09_long::specifyorganism	form09_long::specifyorganism	K.Oxytoca	Klebsiella oxytoca
+form09_long::specifyorganism	form09_long::specifyorganism	klebsella ozena	Klebsiella ozaenae
+form09_long::specifyorganism	form09_long::specifyorganism	Mixed colony grouth	Mixed growth
+form09_long::specifyorganism	form09_long::specifyorganism	n	:::UNDEF:::
+form09_long::specifyorganism	form09_long::specifyorganism	No organism	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	No Organism	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Klebsiella Rhinose	Klebsiella rhinoscleromatis
+form09_long::specifyorganism	form09_long::specifyorganism	K.ozeane	Klebsiella ozaenae
+form09_long::specifyorganism	form09_long::specifyorganism	non-lactcse for mother G-ve	Lactose-negative gram negative
+form09_long::specifyorganism	form09_long::specifyorganism	St. aureus	Staphylococcus aureus
+form09_long::specifyorganism	form09_long::specifyorganism	nen fementative grem-ve rede	Nonfermenting gram negative rod
+form09_long::specifyorganism	form09_long::specifyorganism	No grouth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	No growuth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	No grouwth	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Laktosefermentr.gnemrve Rods	Lactose-positive gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	lacte femeler G-ve ....	Lactose-positive gram negative
+form09_long::specifyorganism	form09_long::specifyorganism	no organism	No growth
+form09_long::specifyorganism	form09_long::specifyorganism	Lactose fermtry G-ve rods	Lactose-positive gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	steptocdcus viridlans	Streptococcus viridans
+form09_long::specifyorganism	form09_long::specifyorganism	Lactose fermetr G-ve rods	Lactose-positive gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	Lactose formentr G-ve rods	Lactose-positive gram negative rods
+form09_long::specifyorganism	form09_long::specifyorganism	citrobacter sppsis	Citrobacter
+form09_long::specifyorganism	form09_long::specifyorganism	citrobactor sppsis	Citrobacter
+form09_long::specifyorganism	form09_long::specifyorganism	Candida Species	Candida
+form09_long::specifyorganism	form09_long::specifyorganism	K.Oxyfoca	Klebsiella oxytoca
+form09_long::specifyorganism	form09_long::specifyorganism	Sapmonella SPPS	Salmonella
+form09_long::specifyorganism	form09_long::specifyorganism	growth on bactec machine but not on the plate (gram positive cocci)	Gram positive cocci
+form09_long::specifyorganism	form09_long::specifyorganism	Growth-Yes or Bacteriya but not on the plase	Bactec positive, media negative
+form09_long::specifyorganism	form09_long::specifyorganism	KLEBSIELLA SPECIES	Klebsiella
 form09_long::specifydrug	form09_long::specifydrug	na	:::UNDEF:::
 form09_long::penicilling	form09_long::penicilling	na	:::UNDEF:::
 form09_long::cephtazdime	form09_long::cephtazdime	na	:::UNDEF:::
 form09_long::csf	form09_long::csf	na	:::UNDEF:::
+form09_long::csf	form09_long::csf	missing	Missing
 form09_long::ceftriaxone	form09_long::ceftriaxone	na	:::UNDEF:::
 form09_long::nitrofurantoin	form09_long::nitrofurantoin	na	:::UNDEF:::
 form09_long::otherdrug	form09_long::otherdrug	na	:::UNDEF:::
 form09_long::otherorganism	form09_long::otherorganism	na	:::UNDEF:::
+form09_long::otherorganism	form09_long::otherorganism	missing	Missing
 form09_long::pusfromskinpos	form09_long::pusfromskinpos	na	:::UNDEF:::
+form09_long::pusfromskinpos	form09_long::pusfromskinpos	missing	Missing
 form09_long::serratia	form09_long::serratia	na	:::UNDEF:::
+form09_long::serratia	form09_long::serratia	missing	Missing
 form09_long::ecoli	form09_long::ecoli	na	:::UNDEF:::
+form09_long::ecoli	form09_long::ecoli	missing	Missing
 form09_long::pusfromumbilicuspos	form09_long::pusfromumbilicuspos	na	:::UNDEF:::
+form09_long::pusfromumbilicuspos	form09_long::pusfromumbilicuspos	missing	Missing
 form09_long::cloxacillin	form09_long::cloxacillin	na	:::UNDEF:::
 form09_long::blood	form09_long::blood	na	:::UNDEF:::
-form06_cbc::hbg	form06_cbc::hbg	na	:::UNDEF:::
+form09_long::blood	form09_long::blood	missing	Missing
+form06_cbc::hbg	form06_cbc::hbg	NA	:::UNDEF:::
 form09_long::sulfadiazine	form09_long::sulfadiazine	na	:::UNDEF:::
-form06_cbc::hct	form06_cbc::hct	na	:::UNDEF:::
+form06_cbc::hct	form06_cbc::hct	NA	:::UNDEF:::
 form09_long::acinetobacter	form09_long::acinetobacter	na	:::UNDEF:::
+form09_long::acinetobacter	form09_long::acinetobacter	missing	Missing
 form09_long::agumentin	form09_long::agumentin	na	:::UNDEF:::
 form09_long::pusfromeyedischargepos	form09_long::pusfromeyedischargepos	na	:::UNDEF:::
+form09_long::pusfromeyedischargepos	form09_long::pusfromeyedischargepos	missing	Missing
 form09_long::gentamycin	form09_long::gentamycin	na	:::UNDEF:::
 form09_long::tetracycline	form09_long::tetracycline	na	:::UNDEF:::
 form09_long::trimethoprimsulfamethoxazole	form09_long::trimethoprimsulfamethoxazole	na	:::UNDEF:::
 form09_long::cephalothin	form09_long::cephalothin	na	:::UNDEF:::
 form09_long::carbencillin	form09_long::carbencillin	na	:::UNDEF:::
 form09_long::bloodpos	form09_long::bloodpos	na	:::UNDEF:::
+form09_long::bloodpos	form09_long::bloodpos	missing	Missing
 form09_long::streptomycin	form09_long::streptomycin	na	:::UNDEF:::
 form09_long::chloramphenicol	form09_long::chloramphenicol	na	:::UNDEF:::
 form09_long::cefotaxime	form09_long::cefotaxime	na	:::UNDEF:::
 form09_long::other	form09_long::other	na	:::UNDEF:::
+form09_long::other	form09_long::other	missing	Missing
 form09_long::amoxil	form09_long::amoxil	na	:::UNDEF:::
-form06_cbc::rbc	form06_cbc::rbc	na	:::UNDEF:::
+form06_cbc::rbc	form06_cbc::rbc	NA	:::UNDEF:::
 form02_long::hivaidsserostatus1	form02_long::hivaidsserostatus1	na	:::UNDEF:::
 form02_long::lasthctlevel	form02_long::lasthctlevel	na	:::UNDEF:::
 form06_cbc::hct	form06_cbc::hct	na	:::UNDEF:::
