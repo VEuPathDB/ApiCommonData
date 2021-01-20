@@ -59,7 +59,7 @@ if ($genomeJsonDir) {
 
 
 my $outputPresenterFile = $inputPresenterFile . "\.modified";
-my ($abbrev, $ifPrimary, $ifHistory, $buildNumber, $annotSource, $annotVersion);
+my ($abbrev, $ifPrimary, $ifHistory, $buildNumber, $annotSource, $annotVersion, $functAnnotSource, $functAnnotVersion);
 open (OUT, ">$outputPresenterFile") || die "can not open $outputPresenterFile file to write\n";
 open (PF, $inputPresenterFile) || die "can not open $inputPresenterFile file to read\n";
 while (<PF>) {
@@ -74,11 +74,30 @@ while (<PF>) {
     $annotSource = $1;
     $annotVersion = $2;
     $ifHistory = 0;
+
+  } elsif ($_ =~ /annotationSource="(.+?)" annotationVersion="(.+?)"/ && $ifHistory == 1) {
+    $annotSource = $1;
+    $annotVersion = $2;
+    ## not assign ifhistory=0;
+  } elsif (($_ =~ /functionalAnnotationSource="(.+)" functionalAnnotationVersion="(.+)">.+<\/history>/)) {
+    $functAnnotSource = $1;
+    $functAnnotVersion = $2;
+    $ifHistory = 0;
   } elsif ($_ =~ /<primaryContactId>/ && $ifPrimary == 1 && $buildNumber < $currentBuildNumber && $accessions{$abbrev}) {
     #print OUT INSDC accession
     print OUT "    <history buildNumber=\"$currentBuildNumber\"\n";
     print OUT "            genomeSource=\"GenBank\" genomeVersion=\"$accessions{$abbrev}\"\n";
-    print OUT "            annotationSource=\"$annotSource\" annotationVersion=\"$annotVersion\">rebuild with INSDC accession added<\/history>\n";
+    if ($functAnnotSource && $functAnnotVersion) {
+      print OUT "            annotationSource=\"$annotSource\" annotationVersion=\"$annotVersion\"\n";
+      print OUT "            functionalAnnotationSource=\"$functAnnotSource\" functionalAnnotationVersion=\"$functAnnotVersion\">rebuild with INSDC accession added<\/history>\n";
+    } else {
+      print OUT "            annotationSource=\"$annotSource\" annotationVersion=\"$annotVersion\">rebuild with INSDC accession added<\/history>\n";
+    }
+    $annotSource = "";
+    $annotVersion = "";
+    $functAnnotSource = "";
+    $functAnnotVersion = "";
+
   } elsif ($_ =~ /<\/datasetPresenter>/) {
     $ifPrimary = 0;
     $abbrev = "";
