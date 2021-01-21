@@ -265,9 +265,10 @@ SELECT atg.ontology_term_id
      , atg.provider_label
      , atg.display_name
      , atg.term_type
-     , case when att.data_type is null then 0 else 1 end as has_value
+     , case when att.data_type is null then 0 else 1 end as has_values
      , att.data_type
-     , att.value_count_per_entity
+     , att.distinct_values_count
+     , att.is_multi_valued
      , att.data_shape
      , att.unit
      , att.precision

@@ -250,7 +250,7 @@ CREATE TABLE apidb.EntityTypeGraph (
  display_name                 VARCHAR2(200) NOT NULL,
  display_name_plural          VARCHAR2(200),
  description                  VARCHAR2(4000),
- internal_abbrev              VARCHAR2(30) NOT NULL,
+ internal_abbrev              VARCHAR2(50) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
