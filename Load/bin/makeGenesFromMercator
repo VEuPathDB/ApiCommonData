@@ -201,7 +201,7 @@ sub addGffFeatures {
                                   );
 
   while (my $feature = $gffIO->next_feature()) {
-    next unless ($feature->primary_tag() eq 'gene');
+    next unless ($feature->primary_tag() =~ /gene$/);
 
     my $seqId = $feature->seq_id();
     my ($gene) = $feature->get_tag_values('ID');
