@@ -44,7 +44,7 @@ foreach my $org (@orgs) {
 
   if ($ncbiTaxonId) {
     $seqA{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
-    $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
+    $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeatureFromTuningTable ($ncbiTaxonId, $dbh);
   }
 
   $dbh->disconnect();
@@ -60,7 +60,7 @@ foreach my $org(@orgs) {
 
   if ($ncbiTaxonId) {
     $seqB{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
-    $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeature ($ncbiTaxonId, $dbh);
+    $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeatureFromTuningTable ($ncbiTaxonId, $dbh);
   }
 
   $dbh->disconnect();
@@ -70,7 +70,7 @@ foreach my $k (sort keys %seqA) {
 
   ## 1. check if organism available in $dbB
   if (!$seqB{$k}) {
-    print STDERR "ERROR ... $k only available in $dbA, but not in $dbB\n";
+    print STDERR "WARNING ... $k only available in $dbA, but not in $dbB\n";
     next;
   }
 
@@ -113,7 +113,7 @@ sub getDatabase {
   my ($dbName) = @_;
 
   $dbName = "dbi:Oracle:" . $dbName;
-  print STDERR "\dbName = $dbName.\n";
+  #print STDERR "\dbName = $dbName.\n";
 
   my $db = ($dbName)
            ? GUS::ObjRelP::DbiDatabase->new($dbName,
@@ -194,7 +194,7 @@ sub getSequenceTypeFromSO {
 }
 
 
-sub getGeneFeature {
+sub getGeneFeatureFromTuningTable {
   my ($ncbiTaxonId, $dbh) = @_;
   my %genes;
 
