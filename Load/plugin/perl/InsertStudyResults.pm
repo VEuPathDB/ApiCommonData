@@ -271,6 +271,9 @@ sub addResults {
   elsif ($protocolName =~ /Lopit/) {
     $tableString = "ApiDB::LopitResults";
   }
+  elsif ($protocolName =~ /WGCNA/) {
+    $tableString = "ApiDB::WGCNAResults";
+  }
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
@@ -651,6 +654,7 @@ sub undoTables {
     'ApiDB.WHOSTANDARDS',
     'ApiDB.NAFeatureMetaCycle',
     'ApiDB.LopitResults',
+    'ApiDB.WGCNAResults',
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
