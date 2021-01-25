@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use DBI;
 use Getopt::Long; 
 use CBIL::Util::PropertySet;
@@ -57,30 +58,51 @@ while(my $row = $sth->fetchrow_arrayref) {
    print "\n===========================================\n";
 
    # remove old genome and gff files if they exist
-   my @oldfiles = glob("$GLOBUS/$project-*\_$organism\_Genome.fasta"); 
+   my @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*Genome.fasta"); 
 
   foreach (@oldfiles) {
      print "rm $_\n";
      system("rm $_") if $commit;
   }
 
-  @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
+  @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*.gff");
   foreach (@oldfiles) {
      print "rm $_\n";
      system("rm $_") if $commit;
   }
 
-  my $src = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/fasta/data/$project-CURRENT\_$organism\_Genome.fasta";
+  # Copy genome file and change file name: CURRENT to build_number
+  my $srcDir = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/fasta/data";
+  chdir($srcDir);
+  my @files = glob("$project-CURRENT\_$organism\_*Genome.fasta");
+  if (scalar @files == 0) {
+      print "WARNING.  There are no genome files in this directory: $srcDir\n";
+  } elsif (scalar @files > 1) {
+      print "Expecting only one genome file but got more in this directory: $srcDir\n";
+      print $_."\n" foreach (@files);
+      die;
+  }
+  my $newFileName = $files[0];
+  $newFileName =~ s/-CURRENT_/-$build_number\_/;
+  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
+  print "$cmd\n";
+  system($cmd) if $commit;
 
-  my $tgt = "$GLOBUS/$project-$build_number\_$organism\_Genome.fasta";
+  # Copy GFF file and change file name: CURRENT to build_number
+  my $srcDir = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/gff/data";
+  chdir($srcDir);
+  my @files = glob("$project-CURRENT\_$organism*.gff");
+  if (scalar @files == 0) {
+      print "WARNING.  There are no GFF files in this directory: $srcDir\n";
+  } elsif (scalar @files > 1) {
+      print "Expecting only one GFF file but got more in this directory: $srcDir\n";
+      print $_."\n" foreach (@files);
+      die;
+  }
+  my $newFileName = $files[0];
+  $newFileName =~ s/-CURRENT_/-$build_number\_/;
+  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
+  print "$cmd\n";
+  system($cmd) if $commit;
 
-  print "cp $src $tgt\n"; 
-  system ("cp $src $tgt") if $commit; 
-
-  $src = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/gff/data/$project-CURRENT\_$organism.gff";
-
-  $tgt = "$GLOBUS/$project-$build_number\_$organism.gff";
-
-  print "cp $src $tgt\n"; 
-  system ("cp $src $tgt") if $commit; 
 }

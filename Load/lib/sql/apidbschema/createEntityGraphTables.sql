@@ -2,7 +2,7 @@ CREATE TABLE apidb.Study (
  study_id            NUMBER(12) NOT NULL,
  stable_id                         VARCHAR2(200) NOT NULL,
  external_database_release_id number(10) NOT NULL,
- internal_abbrev              varchar2(15),
+ internal_abbrev              varchar2(50),
  max_attr_length              number(4),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -23,6 +23,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Study TO gus_w;
 GRANT SELECT ON apidb.Study TO gus_r;
 
 CREATE SEQUENCE apidb.Study_sq;
+
+CREATE INDEX apidb.study_ix_1 ON apidb.study (external_database_release_id, stable_id, internal_abbrev, study_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -48,7 +50,7 @@ CREATE TABLE apidb.EntityType (
  type_id                   NUMBER(10),
  isa_type                     VARCHAR2(50),
  study_id            NUMBER(12) NOT NULL,
- internal_abbrev              VARCHAR2(30) NOT NULL,
+ internal_abbrev              VARCHAR2(50) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -69,6 +71,9 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityType TO gus_w;
 GRANT SELECT ON apidb.EntityType TO gus_r;
 
 CREATE SEQUENCE apidb.EntityType_sq;
+
+CREATE INDEX apidb.entitytype_ix_1 ON apidb.entitytype (study_id, entity_type_id) TABLESPACE indx;
+CREATE INDEX apidb.entitytype_ix_2 ON apidb.entitytype (type_id, entity_type_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -113,6 +118,8 @@ GRANT SELECT ON apidb.ProcessType TO gus_r;
 
 CREATE SEQUENCE apidb.ProcessType_sq;
 
+CREATE INDEX apidb.processtype_ix_1 ON apidb.processtype (type_id, process_type_id) TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
@@ -152,7 +159,10 @@ CREATE TABLE apidb.EntityAttributes (
  CONSTRAINT ensure_va_json CHECK (atts is json)   
 );
 
-CREATE SEARCH INDEX apidb.va_search_idx ON apidb.entityattributes (atts) FOR JSON;
+-- 
+--CREATE SEARCH INDEX apidb.va_search_ix ON apidb.entityattributes (atts) FOR JSON;
+
+CREATE INDEX apidb.entityattributes_ix_1 ON apidb.entityattributes (entity_type_id, entity_attributes_id) TABLESPACE indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityAttributes TO gus_w;
 GRANT SELECT ON apidb.EntityAttributes TO gus_r;
@@ -201,8 +211,10 @@ CREATE TABLE apidb.ProcessAttributes (
  CONSTRAINT ensure_ea_json CHECK (atts is json)   
 );
 
-CREATE INDEX apidb.ea_in_idx ON apidb.processattributes (in_entity_id, out_entity_id) tablespace indx;
-CREATE INDEX apidb.ea_out_idx ON apidb.processattributes (out_entity_id, in_entity_id) tablespace indx;
+CREATE INDEX apidb.ea_in_ix ON apidb.processattributes (in_entity_id, out_entity_id, process_attributes_id) tablespace indx;
+CREATE INDEX apidb.ea_out_ix ON apidb.processattributes (out_entity_id, in_entity_id, process_attributes_id) tablespace indx;
+
+CREATE INDEX apidb.ea_ix_1 ON apidb.processattributes (process_type_id, process_attributes_id) TABLESPACE indx;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ProcessAttributes TO gus_w;
 GRANT SELECT ON apidb.ProcessAttributes TO gus_r;
@@ -225,10 +237,7 @@ FROM dual,
 WHERE 'processattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
-
-
 -----------------------------------------------------------
-
 
 CREATE TABLE apidb.EntityTypeGraph (
  entity_type_graph_id           NUMBER(12) NOT NULL,
@@ -241,7 +250,7 @@ CREATE TABLE apidb.EntityTypeGraph (
  display_name                 VARCHAR2(200) NOT NULL,
  display_name_plural          VARCHAR2(200),
  description                  VARCHAR2(4000),
- internal_abbrev              VARCHAR2(30) NOT NULL,
+ internal_abbrev              VARCHAR2(50) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -263,6 +272,10 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityTypeGraph TO gus_w;
 GRANT SELECT ON apidb.EntityTypeGraph TO gus_r;
 
 CREATE SEQUENCE apidb.EntityTypeGraph_sq;
+
+CREATE INDEX apidb.entitytypegraph_ix_1 ON apidb.entitytypegraph (study_id, entity_type_id, parent_id, entity_type_graph_id) TABLESPACE indx;
+CREATE INDEX apidb.entitytypegraph_ix_2 ON apidb.entitytypegraph (parent_id, entity_type_graph_id) TABLESPACE indx;
+CREATE INDEX apidb.entitytypegraph_ix_3 ON apidb.entitytypegraph (entity_type_id, entity_type_graph_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -310,6 +323,10 @@ GRANT SELECT ON apidb.AttributeUnit TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeUnit_sq;
 
+CREATE INDEX apidb.attributeunit_ix_1 ON apidb.attributeunit (entity_type_id, attr_ontology_term_id, unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+CREATE INDEX apidb.attributeunit_ix_2 ON apidb.attributeunit (attr_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+CREATE INDEX apidb.attributeunit_ix_3 ON apidb.attributeunit (unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
@@ -354,6 +371,9 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ProcessTypeComponent TO gus_w;
 GRANT SELECT ON apidb.ProcessTypeComponent TO gus_r;
 
 CREATE SEQUENCE apidb.ProcessTypeComponent_sq;
+
+CREATE INDEX apidb.ptc_ix_1 ON apidb.processtypecomponent (process_type_id, component_id, order_num, process_type_component_id) TABLESPACE indx;
+CREATE INDEX apidb.ptc_ix_2 ON apidb.processtypecomponent (component_id, process_type_component_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -406,6 +426,8 @@ GRANT SELECT ON apidb.AttributeValue TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeValue_sq;
 
+CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_ontology_term_id, entity_attributes_id) TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
@@ -432,7 +454,8 @@ CREATE TABLE apidb.Attribute (
   ontology_term_id         NUMBER(10) NOT NULL,
   stable_id                varchar2(255) NOT NULL,
   data_type                    varchar2(10) not null,
-  has_multiple_values_per_entity            integer,
+  distinct_values_count            integer,
+  is_multi_valued                number(1),
   data_shape                     varchar2(30),
   unit                          varchar2(30),
   unit_ontology_term_id         NUMBER(10),
@@ -459,6 +482,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Attribute TO gus_w;
 GRANT SELECT ON apidb.Attribute TO gus_r;
 
 CREATE SEQUENCE apidb.Attribute_sq;
+
+CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, ontology_term_id, attribute_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -487,7 +512,7 @@ CREATE TABLE apidb.AttributeGraph (
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
-  provider_label                varchar(30),
+  provider_label                varchar(1500),
   display_name                  varchar(1500) not null,
   term_type                    varchar2(20),
   modification_date            DATE NOT NULL,
@@ -511,6 +536,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeGraph TO gus_w;
 GRANT SELECT ON apidb.AttributeGraph TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeGraph_sq;
+
+CREATE INDEX apidb.attributegraph_ix_1 ON apidb.attributegraph (study_id, ontology_term_id, parent_ontology_term_id, attribute_graph_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

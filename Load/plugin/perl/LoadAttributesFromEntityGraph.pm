@@ -175,27 +175,30 @@ sub loadAttributeTerms {
 
   my $attributeCount;
 
+  SOURCE_ID:
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
 
-    my $hasValues = $ontologyTerm->{_COUNT} > 0 ? 1 : 0;
+    foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
+      next SOURCE_ID unless $ontologyTerm->{$etId}->{_COUNT} > 0;
 
-    my ($dataType, $dataShape, $hasMultipleValuesPerEntity, $precision);
-    if($hasValues) {
-
-      $hasMultipleValuesPerEntity = $self->{_multi_valued_term}->{$sourceId} ? 1 : 0;
-
+      my ($dataType, $dataShape, $precision);
       $precision = 1; # THis is the default; probably never changed
-      my $isNumber = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_NUMBER_COUNT};
-      my $isDate = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_DATE_COUNT};
-      my $valueCount = scalar(keys(%{$ontologyTerm->{_VALUES}}));
-      my $isBoolean = $ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_BOOLEAN_COUNT};
+      my $isNumber = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
+      my $isDate = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
+      my $valueCount = scalar(keys(%{$ontologyTerm->{$etId}->{_VALUES}}));
+      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
 
-      if($ontologyTerm->{_COUNT} == $ontologyTerm->{_IS_ORDINAL_COUNT}) {
+      my $isMultiValued = $ontologyTerm->{$etId}->{_IS_MULTI_VALUED};
+
+      if($ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT}) {
         $dataShape = 'ordinal';
       }
       elsif($isDate || ($isNumber && $valueCount > 10)) {
         $dataShape = 'continuous';
+      }
+      elsif($valueCount == 2) {
+        $dataShape = 'binary';
       }
       else {
         $dataShape = 'categorical'; 
@@ -214,31 +217,26 @@ sub loadAttributeTerms {
         $dataType = 'string';
       }
 
+      my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
 
+      my $entityTypeStableId = $entityTypeIds->{$etId};
 
-      foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
-        my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
+      my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
+                                                         entity_type_stable_id => $entityTypeStableId,
+                                                         process_type_id => $ptId,
+                                                         ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
+                                                         stable_id => $sourceId,
+                                                         data_type => $dataType,
+                                                         distinct_values_count => $valueCount,
+                                                         is_multi_valued => $isMultiValued ? 1 : 0,
+                                                         data_shape => $dataShape,
+                                                         unit => $ontologyTerm->{UNIT_NAME},
+                                                         unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
+                                                         precision => $precision,
+                                                        });
 
-        my $entityTypeStableId = $entityTypeIds->{$etId};
-
-        my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
-                                                           entity_type_stable_id => $entityTypeStableId,
-                                                           process_type_id => $ptId,
-                                                           ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                           stable_id => $sourceId,
-                                                           data_type => $dataType,
-                                                           has_multiple_values_per_entity => $hasMultipleValuesPerEntity,
-                                                           data_shape => $dataShape,
-                                                           unit => $ontologyTerm->{UNIT_NAME},
-                                                           unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-                                                           precision => $precision,
-                                                          });
-
-
-
-        $attribute->submit();
-        $attributeCount++;
-      }
+      $attribute->submit();
+      $attributeCount++;
     }
   }
 
@@ -311,25 +309,24 @@ sub loadAttributes {
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
-      my $valueCount;
-      foreach my $value (@$valueArray) {
-        $self->{_multi_valued_term}->{$ontologySourceId} = 1 if($valueCount); 
-        $valueCount++;
+      my $hasMultipleValues = scalar(@$valueArray) > 1;
 
+      foreach my $value (@$valueArray) {
         my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
         my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
 
         $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
+        $ontologyTerm->{$vtId}->{_IS_MULTI_VALUED} = 1 if($hasMultipleValues);
 
         unless($ontologyTermId) {
           $self->error("No ontology_term_id found for:  $ontologySourceId");
         }
 
-        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value);
+        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
 
         my @a = ($vaId,
                  $vtId,
-                 undef,
+                 $etId,
                  $ontologyTermId,
                  $value,
                  $numberValue,
@@ -344,37 +341,37 @@ sub loadAttributes {
 
 
 sub ontologyTermValues {
-  my ($self, $ontologyTerm, $value) = @_;
+  my ($self, $ontologyTerm, $value, $entityTypeId) = @_;
 
   my ($dateValue, $numberValue);
 
-  $ontologyTerm->{_VALUES}->{$value}++;
+  $ontologyTerm->{$entityTypeId}->{_VALUES}->{$value}++;
 
-  $ontologyTerm->{_COUNT}++;
+  $ontologyTerm->{$entityTypeId}->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
-    $ontologyTerm->{_IS_NUMBER_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_NUMBER_COUNT}++;
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
-    $ontologyTerm->{_IS_DATE_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_DATE_COUNT}++;
   }
   elsif($value =~ /^\d/) {
-    $ontologyTerm->{_IS_ORDINAL_COUNT}++;
+    $ontologyTerm->{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
   }
   else {
     my $lcValue = lc $value;
     if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
-      $ontologyTerm->{_IS_BOOLEAN_COUNT}++;
+      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
     }
   }
 
 
-  return $dateValue, $numberValue
+  return $dateValue, $numberValue;
 }
 
 
@@ -408,7 +405,7 @@ sub readClob {
 sub loadAttributesFromEntity {
   my ($self, $studyId, $fifo, $ontologyTerms) = @_;
 
-  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(va.atts) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
+  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(substr(va.atts, 1, 2)) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
 
   $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
 }
@@ -421,7 +418,7 @@ sub loadAttributesFromIncomingProcess {
 from apidb.processattributes ea
    , apidb.entityattributes va
    , apidb.entitytype vt
-where to_char(ea.atts) != '{}'
+where to_char(substr(ea.atts, 1, 2)) != '{}'
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
 and vt.study_id = ?
