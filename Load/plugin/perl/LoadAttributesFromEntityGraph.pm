@@ -187,7 +187,7 @@ sub loadAttributeTerms {
       my $isNumber = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
       my $isDate = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
       my $valueCount = scalar(keys(%{$ontologyTerm->{$etId}->{_VALUES}}));
-      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
+#      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
 
       my $isMultiValued = $ontologyTerm->{$etId}->{_IS_MULTI_VALUED};
 
@@ -210,9 +210,9 @@ sub loadAttributeTerms {
       elsif($isNumber) {
         $dataType = 'number';
       }
-      elsif($isBoolean) {
-        $dataType = 'boolean';
-      }
+#      elsif($isBoolean) {
+#        $dataType = 'boolean';
+#      }
       else {
         $dataType = 'string';
       }
@@ -324,11 +324,14 @@ sub loadAttributes {
 
         my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
 
+        my $stringValue = $value unless(defined($dateValue) || defined($numberValue));
+
+
         my @a = ($vaId,
                  $vtId,
                  $etId,
                  $ontologyTermId,
-                 $value,
+                 $stringValue,
                  $numberValue,
                  $dateValue
             );
@@ -364,10 +367,10 @@ sub ontologyTermValues {
     $ontologyTerm->{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
   }
   else {
-    my $lcValue = lc $value;
-    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
-      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
-    }
+#    my $lcValue = lc $value;
+#    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
+#      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
+#    }
   }
 
 

@@ -231,6 +231,8 @@ PRIMARY KEY ($stableIdField)
     $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
   }
 
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
+
   return \@ancestorEntityTypeIds;
 }
 
@@ -259,7 +261,7 @@ sub createAttributeGraphTable {
     START WITH ontology_term_id IN (SELECT DISTINCT ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT atg.ontology_term_id
+SELECT distinct atg.ontology_term_id
      , atg.stable_id
      , atg.parent_stable_id
      , atg.provider_label
@@ -281,6 +283,8 @@ where atg.ontology_term_id = att.ontology_term_id (+)
   $dbh->do($sql) or die $dbh->errstr;
 
   $dbh->do("CREATE INDEX attributegraph_${entityTypeId}_1_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
+
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
 }
 
 
@@ -308,6 +312,8 @@ and av.attribute_ontology_term_id = ot.ontology_term_id
   $dbh->do($sql) or die $dbh->errstr;
 
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value) TABLESPACE indx") or die $dbh->errstr;
+
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
 }
 
 

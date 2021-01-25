@@ -126,7 +126,7 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                  parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
                                                                  display_name => $ontologyTerm->{DISPLAY_NAME}, 
-                                                                 term_type => $ontologyTerm->{TERM_TYPE}, 
+                                                                 term_type => $ontologyTerm->{TERM_TYPE} ? $ontologyTerm->{TERM_TYPE} : 'default', 
                                                                 });
     $attributeGraph->submit();
     $attributeCount++;
