@@ -31,7 +31,7 @@ use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyLink;
 use GUS::Model::Study::Output;
-
+use ApiCommonData::Load::MBioResultsTable;
 
 
 my $argsDeclaration = [
@@ -152,165 +152,6 @@ sub getProtocolAppNodeIdsForSamples {
   return \%result;
 }
 
-sub parseSamplesTsv {
-  my ($self, $inputPath) = @_; 
-  # Our Text::CSV is too old - hence the artisanal code instead of:
-  # my @aoh = @{Text::CSV::csv(in=> $inputPath, headers => "auto")};
-  
-  open (my $fh, "<", $inputPath) or $self->error("$!: $inputPath");
- 
-  my $header = <$fh>;
-  $self->error("No header in $inputPath") unless $header;
-  chomp $header;
-  my ($__, @samples) = split "\t", $header;
-  $self->error("No samples in $inputPath") unless @samples;
-  my @rowSampleHashPairs;
-  while(<$fh>){
-    chomp;
-    my ($row, @counts) = split "\t";
-    $self->error("Bad dimensions: $inputPath") unless $#counts == $#samples;
-    my %h = map {
-      $samples[$_] => $counts[$_]
-    } 0..$#counts;
-    push @rowSampleHashPairs, [$row, \%h];
-  }
-  $self->error("No data rows in $inputPath") unless @rowSampleHashPairs;
-  return \@samples, \@rowSampleHashPairs;
-}
-
-# Expect output in HUMAnN format
-# ANAEROFRUCAT-PWY: homolactic fermentation
-# ARGDEG-PWY: superpathway of L-arginine, putrescine, and 4-aminobutanoate degradation|g__Escherichia.s__Escherichia_coli
-# 1.1.1.103: L-threonine 3-dehydrogenase|g__Escherichia.s__Escherichia_coli
-# 1.1.1.103: L-threonine 3-dehydrogenase|unclassified
-# 7.2.1.1: NO_NAME
-
-sub detailsFromRowName {
-  my ($row) = @_;
-
-  (my $name = $row) =~ s{:.*}{};
-
-  my $description;
-  $row =~ m{^.*?:\s*([^\|]+)};
-  $description = $1 if $1 and $1 ne "NO_NAME";
-  
-  
-  my ($__, $lineage) = split("\|", $row);
-
-  my $species;
-  if($row =~ m{\|}){
-    $species = $row;
-    $species =~ s{^.*\|}{};
-    $species =~ s{^.*s__}{};
-    $species = unmessBiobakerySpecies($species);
-  }
-
-  return {name => $name, description => $description, species => $species};
-}
-
-# Expect output in metaphlan format
-# Skip all taxa not at species level - they are summary values
-sub prepareWgsTaxa {
-  my ($dataPairs) = @_;
-
-  my @rows;
-  my @dataPairsResult;
-  for my $p (@{$dataPairs}) {
-    my ($row, $h) = @$p;
-    $row = maybeGoodMetaphlanRow($row);
-    next unless $row;
-    push @rows, $row;
-    push @dataPairsResult, [$row, $h];
-  }
-  return \@rows, \@dataPairsResult;
-}
-
-# Biobakery tools use mangled species names, with space, dash, and a few others changed to underscore
-# Try make them good enough again
-sub unmessBiobakerySpecies {
-  my ($species) = @_;
-# Species with IDs
-  $species =~ s{_sp_}{ sp. };
-
-# genus, maybe a different genus in []
-  $species =~ s{^(\[?[A-Z][a-z]+\]?)_}{$1 };
-
-# last word, like "Ruminococcus gnavus group"
-  $species =~ s{_([a-z]+)$}{ $1};
-
-  $species =~ s{oral_taxon_(\d+)$}{oral taxon $1};
-  return $species;
-}
-
-sub maybeGoodMetaphlanRow {
-  my ($row) = @_;
-  return if $row eq 'UNKNOWN';
-  return unless $row =~ m{k__(.*)\|p__(.*)\|c__(.*)\|o__(.*)\|f__(.*)\|g__(.*)\|s__(.*)};
-  return join(";", $1, $2, $3, $4, $5, $6, unmessBiobakerySpecies($7));
-}
-
-sub prepareFunctionAbundance {
-  my ($self, $samples, $dataPairs) = @_;
-
-  my %result;
-  my %rows;
-  for my $p (@{$dataPairs}) {
-    my ($row, $h) = @$p;
-    next if $row =~ m{UNMAPPED|UNGROUPED|UNINTEGRATED};
-    my $details = detailsFromRowName($row);
-    $rows{$row}++;
-    for my $sample (@{$samples}){
-      $result{$sample}{$row} = {%{$details}, abundance_cpm => $h->{$sample}};
-    }
-  }
-  my @rows = sort keys %rows;
-
-  return \@rows, \%result;
-}
-
-sub mergeAbundanceAndCoverage {
-  my ($self, $samples, $dataPairsA, $dataPairsC) = @_;
-
-
-  my %result;
-  my %rowsA;
-  for my $p (@{$dataPairsA}) {
-    my ($row, $h) = @$p;
-
-    next if $row =~ m{UNMAPPED|UNGROUPED|UNINTEGRATED};
-    my $details = detailsFromRowName($row);
-
-    $rowsA{$row}++;
-    for my $sample (@{$samples}){
-      $result{$sample}{$row} = { %{$details} , abundance_cpm => $h->{$sample}};
-    } 
-  }
-  my $numRowsC;
-
-  for my $p (@{$dataPairsC}) {
-    my ($row, $h) = @{$p};
-    next if $row =~ m{UNMAPPED|UNGROUPED|UNINTEGRATED};
-
-    $self->error("Inconsistent rows between abundance and coverage files: row $row in the coverage file missing from the abundance file")
-      unless defined $rowsA{$row};
-    $numRowsC++;
-
-    for my $sample (@${samples}){
-
-      $self->error("Inconsistent samples between abundance and coverage files: row $row, sample $sample in the coverage file missing from the abundance file")
-         unless defined $result{$sample}{$row}{abundance_cpm};
-
-      $result{$sample}{$row}{coverage_fraction} = $h->{$sample};
-    } 
-  }
- 
-  my @rows = sort keys %rowsA;
-  $self->error(sprintf("Coverage file had %s more rows than the abundance file?", $numRowsC - @rows))
-    unless @rows == $numRowsC;
-
-  return \@rows, \%result; 
-}
-
 sub run {
   my ($self) = @_;
 
@@ -326,7 +167,7 @@ sub readData {
   my $datasetName = $args{datasetName};
   $self->error("Required: datasetName") unless $datasetName;
 
-  $self->error("Nothing to upload?") unless $args{ampliconTaxaPath} || $args{wgsTaxaPath};
+  $self->error("Required: ampliconTaxaPath or ampliconTaxaPath") unless $args{ampliconTaxaPath} || $args{wgsTaxaPath};
 
   for my $arg (qw/pathwayAbundancesPath pathwayCoveragesPath level4ECsPath/){
     if ($args{wgsTaxaPath} and not $args{$arg}){
@@ -334,118 +175,62 @@ sub readData {
     }
   }
 
- 
-  my %data;
-  for my $arg (grep {$args{$_}} qw/ampliconTaxaPath wgsTaxaPath pathwayAbundancesPath pathwayCoveragesPath level4ECsPath/){
-    my ($s, $r) =  $self->parseSamplesTsv($args{$arg});
-    $data{$arg} = [$s,$r];
-  }
- 
   my $maximumNumberOfObjects = 100;
 
-  my $ampliconSamples;
-  my $ampliconTaxa;
+  my $ampliconTaxaTable;
 
-  if($data{ampliconTaxaPath}){
-    $ampliconSamples = $data{ampliconTaxaPath}->[0];
-    $ampliconTaxa = $data{ampliconTaxaPath}->[1];
+  if($args{ampliconTaxaPath}){
+    $ampliconTaxaTable = ApiCommonData::Load::MBioResultsTable->ampliconTaxa($args{ampliconTaxaPath});
 
-    $maximumNumberOfObjects += 4 * @{$ampliconSamples};
-    $maximumNumberOfObjects += @{$ampliconTaxa};
+    $maximumNumberOfObjects += 4 * @{$ampliconTaxaTable->{samples}};
+    $maximumNumberOfObjects += @{$ampliconTaxaTable->{rows}};
   }
 
-  my $wgsSamples;
-  my ($wgsTaxaRows, $wgsTaxa, $level4ECRows, $level4ECData, $pathwayRows, $pathwayData);
+  my ($wgsTaxaTable, $level4EcsTable, $pathwaysTable);
   if ($args{wgsTaxaPath}){
-    my @wgsSamples = uniq map {@{$_->[0]}} @data{qw/wgsTaxaPath pathwayAbundancesPath pathwayCoveragesPath level4ECsPath/};
-    $wgsSamples = \@wgsSamples;
-    for my $p (@data{qw/wgsTaxaPath pathwayAbundancesPath pathwayCoveragesPath level4ECsPath/}){
-      if (@wgsSamples > @{$p->[0]}){
-        $self->error("Inconsistent sample names across WGS files");
-      }
-    }
-    ($wgsTaxaRows, $wgsTaxa) = prepareWgsTaxa($data{wgsTaxaPath}->[1]);
+    $wgsTaxaTable = ApiCommonData::Load::MBioResultsTable->wgsTaxa($args{wgsTaxaPath});
+    $level4EcsTable = ApiCommonData::Load::MBioResultsTable->wgsFunctions("level4EC",$args{level4ECsPath});
+    $pathwaysTable = ApiCommonData::Load::MBioResultsTable->wgsPathways($args{pathwayAbundancesPath}, $args{pathwayCoveragesPath});
 
-    ($level4ECRows, $level4ECData) = $self->prepareFunctionAbundance($wgsSamples, $data{level4ECsPath}->[1]);
-    
-    ($pathwayRows, $pathwayData) = $self->mergeAbundanceAndCoverage($wgsSamples, $data{pathwayAbundancesPath}->[1],  $data{pathwayCoveragesPath}->[1]);
-
-    $maximumNumberOfObjects += 4 * @{$wgsSamples};
-    $maximumNumberOfObjects += @{$wgsTaxaRows};
-    $maximumNumberOfObjects += @{$level4ECRows};
-    $maximumNumberOfObjects += @{$pathwayRows};
+    $maximumNumberOfObjects += 4 * @{$wgsTaxaTable->{samples}};
+    $maximumNumberOfObjects += @{$wgsTaxaTable->{rows}};
+    $maximumNumberOfObjects += @{$level4EcsTable->{rows}};
+    $maximumNumberOfObjects += @{$pathwaysTable->{rows}};
   } 
-  return $datasetName, $ampliconSamples, $ampliconTaxa, $wgsSamples, $wgsTaxaRows, $wgsTaxa, $level4ECRows, $level4ECData, $pathwayRows, $pathwayData, $maximumNumberOfObjects;
+  return $datasetName, $ampliconTaxaTable, $wgsTaxaTable, $level4EcsTable, $pathwaysTable, $maximumNumberOfObjects;
 }
 sub uploadToDb {
-  my ($self, $datasetName, $ampliconSamples, $ampliconTaxa, $wgsSamples, $wgsTaxaRows, $wgsTaxa, $level4ECRows, $level4ECData, $pathwayRows, $pathwayData, $maximumNumberOfObjects) = @_;
+  my ($self, $datasetName, $ampliconTaxaTable, $wgsTaxaTable, $level4EcsTable, $pathwaysTable, $maximumNumberOfObjects) = @_;
 
-  $self->getDb()->setMaximumNumberOfObjects($maximumNumberOfObjects);
-
-
-  my ($protocolId, $investigationId, $studyId) = $self->registerDataset($datasetName);
-
-  if($ampliconSamples){
-    my $suffix = $wgsSamples ? " (OTU from Amplicon)" : " (OTU)";
-  
-    my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $ampliconSamples, $suffix);
-    $self->uploadTaxa($protocolAppNodeIdsForSamples, $ampliconSamples, $ampliconTaxa);
-  }
-
-  if($wgsSamples){
-    my $suffix = " (OTU and functional profiles from WGS)";
-    my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $wgsSamples, $suffix);
-
-    $self->uploadTaxa($protocolAppNodeIdsForSamples, $wgsSamples, $wgsTaxa);
-    $self->uploadFunctionalUnits($protocolAppNodeIdsForSamples, $wgsSamples, $level4ECRows, $level4ECData, "level4EC");
-    $self->uploadFunctionalUnits($protocolAppNodeIdsForSamples, $wgsSamples, $pathwayRows, $pathwayData, "pathway");
-  }
-}
-
-sub uploadFunctionalUnits {
-  my ($self, $protocolAppNodeIdsForSamples, $samples, $rows, $rowData, $unitType) = @_;
-
-  for my $sample (@{$samples}){
-    for my $row (@{$rows}){
-      GUS::Model::Results::FunctionalUnitAbundance->new({
-        %{$rowData->{$sample}{$row}},
-        unit_type => $unitType,
-        PROTOCOL_APP_NODE_ID => $protocolAppNodeIdsForSamples->{$sample},
-      })->submit;
-    }
-    $self->undefPointerCache();
-  }
-}
-
-sub uploadTaxa {
-  my ($self, $protocolAppNodeIdsForSamples, $samples, $rowSampleHashPairs) = @_;
-  my @samples = @{$samples};
-  my @rowSampleHashPairs = @{$rowSampleHashPairs};
-  my %totalCountPerSample;
-  for my $h (map {$_->[1]} @rowSampleHashPairs){
-     for my $sample (@samples){
-        $totalCountPerSample{$sample} += $h->{$sample};
-     }
-  }
-
-  DATUM:
-  for my $sample (@samples){
-    LINEAGE:
-    for my $p (@rowSampleHashPairs){
-    my ($lineage, $h) = @{$p};
-      my $raw_count = $h->{$sample};
-      next LINEAGE unless $raw_count;
-      my $relative_abundance = sprintf("%.6f", $raw_count / $totalCountPerSample{$sample});
-      GUS::Model::Results::LineageAbundance->new({
-        lineage => $lineage,
-        raw_count => $raw_count,
-        relative_abundance => $relative_abundance,
-        PROTOCOL_APP_NODE_ID => $protocolAppNodeIdsForSamples->{$sample},
-      })->submit;
-    }
+  my $setMaxObjects = sub {
+    $self->getDb()->setMaximumNumberOfObjects(@_);
+  };
+  my $undefPointerCache = sub {
     $self->undefPointerCache();
   };
-    
+  my $submit = sub {
+    my ($class, $o) = @_;
+    $class->new($o)->submit;
+  };
+  my ($protocolId, $investigationId, $studyId) = $self->registerDataset($datasetName);
+
+  if($ampliconTaxaTable){
+    my $suffix = $wgsTaxaTable ? " (OTU from Amplicon)" : " (OTU)";
+  
+    $setMaxObjects->($maximumNumberOfObjects);
+    my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $ampliconTaxaTable->{samples}, $suffix);
+    $ampliconTaxaTable->submitToGus($setMaxObjects, $undefPointerCache, $submit, $protocolAppNodeIdsForSamples);
+  }
+
+  if($wgsTaxaTable){
+    my $suffix = " (OTU and functional profiles from WGS)";
+
+    $setMaxObjects->($maximumNumberOfObjects);
+    my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $wgsTaxaTable->{samples}, $suffix);
+    for my $table ($wgsTaxaTable, $level4EcsTable, $pathwaysTable){
+      $table->submitToGus($setMaxObjects, $undefPointerCache, $submit, $protocolAppNodeIdsForSamples);
+    }
+  }
 }
 
 sub undoTables {
