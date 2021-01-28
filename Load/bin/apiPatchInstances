@@ -39,14 +39,24 @@ if (!$list && !$script) {
   die "either -list or -script parameter must be supplied";
 }
 
-my $instances = `apiTnsSummary -all | cut -c61- | sed 's/,.*\$//' `;
-foreach my $instance (split /\n/, $instances) {
-  if ($regex) {
-    next unless $instance =~ /$regex/;
+# my $instances = `apiTnsSummary -all | cut -c61- | sed 's/,.*\$//' `;
+my $instances = `apiTnsSummary -all | cut -c61- `;
+foreach my $instanceNameSet (split /\n/, $instances) {
+
+  my $instance = undef;
+
+  # iterate through comma-separated names of an instance, saving the last match
+  foreach my $instanceString (split /,/, $instanceNameSet) {
+    $instanceString =~ s/^\s+//;
+    if ($regex) {
+      $instance = $instanceString if $instanceString =~ /$regex/;
+    }
   }
 
-  print "instance: " . $instance . "\n";
-  if ($script) {
+  print "instance: " . $instance . "\n"
+    if $instance;
+
+  if ($script && $instance) {
     print `sqlplus $schema/$password\@$instance \@$script`;
   }
 
