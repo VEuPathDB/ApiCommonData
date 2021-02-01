@@ -89,7 +89,7 @@ sub run {
 
       $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
 
     }
   }
@@ -231,7 +231,7 @@ PRIMARY KEY ($stableIdField)
     $dbh->do("CREATE INDEX ancestors_${entityTypeId}_${field}_2_ix ON $tableName (${field}${fieldSuffix}, $stableIdField) TABLESPACE indx") or die $dbh->errstr;
   }
 
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 
   return \@ancestorEntityTypeIds;
 }
@@ -245,7 +245,7 @@ sub entityTypeIdsFromStudyId {
 }
 
 sub createAttributeGraphTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
+  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId) = @_;
 
   my $tableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
@@ -257,7 +257,7 @@ sub createAttributeGraphTable {
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
-   WHERE study_id = 1
+   WHERE study_id = $studyId
     START WITH ontology_term_id IN (SELECT DISTINCT ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
@@ -284,7 +284,7 @@ where atg.ontology_term_id = att.ontology_term_id (+)
 
   $dbh->do("CREATE INDEX attributegraph_${entityTypeId}_1_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 }
 
 
@@ -313,7 +313,7 @@ and av.attribute_ontology_term_id = ot.ontology_term_id
 
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value) TABLESPACE indx") or die $dbh->errstr;
 
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r";
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 }
 
 

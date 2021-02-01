@@ -10,6 +10,7 @@ sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId) = @_;
 
 
+  # TODO: update the source_id for geohash terms
   my $sql = "select s.name
                   , s.source_id
                   , s.ontology_term_id
@@ -44,7 +45,14 @@ and s.ontology_term_id = os.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
 and s.ontology_term_id = tt.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = tt.EXTERNAL_DATABASE_RELEASE_ID (+)    
-and r.external_database_release_id = ?";
+and r.external_database_release_id = ?
+union
+select ot.name, ot.source_id, ot.ontology_term_id, pt.name, pt.source_id, pt.ontology_term_id, ot.name, null, null, null, 'hidden'
+from sres.ontologyterm ot, sres.ontologyterm pt
+where ot.source_id like 'GEOHASH%'
+and pt.source_id = 'Thing'
+";
+
 
   my $sh = $dbh->prepare($sql);
   $sh->execute($extDbRlsId);

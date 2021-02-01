@@ -204,7 +204,11 @@ sub loadAttributeTerms {
         $dataShape = 'categorical'; 
       }
 
-      if($isDate) {
+      # OBI term here is for longitude
+      if($sourceId eq 'OBI_0001621') {
+        $dataType = 'longitude'
+      }
+      elsif($isDate) {
         $dataType = 'date';
       }
       elsif($isNumber) {
@@ -337,10 +341,53 @@ sub loadAttributes {
             );
 
         print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
+
+        # TODO: using temp geo hash id
+        if($ontologySourceId eq 'GEOHASH_TEMP_32') {
+          $self->loadAllGeoHashLevels($vaId, $vtId, $etId, $ontologyTerms, $fh, $value);
+        }
+
       }
     }
   }
 }
+
+
+sub loadAllGeoHashLevels {
+  my ($self, $vaId, $vtId, $etId, $ontologyTerms, $fh, $value) = @_;
+
+  foreach my $n (1 .. 7) {
+    my $subVal = substr($value, 0, $n);
+
+    # TODO: using temp geo hash id
+    my $sourceId = "GEOHASH_TEMP_${n}";
+
+    my $ontologyTerm = $ontologyTerms->{$sourceId};
+    my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
+
+    $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
+
+    unless($ontologyTermId) {
+      $self->error("No ontology_term_id found for:  $sourceId");
+    }
+
+    my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $subVal, $vtId);
+
+    my $stringValue = $subVal unless(defined($dateValue) || defined($numberValue));
+
+    my @a = ($vaId,
+             $vtId,
+             $etId,
+             $ontologyTermId,
+             $stringValue,
+             $numberValue,
+             $dateValue
+        );
+
+    print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
+  }
+}
+
 
 
 sub ontologyTermValues {
