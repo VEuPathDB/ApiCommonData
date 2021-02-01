@@ -326,6 +326,15 @@ sub addResults {
         $start = 1;
     }
 
+    elsif ($sourceIdType =~ /compound/) {
+        my ($chebi, $isotopomer) = split(/\|/, $a[0]);
+        my $reporterId  = $self->lookupIdFromSourceId($chebi, $sourceIdType);
+        $hash = { compound_id => $reporterId,
+                  isotopomer => $isotopomer,
+        };
+        $start=1;
+    }
+
     elsif ($sourceIdType =~ /literal/) {
 	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
 	    $hash = {label=>$a[0]};
