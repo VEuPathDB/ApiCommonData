@@ -278,7 +278,7 @@ printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenom
 
 printRefStraindbEST ($ofh, \%excelInfo);
 printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
-printIsolatesFromFamilyRep ($ofh, \%excelInfo);
+printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB
 
 
 print $ofh "</datasets>\n";
