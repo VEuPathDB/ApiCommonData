@@ -105,11 +105,15 @@ sub biomFileContentsLazy {
   $log->info(sprintf ("%s / %s rows have metadata for taxonomy info", (scalar @rows), (scalar keys %rowMetadataByName)));
 
   our %lineages;
+  our %levels;
   for my $taxonName (sort keys %rowMetadataByName){
-      $lineages{$taxonName} = $lineages->getTermsFromObject($taxonName, $rowMetadataByName{$taxonName});
+    my $terms = $lineages->getTermsFromObject($taxonName, $rowMetadataByName{$taxonName});
+    my $lineage = delete $terms->{lineage};
+    $lineages{$taxonName} = $lineage;
+    $levels{$lineage} = $terms;
   }
   
-  my @lineagesThatMightHaveTaxons = uniq map {$_->{lineage}} values %lineages;
+  my @lineagesThatMightHaveTaxons = keys %levels;
   our %ncbiTaxonsByLineage;
   for my $i (0..$#lineagesThatMightHaveTaxons){
     $log->info("Checked $i / $#lineagesThatMightHaveTaxons lineages against NCBI")
@@ -138,23 +142,26 @@ sub biomFileContentsLazy {
     my $sampleName = $columns[$columnIndex]->{id};
 
     my $totalCountForSample = sum values %{$dataByColumnIndexThenRowIndex{$columnIndex}};
-
-    my @abundances;
+    my %counts;
     for my $rowIndex (sort keys %{$dataByColumnIndexThenRowIndex{$columnIndex}}){
       my $taxonName = $rows[$rowIndex]->{id};
+      my $lineage = $lineages{$taxonName};
       my $count = $dataByColumnIndexThenRowIndex{$columnIndex}{$rowIndex};
-
-      my @levels = map {$lineages{$taxonName}{$_}} @levelNames;
+      $counts{$lineage}+=$count;
+    }
+    my @abundances;
+    for my $lineage (sort keys %counts){
+      my @levels = map {$levels{$lineage}{$_}} @levelNames;
       my $hasLevels = grep {$_} @levels;
       push @abundances, {
-         lineage => $lineages{$taxonName}{lineage},
+         lineage => $lineage,
          ($hasLevels ? (levels  =>\@levels) : ()),
-         ncbi_taxon_id => $ncbiTaxonsByLineage{$lineages{$taxonName}{lineage}},
-	 absolute_abundance => $count,
-	 relative_abundance =>  $count / $totalCountForSample,
+         ncbi_taxon_id => $ncbiTaxonsByLineage{$lineage},
+	 absolute_abundance => $counts{$lineage},
+	 relative_abundance =>  $counts{$lineage} / $totalCountForSample,
       }; 
     }
-    return [sort {$a->{lineage} cmp $b->{lineage}} @abundances], aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
+    return \@abundances, aggregateAbundances($unassignedLevel, \@levelNames, \@abundances);
   }
 
   # samples/observations are BIOM2 verbiage
