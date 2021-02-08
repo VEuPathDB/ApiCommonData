@@ -276,7 +276,7 @@ printGene2PubmedFromNcbi ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{
 #printGene2Uniprot ($ofh, $dbxrefVersion) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);  ## 2020-03-23 will put in general dataset
 printECAssocFromUniprot ($ofh) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 
-printRefStraindbEST ($ofh, \%excelInfo);
+printRefStraindbEST ($ofh, \%excelInfo) if ($projectName ne "HostDB");  ## not print if HostDB
 printRefStrainEpitope ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'isAnnotatedGenome'} =~ /^y/i);
 printIsolatesFromFamilyRep ($ofh, \%excelInfo) if ($projectName ne "VectorBase" && $projectName ne "HostDB"); ## do not print it if VectorBase or HostDB
 
