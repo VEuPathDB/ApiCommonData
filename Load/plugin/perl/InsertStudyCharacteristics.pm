@@ -397,6 +397,7 @@ sub readConfig {
         return \%data ;
       }
     }
+    return {}; # study not found, fail gracefully
   }
 }
 
