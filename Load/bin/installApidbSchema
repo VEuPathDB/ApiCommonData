@@ -254,7 +254,7 @@ SQL
            || decode(object_type, 'TABLE', ' CASCADE CONSTRAINTS', '')
     from all_objects
     where owner in ($schemaSet)
-      and object_type not in ('INDEX', 'TRIGGER')
+      and object_type not in ('INDEX', 'TRIGGER', 'TYPE BODY')
 SQL
 
   $stmt->execute()
