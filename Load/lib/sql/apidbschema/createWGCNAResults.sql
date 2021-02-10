@@ -19,12 +19,8 @@ CREATE TABLE apidb.WGCNAResults (
  PRIMARY KEY (wgcna_result_id)
 );
 
-
-
 CREATE INDEX apidb.wgcnares_1 ON apidb.WGCNAResults (na_feature_id) TABLESPACE indx;
 CREATE INDEX apidb.wgcnares_2 ON apidb.WGCNAResults (protocol_app_node_id) TABLESPACE indx;
-CREATE INDEX apidb.wgcnares_3 ON apidb.WGCNAResults (wgcna_result_id) TABLESPACE indx;
-
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WGCNAResults TO gus_w;
 GRANT SELECT ON apidb.WGCNAResults TO gus_r;
