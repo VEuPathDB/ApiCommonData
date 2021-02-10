@@ -135,15 +135,36 @@ SQL
     return -1; # fail
   }
   
-  $sql = <<SQL;
-  SELECT pan.TYPE_ID TYPE_ID,count(1) COUNT
-  FROM study.studylink sl
-  LEFT JOIN study.PROTOCOLAPPNODE pan ON sl.PROTOCOL_APP_NODE_ID=pan.PROTOCOL_APP_NODE_ID
-  WHERE sl.study_id=?
-  GROUP BY pan.TYPE_ID
-SQL
+# We would have created some values here, but this is done elsewhere now
+#  $sql = <<SQL;
+#  SELECT pan.TYPE_ID TYPE_ID,count(1) COUNT
+#  FROM study.studylink sl
+#  LEFT JOIN study.PROTOCOLAPPNODE pan ON sl.PROTOCOL_APP_NODE_ID=pan.PROTOCOL_APP_NODE_ID
+#  WHERE sl.study_id=?
+#  GROUP BY pan.TYPE_ID
+#SQL
+#  
+#  $results = $self->selectHashRef($dbh,$sql,[$studyId]);
+
+# Gather up the row IDs to clean up later
+# $sql ='SELECT STUDY_CHARACTERISTIC_ID from STUDY.STUDYCHARACTERISTIC WHERE STUDY_ID=?';
   
-  $results = $self->selectHashRef($dbh,$sql,[$studyId]);
+# $results = $self->selectHashRef($dbh,$sql,[$studyId]);
+
+# printf STDERR ("Fetching studyId=%d\n", $studyId);
+
+## Update a study - remove old rows, reuse row alg invocation id
+  
+  my @oldCharacteristics;
+  my $study = GUS::Model::Study::Study->new({study_id => $studyId});
+  if($study->retrieveFromDB()){
+    @oldCharacteristics = $study->getChildren('GUS::Model::Study::StudyCharacteristic',1);
+    foreach my $sch (@oldCharacteristics){
+      my $id = $sch->getStudyCharacteristicId();
+      my $invoId = $sch->getRowAlgInvocationId();
+      print STDERR "Ready to Delete STUDY_CHARACTERISTIC_ID: $id, ROW_ALG_INVOCATION_ID $invoId\n";
+    }
+  }
   
   ################## read OWL ############################################################
   # may replace this with fetching from DB #
@@ -222,7 +243,6 @@ SQL
       printf STDERR ("%s (%s) not found\n", $k, $qualifierSourceId);
     }
     ###
-    unless(ref($values) eq 'ARRAY'){ $values = [ $values ] }
     foreach my $v ( @$values ){
       $valueLabels{uc($v)} ||= $v;
       $v = uc($v);
@@ -345,6 +365,12 @@ SQL
       $sc->submit;
       $rownum++;
     }
+    ## Clean up old rows
+    foreach my $sch (@oldCharacteristics){
+      my $id = $sch->getStudyCharacteristicId();
+      $sch->removeFromDB();
+      print STDERR "Deleted STUDY_CHARACTERISTIC_ID: $id\n";
+    }
   }
   else {
     printf("%s\n", join("\t", qw/study qualifierId label valueId value/));
@@ -384,18 +410,23 @@ sub readConfig {
     my @inifiles = map { "$file/$_" } grep { /.+\.ini$/i } readdir(DH);
     foreach my $inifile (@inifiles){
       read_config($inifile, my %cfg);
-      if(defined($cfg{$datasetName})){
-        printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
-        # clean it up
-        my %data;
-        while(my($k,$v) = each %{$cfg{$datasetName}}){
-          $v =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, Config::Std should handle it
-          if($v =~ /\w+/){
-            $data{$k} = $v;
+      next unless(defined($cfg{$datasetName}));
+      printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
+      # clean it up
+      my %data;
+      while(my($k,$v) = each %{$cfg{$datasetName}}){
+        my $arr = [];
+        if(ref($v)){ $arr = $v } # array of values
+        else { $arr = [ $v ] } # single value
+        foreach my $av (@$arr){ # array value
+          $av =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, Config::Std should handle it
+          if($av =~ /\w+/){
+            $data{$k} //= [];
+            push(@{$data{$k}}, $av);
           }
         }
-        return \%data ;
       }
+      return \%data ;
     }
     return {}; # study not found, fail gracefully
   }
