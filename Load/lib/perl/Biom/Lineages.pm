@@ -137,6 +137,13 @@ sub splitLineageString {
   }
   @lineage = reverse @lineage;
 
+# Remove from the end terms that are the phrase 'ambiguous taxa'
+  @lineage = reverse @lineage;
+  while(@lineage && $lineage[0] =~ /^ambiguous ?_?taxa$/i){
+    shift @lineage;
+  }
+  @lineage = reverse @lineage;
+
 # Make sure there are at most $numMaxTerms
   do {
     my ($lastTerm, @extraTerms) = reverse splice @lineage, ($numMaxTerms-1);

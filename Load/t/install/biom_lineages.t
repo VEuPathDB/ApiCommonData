@@ -76,4 +76,11 @@ is_deeply($t->splitLineageString("a;None"), ["a"], "None is blank");
 is_deeply($t->splitLineageString("a;none;none"), ["a"], "none is blank 2");
 is_deeply($t->splitLineageString("a;none;c"), ["a","none", "c"], "none is okay in the middle");
 is_deeply($t->splitLineageString("none;none;none"), [], "none everywhere is just mad");
+
+# Nephele, found in production
+is_deeply($t->splitLineageString("a;Ambiguous_taxa"), ["a"], "Ambiguous_taxa is blank");
+is_deeply($t->splitLineageString("a;AmbiguousTaxa"), ["a"], "AmbiguousTaxa is blank");
+is_deeply($t->splitLineageString("a;Ambiguous TAXA;ambiguous taxa"), ["a"], "Ambiguous_taxa is blank 2");
+is_deeply($t->splitLineageString("a;Ambiguous_taxa;A c"), ["a","Ambiguous_taxa", "A c"], "Ambiguous_taxa is okay in the middle");
+is_deeply($t->splitLineageString("Ambiguous_taxa;Ambiguous_taxa;Ambiguous_taxa"), [], "Ambiguous_taxa everywhere is just mad");
 done_testing;
