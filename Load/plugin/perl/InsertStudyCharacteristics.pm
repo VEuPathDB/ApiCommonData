@@ -251,6 +251,7 @@ SQL
           my ($linkname,$url) = ($valueLabels{$v} =~ /^(.*)\s+(http.*)$/);
           my $link = sprintf("<a target='_blank' href='%s'>%s</a>", $url, $linkname);
           push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$link]);
+          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
         }
         else {
           push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
@@ -325,7 +326,12 @@ SQL
     my $rownum = 0;
     foreach my $row (@rows){
       unless($row->[1]){ # qualifier_id cannot be null
-        printf STDERR ("ERROR in row: %s\nQualifier ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
+        if(defined($decodedRows[$rownum]) && ref($decodedRows[$rownum])){
+          printf STDERR ("ERROR in row: %s\nQualifier ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
+        }
+        else{
+          printf STDERR ("ERROR in row %d: %s\n", $rownum, Dumper($row)); 
+        }
         $rownum++;
         next;
       }
@@ -380,7 +386,15 @@ sub readConfig {
       read_config($inifile, my %cfg);
       if(defined($cfg{$datasetName})){
         printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
-        return $cfg{$datasetName};
+        # clean it up
+        my %data;
+        while(my($k,$v) = each %{$cfg{$datasetName}}){
+          $v =~ s/^\s*|\s*$//g; # strip whitespace (probably not necessary, Config::Std should handle it
+          if($v =~ /\w+/){
+            $data{$k} = $v;
+          }
+        }
+        return \%data ;
       }
     }
   }
