@@ -53,8 +53,8 @@ my ($geneHash, $transcriptHash) = getGeneTranscriptIdHash ($organismAbbrev);
 my ($translationHash) = getTranslationIdHash ($organismAbbrev, $finalGffFile);
 
 ## grep product info
-my $products = getProductName ($organismAbbrev);
-$products = getProductNameFromGene ($organismAbbrev) if ($component =~ /vector/i);
+my $products = getProductNameFromGene ($organismAbbrev);
+$products = getProductNameFromTranscript ($organismAbbrev) if ($component !~ /vector/i);
 
 ## get dbxrefs
 my $dbxrefs = getDbxRefsAll ($organismAbbrev);
@@ -181,6 +181,8 @@ sub getProductNameFromGene {
     if ($product) {
       $products{$gSourceId} = $product;
     } else {
+      die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ... \n";
+      $product = applyTranscriptProductToGene ($gSourceId);
       $products{$gSourceId} = "unspecified product";
     }
   }
@@ -188,6 +190,22 @@ sub getProductNameFromGene {
   $stmt->finish();
 
   return \%products;
+}
+
+sub applyTranscriptProductToGene {
+  my ($gId) = @_;
+
+  my $sqla = "select TRANSCRIPT_PRODUCT from APIDBTUNING.transcriptattributes where GENE_SOURCE_ID = '$gId'";
+  my $stmta = $dbh->prepareAndExecute($sqla);
+
+  my $prod;
+  while (my ($tP) = $stmta->fetchrow_array() ) {
+    $prod = $tP if ($tP);
+  }
+
+  $stmta->finish();
+
+  return $prod;
 }
 
 sub getProductNameFromTuningTable {
@@ -215,7 +233,7 @@ sub getProductNameFromTuningTable {
   return \%products;
 }
 
-sub getProductName {
+sub getProductNameFromTranscript {
   my ($orgnaismAbbrev) = @_;
 
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
