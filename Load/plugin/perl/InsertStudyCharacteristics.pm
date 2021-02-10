@@ -14,6 +14,7 @@ use GUS::Model::Study::StudyCharacteristic;
 use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
 use Text::CSV_XS;
+use Config::Std;
 
 use Digest::SHA qw/sha1_hex/;
 
@@ -96,7 +97,6 @@ sub run {
 
   my $cfg = $self->readConfig($file,$datasetName);
 
-printf STDERR Dumper $cfg;
   unless (0 < keys %$cfg){ $self->log("$datasetName not found in $file, nothing to do"); return 0 }
 
   # fetch all 
@@ -222,6 +222,7 @@ SQL
       printf STDERR ("%s (%s) not found\n", $k, $qualifierSourceId);
     }
     ###
+    unless(ref($values) eq 'ARRAY'){ $values = [ $values ] }
     foreach my $v ( @$values ){
       $valueLabels{uc($v)} ||= $v;
       $v = uc($v);
@@ -245,13 +246,18 @@ SQL
         }
       }
       elsif (defined($v) && $v ne "") { # derived or free text
-        push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
-        push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
-        printf ("\tReady: %s (free text)\n", $valueLabels{$v});
+        # deal with hyperlinks
+        if($v =~ /^.*\s+HTTP/i){
+          my ($linkname,$url) = ($valueLabels{$v} =~ /^(.*)\s+(http.*)$/);
+          my $link = sprintf("<a target='_blank' href='%s'>%s</a>", $url, $linkname);
+          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$link]);
+        }
+        else {
+          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
+          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
+          printf ("\tReady: %s (free text)\n", $valueLabels{$v});
+        }
       }
-#     else {
-#       push(@derived,$qualifierSourceId);
-#     }
     }
   }
   
@@ -365,6 +371,22 @@ sub selectHashRef {
 }
 
 sub readConfig {
+  my ($self, $file, $datasetName) = @_;
+  if(-f $file && $file =~ /\.csv$/i){ return $self->readConfigFromCsv($file, $datasetName) }
+  if(-d $file){ # a directory containing .ini files
+    opendir(DH, "$file") or die "Cannot open directory $file:$!\n";
+    my @inifiles = map { "$file/$_" } grep { /.+\.ini$/i } readdir(DH);
+    foreach my $inifile (@inifiles){
+      read_config($inifile, my %cfg);
+      if(defined($cfg{$datasetName})){
+        printf STDERR ("Found %s in %s\n", $datasetName, $inifile);
+        return $cfg{$datasetName};
+      }
+    }
+  }
+}
+
+sub readConfigFromCsv {
 # Not using  CBIL::Config::PropertySet because it doesn't handle variables with spaces
   my ($self, $file, $datasetName) = @_;
   my $csv = Text::CSV_XS->new({ binary => 1, sep_char => ",", quote_char => '"', allow_loose_quotes => 1 }) or die "Cannot use CSV: ".Text::CSV_XS->error_diag ();  
