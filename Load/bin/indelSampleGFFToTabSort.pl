@@ -24,10 +24,6 @@ use strict;
 use Bio::Tools::GFF;
 use Getopt::Long;
 use File::Basename;
-
-use Cwd qw(cwd);
-use Data::Dumper;
-
 my ($snpGff, $outFile, $gffVersion);
 
 &GetOptions("snp_gff=s"=> \$snpGff,
@@ -45,7 +41,7 @@ my $gffIO = Bio::Tools::GFF->new(-file => $snpGff,
     );
 
 # sort the output file by first 2 colulmns (second column is numeric)
-my $DIR = cwd;
+my $DIR = dirname($snpGff);
 open(OUT, "|sort -T $DIR -k 1,1 -k 2,2n > $outFile") or die "Cannot open file $outFile for writing: $!";
 
 while (my $feature = $gffIO->next_feature()) {
@@ -56,24 +52,22 @@ while (my $feature = $gffIO->next_feature()) {
 
   my $sequenceId = $feature->seq_id();
 
-  next unless ($sequenceId eq "Pf3D7_02_v3" && $snpStart >= 717000);
-  last unless ($snpStart <= 755000);
-
   my ($snpId) = $feature->get_tag_values('ID');
 
   my $indelType =  $feature->{_source_tag};
 
   foreach ($feature->get_tag_values('Allele')) {
-    my ($strain, $base, $coverage, $percent, $quality, $pvalue) = split(':', $_);
+    my ($strain, $base, $coverage, $percent, $pvalue, $quality) = split(':', $_);
     if ($indelType eq "deletion") {
 	$base = "-".$base;
     } elsif ($indelType eq "insertion") {
 	$base = "+".$base;
     } else {
-	print "Not an insertion or deletion: $sequenceId\t$snpStart\t$strain\t$base\t$indelType\n";
+	print STDERR "Not an insertion or deletion: $sequenceId\t$snpStart\t$strain\t$base\t$indelType\n";
     }
+
     next if($base eq 'undefined');
-    
+
     $percent =~ s/%//g;
 
     print OUT join("\t", ($sequenceId, $snpStart, $strain, $base, $coverage, $percent, $quality, $pvalue, $snpId)) . "\n";
