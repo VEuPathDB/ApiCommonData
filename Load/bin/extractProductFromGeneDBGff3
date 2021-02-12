@@ -132,7 +132,8 @@ sub getGoEvidenceCode {
   } elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/i) {
     return "ISO";
   } elsif ($string =~ /NOT RECORDED/i) {
-    return "NR";
+    print STDERR "$string was referred to NR, but NR is an obsolete evidence code, replace it with IDA\n";
+    return "IDA";
   } elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
     return "IDA";
   } elsif ($string =~ /No biological Data available/i) {
