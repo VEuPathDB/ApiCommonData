@@ -230,23 +230,7 @@ sub dropSchemaSetTables {
                 { PrintError => 1, RaiseError => 0}
                 ) or die "Can't connect to the database: $DBI::errstr\n";
 
-  print STDERR "\nfixing to drop tables in schema set \"$schemaSet\"\n" if $verbose;
-
-  # drop tables
-  my $stmt = $dbh->prepare(<<SQL);
-    select 'drop table ' || owner || '.' || table_name
-           || ' cascade constraints'
-    from all_tables
-    where owner in ($schemaSet)
-SQL
-
-  $stmt->execute()
-    or addErrorLog("\n" . $dbh->errstr . "\n");
-
-  while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
-    $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
-  }
+  print STDERR "\nfixing to drop objectss in schema set \"$schemaSet\"\n" if $verbose;
 
   # drop everything
   my $stmt = $dbh->prepare(<<SQL);
@@ -257,12 +241,19 @@ SQL
       and object_type not in ('INDEX', 'TRIGGER', 'TYPE BODY')
 SQL
 
-  $stmt->execute()
-    or addErrorLog("\n" . $dbh->errstr . "\n");
+  my $objectsToDrop = 1;
 
-  while (my ($dropStmtSql) = $stmt->fetchrow_array()) {
-    print STDERR "\nrunning statement: $dropStmtSql\n" if $verbose;
-    $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+  while ($objectsToDrop) {
+    $stmt->execute()
+      or addErrorLog("\n" . $dbh->errstr . "\n");
+
+    if (my ($dropStmtSql) = $stmt->fetchrow_array()) {
+      print STDERR "running statement: $dropStmtSql\n" if $verbose;
+      $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
+    } else {
+      print STDERR "fetchrow_arry() returned FALSE\n" if $verbose;
+      $objectsToDrop = 0;
+    }
   }
 
 }
