@@ -308,6 +308,10 @@ sub getGoEvidenceCode {
     return "TAS";
   } elsif ($string =~ /Non-traceable Author Statement/i) {
     return "NAS";
+  } elsif ($string =~ /Inferred from High Throughput Direct Assay/i) {
+    return "HDA";
+  } elsif ($string =~ /Inferred from High Throughput Expression Pattern/i) {
+    return "HEP";
   } elsif ($string =~ /Inferred by Curator/i) {
     return "IC";
   } else {
