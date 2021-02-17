@@ -251,7 +251,6 @@ SQL
       print STDERR "running statement: $dropStmtSql\n" if $verbose;
       $dbh->do($dropStmtSql) or die "Can't fetch a drop statement: $DBI::errstr\n";
     } else {
-      print STDERR "fetchrow_arry() returned FALSE\n" if $verbose;
       $objectsToDrop = 0;
     }
   }
