@@ -117,6 +117,54 @@ sub makeProtocolAppNode {
     return $protocolAppNode;
 }
 
+# Delete input and output rows to avoid loading duplicates
+# these are not in the main undoTables method because we want to constrain by more than just rowAlgInvId
+# only want to undo rows associated with profiles and DE results not intron junctions
+sub undoPreprocess {
+    my ($self, $dbh, $rowAlgInvocationList) = @_;
+    my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
+
+    #get PAN ids for results we are going to back out
+    my $panSql = "SELECT DISTINCT protocol_app_node_id
+                 FROM (
+                     SELECT protocol_app_node_id FROM results.nafeatureexpression WHERE row_alg_invocation_id IN ($rowAlgInvocations)
+                     UNION
+                     SELECT protocol_app_node_id FROM results.nafeaturediffresult WHERE row_alg_invocation_id IN ($rowAlgInvocations)
+                 )";
+
+    my $panSh = $dbh->prepare($panSql);
+    $panSh->execute();
+    my @panIdList;
+    while (my ($panId) = $panSh->fetchrow_array()) {
+        push @panIdList, $panId;
+    }
+    $panSh->finish();
+    my $panIds = join(',', @panIdList);
+
+    # delete input and output rows
+    my $deleteStudyInputsSql = "DELETE FROM study.input
+                                WHERE protocol_app_node_id IN ($panIds)";
+
+    my $deleteStudyOutputsSql = "DELETE FROM study.output
+                                 WHERE protocol_app_node_id IN ($panIds)";
+
+    $dbh->do($deleteStudyInputsSql);
+    $dbh->do($deleteStudyOutputsSql);
+
+    # delete protocol apps
+    my $deleteProtocolAppsSql = "DELETE FROM study.protocolapp
+                                WHERE protocol_app_id IN (
+                                    SELECT DISTINCT protocol_app_id FROM (
+                                        SELECT protocol_app_id FROM study.input WHERE protocol_app_node_id IN ($panIds)
+                                        UNION
+                                        SELECT protocol_app_id FROM study.output WHERE protocol_app_node_id IN ($panIds)
+                                    )
+                                )";
+
+    $dbh->do($deleteProtocolAppsSql);
+
+}
+
 #undo using this plugin will only back out profiles and leave everything else
 sub undoTables {
     my ($self) = @_;

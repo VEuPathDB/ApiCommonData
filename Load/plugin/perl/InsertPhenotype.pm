@@ -145,6 +145,8 @@ sub run {
 	my $proteinAnnotationExtension = $a[17];
 	my $mutation_desc = $a[18];
 	my $multipleMutations = $a[19];
+  $multipleMutations =~ s/^\s$//g; 
+
 	my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $geneSourceId, 0, $self->getArg('organismAbbrev')) ;
 #    my $ontologyProteinExtensionNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $proteinAnnotationExtension, 0, $self->getArg('organismAbbrev')) ;
 #    print Dumper "na feature id\n";
