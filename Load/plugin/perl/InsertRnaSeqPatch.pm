@@ -124,6 +124,8 @@ sub undoTables {
     return (
         'Results.NAFeatureExpression',
         'Results.NAFeatureDiffResult',
+        'Study.Input',
+        'Study.Output',
         );
 }
 
