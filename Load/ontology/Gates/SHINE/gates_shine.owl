@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_shine.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_shine.owl"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_shine.owl"/>
     
 
@@ -66,22 +66,6 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition</rdfs:label>
-    </owl:AnnotationProperty>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/TEMP_001 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/TEMP_001">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesforOnt</rdfs:label>
-    </owl:AnnotationProperty>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/TEMP_002 -->
-
-    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/TEMP_002">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesforProvider</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -307,6 +291,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000096">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</rdfs:label>
     </owl:Class>
@@ -527,7 +512,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000671"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::death_by_m18</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infant Death by month 18 visit</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Deceased</rdfs:label>
@@ -671,6 +656,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000738">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</rdfs:label>
     </owl:Class>
@@ -922,7 +908,6 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0022002">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000303"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">External wall material</rdfs:label>
     </owl:Class>
@@ -980,7 +965,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infant year of birth</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">may not need if we have dob</obo:TEMP_002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth year</rdfs:label>
     </owl:Class>
     
@@ -1023,7 +1007,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">r01_22_01: Owns sewing machine</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">There are currently two iri for sewing machine in the clinepi owl. JZ: only one IRI was found in clinEpi. So, use it here.</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sewing machine</rdfs:label>
     </owl:Class>
     
@@ -1063,23 +1046,9 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cluster ID</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0035032 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0035032">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0035121"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::g04_timeto_drinkingwater</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g04: How long does it take to walk to the water point? Minutes</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compound time to drinking water source (min)</rdfs:label>
     </owl:Class>
     
 
@@ -1263,7 +1232,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Could this be improved sanitation?</obo:TEMP_002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Improved latrine</rdfs:label>
     </owl:Class>
     
@@ -1279,6 +1247,20 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">x11: Observe hw facility_items present - 02 soap/detergent</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soap at hand washing location</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0037013 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0037013">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::g04_timeto_drinkingwater</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g04: How long does it take to walk to the water point? Minutes</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Time to water source (min)</rdfs:label>
     </owl:Class>
     
 
@@ -1395,7 +1377,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is latrine currently being used for?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drop the var but keep the label, JZ: delete variable name &quot;SHINE_Baseline_Household_Data_editSWS::g42_resp_latrine_use</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Latrine Use</rdfs:label>
     </owl:Class>
     
@@ -1415,7 +1396,6 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">xb10: Water at the hand washing area/facility</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:IAO_0000115>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Item at handwashing station&quot; under &quot;Hygiene</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water</rdfs:label>
     </owl:Class>
     
@@ -1424,7 +1404,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048011 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048011">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048161"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::hh_mdds</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -1443,7 +1423,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">b0: Items observed @ HW station</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multifilter</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">drop the var but keep the label, JZ: delete variable name &quot;SHINE_Baseline_Household_Data_editSWS::hwstation_items_b0</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Item at handwashing station</rdfs:label>
     </owl:Class>
     
@@ -1485,7 +1464,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Use&quot; under &quot;Waste disposal</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bathing</rdfs:label>
     </owl:Class>
     
@@ -1499,7 +1477,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Use&quot; under &quot;Waste disposal</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Defecation</rdfs:label>
     </owl:Class>
     
@@ -1513,7 +1490,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Use&quot; under &quot;Waste disposal</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other</rdfs:label>
     </owl:Class>
     
@@ -1533,7 +1509,6 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">xb07: Is the latrine being used as a storage facility?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:IAO_0000115>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Use&quot; under &quot;Waste disposal</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Storage</rdfs:label>
     </owl:Class>
     
@@ -1547,7 +1522,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Use&quot; under &quot;Waste disposal</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urinating</rdfs:label>
     </owl:Class>
     
@@ -1576,7 +1550,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of electric power: Generator (p17==1)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Electric power&quot; under &quot;Dwelling characteristics</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Generator</rdfs:label>
     </owl:Class>
     
@@ -1591,7 +1564,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of electric power: Solar     (p17==2)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Electric power&quot; under &quot;Dwelling characteristics</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Solar</rdfs:label>
     </owl:Class>
     
@@ -1922,13 +1894,12 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048046 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048046">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048047"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::ses_quintile1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5 quantiles of ses_score1</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;SHINE Wealth index&quot; under &quot;Socioeconomic status</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wealth index quantiles</rdfs:label>
     </owl:Class>
     
@@ -1943,7 +1914,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE Wealth Index</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE Wealth index</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE Wealth index, categorical</rdfs:label>
     </owl:Class>
     
 
@@ -1974,7 +1945,6 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M24 MUAC (mm)</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bj18: m18 MUAC (mm)</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">JZ: should we make the new term, can we use unit (cm)? EUPATH_0010084 MUAC (cm)</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MUAC (mm)</rdfs:label>
     </owl:Class>
     
@@ -2003,7 +1973,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infant month of birth</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">may not need if we have dob</obo:TEMP_002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth month</rdfs:label>
     </owl:Class>
     
@@ -2032,7 +2001,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal salivary cortisol concentration at baseline</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Maternal saliva test&quot; under &quot;Laboratory test</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cortisol concentration</rdfs:label>
     </owl:Class>
     
@@ -2046,7 +2014,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Access&quot; under &quot;Human waste facilities</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dense vegetation</rdfs:label>
     </owl:Class>
     
@@ -2113,7 +2080,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Access&quot; under &quot;Human waste facilities</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Entrance obstructed</rdfs:label>
     </owl:Class>
     
@@ -2128,7 +2094,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MDAT Finemotor score</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Malawi Developmental Assessment Tool&quot; under &quot;Observation</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fine motor score</rdfs:label>
     </owl:Class>
     
@@ -2157,7 +2122,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MDAT Grossmotor score</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Malawi Developmental Assessment Tool&quot; under &quot;Observation</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gross motor score</rdfs:label>
     </owl:Class>
     
@@ -2186,7 +2150,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wa07_06 Maternal haematuria</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Maternal urine test&quot; under &quot;Laboratory test</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hematuria</rdfs:label>
     </owl:Class>
     
@@ -2243,7 +2206,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MDAT Language score</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Malawi Developmental Assessment Tool&quot; under &quot;Observation</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Language score</rdfs:label>
     </owl:Class>
     
@@ -2310,14 +2272,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048075 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048075">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048160"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN::mean_rainfall</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mean_rainfall</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location specific - please check that label make sense</obo:TEMP_001>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location mean rainfall</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean rainfall</rdfs:label>
     </owl:Class>
     
 
@@ -2325,14 +2286,13 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048076 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048076">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048160"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN::min_temp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mean_min</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location specific - please check that label make sense</obo:TEMP_001>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location minimum tempature</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean minimum temperature</rdfs:label>
     </owl:Class>
     
 
@@ -2346,7 +2306,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Child meets minimum dietary diversity</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">JZ: same name as the one under household, shall we rename it?</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Minimum dietary diversity</rdfs:label>
     </owl:Class>
     
@@ -2472,7 +2431,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Item at handwashing station&quot; under &quot;Hygiene</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">None</rdfs:label>
     </owl:Class>
     
@@ -2514,7 +2472,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Item at handwashing station&quot; under &quot;Hygiene</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sand or ash</rdfs:label>
     </owl:Class>
     
@@ -2542,7 +2499,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Item at handwashing station&quot; under &quot;Hygiene</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soap</rdfs:label>
     </owl:Class>
     
@@ -2557,7 +2513,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MDAT Social score</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Malawi Developmental Assessment Tool&quot; under &quot;Observation</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Social Score</rdfs:label>
     </owl:Class>
     
@@ -2572,7 +2527,6 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MDAT Total score</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Malawi Developmental Assessment Tool&quot; under &quot;Observation</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total MDAT score</rdfs:label>
     </owl:Class>
     
@@ -2586,7 +2540,6 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Access&quot; under &quot;Human waste facilities</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Waste or debris in path</rdfs:label>
     </owl:Class>
     
@@ -2600,340 +2553,7 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please add parent &quot;Latrine Access&quot; under &quot;Human waste facilities</obo:TEMP_001>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Well-trodden</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048096 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048096">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::anotb_score</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A not B score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::anotb_score</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048097 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048097">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::di_direct</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Delayed inhibition - direct view</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::di_direct</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048098 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048098">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::di_hidden</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Delayed inhibition - hidden view</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::di_hidden</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048099 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048099">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::disability</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Disability</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::disability</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048100 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048100">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_1</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Has your child started to combine two words together?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_1</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048101 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048101">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_2</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Has your child started to use plurals?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_2</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048102 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048102">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Has your child started to use progressive/imperative words?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::fci_gc14_3</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048103 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048103">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::mcb_score</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MCB score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_ECD_Data_19 Jun 2020_RN::mcb_score</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048104 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048104">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m12_ari_in_last_7days</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ARI_M12 004 ag01_a fast/difficult breathing</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m12_ari_in_last_7days</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048105 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048105">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m12_diarrhea_in_last_7days</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea_M12 001 ag01_a loosestool</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m12_diarrhea_in_last_7days</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048106 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048106">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m18_ari_in_last_7days</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ARI_M18 004 ag01_a fast/difficult breathing</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m18_ari_in_last_7days</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048107 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048107">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m18_diarrhea_in_last_7days</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diarrhea_M18 001 ag01_a loosestool</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_Birth_m18_Data_19 Jun 2020_RN::m18_diarrhea_in_last_7days</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048108 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048108">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_init</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RECODE of ebfi (early breastfeeding initiation)</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_init</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048109 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048109">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module1</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EBF module 1</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module1</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048110 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048110">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module2</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EBF module 2</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module2</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048111 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048111">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EBF module 3</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf_module3</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048112 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048112">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf24hr_m01</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EBF at 1 month visit using 24 hour recall</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf24hr_m01</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048113 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048113">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf24hr_m03</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EBF at 3 months visit using 24 hour recall</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebf24hr_m03</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048114 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048114">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebfever_m01</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ever EBF at 1 month visit</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebfever_m01</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048115 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048115">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebfever_m03</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ever EBF at 3 months visit</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::ebfever_m03</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048116 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048116">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::total_ebf_1_2_3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">all EBF modules 1, 2 &amp; 3</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Infant_EBF_Data_19 Jun 2020_RN::total_ebf_1_2_3</rdfs:label>
     </owl:Class>
     
 
@@ -2947,655 +2567,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CD4 result at baseline</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">blood test</obo:TEMP_002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CD4 result at baseline</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048118 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048118">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::dma</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal decision making autonomy</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::dma</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048119 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048119">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::epds</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal EPDS</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::epds</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048120 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048120">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::gna</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal gender norms multiple score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::gna</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048121 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048121">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::m18_hiv_status</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal HIV status at M18</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::m18_hiv_status</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048122 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048122">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::mse</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal self-efficacy score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::mse</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048123 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048123">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::ovaseen</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ova seen</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::ovaseen</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048124 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048124">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::phs</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal physical health score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::phs</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048125 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048125">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::pss</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal perceived social support score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::pss</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048126 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048126">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::pts</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal perceived time stress score</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Maternal_Baseline_Data_19 Jun 2020_RN::pts</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048127 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048127">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc01</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cc01:Are you breastfeeding your baby now?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc01</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048128 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048128">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc11</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cc11: Have you seen your child eat soil?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc11</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048129 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048129">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc15</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cc15: Have you ever seen your child eat chicken poop?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc15</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048130 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048130">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc21</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cc21:From sunrise yesterday till sunrise today,how many times did you feed&lt;INDEX</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::cc21</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048131 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048131">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::ec03_04_cat</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Knowledge of feeding during illness</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::ec03_04_cat</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048132 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048132">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::exp_modules_done</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Expected modules delivered</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::exp_modules_done</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048133 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048133">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::gb44_3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Need to fill back in</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::gb44_3</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048134 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048134">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::LNS_no_of_Expect_deliv</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::LNS_no_of_Expect_deliv</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048135 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048135">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::LS_no_of_Expect_deliv</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::LS_no_of_Expect_deliv</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048136 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048136">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_latrine_present</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M12 SHINE latrine present?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_latrine_present</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048137 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048137">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::csi</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Coping strategy index</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::csi</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048138 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048138">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age_70plus</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 70 + yrs who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age_70plus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048139 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048139">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age0_less3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age &lt;3 yrs who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age0_less3</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048140 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048140">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age18_less70</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 18 to &lt;70yrs who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age18_less70</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048141 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048141">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age3_less6</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 3 to &lt;6yrs who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age3_less6</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048142 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048142">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age6_less18</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 6 to &lt;18yrs who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_age6_less18</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048143 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048143">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_hhtotal</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total HH members who use open defecation</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::opendef_hhtotal</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048144 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048144">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_liquidsoap_deliveries</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of liquid soap deliveries by M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_liquidsoap_deliveries</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048145 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048145">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_LNS_no_of_deliveries</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_LNS_no_of_deliveries</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048146 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048146">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_playmat_received</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M12 SHINE playmat recieved?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_playmat_received</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048147 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048147">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_playyard_received</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M12 SHINE playyard received?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_playyard_received</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048148 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048148">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_tippytape_present</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M12 SHINE tippy tape present?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_tippytape_present</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048149 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048149">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_total_modules_done</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total modules delivered by M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_total_modules_done</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048150 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048150">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_waterguard_deliveries</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number on water guard deliveries by M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12_waterguard_deliveries</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048151 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048151">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age_70plus</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 70 + yrs who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age_70plus</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048152 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048152">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age0_less3</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age &lt;3 yrs who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age0_less3</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048153 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048153">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age18_less70</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 18 to &lt;70yrs who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age18_less70</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048154 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048154">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age3_less6</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 3 to &lt;6yrs who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age3_less6</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048155 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048155">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age6_less18</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Members age 6 to &lt;18yrs who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_age6_less18</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048156 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048156">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_hhtotal</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total HH members who use open defecation at M12</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::m12opendef_hhtotal</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048157 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048157">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::WG_no_of_Expect_deliv</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::WG_no_of_Expect_deliv</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0048158 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048158">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::xb44</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">xb44: OBSERVE and record the general appearance of the play space (relative to h</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">please hold a place</obo:TEMP_001>
-        <obo:TEMP_002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">need to confirm variable meaning</obo:TEMP_002>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::xb44</rdfs:label>
     </owl:Class>
     
 
@@ -3603,14 +2575,35 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048159 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048159">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048160"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN::max_temp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Study_Level_Factors_Data_19 Jun 2020_RN</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mean_max</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:TEMP_001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">geographic location specific - please check that label make sense, JZ: add &apos;location&apos; in the label as others. Not sure whether it is under correct category</obo:TEMP_001>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location mean maximum temperature</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mean maximum temperature</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0048160 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048160">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weather</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0048161 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048161">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household nutrition</rdfs:label>
     </owl:Class>
     
 
@@ -3666,6 +2659,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PCO_0000024">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</rdfs:label>
     </owl:Class>
@@ -3717,6 +2711,12 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
     </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TEMP_001">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesforOnt</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TEMP_002">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesforProvider</rdfs:label>
+    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TEMP_003">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesForDL</rdfs:label>
     </rdf:Description>
@@ -3724,5 +2724,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
 
