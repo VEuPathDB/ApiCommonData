@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_shine.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_shine.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_shine.owl"/>
     
 
@@ -58,6 +58,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001005">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">termType</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -1053,6 +1061,21 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0035035 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0035035">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000686"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::x11_02_soap_at_handwashing</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">x11: Observe hw facility_items present - 02 soap/detergent</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0037012</obo:EUPATH_0001006>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soap at hand washing location</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0035062 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0035062">
@@ -1237,24 +1260,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0037012 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0037012">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000686"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::x11_02_soap_at_handwashing</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">x11: Observe hw facility_items present - 02 soap/detergent</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soap at hand washing location</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0037013 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0037013">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000731"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::g04_timeto_drinkingwater</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -1894,7 +1903,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048046 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048046">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000304"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011932"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS::ses_quintile1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Baseline_Household_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
@@ -2300,7 +2309,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0048077 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048077">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0048162"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS::ch_mdds</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SHINE_Month12_Intervention_Uptake_Data_editSWS</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2608,6 +2617,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0048162 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0048162">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0001002>Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005>category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Participent nutrition</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
@@ -2708,9 +2728,6 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001004">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">codebookValues</rdfs:label>
     </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TEMP_001">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">notesforOnt</rdfs:label>
     </rdf:Description>
@@ -2724,5 +2741,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 
