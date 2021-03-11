@@ -112,6 +112,11 @@ stringArg({name           => 'extDbRlsSpec',
             isList         => 0, }),
 
 
+   stringArg({name           => 'evalToGetGetAddMoreData',
+            descr          => 'Add more data to InvestigationSimple Reader',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
   ];
 
 my $documentation = { purpose          => "",
@@ -171,7 +176,13 @@ sub run {
       my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
       my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName if($ontologyMappingOverrideFileBaseName);
 
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile);
+      my $getAddMoreData;
+      my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
+      if($evalToGetGetAddMoreData){
+        $getAddMoreData = eval $evalToGetGetAddMoreData;
+        die "string eval of $evalToGetGetAddMoreData failed: $@" if $@;
+      }
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
