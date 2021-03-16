@@ -246,6 +246,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "pfal3D7"
 	|| $organismAbbrev eq "pgal8A"
 	|| $organismAbbrev eq "pknoH"
+	|| $organismAbbrev eq "pknoA1H1"
 	|| $organismAbbrev eq "pmalUG01"
 	|| $organismAbbrev eq "povaGH01"
 	|| $organismAbbrev eq "preiCDC"
