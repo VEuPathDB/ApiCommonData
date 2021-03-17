@@ -13,8 +13,8 @@ my $purposeBrief = 'Read ontology and study tables and insert tables which store
 my $purpose = $purposeBrief;
 
 my $tablesAffected =
-    [ ['ApiDB::Attribute', ''],
-      ['ApiDB::AttributeValue', '']
+    [ ['ApiDB::AttributeGraph', ''],
+      ['ApiDB::EntityTypeGraph', '']
     ];
 
 # TODO
@@ -97,16 +97,16 @@ sub run {
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
-  my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
+  my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
-    $attributeCount = $attributeCount + $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
+    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
 
-    $entityTypeGraphCount = $entityTypeGraphCount + $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
+    $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
   }
 
-  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue, $attributeCount rows into ApiDB.Attribute and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
+  return "Loaded $attributeGraphCount rows into ApiDB.AttributeGraph and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
 }
 
 
@@ -114,7 +114,7 @@ sub run {
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;
 
-  my $attributeCount;
+  my $attributeGraphCount;
 
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
@@ -129,10 +129,10 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                  term_type => $ontologyTerm->{TERM_TYPE} ? $ontologyTerm->{TERM_TYPE} : 'default', 
                                                                 });
     $attributeGraph->submit();
-    $attributeCount++;
+    $attributeGraphCount++;
   }
 
-  return $attributeCount;
+  return $attributeGraphCount;
 }
 
 

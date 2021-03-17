@@ -2,6 +2,7 @@ package ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use strict;
+use warnings;
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::ApiDB::Attribute;
@@ -126,22 +127,21 @@ sub run {
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
-  my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
+  my $studiesCount;
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
+    $studiesCount++;
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    my $ct = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
-    $attributeValueCount = $attributeValueCount + $ct;
+    $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
 
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    my $act = $self->loadAttributeTerms($ontologyTerms, $studyId, $entityTypeIds);
-    $attributeCount = $attributeCount + $act;
+    $self->loadAttributeTerms($ontologyTerms, $studyId, $entityTypeIds);
   }
 
-  return "Loaded $attributeValueCount rows into ApiDB.AttributeValue, $attributeCount rows into ApiDB.Attribute and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
+  return "Loaded attributes for $studiesCount studies"; 
 }
 
 
@@ -152,15 +152,16 @@ sub queryForEntityTypeIds {
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "select t.entity_type_id, ot.source_id
+  my $sql = "select t.name, t.entity_type_id, ot.source_id
 from apidb.entitytype t, sres.ontologyterm ot
-where ot.ontology_term_id = t.type_id
+where t.type_id = ot.ontology_term_id (+)
 and study_id = $studyId";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  while(my ($etId, $stableId) = $sh->fetchrow_array()) {
+  while(my ($etName, $etId, $stableId) = $sh->fetchrow_array()) {
+    warn "No ontology term for entity type $etName" unless $stableId;
     $rv{$etId} = $stableId;
   }
   $sh->finish();
@@ -184,14 +185,14 @@ sub loadAttributeTerms {
 
       my ($dataType, $dataShape, $precision);
       $precision = 1; # THis is the default; probably never changed
-      my $isNumber = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
-      my $isDate = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
+      my $isNumber = $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
+      my $isDate = $ontologyTerm->{$etId}->{_IS_DATE_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
       my $valueCount = scalar(keys(%{$ontologyTerm->{$etId}->{_VALUES}}));
 #      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
 
       my $isMultiValued = $ontologyTerm->{$etId}->{_IS_MULTI_VALUED};
 
-      if($ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT}) {
+      if($ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT}) {
         $dataShape = 'ordinal';
       }
       elsif($isDate || ($isNumber && $valueCount > 10)) {
@@ -340,7 +341,7 @@ sub loadAttributes {
                  $dateValue
             );
 
-        print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
+        print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
 
         # TODO: using temp geo hash id
         if($ontologySourceId eq 'GEOHASH_TEMP_32') {

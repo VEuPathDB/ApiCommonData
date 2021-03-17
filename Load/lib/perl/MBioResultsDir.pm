@@ -15,6 +15,7 @@ sub new {
 
 sub tablePath {
   my ($self, $dataset, $suffix) = @_;
+   $dataset =~ s{otuDADA2_(.*)_RSRC}{$1};
   return $self->{dir} . "/" . $dataset . $self->{suffixes}{$suffix};
 }
 
@@ -57,6 +58,7 @@ sub toGetAddMoreData {
     my ($studyXml) = @_;
     my $dataset = $studyXml->{dataset}[0];
     my @tables = $self->allTablesForDataset($dataset);
+    warn "No tables found for dataset: $dataset" unless @tables;
     return sub {
       my ($valuesHash) = @_;
       my $sample = $valuesHash->{name}[0];
