@@ -217,7 +217,7 @@ sub run {
         my $identifier = $study->getIdentifier();
         my $description = $study->getDescription();
 
-        my $nodes = $self->nodesCheckMaterialEntitiesHaveMaterialType($study->getNodes());
+        my $nodes = $study->getNodes();
         my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
         my $edges = $study->getEdges();
 
@@ -251,19 +251,6 @@ sub countLines {
 }
 
 
-
-sub nodesCheckMaterialEntitiesHaveMaterialType {
-  my ($self, $nodes) = @_;
-
-  foreach my $node (@$nodes) {
-    my $value = $node->getValue();
-    if($node->hasAttribute("Material Type")) {
-      my $materialTypeOntologyTerm = $node->getMaterialType();
-      $self->logOrError("Material Entity $value is required to have a [Material Type]");
-    }
-  }
-  return $nodes;
-}
 
 sub protocolsCheckProcessTypesAndSetIds {
   my ($self, $protocols) = @_;
@@ -323,9 +310,9 @@ sub addEntityTypeForNode {
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
 
-  my $materialType = $node->hasAttribute("MaterialType") ? $node->getMaterialType()->getTerm() : 'NA';
+  my $materialType = $node->getMaterialType();
 
-  my $mtKey = $materialType . "_" . $isaType;
+  my $mtKey = ($materialType ? $materialType->getTerm : 'NA') . "_" . $isaType;
 
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
@@ -335,13 +322,14 @@ sub addEntityTypeForNode {
   $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
-  if($node->hasAttribute("MaterialType")) {
-    my $materialTypeOntologyTerm = $node->getMaterialType();
-    my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialTypeOntologyTerm, 0);
+  if($materialType) {
+    my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialType, 0);
     $entityType->setTypeId($gusOntologyTerm->getId());
     $entityType->setName($gusOntologyTerm->getName());
   }
   else {
+    my $value = $node->getValue;
+    $self->logOrError("Node of value $value missing material type - unable to set typeId");
     $entityType->setName($isaType);
   }
 
