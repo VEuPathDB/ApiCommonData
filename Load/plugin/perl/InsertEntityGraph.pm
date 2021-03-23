@@ -397,41 +397,39 @@ sub loadNodes {
     my $entityTypeId = $self->addEntityTypeForNode($ontologyTermToIdentifiers, $node, $gusStudyId);
     $entity->setEntityTypeId($entityTypeId);
 
-    if ($node->hasAttribute("Characteristic")) {
-      my $characteristics = $node->getCharacteristics();
-      foreach my $characteristic (@$characteristics) {
+    my $characteristics = $node->getCharacteristics() // [];
+    foreach my $characteristic (@$characteristics) {
 
-        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
-        my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+      my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
+      my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
 
-        if($characteristic->getUnit()) {
-          my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
-          $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
-         }
+      if($characteristic->getUnit()) {
+        my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
+        $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+       }
 
-        my ($charValue);
+      my ($charValue);
 
-        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
-          my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-          $charValue = $value;
-        }
-        elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-          $charValue = $valueOntologyTerm->getName();
-        }
-        else {
-          $charValue = $characteristic->getTerm();
-        }
-
-        $charValue =~ s/\r//;
-
-        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
-
-        if(length $charValue > $self->{_max_attr_value}) {
-          $self->{_max_attr_value} = length $charValue;
-        }
-
+      if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+        my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
+        $charValue = $value;
       }
+      elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
+        my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+        $charValue = $valueOntologyTerm->getName();
+      }
+      else {
+        $charValue = $characteristic->getTerm();
+      }
+
+      $charValue =~ s/\r//;
+
+      push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+
+      if(length $charValue > $self->{_max_attr_value}) {
+        $self->{_max_attr_value} = length $charValue;
+      }
+
     }
 
     my $atts = encode_json($charsForLoader);

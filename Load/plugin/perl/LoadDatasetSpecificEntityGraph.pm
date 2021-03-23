@@ -85,7 +85,7 @@ sub run {
     foreach my $entityTypeId (keys %$entityTypeIds) {
       my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
 
-      $self->log("Making Tables for Entity Type: $entityTypeId");
+      $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
       $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
@@ -304,7 +304,7 @@ SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
 FROM apidb.attributevalue av, apidb.entityattributes ea, sres.ontologyterm ot
 WHERE av.entity_type_id = $entityTypeId
 and av.entity_attributes_id = ea.entity_attributes_id
-and av.attribute_ontology_term_id = ot.ontology_term_id
+and av.attribute_ontology_term_id = ot.ontology_term_id (+)
 ";
 
   my $dbh = $self->getDbHandle();
