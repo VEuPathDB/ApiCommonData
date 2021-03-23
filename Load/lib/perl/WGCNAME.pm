@@ -44,7 +44,7 @@ sub munge {
   $self->setNames(\@names);                                                                                                  
   $self->setFileNames(\@fileNames);
   $self->setProtocolName($PROTOCOL_NAME);
-  $self->setSourceIdType("gene");
+  $self->setSourceIdType("module");
 
   #$self->{doNotLoad} = 0;
   
