@@ -42,6 +42,7 @@ sub ampliconTaxa {
   my ($class, $inputPath) = @_;
   return construct($class, {
     resultType => 'Taxon table',
+    dataForSampleOntologyTerm => 'abundance_amplicon',
     matrixElementType => 'int',
     printMatrixElement => sub {
       my ($x) = @_;
@@ -73,6 +74,7 @@ sub wgsTaxa {
   my ($class, $inputPath) = @_;
   return construct($class, {
     resultType => 'Taxon table',
+    dataForSampleOntologyTerm => 'abundance_wgs',
     matrixElementType => 'float',
     printMatrixElement => sub {
       my ($x) = @_;
@@ -105,6 +107,7 @@ sub wgsFunctions {
   my ($class, $unitType, $inputPath) = @_;
   return construct($class, {
     resultType => 'Function table',
+    dataForSampleOntologyTerm => "function_$unitType",
     matrixElementType => 'float',
     printMatrixElement => sub {
       my ($x) = @_;
@@ -144,6 +147,7 @@ sub wgsPathways {
   my ($class, $inputPathAbundances, $inputPathCoverages) = @_;
   my $dataTypeInfo = {
     resultType => 'Pathway table',
+    dataForSampleOntologyTerm => 'abundance_and_coverage_pathways',
     matrixElementType => 'unicode',
     printMatrixElement => sub {
       my ($abundance, $coverage) = @{$_[0]};

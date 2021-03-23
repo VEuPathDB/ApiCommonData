@@ -219,6 +219,7 @@ sub uploadToDb {
   
     $setMaxObjects->($maximumNumberOfObjects);
     my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $ampliconTaxaTable->{samples}, $suffix);
+    $undefPointerCache->();
     $ampliconTaxaTable->submitToGus($setMaxObjects, $undefPointerCache, $submit, $protocolAppNodeIdsForSamples);
   }
 
@@ -227,6 +228,7 @@ sub uploadToDb {
 
     $setMaxObjects->($maximumNumberOfObjects);
     my $protocolAppNodeIdsForSamples = $self->getProtocolAppNodeIdsForSamples($datasetName,$protocolId, $investigationId, $studyId, $wgsTaxaTable->{samples}, $suffix);
+    $undefPointerCache->();
     for my $table ($wgsTaxaTable, $level4EcsTable, $pathwaysTable){
       $table->submitToGus($setMaxObjects, $undefPointerCache, $submit, $protocolAppNodeIdsForSamples);
     }

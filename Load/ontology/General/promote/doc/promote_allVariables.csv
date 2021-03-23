@@ -29,8 +29,14 @@ aedays,Individual level database FINAL,discard,,Days at risk for AE analyses,,NA
 age,BC-3 enrollment database FINAL,keep,,Age in years,,NA,,,,,BC-3 enrollment database FINAL::age
 age,BC-3 mothers expanded database FINAL,keep,,Age in years,,NA,,,,,BC-3 mothers expanded database FINAL::age
 age,BC-3 screening database FINAL,discard,,Age in years:,numeric,NA,,,,,BC-3 screening database FINAL::age
+age,BC-3 childs expanded database FINAL,discard,,Age in months,,NA,,,,,BC-3 childs expanded database FINAL::age
+age0to12,BC-3 children individual level database FINAL,discard,,(sum) age0to12,,NA,,,,,BC-3 children individual level database FINAL::age0to12
+age0to3,BC-3 children individual level database FINAL,discard,,(sum) age0to3,,NA,,,,,BC-3 children individual level database FINAL::age0to3
 age16yrs,BC-3 screening database FINAL,discard,,Age>=16 years,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::age16yrs
+age3to9,BC-3 children individual level database FINAL,discard,,(sum) age3to9,,NA,,,,,BC-3 children individual level database FINAL::age3to9
+age9to12,BC-3 children individual level database FINAL,discard,,(sum) age9to12,,NA,,,,,BC-3 children individual level database FINAL::age9to12
+agecat,BC-3 childs expanded database FINAL,discard,,Age categories,,NA,,,,,BC-3 childs expanded database FINAL::agecat
 agree,BC3_Household_Survey_Data,discard,,are you going to conduct the interview with this household?,"1=Yes, 2=No",NA,,,,,BC3_Household_Survey_Data::agree
 ahwker,BC3_Household_Survey_Data,keep,,is there a community health worker who distributes malaria medicines in your village,"1=yes,2=No,8=Don’t know, -9=skipped",NA,,,,,BC3_Household_Survey_Data::ahwker
 airbrcov,BC3_Household_Survey_Data,keep,,"observation: if the roon has airbricks, are the airbricks covered?","1=completely covered, 2=partially covered, 3=open, -9=skipped",NA,,,,,BC3_Household_Survey_Data::airbrcov
@@ -78,6 +84,12 @@ altgrade,BC-3 mothers delivery database FINAL,keep,,ALT grade,"0 = no grade,
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers delivery database FINAL::altgrade
+altgrade,BC-3 childs all visit database FINAL,keep,,ALT (IU/L) grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::altgrade
 altrt,BC-3 enrollment database FINAL,discard,,ALT (red top),"0=Not collected,
 1=Collected
 ",NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::altrt
@@ -98,6 +110,7 @@ ams,Individual level database FINAL,discard,,(sum) AMS,"0,1",NA,,,,,Individual l
 anemiaae,Individual level database FINAL,discard,,(sum) anemiaAE,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::anemiaae
 anorexdur,BC-3 enrollment database FINAL,discard,,Anorexia Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::anorexdur
 anorexdur,BC-3 mothers all visits database FINAL,keep,,Anorexia Duration,,NA,,,,,BC-3 mothers all visits database FINAL::anorexdur
+anorexdur,BC-3 childs all visit database FINAL,keep,,Anorexia Duration,,NA,,,,,BC-3 childs all visit database FINAL::anorexdur
 anorexgrade,BC-3 enrollment database FINAL,discard,,Anorexia Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -110,16 +123,30 @@ anorexgrade,BC-3 mothers all visits database FINAL,keep,,Anorexia Grade,"0 = abs
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::anorexgrade
+anorexgrade,BC-3 childs all visit database FINAL,keep,,Anorexia Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::anorexgrade
+antibiot,BC-3 childs hospitalizations FINAL,keep,,Intravenous antibiotics,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::antibiot
 anygrade34ae,Individual level database FINAL,discard,,(sum) anygrade34AE,"0,1,2,3",NA,,,,aggregate observation data,Individual level database FINAL::anygrade34ae
 anyhb,BC-3 mothers expanded database FINAL,keep,,Hemoglobin level (from CBC or hemocue),,NA,,,,,BC-3 mothers expanded database FINAL::anyhb
+anyhb,BC-3 childs expanded database FINAL,discard,,Hemoglobin level (from CBC or hemocue),,NA,,,,Confirm units,BC-3 childs expanded database FINAL::anyhb
 anyhp,BC-3 mothers delivery database FINAL,keep,,Any placental malaria by histopathology,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::anyhp
 anyhp,Individual level database FINAL,discard,,Any placental malaria by histopathology,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::anyhp
+anyhp,BC-3 childs expanded database FINAL,discard,,Any placental malaria by histopathology,"0=No,1=Yes",NA,,,,DROP - Use children individual,BC-3 childs expanded database FINAL::anyhp
+anyhp,BC-3 children individual level database FINAL,discard,,Any placental malaria by histopathology,"0=No,
+1=Yes",NA,,,,DROP - Use delivery,BC-3 children individual level database FINAL::anyhp
+anymalaria,BC-3 childs expanded database FINAL,discard,,Malaria diagnosed today,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::anymalaria
 anysae,Individual level database FINAL,discard,,(sum) anySAE,"0,1,2",NA,,,,aggregate observation data,Individual level database FINAL::anysae
-apdichenroll,Individual level database FINAL,SKIP,,Parasite prevalence by microscopy or qPCR at enrollment,"0,1",NA,,,,,Individual level database FINAL::apdichenroll
+apdichenroll,Individual level database FINAL,keep,,Parasite prevalence by microscopy or qPCR at enrollment,"0,1",NA,,,,,Individual level database FINAL::apdichenroll
 asthma,BC-3 enrollment database FINAL,keep,,Asthma,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::asthma
+autopsy,BC-3 childs deaths FINAL,keep,,information obtained as Autopsy report,1=checked,NA,,,,"map contreport, autopsy, other and hospre to same term",BC-3 childs deaths FINAL::autopsy
 avoidmed,BC-3 screening database FINAL,discard,,Agreement to avoid medications given outside the study protocol,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::avoidmed
 b4dinfo,BC-3 mothers delivery database FINAL,discard,,Could you obtain this information before delivery?,"0=No,
@@ -140,10 +167,10 @@ balive7,BC-3 enrollment database FINAL,keep,,Born Alive or Stillbirth,"1=Alive,
 2=stillbirth",NA,,,,,BC-3 enrollment database FINAL::balive7
 bankacco,BC3_Household_Survey_Data,keep,,a bank account?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::bankacco
 bankaccodich,BC3_Household_Survey_Data,discard,,Bank account?,"0=No, 1=Yes      ",NA,,,,,BC3_Household_Survey_Data::bankaccodich
-bcord1,BC-3 mothers delivery database FINAL,SKIP,,Cord blood1,"0=Not collect, 
+bcord1,BC-3 mothers delivery database FINAL,keep,,Cord blood1,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::bcord1
-bcord2,BC-3 mothers delivery database FINAL,SKIP,,Cord blood2,"0=Not collect, 
+bcord2,BC-3 mothers delivery database FINAL,keep,,Cord blood2,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::bcord2
 bcord3,BC-3 mothers delivery database FINAL,discard,,Cord blood3,"0=Not collect, 
@@ -172,6 +199,8 @@ birthwt6,BC-3 enrollment database FINAL,keep,,Birth wt (kg),,NA,,,,,BC-3 enrollm
 birthwt7,BC-3 enrollment database FINAL,keep,,Birth wt (kg),,NA,,,,,BC-3 enrollment database FINAL::birthwt7
 bldtrans,BC-3 enrollment database FINAL,keep,,Past blood transfusions,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::bldtrans
+blood,BC-3 childs hospitalizations FINAL,keep,,Blood transfusion,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::blood
 bloodsmr,BC-3 enrollment database FINAL,discard,,Thick blood smear,"0=Not collected,
 1=Done (not urgent),
 2=Collected (urgent, malaria suspected)
@@ -181,8 +210,12 @@ bloodsmr,BC-3 mothers all visits database FINAL,keep,,Thick blood smear,"0=Not I
 2=Forgot to collect,
 3=Declined
 ",NA,,,,,BC-3 mothers all visits database FINAL::bloodsmr
+bloodsmr,BC-3 childs all visit database FINAL,keep,,Thick blood smear,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::bloodsmr
+bloodsmr,BC-3 childs expanded database FINAL,discard,,Thick blood smear,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
+",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::bloodsmr
 bp,BC-3 enrollment database FINAL,discard,,Blood Pressure (mm Hg),,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::bp
 bp,BC-3 mothers all visits database FINAL,keep,Have Jay separate into systolic and diastolic (sbp and dbp) and load those instead,Blood pressure (mm Hg),,NA,,,,,BC-3 mothers all visits database FINAL::bp
+bp,BC-3 childs all visit database FINAL,keep,,Blood pressure (mm Hg),,NA,,,,,BC-3 childs all visit database FINAL::bp
 brand1,BC3_Household_Survey_Data,discard,,observe or ask the brand or type of mosquito net1.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::brand1
 brand10,BC3_Household_Survey_Data,discard,,observe or ask the brand or type of mosquito net10.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::brand10
 brand2,BC3_Household_Survey_Data,discard,,observe or ask the brand or type of mosquito net2.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::brand2
@@ -196,13 +229,19 @@ brand9,BC3_Household_Survey_Data,discard,,observe or ask the brand or type of mo
 bsdich,BC-3 enrollment database FINAL,discard,,Blood smear dichotomized,"0=Negative BS, 1=Positive Bs",NA,,,,DROP - Use expanded,BC-3 enrollment database FINAL::bsdich
 bsdich,BC-3 mothers all visits database FINAL,discard,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::bsdich
 bsdich,BC-3 mothers expanded database FINAL,keep,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,,,,,BC-3 mothers expanded database FINAL::bsdich
+bsdich,BC-3 childs expanded database FINAL,discard,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::bsdich
+bsdich,BC-3 childs all visit database FINAL,keep,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,,,,,BC-3 childs all visit database FINAL::bsdich
 bsdichenroll,Individual level database FINAL,discard,,Parasite prevalence by microscopy at enrollment,"0,1",NA,,,,DROP - Use expanded,Individual level database FINAL::bsdichenroll
+bsdichenroll,BC-3 childs expanded database FINAL,discard,,Parasite prevalence by microscopy at enrollment,"0=Negative, 1=positive",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::bsdichenroll
+bsdichenroll,BC-3 children individual level database FINAL,discard,,Parasite prevalence by microscopy at enrollment,"0=Negative BS, 1=Positive Bs",NA,,,,DROP - Use expanded,BC-3 children individual level database FINAL::bsdichenroll
+bweight,BC-3 childs expanded database FINAL,discard,,Birth weight,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::bweight
+bweight,BC-3 children individual level database FINAL,keep,,Birth weight,,NA,,,,,BC-3 children individual level database FINAL::bweight
 cabortions,BC-3 enrollment database FINAL,keep,,Abortion,,NA,,,,,BC-3 enrollment database FINAL::cabortions
 calculatedgravidity,BC-3 enrollment database FINAL,discard,,Gravidity,,NA,,,,DROP - Use gravid from enrollment,BC-3 enrollment database FINAL::calculatedgravidity
 campm,BC-3 mothers delivery database FINAL,discard,,AM/PM CRF,"0=AM,
 1=PM",NA,,,,,BC-3 mothers delivery database FINAL::campm
-canomaly1,BC-3 mothers delivery database FINAL,SKIP,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly1
-canomaly2,BC-3 mothers delivery database FINAL,SKIP,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly2
+canomaly1,BC-3 mothers delivery database FINAL,keep,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly1
+canomaly2,BC-3 mothers delivery database FINAL,keep,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly2
 caplacent,BC-3 mothers delivery database FINAL,discard,,Abruptio placenta,1=ticked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::caplacent
 car,BC3_Household_Survey_Data,keep,,a car or truck?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::car
 car1rdt,BC-3 mothers all visits database FINAL,keep,,Care Start RDT 1st reading,"0=Negative, 1=positive, 2=Invalid",NA,,,,,BC-3 mothers all visits database FINAL::car1rdt
@@ -226,8 +265,11 @@ cbc,BC-3 mothers delivery database FINAL,keep,,CBC/HIV (purple top),"0=Not colle
 ",NA,,,,,BC-3 mothers delivery database FINAL::cbc
 cbc,BC-3 mothers expanded database FINAL,discard,,CBC (purple top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
 ",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::cbc
-cbld,BC-3 mothers delivery database FINAL,SKIP,,Cord blood ,,NA,,,,,BC-3 mothers delivery database FINAL::cbld
-cbld2,BC-3 mothers delivery database FINAL,SKIP,,"Cord blood (placenta ""b"" if twins)",,NA,,,,,BC-3 mothers delivery database FINAL::cbld2
+cbc,BC-3 childs all visit database FINAL,keep,,CBC (purple top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::cbc
+cbc,BC-3 childs expanded database FINAL,discard,,CBC (purple top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
+",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::cbc
+cbld,BC-3 mothers delivery database FINAL,keep,,Cord blood ,,NA,,,,,BC-3 mothers delivery database FINAL::cbld
+cbld2,BC-3 mothers delivery database FINAL,keep,,"Cord blood (placenta ""b"" if twins)",,NA,,,,,BC-3 mothers delivery database FINAL::cbld2
 cblood,BC-3 mothers delivery database FINAL,keep,,Cord blood Hb level,,NA,,,,,BC-3 mothers delivery database FINAL::cblood
 cblood2,BC-3 mothers delivery database FINAL,keep,,"Cord blood Hb level (placenta ""b"" if twins)",,NA,,,,,BC-3 mothers delivery database FINAL::cblood2
 cbtrans,BC-3 mothers delivery database FINAL,keep,,Blood transfusion,1=ticked,NA,,,,,BC-3 mothers delivery database FINAL::cbtrans
@@ -244,6 +286,7 @@ chgblinew28,Individual level database FINAL,discard,,QTc interval change from Da
 chgblinew36,Individual level database FINAL,discard,,QTc interval change from Day 0 to Day 2,,NA,,,,,Individual level database FINAL::chgblinew36
 chilldur,BC-3 enrollment database FINAL,discard,,Chill Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::chilldur
 chilldur,BC-3 mothers all visits database FINAL,keep,,Chill Duration,,NA,,,,,BC-3 mothers all visits database FINAL::chilldur
+chilldur,BC-3 childs all visit database FINAL,keep,,Chill Duration,,NA,,,,,BC-3 childs all visit database FINAL::chilldur
 chillgrade,BC-3 enrollment database FINAL,discard,,Chill Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -256,7 +299,15 @@ chillgrade,BC-3 mothers all visits database FINAL,keep,,Chill Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::chillgrade
+chillgrade,BC-3 childs all visit database FINAL,keep,,Chill Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::chillgrade
 chillsae,Individual level database FINAL,discard,,(sum) chillsAE,"0,1,2",NA,,,,aggregate observation data,Individual level database FINAL::chillsae
+chosp,BC-3 childs all visit database FINAL,keep,,was the child hospitalized today,"0=Not referred,
+1=Referred",NA,,,,,BC-3 childs all visit database FINAL::chosp
 chronicmed,BC-3 screening database FINAL,discard,,Chronic medical condition requiring frequent medical attention,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::chronicmed
 cifetus,BC-3 mothers delivery database FINAL,discard,,"Injury to fetus
@@ -265,6 +316,7 @@ clacera,BC-3 mothers delivery database FINAL,keep,,Laceration/episiotomy,1=ticke
 clock,BC3_Household_Survey_Data,keep,,clock?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::clock
 cmal,BC-3 mothers all visits database FINAL,discard,,IF complicated malaria what criteria: Cerebral malaria,1=checked,NA,,,,All NA's,BC-3 mothers all visits database FINAL::cmal
 cmal,BC-3 mothers delivery database FINAL,discard,,IF complicated malaria what criteria: Cerebral malaria,1=checked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::cmal
+cmal,BC-3 childs all visit database FINAL,keep,,Cerebral malaria,1=checked,NA,,,,,BC-3 childs all visit database FINAL::cmal
 cmrplac,BC-3 mothers delivery database FINAL,discard,,Manual removal of placenta,1=ticked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::cmrplac
 cnone,BC-3 mothers delivery database FINAL,keep,,None,1=ticked,NA,,,,,BC-3 mothers delivery database FINAL::cnone
 comchgbline,BC-3 mothers all visits database FINAL,keep,,QTc interval change from Day 0 to Day 2 (computer generated),,NA,,,,,BC-3 mothers all visits database FINAL::comchgbline
@@ -513,21 +565,25 @@ comp74,BC-3 enrollment database FINAL,discard,,Complications,"1=PPH,
 7=Retained placenta,
 8=Neonatal demise",NA,,,,All NA's,BC-3 enrollment database FINAL::comp74
 complicatedab,Individual level database FINAL,discard,,(sum) complicatedAb,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::complicatedab
+compmal,BC-3 children individual level database FINAL,discard,,(sum) compmal,,NA,,,,,BC-3 children individual level database FINAL::compmal
 compositebo,BC-3 mothers delivery database FINAL,keep,,Whether LBW/preterm/SGA has occurred,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::compositebo
 compositebo,Individual level database FINAL,discard,,Whether LBW/preterm/SGA has occurred,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::compositebo
-compositebob,Individual level database FINAL,SKIP,,LBW/preterm/SGA for supplemental table,"0=No,
+compositebob,Individual level database FINAL,keep,,LBW/preterm/SGA for supplemental table,"0=No,
 1=Yes",NA,,,,Define,Individual level database FINAL::compositebob
 compositefnd,BC-3 mothers delivery database FINAL,keep,,Whether SA/stillbirth/neonatal death occurred,"0,1",NA,,,,,BC-3 mothers delivery database FINAL::compositefnd
 compositefnd,Individual level database FINAL,discard,,Whether SA/stillbirth/neonatal death occurred,"0,1",NA,,,,DROP - Use delivery,Individual level database FINAL::compositefnd
 congenitalanomaly,Individual level database FINAL,discard,,(sum) congenitalanomaly,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::congenitalanomaly
 congenitalmaldich,BC-3 mothers delivery database FINAL,keep,,Whether stillbirth occurred dichotomized if not spontaneous abortion,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::congenitalmaldich
+contexpln,BC-3 childs deaths FINAL,keep,,Contact report explanation,,NA,,,,,BC-3 childs deaths FINAL::contexpln
 contractn,BC-3 enrollment database FINAL,keep,,Abdominal pain/contractions,"0=Not present, 1=Present",NA,,,,,BC-3 enrollment database FINAL::contractn
 contractn,BC-3 mothers all visits database FINAL,keep,,Regular abdominal contractions,"0=Absent,
 1=Present",NA,,,,,BC-3 mothers all visits database FINAL::contractn
-cordbsdich,BC-3 mothers delivery database FINAL,SKIP,,,,NA,,,,Define,BC-3 mothers delivery database FINAL::cordbsdich
+contreport,BC-3 childs deaths FINAL,keep,,information obtained as Contact report,1=checked,NA,,,,"map contreport, autopsy, other and hospre to same term",BC-3 childs deaths FINAL::contreport
+convul,BC-3 childs all visit database FINAL,keep,,1-2 convulsions over 24 hour period,1=checked,NA,,,,,BC-3 childs all visit database FINAL::convul
+cordbsdich,BC-3 mothers delivery database FINAL,keep,,,,NA,,,,Define,BC-3 mothers delivery database FINAL::cordbsdich
 cordcollect,BC-3 mothers delivery database FINAL,keep,,Were any cord blood specimens collected,"0=No, 
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::cordcollect
 cordreas,BC-3 mothers delivery database FINAL,keep,,"If no cord blood collected, Reason",,NA,,,,,BC-3 mothers delivery database FINAL::cordreas
@@ -536,6 +592,7 @@ cother2,BC-3 mothers delivery database FINAL,discard,,Other complications2,,NA,,
 coughae,Individual level database FINAL,discard,,(sum) coughAE,,NA,,,,aggregate observation data,Individual level database FINAL::coughae
 coughdur,BC-3 enrollment database FINAL,discard,,Cough Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::coughdur
 coughdur,BC-3 mothers all visits database FINAL,keep,,Cough Duration,,NA,,,,,BC-3 mothers all visits database FINAL::coughdur
+coughdur,BC-3 childs all visit database FINAL,keep,,Cough Duration,,NA,,,,,BC-3 childs all visit database FINAL::coughdur
 coughgrade,BC-3 enrollment database FINAL,discard,,Cough Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -548,6 +605,12 @@ coughgrade,BC-3 mothers all visits database FINAL,keep,,Cough Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::coughgrade
+coughgrade,BC-3 childs all visit database FINAL,keep,,Cough Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::coughgrade
 cparity,BC-3 enrollment database FINAL,keep,,Parity,,NA,,,,,BC-3 enrollment database FINAL::cparity
 cpeclam,BC-3 mothers delivery database FINAL,keep,,Pre-eclampsia,1=ticked,NA,,,,,BC-3 mothers delivery database FINAL::cpeclam
 cpphsvd,BC-3 mothers delivery database FINAL,keep,,postpartum hemmorhage after spontaneous vaginal delivery,1=ticked,NA,,,,,BC-3 mothers delivery database FINAL::cpphsvd
@@ -568,8 +631,10 @@ currmed4,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,All NA's
 curupt,BC-3 mothers delivery database FINAL,discard,,Uterine Rupture,1=ticked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::curupt
 cv,BC-3 enrollment database FINAL,discard,,cv,,NA,,,,All NA's,BC-3 enrollment database FINAL::cv
 cv,BC-3 mothers all visits database FINAL,discard,,cv,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::cv
+cv,BC-3 childs all visit database FINAL,keep,,cv,,NA,,,,Define,BC-3 childs all visit database FINAL::cv
 cvdur,BC-3 enrollment database FINAL,discard,,CV Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::cvdur
 cvdur,BC-3 mothers all visits database FINAL,discard,,CV Duration,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::cvdur
+cvdur,BC-3 childs all visit database FINAL,keep,,CV Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::cvdur
 cvgrade,BC-3 enrollment database FINAL,discard,,CV Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -582,7 +647,13 @@ cvgrade,BC-3 mothers all visits database FINAL,discard,,CV Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,All NA's,BC-3 mothers all visits database FINAL::cvgrade
-dabort,BC-3 mothers delivery database FINAL,SKIP,,Date of abortion,date,NA,,,,,BC-3 mothers delivery database FINAL::dabort
+cvgrade,BC-3 childs all visit database FINAL,keep,,CV Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::cvgrade
+dabort,BC-3 mothers delivery database FINAL,keep,,Date of abortion,date,NA,,,,,BC-3 mothers delivery database FINAL::dabort
 dallergy,BC-3 enrollment database FINAL,keep,,Known Drug Allergies,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::dallergy
 dampm,BC-3 mothers delivery database FINAL,keep,,AM/PM delivery,"0=AM,
@@ -591,14 +662,25 @@ date,BC-3 enrollment database FINAL,discard,,Date of Enrollment,date,NA,,,,DROP 
 date,BC-3 mothers all visits database FINAL,keep,,Visit date,date,NA,,,,,BC-3 mothers all visits database FINAL::date
 date,BC-3 mothers expanded database FINAL,keep,,Date of observation,Date,NA,,,,,BC-3 mothers expanded database FINAL::date
 date,BC-3 screening database FINAL,discard,,Date of Screening:,date,NA,,,,,BC-3 screening database FINAL::date
+date,BC-3 childs all visit database FINAL,keep,,Visit date,date,NA,,,,,BC-3 childs all visit database FINAL::date
+date,BC-3 childs deaths FINAL,discard,,Visit date,date,NA,,,,,BC-3 childs deaths FINAL::date
+date,BC-3 childs expanded database FINAL,discard,,Date of observation,date,NA,,,,,BC-3 childs expanded database FINAL::date
+date,BC-3 childs hospitalizations FINAL,discard,,Date form completed,date,NA,,,,,BC-3 childs hospitalizations FINAL::date
 date1,BC-3 mothers all visits database FINAL,keep,,last date given medication 1,date,NA,,,,,BC-3 mothers all visits database FINAL::date1
 date1,BC-3 mothers delivery database FINAL,discard,,last date given medication 1,date,NA,,,,DROP - Use all visits,BC-3 mothers delivery database FINAL::date1
+date1,BC-3 childs all visit database FINAL,keep,,last date given medication 1,date,NA,,,,,BC-3 childs all visit database FINAL::date1
+date1stmalaria,BC-3 children individual level database FINAL,discard,,Date of first episode of malaria,date,NA,,,,,BC-3 children individual level database FINAL::date1stmalaria
 date2,BC-3 mothers all visits database FINAL,keep,,last date given medication 2,date,NA,,,,,BC-3 mothers all visits database FINAL::date2
 date2,BC-3 mothers delivery database FINAL,discard,,last date given medication 2,date,NA,,,,All NA's,BC-3 mothers delivery database FINAL::date2
+date2,BC-3 childs all visit database FINAL,keep,,last date given medication 2,date,NA,,,,,BC-3 childs all visit database FINAL::date2
 date3,BC-3 mothers all visits database FINAL,discard,,last date given medication3,date,NA,,,,All NA's,BC-3 mothers all visits database FINAL::date3
 date3,BC-3 mothers delivery database FINAL,discard,,last date given medication3,date,NA,,,,All NA's,BC-3 mothers delivery database FINAL::date3
+date3,BC-3 childs all visit database FINAL,keep,,last date given medication 3,date,NA,,,,,BC-3 childs all visit database FINAL::date3
 date4,BC-3 mothers all visits database FINAL,discard,,last date given medication 4,date,NA,,,,All NA's,BC-3 mothers all visits database FINAL::date4
+date4,BC-3 childs all visit database FINAL,keep,,last date given medication 4,date,NA,,,,,BC-3 childs all visit database FINAL::date4
 datedisch,BC-3 mothers delivery database FINAL,keep,,Date of discharge if hospitalized,date,NA,,,,,BC-3 mothers delivery database FINAL::datedisch
+datedisch,BC-3 childs hospitalizations FINAL,keep,,Date of Discharge,date,NA,,,,,BC-3 childs hospitalizations FINAL::datedisch
+datehosp,BC-3 childs hospitalizations FINAL,keep,,Date of Admission,date,NA,,,,,BC-3 childs hospitalizations FINAL::datehosp
 day0qtcint,BC-3 mothers all visits database FINAL,keep,,Day 0 QTc interval,,NA,,,,,BC-3 mothers all visits database FINAL::day0qtcint
 day0qtcint,BC-3 mothers expanded database FINAL,keep,,Day 0 QTc interval,,NA,,,,,BC-3 mothers expanded database FINAL::day0qtcint
 day0qtcintw20,Individual level database FINAL,discard,,Day 0 QTc interval,,NA,,,,,Individual level database FINAL::day0qtcintw20
@@ -615,29 +697,49 @@ day2qtcintw36,Individual level database FINAL,discard,,Day 2 QTc interval,,NA,,,
 day3date,BC-3 mothers all visits database FINAL,keep,,date study drugs taken day3,"0=No,
 1=Yes",NA,,,,Date participant took 3rd dose of study medication at home,BC-3 mothers all visits database FINAL::day3date
 days,BC-3 mothers expanded database FINAL,discard,,value of 1 for each day of obervation,1=checked,NA,,,,,BC-3 mothers expanded database FINAL::days
+days,BC-3 childs expanded database FINAL,discard,,value of 1 for each day of obervation,1,NA,,,,DROP,BC-3 childs expanded database FINAL::days
 dday2,BC-3 mothers all visits database FINAL,keep,,day 2,,NA,,,,Whether participant took 2nd dose of study medication at home,BC-3 mothers all visits database FINAL::dday2
 dday2,BC-3 mothers expanded database FINAL,discard,,day 2,"0=No,1=Yes",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::dday2
 dday3,BC-3 mothers all visits database FINAL,keep,,day 3,,NA,,,,Whether participant took 3rd dose of study medication at home,BC-3 mothers all visits database FINAL::dday3
 dday3,BC-3 mothers expanded database FINAL,discard,,day 3,"0=No,1=Yes",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::dday3
+deathd,BC-3 childs deaths FINAL,keep,,Date of death,date,NA,,,,,BC-3 childs deaths FINAL::deathd
+deathdx1,BC-3 childs deaths FINAL,keep,,1st cause of death,,NA,,,,,BC-3 childs deaths FINAL::deathdx1
+deathdx2,BC-3 childs deaths FINAL,keep,,2st cause of death,,NA,,,,,BC-3 childs deaths FINAL::deathdx2
+deathdx3,BC-3 childs deaths FINAL,discard,,3st cause of death,,NA,,,,All NA's,BC-3 childs deaths FINAL::deathdx3
 dhfcty,BC3_Household_Survey_Data,keep,,"how far is it to the nearest health facility?if less than 1 km, enter 00 if more",,NA,,,,,BC3_Household_Survey_Data::dhfcty
 dhospital,BC-3 screening database FINAL,discard,,Plan to deliver in the hospital,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::dhospital
 diag1,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::diag1
 diag1,BC-3 mothers all visits database FINAL,keep,,Diagnosis1,,NA,,,,,BC-3 mothers all visits database FINAL::diag1
+diag1,BC-3 childs all visit database FINAL,keep,,Diagnosis1,,NA,,,,,BC-3 childs all visit database FINAL::diag1
+diag1,BC-3 childs expanded database FINAL,discard,,Diagnosis1,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::diag1
 diag2,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::diag2
 diag2,BC-3 mothers all visits database FINAL,keep,,Diagnosis2,,NA,,,,,BC-3 mothers all visits database FINAL::diag2
+diag2,BC-3 childs all visit database FINAL,keep,,Diagnosis2,,NA,,,,,BC-3 childs all visit database FINAL::diag2
+diag2,BC-3 childs expanded database FINAL,discard,,Diagnosis2,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::diag2
 diag3,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,All NA's,BC-3 enrollment database FINAL::diag3
 diag3,BC-3 mothers all visits database FINAL,keep,,Diagnosis3,,NA,,,,,BC-3 mothers all visits database FINAL::diag3
+diag3,BC-3 childs all visit database FINAL,keep,,Diagnosis3,,NA,,,,,BC-3 childs all visit database FINAL::diag3
+diag3,BC-3 childs expanded database FINAL,discard,,Diagnosis3,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::diag3
 diag4,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,All NA's,BC-3 enrollment database FINAL::diag4
 diag4,BC-3 mothers all visits database FINAL,keep,,Diagnosis4,,NA,,,,,BC-3 mothers all visits database FINAL::diag4
+diag4,BC-3 childs all visit database FINAL,keep,,Diagnosis4,,NA,,,,,BC-3 childs all visit database FINAL::diag4
+diag4,BC-3 childs expanded database FINAL,discard,,Diagnosis4,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::diag4
 diag5,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,All NA's,BC-3 enrollment database FINAL::diag5
 diag5,BC-3 mothers all visits database FINAL,discard,,Diagnosis5,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::diag5
+diag5,BC-3 childs all visit database FINAL,discard,,Diagnosis5,,NA,,,,,BC-3 childs all visit database FINAL::diag5
+diag5,BC-3 childs expanded database FINAL,discard,,Diagnosis5,,NA,,,,All NA's,BC-3 childs expanded database FINAL::diag5
 diag6,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,All NA's,BC-3 enrollment database FINAL::diag6
 diag6,BC-3 mothers all visits database FINAL,discard,,Diagnosis6,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::diag6
+diag6,BC-3 childs all visit database FINAL,discard,,Diagnosis6,,NA,,,,,BC-3 childs all visit database FINAL::diag6
+diag6,BC-3 childs expanded database FINAL,discard,,Diagnosis6,,NA,,,,All NA's,BC-3 childs expanded database FINAL::diag6
 diag7,BC-3 enrollment database FINAL,discard,,Diagnosis Code,,NA,,,,All NA's,BC-3 enrollment database FINAL::diag7
 diag7,BC-3 mothers all visits database FINAL,discard,,Diagnosis7,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::diag7
+diag7,BC-3 childs all visit database FINAL,discard,,Diagnosis7,,NA,,,,,BC-3 childs all visit database FINAL::diag7
+diag7,BC-3 childs expanded database FINAL,discard,,Diagnosis7,,NA,,,,All NA's,BC-3 childs expanded database FINAL::diag7
 diarrdur,BC-3 enrollment database FINAL,discard,,Diarrhea Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::diarrdur
 diarrdur,BC-3 mothers all visits database FINAL,keep,,Diarrhea Duration,,NA,,,,,BC-3 mothers all visits database FINAL::diarrdur
+diarrdur,BC-3 childs all visit database FINAL,keep,,Diarrhea Duration,,NA,,,,,BC-3 childs all visit database FINAL::diarrdur
 diarrgrade,BC-3 enrollment database FINAL,discard,,Diarrhea Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -650,6 +752,12 @@ diarrgrade,BC-3 mothers all visits database FINAL,keep,,Diarrhea Grade,"0 = abse
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::diarrgrade
+diarrgrade,BC-3 childs all visit database FINAL,keep,,Diarrhea Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::diarrgrade
 diarrheaae,Individual level database FINAL,discard,,(sum) diarrheaAE,"0,1,2,3,4",NA,,,,aggregate observation data,Individual level database FINAL::diarrheaae
 dmarkt,BC3_Household_Survey_Data,keep,,how far is it to the nearest market place?,,NA,,,,,BC3_Household_Survey_Data::dmarkt
 dmelitus,BC-3 enrollment database FINAL,keep,,Diabetes Mellitus,"0 = No,
@@ -658,6 +766,8 @@ dob,BC-3 enrollment database FINAL,keep,,Date of Birth:,date,NA,,,,,BC-3 enrollm
 dob,BC-3 mothers all visits database FINAL,discard,,Date of Birth:,date,NA,,,,DROP - Use enrollment,BC-3 mothers all visits database FINAL::dob
 dob,BC-3 mothers expanded database FINAL,discard,,Date of Birth:,Date,NA,,,,DROP - Use enrollment,BC-3 mothers expanded database FINAL::dob
 dob,BC-3 screening database FINAL,discard,,Date of Birth:,date,NA,,,,,BC-3 screening database FINAL::dob
+dob,BC-3 children individual level database FINAL,discard,,Date of birth,date,NA,,,,DROP - Use delivery,BC-3 children individual level database FINAL::dob
+dob,BC-3 childs expanded database FINAL,discard,,Date of birth,date,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::dob
 dod,BC-3 mothers delivery database FINAL,keep,,Delivery date,date,NA,,,,,BC-3 mothers delivery database FINAL::dod
 dod,BC-3 mothers expanded database FINAL,discard,,Date of delivery,Date,NA,,,,DROP - Use delivery,BC-3 mothers expanded database FINAL::dod
 dod,Individual level database FINAL,discard,,Date of delivery,date,NA,,,,DROP - Use delivery,Individual level database FINAL::dod
@@ -670,8 +780,10 @@ drugs,BC-3 enrollment database FINAL,keep,,Drugs,"0 = No,
 1=Yes",NA,,,,Social history of drug use,BC-3 enrollment database FINAL::drugs
 dspray,BC3_Household_Survey_Data,discard,,did you pay for the dwelling to be sprayed?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::dspray
 duration,BC-3 mothers expanded database FINAL,keep,,Duration of follow-up,,NA,,,,,BC-3 mothers expanded database FINAL::duration
+duration,BC-3 childs expanded database FINAL,discard,,Duration of follow-up,,NA,,,,,BC-3 childs expanded database FINAL::duration
 dysphdur,BC-3 enrollment database FINAL,discard,,Dysphagia Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::dysphdur
 dysphdur,BC-3 mothers all visits database FINAL,keep,,Dysphagia Duration,,NA,,,,,BC-3 mothers all visits database FINAL::dysphdur
+dysphdur,BC-3 childs all visit database FINAL,keep,,Dysphagia Duration,,NA,,,,,BC-3 childs all visit database FINAL::dysphdur
 dysphgrade,BC-3 enrollment database FINAL,discard,,Dysphagia Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -684,6 +796,12 @@ dysphgrade,BC-3 mothers all visits database FINAL,keep,,Dysphagia Grade,"0 = abs
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::dysphgrade
+dysphgrade,BC-3 childs all visit database FINAL,keep,,Dysphagia Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::dysphgrade
 dysuria,BC-3 enrollment database FINAL,keep,,Dysuria,"0=Not present, 1=Present",NA,,,,,BC-3 enrollment database FINAL::dysuria
 eavescov,BC3_Household_Survey_Data,keep,,"observation: if room has eaves, are the eaves covered?","1=completely covered, 2=partially covered, -9=skipped",NA,,,,,BC3_Household_Survey_Data::eavescov
 eavesdich,BC3_Household_Survey_Data,keep,,Whether eaves present,"1=Eaves present, 2=Eaves not present",NA,,,,,BC3_Household_Survey_Data::eavesdich
@@ -712,10 +830,14 @@ elevatedalt,Individual level database FINAL,discard,,(sum) elevatedALT,"0,1",NA,
 eligible,BC-3 screening database FINAL,discard,,Whether the woman eligible for the study,"0=Not Eligible, 1=Eligible",NA,,,,,BC-3 screening database FINAL::eligible
 enddate,BC-3 mothers expanded database FINAL,keep,,Last day in the study,Date,NA,,,,,BC-3 mothers expanded database FINAL::enddate
 enddate,Individual level database FINAL,discard,,Last day in the study,date,NA,,,,DROP - Use expanded,Individual level database FINAL::enddate
+enddate,BC-3 childs expanded database FINAL,discard,,Last day in the study,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::enddate
+enddate,BC-3 children individual level database FINAL,discard,,Last day in the study,date,NA,,,,,BC-3 children individual level database FINAL::enddate
 endo,BC-3 enrollment database FINAL,discard,,Endo,,NA,,,,All NA's,BC-3 enrollment database FINAL::endo
 endo,BC-3 mothers all visits database FINAL,keep,,Endo,,NA,,,,,BC-3 mothers all visits database FINAL::endo
+endo,BC-3 childs all visit database FINAL,keep,,Endo,,NA,,,,,BC-3 childs all visit database FINAL::endo
 endodur,BC-3 enrollment database FINAL,discard,,Endo Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::endodur
 endodur,BC-3 mothers all visits database FINAL,discard,,Endo Duration,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::endodur
+endodur,BC-3 childs all visit database FINAL,keep,,Endo Duration,,NA,,,,,BC-3 childs all visit database FINAL::endodur
 endograde,BC-3 enrollment database FINAL,discard,,Endo Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -728,9 +850,19 @@ endograde,BC-3 mothers all visits database FINAL,discard,,Endo Grade,"0 = absent
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,All NA's,BC-3 mothers all visits database FINAL::endograde
+endograde,BC-3 childs all visit database FINAL,keep,,Endo Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::endograde
 enrollage,Individual level database FINAL,discard,,Age at enrollment in years,,NA,,,,DROP - Use enrollment,Individual level database FINAL::enrollage
+enrollage,BC-3 childs expanded database FINAL,discard,,Age at enrollment in years,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::enrollage
+enrollage,BC-3 children individual level database FINAL,discard,,Mothers age at enrollment in years,,NA,,,,DROP - Use enrollment,BC-3 children individual level database FINAL::enrollage
 enrolldate,BC-3 mothers expanded database FINAL,keep,,Date of enrollment,Date,NA,,,,,BC-3 mothers expanded database FINAL::enrolldate
 enrolldate,Individual level database FINAL,discard,,Date of enrollment,date,NA,,,,DROP - Use expanded,Individual level database FINAL::enrolldate
+enrolldate,BC-3 childs expanded database FINAL,discard,,Mother's date of enrollment,date,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::enrolldate
+enrolldate,BC-3 children individual level database FINAL,discard,,Mother's date of enrollment,date,NA,,,,DROP - Use expanded,BC-3 children individual level database FINAL::enrolldate
 enrollgestage,BC-3 mothers expanded database FINAL,discard,,Gestational age at enollment (wks),age in weeks,NA,,,,DROP - Use enrollment,BC-3 mothers expanded database FINAL::enrollgestage
 entcov1,BC3_Household_Survey_Data,discard,,observation: is the entryway1 covered?,"1=covered, 2=partially, 3=open, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::entcov1
 entcov10,BC3_Household_Survey_Data,discard,,observation: is the entryway10 covered?,"1=covered, 2=partially, 3=open, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::entcov10
@@ -775,8 +907,10 @@ exp2rdt,BC-3 mothers all visits database FINAL,keep,,Experimental RDT 2nd readin
 exp2rdt,BC-3 mothers expanded database FINAL,discard,,Experimental RDT 2nd reading,"0=Negative,1=Positive P.f.,2=Invalid",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::exp2rdt
 eye,BC-3 enrollment database FINAL,discard,,Eye,,NA,,,,All NA's,BC-3 enrollment database FINAL::eye
 eye,BC-3 mothers all visits database FINAL,keep,,Eye,,NA,,,,,BC-3 mothers all visits database FINAL::eye
+eye,BC-3 childs all visit database FINAL,keep,,Eye,,NA,,,,,BC-3 childs all visit database FINAL::eye
 eyedur,BC-3 enrollment database FINAL,discard,,Eye Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::eyedur
 eyedur,BC-3 mothers all visits database FINAL,keep,,Eye Duration,,NA,,,,,BC-3 mothers all visits database FINAL::eyedur
+eyedur,BC-3 childs all visit database FINAL,keep,,Eye Duration,,NA,,,,,BC-3 childs all visit database FINAL::eyedur
 eyegrade,BC-3 enrollment database FINAL,discard,,Eye Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -789,6 +923,12 @@ eyegrade,BC-3 mothers all visits database FINAL,keep,,Eye Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::eyegrade
+eyegrade,BC-3 childs all visit database FINAL,keep,,Eye Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::eyegrade
 father,BC-3 screening database FINAL,discard,,Is father of the unborn child readily available to provide consent?,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::father
 fatherconsent,BC-3 enrollment database FINAL,keep,,Father's consent for unborn child,"0 = No,
@@ -797,6 +937,7 @@ fatherconsent,BC-3 mothers all visits database FINAL,discard,,Father's consent f
 fatherconsent,BC-3 screening database FINAL,discard,,Father's consent for unborn child,"1=Father unavailable to provide consent, 2=Father provided consent",NA,,,,DROP - Use all visits,BC-3 screening database FINAL::fatherconsent
 fatigdur,BC-3 enrollment database FINAL,discard,,Fatigue Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::fatigdur
 fatigdur,BC-3 mothers all visits database FINAL,keep,,Fatigue Duration,,NA,,,,,BC-3 mothers all visits database FINAL::fatigdur
+fatigdur,BC-3 childs all visit database FINAL,keep,,Fatigue Duration,,NA,,,,,BC-3 childs all visit database FINAL::fatigdur
 fatiggrade,BC-3 enrollment database FINAL,discard,,Fatigue Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -809,6 +950,12 @@ fatiggrade,BC-3 mothers all visits database FINAL,keep,,Fatigue Grade,"0 = absen
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::fatiggrade
+fatiggrade,BC-3 childs all visit database FINAL,keep,,Fatigue Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::fatiggrade
 fconsent,BC-3 screening database FINAL,discard,,"If yes, is father of the unborn child willing to provide consent?","0 = No,
 1=Yes",NA,,,,DROP - Use enrollment,BC-3 screening database FINAL::fconsent
 fdiabetes,BC-3 enrollment database FINAL,keep,,Family history of diabetes,"0 = No,
@@ -817,6 +964,9 @@ febrile,BC-3 enrollment database FINAL,discard,,Whether woman was febrile,"0 = N
 1=Yes",NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::febrile
 febrile,BC-3 mothers all visits database FINAL,keep,,Whether mother was febrile,,NA,,,,,BC-3 mothers all visits database FINAL::febrile
 febrile,BC-3 mothers expanded database FINAL,discard,,Whether mother was febrile,"0=No,1=Yes",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::febrile
+febrile,BC-3 childs all visit database FINAL,keep,,Whether child was febrile,"0=No,
+1=Yes",NA,,,,,BC-3 childs all visit database FINAL::febrile
+febrile,BC-3 childs expanded database FINAL,discard,,Whether child was febrile,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::febrile
 fetal,BC-3 enrollment database FINAL,keep,,Fetal movement,"0=Not present, 1=Present",NA,,,,,BC-3 enrollment database FINAL::fetal
 fetal,BC-3 mothers all visits database FINAL,keep,,Normal fetal movement,"0=Absent 24 hours,
 1=Present,
@@ -826,8 +976,12 @@ fever,BC-3 enrollment database FINAL,discard,,Fever,"0 = No,
 fever,BC-3 mothers all visits database FINAL,discard,,Fever,"0 = No,
 1 = Yes",NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::fever
 fever,BC-3 mothers expanded database FINAL,keep,,Fever,"0 = No,1 = Yes",NA,,,,,BC-3 mothers expanded database FINAL::fever
+fever,BC-3 childs all visit database FINAL,keep,,Fever,"0=No,
+1=Yes",NA,,,,,BC-3 childs all visit database FINAL::fever
+fever,BC-3 childs expanded database FINAL,discard,,Fever,"0=No,1=Yes",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::fever
 feverdur,BC-3 enrollment database FINAL,discard,,Fever Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::feverdur
 feverdur,BC-3 mothers all visits database FINAL,keep,,Fever Duration,,NA,,,,,BC-3 mothers all visits database FINAL::feverdur
+feverdur,BC-3 childs all visit database FINAL,keep,,Fever Duration,,NA,,,,,BC-3 childs all visit database FINAL::feverdur
 fhgt,BC-3 enrollment database FINAL,discard,,Fundal Height,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::fhgt
 fhgt,BC-3 mothers all visits database FINAL,keep,,Fundal Height (cm),,NA,,,,,BC-3 mothers all visits database FINAL::fhgt
 fhtone,BC-3 enrollment database FINAL,discard,,Fetal Heart Tones,"0=Not present, 1=Present",NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::fhtone
@@ -845,11 +999,17 @@ filterpap,BC-3 mothers all visits database FINAL,keep,,filter paper,"0=Not Indic
 ",NA,,,,,BC-3 mothers all visits database FINAL::filterpap
 filterpap,BC-3 mothers expanded database FINAL,discard,,filter paper,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
 ",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::filterpap
+filterpap,BC-3 childs all visit database FINAL,keep,,filter paper,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::filterpap
+filterpap,BC-3 childs expanded database FINAL,discard,,filter paper,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
+",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::filterpap
 finaledd,BC-3 enrollment database FINAL,keep,,Final EDD,date,NA,,,,,BC-3 enrollment database FINAL::finaledd
 finaledd,BC-3 mothers delivery database FINAL,discard,,Final EDD,date,NA,,,,DROP - Use all visits,BC-3 mothers delivery database FINAL::finaledd
 finaledd,BC-3 mothers expanded database FINAL,discard,,Final EDD,Date,NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::finaledd
 finaledd,Individual level database FINAL,discard,,Final EDD,date,NA,,,,DROP - Use all visits,Individual level database FINAL::finaledd
 firstdosesd,Individual level database FINAL,discard,,Gestational age when 1st dose of study drug given,"0=16 weeks,1=>20 weeks",NA,,,,Drop since data is also included in another way ,Individual level database FINAL::firstdosesd
+firstmalaria,BC-3 children individual level database FINAL,discard,,Whether the child has had malaria,"0=No, 1=Yes",NA,,,,,BC-3 children individual level database FINAL::firstmalaria
+fluids,BC-3 childs hospitalizations FINAL,keep,,Intravenous fluids,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::fluids
 fpcblood,BC-3 mothers delivery database FINAL,keep,,Filter paper from Cord blood standard,"0=Not made, 1=Made
 ",NA,,,,,BC-3 mothers delivery database FINAL::fpcblood
 fpcmeta,BC-3 mothers delivery database FINAL,keep,,Filter paper from Cord blood for metabolic testing,"0=Not made, 1=Made
@@ -870,6 +1030,8 @@ fterm6,BC-3 enrollment database FINAL,keep,,Full term or Premature,"1=Full Term,
 fterm7,BC-3 enrollment database FINAL,keep,,Full term or Premature,"1=Full Term, 2=Premature,9=Unknown",NA,,,,,BC-3 enrollment database FINAL::fterm7
 fueltype,BC3_Household_Survey_Data,keep,,what type of fuel does your household mainly use for cooking?,"-9=skipped,2=natural gas, 3=biogas, 5=charcoal, 6=firewood, 7=starw/shrubs/grass",NA,,,,,BC3_Household_Survey_Data::fueltype
 gacat,Individual level database FINAL,discard,,Gestatinal age at enrollment categories,"1=(12-16weeks), 2=(>16-20 weeks)",NA,,,,,Individual level database FINAL::gacat
+gacat,BC-3 childs expanded database FINAL,discard,,Gestatinal age at enrollment categories,"1=(12-16weeks), 2=(>16-20 weeks)",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::gacat
+gacat,BC-3 children individual level database FINAL,discard,,Gestatinal age at enrollment categories,"1=(12-16weeks), 2=(>16-20 weeks)",NA,,,,DROP,BC-3 children individual level database FINAL::gacat
 gacomputed,BC-3 enrollment database FINAL,discard,,,,NA,,,,Same as gaenroll,BC-3 enrollment database FINAL::gacomputed
 gacomputed,BC-3 mothers expanded database FINAL,discard,,Gestational age computed from EDD,,NA,,,,,BC-3 mothers expanded database FINAL::gacomputed
 gadelivery,BC-3 mothers delivery database FINAL,keep,,Gestational age in weeks computed at delivery,,NA,,,,,BC-3 mothers delivery database FINAL::gadelivery
@@ -883,17 +1045,26 @@ gaenroll,BC-3 mothers all visits database FINAL,discard,,Gestational age at enro
 6=36wks,
 7=40wks",NA,,,,DROP - Use enrollment,BC-3 mothers all visits database FINAL::gaenroll
 gaenroll,Individual level database FINAL,discard,,Gestational age at enrollment,,NA,,,,DROP - Use enrollment,Individual level database FINAL::gaenroll
+gaenroll,BC-3 childs expanded database FINAL,discard,,Gestational age at enrollment,,NA,dup,,,DROP - Use enrollment,BC-3 childs expanded database FINAL::gaenroll
+gaenroll,BC-3 children individual level database FINAL,discard,,Gestational age at enrollment,,NA,,,,DROP - Use enrollment,BC-3 children individual level database FINAL::gaenroll
 gaenrollment,BC-3 mothers expanded database FINAL,discard,,Gestational age at enrollment,"12,13,14,15,16,17,18,19,20",NA,,,,DROP - Use enrollment,BC-3 mothers expanded database FINAL::gaenrollment
 game,BC-3 enrollment database FINAL,discard,,Gametocytes,"
 0 = Absent,1 = Present",NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::game
 game,BC-3 mothers all visits database FINAL,keep,,Gametocytes,"0=Absent, 1=Present",NA,,,,,BC-3 mothers all visits database FINAL::game
+game,BC-3 childs all visit database FINAL,keep,,Gametocytes,"0 = Absent,1 = Present",NA,,,,,BC-3 childs all visit database FINAL::game
+game,BC-3 childs expanded database FINAL,discard,,Gametocytes,"0 = Absent,1 = Present",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::game
 game1,BC-3 mothers all visits database FINAL,discard,,gametocytes1,"0 = Absent,1 = Present
 ",NA,,,,DROP - use game,BC-3 mothers all visits database FINAL::game1
+game1,BC-3 childs all visit database FINAL,keep,,gametocytes1,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game1
 game2,BC-3 mothers all visits database FINAL,discard,,gametocytes2,"0 = Absent,1 = Present
 ",NA,,,,DROP - use game,BC-3 mothers all visits database FINAL::game2
+game2,BC-3 childs all visit database FINAL,keep,,gametocytes2,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game2
 game3,BC-3 mothers all visits database FINAL,discard,,gametocytes3,"0 = Absent,1 = Present
 ",NA,,,,DROP - use game,BC-3 mothers all visits database FINAL::game3
+game3,BC-3 childs all visit database FINAL,keep,,gametocytes3,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game3
 gender,Individual level database FINAL,discard,,Gender of child if singleton birth,"1=Male, 2=Female",NA,,,,,Individual level database FINAL::gender
+gender,BC-3 childs expanded database FINAL,discard,,Gender,"1=male, 2=female",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::gender
+gender,BC-3 children individual level database FINAL,keep,,Gender,"1=Male, 2=Female",NA,,,,,BC-3 children individual level database FINAL::gender
 gestage,BC-3 enrollment database FINAL,discard,,,"1=16 wks, 2=20 wks, 3=24 wks, 4=other",NA,,,,DROP - not of interest,BC-3 enrollment database FINAL::gestage
 gestage,BC-3 mothers all visits database FINAL,discard,,gestation age at next routine visit,"1=16wks,
 2=20wks,
@@ -902,6 +1073,8 @@ gestage,BC-3 mothers all visits database FINAL,discard,,gestation age at next ro
 5=32wks,
 6=36wks,
 7=40wks",NA,,,,DROP - not of interest,BC-3 mothers all visits database FINAL::gestage
+gestage,BC-3 childs expanded database FINAL,discard,,Gestational age at birth in weeks,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::gestage
+gestage,BC-3 children individual level database FINAL,keep,,Gestational age at birth in weeks,,NA,,,,Use this for gestational age at birth,BC-3 children individual level database FINAL::gestage
 gestation,BC-3 screening database FINAL,discard,,Estimated gestation age between 12-20weeks,"0 = <12 wks,
 1=12-20wks,
 2=>20wks",NA,,,,,BC-3 screening database FINAL::gestation
@@ -912,8 +1085,10 @@ gestwks,BC-3 mothers delivery database FINAL,keep,,Weeks of gestation,,NA,,,,,BC
 gestwks,BC-3 mothers expanded database FINAL,keep,,If routine visit weeks of gestation,"1=16wks,2=20wks,3=24wks,4=28wks,5=32wks,6=36wks,7=40wks",NA,,,,,BC-3 mothers expanded database FINAL::gestwks
 gi,BC-3 enrollment database FINAL,discard,,gi,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::gi
 gi,BC-3 mothers all visits database FINAL,keep,,gi,,NA,,,,,BC-3 mothers all visits database FINAL::gi
+gi,BC-3 childs all visit database FINAL,keep,,gi,,NA,,,,,BC-3 childs all visit database FINAL::gi
 gidur,BC-3 enrollment database FINAL,discard,,GI Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::gidur
 gidur,BC-3 mothers all visits database FINAL,keep,,GI Duration,,NA,,,,,BC-3 mothers all visits database FINAL::gidur
+gidur,BC-3 childs all visit database FINAL,keep,,GI Duration,,NA,,,,,BC-3 childs all visit database FINAL::gidur
 gigrade,BC-3 enrollment database FINAL,discard,,GI Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -926,6 +1101,12 @@ gigrade,BC-3 mothers all visits database FINAL,keep,,GI Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::gigrade
+gigrade,BC-3 childs all visit database FINAL,keep,,GI Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::gigrade
 gpspray,BC3_Household_Survey_Data,keep,,did you grant them permission to spray the interior walls of your dwelling?,,NA,,,,,BC3_Household_Survey_Data::gpspray
 grade,BC-3 mothers all visits database FINAL,discard,,QTc AE grading,"0,1,2,3",NA,,,,,BC-3 mothers all visits database FINAL::grade
 grade,BC-3 mothers expanded database FINAL,discard,,QTc AE grading,"0 = no grade,1 = grade 1,2 = grade 2,3 = grade 3,4 = grade 4
@@ -937,12 +1118,18 @@ gravid,BC-3 enrollment database FINAL,keep,,Gravidity,,NA,,,,Total number of pre
 gravid,BC-3 mothers all visits database FINAL,discard,,Gravidity,,NA,,,,DROP - Use enrollment,BC-3 mothers all visits database FINAL::gravid
 gravid,BC-3 mothers expanded database FINAL,discard,,Gravidity,,NA,,,,DROP - Use enrollment,BC-3 mothers expanded database FINAL::gravid
 gravidcat,Individual level database FINAL,discard,,Categories of gravidity,"1,2,3=>3",NA,,,,,Individual level database FINAL::gravidcat
+gravidcat,BC-3 childs expanded database FINAL,discard,,Categories of gravidity,"1,2,3=>3",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::gravidcat
+gravidcat,BC-3 children individual level database FINAL,discard,,Categories of gravidity,"1,2,3=>3",NA,,,,DROP,BC-3 children individual level database FINAL::gravidcat
 graviddich,Individual level database FINAL,discard,,Gravidity dichotomized,"1,2=>2",NA,,,,,Individual level database FINAL::graviddich
 gravidity,Individual level database FINAL,discard,,Total number of pregnancies,,NA,,,,DROP - Use gravid from enrollment,Individual level database FINAL::gravidity
+gravidity,BC-3 childs expanded database FINAL,discard,,Total number of pregnancies,"1,2,3,4,5,6,7,8,9",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::gravidity
+gravidity,BC-3 children individual level database FINAL,discard,,Total number of pregnancies,,NA,,,,DROP - Use enrollment,BC-3 children individual level database FINAL::gravidity
 gu,BC-3 enrollment database FINAL,discard,,gu,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::gu
 gu,BC-3 mothers all visits database FINAL,keep,,gu,,NA,,,,,BC-3 mothers all visits database FINAL::gu
+gu,BC-3 childs all visit database FINAL,keep,,gu,,NA,,,,,BC-3 childs all visit database FINAL::gu
 gudur,BC-3 enrollment database FINAL,discard,,GU Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::gudur
 gudur,BC-3 mothers all visits database FINAL,keep,,GU Duration,,NA,,,,,BC-3 mothers all visits database FINAL::gudur
+gudur,BC-3 childs all visit database FINAL,keep,,GU Duration,,NA,,,,,BC-3 childs all visit database FINAL::gudur
 gugrade,BC-3 enrollment database FINAL,discard,,GU Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -955,13 +1142,23 @@ gugrade,BC-3 mothers all visits database FINAL,keep,,GU Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::gugrade
+gugrade,BC-3 childs all visit database FINAL,keep,,GU Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::gugrade
 hampm,BC-3 mothers delivery database FINAL,keep,,AM/PM hospital,"0=AM,
 1=PM",NA,,,,,BC-3 mothers delivery database FINAL::hampm
 hb,BC-3 enrollment database FINAL,discard,,Hemoglobin,,NA,,,,DROP - Use expanded,BC-3 enrollment database FINAL::hb
 hb,BC-3 mothers all visits database FINAL,discard,,hemoglobin result,,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::hb
 hb,BC-3 mothers delivery database FINAL,keep,,Hemoglobin,,NA,,,,,BC-3 mothers delivery database FINAL::hb
 hb,BC-3 mothers expanded database FINAL,keep,,hemoglobin result,,NA,,,,,BC-3 mothers expanded database FINAL::hb
-hbcord,BC-3 mothers delivery database FINAL,SKIP,,Hemoglobin measurement from cord blood,"0=Not made, 1=Done",NA,,,,,BC-3 mothers delivery database FINAL::hbcord
+hb,BC-3 childs all visit database FINAL,keep,,hemoglobin result,,NA,,,,,BC-3 childs all visit database FINAL::hb
+hb,BC-3 childs expanded database FINAL,discard,,hemoglobin result,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::hb
+hb10,BC-3 childs expanded database FINAL,discard,,Hb < 10 gm/dL,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::hb10
+hb8,BC-3 childs expanded database FINAL,discard,,Hb < 8 gm/dL,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::hb8
+hbcord,BC-3 mothers delivery database FINAL,keep,,Hemoglobin measurement from cord blood,"0=Not made, 1=Done",NA,,,,,BC-3 mothers delivery database FINAL::hbcord
 hbenroll,Individual level database FINAL,discard,,Hemoglobin g/dL at enrollment,,NA,,,,DROP - Use expanded,Individual level database FINAL::hbenroll
 hbgrade,BC-3 enrollment database FINAL,discard,,Hemoglobin grade,"0 = no grade,
 1 = grade 1,
@@ -981,7 +1178,14 @@ hbgrade,BC-3 mothers delivery database FINAL,discard,,Hemoglobin grade,"0 = no g
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers delivery database FINAL::hbgrade
+hbgrade,BC-3 childs all visit database FINAL,keep,,hemoglobin grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::hbgrade
 headacheae,Individual level database FINAL,discard,,(sum) headacheAE,,NA,,,,aggregate observation data,Individual level database FINAL::headacheae
+headcircum,BC-3 childs all visit database FINAL,keep,,Head circumference,,NA,,,,,BC-3 childs all visit database FINAL::headcircum
 headdur,BC-3 enrollment database FINAL,keep,,Headache Duration,,NA,,,,,BC-3 enrollment database FINAL::headdur
 headdur,BC-3 mothers all visits database FINAL,keep,,Headache Duration,,NA,,,,,BC-3 mothers all visits database FINAL::headdur
 headgrade,BC-3 enrollment database FINAL,discard,,Headache Grade,"0 = absent,
@@ -999,9 +1203,13 @@ headgrade,BC-3 mothers all visits database FINAL,keep,,Headache Grade,"0 = absen
 height,BC-3 enrollment database FINAL,keep,,Height(cm),,NA,,,,,BC-3 enrollment database FINAL::height
 height,BC-3 mothers all visits database FINAL,discard,,Height(cm),,NA,,,,DROP - Use enrollment,BC-3 mothers all visits database FINAL::height
 height,BC-3 mothers expanded database FINAL,discard,,Height(cm),,NA,,,,DROP - Use enrollment,BC-3 mothers expanded database FINAL::height
+height,BC-3 childs all visit database FINAL,keep,,Height (cm),,NA,,,,,BC-3 childs all visit database FINAL::height
+height,BC-3 childs expanded database FINAL,discard,,Height (cm),,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::height
 hemocue,BC-3 enrollment database FINAL,discard,,Urgent Hb(hemocue),,NA,,,,DROP - Use expanded,BC-3 enrollment database FINAL::hemocue
 hemocue,BC-3 mothers all visits database FINAL,discard,,hemocue,,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::hemocue
 hemocue,BC-3 mothers expanded database FINAL,keep,,hemocue,,NA,,,,,BC-3 mothers expanded database FINAL::hemocue
+hemocue,BC-3 childs all visit database FINAL,keep,,Urgent Hb,,NA,,,,,BC-3 childs all visit database FINAL::hemocue
+hemocue,BC-3 childs expanded database FINAL,discard,,Urgent Hb,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::hemocue
 hemograde,BC-3 enrollment database FINAL,discard,,Urgent Hb(hemocue) grade,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -1014,6 +1222,12 @@ hemograde,BC-3 mothers all visits database FINAL,discard,,hemograde,"0 = no grad
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers all visits database FINAL::hemograde
+hemograde,BC-3 childs all visit database FINAL,keep,,urgent Hb grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::hemograde
 hemorrhage,Individual level database FINAL,discard,,(sum) hemorrhage,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::hemorrhage
 hhamnets,BC3_Household_Survey_Data,discard,,"immediately before enrollment, did your household have any mosquito nets ","1=yes,2=No, -9=skipped",NA,,,,,BC3_Household_Survey_Data::hhamnets
 hhmeals,BC3_Household_Survey_Data,keep,,how many meals does your household usually have per day?,,NA,,,,,BC3_Household_Survey_Data::hhmeals
@@ -1032,11 +1246,19 @@ hivtest,BC-3 mothers delivery database FINAL,keep,,HIV Rapid Test,"0=Negative,
 2=Not done",NA,,,,,BC-3 mothers delivery database FINAL::hivtest
 hnumnets,BC3_Household_Survey_Data,keep,,"immediately before study enrollment, how many mosquito nets did your household have",,NA,,,,,BC3_Household_Survey_Data::hnumnets
 hospdate,BC-3 mothers delivery database FINAL,keep,,Presentation to hospital Date,date,NA,,,,,BC-3 mothers delivery database FINAL::hospdate
+hospdx1,BC-3 childs hospitalizations FINAL,keep,,1st Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx1
+hospdx2,BC-3 childs hospitalizations FINAL,keep,,2nd Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx2
+hospdx3,BC-3 childs hospitalizations FINAL,keep,,3rd Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx3
+hospdx4,BC-3 childs hospitalizations FINAL,keep,,4th Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx4
 hosphrs,BC-3 mothers delivery database FINAL,keep,,Presentation to hospital Time: Hours,Hours,NA,,,,,BC-3 mothers delivery database FINAL::hosphrs
+hospitalized,BC-3 children individual level database FINAL,discard,,(sum) hospitalized,,NA,,,,,BC-3 children individual level database FINAL::hospitalized
+hospitalized,BC-3 childs expanded database FINAL,discard,,Hospitalized on this day,"0=No, 1=Yes",NA,,,,DROP - Use child hospitalizations file,BC-3 childs expanded database FINAL::hospitalized
 hospmin,BC-3 mothers delivery database FINAL,discard,Combine with hosphrs in that variable,Presentation to hospital Time: Minutes,Minutes,NA,,,,,BC-3 mothers delivery database FINAL::hospmin
+hospre,BC-3 childs deaths FINAL,keep,,information obtained as Hospital record,1=checked,NA,,,,"map contreport, autopsy, other and hospre to same term",BC-3 childs deaths FINAL::hospre
 housetype,BC3_Household_Survey_Data,keep,,Housetype dichotomous,"0=Traditional, 1=Mordern",NA,,,,,BC3_Household_Survey_Data::housetype
 hrate,BC-3 enrollment database FINAL,discard,,Heart rate (maternal),,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::hrate
 hrate,BC-3 mothers all visits database FINAL,keep,,Heart rate (maternal),,NA,,,,,BC-3 mothers all visits database FINAL::hrate
+hrate,BC-3 childs all visit database FINAL,keep,,Heart rate,,NA,,,,,BC-3 childs all visit database FINAL::hrate
 htable,BC3_Household_Survey_Data,keep,,table?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::htable
 hyperten,BC-3 enrollment database FINAL,keep,,Medical History: Hypertension,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::hyperten
@@ -1047,6 +1269,11 @@ id,BC-3 mothers expanded database FINAL,discard,,Patient ID number,5-digit numbe
 id,BC-3 screening database FINAL,discard,,Study ID,numeric,NA,,,,"DROP - not loading participant ID as a variable, just as key",BC-3 screening database FINAL::id
 id,BC3_Household_Survey_Data,discard,,"to ensure data integrity, please re-enter the participant id.",5 digits,NA,,,,"DROP - not loading participant ID as a variable, just as key",BC3_Household_Survey_Data::id
 id,Individual level database FINAL,discard,,Study ID,5 digits,NA,,,,"DROP - not loading participant ID as a variable, just as key",Individual level database FINAL::id
+id,BC-3 children individual level database FINAL,discard,,Study ID,5 digits,NA,,,,,BC-3 children individual level database FINAL::id
+id,BC-3 childs all visit database FINAL,discard,,Study Id,5 digits,NA,,,,,BC-3 childs all visit database FINAL::id
+id,BC-3 childs deaths FINAL,discard,,Study Id,5 digits,NA,,,,,BC-3 childs deaths FINAL::id
+id,BC-3 childs expanded database FINAL,discard,,Study ID,5 digit number,NA,,,,,BC-3 childs expanded database FINAL::id
+id,BC-3 childs hospitalizations FINAL,discard,,Study ID,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::id
 immuno,BC-3 mothers delivery database FINAL,keep,,Immunology studies,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::immuno
@@ -1060,10 +1287,18 @@ immunolog,BC-3 mothers all visits database FINAL,keep,,Immunology studies (yello
 ",NA,,,,,BC-3 mothers all visits database FINAL::immunolog
 immunolog,BC-3 mothers expanded database FINAL,discard,,Immunology studies (yellow top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
 ",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::immunolog
+immunolog,BC-3 childs all visit database FINAL,keep,,Immunology studies (yellow top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::immunolog
+immunolog,BC-3 childs expanded database FINAL,discard,,Immunology studies (yellow top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
+",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::immunolog
+inability,BC-3 childs all visit database FINAL,keep,,Inability to sit up or stand,1=checked,NA,,,,,BC-3 childs all visit database FINAL::inability
+incidentmalaria,BC-3 childs expanded database FINAL,discard,,Incident episode of malaria,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::incidentmalaria
+incidentnmfever,BC-3 children individual level database FINAL,discard,,(sum) incidentnmfever,,NA,,,,aggregate observation data,BC-3 children individual level database FINAL::incidentnmfever
 includesupp,Individual level database FINAL,discard,,Included in supplemental birthoutcome table,"0=No,
 1=Yes",NA,,,,,Individual level database FINAL::includesupp
-infstatus1,BC-3 mothers delivery database FINAL,SKIP,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 mothers delivery database FINAL::infstatus1
-infstatus2,BC-3 mothers delivery database FINAL,SKIP,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 mothers delivery database FINAL::infstatus2
+infstatus,BC-3 childs expanded database FINAL,discard,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::infstatus
+infstatus,BC-3 children individual level database FINAL,keep,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 children individual level database FINAL::infstatus
+infstatus1,BC-3 mothers delivery database FINAL,discard,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 mothers delivery database FINAL::infstatus1
+infstatus2,BC-3 mothers delivery database FINAL,discard,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 mothers delivery database FINAL::infstatus2
 intnum,BC3_Household_Survey_Data,discard,,interviewer number,"1,2,3,4,5",NA,,,,,BC3_Household_Survey_Data::intnum
 intrapreg,BC-3 screening database FINAL,discard,,Confirmed viable intrauterine pregnancy by ultrasound,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::intrapreg
@@ -1073,6 +1308,9 @@ itn,BC-3 mothers all visits database FINAL,discard,,ITN ownership,"0=No, 1=Yes",
 itn,BC-3 mothers expanded database FINAL,keep,,Did the woman sleep under an ITN last night,"0=No,1=Yes",NA,,,,,BC-3 mothers expanded database FINAL::itn
 itn,Individual level database FINAL,discard,,ITN ownership,"0=No,
 1=Yes",NA,,,,DROP - Use enrollment,Individual level database FINAL::itn
+itn,BC-3 childs all visit database FINAL,keep,,Did the child sleep under an ITN last night,"0=No,
+1=Yes",NA,,,,,BC-3 childs all visit database FINAL::itn
+itn,BC-3 childs expanded database FINAL,discard,,Did the child sleep under an ITN last night,"0=No,1=Yes",NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::itn
 itnlastnight,BC-3 enrollment database FINAL,discard,,Slept under ITN last night,"0 = No,
 1=Yes",NA,,,,DROP - Use ITN from expanded,BC-3 enrollment database FINAL::itnlastnight
 itnlastnight,Individual level database FINAL,discard,,Slept under ITN last night,"0=No,
@@ -1108,11 +1346,14 @@ lbp4,BC-3 mothers delivery database FINAL,keep,,Blood pressure4,,NA,,,,Flagged a
 lbp5,BC-3 mothers delivery database FINAL,discard,,Blood pressure5,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::lbp5
 lbp6,BC-3 mothers delivery database FINAL,discard,,Blood pressure6,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::lbp6
 lbp7,BC-3 mothers delivery database FINAL,discard,,Blood pressure7,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::lbp7
+lbw,BC-3 childs expanded database FINAL,discard,,Low birth weight (< 2500gm),"0=No,1=Yes",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::lbw
+lbw,BC-3 children individual level database FINAL,keep,,Low birth weight (< 2500gm),"0=No,
+1=Yes",NA,,,,,BC-3 children individual level database FINAL::lbw
 lbwdich,BC-3 mothers delivery database FINAL,keep,,Low birth weight (< 2500 gm) if live birth,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::lbwdich
 lbwdich,Individual level database FINAL,discard,,Low birth weight (< 2500 gm) if live birth,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::lbwdich
-lbwpreterm,Individual level database FINAL,SKIP,,LBW or preterm,"0=No,
+lbwpreterm,Individual level database FINAL,discard,,LBW or preterm,"0=No,
 1=Yes",NA,,,,,Individual level database FINAL::lbwpreterm
 lcdial1,BC-3 mothers delivery database FINAL,keep,,Cervical dilatation1,,NA,,,,Flagged as within visit longitudinal,BC-3 mothers delivery database FINAL::lcdial1
 lcdial2,BC-3 mothers delivery database FINAL,keep,,Cervical dilatation2,,NA,,,,Flagged as within visit longitudinal,BC-3 mothers delivery database FINAL::lcdial2
@@ -1156,6 +1397,7 @@ ldhead4,BC-3 mothers delivery database FINAL,keep,,Descent of head4,,NA,,,,Flagg
 ldhead5,BC-3 mothers delivery database FINAL,keep,,Descent of head5,,NA,,,,Flagged as within visit longitudinal,BC-3 mothers delivery database FINAL::ldhead5
 ldhead6,BC-3 mothers delivery database FINAL,discard,,Descent of head6,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::ldhead6
 ldhead7,BC-3 mothers delivery database FINAL,discard,,Descent of head7,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::ldhead7
+letha,BC-3 childs all visit database FINAL,keep,,Lethargy,1=checked,NA,,,,,BC-3 childs all visit database FINAL::letha
 lfheart1,BC-3 mothers delivery database FINAL,keep,,Fetal heart tones1,"0=No,
 1=Yes",NA,,,,Flagged as within visit longitudinal,BC-3 mothers delivery database FINAL::lfheart1
 lfheart2,BC-3 mothers delivery database FINAL,keep,,Fetal heart tones2,"0=No,
@@ -1244,20 +1486,46 @@ luprotein6,BC-3 mothers delivery database FINAL,discard,,Urine protein6,,NA,,,,A
 luprotein7,BC-3 mothers delivery database FINAL,discard,,Urine protein7,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::luprotein7
 m20wks,BC-3 enrollment database FINAL,discard,,Is mother 20 weeks of gestation today?,"0 = No,
 1=Yes",NA,,,,DROP - not of interest,BC-3 enrollment database FINAL::m20wks
+mal0to12,BC-3 children individual level database FINAL,discard,,(sum) mal0to12,,NA,,,,,BC-3 children individual level database FINAL::mal0to12
+mal0to3,BC-3 children individual level database FINAL,discard,,(sum) mal0to3,,NA,,,,,BC-3 children individual level database FINAL::mal0to3
+mal3to9,BC-3 children individual level database FINAL,discard,,(sum) mal3to9,,NA,,,,,BC-3 children individual level database FINAL::mal3to9
+mal9to12,BC-3 children individual level database FINAL,discard,,(sum) mal9to12,,NA,,,,,BC-3 children individual level database FINAL::mal9to12
 malaiseae,Individual level database FINAL,discard,,(sum) malaiseAE,"0,1,2,3",NA,,,,aggregate observation data,Individual level database FINAL::malaiseae
 malaria,BC-3 mothers expanded database FINAL,discard,,Malaria diagnosed today,"0=No,1=Yes",NA,,,,,BC-3 mothers expanded database FINAL::malaria
 malaria,Individual level database FINAL,keep,,Episodes of malaria,"0,1,2",NA,,,,,Individual level database FINAL::malaria
 malariadays,Individual level database FINAL,discard,,Days at risk for malaria,,NA,,,,,Individual level database FINAL::malariadays
+malariafuday,BC-3 childs expanded database FINAL,discard,,Malaria follow-up day,,NA,,,,,BC-3 childs expanded database FINAL::malariafuday
+matbsdich,BC-3 childs expanded database FINAL,discard,,Number of positive routine BS during pregnancy,"0,1,2,3,4,5,6,7",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matbsdich
+matbsdich,BC-3 children individual level database FINAL,keep,,Number of positive routine BS during pregnancy,,NA,,,,aggregate observation data,BC-3 children individual level database FINAL::matbsdich
+matbsdone,BC-3 childs expanded database FINAL,discard,,Total number of routine BS during pregnancy,"3,4,5,6,7,8",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matbsdone
+matbsdone,BC-3 children individual level database FINAL,keep,,Total number of routine BS during pregnancy,"3,4,5,6,7,8",NA,,,,,BC-3 children individual level database FINAL::matbsdone
+matdaysrisk,BC-3 childs expanded database FINAL,discard,,Mother's days at risk for malaria during pregnancy,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matdaysrisk
+matdaysrisk,BC-3 children individual level database FINAL,discard,,Mother's days at risk for malaria during pregnancy,,NA,,,,,BC-3 children individual level database FINAL::matdaysrisk
+matmalaria,BC-3 childs expanded database FINAL,discard,,Episodes of malaria during pregnancy,"0,1,2,3",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matmalaria
+matmalaria,BC-3 children individual level database FINAL,keep,,Episodes of malaria during pregnancy,"0,1,2,3",NA,,,,,BC-3 children individual level database FINAL::matmalaria
+matmalincidence,BC-3 childs expanded database FINAL,discard,,Incidence of malaria PPY during pregnancy,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matmalincidence
+matmalincidence,BC-3 children individual level database FINAL,keep,,Incidence of malaria PPY during pregnancy,,NA,,,,,BC-3 children individual level database FINAL::matmalincidence
+matpp,BC-3 childs expanded database FINAL,discard,,Parasite prevalence by microscopy during pregnancy,,NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::matpp
+matpp,BC-3 children individual level database FINAL,keep,,Parasite prevalence by microscopy during pregnancy,,NA,,,,,BC-3 children individual level database FINAL::matpp
 mboat,BC3_Household_Survey_Data,keep,,a boat with a motor?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::mboat
 mconsent,BC-3 screening database FINAL,discard,,Mother's willingness to provide informed consent for herself and her unborn chil,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::mconsent
+mdeath,BC-3 childs deaths FINAL,keep,,Was subjects death related to malaria,"0=No,
+1=Definitely,
+2=Probably,
+3=Possibly,
+9=unknown        ",NA,,,,,BC-3 childs deaths FINAL::mdeath
 med1,BC-3 mothers all visits database FINAL,keep,,Any medications outside the study since last seen,,NA,,,,,BC-3 mothers all visits database FINAL::med1
 med1,BC-3 mothers delivery database FINAL,keep,,Any medications outside the study since last seen,,NA,,,,,BC-3 mothers delivery database FINAL::med1
+med1,BC-3 childs all visit database FINAL,keep,,Medication1,,NA,,,,,BC-3 childs all visit database FINAL::med1
 med2,BC-3 mothers all visits database FINAL,keep,,Any medications outside the study since last seen,,NA,,,,,BC-3 mothers all visits database FINAL::med2
 med2,BC-3 mothers delivery database FINAL,discard,,Any medications outside the study since last seen,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::med2
+med2,BC-3 childs all visit database FINAL,keep,,Medication2,,NA,,,,,BC-3 childs all visit database FINAL::med2
 med3,BC-3 mothers all visits database FINAL,discard,,Any medications outside the study since last seen,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::med3
 med3,BC-3 mothers delivery database FINAL,discard,,Any medications outside the study since last seen,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::med3
+med3,BC-3 childs all visit database FINAL,keep,,Medication3,,NA,,,,,BC-3 childs all visit database FINAL::med3
 med4,BC-3 mothers all visits database FINAL,discard,,Any medications outside the study since last seen,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::med4
+med4,BC-3 childs all visit database FINAL,keep,,Medication 4,,NA,,,,,BC-3 childs all visit database FINAL::med4
 mhosp,BC-3 mothers all visits database FINAL,keep,,was the mother hospitalized today,"0=No,
 1=Yes",NA,,,,,BC-3 mothers all visits database FINAL::mhosp
 mmewalls,BC3_Household_Survey_Data,keep,,main material of the exterior walls.,"mud and poles, burnt bricks with plaster/cement",NA,,,,,BC3_Household_Survey_Data::mmewalls
@@ -1286,12 +1554,18 @@ mode4,BC-3 enrollment database FINAL,keep,,Mode,"0=Vigina, 1=Cesarean section",N
 mode5,BC-3 enrollment database FINAL,keep,,Mode,"0=Vigina, 1=Cesarean section",NA,,,,,BC-3 enrollment database FINAL::mode5
 mode6,BC-3 enrollment database FINAL,keep,,Mode,"0=Vigina, 1=Cesarean section",NA,,,,,BC-3 enrollment database FINAL::mode6
 mode7,BC-3 enrollment database FINAL,keep,,Mode,"0=Vigina, 1=Cesarean section",NA,,,,,BC-3 enrollment database FINAL::mode7
+mortality,BC-3 children individual level database FINAL,discard,,(sum) mortality,,NA,,,,,BC-3 children individual level database FINAL::mortality
 motherbsdich,BC-3 mothers delivery database FINAL,keep,,maternal peripheral BS dichotomized,"0,1,2",NA,,,,,BC-3 mothers delivery database FINAL::motherbsdich
 motherbsdich,Individual level database FINAL,discard,,maternal peripheral BS dichotomized,"0,1,2",NA,,,,DROP - Use delivery,Individual level database FINAL::motherbsdich
+motherbsdich,BC-3 childs expanded database FINAL,discard,,maternal peripheral BS dichotomized,"0,1,2",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::motherbsdich
+motherbsdich,BC-3 children individual level database FINAL,discard,,maternal peripheral BS dichotomized,,NA,,,,,BC-3 children individual level database FINAL::motherbsdich
+motherid,BC-3 children individual level database FINAL,discard,,Mother's ID number,5 digits,NA,,,,,BC-3 children individual level database FINAL::motherid
+motherid,BC-3 childs expanded database FINAL,discard,,Mother's ID number,5 digit number,NA,,,,,BC-3 childs expanded database FINAL::motherid
 moveout,BC-3 screening database FINAL,discard,,"Intention of moving outside of Busia District, Uganda","0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::moveout
 mseiz,BC-3 mothers all visits database FINAL,discard,,3 or more seizures over 24 hours,1=checked,NA,,,,All NA's,BC-3 mothers all visits database FINAL::mseiz
 mseiz,BC-3 mothers delivery database FINAL,discard,,3 or more seizures over 24 hours,1=checked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::mseiz
+mseiz,BC-3 childs all visit database FINAL,keep,,3 or more seizures over 24 hours,1=checked,NA,,,,,BC-3 childs all visit database FINAL::mseiz
 msga,BC3_Household_Survey_Data,keep,,where did you hear or see message(s):radio?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::msga
 msgb,BC3_Household_Survey_Data,keep,,where did you hear or see message(s):tv?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::msgb
 msgc,BC3_Household_Survey_Data,keep,,where did you hear or see message(s):newspaper/leaflet?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::msgc
@@ -1303,8 +1577,10 @@ msgh,BC3_Household_Survey_Data,keep,,where did you hear or see message(s):don't 
 msgi,BC3_Household_Survey_Data,keep,,where did you hear or see message(s):other,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::msgi
 msk,BC-3 enrollment database FINAL,discard,,msk,,NA,,,,All NA's,BC-3 enrollment database FINAL::msk
 msk,BC-3 mothers all visits database FINAL,keep,,msk,,NA,,,,,BC-3 mothers all visits database FINAL::msk
+msk,BC-3 childs all visit database FINAL,keep,,msk,,NA,,,,,BC-3 childs all visit database FINAL::msk
 mskdur,BC-3 enrollment database FINAL,discard,,MSK Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::mskdur
 mskdur,BC-3 mothers all visits database FINAL,keep,,MSK Duration,,NA,,,,,BC-3 mothers all visits database FINAL::mskdur
+mskdur,BC-3 childs all visit database FINAL,keep,,MSK Duration,,NA,,,,,BC-3 childs all visit database FINAL::mskdur
 mskgrade,BC-3 enrollment database FINAL,discard,,MSK Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1317,6 +1593,12 @@ mskgrade,BC-3 mothers all visits database FINAL,keep,,MSK Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::mskgrade
+mskgrade,BC-3 childs all visit database FINAL,keep,,MSK Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::mskgrade
 mspray,BC3_Household_Survey_Data,keep,,"in the past 12 months, have you seen or heard any messages about spraying the in",,NA,,,,,BC3_Household_Survey_Data::mspray
 mstatus,BC-3 enrollment database FINAL,discard,,Malaria status,"0=No Malaria diagnosed today,
 1=Uncomplicated malaria treated with AL,
@@ -1332,18 +1614,29 @@ mstatus,BC-3 mothers delivery database FINAL,keep,,Malaria status,"0=No malaria
 3=AL treatment failure
 4=Quinine/artesunate treatment failure",NA,,,,,BC-3 mothers delivery database FINAL::mstatus
 mstatus,BC-3 mothers expanded database FINAL,discard,,Malaria status,"0=No malaria,1=Uncomplicated(AL),2=Complicated malaria(Quinine),3=AL treatment failure,4=Quinine/artesunate treatment failure",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::mstatus
+mstatus,BC-3 childs all visit database FINAL,keep,,Malaria status,"0=No Malaria diagnosed today,
+1=Uncomplicated malaria treated with AL,
+2=Complicated malaria treated with quinine",NA,,,,,BC-3 childs all visit database FINAL::mstatus
+mstatus,BC-3 childs expanded database FINAL,discard,,Malaria status,"0=No malaria,1=Uncomplicated(AL),2=Complicated malaria(Quinine),3=AL treatment failure,4=Quinine/artesunate treatment failure",NA,,,,,BC-3 childs expanded database FINAL::mstatus
 mtest1,BC-3 mothers all visits database FINAL,discard,,1 mtest,,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::mtest1
-mtest1,BC-3 mothers delivery database FINAL,SKIP,,Heel stick for metabolic testing,"0=Not collected, 1=Collected",NA,,,,metabolic testing done on infant 1,BC-3 mothers delivery database FINAL::mtest1
-mtest1,BC-3 mothers expanded database FINAL,SKIP,,1 mtest,"0=No,1=Yes",NA,,,,metabolic testing done on infant 1,BC-3 mothers expanded database FINAL::mtest1
+mtest1,BC-3 mothers delivery database FINAL,keep,,Heel stick for metabolic testing,"0=Not collected, 1=Collected",NA,,,,metabolic testing done on infant 1,BC-3 mothers delivery database FINAL::mtest1
+mtest1,BC-3 mothers expanded database FINAL,keep,,1 mtest,"0=No,1=Yes",NA,,,,metabolic testing done on infant 1,BC-3 mothers expanded database FINAL::mtest1
 mtest2,BC-3 mothers all visits database FINAL,discard,,2 mtest,,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::mtest2
-mtest2,BC-3 mothers delivery database FINAL,SKIP,,Heel stick for metabolic testing,"0=Not collected, 1=Collected",NA,,,,metabolic testing done on infant 2,BC-3 mothers delivery database FINAL::mtest2
-mtest2,BC-3 mothers expanded database FINAL,SKIP,,2 mtest,"0=No,1=Yes",NA,,,,metabolic testing done on infant 2,BC-3 mothers expanded database FINAL::mtest2
+mtest2,BC-3 mothers delivery database FINAL,keep,,Heel stick for metabolic testing,"0=Not collected, 1=Collected",NA,,,,metabolic testing done on infant 2,BC-3 mothers delivery database FINAL::mtest2
+mtest2,BC-3 mothers expanded database FINAL,keep,,2 mtest,"0=No,1=Yes",NA,,,,metabolic testing done on infant 2,BC-3 mothers expanded database FINAL::mtest2
 mthfcty,BC3_Household_Survey_Data,keep,,"if you were to go this facility,how would you most likely go there?","1=car/motorcycle, 2=public transport, 4=walking, 5=bicycle, 8=Don’t know, -9=skipped",NA,,,,,BC3_Household_Survey_Data::mthfcty
 multigest,BC-3 enrollment database FINAL,keep,,Multiple gestation,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::multigest
 mwithin1d,BC-3 enrollment database FINAL,discard,,Is the mother within 1 day before or after 16 or 20 weeks gestational age?,"0 = No,
 1=Yes",NA,,,,DROP - not of interest,BC-3 enrollment database FINAL::mwithin1d
 n,BC-3 mothers expanded database FINAL,keep,,day of observation,,NA,,,,,BC-3 mothers expanded database FINAL::n
+n,BC-3 childs expanded database FINAL,discard,,total days of observation,,NA,,,,,BC-3 childs expanded database FINAL::n
+namehosp,BC-3 childs hospitalizations FINAL,keep,,Hospital,"1=Masafu General Hospital,
+2=Tororo General District Hospital ,  
+3=Mbale Regional Referral Hospital,
+4=Mulago National Referral Hospital,
+5=Cure Children’s Hospital,
+6=Other",NA,,,,,BC-3 childs hospitalizations FINAL::namehosp
 nausdur,BC-3 enrollment database FINAL,discard,,Nausea Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nausdur
 nausdur,BC-3 mothers all visits database FINAL,keep,,Nausea Duration,,NA,,,,,BC-3 mothers all visits database FINAL::nausdur
 nausgrade,BC-3 enrollment database FINAL,discard,,"Nausea Grade: Rank on a scale of 0-4, absent = 0, mild, = 1, moderate = 2, severe = 3 life-threatening = 4, N/A = unable to assess","0 = absent,
@@ -1373,8 +1666,10 @@ nettreated,BC-3 enrollment database FINAL,keep,,Is the bednet insectcide treated
 9=Unknown,99=N/A",NA,,,,,BC-3 enrollment database FINAL::nettreated
 neuro,BC-3 enrollment database FINAL,discard,,Neuro,,NA,,,,All NA's,BC-3 enrollment database FINAL::neuro
 neuro,BC-3 mothers all visits database FINAL,keep,,Neuro,,NA,,,,,BC-3 mothers all visits database FINAL::neuro
+neuro,BC-3 childs all visit database FINAL,keep,,Neuro,,NA,,,,,BC-3 childs all visit database FINAL::neuro
 neurodur,BC-3 enrollment database FINAL,discard,,Neuro Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::neurodur
 neurodur,BC-3 mothers all visits database FINAL,keep,,Neuro Duration,,NA,,,,,BC-3 mothers all visits database FINAL::neurodur
+neurodur,BC-3 childs all visit database FINAL,keep,,Neuro Duration,,NA,,,,,BC-3 childs all visit database FINAL::neurodur
 neurograde,BC-3 enrollment database FINAL,discard,,Neuro Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1387,10 +1682,18 @@ neurograde,BC-3 mothers all visits database FINAL,keep,,Neuro Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::neurograde
+neurograde,BC-3 childs all visit database FINAL,keep,,Neuro Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::neurograde
 neutro,BC-3 enrollment database FINAL,discard,,Neutrophils,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::neutro
 neutro,BC-3 mothers all visits database FINAL,keep,,Neutrophils result,,NA,,,,,BC-3 mothers all visits database FINAL::neutro
 neutro,BC-3 mothers delivery database FINAL,keep,,Neutrophils,,NA,,,,,BC-3 mothers delivery database FINAL::neutro
 neutro,BC-3 mothers expanded database FINAL,discard,,Neutrophils result,,NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::neutro
+neutro,BC-3 childs all visit database FINAL,keep,,Neutrophils result,,NA,,,,,BC-3 childs all visit database FINAL::neutro
+neutro,BC-3 childs expanded database FINAL,discard,,Neutrophils result,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::neutro
 neutrograde,BC-3 enrollment database FINAL,discard,,Neutrophils grade,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -1409,28 +1712,51 @@ neutrograde,BC-3 mothers delivery database FINAL,discard,,Neutrophils grade,"0 =
 3 = grade 3,
 4 = grade 4
 ",NA,,,,DROP - not of interest,BC-3 mothers delivery database FINAL::neutrograde
+neutrograde,BC-3 childs all visit database FINAL,keep,,neutropils grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::neutrograde
+nextage,BC-3 childs all visit database FINAL,discard,,age at next routine visit,,NA,,,,,BC-3 childs all visit database FINAL::nextage
 nextvst,BC-3 enrollment database FINAL,discard,,Date of next scheduled clinic visit:,date,NA,,,,DROP - not of interest,BC-3 enrollment database FINAL::nextvst
 nextvst,BC-3 mothers all visits database FINAL,discard,,date of next scheduled clinic visit,date,NA,,,,DROP - not of interest,BC-3 mothers all visits database FINAL::nextvst
 nextvst,BC-3 mothers delivery database FINAL,discard,,Date of next scheduled clinic visit,date,NA,,,,DROP - not of interest,BC-3 mothers delivery database FINAL::nextvst
+nextvst,BC-3 childs all visit database FINAL,keep,,date of next scheduled clinic visit,date,NA,,,,,BC-3 childs all visit database FINAL::nextvst
 nmed1,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed1
 nmed1,BC-3 mothers all visits database FINAL,keep,,new medication1,,NA,,,,,BC-3 mothers all visits database FINAL::nmed1
 nmed1,BC-3 mothers delivery database FINAL,keep,,Medication at discharge1,,NA,,,,,BC-3 mothers delivery database FINAL::nmed1
+nmed1,BC-3 childs all visit database FINAL,keep,,new medication1,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed1
+nmed1,BC-3 childs expanded database FINAL,discard,,new medication1,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed1
 nmed2,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed2
 nmed2,BC-3 mothers all visits database FINAL,keep,,new medication2,,NA,,,,,BC-3 mothers all visits database FINAL::nmed2
 nmed2,BC-3 mothers delivery database FINAL,keep,,Medication at discharge2,,NA,,,,,BC-3 mothers delivery database FINAL::nmed2
+nmed2,BC-3 childs all visit database FINAL,keep,,new medication2,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed2
+nmed2,BC-3 childs expanded database FINAL,discard,,new medication2,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed2
 nmed3,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed3
 nmed3,BC-3 mothers all visits database FINAL,keep,,new medication3,,NA,,,,,BC-3 mothers all visits database FINAL::nmed3
 nmed3,BC-3 mothers delivery database FINAL,keep,,Medication at discharge3,,NA,,,,,BC-3 mothers delivery database FINAL::nmed3
+nmed3,BC-3 childs all visit database FINAL,keep,,new medication3,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed3
+nmed3,BC-3 childs expanded database FINAL,discard,,new medication3,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed3
 nmed4,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed4
 nmed4,BC-3 mothers all visits database FINAL,keep,,new medication4,,NA,,,,,BC-3 mothers all visits database FINAL::nmed4
 nmed4,BC-3 mothers delivery database FINAL,keep,,Medication at discharge4,,NA,,,,,BC-3 mothers delivery database FINAL::nmed4
+nmed4,BC-3 childs all visit database FINAL,keep,,new medication4,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed4
+nmed4,BC-3 childs expanded database FINAL,discard,,new medication4,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed4
 nmed5,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed5
 nmed5,BC-3 mothers all visits database FINAL,keep,,new medication5,,NA,,,,,BC-3 mothers all visits database FINAL::nmed5
 nmed5,BC-3 mothers delivery database FINAL,discard,,Medication at discharge5,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::nmed5
+nmed5,BC-3 childs all visit database FINAL,keep,,new medication5,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed5
+nmed5,BC-3 childs expanded database FINAL,discard,,new medication5,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed5
 nmed6,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed6
 nmed6,BC-3 mothers all visits database FINAL,keep,,new medication6,,NA,,,,,BC-3 mothers all visits database FINAL::nmed6
+nmed6,BC-3 childs all visit database FINAL,keep,,new medication6,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed6
+nmed6,BC-3 childs expanded database FINAL,discard,,new medication6,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed6
 nmed7,BC-3 enrollment database FINAL,discard,,Medication Code,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::nmed7
 nmed7,BC-3 mothers all visits database FINAL,keep,,new medication7,,NA,,,,,BC-3 mothers all visits database FINAL::nmed7
+nmed7,BC-3 childs all visit database FINAL,keep,,new medication7,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed7
+nmed7,BC-3 childs expanded database FINAL,discard,,new medication7,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::nmed7
+nobs,BC-3 childs all visit database FINAL,discard,,,,NA,,,,,BC-3 childs all visit database FINAL::nobs
 nocord,BC-3 mothers delivery database FINAL,keep,,Number of cords collected,N/A,NA,,,,,BC-3 mothers delivery database FINAL::nocord
 noinfants,BC-3 mothers delivery database FINAL,discard,,Number of infants,,NA,,,,DROP - Use individual,BC-3 mothers delivery database FINAL::noinfants
 noinfants,Individual level database FINAL,keep,,Number of infants,"1,2",NA,,,,,Individual level database FINAL::noinfants
@@ -1440,6 +1766,8 @@ noplas,Individual level database FINAL,keep,,Number of placentas,"1,2",NA,,,,,In
 notapp,BC-3 mothers delivery database FINAL,discard,,Presentation to hospital is NOT Applicable,1=ticked,NA,,,,DROP - not of interest,BC-3 mothers delivery database FINAL::notapp
 nrvisit,BC-3 mothers all visits database FINAL,discard,,Type of next scheduled visit,"0=Non-routine visit,
 1=Routine visit",NA,,,,DROP - not of interest,BC-3 mothers all visits database FINAL::nrvisit
+nrvisit,BC-3 childs all visit database FINAL,discard,,Type of next scheduled visit,"0=Non-routine visit,
+1=Routine visit",NA,,,,,BC-3 childs all visit database FINAL::nrvisit
 nthung1,BC3_Household_Survey_Data,discard,,"if net1 was not hung, why not?","1=nowhere to hung, 6=Don’t want to hang, 7=extra net/used for visitor/owner not home, 96=other, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::nthung1
 nthung10,BC3_Household_Survey_Data,discard,,"if net10 was not hung, why not?","1=nowhere to hung, 6=Don’t want to hang, 7=extra net/used for visitor/owner not home, 96=other, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::nthung10
 nthung2,BC3_Household_Survey_Data,discard,,"if net2 was not hung, why not?","1=nowhere to hung, 6=Don’t want to hang, 7=extra net/used for visitor/owner not home, 96=other, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::nthung2
@@ -1560,6 +1888,8 @@ obsyr5,BC-3 enrollment database FINAL,keep,,Year,,NA,,,,,BC-3 enrollment databas
 obsyr6,BC-3 enrollment database FINAL,keep,,Year,,NA,,,,,BC-3 enrollment database FINAL::obsyr6
 obsyr7,BC-3 enrollment database FINAL,keep,,Year,,NA,,,,,BC-3 enrollment database FINAL::obsyr7
 omed,BC-3 mothers all visits database FINAL,keep,,Any medications taken outside the study since last seen,"0=No, 1=Yes",NA,,,,,BC-3 mothers all visits database FINAL::omed
+omed,BC-3 childs all visit database FINAL,keep,,Any medications taken outside the study since last seen,"0=No,
+1=Yes",NA,,,,,BC-3 childs all visit database FINAL::omed
 omeds,BC-3 mothers delivery database FINAL,keep,,Any medications taken outside the study since last seen,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::omeds
 othcov1,BC3_Household_Survey_Data,discard,,specify other entryway1 covering type,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othcov1
@@ -1576,12 +1906,15 @@ othcov8,BC3_Household_Survey_Data,discard,,specify other entryway8 covering type
 othcov9,BC3_Household_Survey_Data,discard,,specify other entryway9 covering type,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othcov9
 othcriteria,BC-3 mothers all visits database FINAL,keep,,Other,,NA,,,,Other criteria for complicated malaria,BC-3 mothers all visits database FINAL::othcriteria
 othcriteria,BC-3 mothers delivery database FINAL,discard,,Other criteria for complicated malaria,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::othcriteria
+othcriteria,BC-3 childs all visit database FINAL,discard,,other,,NA,,,,All NA's,BC-3 childs all visit database FINAL::othcriteria
 other,BC-3 mothers delivery database FINAL,keep,,Other Lab Result,,NA,,,,Other lab result (mix of test types),BC-3 mothers delivery database FINAL::other
 other1,BC-3 enrollment database FINAL,discard,,Other,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::other1
 other1,BC-3 mothers all visits database FINAL,keep,,Other1,,NA,,,,,BC-3 mothers all visits database FINAL::other1
 other1,BC-3 mothers delivery database FINAL,discard,,Other Lab Result,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::other1
+other1,BC-3 childs all visit database FINAL,keep,,Other1,,NA,,,,Define,BC-3 childs all visit database FINAL::other1
 other1dur,BC-3 enrollment database FINAL,discard,,Other Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::other1dur
 other1dur,BC-3 mothers all visits database FINAL,keep,,Other1 Duration,,NA,,,,,BC-3 mothers all visits database FINAL::other1dur
+other1dur,BC-3 childs all visit database FINAL,keep,,Other Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::other1dur
 other1grade,BC-3 enrollment database FINAL,discard,,Other Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1594,10 +1927,18 @@ other1grade,BC-3 mothers all visits database FINAL,keep,,Other1 Grade,"0 = absen
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::other1grade
+other1grade,BC-3 childs all visit database FINAL,keep,,Other1 Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,Define,BC-3 childs all visit database FINAL::other1grade
 other2,BC-3 enrollment database FINAL,discard,,Other,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::other2
 other2,BC-3 mothers all visits database FINAL,keep,,Other2,,NA,,,,,BC-3 mothers all visits database FINAL::other2
+other2,BC-3 childs all visit database FINAL,keep,,Other2,,NA,,,,Define,BC-3 childs all visit database FINAL::other2
 other2dur,BC-3 enrollment database FINAL,discard,,Other Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::other2dur
 other2dur,BC-3 mothers all visits database FINAL,keep,,Other2 Duration,,NA,,,,,BC-3 mothers all visits database FINAL::other2dur
+other2dur,BC-3 childs all visit database FINAL,keep,,Other2 Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::other2dur
 other2grade,BC-3 enrollment database FINAL,discard,,Other Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1610,10 +1951,18 @@ other2grade,BC-3 mothers all visits database FINAL,keep,,Other2 Grade,"0 = absen
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::other2grade
+other2grade,BC-3 childs all visit database FINAL,keep,,Other2 Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::other2grade
 other3,BC-3 enrollment database FINAL,discard,,Other,,NA,,,,All NA's,BC-3 enrollment database FINAL::other3
 other3,BC-3 mothers all visits database FINAL,discard,,Other3,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::other3
+other3,BC-3 childs all visit database FINAL,keep,,Other3,,NA,,,,,BC-3 childs all visit database FINAL::other3
 other3dur,BC-3 enrollment database FINAL,discard,,Other Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::other3dur
 other3dur,BC-3 mothers all visits database FINAL,discard,,Other3 Duration,,NA,,,,All NA's,BC-3 mothers all visits database FINAL::other3dur
+other3dur,BC-3 childs all visit database FINAL,keep,,Other3 Duration,,NA,,,,,BC-3 childs all visit database FINAL::other3dur
 other3grade,BC-3 enrollment database FINAL,discard,,Other Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1626,6 +1975,12 @@ other3grade,BC-3 mothers all visits database FINAL,discard,,Other3 Grade,"0 = ab
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,All NA's,BC-3 mothers all visits database FINAL::other3grade
+other3grade,BC-3 childs all visit database FINAL,keep,,Other3 Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::other3grade
 otherb1,BC3_Household_Survey_Data,discard,,specify other brands or types of mosquito net1,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::otherb1
 otherb10,BC3_Household_Survey_Data,discard,,specify other brands or types of mosquito net10,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::otherb10
 otherb2,BC3_Household_Survey_Data,discard,,specify other brands or types of mosquito net2,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::otherb2
@@ -1638,11 +1993,13 @@ otherb8,BC3_Household_Survey_Data,discard,,specify other brands or types of mosq
 otherb9,BC3_Household_Survey_Data,discard,,specify other brands or types of mosquito net9,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::otherb9
 otherdesc,BC-3 mothers delivery database FINAL,keep,,Other Lab,,NA,,,,Other lab test type (mix of test types),BC-3 mothers delivery database FINAL::otherdesc
 otherdesc1,BC-3 mothers delivery database FINAL,discard,,Other Lab,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::otherdesc1
+otherdie,BC-3 childs deaths FINAL,keep,,participant died in other place specified,,NA,,,,,BC-3 childs deaths FINAL::otherdie
 othereng,BC3_Household_Survey_Data,keep,,specify other source of energy for lighting,,NA,,,,,BC3_Household_Survey_Data::othereng
 otherfcy,BC3_Household_Survey_Data,keep,,specify other kind of toilet facilities,,NA,,,,,BC3_Household_Survey_Data::otherfcy
 otherfue,BC3_Household_Survey_Data,discard,,specify other type of fuel used,,NA,,,,All NA's,BC3_Household_Survey_Data::otherfue
 othergrade,BC-3 mothers delivery database FINAL,keep,,Other Lab grade,,NA,,,,,BC-3 mothers delivery database FINAL::othergrade
 othergrade1,BC-3 mothers delivery database FINAL,discard,,Other Lab grade,,NA,,,,All NA's,BC-3 mothers delivery database FINAL::othergrade1
+otherinfo,BC-3 childs deaths FINAL,keep,,information obtained as Other,1=checked,NA,,,,"map contreport, autopsy, other and hospre to same term",BC-3 childs deaths FINAL::otherinfo
 othermme,BC3_Household_Survey_Data,keep,,specify other material of the exterior walls,,NA,,,,,BC3_Household_Survey_Data::othermme
 othermmf,BC3_Household_Survey_Data,keep,,specify other material of the floor,,NA,,,,,BC3_Household_Survey_Data::othermmf
 othermmr,BC3_Household_Survey_Data,keep,,specify other material of the roof,,NA,,,,,BC3_Household_Survey_Data::othermmr
@@ -1652,10 +2009,14 @@ otherrgs,BC3_Household_Survey_Data,discard,,specify other reasons for not granti
 otherscs,BC3_Household_Survey_Data,keep,,specify other source of water,,NA,,,,,BC3_Household_Survey_Data::otherscs
 othersl,BC3_Household_Survey_Data,discard,,specify other sleeping area,,NA,,,,All NA's,BC3_Household_Survey_Data::othersl
 otherwsp,BC3_Household_Survey_Data,discard,,specify other people who sprayed the dwelling,,NA,,,,All NA's,BC3_Household_Survey_Data::otherwsp
+othhosp,BC-3 childs hospitalizations FINAL,discard,,Other hospital,text,NA,,,,All NA's,BC-3 childs hospitalizations FINAL::othhosp
+othinfospe,BC-3 childs deaths FINAL,discard,,information obtained as other specified,,NA,,,,,BC-3 childs deaths FINAL::othinfospe
 othlab1,BC-3 enrollment database FINAL,discard,,,,NA,,,,All NA's,BC-3 enrollment database FINAL::othlab1
 othlab1,BC-3 mothers all visits database FINAL,keep,,Other result,,NA,,,,,BC-3 mothers all visits database FINAL::othlab1
+othlab1,BC-3 childs all visit database FINAL,keep,,Other result,,NA,,,,,BC-3 childs all visit database FINAL::othlab1
 othlab1desc,BC-3 enrollment database FINAL,discard,,,,NA,,,,All NA's,BC-3 enrollment database FINAL::othlab1desc
 othlab1desc,BC-3 mothers all visits database FINAL,keep,,Other description,,NA,,,,,BC-3 mothers all visits database FINAL::othlab1desc
+othlab1desc,BC-3 childs all visit database FINAL,keep,,Other description,,NA,,,,,BC-3 childs all visit database FINAL::othlab1desc
 othlab1grade,BC-3 enrollment database FINAL,discard,,,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -1668,10 +2029,18 @@ othlab1grade,BC-3 mothers all visits database FINAL,keep,,Other grade,"0 = no gr
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers all visits database FINAL::othlab1grade
+othlab1grade,BC-3 childs all visit database FINAL,keep,,Other grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::othlab1grade
 othlab2,BC-3 enrollment database FINAL,discard,,,,NA,,,,All NA's,BC-3 enrollment database FINAL::othlab2
 othlab2,BC-3 mothers all visits database FINAL,keep,,other result,,NA,,,,,BC-3 mothers all visits database FINAL::othlab2
+othlab2,BC-3 childs all visit database FINAL,keep,,Other result,,NA,,,,,BC-3 childs all visit database FINAL::othlab2
 othlab2desc,BC-3 enrollment database FINAL,discard,,,,NA,,,,All NA's,BC-3 enrollment database FINAL::othlab2desc
 othlab2desc,BC-3 mothers all visits database FINAL,keep,,Other description,,NA,,,,,BC-3 mothers all visits database FINAL::othlab2desc
+othlab2desc,BC-3 childs all visit database FINAL,keep,,other description,,NA,,,,,BC-3 childs all visit database FINAL::othlab2desc
 othlab2grade,BC-3 enrollment database FINAL,discard,,,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -1684,6 +2053,7 @@ othlab2grade,BC-3 mothers all visits database FINAL,keep,,other grade,"0 = no gr
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers all visits database FINAL::othlab2grade
+othlab2grade,BC-3 childs all visit database FINAL,keep,,other grade,,NA,,,,,BC-3 childs all visit database FINAL::othlab2grade
 othlod,BC-3 mothers delivery database FINAL,keep,map to same IRI as lod,Other,,NA,,,,,BC-3 mothers delivery database FINAL::othlod
 othrnt1,BC3_Household_Survey_Data,discard,,specify other reason why the net1 was not hung.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othrnt1
 othrnt10,BC3_Household_Survey_Data,discard,,specify other reason why the net10 was not hung.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othrnt10
@@ -1696,17 +2066,24 @@ othrnt7,BC3_Household_Survey_Data,discard,,specify other reason why the net7 was
 othrnt8,BC3_Household_Survey_Data,discard,,specify other reason why the net8 was not hung.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othrnt8
 othrnt9,BC3_Household_Survey_Data,discard,,specify other reason why the net9 was not hung.,,NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::othrnt9
 ovstatus,BC3_Household_Survey_Data,keep,,specify other result,,NA,,,,,BC3_Household_Survey_Data::ovstatus
+oxygen,BC-3 childs hospitalizations FINAL,keep,,Oxygen therapy,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::oxygen
 pardens,BC-3 enrollment database FINAL,discard,,Parasite density,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::pardens
 pardens,BC-3 mothers all visits database FINAL,keep,,malaria parasite density,,NA,,,,,BC-3 mothers all visits database FINAL::pardens
 pardens,BC-3 mothers expanded database FINAL,discard,,malaria parasite density,,NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::pardens
 pardens1,BC-3 mothers all visits database FINAL,discard,,parasite density1,,NA,,,,DROP - Use pardens,BC-3 mothers all visits database FINAL::pardens1
+pardens1,BC-3 childs all visit database FINAL,keep,,parasite density1,,NA,,,,,BC-3 childs all visit database FINAL::pardens1
 pardens2,BC-3 mothers all visits database FINAL,discard,,parasite density2,,NA,,,,DROP - Use pardens,BC-3 mothers all visits database FINAL::pardens2
+pardens2,BC-3 childs all visit database FINAL,keep,,parasite density2,,NA,,,,,BC-3 childs all visit database FINAL::pardens2
 pardens3,BC-3 mothers all visits database FINAL,discard,,parasite density3,,NA,,,,DROP - Use pardens,BC-3 mothers all visits database FINAL::pardens3
+pardens3,BC-3 childs all visit database FINAL,keep,,parasite density3,,NA,,,,,BC-3 childs all visit database FINAL::pardens3
 parity,BC-3 enrollment database FINAL,discard,,Parity,,NA,,,,DROP - Use calculated version,BC-3 enrollment database FINAL::parity
-pbld1,BC-3 mothers delivery database FINAL,SKIP,,Placental Blood1,"0=Not collect, 
+parsdens,BC-3 childs all visit database FINAL,keep,,parasite density (/ul),,NA,,,,,BC-3 childs all visit database FINAL::parsdens
+parsdens,BC-3 childs expanded database FINAL,discard,,parasite density (/ul),,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::parsdens
+pbld1,BC-3 mothers delivery database FINAL,keep,,Placental Blood1,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::pbld1
-pbld2,BC-3 mothers delivery database FINAL,SKIP,,Placental Blood2,"0=Not collect, 
+pbld2,BC-3 mothers delivery database FINAL,keep,,Placental Blood2,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::pbld2
 pbld3,BC-3 mothers delivery database FINAL,discard,,Placental Blood3,"0=Not collect, 
@@ -1714,6 +2091,8 @@ pbld3,BC-3 mothers delivery database FINAL,discard,,Placental Blood3,"0=Not coll
 ",NA,,,,All NA's,BC-3 mothers delivery database FINAL::pbld3
 pc1,BC3_Household_Survey_Data,discard,,Scores for component 1,,NA,,,,,BC3_Household_Survey_Data::pc1
 pc2,BC3_Household_Survey_Data,discard,,Scores for component 2,,NA,,,,,BC3_Household_Survey_Data::pc2
+pdeath,BC-3 childs deaths FINAL,keep,,Where did the subject die,"1=home,2=health center,3=private clinic,
+4=hospital, 5=other,9=Unknown",NA,,,,,BC-3 childs deaths FINAL::pdeath
 peribs,BC-3 mothers all visits database FINAL,discard,,peribs,,NA,,,,DROP - Use pardens,BC-3 mothers all visits database FINAL::peribs
 peribs,BC-3 mothers delivery database FINAL,keep,,Peripheral blood smear,,NA,,,,,BC-3 mothers delivery database FINAL::peribs
 perigame,BC-3 mothers delivery database FINAL,keep,,Peripheral Gametocytes,"1 = Present,
@@ -1727,12 +2106,18 @@ pharm,BC-3 mothers all visits database FINAL,keep,,was mother referred to the ph
 1=Referred",NA,,,,,BC-3 mothers all visits database FINAL::pharm
 pharm,BC-3 mothers expanded database FINAL,discard,,was mother referred to the pharmacy today for admnistration of study drugs,"0=Not referred,1=Referred",NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::pharm
 phone,BC3_Household_Survey_Data,keep,,fixed phone?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::phone
-plabs,BC-3 mothers delivery database FINAL,SKIP,,Placental smear ,,NA,,,,,BC-3 mothers delivery database FINAL::plabs
-plabs2,BC-3 mothers delivery database FINAL,SKIP,,"Placental smear (placenta ""b"" if twins)",,NA,,,,,BC-3 mothers delivery database FINAL::plabs2
+photo,BC-3 childs hospitalizations FINAL,keep,,Phototherapy,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::photo
+plabs,BC-3 mothers delivery database FINAL,keep,,Placental smear ,,NA,,,,,BC-3 mothers delivery database FINAL::plabs
+plabs2,BC-3 mothers delivery database FINAL,keep,,"Placental smear (placenta ""b"" if twins)",,NA,,,,,BC-3 mothers delivery database FINAL::plabs2
 placentalbsdich,BC-3 mothers delivery database FINAL,keep,,placental BS dichotomized,"0,1,2",NA,,,,,BC-3 mothers delivery database FINAL::placentalbsdich
 placentalbsdich,Individual level database FINAL,discard,,placental BS dichotomized,"0,1,2",NA,,,,DROP - Use delivery,Individual level database FINAL::placentalbsdich
+placentalbsdich,BC-3 childs expanded database FINAL,discard,,placental BS dichotomized,"0,1,2",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::placentalbsdich
+placentalbsdich,BC-3 children individual level database FINAL,discard,,placental BS dichotomized,"0,1,2",NA,,,,DROP - Use delivery,BC-3 children individual level database FINAL::placentalbsdich
 placentallampdich,BC-3 mothers delivery database FINAL,keep,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,,,,,BC-3 mothers delivery database FINAL::placentallampdich
 placentallampdich,Individual level database FINAL,discard,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,,,,DROP - Use delivery,Individual level database FINAL::placentallampdich
+placentallampdich,BC-3 childs expanded database FINAL,discard,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::placentallampdich
+placentallampdich,BC-3 children individual level database FINAL,discard,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,,,,DROP - Use delivery,BC-3 children individual level database FINAL::placentallampdich
 placollect,BC-3 mothers delivery database FINAL,keep,,Were any placental specimens collected,"0=No, 
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::placollect
 plareas,BC-3 mothers delivery database FINAL,keep,,"If no placentas collected, Reason","0=No, 
@@ -1748,6 +2133,8 @@ plt,BC-3 enrollment database FINAL,discard,,Platelets,,NA,,,,DROP - Use all visi
 plt,BC-3 mothers all visits database FINAL,keep,,platelets,,NA,,,,,BC-3 mothers all visits database FINAL::plt
 plt,BC-3 mothers delivery database FINAL,keep,,Platelets,,NA,,,,,BC-3 mothers delivery database FINAL::plt
 plt,BC-3 mothers expanded database FINAL,discard,,platelets,,NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::plt
+plt,BC-3 childs all visit database FINAL,keep,,platelets,,NA,,,,,BC-3 childs all visit database FINAL::plt
+plt,BC-3 childs expanded database FINAL,discard,,platelets,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::plt
 pltgrade,BC-3 enrollment database FINAL,discard,,Platelets grade,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -1766,19 +2153,28 @@ pltgrade,BC-3 mothers delivery database FINAL,keep,,platelets grade,"0 = no grad
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers delivery database FINAL::pltgrade
+pltgrade,BC-3 childs all visit database FINAL,keep,,platelets grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::pltgrade
 ppwalls,BC3_Household_Survey_Data,discard,,"since the spraying, have the walls in your dwelling been plastered or painted?","1=Yes, 2=No, -9=Skipped",NA,,,,Almost no data,BC3_Household_Survey_Data::ppwalls
 preterm,BC-3 enrollment database FINAL,discard,,Preterm,,NA,,,,DROP - Use calculated version,BC-3 enrollment database FINAL::preterm
 preterm,BC-3 mothers delivery database FINAL,keep,,Preterm delivery (< 37 weeks) if live birth,"0=No,
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::preterm
 preterm,Individual level database FINAL,discard,,Preterm delivery (< 37 weeks) if live birth,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::preterm
+preterm,BC-3 childs expanded database FINAL,discard,,Preterm delivery (< 37 weeks),"0=No,1=Yes",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::preterm
+preterm,BC-3 children individual level database FINAL,keep,,Preterm delivery (< 37 weeks),"0=No,
+1=Yes",NA,,,,,BC-3 children individual level database FINAL::preterm
 probableae,Individual level database FINAL,discard,,(sum) probableAE,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::probableae
 proteinuria,Individual level database FINAL,discard,,(sum) proteinuria,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::proteinuria
 pspray,BC3_Household_Survey_Data,keep,,"at any time in the past 12 months, has anyone asked permission to come into your household","1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::pspray
-ptiss1,BC-3 mothers delivery database FINAL,SKIP,,Placental tissue1,"0=Not collect, 
+ptiss1,BC-3 mothers delivery database FINAL,keep,,Placental tissue1,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::ptiss1
-ptiss2,BC-3 mothers delivery database FINAL,SKIP,,Placental tissue2,"0=Not collect, 
+ptiss2,BC-3 mothers delivery database FINAL,keep,,Placental tissue2,"0=Not collect, 
 1=Collected
 ",NA,,,,,BC-3 mothers delivery database FINAL::ptiss2
 ptiss3,BC-3 mothers delivery database FINAL,discard,,Placental tissue3,"0=Not collect, 
@@ -1800,12 +2196,15 @@ rbusia,BC-3 screening database FINAL,discard,,"Residence within Busia District, 
 1=Yes",NA,,,,,BC-3 screening database FINAL::rbusia
 rdist,BC-3 mothers all visits database FINAL,discard,,Respiratory distress,1=checked,NA,,,,All NA's,BC-3 mothers all visits database FINAL::rdist
 rdist,BC-3 mothers delivery database FINAL,discard,,Respiratory distress,1=checked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::rdist
+rdist,BC-3 childs all visit database FINAL,keep,,Respiratory distress,1=checked,NA,,,,,BC-3 childs all visit database FINAL::rdist
 renal,BC-3 enrollment database FINAL,keep,,Renal disease,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::renal
 resp,BC-3 enrollment database FINAL,discard,,Resp,,NA,,,,All NA's,BC-3 enrollment database FINAL::resp
 resp,BC-3 mothers all visits database FINAL,keep,,Resp,,NA,,,,,BC-3 mothers all visits database FINAL::resp
+resp,BC-3 childs all visit database FINAL,keep,,Resp,,NA,,,,Difference betweenthis and resprate?,BC-3 childs all visit database FINAL::resp
 respdur,BC-3 enrollment database FINAL,discard,,Resp Duration,,NA,,,,All NA's,BC-3 enrollment database FINAL::respdur
 respdur,BC-3 mothers all visits database FINAL,keep,,Resp Duration,,NA,,,,,BC-3 mothers all visits database FINAL::respdur
+respdur,BC-3 childs all visit database FINAL,keep,,Resp Duration,,NA,,,,,BC-3 childs all visit database FINAL::respdur
 respgrade,BC-3 enrollment database FINAL,discard,,Resp Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1818,12 +2217,23 @@ respgrade,BC-3 mothers all visits database FINAL,keep,,Resp Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::respgrade
+respgrade,BC-3 childs all visit database FINAL,keep,,Resp Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::respgrade
 respiratorydistress,Individual level database FINAL,discard,,(sum) respiratorydistress,"0,1",NA,,,,aggregate observation data,Individual level database FINAL::respiratorydistress
+resprate,BC-3 childs all visit database FINAL,keep,,Respiratory rate,,NA,,,,Difference between this and resp?,BC-3 childs all visit database FINAL::resprate
 rgspray,BC3_Household_Survey_Data,discard,,what was the primary reason that you did not grant permission to spray the inter,#NAME?,NA,,,,All NA's,BC3_Household_Survey_Data::rgspray
 rheumatic,BC-3 enrollment database FINAL,keep,,History of Rheumatic fever,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::rheumatic
 rogerson,BC-3 mothers delivery database FINAL,keep,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,,,,,BC-3 mothers delivery database FINAL::rogerson
 rogerson,Individual level database FINAL,discard,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,,,,DROP - Use delivery,Individual level database FINAL::rogerson
+rogerson,BC-3 childs expanded database FINAL,discard,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::rogerson
+rogerson,BC-3 children individual level database FINAL,keep,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,,,,map to Rogerson along with variable from delivery,BC-3 children individual level database FINAL::rogerson
+routinebs,BC-3 childs expanded database FINAL,discard,,Routine visit when BS done,"0=No,1=Yes",NA,,,,,BC-3 childs expanded database FINAL::routinebs
+routinehb,BC-3 childs expanded database FINAL,discard,,Date routine hemoglobin testing done,1,NA,,,,,BC-3 childs expanded database FINAL::routinehb
 rvisit,BC-3 mothers all visits database FINAL,discard,,is today a routine visit and therefore the mother due for study drugs,"0=No,
 1=Yes",NA,,,,,BC-3 mothers all visits database FINAL::rvisit
 saslnum,BC3_Household_Survey_Data,keep,,how many people sleep in the same bed/sleeping area as the study participant und,,NA,,,,,BC3_Household_Survey_Data::saslnum
@@ -1853,14 +2263,16 @@ sga,BC-3 mothers delivery database FINAL,keep,,Small for gestational age if live
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::sga
 sga,Individual level database FINAL,discard,,Small for gestational age if live birth,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::sga
-sgab,Individual level database FINAL,SKIP,,Small for gestational age if singleton live birth based on 2014 Lancet article,"0=No,
+sgab,Individual level database FINAL,keep,,Small for gestational age if singleton live birth based on 2014 Lancet article,"0=No,
 1=Yes",NA,,,,,Individual level database FINAL::sgab
 sickled,BC-3 enrollment database FINAL,keep,,Sickle Cell disease,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::sickled
 skin,BC-3 enrollment database FINAL,discard,,Skin,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::skin
 skin,BC-3 mothers all visits database FINAL,keep,,Skin,,NA,,,,,BC-3 mothers all visits database FINAL::skin
+skin,BC-3 childs all visit database FINAL,keep,,Skin,,NA,,,,,BC-3 childs all visit database FINAL::skin
 skindur,BC-3 enrollment database FINAL,discard,,Skin Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::skindur
 skindur,BC-3 mothers all visits database FINAL,keep,,Skin Duration,,NA,,,,,BC-3 mothers all visits database FINAL::skindur
+skindur,BC-3 childs all visit database FINAL,keep,,Skin Duration,,NA,,,,,BC-3 childs all visit database FINAL::skindur
 skingrade,BC-3 enrollment database FINAL,discard,,Skin Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1873,6 +2285,12 @@ skingrade,BC-3 mothers all visits database FINAL,keep,,Skin Grade,"0 = absent,
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::skingrade
+skingrade,BC-3 childs all visit database FINAL,keep,,Skin Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::skingrade
 slareas,BC3_Household_Survey_Data,keep,,how many sleeping areas are in the room where the study participant sleeps?,,NA,,,,,BC3_Household_Survey_Data::slareas
 sleep,BC3_Household_Survey_Data,keep,,where does the study participant usually sleep?,"1=Directly on ground, 2=on matress/mat on the ground, 3=on a bed raised from ground,99=no response, -9=skipped",NA,,,,,BC3_Household_Survey_Data::sleep
 slpnet1,BC3_Household_Survey_Data,discard,,did anyone sleep under this mosquito net1 last night?,"1=yes, 2=no, 8=not sure, -9= skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::slpnet1
@@ -1887,6 +2305,7 @@ slpnet8,BC3_Household_Survey_Data,discard,,did anyone sleep under this mosquito 
 slpnet9,BC3_Household_Survey_Data,discard,,did anyone sleep under this mosquito net9 last night?,"1=yes, 2=no, 8=not sure, -9= skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::slpnet9
 smal,BC-3 mothers all visits database FINAL,discard,,Complicated malaria Severe anemia,1=checked,NA,,,,All NA's,BC-3 mothers all visits database FINAL::smal
 smal,BC-3 mothers delivery database FINAL,discard,,Severe anemia,1=checked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::smal
+smal,BC-3 childs all visit database FINAL,keep,,Severe anemia,1=checked,NA,,,,,BC-3 childs all visit database FINAL::smal
 smnet1,BC3_Household_Survey_Data,discard,,"since you got the mosquito net1, was it ever soaked or dipped in a liquid to rep","1=yes, 2=no, 8=not sure, -9= skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::smnet1
 smnet10,BC3_Household_Survey_Data,discard,,"since you got the mosquito net10, was it ever soaked or dipped in a liquid to re","1=yes, 2=no, 8=not sure, -9= skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::smnet10
 smnet2,BC3_Household_Survey_Data,discard,,"since you got the mosquito net2, was it ever soaked or dipped in a liquid to rep","1=yes, 2=no, 8=not sure, -9= skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::smnet2
@@ -1919,6 +2338,11 @@ species,BC-3 mothers all visits database FINAL,keep,,Species,"0=Plasmodium Falci
 2=Plasmodium Ovale,
 3=Plasmodium vivax, 4=Mixed,
 9=Unknown",NA,,,,,BC-3 mothers all visits database FINAL::species
+species,BC-3 childs all visit database FINAL,keep,,Species,"0=Plasmodium Falciparum,
+1=Plasmodium Malariae,
+2=Plasmodium Ovale,
+3=Plasmodium vivax
+9=Unknown",NA,,,,How was this estimated? Similar variable? By microscopy?,BC-3 childs all visit database FINAL::species
 spontab,BC-3 mothers delivery database FINAL,keep,,Death of live infant by 28 days,"0,1",NA,,,,,BC-3 mothers delivery database FINAL::spontab
 spontab,Individual level database FINAL,discard,,Spontaneous abortion <28 weeks,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::spontab
@@ -1934,11 +2358,20 @@ stillbirthdich,BC-3 mothers delivery database FINAL,keep,,Whether stillbirth occ
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::stillbirthdich
 stillbirthdich,Individual level database FINAL,discard,,Whether stillbirth occurred dichotomized if not spontaneous abortion,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::stillbirthdich
+stool,BC-3 childs all visit database FINAL,keep,,Stool collected at 4 and 52 weeks,"0=Not Indicated,
+1=Collected,
+2=Forgot to collect,
+3=Declined",NA,,,,,BC-3 childs all visit database FINAL::stool
 stoptime,BC3_Household_Survey_Data,discard,,end time of interview,Time,NA,,,,,BC3_Household_Survey_Data::stoptime
 studydrugdate,BC-3 mothers all visits database FINAL,discard,,Date study drugs started,date,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::studydrugdate
 studydrugdate,BC-3 mothers expanded database FINAL,keep,,Date study drugs first given,Date,NA,,,,,BC-3 mothers expanded database FINAL::studydrugdate
 studydrugdate,Individual level database FINAL,discard,,Date study drugs started,date,NA,,,,DROP - Use expanded,Individual level database FINAL::studydrugdate
+studystatus,BC-3 childs expanded database FINAL,discard,,Study status,"1=stillbirth, 2=Died on day0, 3=Lost to follow-up on day0, 4=Include in analyses ( at least 1 day of follow-up)",NA,,,,,BC-3 childs expanded database FINAL::studystatus
+surgdesc,BC-3 childs hospitalizations FINAL,keep,,surgery describe,text,NA,,,,,BC-3 childs hospitalizations FINAL::surgdesc
+surgery,BC-3 childs hospitalizations FINAL,keep,,Surgery,"0=No,
+1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::surgery
 surveydone,BC3_Household_Survey_Data,discard,,Whether household surveydone,"0=No, 1=Yes      ",NA,,,,,BC3_Household_Survey_Data::surveydone
+survivaltime,BC-3 children individual level database FINAL,discard,,Time to event for survival analysis,,NA,,,,DROP,BC-3 children individual level database FINAL::survivaltime
 swater,BC3_Household_Survey_Data,keep,,what is the main source of drinking water for members of your household?,"borehole, public tap",NA,,,,,BC3_Household_Survey_Data::swater
 syph,BC-3 enrollment database FINAL,discard,,Syphilis,"0=Negative,
 1=Positive,
@@ -1956,6 +2389,8 @@ tbspla,BC-3 mothers delivery database FINAL,keep,,Thick blood smear from placent
 temp,BC-3 enrollment database FINAL,discard,,Temperature,,NA,,,,DROP - Use expanded,BC-3 enrollment database FINAL::temp
 temp,BC-3 mothers all visits database FINAL,discard,,Temperature,,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::temp
 temp,BC-3 mothers expanded database FINAL,keep,,Temperature,,NA,,,,,BC-3 mothers expanded database FINAL::temp
+temp,BC-3 childs all visit database FINAL,keep,,Temperature,,NA,,,,,BC-3 childs all visit database FINAL::temp
+temp,BC-3 childs expanded database FINAL,discard,,Temperature,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::temp
 tempgrade,BC-3 enrollment database FINAL,discard,,Temperature grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -1968,6 +2403,12 @@ tempgrade,BC-3 mothers all visits database FINAL,keep,,Temperature grade,"0 = ab
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::tempgrade
+tempgrade,BC-3 childs all visit database FINAL,keep,,Temperature grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::tempgrade
 term,BC-3 enrollment database FINAL,discard,,Term,,NA,,,,DROP - Use calculated version,BC-3 enrollment database FINAL::term
 tfaclty,BC3_Household_Survey_Data,keep,,what kind of toilet facility do members of your household usually use?,"Covered pit latrine with slab, VIP latrine, covered pit latrine no slab, uncovered pit latrine with slab, uncovered pit latrine no slab,no facility/bush/field",NA,,,,,BC3_Household_Survey_Data::tfaclty
 tfacltydich,BC3_Household_Survey_Data,keep,,what kind of toilet facility do members of your household usually use?,"0=uncovered pit latrine, 1= VIP or covered latrin",NA,,,,,BC3_Household_Survey_Data::tfacltydich
@@ -1997,8 +2438,13 @@ tv,BC3_Household_Survey_Data,keep,,television?,"1=Yes, 2=No, -9=Skipped",NA,,,,,
 txarm,BC-3 mothers all visits database FINAL,discard,,Mothers Treatment Assignment,"1=SP, 2=DP",NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::txarm
 txarm,BC-3 mothers expanded database FINAL,keep,,Mothers Treatment Assignment,"0=SP, 1=DP",NA,,,,,BC-3 mothers expanded database FINAL::txarm
 txarm,Individual level database FINAL,discard,,Mothers Treatment Assignment,"0=SP, 1=DP",NA,,,,DROP - Use expanded,Individual level database FINAL::txarm
+txarm,BC-3 children individual level database FINAL,discard,,Mothers Treatment Assignment,"1=SP, 2=DP",NA,,,,DROP - Use expanded,BC-3 children individual level database FINAL::txarm
+txarm,BC-3 childs expanded database FINAL,discard,,Mothers Treatment Assignment,"1=SP, 2=DP",NA,,,,,BC-3 childs expanded database FINAL::txarm
+unbreast,BC-3 childs all visit database FINAL,keep,,Unable to breastfeed or drink,1=checked,NA,,,,,BC-3 childs all visit database FINAL::unbreast
 uniqueid,BC-3 mothers all visits database FINAL,discard,,Unique ID number (id + date),id number + 5-digit number,NA,,,,"DROP - not loading observation ID as a variable, just as key",BC-3 mothers all visits database FINAL::uniqueid
 uniqueid,BC-3 mothers expanded database FINAL,discard,,Unique ID number = participant ID number + date,id number + 5-digit number,NA,,,,"DROP - not loading observation ID as a variable, just as key",BC-3 mothers expanded database FINAL::uniqueid
+uniqueid,BC-3 childs all visit database FINAL,discard,,Unique ID number (Participant ID + date),id number + 5-digit number,NA,,,,,BC-3 childs all visit database FINAL::uniqueid
+uniqueid,BC-3 childs expanded database FINAL,discard,,Unique ID number = participant ID number + date,id number + 5-digit number,NA,,,,,BC-3 childs expanded database FINAL::uniqueid
 uprotein,BC-3 enrollment database FINAL,discard,,,"0=0,
 1=1+,
 2=2+,
@@ -2022,6 +2468,9 @@ visittype,BC-3 enrollment database FINAL,discard,,Type of visit,2 = Enrollment v
 visittype,BC-3 mothers all visits database FINAL,keep,,Type of visit,"0=Non-routine visit,
 1=Routine visit",NA,,,,,BC-3 mothers all visits database FINAL::visittype
 visittype,BC-3 mothers expanded database FINAL,keep,,Type of visit,"0=Non-routine visit, 1=Routine visit",NA,,,,,BC-3 mothers expanded database FINAL::visittype
+visittype,BC-3 childs all visit database FINAL,keep,,Type of visit,"0=Non-routine visit,
+1=Routine visit(1,4,6,8 nad every 4 weeks thereafter)",NA,,,,,BC-3 childs all visit database FINAL::visittype
+visittype,BC-3 childs expanded database FINAL,discard,,Type of visit,"0=Non-routine visit, 1=Routine visit, 2=Birth",NA,,,,,BC-3 childs expanded database FINAL::visittype
 vom1,BC-3 mothers all visits database FINAL,discard,,Whether participant vomited day 1 dose,"0=No, 1=Vomit once",NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::vom1
 vom1,BC-3 mothers expanded database FINAL,keep,,Whether participant vomited day 1 dose,"0=No,1=Vomit once,2=Vomit twice",NA,,,,,BC-3 mothers expanded database FINAL::vom1
 vom2,BC-3 mothers all visits database FINAL,discard,,Whether participant vomited day 2 dose,"0=No, 1=Vomit once",NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::vom2
@@ -2030,6 +2479,7 @@ vom3,BC-3 mothers all visits database FINAL,discard,,Whether participant vomited
 vom3,BC-3 mothers expanded database FINAL,keep,,Whether participant vomited day 3 dose,"0=No,1=Yes",NA,,,,,BC-3 mothers expanded database FINAL::vom3
 vomdur,BC-3 enrollment database FINAL,discard,,Vomiting Duration,,NA,,,,DROP - Use all visits,BC-3 enrollment database FINAL::vomdur
 vomdur,BC-3 mothers all visits database FINAL,keep,,Vomiting Duration,,NA,,,,,BC-3 mothers all visits database FINAL::vomdur
+vomdur,BC-3 childs all visit database FINAL,keep,,Vomiting Duration,,NA,,,,,BC-3 childs all visit database FINAL::vomdur
 vomgrade,BC-3 enrollment database FINAL,discard,,Vomiting Grade,"0 = absent,
 1 = mild,
 2 = moderate,
@@ -2042,6 +2492,13 @@ vomgrade,BC-3 mothers all visits database FINAL,keep,,Vomiting Grade,"0 = absent
 3 = severe,
 4 = life threatening,
 9 = unable to assess",NA,,,,,BC-3 mothers all visits database FINAL::vomgrade
+vomgrade,BC-3 childs all visit database FINAL,keep,,Vomiting Grade,"0 = absent,
+1 = mild,
+2 = moderate,
+3 = severe,
+4 = life threatening,
+9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::vomgrade
+vomite,BC-3 childs all visit database FINAL,keep,,Vomiting everything,1=checked,NA,,,,,BC-3 childs all visit database FINAL::vomite
 vomitingae,Individual level database FINAL,discard,,(sum) vomitingAE,"0,1,2,3,4",NA,,,,aggregate observation data,Individual level database FINAL::vomitingae
 vstatus,BC3_Household_Survey_Data,keep,,result of visit,"1=completed, 2= no competent respondent household member,3=Entire household absent, 5=Refuded, 9=other",NA,,,,,BC3_Household_Survey_Data::vstatus
 watch,BC3_Household_Survey_Data,keep,, a watch?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::watch
@@ -2049,6 +2506,8 @@ wbc,BC-3 enrollment database FINAL,discard,,wbc,,NA,,,,DROP - Use expanded,BC-3 
 wbc,BC-3 mothers all visits database FINAL,keep,,WBC result,,NA,,,,DROP - Use all visits,BC-3 mothers all visits database FINAL::wbc
 wbc,BC-3 mothers delivery database FINAL,keep,,WBC,,NA,,,,,BC-3 mothers delivery database FINAL::wbc
 wbc,BC-3 mothers expanded database FINAL,discard,,WBC result,,NA,,,,DROP - Use all visits,BC-3 mothers expanded database FINAL::wbc
+wbc,BC-3 childs all visit database FINAL,keep,,WBC result,,NA,,,,,BC-3 childs all visit database FINAL::wbc
+wbc,BC-3 childs expanded database FINAL,discard,,WBC result,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::wbc
 wbcgrade,BC-3 enrollment database FINAL,discard,,WBC grade,"0 = no grade,
 1 = grade 1,
 2 = grade 2,
@@ -2067,12 +2526,20 @@ wbcgrade,BC-3 mothers delivery database FINAL,keep,,WBC grade,"0 = no grade,
 3 = grade 3,
 4 = grade 4
 ",NA,,,,,BC-3 mothers delivery database FINAL::wbcgrade
+wbcgrade,BC-3 childs all visit database FINAL,keep,,WBC grade,"0 = no grade,
+1 = grade 1,
+2 = grade 2,
+3 = grade 3,
+4 = grade 4
+",NA,,,,,BC-3 childs all visit database FINAL::wbcgrade
 wealthcat,BC3_Household_Survey_Data,keep,,Wealth index categories,"1=poorest,2=middle,3=least poor",NA,,,,,BC3_Household_Survey_Data::wealthcat
 weight,BC-3 enrollment database FINAL,discard,,Weight(kg),,NA,,,,DROP - Use expanded,BC-3 enrollment database FINAL::weight
 weight,BC-3 mothers all visits database FINAL,discard,,Weight (kg),,NA,,,,DROP - Use expanded,BC-3 mothers all visits database FINAL::weight
 weight,BC-3 mothers expanded database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 mothers expanded database FINAL::weight
-weight1,BC-3 mothers delivery database FINAL,SKIP,,,,NA,,,,,BC-3 mothers delivery database FINAL::weight1
-weight2,BC-3 mothers delivery database FINAL,SKIP,,Weight 2nd infant,,NA,,,,,BC-3 mothers delivery database FINAL::weight2
+weight,BC-3 childs all visit database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 childs all visit database FINAL::weight
+weight,BC-3 childs expanded database FINAL,discard,,Weight (kg),,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::weight
+weight1,BC-3 mothers delivery database FINAL,discard,,,,NA,,,,,BC-3 mothers delivery database FINAL::weight1
+weight2,BC-3 mothers delivery database FINAL,discard,,Weight 2nd infant,,NA,,,,,BC-3 mothers delivery database FINAL::weight2
 wheren1,BC3_Household_Survey_Data,discard,,where did you get the mosquito net1 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren1
 wheren10,BC3_Household_Survey_Data,discard,,where did you get the mosquito net10 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren10
 wheren2,BC3_Household_Survey_Data,discard,,where did you get the mosquito net2 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren2
@@ -2085,6 +2552,8 @@ wheren8,BC3_Household_Survey_Data,discard,,where did you get the mosquito net8 f
 wheren9,BC3_Household_Survey_Data,discard,,where did you get the mosquito net9 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren9
 windowscat,BC3_Household_Survey_Data,discard,,Number of windows present,"0=None, 1 = 1 window, 2= 2 or more windows",NA,,,,,BC3_Household_Survey_Data::windowscat
 withdrawaldate,BC-3 mothers expanded database FINAL,keep,,Date prematurely withdrawn from the study,Date,NA,,,,,BC-3 mothers expanded database FINAL::withdrawaldate
+withdrawaldate,BC-3 childs expanded database FINAL,discard,,Date prematurely withdrawn from the study,date,NA,dup,date,,DROP - Use children individual,BC-3 childs expanded database FINAL::withdrawaldate
+withdrawaldate,BC-3 children individual level database FINAL,keep,,Date prematurely withdrawn from the study,date,NA,yes,date,,Duplicate with enddate,BC-3 children individual level database FINAL::withdrawaldate
 withdrawalreason,BC-3 mothers expanded database FINAL,keep,,Reason for study withdrawal,"1=Participant unable to be located for > 60 days
 2=Participant moved out of study area
 3=Participant death (complete Death CRF)
@@ -2103,6 +2572,26 @@ withdrawalreason,Individual level database FINAL,keep,,Reason for study withdraw
 7=Subject or parent/guardian judged by the site investigator to be at significant risk ..
 8=Women found to have become HIV-infected during pregnancy or at delivery (infants excluded from study)
 9=Participant completed the study ",NA,,,,,Individual level database FINAL::withdrawalreason
+withdrawalreason,BC-3 childs expanded database FINAL,discard,,Reason for study withdrawal,"1=Participant unable to be located for > 60 days
+2=Participant moved out of study area
+3=Participant death (complete Death CRF)
+4=Withdrawal of informed consent
+5=Inability to comply with the study schedule and procedures
+6=At the discretion of the site investigator if the study is not in the best interest of the participant
+7=Subject or parent/guardian judged by the site investigator to be at significant risk ..
+8=Women found to have become HIV-infected during pregnancy or at delivery (infants excluded from study)
+9=Participant completed the study ",NA,dup,,,DROP - Use children individual,BC-3 childs expanded database FINAL::withdrawalreason
+withdrawalreason,BC-3 children individual level database FINAL,keep,,Reason for study withdrawal,"1=Participant unable to be located for > 60 days
+2=Participant moved out of study area
+3=Participant death (complete Death CRF)
+4=Withdrawal of informed consent
+5=Inability to comply with the study schedule and procedures
+6=At the discretion of the site investigator if the study is not in the best interest of the participant
+7=Subject or parent/guardian judged by the site investigator to be at significant risk ..
+8=Women found to have become HIV-infected during pregnancy or at delivery (infants excluded from study)
+9=Participant completed the study ",NA,,,,,BC-3 children individual level database FINAL::withdrawalreason
+wksage,BC-3 childs all visit database FINAL,keep,,if routine visit weeks of age,,NA,,,,,BC-3 childs all visit database FINAL::wksage
+wksage,BC-3 childs expanded database FINAL,discard,,if routine visit weeks of age,,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::wksage
 wndcov1,BC3_Household_Survey_Data,discard,,observation: is the window1 covered?,"1=completely covered, 2=partially covered, 3=open, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wndcov1
 wndcov10,BC3_Household_Survey_Data,discard,,observation: is the window10 covered?,"1=completely covered, 2=partially covered, 3=open, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wndcov10
 wndcov11,BC3_Household_Survey_Data,discard,,observation: is the window11 covered?,"1=completely covered, 2=partially covered, 3=open, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wndcov11
@@ -2128,492 +2617,3 @@ wndopn7,BC3_Household_Survey_Data,discard,,observation: does the window7 open to
 wndopn8,BC3_Household_Survey_Data,discard,,observation: does the window8 open to the outside,"1=Yes, 2=No, -9=Skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wndopn8
 wndopn9,BC3_Household_Survey_Data,discard,,observation: does the window9 open to the outside,"1=Yes, 2=No, -9=Skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wndopn9
 wspray,BC3_Household_Survey_Data,keep,,who sprayed the dwelling?,"2=private company, 8=don’t know, -9=skipped",NA,,,,,BC3_Household_Survey_Data::wspray
-anyhp,BC-3 childs expanded database FINAL,discard,,Any placental malaria by histopathology,"0=No,1=Yes",NA,,,,DROP - Use individual,BC-3 childs expanded database FINAL::anyhp
-bsdich,BC-3 childs expanded database FINAL,discard,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::bsdich
-bsdichenroll,BC-3 childs expanded database FINAL,discard,,Parasite prevalence by microscopy at enrollment,"0=Negative, 1=positive",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::bsdichenroll
-bweight,BC-3 childs expanded database FINAL,discard,,Birth weight,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::bweight
-enddate,BC-3 childs expanded database FINAL,discard,,Last day in the study,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::enddate
-enrollage,BC-3 childs expanded database FINAL,discard,,Age at enrollment in years,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::enrollage
-enrolldate,BC-3 childs expanded database FINAL,discard,,Mother's date of enrollment,date,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::enrolldate
-gacat,BC-3 childs expanded database FINAL,discard,,Gestatinal age at enrollment categories,"1=(12-16weeks), 2=(>16-20 weeks)",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gacat
-gaenroll,BC-3 childs expanded database FINAL,discard,,Gestational age at enrollment,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gaenroll
-gender,BC-3 childs expanded database FINAL,discard,,Gender,"1=male, 2=female",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gender
-gestage,BC-3 childs expanded database FINAL,discard,,Gestational age at birth in weeks,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gestage
-gravidcat,BC-3 childs expanded database FINAL,discard,,Categories of gravidity,"1,2,3=>3",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gravidcat
-gravidity,BC-3 childs expanded database FINAL,discard,,Total number of pregnancies,"1,2,3,4,5,6,7,8,9",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::gravidity
-infstatus,BC-3 childs expanded database FINAL,discard,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::infstatus
-lbw,BC-3 childs expanded database FINAL,discard,,Low birth weight (< 2500gm),"0=No,1=Yes",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::lbw
-matbsdich,BC-3 childs expanded database FINAL,discard,,Number of positive routine BS during pregnancy,"0,1,2,3,4,5,6,7",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matbsdich
-matbsdone,BC-3 childs expanded database FINAL,discard,,Total number of routine BS during pregnancy,"3,4,5,6,7,8",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matbsdone
-matdaysrisk,BC-3 childs expanded database FINAL,discard,,Mother's days at risk for malaria during pregnancy,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matdaysrisk
-matmalaria,BC-3 childs expanded database FINAL,discard,,Episodes of malaria during pregnancy,"0,1,2,3",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matmalaria
-matmalincidence,BC-3 childs expanded database FINAL,discard,,Incidence of malaria PPY during pregnancy,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matmalincidence
-matpp,BC-3 childs expanded database FINAL,discard,,Parasite prevalence by microscopy during pregnancy,,NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::matpp
-motherbsdich,BC-3 childs expanded database FINAL,discard,,maternal peripheral BS dichotomized,"0,1,2",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::motherbsdich
-placentalbsdich,BC-3 childs expanded database FINAL,discard,,placental BS dichotomized,"0,1,2",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::placentalbsdich
-placentallampdich,BC-3 childs expanded database FINAL,discard,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::placentallampdich
-preterm,BC-3 childs expanded database FINAL,discard,,Preterm delivery (< 37 weeks),"0=No,1=Yes",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::preterm
-rogerson,BC-3 childs expanded database FINAL,discard,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::rogerson
-survivaltime,BC-3 children individual level database FINAL,discard,,Time to event for survival analysis,,NA,,,,DROP,BC-3 children individual level database FINAL::survivaltime
-withdrawaldate,BC-3 childs expanded database FINAL,discard,,Date prematurely withdrawn from the study,date,NA,dup,date,,DROP - Use individual,BC-3 childs expanded database FINAL::withdrawaldate
-withdrawalreason,BC-3 childs expanded database FINAL,discard,,Reason for study withdrawal,"1=Participant unable to be located for > 60 days
-2=Participant moved out of study area
-3=Participant death (complete Death CRF)
-4=Withdrawal of informed consent
-5=Inability to comply with the study schedule and procedures
-6=At the discretion of the site investigator if the study is not in the best interest of the participant
-7=Subject or parent/guardian judged by the site investigator to be at significant risk ..
-8=Women found to have become HIV-infected during pregnancy or at delivery (infants excluded from study)
-9=Participant completed the study ",NA,dup,,,DROP - Use individual,BC-3 childs expanded database FINAL::withdrawalreason
-age,BC-3 childs expanded database FINAL,keep,,Age in months,,NA,,,,,BC-3 childs expanded database FINAL::age
-age0to12,BC-3 children individual level database FINAL,discard,,(sum) age0to12,,NA,,,,Define,BC-3 children individual level database FINAL::age0to12
-age0to3,BC-3 children individual level database FINAL,discard,,(sum) age0to3,,NA,,,,Define,BC-3 children individual level database FINAL::age0to3
-age3to9,BC-3 children individual level database FINAL,discard,,(sum) age3to9,,NA,,,,Define,BC-3 children individual level database FINAL::age3to9
-age9to12,BC-3 children individual level database FINAL,discard,,(sum) age9to12,,NA,,,,Define,BC-3 children individual level database FINAL::age9to12
-agecat,BC-3 childs expanded database FINAL,keep,,Age categories,,NA,,,,,BC-3 childs expanded database FINAL::agecat
-altgrade,BC-3 childs all visit database FINAL,keep,,ALT (IU/L) grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::altgrade
-anorexdur,BC-3 childs all visit database FINAL,keep,,Anorexia Duration,,NA,,,,,BC-3 childs all visit database FINAL::anorexdur
-anorexgrade,BC-3 childs all visit database FINAL,keep,,Anorexia Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::anorexgrade
-antibiot,BC-3 childs hospitalizations FINAL,keep,,Intravenous antibiotics,"0=No,
-1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::antibiot
-anyhb,BC-3 childs expanded database FINAL,keep,,Hemoglobin level (from CBC or hemocue),,NA,,,,Confirm units,BC-3 childs expanded database FINAL::anyhb
-anyhp,BC-3 children individual level database FINAL,keep,,Any placental malaria by histopathology,"0=No,
-1=Yes",NA,,,,,BC-3 children individual level database FINAL::anyhp
-anymalaria,BC-3 childs expanded database FINAL,keep,,Malaria diagnosed today,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::anymalaria
-autopsy,BC-3 childs deaths FINAL,keep,,information obtained as Autopsy report,1=checked,NA,,,,,BC-3 childs deaths FINAL::autopsy
-blood,BC-3 childs hospitalizations FINAL,keep,,Blood transfusion,"0=No,
-1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::blood
-bloodsmr,BC-3 childs all visit database FINAL,keep,,Thick blood smear,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::bloodsmr
-bloodsmr,BC-3 childs expanded database FINAL,keep,,Thick blood smear,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
-",NA,,,,,BC-3 childs expanded database FINAL::bloodsmr
-bp,BC-3 childs all visit database FINAL,keep,,Blood pressure (mm Hg),,NA,,,,,BC-3 childs all visit database FINAL::bp
-bsdich,BC-3 childs all visit database FINAL,keep,,Blood smear results dichotomized,"0=Negative BS, 1=Positive Bs",NA,,,,,BC-3 childs all visit database FINAL::bsdich
-bsdichenroll,BC-3 children individual level database FINAL,keep,,Parasite prevalence by microscopy at enrollment,"0=Negative BS, 1=Positive Bs",NA,,,,"Asexual Plasmodium parasites present, by microscopy",BC-3 children individual level database FINAL::bsdichenroll
-bweight,BC-3 children individual level database FINAL,keep,,Birth weight,,NA,,,,,BC-3 children individual level database FINAL::bweight
-cbc,BC-3 childs all visit database FINAL,keep,,CBC (purple top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::cbc
-cbc,BC-3 childs expanded database FINAL,keep,,CBC (purple top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
-",NA,,,,,BC-3 childs expanded database FINAL::cbc
-chilldur,BC-3 childs all visit database FINAL,keep,,Chill Duration,,NA,,,,,BC-3 childs all visit database FINAL::chilldur
-chillgrade,BC-3 childs all visit database FINAL,keep,,Chill Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::chillgrade
-chosp,BC-3 childs all visit database FINAL,keep,,was the child hospitalized today,"0=Not referred,
-1=Referred",NA,,,,,BC-3 childs all visit database FINAL::chosp
-cmal,BC-3 childs all visit database FINAL,keep,,Cerebral malaria,1=checked,NA,,,,,BC-3 childs all visit database FINAL::cmal
-compmal,BC-3 children individual level database FINAL,keep,,(sum) compmal,,NA,,,,Define,BC-3 children individual level database FINAL::compmal
-contexpln,BC-3 childs deaths FINAL,keep,,Contact report explanation,,NA,,,,,BC-3 childs deaths FINAL::contexpln
-contreport,BC-3 childs deaths FINAL,discard,,information obtained as Contact report,1=checked,NA,,,,,BC-3 childs deaths FINAL::contreport
-convul,BC-3 childs all visit database FINAL,keep,,1-2 convulsions over 24 hour period,1=checked,NA,,,,,BC-3 childs all visit database FINAL::convul
-coughdur,BC-3 childs all visit database FINAL,keep,,Cough Duration,,NA,,,,,BC-3 childs all visit database FINAL::coughdur
-coughgrade,BC-3 childs all visit database FINAL,keep,,Cough Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::coughgrade
-cv,BC-3 childs all visit database FINAL,keep,,cv,,NA,,,,Define,BC-3 childs all visit database FINAL::cv
-cvdur,BC-3 childs all visit database FINAL,keep,,CV Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::cvdur
-cvgrade,BC-3 childs all visit database FINAL,keep,,CV Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::cvgrade
-date,BC-3 childs all visit database FINAL,keep,,Visit date,date,NA,,,,,BC-3 childs all visit database FINAL::date
-date,BC-3 childs deaths FINAL,keep,,Visit date,date,NA,,,,,BC-3 childs deaths FINAL::date
-date,BC-3 childs expanded database FINAL,keep,,Date of observation,date,NA,,,,,BC-3 childs expanded database FINAL::date
-date,BC-3 childs hospitalizations FINAL,keep,,Date form completed,date,NA,,,,,BC-3 childs hospitalizations FINAL::date
-date1,BC-3 childs all visit database FINAL,keep,,last date given medication 1,date,NA,,,,,BC-3 childs all visit database FINAL::date1
-date1stmalaria,BC-3 children individual level database FINAL,keep,,Date of first episode of malaria,date,NA,,,,,BC-3 children individual level database FINAL::date1stmalaria
-date2,BC-3 childs all visit database FINAL,keep,,last date given medication 2,date,NA,,,,,BC-3 childs all visit database FINAL::date2
-date3,BC-3 childs all visit database FINAL,keep,,last date given medication 3,date,NA,,,,,BC-3 childs all visit database FINAL::date3
-date4,BC-3 childs all visit database FINAL,keep,,last date given medication 4,date,NA,,,,,BC-3 childs all visit database FINAL::date4
-datedisch,BC-3 childs hospitalizations FINAL,keep,,Date of Discharge,date,NA,,,,,BC-3 childs hospitalizations FINAL::datedisch
-datehosp,BC-3 childs hospitalizations FINAL,keep,,Date of Admission,date,NA,,,,,BC-3 childs hospitalizations FINAL::datehosp
-days,BC-3 childs expanded database FINAL,keep,,value of 1 for each day of obervation,1,NA,,,,,BC-3 childs expanded database FINAL::days
-deathd,BC-3 childs deaths FINAL,keep,,Date of death,date,NA,,,,,BC-3 childs deaths FINAL::deathd
-deathdx1,BC-3 childs deaths FINAL,keep,,1st cause of death,,NA,,,,Consider relabeling/IRI first cause of death,BC-3 childs deaths FINAL::deathdx1
-deathdx2,BC-3 childs deaths FINAL,keep,,2st cause of death,,NA,,,,Consider relabeling/IRI 2nd cause of death,BC-3 childs deaths FINAL::deathdx2
-deathdx3,BC-3 childs deaths FINAL,keep,,3st cause of death,,NA,,,,Consider relabeling/IRI third cause of death,BC-3 childs deaths FINAL::deathdx3
-diag1,BC-3 childs all visit database FINAL,keep,,Diagnosis1,,NA,,,,,BC-3 childs all visit database FINAL::diag1
-diag1,BC-3 childs expanded database FINAL,keep,,Diagnosis1,,NA,,,,Difference between Diganosis1-7?,BC-3 childs expanded database FINAL::diag1
-diag2,BC-3 childs all visit database FINAL,keep,,Diagnosis2,,NA,,,,,BC-3 childs all visit database FINAL::diag2
-diag2,BC-3 childs expanded database FINAL,keep,,Diagnosis2,,NA,,,,,BC-3 childs expanded database FINAL::diag2
-diag3,BC-3 childs all visit database FINAL,keep,,Diagnosis3,,NA,,,,,BC-3 childs all visit database FINAL::diag3
-diag3,BC-3 childs expanded database FINAL,keep,,Diagnosis3,,NA,,,,,BC-3 childs expanded database FINAL::diag3
-diag4,BC-3 childs all visit database FINAL,keep,,Diagnosis4,,NA,,,,,BC-3 childs all visit database FINAL::diag4
-diag4,BC-3 childs expanded database FINAL,keep,,Diagnosis4,,NA,,,,,BC-3 childs expanded database FINAL::diag4
-diag5,BC-3 childs all visit database FINAL,keep,,Diagnosis5,,NA,,,,,BC-3 childs all visit database FINAL::diag5
-diag5,BC-3 childs expanded database FINAL,keep,,Diagnosis5,,NA,,,,,BC-3 childs expanded database FINAL::diag5
-diag6,BC-3 childs all visit database FINAL,keep,,Diagnosis6,,NA,,,,,BC-3 childs all visit database FINAL::diag6
-diag6,BC-3 childs expanded database FINAL,keep,,Diagnosis6,,NA,,,,,BC-3 childs expanded database FINAL::diag6
-diag7,BC-3 childs all visit database FINAL,keep,,Diagnosis7,,NA,,,,,BC-3 childs all visit database FINAL::diag7
-diag7,BC-3 childs expanded database FINAL,keep,,Diagnosis7,,NA,,,,,BC-3 childs expanded database FINAL::diag7
-diarrdur,BC-3 childs all visit database FINAL,keep,,Diarrhea Duration,,NA,,,,,BC-3 childs all visit database FINAL::diarrdur
-diarrgrade,BC-3 childs all visit database FINAL,keep,,Diarrhea Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::diarrgrade
-dob,BC-3 children individual level database FINAL,keep,,Date of birth,date,NA,,,,,BC-3 children individual level database FINAL::dob
-dob,BC-3 childs expanded database FINAL,keep,,Date of birth,date,NA,,,,,BC-3 childs expanded database FINAL::dob
-duration,BC-3 childs expanded database FINAL,keep,,Duration of follow-up,,NA,,,,,BC-3 childs expanded database FINAL::duration
-dysphdur,BC-3 childs all visit database FINAL,keep,,Dysphagia Duration,,NA,,,,,BC-3 childs all visit database FINAL::dysphdur
-dysphgrade,BC-3 childs all visit database FINAL,keep,,Dysphagia Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::dysphgrade
-enddate,BC-3 children individual level database FINAL,keep,,Last day in the study,date,NA,,,,,BC-3 children individual level database FINAL::enddate
-endo,BC-3 childs all visit database FINAL,keep,,Endo,,NA,,,,,BC-3 childs all visit database FINAL::endo
-endodur,BC-3 childs all visit database FINAL,keep,,Endo Duration,,NA,,,,,BC-3 childs all visit database FINAL::endodur
-endograde,BC-3 childs all visit database FINAL,keep,,Endo Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::endograde
-enrollage,BC-3 children individual level database FINAL,keep,,Mothers age at enrollment in years,,NA,,,,,BC-3 children individual level database FINAL::enrollage
-enrolldate,BC-3 children individual level database FINAL,keep,,Mother's date of enrollment,date,NA,,,,,BC-3 children individual level database FINAL::enrolldate
-eye,BC-3 childs all visit database FINAL,keep,,Eye,,NA,,,,,BC-3 childs all visit database FINAL::eye
-eyedur,BC-3 childs all visit database FINAL,keep,,Eye Duration,,NA,,,,,BC-3 childs all visit database FINAL::eyedur
-eyegrade,BC-3 childs all visit database FINAL,keep,,Eye Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::eyegrade
-fatigdur,BC-3 childs all visit database FINAL,keep,,Fatigue Duration,,NA,,,,,BC-3 childs all visit database FINAL::fatigdur
-fatiggrade,BC-3 childs all visit database FINAL,keep,,Fatigue Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::fatiggrade
-febrile,BC-3 childs all visit database FINAL,keep,,Whether child was febrile,"0=No,
-1=Yes",NA,,,,,BC-3 childs all visit database FINAL::febrile
-febrile,BC-3 childs expanded database FINAL,keep,,Whether child was febrile,,NA,,,,Different values than Fever,BC-3 childs expanded database FINAL::febrile
-fever,BC-3 childs all visit database FINAL,keep,,Fever,"0=No,
-1=Yes",NA,,,,,BC-3 childs all visit database FINAL::fever
-fever,BC-3 childs expanded database FINAL,keep,,Fever,"0=No,1=Yes",NA,,,,,BC-3 childs expanded database FINAL::fever
-feverdur,BC-3 childs all visit database FINAL,keep,,Fever Duration,,NA,,,,,BC-3 childs all visit database FINAL::feverdur
-filterpap,BC-3 childs all visit database FINAL,keep,,filter paper,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::filterpap
-filterpap,BC-3 childs expanded database FINAL,keep,,filter paper,"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
-",NA,,,,,BC-3 childs expanded database FINAL::filterpap
-firstmalaria,BC-3 children individual level database FINAL,keep,,Whether the child has had malaria,"0=No, 1=Yes",NA,,,,,BC-3 children individual level database FINAL::firstmalaria
-fluids,BC-3 childs hospitalizations FINAL,keep,,Intravenous fluids,"0=No,
-1=Yes",NA,,,,"Not necessarily diarrhea treament, use new IRI",BC-3 childs hospitalizations FINAL::fluids
-gacat,BC-3 children individual level database FINAL,keep,,Gestatinal age at enrollment categories,"1=(12-16weeks), 2=(>16-20 weeks)",NA,,,,,BC-3 children individual level database FINAL::gacat
-gaenroll,BC-3 children individual level database FINAL,keep,,Gestational age at enrollment,,NA,,,,,BC-3 children individual level database FINAL::gaenroll
-game,BC-3 childs all visit database FINAL,keep,,Gametocytes,"0 = Absent,1 = Present",NA,,,,,BC-3 childs all visit database FINAL::game
-game,BC-3 childs expanded database FINAL,keep,,Gametocytes,"0 = Absent,1 = Present",NA,,,,,BC-3 childs expanded database FINAL::game
-game1,BC-3 childs all visit database FINAL,keep,,gametocytes1,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game1
-game2,BC-3 childs all visit database FINAL,keep,,gametocytes2,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game2
-game3,BC-3 childs all visit database FINAL,keep,,gametocytes3,"0 = Absent,1 = Present",NA,,,,Difference between this and game?,BC-3 childs all visit database FINAL::game3
-gender,BC-3 children individual level database FINAL,keep,,Gender,"1=Male, 2=Female",NA,,,,,BC-3 children individual level database FINAL::gender
-gestage,BC-3 children individual level database FINAL,keep,,Gestational age at birth in weeks,,NA,,,,,BC-3 children individual level database FINAL::gestage
-gi,BC-3 childs all visit database FINAL,keep,,gi,,NA,,,,,BC-3 childs all visit database FINAL::gi
-gidur,BC-3 childs all visit database FINAL,keep,,GI Duration,,NA,,,,,BC-3 childs all visit database FINAL::gidur
-gigrade,BC-3 childs all visit database FINAL,keep,,GI Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::gigrade
-gravidcat,BC-3 children individual level database FINAL,keep,,Categories of gravidity,"1,2,3=>3",NA,,,,,BC-3 children individual level database FINAL::gravidcat
-gravidity,BC-3 children individual level database FINAL,keep,,Total number of pregnancies,,NA,,,,,BC-3 children individual level database FINAL::gravidity
-gu,BC-3 childs all visit database FINAL,keep,,gu,,NA,,,,,BC-3 childs all visit database FINAL::gu
-gudur,BC-3 childs all visit database FINAL,keep,,GU Duration,,NA,,,,,BC-3 childs all visit database FINAL::gudur
-gugrade,BC-3 childs all visit database FINAL,keep,,GU Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::gugrade
-hb,BC-3 childs all visit database FINAL,keep,,hemoglobin result,,NA,,,,,BC-3 childs all visit database FINAL::hb
-hb,BC-3 childs expanded database FINAL,keep,,hemoglobin result,,NA,,,,,BC-3 childs expanded database FINAL::hb
-hb10,BC-3 childs expanded database FINAL,keep,,Hb < 10 gm/dL,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::hb10
-hb8,BC-3 childs expanded database FINAL,keep,,Hb < 8 gm/dL,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::hb8
-hbgrade,BC-3 childs all visit database FINAL,keep,,hemoglobin grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::hbgrade
-headcircum,BC-3 childs all visit database FINAL,keep,,Head circumference,,NA,,,,,BC-3 childs all visit database FINAL::headcircum
-height,BC-3 childs all visit database FINAL,keep,,Height (cm),,NA,,,,,BC-3 childs all visit database FINAL::height
-height,BC-3 childs expanded database FINAL,keep,,Height (cm),,NA,,,,,BC-3 childs expanded database FINAL::height
-hemocue,BC-3 childs all visit database FINAL,keep,,Urgent Hb,,NA,,,,,BC-3 childs all visit database FINAL::hemocue
-hemocue,BC-3 childs expanded database FINAL,keep,,Urgent Hb,,NA,,,,,BC-3 childs expanded database FINAL::hemocue
-hemograde,BC-3 childs all visit database FINAL,keep,,urgent Hb grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::hemograde
-hospdx1,BC-3 childs hospitalizations FINAL,keep,,1st Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx1
-hospdx2,BC-3 childs hospitalizations FINAL,keep,,2nd Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx2
-hospdx3,BC-3 childs hospitalizations FINAL,keep,,3rd Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx3
-hospdx4,BC-3 childs hospitalizations FINAL,keep,,4th Diagnosis,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::hospdx4
-hospitalized,BC-3 children individual level database FINAL,keep,,(sum) hospitalized,,NA,,,,,BC-3 children individual level database FINAL::hospitalized
-hospitalized,BC-3 childs expanded database FINAL,keep,,Hospitalized on this day,"0=No, 1=Yes",NA,,,,Not same as individual data.,BC-3 childs expanded database FINAL::hospitalized
-hospre,BC-3 childs deaths FINAL,keep,,information obtained as Hospital record,1=checked,NA,,,,,BC-3 childs deaths FINAL::hospre
-hrate,BC-3 childs all visit database FINAL,keep,,Heart rate,,NA,,,,,BC-3 childs all visit database FINAL::hrate
-id,BC-3 children individual level database FINAL,keep,,Study ID,5 digits,NA,,,,,BC-3 children individual level database FINAL::id
-id,BC-3 childs all visit database FINAL,keep,,Study Id,5 digits,NA,,,,,BC-3 childs all visit database FINAL::id
-id,BC-3 childs deaths FINAL,keep,,Study Id,5 digits,NA,,,,,BC-3 childs deaths FINAL::id
-id,BC-3 childs expanded database FINAL,keep,,Study ID,5 digit number,NA,,,,,BC-3 childs expanded database FINAL::id
-id,BC-3 childs hospitalizations FINAL,keep,,Study ID,numeric,NA,,,,,BC-3 childs hospitalizations FINAL::id
-immunolog,BC-3 childs all visit database FINAL,keep,,Immunology studies (yellow top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined",NA,,,,,BC-3 childs all visit database FINAL::immunolog
-immunolog,BC-3 childs expanded database FINAL,keep,,Immunology studies (yellow top),"0=Not Indicated,1=Collected,2=Forgot to collect,3=Declined
-",NA,,,,,BC-3 childs expanded database FINAL::immunolog
-inability,BC-3 childs all visit database FINAL,keep,,Inability to sit up or stand,1=checked,NA,,,,,BC-3 childs all visit database FINAL::inability
-incidentmalaria,BC-3 childs expanded database FINAL,keep,,Incident episode of malaria,"0=No, 1=Yes",NA,,,,,BC-3 childs expanded database FINAL::incidentmalaria
-incidentnmfever,BC-3 children individual level database FINAL,keep,,(sum) incidentnmfever,,NA,,,,aggregate observation data,BC-3 children individual level database FINAL::incidentnmfever
-infstatus,BC-3 children individual level database FINAL,keep,,Status of Infant at delivery,"1=Alive,2=Macerated stillbirth,3=Fresh stillbirth",NA,,,,,BC-3 children individual level database FINAL::infstatus
-itn,BC-3 childs all visit database FINAL,keep,,Did the child sleep under an ITN last night,"0=No,
-1=Yes",NA,,,,,BC-3 childs all visit database FINAL::itn
-itn,BC-3 childs expanded database FINAL,keep,,Did the child sleep under an ITN last night,"0=No,1=Yes",NA,,,,,BC-3 childs expanded database FINAL::itn
-lbw,BC-3 children individual level database FINAL,keep,,Low birth weight (< 2500gm),"0=No,
-1=Yes",NA,,,,,BC-3 children individual level database FINAL::lbw
-letha,BC-3 childs all visit database FINAL,keep,,Lethargy,1=checked,NA,,,,,BC-3 childs all visit database FINAL::letha
-mal0to12,BC-3 children individual level database FINAL,discard,,(sum) mal0to12,,NA,,,,Define,BC-3 children individual level database FINAL::mal0to12
-mal0to3,BC-3 children individual level database FINAL,discard,,(sum) mal0to3,,NA,,,,Define,BC-3 children individual level database FINAL::mal0to3
-mal3to9,BC-3 children individual level database FINAL,discard,,(sum) mal3to9,,NA,,,,Define,BC-3 children individual level database FINAL::mal3to9
-mal9to12,BC-3 children individual level database FINAL,discard,,(sum) mal9to12,,NA,,,,Define,BC-3 children individual level database FINAL::mal9to12
-malariafuday,BC-3 childs expanded database FINAL,keep,,Malaria follow-up day,,NA,,,,,BC-3 childs expanded database FINAL::malariafuday
-matbsdich,BC-3 children individual level database FINAL,keep,,Number of positive routine BS during pregnancy,,NA,,,,aggregate observation data,BC-3 children individual level database FINAL::matbsdich
-matbsdone,BC-3 children individual level database FINAL,keep,,Total number of routine BS during pregnancy,"3,4,5,6,7,8",NA,,,,Maternal,BC-3 children individual level database FINAL::matbsdone
-matdaysrisk,BC-3 children individual level database FINAL,keep,,Mother's days at risk for malaria during pregnancy,,NA,,,,Maternal,BC-3 children individual level database FINAL::matdaysrisk
-matmalaria,BC-3 children individual level database FINAL,keep,,Episodes of malaria during pregnancy,"0,1,2,3",NA,,,,,BC-3 children individual level database FINAL::matmalaria
-matmalincidence,BC-3 children individual level database FINAL,keep,,Incidence of malaria PPY during pregnancy,,NA,,,,,BC-3 children individual level database FINAL::matmalincidence
-matpp,BC-3 children individual level database FINAL,keep,,Parasite prevalence by microscopy during pregnancy,,NA,,,,,BC-3 children individual level database FINAL::matpp
-mdeath,BC-3 childs deaths FINAL,keep,,Was subjects death related to malaria,"0=No,
-1=Definitely,
-2=Probably,
-3=Possibly,
-9=unknown        ",NA,,,,,BC-3 childs deaths FINAL::mdeath
-med1,BC-3 childs all visit database FINAL,keep,,Medication1,,NA,,,,,BC-3 childs all visit database FINAL::med1
-med2,BC-3 childs all visit database FINAL,keep,,Medication2,,NA,,,,,BC-3 childs all visit database FINAL::med2
-med3,BC-3 childs all visit database FINAL,keep,,Medication3,,NA,,,,,BC-3 childs all visit database FINAL::med3
-med4,BC-3 childs all visit database FINAL,keep,,Medication 4,,NA,,,,,BC-3 childs all visit database FINAL::med4
-mortality,BC-3 children individual level database FINAL,keep,,(sum) mortality,,NA,,,,,BC-3 children individual level database FINAL::mortality
-motherbsdich,BC-3 children individual level database FINAL,keep,,maternal peripheral BS dichotomized,,NA,,,,,BC-3 children individual level database FINAL::motherbsdich
-motherid,BC-3 children individual level database FINAL,keep,,Mother's ID number,5 digits,NA,,,,,BC-3 children individual level database FINAL::motherid
-motherid,BC-3 childs expanded database FINAL,keep,,Mother's ID number,5 digit number,NA,,,,,BC-3 childs expanded database FINAL::motherid
-mseiz,BC-3 childs all visit database FINAL,keep,,3 or more seizures over 24 hours,1=checked,NA,,,,,BC-3 childs all visit database FINAL::mseiz
-msk,BC-3 childs all visit database FINAL,keep,,msk,,NA,,,,,BC-3 childs all visit database FINAL::msk
-mskdur,BC-3 childs all visit database FINAL,keep,,MSK Duration,,NA,,,,,BC-3 childs all visit database FINAL::mskdur
-mskgrade,BC-3 childs all visit database FINAL,keep,,MSK Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::mskgrade
-mstatus,BC-3 childs all visit database FINAL,keep,,Malaria status,"0=No Malaria diagnosed today,
-1=Uncomplicated malaria treated with AL,
-2=Complicated malaria treated with quinine",NA,,,,,BC-3 childs all visit database FINAL::mstatus
-mstatus,BC-3 childs expanded database FINAL,keep,,Malaria status,"0=No malaria,1=Uncomplicated(AL),2=Complicated malaria(Quinine),3=AL treatment failure,4=Quinine/artesunate treatment failure",NA,,,,,BC-3 childs expanded database FINAL::mstatus
-n,BC-3 childs expanded database FINAL,keep,,total days of observation,,NA,,,,,BC-3 childs expanded database FINAL::n
-namehosp,BC-3 childs hospitalizations FINAL,keep,,Hospital,"1=Masafu General Hospital,
-2=Tororo General District Hospital ,  
-3=Mbale Regional Referral Hospital,
-4=Mulago National Referral Hospital,
-5=Cure Children’s Hospital,
-6=Other",NA,,,,,BC-3 childs hospitalizations FINAL::namehosp
-neuro,BC-3 childs all visit database FINAL,keep,,Neuro,,NA,,,,,BC-3 childs all visit database FINAL::neuro
-neurodur,BC-3 childs all visit database FINAL,keep,,Neuro Duration,,NA,,,,,BC-3 childs all visit database FINAL::neurodur
-neurograde,BC-3 childs all visit database FINAL,keep,,Neuro Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::neurograde
-neutro,BC-3 childs all visit database FINAL,keep,,Neutrophils result,,NA,,,,,BC-3 childs all visit database FINAL::neutro
-neutro,BC-3 childs expanded database FINAL,keep,,Neutrophils result,,NA,,,,,BC-3 childs expanded database FINAL::neutro
-neutrograde,BC-3 childs all visit database FINAL,keep,,neutropils grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::neutrograde
-nextage,BC-3 childs all visit database FINAL,keep,,age at next routine visit,,NA,,,,,BC-3 childs all visit database FINAL::nextage
-nextvst,BC-3 childs all visit database FINAL,keep,,date of next scheduled clinic visit,date,NA,,,,,BC-3 childs all visit database FINAL::nextvst
-nmed1,BC-3 childs all visit database FINAL,keep,,new medication1,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed1
-nmed1,BC-3 childs expanded database FINAL,keep,,new medication1,,NA,,,,,BC-3 childs expanded database FINAL::nmed1
-nmed2,BC-3 childs all visit database FINAL,keep,,new medication2,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed2
-nmed2,BC-3 childs expanded database FINAL,keep,,new medication2,,NA,,,,,BC-3 childs expanded database FINAL::nmed2
-nmed3,BC-3 childs all visit database FINAL,keep,,new medication3,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed3
-nmed3,BC-3 childs expanded database FINAL,keep,,new medication3,,NA,,,,,BC-3 childs expanded database FINAL::nmed3
-nmed4,BC-3 childs all visit database FINAL,keep,,new medication4,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed4
-nmed4,BC-3 childs expanded database FINAL,keep,,new medication4,,NA,,,,,BC-3 childs expanded database FINAL::nmed4
-nmed5,BC-3 childs all visit database FINAL,keep,,new medication5,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed5
-nmed5,BC-3 childs expanded database FINAL,keep,,new medication5,,NA,,,,,BC-3 childs expanded database FINAL::nmed5
-nmed6,BC-3 childs all visit database FINAL,keep,,new medication6,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed6
-nmed6,BC-3 childs expanded database FINAL,keep,,new medication6,,NA,,,,,BC-3 childs expanded database FINAL::nmed6
-nmed7,BC-3 childs all visit database FINAL,keep,,new medication7,,NA,,,,Medication vs. treatment? Check,BC-3 childs all visit database FINAL::nmed7
-nmed7,BC-3 childs expanded database FINAL,keep,,new medication7,,NA,,,,,BC-3 childs expanded database FINAL::nmed7
-nobs,BC-3 childs all visit database FINAL,keep,,,,NA,,,,,BC-3 childs all visit database FINAL::nobs
-nrvisit,BC-3 childs all visit database FINAL,keep,,Type of next scheduled visit,"0=Non-routine visit,
-1=Routine visit",NA,,,,,BC-3 childs all visit database FINAL::nrvisit
-omed,BC-3 childs all visit database FINAL,keep,,Any medications taken outside the study since last seen,"0=No,
-1=Yes",NA,,,,,BC-3 childs all visit database FINAL::omed
-othcriteria,BC-3 childs all visit database FINAL,keep,,other,,NA,,,,,BC-3 childs all visit database FINAL::othcriteria
-other1,BC-3 childs all visit database FINAL,keep,,Other1,,NA,,,,Define,BC-3 childs all visit database FINAL::other1
-other1dur,BC-3 childs all visit database FINAL,keep,,Other Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::other1dur
-other1grade,BC-3 childs all visit database FINAL,keep,,Other1 Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,Define,BC-3 childs all visit database FINAL::other1grade
-other2,BC-3 childs all visit database FINAL,keep,,Other2,,NA,,,,Define,BC-3 childs all visit database FINAL::other2
-other2dur,BC-3 childs all visit database FINAL,keep,,Other2 Duration,,NA,,,,Define,BC-3 childs all visit database FINAL::other2dur
-other2grade,BC-3 childs all visit database FINAL,keep,,Other2 Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::other2grade
-other3,BC-3 childs all visit database FINAL,keep,,Other3,,NA,,,,,BC-3 childs all visit database FINAL::other3
-other3dur,BC-3 childs all visit database FINAL,keep,,Other3 Duration,,NA,,,,,BC-3 childs all visit database FINAL::other3dur
-other3grade,BC-3 childs all visit database FINAL,keep,,Other3 Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::other3grade
-otherdie,BC-3 childs deaths FINAL,keep,,participant died in other place specified,,NA,,,,,BC-3 childs deaths FINAL::otherdie
-otherinfo,BC-3 childs deaths FINAL,keep,,information obtained as Other,1=checked,NA,,,,,BC-3 childs deaths FINAL::otherinfo
-othhosp,BC-3 childs hospitalizations FINAL,keep,,Other hospital,text,NA,,,,,BC-3 childs hospitalizations FINAL::othhosp
-othinfospe,BC-3 childs deaths FINAL,keep,,information obtained as other specified,,NA,,,,,BC-3 childs deaths FINAL::othinfospe
-othlab1,BC-3 childs all visit database FINAL,keep,,Other result,,NA,,,,,BC-3 childs all visit database FINAL::othlab1
-othlab1desc,BC-3 childs all visit database FINAL,keep,,Other description,,NA,,,,,BC-3 childs all visit database FINAL::othlab1desc
-othlab1grade,BC-3 childs all visit database FINAL,keep,,Other grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::othlab1grade
-othlab2,BC-3 childs all visit database FINAL,keep,,Other result,,NA,,,,,BC-3 childs all visit database FINAL::othlab2
-othlab2desc,BC-3 childs all visit database FINAL,keep,,other description,,NA,,,,,BC-3 childs all visit database FINAL::othlab2desc
-othlab2grade,BC-3 childs all visit database FINAL,keep,,other grade,,NA,,,,,BC-3 childs all visit database FINAL::othlab2grade
-oxygen,BC-3 childs hospitalizations FINAL,keep,,Oxygen therapy,"0=No,
-1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::oxygen
-pardens1,BC-3 childs all visit database FINAL,keep,,parasite density1,,NA,,,,"??'Asexual Plasmodium parasite density, by microscopy' <http://purl.obolibrary.org/obo/EUPATH_0000092>",BC-3 childs all visit database FINAL::pardens1
-pardens2,BC-3 childs all visit database FINAL,keep,,parasite density2,,NA,,,,"??'Asexual Plasmodium parasite density, by microscopy' <http://purl.obolibrary.org/obo/EUPATH_0000092>",BC-3 childs all visit database FINAL::pardens2
-pardens3,BC-3 childs all visit database FINAL,keep,,parasite density3,,NA,,,,"??'Asexual Plasmodium parasite density, by microscopy' <http://purl.obolibrary.org/obo/EUPATH_0000092>",BC-3 childs all visit database FINAL::pardens3
-parsdens,BC-3 childs all visit database FINAL,keep,,parasite density (/ul),,NA,,,,"??'Asexual Plasmodium parasite density, by microscopy' <http://purl.obolibrary.org/obo/EUPATH_0000092>",BC-3 childs all visit database FINAL::parsdens
-parsdens,BC-3 childs expanded database FINAL,keep,,parasite density (/ul),,NA,,,,"'Asexual Plasmodium parasite density, by microscopy' <http://purl.obolibrary.org/obo/EUPATH_0000092>",BC-3 childs expanded database FINAL::parsdens
-pdeath,BC-3 childs deaths FINAL,keep,,Where did the subject die,"1=home,2=health center,3=private clinic,
-4=hospital, 5=other,9=Unknown",NA,,,,,BC-3 childs deaths FINAL::pdeath
-photo,BC-3 childs hospitalizations FINAL,keep,,Phototherapy,"0=No,
-1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::photo
-placentalbsdich,BC-3 children individual level database FINAL,keep,,placental BS dichotomized,"0,1,2",NA,,,,,BC-3 children individual level database FINAL::placentalbsdich
-placentallampdich,BC-3 children individual level database FINAL,keep,,Placental blood LAMP,"0=Negative,1=Positive,9=No results",NA,,,,,BC-3 children individual level database FINAL::placentallampdich
-plt,BC-3 childs all visit database FINAL,keep,,platelets,,NA,,,,,BC-3 childs all visit database FINAL::plt
-plt,BC-3 childs expanded database FINAL,keep,,platelets,,NA,,,,,BC-3 childs expanded database FINAL::plt
-pltgrade,BC-3 childs all visit database FINAL,keep,,platelets grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::pltgrade
-preterm,BC-3 children individual level database FINAL,keep,,Preterm delivery (< 37 weeks),"0=No,
-1=Yes",NA,,,,,BC-3 children individual level database FINAL::preterm
-rdist,BC-3 childs all visit database FINAL,keep,,Respiratory distress,1=checked,NA,,,,,BC-3 childs all visit database FINAL::rdist
-resp,BC-3 childs all visit database FINAL,keep,,Resp,,NA,,,,Difference betweenthis and resprate?,BC-3 childs all visit database FINAL::resp
-respdur,BC-3 childs all visit database FINAL,keep,,Resp Duration,,NA,,,,,BC-3 childs all visit database FINAL::respdur
-respgrade,BC-3 childs all visit database FINAL,keep,,Resp Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::respgrade
-resprate,BC-3 childs all visit database FINAL,keep,,Respiratory rate,,NA,,,,Difference between this and resp?,BC-3 childs all visit database FINAL::resprate
-rogerson,BC-3 children individual level database FINAL,keep,,Placental malaria by Rogerson criteria,"0=No parasites or pigment, 1=Parasites-no pigment in monocytes or fibrin, 2=Parasites-pigment in monocytes +/- fibrin, 3=parasites- pigment in fibrin only, 4=pigment only",NA,,,,,BC-3 children individual level database FINAL::rogerson
-routinebs,BC-3 childs expanded database FINAL,keep,,Routine visit when BS done,"0=No,1=Yes",NA,,,,,BC-3 childs expanded database FINAL::routinebs
-routinehb,BC-3 childs expanded database FINAL,keep,,Date routine hemoglobin testing done,1,NA,,,,,BC-3 childs expanded database FINAL::routinehb
-skin,BC-3 childs all visit database FINAL,keep,,Skin,,NA,,,,,BC-3 childs all visit database FINAL::skin
-skindur,BC-3 childs all visit database FINAL,keep,,Skin Duration,,NA,,,,,BC-3 childs all visit database FINAL::skindur
-skingrade,BC-3 childs all visit database FINAL,keep,,Skin Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::skingrade
-smal,BC-3 childs all visit database FINAL,keep,,Severe anemia,1=checked,NA,,,,,BC-3 childs all visit database FINAL::smal
-species,BC-3 childs all visit database FINAL,keep,,Species,"0=Plasmodium Falciparum,
-1=Plasmodium Malariae,
-2=Plasmodium Ovale,
-3=Plasmodium vivax
-9=Unknown",NA,,,,How was this estimated? Similar variable? By microscopy?,BC-3 childs all visit database FINAL::species
-stool,BC-3 childs all visit database FINAL,keep,,Stool collected at 4 and 52 weeks,"0=Not Indicated,
-1=Collected,
-2=Forgot to collect,
-3=Declined",NA,,,,,BC-3 childs all visit database FINAL::stool
-studystatus,BC-3 childs expanded database FINAL,keep,,Study status,"1=stillbirth, 2=Died on day0, 3=Lost to follow-up on day0, 4=Include in analyses ( at least 1 day of follow-up)",NA,,,,,BC-3 childs expanded database FINAL::studystatus
-surgdesc,BC-3 childs hospitalizations FINAL,keep,,surgery describe,text,NA,,,,,BC-3 childs hospitalizations FINAL::surgdesc
-surgery,BC-3 childs hospitalizations FINAL,keep,,Surgery,"0=No,
-1=Yes",NA,,,,,BC-3 childs hospitalizations FINAL::surgery
-temp,BC-3 childs all visit database FINAL,keep,,Temperature,,NA,,,,,BC-3 childs all visit database FINAL::temp
-temp,BC-3 childs expanded database FINAL,keep,,Temperature,,NA,,,,,BC-3 childs expanded database FINAL::temp
-tempgrade,BC-3 childs all visit database FINAL,keep,,Temperature grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::tempgrade
-txarm,BC-3 children individual level database FINAL,keep,,Mothers Treatment Assignment,"1=SP, 2=DP",NA,,,,,BC-3 children individual level database FINAL::txarm
-txarm,BC-3 childs expanded database FINAL,keep,,Mothers Treatment Assignment,"1=SP, 2=DP",NA,,,,,BC-3 childs expanded database FINAL::txarm
-unbreast,BC-3 childs all visit database FINAL,keep,,Unable to breastfeed or drink,1=checked,NA,,,,,BC-3 childs all visit database FINAL::unbreast
-uniqueid,BC-3 childs all visit database FINAL,keep,,Unique ID number (Participant ID + date),id number + 5-digit number,NA,,,,,BC-3 childs all visit database FINAL::uniqueid
-uniqueid,BC-3 childs expanded database FINAL,keep,,Unique ID number = participant ID number + date,id number + 5-digit number,NA,,,,,BC-3 childs expanded database FINAL::uniqueid
-visittype,BC-3 childs all visit database FINAL,keep,,Type of visit,"0=Non-routine visit,
-1=Routine visit(1,4,6,8 nad every 4 weeks thereafter)",NA,,,,,BC-3 childs all visit database FINAL::visittype
-visittype,BC-3 childs expanded database FINAL,keep,,Type of visit,"0=Non-routine visit, 1=Routine visit, 2=Birth",NA,,,,,BC-3 childs expanded database FINAL::visittype
-vomdur,BC-3 childs all visit database FINAL,keep,,Vomiting Duration,,NA,,,,,BC-3 childs all visit database FINAL::vomdur
-vomgrade,BC-3 childs all visit database FINAL,keep,,Vomiting Grade,"0 = absent,
-1 = mild,
-2 = moderate,
-3 = severe,
-4 = life threatening,
-9 = unable to assess",NA,,,,,BC-3 childs all visit database FINAL::vomgrade
-vomite,BC-3 childs all visit database FINAL,keep,,Vomiting everything,1=checked,NA,,,,,BC-3 childs all visit database FINAL::vomite
-wbc,BC-3 childs all visit database FINAL,keep,,WBC result,,NA,,,,,BC-3 childs all visit database FINAL::wbc
-wbc,BC-3 childs expanded database FINAL,keep,,WBC result,,NA,,,,,BC-3 childs expanded database FINAL::wbc
-wbcgrade,BC-3 childs all visit database FINAL,keep,,WBC grade,"0 = no grade,
-1 = grade 1,
-2 = grade 2,
-3 = grade 3,
-4 = grade 4
-",NA,,,,,BC-3 childs all visit database FINAL::wbcgrade
-weight,BC-3 childs all visit database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 childs all visit database FINAL::weight
-weight,BC-3 childs expanded database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 childs expanded database FINAL::weight
-withdrawaldate,BC-3 children individual level database FINAL,keep,,Date prematurely withdrawn from the study,date,NA,yes,date,,Duplicate with enddate,BC-3 children individual level database FINAL::withdrawaldate
-withdrawalreason,BC-3 children individual level database FINAL,keep,,Reason for study withdrawal,"1=Participant unable to be located for > 60 days
-2=Participant moved out of study area
-3=Participant death (complete Death CRF)
-4=Withdrawal of informed consent
-5=Inability to comply with the study schedule and procedures
-6=At the discretion of the site investigator if the study is not in the best interest of the participant
-7=Subject or parent/guardian judged by the site investigator to be at significant risk ..
-8=Women found to have become HIV-infected during pregnancy or at delivery (infants excluded from study)
-9=Participant completed the study ",NA,,,,,BC-3 children individual level database FINAL::withdrawalreason
-wksage,BC-3 childs all visit database FINAL,keep,,if routine visit weeks of age,,NA,,,,,BC-3 childs all visit database FINAL::wksage
-wksage,BC-3 childs expanded database FINAL,keep,,if routine visit weeks of age,,NA,,,,,BC-3 childs expanded database FINAL::wksage

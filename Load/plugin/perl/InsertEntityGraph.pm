@@ -112,6 +112,11 @@ stringArg({name           => 'extDbRlsSpec',
             isList         => 0, }),
 
 
+   stringArg({name           => 'evalToGetGetAddMoreData',
+            descr          => 'Add more data to InvestigationSimple Reader',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
   ];
 
 my $documentation = { purpose          => "",
@@ -156,7 +161,15 @@ sub run {
   else {
     @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
   }
+  $self->logOrError("No investigation files") unless @investigationFiles;
 
+  my $getAddMoreData;
+  my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
+  if($evalToGetGetAddMoreData){
+    $getAddMoreData = eval $evalToGetGetAddMoreData;
+    $self->logOrError("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
+    $self->logOrError("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
+  }
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;
@@ -171,7 +184,7 @@ sub run {
       my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
       my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName if($ontologyMappingOverrideFileBaseName);
 
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");

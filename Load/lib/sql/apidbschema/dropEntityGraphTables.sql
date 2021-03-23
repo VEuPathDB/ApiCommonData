@@ -101,6 +101,23 @@ WHERE lower(name) =  'study'
                       WHERE lower(name) = 'apidb');
 
 
+SET SERVEROUTPUT ON;
+BEGIN
+  FOR rec IN
+    (
+      SELECT
+        table_name
+      FROM
+        all_tables
+      WHERE
+        owner = 'APIDB' and table_name like 'ATTRIBUTEVALUE_%' or table_name like 'ANCESTORS_%' or table_name like 'ATTRIBUTEGRAPH_%'
+    )
+  LOOP
+   DBMS_OUTPUT.put_line (' dropping table:  apidb.'||rec.table_name);
+   EXECUTE immediate 'DROP TABLE  apidb.'||rec.table_name || ' CASCADE CONSTRAINTS';
+  END LOOP;
+END;
+/
 
 
 exit;
