@@ -441,7 +441,8 @@ begin
          'select max(project_id) ' ||
          'from ApidbTuning.' || prefix || 'ProjectTaxon pt ' ||
          'where pt.taxon = substr(lower('''
-         || replace(replace(organism, 'uncultured_', 'uncultured '), 'unclassified ', '')
+         || replace(replace(regexp_replace(organism, '^\[', ''),
+                            'uncultured_', 'uncultured '), 'unclassified ', '')
          || '''), 1, length(pt.taxon)) '
       into project;
       exception
