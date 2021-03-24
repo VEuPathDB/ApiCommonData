@@ -1,5 +1,4 @@
 
-
 package ApiCommonData::Load::WGCNAME;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 
@@ -9,7 +8,6 @@ use Data::Dumper;
 use Exporter;
 use File::Basename;
 
-my $PROTOCOL_NAME = 'WGCNAME';
 
  sub getSamples                 { $_[0]->{modules} }
  sub setSamples                 { $_[0]->{modules} = $_[1] }
@@ -18,6 +16,10 @@ my $PROTOCOL_NAME = 'WGCNAME';
 sub new {
     my ($class, $args) = @_;
     my $self = $class->SUPER::new($args);
+
+    $self->setSourceIdType('module');
+    $self->setProtocolName("WGCNAME");
+
     return $self;
 }
 
@@ -43,8 +45,6 @@ sub munge {
   $self->setInputProtocolAppNodesHash();
   $self->setNames(\@names);                                                                                                  
   $self->setFileNames(\@fileNames);
-  $self->setProtocolName($PROTOCOL_NAME);
-  $self->setSourceIdType("module");
 
   #$self->{doNotLoad} = 0;
   
