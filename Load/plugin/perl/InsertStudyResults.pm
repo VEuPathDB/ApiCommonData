@@ -271,8 +271,11 @@ sub addResults {
   elsif ($protocolName =~ /Lopit/) {
     $tableString = "ApiDB::LopitResults";
   }
-  elsif ($protocolName =~ /WGCNA/) {
+  elsif ($protocolName eq 'WGCNA') {
     $tableString = "ApiDB::WGCNAResults";
+  }
+  elsif ($protocolName eq 'WGCNAME') {
+    $tableString = "ApiDB::WGCNAMEResults";
   }
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
@@ -326,6 +329,14 @@ sub addResults {
     elsif ($sourceIdType =~ /literal/) {
 	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
 	    $hash = {label=>$a[0]};
+	    $start = 1;
+	}
+    }
+
+    elsif ($sourceIdType =~ /module/) {
+	if($protocolName eq 'WGCNAME'){
+	    $hash = {sample=>$a[0]};
+	    #$hash = {module_eigengene=>$a[1]};
 	    $start = 1;
 	}
     }
@@ -655,6 +666,7 @@ sub undoTables {
     'ApiDB.NAFeatureMetaCycle',
     'ApiDB.LopitResults',
     'ApiDB.WGCNAResults',
+    'ApiDB.WGCNAMEResults',
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
