@@ -47,7 +47,7 @@ my $transcriptAnnotations = {};
 my $ncbiTaxId;
 my $sequenceLengths = {};
 
-my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process 
+my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t.gene_source_id, t.gene_product, t.gene_name, t.source_id as transcript_source_id, t.transcript_product, t.ncbi_tax_id, t.ec_numbers, t.annotated_go_id_function, t.annotated_go_id_component,t.annotated_go_id_process 
                    from apidbtuning.${tuningTablePrefix}transcriptattributes t, dots.nasequence s, sres.externaldatabaserelease r, sres.externaldatabase d
                    where t.na_sequence_id = s.na_sequence_id
                     and r.external_database_release_id = ?
@@ -56,13 +56,14 @@ my $sql = "select t.so_term_name, s.source_id as sequence_source_id, s.length, t
                     and d.name = t.external_db_name";
 my $sh = $dbh->prepare($sql);
 $sh->execute($extDbRlsId);
-while(my ($soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
+while(my ($soTermName, $sequenceSourceId, $sequenceLength, $geneSourceId, $geneProduct, $geneName, $transcriptSourceId, $transcriptProduct, $ncbi, $ecNumbers, @goIds) = $sh->fetchrow_array()) {
   $ncbiTaxId = $ncbi if($ncbi);
 
 
 
   $geneAnnotations->{$geneSourceId} = {gene_product => $geneProduct,
                                        ncbi_tax_id => $ncbiTaxId,
+                                       gene_name => $geneName,
   };
 
   $transcriptAnnotations->{$transcriptSourceId} = {transcript_product => $transcriptProduct,
@@ -114,6 +115,8 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
 
     if(GUS::Community::GeneModelLocations::getShortFeatureType($feature) eq 'Gene') {
+      my $Gene_Name = $geneAnnotations->{$geneSourceId}->{gene_name};
+      $feature->add_tag_value("Name", $Gene_Name) if($Gene_Name);
       $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
     }
 
