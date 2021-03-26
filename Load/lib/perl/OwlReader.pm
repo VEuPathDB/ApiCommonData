@@ -87,6 +87,7 @@ sub getLabelsAndParentsHashes {
   my $propertyNames = {};
   my $propertySubclasses = {};
 	my $propertyOrder = {};
+	my $otherAttrs = {};
 	while (my $row = $it->next) {
 		my $sourceid = $self->getSourceIdFromIRI($row->{entity}->as_hash()->{iri});
 		my $parentid = $self->getSourceIdFromIRI($row->{parent}->as_hash()->{iri});
@@ -96,13 +97,15 @@ sub getLabelsAndParentsHashes {
 		my $col = $row->{column} ? $row->{column}->as_hash()->{literal} : "";
 		my $label = $row->{label} ? $row->{label}->as_hash()->{literal} : "";
 		my $order = $row->{order} ? $row->{order}->as_hash()->{literal} : 99;
+		my $timeVarying = $row->{timeVarying} ? $row->{timeVarying}->as_hash()->{literal} : 99;
 		$propertyOrder->{$sourceid} = $order;
 		$propertyNames->{$sourceid} ||= $label; ## do not overwrite first label, use label that appears first in the OWL
+    $otherAttrs->{$sourceid}->{timeVarying} = $timeVarying;
 	}
 	foreach my $parentid (keys %$propertySubclasses){
 		$propertyOrder->{$parentid} ||= 99;
 	}
-  return($propertyNames, $propertySubclasses, $propertyOrder);
+  return($propertyNames, $propertySubclasses, $propertyOrder, $otherAttrs);
 }
 
 sub execute {
