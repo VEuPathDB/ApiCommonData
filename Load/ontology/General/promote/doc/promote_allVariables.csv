@@ -188,7 +188,7 @@ bioconsent,BC-3 enrollment database FINAL,discard,,Mother provided informed cons
 bioconsent,BC-3 mothers all visits database FINAL,discard,,Mother provided informed consent for use of biological specimens for her and her,1=yes,NA,,,,,BC-3 mothers all visits database FINAL::bioconsent
 bioconsent,BC-3 screening database FINAL,discard,,Mother provided informed consent for use of biological specimens for her and her child,"0 = No,
 1=Yes",NA,,,,,BC-3 screening database FINAL::bioconsent
-birthweight,BC-3 mothers delivery database FINAL,discard,,Birthweight in gm,,NA,,,,DROP,BC-3 mothers delivery database FINAL::birthweight
+birthweight,BC-3 mothers delivery database FINAL,keep,,Birthweight in gm,,NA,,,,,BC-3 mothers delivery database FINAL::birthweight
 birthweight,Individual level database FINAL,discard,,Birthweight in gm,,NA,,,,DROP,Individual level database FINAL::birthweight
 birthwt1,BC-3 enrollment database FINAL,keep,,Birth wt (kg),,NA,,,,,BC-3 enrollment database FINAL::birthwt1
 birthwt2,BC-3 enrollment database FINAL,keep,,Birth wt (kg),,NA,,,,,BC-3 enrollment database FINAL::birthwt2
@@ -240,8 +240,8 @@ cabortions,BC-3 enrollment database FINAL,keep,,Abortion,,NA,,,,,BC-3 enrollment
 calculatedgravidity,BC-3 enrollment database FINAL,discard,,Gravidity,,NA,,,,DROP - Use gravid from enrollment,BC-3 enrollment database FINAL::calculatedgravidity
 campm,BC-3 mothers delivery database FINAL,discard,,AM/PM CRF,"0=AM,
 1=PM",NA,,,,,BC-3 mothers delivery database FINAL::campm
-canomaly1,BC-3 mothers delivery database FINAL,keep,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly1
-canomaly2,BC-3 mothers delivery database FINAL,keep,,Any congenital anomaly noted,,NA,,,,,BC-3 mothers delivery database FINAL::canomaly2
+canomaly1,BC-3 mothers delivery database FINAL,discard,,Any congenital anomaly noted,,NA,,,,DROP - Use congenitalmaldich,BC-3 mothers delivery database FINAL::canomaly1
+canomaly2,BC-3 mothers delivery database FINAL,discard,,Any congenital anomaly noted,,NA,,,,DROP - Use congenitalmaldich,BC-3 mothers delivery database FINAL::canomaly2
 caplacent,BC-3 mothers delivery database FINAL,discard,,Abruptio placenta,1=ticked,NA,,,,All NA's,BC-3 mothers delivery database FINAL::caplacent
 car,BC3_Household_Survey_Data,keep,,a car or truck?,"1=Yes, 2=No, -9=Skipped",NA,,,,,BC3_Household_Survey_Data::car
 car1rdt,BC-3 mothers all visits database FINAL,keep,,Care Start RDT 1st reading,"0=Negative, 1=positive, 2=Invalid",NA,,,,,BC-3 mothers all visits database FINAL::car1rdt
@@ -2263,7 +2263,7 @@ sga,BC-3 mothers delivery database FINAL,keep,,Small for gestational age if live
 1=Yes",NA,,,,,BC-3 mothers delivery database FINAL::sga
 sga,Individual level database FINAL,discard,,Small for gestational age if live birth,"0=No,
 1=Yes",NA,,,,DROP - Use delivery,Individual level database FINAL::sga
-sgab,Individual level database FINAL,keep,,Small for gestational age if singleton live birth based on 2014 Lancet article,"0=No,
+sgab,Individual level database FINAL,discard,,Small for gestational age if singleton live birth based on 2014 Lancet article,"0=No,
 1=Yes",NA,,,,,Individual level database FINAL::sgab
 sickled,BC-3 enrollment database FINAL,keep,,Sickle Cell disease,"0 = No,
 1=Yes",NA,,,,,BC-3 enrollment database FINAL::sickled
@@ -2538,8 +2538,8 @@ weight,BC-3 mothers all visits database FINAL,discard,,Weight (kg),,NA,,,,DROP -
 weight,BC-3 mothers expanded database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 mothers expanded database FINAL::weight
 weight,BC-3 childs all visit database FINAL,keep,,Weight (kg),,NA,,,,,BC-3 childs all visit database FINAL::weight
 weight,BC-3 childs expanded database FINAL,discard,,Weight (kg),,NA,,,,DROP - Use all visits,BC-3 childs expanded database FINAL::weight
-weight1,BC-3 mothers delivery database FINAL,discard,,,,NA,,,,,BC-3 mothers delivery database FINAL::weight1
-weight2,BC-3 mothers delivery database FINAL,discard,,Weight 2nd infant,,NA,,,,,BC-3 mothers delivery database FINAL::weight2
+weight1,BC-3 mothers delivery database FINAL,keep,,,,NA,,,,,BC-3 mothers delivery database FINAL::weight1
+weight2,BC-3 mothers delivery database FINAL,keep,,Weight 2nd infant,,NA,,,,,BC-3 mothers delivery database FINAL::weight2
 wheren1,BC3_Household_Survey_Data,discard,,where did you get the mosquito net1 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren1
 wheren10,BC3_Household_Survey_Data,discard,,where did you get the mosquito net10 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren10
 wheren2,BC3_Household_Survey_Data,discard,,where did you get the mosquito net2 from?,"1=Govt hospital, 2 Govt health center, 9=campaign/VHT, -9=skipped",NA,,,,in repeated hh measures bulk download file,BC3_Household_Survey_Data::wheren2
