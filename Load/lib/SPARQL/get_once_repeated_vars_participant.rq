@@ -1,0 +1,27 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+
+SELECT distinct ?entity ?var ?sid  ?timeVarying
+WHERE {
+       ?entity rdfs:subClassOf* obo:EUPATH_0000096 . #participant and observation
+        ?entity obo:EUPATH_0000755 ?var_par.
+optional{?entity obo:EUPATH_0001011 ?timeVary.}
+
+        BIND (lcase(str(?var_par)) AS ?var) .
+        FILTER (lcase(str(?timeVary)) = "once") .
+        BIND (lcase(str(?timeVary)) AS ?timeVarying) .
+
+
+        BIND(COALESCE(
+        IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c),
+        IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+        IF(CONTAINS(STR(?entity), "#"), STRAFTER(STR(?entity), "#"), ?c),
+        REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid) .
+
+
+
+}
+
+ORDER BY ASC(?entity)
