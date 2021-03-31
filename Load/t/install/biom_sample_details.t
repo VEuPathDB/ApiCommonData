@@ -64,6 +64,15 @@ is_deeply(propertyDetails({s1 => {p=>"v"}}), {p => {
      'type' => 'string'
 }}, "One value string pd");
 
+is_deeply(propertyDetails({s1 => {p=>("v" x 1337)}}), {p => {
+     'description' => 'p: ' . 'v' x 394 . "...",
+     'distinct_values' => 1,
+     'filter' => 'membership',
+     'parent' => 'Singleton',
+     'parent_source_id' => 'NCIT_C64359',
+     'type' => 'string'
+}}, "Description limited to 400 chars");
+
 is_deeply(propertyDetails({s1 => {p=>$exampleDate}}), {p => {
      'description' => "p: $exampleDate",
      'distinct_values' => 1,

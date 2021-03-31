@@ -115,13 +115,17 @@ sub propertyDetails {
   # filter,distinct_values,type as in apidbtuning.propertytype
   # apidbtuning.propertytype also contains property_source_id: the ontology term used
   # parent, parent_source_id, description: not sure yet
+  my $description =  "$property: $valuesSummary";
+  if (length $description > 400){
+    $description = substr($description, 0, 397) . "...";
+  }
   return {
     filter => $filter,
     distinct_values => $numDistinctValues,
     type => $type,
     parent => $propertyType,
     parent_source_id => $propertyTypeOntologyTerm,
-    description => "$property: $valuesSummary",
+    description => $description,
   };
 }
 1;
