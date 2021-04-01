@@ -730,6 +730,7 @@ sub mapRow {
     if($softKeyTableField) {
       my $softKeyTableId = $row->{lc($softKeyTableField)};
       $parentTable = $softKeyTableMap->{$softKeyTableId};
+      $self->error("Soft key mapping error:  Value $softKeyTableId could not be mapped for field $softKeyTableField") unless($parentTable);
     }
 
 
