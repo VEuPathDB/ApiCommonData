@@ -2,22 +2,35 @@
 
 set -e
 
-while getopts s:t:p:m: flag
+while getopts d:p:t:m:c: flag
 do
     case "${flag}" in
-        s) sourceBranch=${OPTARG};;
+        d) datasetsSourceBranch=${OPTARG};;
+        p) presentersSourceBranch=${OPTARG};;
         t) targetBranch=${OPTARG};;
-        m) message=${OPTARG};;
-        p) project=${OPTARG};;
+        c) component=${OPTARG};;
     esac
 done
 
-
 git clone git@github.com:VEuPathDB/ApiCommonDatasets.git;
+git clone git@github.com:VEuPathDB/ApiCommonPresenters.git;
+
 cd ApiCommonDatasets;
-git checkout $sourceBranch;
+git checkout $datasetsSourceBranch;
 git checkout $targetBranch;
-git checkout $sourceBranch Datasets/lib/xml/datasets/${project}*;
-git commit -m "'"${message}"'";
-git push;
+git checkout $datasetsSourceBranch Datasets/lib/xml/datasets/${component}*;
+
+if [ -n "$(git status --porcelain)" ]; then
+  git commit -m "'"tagging ${component} from ${datasetsSourceBranch}"'";
+  git push;
+fi
+
+cd ../ApiCommonPresenters;
+git checkout $presentersSourceBranch;
+git checkout $targetBranch;
+git checkout $presentersSourceBranch Model/lib/xml/datasetPresenters/${component}*;
+if [ -n "$(git status --porcelain)" ]; then
+  git commit -m "'"tagging ${component} from ${presentersSourceBranch}"'";
+  git push;
+fi
 
