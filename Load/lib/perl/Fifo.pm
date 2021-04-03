@@ -39,6 +39,10 @@ sub setReaderProcessId {$_[0]->{_reader_process_id} = $_[1]}
 sub getReaderProcessFileHandle {$_[0]->{_reader_process_file_handle}}
 sub setReaderProcessFileHandle {$_[0]->{_reader_process_file_handle} = $_[1]}
 
+sub getMessageOnError {$_[0]->{_message_on_error}}
+sub setMessageOnError {$_[0]->{_message_on_error} = $_[1]}
+
+
 sub attachReader {
   my ($self, $processString) = @_;
 
@@ -85,7 +89,7 @@ sub getFileHandle {$_[0]->{_file_handle}}
 
 
 sub new {
-  my ($class, $fifoName, $mode, $readerProcessString) = @_;
+  my ($class, $fifoName, $mode, $readerProcessString, $messageOnError) = @_;
 
   $mode = 0700 unless($mode);
 
@@ -101,6 +105,8 @@ sub new {
     $self->attachReader($readerProcessString);
   }
 
+  $self->setMessageOnError($messageOnError);
+
   return $self; 
 }
 
@@ -113,6 +119,8 @@ sub cleanup  {
   my $fh = $self->getFileHandle();
   my $readerFh = $self->getReaderProcessFileHandle();
 
+  my $messageOnError = $self->getMessageOnError();
+
   close $fh if($fh);
 
   if($readerFh) {
@@ -120,7 +128,7 @@ sub cleanup  {
     if($?) {
       kill(9, $self->getReaderProcessId()); 
       unlink $fifoName if(-e $fifoName);
-      die "Error with process reading the FIFO";
+      die "Error with process reading the FIFO $fifoName. \n$messageOnError";
     }
   }
 

@@ -21,7 +21,7 @@ git checkout $targetBranch;
 git checkout $datasetsSourceBranch Datasets/lib/xml/datasets/${component}*;
 
 if [ -n "$(git status --porcelain)" ]; then
-  git commit -m "'"tagging ${component} from ${datasetsSourceBranch}"'";
+  git commit -m "'tagging ${component} from ${datasetsSourceBranch}'";
   git push;
 fi
 
@@ -30,7 +30,7 @@ git checkout $presentersSourceBranch;
 git checkout $targetBranch;
 git checkout $presentersSourceBranch Model/lib/xml/datasetPresenters/${component}*;
 if [ -n "$(git status --porcelain)" ]; then
-  git commit -m "'"tagging ${component} from ${presentersSourceBranch}"'";
+  git commit -m "'tagging ${component} from ${presentersSourceBranch}'";
   git push;
 fi
 
