@@ -326,7 +326,7 @@ sub addResults {
         $start = 1;
     }
 
-    elsif ($sourceIdType =~ /compound/) {
+    elsif ($sourceIdType eq 'compound') {
         my ($chebi, $isotopomer) = split(/\|/, $a[0]);
         my $reporterId  = $self->lookupIdFromSourceId($chebi, $sourceIdType);
         $hash = { compound_id => $reporterId,
