@@ -1,0 +1,34 @@
+# Find terms with more than one parent
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?sid
+  (COUNT(DISTINCT ?parent_entity) AS ?pid_count)
+  (GROUP_CONCAT(DISTINCT ?label;separator="|") AS ?labels)
+  (GROUP_CONCAT(DISTINCT ?plabel;separator="|") AS ?pLabels)
+  (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?datasets)
+WHERE {
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  GRAPH ?file {?entity rdfs:subClassOf ?parent_entity .} .
+  ?entity a owl:Class .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	?f2) AS ?dataset) .
+
+  ?entity rdfs:label ?org_label .  
+  ?parent_entity rdfs:label ?parent_label .
+  BIND (str(?org_label) AS ?label)
+  BIND (str(?parent_label) AS ?plabel)
+  BIND(COALESCE(
+	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
+	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+ 	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid)
+}
+GROUP BY ?sid
+HAVING (?pid_count > 1)
+ORDER BY DESC(?label)
