@@ -19,10 +19,12 @@ SELECT distinct ?IRI
   (GROUP_CONCAT(DISTINCT ?unitL;separator=" | ") AS ?unitLabel)
   (GROUP_CONCAT(DISTINCT ?unitI;separator=" | ") AS ?unitIRI)
   (GROUP_CONCAT(DISTINCT ?dataS;separator=" | ") AS ?dataSet)
-  (GROUP_CONCAT(DISTINCT ?timeV;separator=" | ") AS ?timeVarying)
-  (GROUP_CONCAT(DISTINCT ?keyV;separator=" | ") AS ?keyVar)
+  (GROUP_CONCAT(DISTINCT ?timeV;separator=" | ") AS ?repeated)
+  (GROUP_CONCAT(DISTINCT ?keyV;separator=" | ") AS ?is_featured)
   (GROUP_CONCAT(DISTINCT ?hid;separator=" | ") AS ?hidden)
   (GROUP_CONCAT(DISTINCT ?scal;separator=" | ") AS ?scale)
+  (GROUP_CONCAT(DISTINCT ?temp;separator=" | ") AS ?is_temporal)
+  (GROUP_CONCAT(DISTINCT ?timeK;separator=" | ") AS ?timeKey)
 WHERE {
 	{?IRI rdfs:label ?tlabel .
 	?IRI rdfs:subClassOf* obo:PCO_0000024 .
@@ -82,6 +84,12 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
         }
 	}
 	UNION
@@ -144,6 +152,12 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -204,6 +218,12 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
         }
 	}
 	UNION
@@ -266,6 +286,12 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -326,6 +352,12 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
         }
 	}
 	UNION
@@ -388,6 +420,12 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -448,6 +486,12 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001014 ?scal .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001015 ?temp .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001016 ?timeK .
         }
 	}
 }
