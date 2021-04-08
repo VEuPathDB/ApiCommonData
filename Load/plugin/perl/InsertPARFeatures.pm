@@ -46,7 +46,7 @@ Lift over features in pseudoautosomal regions.
 PURPOSE
 
   my $purposeBrief = <<PURPOSEBRIEF;
-For the specified taxon, populate feature location tables.
+Lift over features in pseudoautosomal regions.
 PURPOSEBRIEF
 
   my $notes = <<NOTES;
@@ -94,6 +94,8 @@ sub new {
 
 sub run {
   my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
 
   my $queryStmt = $dbh->prepare(<<SQL) or die $dbh->errstr;
    select feature_type, feature_source_id, sequence_source_id, na_sequence_id,
