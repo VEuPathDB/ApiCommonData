@@ -24,7 +24,7 @@ SELECT distinct ?IRI
   (GROUP_CONCAT(DISTINCT ?hid;separator=" | ") AS ?hidden)
   (GROUP_CONCAT(DISTINCT ?scal;separator=" | ") AS ?scale)
   (GROUP_CONCAT(DISTINCT ?temp;separator=" | ") AS ?is_temporal)
-  (GROUP_CONCAT(DISTINCT ?timeK;separator=" | ") AS ?timeKey)
+  (GROUP_CONCAT(DISTINCT ?timeK;separator=" | ") AS ?mergeKey)
 WHERE {
 	{?IRI rdfs:label ?tlabel .
 	?IRI rdfs:subClassOf* obo:PCO_0000024 .
