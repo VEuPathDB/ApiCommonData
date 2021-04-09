@@ -16,7 +16,7 @@ use GUS::Model::ApiDB::FeatureLocation;
 use GUS::Model::DoTS::NASequence;
 use Bio::Location::Simple;
 use Bio::Coordinate::Pair;
-# use Data::Dumper;
+use Data::Dumper;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -152,6 +152,8 @@ SQL
 	       $sequenceOntologyId, $isTopLevel, $externalDatabaseReleaseId)
 	   = $queryStmt->fetchrow_array()) {
 
+      # print "got $featureType $featureSourceId\n";
+
       my $unmappedFeature = Bio::Location::Simple->
 	new( -seq_id => $fromId, -start =>   $startMin, -end =>  $endMax,
 	     -strand => $isReversed ? "-1" : "+1" );
@@ -164,14 +166,15 @@ SQL
 						   sequence_source_id => $toId,
 						   na_sequence_id => $naSequence->getId(),
 						   na_feature_id => $naFeatureId,
-						   start_min => $mappedFeature->start_mon,
-						   end_max => $mappedFeature->end_max,
+						   start_min => $mappedFeature->start,
+						   end_max => $mappedFeature->end,
 						   is_reversed => $isReversed,
 						   parent_id => $parentId,
 						   sequence_ontology_id => $sequenceOntologyId,
 						   is_top_level => 0,
 						   external_database_release_id => $externalDatabaseReleaseId
 						  });
+
       $featureLocation->submit() unless ($featureLocation->retrieveFromDB());
     }
 
