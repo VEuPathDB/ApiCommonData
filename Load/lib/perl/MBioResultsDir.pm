@@ -65,7 +65,7 @@ sub toGetAddMoreData {
       for my $table (@tables){
         my $o = $table->{data}{$sample};
         if($o){
-          $valuesHash->{$table->{dataForSampleOntologyTerm}} = [encode_json($o)];
+          $valuesHash->{$table->{dataForSampleOntologyTerm}} = [$o];
         }
       }
       return $valuesHash;
