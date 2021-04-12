@@ -10,7 +10,7 @@ WHERE {
 optional{?entity obo:EUPATH_0001011 ?timeVary.}
 
         BIND (lcase(str(?var_hh)) AS ?var) .
-	FILTER (lcase(str(?timeVary)) = "once") . 
+	FILTER (lcase(str(?timeVary)) = "Yes") .   # Yes means repeated vars
         BIND (lcase(str(?timeVary)) AS ?timeVarying) .
 
 
