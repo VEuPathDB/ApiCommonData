@@ -399,7 +399,7 @@ CREATE TABLE apidb.AttributeValue (
  entity_attributes_id         NUMBER(12) NOT NULL,
  entity_type_id               NUMBER(12) NOT NULL,
  incoming_process_type_id        NUMBER(12),
- attribute_ontology_term_id   NUMBER(10) NOT NULL, 
+ attribute_key                VARCHAR(255)  NOT NULL, 
  string_value                 VARCHAR(1000),
  number_value                 NUMBER,
  date_value                   DATE, 
@@ -417,7 +417,6 @@ CREATE TABLE apidb.AttributeValue (
  FOREIGN KEY (entity_attributes_id) REFERENCES apidb.EntityAttributes,
  FOREIGN KEY (entity_type_id) REFERENCES apidb.EntityType,
  FOREIGN KEY (incoming_process_type_id) REFERENCES apidb.ProcessType,
- FOREIGN KEY (attribute_ontology_term_id) REFERENCES sres.ontologyterm,
  PRIMARY KEY (attribute_value_id)
 );
 
@@ -426,7 +425,7 @@ GRANT SELECT ON apidb.AttributeValue TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeValue_sq;
 
-CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_ontology_term_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_key, entity_attributes_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -452,7 +451,8 @@ CREATE TABLE apidb.Attribute (
   entity_type_stable_id         varchar2(255),
   process_type_id                 NUMBER(12),
   ontology_term_id         NUMBER(10) NOT NULL,
-  stable_id                varchar2(255) NOT NULL,
+  ontology_term_id_is_for_parent         number(1),
+  attribute_key varchar2(255) NOT NULL,
   data_type                    varchar2(10) not null,
   distinct_values_count            integer,
   is_multi_valued                number(1),
@@ -483,7 +483,8 @@ GRANT SELECT ON apidb.Attribute TO gus_r;
 
 CREATE SEQUENCE apidb.Attribute_sq;
 
-CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, ontology_term_id, attribute_id) TABLESPACE indx;
+CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, ontology_term_id,ontology_term_id_is_for_parent, attribute_id) TABLESPACE indx;
+CREATE INDEX apidb.attribute_ix_2 ON apidb.attribute (attribute_id, attribute_key) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

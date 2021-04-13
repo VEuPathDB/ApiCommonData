@@ -134,11 +134,11 @@ sub run {
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
-
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    $self->loadAttributeTerms($ontologyTerms, $studyId, $entityTypeIds);
+    my $attributesByKey = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
+
+    $self->loadAttributeTerms($attributesByKey, $studyId, $entityTypeIds);
   }
 
   return "Loaded attributes for $studiesCount studies"; 
@@ -170,7 +170,8 @@ and study_id = $studyId";
 }
 
 
-
+# TODO: rename the variables because ontologyTerms are any attributes
+# sourceId is the attribute_key (joins up with the parent by this)
 sub loadAttributeTerms {
   my ($self, $ontologyTerms, $studyId, $entityTypeIds) = @_;
 
@@ -206,6 +207,7 @@ sub loadAttributeTerms {
       }
 
       # OBI term here is for longitude
+      # TODO: won't work after I prefixed it
       if($sourceId eq 'OBI_0001621') {
         $dataType = 'longitude'
       }
@@ -230,7 +232,8 @@ sub loadAttributeTerms {
                                                          entity_type_stable_id => $entityTypeStableId,
                                                          process_type_id => $ptId,
                                                          ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                         stable_id => $sourceId,
+                                                         ontology_term_id_is_for_parent => 0,
+                                                         attribute_key => $sourceId, 
                                                          data_type => $dataType,
                                                          distinct_values_count => $valueCount,
                                                          is_multi_valued => $isMultiValued ? 1 : 0,
@@ -290,15 +293,17 @@ sub loadAttributeValues {
   my $fields = $self->fields($maxAttrLength);
 
   my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength);
-  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms);
-  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms);
+  my $attributesByKey = {};
+  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms, $attributesByKey);
+  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms, $attributesByKey);
 
   $fifo->cleanup();
   unlink $fifoName;
+  return $attributesByKey;
 }
 
 sub loadAttributes {
-  my ($self, $studyId, $fifo, $ontologyTerms, $sql) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $attributesByKey, $sql) = @_;
 
   my $dbh = $self->getQueryHandle();
 
@@ -326,6 +331,9 @@ sub loadAttributes {
         unless($ontologyTermId) {
           $self->error("No ontology_term_id found for:  $ontologySourceId");
         }
+# TODO clean up - this relies on items populating the same hash reference
+        my $key = "ontologyTermId:$ontologyTermId";
+        $attributesByKey->{$key} //= $ontologyTerm;
 
         my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
 
@@ -335,7 +343,7 @@ sub loadAttributes {
         my @a = ($vaId,
                  $vtId,
                  $etId,
-                 $ontologyTermId,
+                 $key,
                  $stringValue,
                  $numberValue,
                  $dateValue
@@ -454,16 +462,16 @@ sub readClob {
 
 
 sub loadAttributesFromEntity {
-  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $attributesByKey) = @_;
 
   my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(substr(va.atts, 1, 2)) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
 
-  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $attributesByKey, $sql);
 }
 
 
 sub loadAttributesFromIncomingProcess {
-  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $attributesByKey) = @_;
 
   my $sql = "select va.entity_attributes_id, va.entity_type_id, ea.process_type_id, ea.atts
 from apidb.processattributes ea
@@ -475,7 +483,7 @@ and va.entity_attributes_id = ea.out_entity_id
 and vt.study_id = ?
 ";
 
-  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
+  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $attributesByKey, $sql);
 }
 
 sub fields {

@@ -253,7 +253,7 @@ sub createAttributeGraphTable {
 
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
-  (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId)
+  (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId and ontology_term_id_is_for_parent = 0)
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
@@ -261,8 +261,7 @@ sub createAttributeGraphTable {
     START WITH ontology_term_id IN (SELECT DISTINCT ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct atg.ontology_term_id
-     , atg.stable_id
+SELECT distinct atg.stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
@@ -277,6 +276,8 @@ SELECT distinct atg.ontology_term_id
 FROM atg, att
 where atg.ontology_term_id = att.ontology_term_id (+)
 ";
+# TODO: union the attributes where ontology_term_id_is_for_parent = 1
+# There is no equivalent for atg.ontology_term_id - I've removed it- the backend does not use it
 
 
   my $dbh = $self->getDbHandle();
@@ -297,14 +298,13 @@ sub createTallTable {
 
   my $sql = "CREATE TABLE $tableName as 
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
-     , ot.source_id as attribute_stable_id
+     , av.attribute_key as attribute_stable_id
      , string_value
      , number_value
      , date_value
-FROM apidb.attributevalue av, apidb.entityattributes ea, sres.ontologyterm ot
+FROM apidb.attributevalue av, apidb.entityattributes ea
 WHERE av.entity_type_id = $entityTypeId
 and av.entity_attributes_id = ea.entity_attributes_id
-and av.attribute_ontology_term_id = ot.ontology_term_id (+)
 ";
 
   my $dbh = $self->getDbHandle();
