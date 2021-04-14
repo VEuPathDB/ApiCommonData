@@ -319,7 +319,25 @@ sub loadAttributes {
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
+      for my $p ($self->attributesAndValues($ontologyTerms, $ontologySourceId, $valueArray)){
+        my ($key, $attribute, $value) = @{$p};
+        
+      }
+
+}
+sub attributesAndValues {
+  my ($self, $ontologyTerms, $ontologySourceId, $valueArray) = @_;
+  if($ontologySourceId eq 'GEOHASH_TEMP_32') {
+        # TODO: using temp geo hash id
+ #          $self->loadAllGeoHashLevels($vaId, $vtId, $etId, $ontologyTerms, $fh, $value);
+
+  # todo return an array
+  }
+  elsif ($ontologySourceId =~ m{MBioResult}){
+    # todo return an array
+  } else {
       my $hasMultipleValues = scalar(@$valueArray) > 1;
+      my @result;
 
       foreach my $value (@$valueArray) {
         my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
@@ -331,32 +349,10 @@ sub loadAttributes {
         unless($ontologyTermId) {
           $self->error("No ontology_term_id found for:  $ontologySourceId");
         }
-# TODO clean up - this relies on items populating the same hash reference
-        my $key = "ontologyTermId:$ontologyTermId";
-        $attributesByKey->{$key} //= $ontologyTerm;
-
-        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
-
-        my $stringValue = $value unless(defined($dateValue) || defined($numberValue));
-
-
-        my @a = ($vaId,
-                 $vtId,
-                 $etId,
-                 $key,
-                 $stringValue,
-                 $numberValue,
-                 $dateValue
-            );
-
-        print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
-
-        # TODO: using temp geo hash id
-        if($ontologySourceId eq 'GEOHASH_TEMP_32') {
-          $self->loadAllGeoHashLevels($vaId, $vtId, $etId, $ontologyTerms, $fh, $value);
-        }
+        push @result, [$ontologySourceId, $ontologyTerm, $value];
 
       }
+      return @result;
     }
   }
 }
@@ -380,9 +376,7 @@ sub loadAllGeoHashLevels {
       $self->error("No ontology_term_id found for:  $sourceId");
     }
 
-    my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $subVal, $vtId);
-
-    my $stringValue = $subVal unless(defined($dateValue) || defined($numberValue));
+    my ($stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($ontologyTerm, $subVal, $vtId);
 
     my @a = ($vaId,
              $vtId,
@@ -399,38 +393,39 @@ sub loadAllGeoHashLevels {
 
 
 
-sub ontologyTermValues {
-  my ($self, $ontologyTerm, $value, $entityTypeId) = @_;
+sub typedValueForAttribute {
+  my ($self, $typeCountsByKeyAndEntityTypeId, $key, $entityTypeId, $value) = @_;
 
-  my ($dateValue, $numberValue);
+  my ($stringValue, $numberValue, $dateValue); 
 
-  $ontologyTerm->{$entityTypeId}->{_VALUES}->{$value}++;
+  $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_VALUES}->{$value}++;
 
-  $ontologyTerm->{$entityTypeId}->{_COUNT}++;
+  $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
-    $ontologyTerm->{$entityTypeId}->{_IS_NUMBER_COUNT}++;
+    $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_IS_NUMBER_COUNT}++;
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
-    $ontologyTerm->{$entityTypeId}->{_IS_DATE_COUNT}++;
+    $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_IS_DATE_COUNT}++;
   }
   elsif($value =~ /^\d/) {
-    $ontologyTerm->{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
+    $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
   }
   else {
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
-#      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
+#      $typeCountsByKeyAndEntityTypeId->{$key}{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
 #    }
   }
 
+  $stringValue = $value unless(defined($dateValue) || defined($numberValue));
 
-  return $dateValue, $numberValue;
+  return $stringValue, $numberValue, $dateValue;
 }
 
 

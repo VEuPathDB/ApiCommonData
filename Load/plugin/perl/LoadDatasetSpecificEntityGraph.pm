@@ -253,20 +253,20 @@ sub createAttributeGraphTable {
 
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
-  (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId and ontology_term_id_is_for_parent = 0)
+  (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId)
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
-    START WITH ontology_term_id IN (SELECT DISTINCT ontology_term_id FROM att)
+    START WITH ontology_term_id IN (SELECT DISTINCT parent_ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct atg.stable_id
-     , atg.parent_stable_id
-     , atg.provider_label
-     , atg.display_name
-     , atg.term_type
-     , case when att.data_type is null then 0 else 1 end as has_values
+SELECT distinct att.attribute_key as stable_id
+     , atg.stable_id as parent_stable_id
+     , att.provider_label
+     , att.display_name
+     , 'default' as term_type
+     , 1 as has_values
      , att.data_type
      , att.distinct_values_count
      , att.is_multi_valued
@@ -274,10 +274,23 @@ SELECT distinct atg.stable_id
      , att.unit
      , att.precision
 FROM atg, att
-where atg.ontology_term_id = att.ontology_term_id (+)
+where atg.ontology_term_id = att.parent_ontology_term_id
+UNION
+SELECT distinct atg.stable_id
+     , atg.parent_stable_id
+     , null as provider_label
+     , atg.display_name
+     , atg.term_type
+     , 0 as has_values
+     , null as data_type
+     , null as distinct_values_count
+     , null as is_multi_valued
+     , null as data_shape
+     , null as unit
+     , null as precision
+FROM atg, att
+where atg.ontology_term_id = att.parent_ontology_term_id (+) and att.parent_ontology_term_id is null
 ";
-# TODO: union the attributes where ontology_term_id_is_for_parent = 1
-# There is no equivalent for atg.ontology_term_id - I've removed it- the backend does not use it
 
 
   my $dbh = $self->getDbHandle();
