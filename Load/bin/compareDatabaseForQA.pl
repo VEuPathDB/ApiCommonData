@@ -240,13 +240,49 @@ sub getGeneFeatureFromDotsTable {
     $type =~ s/\_gene$//;
     $type =~ s/\s+gene$//;
     if ($type =~ /protein_coding/
+	|| $type =~ /nontranslating_CDS/
+	|| $type eq "TEC"
+	|| $type eq "TR_C"
+	|| $type eq "TR_D"
+	|| $type eq "TR_J"
+	|| $type eq "TR_V"
+	|| $type eq "IG_C"
+	|| $type eq "IG_D"
+	|| $type eq "IG_J"
+	|| $type eq "IG_LV"
+	|| $type eq "IG_V"
         || $type =~ /coding/) {
       $type = "protein coding";
-#    } elsif ($type =~ /pseudogene/i || $type =~ /pseudogene_with_CDS/i) {
-    } elsif ($type eq "pseudogene" || $type eq "pseudogene_with_CDS") {
+    } elsif ($type eq "pseudogene"
+        || $type eq "processed_pseudogene"
+        || $type eq "transcribed_processed_pseudogene"
+        || $type eq "transcribed_unprocessed_pseudogene"
+        || $type eq "transcribed_unitary_pseudogene"
+        || $type eq "translated_processed_pseudogene"
+        || $type eq "translated_unprocessed_pseudogene"
+        || $type eq "polymorphic_pseudogene"
+        || $type eq "unitary_pseudogene"
+        || $type eq "IG_C_pseudogene"
+        || $type eq "IG_D_pseudogene"
+        || $type eq "IG_J_pseudogene"
+        || $type eq "IG_V_pseudogene"
+        || $type eq "IG_pseudogene"
+        || $type eq "TR_J_pseudogene"
+        || $type eq "TR_V_pseudogene"
+        || $type eq "unprocessed_pseudogene"
+        || $type eq "pseudogene_with_CDS") {
       $type = "pseudogene";
     } elsif ($type eq "tRNA_pseudogene") {
       $type = "tRNA";
+    } elsif ($type eq "rRNA_pseudogene") {
+      $type = "rRNA";
+    } elsif ($type eq "ribozyme") {
+      $type = "ncRNA";
+    } elsif ($type eq "sense_intronic"
+        || $type eq "sense_overlapping"
+        || $type eq "processed_transcript"
+        || $type eq "antisense" ) {
+      $type = "misc_RNA";
     } elsif ($type =~ /RNA$/i) {
     } else {
       print STDERR "ERROR: \$type = $type has not been configured yet\n";
