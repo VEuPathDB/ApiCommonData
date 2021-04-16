@@ -251,6 +251,11 @@ sub createAttributeGraphTable {
 
   $self->log("Creating TABLE:  $tableName");
 
+  # apidb.attribute stable_id could be from sres.ontologyterm, or not
+  # if yes, it could also be another term's parent
+  # (but not a multifilter - term_type for attributes that have values is default)
+  # hence this is only using atg for the parent-child relationship
+  # and only adding atg entries which aren't already in
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
   (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId)
@@ -261,7 +266,7 @@ sub createAttributeGraphTable {
     START WITH ontology_term_id IN (SELECT DISTINCT parent_ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct att.attribute_key as stable_id
+SELECT distinct att.stable_id as stable_id
      , atg.stable_id as parent_stable_id
      , att.provider_label
      , att.display_name
@@ -278,7 +283,7 @@ where atg.ontology_term_id = att.parent_ontology_term_id
 UNION
 SELECT distinct atg.stable_id
      , atg.parent_stable_id
-     , null as provider_label
+     , atg.provider_label
      , atg.display_name
      , atg.term_type
      , 0 as has_values
@@ -289,7 +294,7 @@ SELECT distinct atg.stable_id
      , null as unit
      , null as precision
 FROM atg, att
-where atg.ontology_term_id = att.parent_ontology_term_id (+) and att.parent_ontology_term_id is null
+where atg.stable_id = att.stable_id (+) and att.stable_id is null
 ";
 
 
