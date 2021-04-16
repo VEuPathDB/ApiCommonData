@@ -503,7 +503,7 @@ sub loadPrimaryKeyTableForUndo {
 
   $sqlldrUndo->writeConfigFile();
 
-  my $fifo = ApiCommonData::Load::Fifo->new($sqlldrUndoInfileFn, undef, undef, "LOG:  ". $sqlldrUndo->getLogFileName());
+  my $fifo = ApiCommonData::Load::Fifo->new($sqlldrUndoInfileFn, undef, undef, "LOG:  " . $self->getArg('logDir') . "/" . $sqlldrUndo->getLogFileName());
 
   my $sqlldrUndoProcessString = $sqlldrUndo->getCommandLine();
 
@@ -1032,7 +1032,7 @@ sub loadTable {
                                                    _infile_name => $sqlldrDatInfileFn,
                                                   });
 
-    $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn, undef, undef, "LOG:  ". $sqlldrDat->getLogFileName());
+    $datFifo = ApiCommonData::Load::Fifo->new($sqlldrDatInfileFn, undef, undef, "LOG:  ". $self->getArg('logDir') . "/" . $sqlldrDat->getLogFileName());
 
     # TODO:set back
     # if(!$alreadyMappedMaxOrigPk) {
@@ -1061,7 +1061,7 @@ sub loadTable {
                                                     });
 
   $self->writeConfigFile($sqlldrMap, $tableInfo, $MAPPING_TABLE_NAME, $sqlldrMapInfileFn, $tableReader, $hasRowProjectId);
-  my $mapFifo = ApiCommonData::Load::Fifo->new($sqlldrMapInfileFn, undef, undef, "LOG:  ". $sqlldrMap->getLogFileName());
+  my $mapFifo = ApiCommonData::Load::Fifo->new($sqlldrMapInfileFn, undef, undef, "LOG:  ". $self->getArg('logDir') . "/" . $sqlldrMap->getLogFileName());
   my $sqlldrMapProcessString = $sqlldrMap->getCommandLine();
 
   my $sqlldrGlobInfileFh;
@@ -1076,7 +1076,7 @@ sub loadTable {
                                                     });
 
   $self->writeConfigFile($sqlldrGlob, $tableInfo, $GLOBAL_NATURAL_KEY_TABLE_NAME, $sqlldrGlobInfileFn, $tableReader, $hasRowProjectId);
-  my $globFifo = ApiCommonData::Load::Fifo->new($sqlldrGlobInfileFn, undef, undef, "LOG:  ". $sqlldrGlob->getLogFileName());
+  my $globFifo = ApiCommonData::Load::Fifo->new($sqlldrGlobInfileFn, undef, undef, "LOG:  ". $self->getArg('logDir') . "/" . $sqlldrGlob->getLogFileName());
   my $sqlldrGlobProcessString = $sqlldrGlob->getCommandLine();
 
   # may add this back if using the sequence is too slow for all cases
