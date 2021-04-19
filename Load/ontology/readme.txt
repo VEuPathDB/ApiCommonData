@@ -1,6 +1,18 @@
 Ontology Directory
 ==============
 
+conversionUpdate directory:
+	- replace_EDA.csv
+	- message.txt
+	
+	The file, replace_EDA.csv, is used as the input file for conversion file update script. It contains the term IRIs and the corresponding annotation properties associated with the terms that need to be updated in the conversion files. The headers should be same (not case sensitive) as what we used in the conversion file. If we want to update the IRI, it should be added using 'new IRI' as the column header.
+	
+	The file, 'message.txt', contains the output of the conversion update script, indicating the row and term IRI changes in a conversion file and the updated conversion file. 
+	
+Notes: The updated conversion file will be saved in the same directory as the conversion file with name xxx_conversion_temp.csv.	
+	
+------------------------------
+
 Projects / datasets:
 	- Gates
 	- General
