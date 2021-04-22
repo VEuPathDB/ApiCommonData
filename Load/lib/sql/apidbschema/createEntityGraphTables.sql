@@ -399,7 +399,7 @@ CREATE TABLE apidb.AttributeValue (
  entity_attributes_id         NUMBER(12) NOT NULL,
  entity_type_id               NUMBER(12) NOT NULL,
  incoming_process_type_id        NUMBER(12),
- attribute_ontology_term_id   NUMBER(10) NOT NULL, 
+ attribute_stable_id                VARCHAR(255)  NOT NULL, 
  string_value                 VARCHAR(1000),
  number_value                 NUMBER,
  date_value                   DATE, 
@@ -417,7 +417,6 @@ CREATE TABLE apidb.AttributeValue (
  FOREIGN KEY (entity_attributes_id) REFERENCES apidb.EntityAttributes,
  FOREIGN KEY (entity_type_id) REFERENCES apidb.EntityType,
  FOREIGN KEY (incoming_process_type_id) REFERENCES apidb.ProcessType,
- FOREIGN KEY (attribute_ontology_term_id) REFERENCES sres.ontologyterm,
  PRIMARY KEY (attribute_value_id)
 );
 
@@ -426,7 +425,7 @@ GRANT SELECT ON apidb.AttributeValue TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeValue_sq;
 
-CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_ontology_term_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id, entity_attributes_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -451,8 +450,11 @@ CREATE TABLE apidb.Attribute (
   entity_type_id                NUMBER(12) not null,
   entity_type_stable_id         varchar2(255),
   process_type_id                 NUMBER(12),
-  ontology_term_id         NUMBER(10) NOT NULL,
-  stable_id                varchar2(255) NOT NULL,
+  ontology_term_id         NUMBER(10),
+  parent_ontology_term_id         NUMBER(10) NOT NULL,
+  attribute_stable_id varchar2(255) NOT NULL,
+  provider_label                varchar(1500),
+  display_name                  varchar(1500) not null,
   data_type                    varchar2(10) not null,
   distinct_values_count            integer,
   is_multi_valued                number(1),
@@ -474,6 +476,7 @@ CREATE TABLE apidb.Attribute (
   FOREIGN KEY (entity_type_id) REFERENCES apidb.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES apidb.ProcessType,
   FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
+  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
   PRIMARY KEY (attribute_id)
 );
@@ -483,7 +486,7 @@ GRANT SELECT ON apidb.Attribute TO gus_r;
 
 CREATE SEQUENCE apidb.Attribute_sq;
 
-CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, ontology_term_id, attribute_id) TABLESPACE indx;
+CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, parent_ontology_term_id, attribute_stable_id, attribute_id) TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
