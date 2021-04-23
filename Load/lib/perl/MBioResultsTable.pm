@@ -38,6 +38,26 @@ sub valueToGusTaxa {
   };
 }
 
+sub entitiesForSample {
+  my ($self, $sample) = @_;
+  my %result;
+  for my $row (keys %{$self->{data}{$sample}//{}}){
+    my $key = $self->{rowDetails}{$row}{name};
+    my $displayName = $self->{rowDetails}{$row}{description} // $key;
+    my $s = $self->{rowDetails}{$row}{species};
+    if($s){ # functions and pathways
+     $key .= ", $s";
+     $displayName .= ", $s";
+    }
+    
+    $key =~ s{[^A-Za-z_.0-9]+}{_}g;
+    my $value = $self->{printMatrixElement}->($self->{data}{$sample}{$row});
+    die "Key $key for row $row is a duplicate" if $result{$key};
+    $result{$key} = [$displayName, $value];
+  }
+  return $self->{dataForSampleOntologyTerm} => \%result;
+}
+
 sub ampliconTaxa {
   my ($class, $inputPath) = @_;
   return construct($class, {
@@ -54,10 +74,12 @@ sub ampliconTaxa {
     my @rows;
     my %data;
     my %sampleDetails;
+    my %rowDetails;
     P:
     for my $p (@{$rowSampleHashPairs}){
       my $row = $p->[0];
       push @rows, $row;
+      $rowDetails{$row} = detailsFromRowNameTaxa($row);
       SAMPLE:
       for my $sample (@$samples){
 	my $value = $p->[1]{$sample};
@@ -66,7 +88,7 @@ sub ampliconTaxa {
         $sampleDetails{$sample}{totalCount}+=$value;
       }
     }
-    return \@rows, \%data, \%sampleDetails, {};
+    return \@rows, \%data, \%sampleDetails, \%rowDetails;
   });
 }
 
@@ -86,11 +108,13 @@ sub wgsTaxa {
     my @rows;
     my %data;
     my %sampleDetails;
+    my %rowDetails;
     P:
     for my $p (@{$rowSampleHashPairs}){
       my $row = maybeGoodMetaphlanRow($p->[0]);
       next P unless $row;
       push @rows, $row;
+      $rowDetails{$row} = detailsFromRowNameTaxa($row);
       SAMPLE:
       for my $sample (@$samples){
 	my $value = $p->[1]{$sample};
@@ -99,7 +123,7 @@ sub wgsTaxa {
         $sampleDetails{$sample}{totalCount}+=$value;
       }
     }
-    return \@rows, \%data, \%sampleDetails, {};
+    return \@rows, \%data, \%sampleDetails, \%rowDetails;
   });
 }
 
@@ -131,7 +155,7 @@ sub wgsFunctions {
     for my $p (@{$rowSampleHashPairs}){
       my $row = $p->[0];
       next P if $row =~ m{UNMAPPED|UNGROUPED|UNINTEGRATED};
-      $rowDetails{$row} = detailsFromRowName($row);
+      $rowDetails{$row} = detailsFromRowNameHumannFormat($row);
       $rows{$row}++;
       for my $sample (@$samples){
 	my $value = $p->[1]{$sample};
@@ -214,7 +238,7 @@ sub wgsPathways {
 
   my %rowDetails;
   for my $row (@rows){
-    $rowDetails{$row} = detailsFromRowName($row);
+    $rowDetails{$row} = detailsFromRowNameHumannFormat($row);
   }
 
   return new($class, $dataTypeInfo, \@samples, \@rows, \%data, {}, \%rowDetails);
@@ -358,6 +382,18 @@ sub parseSamplesTsv {
   return \@samples, \@rowSampleHashPairs;
 }
 
+# Not needed for GUS loading
+sub detailsFromRowNameTaxa {
+  my ($row) = @_;
+  (my $description = $row) =~ s{.*;}{};
+  my $name = $row;
+  if (length $name > 255){
+    my ($x, $y) = split(";", $name, 2);
+    $name = $x .";...".substr($y, length $y - (255 - length $x - 4), length $y);
+  }
+  return {name => $name, description => $description};
+}
+
 # Expect output in HUMAnN format
 # ANAEROFRUCAT-PWY: homolactic fermentation
 # ARGDEG-PWY: superpathway of L-arginine, putrescine, and 4-aminobutanoate degradation|g__Escherichia.s__Escherichia_coli
@@ -365,7 +401,7 @@ sub parseSamplesTsv {
 # 1.1.1.103: L-threonine 3-dehydrogenase|unclassified
 # 7.2.1.1: NO_NAME
 
-sub detailsFromRowName {
+sub detailsFromRowNameHumannFormat {
   my ($row) = @_;
 
   (my $name = $row) =~ s{:.*}{};

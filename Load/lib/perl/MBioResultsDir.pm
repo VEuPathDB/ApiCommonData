@@ -52,6 +52,9 @@ sub allTablesForDataset {
   return grep {$_} (ampliconTaxa(@_), wgsTaxa(@_), level4ECs(@_), pathways(@_));
 }
 
+# TODO:
+# - use a function call here
+# - aggregates at different levels
 sub toGetAddMoreData {
   my ($self) = @_;
   return sub {
@@ -63,9 +66,9 @@ sub toGetAddMoreData {
       my ($valuesHash) = @_;
       my $sample = $valuesHash->{name}[0];
       for my $table (@tables){
-        my $o = $table->{data}{$sample};
-        if($o){
-          $valuesHash->{$table->{dataForSampleOntologyTerm}} = [$o];
+        my ($k, $o) = $table->entitiesForSample($sample);
+        if($k and $o){
+          $valuesHash->{$k} = [$o];
         }
       }
       return $valuesHash;
