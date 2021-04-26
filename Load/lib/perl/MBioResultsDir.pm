@@ -66,8 +66,8 @@ sub toGetAddMoreData {
       my ($valuesHash) = @_;
       my $sample = $valuesHash->{name}[0];
       for my $table (@tables){
-        my ($k, $o) = $table->entitiesForSample($sample);
-        if($k and $o){
+        my %h = %{$table->entitiesForSample($sample)//{}};
+        while(my ($k, $o) = each %h){ 
           $valuesHash->{$k} = [$o];
         }
       }

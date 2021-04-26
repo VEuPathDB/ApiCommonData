@@ -37,38 +37,96 @@ sub valueToGusTaxa {
     relative_abundance => sprintf("%.6f", $v / $sd->{totalCount})
   };
 }
-
 sub entitiesForSample {
   my ($self, $sample) = @_;
+  return $self->{entitiesForSample}->($self, $sample);
+}
+sub entitiesForSampleFunctions {
+  my ($data, $rowDetails, $summaryAbundanceName, $detailedAbundanceName, $summaryCoverageName, $detailedCoverageName) = @_;
   my %result;
-  for my $row (keys %{$self->{data}{$sample}//{}}){
-    my $key = $self->{rowDetails}{$row}{name};
-    my $displayName = $self->{rowDetails}{$row}{description} // $key;
-    my $s = $self->{rowDetails}{$row}{species};
-    if($s){ # functions and pathways
-     $key .= ", $s";
-     $displayName .= ", $s";
+  for my $row (keys %{$data}){
+    my $key = $rowDetails->{$row}{name};
+    my $displayName = $rowDetails->{$row}{description} // $key;
+    my $species = $rowDetails->{$row}{species};
+    my ($abundance, $coverage);
+    my $x = $data->{$row};
+    if( ref $x eq 'ARRAY'){
+      $abundance = $x->[0];
+      $coverage = $x->[1];
+    } else {
+      $abundance = $x;
     }
-    
+    if($species){
+      $key .= ", $species";
+      $displayName .= ", $species";
+    }
     $key =~ s{[^A-Za-z_.0-9]+}{_}g;
-    my $value = $self->{printMatrixElement}->($self->{data}{$sample}{$row});
-    die "Key $key for row $row is a duplicate" if $result{$key};
-    $result{$key} = [$displayName, $value];
+    if(length $key > 255) {
+      die "Key unexpectedly long: $key";
+    }
+    if($abundance){
+      my $n = $species ? $detailedAbundanceName : $summaryAbundanceName;
+      $result{$n}{$key} = [$displayName, $abundance];
+    }
+    if($coverage && $summaryCoverageName && $detailedCoverageName){
+      my $n = $species ? $detailedCoverageName : $summaryCoverageName;
+      $result{$n}{$key} = [$displayName, $coverage];
+    }
   }
-  return $self->{dataForSampleOntologyTerm} => \%result;
+  return \%result;
+}
+
+sub entitiesForSampleTaxa {
+  my ($data, $levelNames) = @_;
+
+  my @rows = keys %{$data};
+  my @abundances = values %{$data};
+  my $totalCount = sum @abundances;
+  my %result;
+
+  for my $taxonLevel ((0..$#$levelNames)){
+    my %groups;
+    for my $i (0..$#rows){
+      my @ls = split ";", $rows[$i];
+      my $l = join ";", map {$_ // ""} @ls[0..$taxonLevel];
+      push @{$groups{$l}}, $abundances[$i];
+    }
+    while(my ($key, $as) = each %groups){
+      my $value = sprintf("%.6f", (sum @{$as} ) / $totalCount);
+      my $displayName;
+      if($key =~m{;$}){
+        $displayName = $key;
+        $displayName =~ s{;*$}{};
+        $displayName =~ s{.*;}{};
+        $displayName = "unclassified $displayName";
+      } else {
+        ($displayName = $key) =~ s{.*;}{};
+      }
+      if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > 255){
+        my ($x, $y) = split(";", $key, 2);
+        $key = $x .";...".substr($y, (length $y) - (255 - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
+      }
+      $key =~ s{[^A-Za-z_.0-9]+}{_}g;
+      $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
+    }
+  }
+  return \%result;
 }
 
 sub ampliconTaxa {
   my ($class, $inputPath) = @_;
   return construct($class, {
     resultType => 'Taxon table',
-    dataForSampleOntologyTerm => 'abundance_amplicon',
     matrixElementType => 'int',
     printMatrixElement => sub {
       my ($x) = @_;
       return $x ? $x : "";
     },
     valueToGus => \&valueToGusTaxa,
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleTaxa($self->{data}{$sample}, [map {"abundance_amplicon_${_}"} qw/k p c o f g s/]);
+    }
   }, $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my @rows;
@@ -96,13 +154,16 @@ sub wgsTaxa {
   my ($class, $inputPath) = @_;
   return construct($class, {
     resultType => 'Taxon table',
-    dataForSampleOntologyTerm => 'abundance_wgs',
     matrixElementType => 'float',
     printMatrixElement => sub {
       my ($x) = @_;
       return $x ? sprintf("%.5f", $x) : "";
     },
     valueToGus => \&valueToGusTaxa,
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleTaxa($self->{data}{$sample}, [map {"abundance_wgs_${_}"} qw/k p c o f g s/]);
+    }
   }, $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my @rows;
@@ -131,7 +192,6 @@ sub wgsFunctions {
   my ($class, $unitType, $inputPath) = @_;
   return construct($class, {
     resultType => 'Function table',
-    dataForSampleOntologyTerm => "function_$unitType",
     matrixElementType => 'float',
     printMatrixElement => sub {
       my ($x) = @_;
@@ -145,7 +205,11 @@ sub wgsFunctions {
         unit_type => $unitType,
         abundance_cpm => $v,
       };
-    }
+    },
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", "function_${unitType}_species", undef, undef); 
+    },
   }, $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my %rows;
@@ -171,7 +235,6 @@ sub wgsPathways {
   my ($class, $inputPathAbundances, $inputPathCoverages) = @_;
   my $dataTypeInfo = {
     resultType => 'Pathway table',
-    dataForSampleOntologyTerm => 'abundance_and_coverage_pathways',
     matrixElementType => 'unicode',
     printMatrixElement => sub {
       my ($abundance, $coverage) = @{$_[0]};
@@ -187,6 +250,10 @@ sub wgsPathways {
         abundance_cpm => $abundance,
         coverage_fraction => $coverage
       };
+    },
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"pathway_abundance", "pathway_abundance_species", "pathway_coverage", "pathway_coverage_species");
     }
   }; 
 
