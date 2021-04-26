@@ -32,6 +32,7 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my @orgs = ($organismList) ? split (/\,\s*/, $organismList) : @{getOrganismList($dbA)};
 
 my (%seqA, %geneA, %pseudoA, %seqB, %geneB, %pseudoB);
+my (%fullNameA, %fullNameB);
 
 ## query dbA
 foreach my $org (@orgs) {
@@ -43,6 +44,7 @@ foreach my $org (@orgs) {
   #print STDERR "For $org, at $dbA, get ncbiTaxonId = $ncbiTaxonId\n";
 
   if ($ncbiTaxonId) {
+    $fullNameA{$org} = getOrganismFullName ($org, $dbh);
     $seqA{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
     $geneA{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeatureFromTuningTable ($ncbiTaxonId, $dbh);
   }
@@ -59,6 +61,7 @@ foreach my $org(@orgs) {
   #print STDERR "For $org, at $dbB, get ncbiTaxonId = $ncbiTaxonId\n";
 
   if ($ncbiTaxonId) {
+    $fullNameB{$org} = getOrganismFullName ($org, $dbh);
     $seqB{$org} = getSequenceSummary ($ncbiTaxonId, $dbh);
     $geneB{$org} = ($useDotsTable =~ /^y/i) ? getGeneFeatureFromDotsTable ($ncbiTaxonId, $dbh) : getGeneFeatureFromTuningTable ($ncbiTaxonId, $dbh);
   }
@@ -72,6 +75,11 @@ foreach my $k (sort keys %seqA) {
   if (!$seqB{$k}) {
     print STDERR "WARNING ... $k only available in $dbA, but not in $dbB\n";
     next;
+  }
+
+  ## 1.2 check if organism full Name changed
+  if ($fullNameA{$k} ne $fullNameB{$k}) {
+    print STDERR "WARNING ... organism full name changed. '$fullNameB{$k}' in $dbB, '$fullNameA{$k}' in $dbA\n";
   }
 
   ## 2. check if the total number of sequence is same
@@ -145,6 +153,23 @@ sub getOrganismList {
   $dbh->disconnect();
 
   return \@orgs;
+}
+
+sub getOrganismFullName {
+  my ($org, $dbh) = @_;
+
+  my $fullName;
+
+  my $sql = "select tn.NAME from apidb.organism o, SRES.TAXON t, SRES.TAXONNAME tn
+             where o.TAXON_ID=t.TAXON_ID and t.TAXON_ID=tn.TAXON_ID and o.ABBREV like '$org'
+             and tn.NAME_CLASS like 'scientific name'";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+  while ( my ($val) = $stmt->fetchrow_array()) {
+    $fullName = $val;
+  }
+
+  return $fullName;
 }
 
 sub getNcbiTaxonId {
