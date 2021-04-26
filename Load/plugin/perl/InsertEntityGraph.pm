@@ -159,7 +159,8 @@ sub run {
     @investigationFiles = map { "$metaDataRoot/$_/$investigationBaseName" } @$investigationSubset;
   }
   else {
-    @investigationFiles = glob "$metaDataRoot/$investigationBaseName $metaDataRoot/*/$investigationBaseName";
+    @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
+    push @investigationFiles, "$metaDataRoot/$investigationBaseName" if -e "$metaDataRoot/$investigationBaseName";
   }
   $self->logOrError("No investigation files") unless @investigationFiles;
 
