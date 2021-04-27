@@ -36,7 +36,8 @@ my $dbh  = DBI->connect($dsn, $user, $pass) or die DBI::errstr;
 
 my $sql =<<SQL;
 SELECT distinct o.PROJECT_NAME, w.version, o.NAME_FOR_FILENAMES, 
-       o.is_annotated_genome,  r.BUILD_NUMBER_INTRODUCED
+       o.is_annotated_genome,  r.BUILD_NUMBER_INTRODUCED, 
+       y.value as build_number_revised
 FROM apidbtuning.datasetpresenter r, 
      apidbtuning.DATASETPROPERTY y, 
      apidb.organism o, 
@@ -53,7 +54,7 @@ my $sth = $dbh->prepare($sql);
 $sth->execute;
 
 while(my $row = $sth->fetchrow_arrayref) {
-   my($project, $wf_version, $organism, $is_annotated, $build_number) = @$row;
+   my($project, $wf_version, $organism, $is_annotated, $build_number_introduced, $build_number) = @$row;
    #print "$project, $wf_version, $organism, $is_annotated, $build_number \n";
    print "\n===========================================\n";
 
@@ -65,7 +66,7 @@ while(my $row = $sth->fetchrow_arrayref) {
      system("rm $_") if $commit;
   }
 
-  @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*.gff");
+  @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
   foreach (@oldfiles) {
      print "rm $_\n";
      system("rm $_") if $commit;

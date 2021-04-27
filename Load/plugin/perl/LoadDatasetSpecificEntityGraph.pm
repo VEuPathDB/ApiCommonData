@@ -251,6 +251,11 @@ sub createAttributeGraphTable {
 
   $self->log("Creating TABLE:  $tableName");
 
+  # apidb.attribute stable_id could be from sres.ontologyterm, or not
+  # if yes, it could also be another term's parent
+  # (but not a multifilter - term_type for attributes that have values is default)
+  # hence this is only using atg for the parent-child relationship
+  # and only adding atg entries which aren't already in
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
   (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId)
@@ -258,16 +263,15 @@ sub createAttributeGraphTable {
   (SELECT atg.*
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
-    START WITH ontology_term_id IN (SELECT DISTINCT ontology_term_id FROM att)
+    START WITH ontology_term_id IN (SELECT DISTINCT parent_ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct atg.ontology_term_id
-     , atg.stable_id
-     , atg.parent_stable_id
-     , atg.provider_label
-     , atg.display_name
-     , atg.term_type
-     , case when att.data_type is null then 0 else 1 end as has_values
+SELECT distinct att.stable_id as stable_id
+     , atg.stable_id as parent_stable_id
+     , att.provider_label
+     , att.display_name
+     , 'default' as term_type
+     , 1 as has_values
      , att.data_type
      , att.distinct_values_count
      , att.is_multi_valued
@@ -275,7 +279,22 @@ SELECT distinct atg.ontology_term_id
      , att.unit
      , att.precision
 FROM atg, att
-where atg.ontology_term_id = att.ontology_term_id (+)
+where atg.ontology_term_id = att.parent_ontology_term_id
+UNION
+SELECT distinct atg.stable_id
+     , atg.parent_stable_id
+     , atg.provider_label
+     , atg.display_name
+     , atg.term_type
+     , 0 as has_values
+     , null as data_type
+     , null as distinct_values_count
+     , null as is_multi_valued
+     , null as data_shape
+     , null as unit
+     , null as precision
+FROM atg, att
+where atg.stable_id = att.stable_id (+) and att.stable_id is null
 ";
 
 
@@ -297,14 +316,13 @@ sub createTallTable {
 
   my $sql = "CREATE TABLE $tableName as 
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
-     , ot.source_id as attribute_stable_id
+     , av.attribute_key as attribute_stable_id
      , string_value
      , number_value
      , date_value
-FROM apidb.attributevalue av, apidb.entityattributes ea, sres.ontologyterm ot
+FROM apidb.attributevalue av, apidb.entityattributes ea
 WHERE av.entity_type_id = $entityTypeId
 and av.entity_attributes_id = ea.entity_attributes_id
-and av.attribute_ontology_term_id = ot.ontology_term_id (+)
 ";
 
   my $dbh = $self->getDbHandle();

@@ -5,6 +5,7 @@ use Exporter;
 @EXPORT = qw(queryForOntologyTerms);
 
 use strict;
+use warnings;
 
 sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId) = @_;
