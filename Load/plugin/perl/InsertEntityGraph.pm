@@ -182,9 +182,11 @@ sub run {
       my $dateObfuscationFile = $self->getArg('dateObfuscationFile');
 
       my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
-      my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
-
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFileBaseName, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+      my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFileBaseName');
+      unless(-e $ontologyMappingOverrideFile){ ## prepend path
+        $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
+      }
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
