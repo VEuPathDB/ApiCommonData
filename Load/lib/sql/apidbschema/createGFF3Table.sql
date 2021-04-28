@@ -3,7 +3,7 @@
 CREATE TABLE ApiDB.GFF3 (
  gff3_feature_id       NUMBER(10),  
  na_sequence_id        NUMBER(10) not null,  
- source                VARCHAR2(20),  
+ source                VARCHAR2(50),  
  sequence_ontology_id  NUMBER(10) not null,  
  mapping_start                 NUMBER(8),
  mapping_end                   NUMBER(8),
