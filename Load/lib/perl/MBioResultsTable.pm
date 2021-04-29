@@ -3,7 +3,7 @@ package ApiCommonData::Load::MBioResultsTable;
 use strict;
 use warnings;
 
-use List::Util qw/sum uniq/;
+use List::Util qw/sum uniq all/;
 
 use DateTime;
 use JSON qw/encode_json/;
@@ -20,7 +20,7 @@ sub submitToGus {
     ROW:
     for my $row (@{$self->{rows}}){
 	my $value = $self->{data}{$sample}{$row};
-        next ROW unless $value;
+        next ROW unless ref $value eq 'ARRAY' ? all {$_} @{$value} : $value;
 	$submit->($self->{valueToGus}->($panId, $row, $self->{sampleDetails}{$sample}, $self->{rowDetails}{$row}, $value));
     }
     $undefPointerCache->();
