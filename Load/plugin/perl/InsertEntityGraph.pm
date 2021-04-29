@@ -160,7 +160,9 @@ sub run {
   }
   else {
     @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
-    push @investigationFiles, "$metaDataRoot/$investigationBaseName" if -e "$metaDataRoot/$investigationBaseName";
+    if (-f "$metaDataRoot/$investigationBaseName"){
+      push @investigationFiles, "$metaDataRoot/$investigationBaseName"; 
+    }
   }
   $self->logOrError("No investigation files") unless @investigationFiles;
 
@@ -183,7 +185,7 @@ sub run {
 
       my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
       my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFileBaseName');
-      unless(-e $ontologyMappingOverrideFile){ ## prepend path
+      if ($ontologyMappingOverrideFile && ! -f $ontologyMappingOverrideFile){ ## prepend path
         $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
       }
       $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
