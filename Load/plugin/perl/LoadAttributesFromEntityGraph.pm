@@ -234,6 +234,7 @@ sub loadAttributeTerms {
 
 sub valProps {
   my ($typeCounts, $attributeStableId) = @_;
+  return unless $typeCounts;
   my %cs = %{$typeCounts};
   return unless $cs{_COUNT};
 
@@ -353,6 +354,7 @@ sub loadAttributes {
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
       for my $p ($self->annPropsAndValues($ontologyTerms, $ontologySourceId, $processTypeId, $valueArray)){
+        $processTypeId //= "";
         my ($attributeStableId, $annProps, $value) = @{$p};
         $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$processTypeId} //= $annProps;
 
@@ -370,10 +372,11 @@ sub loadAttributes {
                  $dateValue,
               );
       
-        print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
+        print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
         
       }
-
+    }
+  }
 }
 sub annPropsAndValues {
   my ($self, $ontologyTerms, $ontologySourceId, $processTypeId, $valueArray) = @_;
@@ -389,13 +392,13 @@ sub annPropsAndValues {
     # temporary, and assumes all of these are ontology terms
     # better - one parent geohash term?
     if($ontologySourceId eq 'GEOHASH_TEMP_32') {
-      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId), $value;
+      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId), $value];
       for my $n (1 .. 7) {
         my $subvalue = substr($value, 0, $n);
         my $displayName = $ontologyTerm->{DISPLAY_NAME} . ($n == 1 ? ", to 1 digit" : ", to $n digits");
         push @result, ["GEOHASH_TEMP_${n}", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
       }
-    elsif (ref $value eq 'HASH'){
+    } elsif (ref $value eq 'HASH'){
       # MBio results
       for my $k (keys %{$value}){
         my ($displayName, $subvalue);
@@ -410,10 +413,10 @@ sub annPropsAndValues {
         push @result, ["$ontologySourceId.$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
       }
     } else {
-        push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId, $isMultiValued), $value];
-      }
+      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId, $isMultiValued), $value];
     }
   }
+  return @result;
 }
 
 sub typedValueForAttribute {
@@ -556,7 +559,7 @@ sub fields {
   $datatypeMap->{'entity_attributes_id'} = " CHAR(12)";
   $datatypeMap->{'entity_type_id'} = "  CHAR(12)";
   $datatypeMap->{'incoming_process_type_id'} = "  CHAR(12)";
-  $datatypeMap->{'attribute_stable_id'} = "  VARCHAR(255)";
+  $datatypeMap->{'attribute_stable_id'} = "  CHAR(255)";
   $datatypeMap->{'string_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'number_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'date_value'} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
@@ -634,5 +637,3 @@ sub undoTables {
 }
 
 1;
-
-

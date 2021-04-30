@@ -51,10 +51,10 @@ sub entitiesForSampleFunctions {
     my ($abundance, $coverage);
     my $x = $data->{$row};
     if( ref $x eq 'ARRAY'){
-      $abundance = $x->[0];
+      $abundance = sprintf("%.6f",$x->[0]);
       $coverage = $x->[1];
     } else {
-      $abundance = $x;
+      $abundance = sprintf("%.6f", $x);
     }
     if($species){
       $key .= ", $species";
