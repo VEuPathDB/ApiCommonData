@@ -266,7 +266,7 @@ sub createAttributeGraphTable {
     START WITH ontology_term_id IN (SELECT DISTINCT parent_ontology_term_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct att.stable_id as stable_id
+SELECT distinct att.attribute_stable_id as stable_id
      , atg.stable_id as parent_stable_id
      , att.provider_label
      , att.display_name
@@ -294,7 +294,7 @@ SELECT distinct atg.stable_id
      , null as unit
      , null as precision
 FROM atg, att
-where atg.stable_id = att.stable_id (+) and att.stable_id is null
+where atg.stable_id = att.attribute_stable_id (+) and att.attribute_stable_id is null
 ";
 
 
@@ -316,7 +316,7 @@ sub createTallTable {
 
   my $sql = "CREATE TABLE $tableName as 
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
-     , av.attribute_key as attribute_stable_id
+     , av.attribute_stable_id
      , string_value
      , number_value
      , date_value
