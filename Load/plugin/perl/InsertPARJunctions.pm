@@ -169,6 +169,7 @@ my $insertCounts = 0;
                                                  });
 
       $intronJunction->submit();
+      $self->undefPointerCache();
       $insertCounts++;
     }
 

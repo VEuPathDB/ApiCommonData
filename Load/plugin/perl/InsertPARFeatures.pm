@@ -176,6 +176,7 @@ SQL
 						  });
 
       $featureLocation->submit() unless ($featureLocation->retrieveFromDB());
+      $self->undefPointerCache();
     }
 
     $queryStmt->finish() or die $dbh->errstr;
