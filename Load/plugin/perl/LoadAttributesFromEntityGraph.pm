@@ -127,18 +127,19 @@ sub run {
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
+
   my $studiesCount;
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     $studiesCount++;
-    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
-
+    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    $self->loadAttributeTerms($ontologyTerms, $studyId, $entityTypeIds);
+    my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
+
+    $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
   }
 
   return "Loaded attributes for $studiesCount studies"; 
@@ -168,77 +169,60 @@ and study_id = $studyId";
 
   return \%rv;
 }
-
-
+sub annPropsFromParentOntologyTerm {
+  my ($displayName, $parentOntologyTerm, $processTypeId, $isMultiValued) = @_;
+  return {
+    ontology_term_id => undef,
+    parent_ontology_term_id => $parentOntologyTerm->{ONTOLOGY_TERM_ID},
+    unit => $parentOntologyTerm->{UNIT_NAME},
+    unit_ontology_term_id => $parentOntologyTerm->{UNIT_ONTOLOGY_TERM_ID},
+    provider_label => undef,
+    display_name => $displayName,
+    process_type_id => $processTypeId,
+    is_multi_valued => $isMultiValued,
+  };
+}
+sub annPropsFromOntologyTerm {
+  my ($ontologyTerm, $processTypeId, $isMultiValued) = @_;
+  return {
+    ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
+    parent_ontology_term_id => $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID},
+    unit => $ontologyTerm->{UNIT_NAME},
+    unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
+    provider_label => $ontologyTerm->{PROVIDER_LABEL},
+    display_name => $ontologyTerm->{DISPLAY_NAME},
+    process_type_id => $processTypeId,
+    is_multi_valued => $isMultiValued,
+  };
+}
 
 sub loadAttributeTerms {
-  my ($self, $ontologyTerms, $studyId, $entityTypeIds) = @_;
+  my ($self, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds) = @_;
 
   my $attributeCount;
 
   SOURCE_ID:
-  foreach my $sourceId (keys %$ontologyTerms) {
-    my $ontologyTerm = $ontologyTerms->{$sourceId};
+  foreach my $attributeStableId (keys %$annPropsByAttributeStableIdAndEntityTypeId) {
 
-    foreach my $etId (keys %{$ontologyTerm->{TYPE_IDS}}) {
-      next SOURCE_ID unless $ontologyTerm->{$etId}->{_COUNT} > 0;
+    foreach my $etId (keys %{$annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}}) {
+      my $annProps = $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId};
 
-      my ($dataType, $dataShape, $precision);
-      $precision = 1; # THis is the default; probably never changed
-      my $isNumber = $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_NUMBER_COUNT};
-      my $isDate = $ontologyTerm->{$etId}->{_IS_DATE_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_DATE_COUNT};
-      my $valueCount = scalar(keys(%{$ontologyTerm->{$etId}->{_VALUES}}));
-#      my $isBoolean = $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_BOOLEAN_COUNT};
+      my $valProps = valProps($typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId}, $attributeStableId);
+      next SOURCE_ID unless $valProps;
 
-      my $isMultiValued = $ontologyTerm->{$etId}->{_IS_MULTI_VALUED};
 
-      if($ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT} && $ontologyTerm->{$etId}->{_COUNT} == $ontologyTerm->{$etId}->{_IS_ORDINAL_COUNT}) {
-        $dataShape = 'ordinal';
-      }
-      elsif($isDate || ($isNumber && $valueCount > 10)) {
-        $dataShape = 'continuous';
-      }
-      elsif($valueCount == 2) {
-        $dataShape = 'binary';
-      }
-      else {
-        $dataShape = 'categorical'; 
-      }
-
-      # OBI term here is for longitude
-      if($sourceId eq 'OBI_0001621') {
-        $dataType = 'longitude'
-      }
-      elsif($isDate) {
-        $dataType = 'date';
-      }
-      elsif($isNumber) {
-        $dataType = 'number';
-      }
-#      elsif($isBoolean) {
-#        $dataType = 'boolean';
-#      }
-      else {
-        $dataType = 'string';
-      }
-
-      my $ptId = $ontologyTerm->{TYPE_IDS}->{$etId};
-
-      my $entityTypeStableId = $entityTypeIds->{$etId};
+      # Danielle: A syntactically valid name
+      #   consists of letters, numbers and the dot or underline characters
+      #   and starts with a letter or the dot not followed by a number
+      $self->error("Bad attribute stable ID: $attributeStableId")
+        unless $attributeStableId =~ m{^[.A-Za-z]([.A-Za-z][A-Za-z_.0-9]*)?$};
 
       my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
-                                                         entity_type_stable_id => $entityTypeStableId,
-                                                         process_type_id => $ptId,
-                                                         ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
-                                                         stable_id => $sourceId,
-                                                         data_type => $dataType,
-                                                         distinct_values_count => $valueCount,
-                                                         is_multi_valued => $isMultiValued ? 1 : 0,
-                                                         data_shape => $dataShape,
-                                                         unit => $ontologyTerm->{UNIT_NAME},
-                                                         unit_ontology_term_id => $ontologyTerm->{UNIT_ONTOLOGY_TERM_ID},
-                                                         precision => $precision,
-                                                        });
+                                                         entity_type_stable_id => $entityTypeIds->{$etId},
+                                                         stable_id => $attributeStableId,
+                                                         %$annProps,
+                                                         %$valProps
+                                                       });
 
       $attribute->submit();
       $attributeCount++;
@@ -248,6 +232,58 @@ sub loadAttributeTerms {
   return $attributeCount;
 }
 
+sub valProps {
+  my ($typeCounts, $attributeStableId) = @_;
+  return unless $typeCounts;
+  my %cs = %{$typeCounts};
+  return unless $cs{_COUNT};
+
+  my ($dataType, $dataShape, $precision);
+  $precision = 1; # THis is the default; probably never changed
+  my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == $cs{_IS_NUMBER_COUNT};
+  my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == $cs{_IS_DATE_COUNT};
+  my $valueCount = scalar(keys(%{$cs{_VALUES}}));
+#  my $isBoolean = $cs{_COUNT} == $cs{_IS_BOOLEAN_COUNT};
+
+  my $isMultiValued = $cs{_IS_MULTI_VALUED};
+
+  if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
+    $dataShape = 'ordinal';
+  }
+  elsif($isDate || ($isNumber && $valueCount > 10)) {
+    $dataShape = 'continuous';
+  }
+  elsif($valueCount == 2) {
+    $dataShape = 'binary';
+  }
+  else {
+    $dataShape = 'categorical'; 
+  }
+
+  # OBI term here is for longitude
+  if($attributeStableId eq 'OBI_0001621') {
+    $dataType = 'longitude'
+  }
+  elsif($isDate) {
+    $dataType = 'date';
+  }
+  elsif($isNumber) {
+    $dataType = 'number';
+  }
+#  elsif($isBoolean) {
+#    $dataType = 'boolean';
+#  }
+  else {
+    $dataType = 'string';
+  }
+  return {
+    data_type => $dataType,
+    distinct_values_count => $valueCount,
+    is_multi_valued => $isMultiValued ? 1 : 0,
+    data_shape => $dataShape,
+    precision => $precision,
+  };
+}
 
 
 sub addUnitsToOntologyTerms {
@@ -290,15 +326,18 @@ sub loadAttributeValues {
   my $fields = $self->fields($maxAttrLength);
 
   my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength);
-  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms);
-  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms);
+  my $annPropsByAttributeStableIdAndEntityTypeId = {};
+  my $typeCountsByAttributeStableIdAndEntityTypeId = {};
+  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId);
+  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId);
 
   $fifo->cleanup();
   unlink $fifoName;
+  return $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId;
 }
 
 sub loadAttributes {
-  my ($self, $studyId, $fifo, $ontologyTerms, $sql) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $sql) = @_;
 
   my $dbh = $self->getQueryHandle();
 
@@ -307,122 +346,112 @@ sub loadAttributes {
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
   $sh->execute($studyId);
 
-  while(my ($vaId, $vtId, $etId, $lobLocator) = $sh->fetchrow_array()) {
+  while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
     my $json = $self->readClob($lobLocator);
 
     my $attsHash = decode_json($json);
 
     while(my ($ontologySourceId, $valueArray) = each (%$attsHash)) {
 
-      my $hasMultipleValues = scalar(@$valueArray) > 1;
-
-      foreach my $value (@$valueArray) {
-        my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
-        my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
-
-        $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
-        $ontologyTerm->{$vtId}->{_IS_MULTI_VALUED} = 1 if($hasMultipleValues);
-
-        unless($ontologyTermId) {
-          $self->error("No ontology_term_id found for:  $ontologySourceId");
-        }
-
-        my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $value, $vtId);
-
-        my $stringValue = $value unless(defined($dateValue) || defined($numberValue));
+      for my $p ($self->annPropsAndValues($ontologyTerms, $ontologySourceId, $processTypeId, $valueArray)){
+        $processTypeId //= "";
+        my ($attributeStableId, $annProps, $value) = @{$p};
+        $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$processTypeId} //= $annProps;
 
 
-        my @a = ($vaId,
-                 $vtId,
-                 $etId,
-                 $ontologyTermId,
+        my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
+        my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($cs, $value);
+        $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} = $updatedCs;
+
+        my @a = ($entityAttributesId,
+                 $entityTypeId,
+                 $processTypeId,
+                 $attributeStableId,
                  $stringValue,
                  $numberValue,
-                 $dateValue
-            );
-
+                 $dateValue,
+              );
+      
         print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
-
-        # TODO: using temp geo hash id
-        if($ontologySourceId eq 'GEOHASH_TEMP_32') {
-          $self->loadAllGeoHashLevels($vaId, $vtId, $etId, $ontologyTerms, $fh, $value);
-        }
-
+        
       }
     }
   }
 }
-
-
-sub loadAllGeoHashLevels {
-  my ($self, $vaId, $vtId, $etId, $ontologyTerms, $fh, $value) = @_;
-
-  foreach my $n (1 .. 7) {
-    my $subVal = substr($value, 0, $n);
-
-    # TODO: using temp geo hash id
-    my $sourceId = "GEOHASH_TEMP_${n}";
-
-    my $ontologyTerm = $ontologyTerms->{$sourceId};
-    my $ontologyTermId = $ontologyTerm->{ONTOLOGY_TERM_ID};
-
-    $ontologyTerm->{TYPE_IDS}->{$vtId} = $etId;
-
-    unless($ontologyTermId) {
-      $self->error("No ontology_term_id found for:  $sourceId");
-    }
-
-    my ($dateValue, $numberValue) = $self->ontologyTermValues($ontologyTerm, $subVal, $vtId);
-
-    my $stringValue = $subVal unless(defined($dateValue) || defined($numberValue));
-
-    my @a = ($vaId,
-             $vtId,
-             $etId,
-             $ontologyTermId,
-             $stringValue,
-             $numberValue,
-             $dateValue
-        );
-
-    print $fh join($END_OF_COLUMN_DELIMITER, @a) . $END_OF_RECORD_DELIMITER;
+sub annPropsAndValues {
+  my ($self, $ontologyTerms, $ontologySourceId, $processTypeId, $valueArray) = @_;
+  my $ontologyTerm = $ontologyTerms->{$ontologySourceId};
+  unless($ontologyTerm) {
+    $self->error("No ontology term found for:  $ontologySourceId");
   }
+  my $isMultiValued = scalar(@$valueArray) > 1;
+  my @result;
+
+  VALUE:
+  for my $value (@{$valueArray}){
+    # temporary, and assumes all of these are ontology terms
+    # better - one parent geohash term?
+    if($ontologySourceId eq 'GEOHASH_TEMP_32') {
+      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId), $value];
+      for my $n (1 .. 7) {
+        my $subvalue = substr($value, 0, $n);
+        my $displayName = $ontologyTerm->{DISPLAY_NAME} . ($n == 1 ? ", to 1 digit" : ", to $n digits");
+        push @result, ["GEOHASH_TEMP_${n}", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
+      }
+    } elsif (ref $value eq 'HASH'){
+      # MBio results
+      for my $k (keys %{$value}){
+        my ($displayName, $subvalue);
+        my $o = $value->{$k};
+        if (ref $o eq 'ARRAY'){
+          $displayName = $o->[0];
+          $subvalue = $o->[1];
+        } else {
+           $displayName = $ontologyTerm->{DISPLAY_NAME}. ": $k";
+           $subvalue = $o;
+        }
+        push @result, ["$ontologySourceId.$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
+      }
+    } else {
+      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId, $isMultiValued), $value];
+    }
+  }
+  return @result;
 }
 
+sub typedValueForAttribute {
+  my ($self, $counts, $value) = @_;
 
+  my ($stringValue, $numberValue, $dateValue); 
 
-sub ontologyTermValues {
-  my ($self, $ontologyTerm, $value, $entityTypeId) = @_;
+  $counts->{_VALUES}->{$value}++;
 
-  my ($dateValue, $numberValue);
-
-  $ontologyTerm->{$entityTypeId}->{_VALUES}->{$value}++;
-
-  $ontologyTerm->{$entityTypeId}->{_COUNT}++;
+  $counts->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
-    $ontologyTerm->{$entityTypeId}->{_IS_NUMBER_COUNT}++;
+    $counts->{_IS_NUMBER_COUNT}++;
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
-    $ontologyTerm->{$entityTypeId}->{_IS_DATE_COUNT}++;
+    $counts->{_IS_DATE_COUNT}++;
   }
   elsif($value =~ /^\d/) {
-    $ontologyTerm->{$entityTypeId}->{_IS_ORDINAL_COUNT}++;
+    $counts->{_IS_ORDINAL_COUNT}++;
   }
   else {
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
-#      $ontologyTerm->{$entityTypeId}->{_IS_BOOLEAN_COUNT}++;
+#      $counts->{_IS_BOOLEAN_COUNT}++;
 #    }
   }
 
+  $stringValue = $value unless(defined($dateValue) || defined($numberValue));
 
-  return $dateValue, $numberValue;
+  return $counts, $stringValue, $numberValue, $dateValue;
 }
 
 
@@ -454,18 +483,25 @@ sub readClob {
 
 
 sub loadAttributesFromEntity {
-  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
-
-  my $sql = "select va.entity_attributes_id, va.entity_type_id, null as process_type_id, va.atts from apidb.entityattributes va, apidb.entitytype vt where to_char(substr(va.atts, 1, 2)) != '{}' and vt.entity_type_id = va.entity_type_id and vt.study_id = ?";
-
-  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
+  loadAttributes(@_, "
+select va.entity_attributes_id
+     , va.entity_type_id
+     , null as process_type_id
+     , va.atts
+from apidb.entityattributes va
+   , apidb.entitytype vt
+where to_char(substr(va.atts, 1, 2)) != '{}'
+and vt.entity_type_id = va.entity_type_id
+and vt.study_id = ?");
 }
 
 
 sub loadAttributesFromIncomingProcess {
-  my ($self, $studyId, $fifo, $ontologyTerms) = @_;
-
-  my $sql = "select va.entity_attributes_id, va.entity_type_id, ea.process_type_id, ea.atts
+  loadAttributes(@_, "
+select va.entity_attributes_id
+     , va.entity_type_id
+     , ea.process_type_id
+     , ea.atts
 from apidb.processattributes ea
    , apidb.entityattributes va
    , apidb.entitytype vt
@@ -473,9 +509,7 @@ where to_char(substr(ea.atts, 1, 2)) != '{}'
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
 and vt.study_id = ?
-";
-
-  $self->loadAttributes($studyId, $fifo, $ontologyTerms, $sql);
+");
 }
 
 sub fields {
@@ -513,7 +547,7 @@ sub fields {
   my $attributeList = ["entity_attributes_id",
                        "entity_type_id",
                        "incoming_process_type_id",
-                       "attribute_ontology_term_id",
+                       "attribute_stable_id",
                        "string_value",
                        "number_value",
                        "date_value",
@@ -522,14 +556,14 @@ sub fields {
 
   push @$attributeList, keys %$datatypeMap;
 
-  $datatypeMap->{'attribute_value_id'} = " SEQUENCE(MAX,1)";
   $datatypeMap->{'entity_attributes_id'} = " CHAR(12)";
   $datatypeMap->{'entity_type_id'} = "  CHAR(12)";
   $datatypeMap->{'incoming_process_type_id'} = "  CHAR(12)";
-  $datatypeMap->{'attribute_ontology_term_id'} = "  CHAR(10)";
+  $datatypeMap->{'attribute_stable_id'} = "  CHAR(255)";
   $datatypeMap->{'string_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'number_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'date_value'} = " DATE 'yyyy-mm-dd hh24:mi:ss'";
+  $datatypeMap->{'attribute_value_id'} = " SEQUENCE(MAX,1)";
   
   my @fields = map { lc($_) . $datatypeMap->{lc($_)}  } @$attributeList;
 
@@ -603,5 +637,3 @@ sub undoTables {
 }
 
 1;
-
-

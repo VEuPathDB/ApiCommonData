@@ -14,7 +14,7 @@ use File::Slurp qw/write_file/;
 my $dir = tempdir(CLEANUP => 1);
 my $study = "datasetName";
 
-write_file("$dir/$study16s.lineage_abundance.tsv", <<"EOF");
+write_file("$dir/$study.16s.lineage_abundance.tsv", <<"EOF");
 	s1	s2
 k;p;c;o;f;g;s	11111.0	12111.0
 different_kingdom	13111.0	14111.0
@@ -54,15 +54,16 @@ ANAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.36111
 BNAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.0
 EOF
 
-my $getAddMoreDataStr = 'require ApiCommonData::Load::MBioResultsDir; ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => "16s.lineage_abundance.tsv", wgsTaxa => ".wgs.lineage_abundance.tsv", level4ECs => ".level4ec.tsv", pathwayAbundances => ".pathway_abundance.tsv", pathwayCoverages => ".pathway_coverage.tsv"})->toGetAddMoreData';
+my $getAddMoreDataStr = 'require ApiCommonData::Load::MBioResultsDir; ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => ".16s.lineage_abundance.tsv", wgsTaxa => ".wgs.lineage_abundance.tsv", level4ECs => ".level4ec.tsv", pathwayAbundances => ".pathway_abundance.tsv", pathwayCoverages => ".pathway_coverage.tsv"})->toGetAddMoreData';
 
 my $getAddMoreData = eval $getAddMoreDataStr;
+diag $@ if $@;
 ok $getAddMoreData;
 
 my $addMoreData = $getAddMoreData->({dataset => [$study]});
 my $result = $addMoreData->({name => ["s1"]});
 diag explain $result;
 
-ok($result->{$_}, "Result has key: $_") for qw/abundance_amplicon abundance_wgs abundance_and_coverage_pathways function_level4EC/;
+ok($result->{$_}, "Result has key: $_") for qw /abundance_amplicon_c abundance_amplicon_f abundance_amplicon_g abundance_amplicon_k abundance_amplicon_o abundance_amplicon_p abundance_amplicon_s abundance_wgs_c abundance_wgs_f abundance_wgs_g abundance_wgs_k abundance_wgs_o abundance_wgs_p abundance_wgs_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species/;
 
 done_testing;

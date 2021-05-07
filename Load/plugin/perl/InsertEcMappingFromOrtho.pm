@@ -1,5 +1,5 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^ End GUS4_STATUS ^^^^^^^^^^^^^^^^^^^^
-##                 InsertECMapping.pm
+##                 InsertEcMappingFromOrtho.pm
 ##
 ## Creates new entries in the table DoTS.AASequenceEnzymeClass to represent
 ## the EC mappings found in a tab delimited file of the form EC number, alias
@@ -7,7 +7,7 @@
 ##
 #######################################################################
 
-package ApicommonData::Load::Plugin::InsertEcMappingFromOrtho;
+package ApiCommonData::Load::Plugin::InsertEcMappingFromOrtho;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict 'vars';

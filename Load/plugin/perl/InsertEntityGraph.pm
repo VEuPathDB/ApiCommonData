@@ -159,7 +159,10 @@ sub run {
     @investigationFiles = map { "$metaDataRoot/$_/$investigationBaseName" } @$investigationSubset;
   }
   else {
-    @investigationFiles = glob "$metaDataRoot/$investigationBaseName $metaDataRoot/*/$investigationBaseName";
+    @investigationFiles = glob "$metaDataRoot/*/$investigationBaseName";
+    if (-f "$metaDataRoot/$investigationBaseName"){
+      push @investigationFiles, "$metaDataRoot/$investigationBaseName"; 
+    }
   }
   $self->logOrError("No investigation files") unless @investigationFiles;
 
@@ -181,10 +184,11 @@ sub run {
       my $dateObfuscationFile = $self->getArg('dateObfuscationFile');
 
       my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
-      my $ontologyMappingOverrideFileBaseName = $self->getArg('ontologyMappingOverrideFileBaseName');
-      my $overrideFile = $dirname . "/" . $ontologyMappingOverrideFileBaseName if($ontologyMappingOverrideFileBaseName);
-
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $overrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+      my $ontologyMappingOverrideFile = $self->getArg('ontologyMappingOverrideFileBaseName');
+      if ($ontologyMappingOverrideFile && ! -f $ontologyMappingOverrideFile){ ## prepend path
+        $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
+      }
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");

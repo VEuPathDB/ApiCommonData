@@ -10,10 +10,11 @@ use GUS::Supported::GusConfig;
 
 ## TODO, better to ignore null record
 
-my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $annotationFile, $transpIdSuffix, $component, $help);
+my ($genomeSummaryFile, $organismExcelFile, $gusConfigFile, $outputFileDir, $organismListFile, $annotationFile, $transpIdSuffix, $component, $help);
 
 &GetOptions(
             'genomeSummaryFile=s' => \$genomeSummaryFile,
+            'organismExcelFile=s' => \$organismExcelFile,
             'outputFileDir=s' => \$outputFileDir,
             'gusConfigFile=s' => \$gusConfigFile,
             'organismListFile=s' => \$organismListFile,
@@ -24,7 +25,7 @@ my ($genomeSummaryFile, $gusConfigFile, $outputFileDir, $organismListFile, $anno
             );
 
 &usage() if ($help);
-&usage("Missing a Required Argument") unless (defined $genomeSummaryFile && $outputFileDir);
+&usage("Missing a Required Argument") unless (defined $outputFileDir);
 
 $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config" unless ($gusConfigFile);
 my $verbose;
@@ -133,6 +134,7 @@ foreach my $abbrev (sort keys %isAnnotated) {
   ## 3) make genome metadata json file
   my $genomeJsonCmd = "generateGenomeJson.pl --genomeSummaryFile $genomeSummaryFile --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir --gusConfigFile $gusConfigFile";
   $genomeJsonCmd = "generateGenomeJsonFromDatabase.pl --organismAbbrev $abbrev --outputFileDir $orgOutputFileDir" if ($component =~ /vector/i);
+  $genomeJsonCmd = "generateGenomeJsonFromRedmine.pl --organismAbbrev $abbrev --genomeSummaryFile $organismExcelFile --outputFileDir $orgOutputFileDir --component $component" if ($organismExcelFile);
   system($genomeJsonCmd);
 
   ## 4) make seq region metadata json file
@@ -304,12 +306,13 @@ Usage: perl generateTransferFilesFromDatabase2Ebi.pl --genomeSummaryFile GenomeS
 
 where:
   --genomeSummaryFile: required, the txt file that include all genome info that loaded in EuPathDB
+  --organismExcelFile: optional, required if genomeSummaryFile is not present. Otherwise it is optional
   --outputFileDir: required, the directory that hold all output file
   --organismListFile: optional, the list of organisms that want to export
   --annotationFile: optional, an annotation file that need to be extracted separately
   --transpIdSuffix: optional, only need when --annotationFile called and need to add a suffix for transcript ID
   --gusConfigFile: optional, default is \$GUS_HOME/config/gus.config
-  --component: optional, maybe need for VectorBase
+  --component: optional. required for VectorBase, also required if organismExcelFile is present but genomeSummaryFile is not
 
 ";
 }
