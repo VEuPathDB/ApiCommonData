@@ -194,7 +194,7 @@ sub getOrganismInformation {
     if ($items[2] eq $abbrev) {
       $organismName = $items[0];
       $geneVersion = $items[9] if ($items[1] =~ /^y/i);
-      $geneVersion = $items[29]) if ($items[29]);
+      $geneVersion = $items[29] if ($items[29]);
       $ncbiTaxonId = (length($items[6]) < 10) ? $items[6] : $items[7];
       $acce = $items[31];
     }
