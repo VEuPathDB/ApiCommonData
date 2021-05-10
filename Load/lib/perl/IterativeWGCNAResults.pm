@@ -1,3 +1,4 @@
+
 package ApiCommonData::Load::IterativeWGCNAResults;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 
@@ -52,12 +53,25 @@ sub munge {
 
     #---- FIRST STRAND BEGINS -----------------------------
     if($strandness eq 'firststrand'){
+	#--- be aware of the /FirstStrandResults/ came from the -o defined in Docker -- should be consistant
+	my %inputs;
+	open(DATA, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	while (my $line = <DATA>){
+	    if ($. == 1){
+		my @all = split/\t/,$line;
+		@all = grep {s/^\s+|\s+$//g; $_ } @all;
+		foreach(@all[1 .. $#all]){
+		    $inputs{$_} = 1;
+		}
+	    }
+	}
+	close(DATA);
 
-	my $outputDir = "$mainDirectory/FirstStrandResultsForLoading/";
+	my $outputDir = "$mainDirectory/FirstStrandResults/FirstStrandMMResultsForLoading/";
 	mkdir($outputDir, 0777) unless(-d $outputDir );
-
+	
+	open(IN, "<", "$mainDirectory/FirstStrandResults/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
 	my %hash;
-        open(IN, $inputFile) or die $!;
         while (my $line = <IN>) {
             if ($. == 1){
                 next;
@@ -84,29 +98,12 @@ sub munge {
             }
             close OUT;
         }
-    #--------------below--- prepare first strand  %inputProtocolAppNodesHash for loading -----------------------------
-	open(DATA, "<", "../Preprocessed_profiles.genes.htseq-union.firststrand.tpm") or die "Couldn't open file for reading, $!";
-	my %inputs;
-	while (my $line = <DATA>){
-            if ($. == 1){
-                my @all = split/\t/,$line;
-		@all = grep {s/^\s+|\s+$//g; $_ } @all;
-                foreach(@all[1 .. $#all]){
-                    $inputs{$_} = 1;
-                }
-            }
-        }
-        close(DATA);
-
+    #--------------first strand  %inputProtocolAppNodesHash for loading -----------------------------
 	my %inputProtocolAppNodesHash;
-        foreach my $m (@modules) {
-            foreach my $key (keys %inputs)
-            {
-		my $str = $key . " " . $self->getInputSuffix();
-                push @{$inputProtocolAppNodesHash{$m}},  $str;
-            }
-        }
-    #--------------above --- prepare first strand  %inputProtocolAppNodesHash for loading -----------------------------
+	foreach(@modules) {
+	    push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffix() } keys %inputs;
+	    #print $_ . "\n";
+	}
 
 	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 	$self->setNames(\@modules);                                                                                           
@@ -118,14 +115,26 @@ sub munge {
     }
 
     #---- SECOND STRAND BEGINS -----------------------------
-
     if($strandness eq 'secondstrand'){
+	#--- be aware of the /SecondStrandResults/ came from the -o defined in Docker -- should be consistant
+	my %inputs;
+	open(DATA, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	while (my $line = <DATA>){
+	    if ($. == 1){
+		my @all = split/\t/,$line;
+		@all = grep {s/^\s+|\s+$//g; $_ } @all;
+		foreach(@all[1 .. $#all]){
+		    $inputs{$_} = 1;
+		}
+	    }
+	}
+	close(DATA);
 
-	my $outputDir = "$mainDirectory/SecondStrandResultsForLoading/";
+	my $outputDir = "$mainDirectory/SecondStrandResults/SecondStrandMMResultsForLoading/";
 	mkdir($outputDir, 0777) unless(-d $outputDir );
-
+	
+	open(IN, "<", "$mainDirectory/SecondStrandResults/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
 	my %hash;
-        open(IN, $inputFile) or die $!;
         while (my $line = <IN>) {
             if ($. == 1){
                 next;
@@ -152,29 +161,12 @@ sub munge {
             }
             close OUT;
         }
-    #--------------below--- prepare second strand  %inputProtocolAppNodesHash for loading -----------------------------
-	open(DATA, "<", "../Preprocessed_profiles.genes.htseq-union.secondstrand.tpm") or die "Couldn't open file for reading, $!";
-	my %inputs;
-	while (my $line = <DATA>){
-            if ($. == 1){
-                my @all = split/\t/,$line;
-		@all = grep {s/^\s+|\s+$//g; $_ } @all;
-                foreach(@all[1 .. $#all]){
-                    $inputs{$_} = 1;
-                }
-            }
-        }
-        close(DATA);
-
+    #--------------second strand  %inputProtocolAppNodesHash for loading -----------------------------
 	my %inputProtocolAppNodesHash;
-        foreach my $m (@modules) {
-            foreach my $key (keys %inputs)
-            {
-		my $str = $key . " " . $self->getInputSuffix();
-                push @{$inputProtocolAppNodesHash{$m}},  $str;
-            }
-        }
-    #--------------above --- prepare second strand  %inputProtocolAppNodesHash for loading -----------------------------
+	foreach(@modules) {
+	    push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffix() } keys %inputs;
+	    #print $_ . "\n";
+	}
 
 	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 	$self->setNames(\@modules);                                                                                           
