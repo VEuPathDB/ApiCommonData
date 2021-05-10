@@ -155,8 +155,8 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
     if($feature->primary_tag eq 'gene') {
 #      $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
 
-      $feature->add_tag_value("eupathdb_id", $geneAnnotations->{$geneSourceId}->{eupathdb_id});
-      $feature->add_tag_value("ebi_id", $geneAnnotations->{$geneSourceId}->{ebi_id});
+#      $feature->add_tag_value("eupathdb_id", $geneAnnotations->{$geneSourceId}->{eupathdb_id});
+#      $feature->add_tag_value("ebi_id", $geneAnnotations->{$geneSourceId}->{ebi_id});
     }
 
     if($feature->primary_tag eq 'transcript') {
@@ -172,8 +172,8 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 #      my $translation = $transcriptAnnotations->{$transcriptId}->{translation};
 
       $feature->primary_tag($soTermName);
-      $feature->add_tag_value("eupathdb_id", $transcriptAnnotations->{$transcriptId}->{eupathdb_id});
-      $feature->add_tag_value("ebi_id", $transcriptAnnotations->{$transcriptId}->{ebi_id});
+#      $feature->add_tag_value("eupathdb_id", $transcriptAnnotations->{$transcriptId}->{eupathdb_id});
+#      $feature->add_tag_value("ebi_id", $transcriptAnnotations->{$transcriptId}->{ebi_id});
       $feature->add_tag_value("is_pseudo", $isPseudo) if($isPseudo);
       $feature->add_tag_value("transl_table", $translTable) if($translTable);
       $feature->add_tag_value("transl_except", $translExcept) if($translExcept);
