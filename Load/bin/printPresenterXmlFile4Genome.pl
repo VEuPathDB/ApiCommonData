@@ -16,6 +16,8 @@ my (
     $buildNumber,
     $genomeSource,
     $genomeVersion,
+    $annotationSource,
+    $annotationVersion,
     $pubMedId,
     $primaryContactId,
     $assemblyId,
@@ -33,6 +35,8 @@ my (
 	    'buildNumber=s' => \$buildNumber,
 	    'genomeSource=s' => \$genomeSource,
 	    'genomeVersion=s' => \$genomeVersion,
+	    'annotationSource=s' => \$annotationSource,
+	    'annotationVersion=s' => \$annotationVersion,
 	    'pubMedId=s' => \$pubMedId,
 	    'primaryContactId=s' => \$primaryContactId,
 	    'assemblyId=s' => \$assemblyId,
@@ -67,6 +71,9 @@ print "    <releasePolicy><\/releasePolicy>\n";
 &printPrimaryContactId();
 &printExternalLinks();
 &printPubMedId();
+
+$annotationSource = $genomeSource if (!$annotationSource);
+$annotationVersion = $genomeVersion if (!$annotationVersion);
 
 ($isAnnotatedGenome =~ /^y/i) ? &printAnnotatedGenome : &printUnAnnotatedGenome;
 
@@ -164,7 +171,7 @@ sub printHistory {
   ($assemblyId) ? print "             genomeSource=\"INSDC\" genomeVersion=\"$assemblyId\"\n"
                 : print "             genomeSource=\"$genomeSource\" genomeVersion=\"$genomeVersion\"\n";
 
-  ($isAnnotatedGenome =~ /^y/i) ? print "             annotationSource=\"$genomeSource\" annotationVersion=\"$genomeVersion\"\/>\n"
+  ($isAnnotatedGenome =~ /^y/i) ? print "             annotationSource=\"$annotationSource\" annotationVersion=\"$annotationVersion\"\/>\n"
                                 : print "             annotationSource=\"\" annotationVersion=\"\"\/>\n";
   return 0;
 }
@@ -235,6 +242,8 @@ where
   --buildNumber: optional
   --genomeSource: optional
   --genomeVersion: optional, e.g. Mar 21, 2015
+  --annotationSource: optional
+  --annotationVersion: optional, e.g. Mar 21, 2015
   --pubMedId: optional
   --primaryContactId: optional
   --assemblyId: optional
