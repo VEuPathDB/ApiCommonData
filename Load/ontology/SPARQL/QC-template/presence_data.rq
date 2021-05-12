@@ -1,0 +1,18 @@
+# Lists all presence-of-organism-in-specimen terms
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?id ?label ?organism ?assay
+WHERE {
+  ?iri a owl:Class .
+  ?iri rdfs:label ?label .
+  FILTER regex(STR(?label), ", by") .
+  FILTER (!regex(STR(?label), " result")) .
+  BIND(REPLACE(STR(?iri), "http://purl.obolibrary.org/obo/EUPATH_", "EUPATH:") AS ?id) .
+  BIND(REPLACE(STR(?label), "\\)", "") AS ?l1) .
+  BIND(REPLACE(?l1, "\\(", "") AS ?l2) .
+  BIND(REPLACE(?l2, ?l2, STRBEFORE(?l2, ", by")) AS ?organism) .
+  BIND(REPLACE(?l2, ?l2, STRAFTER(?l2, "by ")) AS ?assay) .
+}

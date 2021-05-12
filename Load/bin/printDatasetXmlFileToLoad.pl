@@ -294,7 +294,7 @@ sub printEbiGenome {
 
   print $fh "  <dataset class=\"ebi_primary_genome\">\n";
   printNameWithDollarSign ($fh, 'genomeVersion');
-  printNameWithValue ($fh, 'ebi2gusTag', '102');
+  printNameWithValue ($fh, 'ebi2gusTag', '103');
   printNameWithDollarSign ($fh, 'projectName');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
