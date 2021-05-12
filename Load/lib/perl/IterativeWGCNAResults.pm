@@ -4,29 +4,23 @@ use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 
 use strict;
 use CBIL::TranscriptExpression::Error;
+use CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles;
+
 use Data::Dumper;
-use Exporter;
-use File::Basename;
 
 use DBI;
 use DBD::Oracle;
-use File::Temp qw/ tempfile /;
-use Data::Dumper;
 
-use lib "$ENV{GUS_HOME}/lib/perl";
-use warnings;
-use GUS::ObjRelP::DbiDatabase;
-
-use DBI;
-use DBD::Oracle;
+use GUS::Supported::GusConfig;
 
 sub getStrandness        { $_[0]->{strandness} }
 sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organismAbbre} }
-sub getInputSuffix              { $_[0]->{inputSuffix} }
+sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
+sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
 
-my $PROTOCOL_NAME = 'WGCNA';
+#my $PROTOCOL_NAME = 'WGCNA';
 
 #-------------------------------------------------------------------------------
 sub new {
@@ -38,7 +32,7 @@ sub new {
   my $power = $args->{softThresholdPower};
   my $organism = $args->{organismAbbre};
 
-  $args->{sourceIdType} = "gene";
+  $args->{sourceIdType} = "gene"; ##### source_id type should be gene or module??????????
   my $self = $class->SUPER::new($args) ;          
   
   return $self;
@@ -47,133 +41,263 @@ sub new {
 
 sub munge {
     my ($self) = @_;
+    #------------- database configuration -----------#
     my $strandness = $self->getStrandness();
     my $mainDirectory = $self->getMainDirectory();
-    my $inputFile = $self->getInputFile();
+    my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+    my $dsn = $gusconfig->getDbiDsn();
+    my $login = $gusconfig->getDatabaseLogin();
+    my $password = $gusconfig->getDatabasePassword();
 
-    #---- FIRST STRAND BEGINS -----------------------------
+    my $dbh = DBI->connect($dsn, $login, $password, { PrintError => 1, RaiseError => 0})
+	or die "Can't connect to the tracking database: $DBI::errstr\n";
+    #--first strand processing ------------------------------------------#
     if($strandness eq 'firststrand'){
-	#--- be aware of the /FirstStrandResults/ came from the -o defined in Docker -- should be consistant
+	my $power = $self->getPower();
+	my $inputFile = $self->getInputFile();
+	my $organism = $self->getOrganism();
+	
+	my $outputFile = "Preprocessed_" . $inputFile;
+	my $sql = "SELECT source_id 
+                   FROM apidbtuning.geneAttributes  
+                   WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
+	my $stmt = $dbh->prepare($sql);
+	$stmt->execute();
+	my %hash;
+
+	while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+	    $hash{$proteinCodingGenes} = 1;
+	}
+
+	$stmt->finish();
+
+        #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	
 	my %inputs;
-	open(DATA, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	while (my $line = <DATA>){
+	while (my $line = <IN>){
+	    if ($. == 1){
+		my @all = split("\t",$line);
+		foreach(@all[1 .. $#all]){
+		    #@all = grep {s/^\s+|\s+$//g; $_} @all;
+                    $inputs{$_} = 1;
+                }
+	    }
+	}
+	close IN;
+	#foreach (sort keys %inputs){print $_ . "\n"};
+	#exit;
+
+	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	while (my $line = <IN>){
 	    if ($. == 1){
 		my @all = split/\t/,$line;
-		@all = grep {s/^\s+|\s+$//g; $_ } @all;
+		$all[0] = 'Gene';
+		my $new_line = join("\t",@all);
+		print OUT $new_line;
+		
 		foreach(@all[1 .. $#all]){
-		    $inputs{$_} = 1;
+		    @all = grep {s/^\s+|\s+$//g; $_ } @all;
+                    $inputs{$_} = 1;
+                }
+
+	    }else{
+		my @all = split/\t/,$line;
+		if ($hash{$all[0]}){
+		    print OUT $line;
 		}
 	    }
 	}
-	close(DATA);
-
-	my $outputDir = "$mainDirectory/FirstStrandResults/FirstStrandMMResultsForLoading/";
+	close IN;
+	close OUT;
+        #-------------- run IterativeWGCNA docker image -----#
+	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
 	mkdir($outputDir, 0777) unless(-d $outputDir );
+
+	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+
+	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+
+
+	my $results  =  system($command);
+
+	#-------------- parse Module Membership -----#
+	my $outputDirModuleMembership = "$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading/";
+	mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	
-	open(IN, "<", "$mainDirectory/FirstStrandResults/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
-	my %hash;
-        while (my $line = <IN>) {
+	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
+	my %MMHash;
+        while (my $line = <MM>) {
             if ($. == 1){
                 next;
             }else{
                 chomp($line);
                 $line =~ s/\r//g;
                 my @all = split/\t/,$line;
-		push @{$hash{$all[1]}}, "$all[0]\t$all[2]\n";
+		push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
             }
         }
-        close IN;
-
+        close MM;
+	
 	my @files;
         my @modules;
-	my @allKeys = keys %hash;
+	my @allKeys = keys %MMHash;
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
         for my $i(@ModuleNames){
-            push @modules,$i . " " . $self->getInputSuffix();
-            push @files,"$i\.txt";
-            open(OUT, ">$outputDir/$i\.txt") or die $!;
-            print OUT "geneID\tcorrelation_coefficient\n";
-            for my $ii(@{$hash{$i}}){
+            push @modules,$i . " " . $self->getInputSuffixMM();
+            push @files,"$i\.txt" . " " . $self->getInputSuffixMM();
+            open(MMOUT, ">$outputDirModuleMembership/$i\.txt") or die $!;
+            print MMOUT "geneID\tcorrelation_coefficient\n";
+            for my $ii(@{$MMHash{$i}}){
                 print OUT $ii;
             }
-            close OUT;
+            close MMOUT;
         }
-    #--------------first strand  %inputProtocolAppNodesHash for loading -----------------------------
 	my %inputProtocolAppNodesHash;
-	foreach(@modules) {
-	    push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffix() } keys %inputs;
-	    #print $_ . "\n";
-	}
-
+        foreach(@modules) {
+            push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+        }
 	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
-	$self->setProtocolName($PROTOCOL_NAME);
+	$self->setProtocolName("WGCNA");
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
+
+=head	#-------------- parse Module Eigengene -----#
+	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
+
+	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
+	$egenes->setProtocolName("WGCNAME");
+	$egenes->munge();
+=cut
 
     }
 
-    #---- SECOND STRAND BEGINS -----------------------------
+
+    #--second strand processing ------------------------------------------#
     if($strandness eq 'secondstrand'){
-	#--- be aware of the /SecondStrandResults/ came from the -o defined in Docker -- should be consistant
+	my $power = $self->getPower();
+	#my $mainDirectory = $self->getMainDirectory();
+	my $inputFile = $self->getInputFile();
+	my $organism = $self->getOrganism();
+	
+	my $outputFile = "Preprocessed_" . $inputFile;
+	my $sql = "SELECT source_id 
+                   FROM apidbtuning.geneAttributes  
+                   WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
+	my $stmt = $dbh->prepare($sql);
+	$stmt->execute();
+	my %hash;
+
+	while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+	    $hash{$proteinCodingGenes} = 1;
+	}
+
+	$stmt->finish();
+
+        #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	
 	my %inputs;
-	open(DATA, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	while (my $line = <DATA>){
+	while (my $line = <IN>){
+	    if ($. == 1){
+		my @all = split("\t",$line);
+		foreach(@all[1 .. $#all]){
+		    #@all = grep {s/^\s+|\s+$//g; $_} @all;
+                    $inputs{$_} = 1;
+                }
+
+	    }
+	}
+	close IN;
+
+	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	while (my $line = <IN>){
 	    if ($. == 1){
 		my @all = split/\t/,$line;
-		@all = grep {s/^\s+|\s+$//g; $_ } @all;
+		$all[0] = 'Gene';
+		my $new_line = join("\t",@all);
+		print OUT $new_line;
+		
 		foreach(@all[1 .. $#all]){
-		    $inputs{$_} = 1;
+		    @all = grep {s/^\s+|\s+$//g; $_ } @all;
+                    $inputs{$_} = 1;
+                }
+
+	    }else{
+		my @all = split/\t/,$line;
+		if ($hash{$all[0]}){
+		    print OUT $line;
 		}
 	    }
 	}
-	close(DATA);
-
-	my $outputDir = "$mainDirectory/SecondStrandResults/SecondStrandMMResultsForLoading/";
+	close IN;
+	close OUT;
+        #-------------- run IterativeWGCNA docker image -----#
+	my $outputDir = $mainDirectory . "/SecondStrandOutputs";
 	mkdir($outputDir, 0777) unless(-d $outputDir );
+
+	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+
+	my $results  =  system($command);
+
+	#-------------- parse Module Membership -----#
+	my $outputDirModuleMembership = "$mainDirectory/SecondStrandOutputs/SecondStrandMMResultsForLoading/";
+	mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	
-	open(IN, "<", "$mainDirectory/SecondStrandResults/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
-	my %hash;
-        while (my $line = <IN>) {
+	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
+	my %MMHash;
+        while (my $line = <MM>) {
             if ($. == 1){
                 next;
             }else{
                 chomp($line);
                 $line =~ s/\r//g;
                 my @all = split/\t/,$line;
-		push @{$hash{$all[1]}}, "$all[0]\t$all[2]\n";
+		push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
             }
         }
-        close IN;
-
+        close MM;
+	
 	my @files;
         my @modules;
-	my @allKeys = keys %hash;
+	my @allKeys = keys %MMHash;
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
         for my $i(@ModuleNames){
-            push @modules,$i . " " . $self->getInputSuffix();
-            push @files,"$i\.txt";
-            open(OUT, ">$outputDir/$i\.txt") or die $!;
-            print OUT "geneID\tcorrelation_coefficient\n";
-            for my $ii(@{$hash{$i}}){
+            push @modules,$i . " " . $self->getInputSuffixMM();
+            push @files,"$i\.txt" . " " . $self->getInputSuffixMM();
+            open(MMOUT, ">$outputDirModuleMembership/$i\.txt") or die $!;
+            print MMOUT "geneID\tcorrelation_coefficient\n";
+            for my $ii(@{$MMHash{$i}}){
                 print OUT $ii;
             }
-            close OUT;
+            close MMOUT;
         }
-    #--------------second strand  %inputProtocolAppNodesHash for loading -----------------------------
+
 	my %inputProtocolAppNodesHash;
-	foreach(@modules) {
-	    push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffix() } keys %inputs;
-	    #print $_ . "\n";
-	}
+        foreach(@modules) {
+            push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+        }
 
 	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
-	$self->setProtocolName($PROTOCOL_NAME);
+	$self->setProtocolName("WGCNA");
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
+=head
+	#-------------- parse Module Eigengene -----#
+	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
+
+	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
+	$egenes->setProtocolName("WGCNAME");
+	$egenes->munge();
+=cut
 
     }
 
