@@ -1,4 +1,4 @@
-CREATE TABLE apidb.WGCNAResults (
+CREATE TABLE apidb.NAfeatureWGCNAResults (
  wgcna_result_id         NUMBER(12) NOT NULL,
  na_feature_id         NUMBER(12) NOT NULL,
  correlation_coefficient         FLOAT(126),
@@ -19,18 +19,18 @@ CREATE TABLE apidb.WGCNAResults (
  PRIMARY KEY (wgcna_result_id)
 );
 
-CREATE INDEX apidb.wgcnares_1 ON apidb.WGCNAResults (na_feature_id) TABLESPACE indx;
-CREATE INDEX apidb.wgcnares_2 ON apidb.WGCNAResults (protocol_app_node_id) TABLESPACE indx;
+CREATE INDEX apidb.wgcnares_1 ON apidb.NAfeatureWGCNAResults (na_feature_id) TABLESPACE indx;
+CREATE INDEX apidb.wgcnares_2 ON apidb.NAfeatureWGCNAResults (protocol_app_node_id) TABLESPACE indx;
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WGCNAResults TO gus_w;
-GRANT SELECT ON apidb.WGCNAResults TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.NAfeatureWGCNAResults TO gus_w;
+GRANT SELECT ON apidb.NAfeatureWGCNAResults TO gus_r;
 
 ------------------------------------------------------------------------------
 
-CREATE SEQUENCE apidb.WGCNAResults_sq;
+CREATE SEQUENCE apidb.NAfeatureWGCNAResults_sq;
 
-GRANT SELECT ON apidb.WGCNAResults_sq TO gus_r;
-GRANT SELECT ON apidb.WGCNAResults_sq TO gus_w;
+GRANT SELECT ON apidb.NAfeatureWGCNAResults_sq TO gus_r;
+GRANT SELECT ON apidb.NAfeatureWGCNAResults_sq TO gus_w;
 
 ------------------------------------------------------------------------------
 
@@ -47,8 +47,16 @@ SELECT core.tableinfo_sq.nextval, 'WGCNAResults',
 FROM dual,
      (SELECT MIN(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE lower('WGCNAResults') NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE lower('NAfeatureWGCNAResults') NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
 exit;
+
+
+
+
+
+
+
+
