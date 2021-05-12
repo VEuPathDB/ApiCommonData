@@ -70,7 +70,6 @@ sub munge {
 	}
 
 	$stmt->finish();
-
         #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
 	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
@@ -101,7 +100,6 @@ sub munge {
 		    @all = grep {s/^\s+|\s+$//g; $_ } @all;
                     $inputs{$_} = 1;
                 }
-
 	    }else{
 		my @all = split/\t/,$line;
 		if ($hash{$all[0]}){
@@ -117,7 +115,6 @@ sub munge {
 
 	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
-
 	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 
 
@@ -166,7 +163,8 @@ sub munge {
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
 
-=head	#-------------- parse Module Eigengene -----#
+=head	
+        #-------------- parse Module Eigengene -----#
 	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
 
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
@@ -176,14 +174,12 @@ sub munge {
 
     }
 
-
     #--second strand processing ------------------------------------------#
     if($strandness eq 'secondstrand'){
 	my $power = $self->getPower();
-	#my $mainDirectory = $self->getMainDirectory();
 	my $inputFile = $self->getInputFile();
 	my $organism = $self->getOrganism();
-	
+
 	my $outputFile = "Preprocessed_" . $inputFile;
 	my $sql = "SELECT source_id 
                    FROM apidbtuning.geneAttributes  
@@ -195,9 +191,7 @@ sub munge {
 	while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
 	    $hash{$proteinCodingGenes} = 1;
 	}
-
 	$stmt->finish();
-
         #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
 	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
@@ -210,7 +204,6 @@ sub munge {
 		    #@all = grep {s/^\s+|\s+$//g; $_} @all;
                     $inputs{$_} = 1;
                 }
-
 	    }
 	}
 	close IN;
