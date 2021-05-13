@@ -109,3 +109,29 @@ sub entitiesForSampleRelativeAbundances {
   }
   return \%result;
 }
+sub alphaDiversityShannon {
+  my ($values) = @_;
+  my $totalCount = sum @{$values};
+  return 0 unless $totalCount;
+
+  my $result = 0;
+  for my $value (@{$values}){
+    my $p = $value / $totalCount;
+    $result += $p * log($p);
+  }
+  return -$result;
+}
+
+sub alphaDiversityInverseSimpson {
+  my ($values) = @_;
+  my $totalCount = sum @{$values};
+  return 0 unless $totalCount;
+
+  my $result = 0;
+  for my $value (@{$values}){
+    my $p = $value / $totalCount;
+    $result += $p * $p;
+  }
+  return 1 / $result;
+}
+1;
