@@ -2,7 +2,7 @@ package ApiCommonData::Load::MBioResultsDir;
 
 use strict;
 use warnings;
-use ApiCommonData::Load::MBioResultsTable;
+use ApiCommonData::Load::MBioResultsTable::AsEntities;
 use CBIL::ISA::StudyAssayEntity;
 use JSON qw/encode_json/;
 
@@ -25,21 +25,21 @@ sub ampliconTaxa {
   my ($self, $datasetName, $nodeName) = @_;
   my $path = $self->tablePath($datasetName, $nodeName, 'ampliconTaxa');
   return unless -f $path;
-  return ApiCommonData::Load::MBioResultsTable->ampliconTaxa($path);
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->ampliconTaxa($path);
 }
 
 sub wgsTaxa {
   my ($self, $datasetName, $nodeName) = @_;
   my $path = $self->tablePath($datasetName, $nodeName, 'wgsTaxa');
   return unless -f $path;
-  return ApiCommonData::Load::MBioResultsTable->wgsTaxa($path);
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsTaxa($path);
 }
 
 sub level4ECs {
   my ($self, $datasetName, $nodeName) = @_;
   my $path = $self->tablePath($datasetName, $nodeName, 'level4ECs');
   return unless -f $path;
-  return ApiCommonData::Load::MBioResultsTable->wgsFunctions('level4EC', $path);
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsFunctions('level4EC', $path);
 }
 
 sub pathways {
@@ -47,7 +47,7 @@ sub pathways {
   my $pathA = $self->tablePath($datasetName, $nodeName, 'pathwayAbundances');
   my $pathC = $self->tablePath($datasetName, $nodeName, 'pathwayCoverages');
   return unless -f $pathA && -f $pathC;
-  return ApiCommonData::Load::MBioResultsTable->wgsPathways($pathA, $pathC);
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsPathways($pathA, $pathC);
 }
 
 sub tablesForNodeName {
