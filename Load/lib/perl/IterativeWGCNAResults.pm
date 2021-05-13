@@ -85,8 +85,6 @@ sub munge {
 	    }
 	}
 	close IN;
-	#foreach (sort keys %inputs){print $_ . "\n"};
-	#exit;
 
 	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 	while (my $line = <IN>){
@@ -111,7 +109,8 @@ sub munge {
 	close OUT;
         #-------------- run IterativeWGCNA docker image -----#
 	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
-	mkdir($outputDir, 0777) unless(-d $outputDir );
+	my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	system($comm);
 
 	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -156,6 +155,7 @@ sub munge {
         foreach(@modules) {
             push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
         }
+
 	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 	$self->setNames(\@modules);                                                                                           
 	$self->setFileNames(\@files);
@@ -163,14 +163,15 @@ sub munge {
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
 
-=head	
         #-------------- parse Module Eigengene -----#
-	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
-
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
+	my $com = "chmod u=rwx,g=rwx,o=rwx $outputDir/merged-0.25-eigengenes.txt";
+	system($com);
+	
+	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+	    {inputFile => "$outputDir/merged-0.25-eigengenes.txt", makePercentiles =>0, mainDirectory => "$mainDirectory"}
+	    );
 	$egenes->setProtocolName("WGCNAME");
 	$egenes->munge();
-=cut
 
     }
 
@@ -283,16 +284,16 @@ sub munge {
 	$self->setProtocolName("WGCNA");
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
-=head
+
 	#-------------- parse Module Eigengene -----#
 	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
 
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
 	$egenes->setProtocolName("WGCNAME");
 	$egenes->munge();
-=cut
 
     }
+
 
 }
 
