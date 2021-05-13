@@ -408,8 +408,8 @@ sub lookupIdFromSourceId {
     $rv = GUS::Supported::Util::getNaFeatureIdsFromSourceId($self, $sourceId, 'Transcript');
   }
   elsif($sourceIdType eq 'gene') {
-    #$rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
-    $rv = GUS::Supported::Util::getGeneFeatureIdWithoutAliases($self, $sourceId);
+    $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
+    #$rv = GUS::Supported::Util::getGeneFeatureIdWithoutAliases($self, $sourceId);
   }
   elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
