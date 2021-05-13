@@ -3,131 +3,19 @@ package ApiCommonData::Load::MBioResultsTable;
 use strict;
 use warnings;
 
-use List::Util qw/sum uniq all/;
+use List::Util qw/sum uniq/;
 
-use DateTime;
-use JSON qw/encode_json/;
 
-sub submitToGus {
-  my ($self, $setMaxObjects, $undefPointerCache, $submit, $protocolAppNodeIdsForSamples) = @_;
-
-  $setMaxObjects->(scalar @{$self->{rows}});
-
-  SAMPLE:
-  for my $sample (@{$self->{samples}}){
-    my $panId = $protocolAppNodeIdsForSamples->{$sample};
-    die "Missing ProtocolAppNode id for sample: $sample" unless $panId;
-    ROW:
-    for my $row (@{$self->{rows}}){
-	my $value = $self->{data}{$sample}{$row};
-        next ROW unless ref $value eq 'ARRAY' ? all {$_} @{$value} : $value;
-	$submit->($self->{valueToGus}->($panId, $row, $self->{sampleDetails}{$sample}, $self->{rowDetails}{$row}, $value));
-    }
-    $undefPointerCache->();
-  }
-}
-
-sub valueToGusTaxa {
-  my ($panId, $row, $sd, $rd, $v) = @_;
-
-  return 'GUS::Model::Results::LineageAbundance', {
-    PROTOCOL_APP_NODE_ID => $panId,
-    lineage => $row,
-    raw_count => $v,
-    relative_abundance => sprintf("%.6f", $v / $sd->{totalCount})
-  };
-}
-sub entitiesForSample {
-  my ($self, $sample) = @_;
-  return $self->{entitiesForSample}->($self, $sample);
-}
-sub entitiesForSampleFunctions {
-  my ($data, $rowDetails, $summaryAbundanceName, $detailedAbundanceName, $summaryCoverageName, $detailedCoverageName) = @_;
-  my %result;
-  for my $row (keys %{$data}){
-    my $key = $rowDetails->{$row}{name};
-    my $displayName = $rowDetails->{$row}{description} // $key;
-    my $species = $rowDetails->{$row}{species};
-    my ($abundance, $coverage);
-    my $x = $data->{$row};
-    if( ref $x eq 'ARRAY'){
-      $abundance = sprintf("%.6f",$x->[0]);
-      $coverage = $x->[1];
-    } else {
-      $abundance = sprintf("%.6f", $x);
-    }
-    if($species){
-      $key .= ", $species";
-      $displayName .= ", $species";
-    }
-    $key =~ s{[^A-Za-z_.0-9]+}{_}g;
-    if(length $key > 255) {
-      die "Key unexpectedly long: $key";
-    }
-    if($abundance){
-      my $n = $species ? $detailedAbundanceName : $summaryAbundanceName;
-      $result{$n}{$key} = [$displayName, $abundance];
-    }
-    if($coverage && $summaryCoverageName && $detailedCoverageName){
-      my $n = $species ? $detailedCoverageName : $summaryCoverageName;
-      $result{$n}{$key} = [$displayName, $coverage];
-    }
-  }
-  return \%result;
-}
-
-sub entitiesForSampleRelativeAbundances {
-  my ($data) = @_;
-  my $levelNames = [map {"relative_abundance_${_}"} qw/k p c o f g s/];
-  my @rows = keys %{$data};
-  my @abundances = values %{$data};
-  my $totalCount = sum @abundances;
-  my %result;
-
-  for my $taxonLevel ((0..$#$levelNames)){
-    my %groups;
-    for my $i (0..$#rows){
-      my @ls = split ";", $rows[$i];
-      my $l = join ";", map {$_ // ""} @ls[0..$taxonLevel];
-      push @{$groups{$l}}, $abundances[$i];
-    }
-    while(my ($key, $as) = each %groups){
-      my $value = sprintf("%.6f", (sum @{$as} ) / $totalCount);
-      my $displayName;
-      if($key =~m{;$}){
-        $displayName = $key;
-        $displayName =~ s{;*$}{};
-        $displayName =~ s{.*;}{};
-        $displayName = "unclassified $displayName";
-      } else {
-        ($displayName = $key) =~ s{.*;}{};
-      }
-      if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > 255){
-        my ($x, $y) = split(";", $key, 2);
-        $key = $x .";...".substr($y, (length $y) - (255 - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
-      }
-      $key =~ s{[^A-Za-z_.0-9]+}{_}g;
-      $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
-    }
-  }
-  return \%result;
+sub dataTypeInfo {
+  my ($class, $constructorName, $oDti) = @_;
+  no strict "refs";
+  my $dti = ${"${class}::dataTypeInfo"} // {};
+  return { %{$dti->{$constructorName} // {}} , %{$oDti // {}}};
 }
 
 sub ampliconTaxa {
   my ($class, $inputPath) = @_;
-  return construct($class, {
-    resultType => 'Taxon table',
-    matrixElementType => 'int',
-    printMatrixElement => sub {
-      my ($x) = @_;
-      return $x ? $x : "";
-    },
-    valueToGus => \&valueToGusTaxa,
-    entitiesForSample => sub {
-      my ($self, $sample) = @_;
-      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
-    }
-  }, $inputPath, sub {
+  return construct($class, dataTypeInfo($class, 'ampliconTaxa'), $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my @rows;
     my %data;
@@ -140,7 +28,7 @@ sub ampliconTaxa {
       $rowDetails{$row} = detailsFromRowNameTaxa($row);
       SAMPLE:
       for my $sample (@$samples){
-	my $value = $p->[1]{$sample};
+        my $value = $p->[1]{$sample};
         next SAMPLE unless $value;
         $data{$sample}{$row} = $value;
         $sampleDetails{$sample}{totalCount}+=$value;
@@ -152,19 +40,7 @@ sub ampliconTaxa {
 
 sub wgsTaxa {
   my ($class, $inputPath) = @_;
-  return construct($class, {
-    resultType => 'Taxon table',
-    matrixElementType => 'float',
-    printMatrixElement => sub {
-      my ($x) = @_;
-      return $x ? sprintf("%.5f", $x) : "";
-    },
-    valueToGus => \&valueToGusTaxa,
-    entitiesForSample => sub {
-      my ($self, $sample) = @_;
-      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
-    }
-  }, $inputPath, sub {
+  return construct($class, dataTypeInfo($class, 'wgsTaxa'), $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my @rows;
     my %data;
@@ -178,7 +54,7 @@ sub wgsTaxa {
       $rowDetails{$row} = detailsFromRowNameTaxa($row);
       SAMPLE:
       for my $sample (@$samples){
-	my $value = $p->[1]{$sample};
+        my $value = $p->[1]{$sample};
         next SAMPLE unless $value;
         $data{$sample}{$row} = $value if $value;
         $sampleDetails{$sample}{totalCount}+=$value;
@@ -190,27 +66,7 @@ sub wgsTaxa {
 
 sub wgsFunctions {
   my ($class, $unitType, $inputPath) = @_;
-  return construct($class, {
-    resultType => 'Function table',
-    matrixElementType => 'float',
-    printMatrixElement => sub {
-      my ($x) = @_;
-      return $x ? sprintf("%.5f", $x) : "";
-    },
-    valueToGus => sub {
-      my ($panId, $row, $sd, $rd, $v) = @_;
-      return 'GUS::Model::Results::FunctionalUnitAbundance', {
-        PROTOCOL_APP_NODE_ID => $panId,
-        %{$rd},
-        unit_type => $unitType,
-        abundance_cpm => $v,
-      };
-    },
-    entitiesForSample => sub {
-      my ($self, $sample) = @_;
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", "function_${unitType}_species", undef, undef); 
-    },
-  }, $inputPath, sub {
+  return construct($class, dataTypeInfo($class, 'wgsFunctions', {unitType => $unitType}), $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my %rows;
     my %data;
@@ -222,7 +78,7 @@ sub wgsFunctions {
       $rowDetails{$row} = detailsFromRowNameHumannFormat($row);
       $rows{$row}++;
       for my $sample (@$samples){
-	my $value = $p->[1]{$sample};
+        my $value = $p->[1]{$sample};
         $data{$sample}{$row} = $value if $value;
       }
     }
@@ -233,29 +89,7 @@ sub wgsFunctions {
 
 sub wgsPathways {
   my ($class, $inputPathAbundances, $inputPathCoverages) = @_;
-  my $dataTypeInfo = {
-    resultType => 'Pathway table',
-    matrixElementType => 'unicode',
-    printMatrixElement => sub {
-      my ($abundance, $coverage) = @{$_[0]};
-      return $abundance ? sprintf("\"%.5f|$coverage\"", $abundance) : "";
-    },
-    valueToGus => sub {
-      my ($panId, $row, $sd, $rd, $v) = @_;
-      my ($abundance, $coverage) = @$v;
-      return 'GUS::Model::Results::FunctionalUnitAbundance', {
-        PROTOCOL_APP_NODE_ID => $panId,
-        %{$rd},
-        unit_type => "pathway",
-        abundance_cpm => $abundance,
-        coverage_fraction => $coverage
-      };
-    },
-    entitiesForSample => sub {
-      my ($self, $sample) = @_;
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"pathway_abundance", "pathway_abundance_species", "pathway_coverage", "pathway_coverage_species");
-    }
-  }; 
+  my $dataTypeInfo = dataTypeInfo($class, 'wgsPathways');
 
   my ($samplesAs, $rowHashSamplePairsAs) = parseSamplesTsv($inputPathAbundances);
   my ($samplesCs, $rowHashSamplePairsCs) = parseSamplesTsv($inputPathCoverages);
@@ -344,85 +178,6 @@ sub value {
 sub attributesForSample {
   my ($self, $sample) = @_;
   return $self->{data}{$sample};
-}
-
-sub writeBiom {
-  my ($self, $outputPath) = @_;
-  open (my $fh, ">", $outputPath) or die "$!: $outputPath";
-  
-  my $date = DateTime->now()->iso8601(); 
-
-  print $fh <<"1";
-{
-    "id":null,
-    "format": "1.0.0",
-    "format_url": "http://biom-format.org",
-    "type": "$self->{resultType}",
-    "generated_by": "MicrobiomeDB",
-    "date": "$date",
-    "rows":
-1
-  print $fh (encode_json([
-    map {{id => $_, metadata => undef}} @{$self->{rows}}
-  ]));
-  print $fh <<"2";
-,
-    "columns":
-2
-  print $fh (encode_json([
-    map {{id => $_, metadata => $self->{sampleDetails}{$_}}} @{$self->{samples}}
-  ]));
-  my $numRows = @{$self->{rows}};
-  my $numSamples = @{$self->{samples}};
-  print $fh <<"3";
-,
-    "matrix_type": "sparse",
-    "matrix_element_type": "$self->{matrixElementType}",
-    "shape": [$numRows, $numSamples],
-    "data": [
-3
-  my $printCommaBeforeValue;
-  RX:
-  for my $rx (0..$#{$self->{rows}}){
-    SX:
-    for my $sx (0..$#{$self->{samples}}){
-       my $value = $self->{printMatrixElement}->($self->{data}{$self->{samples}[$sx]}{$self->{rows}[$rx]});
-       
-       next SX unless $value;
-
-       print $fh "," if $printCommaBeforeValue;
-       print $fh "[$rx,$sx,$value]";
-       $printCommaBeforeValue //= 1;
-    }
-  }
-  print $fh <<"4";
-           ]
-}
-4
-  close $fh;
-}
-
-sub writeTabData {
-  my ($self, $outputPath) = @_;
-  open (my $fh, ">", $outputPath) or die "$!: $outputPath";
-  print $fh join("\t", "", @{$self->{samples}})."\n";
-  for my $row (@{$self->{rows}}){
-    print $fh join("\t", $row, map {  $self->{printMatrixElement}->($self->{data}{$_}{$row})} @{$self->{samples}})."\n";
-  }
-  close $fh;
-}
-
-sub writeTabSampleDetails {
-  my ($self, $outputPath) = @_;
-
-  my @sampleDetails = uniq map {keys %{$_}} values %{$self->{sampleDetails}};
-
-  open (my $fh, ">", $outputPath) or die "$!: $outputPath";
-  print $fh join("\t", "", @sampleDetails)."\n";
-  for my $sample (@{$self->{samples}}){
-    print $fh join("\t", $sample, map { $self->{sampleDetails}{$sample}{$_} // ""} @sampleDetails)."\n";
-  }
-  close $fh;
 }
 
 sub parseSamplesTsv {
