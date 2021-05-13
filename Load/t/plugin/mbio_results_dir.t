@@ -70,7 +70,7 @@ my $getAddMoreData = eval $getAddMoreDataStr;
 diag $@ if $@;
 ok $getAddMoreData;
 
-# this is the SimpleXml parse fro
+# this is the SimpleXml parse of one study in i_Investigation.xml
 my $studyXml = {
   dataset => [$study],
   node => {
@@ -112,7 +112,7 @@ sub okAmpliconKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw /abundance_amplicon_c abundance_amplicon_f abundance_amplicon_g abundance_amplicon_k abundance_amplicon_o abundance_amplicon_p abundance_amplicon_s/; 
+    ok($result->{$_}, "Result has key: $_") for qw /relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s/; 
   };
 };
 
@@ -124,7 +124,7 @@ sub okWgsKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw/abundance_wgs_c abundance_wgs_f abundance_wgs_g abundance_wgs_k abundance_wgs_o abundance_wgs_p abundance_wgs_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species/;
+    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species/;
   };
 }
 okWgsKeys("s1 (WGS)");

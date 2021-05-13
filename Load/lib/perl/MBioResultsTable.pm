@@ -76,9 +76,9 @@ sub entitiesForSampleFunctions {
   return \%result;
 }
 
-sub entitiesForSampleTaxa {
-  my ($data, $levelNames) = @_;
-
+sub entitiesForSampleRelativeAbundances {
+  my ($data) = @_;
+  my $levelNames = [map {"relative_abundance_${_}"} qw/k p c o f g s/];
   my @rows = keys %{$data};
   my @abundances = values %{$data};
   my $totalCount = sum @abundances;
@@ -125,7 +125,7 @@ sub ampliconTaxa {
     valueToGus => \&valueToGusTaxa,
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleTaxa($self->{data}{$sample}, [map {"abundance_amplicon_${_}"} qw/k p c o f g s/]);
+      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
     }
   }, $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
@@ -162,7 +162,7 @@ sub wgsTaxa {
     valueToGus => \&valueToGusTaxa,
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleTaxa($self->{data}{$sample}, [map {"abundance_wgs_${_}"} qw/k p c o f g s/]);
+      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
     }
   }, $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
