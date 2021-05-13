@@ -157,6 +157,9 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       $feature->frame('.');
     }
 
+    if ($feature->primary_tag eq 'exon' || $feature->primary_tag eq 'CDS') {
+        $feature->add_tag_value("gene_id", $geneSourceId);
+    }
 
 
   $feature->gff_format(Bio::Tools::GFF->new(-gff_version => 3)); 
