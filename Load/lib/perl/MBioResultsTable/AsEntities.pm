@@ -9,13 +9,13 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
   ampliconTaxa => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
+      return entitiesForSampleTaxa($self->{data}{$sample});
     }
   },
   wgsTaxa => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleRelativeAbundances($self->{data}{$sample});
+      return entitiesForSampleTaxa($self->{data}{$sample});
     }
   },
   wgsFunctions => {
@@ -36,6 +36,15 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
 sub entitiesForSample {
   my ($self, $sample) = @_;
   return $self->{entitiesForSample}->($self, $sample);
+}
+sub entitiesForSampleTaxa {
+  my ($data) = @_;
+  my @values = values %${data};
+  return {
+    %{entitiesForSampleRelativeAbundances($data)},
+    alpha_diversity_shannon => alphaDiversityShannon(\@values),
+    alpha_diversity_inverse_simpson => alphaDiversityInverseSimpson(\@values),
+  };
 }
 
 sub entitiesForSampleFunctions {
