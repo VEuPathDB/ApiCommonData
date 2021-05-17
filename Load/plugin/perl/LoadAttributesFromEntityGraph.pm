@@ -356,7 +356,7 @@ sub loadAttributes {
       for my $p ($self->annPropsAndValues($ontologyTerms, $ontologySourceId, $processTypeId, $valueArray)){
         $processTypeId //= "";
         my ($attributeStableId, $annProps, $value) = @{$p};
-        $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$processTypeId} //= $annProps;
+        $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} //= $annProps;
 
 
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
