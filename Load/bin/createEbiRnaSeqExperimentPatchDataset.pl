@@ -14,17 +14,15 @@ EOL
 
 my $Realigned_RnaSeqExperiments = shift or die $usage;
 my $ebiVersion = shift or die $usage;
-
-close(R1);
-close(R2);
-
+my $datasetDir = $ENV{PROJECT_HOME} . "/ApiCommonDatasets/Datasets/lib/xml/datasets";
+print STDERR "$datasetDir\n";
 open S, $Realigned_RnaSeqExperiments;
 while(<S>) {
   chomp;
   my ($component, $ebiOrganismName, $expName) = split /\t/, $_;
   $expName =~ s/^\s+|\s+$//g;
-  open R, "$component/$ebiOrganismName.xml";
-  open O, ">>$component/$ebiOrganismName.xml.patch";
+  open R, "$datasetDir/$component/$ebiOrganismName.xml";
+  open O, ">>$datasetDir/$component/$ebiOrganismName.xml.patch";
   while (<R>) {
    chomp;
    if (/$expName/){
@@ -33,15 +31,15 @@ while(<S>) {
 chomp($version);
 chomp($isStrandSpecific);
 print O <<EOL;
-<dataset class="ebiRnaSeqExperimentPatch">
+  <dataset class="ebiRnaSeqExperimentPatch">
      <prop name="projectName">\$\$projectName\$\$</prop>
      <prop name="organismAbbrev">\$\$organismAbbrev\$\$</prop>
      <prop name="name">$expName</prop>
-     $version
-     $isStrandSpecific
+ $version
+ $isStrandSpecific
      <prop name="ebiOrganismName">$ebiOrganismName</prop>
      <prop name="ebiVersion">$ebiVersion</prop>
-</dataset>
+  </dataset>
 EOL
 }
 }
