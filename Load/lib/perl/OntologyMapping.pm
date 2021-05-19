@@ -9,61 +9,45 @@ use Env qw/PROJECT_HOME/;
 use XML::Simple;
 use Data::Dumper;
 
-sub getOntologyMapping { return $_[0]->{_ontology_mapping} }
+sub asHash { return $_[0]->{_ontology_mapping} }
 
-sub new {
-  my ($class,$owlFile,$functionsFile) = @_;
-  my $self = {};
-  bless ($self, $class);
-  $self->setOntologyMapping($owlFile,$functionsFile);
-  return $self;
-}
+sub asSourcesAndMapping {
+  my ($self) = @_;
+  my $omHash = $self->asHash;
+  my %ontologyMapping;
+  my %ontologySources;
 
-sub setOntologyMapping{
-  my ($self,$owlFile,$functionsFile,$sortByIRI) = @_;
-  unless( -f $owlFile ){
-    my $owlDir = "$PROJECT_HOME/ApiCommonData/Load/ontology/release/production";
-  	my $tmp = "$owlDir/$owlFile.owl";
-  	if(-f $tmp){
-  		$owlFile = $tmp;
-  	}
-  	else{
-  		opendir(DH, dirname($owlDir));
-  		my @owls = grep { /\.owl$/i } readdir(DH);
-  		close(DH);
-  		print STDERR "Error: $owlFile does not exist\n";
-  		printf STDERR ("Error: %s does not exist\nAvailable owl files in %s:\n%s\n",
-  			$owlFile, dirname($tmp), join("\n", @owls));
-  		exit;
-  	}
+
+  foreach my $os (@{$omHash->{ontologySource}//[]}) {
+    $ontologySources{lc($os)} = 1;
   }
-  my $funcToAdd = {};
-  if($functionsFile && -e $functionsFile){
-    $funcToAdd = $self->readFunctionsFile($functionsFile);
+
+
+  foreach my $ot (@{$omHash->{ontologyTerm}}) {
+    my $sourceId = $ot->{source_id};
+    $ontologyMapping{lc($sourceId)}->{$ot->{type}} = $ot;
+    my @names;
+    if(ref($ot->{name}) eq "ARRAY"){
+      @names = @{$ot->{name}};
+    }
+    elsif(ref($ot->{name}) eq "HASH"){
+      @names = map { $_->{content} } values %{$ot->{name}};
+      $ot->{name} = \@names;
+    }
+    else {
+      die "Cannot read names from ontologyTerm $sourceId\n"
+    }
+    foreach my $name (@names) {
+      $ontologyMapping{lc($name)}->{$ot->{type}} = $ot;
+    }
+
   }
-  my $owl = $self->getOwl($owlFile);
-  my $vars = $self->getTermsFromOwl($owl, $funcToAdd);
-  my $materials = $self->getMaterialTypesFromOwl($owl);
-  my $protocols = $self->getProtocols();
-  my @terms;
-  push(@terms, $_) for @$materials;
-  push(@terms, $_) for @$protocols;
-  push(@terms, $_) for @$vars;
-  my $data = {
-    ontologymappings => [
-      {
-        ontologyTerm => \@terms
-      }
-    ]
-  };
-  $self->{_ontology_mapping} = $data;
-  return $data;
+  return \%ontologySources, \%ontologyMapping;
 }
 
 sub getOntologyXml {
   my ($self) = @_;
-  my $data = $self->getOntologyMapping();
-  return XMLout($data, KeepRoot => 1, AttrIndent => 0);
+  return XMLout($self->asHash, KeepRoot => 1, AttrIndent => 0);
 }
 
 sub printXml {
@@ -76,13 +60,61 @@ sub printXml {
   }
   else { print $xml }
 }
+
+sub new {
+  my ($class, $ontologyMapping) = @_;
+  return bless {_ontology_mapping => $ontologyMapping}, $class;
+}
+sub fromOwl {
+  my ($class,$owlFile,$functionsFile, $sortByIRI) = @_;
+  return new($class, ontologyMappingFromOwl($owlFile,$functionsFile, $sortByIRI));
+}
+sub fromXml {
+  my ($class, $ontologyMappingFile) = @_;
+  return new($class, XMLin($ontologyMappingFile, ForceArray => 1));
+}
+
+sub findOwlPath {
+  my ($arg) = @_;
+  if (ref $arg eq 'SCALAR' || -f $arg){
+    return $arg;
+  }
+  my $owlDir = "$PROJECT_HOME/ApiCommonData/Load/ontology/release/production";
+  if (-f "$owlDir/$arg.owl"){
+    return "$owlDir/$arg.owl";
+  }
+  die "Error: $arg not openable and $arg.owl does not exist in $owlDir";
+}
+
+sub ontologyMappingFromOwl {
+  my ($owlFile,$functionsFile,$sortByIRI) = @_;
+
+  my $owl = getOwl(findOwlPath($owlFile));
+  my $funcToAdd = {};
+  if($functionsFile && -e $functionsFile){
+    $funcToAdd = readFunctionsFile($functionsFile);
+  }
+  my $vars = getTermsFromOwl($owl, $funcToAdd, $sortByIRI);
+  my $materials = getMaterialTypesFromOwl($owl);
+  my $protocols = getProtocols();
+  my @terms;
+  push(@terms, $_) for @$materials;
+  push(@terms, $_) for @$protocols;
+  push(@terms, $_) for @$vars;
+  # Mirror the XMLIn parse
+  return {
+    ontologyTerm => \@terms
+  };
+}
+
   
 sub getOwl {
-  return ApiCommonData::Load::OwlReader->new($_[1]);
+  my ($path) = @_;
+  return ApiCommonData::Load::OwlReader->new($path);
 }
 
 sub getTermsFromOwl{
-  my ($self,$owl,$funcToAdd,$sortByIRI) = @_;
+  my ($owl,$funcToAdd,$sortByIRI) = @_;
   my $it = $owl->execute('get_column_sourceID');
   my %terms;
   while (my $row = $it->next) {
@@ -146,7 +178,7 @@ sub getTermsFromOwl{
 }
 
 sub getMaterialTypesFromOwl {
-  my ($self,$owl) = @_;
+  my ($owl) = @_;
   my $it = $owl->execute('top_level_entities');
   my %materialTypes;
   while (my $row = $it->next) {
@@ -180,7 +212,7 @@ sub getProtocols {
 }
 
 sub readFunctionsFile {
-  my ($self, $functionsFile) = @_;
+  my ($functionsFile) = @_;
   my %funcToAdd;
 	open(FH, "<$functionsFile") or die "Cannot read $functionsFile:$!\n";
 	my $rank = 1;
