@@ -37,15 +37,28 @@ my $dbh  = DBI->connect($dsn, $user, $pass) or die DBI::errstr;
 my $sql =<<SQL;
 SELECT distinct o.PROJECT_NAME, w.version, o.NAME_FOR_FILENAMES, 
        o.is_annotated_genome,  r.BUILD_NUMBER_INTRODUCED, 
-       y.value as build_number_revised
+       '$build_number' as build_number_revised, r.name
 FROM apidbtuning.datasetpresenter r, 
      apidbtuning.DATASETPROPERTY y, 
      apidb.organism o, 
      apidb.workflow w
 WHERE r.DATASET_PRESENTER_ID=y.DATASET_PRESENTER_ID
      and r.type='genome' 
-     and (r.BUILD_NUMBER_INTRODUCED=$build_number or 
-         (y.property='buildNumberRevised' and y.value=$build_number))
+     and r.BUILD_NUMBER_INTRODUCED=$build_number 
+     and w.name = o.PROJECT_NAME
+     and o.abbrev || '_primary_genome_RSRC' = r.name
+UNION
+SELECT distinct o.PROJECT_NAME, w.version, o.NAME_FOR_FILENAMES, 
+       o.is_annotated_genome,  r.BUILD_NUMBER_INTRODUCED, 
+       y.value as build_number_revised, r.name
+FROM apidbtuning.datasetpresenter r, 
+     apidbtuning.DATASETPROPERTY y, 
+     apidb.organism o, 
+     apidb.workflow w
+WHERE r.DATASET_PRESENTER_ID=y.DATASET_PRESENTER_ID
+     and r.type='genome' 
+     and r.BUILD_NUMBER_INTRODUCED != $build_number 
+     and y.property='buildNumberRevised' and y.value=$build_number
      and w.name = o.PROJECT_NAME
      and o.abbrev || '_primary_genome_RSRC' = r.name
 SQL
@@ -54,22 +67,21 @@ my $sth = $dbh->prepare($sql);
 $sth->execute;
 
 while(my $row = $sth->fetchrow_arrayref) {
-   my($project, $wf_version, $organism, $is_annotated, $build_number_introduced, $build_number) = @$row;
-   #print "$project, $wf_version, $organism, $is_annotated, $build_number \n";
+   my($project, $wf_version, $organism, $is_annotated, $build_number_introduced, $build_number_revised, $ds_name) = @$row;
    print "\n===========================================\n";
 
    # remove old genome and gff files if they exist
    my @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*Genome.fasta"); 
 
   foreach (@oldfiles) {
-     print "rm $_\n";
-     system("rm $_") if $commit;
+     print "rm -f $_ ;\n";
+     system("rm -f $_") if $commit;
   }
 
   @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
   foreach (@oldfiles) {
-     print "rm $_\n";
-     system("rm $_") if $commit;
+     print "rm -f $_ ; \n";
+     system("rm -f $_") if $commit;
   }
 
   # Copy genome file and change file name: CURRENT to build_number
@@ -84,9 +96,9 @@ while(my $row = $sth->fetchrow_arrayref) {
       die;
   }
   my $newFileName = $files[0];
-  $newFileName =~ s/-CURRENT_/-$build_number\_/;
+  $newFileName =~ s/-CURRENT_/-$build_number_revised\_/;
   my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
-  print "$cmd\n";
+  print "$cmd ;\n";
   system($cmd) if $commit;
 
   # Copy GFF file and change file name: CURRENT to build_number
@@ -101,8 +113,8 @@ while(my $row = $sth->fetchrow_arrayref) {
       die;
   }
   my $newFileName = $files[0];
-  $newFileName =~ s/-CURRENT_/-$build_number\_/;
-  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
+  $newFileName =~ s/-CURRENT_/-$build_number_revised\_/;
+  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName ;";
   print "$cmd\n";
   system($cmd) if $commit;
 
