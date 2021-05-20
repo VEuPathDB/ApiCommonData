@@ -165,7 +165,15 @@ sub getTermsFromOwl{
   	  }
   	  @funcs = sort { $funcHash{$a} <=> $funcHash{$b} } keys %funcHash;
     }
-    $terms{$sid} = { 'source_id' => $sid, 'name' =>  $names, 'type' => 'characteristicQualifier', 'parent'=> 'ENTITY', 'function' => \@funcs };
+    $terms{$sid} = { 
+      source_id => $sid,
+      name =>  $names,
+      type => 'characteristicQualifier',
+      parent=> 'ENTITY',
+      function => \@funcs
+    };
+    $terms{$sid}{unit} = $row->{unitLabel}->literal_value if $row->{unitLabel};
+    $terms{$sid}{unitSourceId} = basename $row->{unitIRI}->literal_value if $row->{unitIRI};
   }
   my @sorted;
   if($sortByIRI){
