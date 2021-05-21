@@ -7,10 +7,9 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 select ?label ?IRI
 where {
-  ?atprop a owl:AnnotationProperty .
-  ?atprop rdfs:label ?_label .
+  ?IRI a owl:AnnotationProperty .
+  ?IRI rdfs:label ?_label .
   BIND(str(?_label) AS ?label) 
-  BIND(str(?atprop) AS ?IRI) 
 }
 
 
