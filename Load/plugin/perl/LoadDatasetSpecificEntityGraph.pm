@@ -117,31 +117,33 @@ sub populateAncestorsTable {
 
   my $stableIdField = $entityTypeAbbrevs->{$entityTypeId} . $fieldSuffix;
 
-  my $sql = "with f as 
-(select p.in_entity_id
-      , i.stable_id in_stable_id
-      , i.entity_type_id in_type_id
-      , p.out_entity_id
-      , o.entity_type_id out_type_id
-      , o.stable_id out_stable_id
-from apidb.processattributes p
-   , apidb.entityattributes i
-   , apidb.entityattributes o
-   , apidb.entitytype et
-   , apidb.study s
-where p.in_entity_id = i.entity_attributes_id
-and p.out_entity_id = o.entity_attributes_id
-and i.entity_type_id = et.entity_type_id
-and et.study_id = s.study_id
-and s.study_id = $studyId
-)
-select connect_by_root out_stable_id,  in_stable_id, in_type_id
-from f
-start with f.out_type_id = $entityTypeId
-connect by prior in_entity_id = out_entity_id
-union
-select stable_id, null, null
-from apidb.entityattributes where entity_type_id = $entityTypeId";
+  my $sql = "select * from (
+  with f as 
+  (select p.in_entity_id
+        , i.stable_id in_stable_id
+        , i.entity_type_id in_type_id
+        , p.out_entity_id
+        , o.entity_type_id out_type_id
+        , o.stable_id out_stable_id
+  from apidb.processattributes p
+     , apidb.entityattributes i
+     , apidb.entityattributes o
+     , apidb.entitytype et
+     , apidb.study s
+  where p.in_entity_id = i.entity_attributes_id
+  and p.out_entity_id = o.entity_attributes_id
+  and i.entity_type_id = et.entity_type_id
+  and et.study_id = s.study_id
+  and s.study_id = $studyId
+  )
+  select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
+  from f
+  start with f.out_type_id = $entityTypeId
+  connect by prior in_entity_id = out_entity_id
+  union
+  select stable_id, null, null
+  from apidb.entityattributes where entity_type_id = $entityTypeId
+) order by stable_id";
 
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($sql);
