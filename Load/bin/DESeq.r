@@ -20,9 +20,17 @@ df = read.delim(dataFrame, header = TRUE, sep = "\t");
 ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = df, directory =inputDir, design=~ condition);
 ddsHTSeq$condition <-relevel(ddsHTSeq$condition, ref="reference");
 ddsHTSeq <- estimateSizeFactors(ddsHTSeq);
-ddsHTSeq <- estimateDispersions(ddsHTSeq);
+ddsHTSeq <- tryCatch ({ 
+    ddsHTSeq <- estimateDispersions(ddsHTSeq); 
+    return (ddsHTSeq);
+    },
+    error = function(e) {
+        ddsHTSeq <- estimateDispersionsGeneEst(ddsHTSeq);
+        dispersions(ddsHTSeq) <- mcols(ddsHTSeq)$dispGeneEst;
+        return (ddsHTSeq);
+    }
+)
 ddsHTSeq<- nbinomWaldTest(ddsHTSeq);
-rld<-rlogTransformation(ddsHTSeq, blind = FALSE);
 res<-results(ddsHTSeq);
 
 #can I do something like this for deseq2 so we only need one df for each experiment 

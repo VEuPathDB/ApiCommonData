@@ -172,7 +172,8 @@ SQL
 
 	foreach my $feature (@$bioperlFeatures) {
 
-	  if($feature->primary_tag eq 'gene') {
+
+          if(GUS::Community::GeneModelLocations::getShortFeatureType($feature) eq 'Gene') {
 
 	    my ($geneNaFeatureId) = $feature->get_tag_values("NA_FEATURE_ID");
 	    my $seqOntId = $geneSoMap{$geneNaFeatureId};
@@ -211,7 +212,7 @@ SQL
             $self->incrementInsertCounter();
 	  }
 
-	  if($feature->primary_tag() eq 'CDS') {
+          if($feature->primary_tag eq 'CDS') {
 	    my $loc
 	      = GUS::Model::ApiDB::CdsLocation->
 		new({'protein_source_id' => ($feature->get_tag_values("PROTEIN_SOURCE_ID"))[0],
@@ -279,8 +280,7 @@ SQL
 
 	  }
 
-	  if($feature->primary_tag() eq 'transcript') {
-
+          if(GUS::Community::GeneModelLocations::getShortFeatureType($feature) eq 'Transcript') {
 	    my $loc
 	      = GUS::Model::ApiDB::TranscriptLocation->
 		new({
@@ -355,7 +355,7 @@ SQL
 	    }
 	  }
 
-	  if($feature->primary_tag() eq 'exon') {
+          if($feature->primary_tag eq 'exon') {
 	    my $loc
 	      = GUS::Model::ApiDB::ExonLocation->
 		new({

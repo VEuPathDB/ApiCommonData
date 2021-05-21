@@ -8,6 +8,7 @@
 # Danpos2: https://sites.google.com/site/danposdoc/install
 # MAKE SURE to activate python 2.7 virtual environment prior to running this script.
 
+
 use strict;
 use Getopt::Long;
 
@@ -62,6 +63,12 @@ if ($experimentType ne 'mnase') {
 else {
     # danpos2 -o option doesn't work nicely re output path and names#
 #    chdir $outDir;
+
+
+    # temporary hack to make DanPos run - add old version to PATH
+    my $path = $ENV{'PATH'};
+    $ENV{'PATH'} = "/home/crouchk/samtools/samtools-0.1.7a:$path";
+
     my $dposCmd = "danpos.py dpos $inBamFile -o $outDir";
 
     if ($fragmentLength) {

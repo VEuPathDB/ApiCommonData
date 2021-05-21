@@ -128,6 +128,7 @@ my @create = qw(
                createHaplotypeResult.sql
                createOntologyTermResult.sql
                createSubjectResult.sql
+               createSeqEdit.sql
                createWHOStandards.sql
                createLOPITResults.sql
                createWGCNAResults.sql
@@ -143,8 +144,9 @@ my @create = qw(
                createUserDatasetCoreTables.sql
                createUserDatasetTypeTables.sql
                createDatabaseTableMapping.sql
-               createSeqEdit.sql
                createEntityGraphTables.sql
+               createExternalResourceUrl.sql
+               createAGPPiece.sql
 	     );
 
 
@@ -158,8 +160,9 @@ my @delete = qw( restoreNullConstraintsFromSimilarityTables.sql
                  dropApidbTuningSchema.sql
                  dropApidbUserDatasetsSchema.sql
                  dropApidbSchema.sql
-								 dropChebiSchema.sql
-								 dropHMDBSchema.sql
+			     dropChebiSchema.sql
+				 dropHMDBSchema.sql
+                 dropExternalResourceUrl.sql
                );
 
 if ($create) {

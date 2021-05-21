@@ -78,7 +78,7 @@ while(my $row = $sth->fetchrow_arrayref) {
      system("rm -f $_") if $commit;
   }
 
-  @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
+  @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*.gff");
   foreach (@oldfiles) {
      print "rm -f $_ ; \n";
      system("rm -f $_") if $commit;
@@ -96,6 +96,7 @@ while(my $row = $sth->fetchrow_arrayref) {
       die;
   }
   my $newFileName = $files[0];
+
   $newFileName =~ s/-CURRENT_/-$build_number_revised\_/;
   my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
   print "$cmd ;\n";
@@ -113,6 +114,7 @@ while(my $row = $sth->fetchrow_arrayref) {
       die;
   }
   my $newFileName = $files[0];
+
   $newFileName =~ s/-CURRENT_/-$build_number_revised\_/;
   my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName ;";
   print "$cmd\n";

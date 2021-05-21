@@ -464,7 +464,7 @@ sub queryNaSequenceIds {
   my $sql = "select s.na_sequence_id, s.source_id
 from dots.nasequence s, sres.ontologyterm o
 where s.sequence_ontology_id = o.ontology_term_id
-and o.name in ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome', 'variant_genome')
+and o.name in ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome', 'variant_genome','maxicircle')
 ";
 
   my $sh = $dbh->prepare($sql);

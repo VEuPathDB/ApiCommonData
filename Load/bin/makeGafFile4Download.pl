@@ -8,7 +8,6 @@ use DBD::Oracle;
 use Getopt::Long;
 
 use CBIL::Util::PropertySet;
-use GUS::Community::GeneModelLocations;
 
 #use Bio::Tools::GAF;
 use HTTP::Date;

@@ -272,6 +272,8 @@ sub printAlignmentAsGff {
      return 0;
    }
 
+
+   $ts = $ts + 1; #there is a one off error in the ts;
    print $fh "$target_id\tBLAT\tmatch\t$ts\t$te\t" . $align->getScore() . "\t$strand\t.\tID=$gffId;PercentIdentity=$pctId;GI=$gi\n";
 
    my @tstarts = map { s/\s+//g; $_+1 } split /,/, $tStarts;

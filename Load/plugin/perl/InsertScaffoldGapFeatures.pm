@@ -34,18 +34,11 @@ sub getArgsDeclaration {
 my $argsDeclaration  =
 [
 
-stringArg({name => 'extDbRlsName',
-       descr => 'List of External Database names for the scaffolds or chromosomes',
+stringArg({name => 'extDbRlsSpec',
+       descr => 'External Database Spec for genome',
        constraintFunc=> undef,
        reqd  => 1,
-       isList => 1
-      }),
-
-stringArg({name => 'extDbRlsVer',
-       descr => 'List of version of each External Database, corresponding to the names',
-       constraintFunc=> undef,
-       reqd  => 1,
-       isList => 1
+       isList => 0
       }),
 
 stringArg({name => 'SOExtDbRlsSpec',
@@ -147,25 +140,18 @@ sub run {
   }
   my $SOTermId = $SOTerm->getId();
 
-  # the array of External Database Names and their corresponding versions
-  my @extDbNameArr = @{$self->getArg('extDbRlsName')};
-  my @extDbVerArr  = @{$self->getArg('extDbRlsVer')};
+  # External Database Spec
+  my $extDbSpec = $self->getArg('extDbRlsSpec');
+  $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n";
+  $self->log("External Database Spec: $extDbSpec, ReleaseID: $extDbRlsId");
 
-  for (my $i=0; $i<=$#extDbNameArr; $i++) {
-    my $extDbName = $extDbNameArr[$i];
-    my $extDbVer  = $extDbVerArr[$i];
-    my $extDbRlsId = $self->getExtDbRlsId($extDbName, $extDbVer)
-      or die "Couldn't find source db: $extDbName, $extDbVer\n";
-    $self->log("External Database Name: $extDbName, Version: $extDbVer, ReleaseID: $extDbRlsId");
+  # retrieve sequences in a hash
+  my $seqsRef = $self->retrieveSequences($extDbRlsId);
 
-
-    # retrieve sequences in a hash
-    my $seqsRef = $self->retrieveSequences($extDbRlsId);
-
-    # create a feature for each gap
-    my $ct = $self->makeGapFeatureAssignments($seqsRef, $extDbRlsId, $SOTermArg, $SOTermId);
-    $self->log("$ct gap features created for $extDbName.");
-  }
+  # create a feature for each gap
+  my $ct = $self->makeGapFeatureAssignments($seqsRef, $extDbRlsId, $SOTermArg, $SOTermId);
+  $self->log("$ct gap features created for $extDbSpec.");
+ 
   return("Gap Features loaded");
 }
 
@@ -217,6 +203,7 @@ sub makeGapFeatureAssignments {
       $count++;
 
       $prev_pos = $pos + $gapSize;
+      $self->undefPointerCache();
     }
   }
   return $count;

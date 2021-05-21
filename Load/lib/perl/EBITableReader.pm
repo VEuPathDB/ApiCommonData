@@ -82,8 +82,14 @@ sub nextRowAsHashref {
   return \%hash;
 }
 
-# rows will only be global if entire table is
+
 sub isRowGlobal {
+  my ($self, $mappedRow, $tableName) = @_;
+
+  if($tableName eq "GUS::Model::SRes::DbRef") {
+    return 1;
+  }
+
   return 0; 
 }
 
@@ -119,8 +125,10 @@ sub getDistinctTablesForTableIdField {
   my %rv;
 
   if(uc($table) eq "DOTS.GOASSOCIATION") {
-    my $softTable = "TranslatedAASequence";
-    my $impTable = "AASequenceImp";
+
+    my %softTables = ( "TranslatedAASequence" => "AASequenceImp",
+                       "Transcript" => "NAFeatureImp",
+        );
 
     while(<FILE>) {
       chomp;
@@ -129,7 +137,7 @@ sub getDistinctTablesForTableIdField {
       my $name = $a[$nameIndex];
       my $tableId = $a[$tableIdIndex];
 
-      if($name eq $softTable) {
+      if(my $impTable = $softTables{$name}) {
         $rv{$tableId} = "GUS::Model::DoTS::${impTable}";
       }
     }

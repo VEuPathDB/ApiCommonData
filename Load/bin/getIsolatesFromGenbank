@@ -189,9 +189,10 @@ SQL
   foreach my $batch (@$ncbiTaxIdsBatches) {
       my @queries = map {"txid${_}[Organism:exp] "} @$batch;
       my $queryString = "(".join("OR ", @queries).")";
-      $queryString .= "AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes OR (chromosome[DEFINITION] AND complete+sequence[DEFINITION]))))";
+      $queryString .= "AND (nuccore_popset[filter] OR ((isolate OR strain) NOT (nuccore_popset[filter] OR genome OR genomes OR (chromosome[Title] AND complete+sequence[Title])))) NOT is_est[filter]";
       push(@queryStrings,$queryString);
   }
+
   return @queryStrings;
 }
 
