@@ -108,8 +108,8 @@ sub run {
    order by feature_type, start_min
 SQL
 
-  my $mappingFile = "parMap.dat";
-
+  #my $mappingFile = "parMap.dat";
+  my $mappingFile = $self->getArg('mappingFile');
   open (my $fh, "<", $mappingFile) or die "can't open file \"$mappingFile\"";
   while (<$fh>) {
     my ($fromId, $fromStart, $fromEnd, $toId, $toStart, $toEnd);
@@ -122,7 +122,7 @@ SQL
       $fromId = $4;
       $fromStart = $5;
       $fromEnd = $6;
-      # print "from $fromId at $fromStart to $fromEnd onto $toId at $toStart to $toEnd is my mapping\n";
+      print "from $fromId at $fromStart to $fromEnd onto $toId at $toStart to $toEnd is my mapping\n";
     } else {
       die "could not parse mapping \"$_\"";
     }
@@ -176,6 +176,7 @@ SQL
 						  });
 
       $featureLocation->submit() unless ($featureLocation->retrieveFromDB());
+      $self->undefPointerCache();
     }
 
     $queryStmt->finish() or die $dbh->errstr;

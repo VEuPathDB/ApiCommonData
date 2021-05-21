@@ -260,7 +260,7 @@ sub getMapping {
       $vals[$i+1] =~ s/^\s+//;
       $vals[$i+1] =~ s/\s+$//;
       $dbRef{$cols->[$i]} = $vals[$i+1];
-
+=begin comment
       ## check if duplicated aliases
       if ($self->getArg('organismAbbrev') && $cols->[$i] eq 'primary_identifier' && $self->getArg('extDbName') =~ /aliases/i && $self->getArg('tableName') =~ /NAFeature/i ) {
 
@@ -302,7 +302,8 @@ sub getMapping {
 	  }
 	}
       }
-
+=end comment
+=cut
     }
 
     if($lineCt%100 == 0){

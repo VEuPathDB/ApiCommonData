@@ -35,7 +35,7 @@ my($workflowVersion,$projectName,$buildNumber,$copyFromPreRelease);
             );
 
 die "usage: copyDownloadFilesFromStagingToReal.pl --projectName  --workflowVersion --buildNumber [--copyFromPreRelease]\n" unless ($projectName && $workflowVersion && $buildNumber);
-die "you must use fully qualified value for --projectName\n" unless ($projectName =~ /DB/);
+#die "you must use fully qualified value for --projectName\n" unless ($projectName =~ /DB/);
 my $targetDir="/eupath/data/apiSiteFiles/downloadSite/${projectName}";
 my $sourceDir="/eupath/data/apiSiteFilesStaging/${projectName}/${workflowVersion}/real/downloadSite/${projectName}/release-CURRENT/";
 $sourceDir="/eupath/data/apiSiteFilesStagingPreRelease/${projectName}/${workflowVersion}/real/downloadSite/${projectName}/release-CURRENT/" if ($copyFromPreRelease);

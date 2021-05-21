@@ -30,6 +30,4 @@ drop table chebi.default_structures;
 drop table chebi.autogen_structures;
 drop table chebi.compounds;
 
-exit;
-
 exit

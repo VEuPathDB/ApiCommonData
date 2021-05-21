@@ -263,8 +263,7 @@ print STDERR "The number of coding_gene loaded = $codingGeneCount\nFor these cod
 ## G. check the pseudogene
 my $sql = <<SQL;
   select distinct t.is_pseudo, count(*) from dots.genefeature gf, dots.transcript t 
-  where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId
-  and (gf.name like 'coding_gene' OR gf.name like 'protein_coding' OR gf.name like 'pseudogene_with_CDS' OR gf.name like 'pseudogene' ) group by t.is_pseudo
+where t.parent_id=gf.na_feature_id and gf.external_database_release_id=$extDbRlsId and (gf.name like 'coding_gene' or gf.name like 'protein_coding') group by t.is_pseudo
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();

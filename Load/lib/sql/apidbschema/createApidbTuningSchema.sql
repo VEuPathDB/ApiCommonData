@@ -59,6 +59,7 @@ create table apidbTuning.AnnotationChange0000
   product     varchar2(800)
 );
 
+
 grant insert, select, update, delete on apidbTuning.AnnotationChange0000 to public;
 
 create or replace synonym apidbTuning.AnnotationChange

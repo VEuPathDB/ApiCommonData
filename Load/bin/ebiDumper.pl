@@ -101,12 +101,12 @@ if($containerExists) {
   die "There is an existing container named $containerName";
 }
 
-my $mysqlServiceCommand = "singularity instance start --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
+my $mysqlServiceCommand = "singularity instance start --bind ${schemaDefinitionFile}:/usr/local/etc/gusSchemaDefinitions.xml --bind ${outputDir}:/tmp --bind ${registryFn}:/usr/local/etc/ensembl_registry.conf --bind ${dataDir}:/var/lib/mysql --bind ${initDir}:/docker-entrypoint-initdb.d  docker://veupathdb/ebi2gus:${ebi2gusVersion} $containerName";
 
 system($mysqlServiceCommand) == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
-my $runscript = "SINGULARITYENV_MYSQL_ROOT_PASSWORD=${randomPassword} SINGULARITYENV_MYSQL_DATABASE=${databaseName} singularity run instance://${containerName} mysqld --skip-networking";
+my $runscript = "SINGULARITYENV_MYSQL_ROOT_PASSWORD=${randomPassword} SINGULARITYENV_MYSQL_DATABASE=${databaseName} singularity run instance://${containerName} mysqld --skip-networking --max_allowed_packet=1G";
 
 my $servicePid = open(SERVICE, "-|", $runscript) or die "Could not start service: $!";
 
@@ -127,7 +127,7 @@ while($healthStatus) {
   chomp $healthStatus;
 }
 
-system("singularity exec instance://$containerName dumpGUS.pl -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION' -a $organismAbbrev") == 0
+system("singularity exec instance://$containerName dumpGUS.pl -w -d $datasetName -v $datasetVersion -n $ncbiTaxId -r $projectRelease -p $projectName -g '$GO_NAME|$GO_VERSION' -s '$SO_NAME|$SO_VERSION' -l '$GOEVID_NAME|$GOEVID_VERSION' -a $organismAbbrev") == 0
     or &stopContainerAndDie($containerName, "singularity exec failed: $?");
 
 &stopContainer($containerName);

@@ -77,10 +77,10 @@ print O1 <<EOL;
 EOL
 #}
 
-system("touch ../final/$sample");
-system("touch ../final/$sample.paired");
-system("touch ../final/$sample.qual");
-system("touch ../final/$sample.qual.paired");
+#system("touch ../final/$sample");
+#system("touch ../final/$sample.paired");
+#system("touch ../final/$sample.qual");
+#system("touch ../final/$sample.qual.paired");
 }elsif($dataType=~/chipSeq/){
 print O1 <<EOL;
   <dataset class="chipSeqSample">

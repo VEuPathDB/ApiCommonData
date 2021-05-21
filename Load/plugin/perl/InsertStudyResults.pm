@@ -2,6 +2,8 @@ package ApiCommonData::Load::Plugin::InsertStudyResults;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
+use locale;
+use open ':locale';
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 
@@ -326,6 +328,15 @@ sub addResults {
         $start = 1;
     }
 
+    elsif ($sourceIdType eq 'compound') {
+        my ($chebi, $isotopomer) = split(/\|/, $a[0]);
+        my $reporterId  = $self->lookupIdFromSourceId($chebi, $sourceIdType);
+        $hash = { compound_id => $reporterId,
+                  isotopomer => $isotopomer,
+        };
+        $start=1;
+    }
+
     elsif ($sourceIdType =~ /literal/) {
 	if($protocolName eq 'ClinEpiData::Load::WHOProfiles'){
 	    $hash = {label=>$a[0]};
@@ -408,6 +419,7 @@ sub lookupIdFromSourceId {
   }
   elsif($sourceIdType eq 'gene') {
     $rv = GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
+    #$rv = GUS::Supported::Util::getGeneFeatureIdWithoutAliases($self, $sourceId);
   }
   elsif ($sourceIdType eq 'segment' || $sourceIdType eq 'NASequence') {
     $rv = GUS::Supported::Util::getNASequenceId ($self, $sourceId);
@@ -664,12 +676,12 @@ sub undoTables {
     'ApiDB.PhenotypeGrowthRate',
     'ApiDB.WHOSTANDARDS',
     'ApiDB.NAFeatureMetaCycle',
-    'ApiDB.LopitResults',
     'ApiDB.WGCNAResults',
     'ApiDB.WGCNAMEResults',
     'ApiDB.CompoundMassSpecResult',
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
+    'ApiDB.LopitResults',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',

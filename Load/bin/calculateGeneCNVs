@@ -55,6 +55,9 @@ my $geneOrthoMclIds = {};
 while (my @row = $orthoMclStmt->fetchrow_array()){
     $geneOrthoMclIds->{$row[0]} = $row[1];
 }           
+die "ERROR:\tNo orthologs can be found for genes in the organism with taxon id $taxonId. Ortholog data is required to run this script.\n\n
+         DATA LOADERS: Please undo this step and re-run after orthologs have been loaded in this database.\n"
+         unless scalar keys %$chrs > 0;
 $dbh->disconnect();
 
 my $allGenesData = &geneCopyNumberCalc($fpkmFile, $chrPloidies, $chrMedians, $geneOrthoMclIds, $chrs, $geneData);
