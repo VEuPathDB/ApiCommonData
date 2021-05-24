@@ -154,8 +154,13 @@ sub run {
 
     my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
 
+    #if no files, check dir structure for EBI RNAseq
+    @mappingStatsFiles = scalar @mappingStatsFiles == 0 ? glob $self->getArg('rnaseqExperimentDirectory') . "/*RR*/mappingStats.txt" : @mappingStatsFiles;
+
     foreach my $mappingStats (@mappingStatsFiles) {
       my ($internalSampleName) = $mappingStats =~ /analyze_(.+)\/master\/mainresult/;
+      ($internalSampleName) = defined $internalSampleName ? $internalSampleName : $mappingStats =~ /([D|E|S]RR.+)\//;
+
 
       my $protocolAppNodeName;
       if(my ($combinedInternalName) = $internalSampleName =~ /(.+)_combined/) {
@@ -164,8 +169,14 @@ sub run {
 
       $protocolAppNodeName = "$internalSampleName (RNASeq)";
 
+
       my $protocolAppNode = $protocolAppNodes{$protocolAppNodeName};
+      if (! defined $protocolAppNode) {
+        $protocolAppNodeName = "$internalSampleName (RNASeqEbi)";
+        $protocolAppNode = $protocolAppNodes{$protocolAppNodeName};
+      }
       $self->error("Could not find protocolappnode row for name:  $protocolAppNodeName") unless($protocolAppNode);
+
 
       open(FILE, $mappingStats) or $self->error("could not open file $mappingStats for reading:  $!");
 

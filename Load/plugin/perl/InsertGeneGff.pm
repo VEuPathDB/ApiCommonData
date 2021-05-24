@@ -100,9 +100,7 @@ sub run {
       my ($id) = $feature->get_tag_values("ID");
 
       # check for gene record
-      if ($primary eq 'gene') {
-
-
+      if ($primary =~ /gene$/) {
 
 
 	# write record for previous gene (if any)

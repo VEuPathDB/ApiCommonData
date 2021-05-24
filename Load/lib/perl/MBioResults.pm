@@ -31,7 +31,7 @@ use GUS::Model::Study::ProtocolAppNode;
 use GUS::Model::Study::Study;
 use GUS::Model::Study::StudyLink;
 use GUS::Model::Study::Output;
-use ApiCommonData::Load::MBioResultsTable;
+use ApiCommonData::Load::MBioResultsTable::AsGus;
 
 
 my $argsDeclaration = [
@@ -180,7 +180,7 @@ sub readData {
   my $ampliconTaxaTable;
 
   if($args{ampliconTaxaPath}){
-    $ampliconTaxaTable = ApiCommonData::Load::MBioResultsTable->ampliconTaxa($args{ampliconTaxaPath});
+    $ampliconTaxaTable = ApiCommonData::Load::MBioResultsTable::AsGus->ampliconTaxa($args{ampliconTaxaPath});
 
     $maximumNumberOfObjects += 4 * @{$ampliconTaxaTable->{samples}};
     $maximumNumberOfObjects += @{$ampliconTaxaTable->{rows}};
@@ -188,9 +188,9 @@ sub readData {
 
   my ($wgsTaxaTable, $level4EcsTable, $pathwaysTable);
   if ($args{wgsTaxaPath}){
-    $wgsTaxaTable = ApiCommonData::Load::MBioResultsTable->wgsTaxa($args{wgsTaxaPath});
-    $level4EcsTable = ApiCommonData::Load::MBioResultsTable->wgsFunctions("level4EC",$args{level4ECsPath});
-    $pathwaysTable = ApiCommonData::Load::MBioResultsTable->wgsPathways($args{pathwayAbundancesPath}, $args{pathwayCoveragesPath});
+    $wgsTaxaTable = ApiCommonData::Load::MBioResultsTable::AsGus->wgsTaxa($args{wgsTaxaPath});
+    $level4EcsTable = ApiCommonData::Load::MBioResultsTable::AsGus->wgsFunctions("level4EC",$args{level4ECsPath});
+    $pathwaysTable = ApiCommonData::Load::MBioResultsTable::AsGus->wgsPathways($args{pathwayAbundancesPath}, $args{pathwayCoveragesPath});
 
     $maximumNumberOfObjects += 4 * @{$wgsTaxaTable->{samples}};
     $maximumNumberOfObjects += @{$wgsTaxaTable->{rows}};

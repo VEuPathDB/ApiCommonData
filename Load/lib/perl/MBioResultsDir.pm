@@ -5,9 +5,12 @@ use warnings;
 use ApiCommonData::Load::MBioResultsTable::AsEntities;
 use CBIL::ISA::StudyAssayEntity;
 use JSON qw/encode_json/;
+use feature 'say';
 
 sub new {
   my ($class, $dir, $fileExtensions, $nodeTypes) = @_;
+  die "node type for amplicon?" unless $nodeTypes->{amplicon};
+  die "node type for wgs?" unless $nodeTypes->{wgs};
   return bless {
     dir => $dir,
     fileExtensions => $fileExtensions,
@@ -16,43 +19,47 @@ sub new {
 }
 
 #<dataset>.<node name>.<file extension>
-sub tablePath {
+sub mbioResultTablePath {
   my ($self, $datasetName, $nodeName, $suffix) = @_;
   return $self->{dir} . "/" . join(".", $datasetName, $nodeName, $self->{fileExtensions}{$suffix});
 }
 
 sub ampliconTaxa {
   my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->tablePath($datasetName, $nodeName, 'ampliconTaxa');
+  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'ampliconTaxa');
+  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->ampliconTaxa($path);
 }
 
 sub wgsTaxa {
   my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->tablePath($datasetName, $nodeName, 'wgsTaxa');
+  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'wgsTaxa');
+  say STDERR "MBioResultsDir: Does $datasetName have wgsTaxa? Trying path: $path";
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsTaxa($path);
 }
 
 sub level4ECs {
   my ($self, $datasetName, $nodeName) = @_;
-  my $path = $self->tablePath($datasetName, $nodeName, 'level4ECs');
+  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'level4ECs');
+  say STDERR "MBioResultsDir: Does $datasetName have level4ECs? Trying path: $path";
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsFunctions('level4EC', $path);
 }
 
 sub pathways {
   my ($self, $datasetName, $nodeName) = @_;
-  my $pathA = $self->tablePath($datasetName, $nodeName, 'pathwayAbundances');
-  my $pathC = $self->tablePath($datasetName, $nodeName, 'pathwayCoverages');
+  my $pathA = $self->mbioResultTablePath($datasetName, $nodeName, 'pathwayAbundances');
+  my $pathC = $self->mbioResultTablePath($datasetName, $nodeName, 'pathwayCoverages');
+  say STDERR "MBioResultsDir: Does $datasetName have pathways? Trying paths: $pathA $pathC";
   return unless -f $pathA && -f $pathC;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsPathways($pathA, $pathC);
 }
 
-sub tablesForNodeName {
+sub mbioResultTablesForNodeName {
   my ($self, $datasetName, $nodeType, $nodeName) = @_;
-  my @tables = $nodeType eq $self->{nodeTypes}{amplicon} ? (
+  my @mbioResultTables = $nodeType eq $self->{nodeTypes}{amplicon} ? (
       $self->ampliconTaxa($datasetName, $nodeName)
       )
     : $nodeType eq $self->{nodeTypes}{wgs} ? (
@@ -61,9 +68,9 @@ sub tablesForNodeName {
       $self->pathways($datasetName, $nodeName),
       )
     : ();
-  return [grep {$_} @tables];
+  return [grep {$_} @mbioResultTables];
 }
-sub tablesBySuffixForStudy {
+sub mbioResultTablesBySuffixForStudy {
   my ($self, $studyXml) = @_;
   die "Not supported for MBio: studyXmls without datasets" unless @{$studyXml->{dataset}};
   die "Not supported for MBio, yet: studyXmls with more datasets than one" unless @{$studyXml->{dataset}} == 1;
@@ -74,12 +81,12 @@ sub tablesBySuffixForStudy {
   for my $nodeName (keys %{$studyXml->{node}}){
     my $suffix = $studyXml->{node}{$nodeName}{suffix};
     next unless $suffix;
-    my $tables = $self->tablesForNodeName(
+    my $mbioResultTables = $self->mbioResultTablesForNodeName(
       $datasetName,
       $studyXml->{node}{$nodeName}{type},
       $nodeName
     );
-    $result{$suffix} = $tables;
+    $result{$suffix} = $mbioResultTables;
   }
   return \%result;
 }
@@ -89,18 +96,18 @@ sub toGetAddMoreData {
   return sub {
     my ($studyXml) = @_;
 
-    my $tablesBySuffix = $self->tablesBySuffixForStudy($studyXml);
+    my $mbioResultTablesBySuffix = $self->mbioResultTablesBySuffixForStudy($studyXml);
 
     my $datasetName = $studyXml->{dataset}[0];
-    warn "No tables found for dataset: $datasetName" unless map {@$_} values %$tablesBySuffix;
+    warn "No mbioResultTables found for dataset: $datasetName" unless map {@$_} values %$mbioResultTablesBySuffix;
     return sub {
       my ($node) = @_;
       die "Unexpected argument: $node" unless blessed $node && $node->isa('CBIL::ISA::StudyAssayEntity');
       my ($sample, $suffix) = $node->getValue =~ m{^(.*) \((.*)\)$};
       return {} unless $sample && $suffix;
       my $valuesHash = {};
-      for my $table (@{$tablesBySuffix->{$suffix} // []}){
-        my %h = %{$table->entitiesForSample($sample)//{}};
+      for my $mbioResultTable (@{$mbioResultTablesBySuffix->{$suffix} // []}){
+        my %h = %{$mbioResultTable->entitiesForSample($sample)//{}};
         while(my ($k, $o) = each %h){ 
           $valuesHash->{$k} = [$o];
         }

@@ -1,0 +1,135 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Model::Core::UserInfo;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Model::ApiDB::Organism;
+use FileHandle;
+use File::Basename;
+use Data::Dumper;
+
+
+my ($pair_dir, $test, $undo);
+my %options = ('pair_dir=s' => \$pair_dir, 'test!' => \$test, 'undo!' => \$undo);
+
+unless(@ARGV){
+  printf("\t%s\n", join("\n\t", keys %options));
+  exit;
+}
+
+GetOptions(%options);
+
+my $gusconfig = GUS::Supported::GusConfig->new();
+
+my $dbVendor = $gusconfig->getDatabaseVendor;
+my $dsn = $gusconfig->getDbiDsn();
+my ($dbi, $type, $dbName) = split(':', $dsn);
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $db = GUS::ObjRelP::DbiDatabase->new($dsn, $login, $password, 0,0,1, $gusconfig->getCoreSchemaName());
+
+sleep(rand(10)+1); 
+
+my $dbh = $db->getQueryHandle(0);
+
+########################################################################################
+
+my $ui = GUS::Model::Core::UserInfo->new({login => $login});
+$ui->retrieveFromDB();
+my $userId = $ui->getId();
+my $algInvocationId = 0;
+
+
+
+########################################################################################
+my ($syntenyFile, $syntenyCtrl, $syntenicGeneFile, $syntenicGeneCtrl) = qw/synteny.dat synteny.dat.ctrl syntenic_gene.dat syntenic_gene.dat.ctrl/;
+foreach my $file ($syntenyFile, $syntenyCtrl, $syntenicGeneFile, $syntenicGeneCtrl){
+  my $fh = FileHandle->new(">$file");
+  die ("Cannot write $file\n") unless $fh;
+  close($fh);
+}
+
+my $pair = basename($pair_dir);
+
+my ($orgAbbrevA, $orgAbbrevB) = ("","");
+my @orgAbbrevs = split(/\-/, $pair);
+##### Some organism abbreviations may contain hyphen(s)
+
+while(scalar @orgAbbrevs >1){
+  my $tmp=pop(@orgAbbrevs);
+  $orgAbbrevB = $tmp . $orgAbbrevB;
+  my $org = GUS::Model::ApiDB::Organism->new({abbrev => $orgAbbrevB}); # abbrev is constrained to be unique
+    if($org->retrieveFromDB){
+      printf STDERR ("orgAbbrevB is '$orgAbbrevB'.\n");
+      last;
+    }else{
+      $orgAbbrevB = "-".$orgAbbrevB;
+    }
+}
+
+while(scalar @orgAbbrevs > 0){
+  my $tmp=pop(@orgAbbrevs);
+  $orgAbbrevA = $tmp . $orgAbbrevA;
+  my $org = GUS::Model::ApiDB::Organism->new({abbrev => $orgAbbrevA}); # abbrev is constrained to be unique
+    if($org->retrieveFromDB){
+      printf STDERR ("orgAbbrevA is '$orgAbbrevA'.\n");
+      last;
+    }else{
+      $orgAbbrevA = "-" . $orgAbbrevA;
+    }
+}
+
+my $databaseName = "${pair}_Mercator_synteny";
+my $dbPluginArgs = "--name '$databaseName' ";
+my $releasePluginArgs = "--databaseName '$databaseName' --databaseVersion dontcare";
+
+my $insertPluginArgs = join(" ",
+    "--writeSqlldrFiles",
+    "--inputDirectory $pair_dir",
+    "--outputSyntenyDatFile synteny.dat",
+    "--outputSyntenyCtrlFile synteny.dat.ctrl",
+    "--outputSyntenicGeneDatFile syntenic_gene.dat",
+    "--outputSyntenicGeneCtrlFile syntenic_gene.dat.ctrl",
+    "--syntenyDbRlsSpec '$databaseName|dontcare'");
+
+# allow for restart; skip those already in db.   any partially done pair needs to be fully backed out before restart.
+my $skip = 0;
+my $ed = GUS::Model::SRes::ExternalDatabase->new({name => $databaseName});
+my $edIsLoaded = $ed->retrieveFromDB;
+my $edRelIsLoaded;
+if($edIsLoaded){
+  my $edr = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_id => $ed->getExternalDatabaseId});
+  $edRelIsLoaded = $edr->retrieveFromDB;
+  if($edRelIsLoaded){
+    printf STDERR ("Pair $pair was previously loaded.  Skipping.\n");
+    exit 0;
+  }
+  else{
+    $skip = 1;
+  }
+}
+unless($edIsLoaded){
+  runPlugin($test, $undo, "GUS::Supported::Plugin::InsertExternalDatabase", $dbPluginArgs);
+}
+runPlugin($test, $undo, "GUS::Supported::Plugin::InsertExternalDatabaseRls", $releasePluginArgs) unless($edRelIsLoaded);
+## Always run in test mode, no GUS::Model submit:
+my $status = runPlugin(1, 0, "ApiCommonData::Load::Plugin::InsertSyntenySpans", $insertPluginArgs) unless($skip);
+
+exit $status;
+1;
+
+sub runPlugin {
+  my ($test, $undo, $plugin, $args) = @_;
+  unless ($test) { $args .= ' --commit' }
+  $args .= " --comment \"$args\"";
+  my $cmd = sprintf("ga %s %s", $plugin, $args);
+  printf STDERR ("Running ga command: $cmd\n");
+  return system($cmd);
+}

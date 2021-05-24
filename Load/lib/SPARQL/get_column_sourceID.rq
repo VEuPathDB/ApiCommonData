@@ -1,9 +1,11 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT distinct ?entity ?vars
+SELECT distinct ?entity ?vars ?unitLabel ?unitIRI
 WHERE { 
 	?entity a owl:Class .
         ?entity obo:EUPATH_0000755 ?column. 
+        OPTIONAL { ?entity obo:EUPATH_0001008 ?unitLabel }
+        OPTIONAL { ?entity obo:EUPATH_0001009 ?unitIRI }
 	BIND (str(?column) AS ?vars) .
 }

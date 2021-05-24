@@ -23,6 +23,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Study TO gus_w;
 GRANT SELECT ON apidb.Study TO gus_r;
 
 CREATE SEQUENCE apidb.Study_sq;
+GRANT SELECT ON apidb.Study_sq TO gus_w;
+GRANT SELECT ON apidb.Study_sq TO gus_r;
 
 CREATE INDEX apidb.study_ix_1 ON apidb.study (external_database_release_id, stable_id, internal_abbrev, study_id) TABLESPACE indx;
 
@@ -71,6 +73,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityType TO gus_w;
 GRANT SELECT ON apidb.EntityType TO gus_r;
 
 CREATE SEQUENCE apidb.EntityType_sq;
+GRANT SELECT ON apidb.EntityType_sq TO gus_w;
+GRANT SELECT ON apidb.EntityType_sq TO gus_r;
 
 CREATE INDEX apidb.entitytype_ix_1 ON apidb.entitytype (study_id, entity_type_id) TABLESPACE indx;
 CREATE INDEX apidb.entitytype_ix_2 ON apidb.entitytype (type_id, entity_type_id) TABLESPACE indx;
@@ -117,6 +121,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ProcessType TO gus_w;
 GRANT SELECT ON apidb.ProcessType TO gus_r;
 
 CREATE SEQUENCE apidb.ProcessType_sq;
+GRANT SELECT ON apidb.ProcessType_sq TO gus_w;
+GRANT SELECT ON apidb.ProcessType_sq TO gus_r;
 
 CREATE INDEX apidb.processtype_ix_1 ON apidb.processtype (type_id, process_type_id) TABLESPACE indx;
 
@@ -168,6 +174,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityAttributes TO gus_w;
 GRANT SELECT ON apidb.EntityAttributes TO gus_r;
 
 CREATE SEQUENCE apidb.EntityAttributes_sq;
+GRANT SELECT ON apidb.EntityAttributes_sq TO gus_w;
+GRANT SELECT ON apidb.EntityAttributes_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -220,6 +228,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ProcessAttributes TO gus_w;
 GRANT SELECT ON apidb.ProcessAttributes TO gus_r;
 
 CREATE SEQUENCE apidb.ProcessAttributes_sq;
+GRANT SELECT ON apidb.ProcessAttributes_sq TO gus_w;
+GRANT SELECT ON apidb.ProcessAttributes_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -272,6 +282,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.EntityTypeGraph TO gus_w;
 GRANT SELECT ON apidb.EntityTypeGraph TO gus_r;
 
 CREATE SEQUENCE apidb.EntityTypeGraph_sq;
+GRANT SELECT ON apidb.EntityTypeGraph_sq TO gus_w;
+GRANT SELECT ON apidb.EntityTypeGraph_sq TO gus_r;
 
 CREATE INDEX apidb.entitytypegraph_ix_1 ON apidb.entitytypegraph (study_id, entity_type_id, parent_id, entity_type_graph_id) TABLESPACE indx;
 CREATE INDEX apidb.entitytypegraph_ix_2 ON apidb.entitytypegraph (parent_id, entity_type_graph_id) TABLESPACE indx;
@@ -322,6 +334,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeUnit TO gus_w;
 GRANT SELECT ON apidb.AttributeUnit TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeUnit_sq;
+GRANT SELECT ON apidb.AttributeUnit_sq TO gus_w;
+GRANT SELECT ON apidb.AttributeUnit_sq TO gus_r;
 
 CREATE INDEX apidb.attributeunit_ix_1 ON apidb.attributeunit (entity_type_id, attr_ontology_term_id, unit_ontology_term_id, attribute_unit_id) TABLESPACE indx;
 CREATE INDEX apidb.attributeunit_ix_2 ON apidb.attributeunit (attr_ontology_term_id, attribute_unit_id) TABLESPACE indx;
@@ -371,6 +385,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ProcessTypeComponent TO gus_w;
 GRANT SELECT ON apidb.ProcessTypeComponent TO gus_r;
 
 CREATE SEQUENCE apidb.ProcessTypeComponent_sq;
+GRANT SELECT ON apidb.ProcessTypeComponent_sq TO gus_w;
+GRANT SELECT ON apidb.ProcessTypeComponent_sq TO gus_r;
 
 CREATE INDEX apidb.ptc_ix_1 ON apidb.processtypecomponent (process_type_id, component_id, order_num, process_type_component_id) TABLESPACE indx;
 CREATE INDEX apidb.ptc_ix_2 ON apidb.processtypecomponent (component_id, process_type_component_id) TABLESPACE indx;
@@ -424,6 +440,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeValue TO gus_w;
 GRANT SELECT ON apidb.AttributeValue TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeValue_sq;
+GRANT SELECT ON apidb.AttributeValue_sq TO gus_w;
+GRANT SELECT ON apidb.AttributeValue_sq TO gus_r;
 
 CREATE INDEX apidb.attributevalue_ix_1 ON apidb.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id, entity_attributes_id) TABLESPACE indx;
 
@@ -485,6 +503,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Attribute TO gus_w;
 GRANT SELECT ON apidb.Attribute TO gus_r;
 
 CREATE SEQUENCE apidb.Attribute_sq;
+GRANT SELECT ON apidb.Attribute_sq TO gus_w;
+GRANT SELECT ON apidb.Attribute_sq TO gus_r;
 
 CREATE INDEX apidb.attribute_ix_1 ON apidb.attribute (entity_type_id, process_type_id, parent_ontology_term_id, attribute_stable_id, attribute_id) TABLESPACE indx;
 
@@ -539,6 +559,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeGraph TO gus_w;
 GRANT SELECT ON apidb.AttributeGraph TO gus_r;
 
 CREATE SEQUENCE apidb.AttributeGraph_sq;
+GRANT SELECT ON apidb.AttributeGraph_sq TO gus_w;
+GRANT SELECT ON apidb.AttributeGraph_sq TO gus_r;
 
 CREATE INDEX apidb.attributegraph_ix_1 ON apidb.attributegraph (study_id, ontology_term_id, parent_ontology_term_id, attribute_graph_id) TABLESPACE indx;
 

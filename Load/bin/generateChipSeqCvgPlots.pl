@@ -6,10 +6,12 @@
 # wigToBigWig
 # Homer: homer/bin directory added to executable path (see http://homer.salk.edu/homer/introduction/install.html). 
 # Danpos2: https://sites.google.com/site/danposdoc/install
-# MAKE SURE to activate python 2.7 virtual environment prior to running this script.
+# note that due to conflicting dependencies, Danpos2 will be run from a a docker container using Singularity from May 2020
+
 
 use strict;
 use Getopt::Long;
+use File::Basename;
 
 my ($experimentType, $inBamFile,$outDir, $topLevelSeqSizeFile, $fragmentLength);
 &GetOptions("experimentType=s" => \$experimentType,
@@ -56,13 +58,13 @@ if ($experimentType ne 'mnase') {
     my $makeBwFileCmd = "bedGraphToBigWig $outDir" . "results.bedGraph $topLevelSeqSizeFile $bwFile";
     print STDERR "$makeBwFileCmd\n\n";
     system($makeBwFileCmd) == 0 or die "system $makeBwFileCmd failed: $?";
-#    unlink($outDir . 'results.bedgraph.gz'); 
 }
 
 else {
-    # danpos2 -o option doesn't work nicely re output path and names#
-#    chdir $outDir;
-    my $dposCmd = "danpos.py dpos $inBamFile -o $outDir";
+    my $bamFileDir = dirname($inBamFile);
+    my $bamFileName = basename($inBamFile);
+    my $seqSizeDirName = dirname($topLevelSeqSizeFile);
+    my $dposCmd = "singularity exec --bind $bamFileDir:/tmp,$outDir:/data docker://biocontainers/danpos:v2.2.2_cv3 danpos.py dpos /tmp/$bamFileName -o /data";
 
     if ($fragmentLength) {
 	$dposCmd .=  " --frsz $fragmentLength";
@@ -74,10 +76,9 @@ else {
     while (my $file = readdir(DIR)) {
 	next unless (-f "$outDir/pooled/$file");
 	if ($file =~ m/\.wig$/) {
-	    my $makeBwFileCmd = "wigToBigWig -clip $outDir/pooled/$file $topLevelSeqSizeFile $bwFile";
+	    my $makeBwFileCmd = "singularity exec --bind $outDir:/data,$seqSizeDirName:/tmp docker://biowardrobe2/ucscuserapps:v358_2 wigToBigWig -clip /data/pooled/$file /tmp/chrom.sizes /data/results.bw";
 	    print STDERR "$makeBwFileCmd\n\n";
 	    system($makeBwFileCmd) == 0 or die "system $makeBwFileCmd failed: $?";
-#	    unlink("$danposDir/pooled/$file"); 
 	    last;
 	}
     }

@@ -1,0 +1,15 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+## This query fetches IRI and label for the AnnotationProperty entities
+## These may be referred to as "Attributes"
+
+select ?label ?IRI
+where {
+  ?IRI a owl:AnnotationProperty .
+  ?IRI rdfs:label ?_label .
+  BIND(str(?_label) AS ?label) 
+}
+
+

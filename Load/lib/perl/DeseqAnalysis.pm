@@ -191,50 +191,54 @@ sub munge {
 	close($dataframe);
 	
 	$outputFile =~ s/ /_/g;
- &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile");
-#	print  "DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile\n\n\n";
-	open(my $OUT, ">$mainDirectory\/$fileName");
-	print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
-	open( my $IN, "$mainDirectory\/$outputFile");
-	
-    while (my $line = <$IN>) {
-	chomp $line;
-#	print "gettting to the printing of the formatted file\n\n\n\n\n ";
-	if ($line =~/baseMean/) {
-	    #skip header
-	    next;
-	}
-	else {
-	    my @temps = split ",", $line;
-	    my $reportedFC;
-	    my $id = $temps[0];
-	    $id =~ s/"//g;
-	    my $log2fc = $temps[2];
-	    my $foldchange = 2**$log2fc;
-	    if ($foldchange >1 ) {
-		#its ok leave it alone
-	        $reportedFC = $foldchange;
-	    }
-	    else {
-		$reportedFC = (1/$foldchange)*(-1);
-	    }
-	    my $pval = $temps[5];
-	    my $adjp = $temps[6];
-	    print $OUT $id."\t".$reportedFC."\t".$pval."\t".$adjp."\n";
-	}
-   }
-    
-    close ($IN);
-    close($OUT);
+    eval { &runCmd("DESeq.r $dataframeFile $mainDirectory $mainDirectory $outputFile") };
+    if ($@) {
+        print "Coverage is no deep enough to run DESeq2. Differential expression will not be loaded for this contrast.\n";
+    }
+    else {
+        open(my $OUT, ">$mainDirectory\/$fileName");
+        print $OUT "ID\tfold_change\tp_value\tadj_p_value\n";
+        open( my $IN, "$mainDirectory\/$outputFile");
 
-####################################################################################################
-my $input_list = \@inputs;
-  $self->setSourceIdType('gene');
-  $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
-$self->getProtocolParamsHash();
-$self->addProtocolParamValue('reference',$reference);
-$self->addProtocolParamValue('comparator',$comparator);
- $self->createConfigFile();
+        while (my $line = <$IN>) {
+        chomp $line;
+    #	print "gettting to the printing of the formatted file\n\n\n\n\n ";
+        if ($line =~/baseMean/) {
+            #skip header
+            next;
+        }
+        else {
+            my @temps = split ",", $line;
+            my $reportedFC;
+            my $id = $temps[0];
+            $id =~ s/"//g;
+            my $log2fc = $temps[2];
+            my $foldchange = 2**$log2fc;
+            if ($foldchange >1 ) {
+            #its ok leave it alone
+                $reportedFC = $foldchange;
+            }
+            else {
+            $reportedFC = (1/$foldchange)*(-1);
+            }
+            my $pval = $temps[5];
+            my $adjp = $temps[6];
+            print $OUT $id."\t".$reportedFC."\t".$pval."\t".$adjp."\n";
+        }
+       }
+
+        close ($IN);
+        close($OUT);
+
+        ####################################################################################################
+        my $input_list = \@inputs;
+        $self->setSourceIdType('gene');
+        $self->setInputProtocolAppNodesHash({$sampleName => $input_list});
+        $self->getProtocolParamsHash();
+        $self->addProtocolParamValue('reference',$reference);
+        $self->addProtocolParamValue('comparator',$comparator);
+        $self->createConfigFile();
+    }
 }
 
 

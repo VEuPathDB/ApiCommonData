@@ -112,7 +112,7 @@ sub okAmpliconKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw /relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s/; 
+    ok($result->{$_}, "Result has key: $_") for qw /relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s alpha_diversity_shannon alpha_diversity_inverse_simpson/; 
   };
 };
 
@@ -124,7 +124,7 @@ sub okWgsKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species/;
+    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species alpha_diversity_shannon alpha_diversity_inverse_simpson/;
   };
 }
 okWgsKeys("s1 (WGS)");

@@ -139,7 +139,9 @@ sub run {
 
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
 
-    $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+    my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+
+    $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
 
   return "Loaded attributes for $studiesCount studies"; 
@@ -343,10 +345,14 @@ sub loadAttributes {
 
   my $fh = $fifo->getFileHandle();
 
+  $self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
   $sh->execute($studyId);
 
+  my $clobCount = 0;
+
   while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
+
     my $json = $self->readClob($lobLocator);
 
     my $attsHash = decode_json($json);
@@ -356,7 +362,7 @@ sub loadAttributes {
       for my $p ($self->annPropsAndValues($ontologyTerms, $ontologySourceId, $processTypeId, $valueArray)){
         $processTypeId //= "";
         my ($attributeStableId, $annProps, $value) = @{$p};
-        $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$processTypeId} //= $annProps;
+        $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} //= $annProps;
 
 
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
@@ -376,7 +382,11 @@ sub loadAttributes {
         
       }
     }
+    if(++$clobCount % 10000 == 0){
+      $self->log("Loading attribute values for study $studyId: processed $clobCount clobs");
+    }
   }
+  $self->log("Loaded attribute values for study $studyId: processed $clobCount clobs");
 }
 sub annPropsAndValues {
   my ($self, $ontologyTerms, $ontologySourceId, $processTypeId, $valueArray) = @_;

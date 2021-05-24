@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 package ApiCommonData::Load::OwlReader;
 ## TODO
 ## move to another package tree where it belongs (???)
@@ -5,7 +7,7 @@ use Digest::MD5;
 use RDF::Trine;
 use RDF::Query;
 use File::Basename;
-use Env /PROJECT_HOME SPARQLPATH/;
+use Env qw/PROJECT_HOME SPARQLPATH/;
 use Data::Dumper;
 
 
@@ -31,7 +33,6 @@ sub getQueries{
 
 sub loadQueries{
 	my ($self) = @_;
-	print STDERR "Loading queries in $SPARQLPATH\n";
 	opendir(DH, $SPARQLPATH) or die "Cannot open directory $SPARQLPATH: $!\n";
 	my @files = grep { /\.rq$/i } readdir(DH);
 	my %queries;
@@ -54,13 +55,9 @@ sub loadOwl {
 	my $exists = -e $dbfile;
 	my $name = basename($owlFile);
 	if($exists && ! $self->fileIsCurrent($owlFile)){
-		print STDERR "OWL DB out of date, rebuilding\n";
 		$exists = 0;
 		unlink($dbfile);
 		$self->writeMD5($owlFile);
-	}
-	else{
-		print STDERR "OWL DB is up to date\n";
 	}
 	my $model = RDF::Trine::Model->new(
 	    RDF::Trine::Store::DBI->new(
@@ -73,7 +70,6 @@ sub loadOwl {
 	unless( $exists ) { ## assumes existing dbfile is loaded
 		my $parser = RDF::Trine::Parser->new('rdfxml');
 		$parser->parse_file_into_model(undef, $owlFile, $model);
-		print STDERR ("OWL DB ready\n");
 	}
 	$self->{config}->{model} = $model;
 }

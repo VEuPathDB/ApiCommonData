@@ -39,6 +39,9 @@ sub getChrsForCalcs {
         $chrs->{$row[0]} = 0;
     }
     $dbh->disconnect();
+    die "ERROR:\tThe organism with taxon id $taxonId does not have any sequences annotated with the SO term \"chromosome\".
+         We cannot calculate copy number variations for this organism.\n\nDATA LOADERS: Please undo this dataset and remove the dataset class.\n"
+         unless scalar keys %$chrs > 0;
     return $chrs;
 }
 

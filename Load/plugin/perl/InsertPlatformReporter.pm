@@ -117,7 +117,7 @@ sub run {
                                                        });
 
     $reporter->setParent($arrayDesign);
-    $reporter->submit();
+    $reporter->submit() unless $reporter->retrieveFromDB();;
 
     $self->undefPointerCache();
     $count++;

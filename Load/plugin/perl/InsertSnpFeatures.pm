@@ -172,7 +172,7 @@ sub run {
   while(<SNP>) {
     chomp;
 
-    my @a = split(/\t/, $_);
+    my @a = split(/\t/, $_, -1);
 
     unless(scalar @a == scalar @$snpColumnNames) {
       $self->error("Expected number of columns in snpFeature file differes from found");
