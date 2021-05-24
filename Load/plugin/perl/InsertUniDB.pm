@@ -414,9 +414,6 @@ sub run {
 
   if($mode eq 'undo') {
     foreach my $tableName (reverse @$orderedTables) {
-      # For loading EBI Core DB into Genomics sites... we cannot undo Global tables;  (DBRef is the only current example);
-      # should the reader class provide a list of tables to skip?  may add that in future
-      next if($tableReaderClass eq 'ApiCommonData::Load::EBIReaderForUndo' && $GLOBAL_UNIQUE_FIELDS{$tableName} && $tableName ne 'GUS::Model::DoTS::AASequenceImp');
 
       $self->undoTable($database, $tableName, $tableInfo->{$tableName}, $tableReader);
     }
@@ -625,9 +622,18 @@ sub undoTable {
                                                where a.primary_key_orig = k.primary_key_orig (+)
                                                 and k.primary_key_orig is null)";
 
-  $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
 
-  $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
+
+  # For loading EBI Core DB into Genomics sites... we cannot undo Global tables;  (DBRef is the only current example);
+  # should the reader class provide a list of tables to skip?  may add that in future
+  my $tableReaderClass = $self->getArg('table_reader');
+  unless($tableReaderClass eq 'ApiCommonData::Load::EBIReaderForUndo' && $GLOBAL_UNIQUE_FIELDS{$tableName} && $tableName ne 'GUS::Model::DoTS::AASequenceImp') {
+
+    $self->deleteFromTable($dbh, $deleteGlobSql, $GLOBAL_NATURAL_KEY_TABLE_NAME);  
+
+    $self->deleteFromTable($dbh, $deleteSql, $abbreviatedTable);  
+
+  }
 
   $self->deleteFromTable($dbh, $deleteMapSql, $MAPPING_TABLE_NAME);  
 
