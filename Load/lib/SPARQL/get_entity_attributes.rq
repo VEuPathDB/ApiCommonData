@@ -1,15 +1,18 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-# PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 # PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-## This query fetches {ATTRIB_IRI} and {ATTRIB_NAME} for the AnnotationProperty entities
+## This query fetches <http://purl.obolibrary.org/obo/EUPATH_0000274> and displayOrder for the AnnotationProperty entities
 ## These may be referred to as "Attributes"
 
-select ?entity ?{ATTRIB_NAME}
+select ?entity ?label ?value
 where {
   ?_entity a owl:Class .
-  ?_entity {ATTRIB_IRI} ?_{ATTRIB_NAME} .
+  ?_prop a owl:AnnotationProperty .
+  ?_prop rdfs:label ?_label .
+  ?_entity ?_prop ?_value . 
   BIND(str(?_entity) AS ?entity) 
-  BIND(str(?_{ATTRIB_NAME}) AS ?{ATTRIB_NAME}) 
+  BIND(str(?_label) AS ?label) 
+  BIND(str(?_value) AS ?value) 
 }
 
