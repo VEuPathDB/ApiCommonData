@@ -16,7 +16,8 @@ CREATE TABLE apidb.Study (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (external_database_release_id) REFERENCES sres.ExternalDatabaseRelease,
- PRIMARY KEY (study_id)
+ PRIMARY KEY (study_id),
+ CONSTRAINT unique_stable_id UNIQUE (stable_id)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Study TO gus_w;

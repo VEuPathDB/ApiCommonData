@@ -202,7 +202,7 @@ sub loadAttributeTerms {
   my ($self, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds) = @_;
 
   my $attributeCount;
-
+  $self->getDb->setMaximumNumberOfObjects((scalar keys %$annPropsByAttributeStableIdAndEntityTypeId ) * (scalar keys %$entityTypeIds));
   SOURCE_ID:
   foreach my $attributeStableId (keys %$annPropsByAttributeStableIdAndEntityTypeId) {
 
@@ -230,6 +230,7 @@ sub loadAttributeTerms {
       $attributeCount++;
     }
   }
+  $self->undefPointerCache;
 
   return $attributeCount;
 }
@@ -382,7 +383,7 @@ sub loadAttributes {
         
       }
     }
-    if(++$clobCount % 10000 == 0){
+    if(++$clobCount % 500 == 0){
       $self->log("Loading attribute values for study $studyId: processed $clobCount clobs");
     }
   }
