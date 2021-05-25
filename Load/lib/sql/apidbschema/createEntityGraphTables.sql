@@ -471,7 +471,7 @@ CREATE TABLE apidb.Attribute (
   process_type_id                 NUMBER(12),
   ontology_term_id         NUMBER(10),
   parent_ontology_term_id         NUMBER(10) NOT NULL,
-  attribute_stable_id varchar2(255) NOT NULL,
+  stable_id varchar2(255) NOT NULL,
   provider_label                varchar(1500),
   display_name                  varchar(1500) not null,
   data_type                    varchar2(10) not null,
