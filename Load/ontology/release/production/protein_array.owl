@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/protein_array.owl">
-        <owl:versionInfo>2020-09-11</owl:versionInfo>
+        <owl:versionInfo>2021-05-25</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -21,6 +21,14 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
+    </owl:AnnotationProperty>
     
 
 
@@ -303,17 +311,6 @@
         <obo:IAO_0000115>Informed consent for data collection and usage</obo:IAO_0000115>
         <obo:ICEMR_temp>data consent</obo:ICEMR_temp>
         <rdfs:label>Data consent</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000516 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000516">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
-        <obo:IAO_0000115>Does the patient meet criteria for fluid and electrolyte disturbances</obo:IAO_0000115>
-        <obo:ICEMR_temp>electrolyte disturbances</obo:ICEMR_temp>
-        <rdfs:label>Electrolyte disturbances</rdfs:label>
     </owl:Class>
     
 
@@ -808,6 +805,18 @@
         <obo:IAO_0000115>Does the patient meet criteria for respiratory distress</obo:IAO_0000115>
         <obo:ICEMR_temp>respiratory distress</obo:ICEMR_temp>
         <rdfs:label>Respiratory distress</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/HP_0003111 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0003111">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000309"/>
+        <obo:EUPATH_0001006>EUPATH_0000516</obo:EUPATH_0001006>
+        <obo:IAO_0000115>Does the patient meet criteria for fluid and electrolyte disturbances</obo:IAO_0000115>
+        <obo:ICEMR_temp>electrolyte disturbances</obo:ICEMR_temp>
+        <rdfs:label>Electrolyte disturbances</rdfs:label>
     </owl:Class>
     
 
