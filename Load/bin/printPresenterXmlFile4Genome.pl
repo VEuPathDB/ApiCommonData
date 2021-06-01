@@ -67,13 +67,13 @@ print "    <caveat><\/caveat>\n";
 print "    <acknowledgement><\/acknowledgement>\n";
 print "    <releasePolicy><\/releasePolicy>\n";
 
+$annotationSource = $genomeSource if (!$annotationSource);
+$annotationVersion = $genomeVersion if (!$annotationVersion);
+
 &printHistory();
 &printPrimaryContactId();
 &printExternalLinks();
 &printPubMedId();
-
-$annotationSource = $genomeSource if (!$annotationSource);
-$annotationVersion = $genomeVersion if (!$annotationVersion);
 
 ($isAnnotatedGenome =~ /^y/i) ? &printAnnotatedGenome : &printUnAnnotatedGenome;
 
@@ -184,7 +184,8 @@ sub printExternalLinks {
   ($bioprojectId) ? print "      <url>https:\/\/www.ncbi.nlm.nih.gov\/bioproject\/$bioprojectId<\/url>\n" : print "      <url><\/url>\n";
   print "    </link>\n";
   print "    <link>\n";
-  print "      <text>GenBank Assembly page<\/text>\n";
+#  print "      <text>GenBank Assembly page<\/text>\n";
+  ($assemblyId =~ /^GCF_/) ? print "      <text>RefSeq Assembly page<\/text>\n" : print "      <text>GenBank Assembly page<\/text>\n";
   ($assemblyId) ? print "      <url>https:\/\/www.ncbi.nlm.nih.gov\/assembly\/$assemblyId</url>\n" : print "      <url></url>\n";
   print "    </link>\n";
 
