@@ -1133,339 +1133,92 @@ colOrder,variable,dataFile,keepDiscard,definition,category,codebookDescription,c
 43,pneumonia,form12b,keep,,,contributing cause of death,,value,,,,Pneumonia,form12b::pneumonia,chr,No,NA,NA,"No, YES, Yes",3,NA,0,duplicated variable
 44,hypoglycaemia,form12b,keep,,,contributing cause of death,,value,,,,HYPOGLYCAEMIA,form12b::hypoglycaemia,chr,No,NA,NA,"No, YES, Yes",3,NA,0,duplicated variable
 45,dic,form12b,keep,,,contributing cause of death,,value,,,,DIC,form12b::dic,chr,No,NA,NA,"No, YES, Yes",3,NA,0,duplicated variable
-1,x...,moniteringcleaned,discard,,,,,,,,,X...,moniteringcleaned::x...,int,1134,NA,NA,1134 to 3179,2024,NA,0.933882726,NA
-2,hospitalname,moniteringcleaned,discard,,,,,,,,,HOSPITALNAME,moniteringcleaned::hospitalname,chr,TAH,NA,NA,>10 unique values,16,NA,0.851473851,duplicated variable
-3,monitoringid,moniteringcleaned,discard,,,,,,,,,MonitoringID,moniteringcleaned::monitoringid,chr,TA0016,NA,NA,>10 unique values,3490,NA,0.846212361,NA
-4,mid,moniteringcleaned,discard,,,,,,,,use for PID,MID,moniteringcleaned::mid,chr,TA0016,NA,NA,>10 unique values,3469,NA,0,NA
-5,medicalrecord,moniteringcleaned,discard,,,,,,,,,MEDICALRECORD,moniteringcleaned::medicalrecord,chr,426372,NA,NA,>10 unique values,3515,NA,0.852678288,duplicated variable
-6,enterdayofexam1,moniteringcleaned,discard,,,,,,,,,Enterdayofexam1,moniteringcleaned::enterdayofexam1,dbl,1,NA,NA,1 to 72,32,NA,0.055245642,NA
-7,edn,moniteringcleaned,keep,,,day of exam,,,,,,EDN,moniteringcleaned::edn,dbl,1,NA,NA,1 to 72,32,NA,0.000158479,NA
-8,enterdateofexam1,moniteringcleaned,keep,,,,,,,,format is day.month. Need to add year,Enterdateofexam1,moniteringcleaned::enterdateofexam1,dbl,1.08,date?,NA,0 to 99.1,445,NA,0.003011094,NA
-9,color1,moniteringcleaned,keep,,,,,,,,,Color1,moniteringcleaned::color1,chr,1,NA,NA,>10 unique values,12,NA,0.003359746,NA
-10,absent,moniteringcleaned,keep,,,Jaundice,,value,,,,ABSENT,moniteringcleaned::absent,chr,Yes,NA,NA,", 1, 3, Missing, No, Yes",5,NA,0.000380349,NA
-11,face,moniteringcleaned,keep,,,Jaundice,,value,,,,FACE,moniteringcleaned::face,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000380349,duplicated variable
-12,chest,moniteringcleaned,keep,,,Jaundice,,value,,,,CHEST,moniteringcleaned::chest,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000380349,NA
-13,abdomen,moniteringcleaned,keep,,,Jaundice,,value,,,,ABDOMEN,moniteringcleaned::abdomen,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000380349,duplicated variable
-14,sole,moniteringcleaned,keep,,,Jaundice,,value,,,,SOLE,moniteringcleaned::sole,chr,No,NA,NA,", 1, Missing, No, Yes",4,NA,0.000380349,NA
-15,wakefulness1,moniteringcleaned,keep,,,,,,,,,Wakefulness1,moniteringcleaned::wakefulness1,chr,2,NA,NA,", 1, 2, 3, No",4,NA,0.003074485,NA
-16,movementactivity1,moniteringcleaned,keep,,,,,,,,,Movementactivity1,moniteringcleaned::movementactivity1,int,1,NA,NA,1 to 3,3,NA,0.004469097,NA
-17,resuscitationdone1,moniteringcleaned,keep,,,,,,,,,Resuscitationdone1,moniteringcleaned::resuscitationdone1,int,2,NA,NA,1 to 3,3,NA,0.005800317,NA
-18,chestindrawing1,moniteringcleaned,keep,,,,,,,,,Chestindrawing1,moniteringcleaned::chestindrawing1,int,2,NA,NA,1 to 3,3,NA,0.008462758,NA
-19,patencyofairway1,moniteringcleaned,keep,,,,,,,,,Patencyofairway1,moniteringcleaned::patencyofairway1,chr,1,NA,NA,", 1, 2, 3, 4, No",5,NA,0.014326466,NA
-20,seizurespresent1,moniteringcleaned,keep,,,,,,,,,Seizurespresent1,moniteringcleaned::seizurespresent1,chr,No,NA,NA,", 1, Missing, No, Yes",4,NA,0.000380349,NA
-21,vomiting1,moniteringcleaned,keep,,,,,,,,,Vomiting1,moniteringcleaned::vomiting1,chr,1,NA,NA,", 1, 2, 3, 4, 5, 55, No",7,NA,0.010522979,NA
-22,respiratoryrateam1,moniteringcleaned,keep,,,,,,,,,RespiratoryrateAM1,moniteringcleaned::respiratoryrateam1,int,36,NA,NA,0 to 116,102,NA,0.055816165,NA
-23,respiratoryratepm1,moniteringcleaned,keep,,,,,,,,,RespiratoryratePM1,moniteringcleaned::respiratoryratepm1,int,44,NA,NA,0 to 130,104,NA,0.197527734,NA
-24,apicalheartrateam1,moniteringcleaned,keep,,,,,,,,,ApicalheartrateAM1,moniteringcleaned::apicalheartrateam1,int,184,NA,NA,0 to 356,173,NA,0.059017433,NA
-25,apicalheartratepm1,moniteringcleaned,keep,,,,,,,,,ApicalheartratePM1,moniteringcleaned::apicalheartratepm1,dbl,160,NA,NA,0 to 752,188,NA,0.201394612,NA
-26,temperaturecam1,moniteringcleaned,keep,,,,,,,,,TemperatureCAM1,moniteringcleaned::temperaturecam1,dbl,37,NA,NA,0 to 156,154,NA,0.061045959,NA
-27,temperaturepm1,moniteringcleaned,keep,,,,,,,,,TemperaturePM1,moniteringcleaned::temperaturepm1,dbl,34.8,NA,NA,0 to 99,130,NA,0.203074485,NA
-28,saturationam1,moniteringcleaned,keep,,,,,,,,,SaturationAM1,moniteringcleaned::saturationam1,dbl,98,NA,NA,0 to 100,91,NA,0.19866878,NA
-29,saturationpm1,moniteringcleaned,keep,,,,,,,,,SaturationPM1,moniteringcleaned::saturationpm1,int,95,NA,NA,0 to 1400,93,NA,0.357432647,NA
-30,dailyweightg1,moniteringcleaned,keep,,,,,,,,,Dailyweightg1,moniteringcleaned::dailyweightg1,int,2000,NA,NA,21 to 9849,957,NA,0.102091918,NA
-31,weeklyheadcircumferencecm,moniteringcleaned,keep,,,,,,,,,Weeklyheadcircumferencecm,moniteringcleaned::weeklyheadcircumferencecm,dbl,38,NA,NA,1 to 2150,133,NA,0.733946117,NA
-32,weeklylengthcm,moniteringcleaned,keep,,,,,,,,,Weeklylengthcm,moniteringcleaned::weeklylengthcm,chr,48,NA,NA,>10 unique values,37,NA,0.770237718,NA
-33,bowelsounds1,moniteringcleaned,keep,,,,,,,,,Bowelsounds1,moniteringcleaned::bowelsounds1,chr,Yes,NA,NA,", 43, Missing, No, Yes",4,NA,0.000982567,NA
-34,stoolpresent1,moniteringcleaned,keep,,,,,,,,,Stoolpresent1,moniteringcleaned::stoolpresent1,chr,Yes,NA,NA,", Missing, No, Yes",3,NA,0.000855784,NA
-35,urineoutput1,moniteringcleaned,keep,,,,,,,,,Urineoutput1,moniteringcleaned::urineoutput1,chr,Yes,NA,NA,", 1, Missing, No, Yes",4,NA,0.000855784,NA
-36,oxygen1,moniteringcleaned,keep,,,,,,,,,Oxygen1,moniteringcleaned::oxygen1,chr,1,NA,NA,", 1, 2, 3, 4, Yes",5,NA,0.030713154,NA
-37,ifoxygengivenflowratelitresmin1,moniteringcleaned,keep,,,,,,,,,Ifoxygengivenflowratelitresmin1,moniteringcleaned::ifoxygengivenflowratelitresmin1,chr,1,NA,NA,>10 unique values,29,NA,0.720380349,NA
-38,shard,moniteringcleaned,keep,,,,,,,,,shard,moniteringcleaned::shard,chr,No,NA,NA,>10 unique values,22,NA,0.32526149,NA
-39,ifoxygenconcentrationgiven1,moniteringcleaned,keep,,,,,,,,,Ifoxygenconcentrationgiven1,moniteringcleaned::ifoxygenconcentrationgiven1,chr,98,NA,NA,>10 unique values,41,NA,0.664754358,NA
-40,ifcpap,moniteringcleaned,keep,,,,,,,,,IfCPAP,moniteringcleaned::ifcpap,chr,2,NA,NA,>10 unique values,26,NA,0.273534073,NA
-41,anyivfluids,moniteringcleaned,keep,,,,,,,,,AnyIVfluids,moniteringcleaned::anyivfluids,int,2,NA,NA,0 to 504,147,NA,0.099524564,NA
-42,ifyes,moniteringcleaned,keep,,,Amount of IV fluids,,,,,,IfYes,moniteringcleaned::ifyes,int,130,NA,NA,0 to 900,325,NA,0.471061807,duplicated variable
-43,feedingmethod,moniteringcleaned,keep,,,,,,,,,Feedingmethod,moniteringcleaned::feedingmethod,int,1,NA,NA,0 to 880,155,NA,0.05977813,NA
-44,inprior24hcupfeedingamountml,moniteringcleaned,keep,,,,,,,,,Inprior24hcupfeedingamountml,moniteringcleaned::inprior24hcupfeedingamountml,chr,0,NA,NA,>10 unique values,329,NA,0.578256735,NA
-45,anysuckling,moniteringcleaned,keep,,,,,,,,,Anysuckling,moniteringcleaned::anysuckling,chr,Yes,NA,NA,>10 unique values,154,NA,0.012488114,NA
-46,antibioticsgiven,moniteringcleaned,keep,,,,,,,,,Antibioticsgiven,moniteringcleaned::antibioticsgiven,chr,Yes,NA,NA,>10 unique values,107,NA,0.02548336,NA
-47,ampicillin,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Ampicillin,moniteringcleaned::ampicillin,chr,Yes,NA,NA,", Missing, No, Yes",3,NA,0.000982567,duplicated variable
-48,gentamicin,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Gentamicin,moniteringcleaned::gentamicin,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-49,cephtriaxone,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Cephtriaxone,moniteringcleaned::cephtriaxone,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-50,cephotaxime,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Cephotaxime,moniteringcleaned::cephotaxime,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-51,cephtazidime,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Cephtazidime,moniteringcleaned::cephtazidime,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-52,vancomycin,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Vancomycin,moniteringcleaned::vancomycin,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,duplicated variable
-53,cloxacillin,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Cloxacillin,moniteringcleaned::cloxacillin,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,duplicated variable
-54,metronidazole,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Metronidazole,moniteringcleaned::metronidazole,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-55,ifother,moniteringcleaned,keep,,,Antibiotics given,,value,,,,Ifother,moniteringcleaned::ifother,chr,No,NA,NA,", Missing, No, Yes, n, neverapine",5,NA,0.040602219,NA
-56,specify3,moniteringcleaned,keep,,,Specify other antibiotics,,variable,,,,specify3,moniteringcleaned::specify3,chr,No,NA,NA,>10 unique values,358,NA,0.859873217,duplicated variable
-57,antibioticsstopped,moniteringcleaned,keep,,,,,,,,,Antibioticsstopped,moniteringcleaned::antibioticsstopped,chr,No,NA,NA,", Azithamycin, Missing, No, Yes",4,NA,0.02066561,NA
-58,othermedications,moniteringcleaned,keep,,,,,,,,,Othermedications,moniteringcleaned::othermedications,chr,No,NA,NA,>10 unique values,128,NA,0.079207607,NA
-59,ifyes1,moniteringcleaned,keep,,,"If other medications given, specified",,,,,,Ifyes1,moniteringcleaned::ifyes1,chr,No,NA,NA,>10 unique values,812,NA,0.79866878,duplicated variable
-60,ampicillin1,moniteringcleaned,keep,,,,,,,,,Ampicillin1,moniteringcleaned::ampicillin1,chr,No,NA,NA,>10 unique values,24,NA,0.01977813,duplicated variable
-61,gentamicin1,moniteringcleaned,keep,,,,,,,,,Gentamicin1,moniteringcleaned::gentamicin1,chr,No,NA,NA,>10 unique values,89,NA,0.04110935,NA
-62,cephtriaxone1,moniteringcleaned,keep,,,,,,,,,Cephtriaxone1,moniteringcleaned::cephtriaxone1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-63,cephotaxime1,moniteringcleaned,keep,,,,,,,,,Cephotaxime1,moniteringcleaned::cephotaxime1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-64,cephtazidime1,moniteringcleaned,keep,,,,,,,,,Cephtazidime1,moniteringcleaned::cephtazidime1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-65,vancomycin1,moniteringcleaned,keep,,,,,,,,,Vancomycin1,moniteringcleaned::vancomycin1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,duplicated variable
-66,cloxacillin1,moniteringcleaned,keep,,,,,,,,,Cloxacillin1,moniteringcleaned::cloxacillin1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,duplicated variable
-67,metronidazole1,moniteringcleaned,keep,,,,,,,,,Metronidazole1,moniteringcleaned::metronidazole1,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.000982567,NA
-68,ifother1,moniteringcleaned,keep,,,,,,,,,ifother1,moniteringcleaned::ifother1,chr,No,NA,NA,", Aminophillne, Azothromycin, Missing, No, Yes, n",6,NA,0.063201268,NA
-69,specify4,moniteringcleaned,keep,,,,,,,,,Specify4,moniteringcleaned::specify4,chr,No,NA,NA,>10 unique values,39,NA,0.865832013,duplicated variable
-70,wereanynewdiagnosesmade,moniteringcleaned,keep,,,,,,,,,Wereanynewdiagnosesmade,moniteringcleaned::wereanynewdiagnosesmade,chr,Yes,NA,NA,", Missing, No, Yes",3,NA,0.021394612,NA
-71,hypoglycemia4,moniteringcleaned,keep,,,new diagnoses,,value,,,,Hypoglycemia4,moniteringcleaned::hypoglycemia4,chr,No,NA,NA,>10 unique values,14,NA,0.047004754,NA
-72,rds,moniteringcleaned,keep,,,new diagnoses,,value,,,,RDS,moniteringcleaned::rds,chr,No,NA,NA,>10 unique values,310,NA,0.015816165,NA
-73,pphn,moniteringcleaned,keep,,,new diagnoses,,value,,,,PPHN,moniteringcleaned::pphn,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-74,pneumonia,moniteringcleaned,keep,,,new diagnoses,,value,,,,Pneumonia,moniteringcleaned::pneumonia,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-75,meningitis,moniteringcleaned,keep,,,new diagnoses,,value,,,,Meningitis,moniteringcleaned::meningitis,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-76,ivh,moniteringcleaned,keep,,,new diagnoses,,value,,,,IVH,moniteringcleaned::ivh,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-77,sepsis,moniteringcleaned,keep,,,new diagnoses,,value,,,,Sepsis,moniteringcleaned::sepsis,chr,Yes,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-78,nec,moniteringcleaned,keep,,,new diagnoses,,value,,,,NEC,moniteringcleaned::nec,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-79,hypothermia365c,moniteringcleaned,keep,,,new diagnoses,,value,,,,Hypothermia365C,moniteringcleaned::hypothermia365c,chr,Yes,NA,NA,", Missing, No, Yes",3,NA,0.001711569,NA
-80,apnea,moniteringcleaned,keep,,,new diagnoses,,value,,,,Apnea,moniteringcleaned::apnea,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-81,anemia,moniteringcleaned,keep,,,new diagnoses,,value,,,,Anemia,moniteringcleaned::anemia,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-82,renalfailure,moniteringcleaned,keep,,,new diagnoses,,value,,,,Renalfailure,moniteringcleaned::renalfailure,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001711569,duplicated variable
-83,tetanus,moniteringcleaned,keep,,,new diagnoses,,value,,,,Tetanus,moniteringcleaned::tetanus,chr,No,NA,NA,", Missing, No, Yes",3,NA,0.001743265,duplicated variable
-84,other3,moniteringcleaned,keep,,,new diagnoses,,value,,,,OTHER3,moniteringcleaned::other3,chr,No,NA,NA,>10 unique values,47,NA,0.062408875,duplicated variable
-85,specify1,moniteringcleaned,keep,,,other diagonsis specified,,variable,,,,Specify1,moniteringcleaned::specify1,chr,"Neonatal,Jaundice",NA,NA,>10 unique values,855,NA,0.867955626,duplicated variable
-86,locationofbaby,moniteringcleaned,keep,,,,,,,,,Locationofbaby,moniteringcleaned::locationofbaby,chr,1,NA,NA,>10 unique values,14,NA,0.105451664,NA
-87,nursecompletingform,moniteringcleaned,discard,,,,,,,,,Nursecompletingform,moniteringcleaned::nursecompletingform,chr,Amina,NA,NA,>10 unique values,955,NA,0.131537242,NA
-88,doctorwhoreviewed,moniteringcleaned,discard,,,,,,,,,Doctorwhoreviewed,moniteringcleaned::doctorwhoreviewed,chr,Dr.Bezawit,NA,NA,>10 unique values,170,NA,0.729984152,NA
-89,x,moniteringcleaned,discard,,,,,,,,,X,moniteringcleaned::x,lgl,NA,NA,NA,n/a,0,NA,1,no data
-90,x.1,moniteringcleaned,discard,,,,,,,,,X.1,moniteringcleaned::x.1,lgl,NA,NA,NA,n/a,0,NA,1,no data
-91,x.2,moniteringcleaned,discard,,,,,,,,,X.2,moniteringcleaned::x.2,lgl,NA,NA,NA,n/a,0,NA,1,no data
-92,x.3,moniteringcleaned,discard,,,,,,,,,X.3,moniteringcleaned::x.3,lgl,NA,NA,NA,n/a,0,NA,1,no data
-93,x.4,moniteringcleaned,discard,,,,,,,,,X.4,moniteringcleaned::x.4,lgl,NA,NA,NA,n/a,0,NA,1,no data
-94,x.5,moniteringcleaned,discard,,,,,,,,,X.5,moniteringcleaned::x.5,lgl,NA,NA,NA,n/a,0,NA,1,no data
-95,x.6,moniteringcleaned,discard,,,,,,,,,X.6,moniteringcleaned::x.6,lgl,NA,NA,NA,n/a,0,NA,1,no data
-96,x.7,moniteringcleaned,discard,,,,,,,,,X.7,moniteringcleaned::x.7,lgl,NA,NA,NA,n/a,0,NA,1,no data
-97,x.8,moniteringcleaned,discard,,,,,,,,,X.8,moniteringcleaned::x.8,lgl,NA,NA,NA,n/a,0,NA,1,no data
-98,x.9,moniteringcleaned,discard,,,,,,,,,X.9,moniteringcleaned::x.9,lgl,NA,NA,NA,n/a,0,NA,1,no data
-99,x.10,moniteringcleaned,discard,,,,,,,,,X.10,moniteringcleaned::x.10,lgl,NA,NA,NA,n/a,0,NA,1,no data
-100,x.11,moniteringcleaned,discard,,,,,,,,,X.11,moniteringcleaned::x.11,lgl,NA,NA,NA,n/a,0,NA,1,no data
-101,x.12,moniteringcleaned,discard,,,,,,,,,X.12,moniteringcleaned::x.12,lgl,NA,NA,NA,n/a,0,NA,1,no data
-102,x.13,moniteringcleaned,discard,,,,,,,,,X.13,moniteringcleaned::x.13,lgl,NA,NA,NA,n/a,0,NA,1,no data
-103,x.14,moniteringcleaned,discard,,,,,,,,,X.14,moniteringcleaned::x.14,lgl,NA,NA,NA,n/a,0,NA,1,no data
-104,x.15,moniteringcleaned,discard,,,,,,,,,X.15,moniteringcleaned::x.15,lgl,NA,NA,NA,n/a,0,NA,1,no data
-105,x.16,moniteringcleaned,discard,,,,,,,,,X.16,moniteringcleaned::x.16,lgl,NA,NA,NA,n/a,0,NA,1,no data
-106,x.17,moniteringcleaned,discard,,,,,,,,,X.17,moniteringcleaned::x.17,lgl,NA,NA,NA,n/a,0,NA,1,no data
-107,x.18,moniteringcleaned,discard,,,,,,,,,X.18,moniteringcleaned::x.18,lgl,NA,NA,NA,n/a,0,NA,1,no data
-108,x.19,moniteringcleaned,discard,,,,,,,,,X.19,moniteringcleaned::x.19,lgl,NA,NA,NA,n/a,0,NA,1,no data
-109,x.20,moniteringcleaned,discard,,,,,,,,,X.20,moniteringcleaned::x.20,lgl,NA,NA,NA,n/a,0,NA,1,no data
-110,x.21,moniteringcleaned,discard,,,,,,,,,X.21,moniteringcleaned::x.21,lgl,NA,NA,NA,n/a,0,NA,1,no data
-111,x.22,moniteringcleaned,discard,,,,,,,,,X.22,moniteringcleaned::x.22,lgl,NA,NA,NA,n/a,0,NA,1,no data
-112,x.23,moniteringcleaned,discard,,,,,,,,,X.23,moniteringcleaned::x.23,lgl,NA,NA,NA,n/a,0,NA,1,no data
-113,x.24,moniteringcleaned,discard,,,,,,,,,X.24,moniteringcleaned::x.24,lgl,NA,NA,NA,n/a,0,NA,1,no data
-114,x.25,moniteringcleaned,discard,,,,,,,,,X.25,moniteringcleaned::x.25,lgl,NA,NA,NA,n/a,0,NA,1,no data
-115,x.26,moniteringcleaned,discard,,,,,,,,,X.26,moniteringcleaned::x.26,lgl,NA,NA,NA,n/a,0,NA,1,no data
-116,x.27,moniteringcleaned,discard,,,,,,,,,X.27,moniteringcleaned::x.27,lgl,NA,NA,NA,n/a,0,NA,1,no data
-117,x.28,moniteringcleaned,discard,,,,,,,,,X.28,moniteringcleaned::x.28,lgl,NA,NA,NA,n/a,0,NA,1,no data
-118,x.29,moniteringcleaned,discard,,,,,,,,,X.29,moniteringcleaned::x.29,lgl,NA,NA,NA,n/a,0,NA,1,no data
-119,x.30,moniteringcleaned,discard,,,,,,,,,X.30,moniteringcleaned::x.30,lgl,NA,NA,NA,n/a,0,NA,1,no data
-120,x.31,moniteringcleaned,discard,,,,,,,,,X.31,moniteringcleaned::x.31,lgl,NA,NA,NA,n/a,0,NA,1,no data
-121,x.32,moniteringcleaned,discard,,,,,,,,,X.32,moniteringcleaned::x.32,lgl,NA,NA,NA,n/a,0,NA,1,no data
-122,x.33,moniteringcleaned,discard,,,,,,,,,X.33,moniteringcleaned::x.33,lgl,NA,NA,NA,n/a,0,NA,1,no data
-123,x.34,moniteringcleaned,discard,,,,,,,,,X.34,moniteringcleaned::x.34,lgl,NA,NA,NA,n/a,0,NA,1,no data
-124,x.35,moniteringcleaned,discard,,,,,,,,,X.35,moniteringcleaned::x.35,lgl,NA,NA,NA,n/a,0,NA,1,no data
-125,x.36,moniteringcleaned,discard,,,,,,,,,X.36,moniteringcleaned::x.36,lgl,NA,NA,NA,n/a,0,NA,1,no data
-126,x.37,moniteringcleaned,discard,,,,,,,,,X.37,moniteringcleaned::x.37,lgl,NA,NA,NA,n/a,0,NA,1,no data
-127,x.38,moniteringcleaned,discard,,,,,,,,,X.38,moniteringcleaned::x.38,lgl,NA,NA,NA,n/a,0,NA,1,no data
-128,x.39,moniteringcleaned,discard,,,,,,,,,X.39,moniteringcleaned::x.39,lgl,NA,NA,NA,n/a,0,NA,1,no data
-129,x.40,moniteringcleaned,discard,,,,,,,,,X.40,moniteringcleaned::x.40,lgl,NA,NA,NA,n/a,0,NA,1,no data
-130,x.41,moniteringcleaned,discard,,,,,,,,,X.41,moniteringcleaned::x.41,lgl,NA,NA,NA,n/a,0,NA,1,no data
-131,x.42,moniteringcleaned,discard,,,,,,,,,X.42,moniteringcleaned::x.42,lgl,NA,NA,NA,n/a,0,NA,1,no data
-132,x.43,moniteringcleaned,discard,,,,,,,,,X.43,moniteringcleaned::x.43,lgl,NA,NA,NA,n/a,0,NA,1,no data
-133,x.44,moniteringcleaned,discard,,,,,,,,,X.44,moniteringcleaned::x.44,lgl,NA,NA,NA,n/a,0,NA,1,no data
-134,x.45,moniteringcleaned,discard,,,,,,,,,X.45,moniteringcleaned::x.45,lgl,NA,NA,NA,n/a,0,NA,1,no data
-135,x.46,moniteringcleaned,discard,,,,,,,,,X.46,moniteringcleaned::x.46,lgl,NA,NA,NA,n/a,0,NA,1,no data
-136,x.47,moniteringcleaned,discard,,,,,,,,,X.47,moniteringcleaned::x.47,lgl,NA,NA,NA,n/a,0,NA,1,no data
-137,x.48,moniteringcleaned,discard,,,,,,,,,X.48,moniteringcleaned::x.48,lgl,NA,NA,NA,n/a,0,NA,1,no data
-138,x.49,moniteringcleaned,discard,,,,,,,,,X.49,moniteringcleaned::x.49,lgl,NA,NA,NA,n/a,0,NA,1,no data
-139,x.50,moniteringcleaned,discard,,,,,,,,,X.50,moniteringcleaned::x.50,lgl,NA,NA,NA,n/a,0,NA,1,no data
-140,x.51,moniteringcleaned,discard,,,,,,,,,X.51,moniteringcleaned::x.51,lgl,NA,NA,NA,n/a,0,NA,1,no data
-141,x.52,moniteringcleaned,discard,,,,,,,,,X.52,moniteringcleaned::x.52,lgl,NA,NA,NA,n/a,0,NA,1,no data
-142,x.53,moniteringcleaned,discard,,,,,,,,,X.53,moniteringcleaned::x.53,lgl,NA,NA,NA,n/a,0,NA,1,no data
-143,x.54,moniteringcleaned,discard,,,,,,,,,X.54,moniteringcleaned::x.54,lgl,NA,NA,NA,n/a,0,NA,1,no data
-144,x.55,moniteringcleaned,discard,,,,,,,,,X.55,moniteringcleaned::x.55,lgl,NA,NA,NA,n/a,0,NA,1,no data
-145,x.56,moniteringcleaned,discard,,,,,,,,,X.56,moniteringcleaned::x.56,lgl,NA,NA,NA,n/a,0,NA,1,no data
-146,x.57,moniteringcleaned,discard,,,,,,,,,X.57,moniteringcleaned::x.57,lgl,NA,NA,NA,n/a,0,NA,1,no data
-147,x.58,moniteringcleaned,discard,,,,,,,,,X.58,moniteringcleaned::x.58,lgl,NA,NA,NA,n/a,0,NA,1,no data
-148,x.59,moniteringcleaned,discard,,,,,,,,,X.59,moniteringcleaned::x.59,lgl,NA,NA,NA,n/a,0,NA,1,no data
-149,x.60,moniteringcleaned,discard,,,,,,,,,X.60,moniteringcleaned::x.60,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-150,x.61,moniteringcleaned,discard,,,,,,,,,X.61,moniteringcleaned::x.61,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-151,x.62,moniteringcleaned,discard,,,,,,,,,X.62,moniteringcleaned::x.62,lgl,NA,NA,NA,n/a,0,NA,1,no data
-152,x.63,moniteringcleaned,discard,,,,,,,,,X.63,moniteringcleaned::x.63,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-153,x.64,moniteringcleaned,discard,,,,,,,,,X.64,moniteringcleaned::x.64,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-154,x.65,moniteringcleaned,discard,,,,,,,,,X.65,moniteringcleaned::x.65,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-155,x.66,moniteringcleaned,discard,,,,,,,,,X.66,moniteringcleaned::x.66,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-156,x.67,moniteringcleaned,discard,,,,,,,,,X.67,moniteringcleaned::x.67,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-157,x.68,moniteringcleaned,discard,,,,,,,,,X.68,moniteringcleaned::x.68,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-158,x.69,moniteringcleaned,discard,,,,,,,,,X.69,moniteringcleaned::x.69,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-159,x.70,moniteringcleaned,discard,,,,,,,,,X.70,moniteringcleaned::x.70,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-160,x.71,moniteringcleaned,discard,,,,,,,,,X.71,moniteringcleaned::x.71,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-161,x.72,moniteringcleaned,discard,,,,,,,,,X.72,moniteringcleaned::x.72,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-162,x.73,moniteringcleaned,discard,,,,,,,,,X.73,moniteringcleaned::x.73,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-163,x.74,moniteringcleaned,discard,,,,,,,,,X.74,moniteringcleaned::x.74,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-164,x.75,moniteringcleaned,discard,,,,,,,,,X.75,moniteringcleaned::x.75,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-165,x.76,moniteringcleaned,discard,,,,,,,,,X.76,moniteringcleaned::x.76,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-166,x.77,moniteringcleaned,discard,,,,,,,,,X.77,moniteringcleaned::x.77,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-167,x.78,moniteringcleaned,discard,,,,,,,,,X.78,moniteringcleaned::x.78,chr,No,NA,NA,", No",1,NA,0.999968304,NA
-168,x.79,moniteringcleaned,discard,,,,,,,,,X.79,moniteringcleaned::x.79,lgl,NA,NA,NA,n/a,0,NA,1,no data
-169,x.80,moniteringcleaned,discard,,,,,,,,,X.80,moniteringcleaned::x.80,int,1,NA,NA,1 to 1,1,NA,0.999968304,NA
-170,x.81,moniteringcleaned,discard,,,,,,,,,X.81,moniteringcleaned::x.81,chr,Sr. Rukiya,NA,NA,", Sr. Rukiya",1,NA,0.999968304,NA
-171,x.82,moniteringcleaned,discard,,,,,,,,,X.82,moniteringcleaned::x.82,chr,Asrat,NA,NA,", Asrat",1,NA,0.999968304,NA
-172,x.83,moniteringcleaned,discard,,,,,,,,,X.83,moniteringcleaned::x.83,lgl,NA,NA,NA,n/a,0,NA,1,no data
-173,x.84,moniteringcleaned,discard,,,,,,,,,X.84,moniteringcleaned::x.84,lgl,NA,NA,NA,n/a,0,NA,1,no data
-174,x.85,moniteringcleaned,discard,,,,,,,,,X.85,moniteringcleaned::x.85,lgl,NA,NA,NA,n/a,0,NA,1,no data
-175,x.86,moniteringcleaned,discard,,,,,,,,,X.86,moniteringcleaned::x.86,lgl,NA,NA,NA,n/a,0,NA,1,no data
-176,x.87,moniteringcleaned,discard,,,,,,,,,X.87,moniteringcleaned::x.87,lgl,NA,NA,NA,n/a,0,NA,1,no data
-177,x.88,moniteringcleaned,discard,,,,,,,,,X.88,moniteringcleaned::x.88,lgl,NA,NA,NA,n/a,0,NA,1,no data
-178,x.89,moniteringcleaned,discard,,,,,,,,,X.89,moniteringcleaned::x.89,lgl,NA,NA,NA,n/a,0,NA,1,no data
-179,x.90,moniteringcleaned,discard,,,,,,,,,X.90,moniteringcleaned::x.90,lgl,NA,NA,NA,n/a,0,NA,1,no data
-180,x.91,moniteringcleaned,discard,,,,,,,,,X.91,moniteringcleaned::x.91,lgl,NA,NA,NA,n/a,0,NA,1,no data
-181,x.92,moniteringcleaned,discard,,,,,,,,,X.92,moniteringcleaned::x.92,lgl,NA,NA,NA,n/a,0,NA,1,no data
-182,x.93,moniteringcleaned,discard,,,,,,,,,X.93,moniteringcleaned::x.93,lgl,NA,NA,NA,n/a,0,NA,1,no data
-183,x.94,moniteringcleaned,discard,,,,,,,,,X.94,moniteringcleaned::x.94,lgl,NA,NA,NA,n/a,0,NA,1,no data
-184,x.95,moniteringcleaned,discard,,,,,,,,,X.95,moniteringcleaned::x.95,lgl,NA,NA,NA,n/a,0,NA,1,no data
-185,x.96,moniteringcleaned,discard,,,,,,,,,X.96,moniteringcleaned::x.96,lgl,NA,NA,NA,n/a,0,NA,1,no data
-186,x.97,moniteringcleaned,discard,,,,,,,,,X.97,moniteringcleaned::x.97,lgl,NA,NA,NA,n/a,0,NA,1,no data
-187,x.98,moniteringcleaned,discard,,,,,,,,,X.98,moniteringcleaned::x.98,lgl,NA,NA,NA,n/a,0,NA,1,no data
-188,x.99,moniteringcleaned,discard,,,,,,,,,X.99,moniteringcleaned::x.99,lgl,NA,NA,NA,n/a,0,NA,1,no data
-189,x.100,moniteringcleaned,discard,,,,,,,,,X.100,moniteringcleaned::x.100,lgl,NA,NA,NA,n/a,0,NA,1,no data
-190,x.101,moniteringcleaned,discard,,,,,,,,,X.101,moniteringcleaned::x.101,lgl,NA,NA,NA,n/a,0,NA,1,no data
-191,x.102,moniteringcleaned,discard,,,,,,,,,X.102,moniteringcleaned::x.102,lgl,NA,NA,NA,n/a,0,NA,1,no data
-192,x.103,moniteringcleaned,discard,,,,,,,,,X.103,moniteringcleaned::x.103,lgl,NA,NA,NA,n/a,0,NA,1,no data
-193,x.104,moniteringcleaned,discard,,,,,,,,,X.104,moniteringcleaned::x.104,lgl,NA,NA,NA,n/a,0,NA,1,no data
-194,x.105,moniteringcleaned,discard,,,,,,,,,X.105,moniteringcleaned::x.105,lgl,NA,NA,NA,n/a,0,NA,1,no data
-195,x.106,moniteringcleaned,discard,,,,,,,,,X.106,moniteringcleaned::x.106,lgl,NA,NA,NA,n/a,0,NA,1,no data
-196,x.107,moniteringcleaned,discard,,,,,,,,,X.107,moniteringcleaned::x.107,lgl,NA,NA,NA,n/a,0,NA,1,no data
-197,x.108,moniteringcleaned,discard,,,,,,,,,X.108,moniteringcleaned::x.108,lgl,NA,NA,NA,n/a,0,NA,1,no data
-198,x.109,moniteringcleaned,discard,,,,,,,,,X.109,moniteringcleaned::x.109,lgl,NA,NA,NA,n/a,0,NA,1,no data
-199,x.110,moniteringcleaned,discard,,,,,,,,,X.110,moniteringcleaned::x.110,lgl,NA,NA,NA,n/a,0,NA,1,no data
-200,x.111,moniteringcleaned,discard,,,,,,,,,X.111,moniteringcleaned::x.111,lgl,NA,NA,NA,n/a,0,NA,1,no data
-201,x.112,moniteringcleaned,discard,,,,,,,,,X.112,moniteringcleaned::x.112,lgl,NA,NA,NA,n/a,0,NA,1,no data
-202,x.113,moniteringcleaned,discard,,,,,,,,,X.113,moniteringcleaned::x.113,lgl,NA,NA,NA,n/a,0,NA,1,no data
-203,x.114,moniteringcleaned,discard,,,,,,,,,X.114,moniteringcleaned::x.114,lgl,NA,NA,NA,n/a,0,NA,1,no data
-204,x.115,moniteringcleaned,discard,,,,,,,,,X.115,moniteringcleaned::x.115,lgl,NA,NA,NA,n/a,0,NA,1,no data
-205,x.116,moniteringcleaned,discard,,,,,,,,,X.116,moniteringcleaned::x.116,lgl,NA,NA,NA,n/a,0,NA,1,no data
-206,x.117,moniteringcleaned,discard,,,,,,,,,X.117,moniteringcleaned::x.117,lgl,NA,NA,NA,n/a,0,NA,1,no data
-207,x.118,moniteringcleaned,discard,,,,,,,,,X.118,moniteringcleaned::x.118,lgl,NA,NA,NA,n/a,0,NA,1,no data
-208,x.119,moniteringcleaned,discard,,,,,,,,,X.119,moniteringcleaned::x.119,lgl,NA,NA,NA,n/a,0,NA,1,no data
-209,x.120,moniteringcleaned,discard,,,,,,,,,X.120,moniteringcleaned::x.120,lgl,NA,NA,NA,n/a,0,NA,1,no data
-210,x.121,moniteringcleaned,discard,,,,,,,,,X.121,moniteringcleaned::x.121,lgl,NA,NA,NA,n/a,0,NA,1,no data
-211,x.122,moniteringcleaned,discard,,,,,,,,,X.122,moniteringcleaned::x.122,lgl,NA,NA,NA,n/a,0,NA,1,no data
-212,x.123,moniteringcleaned,discard,,,,,,,,,X.123,moniteringcleaned::x.123,lgl,NA,NA,NA,n/a,0,NA,1,no data
-213,x.124,moniteringcleaned,discard,,,,,,,,,X.124,moniteringcleaned::x.124,lgl,NA,NA,NA,n/a,0,NA,1,no data
-214,x.125,moniteringcleaned,discard,,,,,,,,,X.125,moniteringcleaned::x.125,lgl,NA,NA,NA,n/a,0,NA,1,no data
-215,x.126,moniteringcleaned,discard,,,,,,,,,X.126,moniteringcleaned::x.126,lgl,NA,NA,NA,n/a,0,NA,1,no data
-216,x.127,moniteringcleaned,discard,,,,,,,,,X.127,moniteringcleaned::x.127,lgl,NA,NA,NA,n/a,0,NA,1,no data
-217,x.128,moniteringcleaned,discard,,,,,,,,,X.128,moniteringcleaned::x.128,lgl,NA,NA,NA,n/a,0,NA,1,no data
-218,x.129,moniteringcleaned,discard,,,,,,,,,X.129,moniteringcleaned::x.129,lgl,NA,NA,NA,n/a,0,NA,1,no data
-219,x.130,moniteringcleaned,discard,,,,,,,,,X.130,moniteringcleaned::x.130,lgl,NA,NA,NA,n/a,0,NA,1,no data
-220,x.131,moniteringcleaned,discard,,,,,,,,,X.131,moniteringcleaned::x.131,lgl,NA,NA,NA,n/a,0,NA,1,no data
-221,x.132,moniteringcleaned,discard,,,,,,,,,X.132,moniteringcleaned::x.132,lgl,NA,NA,NA,n/a,0,NA,1,no data
-222,x.133,moniteringcleaned,discard,,,,,,,,,X.133,moniteringcleaned::x.133,lgl,NA,NA,NA,n/a,0,NA,1,no data
-223,x.134,moniteringcleaned,discard,,,,,,,,,X.134,moniteringcleaned::x.134,lgl,NA,NA,NA,n/a,0,NA,1,no data
-224,x.135,moniteringcleaned,discard,,,,,,,,,X.135,moniteringcleaned::x.135,lgl,NA,NA,NA,n/a,0,NA,1,no data
-225,x.136,moniteringcleaned,discard,,,,,,,,,X.136,moniteringcleaned::x.136,lgl,NA,NA,NA,n/a,0,NA,1,no data
-226,x.137,moniteringcleaned,discard,,,,,,,,,X.137,moniteringcleaned::x.137,lgl,NA,NA,NA,n/a,0,NA,1,no data
-227,x.138,moniteringcleaned,discard,,,,,,,,,X.138,moniteringcleaned::x.138,lgl,NA,NA,NA,n/a,0,NA,1,no data
-228,x.139,moniteringcleaned,discard,,,,,,,,,X.139,moniteringcleaned::x.139,lgl,NA,NA,NA,n/a,0,NA,1,no data
-229,x.140,moniteringcleaned,discard,,,,,,,,,X.140,moniteringcleaned::x.140,lgl,NA,NA,NA,n/a,0,NA,1,no data
-230,x.141,moniteringcleaned,discard,,,,,,,,,X.141,moniteringcleaned::x.141,lgl,NA,NA,NA,n/a,0,NA,1,no data
-231,x.142,moniteringcleaned,discard,,,,,,,,,X.142,moniteringcleaned::x.142,lgl,NA,NA,NA,n/a,0,NA,1,no data
-232,x.143,moniteringcleaned,discard,,,,,,,,,X.143,moniteringcleaned::x.143,lgl,NA,NA,NA,n/a,0,NA,1,no data
-233,x.144,moniteringcleaned,discard,,,,,,,,,X.144,moniteringcleaned::x.144,lgl,NA,NA,NA,n/a,0,NA,1,no data
-234,x.145,moniteringcleaned,discard,,,,,,,,,X.145,moniteringcleaned::x.145,lgl,NA,NA,NA,n/a,0,NA,1,no data
-235,x.146,moniteringcleaned,discard,,,,,,,,,X.146,moniteringcleaned::x.146,lgl,NA,NA,NA,n/a,0,NA,1,no data
-236,x.147,moniteringcleaned,discard,,,,,,,,,X.147,moniteringcleaned::x.147,lgl,NA,NA,NA,n/a,0,NA,1,no data
-237,x.148,moniteringcleaned,discard,,,,,,,,,X.148,moniteringcleaned::x.148,lgl,NA,NA,NA,n/a,0,NA,1,no data
-238,x.149,moniteringcleaned,discard,,,,,,,,,X.149,moniteringcleaned::x.149,lgl,NA,NA,NA,n/a,0,NA,1,no data
-239,x.150,moniteringcleaned,discard,,,,,,,,,X.150,moniteringcleaned::x.150,lgl,NA,NA,NA,n/a,0,NA,1,no data
-240,x.151,moniteringcleaned,discard,,,,,,,,,X.151,moniteringcleaned::x.151,lgl,NA,NA,NA,n/a,0,NA,1,no data
-241,x.152,moniteringcleaned,discard,,,,,,,,,X.152,moniteringcleaned::x.152,lgl,NA,NA,NA,n/a,0,NA,1,no data
-242,x.153,moniteringcleaned,discard,,,,,,,,,X.153,moniteringcleaned::x.153,lgl,NA,NA,NA,n/a,0,NA,1,no data
-243,x.154,moniteringcleaned,discard,,,,,,,,,X.154,moniteringcleaned::x.154,lgl,NA,NA,NA,n/a,0,NA,1,no data
-244,x.155,moniteringcleaned,discard,,,,,,,,,X.155,moniteringcleaned::x.155,lgl,NA,NA,NA,n/a,0,NA,1,no data
-245,x.156,moniteringcleaned,discard,,,,,,,,,X.156,moniteringcleaned::x.156,lgl,NA,NA,NA,n/a,0,NA,1,no data
-246,x.157,moniteringcleaned,discard,,,,,,,,,X.157,moniteringcleaned::x.157,lgl,NA,NA,NA,n/a,0,NA,1,no data
-247,x.158,moniteringcleaned,discard,,,,,,,,,X.158,moniteringcleaned::x.158,lgl,NA,NA,NA,n/a,0,NA,1,no data
-248,x.159,moniteringcleaned,discard,,,,,,,,,X.159,moniteringcleaned::x.159,lgl,NA,NA,NA,n/a,0,NA,1,no data
-249,x.160,moniteringcleaned,discard,,,,,,,,,X.160,moniteringcleaned::x.160,lgl,NA,NA,NA,n/a,0,NA,1,no data
-250,x.161,moniteringcleaned,discard,,,,,,,,,X.161,moniteringcleaned::x.161,lgl,NA,NA,NA,n/a,0,NA,1,no data
-251,x.162,moniteringcleaned,discard,,,,,,,,,X.162,moniteringcleaned::x.162,lgl,NA,NA,NA,n/a,0,NA,1,no data
-252,x.163,moniteringcleaned,discard,,,,,,,,,X.163,moniteringcleaned::x.163,lgl,NA,NA,NA,n/a,0,NA,1,no data
-253,x.164,moniteringcleaned,discard,,,,,,,,,X.164,moniteringcleaned::x.164,lgl,NA,NA,NA,n/a,0,NA,1,no data
-254,x.165,moniteringcleaned,discard,,,,,,,,,X.165,moniteringcleaned::x.165,lgl,NA,NA,NA,n/a,0,NA,1,no data
-255,x.166,moniteringcleaned,discard,,,,,,,,,X.166,moniteringcleaned::x.166,lgl,NA,NA,NA,n/a,0,NA,1,no data
-256,x.167,moniteringcleaned,discard,,,,,,,,,X.167,moniteringcleaned::x.167,lgl,NA,NA,NA,n/a,0,NA,1,no data
-257,x.168,moniteringcleaned,discard,,,,,,,,,X.168,moniteringcleaned::x.168,lgl,NA,NA,NA,n/a,0,NA,1,no data
-258,x.169,moniteringcleaned,discard,,,,,,,,,X.169,moniteringcleaned::x.169,lgl,NA,NA,NA,n/a,0,NA,1,no data
-259,x.170,moniteringcleaned,discard,,,,,,,,,X.170,moniteringcleaned::x.170,lgl,NA,NA,NA,n/a,0,NA,1,no data
-260,x.171,moniteringcleaned,discard,,,,,,,,,X.171,moniteringcleaned::x.171,lgl,NA,NA,NA,n/a,0,NA,1,no data
-261,x.172,moniteringcleaned,discard,,,,,,,,,X.172,moniteringcleaned::x.172,lgl,NA,NA,NA,n/a,0,NA,1,no data
-262,x.173,moniteringcleaned,discard,,,,,,,,,X.173,moniteringcleaned::x.173,lgl,NA,NA,NA,n/a,0,NA,1,no data
-263,x.174,moniteringcleaned,discard,,,,,,,,,X.174,moniteringcleaned::x.174,lgl,NA,NA,NA,n/a,0,NA,1,no data
-264,x.175,moniteringcleaned,discard,,,,,,,,,X.175,moniteringcleaned::x.175,lgl,NA,NA,NA,n/a,0,NA,1,no data
-265,x.176,moniteringcleaned,discard,,,,,,,,,X.176,moniteringcleaned::x.176,lgl,NA,NA,NA,n/a,0,NA,1,no data
-266,x.177,moniteringcleaned,discard,,,,,,,,,X.177,moniteringcleaned::x.177,lgl,NA,NA,NA,n/a,0,NA,1,no data
-267,x.178,moniteringcleaned,discard,,,,,,,,,X.178,moniteringcleaned::x.178,lgl,NA,NA,NA,n/a,0,NA,1,no data
-268,x.179,moniteringcleaned,discard,,,,,,,,,X.179,moniteringcleaned::x.179,lgl,NA,NA,NA,n/a,0,NA,1,no data
-269,x.180,moniteringcleaned,discard,,,,,,,,,X.180,moniteringcleaned::x.180,lgl,NA,NA,NA,n/a,0,NA,1,no data
-270,x.181,moniteringcleaned,discard,,,,,,,,,X.181,moniteringcleaned::x.181,lgl,NA,NA,NA,n/a,0,NA,1,no data
-271,x.182,moniteringcleaned,discard,,,,,,,,,X.182,moniteringcleaned::x.182,lgl,NA,NA,NA,n/a,0,NA,1,no data
-272,x.183,moniteringcleaned,discard,,,,,,,,,X.183,moniteringcleaned::x.183,lgl,NA,NA,NA,n/a,0,NA,1,no data
-273,x.184,moniteringcleaned,discard,,,,,,,,,X.184,moniteringcleaned::x.184,lgl,NA,NA,NA,n/a,0,NA,1,no data
-274,x.185,moniteringcleaned,discard,,,,,,,,,X.185,moniteringcleaned::x.185,lgl,NA,NA,NA,n/a,0,NA,1,no data
-275,x.186,moniteringcleaned,discard,,,,,,,,,X.186,moniteringcleaned::x.186,lgl,NA,NA,NA,n/a,0,NA,1,no data
-276,x.187,moniteringcleaned,discard,,,,,,,,,X.187,moniteringcleaned::x.187,lgl,NA,NA,NA,n/a,0,NA,1,no data
-277,x.188,moniteringcleaned,discard,,,,,,,,,X.188,moniteringcleaned::x.188,lgl,NA,NA,NA,n/a,0,NA,1,no data
-278,x.189,moniteringcleaned,discard,,,,,,,,,X.189,moniteringcleaned::x.189,lgl,NA,NA,NA,n/a,0,NA,1,no data
-279,x.190,moniteringcleaned,discard,,,,,,,,,X.190,moniteringcleaned::x.190,lgl,NA,NA,NA,n/a,0,NA,1,no data
-280,x.191,moniteringcleaned,discard,,,,,,,,,X.191,moniteringcleaned::x.191,lgl,NA,NA,NA,n/a,0,NA,1,no data
-281,x.192,moniteringcleaned,discard,,,,,,,,,X.192,moniteringcleaned::x.192,lgl,NA,NA,NA,n/a,0,NA,1,no data
-282,x.193,moniteringcleaned,discard,,,,,,,,,X.193,moniteringcleaned::x.193,lgl,NA,NA,NA,n/a,0,NA,1,no data
-283,x.194,moniteringcleaned,discard,,,,,,,,,X.194,moniteringcleaned::x.194,lgl,NA,NA,NA,n/a,0,NA,1,no data
-284,x.195,moniteringcleaned,discard,,,,,,,,,X.195,moniteringcleaned::x.195,lgl,NA,NA,NA,n/a,0,NA,1,no data
-285,x.196,moniteringcleaned,discard,,,,,,,,,X.196,moniteringcleaned::x.196,lgl,NA,NA,NA,n/a,0,NA,1,no data
-286,x.197,moniteringcleaned,discard,,,,,,,,,X.197,moniteringcleaned::x.197,lgl,NA,NA,NA,n/a,0,NA,1,no data
-287,x.198,moniteringcleaned,discard,,,,,,,,,X.198,moniteringcleaned::x.198,lgl,NA,NA,NA,n/a,0,NA,1,no data
-288,x.199,moniteringcleaned,discard,,,,,,,,,X.199,moniteringcleaned::x.199,lgl,NA,NA,NA,n/a,0,NA,1,no data
-289,x.200,moniteringcleaned,discard,,,,,,,,,X.200,moniteringcleaned::x.200,lgl,NA,NA,NA,n/a,0,NA,1,no data
-290,x.201,moniteringcleaned,discard,,,,,,,,,X.201,moniteringcleaned::x.201,lgl,NA,NA,NA,n/a,0,NA,1,no data
-291,x.202,moniteringcleaned,discard,,,,,,,,,X.202,moniteringcleaned::x.202,lgl,NA,NA,NA,n/a,0,NA,1,no data
-292,x.203,moniteringcleaned,discard,,,,,,,,,X.203,moniteringcleaned::x.203,lgl,NA,NA,NA,n/a,0,NA,1,no data
-293,x.204,moniteringcleaned,discard,,,,,,,,,X.204,moniteringcleaned::x.204,lgl,NA,NA,NA,n/a,0,NA,1,no data
-294,x.205,moniteringcleaned,discard,,,,,,,,,X.205,moniteringcleaned::x.205,lgl,NA,NA,NA,n/a,0,NA,1,no data
-295,x.206,moniteringcleaned,discard,,,,,,,,,X.206,moniteringcleaned::x.206,lgl,NA,NA,NA,n/a,0,NA,1,no data
-296,x.207,moniteringcleaned,discard,,,,,,,,,X.207,moniteringcleaned::x.207,lgl,NA,NA,NA,n/a,0,NA,1,no data
-297,x.208,moniteringcleaned,discard,,,,,,,,,X.208,moniteringcleaned::x.208,lgl,NA,NA,NA,n/a,0,NA,1,no data
-298,x.209,moniteringcleaned,discard,,,,,,,,,X.209,moniteringcleaned::x.209,lgl,NA,NA,NA,n/a,0,NA,1,no data
-299,x.210,moniteringcleaned,discard,,,,,,,,,X.210,moniteringcleaned::x.210,lgl,NA,NA,NA,n/a,0,NA,1,no data
-300,x.211,moniteringcleaned,discard,,,,,,,,,X.211,moniteringcleaned::x.211,lgl,NA,NA,NA,n/a,0,NA,1,no data
-301,x.212,moniteringcleaned,discard,,,,,,,,,X.212,moniteringcleaned::x.212,lgl,NA,NA,NA,n/a,0,NA,1,no data
-302,x.213,moniteringcleaned,discard,,,,,,,,,X.213,moniteringcleaned::x.213,lgl,NA,NA,NA,n/a,0,NA,1,no data
-303,x.214,moniteringcleaned,discard,,,,,,,,,X.214,moniteringcleaned::x.214,lgl,NA,NA,NA,n/a,0,NA,1,no data
-304,x.215,moniteringcleaned,discard,,,,,,,,,X.215,moniteringcleaned::x.215,lgl,NA,NA,NA,n/a,0,NA,1,no data
-305,x.216,moniteringcleaned,discard,,,,,,,,,X.216,moniteringcleaned::x.216,lgl,NA,NA,NA,n/a,0,NA,1,no data
-306,x.217,moniteringcleaned,discard,,,,,,,,,X.217,moniteringcleaned::x.217,lgl,NA,NA,NA,n/a,0,NA,1,no data
-307,x.218,moniteringcleaned,discard,,,,,,,,,X.218,moniteringcleaned::x.218,lgl,NA,NA,NA,n/a,0,NA,1,no data
-308,x.219,moniteringcleaned,discard,,,,,,,,,X.219,moniteringcleaned::x.219,lgl,NA,NA,NA,n/a,0,NA,1,no data
-309,x.220,moniteringcleaned,discard,,,,,,,,,X.220,moniteringcleaned::x.220,lgl,NA,NA,NA,n/a,0,NA,1,no data
-310,x.221,moniteringcleaned,discard,,,,,,,,,X.221,moniteringcleaned::x.221,lgl,NA,NA,NA,n/a,0,NA,1,no data
-311,x.222,moniteringcleaned,discard,,,,,,,,,X.222,moniteringcleaned::x.222,lgl,NA,NA,NA,n/a,0,NA,1,no data
-312,x.223,moniteringcleaned,discard,,,,,,,,,X.223,moniteringcleaned::x.223,lgl,NA,NA,NA,n/a,0,NA,1,no data
-313,x.224,moniteringcleaned,discard,,,,,,,,,X.224,moniteringcleaned::x.224,lgl,NA,NA,NA,n/a,0,NA,1,no data
-314,x.225,moniteringcleaned,discard,,,,,,,,,X.225,moniteringcleaned::x.225,lgl,NA,NA,NA,n/a,0,NA,1,no data
-315,x.226,moniteringcleaned,discard,,,,,,,,,X.226,moniteringcleaned::x.226,lgl,NA,NA,NA,n/a,0,NA,1,no data
-316,x.227,moniteringcleaned,discard,,,,,,,,,X.227,moniteringcleaned::x.227,lgl,NA,NA,NA,n/a,0,NA,1,no data
-317,x.228,moniteringcleaned,discard,,,,,,,,,X.228,moniteringcleaned::x.228,lgl,NA,NA,NA,n/a,0,NA,1,no data
-318,x.229,moniteringcleaned,discard,,,,,,,,,X.229,moniteringcleaned::x.229,lgl,NA,NA,NA,n/a,0,NA,1,no data
-319,x.230,moniteringcleaned,discard,,,,,,,,,X.230,moniteringcleaned::x.230,lgl,NA,NA,NA,n/a,0,NA,1,no data
-320,x.231,moniteringcleaned,discard,,,,,,,,,X.231,moniteringcleaned::x.231,lgl,NA,NA,NA,n/a,0,NA,1,no data
-321,x.232,moniteringcleaned,discard,,,,,,,,,X.232,moniteringcleaned::x.232,lgl,NA,NA,NA,n/a,0,NA,1,no data
-322,x.233,moniteringcleaned,discard,,,,,,,,,X.233,moniteringcleaned::x.233,lgl,NA,NA,NA,n/a,0,NA,1,no data
-323,x.234,moniteringcleaned,discard,,,,,,,,,X.234,moniteringcleaned::x.234,lgl,NA,NA,NA,n/a,0,NA,1,no data
-324,x.235,moniteringcleaned,discard,,,,,,,,,X.235,moniteringcleaned::x.235,lgl,NA,NA,NA,n/a,0,NA,1,no data
-325,x.236,moniteringcleaned,discard,,,,,,,,,X.236,moniteringcleaned::x.236,lgl,NA,NA,NA,n/a,0,NA,1,no data
-326,x.237,moniteringcleaned,discard,,,,,,,,,X.237,moniteringcleaned::x.237,lgl,NA,NA,NA,n/a,0,NA,1,no data
-327,x.238,moniteringcleaned,discard,,,,,,,,,X.238,moniteringcleaned::x.238,lgl,NA,NA,NA,n/a,0,NA,1,no data
-328,x.239,moniteringcleaned,discard,,,,,,,,,X.239,moniteringcleaned::x.239,lgl,NA,NA,NA,n/a,0,NA,1,no data
-329,x.240,moniteringcleaned,discard,,,,,,,,,X.240,moniteringcleaned::x.240,lgl,NA,NA,NA,n/a,0,NA,1,no data
-330,x.241,moniteringcleaned,discard,,,,,,,,,X.241,moniteringcleaned::x.241,lgl,NA,NA,NA,n/a,0,NA,1,no data
-331,x.242,moniteringcleaned,discard,,,,,,,,,X.242,moniteringcleaned::x.242,lgl,NA,NA,NA,n/a,0,NA,1,no data
-332,x.243,moniteringcleaned,discard,,,,,,,,,X.243,moniteringcleaned::x.243,lgl,NA,NA,NA,n/a,0,NA,1,no data
-333,x.244,moniteringcleaned,discard,,,,,,,,,X.244,moniteringcleaned::x.244,lgl,NA,NA,NA,n/a,0,NA,1,no data
-334,x.245,moniteringcleaned,discard,,,,,,,,,X.245,moniteringcleaned::x.245,lgl,NA,NA,NA,n/a,0,NA,1,no data
-335,x.246,moniteringcleaned,discard,,,,,,,,,X.246,moniteringcleaned::x.246,lgl,NA,NA,NA,n/a,0,NA,1,no data
-336,x.247,moniteringcleaned,discard,,,,,,,,,X.247,moniteringcleaned::x.247,chr,Enatnesh,NA,NA,", Enatnesh",1,NA,0.999968304,NA
+1,uniquekey,form04,discard,,,,,,,,,UniqueKey,form04::uniquekey,int,1,NA,NA,1 to 2296,2287,NA,0,duplicated variable
+2,hospitalname,form04,discard,,,,,,,,,HOSPITALNAME,form04::hospitalname,chr,TAH,NA,NA,>10 unique values,14,NA,0,duplicated variable
+3,monitoringid,form04,discard,,,,,,,,,MonitoringID,form04::monitoringid,chr,TA0016,NA,NA,>10 unique values,2619,NA,0,NA
+4,medicalrecord,form04,discard,,,,,,,,,MEDICALRECORD,form04::medicalrecord,dbl,426372,NA,NA,51 to 7000267,2615,NA,0.002740632,duplicated variable
+5,obs_num,form04,discard,,,,,,,,,obs_num,form04::obs_num,int,1,NA,NA,1 to 5,5,NA,0,NA
+6,enterdayofexam,form04,discard,,,,,,,,,Enterdayofexam,form04::enterdayofexam,int,1,NA,NA,0 to 96,34,NA,0.003638426,NA
+7,enterdateofexam,form04,keep,,,,,,,,,Enterdateofexam,form04::enterdateofexam,dbl,1.08,date?,NA,0 to 99.1,455,NA,0.008647167,NA
+8,color,form04,keep,,,,,,,,,Color,form04::color,int,1,NA,NA,1 to 5,5,NA,0.010679015,NA
+9,wakefulness,form04,keep,,,,,,,,,Wakefulness,form04::wakefulness,int,2,NA,NA,1 to 3,3,NA,0.009592213,NA
+10,movementactivity,form04,keep,,,,,,,,,Movementactivity,form04::movementactivity,int,1,NA,NA,1 to 3,3,NA,0.009781222,NA
+11,resuscitationdone,form04,keep,,,,,,,,,Resuscitationdone,form04::resuscitationdone,int,2,NA,NA,1 to 3,3,NA,0.010253745,NA
+12,chestindrawing,form04,keep,,,,,,,,,Chestindrawing,form04::chestindrawing,int,2,NA,NA,1 to 3,3,NA,0.011104286,duplicated variable
+13,patencyofairway,form04,keep,,,,,,,,,Patencyofairway,form04::patencyofairway,int,1,NA,NA,1 to 4,4,NA,0.012474602,NA
+14,seizurespresent,form04,keep,,,,,,,,,Seizurespresent,form04::seizurespresent,chr,No,NA,NA,"No, Yes, NA",2,NA,0.014270189,NA
+15,vomiting,form04,keep,,,,,,,,,Vomiting,form04::vomiting,int,1,NA,NA,1 to 5,5,NA,0.013372395,NA
+16,respiratoryrateam,form04,keep,,,,,,,,,RespiratoryrateAM,form04::respiratoryrateam,int,36,NA,NA,0 to 116,100,NA,0.072721259,NA
+17,respiratoryratepm,form04,keep,,,,,,,,,RespiratoryratePM,form04::respiratoryratepm,int,44,NA,NA,0 to 120,96,NA,0.155507253,NA
+18,apicalheartrateam,form04,keep,,,,,,,,,ApicalheartrateAM,form04::apicalheartrateam,int,184,NA,NA,0 to 250,159,NA,0.073902566,NA
+19,apicalheartratepm,form04,keep,,,,,,,,,ApicalheartratePM,form04::apicalheartratepm,int,160,NA,NA,0 to 335,170,NA,0.157775363,NA
+20,temperaturecam,form04,keep,,,,,,,,,TemperatureCAM,form04::temperaturecam,dbl,37,NA,NA,0 to 86.9,125,NA,0.076170675,NA
+21,temperaturepm,form04,keep,,,,,,,,,TemperaturePM,form04::temperaturepm,dbl,34.8,NA,NA,0 to 97,119,NA,0.158531399,NA
+22,saturationam,form04,keep,,,,,,,,,SaturationAM,form04::saturationam,int,98,NA,NA,0 to 100,84,NA,0.257146907,NA
+23,saturationpm,form04,keep,,,,,,,,,SaturationPM,form04::saturationpm,int,95,NA,NA,0 to 100,80,NA,0.340972452,NA
+24,dailyweightg,form04,keep,,,,,,,,,Dailyweightg,form04::dailyweightg,int,2000,NA,NA,0 to 9849,661,NA,0.129991022,NA
+25,weeklyheadcircumferencecm,form04,keep,,,,,,,,,Weeklyheadcircumferencecm,form04::weeklyheadcircumferencecm,dbl,38,NA,NA,0 to 50,108,NA,0.748476114,NA
+26,weeklylengthcm,form04,keep,,,,,,,,,Weeklylengthcm,form04::weeklylengthcm,int,48,NA,NA,0 to 92,35,NA,0.803666777,NA
+27,bowelsounds,form04,keep,,,,,,,,,Bowelsounds,form04::bowelsounds,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.014884468,duplicated variable
+28,stoolpresent,form04,keep,,,,,,,,,Stoolpresent,form04::stoolpresent,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.014837216,duplicated variable
+29,urineoutput,form04,keep,,,,,,,,,Urineoutput,form04::urineoutput,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.014837216,NA
+30,oxygen,form04,keep,,,,,,,,,Oxygen,form04::oxygen,int,1,NA,NA,1 to 4,4,NA,0.023484383,NA
+31,ifoxygengivenflowratelitresmin,form04,keep,,,,,,,,,Ifoxygengivenflowratelitresmin,form04::ifoxygengivenflowratelitresmin,dbl,1,NA,NA,0 to 98,24,NA,0.773425318,NA
+32,absent,form04,keep,,,,,,,,,ABSENT,form04::absent,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.014364693,NA
+33,face,form04,keep,,,,,,,,,FACE,form04::face,chr,No,NA,NA,"No, Yes, NA",2,NA,0.01781411,duplicated variable
+34,chest,form04,keep,,,,,,,,,CHEST,form04::chest,chr,No,NA,NA,"No, Yes, NA",2,NA,0.01885366,NA
+35,abdomen,form04,keep,,,,,,,,,ABDOMEN,form04::abdomen,chr,No,NA,NA,"No, Yes, NA",2,NA,0.018664651,duplicated variable
+36,sole,form04,keep,,,,,,,,,SOLE,form04::sole,chr,No,NA,NA,"No, Yes, NA",2,NA,0.019515192,NA
+37,shard,form04,keep,,,,,,,,,shard,form04::shard,chr,No,NA,NA,"No, Yes, NA",2,NA,0.538486982,NA
+38,ifoxygenconcentrationgiven,form04,keep,,,,,,,,,Ifoxygenconcentrationgiven,form04::ifoxygenconcentrationgiven,int,98,NA,NA,0 to 200,32,NA,0.790294382,NA
+39,ifcpap,form04,keep,,,,,,,,,IfCPAP,form04::ifcpap,int,2,NA,NA,1 to 3,3,NA,0.253933752,NA
+40,anyivfluids,form04,keep,,,,,,,,,AnyIVfluids,form04::anyivfluids,int,2,NA,NA,1 to 3,3,NA,0.017436091,NA
+41,ifyesamountpast24hml,form04,keep,,,,,,,,,IfYesAmountPast24hmL,form04::ifyesamountpast24hml,int,130,NA,NA,0 to 928,308,NA,0.511978453,NA
+42,feedingmethod,form04,keep,,,,,,,,,Feedingmethod,form04::feedingmethod,int,1,NA,NA,0 to 4,5,NA,0.020696499,NA
+43,inprior24h,form04,keep,,,,,,,,,Inprior24h,form04::inprior24h,int,0,NA,NA,0 to 972,316,NA,0.535037566,NA
+44,anysuckling,form04,keep,,,,,,,,,Anysuckling,form04::anysuckling,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.021736049,NA
+45,antibioticsgiven,form04,keep,,,,,,,,,Antibioticsgiven,form04::antibioticsgiven,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.017294334,NA
+46,antibioticsstopped,form04,keep,,,,,,,,,Antibioticsstopped,form04::antibioticsstopped,chr,No,NA,NA,"No, Yes, NA",2,NA,0.026981052,NA
+47,othermedications,form04,keep,,,,,,,,,Othermedications,form04::othermedications,chr,No,NA,NA,"No, Yes, NA",2,NA,0.020365733,NA
+48,ifyesantibiotics,form04,keep,,,,,,,,,IfyesAntibiotics,form04::ifyesantibiotics,chr,Phototherapy,NA,NA,>10 unique values,518,NA,0.919671124,NA
+49,ampicillin,form04,keep,,,,,,,,,Ampicillin,form04::ampicillin,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.018759155,duplicated variable
+50,gentamicin,form04,keep,,,,,,,,,Gentamicin,form04::gentamicin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.021121769,NA
+51,cephtriaxone,form04,keep,,,,,,,,,Cephtriaxone,form04::cephtriaxone,chr,No,NA,NA,"No, Yes, NA",2,NA,0.023248122,NA
+52,cephotaxime,form04,keep,,,,,,,,,Cephotaxime,form04::cephotaxime,chr,No,NA,NA,"No, Yes, NA",2,NA,0.023295374,NA
+53,cephtazidime,form04,keep,,,,,,,,,Cephtazidime,form04::cephtazidime,chr,No,NA,NA,"No, Yes, NA",2,NA,0.023578888,NA
+54,vancomycin,form04,keep,,,,,,,,,Vancomycin,form04::vancomycin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.023578888,duplicated variable
+55,cloxacillin,form04,keep,,,,,,,,,Cloxacillin,form04::cloxacillin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.02362614,duplicated variable
+56,metronidazole,form04,keep,,,,,,,,,Metronidazole,form04::metronidazole,chr,No,NA,NA,"No, Yes, NA",2,NA,0.023531635,NA
+57,ifother,form04,keep,,,,,,,,,Ifother,form04::ifother,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024760195,NA
+58,ifotherantibioticspecify,form04,keep,,,,,,,,,ifOtherAntibioticSpecify,form04::ifotherantibioticspecify,chr,Aminophyline,NA,NA,>10 unique values,89,NA,0.972357416,NA
+59,stoppedampicillin,form04,keep,,,,,,,,,stoppedAmpicillin,form04::stoppedampicillin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.028304116,NA
+60,stoppedgentamicin,form04,keep,,,,,,,,,stoppedGentamicin,form04::stoppedgentamicin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.028304116,NA
+61,stoppedcephtriaxone,form04,keep,,,,,,,,,stoppedCephtriaxone,form04::stoppedcephtriaxone,chr,No,NA,NA,"No, Yes, NA",2,NA,0.028493125,NA
+62,stoppedcephotaxime,form04,keep,,,,,,,,,stoppedCephotaxime,form04::stoppedcephotaxime,chr,No,NA,NA,"No, Yes, NA",2,NA,0.028871143,NA
+63,stoppedcephtazidime,form04,keep,,,,,,,,,stoppedCephtazidime,form04::stoppedcephtazidime,chr,No,NA,NA,"No, Yes, NA",2,NA,0.028918395,NA
+64,stoppedvancomycin,form04,keep,,,,,,,,,stoppedVancomycin,form04::stoppedvancomycin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.029107404,NA
+65,stoppedcloxacillin,form04,keep,,,,,,,,,stoppedCloxacillin,form04::stoppedcloxacillin,chr,No,NA,NA,"No, Yes, NA",2,NA,0.029154657,NA
+66,stoppedmetronidazole,form04,keep,,,,,,,,,stoppedMetronidazole,form04::stoppedmetronidazole,chr,No,NA,NA,"No, Yes, NA",2,NA,0.029249161,NA
+67,stoppedifother,form04,keep,,,,,,,,,stoppedifother,form04::stoppedifother,chr,No,NA,NA,"No, Yes, NA",2,NA,0.029768936,NA
+68,ifotherstopped,form04,keep,,,,,,,,,ifOtherStopped,form04::ifotherstopped,chr,Aminophiline,NA,NA,NA,10,NA,0.993006663,NA
+69,wereanynewdiagnosesmade,form04,keep,,,,,,,,,Wereanynewdiagnosesmade,form04::wereanynewdiagnosesmade,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.012616359,NA
+70,hypoglycemia,form04,keep,,,,,,,,,Hypoglycemia,form04::hypoglycemia,chr,No,NA,NA,"No, Yes, NA",2,NA,0.02424042,NA
+71,rds,form04,keep,,,,,,,,,RDS,form04::rds,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024287672,NA
+72,pphn,form04,keep,,,,,,,,,PPHN,form04::pphn,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024429429,duplicated variable
+73,pneumonia,form04,keep,,,,,,,,,Pneumonia,form04::pneumonia,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024429429,duplicated variable
+74,meningitis,form04,keep,,,,,,,,,Meningitis,form04::meningitis,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024618438,duplicated variable
+75,ttn,form04,keep,,,,,,,,,TTN,form04::ttn,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024476681,duplicated variable
+76,ivh,form04,keep,,,,,,,,,IVH,form04::ivh,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024712942,duplicated variable
+77,sepsis,form04,keep,,,,,,,,,Sepsis,form04::sepsis,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.024287672,duplicated variable
+78,nec,form04,keep,,,,,,,,,NEC,form04::nec,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024523933,duplicated variable
+79,hypothermia365c,form04,keep,,,,,,,,,Hypothermia365C,form04::hypothermia365c,chr,Yes,NA,NA,"No, Yes, NA",2,NA,0.024193167,NA
+80,apnea,form04,keep,,,,,,,,,Apnea,form04::apnea,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024429429,duplicated variable
+81,anemia,form04,keep,,,,,,,,,Anemia,form04::anemia,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024901952,duplicated variable
+82,renalfailure,form04,keep,,,,,,,,,Renalfailure,form04::renalfailure,chr,No,NA,NA,"No, Yes, NA",2,NA,0.025185465,duplicated variable
+83,tetanus,form04,keep,,,,,,,,,Tetanus,form04::tetanus,chr,No,NA,NA,"No, Yes, NA",2,NA,0.024996456,duplicated variable
+84,otherdiagnosis,form04,keep,,,,,,,,,otherDiagnosis,form04::otherdiagnosis,chr,No,NA,NA,"No, Yes, NA",2,NA,0.02527997,NA
+85,otherdiagnosisspecify,form04,keep,,,,,,,,,otherDiagnosisSpecify,form04::otherdiagnosisspecify,chr,"Neonatal,Jaundice",NA,NA,>10 unique values,678,NA,0.888201106,NA
+86,locationofbaby,form04,keep,,,,,,,,,Locationofbaby,form04::locationofbaby,chr,1,NA,NA,>10 unique values,12,NA,0.027689836,NA
+87,nursecompletingform,form04,discard,,,,,,,,,Nursecompletingform,form04::nursecompletingform,chr,Amina,NA,NA,>10 unique values,506,NA,0.046874262,NA
+88,doctorwhoreviewed,form04,discard,,,,,,,,,Doctorwhoreviewed,form04::doctorwhoreviewed,chr,Dr. Bezawit,NA,NA,>10 unique values,121,NA,0.608325852,NA
+89,date,form04,discard,,,,,,,,,DATE,form04::date,int,2908,date?,NA,0 to 7806,405,NA,0.130085527,NA
