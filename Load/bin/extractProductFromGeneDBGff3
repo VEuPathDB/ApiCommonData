@@ -132,8 +132,10 @@ sub getGoEvidenceCode {
   } elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/i) {
     return "ISO";
   } elsif ($string =~ /NOT RECORDED/i) {
-    print STDERR "$string was referred to NR, but NR is an obsolete evidence code, replace it with IDA\n";
-    return "IDA";
+    print STDERR "$string was referred to NR, but NR is an obsolete evidence code, replace it with IDA in PlasmoDB and empty in TriTrypDB and FungiDB\n";
+#    return "IDA";  ## confirmed with Uli it should be "IDA"
+    return "";  ## Achchuthan wants it to be empty 
+#    return "NR";  ## return NR for now to catch all issues
   } elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
     return "IDA";
   } elsif ($string =~ /No biological Data available/i) {
