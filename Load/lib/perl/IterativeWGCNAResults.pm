@@ -3,7 +3,7 @@ package ApiCommonData::Load::IterativeWGCNAResults;
 use base qw(CBIL::TranscriptExpression::DataMunger::Loadable);
 
 use strict;
-use CBIL::TranscriptExpression::Error;
+#use CBIL::TranscriptExpression::Error;
 use CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles;
 
 use Data::Dumper;
@@ -19,6 +19,8 @@ sub getOrganism        { $_[0]->{organismAbbre} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
 sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
+sub getprofileSetName              { $_[0]->{profileSetName} }
+sub getTechnologyType              { $_[0]->{technologyType} }
 
 #my $PROTOCOL_NAME = 'WGCNA';
 
@@ -27,6 +29,7 @@ sub new {
   my ($class, $args) = @_; 
 
   my $mainDirectory = $args->{mainDirectory};
+  my $technologyType = $args->{technologyType};
   my $inputfile = $mainDirectory. "/" . $args->{inputFile};
   my $strandness = $args->{strandness};
   my $power = $args->{softThresholdPower};
@@ -44,6 +47,8 @@ sub munge {
     #------------- database configuration -----------#
     my $strandness = $self->getStrandness();
     my $mainDirectory = $self->getMainDirectory();
+    my $technologyType = $self->getTechnologyType();
+    my $profileSetName = $self->getprofileSetName();
     my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
     my $dsn = $gusconfig->getDbiDsn();
     my $login = $gusconfig->getDatabaseLogin();
@@ -164,16 +169,17 @@ sub munge {
 	$self->createConfigFile();
 
         #-------------- parse Module Eigengene -----#
-	my $com = "chmod u=rwx,g=rwx,o=rwx $outputDir/merged-0.25-eigengenes.txt";
-	system($com);
-	
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-	    {inputFile => "$outputDir/merged-0.25-eigengenes.txt", makePercentiles =>0, mainDirectory => "$mainDirectory"}
-	    );
-	$egenes->setProtocolName("WGCNAME");
-	$egenes->munge();
+	#-- copy module_egene file to one upper dir and the run doTranscription --#
+	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  .";
+        my $CPresults  =  system($CPcommand);
 
+	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+	    );
+	$egenes ->setTechnologyType("RNASeq");
+	$egenes ->munge();
     }
+
 
     #--second strand processing ------------------------------------------#
     if($strandness eq 'secondstrand'){
