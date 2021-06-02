@@ -170,11 +170,12 @@ sub munge {
 
         #-------------- parse Module Eigengene -----#
 	#-- copy module_egene file to one upper dir and the run doTranscription --#
-	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  .";
+	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand.txt ";
         my $CPresults  =  system($CPcommand);
 
 	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 	    );
 	$egenes ->setTechnologyType("RNASeq");
 	$egenes ->munge();
@@ -290,13 +291,18 @@ sub munge {
 	$self->setProtocolName("WGCNA");
 	$self->setSourceIdType("gene");
 	$self->createConfigFile();
+	
+        #-------------- parse Module Eigengene -----#
+	#-- copy module_egene file to one upper dir and the run doTranscription --#
+	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ;
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_2ndStrand.txt ";
+        my $CPresults  =  system($CPcommand);
 
-	#-------------- parse Module Eigengene -----#
-	my $eigengenefile =  "$outputDir/merged-0.25-eigengenes.txt";
-
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new({inputFile => $eigengenefile});
-	$egenes->setProtocolName("WGCNAME");
-	$egenes->munge();
+	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_2ndStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+	    );
+	$egenes ->setTechnologyType("RNASeq");
+	$egenes ->munge();
 
     }
 
