@@ -257,6 +257,8 @@ sub getGeneticCodeFromOrganismAbbrev {
       $projectName = "PlasmoDB";
     } elsif ( $organismAbbrev eq "mbalATCC30984") {
       $projectName = "AmoebaDB";
+    } elsif ( $organismAbbrev eq "ncanLiverpool2019") {
+      $projectName = "ToxoDB";
     } elsif ( $organismAbbrev eq "treeQM6a2017") {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
