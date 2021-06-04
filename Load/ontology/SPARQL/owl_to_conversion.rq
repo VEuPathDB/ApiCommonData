@@ -5,26 +5,29 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT distinct ?IRI 
   (GROUP_CONCAT(DISTINCT ?slabel;separator=" | ") AS ?label)
-  (GROUP_CONCAT(DISTINCT ?dOrder;separator=" | ") AS ?displayOrder)
   (GROUP_CONCAT(DISTINCT ?var;separator=" | ") AS ?variable)
+  (GROUP_CONCAT(DISTINCT ?dOrder;separator=" | ") AS ?displayOrder)
   (GROUP_CONCAT(DISTINCT ?dFile;separator=" | ") AS ?dataFile)
   (GROUP_CONCAT(DISTINCT ?def;separator=" | ") AS ?definition)
   (GROUP_CONCAT(DISTINCT ?cate;separator=" | ") AS ?category)
-  (GROUP_CONCAT(DISTINCT ?pLabel;separator=" | ") AS ?parentLabel)
   (GROUP_CONCAT(DISTINCT ?pIRI;separator=" | ") AS ?parentIRI)
+  (GROUP_CONCAT(DISTINCT ?pLabel;separator=" | ") AS ?parentLabel)
   (GROUP_CONCAT(DISTINCT ?cDescription;separator=" | ") AS ?codebookDescription)
   (GROUP_CONCAT(DISTINCT ?cValues;separator=" | ") AS ?codebookValues)
   (GROUP_CONCAT(DISTINCT ?tType;separator=" | ") AS ?termType)
+  (GROUP_CONCAT(DISTINCT ?timeV;separator=" | ") AS ?repeated)
+  (GROUP_CONCAT(DISTINCT ?temp;separator=" | ") AS ?is_temporal)
+  (GROUP_CONCAT(DISTINCT ?timeK;separator=" | ") AS ?mergeKey)
+  (GROUP_CONCAT(DISTINCT ?dataS;separator=" | ") AS ?dataSet)
   (GROUP_CONCAT(DISTINCT ?rep;separator=" | ") AS ?replaces)
   (GROUP_CONCAT(DISTINCT ?unitL;separator=" | ") AS ?unitLabel)
   (GROUP_CONCAT(DISTINCT ?unitI;separator=" | ") AS ?unitIRI)
-  (GROUP_CONCAT(DISTINCT ?dataS;separator=" | ") AS ?dataSet)
-  (GROUP_CONCAT(DISTINCT ?timeV;separator=" | ") AS ?repeated)
   (GROUP_CONCAT(DISTINCT ?keyV;separator=" | ") AS ?is_featured)
   (GROUP_CONCAT(DISTINCT ?hid;separator=" | ") AS ?hidden)
   (GROUP_CONCAT(DISTINCT ?scal;separator=" | ") AS ?scale)
-  (GROUP_CONCAT(DISTINCT ?temp;separator=" | ") AS ?is_temporal)
-  (GROUP_CONCAT(DISTINCT ?timeK;separator=" | ") AS ?mergeKey)
+  (GROUP_CONCAT(DISTINCT ?rangeMin;separator=" | ") AS ?defaultDisplayRangeMin)
+  (GROUP_CONCAT(DISTINCT ?rangeMax;separator=" | ") AS ?defaultDisplayRangeMax)
+  (GROUP_CONCAT(DISTINCT ?binWidth;separator=" | ") AS ?defaultBinWidth)
 WHERE {
 	{?IRI rdfs:label ?tlabel .
 	?IRI rdfs:subClassOf* obo:PCO_0000024 .
@@ -90,6 +93,15 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
         }
 	}
 	UNION
@@ -158,6 +170,15 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -224,6 +245,15 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
         }
 	}
 	UNION
@@ -292,6 +322,15 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -358,6 +397,15 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
         }
 	}
 	UNION
@@ -426,6 +474,15 @@ WHERE {
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
         }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
+        }
 	}
 	UNION
 	{?IRI rdfs:label ?tlabel .
@@ -492,6 +549,15 @@ WHERE {
         }
         OPTIONAL {
             ?IRI obo:EUPATH_0001016 ?timeK .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001017 ?rangeMin .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001018 ?rangeMax .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001019 ?binWidth .
         }
 	}
 }
