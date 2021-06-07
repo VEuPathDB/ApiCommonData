@@ -128,7 +128,7 @@ sub munge {
 	my $outputDirModuleMembership = "$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading/";
 	mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	
-	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
+	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	my %MMHash;
         while (my $line = <MM>) {
             if ($. == 1){
@@ -148,11 +148,11 @@ sub munge {
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
         for my $i(@ModuleNames){
             push @modules,$i . " " . $self->getInputSuffixMM();
-            push @files,"$i\.txt" . " " . $self->getInputSuffixMM();
-            open(MMOUT, ">$outputDirModuleMembership/$i\.txt") or die $!;
+	    push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() ;
+            open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st" . "\.txt") or die $!;
             print MMOUT "geneID\tcorrelation_coefficient\n";
             for my $ii(@{$MMHash{$i}}){
-                print OUT $ii;
+                print MMOUT $ii;
             }
             close MMOUT;
         }
@@ -271,11 +271,11 @@ sub munge {
 	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
         for my $i(@ModuleNames){
             push @modules,$i . " " . $self->getInputSuffixMM();
-            push @files,"$i\.txt" . " " . $self->getInputSuffixMM();
-            open(MMOUT, ">$outputDirModuleMembership/$i\.txt") or die $!;
-            print MMOUT "geneID\tcorrelation_coefficient\n";
+	    push @files,"$i" . "_2nd" . "\.txt" . " " . $self->getInputSuffixMM() ;
+            open(MMOUT, ">$outputDirModuleMembership/$i" . "_2nd" . "\.txt") or die $!;
+	    print MMOUT "geneID\tcorrelation_coefficient\n";
             for my $ii(@{$MMHash{$i}}){
-                print OUT $ii;
+                print MMOUT $ii;
             }
             close MMOUT;
         }
