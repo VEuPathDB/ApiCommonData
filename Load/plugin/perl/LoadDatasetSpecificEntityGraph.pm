@@ -302,8 +302,8 @@ where atg.stable_id = att.stable_id (+) and att.stable_id is null
 
   my $dbh = $self->getDbHandle();
   $dbh->do($sql) or die $dbh->errstr;
-
-  $dbh->do("CREATE INDEX attributegraph_${entityTypeId}_1_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
+  
+  $dbh->do("alter table $tableName add primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 }
