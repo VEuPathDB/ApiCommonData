@@ -127,6 +127,13 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
                                                                  display_name => $ontologyTerm->{DISPLAY_NAME}, 
                                                                  term_type => $ontologyTerm->{TERM_TYPE} ? $ontologyTerm->{TERM_TYPE} : 'default', 
+                                                                 display_range_min_override => $ontologyTerm->{DISPLAY_RANGE_MIN_OVERRIDE},
+                                                                 display_range_max_override => $ontologyTerm->{DISPLAY_RANGE_MAX_OVERRIDE},
+                                                                 bin_width_override => $ontologyTerm->{BIN_WIDTH_OVERRIDE},
+                                                                 is_hidden => $ontologyTerm->{IS_HIDDEN},
+                                                                 is_temporal => $ontologyTerm->{IS_TEMPORAL},
+                                                                 is_featured => $ontologyTerm->{IS_FEATURED},
+                                                                 display_order => $ontologyTerm->{DISPLAY_ORDER},
                                                                 });
     $attributeGraph->submit();
     $attributeGraphCount++;
@@ -146,16 +153,16 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
-  # TODO: Add Plural when available
   my $sql = "select et.parent_id
                   , et.parent_stable_id
-                  , t.name display_name
+                  , nvl(os.ontology_synonym, t.name) display_name
                   , t.entity_type_id
                   , t.internal_abbrev
                   ,  ot.source_id as stable_id
                   , nvl(os.definition, ot.definition) as description
                   , s.study_id
                   , s.stable_id as study_stable_id
+                  , os.plural as display_name_plural
 from (
 select distinct s.study_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
 from apidb.processattributes p
