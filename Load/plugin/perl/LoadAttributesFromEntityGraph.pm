@@ -182,22 +182,22 @@ sub statsForPlots {
   }
 
 
-  my %rv;
+  my $rv = {};
   open(FILE, $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
   
   while(<FILE>) {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split($_);
 
-    $rv{$attributeSourceId}{$entityTypeId} =  {display_range_min => $min,
-                                               display_range_max => $max,
-                                               bin_width => $binWidth 
+    $rv->{$attributeSourceId}->{$entityTypeId} =  {display_range_min => $min,
+                                                   display_range_max => $max,
+                                                   bin_width => $binWidth 
     };
   }
   close FILE;
   unlink $outputStatsFileName;
 
-  return \%rv;
+  return $rv;
 }
 
 sub rCommandsForStats {
@@ -283,9 +283,8 @@ sub loadAttributeTerms {
 
       my $valProps = valProps($typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId}, $attributeStableId);
 
-      my $statProps = $statsForPlotsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId};
+      my $statProps = $statsForPlotsByAttributeStableIdAndEntityTypeId->{$attributeStableId}->{$etId};
       $statProps = {} unless($statProps);
-
 
       next SOURCE_ID unless $valProps;
 
@@ -301,8 +300,13 @@ sub loadAttributeTerms {
                                                          stable_id => $attributeStableId,
                                                          %$annProps,
                                                          %$valProps,
-                                                         %$statProps,
+                                                         display_range_min => $statProps->{display_range_min},
+                                                         display_range_max => $statProps->{display_range_max},
+                                                         bin_width => $statProps->{bin_width}
                                                        });
+
+
+
 
       $attribute->submit();
       $attributeCount++;
