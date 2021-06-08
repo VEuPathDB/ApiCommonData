@@ -172,7 +172,7 @@ sub statsForPlots {
 
   my ($rCommandsFh, $rCommandsFileName) = tempfile( DIR => $tempDirectory );
 
-  print $rCommandsFh $self->rCommandsFOrStats();
+  print $rCommandsFh $self->rCommandsForStats();
 
   unless(system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName 2>/dev/null")) {
     $self->error("Error Running singularity for numericFile");
@@ -531,6 +531,8 @@ sub typedValueForAttribute {
     
     # $counts->{_MIN_NUMBER} = min($counts->{_MIN_NUMBER} || $numberValue, $numberValue);
     # $counts->{_MAX_NUMBER} = max($counts->{_MAX_NUMBER} || $numberValue, $numberValue);
+
+    $counts->{_VALUES}->{$value} //= 0;
     if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {
       $counts->{_VALUES}->{$value}++;
     }
