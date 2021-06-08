@@ -12,6 +12,11 @@ use ApiCommonData::Load::Sqlldr;
 
 use Scalar::Util qw(looks_like_number);
 
+#use List::Util qw(min max);
+#use Date::Manip qw(ParseDate Date_Cmp);
+
+use File::Temp qw/ tempfile tempdir tmpnam /;
+
 use Time::HiRes qw(gettimeofday);
 
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
@@ -19,6 +24,9 @@ use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
 use JSON;
 
 use Data::Dumper;
+
+
+my $VALUE_COUNT_CUTOFF = 10;
 
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
@@ -137,14 +145,78 @@ sub run {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
-    my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength);
+    my $tempDirectory = tempdir( CLEANUP => 1 );
+    my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory );
+    my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory );
 
-    my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
+    my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh);
+
+    my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
+
+    my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
 
     $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
 
   return "Loaded attributes for $studiesCount studies"; 
+}
+
+
+sub statsForPlots {
+  my ($self, $dateValsFileName, $numericValsFileName, $tempDirectory) = @_;
+
+  my $outputStatsFileName = tmpnam();
+  while(-e $outputStatsFileName) {
+    $outputStatsFileName = tmpnam();
+  }
+
+  my ($rCommandsFh, $rCommandsFileName) = tempfile( DIR => $tempDirectory );
+
+  print $rCommandsFh $self->rCommandsFOrStats();
+
+  unless(system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName 2>/dev/null")) {
+    $self->error("Error Running singularity for numericFile");
+  }
+  unless(system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName 2>/dev/null")) {
+    $self->error("Error Running singularity for datesFile");
+  }
+
+
+  my %rv;
+  open(FILE, $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
+  
+  while(<FILE>) {
+    chomp;
+    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split($_);
+
+    $rv{$attributeSourceId}{$entityTypeId} =  {display_range_min => $min,
+                                               display_range_max => $max,
+                                               bin_width => $binWidth 
+    };
+  }
+  close FILE;
+  unlink $outputStatsFileName;
+
+  return \%rv;
+}
+
+sub rCommandsForStats {
+  return "args = commandArgs(trailingOnly = TRUE);
+fileName = args[1];
+outputFileName = args[2];
+t = read.table(fileName, header=FALSE);
+u = unique(t[,1:2]);
+subsetFxn = function(x, output){
+   v = subset(t, V1==x[1] & V2==x[2])\$V3
+   data.min = min(v);
+   data.max = max(v);
+   data.binWidth = plot.data::findBinWidth(v);
+   data.output = c(x, data.min, data.max, data.binWidth);
+   write(data.output, file=outputFileName, append=T, ncolumns=5)
+};
+apply(u, 1, subsetFxn);
+";
+
 }
 
 
@@ -199,7 +271,7 @@ sub annPropsFromOntologyTerm {
 }
 
 sub loadAttributeTerms {
-  my ($self, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $entityTypeIds) = @_;
+  my ($self, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds) = @_;
 
   my $attributeCount;
   $self->getDb->setMaximumNumberOfObjects((scalar keys %$annPropsByAttributeStableIdAndEntityTypeId ) * (scalar keys %$entityTypeIds));
@@ -210,6 +282,9 @@ sub loadAttributeTerms {
       my $annProps = $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId};
 
       my $valProps = valProps($typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId}, $attributeStableId);
+
+      my $statProps = $statsForPlotsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId};
+
       next SOURCE_ID unless $valProps;
 
 
@@ -223,7 +298,8 @@ sub loadAttributeTerms {
                                                          entity_type_stable_id => $entityTypeIds->{$etId},
                                                          stable_id => $attributeStableId,
                                                          %$annProps,
-                                                         %$valProps
+                                                         %$valProps,
+                                                         %$statProps,
                                                        });
 
       $attribute->submit();
@@ -253,7 +329,7 @@ sub valProps {
   if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
     $dataShape = 'ordinal';
   }
-  elsif($isDate || ($isNumber && $valueCount > 10)) {
+  elsif($isDate || ($isNumber && $valueCount > $VALUE_COUNT_CUTOFF)) {
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
@@ -321,7 +397,7 @@ and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
 
 
 sub loadAttributeValues {
-  my ($self, $studyId, $ontologyTerms, $maxAttrLength) = @_;
+  my ($self, $studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh) = @_;
 
   my $timestamp = int (gettimeofday * 1000);
   my $fifoName = "apidb_attributevalue_${timestamp}.dat";
@@ -331,8 +407,8 @@ sub loadAttributeValues {
   my $fifo = $self->makeFifo($fields, $fifoName, $maxAttrLength);
   my $annPropsByAttributeStableIdAndEntityTypeId = {};
   my $typeCountsByAttributeStableIdAndEntityTypeId = {};
-  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId);
-  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId);
+  $self->loadAttributesFromEntity($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh);
+  $self->loadAttributesFromIncomingProcess($studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh);
 
   $fifo->cleanup();
   unlink $fifoName;
@@ -340,7 +416,7 @@ sub loadAttributeValues {
 }
 
 sub loadAttributes {
-  my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $sql) = @_;
+  my ($self, $studyId, $fifo, $ontologyTerms, $annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $dateValsFh, $numericValsFh, $sql) = @_;
 
   my $dbh = $self->getQueryHandle();
 
@@ -369,6 +445,14 @@ sub loadAttributes {
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
         my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($cs, $value);
         $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} = $updatedCs;
+
+        if($dateValue) {
+          print $dateValsFh join("\t", $attributeStableId, $entityTypeId, $dateValue) . "\n";
+        }
+        elsif($numberValue) {
+          print $numericValsFh join("\t", $attributeStableId, $entityTypeId, $numberValue) . "\n";
+        }
+        else {}
 
         my @a = ($entityAttributesId,
                  $entityTypeId,
@@ -431,11 +515,10 @@ sub annPropsAndValues {
 }
 
 sub typedValueForAttribute {
-  my ($self, $counts, $value) = @_;
+  my ($self, $counts, $value, $dateValsFh, $numericValsFh) = @_;
 
   my ($stringValue, $numberValue, $dateValue); 
 
-  $counts->{_VALUES}->{$value}++;
 
   $counts->{_COUNT}++;
 
@@ -445,15 +528,27 @@ sub typedValueForAttribute {
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
+    
+    # $counts->{_MIN_NUMBER} = min($counts->{_MIN_NUMBER} || $numberValue, $numberValue);
+    # $counts->{_MAX_NUMBER} = max($counts->{_MAX_NUMBER} || $numberValue, $numberValue);
+    if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {
+      $counts->{_VALUES}->{$value}++;
+    }
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
     $counts->{_IS_DATE_COUNT}++;
+
+    # my $parsedDate = ParseDate($dateValue);
+    # $counts->{_MIN_DATE} = (sort { Date_Cmp($b, $a) } ($counts->{_MIN_DATE} || $parsedDate, $parsedDate))[-1];
+    # $counts->{_MAX_DATE} = (sort { Date_Cmp($a, $b) } ($counts->{_MAX_DATE} || $parsedDate, $parsedDate))[-1];
   }
   elsif($value =~ /^\d/) {
     $counts->{_IS_ORDINAL_COUNT}++;
+    $counts->{_VALUES}->{$value}++;
   }
   else {
+      $counts->{_VALUES}->{$value}++;
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
 #      $counts->{_IS_BOOLEAN_COUNT}++;

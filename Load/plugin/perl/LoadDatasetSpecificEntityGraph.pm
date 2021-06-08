@@ -260,7 +260,7 @@ sub createAttributeGraphTable {
   # and only adding atg entries which aren't already in
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
-  (SELECT * FROM apidb.attribute WHERE entity_type_id = $entityTypeId)
+  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id =  $entityTypeId)
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
@@ -316,7 +316,11 @@ sub createTallTable {
 
   $self->log("Creating TABLE:  $tableName");
 
-  my $sql = "CREATE TABLE $tableName as 
+  my $sql = "CREATE TABLE $tableName 
+(attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value
+  constraint attrval_${entityTypeId}_1_ix primary key (attribute_stable_id, ${entityTypeAbbrev}_stable_id))
+organization index 
+nologging as
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , av.attribute_stable_id
      , string_value
@@ -331,7 +335,9 @@ and av.entity_attributes_id = ea.entity_attributes_id
 
   $dbh->do($sql) or die $dbh->errstr;
 
-  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 }
