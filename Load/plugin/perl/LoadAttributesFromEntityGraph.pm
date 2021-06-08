@@ -284,6 +284,8 @@ sub loadAttributeTerms {
       my $valProps = valProps($typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId}, $attributeStableId);
 
       my $statProps = $statsForPlotsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$etId};
+      $statProps = {} unless($statProps);
+
 
       next SOURCE_ID unless $valProps;
 
