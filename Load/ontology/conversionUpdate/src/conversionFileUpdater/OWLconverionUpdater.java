@@ -47,10 +47,13 @@ public class OWLconverionUpdater {
 		
 		String messageFilename = bean.getMessageFilename();
 		
+		String fileDir = "ApiCommonData";
+		
 		ArrayList<String> message = new ArrayList<String>();
 		
 		// get replace column name and values
-		message.add("Replace file: \n" + inputFilename + "\n----------------\n\n");
+		if (inputFilename.contains(fileDir))	message.add("Replace file: \n  " + inputFilename.substring(inputFilename.indexOf(fileDir)) + "\n----------------\n\n");	
+		else									message.add("Replace file: \n  " + inputFilename + "\n----------------\n\n");
 		
 		ArrayList <String[]> replaceFile = readCSVFile(inputFilename);
 		
@@ -87,11 +90,14 @@ public class OWLconverionUpdater {
 		if (conversionFilenames.size() == 0) 
 			System.out.println("No conversion file under " + path);
 		
+		// walk through conversion file
 		for (int counter = 0; counter < conversionFilenames.size(); counter++) { 
 			
 			// read conversion file
 			String filename = conversionFilenames.get(counter);
-	        message.add("Conversion file: \n  " + filename + "\n\n"); 
+			
+			if (filename.contains(fileDir))	message.add("Conversion file: \n  " + filename.substring(filename.indexOf(fileDir)) + "\n"); 
+			else							message.add("Conversion file: \n  " + filename + "\n"); 
 	          
 			ArrayList <String[]> conversionFile = readCSVFile(filename);
 	          
@@ -107,11 +113,11 @@ public class OWLconverionUpdater {
   	  			if (headers[n].equalsIgnoreCase("IRI")) {
   	  				iriPos = n;
   	  				break;
-  	  			}
+  	  			} 
   	  		}
   	  		
   	  		if (iriPos < 0) {
-  	  			message.add("WARNING: The conversion file does not have IRI column, cannot update automatically");
+  	  			message.add("WARNING: The conversion file does not have IRI column, cannot update automatically\n----------------\n\n");
   	  		} 
   	  		else {	        
   	  			Hashtable<String, Integer> updateColumn = new Hashtable<String, Integer>();
@@ -154,21 +160,36 @@ public class OWLconverionUpdater {
 	          
   	  			// update the conversion file  
   	  			for(int l = 1; l < conversionFile.size(); l ++ ) {
+  	  				boolean rowUpdate = false;
+  	  				
   	  				String[] row = conversionFile.get(l);				
   	  				String iri = row[iriPos];
 				
   	  				if (replaceObjects.containsKey(iri)) {
-  	  					update = true;
-					
   	  					int rowNum = l + 1;
-  	  					message.add("  row " + rowNum + ": " + iri + "\n");
+  	  					
 
   	  					Hashtable<String,String> replaceObject = replaceObjects.get(iri);			
 					
   	  					for(String colName : updateColumn.keySet()) {	
   	  						if (replaceObject.get(colName).length() > 0) {						
   	  							int pos = updateColumn.get(colName).intValue();
-  	  							row[pos] = replaceObject.get(colName);
+  	  							String old_str = row[pos];
+  	  							String new_str = replaceObject.get(colName);
+  	  							
+  	  							if (! old_str.equals(new_str)) {  	  							
+  	  								row[pos] = replaceObject.get(colName);
+  	  								
+  	  								if (!rowUpdate)	{
+  	  									message.add("\n  row " + rowNum + ": " + iri);
+  	  									rowUpdate = true;
+  	  								}  	  								
+  	  								
+  	  								if (old_str.length() > 0) message.add("\n   - " + colName + ": '" + old_str + "' replaced by '"+ new_str + "'");
+  	  								else message.add("\n   - " + colName + ": add '" + new_str + "'");
+ 	  								
+  	  								update = true;
+  	  							}
 							//System.out.println("   " + colName + ", replace: " + conversionFile.get(l)[pos]);
 							//System.out.println("     with: " + replaceObject.get(colName));						
   	  						}	
@@ -180,7 +201,17 @@ public class OWLconverionUpdater {
   	  						String[] newVals = new String[newColumnHeaders.length];
 						
   	  						for (int k = 0; k < newColumnHeaders.length; k ++) {							
-  	  							newVals[k] = replaceObject.get(newColumnHeaders[k]); 
+  	  							newVals[k] = replaceObject.get(newColumnHeaders[k]);
+  	  							if (newVals[k].length() > 0) {   	  								
+  	  								if (!rowUpdate)	{
+  	  									message.add("\n  row " + rowNum + ": " + iri);
+  	  									rowUpdate = true;
+  	  								}
+
+  	  								message.add("\n   - " + newColumnHeaders[k] + ": add '" + newVals[k] + "'");
+  	  								
+  	  								update = true;;
+  	  							}  	  							
   	  						}
   	  						newColumn.add(newVals);
   	  					}
@@ -199,13 +230,14 @@ public class OWLconverionUpdater {
 	  		
   	  			if (update) {
   	  				String outFilename = filename.substring(0, filename.length()-4) + "_temp.csv";
-	  		
+  	  					  		
   	  				writeCSVfile(outFilename, conversionFile, newColumn);
 	  			
-  	  				message.add("write updated file to: \n  " + outFilename + "\n---------------\n\n"); 
+  	  				if (outFilename.contains(fileDir))	message.add("\n\nwrite updated file to: \n  " + outFilename.substring(outFilename.indexOf(fileDir)) + "\n---------------\n\n"); 
+  	  				else								message.add("\n\nwrite updated file to: \n  " + outFilename + "\n---------------\n\n"); 
 
   	  			} else {
-  	  				message.add("  - don't contain any term need to be updated\n----------------\n\n");
+  	  				message.add("  - not find any term need to be updated\n----------------\n\n");
   	  			}
   	  		} 
 		}
