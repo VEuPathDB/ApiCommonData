@@ -253,11 +253,13 @@ sub createAttributeGraphTable {
 
   $self->log("Creating TABLE:  $tableName");
 
+
   # apidb.attribute stable_id could be from sres.ontologyterm, or not
   # if yes, it could also be another term's parent
   # (but not a multifilter - term_type for attributes that have values is default)
   # hence this is only using atg for the parent-child relationship
   # and only adding atg entries which aren't already in
+
   my $sql = "CREATE TABLE $tableName as 
   WITH att AS
   (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id =  $entityTypeId)
@@ -265,29 +267,27 @@ sub createAttributeGraphTable {
   (SELECT atg.*
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
-    START WITH ontology_term_id IN (SELECT DISTINCT parent_ontology_term_id FROM att)
+    START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
-SELECT distinct att.stable_id as stable_id
-     , atg.stable_id as parent_stable_id
-     , att.provider_label
-     , att.display_name
-     , 'default' as term_type
-     , 1 as has_values
-     , att.data_type
-     , att.distinct_values_count
-     , att.is_multi_valued
-     , att.data_shape
-     , att.unit
-     , att.precision
-FROM atg, att
-where atg.ontology_term_id = att.parent_ontology_term_id
-UNION
+-- this bit gets the internal nodes
 SELECT distinct atg.stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
+     , atg.definition
+     , atg.ordinal_values
      , atg.term_type
+     , atg.display_order
+     , atg.display_range_min_override
+     , atg.display_range_max_override
+     , att.display_range_min
+     , att.display_range_max
+     , atg.bin_width_override as subset_bin_width
+     , case when atg.bin_width_override is not null then atg.bin_width_override else att.bin_width end as dataset_bin_width
+     , atg.is_hidden
+     , atg.is_temporal
+     , atg.is_featured
      , 0 as has_values
      , null as data_type
      , null as distinct_values_count
@@ -297,6 +297,34 @@ SELECT distinct atg.stable_id
      , null as precision
 FROM atg, att
 where atg.stable_id = att.stable_id (+) and att.stable_id is null
+UNION
+-- this bit gets the Leaf nodes which have ontologyterm id
+SELECT distinct att.stable_id as stable_id
+     , atg.parent_stable_id
+     , atg.provider_label
+     , atg.display_name
+     , atg.definition
+     , atg.ordinal_values
+     , atg.term_type term_type
+     , atg.display_order
+     , atg.display_range_min_override
+     , atg.display_range_max_override
+     , att.display_range_min
+     , att.display_range_max
+     , atg.bin_width_override as subset_bin_width
+     , case when atg.bin_width_override is not null then atg.bin_width_override else att.bin_width end as dataset_bin_width
+     , atg.is_hidden
+     , atg.is_temporal
+     , atg.is_featured
+     , 1 as has_values
+     , att.data_type
+     , att.distinct_values_count
+     , att.is_multi_valued
+     , att.data_shape
+     , att.unit
+     , att.precision
+FROM atg, att
+where atg.ontology_term_id = att.ontology_term_id
 ";
 
 
@@ -318,9 +346,6 @@ sub createTallTable {
 
   my $sql = <<CREATETABLE;
 CREATE TABLE $tableName 
-(attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value)
--- constraint attrval_${entityTypeId}_1_ix primary key (attribute_stable_id, ${entityTypeAbbrev}_stable_id))
--- organization index 
 nologging as
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , av.attribute_stable_id
@@ -335,6 +360,9 @@ CREATETABLE
   my $dbh = $self->getDbHandle();
 
   $dbh->do($sql) or die $dbh->errstr;
+
+
+  $dbh->do("CREATE INDEX attrval_${entityTypeId}_1_ix ON $tableName (attribute_stable_id, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_2_ix ON $tableName (attribute_stable_id, string_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_3_ix ON $tableName (attribute_stable_id, date_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
