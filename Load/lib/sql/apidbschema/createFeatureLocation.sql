@@ -47,8 +47,9 @@ ON apidb.FeatureLocation (na_sequence_id, feature_type, start_min, end_max, is_r
                           sequence_ontology_id, na_feature_id, parent_id)
 TABLESPACE INDX;
 
-CREATE INDEX apidb.featloc_revix1
-ON apidb.FeatureLocation (na_sequence_id, feature_location_id)
+CREATE INDEX apidb.featloc_ix4
+ON apidb.FeatureLocation (na_sequence_id, feature_type, end_max, start_min, is_reversed,
+                          sequence_ontology_id, na_feature_id, parent_id)
 TABLESPACE INDX;
 
 CREATE INDEX apidb.featloc_revix2

@@ -19,36 +19,32 @@ sub queryForOntologyTerms {
                   , o.source_id parent_source_id
                   , o.ontology_term_id parent_ontology_term_id
                   , nvl(os.ontology_synonym, s.name) as display_name
-                  , os.variable as provider_label
                   , os.is_preferred
-                  , os.definition
-                  , tt.term_type
+                  , os.definition                    --this is also in the annotation_properties json
+                  , json_value(os.annotation_properties, '\$.termType[0]') as term_type
+                  , json_value(os.annotation_properties, '\$.displayOrder[0]') as display_order
+                  , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min_override
+                  , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max_override
+                  , json_value(annotation_properties, '\$.defaultBinWidth[0]') as bin_width_override
+                  , case when lower(json_value(annotation_properties, '\$.hidden[0]')) = 'yes' then 1 else 0 end as is_hidden
+                  , case when lower(json_value(annotation_properties, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
+                  , case when lower(json_value(annotation_properties, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
+                  , json_query(os.annotation_properties, '\$.variable') as provider_label -- gives json array
+                  , os.permutation as ordinal_values --gives json array
 from sres.ontologyrelationship r
    , sres.ontologyterm s
    , sres.ontologyterm o
    , sres.ontologyterm p
    , sres.ontologysynonym os
-   , (select r.external_database_release_id, s.ontology_term_id, o.name as term_type
-from sres.ontologyrelationship r
-   , sres.ontologyterm s
-   , sres.ontologyterm o
-   , sres.ontologyterm p
-where r.subject_term_id = s.ontology_term_id
-and r.predicate_term_id = p.ontology_term_id
-and r.object_term_id = o.ontology_term_id
-and p.SOURCE_ID = 'EUPATH_0000271' -- termType
-) tt
 where r.subject_term_id = s.ontology_term_id
 and r.predicate_term_id = p.ontology_term_id
 and r.object_term_id = o.ontology_term_id
 and p.SOURCE_ID = 'subClassOf'
 and s.ontology_term_id = os.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
-and s.ontology_term_id = tt.ontology_term_id (+)
-and r.EXTERNAL_DATABASE_RELEASE_ID = tt.EXTERNAL_DATABASE_RELEASE_ID (+)    
 and r.external_database_release_id = ?
 union
-select ot.name, ot.source_id, ot.ontology_term_id, pt.name, pt.source_id, pt.ontology_term_id, ot.name, null, null, null, 'hidden'
+select ot.name, ot.source_id, ot.ontology_term_id, pt.name, pt.source_id, pt.ontology_term_id, ot.name, null, null, null, null, null, null, null, null, null, null, null, null
 from sres.ontologyterm ot, sres.ontologyterm pt
 where ot.source_id like 'GEOHASH%'
 and pt.source_id = 'Thing'
