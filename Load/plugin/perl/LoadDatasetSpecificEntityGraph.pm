@@ -316,10 +316,11 @@ sub createTallTable {
 
   $self->log("Creating TABLE:  $tableName");
 
-  my $sql = "CREATE TABLE $tableName 
-(attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value
-  constraint attrval_${entityTypeId}_1_ix primary key (attribute_stable_id, ${entityTypeAbbrev}_stable_id))
-organization index 
+  my $sql = <<CREATETABLE;
+CREATE TABLE $tableName 
+(attribute_stable_id, ${entityTypeAbbrev}_stable_id, number_value, string_value, date_value)
+-- constraint attrval_${entityTypeId}_1_ix primary key (attribute_stable_id, ${entityTypeAbbrev}_stable_id))
+-- organization index 
 nologging as
 SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , av.attribute_stable_id
@@ -329,7 +330,7 @@ SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
 FROM apidb.attributevalue av, apidb.entityattributes ea
 WHERE av.entity_type_id = $entityTypeId
 and av.entity_attributes_id = ea.entity_attributes_id
-";
+CREATETABLE
 
   my $dbh = $self->getDbHandle();
 
@@ -367,11 +368,21 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
 
       while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
 
-        $self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
+        # Some tables do not exist, get a list and drop them
+        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+        $self->log("Finding tables to drop with SQL: $sql");
+        my $sh3 = $dbh->prepare($sql);
+        $sh3->execute();
+        while(my ($table_name) = $sh3->fetchrow_array()){
+          $self->log("dropping table apidb.${table_name}");
+          $dbh->do("drop table apidb.${table_name}") or die $dbh->errstr;
+        }
 
-        $dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
-        $dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
-        $dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $self->getDbHandle()->errstr;
+       #$self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
+
+       #$dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or die $dbh->errstr;
+       #$dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->dbh->errstr;
+       #$dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $dbh->errstr;
       }
     }
     $sh->finish();
