@@ -146,8 +146,8 @@ sub run {
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
-    my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory );
-    my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory );
+    my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
+    my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh);
 
@@ -170,24 +170,27 @@ sub statsForPlots {
     $outputStatsFileName = tmpnam();
   }
 
-  my ($rCommandsFh, $rCommandsFileName) = tempfile( DIR => $tempDirectory );
+  my ($rCommandsFh, $rCommandsFileName) = tempfile( DIR => $tempDirectory, UNLINK => 0 );
 
   print $rCommandsFh $self->rCommandsForStats();
 
-  unless(system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName 2>/dev/null")) {
+
+  my $numberSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
+  if($numberSysResult) {
     $self->error("Error Running singularity for numericFile");
   }
-  unless(system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName 2>/dev/null")) {
+
+  my $dateSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
+  if($dateSysResult) {
     $self->error("Error Running singularity for datesFile");
   }
-
 
   my $rv = {};
   open(FILE, $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
   
   while(<FILE>) {
     chomp;
-    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split($_);
+    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split(/\s/, $_);
 
     $rv->{$attributeSourceId}->{$entityTypeId} =  {display_range_min => $min,
                                                    display_range_max => $max,
@@ -205,16 +208,25 @@ sub rCommandsForStats {
 fileName = args[1];
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
+if(is.character(t\$V3)) {
+  t\$V3 = as.Date(t\$V3);
+}
 u = unique(t[,1:2]);
 subsetFxn = function(x, output){
    v = subset(t, V1==x[1] & V2==x[2])\$V3
    data.min = min(v);
    data.max = max(v);
-   data.binWidth = plot.data::findBinWidth(v);
-   data.output = c(x, data.min, data.max, data.binWidth);
+   if(data.min != data.max) {
+     data.binWidth = plot.data::findBinWidth(v);
+   }
+   else {
+     data.binWidth = NULL;
+   }
+   data.output = c(x, as.character(data.min), as.character(data.max), data.binWidth);
    write(data.output, file=outputFileName, append=T, ncolumns=5)
 };
 apply(u, 1, subsetFxn);
+quit('no')
 ";
 
 }
@@ -604,7 +616,8 @@ from apidb.entityattributes va
    , apidb.entitytype vt
 where to_char(substr(va.atts, 1, 2)) != '{}'
 and vt.entity_type_id = va.entity_type_id
-and vt.study_id = ?");
+and vt.study_id = ?
+");
 }
 
 
