@@ -30,7 +30,7 @@ sub queryForOntologyTerms {
                   , case when lower(json_value(annotation_properties, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
                   , case when lower(json_value(annotation_properties, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
                   , json_query(os.annotation_properties, '\$.variable') as provider_label -- gives json array
-                  , os.permutation as ordinal_values --gives json array
+                  , os.ordinal_values as ordinal_values --gives json array
 from sres.ontologyrelationship r
    , sres.ontologyterm s
    , sres.ontologyterm o

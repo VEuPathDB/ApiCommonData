@@ -134,6 +134,8 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                  is_temporal => $ontologyTerm->{IS_TEMPORAL},
                                                                  is_featured => $ontologyTerm->{IS_FEATURED},
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
+                                                                 definition => $ontologyTerm->{DEFINITION},
+                                                                 ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
                                                                 });
     $attributeGraph->submit();
     $attributeGraphCount++;
