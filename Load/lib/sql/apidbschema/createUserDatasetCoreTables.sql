@@ -50,10 +50,14 @@ GRANT select ON ApiDBUserDatasets.UserDatasetAccessControl TO gus_r;
 
 ---------------------------------------------------------------------------------
 
-create table ApiDBUserDatasets.UserDatasetEvent (
-event_id number(20) not null,
-completed date,
-primary key (event_id)
+CREATE TABLE ApiDBUserDatasets.UserDatasetEvent
+(
+  event_id        NUMBER(20) NOT NULL PRIMARY KEY,
+  user_dataset_id NUMBER(20) NOT NULL,
+  handled_time    TIMESTAMP WITH TIME ZONE NOT NULL,
+  status          VARCHAR2(18) NOT NULL,
+  type_name       VARCHAR2(256) NOT NULL,
+  type_version    VARCHAR2(256) NOT NULL
 );
 GRANT insert, select, update, delete ON ApiDBUserDatasets.UserDatasetEvent TO gus_w;
 GRANT select ON ApiDBUserDatasets.UserDatasetEvent TO gus_r;
