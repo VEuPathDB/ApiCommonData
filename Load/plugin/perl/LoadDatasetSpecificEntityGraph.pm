@@ -284,7 +284,7 @@ SELECT distinct atg.stable_id
      , null as range_min
      , null as range_max
      , null as bin_width_override
-     , null as bin_width as bin_width_computed
+     , null as bin_width_computed
      , atg.is_temporal
      , atg.is_featured
      , atg.is_merge_key
