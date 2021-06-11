@@ -12,7 +12,7 @@ use ApiCommonData::Load::Sqlldr;
 
 use Scalar::Util qw(looks_like_number);
 
-#use List::Util qw(min max);
+use List::Util qw(min max);
 #use Date::Manip qw(ParseDate Date_Cmp);
 
 use File::Temp qw/ tempfile tempdir tmpnam /;
@@ -192,8 +192,8 @@ sub statsForPlots {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split(/\s/, $_);
 
-    $rv->{$attributeSourceId}->{$entityTypeId} =  {display_range_min => $min,
-                                                   display_range_max => $max,
+    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $min,
+                                                   range_max => $max,
                                                    bin_width => $binWidth 
     };
   }
@@ -310,8 +310,8 @@ sub loadAttributeTerms {
                                                          stable_id => $attributeStableId,
                                                          %$annProps,
                                                          %$valProps,
-                                                         display_range_min => $statProps->{display_range_min},
-                                                         display_range_max => $statProps->{display_range_max},
+                                                         range_min => $statProps->{range_min},
+                                                         range_max => $statProps->{range_max},
                                                          bin_width => $statProps->{bin_width}
                                                        });
 
@@ -333,8 +333,8 @@ sub valProps {
   my %cs = %{$typeCounts};
   return unless $cs{_COUNT};
 
-  my ($dataType, $dataShape, $precision);
-  $precision = 1; # THis is the default; probably never changed
+  my ($dataType, $dataShape);
+  my $precision = $cs{_PRECISION};
   my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == $cs{_IS_NUMBER_COUNT};
   my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == $cs{_IS_DATE_COUNT};
   my $valueCount = scalar(keys(%{$cs{_VALUES}}));
@@ -545,8 +545,9 @@ sub typedValueForAttribute {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
-    # $counts->{_MIN_NUMBER} = min($counts->{_MIN_NUMBER} || $numberValue, $numberValue);
-    # $counts->{_MAX_NUMBER} = max($counts->{_MAX_NUMBER} || $numberValue, $numberValue);
+    my $precision = length(($value =~ /\.(.*)/)[0]);
+    $counts->{_PRECISION} //= 0;
+    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);
 
     $counts->{_VALUES}->{$value} //= 0;
     if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {

@@ -23,12 +23,14 @@ sub queryForOntologyTerms {
                   , os.definition                    --this is also in the annotation_properties json
                   , json_value(os.annotation_properties, '\$.displayType[0]') as display_type
                   , json_value(os.annotation_properties, '\$.displayOrder[0]') as display_order
-                  , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min_override
-                  , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max_override
+                  , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min
+                  , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max
                   , json_value(annotation_properties, '\$.defaultBinWidth[0]') as bin_width_override
                 --  , case when lower(json_value(annotation_properties, '\$.hidden[0]')) = 'yes' then 1 else 0 end as is_hidden
                   , case when lower(json_value(annotation_properties, '\$.is_temporal[0]')) = 'yes' then 1 else 0 end as is_temporal
                   , case when lower(json_value(annotation_properties, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
+                  , case when lower(json_value(annotation_properties, '\$.repeated[0]')) = 'yes' then 1 else 0 end as is_repeated
+                  , case when lower(json_value(annotation_properties, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
                   , json_query(os.annotation_properties, '\$.variable') as provider_label -- gives json array
                   , os.ordinal_values as ordinal_values --gives json array
 from sres.ontologyrelationship r
