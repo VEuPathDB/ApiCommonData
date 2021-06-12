@@ -46,7 +46,7 @@ and s.ontology_term_id = os.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
 and r.external_database_release_id = ?
 union
-select ot.name, ot.source_id, ot.ontology_term_id, pt.name, pt.source_id, pt.ontology_term_id, ot.name, null, null, null, null, null, null, null, null, null, null, null
+select ot.name, ot.source_id, ot.ontology_term_id, pt.name, pt.source_id, pt.ontology_term_id, ot.name, null, null, null, null, null, null, null, null, null, null, null, null, null
 from sres.ontologyterm ot, sres.ontologyterm pt
 where ot.source_id like 'GEOHASH%'
 and pt.source_id = 'Thing'
