@@ -547,7 +547,7 @@ sub typedValueForAttribute {
     
     my $precision = length(($value =~ /\.(.*)/)[0]);
     $counts->{_PRECISION} //= 0;
-    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);
+    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision) if $counts->{_PRECISION};
 
     $counts->{_VALUES}->{$value} //= 0;
     if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {
