@@ -140,9 +140,10 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
       my @goIds = split(/\s?,\s?/, $goIds);
 
-      foreach(grep {defined } @goIds) {
-        $feature->add_tag_value("Ontology_term", $_);
-      }
+# exclude GO terms in GFF3, discussed with Brian, Omar, John, Mark, and Wei in slack
+#      foreach(grep {defined } @goIds) {
+#        $feature->add_tag_value("Ontology_term", $_);
+#      }
     }
 
     if($feature->primary_tag eq 'utr3prime') {

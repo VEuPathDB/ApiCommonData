@@ -256,7 +256,7 @@ sub createAttributeGraphTable {
 
   # apidb.attribute stable_id could be from sres.ontologyterm, or not
   # if yes, it could also be another term's parent
-  # (but not a multifilter - term_type for attributes that have values is default)
+  # (but not a multifilter - term_type for attributes that have values is default) -- TODO term_type and is_hidden are DEPRECATED, rewrite this comment
   # hence this is only using atg for the parent-child relationship
   # and only adding atg entries which aren't already in
 
@@ -277,17 +277,18 @@ SELECT distinct atg.stable_id
      , atg.display_name
      , atg.definition
      , atg.ordinal_values
-     , atg.term_type
+     , atg.display_type
      , atg.display_order
-     , atg.display_range_min_override
-     , atg.display_range_max_override
-     , att.display_range_min
-     , att.display_range_max
-     , atg.bin_width_override as subset_bin_width
-     , case when atg.bin_width_override is not null then atg.bin_width_override else att.bin_width end as dataset_bin_width
-     , atg.is_hidden
+     , atg.display_range_min
+     , atg.display_range_max
+     , null as range_min
+     , null as range_max
+     , null as bin_width_override
+     , null as bin_width_computed
      , atg.is_temporal
      , atg.is_featured
+     , atg.is_merge_key
+     , atg.is_repeated
      , 0 as has_values
      , null as data_type
      , null as distinct_values_count
@@ -305,17 +306,18 @@ SELECT distinct att.stable_id as stable_id
      , atg.display_name
      , atg.definition
      , atg.ordinal_values
-     , atg.term_type term_type
+     , atg.display_type display_type
      , atg.display_order
-     , atg.display_range_min_override
-     , atg.display_range_max_override
-     , att.display_range_min
-     , att.display_range_max
-     , atg.bin_width_override as subset_bin_width
-     , case when atg.bin_width_override is not null then atg.bin_width_override else att.bin_width end as dataset_bin_width
-     , atg.is_hidden
+     , atg.display_range_min
+     , atg.display_range_max
+     , att.range_min
+     , att.range_max
+     , atg.bin_width_override
+     , att.bin_width as bin_width_computed
      , atg.is_temporal
      , atg.is_featured
+     , atg.is_merge_key
+     , atg.is_repeated
      , 1 as has_values
      , att.data_type
      , att.distinct_values_count
