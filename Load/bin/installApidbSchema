@@ -170,11 +170,25 @@ if ($create) {
      print STDOUT "\n==============================================================\n";
      print STDOUT "$sql\n";     
      print STDOUT "==============================================================\n";
-    &runSql($login, $password, $db, $sql);
+     
+     my @sqlplusParamValues;
+     if($sql eq 'createEntityGraphTables.sql') {
+       $sqlplusParamValues[0] = "EDA";
+       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+
+       $sqlplusParamValues[0] = "EDA_UD";
+       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+     }
+
+     else {
+       &runSql($login, $password, $db, $sql, @sqlplusParamValues);
+     }
+
+
   }
 
 } elsif ($dropApiDB) {
-  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB'");
+  &dropSchemaSetTables($login, $password, $db, "'APIDB','APIDBTUNING','APIDBUSERDATASETS','CHEBI','HMDB', 'EDA', 'EDA_UD'");
 
 } elsif ($dropGUS) {
   &dropSchemaSet($login, $password, $db,
@@ -185,7 +199,7 @@ if ($create) {
 print STDERR "\nDone.\n";
 
 sub runSql {
-  my ($login, $password, $db, $file) = @_;
+  my ($login, $password, $db, $file, @sqlplusParamValues) = @_;
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
@@ -203,7 +217,9 @@ sub runSql {
 
   $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd, $tmpFile);
-  $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
+
+  my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
+  $cmd = "sqlplus $login\@$db/$password \@$tmpFile $sqlplusParamValuesString";
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $tmpFile\n";
   print STDOUT "==============================================================\n";
