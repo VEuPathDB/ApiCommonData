@@ -218,7 +218,7 @@ sub runSql {
   $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd, $tmpFile);
 
-  my $sqlplusParamValuesString = join(" ", @sqlplusParamValues)
+  my $sqlplusParamValuesString = join(" ", @sqlplusParamValues);
   $cmd = "sqlplus $login\@$db/$password \@$tmpFile $sqlplusParamValuesString";
   print STDOUT "\n==============================================================\n";
   print STDOUT "Running $tmpFile\n";
