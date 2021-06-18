@@ -355,6 +355,12 @@ sub valProps {
     $dataShape = 'categorical'; 
   }
 
+  my $orderedValues;
+  if($dataShape ne 'continuous') {
+    my @values = sort keys(%{$cs{_VALUES}});
+    $orderedValues = encode_json(\@values);
+  }
+
   # OBI term here is for longitude
   if($attributeStableId eq 'OBI_0001621') {
     $dataType = 'longitude'
@@ -377,6 +383,7 @@ sub valProps {
     is_multi_valued => $isMultiValued ? 1 : 0,
     data_shape => $dataShape,
     precision => $precision,
+    ordered_values => $orderedValues,
   };
 }
 
@@ -535,24 +542,20 @@ sub typedValueForAttribute {
 
   my ($stringValue, $numberValue, $dateValue); 
 
-
   $counts->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
+  $counts->{_VALUES}->{$value}++;
+
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
-    my $precision = length(($value =~ /\.(.*)/)[0]);
+    my $precision = length(($value =~ /\.(.*)/)[0]) || 0;
     $counts->{_PRECISION} //= 0;
     $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision) if $counts->{_PRECISION};
-
-    $counts->{_VALUES}->{$value} //= 0;
-    if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {
-      $counts->{_VALUES}->{$value}++;
-    }
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
@@ -564,10 +567,8 @@ sub typedValueForAttribute {
   }
   elsif($value =~ /^\d/) {
     $counts->{_IS_ORDINAL_COUNT}++;
-    $counts->{_VALUES}->{$value}++;
   }
   else {
-      $counts->{_VALUES}->{$value}++;
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
 #      $counts->{_IS_BOOLEAN_COUNT}++;

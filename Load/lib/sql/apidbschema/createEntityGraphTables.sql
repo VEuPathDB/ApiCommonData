@@ -480,6 +480,7 @@ CREATE TABLE apidb.Attribute (
   unit                          varchar2(30),
   unit_ontology_term_id         NUMBER(10),
   precision                     integer,
+  ordered_values                varchar2(1500),    
   range_min                     varchar2(16),
   range_max                     varchar2(16),
   bin_width                    varchar2(16),
@@ -499,7 +500,8 @@ CREATE TABLE apidb.Attribute (
   FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
-  PRIMARY KEY (attribute_id)
+  PRIMARY KEY (attribute_id),
+  CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Attribute TO gus_w;
@@ -566,7 +568,8 @@ CREATE TABLE apidb.AttributeGraph (
   FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES apidb.study,
-  PRIMARY KEY (attribute_graph_id)
+  PRIMARY KEY (attribute_graph_id),
+  CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json)   
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AttributeGraph TO gus_w;
