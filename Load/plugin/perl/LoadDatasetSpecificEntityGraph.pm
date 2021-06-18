@@ -276,7 +276,7 @@ SELECT distinct atg.stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , atg.ordinal_values as ordered_values
+     , atg.ordinal_values as vocabulary
      , atg.display_type
      , atg.display_order
      , atg.display_range_min
@@ -305,7 +305,7 @@ SELECT distinct att.stable_id as stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     , nvl(atg.ordinal_values, att.ordered_values) as ordered_values
+     , nvl(atg.ordinal_values, att.ordered_values) as vocabulary
      , atg.display_type display_type
      , atg.display_order
      , atg.display_range_min
