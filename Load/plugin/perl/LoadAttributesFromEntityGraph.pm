@@ -31,6 +31,8 @@ my $VALUE_COUNT_CUTOFF = 10;
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
+my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
+
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
@@ -192,9 +194,9 @@ sub statsForPlots {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split(/\s/, $_);
 
-    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $min,
-                                                   range_max => $max,
-                                                   bin_width => $binWidth 
+    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => substr($min, 0, $RANGE_FIELD_WIDTH),
+                                                   range_max => substr($max, 0, $RANGE_FIELD_WIDTH),
+                                                   bin_width => substr($binWidth, 0, $RANGE_FIELD_WIDTH) 
     };
   }
   close FILE;
