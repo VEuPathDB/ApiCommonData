@@ -15,7 +15,7 @@ use GUS::Supported::GusConfig;
 
 sub getStrandness        { $_[0]->{strandness} }
 sub getPower        { $_[0]->{softThresholdPower} }
-sub getOrganism        { $_[0]->{organismAbbre} }
+sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
 sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
