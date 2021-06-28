@@ -12,7 +12,7 @@ use ApiCommonData::Load::Sqlldr;
 
 use Scalar::Util qw(looks_like_number);
 
-#use List::Util qw(min max);
+use List::Util qw(min max);
 #use Date::Manip qw(ParseDate Date_Cmp);
 
 use File::Temp qw/ tempfile tempdir tmpnam /;
@@ -30,6 +30,8 @@ my $VALUE_COUNT_CUTOFF = 10;
 
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
+
+my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
@@ -192,9 +194,9 @@ sub statsForPlots {
     chomp;
     my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split(/\s/, $_);
 
-    $rv->{$attributeSourceId}->{$entityTypeId} =  {display_range_min => $min,
-                                                   display_range_max => $max,
-                                                   bin_width => $binWidth 
+    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => substr($min, 0, $RANGE_FIELD_WIDTH),
+                                                   range_max => substr($max, 0, $RANGE_FIELD_WIDTH),
+                                                   bin_width => substr($binWidth, 0, $RANGE_FIELD_WIDTH) 
     };
   }
   close FILE;
@@ -310,8 +312,8 @@ sub loadAttributeTerms {
                                                          stable_id => $attributeStableId,
                                                          %$annProps,
                                                          %$valProps,
-                                                         display_range_min => $statProps->{display_range_min},
-                                                         display_range_max => $statProps->{display_range_max},
+                                                         range_min => $statProps->{range_min},
+                                                         range_max => $statProps->{range_max},
                                                          bin_width => $statProps->{bin_width}
                                                        });
 
@@ -333,8 +335,8 @@ sub valProps {
   my %cs = %{$typeCounts};
   return unless $cs{_COUNT};
 
-  my ($dataType, $dataShape, $precision);
-  $precision = 1; # THis is the default; probably never changed
+  my ($dataType, $dataShape);
+  my $precision = $cs{_PRECISION};
   my $isNumber = $cs{_IS_NUMBER_COUNT} && $cs{_COUNT} == $cs{_IS_NUMBER_COUNT};
   my $isDate = $cs{_IS_DATE_COUNT} && $cs{_COUNT} == $cs{_IS_DATE_COUNT};
   my $valueCount = scalar(keys(%{$cs{_VALUES}}));
@@ -353,6 +355,12 @@ sub valProps {
   }
   else {
     $dataShape = 'categorical'; 
+  }
+
+  my $orderedValues;
+  if($dataShape ne 'continuous') {
+    my @values = sort keys(%{$cs{_VALUES}});
+    $orderedValues = encode_json(\@values);
   }
 
   # OBI term here is for longitude
@@ -377,6 +385,7 @@ sub valProps {
     is_multi_valued => $isMultiValued ? 1 : 0,
     data_shape => $dataShape,
     precision => $precision,
+    ordered_values => $orderedValues,
   };
 }
 
@@ -535,23 +544,20 @@ sub typedValueForAttribute {
 
   my ($stringValue, $numberValue, $dateValue); 
 
-
   $counts->{_COUNT}++;
 
   my $valueNoCommas = $value;
   $valueNoCommas =~ tr/,//d;
 
+  $counts->{_VALUES}->{$value}++;
+
   if(looks_like_number($valueNoCommas)) {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
-    # $counts->{_MIN_NUMBER} = min($counts->{_MIN_NUMBER} || $numberValue, $numberValue);
-    # $counts->{_MAX_NUMBER} = max($counts->{_MAX_NUMBER} || $numberValue, $numberValue);
-
-    $counts->{_VALUES}->{$value} //= 0;
-    if($counts->{_VALUES}->{$value} <= $VALUE_COUNT_CUTOFF) {
-      $counts->{_VALUES}->{$value}++;
-    }
+    my $precision = length(($value =~ /\.(.*)/)[0]) || 0;
+    $counts->{_PRECISION} //= 0;
+    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision) if $counts->{_PRECISION};
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
@@ -563,10 +569,8 @@ sub typedValueForAttribute {
   }
   elsif($value =~ /^\d/) {
     $counts->{_IS_ORDINAL_COUNT}++;
-    $counts->{_VALUES}->{$value}++;
   }
   else {
-      $counts->{_VALUES}->{$value}++;
 #    my $lcValue = lc $value;
 #    if($lcValue eq 'yes' || $lcValue eq 'no' || $lcValue eq 'true' || $lcValue eq 'false') {
 #      $counts->{_IS_BOOLEAN_COUNT}++;

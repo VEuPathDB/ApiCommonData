@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionInfo>2021-05-24</owl:versionInfo>
+        <owl:versionInfo>2021-06-24</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -429,7 +429,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000584 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000584">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Formula or breast milk</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_2</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_3</obo:EUPATH_0000755>
@@ -443,7 +443,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000585 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000585">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diet_2_month</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">For each month, what was the main source of nutrition for the child?</obo:IAO_0000115>
@@ -1069,6 +1069,17 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000732 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000732">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">weight_kg</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Weight (kg)</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000733 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000733">
@@ -1328,8 +1339,9 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009022 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009022">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight_to_use</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">birth_weight</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Host weight (g)</rdfs:label>
     </owl:Class>
@@ -1534,7 +1546,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009040 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009040">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">milk_first_three_days</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Milk feeding during the first three days of life: mother&apos;s breast milk, formula or something else (e.g. combination of beast milk and formula, or not reported)</obo:IAO_0000115>
@@ -3720,6 +3732,50 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009242 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009242">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">weight %</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Weight (%)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009243 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009243">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">length %</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Recumbent length (%)</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009244 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009244">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">table food</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Table food</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009245 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009245">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">fecal fat %</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Fecal fat (%)</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010016 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010016">
@@ -3799,6 +3855,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011880">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">current or prior antibiotics</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic administration</rdfs:label>
     </owl:Class>
@@ -3825,6 +3882,17 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">waz_last</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight-for-height z-score</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011918 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011918">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">length</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Recumbent length (cm)</rdfs:label>
     </owl:Class>
     
 
@@ -3860,12 +3928,34 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0031068 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0031068">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">breastmilk</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Breast milk</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0036493 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0036493">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maternal clinical history</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FOODON_03303130 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FOODON_03303130">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011732"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">formula</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Infant formula</rdfs:label>
     </owl:Class>
     
 
@@ -4384,6 +4474,17 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Burkholderia cenocepacia</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <rdfs:label xml:lang="en">Burkholderia cenocepacia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCIT_C105971 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C105971">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">calprotectin</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Calprotectin</rdfs:label>
     </owl:Class>
     
 

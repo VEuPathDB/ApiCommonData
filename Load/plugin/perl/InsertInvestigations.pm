@@ -967,6 +967,7 @@ where ot.source_id = ?
 
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
       my $accessionOrName = basename $ota;
+      next if $accessionOrName =~ /^ncbitaxon/i;
       $shOntologyTerms->execute($accessionOrName);
       my $count=0;
       my ($ontologyTermId, $ontologyTermName);

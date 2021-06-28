@@ -734,7 +734,7 @@ sub undoTables {
     'ApiDB.EntityAttributes',
     'ApiDB.AttributeUnit',
     'ApiDB.ProcessTypeComponent',
-    'ApiDB.ProcessType',
+    ## 'ApiDB.ProcessType',
     'ApiDB.EntityType',
     'ApiDB.Study',
      );

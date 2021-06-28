@@ -15,27 +15,18 @@ use GUS::Supported::GusConfig;
 
 sub getStrandness        { $_[0]->{strandness} }
 sub getPower        { $_[0]->{softThresholdPower} }
-sub getOrganism        { $_[0]->{organismAbbre} }
+sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
 sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
 
-#my $PROTOCOL_NAME = 'WGCNA';
 
 #-------------------------------------------------------------------------------
 sub new {
   my ($class, $args) = @_; 
-
-  my $mainDirectory = $args->{mainDirectory};
-  my $technologyType = $args->{technologyType};
-  my $inputfile = $mainDirectory. "/" . $args->{inputFile};
-  my $strandness = $args->{strandness};
-  my $power = $args->{softThresholdPower};
-  my $organism = $args->{organismAbbre};
-
-  $args->{sourceIdType} = "gene"; ##### source_id type should be gene or module??????????
+  $args->{sourceIdType} = "gene";
   my $self = $class->SUPER::new($args) ;          
   
   return $self;
@@ -81,10 +72,10 @@ sub munge {
 	
 	my %inputs;
 	while (my $line = <IN>){
+	    $line =~ s/\n//g;
 	    if ($. == 1){
 		my @all = split("\t",$line);
 		foreach(@all[1 .. $#all]){
-		    #@all = grep {s/^\s+|\s+$//g; $_} @all;
                     $inputs{$_} = 1;
                 }
 	    }
@@ -112,6 +103,7 @@ sub munge {
 	}
 	close IN;
 	close OUT;
+	
         #-------------- run IterativeWGCNA docker image -----#
 	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
 	my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
@@ -178,7 +170,10 @@ sub munge {
 	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 	    );
 	$egenes ->setTechnologyType("RNASeq");
+	$egenes->setProtocolName("WGCNAME");
+
 	$egenes ->munge();
+
     }
 
 
