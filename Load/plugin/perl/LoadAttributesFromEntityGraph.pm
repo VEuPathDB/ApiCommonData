@@ -208,6 +208,9 @@ sub statsForPlots {
 sub rCommandsForStats {
   return "args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
+if( file.info(fileName)\$size == 0 ){
+  quit('no')
+}
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 if(is.character(t\$V3)) {
