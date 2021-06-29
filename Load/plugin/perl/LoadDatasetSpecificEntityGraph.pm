@@ -268,7 +268,7 @@ sub createAttributeGraphTable {
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
+    CONNECT BY prior parent_stable_id = stable_id AND parent_stable_id != 'Thing'
   )
 -- this bit gets the internal nodes
 SELECT distinct atg.stable_id
@@ -326,7 +326,7 @@ SELECT distinct att.stable_id as stable_id
      , att.unit
      , att.precision
 FROM atg, att
-where atg.ontology_term_id = att.ontology_term_id
+where atg.stable_id = att.stable_id
 ";
 
 

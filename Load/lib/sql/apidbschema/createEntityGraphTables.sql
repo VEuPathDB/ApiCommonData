@@ -538,7 +538,7 @@ WHERE 'attribute' NOT IN (SELECT lower(name) FROM core.TableInfo
 CREATE TABLE &1.AttributeGraph (
   attribute_graph_id                  NUMBER(12) NOT NULL,
   study_id            NUMBER(12) NOT NULL, 
-  ontology_term_id         NUMBER(10) NOT NULL,
+  ontology_term_id         NUMBER(10),
   stable_id                varchar2(255) NOT NULL,
   parent_stable_id              varchar2(255) NOT NULL,
   parent_ontology_term_id       NUMBER(10) NOT NULL,
