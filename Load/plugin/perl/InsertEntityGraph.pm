@@ -436,6 +436,8 @@ sub loadNodes {
 
     }
 
+    $self->addGeohash($charsForLoader);
+
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts);
 
@@ -454,6 +456,69 @@ sub loadNodes {
 
   $self->getDb()->manageTransaction(0, 'commit');
 }
+
+sub addGeohash {
+  my ($self, $hash) = @_;
+
+  my $geohashLength = 7;
+
+  my $latitudeSourceId = "OBI_0001620";
+  my $longitudeSourceId = "OBI_0001621";
+
+  return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
+
+  my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}, $hash->{$longitudeSourceId}, $geohashLength);
+
+  my @geohashSourceIds = ('EUPATH_0043203', # GEOHASH 1
+                          'EUPATH_0043204', # GEOHASH 2
+                          'EUPATH_0043205', # GEOHASH 3
+                          'EUPATH_0043206', # GEOHASH 4
+                          'EUPATH_0043207', # GEOHASH 5
+                          'EUPATH_0043208', # GEOHASH 6
+                          'EUPATH_0043209', # GEOHASH 7
+      );
+
+  for my $n (1 .. $geohashLength) {
+    my $subvalue = substr($geohash, 0, $n);         
+    my $geohashSourceId = $geohashSourceIds[$n - 1];
+    $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
+    $hash->{$geohashSourceId} = [$subvalue];
+  }            
+}
+
+
+sub encodeGeohash {
+  my ($self, $lat, $lng, $bits) = @_;
+  my $minLat = -90;
+  my $maxLat = 90;
+  my $minLng = -180;
+  my $maxLng = 180;
+  my $result = 0;
+  for (my $i = 0; $i < $bits; ++$i){
+    if ($i % 2 == 0) {                 # even bit: bisect longitude
+      my $midpoint = ($minLng + $maxLng) / 2;
+      if ($lng < $midpoint) {
+        $result <<= 1;                 # push a zero bit
+        $maxLng = $midpoint;            # shrink range downwards
+      } else {
+        $result = $result << 1 | 1;     # push a one bit
+        $minLng = $midpoint;            # shrink range upwards
+      }
+    } else {                          # odd bit: bisect latitude
+      my $midpoint = ($minLat + $maxLat) / 2;
+      if ($lat < $midpoint) {
+        $result <<= 1;                 # push a zero bit
+        $maxLat = $midpoint;            # shrink range downwards
+      } else {
+        $result = $result << 1 | 1;     # push a one bit
+        $minLat = $midpoint;            # shrink range upwards
+      }
+    }
+  }
+  return $result;
+}
+
+
 
 sub getOntologyTermGusObj {
     my ($self, $ontologyTermToIdentifiers, $ontologyTerm, $useQualifier) = @_;
