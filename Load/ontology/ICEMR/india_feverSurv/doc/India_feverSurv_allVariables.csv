@@ -1,0 +1,366 @@
+overallOrder,variable,dataFile,keepDiscard,notesForDL,codebookDescription,codebookValues,timeVarying,duplicated,dateTime,flag,multifilter,variableType,category,IRI,parentIRI,definition,label
+1,sid,CRF_DATA,keep,,,text,,,,,,0,participant,http://purl.obolibrary.org/obo/EUPATH_0000095,http://purl.obolibrary.org/obo/EUPATH_0000096,,Participant ID
+2,redcap_event_name,CRF_DATA,keep,,,day_7_arm_1 end_of_study_arm_1   enrollment_arm_1,,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021001,http://purl.obolibrary.org/obo/EUPATH_0000310,,Visit #
+3,date,CRF_DATA,keep,,,date,,"date_fu, date_eos",yes,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0004991,http://purl.obolibrary.org/obo/EUPATH_0000310,,Observation date
+4,time,CRF_DATA,keep,,,time,,,yes,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0023052,http://purl.obolibrary.org/obo/EUPATH_0000310,,Observation time
+5,name,CRF_DATA,discard,,,,,,,,,,,,,,
+6,rsp_yn,CRF_DATA,discard,,,,,,,,,1,,,,,
+7,igh_id,CRF_DATA,discard,,,,,,,,,,,,,,
+8,phone,CRF_DATA,discard,,,,,,,,,,,,,,
+9,age,CRF_DATA,keep,,,numeric,,,,,,0,participant,,,,
+10,sex_rad,CRF_DATA,keep,,,1 female 2 male,,,,,,1,participant,http://purl.obolibrary.org/obo/PATO_0000047,http://purl.obolibrary.org/obo/EUPATH_0010981,,Sex
+11,education_rad,CRF_DATA,keep,,,"1 None
+2 Primary school
+3 Secondary school
+4 University
+5 Diploma
+6 Graduate or higher
+88888 missing",,,,,,1,participant,http://purl.obolibrary.org/obo/EUPATH_0000345,http://purl.obolibrary.org/obo/EUPATH_0010981,The highest level of education completed,Education level
+12,occupation_rad,CRF_DATA,keep,,,"1 Daily wage/labor
+2 Service (=salaried)
+3 Trade (=self-employed)
+4 Housewife
+5 Student
+6 None
+88888 missing",,,,,,1,participant,http://purl.obolibrary.org/obo/EUPATH_0000359,http://purl.obolibrary.org/obo/EUPATH_0000342,,Occupation
+13,travel_2wk_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000450,http://purl.obolibrary.org/obo/EUPATH_0000340,,Traveled in last 2 weeks
+14,travel_2wk_country,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000445,http://purl.obolibrary.org/obo/EUPATH_0000340,,Country visited
+15,travel_2wk_state,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000447,http://purl.obolibrary.org/obo/EUPATH_0000340,,State visited
+16,travel_2wk_district,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000446,http://purl.obolibrary.org/obo/EUPATH_0000340,,District visited
+17,travel_2wk_taluk,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000448,http://purl.obolibrary.org/obo/EUPATH_0000340,,Taluk visited
+18,travel_2wk_village,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000449,http://purl.obolibrary.org/obo/EUPATH_0000340,,Village visited
+19,pastyear_num_dx,CRF_DATA,keep,,,numeric,,,,,,0,participant,http://purl.obolibrary.org/obo/EUPATH_0000426,http://purl.obolibrary.org/obo/OGMS_0000015,,Malaria diagnoses past year (count)
+20,pastyear_num_mo,CRF_DATA,keep,,," 01 DAYS BACK      02 WEEKS  03 DAYS BACK            04             1    1 DAY BACK 
+          898             1             1             1             1            10             1 
+      1 MONTH   1 WEEK BACK            10  10 DAYS BACK            11            12       13 DAYS 
+            1             5             2             1             1             3             1 
+ 15 DAYS BACK             2   2 DAYS BACK 2 MONTHS BACK   2 WEEK BACK       20 DAYS             3 
+            3             4             2             2             1             1             1 
+       3 DAYS   3 DAYS BACK             4            4     4 DAYS AGO   4 DAYS BACK             5 
+            1             2             1             1             1             1             4 
+  5 DAYS BACK             6            6    6 DAYS BACK             7   7 DAYS BACK             8 
+            1             1             1             1             1             1             3 
+CANT REMEMBER 
+            1 ",,,,,,1,participant,http://purl.obolibrary.org/obo/EUPATH_0000427,http://purl.obolibrary.org/obo/OGMS_0000015,,Last malaria diagnosis (days)
+21,pastyear_dx_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021032,http://purl.obolibrary.org/obo/EUPATH_0000425,,Plasmodium falciparum
+22,pastyear_dx_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021033,http://purl.obolibrary.org/obo/EUPATH_0000425,,Plasmodium vivax
+23,pastyear_dx_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021034,http://purl.obolibrary.org/obo/EUPATH_0000425,,Plasmodium malariae
+24,pastyear_dx_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021035,http://purl.obolibrary.org/obo/EUPATH_0000425,,Can't remember
+25,pastyear_dx_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,participant,,,,Missing
+26,pastyear_treat_rad,CRF_DATA,keep,,,"1 Yes
+2 No
+3 Can't remember
+88888 missing",,,,,,1,participant,http://purl.obolibrary.org/obo/EUPATH_0000428,http://purl.obolibrary.org/obo/EUPATH_0000427,Whether antimalarials were used for the most recent malaria diagnosis within the last year. ,Treated with antimalarials
+27,pastyear_treat_date,CRF_DATA,keep,,,date,,,yes,,,0,participant,http://purl.obolibrary.org/obo/EUPATH_0000429,http://purl.obolibrary.org/obo/EUPATH_0000427,Date of most recent treatment with antimalarials within the last year. ,Antimalarial treatment date
+28,pastyear_treat_by_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021044,http://purl.obolibrary.org/obo/EUPATH_0000431,,Clinic/hospital
+29,pastyear_treat_by_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021045,http://purl.obolibrary.org/obo/EUPATH_0000431,,Private doctor
+30,pastyear_treat_by_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021046,http://purl.obolibrary.org/obo/EUPATH_0000431,,Self-treated
+31,pastyear_treat_by_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021047,http://purl.obolibrary.org/obo/EUPATH_0000431,,Can't remember
+32,pastyear_treat_by_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,participant,,,,Missing
+33,pastyear_treat_drugs_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021036,http://purl.obolibrary.org/obo/EUPATH_0000430,,Artesunate
+34,pastyear_treat_drugs_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021039,http://purl.obolibrary.org/obo/EUPATH_0000430,,Artesunate/pyrimethamine/sulphadoxine
+35,pastyear_treat_drugs_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/CHEBI_3638,http://purl.obolibrary.org/obo/EUPATH_0000430,,Chloroquine
+36,pastyear_treat_drugs_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021040,http://purl.obolibrary.org/obo/EUPATH_0000430,,Chloroquine/primaquine
+37,pastyear_treat_drugs_chk___5,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/CHEBI_63609,http://purl.obolibrary.org/obo/EUPATH_0000430,,Mefloquine
+38,pastyear_treat_drugs_chk___6,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/CHEBI_8405,http://purl.obolibrary.org/obo/EUPATH_0000430,,Primaquine
+39,pastyear_treat_drugs_chk___7,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021041,http://purl.obolibrary.org/obo/EUPATH_0000430,,Pyrimethamine/sulphadoxine
+40,pastyear_treat_drugs_chk___8,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021042,http://purl.obolibrary.org/obo/EUPATH_0000430,,Quinine/quinidine
+41,pastyear_treat_drugs_chk___9,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021043,http://purl.obolibrary.org/obo/EUPATH_0000430,,Tetracycline/doxycycline
+42,pastyear_treat_drugs_chk___10,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021037,http://purl.obolibrary.org/obo/EUPATH_0000430,,Other
+43,pastyear_treat_drugs_chk___11,CRF_DATA,keep,,,binary,,,,,value,0,participant,http://purl.obolibrary.org/obo/EUPATH_0021038,http://purl.obolibrary.org/obo/EUPATH_0000430,,Can't remember
+44,pastyear_treat_drugs_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,participant,,,,Missing
+45,temperature,CRF_DATA,keep,,,numeric,,temperature_fu,,will need to convert to C,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000110,http://purl.obolibrary.org/obo/OGMS_0000083,,Temperature (C)
+46,weight,CRF_DATA,keep,,,numeric,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000732,http://purl.obolibrary.org/obo/EUPATH_0000649,,Weight (kg)
+47,height,CRF_DATA,keep,,,numeric,,,,,,0,observation,http://purl.obolibrary.org/obo/IAO_0000408,http://purl.obolibrary.org/obo/EUPATH_0000649,,Height (cm)
+48,hemocue,CRF_DATA,keep,,,numeric,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000047,http://purl.obolibrary.org/obo/EUPATH_0011795,,Hemoglobin (g/dL)
+49,bp,CRF_DATA,keep,,,numeric,,,,"will need to split into 2 variables, Systolic and Diastolic",,0,,,,,
+50,existing_illness_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000412,http://purl.obolibrary.org/obo/EUPATH_0021098,,Existing illness
+51,existing_illness_list,CRF_DATA,keep,,,text,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000411,http://purl.obolibrary.org/obo/EUPATH_0021098,,Type of existing illness
+52,rdt_falc_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021053,http://purl.obolibrary.org/obo/EUPATH_0000437,,Plasmodium falciparum
+53,rdt_falc_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021054,http://purl.obolibrary.org/obo/EUPATH_0000437,,Plasmodium vivax
+54,rdt_falc_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021055,http://purl.obolibrary.org/obo/EUPATH_0000437,,Negative
+55,rdt_falc_chk___4,CRF_DATA,keep,,,binary,,,,will need to switch value mapping so 1 = No and 0 = Yes,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021056,http://purl.obolibrary.org/obo/EUPATH_0011800,,FalciVax RDT performed
+56,rdt_falc_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,sample,,,,Missing
+57,illnow_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000417,http://purl.obolibrary.org/obo/EUPATH_0000738,Ill at time of visit,Ill now
+58,fever_2wk_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021096,http://purl.obolibrary.org/obo/EUPATH_0021098,,Fever in last 2 weeks
+59,fever_2wk_where_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/EUPATH_0021023,http://purl.obolibrary.org/obo/EUPATH_0000413,,Clinic
+60,fever_2wk_where_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/EUPATH_0021024,http://purl.obolibrary.org/obo/EUPATH_0000413,,Private practice
+61,fever_2wk_where_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/EUPATH_0021025,http://purl.obolibrary.org/obo/EUPATH_0000413,,Self-treated
+62,fever_2wk_where_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/EUPATH_0021026,http://purl.obolibrary.org/obo/EUPATH_0000413,,Not treated
+63,fever_2wk_where_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,observation,,,,Missing
+64,fever_48hr_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021090,http://purl.obolibrary.org/obo/EUPATH_0000309,,Fever in last 48 hours
+65,suppressant_now_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000443,http://purl.obolibrary.org/obo/OGMS_0000090,On fever suppressant at observation,On fever suppressant
+66,drugs_2wk_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000410,http://purl.obolibrary.org/obo/OGMS_0000090,Took antimalarial medication in last 2 weeks,Took antimalarial medication
+67,drugs_2wk_codes,CRF_DATA,keep,,,requires coding ,,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021091,http://purl.obolibrary.org/obo/OGMS_0000090,Malaria medication taken in last 2 weeks,Antimalarial medication in last 2 weeks
+68,symptoms_yn,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,value,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021089,http://purl.obolibrary.org/obo/EUPATH_0021002,,Any symptoms
+69,symptoms_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002315,http://purl.obolibrary.org/obo/EUPATH_0021002,,Headache
+70,symptoms_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0019174,http://purl.obolibrary.org/obo/EUPATH_0021002,,Chills
+71,symptoms_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000099,http://purl.obolibrary.org/obo/EUPATH_0021002,,Aches or pains
+72,symptoms_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0019177,http://purl.obolibrary.org/obo/EUPATH_0021002,,Fatigue
+73,symptoms_chk___5,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002013,http://purl.obolibrary.org/obo/EUPATH_0021002,,Vomiting
+74,symptoms_chk___6,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000523,http://purl.obolibrary.org/obo/EUPATH_0021002,,Anorexia
+75,symptoms_chk___7,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000614,http://purl.obolibrary.org/obo/EUPATH_0021002,,Cough
+76,symptoms_chk___8,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000610,http://purl.obolibrary.org/obo/EUPATH_0021002,,Dizziness
+77,symptoms_chk___9,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0000975,http://purl.obolibrary.org/obo/EUPATH_0021002,,Sweating
+78,symptoms_chk___10,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002027,http://purl.obolibrary.org/obo/EUPATH_0021002,,Abdominal pain
+79,symptoms_chk___11,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/DOID_13250,http://purl.obolibrary.org/obo/EUPATH_0021002,,Diarrhea
+80,symptoms_chk___12,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0003419,http://purl.obolibrary.org/obo/EUPATH_0021002,,Lower back pain
+81,symptoms_chk___13,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.bioontology.org/ontology/MEDDRA/10015958,http://purl.obolibrary.org/obo/EUPATH_0021002,,Eye pain
+82,symptoms_chk___14,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0000980,http://purl.obolibrary.org/obo/EUPATH_0021002,,Paleness
+83,symptoms_chk___15,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0100749,http://purl.obolibrary.org/obo/EUPATH_0021002,,Chest pain
+84,symptoms_chk___16,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/DOID_0050486,http://purl.obolibrary.org/obo/EUPATH_0021002,,Rash
+85,symptoms_chk___17,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.bioontology.org/ontology/MEDDRA/10014020,http://purl.obolibrary.org/obo/EUPATH_0021002,,Ear pain
+86,symptoms_chk___18,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0001744,http://purl.obolibrary.org/obo/EUPATH_0021002,,Splenomegaly
+87,symptoms_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,observation,,,,Missing
+88,prelim_dx_rad,CRF_DATA,keep,,,"1 No illness
+2 Asymptomatic malaria
+3 Uncomplicated malaria
+4 Severe malaria
+5 Illness other than malaria
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000036,http://purl.obolibrary.org/obo/OGMS_0000073,Preliminary diagnosis based on symptoms and RDT results,Malaria-related diagnosis
+89,samples_chk___1,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021081,http://purl.obolibrary.org/obo/OBI_0000655,,Blood smear sample
+90,samples_chk___2,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021082,http://purl.obolibrary.org/obo/OBI_0000655,,Small volume sample
+91,samples_chk___3,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0000127,http://purl.obolibrary.org/obo/OBI_0000655,,Filter paper sample
+92,samples_chk___4,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021083,http://purl.obolibrary.org/obo/OBI_0000655,,Vacutainer sample
+93,samples_chk___88888,CRF_DATA,keep,,,binary,,,,,value,0,sample,,,,Missing
+94,samples_collected_by,CRF_DATA,discard,,,,,,,,,,,,,,
+95,crf_completed_by,CRF_DATA,discard,,,,,,,,,,,,,,
+96,deo_notes,CRF_DATA,discard,,,,,,,,,,,,,,
+97,igh_surveillance_complete,CRF_DATA,discard,,,,,,,,,,,,,,
+98,sid_fu,CRF_DATA,discard,"sid_fu matches sid, so no need to keep",,,,,,,,,,,,,
+99,date_fu,CRF_DATA,keep,,,date,,"date, date_eos",yes,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0004991,http://purl.obolibrary.org/obo/EUPATH_0000310,,Observation date
+100,date_enrol,CRF_DATA,discard,,,,,,,,,,,,,,
+101,days_since_enrol,CRF_DATA,keep,,,numeric,,,,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000191,http://purl.obolibrary.org/obo/EUPATH_0000310,,Days since enrollment
+102,age_fu,CRF_DATA,keep,,,numeric,,,,,,0,observation,,,,
+103,d7_compliance_rad,CRF_DATA,discard,always empty,,,,,,,,,,,,,
+104,d7_meds_left_rad,CRF_DATA,discard,always empty,,,,,,,,,,,,,
+105,d7_meds_specify,CRF_DATA,discard,always empty,,,,,,,,,,,,,
+106,other_facility_rad,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,,,,
+107,other_facility_specify,CRF_DATA,keep,,,text,,,,,,0,observation,,,,
+108,other_antis_rad,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,,,,
+109,other_antis_specify,CRF_DATA,keep,,,text,,,,,,0,observation,,,,
+110,temperature_fu,CRF_DATA,keep,,,numeric,,temperature,,will need to convert to C,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0000110,http://purl.obolibrary.org/obo/OGMS_0000083,,Temperature (C)
+111,hemocue_fu,CRF_DATA,keep,,,numeric,,,,,,0,sample,http://purl.obolibrary.org/obo/EUPATH_0000047,http://purl.obolibrary.org/obo/EUPATH_0011795,,Hemoglobin (g/dL)
+112,illnow_rad_fu,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000417,http://purl.obolibrary.org/obo/EUPATH_0000738,Ill at time of observation,Ill now
+113,fever_48hr_rad_fu,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021090,http://purl.obolibrary.org/obo/EUPATH_0000309,,Fever in last 48 hours
+114,suppressant_now_rad_fu,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,http://purl.obolibrary.org/obo/EUPATH_0000443,http://purl.obolibrary.org/obo/OGMS_0000090,On fever suppressant at observation,On fever suppressant
+115,symptoms_rad_fu,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,value,1,observation,http://purl.obolibrary.org/obo/EUPATH_0021089,http://purl.obolibrary.org/obo/EUPATH_0021002,,Any symptoms
+116,symptoms_chk_fu___1,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002315,http://purl.obolibrary.org/obo/EUPATH_0021002,,Headache
+117,symptoms_chk_fu___2,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0019174,http://purl.obolibrary.org/obo/EUPATH_0021002,,Chills
+118,symptoms_chk_fu___3,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000099,http://purl.obolibrary.org/obo/EUPATH_0021002,,Aches or pains
+119,symptoms_chk_fu___4,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0019177,http://purl.obolibrary.org/obo/EUPATH_0021002,,Fatigue
+120,symptoms_chk_fu___5,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002013,http://purl.obolibrary.org/obo/EUPATH_0021002,,Vomiting
+121,symptoms_chk_fu___6,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000523,http://purl.obolibrary.org/obo/EUPATH_0021002,,Anorexia
+122,symptoms_chk_fu___7,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000614,http://purl.obolibrary.org/obo/EUPATH_0021002,,Cough
+123,symptoms_chk_fu___8,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/SYMP_0000610,http://purl.obolibrary.org/obo/EUPATH_0021002,,Dizziness
+124,symptoms_chk_fu___9,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0000975,http://purl.obolibrary.org/obo/EUPATH_0021002,,Sweating
+125,symptoms_chk_fu___10,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0002027,http://purl.obolibrary.org/obo/EUPATH_0021002,,Abdominal pain
+126,symptoms_chk_fu___11,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/DOID_13250,http://purl.obolibrary.org/obo/EUPATH_0021002,,Diarrhea
+127,symptoms_chk_fu___12,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0003419,http://purl.obolibrary.org/obo/EUPATH_0021002,,Lower back pain
+128,symptoms_chk_fu___13,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.bioontology.org/ontology/MEDDRA/10015958,http://purl.obolibrary.org/obo/EUPATH_0021002,,Eye pain
+129,symptoms_chk_fu___14,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0000980,http://purl.obolibrary.org/obo/EUPATH_0021002,,Paleness
+130,symptoms_chk_fu___15,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0100749,http://purl.obolibrary.org/obo/EUPATH_0021002,,Chest pain
+131,symptoms_chk_fu___16,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/DOID_0050486,http://purl.obolibrary.org/obo/EUPATH_0021002,,Rash
+132,symptoms_chk_fu___17,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.bioontology.org/ontology/MEDDRA/10014020,http://purl.obolibrary.org/obo/EUPATH_0021002,,Ear pain
+133,symptoms_chk_fu___18,CRF_DATA,keep,,,binary,,,,,value,0,observation,http://purl.obolibrary.org/obo/HP_0001744,http://purl.obolibrary.org/obo/EUPATH_0021002,,Splenomegaly
+134,symptoms_chk_fu___88888,CRF_DATA,keep,,,binary,,,,,value,0,observation,,,,Missing
+135,meds_thisvisit,CRF_DATA,keep,,,"1 Yes
+2 No
+88888 missing",,,,,,1,observation,,,,
+136,meds_thisvisit_specify,CRF_DATA,discard,no data,,,,,,,,,,,,,
+137,samples_chk_fu___1,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021081,http://purl.obolibrary.org/obo/OBI_0000655,,Blood smear sample
+138,samples_chk_fu___2,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021082,http://purl.obolibrary.org/obo/OBI_0000655,,Small volume sample
+139,samples_chk_fu___3,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0000127,http://purl.obolibrary.org/obo/OBI_0000655,,Filter paper sample
+140,samples_chk_fu___4,CRF_DATA,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021083,http://purl.obolibrary.org/obo/OBI_0000655,,Vacutainer sample
+141,samples_chk_fu___88888,CRF_DATA,keep,,,binary,,,,,value,0,sample,,,,Missing
+142,samples_collected_by_fu,CRF_DATA,discard,,,,,,,,,,,,,,
+143,crf_completed_by_fu,CRF_DATA,discard,,,,,,,,,,,,,,
+144,deo_notes_fu,CRF_DATA,discard,,,,,,,,,,,,,,
+145,igh_followup_complete,CRF_DATA,discard,,,,,,,,,,,,,,
+146,sid_eos,CRF_DATA,discard,,,,,,,,,,,,,,
+147,date_eos,CRF_DATA,keep,,,date,,"date, date_fu",yes,,,0,observation,http://purl.obolibrary.org/obo/EUPATH_0004991,http://purl.obolibrary.org/obo/EUPATH_0000310,,Observation date
+148,date_enrol_eos,CRF_DATA,discard,,,,,,,,,,,,,,
+149,departure_rad,CRF_DATA,keep,,How did the subject depart the study?,"1 Completed all study visits
+2 Moved
+3 Can't be traced
+4 Declined to participate further
+5 Other",,,,,,1,participant,,,,
+150,departure_specify,CRF_DATA,discard,no data,,,,,,,,,,,,,
+151,previous_date,CRF_DATA,discard,duplicates date_fu,,,,,,,,,,,,,
+152,finish_treatment_rad,CRF_DATA,keep,,Did the participant __nish his/her malaria treatment,"1 Yes
+2 No
+99999 unknown",,,,,,1,observation,,,,
+153,last_health_rad,CRF_DATA,keep,,Was the participant in good health at the last visit?,"1 Yes
+2 No
+99999 unknown",,,,,,1,observation,,,,
+154,notes_eos,CRF_DATA,discard,,,,,,,,,,,,,,
+155,crf_completed_by_eos,CRF_DATA,discard,,,,,,,,,,,,,,
+156,deo_notes_eos,CRF_DATA,discard,,,,,,,,,,,,,,
+157,igh_endofstudy_complete,CRF_DATA,discard,,,,,,,,,,,,,,
+158,mic_sid1,microscopy_Malaria,discard,Use to map to participant,,,,,,,,,,,,,
+159,redcap_event_name,microscopy_Malaria,discard,Use to map to observation,,,,,,,,,,,,,
+160,mic_sid2,microscopy_Malaria,discard,,,,,,,,,,,,,,
+161,mic_sample_collect_date,microscopy_Malaria,keep,,,date,,,yes,,,0,sample,,,,
+162,mic_species___1,microscopy_Malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021027,http://purl.obolibrary.org/obo/EUPATH_0000423,,Negative
+163,mic_species___2,microscopy_Malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021028,http://purl.obolibrary.org/obo/EUPATH_0000423,,Plasmodium falciparum
+164,mic_species___3,microscopy_Malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021029,http://purl.obolibrary.org/obo/EUPATH_0000423,,Plasmodium vivax
+165,mic_species___4,microscopy_Malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021030,http://purl.obolibrary.org/obo/EUPATH_0000423,,Plasmodium malariae
+166,mic_species___5,microscopy_Malaria,keep,,,binary,,,,Need to recode so 1=No and 0=Yes,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021031,http://purl.obolibrary.org/obo/EUPATH_0011802,,Microscopy performed
+167,mic_counts1,microscopy_Malaria,keep,,,numeric,,,,"Need to split into 4 variables as before, P. falciparum asexual and sexual and P. vivax asexual and sexual",,0,sample,,,,
+168,mic_counts2,microscopy_Malaria,discard,no data,,,,,,,,,,,,,
+169,mic_form_date,microscopy_Malaria,discard,,,,,,,,,,,,,,
+170,mic_page_number,microscopy_Malaria,discard,,,,,,,,,,,,,,
+171,mic_completed_by,microscopy_Malaria,discard,,,,,,,,,,,,,,
+172,mic_deo_notes,microscopy_Malaria,discard,,,,,,,,,,,,,,
+173,igh_surveillance_microscopy_complete,microscopy_Malaria,discard,,,,,,,,,,,,,,
+174,pcr_sid1,PCR_malaria,discard,Use to map to participant,,,,,,,,,,,,,
+175,redcap_event_name,PCR_malaria,discard,,,,,,,,,,,,,,
+,pcr_sid2,PCR_malaria,discard,,,,,,,,,,,,,,
+,pcr_scd,PCR_malaria,keep,,,,,,,,,,,,,,
+,pcr_dna_source,PCR_malaria,discard,,,,,,,,,,,,,,
+176,pcr_species___1,PCR_malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021048,http://purl.obolibrary.org/obo/EUPATH_0000433,,Negative
+177,pcr_species___2,PCR_malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021049,http://purl.obolibrary.org/obo/EUPATH_0000433,,Plasmodium falciparum
+178,pcr_species___3,PCR_malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021050,http://purl.obolibrary.org/obo/EUPATH_0000433,,Plasmodium vivax
+179,pcr_species___4,PCR_malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021051,http://purl.obolibrary.org/obo/EUPATH_0000433,,Plasmodium malariae
+180,pcr_species___5,PCR_malaria,keep,,,binary,,,,,value,0,sample,http://purl.obolibrary.org/obo/EUPATH_0021052,http://purl.obolibrary.org/obo/EUPATH_0000433,,Plasmodium ovale
+,form_date,PCR_malaria,discard,,,,,,,,,,,,,,
+,pcr_page_number,PCR_malaria,discard,,,,,,,,,,,,,,
+,pcr_filled_by,PCR_malaria,discard,,,,,,,,,,,,,,
+,pcr_deo_notes,PCR_malaria,discard,,,,,,,,,,,,,,
+,igh_surveillance_pcr_complete,PCR_malaria,discard,,,,,,,,,,,,,,
+181,igm_chik_sid1,ELISA_Chikungunya,discard,Use to map to participant,,,,,,,,,,,,,
+182,redcap_event_name,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+183,igm_chik_sid2,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+184,igm_chik_scd,ELISA_Chikungunya,keep,,Sample collection date,date,,,yes,,,0,sample,,,,
+185,igm_chik_rad,ELISA_Chikungunya,keep,,This ELISA assay from Alere (Abbott) tests for IgM against the chikungunya virus,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Chikungunya, by SD Bioline IgM ELISA"
+186,igm_chik_od,ELISA_Chikungunya,keep,,The OD (optical density) of the sample,numeric,,,,,,0,sample,,,,
+187,igm_chik_cutoff,ELISA_Chikungunya,keep,,The OD (optical density) cut off value. Anything above this is considered positive for IgM against Chikungunya,numeric,,,,,,0,sample,,,,
+188,igm_chik_calfac,ELISA_Chikungunya,discard,Need to ask data provider,The calculated faction,numeric,,,,,,0,sample,,,,
+189,form_date,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+190,filled_by,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+191,page_number,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+192,deo_notes,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+193,igh_fever_elisa_chikungunya_complete,ELISA_Chikungunya,discard,,,,,,,,,,,,,,
+194,rdt_sid1,RDT_Chikungunya_Dengue,discard,Use to map to participant,,,,,,,,,,,,,
+195,rdt_scd,RDT_Chikungunya_Dengue,keep,,Sample collection date,date,,,yes,,,0,sample,,,,
+196,rdt_dengue_jmitra_ns1,RDT_Chikungunya_Dengue,keep,,NS1 RDT from J. Mitra and Co. ,"1, Pos | 2, Neg",,,,,,1,sample,,"Dengue, by Dengue Day 1 Test RDT",,NS1 antigen
+197,rdt_dengue_jmitra_ab___1,RDT_Chikungunya_Dengue,keep,,IgM,binary,,,,,value,0,sample,,"Dengue, by Dengue Day 1 Test RDT",,IgM
+198,rdt_dengue_jmitra_ab___2,RDT_Chikungunya_Dengue,keep,,IgG,binary,,,,,value,0,sample,,"Dengue, by Dengue Day 1 Test RDT",,IgG
+199,rdt_dengue_jmitra_ab___3,RDT_Chikungunya_Dengue,keep,,Negative,binary,,,,,value,0,sample,,"Dengue, by Dengue Day 1 Test RDT",,Negative
+200,rdt_dengue_alere_ns1,RDT_Chikungunya_Dengue,keep,,NS1 RDT from Alere,"1, Pos | 2, Neg",,,,,,1,sample,,"Dengue, by Dengue Duo Test RDT",,NS1 antigen
+201,rdt_dengue_alere_ab___1,RDT_Chikungunya_Dengue,keep,,IgM,binary,,,,,value,0,sample,,"Dengue, by Dengue Duo Test RDT",,IgM
+202,rdt_dengue_alere_ab___2,RDT_Chikungunya_Dengue,keep,,IgG,binary,,,,,value,0,sample,,"Dengue, by Dengue Duo Test RDT",,IgG
+203,rdt_dengue_alere_ab___3,RDT_Chikungunya_Dengue,keep,,Negative,binary,,,,,value,0,sample,,"Dengue, by Dengue Duo Test RDT",,Negative
+204,rdt_chik_jmitra_igm,RDT_Chikungunya_Dengue,keep,,This RDT from J. Mitra and Co. tests for IgM against the chikungunya virus,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Chikungunya, by Advantage Chikungunya IgM Card RDT"
+205,rdt_chik_alere_igm,RDT_Chikungunya_Dengue,keep,,This RDT from Alere (Abbott) tests for IgM against the chikungunya virus,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Chikungunya, by SD Bioline Chikungunya IgM RDT"
+206,rdt_form_date,RDT_Chikungunya_Dengue,discard,,,,,,,,,,,,,,
+207,rdt_filled_by,RDT_Chikungunya_Dengue,discard,,,,,,,,,,,,,,
+208,rdt_page_num,RDT_Chikungunya_Dengue,discard,,,,,,,,,,,,,,
+209,rdt_deo_notes,RDT_Chikungunya_Dengue,discard,,,,,,,,,,,,,,
+210,igh_surveillance_dengue_chik_rdt_complete,RDT_Chikungunya_Dengue,discard,,,,,,,,,,,,,,
+211,igm_typhus_sid1,IgG_Dengue,discard,Use to map to participant,,,,,,,,,,,,,
+212,redcap_event_name,IgG_Dengue,discard,,,,,,,,,,,,,,
+213,igm_typhus_sid2,IgG_Dengue,discard,,,,,,,,,,,,,,
+214,igm_typhus_scd,IgG_Dengue,keep,Talk to data provider,Sample collection date,date,,,yes,,,0,sample,,,,
+215,igm_typhus_rad,IgG_Dengue,keep,Talk to data provider,This ELISA assay from Alere (Abbott) tests for IgM against the dengue virus,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Dengue, by Panbio Dengue IgM capture ELISA"
+216,igm_typhus_od,IgG_Dengue,keep,Talk to data provider,The OD (optical density) of the sample,numeric,,,,,,0,sample,,,,
+217,igm_typhus_cutoff,IgG_Dengue,keep,Talk to data provider,The OD (optical density) cut off value. Anything above this is considered positive for IgM against Chikungunya,numeric,,,,,,0,sample,,,,
+218,igm_typhus_calfac,IgG_Dengue,discard,Talk to data provider,The calculated fraction,numeric,,,,,,0,sample,,,,
+219,form_date,IgG_Dengue,discard,,,,,,,,,,,,,,
+220,filled_by,IgG_Dengue,discard,,,,,,,,,,,,,,
+221,page_number,IgG_Dengue,discard,,,,,,,,,,,,,,
+222,deo_notes,IgG_Dengue,discard,,,,,,,,,,,,,,
+223,igh_fever_elisa_dengue_igm_complete,IgG_Dengue,discard,,,,,,,,,,,,,,
+224,ns1_dengue_sid1,N_Dengue,discard,Use to map to participant,,,,,,,,,,,,,
+225,redcap_event_name,N_Dengue,discard,,,,,,,,,,,,,,
+226,ns1_dengue_sid2,N_Dengue,discard,,,,,,,,,,,,,,
+227,ns1_dengue_scd,N_Dengue,keep,,Sample collection date,date,,,yes,,,0,sample,,,,
+228,ns1_dengue_rad,N_Dengue,keep,,This ELISA assay from Alere (Abbott) tests for the dengue NS1 antigen,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Dengue, by Panbio Dengue Early ELISA"
+229,ns1_dengue_od,N_Dengue,keep,,The OD (optical density) of the sample,numeric,,,,,,0,sample,,,,
+230,ns1_dengue_cutoff,N_Dengue,keep,,The OD (optical density) cut off value. Anything above this is considered positive for IgM against Chikungunya,numeric,,,,,,0,sample,,,,
+231,ns1_dengue_calfac,N_Dengue,discard,Talk to data provider,The calculated fraction,numeric,,,,,,0,sample,,,,
+232,form_date,N_Dengue,discard,,,,,,,,,,,,,,
+233,filled_by,N_Dengue,discard,,,,,,,,,,,,,,
+234,page_number,N_Dengue,discard,,,,,,,,,,,,,,
+235,deo_notes,N_Dengue,discard,,,,,,,,,,,,,,
+236,igh_fever_elisa_dengue_ns1_complete,N_Dengue,discard,,,,,,,,,,,,,,
+237,pcr_sid1,PCR_Salmonella_typhi,discard,Use to map to participant,,,,,,,,,,,,,
+238,pcr_scd,PCR_Salmonella_typhi,keep,,Sample collection date,date,,,yes,,,0,sample,,,,
+239,pcr_dna_source,PCR_Salmonella_typhi,discard,,,"1, SV | 2, Vac",,,,,,1,sample,,,,
+240,pcr_result,PCR_Salmonella_typhi,keep,,,"1, Neg | 2, Pos",,,,,,1,sample,,,,"Salmonella typhi, by PCR"
+241,form_date,PCR_Salmonella_typhi,discard,,,,,,,,,,,,,,
+242,pcr_page_number,PCR_Salmonella_typhi,discard,,,,,,,,,,,,,,
+243,pcr_filled_by,PCR_Salmonella_typhi,discard,,,,,,,,,,,,,,
+244,pcr_deo_notes,PCR_Salmonella_typhi,discard,,,,,,,,,,,,,,
+245,igh_surveillance_typhi_pcr_complete,PCR_Salmonella_typhi,discard,,,,,,,,,,,,,,
+246,igm_typhus_sid1,ELISA_scrub_typhus,discard,Use to map to participant,,,,,,,,,,,,,
+247,redcap_event_name,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+248,igm_typhus_sid2,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+249,igm_typhus_scd,ELISA_scrub_typhus,keep,,Sample collection date,date,,,yes,,,0,sample,,,,
+250,igm_typhus_rad,ELISA_scrub_typhus,keep,,This ELISA assay from InBios International tests for IgM against scrub typhus,"1, Pos | 2, Neg",,,,,,1,sample,,,,"Scrub typhus, by DetectTM IgM ELISA"
+251,igm_typhus_od,ELISA_scrub_typhus,keep,,The OD (optical density) of the sample,numeric,,,,,,0,sample,,,,
+252,form_date,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+253,filled_by,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+254,page_number,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+255,deo_notes,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+256,igh_fever_elisa_scrubtyphus_igm_complete,ELISA_scrub_typhus,discard,,,,,,,,,,,,,,
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000423,http://purl.obolibrary.org/obo/NCBITaxon_5820,,"Plasmodium species, by microscopy"
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000425,http://purl.obolibrary.org/obo/EUPATH_0000427,,Plasmodium species in last year
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000096,http://www.w3.org/2002/07/owl#Thing,,Participant
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000430,http://purl.obolibrary.org/obo/EUPATH_0000427,Type of antimalarials used for the most recent treament within the last year. ,Antimalarial medications used
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000309,http://purl.obolibrary.org/obo/EUPATH_0000738,,Signs and symptoms
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000310,http://purl.obolibrary.org/obo/EUPATH_0000738,,Observation details
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000340,http://purl.obolibrary.org/obo/EUPATH_0000738,,Travel details
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000342,http://purl.obolibrary.org/obo/EUPATH_0000096,,Employment
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000609,http://www.w3.org/2002/07/owl#Thing,,Sample
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000649,http://purl.obolibrary.org/obo/EUPATH_0000738,,Anthropometry
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000413,http://purl.obolibrary.org/obo/EUPATH_0021098,Type of healthcare facility where treated for fever in the last two weeks,Fever treatment location
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0010981,http://purl.obolibrary.org/obo/EUPATH_0000096,,Demographics
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0011800,http://purl.obolibrary.org/obo/EUPATH_0020005,,Microbiology tests performed
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0011802,http://purl.obolibrary.org/obo/EUPATH_0011800,,Microscopy
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0020005,http://purl.obolibrary.org/obo/OGMS_0000056,,Blood microbiology test
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0021002,http://purl.obolibrary.org/obo/EUPATH_0000309,,Symptoms
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000431,http://purl.obolibrary.org/obo/EUPATH_0000427,Where treated for the most recent malaria episode within the last year.,Where treated
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000433,http://purl.obolibrary.org/obo/NCBITaxon_5820,,"Plasmodium species, by PCR"
+,,,,,,,,,,,yes,,,http://purl.obolibrary.org/obo/EUPATH_0000437,http://purl.obolibrary.org/obo/NCBITaxon_5820,,"Plasmodium species, by FalciVax RDT"
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0011795,http://purl.obolibrary.org/obo/OGMS_0000056,,Blood test
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OGMS_0000056,http://purl.obolibrary.org/obo/EUPATH_0000609,,Laboratory test
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OGMS_0000073,http://purl.obolibrary.org/obo/EUPATH_0000738,,Diagnosis
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0000738,http://www.w3.org/2002/07/owl#Thing,,Observation
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OGMS_0000015,http://purl.obolibrary.org/obo/EUPATH_0000096,,Clinical history
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OGMS_0000083,http://purl.obolibrary.org/obo/EUPATH_0000738,,Physical examination
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OGMS_0000090,http://purl.obolibrary.org/obo/EUPATH_0000738,,Treatment
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/OBI_0000655,http://purl.obolibrary.org/obo/EUPATH_0000609,Types of blood samples obtained,Blood sample
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/EUPATH_0021098,http://purl.obolibrary.org/obo/EUPATH_0000738,,Immediate clinical history
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/NCBITaxon_5820,http://purl.obolibrary.org/obo/NCBITaxon_2759,,Plasmodium
+,,,,,,,,,,,,,,http://purl.obolibrary.org/obo/NCBITaxon_2759,http://purl.obolibrary.org/obo/EUPATH_0020005,,Eukaryota
+,,,,,,,,,,,yes,,,,,,"Dengue, by Dengue Day 1 Test RDT"
+,,,,,,,,,,,yes,,,,,,"Dengue, by Dengue Duo Test RDT"

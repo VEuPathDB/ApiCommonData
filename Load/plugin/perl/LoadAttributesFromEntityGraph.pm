@@ -208,6 +208,9 @@ sub statsForPlots {
 sub rCommandsForStats {
   return "args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
+if( file.info(fileName)\$size == 0 ){
+  quit('no')
+}
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 if(is.character(t\$V3)) {
@@ -509,16 +512,7 @@ sub annPropsAndValues {
 
   VALUE:
   for my $value (@{$valueArray}){
-    # temporary, and assumes all of these are ontology terms
-    # better - one parent geohash term?
-    if($ontologySourceId eq 'GEOHASH_TEMP_32') {
-      push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId), $value];
-      for my $n (1 .. 7) {
-        my $subvalue = substr($value, 0, $n);
-        my $displayName = $ontologyTerm->{DISPLAY_NAME} . ($n == 1 ? ", to 1 digit" : ", to $n digits");
-        push @result, ["GEOHASH_TEMP_${n}", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
-      }
-    } elsif (ref $value eq 'HASH'){
+    if (ref $value eq 'HASH'){
       # MBio results
       for my $k (keys %{$value}){
         my ($displayName, $subvalue);
