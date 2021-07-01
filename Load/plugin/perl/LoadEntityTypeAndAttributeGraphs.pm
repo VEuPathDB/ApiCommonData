@@ -100,8 +100,9 @@ sub run {
   my ($attributeGraphCount, $entityTypeGraphCount);
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $allTerms = $self->addNonOntologicalLeaves($ontologyTerms, $studyId);
 
-    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $ontologyTerms);
+    $attributeGraphCount += $self->constructAndSubmitAttributeGraphsForOntologyTerms($studyId, $allTerms);
 
     $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
   }
@@ -109,6 +110,35 @@ sub run {
   return "Loaded $attributeGraphCount rows into ApiDB.AttributeGraph and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
 }
 
+
+sub addNonOntologicalLeaves {
+  my ($self, $terms, $studyId) = @_;
+
+  my $sql = "select distinct a.stable_id as source_id, a.parent_ontology_term_id, pt.source_id as parent_source_id, a.display_name
+from apidb.attribute a, apidb.entitytype et, sres.ontologyterm pt
+where a.entity_type_id = et.entity_type_id
+and a.parent_ontology_term_id = pt.ontology_term_id
+and et.study_id = ?
+and a.ontology_term_id is null";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($studyId);
+
+
+  while(my $hash = $sh->fetchrow_hashref()) {
+    my $sourceId = $hash->{SOURCE_ID};
+
+    if($terms->{$sourceId}) {
+      $self->log("WARNING: Stable Id $sourceId found in BOTH ontology AND nonontological leaf; using parent relation from the latter");
+    }
+
+    $terms->{$sourceId} = $hash;
+  }
+  $sh->finish();
+
+  return $terms;
+}
 
 
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
