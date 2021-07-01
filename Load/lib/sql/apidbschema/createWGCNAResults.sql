@@ -40,7 +40,7 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'WGCNAResults',
+SELECT core.tableinfo_sq.nextval, 'NAfeatureWGCNAResults',
        'Standard', 'wgcna_result_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
