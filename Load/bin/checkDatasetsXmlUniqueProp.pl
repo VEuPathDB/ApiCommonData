@@ -2,14 +2,11 @@
 
 use strict;
 use Getopt::Long;
-use GUS::Model::SRes::Taxon;
-use GUS::Model::SRes::TaxonName;
 use GUS::Supported::GusConfig;
 use Data::Dumper;
-use JSON;
 
 
-my ($inputDatasetXmlFile, $propNameToCheck, $propName, $replaceValue, $help);
+my ($propNameToCheck, $help);
 
 &GetOptions(
             'propNameToCheck=s' => \$propNameToCheck,
@@ -17,7 +14,7 @@ my ($inputDatasetXmlFile, $propNameToCheck, $propName, $replaceValue, $help);
             );
 
 &usage() if ($help);
-&usage("Missing a Required Argument") unless (defined $propNameToCheck);
+#&usage("Missing a Required Argument") unless (defined $propNameToCheck);
 
 my %xmlFiles = (
 		       AmoebaDB => 'AmoebaDB.xml',
@@ -35,35 +32,41 @@ my %xmlFiles = (
 		       VectorBase => 'VectorBase.xml'
 );
 
-my $inClass = 0;
 my %propValues;
 
-foreach my $k (sort keys %xmlFiles) {
-  print STDERR "processing $xmlFiles{$k}\n";
+my @propNames = ($propNameToCheck) ? ($propNameToCheck) : qw(organismAbbrev ncbiTaxonId orthomclAbbrev);
 
-  #my $xmlFile = "\$PROJECT_HOME\/ApiCommonDatasets\/Datasets\/lib\/xml\/datasets\/".$xmlFiles{$k};
-  my $xmlFile = $xmlFiles{$k};
+foreach my $propName (@propNames) {
+  print STDERR "checking prop name: $propName ...\n";
 
-  open (IN, "$xmlFile") || die "can not open $xmlFile to read\n";
-  while (<IN>) {
-    if ($_ =~ /<dataset class=\"organism\">/) {
-      $inClass = 1;
-    } elsif ($_ =~ /<\/dataset>/) {
-      $inClass = 0;
-    }
+  foreach my $k (sort keys %xmlFiles) {
+    print STDERR "  processing $xmlFiles{$k} " if ($propNameToCheck);
 
-    if ($_ =~ /<prop name=\"$propNameToCheck\">(\S+?)<\/prop>/ && $inClass == 1) {
-      my $v = $1;
-      if ($propValues{$v}) {
-	print STDERR "ERROR ... duplicated value found for $propNameToCheck at '$v'\n";
-      } else {
-	print STDERR ".";
-	$propValues{$v} = 1;
+#    my $xmlFile = "\$PROJECT_HOME\/ApiCommonDatasets\/Datasets\/lib\/xml\/datasets\/".$xmlFiles{$k};
+    my $xmlFile = $xmlFiles{$k};
+
+    my $inClass = 0;
+    open (IN, "$xmlFile") || die "can not open $xmlFile to read\n";
+    while (<IN>) {
+      if ($_ =~ /<dataset class=\"organism\">/) {
+	$inClass = 1;
+      } elsif ($_ =~ /<\/dataset>/) {
+	$inClass = 0;
+      }
+
+      if ($_ =~ /<prop name=\"$propName\">(\S+?)<\/prop>/ && $inClass == 1) {
+	my $v = $1;
+	if ($propValues{$v}) {
+	  print STDERR "ERROR ... duplicated value found for $propName at $xmlFiles{$k} for '$v'\n";
+	} else {
+	  print STDERR ".";
+	  $propValues{$v} = 1;
+	}
       }
     }
+    close IN;
+    print STDERR "\n";
   }
-  close IN;
-  print STDERR "\n";
 }
 
 
@@ -79,7 +82,8 @@ Usage: perl checkDatasetsXmlUniqueProp.pl --propNameToCheck orthomclAbbrev
 please run the script under the dir: ApiCommonDatasets/Datasets/lib/xml/datasets/
 
 where:
-  --propNameToCheck: required. e.g. organismAbbrev, ncbiTaxonId, or orthomclAbbrev
+  --propNameToCheck: optional. e.g. organismAbbrev, ncbiTaxonId, or orthomclAbbrev
+                     default is for organismAbbrev, ncbiTaxonId and orthomclAbbrev
 
 ";
 }
