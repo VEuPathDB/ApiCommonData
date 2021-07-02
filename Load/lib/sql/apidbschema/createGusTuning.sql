@@ -703,4 +703,11 @@ grant select on results.NaFeatureExpression to public;
 alter table Sres.PathwayNode add (cellular_location varchar2(200));
 alter table Sres.PathwayRelationship add (is_reversible number(1));
 
+GRANT REFERENCES on sres.ontologyterm to eda;
+GRANT REFERENCES on sres.ontologyterm to eda_ud;
+
+GRANT REFERENCES on sres.ExternalDatabaseRelease to eda;
+GRANT REFERENCES on sres.ExternalDatabaseRelease to eda_ud;
+
+
 exit

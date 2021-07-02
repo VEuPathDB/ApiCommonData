@@ -14,6 +14,7 @@ use DBD::Oracle;
 use GUS::Supported::GusConfig;
 
 sub getStrandness        { $_[0]->{strandness} }
+sub getGeneType        { $_[0]->{genetype} }
 sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
@@ -32,6 +33,9 @@ sub new {
   return $self;
 }
 
+#------ Note: two versions of inputs ae used to running iterativeWGCNA method -----------#
+#----- version1: only include protein-coding gene in the input tpm file -----------------#
+#----- version2: only exclude pseudogenes in the input tpm file -------------------------#
 
 sub munge {
     my ($self) = @_;
@@ -52,131 +56,514 @@ sub munge {
 	my $power = $self->getPower();
 	my $inputFile = $self->getInputFile();
 	my $organism = $self->getOrganism();
-	
-	my $outputFile = "Preprocessed_" . $inputFile;
-	my $sql = "SELECT source_id 
+	my $genetype = $self->getGeneType();
+	#--Version1: first strand processing  (only keep protein-coding gene in the input tpm file)-------------#
+	if($genetype eq 'protein coding'){
+	    my $outputFile = "Preprocessed_proteincoding_" . $inputFile;
+	    my $sql = "SELECT source_id 
                    FROM apidbtuning.geneAttributes  
                    WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
-	my $stmt = $dbh->prepare($sql);
-	$stmt->execute();
-	my %hash;
-
-	while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
-	    $hash{$proteinCodingGenes} = 1;
-	}
-
-	$stmt->finish();
-        #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
-	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
-	
-	my %inputs;
-	while (my $line = <IN>){
-	    $line =~ s/\n//g;
-	    if ($. == 1){
-		my @all = split("\t",$line);
-		foreach(@all[1 .. $#all]){
-                    $inputs{$_} = 1;
-                }
+	    my $stmt = $dbh->prepare($sql);
+	    $stmt->execute();
+	    my %hash;
+	    
+	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+		$hash{$proteinCodingGenes} = 1;
 	    }
+	    
+	    $stmt->finish();
+	    #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	    
+	    my %inputs;
+	    while (my $line = <IN>){
+		$line =~ s/\n//g;
+		if ($. == 1){
+		    my @all = split("\t",$line);
+		    foreach(@all[1 .. $#all]){
+			$inputs{$_} = 1;
+		    }
+		}
 	}
-	close IN;
-
-	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	while (my $line = <IN>){
-	    if ($. == 1){
-		my @all = split/\t/,$line;
-		$all[0] = 'Gene';
-		my $new_line = join("\t",@all);
-		print OUT $new_line;
-		
-		foreach(@all[1 .. $#all]){
-		    @all = grep {s/^\s+|\s+$//g; $_ } @all;
-                    $inputs{$_} = 1;
-                }
-	    }else{
-		my @all = split/\t/,$line;
-		if ($hash{$all[0]}){
-		    print OUT $line;
+	    close IN;
+	    
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    while (my $line = <IN>){
+		if ($. == 1){
+		    my @all = split/\t/,$line;
+		    $all[0] = 'Gene';
+		    my $new_line = join("\t",@all);
+		    print OUT $new_line;
+		    
+		    foreach(@all[1 .. $#all]){
+			@all = grep {s/^\s+|\s+$//g; $_ } @all;
+			$inputs{$_} = 1;
+		    }
+		}else{
+		    my @all = split/\t/,$line;
+		    if ($hash{$all[0]}){
+			print OUT $line;
+		    }
 		}
 	    }
+	    close IN;
+	    close OUT;
+	    
+	    #-------------- run IterativeWGCNA docker image -----#
+	    my $outputDir = $mainDirectory . "/FirstStrandProteinCodingOutputs";
+	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    system($comm);
+
+	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	    #my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	    
+	    my $results  =  system($command);
+	    
+	    #-------------- parse Module Membership -----#
+	    my $outputDirModuleMembership = "$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading/";
+	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
+	    
+	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	    my %MMHash;
+	    while (my $line = <MM>) {
+		if ($. == 1){
+		    next;
+		}else{
+		    chomp($line);
+		    $line =~ s/\r//g;
+		    my @all = split/\t/,$line;
+		    push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
+		}
+	    }
+	    close MM;
+	    
+	    my @files;
+	    my @modules;
+	    my @allKeys = keys %MMHash;
+	    my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
+	    for my $i(@ModuleNames){
+		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ProteinCoding";
+		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ProteinCoding" ;
+		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st_ProteinCoding" . "\.txt") or die $!;
+		print MMOUT "geneID\tcorrelation_coefficient\n";
+		for my $ii(@{$MMHash{$i}}){
+		    print MMOUT $ii;
+		}
+		close MMOUT;
+	    }
+	    my %inputProtocolAppNodesHash;
+	    foreach(@modules) {
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+	    }
+	    
+	    $self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
+	    $self->setNames(\@modules);                                                                                           
+	    $self->setFileNames(\@files);
+	    $self->setProtocolName("WGCNA");
+	    $self->setSourceIdType("gene");
+	    $self->createConfigFile();
+	    
+	    #-------------- parse Module Eigengene -----#
+	    #-- copy module_egene file to one upper dir and the run doTranscription --#
+	    my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand_ProteinCoding.txt ";
+	    my $CPresults  =  system($CPcommand);
+	    
+	    my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand_ProteinCoding.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		);
+	    $egenes ->setTechnologyType("RNASeq");
+	    $egenes->setProtocolName("WGCNAME");
+	    
+	    $egenes ->munge();
+	    
 	}
-	close IN;
-	close OUT;
-	
-        #-------------- run IterativeWGCNA docker image -----#
-	my $outputDir = $mainDirectory . "/FirstStrandOutputs";
-	my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	system($comm);
 
-	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
-	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
-	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	#-- Version2: first strand processing  (only remove pseudogenes in the input tpm file)-------------#
+	if($genetype eq 'exclude pseudogene'){
+	    my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
+	    my $sql = "SELECT source_id 
+                   FROM apidbtuning.geneAttributes  
+                   WHERE organism = '$organism' AND gene_type != 'pseudogene'";
+	    my $stmt = $dbh->prepare($sql);
+	    $stmt->execute();
+	    my %hash;
+	    
+	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+		$hash{$proteinCodingGenes} = 1;
+	    }
+	    
+	    $stmt->finish();
+	    #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	    
+	    my %inputs;
+	    while (my $line = <IN>){
+		$line =~ s/\n//g;
+		if ($. == 1){
+		    my @all = split("\t",$line);
+		    foreach(@all[1 .. $#all]){
+			$inputs{$_} = 1;
+		    }
+		}
+	}
+	    close IN;
+	    
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    while (my $line = <IN>){
+		if ($. == 1){
+		    my @all = split/\t/,$line;
+		    $all[0] = 'Gene';
+		    my $new_line = join("\t",@all);
+		    print OUT $new_line;
+		    
+		    foreach(@all[1 .. $#all]){
+			@all = grep {s/^\s+|\s+$//g; $_ } @all;
+			$inputs{$_} = 1;
+		    }
+		}else{
+		    my @all = split/\t/,$line;
+		    if ($hash{$all[0]}){
+			print OUT $line;
+		    }
+		}
+	    }
+	    close IN;
+	    close OUT;
+	    
+	    #-------------- run IterativeWGCNA docker image -----#
+	    my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
+	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    system($comm);
 
-
-	my $results  =  system($command);
-
-	#-------------- parse Module Membership -----#
-	my $outputDirModuleMembership = "$mainDirectory/FirstStrandOutputs/FirstStrandMMResultsForLoading/";
-	mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
-	
-	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
-	my %MMHash;
-        while (my $line = <MM>) {
-            if ($. == 1){
-                next;
-            }else{
-                chomp($line);
-                $line =~ s/\r//g;
-                my @all = split/\t/,$line;
-		push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
-            }
-        }
-        close MM;
-	
-	my @files;
-        my @modules;
-	my @allKeys = keys %MMHash;
-	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
-        for my $i(@ModuleNames){
-            push @modules,$i . " " . $self->getInputSuffixMM();
-	    push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() ;
-            open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st" . "\.txt") or die $!;
-            print MMOUT "geneID\tcorrelation_coefficient\n";
-            for my $ii(@{$MMHash{$i}}){
-                print MMOUT $ii;
-            }
-            close MMOUT;
-        }
-	my %inputProtocolAppNodesHash;
-        foreach(@modules) {
-            push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
-        }
-
-	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
-	$self->setNames(\@modules);                                                                                           
-	$self->setFileNames(\@files);
-	$self->setProtocolName("WGCNA");
-	$self->setSourceIdType("gene");
-	$self->createConfigFile();
-
-        #-------------- parse Module Eigengene -----#
-	#-- copy module_egene file to one upper dir and the run doTranscription --#
-	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
-                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand.txt ";
-        my $CPresults  =  system($CPcommand);
-
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
-	    );
-	$egenes ->setTechnologyType("RNASeq");
-	$egenes->setProtocolName("WGCNAME");
-
-	$egenes ->munge();
-
+	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	    #my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	    
+	    my $results  =  system($command);
+	    
+	    #-------------- parse Module Membership -----#
+	    my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
+	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
+	    
+	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	    my %MMHash;
+	    while (my $line = <MM>) {
+		if ($. == 1){
+		    next;
+		}else{
+		    chomp($line);
+		    $line =~ s/\r//g;
+		    my @all = split/\t/,$line;
+		    push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
+		}
+	    }
+	    close MM;
+	    
+	    my @files;
+	    my @modules;
+	    my @allKeys = keys %MMHash;
+	    my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
+	    for my $i(@ModuleNames){
+		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene";
+		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene" ;
+		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st_ExcludePseudogene" . "\.txt") or die $!;
+		print MMOUT "geneID\tcorrelation_coefficient\n";
+		for my $ii(@{$MMHash{$i}}){
+		    print MMOUT $ii;
+		}
+		close MMOUT;
+	    }
+	    my %inputProtocolAppNodesHash;
+	    foreach(@modules) {
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+	    }
+	    
+	    $self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
+	    $self->setNames(\@modules);                                                                                           
+	    $self->setFileNames(\@files);
+	    $self->setProtocolName("WGCNA");
+	    $self->setSourceIdType("gene");
+	    $self->createConfigFile();
+	    
+	    #-------------- parse Module Eigengene -----#
+	    #-- copy module_egene file to one upper dir and the run doTranscription --#
+	    my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand_ExcludePseudogene.txt ";
+	    my $CPresults  =  system($CPcommand);
+	    
+	    my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand_ExcludePseudogene.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		);
+	    $egenes ->setTechnologyType("RNASeq");
+	    $egenes->setProtocolName("WGCNAME");
+	    
+	    $egenes ->munge();
+	    
+	}
     }
 
 
+
+   #--second strand processing ------------------------------------------#
+    if($strandness eq 'secondstrand'){
+	my $power = $self->getPower();
+	my $inputFile = $self->getInputFile();
+	my $organism = $self->getOrganism();
+	my $genetype = $self->getGeneType();
+	#--Version1: second strand processing  (only keep protein-coding gene in the input tpm file)-------------#
+	if($genetype eq 'protein coding'){
+	    my $outputFile = "Preprocessed_proteincoding_" . $inputFile;
+	    my $sql = "SELECT source_id 
+                   FROM apidbtuning.geneAttributes  
+                   WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
+	    my $stmt = $dbh->prepare($sql);
+	    $stmt->execute();
+	    my %hash;
+	    
+	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+		$hash{$proteinCodingGenes} = 1;
+	    }
+	    
+	    $stmt->finish();
+	    #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	    
+	    my %inputs;
+	    while (my $line = <IN>){
+		$line =~ s/\n//g;
+		if ($. == 1){
+		    my @all = split("\t",$line);
+		    foreach(@all[1 .. $#all]){
+			$inputs{$_} = 1;
+		    }
+		}
+	}
+	    close IN;
+	    
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    while (my $line = <IN>){
+		if ($. == 1){
+		    my @all = split/\t/,$line;
+		    $all[0] = 'Gene';
+		    my $new_line = join("\t",@all);
+		    print OUT $new_line;
+		    
+		    foreach(@all[1 .. $#all]){
+			@all = grep {s/^\s+|\s+$//g; $_ } @all;
+			$inputs{$_} = 1;
+		    }
+		}else{
+		    my @all = split/\t/,$line;
+		    if ($hash{$all[0]}){
+			print OUT $line;
+		    }
+		}
+	    }
+	    close IN;
+	    close OUT;
+	    
+	    #-------------- run IterativeWGCNA docker image -----#
+	    my $outputDir = $mainDirectory . "/SecondStrandProteinCodingOutputs";
+	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    system($comm);
+
+	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	    #my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	    
+	    my $results  =  system($command);
+	    
+	    #-------------- parse Module Membership -----#
+	    my $outputDirModuleMembership = "$mainDirectory/SecondStrandProteinCodingOutputs/SecondStrandMMResultsForLoading/";
+	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
+	    
+	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	    my %MMHash;
+	    while (my $line = <MM>) {
+		if ($. == 1){
+		    next;
+		}else{
+		    chomp($line);
+		    $line =~ s/\r//g;
+		    my @all = split/\t/,$line;
+		    push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
+		}
+	    }
+	    close MM;
+	    
+	    my @files;
+	    my @modules;
+	    my @allKeys = keys %MMHash;
+	    my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
+	    for my $i(@ModuleNames){
+		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ProteinCoding";
+		push @files,"$i" . "_2nd" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ProteinCoding" ;
+		open(MMOUT, ">$outputDirModuleMembership/$i" . "_2nd_ProteinCoding" . "\.txt") or die $!;
+		print MMOUT "geneID\tcorrelation_coefficient\n";
+		for my $ii(@{$MMHash{$i}}){
+		    print MMOUT $ii;
+		}
+		close MMOUT;
+	    }
+	    my %inputProtocolAppNodesHash;
+	    foreach(@modules) {
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+	    }
+	    
+	    $self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
+	    $self->setNames(\@modules);                                                                                           
+	    $self->setFileNames(\@files);
+	    $self->setProtocolName("WGCNA");
+	    $self->setSourceIdType("gene");
+	    $self->createConfigFile();
+	    
+	    #-------------- parse Module Eigengene -----#
+	    #-- copy module_egene file to one upper dir and the run doTranscription --#
+	    my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_2ndStrand_ProteinCoding.txt ";
+	    my $CPresults  =  system($CPcommand);
+	    
+	    my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_2ndStrand_ProteinCoding.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		);
+	    $egenes ->setTechnologyType("RNASeq");
+	    $egenes->setProtocolName("WGCNAME");
+	    
+	    $egenes ->munge();
+	    
+	}
+
+	#-- Version2: second strand processing  (only remove pseudogenes in the input tpm file)-------------#
+	if($genetype eq 'exclude pseudogene'){
+	    my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
+	    my $sql = "SELECT source_id 
+                   FROM apidbtuning.geneAttributes  
+                   WHERE organism = '$organism' AND gene_type != 'pseudogene'";
+	    my $stmt = $dbh->prepare($sql);
+	    $stmt->execute();
+	    my %hash;
+	    
+	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+		$hash{$proteinCodingGenes} = 1;
+	    }
+	    
+	    $stmt->finish();
+	    #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+	    
+	    my %inputs;
+	    while (my $line = <IN>){
+		$line =~ s/\n//g;
+		if ($. == 1){
+		    my @all = split("\t",$line);
+		    foreach(@all[1 .. $#all]){
+			$inputs{$_} = 1;
+		    }
+		}
+	}
+	    close IN;
+	    
+	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	    while (my $line = <IN>){
+		if ($. == 1){
+		    my @all = split/\t/,$line;
+		    $all[0] = 'Gene';
+		    my $new_line = join("\t",@all);
+		    print OUT $new_line;
+		    
+		    foreach(@all[1 .. $#all]){
+			@all = grep {s/^\s+|\s+$//g; $_ } @all;
+			$inputs{$_} = 1;
+		    }
+		}else{
+		    my @all = split/\t/,$line;
+		    if ($hash{$all[0]}){
+			print OUT $line;
+		    }
+		}
+	    }
+	    close IN;
+	    close OUT;
+	    
+	    #-------------- run IterativeWGCNA docker image -----#
+	    my $outputDir = $mainDirectory . "/SecondStrandExcludePseudogeneOutputs";
+	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    system($comm);
+
+	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	    #my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	    
+	    my $results  =  system($command);
+	    
+	    #-------------- parse Module Membership -----#
+	    my $outputDirModuleMembership = "$mainDirectory/SecondStrandExcludePseudogeneOutputs/SecondStrandMMResultsForLoading/";
+	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
+	    
+	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	    my %MMHash;
+	    while (my $line = <MM>) {
+		if ($. == 1){
+		    next;
+		}else{
+		    chomp($line);
+		    $line =~ s/\r//g;
+		    my @all = split/\t/,$line;
+		    push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
+		}
+	    }
+	    close MM;
+	    
+	    my @files;
+	    my @modules;
+	    my @allKeys = keys %MMHash;
+	    my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
+	    for my $i(@ModuleNames){
+		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene";
+		push @files,"$i" . "_2nd" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ExcludePseudogene" ;
+		open(MMOUT, ">$outputDirModuleMembership/$i" . "_2nd_ExcludePseudogene" . "\.txt") or die $!;
+		print MMOUT "geneID\tcorrelation_coefficient\n";
+		for my $ii(@{$MMHash{$i}}){
+		    print MMOUT $ii;
+		}
+		close MMOUT;
+	    }
+	    my %inputProtocolAppNodesHash;
+	    foreach(@modules) {
+		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+	    }
+	    
+	    $self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
+	    $self->setNames(\@modules);                                                                                           
+	    $self->setFileNames(\@files);
+	    $self->setProtocolName("WGCNA");
+	    $self->setSourceIdType("gene");
+	    $self->createConfigFile();
+	    
+	    #-------------- parse Module Eigengene -----#
+	    #-- copy module_egene file to one upper dir and the run doTranscription --#
+	    my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_2ndStrand_ExcludePseudogene.txt ";
+	    my $CPresults  =  system($CPcommand);
+	    
+	    my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
+		{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_2ndStrand_ExcludePseudogene.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+		);
+	    $egenes ->setTechnologyType("RNASeq");
+	    $egenes->setProtocolName("WGCNAME");
+	    
+	    $egenes ->munge();
+	    
+	}
+    }
+    
+=head
     #--second strand processing ------------------------------------------#
     if($strandness eq 'secondstrand'){
 	my $power = $self->getPower();
@@ -300,6 +687,9 @@ sub munge {
 	$egenes ->munge();
 
     }
+=cut
+
+
 
 
 }
