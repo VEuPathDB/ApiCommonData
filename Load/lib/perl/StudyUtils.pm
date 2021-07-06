@@ -49,7 +49,8 @@ select s.name
      , s.source_id
      , s.ontology_term_id
      , o.name parent_name
-     , o.source_id parent_ontology_term_id
+     , o.source_id parent_source_id
+     , o.ontology_term_id parent_ontology_term_id
      , s.name as display_name
      , null
      , s.definition
