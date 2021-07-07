@@ -2,7 +2,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT distinct ?entity ?parent ?column ?label ?order ?timeVarying
+SELECT distinct ?entity ?parent ?column ?label ?order ?repeated
 WHERE { 
 	?entity a owl:Class .
 	OPTIONAL {
@@ -18,11 +18,11 @@ WHERE {
   	?entity obo:EUPATH_0000274 ?order . 
 	}
 	OPTIONAL {
- 	  ?entity obo:EUPATH_0001011 ?_timeVarying . 
+ 	  ?entity obo:EUPATH_0001011 ?_repeated . 
 	}
 	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
 	BIND (str(?slabel) AS ?label) .
 	BIND (str(?scolumn) AS ?column) .
-	BIND (str(?_timeVarying) AS ?timeVarying) .
+	BIND (str(?_repeated) AS ?repeated) .
 }
 
