@@ -1,0 +1,28 @@
+# List unit label and IRI group by unit label
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?unitLabel
+  (COUNT(DISTINCT ?unitIRI_str) AS ?unit_count)
+  (GROUP_CONCAT(DISTINCT ?unitIRI_str;separator="|") AS ?unitIRI)
+  (GROUP_CONCAT(DISTINCT ?dataset;separator=" | ") AS ?datasets)
+WHERE {
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  GRAPH ?file {?entity obo:EUPATH_0001008 ?unitLabel } .
+  OPTIONAL {
+    ?entity obo:EUPATH_0001009 ?uIRI . 
+  }
+  BIND(IF(bound(?uIRI), ?uIRI, "NO_IRI") AS ?unitIRI_str)
+
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	?f2) AS ?dataset) .
+}
+GROUP BY ?unitLabel
+ORDER BY ASC(?unit_count) ASC(?unitLabel)
