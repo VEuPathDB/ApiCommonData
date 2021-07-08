@@ -1,10 +1,15 @@
 Replace file: 
-  conversionUpdate/replace_EDA.csv
+  ApiCommonData/Load/ontology/conversionUpdate/replace_EDA.csv
 ----------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/SCORE_FiveCountry/doc/SCOREFiveCountry_conversion.csv
 
+  row 6: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 15: http://purl.obolibrary.org/obo/EUPATH_0000096
    - category: add 'Participant'
    - parentIRI: add 'http://www.w3.org/2002/07/owl#Thing'
@@ -81,6 +86,10 @@ Conversion file:
    - is_featured: add 'yes'
   row 214: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 364: http://purl.obolibrary.org/obo/EUPATH_0033154
+   - label: 'C-reactive protein (mg/L)' replaced by 'C-reactive protein'
+   - unitLabel: add 'mg/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000273'
   row 365: http://purl.obolibrary.org/obo/EUPATH_0000047
    - label: 'Hemoglobin (g/dL)' replaced by 'Hemoglobin'
    - unitLabel: add 'g/dL'
@@ -138,8 +147,8 @@ Conversion file:
    - unitLabel: add 'days'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 172: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 174: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
 
@@ -152,6 +161,11 @@ Conversion file:
 
   row 2: http://purl.obolibrary.org/obo/PCO_0000024
    - hidden: add 'yes'
+  row 23: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 24: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 27: http://purl.obolibrary.org/obo/EUPATH_0000609
@@ -241,6 +255,11 @@ Conversion file:
 
   row 2: http://purl.obolibrary.org/obo/PCO_0000024
    - hidden: add 'yes'
+  row 21: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 22: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 25: http://purl.obolibrary.org/obo/EUPATH_0000609
@@ -272,6 +291,11 @@ Conversion file:
    - category: 'Observation' replaced by 'Participant'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - is_featured: add 'yes'
+  row 15: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 16: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 20: http://purl.obolibrary.org/obo/EUPATH_0000609
@@ -291,11 +315,21 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/ELICIT/doc/ELICIT_conversion.csv
 
-  row 51: http://purl.obolibrary.org/obo/OBI_0001508
+  row 81: http://purl.obolibrary.org/obo/OBI_0001508
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000649' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - parentLabel: 'Anthropometry' replaced by 'Observation details'
    - is_featured: add 'yes'
    - label: 'Study time point' replaced by 'Study timepoint'
+  row 82: http://purl.obolibrary.org/obo/IAO_0000414
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+  row 90: http://purl.obolibrary.org/obo/EUPATH_0036079
+   - parentIRI: 'http://purl.obolibrary.org/obo/OGMS_0000015' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0036493'
+   - parentLabel: 'Clinical history' replaced by 'Maternal clinical history'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+  row 104: http://purl.obolibrary.org/obo/OBI_0001169
+   - is_featured: add 'yes'
+  row 119: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
 
 write updated file to: 
   ApiCommonData/Load/ontology/Gates/ELICIT/doc/ELICIT_conversion_temp.csv
@@ -304,21 +338,23 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/GAMIN/doc/GAMIN_conversion.csv
 
-  row 10: http://purl.obolibrary.org/obo/EUPATH_0000732
+  row 9: http://purl.obolibrary.org/obo/EUPATH_0000732
    - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
    - replaces: add 'EUPATH_0000732'
-  row 24: http://purl.obolibrary.org/obo/OBI_0001508
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+  row 48: http://purl.obolibrary.org/obo/OBI_0001169
+   - is_featured: add 'yes'
+  row 52: http://purl.obolibrary.org/obo/OBI_0001508
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - parentLabel: 'Participant' replaced by 'Observation details'
    - is_featured: add 'yes'
-  row 25: http://purl.obolibrary.org/obo/EUPATH_0000311
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+  row 53: http://purl.obolibrary.org/obo/EUPATH_0000311
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000311' replaced by 'http://purl.obolibrary.org/obo/BFO_0000015'
    - replaces: add 'EUPATH_0000311'
    - parentLabel: 'Participant' replaced by 'Observation details'
    - is_featured: add 'yes'
    - label: 'Visit type' replaced by 'Observation type'
-  row 39: http://purl.obolibrary.org/obo/EUPATH_0000110
+  row 68: http://purl.obolibrary.org/obo/EUPATH_0000110
    - unitLabel: 'Celcius' replaced by 'C'
 
 write updated file to: 
@@ -390,10 +426,34 @@ Conversion file:
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
   row 326: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
+  row 332: http://purl.obolibrary.org/obo/EUPATH_0000742
+   - label: 'Total diarrheal days' replaced by 'Total time in all diarrheal episodes'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 356: http://purl.obolibrary.org/obo/EUPATH_0011049
+   - label: 'Age last exclusively breastfed (days)' replaced by 'Age last exclusively breastfed'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 363: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
+  row 377: http://purl.obolibrary.org/obo/EUPATH_0011147
+   - label: 'Age at last contact (days)' replaced by 'Age at last contact'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 384: http://purl.obolibrary.org/obo/EUPATH_0010502
+   - label: 'Total illness surveillance days' replaced by 'Total illness surveillance time'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 390: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 492: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - label: 'Blood ferritin (ng/mL)' replaced by 'Ferritin'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 772: http://purl.obolibrary.org/obo/EUPATH_0011516
+   - label: 'Rotavirus IgA titer (U/L), by ELISA result' replaced by 'Rotavirus IgA titer, by ELISA result'
+   - unitLabel: add 'U/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000178'
   row 775: http://purl.obolibrary.org/obo/EUPATH_0015332
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'Aeromonas Ct value, by TAC result' replaced by 'Aeromonas by TAC result'
@@ -414,6 +474,10 @@ Conversion file:
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'Campylobacter jejuni or C. coli Ct value, by TAC result' replaced by 'Campylobacter jejuni or C. coli, by TAC result'
    - unitLabel: add 'Ct value'
+  row 783: http://purl.obolibrary.org/obo/EUPATH_0011855
+   - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
+   - label: 'Clostridium difficile Ct value, by TAC result' replaced by 'Clostridium difficile, by TAC result'
+   - unitLabel: add 'Ct value'
   row 784: http://purl.obolibrary.org/obo/EUPATH_0015389
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'EAEC Ct value, by TAC result' replaced by 'EAEC, by TAC result'
@@ -430,9 +494,17 @@ Conversion file:
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'EAEC aggR Ct value, by TAC result' replaced by 'EAEC aggR, by TAC result'
    - unitLabel: add 'Ct value'
+  row 790: http://purl.obolibrary.org/obo/EUPATH_0011892
+   - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
+   - label: 'EAEC aggR-activated regulator (aar) Ct value, by TAC result' replaced by 'EAEC aggR-activated regulator (aar), by TAC result'
+   - unitLabel: add 'Ct value'
   row 791: http://purl.obolibrary.org/obo/EUPATH_0015353
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'EPEC bfpA Ct value, by TAC result' replaced by 'EPEC bfpA, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 792: http://purl.obolibrary.org/obo/EUPATH_0011857
+   - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
+   - label: 'EPEC eae Ct value, by TAC result' replaced by 'EPEC eae, by TAC result'
    - unitLabel: add 'Ct value'
   row 799: http://purl.obolibrary.org/obo/EUPATH_0015355
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
@@ -453,6 +525,10 @@ Conversion file:
   row 805: http://purl.obolibrary.org/obo/EUPATH_0015361
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
    - label: 'Helicobacter pylori Ct value, by TAC result' replaced by 'Helicobacter pylori, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 806: http://purl.obolibrary.org/obo/EUPATH_0011865
+   - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
+   - label: 'Mycobacterium tuberculosis Ct value, by TAC result' replaced by 'Mycobacterium tuberculosis, by TAC result'
    - unitLabel: add 'Ct value'
   row 808: http://purl.obolibrary.org/obo/EUPATH_0015398
    - parentLabel: 'Raw bacteria data' replaced by 'Raw bacteria data for stool'
@@ -566,6 +642,10 @@ Conversion file:
    - parentLabel: 'Raw virus data' replaced by 'Raw virus data for stool'
    - label: 'Norovirus GII Ct value, by TAC result' replaced by 'Norovirus GII, by TAC result'
    - unitLabel: add 'Ct value'
+  row 861: http://purl.obolibrary.org/obo/EUPATH_0010781
+   - parentLabel: 'Raw virus data' replaced by 'Raw virus data for stool'
+   - label: 'Norovirus, by RT-PCR result' replaced by 'Norovirus, by qRT-PCR result'
+   - unitLabel: add 'Ct value'
   row 863: http://purl.obolibrary.org/obo/EUPATH_0015366
    - parentLabel: 'Raw virus data' replaced by 'Raw virus data for stool'
    - label: 'Rotavirus Ct value, by TAC result' replaced by 'Rotavirus, by TAC result'
@@ -614,6 +694,29 @@ Conversion file:
    - parentLabel: 'Raw virus data' replaced by 'Raw virus data for stool'
    - label: 'Sapovirus Ct value, by TAC result' replaced by 'Sapovirus, by TAC result'
    - unitLabel: add 'Ct value'
+  row 918: http://purl.obolibrary.org/obo/EUPATH_0011276
+   - label: 'Alpha-1-antitrypsin (mg/g)' replaced by 'Alpha-1-antitrypsin'
+   - unitLabel: add 'mg/g'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036574'
+  row 921: http://purl.obolibrary.org/obo/EUPATH_0011277
+   - label: 'Myeloperoxidase (ng/mL)' replaced by 'Myeloperoxidase'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 923: http://purl.obolibrary.org/obo/EUPATH_0011278
+   - label: 'Neopterin (nmol/L)' replaced by 'Neopterin'
+   - unitLabel: add 'nmol/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+  row 994: http://purl.obolibrary.org/obo/EUPATH_0011194
+   - unitLabel: add 'mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+  row 1015: http://purl.obolibrary.org/obo/EUPATH_0011215
+   - label: 'Lactulose dosage (mg)' replaced by 'Lactulose dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 1019: http://purl.obolibrary.org/obo/EUPATH_0011216
+   - label: 'Mannitol dosage (mg)' replaced by 'Mannitol dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
 
 write updated file to: 
   ApiCommonData/Load/ontology/Gates/MALED/doc/MALED_24m_conversion_temp.csv
@@ -684,10 +787,34 @@ Conversion file:
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
   row 327: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
+  row 333: http://purl.obolibrary.org/obo/EUPATH_0000742
+   - label: 'Total diarrheal days' replaced by 'Total time in all diarrheal episodes'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 357: http://purl.obolibrary.org/obo/EUPATH_0011049
+   - label: 'Age last exclusively breastfed (days)' replaced by 'Age last exclusively breastfed'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 364: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
+  row 378: http://purl.obolibrary.org/obo/EUPATH_0011147
+   - label: 'Age at last contact (days)' replaced by 'Age at last contact'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 385: http://purl.obolibrary.org/obo/EUPATH_0010502
+   - label: 'Total illness surveillance days' replaced by 'Total illness surveillance time'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 391: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 493: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - label: 'Ferritin (ng/mL)' replaced by 'Ferritin'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 771: http://purl.obolibrary.org/obo/EUPATH_0011516
+   - label: 'Rotavirus IgA titer (U/L), by ELISA result' replaced by 'Rotavirus IgA titer, by ELISA result'
+   - unitLabel: add 'U/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000178'
   row 774: http://purl.obolibrary.org/obo/EUPATH_0015332
    - label: 'Aeromonas Ct value, by TAC result' replaced by 'Aeromonas by TAC result'
    - unitLabel: add 'Ct value'
@@ -703,6 +830,9 @@ Conversion file:
   row 779: http://purl.obolibrary.org/obo/EUPATH_0015341
    - label: 'Campylobacter jejuni or C. coli Ct value, by TAC result' replaced by 'Campylobacter jejuni or C. coli, by TAC result'
    - unitLabel: add 'Ct value'
+  row 782: http://purl.obolibrary.org/obo/EUPATH_0011855
+   - label: 'Clostridium difficile Ct value, by TAC result' replaced by 'Clostridium difficile, by TAC result'
+   - unitLabel: add 'Ct value'
   row 783: http://purl.obolibrary.org/obo/EUPATH_0015389
    - label: 'EAEC Ct value, by TAC result' replaced by 'EAEC, by TAC result'
    - unitLabel: add 'Ct value'
@@ -715,8 +845,14 @@ Conversion file:
   row 788: http://purl.obolibrary.org/obo/EUPATH_0015349
    - label: 'EAEC aggR Ct value, by TAC result' replaced by 'EAEC aggR, by TAC result'
    - unitLabel: add 'Ct value'
+  row 789: http://purl.obolibrary.org/obo/EUPATH_0011892
+   - label: 'EAEC aggR-activated regulator (aar) Ct value, by TAC result' replaced by 'EAEC aggR-activated regulator (aar), by TAC result'
+   - unitLabel: add 'Ct value'
   row 790: http://purl.obolibrary.org/obo/EUPATH_0015353
    - label: 'EPEC bfpA Ct value, by TAC result' replaced by 'EPEC bfpA, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 791: http://purl.obolibrary.org/obo/EUPATH_0011857
+   - label: 'EPEC eae Ct value, by TAC result' replaced by 'EPEC eae, by TAC result'
    - unitLabel: add 'Ct value'
   row 798: http://purl.obolibrary.org/obo/EUPATH_0015355
    - label: 'ETEC LT-pos Ct value, by TAC result' replaced by 'ETEC LT-pos, by TAC result'
@@ -732,6 +868,9 @@ Conversion file:
    - unitLabel: add 'Ct value'
   row 804: http://purl.obolibrary.org/obo/EUPATH_0015361
    - label: 'Helicobacter pylori Ct value, by TAC result' replaced by 'Helicobacter pylori, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 805: http://purl.obolibrary.org/obo/EUPATH_0011865
+   - label: 'Mycobacterium tuberculosis Ct value, by TAC result' replaced by 'Mycobacterium tuberculosis, by TAC result'
    - unitLabel: add 'Ct value'
   row 807: http://purl.obolibrary.org/obo/EUPATH_0015398
    - label: 'STEC Ct value, by TAC result' replaced by 'STEC, by TAC result'
@@ -817,6 +956,9 @@ Conversion file:
   row 857: http://purl.obolibrary.org/obo/EUPATH_0015365
    - label: 'Norovirus GII Ct value, by TAC result' replaced by 'Norovirus GII, by TAC result'
    - unitLabel: add 'Ct value'
+  row 860: http://purl.obolibrary.org/obo/EUPATH_0010781
+   - label: 'Norovirus, by RT-PCR result' replaced by 'Norovirus, by qRT-PCR result'
+   - unitLabel: add 'Ct value'
   row 862: http://purl.obolibrary.org/obo/EUPATH_0015366
    - label: 'Rotavirus Ct value, by TAC result' replaced by 'Rotavirus, by TAC result'
    - unitLabel: add 'Ct value'
@@ -853,6 +995,29 @@ Conversion file:
   row 875: http://purl.obolibrary.org/obo/EUPATH_0015382
    - label: 'Sapovirus Ct value, by TAC result' replaced by 'Sapovirus, by TAC result'
    - unitLabel: add 'Ct value'
+  row 917: http://purl.obolibrary.org/obo/EUPATH_0011276
+   - label: 'Alpha-1-antitrypsin (mg/g)' replaced by 'Alpha-1-antitrypsin'
+   - unitLabel: add 'mg/g'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036574'
+  row 920: http://purl.obolibrary.org/obo/EUPATH_0011277
+   - label: 'Myeloperoxidase (ng/mL)' replaced by 'Myeloperoxidase'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 922: http://purl.obolibrary.org/obo/EUPATH_0011278
+   - label: 'Neopterin (nmol/L)' replaced by 'Neopterin'
+   - unitLabel: add 'nmol/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+  row 993: http://purl.obolibrary.org/obo/EUPATH_0011194
+   - unitLabel: add 'mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+  row 1014: http://purl.obolibrary.org/obo/EUPATH_0011215
+   - label: 'Lactulose dosage (mg)' replaced by 'Lactulose dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 1018: http://purl.obolibrary.org/obo/EUPATH_0011216
+   - label: 'Mannitol dosage (mg)' replaced by 'Mannitol dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
 
 write updated file to: 
   ApiCommonData/Load/ontology/Gates/MALED/doc/gates_maled_conversion_temp.csv
@@ -861,6 +1026,21 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/MALED/doc/MALED_LMZ_vax_conversion.csv
 
+  row 10: http://purl.obolibrary.org/obo/EUPATH_0011278
+   - parentLabel: 'Aggregated vaccination data' replaced by 'Stool intestinal inflammation test'
+   - label: 'Total IPV vaccine doses' replaced by 'Neopterin'
+   - category: 'Participant' replaced by 'Sample'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0011471' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011748'
+   - unitLabel: add 'nmol/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+  row 35: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - label: 'Blood ferritin (ng/mL)' replaced by 'Ferritin'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 80: http://purl.obolibrary.org/obo/EUPATH_0011516
+   - label: 'Rotavirus IgA titer (U/L), by ELISA result' replaced by 'Rotavirus IgA titer, by ELISA result'
+   - unitLabel: add 'U/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000178'
   row 93: http://purl.obolibrary.org/obo/EUPATH_0000579
    - parentLabel: 'Observation' replaced by 'Observation details'
    - label: 'Age (days)' replaced by 'Age'
@@ -2202,6 +2382,14 @@ Conversion file:
    - replaces: add 'EUPATH_0000579'
    - unitLabel: add 'days'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 266: http://purl.obolibrary.org/obo/EUPATH_0011215
+   - label: 'Lactulose dosage (mg)' replaced by 'Lactulose dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 268: http://purl.obolibrary.org/obo/EUPATH_0011216
+   - label: 'Mannitol dosage (mg)' replaced by 'Mannitol dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
   row 484: http://purl.obolibrary.org/obo/EUPATH_0000609
    - category: add 'Sample'
    - hidden: add 'yes'
@@ -2284,10 +2472,34 @@ Conversion file:
    - unitLabel: add 'C'
   row 333: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
+  row 338: http://purl.obolibrary.org/obo/EUPATH_0000742
+   - label: 'Total days in all diarrheal episodes' replaced by 'Total time in all diarrheal episodes'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 366: http://purl.obolibrary.org/obo/EUPATH_0011049
+   - label: 'Age last exclusively breastfed (days)' replaced by 'Age last exclusively breastfed'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 373: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
+  row 386: http://purl.obolibrary.org/obo/EUPATH_0011147
+   - label: 'Age at last contact (days)' replaced by 'Age at last contact'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 391: http://purl.obolibrary.org/obo/EUPATH_0010502
+   - label: 'Total illness surveillance days' replaced by 'Total illness surveillance time'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 398: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 551: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - label: 'Ferritin (ng/mL)' replaced by 'Ferritin'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+   - unitLabel: add 'ng/mL'
+  row 761: http://purl.obolibrary.org/obo/EUPATH_0011516
+   - label: 'Rotavirus IgA titer (U/mL), by ELISA result' replaced by 'Rotavirus IgA titer, by ELISA result'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000178'
+   - unitLabel: add 'U/mL'
   row 764: http://purl.obolibrary.org/obo/EUPATH_0015332
    - label: 'Aeromonas Ct value, by TAC result' replaced by 'Aeromonas by TAC result'
    - unitLabel: add 'Ct value'
@@ -2303,6 +2515,9 @@ Conversion file:
   row 769: http://purl.obolibrary.org/obo/EUPATH_0015341
    - label: 'Campylobacter jejuni or C. coli Ct value, by TAC result' replaced by 'Campylobacter jejuni or C. coli, by TAC result'
    - unitLabel: add 'Ct value'
+  row 773: http://purl.obolibrary.org/obo/EUPATH_0011855
+   - label: 'Clostridium difficile Ct value, by TAC result' replaced by 'Clostridium difficile, by TAC result'
+   - unitLabel: add 'Ct value'
   row 774: http://purl.obolibrary.org/obo/EUPATH_0015389
    - label: 'EAEC Ct value, by TAC result' replaced by 'EAEC, by TAC result'
    - unitLabel: add 'Ct value'
@@ -2315,8 +2530,14 @@ Conversion file:
   row 780: http://purl.obolibrary.org/obo/EUPATH_0015349
    - label: 'EAEC aggR Ct value, by TAC result' replaced by 'EAEC aggR, by TAC result'
    - unitLabel: add 'Ct value'
+  row 781: http://purl.obolibrary.org/obo/EUPATH_0011892
+   - label: 'EAEC aggR-activated regulator (aar) Ct value, by TAC result' replaced by 'EAEC aggR-activated regulator (aar), by TAC result'
+   - unitLabel: add 'Ct value'
   row 782: http://purl.obolibrary.org/obo/EUPATH_0015353
    - label: 'EPEC bfpA Ct value, by TAC result' replaced by 'EPEC bfpA, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 784: http://purl.obolibrary.org/obo/EUPATH_0011857
+   - label: 'EPEC eae Ct value, by TAC result' replaced by 'EPEC eae, by TAC result'
    - unitLabel: add 'Ct value'
   row 792: http://purl.obolibrary.org/obo/EUPATH_0015355
    - label: 'ETEC LT-pos Ct value, by TAC result' replaced by 'ETEC LT-pos, by TAC result'
@@ -2332,6 +2553,9 @@ Conversion file:
    - unitLabel: add 'Ct value'
   row 799: http://purl.obolibrary.org/obo/EUPATH_0015361
    - label: 'Helicobacter pylori Ct value, by TAC result' replaced by 'Helicobacter pylori, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 800: http://purl.obolibrary.org/obo/EUPATH_0011865
+   - label: 'Mycobacterium tuberculosis Ct value, by TAC result' replaced by 'Mycobacterium tuberculosis, by TAC result'
    - unitLabel: add 'Ct value'
   row 802: http://purl.obolibrary.org/obo/EUPATH_0015398
    - label: 'STEC Ct value, by TAC result' replaced by 'STEC, by TAC result'
@@ -2450,6 +2674,30 @@ Conversion file:
   row 869: http://purl.obolibrary.org/obo/EUPATH_0015382
    - label: 'Sapovirus Ct value, by TAC result' replaced by 'Sapovirus, by TAC result'
    - unitLabel: add 'Ct value'
+  row 920: http://purl.obolibrary.org/obo/EUPATH_0011276
+   - label: 'Alpha-1-antitrypsin (mg/g)' replaced by 'Alpha-1-antitrypsin'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036574'
+   - unitLabel: add 'mg/g'
+  row 923: http://purl.obolibrary.org/obo/EUPATH_0011277
+   - label: 'Myeloperoxidase (ng/mL)' replaced by 'Myeloperoxidase'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+   - unitLabel: add 'ng/mL'
+  row 925: http://purl.obolibrary.org/obo/EUPATH_0011278
+   - label: 'Neopterin (nmol/L)' replaced by 'Neopterin'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+   - unitLabel: add 'nmol/L'
+  row 1009: http://purl.obolibrary.org/obo/EUPATH_0011194
+   - label: 'Urine volume (mL)' replaced by 'Urine volume'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+   - unitLabel: add 'mL'
+  row 1036: http://purl.obolibrary.org/obo/EUPATH_0011215
+   - label: 'Lactulose dosage (mg)' replaced by 'Lactulose dosage'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+   - unitLabel: add 'mg'
+  row 1038: http://purl.obolibrary.org/obo/EUPATH_0011216
+   - label: 'Mannitol dosage (mg)' replaced by 'Mannitol dosage'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+   - unitLabel: add 'mg'
 
 write updated file to: 
   ApiCommonData/Load/ontology/Gates/MALED/doc/gates_maled_phase3_conversion_temp.csv
@@ -2484,6 +2732,11 @@ Conversion file:
    - parentLabel: 'Observation' replaced by 'Observation details'
    - category: 'Observation' replaced by 'Participant'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+   - is_featured: add 'yes'
+  row 167: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
    - is_featured: add 'yes'
   row 175: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
@@ -2525,8 +2778,8 @@ Conversion file:
   row 21: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 25: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 27: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -2593,8 +2846,8 @@ Conversion file:
   row 12: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 16: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 18: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -2605,6 +2858,9 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/SCORE/doc/SCORE_CrossSect_conversion.csv
 
+  row 25: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
   row 27: http://purl.obolibrary.org/obo/OBI_0001508
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000307' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - parentLabel: 'Participant study details' replaced by 'Observation details'
@@ -2664,8 +2920,8 @@ Conversion file:
   row 26: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 32: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 34: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -2717,8 +2973,8 @@ Conversion file:
   row 12: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 18: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
-   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 19: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -2801,8 +3057,15 @@ Conversion file:
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
   row 569: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
+  row 577: http://purl.obolibrary.org/obo/EUPATH_0036493
+   - parentLabel: 'Clinical history' replaced by 'Participant'
+   - parentIRI: 'http://purl.obolibrary.org/obo/OGMS_0000015' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
   row 634: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
+  row 642: http://purl.obolibrary.org/obo/EUPATH_0036409
+   - label: 'Estimated gestational age (weeks)' replaced by 'Estimated gestational age'
+   - unitLabel: add 'weeks'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000034'
   row 681: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
   row 719: http://purl.obolibrary.org/obo/EUPATH_0000047
@@ -2942,6 +3205,15 @@ Conversion file:
    - category: 'Observation' replaced by 'Participant'
    - unitLabel: add 'days'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 459: http://purl.obolibrary.org/obo/EUPATH_0031113
+   - label: 'Vesikari days vomiting' replaced by 'Vesikari vomiting duration'
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 461: http://purl.obolibrary.org/obo/EUPATH_0031114
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 503: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 524: http://www.ebi.ac.uk/efo/EFO_0004950
@@ -2971,6 +3243,9 @@ Conversion file:
   row 645: http://purl.obolibrary.org/obo/EUPATH_0015341
    - label: 'Campylobacter jejuni or C. coli Ct value, by TAC result' replaced by 'Campylobacter jejuni or C. coli, by TAC result'
    - unitLabel: add 'Ct value'
+  row 646: http://purl.obolibrary.org/obo/EUPATH_0011855
+   - label: 'Clostridium difficile Ct value, by TAC result' replaced by 'Clostridium difficile, by TAC result'
+   - unitLabel: add 'Ct value'
   row 647: http://purl.obolibrary.org/obo/EUPATH_0015389
    - label: 'EAEC Ct value, by TAC result' replaced by 'EAEC, by TAC result'
    - unitLabel: add 'Ct value'
@@ -2983,8 +3258,14 @@ Conversion file:
   row 652: http://purl.obolibrary.org/obo/EUPATH_0015349
    - label: 'EAEC aggR Ct value, by TAC result' replaced by 'EAEC aggR, by TAC result'
    - unitLabel: add 'Ct value'
+  row 653: http://purl.obolibrary.org/obo/EUPATH_0011892
+   - label: 'EAEC aggR-activated regulator (aar) Ct value, by TAC result' replaced by 'EAEC aggR-activated regulator (aar), by TAC result'
+   - unitLabel: add 'Ct value'
   row 655: http://purl.obolibrary.org/obo/EUPATH_0015353
    - label: 'EPEC bfpA Ct value, by TAC result' replaced by 'EPEC bfpA, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 658: http://purl.obolibrary.org/obo/EUPATH_0011857
+   - label: 'EPEC eae Ct value, by TAC result' replaced by 'EPEC eae, by TAC result'
    - unitLabel: add 'Ct value'
   row 668: http://purl.obolibrary.org/obo/EUPATH_0015355
    - label: 'ETEC LT-pos Ct value, by TAC result' replaced by 'ETEC LT-pos, by TAC result'
@@ -3421,14 +3702,8 @@ write updated file to:
 
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/PROVIDE/doc/PROVIDE_conversion.csv
-
-  row 455: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000033' replaced by 'http://purl.obolibrary.org/obo/UO_0000036'
-   - unitLabel: 'days' replaced by 'years'
-
-write updated file to: 
-  ApiCommonData/Load/ontology/Gates/PROVIDE/doc/PROVIDE_conversion_temp.csv
----------------
+  - not find any term need to be updated
+----------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/Gates/GEMS-HUAS/doc/HUASGEMS1_conversion.csv
@@ -3621,6 +3896,11 @@ Conversion file:
    - category: 'Household | Entomology' replaced by 'Entomology'
    - parentIRI: 'http://www.w3.org/2002/07/owl#Thing | http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://www.w3.org/2002/07/owl#Thing'
    - hidden: add 'yes'
+  row 850: http://purl.obolibrary.org/obo/EUPATH_0041170
+   - label: 'Adverse event duration (days)' replaced by 'Adverse event duration'
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 867: http://purl.obolibrary.org/obo/EUPATH_0000661
    - replaces: add 'EUPATH_0000661'
    - label: 'BMI (kg/m2)' replaced by 'BMI'
@@ -3794,6 +4074,11 @@ Conversion file:
    - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000311' replaced by 'http://purl.obolibrary.org/obo/BFO_0000015'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
    - is_featured: add 'yes'
+  row 2144: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 2166: http://purl.obolibrary.org/obo/EUPATH_0000191
    - label: 'Days since enrollment' replaced by 'Time since enrollment'
    - category: 'Observation' replaced by 'Participant'
@@ -3899,6 +4184,11 @@ Conversion file:
   row 2445: http://purl.obolibrary.org/obo/EUPATH_0010248
    - label: 'Unlicensed doctor, transport expenses' replaced by 'Unlicensed doctor, transport expenses amount'
    - category: 'Observation' replaced by 'Participant'
+  row 2489: http://purl.obolibrary.org/obo/EUPATH_0036161
+   - label: 'RPM total test time (min)' replaced by 'RPM total test time'
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'min'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000031'
   row 2564: http://purl.obolibrary.org/obo/EUPATH_0010316
    - label: 'Stool volume (mL)' replaced by 'Stool volume'
    - category: 'Observation' replaced by 'Participant'
@@ -3962,6 +4252,15 @@ Conversion file:
    - category: 'Observation' replaced by 'Participant'
    - unitLabel: add 'days'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 2718: http://purl.obolibrary.org/obo/EUPATH_0031113
+   - label: 'Vesikari days vomiting' replaced by 'Vesikari vomiting duration'
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 2720: http://purl.obolibrary.org/obo/EUPATH_0031114
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 2724: http://purl.obolibrary.org/obo/EUPATH_0000165
    - label: 'Vomiting duration (days)' replaced by 'Vomiting duration'
    - category: 'Observation' replaced by 'Participant'
@@ -3982,31 +4281,537 @@ Conversion file:
    - hidden: add 'yes'
   row 3177: http://purl.obolibrary.org/obo/EUPATH_0015457
    - is_featured: add 'yes'
+  row 3182: http://purl.obolibrary.org/obo/EUPATH_0036462
+   - label: 'Diarrheal episode duration standard deviation (days)' replaced by 'Diarrheal episode duration standard deviation'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3186: http://purl.obolibrary.org/obo/EUPATH_0036463
+   - label: 'Maximum diarrheal episode duration (days)' replaced by 'Maximum diarrheal episode duration'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3188: http://purl.obolibrary.org/obo/EUPATH_0036465
+   - label: 'Mean diarrheal episode duration (days)' replaced by 'Mean diarrheal episode duration'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3192: http://purl.obolibrary.org/obo/EUPATH_0036467
+   - label: 'Median diarrheal episode duration (days)' replaced by 'Median diarrheal episode duration'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3194: http://purl.obolibrary.org/obo/EUPATH_0036469
+   - label: 'Minimum diarrheal episode duration (days)' replaced by 'Minimum diarrheal episode duration'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3199: http://purl.obolibrary.org/obo/EUPATH_0000742
+   - label: 'Total days in all diarrheal episodes' replaced by 'Total time in all diarrheal episodes'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3201: http://purl.obolibrary.org/obo/EUPATH_0036472
+   - label: 'Total days in all severe diarrheal episodes' replaced by 'Total time in all severe diarrheal episodes'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3285: http://purl.obolibrary.org/obo/EUPATH_0011049
+   - label: 'Age last exclusively breastfed (days)' replaced by 'Age last exclusively breastfed'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3288: http://purl.obolibrary.org/obo/EUPATH_0036396
+   - label: 'Breastfeeding duration (days)' replaced by 'Breastfeeding duration'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3331: http://purl.obolibrary.org/obo/EUPATH_0036493
+   - parentLabel: 'Clinical history' replaced by 'Participant'
+   - parentIRI: 'http://purl.obolibrary.org/obo/OGMS_0000015' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
+  row 3460: http://purl.obolibrary.org/obo/EUPATH_0036409
+   - label: 'Estimated gestational age (weeks)' replaced by 'Estimated gestational age'
+   - unitLabel: add 'weeks'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000034'
+  row 3521: http://purl.obolibrary.org/obo/EUPATH_0036077
+   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+  row 3523: http://purl.obolibrary.org/obo/EUPATH_0036078
+   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
   row 3534: http://purl.obolibrary.org/obo/EUPATH_0010120
    - label: 'Age, matched case (months)' replaced by 'Age, matched case'
    - unitLabel: add 'months'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000035'
+  row 3543: http://purl.obolibrary.org/obo/EUPATH_0036079
+   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+  row 3544: http://purl.obolibrary.org/obo/EUPATH_0036080
+   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
   row 3565: http://purl.obolibrary.org/obo/EUPATH_0010375
    - parentLabel: 'Participant' replaced by 'Participant study details'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000307'
    - is_featured: add 'yes'
+  row 3585: http://purl.obolibrary.org/obo/EUPATH_0000377
+   - parentLabel: 'Participant' replaced by 'Relocation'
+   - label: 'Years living in dwelling' replaced by 'Time living in dwelling'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022068'
+   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
   row 3612: http://purl.obolibrary.org/obo/EUPATH_0010368
    - label: 'Age at eligibility form completion (months)' replaced by 'Age at eligibility form completion'
    - unitLabel: add 'months'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000035'
   row 3613: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3617: http://purl.obolibrary.org/obo/EUPATH_0011147
+   - label: 'Age at last contact (days)' replaced by 'Age at last contact'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 3648: http://purl.obolibrary.org/obo/EUPATH_0010502
+   - label: 'Total illness surveillance days' replaced by 'Total illness surveillance time'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 3654: http://www.ebi.ac.uk/efo/EFO_0004950
    - parentLabel: 'Participant | Demographics' replaced by 'Demographics'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096 | http://purl.obolibrary.org/obo/EUPATH_0010981' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0010981'
    - hidden: add 'yes'
   row 3695: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 4086: http://purl.obolibrary.org/obo/EUPATH_0036228
+   - label: 'Activin A (pg/mL)' replaced by 'Activin A'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4106: http://purl.obolibrary.org/obo/EUPATH_0033154
+   - label: 'C-reactive protein (mg/L)' replaced by 'C-reactive protein'
+   - unitLabel: add 'mg/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000273'
+  row 4111: http://purl.obolibrary.org/obo/EUPATH_0036293
+   - label: 'Endotoxin (EU/mL)' replaced by 'Endotoxin'
+   - unitLabel: add 'EU/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036576'
+  row 4112: http://purl.obolibrary.org/obo/EUPATH_0036307
+   - label: 'Endotoxin core antibodies (GMU/mL)' replaced by 'Endotoxin core antibodies'
+   - unitLabel: add 'GMU/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036577'
+  row 4117: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - label: 'Ferritin (ng/mL)' replaced by 'Ferritin'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 4119: http://purl.obolibrary.org/obo/EUPATH_0036494
+   - label: 'Granulocyte-colony stimulating factor (pg/mL)' replaced by 'Granulocyte-colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4120: http://purl.obolibrary.org/obo/EUPATH_0036496
+   - label: 'Granulocyte-macrophage colony stimulating factor (pg/mL)' replaced by 'Granulocyte-macrophage colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
   row 4122: http://purl.obolibrary.org/obo/EUPATH_0000047
    - label: 'Hemoglobin (g/dL)' replaced by 'Hemoglobin'
    - unitLabel: add 'g/dL'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
+  row 4127: http://purl.obolibrary.org/obo/EUPATH_0036262
+   - label: 'Interferon gamma (pg/mL)' replaced by 'Interferon gamma'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4128: http://purl.obolibrary.org/obo/EUPATH_0036264
+   - label: 'Interleukin 1 beta (pg/mL)' replaced by 'Interleukin 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4129: http://purl.obolibrary.org/obo/EUPATH_0036263
+   - label: 'Interleukin 10 (pg/mL)' replaced by 'Interleukin 10'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4130: http://purl.obolibrary.org/obo/EUPATH_0036502
+   - label: 'Interleukin 12, p70 (pg/mL)' replaced by 'Interleukin 12, p70'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4131: http://purl.obolibrary.org/obo/EUPATH_0036504
+   - label: 'Interleukin 13 (pg/mL)' replaced by 'Interleukin 13'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4132: http://purl.obolibrary.org/obo/EUPATH_0036506
+   - label: 'Interleukin 17A (pg/mL)' replaced by 'Interleukin 17A'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4133: http://purl.obolibrary.org/obo/EUPATH_0036532
+   - label: 'Interleukin 2 (pg/mL)' replaced by 'Interleukin 2'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4134: http://purl.obolibrary.org/obo/EUPATH_0036265
+   - label: 'Interleukin 4 (pg/mL)' replaced by 'Interleukin 4'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4135: http://purl.obolibrary.org/obo/EUPATH_0036266
+   - label: 'Interleukin 5 (pg/mL)' replaced by 'Interleukin 5'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4136: http://purl.obolibrary.org/obo/EUPATH_0036267
+   - label: 'Interleukin 6 (pg/mL)' replaced by 'Interleukin 6'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4137: http://purl.obolibrary.org/obo/EUPATH_0036268
+   - label: 'Interleukin 7 (pg/mL)' replaced by 'Interleukin 7'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4138: http://purl.obolibrary.org/obo/EUPATH_0036269
+   - label: 'Interleukin 8 (pg/mL)' replaced by 'Interleukin 8'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4151: http://purl.obolibrary.org/obo/EUPATH_0036270
+   - label: 'Macrophage inflammatory protein 1 beta (pg/mL)' replaced by 'Macrophage inflammatory protein 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4153: http://purl.obolibrary.org/obo/EUPATH_0036521
+   - label: 'Monocyte chemoattractant protein 1 (pg/mL)' replaced by 'Monocyte chemoattractant protein 1'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4165: http://purl.obolibrary.org/obo/EUPATH_0036336
+   - label: 'Retinol Binding Protein (ng/ml)' replaced by 'Retinol Binding Protein'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 4168: http://purl.obolibrary.org/obo/EUPATH_0036344
+   - label: 'Soluble CD14 (ng/mL)' replaced by 'Soluble CD14'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 4172: http://purl.obolibrary.org/obo/EUPATH_0036271
+   - label: 'Tumor necrosis factor alpha (pg/mL)' replaced by 'Tumor necrosis factor alpha'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4177: http://purl.obolibrary.org/obo/EUPATH_0036393
+   - label: 'Vitamin D (nmol/L)' replaced by 'Vitamin D'
+   - unitLabel: add 'nmol/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+  row 4183: http://purl.obolibrary.org/obo/EUPATH_0036394
+   - label: 'Zinc (ug/L)' replaced by 'Zinc'
+   - unitLabel: add 'ug/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000301'
+  row 4194: http://purl.obolibrary.org/obo/EUPATH_0036163
+   - label: 'Carbon dioxide (ppm), at 100 min' replaced by 'Carbon dioxide at 100 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4195: http://purl.obolibrary.org/obo/EUPATH_0036164
+   - label: 'Carbon dioxide (ppm), at 120 min' replaced by 'Carbon dioxide at 120 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4196: http://purl.obolibrary.org/obo/EUPATH_0036165
+   - label: 'Carbon dioxide (ppm), at 140 min' replaced by 'Carbon dioxide at 140 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4197: http://purl.obolibrary.org/obo/EUPATH_0036166
+   - label: 'Carbon dioxide (ppm), at 160 min' replaced by 'Carbon dioxide at 160 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4198: http://purl.obolibrary.org/obo/EUPATH_0036167
+   - label: 'Carbon dioxide (ppm), at 180 min' replaced by 'Carbon dioxide at 180 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4199: http://purl.obolibrary.org/obo/EUPATH_0036168
+   - label: 'Carbon dioxide (ppm), at 20 min' replaced by 'Carbon dioxide at 20 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4200: http://purl.obolibrary.org/obo/EUPATH_0036169
+   - label: 'Carbon dioxide (ppm), at 40 min' replaced by 'Carbon dioxide at 40 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4201: http://purl.obolibrary.org/obo/EUPATH_0036170
+   - label: 'Carbon dioxide (ppm), at 60 min' replaced by 'Carbon dioxide at 60 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4202: http://purl.obolibrary.org/obo/EUPATH_0036171
+   - label: 'Carbon dioxide (ppm), at 80 min' replaced by 'Carbon dioxide at 80 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4203: http://purl.obolibrary.org/obo/EUPATH_0036162
+   - label: 'Carbon dioxide (ppm), at baseline' replaced by 'Carbon dioxide at baseline'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4204: http://purl.obolibrary.org/obo/EUPATH_0036173
+   - label: 'Hydrogen (ppm), at 100 min' replaced by 'Hydrogen at 100 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4205: http://purl.obolibrary.org/obo/EUPATH_0036174
+   - label: 'Hydrogen (ppm), at 120 min' replaced by 'Hydrogen at 120 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4206: http://purl.obolibrary.org/obo/EUPATH_0036175
+   - label: 'Hydrogen (ppm), at 140 min' replaced by 'Hydrogen at 140 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4207: http://purl.obolibrary.org/obo/EUPATH_0036176
+   - label: 'Hydrogen (ppm), at 160 min' replaced by 'Hydrogen at 160 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4208: http://purl.obolibrary.org/obo/EUPATH_0036177
+   - label: 'Hydrogen (ppm), at 180 min' replaced by 'Hydrogen at 180 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4209: http://purl.obolibrary.org/obo/EUPATH_0036178
+   - label: 'Hydrogen (ppm), at 20 min' replaced by 'Hydrogen at 20 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4210: http://purl.obolibrary.org/obo/EUPATH_0036179
+   - label: 'Hydrogen (ppm), at 40 min' replaced by 'Hydrogen at 40 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4211: http://purl.obolibrary.org/obo/EUPATH_0036180
+   - label: 'Hydrogen (ppm), at 60 min' replaced by 'Hydrogen at 60 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4212: http://purl.obolibrary.org/obo/EUPATH_0036181
+   - label: 'Hydrogen (ppm), at 80 min' replaced by 'Hydrogen at 80 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4213: http://purl.obolibrary.org/obo/EUPATH_0036172
+   - label: 'Hydrogen (ppm), at baseline' replaced by 'Hydrogen at baseline'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4214: http://purl.obolibrary.org/obo/EUPATH_0036191
+   - label: 'Methane (ppm), at 100 min' replaced by 'Methane at 100 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4215: http://purl.obolibrary.org/obo/EUPATH_0036183
+   - label: 'Methane (ppm), at 120 min' replaced by 'Methane at 120 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4216: http://purl.obolibrary.org/obo/EUPATH_0036184
+   - label: 'Methane (ppm), at 140 min' replaced by 'Methane at 140 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4217: http://purl.obolibrary.org/obo/EUPATH_0036185
+   - label: 'Methane (ppm), at 160 min' replaced by 'Methane at 160 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4218: http://purl.obolibrary.org/obo/EUPATH_0036186
+   - label: 'Methane (ppm), at 180 min' replaced by 'Methane at 180 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4219: http://purl.obolibrary.org/obo/EUPATH_0036187
+   - label: 'Methane (ppm), at 20 min' replaced by 'Methane at 20 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4220: http://purl.obolibrary.org/obo/EUPATH_0036188
+   - label: 'Methane (ppm), at 40 min' replaced by 'Methane at 40 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4221: http://purl.obolibrary.org/obo/EUPATH_0036189
+   - label: 'Methane (ppm), at 60 min' replaced by 'Methane at 60 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4222: http://purl.obolibrary.org/obo/EUPATH_0036190
+   - label: 'Methane (ppm), at 80 min' replaced by 'Methane at 80 min'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4223: http://purl.obolibrary.org/obo/EUPATH_0036182
+   - label: 'Methane (ppm), at baseline' replaced by 'Methane at baseline'
+   - unitLabel: add 'ppm'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000169'
+  row 4224: http://purl.obolibrary.org/obo/EUPATH_0036192
+   - label: 'Glucose administered for breath test (mL)' replaced by 'Glucose administered for breath test'
+   - unitLabel: add 'mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000098'
+  row 4225: http://purl.obolibrary.org/obo/EUPATH_0036193
+   - label: 'Hours since last oral intake' replaced by 'Time since last oral intake'
+   - unitLabel: add 'hours'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+  row 4411: http://purl.obolibrary.org/obo/EUPATH_0036431
+   - label: 'Polio serotype 1 shedding duration (days), by multiplexed qRT-PCR' replaced by 'Polio serotype 1 shedding duration, by multiplexed qRT-PCR'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 4412: http://purl.obolibrary.org/obo/EUPATH_0036432
+   - label: 'Polio serotype 2 shedding duration (days), by multiplexed qRT-PCR' replaced by 'Polio serotype 2 shedding duration, by multiplexed qRT-PCR'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 4413: http://purl.obolibrary.org/obo/EUPATH_0036433
+   - label: 'Polio serotype 3 shedding duration (days), by multiplexed qRT-PCR' replaced by 'Polio serotype 3 shedding duration, by multiplexed qRT-PCR'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 4414: http://purl.obolibrary.org/obo/EUPATH_0036430
+   - label: 'Polio shedding duration (days), by culture' replaced by 'Polio shedding duration, by culture'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 4666: http://purl.obolibrary.org/obo/EUPATH_0036495
+   - label: 'Granulocyte-colony stimulating factor (pg/mL)' replaced by 'Granulocyte-colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4667: http://purl.obolibrary.org/obo/EUPATH_0036497
+   - label: 'Granulocyte-macrophage colony stimulating factor (pg/mL)' replaced by 'Granulocyte-macrophage colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4668: http://purl.obolibrary.org/obo/EUPATH_0036499
+   - label: 'Interferon gamma (pg/mL)' replaced by 'Interferon gamma'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4669: http://purl.obolibrary.org/obo/EUPATH_0036509
+   - label: 'Interleukin 1 beta (pg/mL)' replaced by 'Interleukin 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4670: http://purl.obolibrary.org/obo/EUPATH_0036501
+   - label: 'Interleukin 10 (pg/mL)' replaced by 'Interleukin 10'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4671: http://purl.obolibrary.org/obo/EUPATH_0036503
+   - label: 'Interleukin 12, p70 (pg/mL)' replaced by 'Interleukin 12, p70'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4672: http://purl.obolibrary.org/obo/EUPATH_0036505
+   - label: 'Interleukin 13 (pg/mL)' replaced by 'Interleukin 13'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4673: http://purl.obolibrary.org/obo/EUPATH_0036507
+   - label: 'Interleukin 17A (pg/mL)' replaced by 'Interleukin 17A'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4674: http://purl.obolibrary.org/obo/EUPATH_0036533
+   - label: 'Interleukin 2 (pg/mL)' replaced by 'Interleukin 2'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4675: http://purl.obolibrary.org/obo/EUPATH_0036511
+   - label: 'Interleukin 4 (pg/mL)' replaced by 'Interleukin 4'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4676: http://purl.obolibrary.org/obo/EUPATH_0036513
+   - label: 'Interleukin 5 (pg/mL)' replaced by 'Interleukin 5'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4677: http://purl.obolibrary.org/obo/EUPATH_0036515
+   - label: 'Interleukin 6 (pg/mL)' replaced by 'Interleukin 6'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4678: http://purl.obolibrary.org/obo/EUPATH_0036518
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4679: http://purl.obolibrary.org/obo/EUPATH_0036520
+   - label: 'Interleukin 8 (pg/mL)' replaced by 'Interleukin 8'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4680: http://purl.obolibrary.org/obo/EUPATH_0036524
+   - label: 'Macrophage inflammatory protein 1 beta (pg/mL)' replaced by 'Macrophage inflammatory protein 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4681: http://purl.obolibrary.org/obo/EUPATH_0036522
+   - label: 'Monocyte chemoattractant protein 1 (pg/mL)' replaced by 'Monocyte chemoattractant protein 1'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4682: http://purl.obolibrary.org/obo/EUPATH_0036526
+   - label: 'Tumor necrosis factor alpha (pg/mL)' replaced by 'Tumor necrosis factor alpha'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4702: http://purl.obolibrary.org/obo/EUPATH_0036273
+   - label: 'Eotaxin concentration (pg/mL)' replaced by 'Eotaxin concentration'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4703: http://purl.obolibrary.org/obo/EUPATH_0036292
+   - label: 'Epidermal growth factor (pg/mL)' replaced by 'Epidermal growth factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4704: http://purl.obolibrary.org/obo/EUPATH_0036272
+   - label: 'Fibroblast growth factor (pg/mL)' replaced by 'Fibroblast growth factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4706: http://purl.obolibrary.org/obo/EUPATH_0036274
+   - label: 'Granulocyte-colony stimulating factor (pg/mL)' replaced by 'Granulocyte-colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4707: http://purl.obolibrary.org/obo/EUPATH_0036275
+   - label: 'Granulocyte-macrophage colony stimulating factor (pg/mL)' replaced by 'Granulocyte-macrophage colony stimulating factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4708: http://purl.obolibrary.org/obo/EUPATH_0036498
+   - label: 'Interferon gamma (pg/mL)' replaced by 'Interferon gamma'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4709: http://purl.obolibrary.org/obo/EUPATH_0036283
+   - label: 'Interferon gamma-induced protein 10 (pg/mL)' replaced by 'Interferon gamma-induced protein 10'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4710: http://purl.obolibrary.org/obo/EUPATH_0036508
+   - label: 'Interleukin 1 beta (pg/mL)' replaced by 'Interleukin 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4711: http://purl.obolibrary.org/obo/EUPATH_0036280
+   - label: 'Interleukin 1 receptor agonist (pg/mL)' replaced by 'Interleukin 1 receptor agonist'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4712: http://purl.obolibrary.org/obo/EUPATH_0036500
+   - label: 'Interleukin 10 (pg/mL)' replaced by 'Interleukin 10'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4713: http://purl.obolibrary.org/obo/EUPATH_0036276
+   - label: 'Interleukin 12, p70 (pg/mL)' replaced by 'Interleukin 12, p70'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4714: http://purl.obolibrary.org/obo/EUPATH_0036277
+   - label: 'Interleukin 13 (pg/mL)' replaced by 'Interleukin 13'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4715: http://purl.obolibrary.org/obo/EUPATH_0036278
+   - label: 'Interleukin 15 (pg/mL)' replaced by 'Interleukin 15'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4716: http://purl.obolibrary.org/obo/EUPATH_0036279
+   - label: 'Interleukin 17A (pg/mL)' replaced by 'Interleukin 17A'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4717: http://purl.obolibrary.org/obo/EUPATH_0036281
+   - label: 'Interleukin 2 (pg/mL)' replaced by 'Interleukin 2'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4718: http://purl.obolibrary.org/obo/EUPATH_0036510
+   - label: 'Interleukin 4 (pg/mL)' replaced by 'Interleukin 4'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4719: http://purl.obolibrary.org/obo/EUPATH_0036512
+   - label: 'Interleukin 5 (pg/mL)' replaced by 'Interleukin 5'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4720: http://purl.obolibrary.org/obo/EUPATH_0036514
+   - label: 'Interleukin 6 (pg/mL)' replaced by 'Interleukin 6'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4721: http://purl.obolibrary.org/obo/EUPATH_0036516
+   - label: 'Interleukin 7 (pg/mL)' replaced by 'Interleukin 7'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4722: http://purl.obolibrary.org/obo/EUPATH_0036519
+   - label: 'Interleukin 8 (pg/mL)' replaced by 'Interleukin 8'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4723: http://purl.obolibrary.org/obo/EUPATH_0036282
+   - label: 'Interleukin 9 (pg/mL)' replaced by 'Interleukin 9'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4728: http://purl.obolibrary.org/obo/EUPATH_0036285
+   - label: 'Macrophage inflammatory protein 1 alpha (pg/mL)' replaced by 'Macrophage inflammatory protein 1 alpha'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4729: http://purl.obolibrary.org/obo/EUPATH_0036523
+   - label: 'Macrophage inflammatory protein 1 beta (pg/mL)' replaced by 'Macrophage inflammatory protein 1 beta'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4730: http://purl.obolibrary.org/obo/EUPATH_0036308
+   - label: 'Milk fat globule-EGF factor 8 (ng/mL)' replaced by 'Milk fat globule-EGF factor 8'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4731: http://purl.obolibrary.org/obo/EUPATH_0036284
+   - label: 'Monocyte chemoattractant protein 1 (pg/mL)' replaced by 'Monocyte chemoattractant protein 1'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4738: http://purl.obolibrary.org/obo/EUPATH_0036286
+   - label: 'Platelet derived growth factor (pg/mL)' replaced by 'Platelet derived growth factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4739: http://purl.obolibrary.org/obo/EUPATH_0036287
+   - label: 'RANTES (pg/mL)' replaced by 'RANTES'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4741: http://purl.obolibrary.org/obo/EUPATH_0036525
+   - label: 'Tumor necrosis factor alpha (pg/mL)' replaced by 'Tumor necrosis factor alpha'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4742: http://purl.obolibrary.org/obo/EUPATH_0036288
+   - label: 'Vascular endothelial growth factor (pg/mL)' replaced by 'Vascular endothelial growth factor'
+   - unitLabel: add 'pg/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036572'
+  row 4839: http://purl.obolibrary.org/obo/EUPATH_0000537
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium (per uL blood), by microscopy' replaced by 'Plasmodium, by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - unitLabel: add '/uL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
   row 4840: http://purl.obolibrary.org/obo/EUPATH_0020166
    - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
    - label: 'Plasmodium (per uL), by qPCR' replaced by 'Plasmodium, by qPCR result'
@@ -4019,12 +4824,79 @@ Conversion file:
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
    - unitLabel: add '/uL'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+  row 4852: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum asexual stages (per uL blood), by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - unitLabel: add '/uL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+  row 4853: http://purl.obolibrary.org/obo/EUPATH_0000546
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum gametocytes (per uL blood), by microscopy' replaced by 'Plasmodium falciparum gametocytes, by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - unitLabel: add '/uL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+  row 4855: http://purl.obolibrary.org/obo/EUPATH_0023028
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum parasitemia (%), by microscopy' replaced by 'Plasmodium falciparum parasitemia (%), by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+  row 4856: http://purl.obolibrary.org/obo/EUPATH_0023019
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium gametocytemia (%), by microscopy' replaced by 'Plasmodium gametocytemia (%), by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
   row 4860: http://purl.obolibrary.org/obo/EUPATH_0023018
    - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
    - label: 'Plasmodium gametocytes (per uL blood), by microscopy' replaced by 'Plasmodium gametocytes, by microscopy result'
    - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
    - unitLabel: add '/uL'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+  row 4863: http://purl.obolibrary.org/obo/EUPATH_0023029
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium malariae parasitemia (%), by microscopy' replaced by 'Plasmodium malariae parasitemia (%), by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+  row 4885: http://purl.obolibrary.org/obo/EUPATH_0023030
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium vivax parasitemia (%), by microscopy' replaced by 'Plasmodium vivax parasitemia (%), by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+  row 4974: http://purl.obolibrary.org/obo/EUPATH_0036386
+   - label: 'Diphtheria toxoid IgG titer (IU/mL), by MIA result' replaced by 'Diphtheria toxoid IgG titer, by MIA result'
+   - unitLabel: add 'IU/mL'
+   - unitIRI: add 'http://www.ebi.ac.uk/efo/EFO_0002928'
+  row 4975: http://purl.obolibrary.org/obo/EUPATH_0036387
+   - label: 'Filamentous hemagglutinin IgG titer (EU/mL), by MIA result' replaced by 'Filamentous hemagglutinin IgG titer, by MIA result'
+   - unitLabel: add 'EU/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036576'
+  row 4976: http://purl.obolibrary.org/obo/EUPATH_0036388
+   - label: 'Haemophilus influenzae type B IgG titer (ng/mL), by MIA result' replaced by 'Haemophilus influenzae type B IgG titer, by MIA result'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 4986: http://purl.obolibrary.org/obo/EUPATH_0036389
+   - label: 'Measles IgG titer (IU/mL), by MIA result' replaced by 'Measles IgG titer, by MIA result'
+   - unitLabel: add 'IU/mL'
+   - unitIRI: add 'http://www.ebi.ac.uk/efo/EFO_0002928'
+  row 4988: http://purl.obolibrary.org/obo/EUPATH_0036390
+   - label: 'Pertactin IgG titer (EU/mL), by MIA result' replaced by 'Pertactin IgG titer, by MIA result'
+   - unitLabel: add 'EU/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036576'
+  row 4990: http://purl.obolibrary.org/obo/EUPATH_0036391
+   - label: 'Pertussis toxin IgG titer (EU/mL), by MIA result' replaced by 'Pertussis toxin IgG titer, by MIA result'
+   - unitLabel: add 'EU/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036576'
+  row 4998: http://purl.obolibrary.org/obo/EUPATH_0011516
+   - label: 'Rotavirus IgA titer (U/mL), by ELISA result' replaced by 'Rotavirus IgA titer, by ELISA result'
+   - unitLabel: add 'U/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000178'
+  row 5004: http://purl.obolibrary.org/obo/EUPATH_0036261
+   - label: 'Tetanus toxoid IgG titer (IU/mL), by ELISA result' replaced by 'Tetanus toxoid IgG titer, by ELISA result'
+   - unitLabel: add 'IU/mL'
+   - unitIRI: add 'http://www.ebi.ac.uk/efo/EFO_0002928'
+  row 5005: http://purl.obolibrary.org/obo/EUPATH_0036392
+   - label: 'Tetanus toxoid IgG titer (IU/mL), by MIA result' replaced by 'Tetanus toxoid IgG titer, by MIA result'
+   - unitLabel: add 'IU/mL'
+   - unitIRI: add 'http://www.ebi.ac.uk/efo/EFO_0002928'
+  row 5154: http://purl.obolibrary.org/obo/EUPATH_0036358
+   - label: '16S ribosomal Ct value, by TAC result' replaced by '16S ribosomal, by TAC result'
+   - unitLabel: add 'Ct value'
   row 5155: http://purl.obolibrary.org/obo/EUPATH_0015332
    - label: 'Aeromonas Ct value, by TAC result' replaced by 'Aeromonas by TAC result'
    - unitLabel: add 'Ct value'
@@ -4039,6 +4911,9 @@ Conversion file:
    - unitLabel: add 'Ct value'
   row 5161: http://purl.obolibrary.org/obo/EUPATH_0015341
    - label: 'Campylobacter jejuni or C. coli Ct value, by TAC result' replaced by 'Campylobacter jejuni or C. coli, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5165: http://purl.obolibrary.org/obo/EUPATH_0011855
+   - label: 'Clostridium difficile Ct value, by TAC result' replaced by 'Clostridium difficile, by TAC result'
    - unitLabel: add 'Ct value'
   row 5168: http://purl.obolibrary.org/obo/EUPATH_0015339
    - label: 'Clostridium difficile toxin A (TcdA) Ct value, by TAC result' replaced by 'Clostridium difficile toxin A (TcdA), by TAC result'
@@ -4058,8 +4933,14 @@ Conversion file:
   row 5176: http://purl.obolibrary.org/obo/EUPATH_0015349
    - label: 'EAEC aggR Ct value, by TAC result' replaced by 'EAEC aggR, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5177: http://purl.obolibrary.org/obo/EUPATH_0011892
+   - label: 'EAEC aggR-activated regulator (aar) Ct value, by TAC result' replaced by 'EAEC aggR-activated regulator (aar), by TAC result'
+   - unitLabel: add 'Ct value'
   row 5179: http://purl.obolibrary.org/obo/EUPATH_0015353
    - label: 'EPEC bfpA Ct value, by TAC result' replaced by 'EPEC bfpA, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5182: http://purl.obolibrary.org/obo/EUPATH_0011857
+   - label: 'EPEC eae Ct value, by TAC result' replaced by 'EPEC eae, by TAC result'
    - unitLabel: add 'Ct value'
   row 5192: http://purl.obolibrary.org/obo/EUPATH_0015355
    - label: 'ETEC LT-pos Ct value, by TAC result' replaced by 'ETEC LT-pos, by TAC result'
@@ -4078,6 +4959,9 @@ Conversion file:
    - unitLabel: add 'Ct value'
   row 5203: http://purl.obolibrary.org/obo/EUPATH_0015361
    - label: 'Helicobacter pylori Ct value, by TAC result' replaced by 'Helicobacter pylori, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5204: http://purl.obolibrary.org/obo/EUPATH_0011865
+   - label: 'Mycobacterium tuberculosis Ct value, by TAC result' replaced by 'Mycobacterium tuberculosis, by TAC result'
    - unitLabel: add 'Ct value'
   row 5206: http://purl.obolibrary.org/obo/EUPATH_0015398
    - label: 'STEC Ct value, by TAC result' replaced by 'STEC, by TAC result'
@@ -4109,6 +4993,9 @@ Conversion file:
   row 5242: http://purl.obolibrary.org/obo/EUPATH_0015342
    - label: 'Cryptosporidium Ct value, by TAC result' replaced by 'Cryptosporidium, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5243: http://purl.obolibrary.org/obo/EUPATH_0036531
+   - label: 'Cryptosporidium Ct value, by qPCR result' replaced by 'Cryptosporidium, by qPCR result'
+   - unitLabel: add 'Ct value'
   row 5244: http://purl.obolibrary.org/obo/EUPATH_0015343
    - label: 'Cryptosporidium hominis Ct value, by TAC result' replaced by 'Cryptosporidium hominis, by TAC result'
    - unitLabel: add 'Ct value'
@@ -4124,11 +5011,20 @@ Conversion file:
   row 5252: http://purl.obolibrary.org/obo/EUPATH_0015351
    - label: 'Entamoeba histolytica Ct value, by TAC result' replaced by 'Entamoeba histolytica, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5253: http://purl.obolibrary.org/obo/EUPATH_0036323
+   - label: 'Entamoeba histolytica Ct value, by qPCR result' replaced by 'Entamoeba histolytica, by qPCR result'
+   - unitLabel: add 'Ct value'
   row 5256: http://purl.obolibrary.org/obo/EUPATH_0015350
    - label: 'Enterocytozoon bieneusi Ct value, by TAC result' replaced by 'Enterocytozoon bieneusi, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5257: http://purl.obolibrary.org/obo/EUPATH_0036361
+   - label: 'Eukaryotic 18S rRNA endogenous control Ct value, by TAC result' replaced by 'Eukaryotic 18S rRNA endogenous control, by TAC result'
+   - unitLabel: add 'Ct value'
   row 5258: http://purl.obolibrary.org/obo/EUPATH_0015360
    - label: 'Giardia Ct value, by TAC result' replaced by 'Giardia, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5259: http://purl.obolibrary.org/obo/EUPATH_0036324
+   - label: 'Giardia Ct value, by qPCR result' replaced by 'Giardia, by qPCR result'
    - unitLabel: add 'Ct value'
   row 5260: http://purl.obolibrary.org/obo/EUPATH_0015358
    - label: 'Giardia assemblage A Ct value, by TAC result' replaced by 'Giardia assemblage A, by TAC result'
@@ -4157,14 +5053,53 @@ Conversion file:
   row 5418: http://purl.obolibrary.org/obo/EUPATH_0015335
    - label: 'Astrovirus Ct value, by TAC result' replaced by 'Astrovirus, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5419: http://purl.obolibrary.org/obo/EUPATH_0036316
+   - label: 'Astrovirus Ct value, by qPCR result' replaced by 'Astrovirus, by qPCR result'
+   - unitLabel: add 'Ct value'
+  row 5421: http://purl.obolibrary.org/obo/EUPATH_0036257
+   - label: 'Cytomegalovirus Ct value, by qPCR result' replaced by 'Cytomegalovirus, by qPCR result'
+   - unitLabel: add 'Ct value'
+  row 5422: http://purl.obolibrary.org/obo/EUPATH_0036359
+   - label: 'Enterobacteria phage MS2 Ct value, by TAC result' replaced by 'Enterobacteria phage MS2, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5423: http://purl.obolibrary.org/obo/EUPATH_0036360
+   - label: 'Enterovirus Ct value, by TAC result' replaced by 'Enterovirus, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5424: http://purl.obolibrary.org/obo/EUPATH_0010781
+   - label: 'Norovirus Ct value, by qRT-PCR result' replaced by 'Norovirus, by qRT-PCR result'
+   - unitLabel: add 'Ct value'
   row 5425: http://purl.obolibrary.org/obo/EUPATH_0015364
    - label: 'Norovirus GI Ct value, by TAC result' replaced by 'Norovirus GI, by TAC result'
    - unitLabel: add 'Ct value'
   row 5428: http://purl.obolibrary.org/obo/EUPATH_0015365
    - label: 'Norovirus GII Ct value, by TAC result' replaced by 'Norovirus GII, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5432: http://purl.obolibrary.org/obo/EUPATH_0036369
+   - label: 'Oral poliovirus vaccine type 1 Ct value, by TAC result' replaced by 'Oral poliovirus vaccine type 1, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5433: http://purl.obolibrary.org/obo/EUPATH_0036370
+   - label: 'Oral poliovirus vaccine type 2 Ct value, by TAC result' replaced by 'Oral poliovirus vaccine type 2, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5434: http://purl.obolibrary.org/obo/EUPATH_0036371
+   - label: 'Oral poliovirus vaccine type 3 Ct value, by TAC result' replaced by 'Oral poliovirus vaccine type 3, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5435: http://purl.obolibrary.org/obo/EUPATH_0036363
+   - label: 'Phocine herpesvirus (positive control) Ct value, by TAC result' replaced by 'Phocine herpesvirus (positive control), by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5436: http://purl.obolibrary.org/obo/EUPATH_0036331
+   - label: 'Poliovirus serotype 1 Ct value, by multiplexed qRT-PCR result' replaced by 'Poliovirus serotype 1, by multiplexed qRT-PCR result'
+   - unitLabel: add 'Ct value'
+  row 5438: http://purl.obolibrary.org/obo/EUPATH_0036332
+   - label: 'Poliovirus serotype 2 Ct value, by multiplexed qRT-PCR result' replaced by 'Poliovirus serotype 2, by multiplexed qRT-PCR result'
+   - unitLabel: add 'Ct value'
+  row 5440: http://purl.obolibrary.org/obo/EUPATH_0036333
+   - label: 'Poliovirus serotype 3 Ct value, by multiplexed qRT-PCR result' replaced by 'Poliovirus serotype 3, by multiplexed qRT-PCR result'
+   - unitLabel: add 'Ct value'
   row 5445: http://purl.obolibrary.org/obo/EUPATH_0015366
    - label: 'Rotavirus Ct value, by TAC result' replaced by 'Rotavirus, by TAC result'
+   - unitLabel: add 'Ct value'
+  row 5446: http://purl.obolibrary.org/obo/EUPATH_0036318
+   - label: 'Rotavirus Ct value, by qPCR result' replaced by 'Rotavirus, by qPCR result'
    - unitLabel: add 'Ct value'
   row 5449: http://purl.obolibrary.org/obo/EUPATH_0015369
    - label: 'Rotavirus genotype G1 Ct value, by TAC result' replaced by 'Rotavirus genotype G1, by TAC result'
@@ -4211,9 +5146,64 @@ Conversion file:
   row 5464: http://purl.obolibrary.org/obo/EUPATH_0015382
    - label: 'Sapovirus Ct value, by TAC result' replaced by 'Sapovirus, by TAC result'
    - unitLabel: add 'Ct value'
+  row 5465: http://purl.obolibrary.org/obo/EUPATH_0036319
+   - label: 'Sapovirus Ct value, by qPCR result' replaced by 'Sapovirus, by qPCR result'
+   - unitLabel: add 'Ct value'
   row 5567: http://purl.obolibrary.org/obo/EUPATH_0030024
    - label: 'Mean Schistosoma mansoni count eggs per gram, by microscopy' replaced by 'Mean Schistosoma mansoni count by microscopy'
    - unitLabel: add 'eggs/g'
+  row 5644: http://purl.obolibrary.org/obo/EUPATH_0011276
+   - label: 'Alpha-1-antitrypsin (mg/g)' replaced by 'Alpha-1-antitrypsin'
+   - unitLabel: add 'mg/g'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036574'
+  row 5646: http://purl.obolibrary.org/obo/EUPATH_0036255
+   - label: 'Calprotectin (ug/g)' replaced by 'Calprotectin'
+   - unitLabel: add 'ug/g'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036575'
+  row 5648: http://purl.obolibrary.org/obo/EUPATH_0011277
+   - label: 'Myeloperoxidase (ng/mL)' replaced by 'Myeloperoxidase'
+   - unitLabel: add 'ng/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
+  row 5650: http://purl.obolibrary.org/obo/EUPATH_0011278
+   - label: 'Neopterin (nmol/L)' replaced by 'Neopterin'
+   - unitLabel: add 'nmol/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0036573'
+  row 5651: http://purl.obolibrary.org/obo/EUPATH_0036337
+   - label: 'Regenerating family member 1 beta (ug/mL)' replaced by 'Regenerating family member 1 beta'
+   - unitLabel: add 'ug/mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000274'
+  row 5816: http://purl.obolibrary.org/obo/EUPATH_0011194
+   - label: 'Urine volume (mL)' replaced by 'Urine volume'
+   - unitLabel: add 'mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+  row 5856: http://purl.obolibrary.org/obo/EUPATH_0036109
+   - label: 'L:M solution volume (mL)' replaced by 'L:M solution volume'
+   - unitLabel: add 'mL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000032'
+  row 5857: http://purl.obolibrary.org/obo/EUPATH_0011215
+   - label: 'Lactulose dosage (mg)' replaced by 'Lactulose dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 5859: http://purl.obolibrary.org/obo/EUPATH_0036399
+   - label: 'Lactulose excreted (mg)' replaced by 'Lactulose excreted'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 5860: http://purl.obolibrary.org/obo/EUPATH_0036397
+   - label: 'Lactulose excreted (mg/L)' replaced by 'Lactulose excreted'
+   - unitLabel: add 'mg/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000273'
+  row 5862: http://purl.obolibrary.org/obo/EUPATH_0011216
+   - label: 'Mannitol dosage (mg)' replaced by 'Mannitol dosage'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 5864: http://purl.obolibrary.org/obo/EUPATH_0036400
+   - label: 'Mannitol excreted (mg)' replaced by 'Mannitol excreted'
+   - unitLabel: add 'mg'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000022'
+  row 5865: http://purl.obolibrary.org/obo/EUPATH_0036398
+   - label: 'Mannitol excreted (mg/L)' replaced by 'Mannitol excreted'
+   - unitLabel: add 'mg/L'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000273'
 
 write updated file to: 
   ApiCommonData/Load/ontology/harmonization/clinEpi_conversion_temp.csv
@@ -4225,6 +5215,10 @@ Conversion file:
   row 2: http://purl.obolibrary.org/obo/EUPATH_0000609
    - category: add 'Sample'
    - hidden: add 'yes'
+  row 111: http://purl.obolibrary.org/obo/EUPATH_0036493
+   - parentLabel: 'Clinical history' replaced by 'Participant'
+   - parentIRI: 'http://purl.obolibrary.org/obo/OGMS_0000015' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
+   - category: add 'Participant'
   row 148: http://purl.obolibrary.org/obo/OBI_0001620
    - label: 'Latitude (degrees)' replaced by 'Latitude'
    - category: add 'Household'
@@ -4249,6 +5243,14 @@ Conversion file:
    - category: add 'Participant'
    - unitLabel: add 'days'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 166: http://purl.obolibrary.org/obo/OBI_0001169
+   - parentLabel: 'Human or Animal' replaced by 'Observation details'
+   - label: 'Age (years)' replaced by 'Age'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000612' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+   - category: add 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 180: http://purl.obolibrary.org/obo/EUPATH_0010375
    - parentLabel: 'Human or Animal' replaced by 'Participant study details'
    - label: 'Case or control subject' replaced by 'Case or control participant'
@@ -4267,12 +5269,24 @@ WARNING: The conversion file does not have IRI column, cannot update automatical
 
 Conversion file: 
   ApiCommonData/Load/ontology/General/umsp/doc/UMSP_conversion.csv
-  - not find any term need to be updated
-----------------
+
+  row 31: http://purl.obolibrary.org/obo/OBI_0001169
+   - is_featured: add 'yes'
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/General/umsp/doc/UMSP_conversion_temp.csv
+---------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/General/COVID-19_India/doc/COVID_India_conversion.csv
 
+  row 27: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 51: http://purl.obolibrary.org/obo/PCO_0000024
    - hidden: add 'yes'
   row 53: http://purl.obolibrary.org/obo/EUPATH_0000096
@@ -4285,11 +5299,143 @@ write updated file to:
 ---------------
 
 Conversion file: 
+  ApiCommonData/Load/ontology/General/promote/doc/promote_conversion.csv
+
+  row 2: http://purl.obolibrary.org/obo/PCO_0000024
+   - hidden: add 'yes'
+  row 41: http://purl.obolibrary.org/obo/EUPATH_0000025
+   - label: 'Sleeping rooms in dwelling' replaced by 'Sleeping rooms in dwelling count'
+  row 47: http://purl.obolibrary.org/obo/EUPATH_0020215
+   - unitIRI: add 'http://purl.obolibrary.org/obo/EUPATH_0020260'
+   - unitLabel: add 'km'
+  row 62: http://purl.obolibrary.org/obo/EUPATH_0021085
+   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
+   - parentLabel: 'Household' replaced by 'Household observation details'
+  row 100: http://purl.obolibrary.org/obo/EUPATH_0010075
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Height (cm)' replaced by 'Height'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
+   - unitLabel: add 'cm'
+  row 101: http://purl.obolibrary.org/obo/EUPATH_0000732
+   - category: 'Observation' replaced by 'Participant'
+   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
+   - replaces: add 'EUPATH_0000732'
+   - label: 'Weight (kg)' replaced by 'Weight'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+   - unitLabel: add 'kg'
+  row 255: http://purl.obolibrary.org/obo/EUPATH_0021098
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
+   - category: 'Observation' replaced by 'Participant'
+   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
+   - replaces: add 'EUPATH_0021098'
+   - parentLabel: 'Observation' replaced by 'Participant'
+   - label: 'Immediate clinical history' replaced by 'Clinical history'
+  row 263: http://purl.obolibrary.org/obo/EUPATH_0000311
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+   - category: 'Observation' replaced by 'Participant'
+   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000311' replaced by 'http://purl.obolibrary.org/obo/BFO_0000015'
+   - replaces: add 'EUPATH_0000311'
+   - parentLabel: 'Observation' replaced by 'Observation details'
+   - is_featured: add 'yes'
+   - label: 'Visit type' replaced by 'Observation type'
+  row 351: http://purl.obolibrary.org/obo/EUPATH_0021087
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Diastolic blood pressure (mmHg)' replaced by 'Diastolic blood pressure'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
+   - unitLabel: add 'mmHg'
+  row 353: http://www.ebi.ac.uk/efo/EFO_0004326
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Heart rate (bpm)' replaced by 'Heart rate'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/NCIT_C49673'
+   - unitLabel: add 'bpm'
+  row 358: http://purl.obolibrary.org/obo/EUPATH_0021086
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Systolic blood pressure (mmHg)' replaced by 'Systolic blood pressure'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
+   - unitLabel: add 'mmHg'
+  row 359: http://purl.obolibrary.org/obo/EUPATH_0000110
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Temperature (C)' replaced by 'Temperature'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
+   - unitLabel: add 'C'
+  row 370: http://purl.obolibrary.org/obo/EUPATH_0000154
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Abdominal pain duration (days)' replaced by 'Abdominal pain duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 371: http://purl.obolibrary.org/obo/EUPATH_0000155
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Anorexia duration (days)' replaced by 'Anorexia duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 373: http://purl.obolibrary.org/obo/EUPATH_0000156
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Cough duration (days)' replaced by 'Cough duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 374: http://purl.obolibrary.org/obo/EUPATH_0000157
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Diarrhea duration (days)' replaced by 'Diarrhea duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 379: http://purl.obolibrary.org/obo/EUPATH_0000158
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Fatigue duration (days)' replaced by 'Fatigue duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 385: http://purl.obolibrary.org/obo/EUPATH_0000159
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Headache duration (days)' replaced by 'Headache duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 402: http://purl.obolibrary.org/obo/EUPATH_0000165
+   - category: 'Observation' replaced by 'Participant'
+   - label: 'Vomiting duration (days)' replaced by 'Vomiting duration'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 438: http://purl.obolibrary.org/obo/EUPATH_0000096
+   - hidden: add 'yes'
+  row 440: http://purl.obolibrary.org/obo/EUPATH_0015457
+   - is_featured: add 'yes'
+  row 454: http://www.ebi.ac.uk/efo/EFO_0004950
+   - hidden: add 'yes'
+  row 462: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
+  row 467: http://purl.obolibrary.org/obo/EUPATH_0000609
+   - hidden: add 'yes'
+  row 482: http://purl.obolibrary.org/obo/EUPATH_0000047
+   - label: 'Hemoglobin (g/dL)' replaced by 'Hemoglobin'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
+   - unitLabel: add 'g/dL'
+  row 533: http://purl.obolibrary.org/obo/EUPATH_0000537
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium (per uL blood), by microscopy' replaced by 'Plasmodium, by microscopy result'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+   - unitLabel: add '/uL'
+  row 534: http://purl.obolibrary.org/obo/EUPATH_0020166
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium (per uL), by qPCR' replaced by 'Plasmodium, by qPCR result'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+   - unitLabel: add '/uL'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/General/promote/doc/promote_conversion_temp.csv
+---------------
+
+Conversion file: 
   ApiCommonData/Load/ontology/General/nhs/doc/NHS_conversion.csv
 
   row 2: http://purl.obolibrary.org/obo/EUPATH_0000096
    - parentIRI: add 'http://www.w3.org/2002/07/owl#Thing'
    - hidden: add 'yes'
+  row 51: http://purl.obolibrary.org/obo/OBI_0001169
+   - category: 'Observation' replaced by 'Participant'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - is_featured: add 'yes'
   row 55: http://purl.obolibrary.org/obo/PCO_0000024
    - parentIRI: add 'http://www.w3.org/2002/07/owl#Thing'
    - hidden: add 'yes'
@@ -4308,8 +5454,8 @@ Conversion file:
   row 10: http://purl.obolibrary.org/obo/EUPATH_0015457
    - is_featured: add 'yes'
   row 17: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 18: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -4342,8 +5488,14 @@ Conversion file:
    - unitLabel: add 'C'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
   row 14: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+  row 23: http://purl.obolibrary.org/obo/EUPATH_0000537
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium (per uL blood), by microscopy' replaced by 'Plasmodium, by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - unitLabel: add '/uL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
   row 24: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
   row 26: http://purl.obolibrary.org/obo/EUPATH_0000732
@@ -4397,22 +5549,20 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/General/crompton/doc/Crompton126_226_227_conversion.csv
 
-  row 5: http://purl.obolibrary.org/obo/EUPATH_0021085
-   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
-   - parentLabel: 'Household' replaced by 'Household observation details'
-  row 168: http://purl.obolibrary.org/obo/BFO_0000015
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
-   - parentLabel: 'Participant' replaced by 'Observation details'
+  row 160: http://purl.obolibrary.org/obo/BFO_0000015
    - is_featured: add 'yes'
+  row 175: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 251: http://purl.obolibrary.org/obo/EUPATH_0000537
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium, by microscopy' replaced by 'Plasmodium, by microscopy result'
+   - unitLabel: 'per uL blood' replaced by '/uL'
 
 write updated file to: 
   ApiCommonData/Load/ontology/General/crompton/doc/Crompton126_226_227_conversion_temp.csv
 ---------------
-
-Conversion file: 
-  ApiCommonData/Load/ontology/script/test/SouthAsia_conversion.csv
-  - not find any term need to be updated
-----------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/script/test-local/SIP_conversion.csv
@@ -4489,8 +5639,15 @@ Conversion file:
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
   row 569: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
+  row 577: http://purl.obolibrary.org/obo/EUPATH_0036493
+   - parentLabel: 'Clinical history' replaced by 'Participant'
+   - parentIRI: 'http://purl.obolibrary.org/obo/OGMS_0000015' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
   row 634: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
+  row 642: http://purl.obolibrary.org/obo/EUPATH_0036409
+   - label: 'Estimated gestational age (weeks)' replaced by 'Estimated gestational age'
+   - unitLabel: add 'weeks'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000034'
   row 681: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
   row 719: http://purl.obolibrary.org/obo/EUPATH_0000047
@@ -4509,47 +5666,21 @@ WARNING: The conversion file does not have IRI column, cannot update automatical
 
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/south_asia/doc/SouthAsia_conversion.csv
-  - not find any term need to be updated
-----------------
+
+  row 64: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/ICEMR/south_asia/doc/SouthAsia_conversion_temp.csv
+---------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/southern_africa/doc/SouthernAfrica_conversion.csv
 
-  row 2: http://purl.obolibrary.org/obo/PCO_0000024
-   - hidden: add 'yes'
-  row 6: http://purl.obolibrary.org/obo/EUPATH_0021085
-   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
-   - parentLabel: 'Household' replaced by 'Household observation details'
-  row 22: http://purl.obolibrary.org/obo/EUPATH_0000732
-   - category: 'Observation' replaced by 'Participant'
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
-   - replaces: add 'EUPATH_0000732'
-   - label: 'Weight (kg)' replaced by 'Weight'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
-   - unitLabel: add 'kg'
-  row 44: http://purl.obolibrary.org/obo/EUPATH_0010240
-   - category: 'Observation' replaced by 'Participant'
-   - label: 'Max loose stools at episode' replaced by 'Max loose stools at episode count'
-  row 118: http://purl.obolibrary.org/obo/EUPATH_0021098
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
-   - category: 'Observation' replaced by 'Participant'
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
-   - replaces: add 'EUPATH_0021098'
-   - parentLabel: 'Observation' replaced by 'Participant'
-   - label: 'Immediate clinical history' replaced by 'Clinical history'
-  row 160: http://purl.obolibrary.org/obo/EUPATH_0000110
-   - category: 'Observation' replaced by 'Participant'
-   - label: 'Temperature (C)' replaced by 'Temperature'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
-   - unitLabel: add 'C'
-  row 241: http://purl.obolibrary.org/obo/EUPATH_0000096
-   - hidden: add 'yes'
-  row 264: http://purl.obolibrary.org/obo/EUPATH_0000609
-   - hidden: add 'yes'
-  row 266: http://purl.obolibrary.org/obo/EUPATH_0000047
-   - label: 'Hemoglobin (g/dL)' replaced by 'Hemoglobin'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
-   - unitLabel: add 'g/dL'
+  row 135: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/southern_africa/doc/SouthernAfrica_conversion_temp.csv
@@ -4601,68 +5732,56 @@ Conversion file:
    - is_featured: add 'yes'
   row 227: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
+  row 241: http://purl.obolibrary.org/obo/EUPATH_0000537
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium (per uL blood), by microscopy' replaced by 'Plasmodium, by microscopy result'
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - unitLabel: add '/uL'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/malawi/doc/icemr_malawi_conversion_temp.csv
 ---------------
 
 Conversion file: 
-  ApiCommonData/Load/ontology/ICEMR/india_cohort/doc/Indian_cohort_conversion.csv
-WARNING: The conversion file does not have IRI column, cannot update automatically
-----------------
+  ApiCommonData/Load/ontology/ICEMR/india_cohort/doc/India_cohort_conversion.csv
+
+  row 26: http://purl.obolibrary.org/obo/EUPATH_0021085
+   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
+   - parentLabel: 'Household' replaced by 'Household observation details'
+  row 47: http://purl.obolibrary.org/obo/EUPATH_0000019
+   - label: 'Persons living in house' replaced by 'Persons living in house count'
+  row 97: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 106: http://purl.obolibrary.org/obo/BFO_0000015
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
+   - parentLabel: 'Participant' replaced by 'Observation details'
+  row 115: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 196: http://purl.obolibrary.org/obo/EUPATH_0000047
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
+   - unitLabel: add 'g/dL'
+  row 200: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum asexual stages, by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
+  row 201: http://purl.obolibrary.org/obo/EUPATH_0000546
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum gametocytes, by microscopy' replaced by 'Plasmodium falciparum gametocytes, by microscopy result'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/ICEMR/india_cohort/doc/India_cohort_conversion_temp.csv
+---------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/india_meghalaya/doc/India_Meghalaya_conversion.csv
 
-  row 2: http://purl.obolibrary.org/obo/PCO_0000024
-   - hidden: add 'yes'
-  row 25: http://purl.obolibrary.org/obo/EUPATH_0021085
-   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
-   - parentLabel: 'Household' replaced by 'Household observation details'
-  row 94: http://purl.obolibrary.org/obo/EUPATH_0000019
-   - label: 'Persons living in house' replaced by 'Persons living in house count'
-  row 113: http://purl.obolibrary.org/obo/EUPATH_0010075
-   - category: 'Observation' replaced by 'Participant'
-   - label: 'Height (cm)' replaced by 'Height'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
-   - unitLabel: add 'cm'
-  row 115: http://purl.obolibrary.org/obo/EUPATH_0010084
-   - category: 'Observation' replaced by 'Participant'
-   - label: 'MUAC (cm)' replaced by 'MUAC'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
-   - unitLabel: add 'cm'
-  row 117: http://purl.obolibrary.org/obo/EUPATH_0000732
-   - category: 'Observation' replaced by 'Participant'
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
-   - replaces: add 'EUPATH_0000732'
-   - label: 'Weight (kg)' replaced by 'Weight'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
-   - unitLabel: add 'kg'
-  row 134: http://purl.obolibrary.org/obo/EUPATH_0021098
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000096'
-   - category: 'Observation' replaced by 'Participant'
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
-   - replaces: add 'EUPATH_0021098'
-   - parentLabel: 'Observation' replaced by 'Participant'
-   - label: 'Immediate clinical history' replaced by 'Clinical history'
-  row 137: http://purl.obolibrary.org/obo/BFO_0000015
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000738' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
-   - category: 'Observation' replaced by 'Participant'
-   - parentLabel: 'Observation' replaced by 'Observation details'
-   - is_featured: add 'yes'
-  row 163: http://purl.obolibrary.org/obo/EUPATH_0000110
-   - category: 'Observation' replaced by 'Participant'
-   - label: 'Temperature (C)' replaced by 'Temperature'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
-   - unitLabel: add 'C'
-  row 182: http://purl.obolibrary.org/obo/EUPATH_0000096
-   - hidden: add 'yes'
-  row 202: http://purl.obolibrary.org/obo/EUPATH_0000609
-   - hidden: add 'yes'
-  row 212: http://purl.obolibrary.org/obo/EUPATH_0000047
-   - label: 'Hemoglobin (g/dL)' replaced by 'Hemoglobin'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
-   - unitLabel: add 'g/dL'
+  row 141: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/india_meghalaya/doc/India_Meghalaya_conversion_temp.csv
@@ -4670,58 +5789,49 @@ write updated file to:
 
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/prism/doc/PRISM_conversion.csv
-  - not find any term need to be updated
-----------------
+
+  row 99: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 118: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/ICEMR/prism/doc/PRISM_conversion_temp.csv
+---------------
 
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/west_africa/doc/WestAfrica_conversion.csv
-  - not find any term need to be updated
-----------------
 
-Conversion file: 
-  ApiCommonData/Load/ontology/ICEMR/india_cx/doc/Indian_cx_conversion.csv
-
-  row 5: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
-  row 49: http://purl.obolibrary.org/obo/EUPATH_0000191
-   - label: 'Days since enrollment' replaced by 'Time since enrollment'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
-   - unitLabel: add 'days'
-  row 54: http://purl.obolibrary.org/obo/EUPATH_0021087
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 80: http://purl.obolibrary.org/obo/EUPATH_0010075
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
-  row 81: http://purl.obolibrary.org/obo/EUPATH_0000047
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
-  row 83: http://purl.obolibrary.org/obo/EUPATH_0021085
-   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
-   - parentLabel: 'Household' replaced by 'Household observation details'
-  row 88: http://purl.obolibrary.org/obo/EUPATH_0021098
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
-   - replaces: add 'EUPATH_0021098'
-   - label: 'Immediate clinical history' replaced by 'Clinical history'
-  row 120: http://purl.obolibrary.org/obo/BFO_0000015
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
-   - parentLabel: 'Participant' replaced by 'Observation details'
-   - is_featured: add 'yes'
-  row 138: http://purl.obolibrary.org/obo/EUPATH_0000019
-   - label: 'Persons living in house' replaced by 'Persons living in house count'
-  row 199: http://purl.obolibrary.org/obo/EUPATH_0021086
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 202: http://purl.obolibrary.org/obo/EUPATH_0000110
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
-  row 222: http://purl.obolibrary.org/obo/EUPATH_0000091
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000091' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0004991'
-   - replaces: add 'EUPATH_0000091'
-   - is_featured: add 'yes'
-   - label: 'Visit date' replaced by 'Observation date'
-  row 225: http://purl.obolibrary.org/obo/EUPATH_0000732
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
-   - replaces: add 'EUPATH_0000732'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+  row 29: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 60: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum asexual stages, by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
 
 write updated file to: 
-  ApiCommonData/Load/ontology/ICEMR/india_cx/doc/Indian_cx_conversion_temp.csv
+  ApiCommonData/Load/ontology/ICEMR/west_africa/doc/WestAfrica_conversion_temp.csv
+---------------
+
+Conversion file: 
+  ApiCommonData/Load/ontology/ICEMR/india_cx/doc/India_cx_conversion.csv
+
+  row 97: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 115: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 222: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - label: 'Plasmodium falciparum asexual stages, by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
+  row 223: http://purl.obolibrary.org/obo/EUPATH_0000546
+   - label: 'Plasmodium falciparum gametocytes, by microscopy' replaced by 'Plasmodium falciparum gametocytes, by microscopy result'
+
+write updated file to: 
+  ApiCommonData/Load/ontology/ICEMR/india_cx/doc/India_cx_conversion_temp.csv
 ---------------
 
 Conversion file: 
@@ -4729,6 +5839,12 @@ Conversion file:
 
   row 113: http://purl.obolibrary.org/obo/EUPATH_0020215
    - unitIRI: 'http://purl.obolibrary.org/obo/EUPATH_0020269' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0020260'
+  row 177: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 200: http://purl.obolibrary.org/obo/EUPATH_0000120
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/prism2_border_cohort/docs/PRISM2_border_cohort_conversion_temp.csv
@@ -4755,8 +5871,8 @@ Conversion file:
   row 20: http://purl.obolibrary.org/obo/EUPATH_0000096
    - hidden: add 'yes'
   row 35: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitLabel: add 'years'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'days'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
   row 37: http://purl.obolibrary.org/obo/EUPATH_0000609
    - hidden: add 'yes'
 
@@ -4768,31 +5884,10 @@ Conversion file:
   ApiCommonData/Load/ontology/ICEMR/india_gujarat/doc/India_gujarat_conversion.csv
 
   row 7: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
-   - unitLabel: add 'years'
-  row 67: http://purl.obolibrary.org/obo/EUPATH_0021087
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 84: http://www.ebi.ac.uk/efo/EFO_0004326
-   - unitIRI: add 'http://purl.obolibrary.org/obo/NCIT_C49673'
-  row 85: http://purl.obolibrary.org/obo/EUPATH_0010075
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
-  row 87: http://purl.obolibrary.org/obo/EUPATH_0000047
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
-  row 104: http://purl.obolibrary.org/obo/EUPATH_0021098
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
-   - replaces: add 'EUPATH_0021098'
-   - label: 'Immediate clinical history' replaced by 'Clinical history'
-  row 155: http://purl.obolibrary.org/obo/BFO_0000015
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
-   - parentLabel: 'Participant' replaced by 'Observation details'
-  row 221: http://purl.obolibrary.org/obo/EUPATH_0021086
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 224: http://purl.obolibrary.org/obo/EUPATH_0000110
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
-  row 244: http://purl.obolibrary.org/obo/EUPATH_0000732
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
-   - replaces: add 'EUPATH_0000732'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 79: http://purl.obolibrary.org/obo/EUPATH_0011849
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000275'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/india_gujarat/doc/India_gujarat_conversion_temp.csv
@@ -4801,9 +5896,13 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/india_behavior/doc/India_behavior_conversion.csv
 
-  row 65: http://purl.obolibrary.org/obo/EUPATH_0021085
-   - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
-   - parentLabel: 'Household' replaced by 'Household observation details'
+  row 109: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
+  row 145: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - label: 'Plasmodium falciparum asexual stages, by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
+  row 146: http://purl.obolibrary.org/obo/EUPATH_0000546
+   - label: 'Plasmodium falciparum gametocytes, by microscopy' replaced by 'Plasmodium falciparum gametocytes, by microscopy result'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/india_behavior/doc/India_behavior_conversion_temp.csv
@@ -4812,9 +5911,13 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/amazonia/doc/AmazoniaBrazil_conversion.csv
 
+  row 6: http://purl.obolibrary.org/obo/OBI_0001169
+   - is_featured: add 'yes'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 7: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
-   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 22: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
   row 95: http://purl.obolibrary.org/obo/EUPATH_0000047
@@ -4837,6 +5940,12 @@ Conversion file:
    - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
    - replaces: add 'EUPATH_0000732'
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+  row 291: http://purl.obolibrary.org/obo/EUPATH_0000377
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022068'
+   - parentLabel: 'Participant' replaced by 'Relocation'
+   - label: 'Years living in dwelling' replaced by 'Time living in dwelling'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'years'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/amazonia/doc/AmazoniaBrazil_conversion_temp.csv
@@ -4846,17 +5955,35 @@ Conversion file:
   ApiCommonData/Load/ontology/ICEMR/amazonia/doc/AmazoniaPeru_long_conversion.csv
 
   row 9: http://purl.obolibrary.org/obo/EUPATH_0000120
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
-   - unitLabel: add 'years'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: add 'days'
   row 18: http://www.ebi.ac.uk/efo/EFO_0004950
    - hidden: add 'yes'
   row 66: http://purl.obolibrary.org/obo/EUPATH_0021085
    - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
    - parentLabel: 'Household' replaced by 'Household observation details'
+  row 98: http://purl.obolibrary.org/obo/EUPATH_0000550
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum asexual stage, by microscopy' replaced by 'Plasmodium falciparum asexual stages, by microscopy result'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+   - unitLabel: '/uL blood' replaced by '/uL'
+  row 100: http://purl.obolibrary.org/obo/EUPATH_0000546
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0033308' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022270'
+   - parentLabel: 'Plasmodium in blood' replaced by 'Raw eukaryota data for blood'
+   - label: 'Plasmodium falciparum gametocytes, by microscopy' replaced by 'Plasmodium falciparum gametocytes, by microscopy result'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000316'
+   - unitLabel: '/uL blood' replaced by '/uL'
   row 150: http://purl.obolibrary.org/obo/EUPATH_0000025
    - label: 'Sleeping rooms in dwelling' replaced by 'Sleeping rooms in dwelling count'
   row 159: http://purl.obolibrary.org/obo/EUPATH_0000110
    - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
+  row 176: http://purl.obolibrary.org/obo/EUPATH_0000377
+   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0022068'
+   - parentLabel: 'Participant' replaced by 'Relocation'
+   - label: 'Years living in dwelling' replaced by 'Time living in dwelling'
+   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000036'
+   - unitLabel: add 'years'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/amazonia/doc/AmazoniaPeru_long_conversion_temp.csv
@@ -4865,31 +5992,9 @@ write updated file to:
 Conversion file: 
   ApiCommonData/Load/ontology/ICEMR/india_feverSurv/doc/India_feverSurv_conversion.csv
 
-  row 39: http://purl.obolibrary.org/obo/EUPATH_0000191
-   - label: 'Days since enrollment' replaced by 'Time since enrollment'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000033'
-   - unitLabel: add 'days'
-  row 53: http://purl.obolibrary.org/obo/EUPATH_0021087
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 71: http://purl.obolibrary.org/obo/EUPATH_0010075
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000015'
-  row 72: http://purl.obolibrary.org/obo/EUPATH_0000047
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000208'
-  row 79: http://purl.obolibrary.org/obo/EUPATH_0021098
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0021098' replaced by 'http://purl.obolibrary.org/obo/OGMS_0000015'
-   - replaces: add 'EUPATH_0021098'
-   - label: 'Immediate clinical history' replaced by 'Clinical history'
-  row 101: http://purl.obolibrary.org/obo/BFO_0000015
-   - parentIRI: 'http://purl.obolibrary.org/obo/EUPATH_0000096' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0000310'
-   - parentLabel: 'Participant' replaced by 'Observation details'
-  row 159: http://purl.obolibrary.org/obo/EUPATH_0021086
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000272'
-  row 161: http://purl.obolibrary.org/obo/EUPATH_0000110
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000027'
-  row 175: http://purl.obolibrary.org/obo/EUPATH_0000732
-   - IRI: 'http://purl.obolibrary.org/obo/EUPATH_0000732' replaced by 'http://purl.obolibrary.org/obo/IAO_0000414'
-   - replaces: add 'EUPATH_0000732'
-   - unitIRI: add 'http://purl.obolibrary.org/obo/UO_0000009'
+  row 4: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
 
 write updated file to: 
   ApiCommonData/Load/ontology/ICEMR/india_feverSurv/doc/India_feverSurv_conversion_temp.csv
@@ -4901,6 +6006,9 @@ Conversion file:
   row 87: http://purl.obolibrary.org/obo/EUPATH_0021085
    - parentIRI: 'http://purl.obolibrary.org/obo/PCO_0000024' replaced by 'http://purl.obolibrary.org/obo/EUPATH_0011995'
    - parentLabel: 'Household' replaced by 'Household observation details'
+  row 162: http://purl.obolibrary.org/obo/OBI_0001169
+   - unitIRI: 'http://purl.obolibrary.org/obo/UO_0000036' replaced by 'http://purl.obolibrary.org/obo/UO_0000033'
+   - unitLabel: 'years' replaced by 'days'
   row 211: http://purl.obolibrary.org/obo/EUPATH_0020254
    - replaces: add 'EUPATH_0000316'
   row 234: http://purl.obolibrary.org/obo/HP_0003326
