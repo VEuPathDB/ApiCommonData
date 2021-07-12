@@ -336,8 +336,8 @@ sub loadCharacteristics{
   my ($sequenceValue) = $dbh->selectrow_array("select ${sequenceName}.nextval from dual");
   my ($maxPrimaryKey) = $dbh->selectrow_array("select MAX(CHARACTERISTIC_ID) FROM Study.CHARACTERISTIC");
   my $sequenceDifference = $maxPrimaryKey - $sequenceValue;
-  $self->log("Increasing CHARACTERISTIC_ID by $sequenceDifference\n");
   if($sequenceDifference > 0) {
+    $self->log("Increasing CHARACTERISTIC_ID by $sequenceDifference\n");
     $dbh->do("alter sequence $sequenceName increment by $sequenceDifference");
     $dbh->do("select ${sequenceName}.nextval from dual");
     $dbh->do("alter sequence $sequenceName increment by 1");
@@ -510,16 +510,19 @@ sub loadNodes {
       my $characteristics = $node->getCharacteristics();
 
       foreach my $characteristic (@$characteristics) {
-        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+        my $charQualifierId;
+        if($characteristic->getQualifier =~ m{ncbitaxon}i) { # qualifier is a taxon
           my $taxonId = $self->{_taxon_to_identifiers}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
           $pan->setTaxonId($taxonId);
+          $charQualifierId = $taxonId;
+        } else {
+          my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
+          $charQualifierId = $charQualifierOntologyTerm->getId();
         }
 
     #   my $gusChar = GUS::Model::Study::Characteristic->new();
     #   $gusChar->setParent($pan);
 
-        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($characteristic, 1);
-        my $charQualifierId = $charQualifierOntologyTerm->getId();
 
       # ALWAYS Set the qualifier_id
 
@@ -535,7 +538,8 @@ sub loadNodes {
 
         my ($charValue, $charOntologyTermId);
 
-        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+
+        if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') { # term is a taxon
           my $value = $self->{_taxon_to_names}->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
     #     $gusChar->setValue($value);
           $charValue = $value;
