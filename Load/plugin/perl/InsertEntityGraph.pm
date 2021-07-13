@@ -164,14 +164,14 @@ sub run {
       push @investigationFiles, "$metaDataRoot/$investigationBaseName"; 
     }
   }
-  $self->logOrError("No investigation files") unless @investigationFiles;
+  $self->userError("No investigation files") unless @investigationFiles;
 
   my $getAddMoreData;
   my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
   if($evalToGetGetAddMoreData){
     $getAddMoreData = eval $evalToGetGetAddMoreData;
-    $self->logOrError("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
-    $self->logOrError("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
+    $self->error("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
+    $self->error("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
   }
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
@@ -193,14 +193,13 @@ sub run {
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
+    my %errors;
+    $investigation->setOnError(sub {
+      my ($error) = @_;
+      $self->log("Error found when parsing:\n$error") unless $errors{$error}++;
+    });
 
-    eval {
     $investigation->parseInvestigation();
-    };
-    if($@) {
-      $self->logOrError($@);
-      next;
-    }
 
     my $investigationId = $investigation->getIdentifier();
     my $studies = $investigation->getStudies();
@@ -209,14 +208,8 @@ sub run {
     
     foreach my $study (@$studies) {
       while($study->hasMoreData()) {
-        eval {
-          $investigation->parseStudy($study);
-          $investigation->dealWithAllOntologies();
-        };
-        if($@) {
-          $self->logOrError($@);
-          next;
-        }
+        $investigation->parseStudy($study);
+        $investigation->dealWithAllOntologies();
 
         my $identifier = $study->getIdentifier();
         my $description = $study->getDescription();
@@ -234,11 +227,10 @@ sub run {
     }
 
     $investigationCount++;
-  }
-
-  my $errorCount = $self->{_has_errors};
-  if($errorCount) {
-    $self->error("FOUND $errorCount ERRORS!");
+    my $errorCount = scalar keys %errors;
+    if($errorCount) {
+      $self->error("FOUND $errorCount DIFFERENT ERRORS!");
+    }
   }
 
   $self->logRowsInserted() if($self->getArg('commit'));
@@ -316,7 +308,10 @@ sub addEntityTypeForNode {
 
   my $materialType = $node->getMaterialType();
 
-  my $mtKey = ($materialType ? $materialType->getTerm : 'NA') . "_" . $isaType;
+  $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId")
+    unless $materialType;
+
+  my $mtKey = join("_", $materialType->getTerm, $isaType);
 
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
@@ -326,17 +321,9 @@ sub addEntityTypeForNode {
   $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
-  if($materialType) {
-    my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialType, 0);
-    $entityType->setTypeId($gusOntologyTerm->getId());
-    $entityType->setName($gusOntologyTerm->getName());
-  }
-  else {
-    my $value = $node->getValue;
-    $self->logOrError("Node of value $value missing material type - unable to set typeId");
-    $entityType->setName($isaType);
-  }
-
+  my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialType, 0);
+  $entityType->setTypeId($gusOntologyTerm->getId());
+  $entityType->setName($gusOntologyTerm->getName());
 
   my $internalAbbrev = $entityType->getName();
   $internalAbbrev =~ s/([\w']+)/\u$1/g;
@@ -541,7 +528,7 @@ sub getOntologyTermGusObj {
       $self->userError("No ontology entry found for $ontologyTermSourceRef and $ontologyTermAccessionNumber") unless($ontologyTermId);
     }
     else {
-      $self->logOrError("OntologyTerm of class $ontologyTermClass and value [$ontologyTermTerm] must provide accession&source OR a qualifier in the case of Characteristics must map to an ontologyterm");
+      $self->userError("OntologyTerm of class $ontologyTermClass and value [$ontologyTermTerm] must provide accession&source OR a qualifier in the case of Characteristics must map to an ontologyterm");
     }
 
 
@@ -747,7 +734,8 @@ and tn.name_class = 'scientific name'
   my $ontologyTermToIdentifiers = {};
   my $ontologyTermToNames = {};
 
-
+  my @multipleCounts;
+  my @missingTerms;
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
 
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
@@ -758,38 +746,28 @@ and tn.name_class = 'scientific name'
       while(my ($dName, $sourceId, $id, $name) = $sh->fetchrow_array()) {
         $ontologyTermId = $id;
         $ontologyTermName = $name;
-    $count++;
+        $count++;
       }
       $sh->finish();
       if($count == 1) {
         $ontologyTermToIdentifiers->{$os}->{$ota} = $ontologyTermId;
-
         $ontologyTermToNames->{$os}->{$ota} = $ontologyTermName;
-
       }
-      else {
-        $self->logOrError("ERROR:  OntologyTerms with Accession Or Name [$accessionOrName] were not found or were not found uniquely in the database");
-
+      elsif($count > 1) {
+        push @multipleCounts, $accessionOrName;
+      } else {
+        push @missingTerms, $accessionOrName;
       }
     }
   }
-  return $ontologyTermToIdentifiers, $ontologyTermToNames;
-}
-
-
-sub logOrError {
-  my ($self, $msg) = @_;
-
-  $self->{_has_errors}++;
-
-  if($self->getArg('commit')) {
+  if(@multipleCounts or @missingTerms){
+    my $msg = "checkOntologyTermsAndFetchIds FAILED";
+    $msg .= "\nTerms with multiple records: " . join (", ", @multipleCounts) if @multipleCounts;
+    $msg .= "\nTerms missing from the database: " . join (", ", @missingTerms) if @missingTerms;
     $self->userError($msg);
   }
-  else {
-    $self->log($msg);
-  }
+  return $ontologyTermToIdentifiers, $ontologyTermToNames;
 }
-
 
 sub undoTables {
   my ($self) = @_;
