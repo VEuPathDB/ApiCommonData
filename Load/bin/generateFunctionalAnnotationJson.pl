@@ -181,7 +181,7 @@ sub getProductNameFromGene {
     if ($product) {
       $products{$gSourceId} = $product;
     } else {
-      die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ... \n";
+      die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ...\n    It depends on APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES, which are not working on isfTest database yet.\n";
       $product = applyTranscriptProductToGene ($gSourceId);
       $products{$gSourceId} = "unspecified product";
     }
