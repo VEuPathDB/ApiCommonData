@@ -222,7 +222,8 @@ sub run {
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap);
+        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap)
+         unless %errors;
       }
     }
 
