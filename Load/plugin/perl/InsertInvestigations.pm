@@ -186,14 +186,14 @@ sub run {
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
-
-    eval {
-    $investigation->parseInvestigation();
-    };
-    if($@) {
-      $self->logOrError($@);
-      next;
+    if($isReportMode){
+      $investigation->setOnError(sub {
+        my ($error) = @_;
+        $self->logOrError("Error found when parsing:\n$error");
+      });
     }
+
+    $investigation->parseInvestigation();
 
     my $investigationId = $investigation->getIdentifier();
     my $studies = $investigation->getStudies();
@@ -233,14 +233,8 @@ sub run {
 
       while($study->hasMoreData()) {
 
-        eval {
-          $investigation->parseStudy($study);
-          $investigation->dealWithAllOntologies();
-        };
-        if($@) {
-          $self->logOrError($@);
-          next;
-        }
+        $investigation->parseStudy($study);
+        $investigation->dealWithAllOntologies();
 
         my $isatabDatasets = $study->{_insert_investigations_datasets};
 
