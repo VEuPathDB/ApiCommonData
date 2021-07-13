@@ -214,9 +214,9 @@ sub getProductNameFromTuningTable {
   my $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($organismAbbrev);
 
   ## only grep the preferred product name
-  my $sql = "select TRANSCRIPT_SOURCE_ID, TRANSCRIPT_PRODUCT
+  my $sql = "select source_id as transcript_source_id, transcript_product
              from apidbtuning.transcriptAttributes
-             where EXTERNAL_DB_RLS_ID=$extDbRlsId";
+             where external_db_rls_id=$extDbRlsId";
 
   my $stmt = $dbh->prepareAndExecute($sql);
 
