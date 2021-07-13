@@ -1,0 +1,32 @@
+# List variable ID, Label, unit label, unitIRI, and study
+
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT ?ID ?Label ?unitLabel ?unitIRI ?dataset
+WHERE {
+  <http://purl.obolibrary.org/obo/projects.owl> owl:imports ?file .
+  GRAPH ?file {
+    ?entity obo:EUPATH_0001008 ?unitLabel .
+    OPTIONAL {
+      ?entity obo:EUPATH_0001009 ?unitIRI . 
+    }
+  } .
+  ?entity rdfs:label ?org_label .
+  BIND (str(?org_label) AS ?Label) .
+  BIND(COALESCE(
+ 	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
+	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
+ 	IF(CONTAINS(STR(?entity), "#"), STRAFTER(STR(?entity), "#"), ?c),
+  	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?ID) .
+  BIND(STRAFTER(STR(?file), "/obo/") AS ?f) . 
+  BIND(IF(STRENDS(?f, ".owl"), STRBEFORE(?f, ".owl"), ?f) AS ?f2) .
+  BIND(COALESCE(
+	IF(STRSTARTS(?f2, "gates/"), STRAFTER(?f2, "gates/"), ?c), 
+	IF(CONTAINS(?f2, "icemr/"), STRAFTER(?f2, "icemr/"), ?c), 
+	IF(CONTAINS(?f2, "general/"), STRAFTER(?f2, "general/"), ?c), 
+	IF(STRSTARTS(?f2, "eupath/"), STRAFTER(?f2, "eupath/"), ?c), 
+	?f2) AS ?dataset) .
+}
+ORDER BY ASC(?ID) ASC(?unitLabel) ASC(?dataset)
