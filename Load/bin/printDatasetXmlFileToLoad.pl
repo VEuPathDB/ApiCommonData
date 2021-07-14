@@ -252,7 +252,7 @@ printValidateOrganismInfo($ofh);
 printAnnotation($ofh, $format, $secondaryAnnot) if ($format);
 
 if ($isEbiGenome =~ /^y/i ) {
-  printEbiGenome($ofh, $organismAbbrev, $ebiVersion);
+  printEbiGenome($ofh, $organismAbbrev, $ebiVersion, $genomeVersion);
 }
 
 printProductNamesClass ($ofh, \%excelInfo) if ($excelInfo{$organismAbbrev}{'hasProduct'} =~ /^y/i);
@@ -290,7 +290,7 @@ close $ofh;
 
 ##################### subroutine ###################
 sub printEbiGenome {
-  my ($fh, $ebiOrganismName, $ebiVersion) = @_;
+  my ($fh, $ebiOrganismName, $ebiVersion, $genomeVersion) = @_;
 
   print $fh "  <dataset class=\"ebi_primary_genome\">\n";
   printNameWithDollarSign ($fh, 'genomeVersion');
@@ -300,7 +300,7 @@ sub printEbiGenome {
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
   printNameWithDollarSign ($fh, 'ebiOrganismName');
   printNameWithValue ($fh, 'ebiVersion', $ebiVersion);
-  printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion');
+  ($genomeVersion =~ /^\d+/) ? printNameWithDollarSign ($fh, 'releaseDate', 'genomeVersion') : printNameWithEmptyValue ($fh, 'releaseDate');
   print $fh "  </dataset>\n";
   print $fh "\n";
 
