@@ -39,6 +39,7 @@ my (
     $isfMappingFile,
     $isEbiGenome,
     $ebiVersion,
+    $ebi2gusTag,
 
     $help);
 
@@ -70,6 +71,7 @@ my (
 	    'isfMappingFile=s' => \$isfMappingFile,
 	    'isEbiGenome=s' => \$isEbiGenome,
 	    'ebiVersion=s' => \$ebiVersion,
+	    'ebi2gusTag=s' => \$ebi2gusTag,
 
 	    'help|h' => \$help,
 	    );
@@ -80,6 +82,7 @@ my (
 &usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
 &usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
 &usage("Missing a Required Argument --ebiVersion") if ($isEbiGenome && !$ebiVersion);
+&usage("Missing a Required Argument --ebi2gusTag") if ($isEbiGenome && !$ebi2gusTag);
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
@@ -133,6 +136,7 @@ if ($secondaryAnnot =~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} !~
   die "ERROR: The --secondaryAnnot arguemnt includes 'api', but it isn't included in the excel file. Please double check it!!\n";
 }
 
+if ($isEbiGenome =~ /^n/i) {
 if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
   if ($excelInfo{$organismAbbrev}{"haveSupercontig"} =~ /^y/i) {
     if ($secondaryAnnot !~ /superc/i) {
@@ -150,6 +154,7 @@ if ($excelInfo{$organismAbbrev}{"haveChromosome"} =~ /^y/i) {
       die "ERROR: secondary genome, contig included, please add argument --secondaryAnnot 'contig'\n";
     }
   }
+}
 }
 
 ## check format is consistant with %excelInfo
@@ -294,7 +299,7 @@ sub printEbiGenome {
 
   print $fh "  <dataset class=\"ebi_primary_genome\">\n";
   printNameWithDollarSign ($fh, 'genomeVersion');
-  printNameWithValue ($fh, 'ebi2gusTag', '103');
+  printNameWithValue ($fh, 'ebi2gusTag', $ebi2gusTag);
   printNameWithDollarSign ($fh, 'projectName');
   printNameWithDollarSign ($fh, 'organismAbbrev');
   printNameWithDollarSign ($fh, 'ncbiTaxonId');
@@ -988,7 +993,7 @@ sub usage {
 Usage: printDatasetXmlFileToLoad.pl --organismAbbrev ffujIMI58289 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-01-30
        printDatasetXmlFileToLoad.pl --organismAbbrev afumA1163 --excelFile organismExcelFile.txt --projectName FungiDB --dbxrefVersion 2017-03-06
                                     --format gff3 --sourceIdRegex '^>(\\S+)' --isfMappingFile genemRNAExonCDS2Gus.xml
-       printDatasetXmlFileToLoad.pl --organismAbbrev ngruNEG-M --excelFile organismExcelFile.txt --projectName AmoebaDB --dbxrefVersion 2020-03-17 --isEbiGenome y --ebiVersion build_49
+       printDatasetXmlFileToLoad.pl --organismAbbrev ngruNEG-M --excelFile organismExcelFile.txt --projectName AmoebaDB --dbxrefVersion 2020-03-17 --isEbiGenome y --ebiVersion build_49 --ebi2gusTag 101
 
 where
   --organismAbbrev: required, the organism abbrev
@@ -1001,6 +1006,7 @@ where
   --isfMappingFile: optional, it is required if format is gff3 or embl. Also required if it doesn't use genbankGenbank2Gus.xml
   --isEbiGenome: optional, Yes|No
   --ebiVersion: required if isEbiGenome=Yes
+  --ebi2gusTag: required if isEbiGenome=Yes
 
 ";
 }
