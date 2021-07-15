@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionInfo>2021-07-09</owl:versionInfo>
+        <owl:versionInfo>2021-07-15</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -61,6 +61,23 @@
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">definition</rdfs:label>
     </owl:AnnotationProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0000312 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/OBI_0000312"/>
     
 
 
@@ -3802,6 +3819,213 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009246 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009246">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0200000"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Functional profiling</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009247 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009247">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Level 4 EC abundance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009248 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009248">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label>Pathway abundance</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009249 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009249">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009246"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathway coverage</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009250 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009250">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0200000"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009251 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009251">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of kingdom</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009252 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009252">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of phylum</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009253 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009253">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of class</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009254 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009254">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of orders</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009255 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009255">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of family</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009256 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009256">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of genus</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009257 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009257">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009250"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement of relative abundance of organisms grouped at the level of species</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009258 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009258">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0200000"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha diversity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009259 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009259">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009258"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009258"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha diversity, Shannon</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009260 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009260">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009258"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/OBI_0000312"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009258"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha diversity, inverse Simpson</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009261 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009261">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
         <obo:EUPATH_0000755>Is low length</obo:EUPATH_0000755>
         <obo:EUPATH_0001005>variable</obo:EUPATH_0001005>
@@ -3811,9 +4035,9 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009247 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009262 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009247">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009262">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Received acid blocker</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
@@ -3822,9 +4046,9 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0009248 -->
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009263 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009248">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009263">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000015"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Received proton pump inhibitor</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
@@ -4716,6 +4940,14 @@
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">sampletype</obo:EUPATH_0000755>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample type</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0200000 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0200000">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Data analysis</rdfs:label>
     </owl:Class>
     
 
