@@ -1,0 +1,12 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT distinct ?SOURCE_ID ?name
+WHERE { 
+  ?thing obo:EUPATH_0001009 ?_unitIRI .
+  ?thing obo:EUPATH_0001008 ?_unitLabel .
+  BIND(str(?_unitIRI) AS ?unitIRI) .
+  BIND(str(?_unitLabel) AS ?name) .
+  BIND(REPLACE(?unitIRI, str(obo:), "") AS ?SOURCE_ID)
+}
+

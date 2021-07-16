@@ -3,26 +3,41 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT * {
-	{
-		SELECT distinct ?entity ?label ?def
-		WHERE { 
-			?entity a owl:Class .
-		  ?entity rdfs:label ?slabel. 
-			?entity obo:IAO_0000115 ?definition .
-			BIND (str(?slabel) AS ?label) .
-			BIND (str(?definition) AS ?def) .
-		}
-	}
-	UNION
-	{
-		SELECT distinct ?entity ?label
-		WHERE { 
-			?entity a owl:Class .
-			?entity rdfs:label ?slabel. 
-			filter not exists { 
-				?entity obo:IAO_0000115 ?definition .
-			}
-			BIND (str(?slabel) AS ?label) .
-		}
-	}
+  {
+    SELECT distinct ?sid ?uri ?name ?def
+      WHERE { 
+        ?entity a owl:Class .
+          ?entity rdfs:label ?_label. 
+          ?entity obo:IAO_0000115 ?definition .
+          BIND (str(?entity) AS ?uri) .
+          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+          BIND (str(?_label) AS ?name) .
+          BIND (str(?definition) AS ?def) .
+      }
+  }
+  UNION
+  {
+    SELECT distinct ?sid ?uri ?name
+      WHERE { 
+        ?entity a owl:Class .
+          ?entity rdfs:label ?_label. 
+          filter not exists { 
+            ?entity obo:IAO_0000115 ?definition .
+          }
+          BIND (str(?entity) AS ?uri) .
+          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+          BIND (str(?_label) AS ?name) .
+      }
+  }
+  UNION
+  {
+    SELECT distinct ?sid ?uri ?name
+      WHERE { 
+        ?thing obo:EUPATH_0001009 ?_unitIRI .
+          ?thing obo:EUPATH_0001008 ?_unitLabel .
+          BIND(str(?_unitIRI) AS ?uri) .
+          BIND(str(?_unitLabel) AS ?name) .
+          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+      }
+  }
 }
