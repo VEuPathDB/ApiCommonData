@@ -6,14 +6,15 @@ use lib $ENV{GUS_HOME} . '/lib/perl';
 use ApiCommonData::Load::OwlReader;
 use Data::Dumper;
 use File::Basename;
-use Getopt::Long;
+use Getopt::Long qw/:config no_ignore_case/;
 
-my ($ont, $query, $outFile);
+my ($ont, $query, $outFile, @queryArgs);
 
 GetOptions(
   'o|ontology=s' => \$ont,
   'q|query=s' => \$query,
   'f|outputFile=s' => \$outFile,
+  'a|args=s' => \@queryArgs
 );
 
 my $ontdir = $ENV{PROJECT_HOME} . "/ApiCommonData/Load/ontology/release/production";
@@ -120,6 +121,9 @@ elsif($query eq 'sidbytype'){
   }
   printf("$_\t$iri{$_}\n") for sort { $iri{$a} cmp $iri{$b} } keys %iri;
 }
+elsif ( $owl->can($query) ){
+  $owl->$query(@queryArgs);
+}
 else {
 	my $it = $owl->execute($query);
 	my @fields = $it->binding_names;
@@ -129,4 +133,5 @@ else {
 		printf("%s\n", join("\t", @vals));
 	}
 }
+
 	
