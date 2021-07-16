@@ -257,6 +257,21 @@ sub getSourceIdFromIRI {
 	}
 }
 
+sub makeFileFromQuery{
+  my ($self, $queryName, $outputFile) = @_;
+  open(FH, ">", $outputFile) or die "Cannot write $outputFile: $!\n";
+	my $it = $self->execute($queryName);
+	my @fields = $it->binding_names;
+	printf FH ("%s\n", join("\t", @fields));
+	while( my $row = $it->next ){
+		my @vals = map { $row->{$_} ? $row->{$_}->as_sparql : "" } @fields;
+		printf FH ("%s\n", join("\t", @vals));
+	}
+  close(FH);
+  printf STDERR "Done writing $outputFile\n";
+  return;
+}
+
 sub writeMD5 {
 	my ($self, $file) = @_;
 	my $md5file = $self->{config}->{md5file};
