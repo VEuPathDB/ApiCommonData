@@ -136,13 +136,10 @@ sub getTerms {
 		}
 	);
  	my $it = $self->execute('get_terms');
-		while (my $row = $it->next) {
-		my $uri = $row->{entity}->as_hash()->{iri}|| $row->{entity}->as_hash()->{URI};
-	  next unless $uri;
-		my $sid = $self->getSourceIdFromIRI($uri);
-		die "Cannot get source id from $uri" unless $sid;
-		my $name = $row->{label} ? $row->{label}->as_hash()->{literal} : "";
-		unless($name){if($uri =~ /#(.+)$/){ $name = $1; }} # use "Thing" for name
+	while (my $row = $it->next) {
+		my $sid = $row->{sid} ? $row->{sid}->as_hash()->{literal} : "";
+		my $uri = $row->{uri} ? $row->{uri}->as_hash()->{literal} : "";
+		my $name = $row->{name} ? $row->{name}->as_hash()->{literal} : "";
 		my $def = $row->{def} ? $row->{def}->as_hash()->{literal} : "";
 		$def =~ s/[\n\t]+/ /g;
 		my $obs = $row->{obs} ? $row->{obs}->as_hash()->{literal} : "false";
