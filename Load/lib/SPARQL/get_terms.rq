@@ -1,6 +1,7 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
 
 SELECT * {
   {
@@ -10,7 +11,11 @@ SELECT * {
           ?entity rdfs:label ?_label. 
           ?entity obo:IAO_0000115 ?definition .
           BIND (str(?entity) AS ?uri) .
-          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+          BIND(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), "")
+             AS ?sid) .
           BIND (str(?_label) AS ?name) .
           BIND (str(?definition) AS ?def) .
       }
@@ -25,7 +30,11 @@ SELECT * {
             ?entity obo:IAO_0000115 ?definition .
           }
           BIND (str(?entity) AS ?uri) .
-          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+          BIND(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), "")
+             AS ?sid) .
           BIND (str(?_label) AS ?name) .
       }
   }
@@ -37,7 +46,11 @@ SELECT * {
           ?thing obo:EUPATH_0001008 ?_unitLabel .
           BIND(str(?_unitIRI) AS ?uri) .
           BIND(str(?_unitLabel) AS ?name) .
-          BIND(REPLACE(?uri, str(obo:), "") AS ?sid) .
+          BIND(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), "")
+             AS ?sid) .
       }
   }
 }

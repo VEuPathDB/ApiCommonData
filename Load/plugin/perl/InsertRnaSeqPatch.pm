@@ -148,9 +148,6 @@ sub undoPreprocess {
     my $deleteStudyOutputsSql = "DELETE FROM study.output
                                  WHERE protocol_app_node_id IN ($panIds)";
 
-    $dbh->do($deleteStudyInputsSql);
-    $dbh->do($deleteStudyOutputsSql);
-
     # delete protocol apps
     my $deleteProtocolAppsSql = "DELETE FROM study.protocolapp
                                 WHERE protocol_app_id IN (
@@ -161,6 +158,8 @@ sub undoPreprocess {
                                     )
                                 )";
 
+    $dbh->do($deleteStudyInputsSql);
+    $dbh->do($deleteStudyOutputsSql);
     $dbh->do($deleteProtocolAppsSql);
 
 }
@@ -172,8 +171,6 @@ sub undoTables {
     return (
         'Results.NAFeatureExpression',
         'Results.NAFeatureDiffResult',
-        'Study.Input',
-        'Study.Output',
         );
 }
 
