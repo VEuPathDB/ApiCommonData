@@ -1,6 +1,7 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
 
 ## This query fetches <http://purl.obolibrary.org/obo/EUPATH_0000274> and displayOrder for the AnnotationProperty entities
 ## These may be referred to as "Attributes"
@@ -12,7 +13,10 @@ where {
   ?_prop rdfs:label ?_label .
   ?_entity ?_prop ?_value . 
   BIND(str(?_entity) AS ?entity) 
-  BIND(replace(?entity, str(obo:), "") AS ?sid) 
+  BIND(
+    replace(
+    replace(?entity, str(obo:), "")
+    , str(ebi:), "") AS ?sid) 
   BIND(str(?_label) AS ?label) 
   BIND(str(?_value) AS ?value) 
 }
