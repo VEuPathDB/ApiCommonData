@@ -185,6 +185,21 @@ sub preprocess {
 		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
 		if($gene){
 
+                  ## update all pseudogene not loading CDS
+                  foreach my $RNA ($gene->get_SeqFeatures) {
+                    my $tType = $RNA->primary_tag();
+                    if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
+                      my ($tID) = $RNA->get_tag_values("ID") if ($RNA->has_tag("ID"));
+                      print STDERR "found pseudo: $tID\n";
+                      foreach my $exon ($RNA->get_SeqFeatures) {
+                        $exon->remove_tag('CodingStart') if ($exon->has_tag('CodingStart'));
+                        $exon->add_tag_value('CodingStart', '');
+                        $exon->remove_tag('CodingEnd') if ($exon->has_tag('CodingEnd'));
+                        $exon->add_tag_value('CodingEnd', '');
+                      }
+                    }
+                  }
+
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
 		

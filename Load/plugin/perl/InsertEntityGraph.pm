@@ -230,7 +230,7 @@ sub run {
     $investigationCount++;
     my $errorCount = scalar keys %errors;
     if($errorCount) {
-      $self->error("FOUND $errorCount DIFFERENT ERRORS!");
+      $self->error(join("\n","FOUND $errorCount DIFFERENT ERRORS!", keys %errors));
     }
   }
 
