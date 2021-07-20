@@ -145,7 +145,7 @@ sub run {
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
     my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms);
+    $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -394,26 +394,46 @@ sub valProps {
 
 
 sub addUnitsToOntologyTerms {
-  my ($self, $studyId, $ontologyTerms) = @_;
+  my ($self, $studyId, $ontologyTerms, $ontologyExtDbRlsId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "select  att.source_id, unit.ontology_term_id, unit.name
+  my $sql = "select * from (
+select  att.source_id, unit.ontology_term_id, unit.name
 from apidb.study pg
    , apidb.entitytype vt
    , apidb.attributeunit au
    , sres.ontologyterm att
    , sres.ontologyterm unit
+   , 2 as priority
 where pg.study_id = ?
 and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
 and au.ATTR_ONTOLOGY_TERM_ID = att.ontology_term_id
-and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id";
+and au.UNIT_ONTOLOGY_TERM_ID = unit.ontology_term_id
+UNION
+select ot.source_id
+     , uot.ontology_term_id
+     , json_value(annotation_properties, '$.unitLabel[0]') label
+     , 1 as priority    
+from sres.ontologysynonym os
+   , sres.ontologyterm ot
+   , sres.ontologyterm uot
+where os.ontology_term_id = ot.ontology_term_id
+and json_value(annotation_properties, '$.unitIRI[0]') = uot.uri
+and json_value(annotation_properties, '$.unitLabel[0]') is not null
+and os.external_database_release_id = ?
+) order by priority
+";
 
   my $sh = $dbh->prepare($sql);
-  $sh->execute($studyId);
+  $sh->execute($studyId, $ontologyExtDbRlsId);
 
   while(my ($sourceId, $unitOntologyTermId, $unitName) = $sh->fetchrow_array()) {
+    if($ontologyTerms->{$sourceId}) {
+      $self->userError("The Attribute $sourceId can only have one unit specification per study.  Units can be specified either in the ISA files OR in annotation properties");
+    }
+
     $ontologyTerms->{$sourceId}->{UNIT_ONTOLOGY_TERM_ID} = $unitOntologyTermId;
     $ontologyTerms->{$sourceId}->{UNIT_NAME} = $unitName;
   }
