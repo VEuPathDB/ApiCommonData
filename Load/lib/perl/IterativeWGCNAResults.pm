@@ -112,8 +112,8 @@ sub munge {
 	    
 	    #-------------- run IterativeWGCNA docker image -----#
 	    my $outputDir = $mainDirectory . "/FirstStrandProteinCodingOutputs";
-	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    system($comm);
+	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -236,8 +236,8 @@ sub munge {
 	    
 	    #-------------- run IterativeWGCNA docker image -----#
 	    my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
-	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    system($comm);
+	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -369,8 +369,8 @@ sub munge {
 	    
 	    #-------------- run IterativeWGCNA docker image -----#
 	    my $outputDir = $mainDirectory . "/SecondStrandProteinCodingOutputs";
-	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    system($comm);
+	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -493,8 +493,8 @@ sub munge {
 	    
 	    #-------------- run IterativeWGCNA docker image -----#
 	    my $outputDir = $mainDirectory . "/SecondStrandExcludePseudogeneOutputs";
-	    my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    system($comm);
+	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
+	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
