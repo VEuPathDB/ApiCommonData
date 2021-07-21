@@ -78,7 +78,7 @@ while(my $row = $sth->fetchrow_arrayref) {
      system("rm -f $_") if $commit;
   }
 
-  @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*.gff");
+  @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
   foreach (@oldfiles) {
      print "rm -f $_ ; \n";
      system("rm -f $_") if $commit;
