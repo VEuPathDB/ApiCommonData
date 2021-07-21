@@ -346,11 +346,10 @@ AND study_id = $studyId)";
   
   ## Insert vocabulary from Attribute, omitting those already filled
   $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT DISTINCT TO_CHAR(att.ordered_values) FROM apidb.ATTRIBUTE att
+(SELECT att.ordered_values FROM apidb.ATTRIBUTE att
 left join apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
  WHERE att.stable_id = ago.STABLE_ID
-and ett.study_id = $studyId
-and att.ordered_values IS NOT NULL)
+and ett.study_id = $studyId)
 WHERE EXISTS (SELECT att.ordered_values FROM apidb.ATTRIBUTE att
 LEFT JOIN apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
  WHERE att.stable_id = ago.STABLE_ID
