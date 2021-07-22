@@ -90,11 +90,108 @@ sub run {
       $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
       $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-
+      $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
     }
   }
 
   return("made some tall tables and some wide tables");
+}
+
+
+sub makeWideTableColumnString {
+  my ($self, $entityTypeId) = @_;
+
+  my $specSql = "select stable_id
+     , data_type
+     , is_multi_valued
+     , case when process_type_id is null 
+            then 'e' 
+            else 'p' 
+       end as table_type
+from APIDB.ATTRIBUTE
+where entity_type_id = $entityTypeId";
+
+  my $dbh = $self->getDbHandle();
+  my $sh = $dbh->prepare($specSql);
+  $sh->execute();
+
+
+  my (@entityColumnStrings, @processColumnStrings);
+  while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
+    my $path = "\$.${stableId}[0]";
+    $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
+
+    # multiValued data always return JSON array
+    if($isMultiValued) {
+      $dataType = "FORMAT JSON";
+      $path = "\$.${stableId}";
+    }
+
+    my $string = "${stableId} $dataType PATH '${path}'";
+    if($tableType eq 'p') {
+      push @processColumnStrings, $string;
+    }
+
+    elsif($tableType eq 'e') {
+      push @entityColumnStrings, $string;
+    }
+    else {
+      $self->error("Unexpected table_type $tableType");
+    }
+  }
+
+  return \@entityColumnStrings, \@processColumnStrings;
+}
+
+
+sub createWideTable {
+  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
+
+  my $tableName = "ApiDB.Attributes_${studyAbbrev}_${entityTypeAbbrev}";
+
+  my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
+
+  my $entityColumns = join("\n,", @$entityColumnStrings);
+  my $processColumns = join("\n,", @$processColumnStrings);
+
+  my $entitySql = "select ea.stable_id, eaa.*
+                   from apidb.entityattributes ea,
+                        json_table(atts, '$'
+                         columns ( $entityColumns )) eaa
+                   where ea.entity_type_id = $entityTypeId";
+
+
+  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
+                                                from apidb.processattributes pa,
+                                                     (select entity_attributes_id
+                                                           , stable_id 
+                                                      from apidb.entityattributes 
+                                                      where entity_type_id = $entityTypeId) ea
+                                                where ea.entity_attributes_id = pa.out_entity_id (+)
+                                               )
+                    select pa.stable_id, paa.*
+                    from process_attributes pa,
+                         json_table(atts, '$'
+                          columns ( $processColumns)) paa";
+
+
+  my $sql;
+  if(scalar @$entityColumnStrings > 0 && scalar @$processColumnStrings > 0) {
+    $sql = "select e.*, p.* from ($entitySql) e, ($processSql) p where e.stable_id = p.stable_id";
+  }
+  elsif(scalar @$entityColumnStrings > 0) {
+    $sql = $entitySql;
+  }
+  elsif(scalar @$processColumnStrings > 0) {
+    $sql = $processSql;
+  }
+  else {
+    $sql = "select entity_attributes_id from apidb.entityattributes where entity_type_id = $entityTypeId";
+  }
+
+  $dbh->do("CREATE TABLE $tableName as $sql");
+
+  $dbh->do("CREATE INDEX attributes_${entityTypeId}_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
 }
 
 
