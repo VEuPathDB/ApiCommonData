@@ -399,13 +399,12 @@ sub addUnitsToOntologyTerms {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select * from (
-select  att.source_id, unit.ontology_term_id, unit.name
+select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
 from apidb.study pg
    , apidb.entitytype vt
    , apidb.attributeunit au
    , sres.ontologyterm att
    , sres.ontologyterm unit
-   , 2 as priority
 where pg.study_id = ?
 and pg.study_id = vt.study_id
 and vt.entity_type_id = au.entity_type_id
