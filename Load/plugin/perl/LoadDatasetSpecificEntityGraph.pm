@@ -156,7 +156,7 @@ sub createWideTable {
 
   my $entitySql = "select ea.stable_id, eaa.*
                    from apidb.entityattributes ea,
-                        json_table(atts, '$'
+                        json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
                    where ea.entity_type_id = $entityTypeId";
 
@@ -171,7 +171,7 @@ sub createWideTable {
                                                )
                     select pa.stable_id, paa.*
                     from process_attributes pa,
-                         json_table(atts, '$'
+                         json_table(atts, '\$'
                           columns ( $processColumns)) paa";
 
 
@@ -189,7 +189,9 @@ sub createWideTable {
     $sql = "select entity_attributes_id from apidb.entityattributes where entity_type_id = $entityTypeId";
   }
 
+  my $dbh = $self->getDbHandle();
   $dbh->do("CREATE TABLE $tableName as $sql");
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 
   $dbh->do("CREATE INDEX attributes_${entityTypeId}_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
 }
