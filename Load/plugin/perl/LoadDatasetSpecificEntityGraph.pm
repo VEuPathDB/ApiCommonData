@@ -356,7 +356,7 @@ SQL
         where stable_id = '$stableId'
           and rownum < (select count(*)
                         from $tableName
-                        where stable_id = '$stableId');
+                        where stable_id = '$stableId')
 SQL
   }
 
