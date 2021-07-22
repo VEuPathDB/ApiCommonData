@@ -357,23 +357,24 @@ sub createAttributeGraphTable {
   # hence this is only using atg for the parent-child relationship
   # and only adding atg entries which aren't already in
 
-  my $sql = "CREATE TABLE $tableName as 
+  my $sql = "CREATE TABLE $tableName as
   WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id =  $entityTypeId)
+  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-    CONNECT BY prior parent_stable_id = stable_id AND parent_stable_id != 'Thing'
+    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
 -- this bit gets the internal nodes
-SELECT distinct atg.stable_id
+SELECT --  distinct
+       atg.stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     --, atg.ordinal_values as vocabulary
+     , atg.ordinal_values as vocabulary
      , atg.display_type
      , atg.display_order
      , atg.display_range_min
@@ -395,14 +396,19 @@ SELECT distinct atg.stable_id
      , null as precision
 FROM atg, att
 where atg.stable_id = att.stable_id (+) and att.stable_id is null
-UNION
+UNION ALL
 -- this bit gets the Leaf nodes which have ontologyterm id
-SELECT distinct att.stable_id as stable_id
+SELECT -- distinct
+       att.stable_id as stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     --, nvl(atg.ordinal_values, att.ordered_values) as vocabulary
+     , CASE
+         WHEN atg.ordinal_values IS NULL
+           THEN att.ordered_values
+         ELSE atg.ordinal_values
+       END as vocabulary
      , atg.display_type display_type
      , atg.display_order
      , atg.display_range_min
@@ -423,36 +429,33 @@ SELECT distinct att.stable_id as stable_id
      , att.unit
      , att.precision
 FROM atg, att
-where atg.stable_id = att.stable_id
+where atg.ontology_term_id = att.ontology_term_id
 ";
 
 
   my $dbh = $self->getDbHandle();
   $dbh->do($sql) or die $dbh->errstr;
 
-  ## add vocabulary
-  $sql = "ALTER TABLE $tableName ADD vocabulary CLOB";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from AttributeGraph, if any
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id = ago.STABLE_ID and atg.study_id = $studyId)
-WHERE EXISTS (SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id=ago.stable_id
-AND study_id = $studyId)";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from Attribute, omitting those already filled
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT att.ordered_values FROM apidb.ATTRIBUTE att
-left join apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-and ett.study_id = $studyId)
-WHERE EXISTS (SELECT att.ordered_values FROM apidb.ATTRIBUTE att
-LEFT JOIN apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-AND ett.study_id = $studyId)
-AND ago.vocabulary IS NULL";
-  $dbh->do($sql) or die $dbh->errstr;
+  # remove duplicate rows
+  my $dupq = $dbh->prepare(<<SQL) or die $dbh->errstr;
+       select stable_id
+       from $tableName
+       group by stable_id
+       having count(*) > 1
+       order by stable_id
+SQL
+
+  $dupq->execute();
+
+  while (my ($stableId) = $dupq->fetchrow_array()) {
+    $dbh->do(<<SQL) or die $dbh->errstr;
+        delete from $tableName
+        where stable_id = '$stableId'
+          and rownum < (select count(*)
+                        from $tableName
+                        where stable_id = '$stableId')
+SQL
+  }
 
   $dbh->do("alter table $tableName add primary key (stable_id)") or die $dbh->errstr;
 
