@@ -339,29 +339,26 @@ where atg.ontology_term_id = att.ontology_term_id
   my $dbh = $self->getDbHandle();
   $dbh->do($sql) or die $dbh->errstr;
 
-  ## add vocabulary
-  $sql = "ALTER TABLE $tableName ADD vocabulary CLOB";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from AttributeGraph, if any
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id = ago.STABLE_ID and atg.study_id = $studyId)
-WHERE EXISTS (SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id=ago.stable_id
-AND study_id = $studyId)";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from Attribute, omitting those already filled
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT att.ordered_values FROM apidb.ATTRIBUTE att
-left join apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-and ett.study_id = $studyId)
-WHERE EXISTS (SELECT att.ordered_values FROM apidb.ATTRIBUTE att
-LEFT JOIN apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-AND ett.study_id = $studyId)
-AND ago.vocabulary IS NULL";
-  $dbh->do($sql) or die $dbh->errstr;
+  # remove duplicate rows
+  my $dupq = $dbh->prepare(<<SQL) or die $dbh->errstr;
+       select stable_id
+       from $tableName
+       group by stable_id
+       having count(*) > 1
+       order by stable_id
+SQL
+
+  $dupq->execute();
+
+  while (my ($stableId) = $dupq->fetchrow_array()) {
+    $dbh->do(<<SQL) or die $dbh->errstr;
+        delete from $tableName
+        where stable_id = '$stableId'
+          and rownum < (select count(*)
+                        from $tableName
+                        where stable_id = '$stableId');
+SQL
+  }
 
   $dbh->do("alter table $tableName add primary key (stable_id)") or die $dbh->errstr;
 
