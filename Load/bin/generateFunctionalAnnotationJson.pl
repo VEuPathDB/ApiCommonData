@@ -54,7 +54,7 @@ my ($translationHash) = getTranslationIdHash ($organismAbbrev, $finalGffFile);
 
 ## grep product info
 my $products = getProductNameFromGene ($organismAbbrev);
-$products = getProductNameFromTranscript ($organismAbbrev) if ($component !~ /vector/i);
+#$products = getProductNameFromTranscript ($organismAbbrev) if ($component !~ /vector/i);
 
 ## get dbxrefs
 my $dbxrefs = getDbxRefsAll ($organismAbbrev);
@@ -76,7 +76,8 @@ foreach my $k (sort keys %{$geneHash}) {
 
   $functAnnot{xrefs} = \@{$dbxrefs->{$k}} if ($dbxrefs->{$k});
   $functAnnot{synonyms} = \@{$synonym->{$k}} if ($synonym->{$k});
-  $functAnnot{description} = $products->{$k} if ($products->{$k} && $component =~ /vector/i);
+#  $functAnnot{description} = $products->{$k} if ($products->{$k} && $component =~ /vector/i);
+  $functAnnot{description} = $products->{$k} if ($products->{$k});
 
   push @functAnnotInfos, \%functAnnot;
 
@@ -181,9 +182,9 @@ sub getProductNameFromGene {
     if ($product) {
       $products{$gSourceId} = $product;
     } else {
-      die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ...\n    It depends on APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES, which are not working on isfTest database yet.\n";
+      #die "ERROR ... if gene have not have product, apply product in transcript with is_prefer=1 to gene\n    The applyTranscriptProductToGene subroutine code has not been tested yet, comment out this line and test the subroutine code ...\n    It depends on APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES, which are not working on isfTest database yet.\n";
       $product = applyTranscriptProductToGene ($gSourceId);
-      $products{$gSourceId} = "unspecified product";
+      $products{$gSourceId} = $product if ($product);
     }
   }
 
@@ -195,7 +196,10 @@ sub getProductNameFromGene {
 sub applyTranscriptProductToGene {
   my ($gId) = @_;
 
-  my $sqla = "select TRANSCRIPT_PRODUCT from APIDBTUNING.transcriptattributes where GENE_SOURCE_ID = '$gId'";
+  # since APIDBTUNING.GENEATTRIBUTES and APIDBTUNING.TRANSCRIPTATTRIBUTES are not working in isfTest instance yet, query dots tables instead. and only grep IS_PREFERRED=1
+  my $sqla = "select tp.PRODUCT from dots.genefeature g, DOTS.TRANSCRIPT t, APIDB.TRANSCRIPTPRODUCT tp where g.NA_FEATURE_ID=t.PARENT_ID and t.NA_FEATURE_ID=tp.NA_FEATURE_ID and tp.IS_PREFERRED=1 and g.SOURCE_ID = '$gId'";
+  #my $sqla = "select TRANSCRIPT_PRODUCT from APIDBTUNING.transcriptattributes where GENE_SOURCE_ID = '$gId'";
+
   my $stmta = $dbh->prepareAndExecute($sqla);
 
   my $prod;

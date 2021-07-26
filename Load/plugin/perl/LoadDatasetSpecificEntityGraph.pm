@@ -90,11 +90,110 @@ sub run {
       $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
       $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-
+      $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
     }
   }
 
   return("made some tall tables and some wide tables");
+}
+
+
+sub makeWideTableColumnString {
+  my ($self, $entityTypeId) = @_;
+
+  my $specSql = "select stable_id
+     , data_type
+     , is_multi_valued
+     , case when process_type_id is null 
+            then 'e' 
+            else 'p' 
+       end as table_type
+from APIDB.ATTRIBUTE
+where entity_type_id = $entityTypeId";
+
+  my $dbh = $self->getDbHandle();
+  my $sh = $dbh->prepare($specSql);
+  $sh->execute();
+
+
+  my (@entityColumnStrings, @processColumnStrings);
+  while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
+    my $path = "\$.${stableId}[0]";
+    $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
+
+    # multiValued data always return JSON array
+    if($isMultiValued) {
+      $dataType = "FORMAT JSON";
+      $path = "\$.${stableId}";
+    }
+
+    my $string = "${stableId} $dataType PATH '${path}'";
+    if($tableType eq 'p') {
+      push @processColumnStrings, $string;
+    }
+
+    elsif($tableType eq 'e') {
+      push @entityColumnStrings, $string;
+    }
+    else {
+      $self->error("Unexpected table_type $tableType");
+    }
+  }
+
+  return \@entityColumnStrings, \@processColumnStrings;
+}
+
+
+sub createWideTable {
+  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
+
+  my $tableName = "ApiDB.Attributes_${studyAbbrev}_${entityTypeAbbrev}";
+
+  my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
+
+  my $entityColumns = join("\n,", @$entityColumnStrings);
+  my $processColumns = join("\n,", @$processColumnStrings);
+
+  my $entitySql = "select ea.stable_id, eaa.*
+                   from apidb.entityattributes ea,
+                        json_table(atts, '\$'
+                         columns ( $entityColumns )) eaa
+                   where ea.entity_type_id = $entityTypeId";
+
+
+  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
+                                                from apidb.processattributes pa,
+                                                     (select entity_attributes_id
+                                                           , stable_id 
+                                                      from apidb.entityattributes 
+                                                      where entity_type_id = $entityTypeId) ea
+                                                where ea.entity_attributes_id = pa.out_entity_id (+)
+                                               )
+                    select pa.stable_id, paa.*
+                    from process_attributes pa,
+                         json_table(atts, '\$'
+                          columns ( $processColumns)) paa";
+
+
+  my $sql;
+  if(scalar @$entityColumnStrings > 0 && scalar @$processColumnStrings > 0) {
+    $sql = "select e.*, p.* from ($entitySql) e, ($processSql) p where e.stable_id = p.stable_id";
+  }
+  elsif(scalar @$entityColumnStrings > 0) {
+    $sql = $entitySql;
+  }
+  elsif(scalar @$processColumnStrings > 0) {
+    $sql = $processSql;
+  }
+  else {
+    $sql = "select entity_attributes_id from apidb.entityattributes where entity_type_id = $entityTypeId";
+  }
+
+  my $dbh = $self->getDbHandle();
+  $dbh->do("CREATE TABLE $tableName as $sql");
+  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+
+  $dbh->do("CREATE INDEX attributes_${entityTypeId}_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
 }
 
 
@@ -260,23 +359,24 @@ sub createAttributeGraphTable {
   # hence this is only using atg for the parent-child relationship
   # and only adding atg entries which aren't already in
 
-  my $sql = "CREATE TABLE $tableName as 
+  my $sql = "CREATE TABLE $tableName as
   WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id =  $entityTypeId)
+  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
    , atg AS
   (SELECT atg.*
    FROM apidb.attributegraph atg
    WHERE study_id = $studyId
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
-    CONNECT BY prior parent_stable_id = stable_id AND parent_stable_id != 'Thing'
+    CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
   )
 -- this bit gets the internal nodes
-SELECT distinct atg.stable_id
+SELECT --  distinct
+       atg.stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     --, atg.ordinal_values as vocabulary
+     , atg.ordinal_values as vocabulary
      , atg.display_type
      , atg.display_order
      , atg.display_range_min
@@ -298,14 +398,19 @@ SELECT distinct atg.stable_id
      , null as precision
 FROM atg, att
 where atg.stable_id = att.stable_id (+) and att.stable_id is null
-UNION
+UNION ALL
 -- this bit gets the Leaf nodes which have ontologyterm id
-SELECT distinct att.stable_id as stable_id
+SELECT -- distinct
+       att.stable_id as stable_id
      , atg.parent_stable_id
      , atg.provider_label
      , atg.display_name
      , atg.definition
-     --, nvl(atg.ordinal_values, att.ordered_values) as vocabulary
+     , CASE
+         WHEN atg.ordinal_values IS NULL
+           THEN att.ordered_values
+         ELSE atg.ordinal_values
+       END as vocabulary
      , atg.display_type display_type
      , atg.display_order
      , atg.display_range_min
@@ -326,37 +431,33 @@ SELECT distinct att.stable_id as stable_id
      , att.unit
      , att.precision
 FROM atg, att
-where atg.stable_id = att.stable_id
+where atg.ontology_term_id = att.ontology_term_id
 ";
 
 
   my $dbh = $self->getDbHandle();
   $dbh->do($sql) or die $dbh->errstr;
 
-  ## add vocabulary
-  $sql = "ALTER TABLE $tableName ADD vocabulary CLOB";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from AttributeGraph, if any
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id = ago.STABLE_ID and atg.study_id = $studyId)
-WHERE EXISTS (SELECT atg.ordinal_values FROM apidb.ATTRIBUTEGRAPH atg WHERE atg.stable_id=ago.stable_id
-AND study_id = $studyId)";
-  $dbh->do($sql) or die $dbh->errstr;
-  
-  ## Insert vocabulary from Attribute, omitting those already filled
-  $sql = "UPDATE $tableName ago SET ago.vocabulary=
-(SELECT DISTINCT TO_CHAR(att.ordered_values) FROM apidb.ATTRIBUTE att
-left join apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-and ett.study_id = $studyId
-and att.ordered_values IS NOT NULL)
-WHERE EXISTS (SELECT att.ordered_values FROM apidb.ATTRIBUTE att
-LEFT JOIN apidb.ENTITYTYPE ett ON att.entity_type_id = ett.entity_type_id
- WHERE att.stable_id = ago.STABLE_ID
-AND ett.study_id = $studyId)
-AND ago.vocabulary IS NULL";
-  $dbh->do($sql) or die $dbh->errstr;
+  # remove duplicate rows
+  my $dupq = $dbh->prepare(<<SQL) or die $dbh->errstr;
+       select stable_id
+       from $tableName
+       group by stable_id
+       having count(*) > 1
+       order by stable_id
+SQL
+
+  $dupq->execute();
+
+  while (my ($stableId) = $dupq->fetchrow_array()) {
+    $dbh->do(<<SQL) or die $dbh->errstr;
+        delete from $tableName
+        where stable_id = '$stableId'
+          and rownum < (select count(*)
+                        from $tableName
+                        where stable_id = '$stableId')
+SQL
+  }
 
   $dbh->do("alter table $tableName add primary key (stable_id)") or die $dbh->errstr;
 
