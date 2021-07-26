@@ -26,7 +26,7 @@ my $sqlldr = ApiCommonData::Load::Sqlldr->new({'_login' => 'user',
                                                });
 
 $sqlldr->getCommandLine();
-$sqlldr->wrietControlFile();
+$sqlldr->writeConfigFile();
 
 =back
 
