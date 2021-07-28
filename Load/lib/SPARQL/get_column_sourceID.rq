@@ -1,9 +1,19 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
+PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
-SELECT distinct ?entity ?vars
+SELECT distinct ?entity ?iri ?vars
 WHERE { 
-	?entity a owl:Class .
-        ?entity obo:EUPATH_0000755 ?column. 
+	?_entity a owl:Class .
+  ?_entity obo:EUPATH_0000755 ?column. 
+	BIND (str(?_entity) AS ?entity) .
 	BIND (str(?column) AS ?vars) .
+  BIND(
+    replace(
+      replace(
+        replace($entity, str(obo:), ""),
+        str(ebi:), ""),
+      str(sno:), "SNOMEDCT_")
+    as $iri) .
 }

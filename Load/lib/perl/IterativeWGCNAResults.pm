@@ -109,11 +109,13 @@ sub munge {
 	    }
 	    close IN;
 	    close OUT;
-	    
+
+	    my $commForPermission = "chmod g+w $outputFile";
+	    system($commForPermission);
 	    #-------------- run IterativeWGCNA docker image -----#
+	    my $comm = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs";
+	    system($comm);
 	    my $outputDir = $mainDirectory . "/FirstStrandProteinCodingOutputs";
-	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -122,8 +124,9 @@ sub munge {
 	    my $results  =  system($command);
 	    
 	    #-------------- parse Module Membership -----#
+	    my $commgw = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading";
+	    system($commgw);
 	    my $outputDirModuleMembership = "$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading/";
-	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	    
 	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	    my %MMHash;
@@ -235,9 +238,9 @@ sub munge {
 	    close OUT;
 	    
 	    #-------------- run IterativeWGCNA docker image -----#
+	    my $commForPermission = "chmod g+w $outputFile";
+	    system($commForPermission);
 	    my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
-	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -246,8 +249,10 @@ sub munge {
 	    my $results  =  system($command);
 	    
 	    #-------------- parse Module Membership -----#
+	    my $commgw = "mkdir $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading";
+	    system($commgw);
+	    
 	    my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
-	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	    
 	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	    my %MMHash;
@@ -366,11 +371,13 @@ sub munge {
 	    }
 	    close IN;
 	    close OUT;
-	    
+
+	    my $commForPermission = "chmod g+w $outputFile";
+	    system($commForPermission);
 	    #-------------- run IterativeWGCNA docker image -----#
+	    my $comm = "mkdir $mainDirectory/SecondStrandProteinCodingOutputs; chmod g+w $mainDirectory/SecondStrandProteinCodingOutputs";
+	    system($comm);
 	    my $outputDir = $mainDirectory . "/SecondStrandProteinCodingOutputs";
-	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -379,8 +386,10 @@ sub munge {
 	    my $results  =  system($command);
 	    
 	    #-------------- parse Module Membership -----#
+	    my $commgw = "mkdir $mainDirectory/SecondStrandProteinCodingOutputs/SecondStrandMMResultsForLoading; chmod g+w $mainDirectory/SecondStrandProteinCodingOutputs/SecondStrandMMResultsForLoading/";
+	    system($commgw);
+
 	    my $outputDirModuleMembership = "$mainDirectory/SecondStrandProteinCodingOutputs/SecondStrandMMResultsForLoading/";
-	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	    
 	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	    my %MMHash;
@@ -491,10 +500,13 @@ sub munge {
 	    close IN;
 	    close OUT;
 	    
+	    my $commForPermission = "chmod g+w $outputFile";
+	    system($commForPermission);
 	    #-------------- run IterativeWGCNA docker image -----#
+	    my $comm = "mkdir $mainDirectory/SecondStrandExcludePseudogeneOutputs; chmod g+w $mainDirectory/SecondStrandExcludePseudogeneOutputs";
+	    system($comm);
+
 	    my $outputDir = $mainDirectory . "/SecondStrandExcludePseudogeneOutputs";
-	    #my $comm = "chmod u=rwx,g=rwx,o=rwx  $outputDir";
-	    #system($comm);
 
 	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
@@ -503,8 +515,10 @@ sub munge {
 	    my $results  =  system($command);
 	    
 	    #-------------- parse Module Membership -----#
+	    my $commgw = "mkdir $mainDirectory/SecondStrandExcludePseudogeneOutputs/SecondStrandMMResultsForLoading; chmod g+w $mainDirectory/SecondStrandExcludePseudogeneOutputs/SecondStrandMMResultsForLoading";
+	    system($commgw);
+
 	    my $outputDirModuleMembership = "$mainDirectory/SecondStrandExcludePseudogeneOutputs/SecondStrandMMResultsForLoading/";
-	    mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
 	    
 	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	    my %MMHash;
@@ -563,134 +577,6 @@ sub munge {
 	}
     }
     
-=head
-    #--second strand processing ------------------------------------------#
-    if($strandness eq 'secondstrand'){
-	my $power = $self->getPower();
-	my $inputFile = $self->getInputFile();
-	my $organism = $self->getOrganism();
-
-	my $outputFile = "Preprocessed_" . $inputFile;
-	my $sql = "SELECT source_id 
-                   FROM apidbtuning.geneAttributes  
-                   WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
-	my $stmt = $dbh->prepare($sql);
-	$stmt->execute();
-	my %hash;
-
-	while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
-	    $hash{$proteinCodingGenes} = 1;
-	}
-	$stmt->finish();
-        #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
-	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
-	
-	my %inputs;
-	while (my $line = <IN>){
-	    if ($. == 1){
-		my @all = split("\t",$line);
-		foreach(@all[1 .. $#all]){
-		    #@all = grep {s/^\s+|\s+$//g; $_} @all;
-                    $inputs{$_} = 1;
-                }
-	    }
-	}
-	close IN;
-
-	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	while (my $line = <IN>){
-	    if ($. == 1){
-		my @all = split/\t/,$line;
-		$all[0] = 'Gene';
-		my $new_line = join("\t",@all);
-		print OUT $new_line;
-		
-		foreach(@all[1 .. $#all]){
-		    @all = grep {s/^\s+|\s+$//g; $_ } @all;
-                    $inputs{$_} = 1;
-                }
-
-	    }else{
-		my @all = split/\t/,$line;
-		if ($hash{$all[0]}){
-		    print OUT $line;
-		}
-	    }
-	}
-	close IN;
-	close OUT;
-        #-------------- run IterativeWGCNA docker image -----#
-	my $outputDir = $mainDirectory . "/SecondStrandOutputs";
-	mkdir($outputDir, 0777) unless(-d $outputDir );
-
-	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
-	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
-
-	my $results  =  system($command);
-
-	#-------------- parse Module Membership -----#
-	my $outputDirModuleMembership = "$mainDirectory/SecondStrandOutputs/SecondStrandMMResultsForLoading/";
-	mkdir($outputDirModuleMembership, 0777) unless(-d $outputDirModuleMembership );
-	
-	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open file for reading, $!";
-	my %MMHash;
-        while (my $line = <MM>) {
-            if ($. == 1){
-                next;
-            }else{
-                chomp($line);
-                $line =~ s/\r//g;
-                my @all = split/\t/,$line;
-		push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
-            }
-        }
-        close MM;
-	
-	my @files;
-        my @modules;
-	my @allKeys = keys %MMHash;
-	my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
-        for my $i(@ModuleNames){
-            push @modules,$i . " " . $self->getInputSuffixMM();
-	    push @files,"$i" . "_2nd" . "\.txt" . " " . $self->getInputSuffixMM() ;
-            open(MMOUT, ">$outputDirModuleMembership/$i" . "_2nd" . "\.txt") or die $!;
-	    print MMOUT "geneID\tcorrelation_coefficient\n";
-            for my $ii(@{$MMHash{$i}}){
-                print MMOUT $ii;
-            }
-            close MMOUT;
-        }
-
-	my %inputProtocolAppNodesHash;
-        foreach(@modules) {
-            push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
-        }
-
-	$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
-	$self->setNames(\@modules);                                                                                           
-	$self->setFileNames(\@files);
-	$self->setProtocolName("WGCNA");
-	$self->setSourceIdType("gene");
-	$self->createConfigFile();
-	
-        #-------------- parse Module Eigengene -----#
-	#-- copy module_egene file to one upper dir and the run doTranscription --#
-	my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ;
-                         mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_2ndStrand.txt ";
-        my $CPresults  =  system($CPcommand);
-
-	my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-	    {mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_2ndStrand.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
-	    );
-	$egenes ->setTechnologyType("RNASeq");
-	$egenes ->munge();
-
-    }
-=cut
-
-
-
 
 }
 

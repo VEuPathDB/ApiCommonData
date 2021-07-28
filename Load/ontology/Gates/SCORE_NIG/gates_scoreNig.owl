@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_scoreNig.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_scoreNig.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_scoreNig.owl"/>
     
 
@@ -70,6 +70,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0001008 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001008">
@@ -121,9 +129,9 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/ENVO_00000004 -->
+    <!-- http://purl.obolibrary.org/obo/ENVO_00000009 -->
 
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000004">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000009">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country_Code</obo:EUPATH_0000755>
@@ -131,6 +139,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country; Country wide</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NIG=Niger</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006>ENVO_00000004</obo:EUPATH_0001006>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country in which study was conducted</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
     </owl:Class>
@@ -336,7 +345,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village level; school-age children (SAC) treated in village</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent school-age children (SAC) treated in village in first treatment. Calculated by dividing SAC_Rxed_Rx1 by Total_SAC</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent school-age children treated in village</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">School-age children treated in village (%)</rdfs:label>
     </owl:Class>
     
 
@@ -381,7 +390,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village level; Percent total population treated in village</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent total population treated in village in first treatment. Calculated by dividing Total_Pop_Rxed_Rx1 by Total_Pop</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent total population treated in village</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total population treated in village (%)</rdfs:label>
     </owl:Class>
     
 
@@ -509,7 +518,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village level; school-age children (SAC) treated in village</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent school-age children (SAC) treated in village. Calculated by dividing SAC_Rxed_Rx2 by Total_SAC</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent school-age children treated in village, second treatment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">School-age children treated in village, second treatment (%)</rdfs:label>
     </owl:Class>
     
 
@@ -539,7 +548,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Village level; Percent total population treated in village</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent total population treated in village. Calculated by dividing Total_Pop_Rxed_Rx2 by Total_Pop</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Percent total population treated in village, second treatment</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total population treated in village, second treatment (%)</rdfs:label>
     </owl:Class>
     
 
@@ -673,9 +682,6 @@
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001001">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dataFile</rdfs:label>
     </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001010">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dataSet</rdfs:label>
     </rdf:Description>
@@ -704,5 +710,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 

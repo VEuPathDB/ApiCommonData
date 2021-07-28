@@ -17,13 +17,7 @@ SELECT distinct ?IRI
 WHERE {
 	?IRI a owl:Class .
 	?IRI rdfs:label ?tlabel .
-    	FILTER not exists { 
-      		?IRI owl:deprecated ?dep .
-    	}
 	BIND (str(?tlabel) AS ?slabel) .
-	OPTIONAL {
-		?IRI obo:EUPATH_0000274 ?dOrder .
-    	}
      	OPTIONAL {
         	?IRI obo:EUPATH_0000755 ?var .
     	} 
