@@ -17,7 +17,6 @@ my @skipDatasets = (
   'metaboliteProfiles%',
   'MetaboliteProfiles%',
   'Pathways_%',
-  '%_PostLoadGenome.genomeAnalysis.loadOrfFile',
 );
 
 my @globalDatasets = (
@@ -89,10 +88,6 @@ sub getTableSql {
   }
 
   my $where = "where $primaryKeyColumn > $maxAlreadyLoadedPk";
-
-  if(lc($tableName) eq "apidb.featurelocation") {
-    $where = $where . " and sequence_ontology_id not in (select ontology_term_id from sres.ontologyterm where name = 'ORF')";
-  }
 
   my $sql = "select * from $tableName $where $orderBy";
 
