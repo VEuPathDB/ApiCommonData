@@ -577,10 +577,16 @@ sub makeSNPFeatureFromVariations {
   my %alleleCounts;
   my %productCounts;
   my %strains;
+
+  my $totalAlleleCount = scalar @variations;
+  my $hasStopCodon = 0;
+
   foreach my $variation (@$variations) {
     my $allele = $variation->{base};
     my $product = $variation->{product};
     my $strain = $variation->{strain};
+
+    $hasStopCodon = 1 if($product eq '*');
 
     $alleleCounts{$allele} ++;
     $strains{$strain}++;
@@ -630,7 +636,8 @@ sub makeSNPFeatureFromVariations {
            "positions_in_cds" => $referenceVariation->{positions_in_cds},
            "positions_in_protein" => $referenceVariation->{positions_in_protein},
            "reference_aa_full" => $referenceVariation->{products},
-
+           "total_allele_count" => $totalAlleleCount,
+           "has_stop_codon" => $hasStopCodon
   };
 
 }

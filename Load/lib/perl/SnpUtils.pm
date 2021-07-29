@@ -84,7 +84,9 @@ sub snpFileColumnNames {
                      'is_coding',
                      "positions_in_cds",
                      "positions_in_protein",
-                     "reference_aa_full"
+                     "reference_aa_full",
+                     "has_stop_codon",
+                     "total_allele_count"
       );
 
   return \@columnNames;
