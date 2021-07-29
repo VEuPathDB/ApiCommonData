@@ -21,6 +21,8 @@ create table apidb.Snp (
     distinct_strain_count        number(3), 
     distinct_allele_count        number(3),
     is_coding                number(1),
+    has_stop_codon                number(1),
+    total_allele_count            number(5),
     positions_in_cds_full varchar2(2500),
     positions_in_protein_full varchar2(2500),
     reference_aa_full varchar2(2500),
