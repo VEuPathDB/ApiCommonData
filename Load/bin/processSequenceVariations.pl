@@ -578,7 +578,7 @@ sub makeSNPFeatureFromVariations {
   my %productCounts;
   my %strains;
 
-  my $totalAlleleCount = scalar @variations;
+  my $totalAlleleCount = scalar @$variations;
   my $hasStopCodon = 0;
 
   foreach my $variation (@$variations) {
