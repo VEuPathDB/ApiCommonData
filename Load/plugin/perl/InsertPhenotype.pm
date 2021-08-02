@@ -131,6 +131,7 @@ sub run {
 	my $isSuccessful = $a[5] eq 'yes'? 1 : 0;
 	my $organism = $a[6];
 	my $qualityTerm = $a[7];
+    $qualityTerm =~ s/^\s$//g;
 	my $entityTerm = $a[8];
 	my $timing = $a[9];
 	my $lifeCycleTerm = $a[10];
