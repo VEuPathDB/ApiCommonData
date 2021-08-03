@@ -110,7 +110,7 @@ sub makeWideTableColumnString {
        end as table_type
 from APIDB.ATTRIBUTE
 where entity_type_id = $entityTypeId";
-
+$self->log("DEBUG:::\n$specSql");
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($specSql);
   $sh->execute();
@@ -120,6 +120,8 @@ where entity_type_id = $entityTypeId";
   while(my ($stableId, $dataType, $isMultiValued, $tableType) = $sh->fetchrow_array()) {
     my $path = "\$.${stableId}[0]";
     $dataType = lc($dataType) eq 'string' ? "VARCHAR2" : uc($dataType);
+# TODO Is this the right way to handle longitude?
+    $dataType = lc($dataType) eq 'longitude' ? "NUMBER" : uc($dataType);
 
     # multiValued data always return JSON array
     if($isMultiValued) {
@@ -525,7 +527,7 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
       while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
 
         # Some tables do not exist, get a list and drop them
-        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
         $self->log("Finding tables to drop with SQL: $sql");
         my $sh3 = $dbh->prepare($sql);
         $sh3->execute();
