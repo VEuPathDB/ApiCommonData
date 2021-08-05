@@ -142,7 +142,7 @@ sub createDownloadFile {
   my $attrTableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   # get an iri dictionary
-  my $sql = "SELECT STABLE_ID, DISPLAY_NAME FROM $attrTableName";
+  my $sql = "SELECT STABLE_ID, DISPLAY_NAME FROM $attrTableName WHERE DATA_TYPE IS NOT NULL";
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} <=> $attrNames->{$b} } keys %$attrNames;
   while(my ($k,$v) = each %$attrNames){
@@ -187,7 +187,6 @@ from apidb.entitytype t
 left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
 and os.external_database_release_id = $ontologyId";
-  printf STDERR ("DEBUG: $sql\n");
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
   $sh->execute();

@@ -1,31 +1,20 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
+PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
-SELECT * {
-	{
-		SELECT distinct ?entity ?col ?dataset
-		WHERE { 
-			?entity a owl:Class .
-		 	?entity obo:EUPATH_0000755 ?column . 
-			?entity rdfs:subClassOf* {ENTITY} .
-		 	?entity obo:TEMP_0023101 ?_dataset . 
-			BIND(str(?column) AS ?col) .
-			BIND(str(?_dataset) AS ?dataset) .
-		}
+ SELECT distinct ?entity ?iri ?col 
+ WHERE { 
+ 	?entity a owl:Class .
+  	?entity obo:EUPATH_0000755 ?column . 
+ 	?entity rdfs:subClassOf* {ENTITY} .
+ 	BIND(str(?column) AS ?col) .
+  BIND(
+    replace(
+      replace(
+        replace(str($entity), str(obo:), ""),
+        str(ebi:), ""),
+      str(sno:), "SNOMEDCT_")
+    as $iri) .
 	}
-	UNION
-	{
-		SELECT distinct ?entity ?col ?dataset
-		WHERE { 
-			?entity a owl:Class .
-		 	?entity obo:EUPATH_0000755 ?column . 
-			?entity rdfs:subClassOf* {ENTITY} .
-		 	FILTER NOT EXISTS {
-				?entity obo:TEMP_0023101 ?dataset . 
-			}
-			BIND(str(?column) AS ?col) .
-		}
-	}
-}
-
