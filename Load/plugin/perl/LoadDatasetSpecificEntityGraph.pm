@@ -387,6 +387,10 @@ SELECT --  distinct
      , null as range_max
      , null as bin_width_override
      , null as bin_width_computed
+     , null as mean 
+     , null as median
+     , null as lower_quartile 
+     , null as upper_quartile 
      , atg.is_temporal
      , atg.is_featured
      , atg.is_merge_key
@@ -421,6 +425,10 @@ SELECT -- distinct
      , att.range_max
      , atg.bin_width_override
      , att.bin_width as bin_width_computed
+     , att.mean 
+     , att.median
+     , att.lower_quartile 
+     , att.upper_quartile 
      , atg.is_temporal
      , atg.is_featured
      , atg.is_merge_key
