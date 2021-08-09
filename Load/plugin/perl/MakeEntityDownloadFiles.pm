@@ -214,14 +214,20 @@ WITH synrep AS
 (SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM sres.ONTOLOGYSYNONYM o
 LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID=o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId
-)
-SELECT ag.stable_id, ag.display_name, ag.data_type, ag.parent_stable_id,
+),
+parent AS 
+(SELECT o4.SOURCE_ID STABLE_ID, o3.ONTOLOGY_SYNONYM LABEL FROM sres.ONTOLOGYSYNONYM o3
+LEFT JOIN sres.ONTOLOGYTERM o4 ON o3.ONTOLOGY_TERM_ID=o4.ONTOLOGY_TERM_ID
+WHERE o3.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId)
+SELECT ag.stable_id, ag.display_name, ag.data_type, parent.label,
 '$category' category, ag.definition, ag.range_min, ag.range_max,
 ag.mean, ag.median, ag.upper_quartile, ag.lower_quartile,
 ag.distinct_values_count, ag.vocabulary, ag.provider_label, synrep.replaces
 FROM $tableName ag
 left join synrep ON ag.STABLE_ID = synrep.stable_id
+LEFT JOIN parent ON ag.parent_stable_id=parent.stable_id
 ONTOSQL
+print STDERR "Get ontology metadata:\n$sql\n";
     my $dbh = $self->getQueryHandle();
     my $sh = $dbh->prepare($sql);
     $sh->execute();
