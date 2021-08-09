@@ -163,6 +163,8 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                #  is_hidden => $ontologyTerm->{IS_HIDDEN},
                                                                  is_temporal => $ontologyTerm->{IS_TEMPORAL},
                                                                  is_featured => $ontologyTerm->{IS_FEATURED},
+                                                                 is_repeated => $ontologyTerm->{IS_REPEATED},
+                                                                 is_merge_key => $ontologyTerm->{IS_MERGE_KEY},
                                                                  display_order => $ontologyTerm->{DISPLAY_ORDER},
                                                                  definition => $ontologyTerm->{DEFINITION},
                                                                  ordinal_values => $ontologyTerm->{ORDINAL_VALUES},
