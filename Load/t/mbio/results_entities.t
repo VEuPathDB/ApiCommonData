@@ -20,6 +20,28 @@ subtest 'relative abundances' => sub {
   is_deeply($x1, $x2, "stays equal if all vars are scaled");
 };
 
+subtest 'abundances cpms' => sub {
+  my $t = \&ApiCommonData::Load::MBioResultsTable::AsEntities::entitiesForSampleAbundanceCpms;
+  is_deeply($t->({}), {}, "null case");
+
+  my $x1 = $t->({Bacteria => 95, Archaea => 5});
+  ok(keys %$x1 > 0, "return something");
+  my @k1 = sort keys %$x1;
+
+  my $x2 = $t->({Bacteria => 950, Archaea => 50});
+
+
+  my @k2 = sort keys %$x2;
+
+  is_deeply(\@k1, \@k2, "keys stay equal if all vars are scaled");
+
+  is(
+    $x1->{abundance_cpms_c}{Archaea_}[1] * 10.0,
+    $x2->{abundance_cpms_c}{Archaea_}[1] * 1.0,
+    "stays equal if all vars are scaled");
+
+};
+
 sub testAlphaDiversity {
   my ($label, $t) = @_;
   subtest $label => sub {

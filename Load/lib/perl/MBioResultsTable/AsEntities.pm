@@ -31,6 +31,12 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
       return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"pathway_abundance", "pathway_abundance_species", "pathway_coverage", "pathway_coverage_species");
     }
   },
+  eukdetectCpms => {
+    entitiesForSample => sub {
+      my ($self, $sample) = @_;
+      return entitiesForSampleAbundanceCpms($self->{data}{$sample});
+    }
+  }
 };
 
 sub entitiesForSample {
@@ -82,12 +88,23 @@ sub entitiesForSampleFunctions {
   return \%result;
 }
 
+sub entitiesForSampleAbundanceCpms {
+  my ($data) = @_;
+  my $levelNames = [map {"abundance_cpms_${_}"} qw/k p c o f g s/];
+  return entitiesForSampleAggregatedAbundance($data, $levelNames, 1);
+}
+
 sub entitiesForSampleRelativeAbundances {
   my ($data) = @_;
   my $levelNames = [map {"relative_abundance_${_}"} qw/k p c o f g s/];
+  my $totalCount = sum values %{$data};
+  return entitiesForSampleAggregatedAbundance($data, $levelNames, $totalCount);
+}
+
+sub entitiesForSampleAggregatedAbundance {
+  my ($data, $levelNames, $normalizingFactor) = @_;
   my @rows = keys %{$data};
   my @abundances = values %{$data};
-  my $totalCount = sum @abundances;
   my %result;
 
   for my $taxonLevel ((0..$#$levelNames)){
@@ -98,7 +115,7 @@ sub entitiesForSampleRelativeAbundances {
       push @{$groups{$l}}, $abundances[$i];
     }
     while(my ($key, $as) = each %groups){
-      my $value = sprintf("%.6f", (sum @{$as} ) / $totalCount);
+      my $value = sprintf("%.6f", (sum @{$as} ) / $normalizingFactor);
       my $displayName;
       if($key =~m{;$}){
         $displayName = $key;

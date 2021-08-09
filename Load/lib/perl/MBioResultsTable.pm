@@ -14,8 +14,16 @@ sub dataTypeInfo {
 }
 
 sub ampliconTaxa {
-  my ($class, $inputPath) = @_;
-  return construct($class, dataTypeInfo($class, 'ampliconTaxa'), $inputPath, sub {
+  return taxaWithLineageAsFirstColumn('ampliconTaxa', @_);
+}
+
+sub eukdetectCpms {
+  return taxaWithLineageAsFirstColumn('eukdetectCpms', @_);
+}
+
+sub taxaWithLineageAsFirstColumn {
+  my ($dtiLabel, $class, $inputPath) = @_;
+  return construct($class, dataTypeInfo($class, $dtiLabel), $inputPath, sub {
     my ($samples, $rowSampleHashPairs) = @_;
     my @rows;
     my %data;

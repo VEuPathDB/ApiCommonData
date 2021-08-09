@@ -11,6 +11,7 @@ sub new {
   my ($class, $dir, $fileExtensions, $nodeTypes) = @_;
   die "node type for amplicon?" unless $nodeTypes->{amplicon};
   die "node type for wgs?" unless $nodeTypes->{wgs};
+  die "node type for eukdetect?" unless $nodeTypes->{eukdetect};
   return bless {
     dir => $dir,
     fileExtensions => $fileExtensions,
@@ -30,6 +31,16 @@ sub ampliconTaxa {
   say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->ampliconTaxa($path);
+}
+
+sub eukdetectCpms {
+  my ($self, $datasetName, $nodeName) = @_;
+  my $path = $self->mbioResultTablePath($datasetName, $nodeName, 'eukdetectCpms');
+  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
+  return unless -f $path;
+  return ApiCommonData::Load::MBioResultsTable::AsEntities->eukdetectCpms($path);
+}
+
 }
 
 sub wgsTaxa {
