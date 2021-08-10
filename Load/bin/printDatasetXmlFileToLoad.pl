@@ -81,8 +81,8 @@ my (
 &usage("Missing a Required Argument --sourceIdRegex") if ($format =~ /genedb/i && !$sourceIdRegex);
 &usage("Missing a Required Argument --sourceIdRegex --isfMappingFile") if ($format =~ /gff/i && (!$sourceIdRegex || !$isfMappingFile ) );
 &usage("Missing a Required Argument --isfMappingFile") if ($format =~ /embl/i && !$isfMappingFile);
-&usage("Missing a Required Argument --ebiVersion") if ($isEbiGenome && !$ebiVersion);
-&usage("Missing a Required Argument --ebi2gusTag") if ($isEbiGenome && !$ebi2gusTag);
+&usage("Missing a Required Argument --ebiVersion") if ($isEbiGenome =~ /^y/i && !$ebiVersion);
+&usage("Missing a Required Argument --ebi2gusTag") if ($isEbiGenome =~ /^y/i && !$ebi2gusTag);
 
 my (%excelInfo, @excelColumn, $orgAbbrevColumn);
 my $count = 0;
