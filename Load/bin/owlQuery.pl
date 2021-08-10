@@ -125,7 +125,12 @@ elsif ( $owl->can($query) ){
   $owl->$query(@queryArgs);
 }
 else {
-	my $it = $owl->execute($query);
+  my $bind = {};
+  foreach my $arg( @queryArgs ){
+    my($k,$v) = split(/=/, $arg);
+    $bind->{$k} = $v;
+  }
+	my $it = $owl->execute($query, $bind);
 	my @fields = $it->binding_names;
 	printf("%s\n", join("\t", @fields));
 	while( my $row = $it->next ){

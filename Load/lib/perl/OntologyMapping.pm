@@ -118,7 +118,7 @@ sub getTermsFromOwl{
   my $it = $owl->execute('get_column_sourceID');
   my %terms;
   while (my $row = $it->next) {
-  	my $iri = $row->{entity}->as_hash()->{iri}|| $row->{entity}->as_hash()->{URI};
+    my $sid = $row->{iri}->as_hash()->{literal};
   	my $names = $row->{vars}->as_hash()->{literal};
   	#my $name = "";
   	if(ref($names) eq 'ARRAY'){
@@ -144,7 +144,6 @@ sub getTermsFromOwl{
      #}
   		$allnames{$n} = 1;
   	}
-  	my $sid = $owl->getSourceIdFromIRI($iri); 	
   	if(defined($terms{$sid})){
   		foreach my $n (@{ $terms{$sid}->{name} } ){ # all rows for this $sid previously read
   			$allnames{$n} = 1;

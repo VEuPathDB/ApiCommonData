@@ -74,7 +74,7 @@ sub munge {
     open(my $dataframe, ">$mainDirectory/$dataframeFile");
     print $dataframe "sample\tfile\tcondition\n";
     foreach my $d (sort @ds) {
-        next unless $d =~ /^[D|E|S]R[R|X]\d{6}/;
+        next unless -e "$d/genes.htseq-union$append.counts";
 	    my $sample = $d;
 
         $d = "$d/genes.htseq-union$append.counts";

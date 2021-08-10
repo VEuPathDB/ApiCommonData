@@ -188,15 +188,19 @@ sub statsForPlots {
   }
 
   my $rv = {};
-  open(FILE, $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
+  open(FILE, "<", $outputStatsFileName) or die "Cannot open $outputStatsFileName for reading: $!";
   
   while(<FILE>) {
     chomp;
-    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth) = split(/\s/, $_);
+    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\s/, $_);
 
     $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => substr($min, 0, $RANGE_FIELD_WIDTH),
                                                    range_max => substr($max, 0, $RANGE_FIELD_WIDTH),
-                                                   bin_width => substr($binWidth, 0, $RANGE_FIELD_WIDTH) 
+                                                   bin_width => substr($binWidth, 0, $RANGE_FIELD_WIDTH),
+                                                   mean => substr($mean, 0, $RANGE_FIELD_WIDTH),
+                                                   median => substr($median, 0, $RANGE_FIELD_WIDTH),
+                                                   lower_quartile => substr($lower_quartile, 0, $RANGE_FIELD_WIDTH),
+                                                   upper_quartile => substr($upper_quartile, 0, $RANGE_FIELD_WIDTH),
     };
   }
   close FILE;
@@ -206,34 +210,51 @@ sub statsForPlots {
 }
 
 sub rCommandsForStats {
-  return "args = commandArgs(trailingOnly = TRUE);
+  my $R_script = <<RSCRIPT;
+args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
 if( file.info(fileName)\$size == 0 ){
   quit('no')
 }
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
+isDate = 0;
 if(is.character(t\$V3)) {
   t\$V3 = as.Date(t\$V3);
+  isDate = 1;
 }
 u = unique(t[,1:2]);
 subsetFxn = function(x, output){
    v = subset(t, V1==x[1] & V2==x[2])\$V3
    data.min = min(v);
    data.max = max(v);
+   data.mean = mean(v);
+   data.median = median(v);
    if(data.min != data.max) {
      data.binWidth = plot.data::findBinWidth(v);
+     if(isDate) {
+       stats = as.Date(stats::fivenum(as.numeric(v)), origin = "1970-01-01");
+       data.lower_quartile = stats[2];
+       data.upper_quartile = stats[4];
+     }
+     else {
+       stats = stats::fivenum(v); # min, lower hinge, median, upper hinge, max
+       data.lower_quartile = stats[2];
+       data.upper_quartile = stats[4];
+     }
    }
    else {
      data.binWidth = NULL;
+     data.lower_quartile = NULL;
+     data.upper_quartile = NULL;
    }
-   data.output = c(x, as.character(data.min), as.character(data.max), data.binWidth);
-   write(data.output, file=outputFileName, append=T, ncolumns=5)
+   data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
+   write(data.output, file=outputFileName, append=T, ncolumns=16)
 };
 apply(u, 1, subsetFxn);
 quit('no')
-";
-
+RSCRIPT
+return $R_script;
 }
 
 
@@ -317,7 +338,11 @@ sub loadAttributeTerms {
                                                          %$valProps,
                                                          range_min => $statProps->{range_min},
                                                          range_max => $statProps->{range_max},
-                                                         bin_width => $statProps->{bin_width}
+                                                         bin_width => $statProps->{bin_width},
+                                                         mean      => $statProps->{mean},
+                                                         median    => $statProps->{median},
+                                                         lower_quartile => $statProps->{lower_quartile},
+                                                         upper_quartile => $statProps->{upper_quartile},
                                                        });
 
 
