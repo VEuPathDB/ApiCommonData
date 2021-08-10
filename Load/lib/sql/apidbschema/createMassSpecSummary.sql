@@ -44,6 +44,7 @@ CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_da
 CREATE INDEX apiDB.massspecsumm_aaseqid_idx ON apiDB.Massspecsummary(aa_sequence_id);
 CREATE INDEX apiDB.massspecsumm_protAppNd_idx ON apiDB.Massspecsummary(protocol_app_node_id);
 
+GRANT REFERENCES ON apidb.MassSpecSummary to dots;
 
 ALTER TABLE DoTS.AAFeatureImp
 ADD CONSTRAINT mss_id FOREIGN KEY (mass_spec_summary_id)
