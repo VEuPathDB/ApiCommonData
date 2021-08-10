@@ -561,7 +561,7 @@ foreach my $kk (sort keys %tSourceIds) {
 ## MN. For each translatedAAFeature, at least one aaFeatureExon has coding_start and coding_end
 
 my $sql = <<SQL;
-select AA_FEATURE_ID, SOURCE_ID from DOTS.TRANSLATEDAAFEATURE where EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+select taf.AA_FEATURE_ID, taf.SOURCE_ID from DOTS.TRANSLATEDAAFEATURE taf, dots.transcript t where taf.NA_FEATURE_ID=t.NA_FEATURE_ID and t.IS_PSEUDO is null and t.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
 SQL
 
 my $stmt = $dbh->prepare($sql);
