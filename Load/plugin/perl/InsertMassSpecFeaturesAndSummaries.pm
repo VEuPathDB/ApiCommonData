@@ -965,7 +965,7 @@ sub insertMassSpecFeatures {
 #                                                            'developmental_stage'     => $record->{devStage},
                                                             'description'             => $pep->{description},
                                                             'spectrum_count'          => $pep->{spectrum_count},
-                                                            'source_id'               => $mss->getMassSpecSummaryId,
+                                                            'mass_spec_summary_id'    => $mss->getMassSpecSummaryId,
                                                             'is_predicted'            => 1,
                                                            });
         

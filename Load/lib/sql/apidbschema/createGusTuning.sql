@@ -270,6 +270,7 @@ UNIQUE (executable, cvs_revision);
 -- (and don't drop in dropGusTuning.sql)
 
 
+alter table dots.aafeatureimp add mass_spec_summary_id number(12);
 
 DROP VIEW dots.massspecfeature;
 CREATE VIEW DOTS.MASSSPECFEATURE AS
@@ -291,6 +292,7 @@ SELECT AA_FEATURE_ID,
   REVIEW_STATUS_ID,
   STRING1 AS DEVELOPMENTAL_STAGE,
   NUMBER1 AS SPECTRUM_COUNT,
+  MASS_SPEC_SUMMARY_ID,
   MODIFICATION_DATE,
   USER_READ,
   USER_WRITE,
