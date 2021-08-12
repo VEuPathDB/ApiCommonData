@@ -497,6 +497,7 @@ sub loadAttributes {
   $self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
   $sh->execute($studyId);
+  $self->log("query finished, processing...");
 
   my $clobCount = 0;
 
@@ -589,7 +590,8 @@ sub typedValueForAttribute {
 
   $counts->{_VALUES}->{$value}++;
 
-  if(looks_like_number($valueNoCommas)) {
+  if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
+    # looks_like_number() considers these numbers: nan=not a number, inf=infinity 
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
