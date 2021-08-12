@@ -539,6 +539,7 @@ sub loadAttributes {
         print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
         
       }
+      $self->undefPointerCache();
     }
     if(++$clobCount % 500 == 0){
       $self->log("Loading attribute values for study $studyId: processed $clobCount clobs");
