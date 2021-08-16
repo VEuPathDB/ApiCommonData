@@ -53,9 +53,7 @@ my $sth = $dbh->prepare($sql);
 $sth->execute;
 
 while(my $row = $sth->fetchrow_arrayref) {
-   my($project, $wf_version, $organism, $is_annotated, $build_number) = @$row;
-   #print "$project, $wf_version, $organism, $is_annotated, $build_number \n";
-   print "\n===========================================\n";
+   my($project, $wf_version, $organism, $is_annotated, $build_number_introduced) = @$row;
 
    # remove old genome and gff files if they exist
    my @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*Genome.fasta"); 
@@ -65,7 +63,7 @@ while(my $row = $sth->fetchrow_arrayref) {
      system("rm $_") if $commit;
   }
 
-  @oldfiles = glob("$GLOBUS/$project-*\_$organism\_*.gff");
+  @oldfiles = glob("$GLOBUS/$project-*\_$organism.gff");
   foreach (@oldfiles) {
      print "rm $_\n";
      system("rm $_") if $commit;
@@ -82,27 +80,32 @@ while(my $row = $sth->fetchrow_arrayref) {
       print $_."\n" foreach (@files);
       die;
   }
+
   my $newFileName = $files[0];
   $newFileName =~ s/-CURRENT_/-$build_number\_/;
-  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
+  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName ;";
   print "$cmd\n";
   system($cmd) if $commit;
 
   # Copy GFF file and change file name: CURRENT to build_number
-  my $srcDir = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/gff/data";
-  chdir($srcDir);
-  my @files = glob("$project-CURRENT\_$organism*.gff");
-  if (scalar @files == 0) {
+  if($is_annotated) {
+    my $srcDir = "$STAGING/$project/$wf_version/real/downloadSite/$project/release-CURRENT/$organism/gff/data";
+    chdir($srcDir);
+    my @files = glob("$project-CURRENT\_$organism*.gff");
+    if (scalar @files == 0) {
       print "WARNING.  There are no GFF files in this directory: $srcDir\n";
-  } elsif (scalar @files > 1) {
+    } elsif (scalar @files > 1) {
       print "Expecting only one GFF file but got more in this directory: $srcDir\n";
       print $_."\n" foreach (@files);
       die;
+    }
+    my $newFileName = $files[0];
+    $newFileName =~ s/-CURRENT_/-$build_number\_/;
+    my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName ;";
+    print "$cmd\n";
+    system($cmd) if $commit;
   }
-  my $newFileName = $files[0];
-  $newFileName =~ s/-CURRENT_/-$build_number\_/;
-  my $cmd = "cp $srcDir/$files[0] $GLOBUS/$newFileName";
-  print "$cmd\n";
-  system($cmd) if $commit;
+
+  print "\n\n";
 
 }
