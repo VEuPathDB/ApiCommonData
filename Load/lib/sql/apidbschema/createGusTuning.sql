@@ -272,8 +272,7 @@ UNIQUE (executable, cvs_revision);
 
 alter table dots.aafeatureimp add mass_spec_summary_id number(12);
 
-DROP VIEW dots.massspecfeature;
-CREATE VIEW DOTS.MASSSPECFEATURE AS
+CREATE OR REPLACE VIEW DOTS.MASSSPECFEATURE AS
 SELECT AA_FEATURE_ID,
   AA_SEQUENCE_ID,
   FEATURE_NAME_ID,

@@ -110,7 +110,6 @@ sub makeWideTableColumnString {
        end as table_type
 from APIDB.ATTRIBUTE
 where entity_type_id = $entityTypeId";
-$self->log("DEBUG:::\n$specSql");
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($specSql);
   $sh->execute();

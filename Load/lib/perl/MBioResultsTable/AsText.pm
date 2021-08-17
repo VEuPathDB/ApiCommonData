@@ -16,6 +16,14 @@ $ApiCommonData::Load::MBioResultsTable::AsText::dataTypeInfo = {
       return $x ? $x : "";
     },
   },
+  eukdetectCpms => {
+    resultType => 'Taxon table',
+    matrixElementType => 'float',
+    printMatrixElement => sub {
+      my ($x) = @_;
+      return $x ? sprintf("%.5f", $x) : "";
+    },
+  },
   wgsTaxa => {
     resultType => 'Taxon table',
     matrixElementType => 'float',

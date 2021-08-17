@@ -10,6 +10,11 @@ $ApiCommonData::Load::MBioResultsTable::AsGus::dataTypeInfo = {
   ampliconTaxa => {
     valueToGus => \&valueToGusTaxa,
   },
+  eukdetectCpms => {
+    valueToGus => sub {
+      die "eukdetectCpms do not go to GUS";
+    },
+  }
   wgsTaxa => {
     valueToGus => \&valueToGusTaxa,
   },

@@ -4,6 +4,7 @@ package ApiCommonData::Load::Plugin::MakeEntityDownloadFiles;
 use strict;
 use GUS::PluginMgr::Plugin;
 
+use File::Basename;
 use Data::Dumper;
 
 my $purposeBrief = 'Dump dataset-specific ANCESTORS+ATTRIBUTES to a tabular file with headers as display_name [IRI] from ATTRIBUTEGRAPH';
@@ -90,6 +91,13 @@ sub run {
     $self->log("Loading Study: $studyAbbrev");
     my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId,$ontologyId);
     my %entityNames = map { uc($_->{ABBREV}) => $_->{LABEL} } values %$entityTypeIds;
+  
+    #  When generating R script these must be copied to a new column in each table: mergeKey
+    #  Observation date [EUPATH_0004991]
+    #  Collection date [EUPATH_0020003]
+    #  Don't forget to delete the new column before writing output
+
+    my %mergeInfo; # populate with id_cols, merge_key for each file
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
       my $entityNameForFile = $meta->{PLURAL};
@@ -107,10 +115,25 @@ sub run {
         $outputFile = sprintf("%s_%s.txt", $datasetName, $entityNameForFile);
       }
       $self->log("Making download file $outputFile for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
-      $self->createDownloadFile($entityTypeId, $entityTypeAbbrev, \%entityNames, $studyAbbrev,$outputFile);
+      $mergeInfo{$outputFile} =  $self->createDownloadFile($entityTypeId, $entityTypeAbbrev, \%entityNames, $studyAbbrev,$outputFile);
     }
+    #
+    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $datasetName);
+    $self->log("Making all data merged file $allMergedFile ");
+    my $tempScript = "merge_script.R";
+    if($outputDir){$tempScript = join("/", $outputDir,$tempScript)}
+    printf STDERR "Writing script $tempScript\n";
+    open(FH, ">",$tempScript) or die "Cannot write $tempScript: $!\n"; 
+    my $code = $self->mergeScript($allMergedFile, \%mergeInfo);
+    print FH ($code);
+    close(FH);
+    if(system("nice -n40 Rscript $tempScript")){
+      $self->error("$tempScript failed");
+    }
+    next;
     ## ontology file
-    my $outputFile;
+
+    my $outputFile = "ontologyMetadata.txt"; 
     if($outputDir){ 
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
@@ -123,8 +146,7 @@ sub run {
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
   }
-
-  return("made some tall tables and some wide tables");
+  return("Created download files");
 }
 
 sub createDownloadFile {
@@ -141,14 +163,15 @@ sub createDownloadFile {
  
   my $attrTableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
-  # get an iri dictionary
-  my $sql = "SELECT STABLE_ID, DISPLAY_NAME FROM $attrTableName WHERE DATA_TYPE IS NOT NULL";
+  # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
+  my $sql = "SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' FROM $attrTableName WHERE DATA_TYPE IS NOT NULL";
+  # we could format
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} <=> $attrNames->{$b} } keys %$attrNames;
-  while(my ($k,$v) = each %$attrNames){
-    $v = $v . " [$k]";
-    $attrNames->{$k} = $v;
-  }
+ #while(my ($k,$v) = each %$attrNames){
+ #  $v = $v . " [$k]";
+ #  $attrNames->{$k} = $v;
+ #}
 
   # get everything
   $sql = "SELECT a.*, e.* FROM $dataTableName e LEFT JOIN $ancestorTableName a ON e.STABLE_ID = a.${entityTypeAbbrev}_STABLE_ID" ;
@@ -158,7 +181,8 @@ sub createDownloadFile {
   $sh->execute();
   # set up column headers for ancestor IDs
   my @cols = @{$sh->{NAME}}; 
-  my @entityIdCols;
+  my @entityIdCols; # for creating this file (raw ID from SQL)
+  my @mergeIdCols; # for merging with this file (pretty ID from file)
   foreach my $col (@cols){
     # the first columns must be *_STABLE_ID
     last if($col eq 'STABLE_ID'); # omitted
@@ -168,6 +192,7 @@ sub createDownloadFile {
     $name =~ tr/ /_/;
     $attrNames->{$col} = "${name}_Id";
     push(@entityIdCols, $col);
+    push(@mergeIdCols, $attrNames->{$col});
   }
   open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
   # print header row
@@ -177,12 +202,18 @@ sub createDownloadFile {
     printf FH ("%s\n", join("\t", map { $row->{$_} } @entityIdCols, @orderedIRIs));
   }
   close(FH);
+  # get Merge Key, if any
+  $sql = sprintf("SELECT t1.display_name || ' [' || t1.stable_id || ']' MERGE_KEY,1 value FROM %s t1 WHERE t1.IS_MERGE_KEY = 1", $attrTableName);
+  my ($mergeKey) = keys %{ $self->sqlAsDictionary( Sql => $sql ) };
+  return { id_cols => \@mergeIdCols, merge_key => $mergeKey };
+  # return info for merging
 }
 
 sub entityTypeIdsFromStudyId {
   my ($self, $studyId,$ontologyId) = @_;
 
-  my $sql = "select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,os.ontology_synonym LABEL, os.plural PLURAL
+  my $sql = "select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,os.ontology_synonym LABEL, os.plural PLURAL,
+regexp_replace(os.ONTOLOGY_SYNONYM ,'\s','_') || '_Id' ID_COLUMN
 from apidb.entitytype t
 left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
@@ -237,6 +268,75 @@ print STDERR "Get ontology metadata:\n$sql\n";
   }
   close(FH);
 }
+
+sub mergeScript {
+  my ($self, $outputFile, $mergeInfo) = @_;
+
+
+  my $TMK = "TemporaryMergeKey";
+  my $ALLTAB = "MasterDataTable";
+  my $ENTITYTAB = "entityTable";
+
+  my @scriptLines = (
+  "#!/usr/bin/env Rscript",
+  "library(data.table)",
+  "library(plyr)",
+  "$ALLTAB = c()", # merged data
+  "",""
+  );
+  
+  my $firstFile = 1;
+  my %allMergedCols; # mergeable columns in all, including mergeKey
+  # $fileInfo is set at the end of createDownloadFile
+  while(my ($fileName, $fileInfo) = each %$mergeInfo){
+      push(@scriptLines, sprintf("\n# Merging %s", basename($fileName)));
+    my @mergeCols;
+    ###
+    if($firstFile){
+      $firstFile = 0;
+      push(@scriptLines, sprintf('%s <- fread("%s")', $ALLTAB, $fileName));
+      if( $fileInfo->{merge_key} ){
+        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
+      }
+    }
+    else {
+      push(@scriptLines, sprintf('%s <- fread("%s")', $ENTITYTAB, $fileName));
+      if( $fileInfo->{merge_key} ){
+        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
+        if($allMergedCols{$TMK}) { push(@mergeCols, $TMK) }
+      }
+      foreach my $idCol ( @{ $fileInfo->{id_cols} } ){
+        if( $allMergedCols{$idCol} ) { push(@mergeCols, $idCol) }
+      }
+      my $mergeBy = join(",", map { "\"$_\"" } @mergeCols);
+      push(@scriptLines, sprintf("%s <- merge(%s, %s, by = c(%s), allow.cartesian=T, all=T)", $ALLTAB, $ALLTAB, $ENTITYTAB, $mergeBy));
+    }
+    ###
+    $allMergedCols{$_} = 1 for @{ $fileInfo->{id_cols} };
+    $allMergedCols{$TMK} = 1 if($fileInfo->{merge_key});
+    push(@scriptLines, 'cat(sprintf("%d rows\n", nrow(' . $ALLTAB .')))');
+  }
+  if($allMergedCols{$TMK}) { push(@scriptLines, sprintf('%s$%s <- NULL', $ALLTAB, $TMK)) }
+  ## reorder all
+  push(@scriptLines, sprintf("setcolorder(%s, order(names(%s)))", $ALLTAB, $ALLTAB));
+  
+my $moveIdCols = <<MOVEIDCOLS;
+orderedIdCols = c()
+for( idcol in c("Community_Id", "Community_repeated_measure_Id", "Household_Id", "Household_repeated_measure_Id", "Entomology_collection_Id", "Participant_Id", "Repeated_measure_Id", "Sample_Id") ){
+  if( idcol %in% names($ALLTAB) ){
+    orderedIdCols <- append( orderedIdCols, grep( idcol, names($ALLTAB) ) )
+  }
+}
+setcolorder( $ALLTAB, orderedIdCols )
+MOVEIDCOLS
+  push(@scriptLines, $moveIdCols);
+
+  push(@scriptLines, sprintf('fwrite(%s,"%s", sep="\t", na="NA")', $ALLTAB, $outputFile));
+  push(@scriptLines, '', 'quit("no")', '');
+  return join("\n", @scriptLines);
+}
+
+
 
 
 
