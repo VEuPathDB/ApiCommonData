@@ -370,7 +370,7 @@ sub valProps {
   my $valueCount = scalar(keys(%{$cs{_VALUES}}));
 #  my $isBoolean = $cs{_COUNT} == $cs{_IS_BOOLEAN_COUNT};
 
-  my $isMultiValued = $cs{_IS_MULTI_VALUED};
+#  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
   if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
     $dataShape = 'ordinal';
@@ -410,7 +410,7 @@ sub valProps {
   return {
     data_type => $dataType,
     distinct_values_count => $valueCount,
-    is_multi_valued => $isMultiValued ? 1 : 0,
+#    is_multi_valued => $isMultiValued ? 1 : 0,
     data_shape => $dataShape,
     precision => $precision,
     ordered_values => $orderedValues,
