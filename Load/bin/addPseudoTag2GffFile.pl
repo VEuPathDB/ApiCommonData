@@ -11,6 +11,8 @@ open (IN, $pseudoFile) || die "can not open pseudoFile file to read.\n";
 while (<IN>) {
   chomp;
   next if ($_ =~ /^\s*$/);
+  $_ =~ s/\*\*\*WARNING\*\*\*\*\*\*\*\*\*\s+transcript\s*//;
+  $_ =~ s/\s*contains internal stop codons\.//;
   $isPseudo{$_} = 1;
 }
 close IN;

@@ -1453,7 +1453,7 @@ select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
   dots.aalocation aal,
   dots.translatedaafeature taaf,
   dots.nafeature misc
-  where mss.mass_spec_summary_id = msf.source_id
+  where mss.mass_spec_summary_id = msf.mass_spec_summary_id
   and msf.aa_feature_id = aal.aa_feature_id
   and mss.aa_sequence_id = taaf.aa_sequence_id
   and taaf.na_feature_id = misc.na_feature_id
@@ -1467,7 +1467,7 @@ select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
   dots.translatedaafeature taaf,
   dots.transcript t,
   dots.genefeature gf
-  where mss.mass_spec_summary_id = msf.source_id
+  where mss.mass_spec_summary_id = msf.mass_spec_summary_id
   and msf.aa_feature_id = aal.aa_feature_id
   and mss.aa_sequence_id = taaf.aa_sequence_id
   and taaf.na_feature_id = t.na_feature_id
@@ -1482,7 +1482,7 @@ select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
   dots.translatedaasequence taas,
   dots.translatedaafeature taaf,
   dots.transcript t
-  where mss.mass_spec_summary_id = msf.source_id
+  where mss.mass_spec_summary_id = msf.mass_spec_summary_id
   and msf.nA_FEATURE_ID = nal.nA_FEATURE_ID
   and mss.aa_sequence_id = taas.aa_sequence_id
   and taas.aa_sequence_id = taaf.aa_sequence_id
