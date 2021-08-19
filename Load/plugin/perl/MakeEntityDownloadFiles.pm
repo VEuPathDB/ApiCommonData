@@ -84,7 +84,7 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
-  $self->getDbHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
+  $self->getDbHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd'") or die $self->getDbHandle()->errstr;
 
   foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
@@ -164,19 +164,25 @@ sub createDownloadFile {
   my $attrTableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
-  my $sql = "SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' FROM $attrTableName WHERE DATA_TYPE IS NOT NULL";
-  # we could format
+  my $sql = <<SQL_GETLABELS;
+SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL
+UNION
+SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL
+SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
-  my @orderedIRIs = sort { $attrNames->{$a} <=> $attrNames->{$b} } keys %$attrNames;
+  my @orderedIRIs = sort { $attrNames->{$a} cmp $attrNames->{$b} } keys %$attrNames;
  #while(my ($k,$v) = each %$attrNames){
  #  $v = $v . " [$k]";
  #  $attrNames->{$k} = $v;
  #}
+  # check order
+  printf STDERR ("ORDER:\n%s...\n", join("\t\n", map { $attrNames->{$_} } @orderedIRIs[0..10]));
 
   # get everything
   $sql = "SELECT a.*, e.* FROM $dataTableName e LEFT JOIN $ancestorTableName a ON e.STABLE_ID = a.${entityTypeAbbrev}_STABLE_ID" ;
   
   my $dbh = $self->getQueryHandle();
+  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   # set up column headers for ancestor IDs
@@ -219,6 +225,7 @@ left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
 and os.external_database_release_id = $ontologyId";
   my $dbh = $self->getQueryHandle();
+  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);
   $sh->execute();
   my %entityTypeIds;
@@ -260,6 +267,7 @@ LEFT JOIN parent ON ag.parent_stable_id=parent.stable_id
 ONTOSQL
 print STDERR "Get ontology metadata:\n$sql\n";
     my $dbh = $self->getQueryHandle();
+    $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
     my $sh = $dbh->prepare($sql);
     $sh->execute();
     while(my $row = $sh->fetchrow_arrayref()) {
@@ -330,7 +338,7 @@ for( idcol in c("Community_Id", "Community_repeated_measure_Id", "Household_Id",
 setcolorder( $ALLTAB, orderedIdCols )
 MOVEIDCOLS
   push(@scriptLines, $moveIdCols);
-
+  # force all data to be character (for dates, numerical IDs, etc.)
   push(@scriptLines, sprintf('fwrite(%s,"%s", sep="\t", na="NA")', $ALLTAB, $outputFile));
   push(@scriptLines, '', 'quit("no")', '');
   return join("\n", @scriptLines);
