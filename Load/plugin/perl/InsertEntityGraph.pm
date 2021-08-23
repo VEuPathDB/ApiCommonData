@@ -11,15 +11,6 @@ use File::Basename;
 
 use GUS::Model::SRes::OntologyTerm;
 
-use GUS::Model::ApiDB::Study;
-use GUS::Model::ApiDB::EntityAttributes;
-use GUS::Model::ApiDB::EntityType;
-use GUS::Model::ApiDB::AttributeUnit;
-
-use GUS::Model::ApiDB::ProcessAttributes;
-use GUS::Model::ApiDB::ProcessType;
-use GUS::Model::ApiDB::ProcessTypeComponent;
-
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
 
@@ -54,8 +45,13 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 1, }),
 
-stringArg({name           => 'extDbRlsSpec',
+   stringArg({name           => 'extDbRlsSpec',
             descr          => 'external database release spec',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
+   stringArg({name           => 'schema',
+            descr          => 'GUS::Model schema for entity tables',
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
@@ -149,6 +145,7 @@ sub new {
 
 sub run {
   my ($self) = @_;
+  $self->requireModelObjects();
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -252,7 +249,7 @@ sub countLines {
 sub protocolsCheckProcessTypesAndSetIds {
   my ($self, $protocols) = @_;
 
-  my $sql = "select name, process_type_id from apidb.processtype";
+  my $sql = sprintf("select name, process_type_id from %s.processtype", $self->getArg('schema'));
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
@@ -286,7 +283,7 @@ sub loadStudy {
   my $internalAbbrev = $identifier;
   $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
 
-  my $gusStudy = GUS::Model::ApiDB::Study->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
+  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
@@ -318,7 +315,7 @@ sub addEntityTypeForNode {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
   }
 
-  my $entityType = GUS::Model::ApiDB::EntityType->new();
+  my $entityType = $self->getGusModelClass('EntityType')->new();
   $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
@@ -357,7 +354,7 @@ sub addAttributeUnit {
   }
 
   
-  my $attributeValue = GUS::Model::ApiDB::AttributeUnit->new({entity_type_id => $entityTypeId, 
+  my $attributeValue = $self->getGusModelClass('AttributeUnit')->new({entity_type_id => $entityTypeId, 
                                                               attr_ontology_term_id => $attrOntologyTermId,
                                                               unit_ontology_term_id => $unitOntologyTermId
                                                              });
@@ -384,7 +381,7 @@ sub loadNodes {
       next;
     }
 
-    my $entity = GUS::Model::ApiDB::EntityAttributes->new({stable_id => $node->getValue()});
+    my $entity = $self->getGusModelClass('EntityAttributes')->new({stable_id => $node->getValue()});
 
     my $entityTypeId = $self->addEntityTypeForNode($ontologyTermToIdentifiers, $node, $gusStudyId);
     $entity->setEntityTypeId($entityTypeId);
@@ -561,7 +558,7 @@ sub loadProcessTypes {
 
     unless($processTypeId) {
       my $protocolDescription = $protocol->getProtocolDescription();
-      $gusProcessType = GUS::Model::ApiDB::ProcessType->new({name => $protocolName, description => $protocolDescription});
+      $gusProcessType = $self->getGusModelClass('ProcessType')->new({name => $protocolName, description => $protocolDescription});
 
       if($protocol->getProtocolType()) {
         my $gusProtocolType = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $protocol->getProtocolType(), 0);
@@ -601,14 +598,14 @@ sub getOrMakeProcessTypeId {
   my $gusProcessTypeId = $processTypeNamesToIdMap->{$protocolName};
 
   unless($gusProcessTypeId) {
-    my $gusProcessType = GUS::Model::ApiDB::ProcessType->new({name => $protocolName});
+    my $gusProcessType = $self->getGusModelClass('ProcessType')->new({name => $protocolName});
     $gusProcessType->submit(undef, 1);
 
     $gusProcessTypeId = $gusProcessType->getId();
 
     $processTypeNamesToIdMap->{$protocolName} = $gusProcessTypeId;
     for (my $i=0; $i<@seriesProtocolNames; $i++) {
-      my $processTypeComponent = GUS::Model::ApiDB::ProcessTypeComponent->new({order_num => $i+1});
+      my $processTypeComponent = $self->getGusModelClass('ProcessTypeComponent')->new({order_num => $i+1});
       $processTypeComponent->setProcessTypeId($gusProcessTypeId);
       $processTypeComponent->setComponentId($processTypeNamesToIdMap->{$seriesProtocolNames[$i]});
       $processTypeComponent->submit(undef, 1);
@@ -693,7 +690,7 @@ sub loadProcesses {
         my $inId = $self->getGusEntityId($input, $nodeNameToIdMap);
         my $outId = $self->getGusEntityId($output, $nodeNameToIdMap);
 
-        my $gusProcessAttributes = GUS::Model::ApiDB::ProcessAttributes->new({process_type_id => $gusProcessTypeId, 
+        my $gusProcessAttributes = $self->getGusModelClass('ProcessAttributes')->new({process_type_id => $gusProcessTypeId, 
                                                                         in_entity_id => $inId,
                                                                         out_entity_id => $outId,
                                                                         atts => $atts,
@@ -770,17 +767,33 @@ and tn.name_class = 'scientific name'
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
 }
 
+# ======================================================================
+
+sub requireModelObjects {
+  my ($self,$schema) = @_;
+  my $schema ||= $self->getArg('schema');
+  foreach my $table (qw/ Study EntityAttributes EntityType AttributeUnit ProcessAttributes ProcessType ProcessTypeComponent/){
+    eval "require GUS::Model::${schema}::${table}";
+  }
+}
+
+sub getGusModelClass {
+  my ($self,$table) = @_;
+  my $schema = $self->getArg('schema');
+  return sprintf("GUS::Model::%s::%s", $schema, $table);
+}
+
 sub undoTables {
   my ($self) = @_;
-
+  my $schema = $self->getArg('schema');
   return (
-    'ApiDB.ProcessAttributes',
-    'ApiDB.EntityAttributes',
-    'ApiDB.AttributeUnit',
-    'ApiDB.ProcessTypeComponent',
-    ## 'ApiDB.ProcessType',
-    'ApiDB.EntityType',
-    'ApiDB.Study',
+    "${schema}.ProcessAttributes",
+    "${schema}.EntityAttributes",
+    "${schema}.AttributeUnit",
+    "${schema}.ProcessTypeComponent",
+    ## "${schema}.ProcessType",
+    "${schema}.EntityType",
+    "${schema}.Study",
      );
 
 
