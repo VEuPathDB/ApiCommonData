@@ -127,10 +127,11 @@ sub run {
     my $code = $self->mergeScript($allMergedFile, \%mergeInfo);
     print FH ($code);
     close(FH);
+    printf STDERR "Running $tempScript\n";
     if(system("nice -n40 Rscript $tempScript")){
       $self->error("$tempScript failed");
     }
-    next;
+
     ## ontology file
 
     my $outputFile = "ontologyMetadata.txt"; 
@@ -176,7 +177,7 @@ SQL_GETLABELS
  #  $attrNames->{$k} = $v;
  #}
   # check order
-  printf STDERR ("ORDER:\n%s...\n", join("\t\n", map { $attrNames->{$_} } @orderedIRIs[0..10]));
+  # printf STDERR ("ORDER:\n%s...\n", join("\t\n", map { $attrNames->{$_} } @orderedIRIs[0..10]));
 
   # get everything
   $sql = "SELECT a.*, e.* FROM $dataTableName e LEFT JOIN $ancestorTableName a ON e.STABLE_ID = a.${entityTypeAbbrev}_STABLE_ID" ;
@@ -194,7 +195,6 @@ SQL_GETLABELS
     last if($col eq 'STABLE_ID'); # omitted
     my ($type) = ($col =~ m/^(.*)_STABLE_ID/i);
     my $name = $entityNames->{uc($type)};
-    printf STDERR ("TYPE=$type ... $name\n");
     $name =~ tr/ /_/;
     $attrNames->{$col} = "${name}_Id";
     push(@entityIdCols, $col);
@@ -292,23 +292,27 @@ sub mergeScript {
   "$ALLTAB = c()", # merged data
   "",""
   );
+
+  my @orderedFiles = sort { scalar(@{$mergeInfo->{$a}->{id_cols}}) <=> scalar(@{$mergeInfo->{$b}->{id_cols}}) } keys %$mergeInfo;
+  # process files in order of least number of ID cols (equivalent to number of ancestors + self)
   
   my $firstFile = 1;
   my %allMergedCols; # mergeable columns in all, including mergeKey
   # $fileInfo is set at the end of createDownloadFile
-  while(my ($fileName, $fileInfo) = each %$mergeInfo){
+  foreach my $fileName(@orderedFiles){
+      my $fileInfo = $mergeInfo->{$fileName};
       push(@scriptLines, sprintf("\n# Merging %s", basename($fileName)));
     my @mergeCols;
     ###
     if($firstFile){
       $firstFile = 0;
-      push(@scriptLines, sprintf('%s <- fread("%s")', $ALLTAB, $fileName));
+      push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ALLTAB, $fileName));
       if( $fileInfo->{merge_key} ){
         push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
       }
     }
     else {
-      push(@scriptLines, sprintf('%s <- fread("%s")', $ENTITYTAB, $fileName));
+      push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ENTITYTAB, $fileName));
       if( $fileInfo->{merge_key} ){
         push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
         if($allMergedCols{$TMK}) { push(@mergeCols, $TMK) }

@@ -233,7 +233,7 @@ sub run {
 
   $self->logRowsInserted() if($self->getArg('commit'));
 
-  return("Processed $investigationCount Investigations.");
+  $self->log("Processed $investigationCount Investigations.");
 }
 
 sub countLines {
