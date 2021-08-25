@@ -216,7 +216,7 @@ sub loadSeqVarFile {
   my $varFile = "$loaderDir/var_${organismAbbrev}.dat";
   my $logFile = "$loaderDir/var_${organismAbbrev}.log";
 
-  my $sqlloaderString = "sqlldr ${DBI_USER}/${DBI_PASS}\@${DBI_DSN} data=$varFile control=$ctlFile log=$logFile rows=25000 direct=TRUE skip_index_maintenance=TRUE";
+  my $sqlloaderString = "sqlldr ${DBI_USER}/${DBI_PASS}\@${DBI_DSN} data=$varFile control=$ctlFile log=$logFile rows=25000 direct=TRUE";
 
   my $fifo = ApiCommonData::Load::Fifo->new($varFile, undef, undef, $logFile);
   my $pid = $fifo->attachReader($sqlloaderString);
@@ -269,7 +269,7 @@ sub loadSnpFile {
   my $snpFile = "$loaderDir/snp_${organismAbbrev}.dat";
   my $logFile = "$loaderDir/snp_${organismAbbrev}.log";
 
-  my $sqlloaderString = "sqlldr ${DBI_USER}/${DBI_PASS}\@${DBI_DSN} data=$snpFile control=$ctlFile log=$logFile rows=25000 direct=TRUE skip_index_maintenance=TRUE";
+  my $sqlloaderString = "sqlldr ${DBI_USER}/${DBI_PASS}\@${DBI_DSN} data=$snpFile control=$ctlFile log=$logFile rows=25000 direct=TRUE";
 
   my $fifo = ApiCommonData::Load::Fifo->new($snpFile, undef, undef, $logFile);
   my $pid = $fifo->attachReader($sqlloaderString);
