@@ -211,7 +211,6 @@ sub statsForPlots {
 
 sub rCommandsForStats {
   my $R_script = <<RSCRIPT;
-library(data.table)
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
 if( file.info(fileName)\$size == 0 ){
@@ -250,7 +249,7 @@ subsetFxn = function(x, output){
      data.upper_quartile = NULL;
    }
    data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
-   fwrite(data.output, file=outputFileName, sep='\t', na='', append=T, ncolumns=16)
+   write(data.output, file=outputFileName, append=T, ncolumns=16)
 };
 apply(u, 1, subsetFxn);
 quit('no')
