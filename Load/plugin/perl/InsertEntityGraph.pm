@@ -416,7 +416,9 @@ sub loadNodes {
 
       $charValue =~ s/\r//;
 
-      push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+      unless( grep(/^$charValue$/, @{$charsForLoader->{$charQualifierSourceId}}) ) {
+        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+      }
 
       if(length $charValue > $self->{_max_attr_value}) {
         $self->{_max_attr_value} = length $charValue;
