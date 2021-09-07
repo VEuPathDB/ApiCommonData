@@ -20,6 +20,7 @@ intron_junction_id       NUMBER(10),
  ROW_PROJECT_ID               NUMBER(4),
  ROW_ALG_INVOCATION_ID        NUMBER(12),
  FOREIGN KEY (protocol_app_node_id) REFERENCES Study.ProtocolAppNode,
+ FOREIGN KEY (na_sequence_id) REFERENCES DoTS.NASequenceImp (NA_SEQUENCE_ID),
  PRIMARY KEY (intron_junction_id)
 );
 
