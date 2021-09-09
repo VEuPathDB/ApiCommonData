@@ -645,7 +645,8 @@ sub typedValueForAttribute {
 #    }
   }
 
-  $stringValue = $value unless(defined($dateValue) || defined($numberValue));
+	# Always load string_value (see https://github.com/VEuPathDB/EdaLoadingIssues/issues/1)
+  $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
 
   return $counts, $stringValue, $numberValue, $dateValue;
 }
