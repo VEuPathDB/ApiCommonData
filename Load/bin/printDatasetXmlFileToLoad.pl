@@ -121,10 +121,10 @@ $excelInfo{$organismAbbrev}{"referenceStrainOrganismAbbrev"} = $excelInfo{$organ
   if ($excelInfo{$organismAbbrev}{"isReferenceStrain"} =~ /^y/i);
 
 ## add secondaryAnnot if it is not get from arguments
-if ($secondaryAnnot !~ /mito/i && $excelInfo{$organismAbbrev}{"hasMito"} =~ /^y/i) {
+if ($secondaryAnnot !~ /mito/i && $excelInfo{$organismAbbrev}{"hasMito"} =~ /^y/i && $isEbiGenome =~ /^n/i) {
   die "ERROR: mito- genome included, please add argument: --secondaryAnnot 'mito'\n";
 }
-if ($secondaryAnnot !~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} =~ /^y/i) {
+if ($secondaryAnnot !~ /api/i && $excelInfo{$organismAbbrev}{"hasApicoplast"} =~ /^y/i && $isEbiGenome =~ /^n/i) {
   die "ERROR: api- genome included, please add argument: --secondaryAnnot 'api'\n";
 }
 
