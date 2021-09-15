@@ -67,14 +67,19 @@ sub new {
 
 sub run {
   my ($self) = @_;
-
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
+  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
   my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from apidb.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
-  $self->getDbHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
+  my $dbh = $self->getDbHandle();
+
+  $self->dropTables($dbh, $extDbRlsSpec);
+
+  $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
+
 
   my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
   foreach my $studyId (keys %$studies) {
@@ -206,7 +211,7 @@ sub createAncestorsTable {
   my $tableName = "ApiDB.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   my $fieldSuffix = "_stable_id";
 
-  $self->log("Creating TABLE $tableName");
+  $self->log("Creating TABLE: $tableName");
 
   my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
   $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
@@ -479,7 +484,7 @@ sub createTallTable {
 
   my $tableName = "ApiDB.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
 
-  $self->log("Creating TABLE:  $tableName");
+  $self->log("Creating TABLE: $tableName");
 
   my $sql = <<CREATETABLE;
 CREATE TABLE $tableName 
@@ -508,8 +513,31 @@ CREATETABLE
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
 }
 
+sub dropTables {
+  my ($self, $dbh, $extDbRlsSpec) = @_;
+  my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
+  
+  my $sql1 = "select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, apidb.study s, apidb.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id";
+  $self->log("Looking for tables belonging to $extDbRlsSpec :\n$sql1");
+  my $sh = $dbh->prepare($sql1);
+  $sh->execute();
 
-sub undoPreprocess {
+  while(my ($entityTypeAbbrev, $studyAbbrev) = $sh->fetchrow_array()) {
+    # Some tables do not exist, get a list and drop them
+    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+    $self->log("Finding tables to drop with SQL: $sql");
+    my $sh2 = $dbh->prepare($sql);
+    $sh2->execute();
+    while(my ($table_name) = $sh2->fetchrow_array()){
+      $self->log("dropping table apidb.${table_name}");
+      $dbh->do("drop table apidb.${table_name}") or die $dbh->errstr;
+    }
+    $sh2->finish();
+  }
+  $sh->finish();
+}
+
+sub _DEPRECATED_undoPreprocess {
     my ($self, $dbh, $rowAlgInvocationList) = @_;
 
     my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
@@ -542,6 +570,7 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
           $self->log("dropping table apidb.${table_name}");
           $dbh->do("drop table apidb.${table_name}") or die $dbh->errstr;
         }
+        $sh3->finish();
 
        #$self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
 
@@ -549,6 +578,7 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
        #$dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->dbh->errstr;
        #$dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $dbh->errstr;
       }
+      $sh2->finish();
     }
     $sh->finish();
 }
