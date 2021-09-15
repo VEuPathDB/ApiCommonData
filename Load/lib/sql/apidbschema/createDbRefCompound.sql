@@ -16,6 +16,9 @@ CREATE TABLE apidb.DbRefCompound (
  PRIMARY KEY (db_ref_compound_id)
 );
 
+ALTER TABLE apidb.DbRefCompound ADD CONSTRAINT dbrc_fk
+      FOREIGN KEY (DB_REF_ID) REFERENCES sres.DbRef (DB_REF_ID);
+
 CREATE SEQUENCE apidb.DbRefCompound_sq;
 
 GRANT insert, select, update, delete ON apidb.DbRefCompound TO gus_w;
