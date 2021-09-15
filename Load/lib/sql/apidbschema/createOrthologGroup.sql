@@ -37,6 +37,10 @@ ALTER TABLE apidb.OrthologGroup
 ADD CONSTRAINT og_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease;
 
+ALTER TABLE apidb.OrthologGroup
+ADD CONSTRAINT og_fk2 FOREIGN KEY (aa_seq_group_experiment_id)
+REFERENCES dots.AaSeqGroupExperimentImp (aa_seq_group_experiment_id);
+
 CREATE INDEX apidb.OrthologGroup_revix
 ON apidb.OrthologGroup (external_database_release_id, ortholog_group_id) tablespace indx;
 

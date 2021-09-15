@@ -1311,10 +1311,10 @@ sub declareArgs {
 
 sub undoTables {
   qw(
-    ApiDB.MassSpecSummary
     DoTS.AALocation
     DoTS.PostTranslationalModFeature
     DoTS.MassSpecFeature
+    ApiDB.MassSpecSummary
     DoTS.NALocation
     DoTS.NAFeature
     Study.StudyLink
