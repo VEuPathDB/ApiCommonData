@@ -427,8 +427,11 @@ sub valProps {
   elsif($isDate) {
     $dataType = 'date';
   }
-  elsif($isNumber) {
+  elsif($isNumber && ($precision > 0)) {
     $dataType = 'number';
+  }
+  elsif($isNumber && ($precision == 0)) {
+    $dataType = 'integer';
   }
 #  elsif($isBoolean) {
 #    $dataType = 'boolean';
