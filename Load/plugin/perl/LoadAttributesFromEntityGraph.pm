@@ -192,7 +192,7 @@ sub statsForPlots {
   
   while(<FILE>) {
     chomp;
-    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\s/, $_);
+    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
 
     $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $self->truncateSummaryStat($min),
                                                    range_max => $self->truncateSummaryStat($max),
@@ -273,12 +273,12 @@ subsetFxn = function(x, output){
      }
    }
    else {
-     data.binWidth = NULL;
-     data.lower_quartile = NULL;
-     data.upper_quartile = NULL;
+     data.binWidth = "";
+     data.lower_quartile = "";
+     data.upper_quartile = "";
    }
    data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
-   write(data.output, file=outputFileName, append=T, ncolumns=16)
+   write(data.output, file=outputFileName, append=T, ncolumns=16, sep="\t")
 };
 apply(u, 1, subsetFxn);
 quit('no')
@@ -427,8 +427,11 @@ sub valProps {
   elsif($isDate) {
     $dataType = 'date';
   }
-  elsif($isNumber) {
+  elsif($isNumber && ($precision > 0)) {
     $dataType = 'number';
+  }
+  elsif($isNumber && ($precision == 0)) {
+    $dataType = 'integer';
   }
 #  elsif($isBoolean) {
 #    $dataType = 'boolean';
