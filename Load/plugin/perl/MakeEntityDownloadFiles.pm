@@ -334,7 +334,8 @@ sub mergeScript {
   
 my $moveIdCols = <<MOVEIDCOLS;
 orderedIdCols = c()
-for( idcol in c("Community_Id", "Community_repeated_measure_Id", "Household_Id", "Household_repeated_measure_Id", "Entomology_collection_Id", "Participant_Id", "Repeated_measure_Id", "Sample_Id") ){
+for( idcol in c("Community_Id", "Community_repeated_measure_Id", "Household_Id", "Household_repeated_measure_Id",
+ "Entomology_collection_Id", "Participant_Id", "Repeated_measure_Id", "Participant_repeated_measure_Id",  "Sample_Id") ){
   if( idcol %in% names($ALLTAB) ){
     orderedIdCols <- append( orderedIdCols, grep( idcol, names($ALLTAB) ) )
   }
