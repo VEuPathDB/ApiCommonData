@@ -276,6 +276,7 @@ subsetFxn = function(x, output){
      data.binWidth = "";
      data.lower_quartile = "";
      data.upper_quartile = "";
+     if(is.null(data.binWidth) && isDate) { data.binWidth = 'day' }
    }
    data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
    write(data.output, file=outputFileName, append=T, ncolumns=16, sep="\t")
