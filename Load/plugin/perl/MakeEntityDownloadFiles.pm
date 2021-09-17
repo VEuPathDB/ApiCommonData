@@ -176,6 +176,10 @@ SQL_GETLABELS
  #  $v = $v . " [$k]";
  #  $attrNames->{$k} = $v;
  #}
+  
+  # get Merge Key, if any
+  $sql = sprintf("SELECT t1.display_name || ' [' || t1.stable_id || ']' MERGE_KEY,t1.stable_id value FROM %s t1 WHERE t1.IS_MERGE_KEY = 1", $attrTableName);
+  my ($mergeKey, $mergeKeyIRI) = each  %{ $self->sqlAsDictionary( Sql => $sql ) };
   # check order
   # printf STDERR ("ORDER:\n%s...\n", join("\t\n", map { $attrNames->{$_} } @orderedIRIs[0..10]));
 
@@ -200,6 +204,10 @@ SQL_GETLABELS
     push(@entityIdCols, $col);
     push(@mergeIdCols, $attrNames->{$col});
   }
+  if($mergeKey){ # place immediately after IDs
+    push(@entityIdCols, $mergeKeyIRI);
+    @orderedIRIs = grep { ! /^$mergeKeyIRI$/ } @orderedIRIs;
+  }
   open(FH, ">$outputFile") or die "Cannot write $outputFile: $!\n";
   # print header row
   printf FH ("%s\n", join("\t", map { $attrNames->{$_} } @entityIdCols, @orderedIRIs));
@@ -208,9 +216,6 @@ SQL_GETLABELS
     printf FH ("%s\n", join("\t", map { $row->{$_} } @entityIdCols, @orderedIRIs));
   }
   close(FH);
-  # get Merge Key, if any
-  $sql = sprintf("SELECT t1.display_name || ' [' || t1.stable_id || ']' MERGE_KEY,1 value FROM %s t1 WHERE t1.IS_MERGE_KEY = 1", $attrTableName);
-  my ($mergeKey) = keys %{ $self->sqlAsDictionary( Sql => $sql ) };
   return { id_cols => \@mergeIdCols, merge_key => $mergeKey };
   # return info for merging
 }
@@ -265,7 +270,7 @@ FROM $tableName ag
 left join synrep ON ag.STABLE_ID = synrep.stable_id
 LEFT JOIN parent ON ag.parent_stable_id=parent.stable_id
 ONTOSQL
-print STDERR "Get ontology metadata:\n$sql\n";
+## print STDERR "Get ontology metadata:\n$sql\n";
     my $dbh = $self->getQueryHandle();
     $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
     my $sh = $dbh->prepare($sql);
@@ -298,9 +303,11 @@ sub mergeScript {
   
   my $firstFile = 1;
   my %allMergedCols; # mergeable columns in all, including mergeKey
+  my @mergeKeyCols;
   # $fileInfo is set at the end of createDownloadFile
   foreach my $fileName(@orderedFiles){
       my $fileInfo = $mergeInfo->{$fileName};
+      push(@mergeKeyCols, $fileInfo->{merge_key}) if ($fileInfo->{merge_key});
       push(@scriptLines, sprintf("\n# Merging %s", basename($fileName)));
     my @mergeCols;
     ###
@@ -331,13 +338,18 @@ sub mergeScript {
   if($allMergedCols{$TMK}) { push(@scriptLines, sprintf('%s$%s <- NULL', $ALLTAB, $TMK)) }
   ## reorder all
   push(@scriptLines, sprintf("setcolorder(%s, order(names(%s)))", $ALLTAB, $ALLTAB));
-  
+
+  my $mergeKeys = "";
+  if(@mergeKeyCols){  
+    $mergeKeys = ', ' . join(",", map { sprintf('"%s"', $_) } @mergeKeyCols);
+  }
 my $moveIdCols = <<MOVEIDCOLS;
 orderedIdCols = c()
 for( idcol in c("Community_Id", "Community_repeated_measure_Id", "Household_Id", "Household_repeated_measure_Id",
- "Entomology_collection_Id", "Participant_Id", "Repeated_measure_Id", "Participant_repeated_measure_Id",  "Sample_Id") ){
+ "Entomology_collection_Id", "Participant_Id", "Repeated_measure_Id", "Participant_repeated_measure_Id",  "Sample_Id" 
+  $mergeKeys ) ){
   if( idcol %in% names($ALLTAB) ){
-    orderedIdCols <- append( orderedIdCols, grep( idcol, names($ALLTAB) ) )
+    orderedIdCols <- append( orderedIdCols, grep( idcol, names($ALLTAB), fixed=T ) )
   }
 }
 setcolorder( $ALLTAB, orderedIdCols )
