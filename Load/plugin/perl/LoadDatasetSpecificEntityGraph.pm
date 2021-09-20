@@ -153,7 +153,8 @@ where entity_type_id = $entityTypeId";
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
-  my $tableName = "ApiDB.Attributes_${studyAbbrev}_${entityTypeAbbrev}";
+  my $schema = "APIDB";
+  my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
@@ -196,10 +197,16 @@ sub createWideTable {
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("CREATE TABLE $tableName as $sql");
-  $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+  $dbh->do("CREATE TABLE $schema.$tableName as $sql");
+  $dbh->do("GRANT SELECT ON $schema.$tableName TO gus_r");
 
-  $dbh->do("CREATE INDEX attributes_${entityTypeId}_ix ON $tableName (stable_id) TABLESPACE indx") or die $dbh->errstr;
+  # Check for stable_id (entities with no attributes will have none)
+  my $fields =  $self->sqlAsDictionary( Sql => "SELECT column_name, DATA_LENGTH FROM all_tab_columns WHERE owner='$schema'
+AND table_name='$tableName'");
+  if($fields->{STABLE_ID}){
+    $self->log("Creating index on $schema.$tableName STABLE_ID");
+    $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $schema.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+  }
 }
 
 
