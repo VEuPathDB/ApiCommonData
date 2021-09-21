@@ -269,6 +269,7 @@ sub getGeneticCodeFromOrganismAbbrev {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
 	    || $organismAbbrev eq "tbruLister427_2018"
+	    || $organismAbbrev eq "tbruEATRO1125"
 	    ) {
       $projectName = "TriTrypDB";
     } else {

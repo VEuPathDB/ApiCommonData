@@ -34,7 +34,7 @@ $sqlldr->writeConfigFile();
 
 # DEFAULT VALUES
 my $ROWS = 5000;
-my $BIND_SIZE = 1024000;
+my $BIND_SIZE = 2048000;
 my $READ_SIZE = 1048576;
 my $DISCARD_MAX = 0;
 my $ERROR_COUNT = 0;

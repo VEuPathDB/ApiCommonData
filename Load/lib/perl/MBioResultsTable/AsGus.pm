@@ -14,7 +14,7 @@ $ApiCommonData::Load::MBioResultsTable::AsGus::dataTypeInfo = {
     valueToGus => sub {
       die "eukdetectCpms do not go to GUS";
     },
-  }
+  },
   wgsTaxa => {
     valueToGus => \&valueToGusTaxa,
   },

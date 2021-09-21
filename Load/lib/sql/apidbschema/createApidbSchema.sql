@@ -18,28 +18,29 @@ GRANT CREATE ANY INDEX TO ApiDB;
 GRANT CREATE TRIGGER TO ApiDB;
 GRANT CREATE ANY TRIGGER TO ApiDB;
 
+GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
 GRANT REFERENCES ON core.TableInfo to ApiDB;
+
 GRANT REFERENCES ON dots.AaSequenceImp TO ApiDB;
-GRANT REFERENCES ON dots.BlatAlignmentQuality to ApiDB;
+GRANT REFERENCES ON dots.AaSeqGroupExperimentImp TO ApiDB;
+GRANT REFERENCES ON dots.BlatAlignmentQuality TO ApiDB;
+GRANT REFERENCES ON dots.ChromosomeElementFeature TO ApiDB;
 GRANT REFERENCES ON dots.GeneFeature TO ApiDB;
+GRANT references ON dots.NaFeatureImp TO apidb;
 GRANT REFERENCES ON dots.NaFeatureNaGene TO ApiDB;
 GRANT REFERENCES ON dots.NaFeature TO ApiDB;
-GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
-GRANT REFERENCES ON dots.NaSequence to ApiDB;
-GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
-GRANT REFERENCES ON sres.Taxon TO ApiDB;
-GRANT REFERENCES ON study.protocolappnode TO ApiDB;
+GRANT REFERENCES ON dots.NaSequenceImp TO ApiDB;
+GRANT REFERENCES ON dots.NaSequence TO ApiDB;
 
+GRANT REFERENCES ON sres.DbRef TO ApiDB;
+GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.PathwayRelationship TO ApiDB;
 GRANT REFERENCES ON sres.Pathway TO ApiDB;
-
-GRANT references ON dots.nafeatureimp TO apidb;
-GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
-GRANT references ON Sres.OntologyTerm TO ApiDB;
+GRANT REFERENCES ON sres.Taxon TO ApiDB;
+GRANT REFERENCES ON sres.OntologyTerm TO ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
-GRANT REFERENCES ON core.AlgorithmInvocation TO ApiDB;
 
-
+GRANT REFERENCES ON study.ProtocolAppNode TO ApiDB;
 
 -- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;

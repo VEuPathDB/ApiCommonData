@@ -413,7 +413,9 @@ sub loadNodes {
 
       $charValue =~ s/\r//;
 
-      push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+      unless( grep(/^$charValue$/, @{$charsForLoader->{$charQualifierSourceId}}) ) {
+        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
+      }
 
       if(length $charValue > $self->{_max_attr_value}) {
         $self->{_max_attr_value} = length $charValue;
@@ -424,7 +426,8 @@ sub loadNodes {
     $self->addGeohash($charsForLoader);
 
     my $atts = encode_json($charsForLoader);
-    $entity->setAtts($atts);
+    $entity->setAtts($atts) unless($atts eq '{}');
+      ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
 
     $entity->submit(undef, 1);
 
@@ -684,6 +687,8 @@ sub loadProcesses {
     my $processAttributesHash = $self->getProcessAttributesHash($ontologyTermToIdentifiers, $process, $nodeNameToIdMap);
 
     my $atts = encode_json($processAttributesHash);
+    if($atts eq '{}'){ $atts = undef }
+      ## NEVER load empty JSON - avoids having to cull this from the loadAttributes() query in ::LoadAttributesFromEntityGraph
 
     foreach my $output (@{$process->getOutputs()}) {
       foreach my $input (@{$process->getInputs()}) {

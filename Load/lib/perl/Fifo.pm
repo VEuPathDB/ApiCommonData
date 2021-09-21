@@ -19,7 +19,7 @@ module to manage  a fifo ojbect
 =item Usage
 
 my $fifo = ApiCommonData::Load::Fifo->new($fifoName, $mode, $readerProcessString);
-nnmy $pid = $fifo->getReaderProcessId();
+my $pid = $fifo->getReaderProcessId();
 my $fh = $fifo->attachWriter();
 
 OR

@@ -107,6 +107,13 @@ sub preprocess {
 			$geneFeature->add_tag_value("pseudo","");
 		    }
 		}
+		if($geneFeature->has_tag("description")){
+		    my($note) = $geneFeature->get_tag_values("description");
+
+		    if($note =~ /pseudogene/i){
+			$geneFeature->add_tag_value("pseudo","") if (!$geneFeature->has_tag("pseudo"));
+		    }
+		}
 		for my $tag ($geneFeature->get_all_tags) {
 		    if($tag eq 'pseudo'){
 			if ($geneFeature->get_SeqFeatures){
@@ -144,8 +151,18 @@ sub preprocess {
 		my @UTRs = @{$UTRArrayRef};
 
 		foreach my $gene (@genes) {
+		  my($geneID) = $geneFeature->get_tag_values('ID');
+		  $geneID =~ s/\:pseudogene//;
+		  $gene->remove_tag('ID');
+		  $gene->add_tag_value("ID",$geneID);
+
                   ## update all pseudogene not loading CDS
                   foreach my $RNA ($gene->get_SeqFeatures) {
+		    my($tID) = $RNA->get_tag_values('ID');
+		    $tID =~ s/\:pseudogenic_transcript/\:mRNA/;
+		    $RNA->remove_tag('ID');
+		    $RNA->add_tag_value("ID",$tID);
+
                     my $tType = $RNA->primary_tag();
                     if ($tType eq "pseudogenic_transcript" || $RNA->has_tag("pseudo")) {
                       my ($tID) = $RNA->get_tag_values("ID") if ($RNA->has_tag("ID"));

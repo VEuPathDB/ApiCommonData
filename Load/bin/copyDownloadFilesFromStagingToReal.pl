@@ -60,8 +60,8 @@ if ($projectName eq "OrthoMCL"){
 print STDERR "Copying OrthoMCL files for Galaxy\n";
 my $source_galaxy="/eupath/data/EuPathDB/workflows/OrthoMCL/${workflowVersion}/data/galaxyFiles";
 my $target_galaxy="/eupath/data/apiSiteFilesStaging/OrthoMCL/${workflowVersion}/real/galaxyOrthoMCL/release-${buildNumber}";
-print STDERR "Copying $sourceDir to $targetDir\n";
-system ("cp -r $sourceDir $targetDir");
+print STDERR "Copying $source_galaxy to $target_galaxy\n";
+system ("cp -r $source_galaxy $target_galaxy");
 }
 #print STDERR "Moving pathway files to /eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles\n";
 #if ( -d "/eupath/data/apiSiteFiles/downloadSite/${projectName}/pathwayFiles"){

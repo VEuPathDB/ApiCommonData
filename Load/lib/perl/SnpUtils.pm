@@ -89,9 +89,8 @@ sub snpFileColumnNames {
                      "total_allele_count"
       );
 
-  return \@columnNames;
+  return wantarray ? @columnNames : \@columnNames;
 }
-
 
 
 sub isSameSNP {

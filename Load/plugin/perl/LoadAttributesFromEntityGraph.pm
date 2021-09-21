@@ -192,15 +192,15 @@ sub statsForPlots {
   
   while(<FILE>) {
     chomp;
-    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\s/, $_);
+    my ($attributeSourceId, $entityTypeId, $min, $max, $binWidth, $mean, $median, $lower_quartile, $upper_quartile) = split(/\t/, $_);
 
-    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => substr($min, 0, $RANGE_FIELD_WIDTH),
-                                                   range_max => substr($max, 0, $RANGE_FIELD_WIDTH),
-                                                   bin_width => substr($binWidth, 0, $RANGE_FIELD_WIDTH),
-                                                   mean => substr($mean, 0, $RANGE_FIELD_WIDTH),
-                                                   median => substr($median, 0, $RANGE_FIELD_WIDTH),
-                                                   lower_quartile => substr($lower_quartile, 0, $RANGE_FIELD_WIDTH),
-                                                   upper_quartile => substr($upper_quartile, 0, $RANGE_FIELD_WIDTH),
+    $rv->{$attributeSourceId}->{$entityTypeId} =  {range_min => $self->truncateSummaryStat($min),
+                                                   range_max => $self->truncateSummaryStat($max),
+                                                   bin_width => $self->truncateSummaryStat($binWidth),
+                                                   mean => $self->truncateSummaryStat($mean),
+                                                   median => $self->truncateSummaryStat($median),
+                                                   lower_quartile => $self->truncateSummaryStat($lower_quartile),
+                                                   upper_quartile => $self->truncateSummaryStat($upper_quartile),
     };
   }
   close FILE;
@@ -209,9 +209,37 @@ sub statsForPlots {
   return $rv;
 }
 
+sub truncateSummaryStat {
+  my ($self,$val) = @_;
+  return $val unless(looks_like_number($val) && $val !~ /^(inf|nan)$/);
+  my $type = "integer";
+  if(length($val) > $RANGE_FIELD_WIDTH){
+    # trim scientific notation, which should always be in the format
+    if($val =~ /^([-+]?\d*)\.\d+(e[-+]?\d+)$/){ 
+      $type = "exponent";
+      # sprintf will always handle irregular notation e.g. 101.3e-12 => 1.013e-10
+      my $width = $RANGE_FIELD_WIDTH - (length($1 . $2) + 1);
+      $val = sprintf("%.${width}e", $val);
+    }
+    elsif($val =~ /^([-+]?\d+)\.\d+$/){  # floating point, no exponent
+      $type = "floating point";
+      my $width = $RANGE_FIELD_WIDTH - (length($1) + 1);
+      $val = sprintf("%.${width}f", $val);
+    }
+    else { # really big number should be in notation anyway
+      $type = "long int";
+      my $width = $RANGE_FIELD_WIDTH - 6; # should be short enough allowing for negative, decimal, and exp up to 2 digits
+      $val = sprintf("%.$width", $val);
+    }
+    if(length($val) > $RANGE_FIELD_WIDTH ){
+      $self->error("Your math is off! $val is still too long; fix the calculation where \$type=$type");
+    }
+  }
+  return $val;
+}
+
 sub rCommandsForStats {
   my $R_script = <<RSCRIPT;
-library(data.table)
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
 if( file.info(fileName)\$size == 0 ){
@@ -245,12 +273,13 @@ subsetFxn = function(x, output){
      }
    }
    else {
-     data.binWidth = NULL;
-     data.lower_quartile = NULL;
-     data.upper_quartile = NULL;
+     data.binWidth = "";
+     data.lower_quartile = "";
+     data.upper_quartile = "";
+     if(is.null(data.binWidth) && isDate) { data.binWidth = 'day' }
    }
    data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
-   fwrite(data.output, file=outputFileName, sep='\t', na='', append=T, ncolumns=16)
+   write(data.output, file=outputFileName, append=T, ncolumns=16, sep="\t")
 };
 apply(u, 1, subsetFxn);
 quit('no')
@@ -388,7 +417,7 @@ sub valProps {
 
   my $orderedValues;
   if($dataShape ne 'continuous') {
-    my @values = sort keys(%{$cs{_VALUES}});
+    my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { $a cmp $b} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
 
@@ -399,8 +428,11 @@ sub valProps {
   elsif($isDate) {
     $dataType = 'date';
   }
-  elsif($isNumber) {
+  elsif($isNumber && ($precision > 0)) {
     $dataType = 'number';
+  }
+  elsif($isNumber && ($precision == 0)) {
+    $dataType = 'integer';
   }
 #  elsif($isBoolean) {
 #    $dataType = 'boolean';
@@ -498,12 +530,10 @@ sub loadAttributes {
   $self->log("Loading attribute values for study $studyId from sql:".$sql);
   my $sh = $dbh->prepare($sql, { ora_auto_lob => 0 } );
   $sh->execute($studyId);
-  $self->log("query finished, processing...");
 
   my $clobCount = 0;
 
   while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
-
     my $json = $self->readClob($lobLocator);
 
     my $attsHash = decode_json($json);
@@ -523,7 +553,7 @@ sub loadAttributes {
         if($dateValue) {
           print $dateValsFh join("\t", $attributeStableId, $entityTypeId, $dateValue) . "\n";
         }
-        elsif($numberValue) {
+        elsif(defined($numberValue)) { # avoid if( 0 ) evaluating to false
           print $numericValsFh join("\t", $attributeStableId, $entityTypeId, $numberValue) . "\n";
         }
         else {}
@@ -597,9 +627,9 @@ sub typedValueForAttribute {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
-    my $precision = length(($value =~ /\.(.*)/)[0]) || 0;
-    $counts->{_PRECISION} //= 0;
-    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision) if $counts->{_PRECISION};
+    my $precision = length(($value =~ /\.(.\d+)/)[0]) || 0;
+    $counts->{_PRECISION} ||= 0;
+    $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);#if $counts->{_PRECISION};
   }
   elsif($value =~ /^\d\d\d\d-\d\d-\d\d$/) {
     $dateValue = $value;
@@ -619,7 +649,8 @@ sub typedValueForAttribute {
 #    }
   }
 
-  $stringValue = $value unless(defined($dateValue) || defined($numberValue));
+	# Always load string_value (see https://github.com/VEuPathDB/EdaLoadingIssues/issues/1)
+  $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
 
   return $counts, $stringValue, $numberValue, $dateValue;
 }
@@ -660,7 +691,7 @@ select va.entity_attributes_id
      , va.atts
 from apidb.entityattributes va
    , apidb.entitytype vt
-where to_char(substr(va.atts, 1, 2)) != '{}'
+where va.atts is not null
 and vt.entity_type_id = va.entity_type_id
 and vt.study_id = ?
 ");
@@ -676,7 +707,7 @@ select va.entity_attributes_id
 from apidb.processattributes ea
    , apidb.entityattributes va
    , apidb.entitytype vt
-where to_char(substr(ea.atts, 1, 2)) != '{}'
+where ea.atts is not null
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
 and vt.study_id = ?
