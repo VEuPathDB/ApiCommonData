@@ -193,7 +193,7 @@ sub createWideTable {
     $sql = $processSql;
   }
   else {
-    $sql = "select entity_attributes_id from apidb.entityattributes where entity_type_id = $entityTypeId";
+    $sql = "select stable_id from apidb.entityattributes where entity_type_id = $entityTypeId";
   }
 
   my $dbh = $self->getDbHandle();
