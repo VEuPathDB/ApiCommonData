@@ -3,6 +3,7 @@ package ApiCommonData::Load::Plugin::InsertEntityGraph;
 @ISA = qw(GUS::PluginMgr::Plugin);
 use GUS::PluginMgr::Plugin;
 use strict;
+use warnings;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
@@ -13,6 +14,8 @@ use GUS::Model::SRes::OntologyTerm;
 
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
+
+use ApiCommonData::Load::StudyUtils qw/getSchemaFromRowAlgInvocationId/;
 
 use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
@@ -124,6 +127,7 @@ my $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
+my @UNDO_TABLES ; # populated by undoPreprocess
 
 # ----------------------------------------------------------------------
 
@@ -414,6 +418,7 @@ sub loadNodes {
       $charValue =~ s/\r//;
 
       unless( grep(/^$charValue$/, @{$charsForLoader->{$charQualifierSourceId}}) ) {
+        # keep only unique values, no duplicates
         push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
       }
 
@@ -788,10 +793,13 @@ sub getGusModelClass {
   return sprintf("GUS::Model::%s::%s", $schema, $table);
 }
 
-sub undoTables {
-  my ($self) = @_;
-  my $schema = $self->getArg('schema');
-  return (
+sub undoPreprocess {
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+  foreach my $rowAlgInvocationId (@{$rowAlgInvocationList}){
+    my $schema = getSchemaFromRowAlgInvocationId($dbh, $rowAlgInvocationId);
+    # $schema ||= 'EDA';
+    die ("Schema param missing! Undo failed") unless($schema);
+    push(@UNDO_TABLES,
     "${schema}.ProcessAttributes",
     "${schema}.EntityAttributes",
     "${schema}.AttributeUnit",
@@ -800,8 +808,14 @@ sub undoTables {
     "${schema}.EntityType",
     "${schema}.Study",
      );
-
-
+  }
+  printf STDERR ("Populated UNDO_TABLES:\n%s\n", join("\n", @UNDO_TABLES));
+  return 0;
+}
+sub undoTables {
+  my ($self) = @_;
+  printf STDERR ("Getting undo tables:\n%s\n", join(",", @UNDO_TABLES));
+  return @UNDO_TABLES;
 }
 
 1;
