@@ -417,7 +417,7 @@ sub valProps {
 
   my $orderedValues;
   if($dataShape ne 'continuous') {
-    my @values = sort keys(%{$cs{_VALUES}});
+    my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { $a cmp $b} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
 
