@@ -2,7 +2,7 @@ package ApiCommonData::Load::StudyUtils;
 
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(queryForOntologyTerms);
+@EXPORT = qw(queryForOntologyTerms getSchemaFromRowAlgInvocationId);
 
 use strict;
 use warnings;
@@ -82,6 +82,24 @@ and p.SOURCE_ID = 'subClassOf'
 
   return \%ontologyTerms;
 }
+
+sub getSchemaFromRowAlgInvocationId {
+  my($dbh, $rowAlgInvocationId) = @_;
+  my $sql  = "select p.string_value as SCHEMA
+from core.algorithmparam p, core.algorithmparamkey k
+where p.row_alg_invocation_id = ? 
+and p.ALGORITHM_PARAM_KEY_ID = k.ALGORITHM_PARAM_KEY_ID
+and k.ALGORITHM_PARAM_KEY = 'schema'";
+  my $sh = $dbh->prepare($sql);
+printf STDERR ("Executing query with id=$rowAlgInvocationId:$sql\n");
+  $sh->execute($rowAlgInvocationId);
+  my $hash = $sh->fetchrow_hashref();
+  my $schema = $hash->{SCHEMA};
+printf STDERR ("SCHEMA = $schema\n");
+  $sh->finish();
+  return $schema;
+}
+
 
 
 1;
