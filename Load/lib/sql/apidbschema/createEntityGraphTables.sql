@@ -624,7 +624,7 @@ CREATE TABLE &1.StudyCharacteristic (
   FOREIGN KEY (value_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (attribute_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
-  PRIMARY KEY (study_characteristic_id),
+  PRIMARY KEY (study_characteristic_id)
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON &1.StudyCharacteristic TO gus_w;
