@@ -652,6 +652,13 @@ FROM dual,
 WHERE 'study_characteristic_id' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
+CREATE TABLE &1.STUDYIDDATASETID (
+  STUDY_STABLE_ID VARCHAR2(50),
+  DATASET_ID VARCHAR2(50),
+  CONSTRAINT SYS_C0026031 CHECK ('STUDY_STABLE_ID' IS NOT NULL),
+  CONSTRAINT SYS_C0026032 CHECK ('DATASET_ID' IS NOT NULL)
+);
+GRANT SELECT ON &1.STUDYIDDATASETID TO gus_r;
 
 
 exit;
