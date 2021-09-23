@@ -39,6 +39,7 @@ my @propNames = ($propNameToCheck) ? ($propNameToCheck) : qw(organismAbbrev ncbi
 foreach my $propName (@propNames) {
   print STDERR "checking prop name: $propName ...\n";
 
+  my $c = 0;
   foreach my $k (sort keys %xmlFiles) {
     print STDERR "  processing $xmlFiles{$k} " if ($propNameToCheck);
 
@@ -50,6 +51,7 @@ foreach my $propName (@propNames) {
     while (<IN>) {
       if ($_ =~ /<dataset class=\"organism\">/) {
 	$inClass = 1;
+	$c++;
       } elsif ($_ =~ /<\/dataset>/) {
 	$inClass = 0;
       }
@@ -67,6 +69,7 @@ foreach my $propName (@propNames) {
     close IN;
     print STDERR "\n";
   }
+  print STDERR "Total '$propName' = $c\n\n";
 }
 
 
@@ -79,11 +82,11 @@ sub usage {
 A script to check if the prop organismAbbrev, ncbiTaxonId, or orthomclAbbrev is unique in the dataset xml file
 
 Usage: perl checkDatasetsXmlUniqueProp.pl --propNameToCheck orthomclAbbrev
-please run the script under the dir: ApiCommonDatasets/Datasets/lib/xml/datasets/
+Note: run the script under the dir: ApiCommonDatasets/Datasets/lib/xml/datasets/
 
 where:
   --propNameToCheck: optional. e.g. organismAbbrev, ncbiTaxonId, or orthomclAbbrev
-                     default is for organismAbbrev, ncbiTaxonId and orthomclAbbrev
+                     default is all three, organismAbbrev, ncbiTaxonId and orthomclAbbrev
 
 ";
 }
