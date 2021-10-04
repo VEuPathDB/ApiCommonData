@@ -47,9 +47,15 @@ my $argsDeclaration =
 	     reqd            => 0,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+ stringArg({name           => 'schema',
+       descr          => 'GUS::Model schema for entity tables',
+       reqd           => 1,
+       constraintFunc => undef,
+       isList         => 0, }),
 
 ];
 
+my ${SCHEMA} = '__SCHEMA__'; # must be replaced with real schema name
 
 # ----------------------------------------------------------------------
 
@@ -71,6 +77,7 @@ sub new {
 
 sub run {
   my ($self) = @_;
+  ${SCHEMA} = $self->getArg('schema');
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
   my ($datasetName,$ver) = split(/\|/, $extDbRlsSpec);
@@ -80,7 +87,7 @@ sub run {
   my $ontologySpec = $self->getArg('ontologyExtDbRlsSpec'); # for entity labels
   my $ontologyId = $self->getExtDbRlsId($ontologySpec);
 
-  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from apidb.study where external_database_release_id = $extDbRlsId");
+  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
@@ -155,14 +162,14 @@ sub createDownloadFile {
 
   # entity data with unsorted IRI columns
   # (entity) STABLE_ID, IRIs...
-  my $dataTableName = "ApiDB.Attributes_${studyAbbrev}_${entityTypeAbbrev}";
+  my $dataTableName = "${SCHEMA}.Attributes_${studyAbbrev}_${entityTypeAbbrev}";
   # [TYPE]_STABLE_ID, [PARENT_TYPE]_STABLE_ID, ...
 
-  my $ancestorTableName = "ApiDB.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
+  my $ancestorTableName = "${SCHEMA}.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   # ontology info
   # (iri) STABLE_ID, DISPLAY_NAME
  
-  my $attrTableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
+  my $attrTableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
@@ -189,6 +196,7 @@ SQL_GETLABELS
   my $dbh = $self->getQueryHandle();
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd'");
   my $sh = $dbh->prepare($sql);
+  printf STDERR ("+++++++++++++\nDEBUG: $sql\n");
   $sh->execute();
   # set up column headers for ancestor IDs
   my @cols = @{$sh->{NAME}}; 
@@ -225,7 +233,7 @@ sub entityTypeIdsFromStudyId {
 
   my $sql = "select t.entity_type_id TYPE_ID, t.internal_abbrev ABBREV,os.ontology_synonym LABEL, os.plural PLURAL,
 regexp_replace(os.ONTOLOGY_SYNONYM ,'\s','_') || '_Id' ID_COLUMN
-from apidb.entitytype t
+from ${SCHEMA}.entitytype t
 left join SRes.OntologySynonym os on t.type_id=os.ontology_term_id
 where t.study_id = $studyId
 and os.external_database_release_id = $ontologyId";
@@ -251,7 +259,7 @@ sub makeOntologyFile {
   foreach my $entityType ( values %{$self->{entityTypeIds}} ){
     my $type = $entityType->{ABBREV};
     my $category = $entityType->{LABEL};
-    my $tableName = "APIDB.AttributeGraph_${studyAbbrev}_${type}";
+    my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${type}";
     my $sql =  <<ONTOSQL;
 WITH synrep AS 
 (SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM sres.ONTOLOGYSYNONYM o

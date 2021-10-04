@@ -1,11 +1,14 @@
 package ApiCommonData::Load::Plugin::ParameterizedSchema;
-@ISA = qw(GUS::PluginMgr::Plugin );
 use strict;
 use warnings;
+use Data::Dumper;
 
-sub getSchemaTables {
-  my($self, $schema, $tables) = @_;
-  return map { sprintf("%s.%s", $schema, $_) } @$tables;
+sub resetUndoTables {
+  ## Called in run() only; so logRowsInserted() has the correct list of tables
+  my($self) = @_;
+  my $schema = $self->getArg('schema');
+  my @tables = map { sprintf("%s.%s", $schema, $_) } @{$self->{_undo_tables}};
+  $self->{_undo_tables} = \@tables;
 }
 
 sub getGusModelClass {
@@ -28,7 +31,7 @@ sub undoTables {
   return @{ $self->{_undo_tables} }
 }
 
-sub undoPreprocess {
+sub preprocessUndoGetSchemas {
   my($self, $dbh, $rowAlgInvocationList) = @_;
   my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
   my $pluginName = ref($self);
@@ -41,15 +44,22 @@ AND p.ROW_ALG_INVOCATION_ID in (?)
 AND k.ALGORITHM_PARAM_KEY = 'schema'";
   my $sh = $dbh->prepare($sql);
   $sh->execute($pluginName,$rowAlgInvocations);
-  my %schemas;
+  my %schemaNames;
   while(my ($name) = $sh->fetchrow_array){
-    $schemas{ $name } = 1;
+    $schemaNames{ $name } = 1;
   }
   $sh->finish();
-  my @tables = @{ $self->{_undo_tables} };
-  foreach my $schema (keys %schemas){
-    @{ $self->{_undo_tables} } = map { join(".", $schema, $_) } @tables;
+  my @schemas = keys %schemaNames;
+  return \@schemas;
+}
+sub undoPreprocess {
+  my($self, $dbh, $rowAlgInvocationList) = @_;
+  my @allUndoTables;
+  my $schemas = $self->preprocessUndoGetSchemas($dbh, $rowAlgInvocationList);
+  foreach my $schema (@$schemas){
+     push(@allUndoTables, map { join(".", $schema, $_) } @{ $self->{_undo_tables} });
   }
+  $self->{_undo_tables} = \@allUndoTables;
 }
 
 1;

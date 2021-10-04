@@ -1,7 +1,8 @@
 package ApiCommonData::Load::Plugin::InsertEntityGraph;
 
-@ISA = qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use GUS::PluginMgr::Plugin;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 use strict;
 use warnings;
 
@@ -15,7 +16,7 @@ use GUS::Model::SRes::OntologyTerm;
 use CBIL::ISA::Investigation;
 use CBIL::ISA::InvestigationSimple;
 
-use ApiCommonData::Load::StudyUtils qw/getSchemaFromRowAlgInvocationId/;
+# use ApiCommonData::Load::StudyUtils qw/getSchemaFromRowAlgInvocationId/;
 
 use Scalar::Util qw(blessed);
 use POSIX qw/strftime/;
@@ -127,7 +128,24 @@ my $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-my @UNDO_TABLES ; # populated by undoPreprocess
+our @UNDO_TABLES =qw(
+  ProcessAttributes
+  EntityAttributes
+  AttributeUnit
+  ProcessTypeComponent
+  EntityType
+  Study
+); ## undo is not run on ProcessType
+
+my @REQUIRE_TABLES = qw(
+  Study
+  EntityAttributes
+  EntityType
+  AttributeUnit
+  ProcessAttributes
+  ProcessType
+  ProcessTypeComponent
+);
 
 # ----------------------------------------------------------------------
 
@@ -141,7 +159,8 @@ sub new {
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
                       documentation     => $documentation});
-
+  $self->{_require_tables} = \@REQUIRE_TABLES;
+  $self->{_undo_tables} = \@UNDO_TABLES;
   return $self;
 }
 
@@ -150,6 +169,7 @@ sub new {
 sub run {
   my ($self) = @_;
   $self->requireModelObjects();
+  $self->resetUndoTables(); # for when logRowsInserted() is called after loading
   my $metaDataRoot = $self->getArg('metaDataRoot');
   my $investigationBaseName = $self->getArg('investigationBaseName');
 
@@ -403,7 +423,8 @@ sub loadNodes {
 
       my ($charValue);
 
-      if(lc $characteristic->getTermSourceRef() eq 'ncbitaxon') {
+      my $termSourceRef = $characteristic->getTermSourceRef();
+      if($termSourceRef && (lc($termSourceRef) eq 'ncbitaxon')) {
         my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
         $charValue = $value;
       }
@@ -516,10 +537,10 @@ sub encodeGeohash {
 sub getOntologyTermGusObj {
     my ($self, $ontologyTermToIdentifiers, $ontologyTerm, $useQualifier) = @_;
 
-    my $ontologyTermTerm = $ontologyTerm->getTerm();
-    my $ontologyTermClass = blessed($ontologyTerm);
-    my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber();
-    my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef();
+    my $ontologyTermTerm = $ontologyTerm->getTerm() || "";
+    my $ontologyTermClass = blessed($ontologyTerm) || "";
+    my $ontologyTermAccessionNumber = $ontologyTerm->getTermAccessionNumber() || "";
+    my $ontologyTermSourceRef = $ontologyTerm->getTermSourceRef() || "";
 
     $self->logDebug("OntologyTerm=$ontologyTermTerm\tClass=$ontologyTermClass\tAccession=$ontologyTermAccessionNumber\tSource=$ontologyTermSourceRef\n");
 
@@ -777,46 +798,6 @@ and tn.name_class = 'scientific name'
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
 }
 
-# ======================================================================
-
-sub requireModelObjects {
-  my ($self,$schema) = @_;
-  my $schema ||= $self->getArg('schema');
-  foreach my $table (qw/ Study EntityAttributes EntityType AttributeUnit ProcessAttributes ProcessType ProcessTypeComponent/){
-    eval "require GUS::Model::${schema}::${table}";
-  }
-}
-
-sub getGusModelClass {
-  my ($self,$table) = @_;
-  my $schema = $self->getArg('schema');
-  return sprintf("GUS::Model::%s::%s", $schema, $table);
-}
-
-sub undoPreprocess {
-  my ($self, $dbh, $rowAlgInvocationList) = @_;
-  foreach my $rowAlgInvocationId (@{$rowAlgInvocationList}){
-    my $schema = getSchemaFromRowAlgInvocationId($dbh, $rowAlgInvocationId);
-    # $schema ||= 'EDA';
-    die ("Schema param missing! Undo failed") unless($schema);
-    push(@UNDO_TABLES,
-    "${schema}.ProcessAttributes",
-    "${schema}.EntityAttributes",
-    "${schema}.AttributeUnit",
-    "${schema}.ProcessTypeComponent",
-    ## "${schema}.ProcessType",
-    "${schema}.EntityType",
-    "${schema}.Study",
-     );
-  }
-  printf STDERR ("Populated UNDO_TABLES:\n%s\n", join("\n", @UNDO_TABLES));
-  return 0;
-}
-sub undoTables {
-  my ($self) = @_;
-  printf STDERR ("Getting undo tables:\n%s\n", join(",", @UNDO_TABLES));
-  return @UNDO_TABLES;
-}
 
 1;
 

@@ -1,11 +1,10 @@
 package ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph;
 
-@ISA = qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
 use warnings;
 use GUS::PluginMgr::Plugin;
-
-use GUS::Model::ApiDB::Attribute;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 use ApiCommonData::Load::Fifo;
 use ApiCommonData::Load::Sqlldr;
@@ -25,6 +24,7 @@ use JSON;
 
 use Data::Dumper;
 
+my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 
 my $VALUE_COUNT_CUTOFF = 10;
 
@@ -36,20 +36,28 @@ my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
+my @UNDO_TABLES = qw(
+  Attribute
+  AttributeValue
+);
+my @REQUIRE_TABLES = qw(
+  Attribute
+);
+
 my $tablesAffected =
-    [ ['ApiDB::Attribute', ''],
-      ['ApiDB::AttributeValue', '']
+    [ ['__SCHEMA__::Attribute', ''],
+      ['__SCHEMA__::AttributeValue', '']
     ];
 
 my $tablesDependedOn =
-    [['ApiDB::Study',''],
-     ['ApiDB::EntityAttributes',  ''],
-     ['ApiDB::ProcessAttributes',  ''],
-     ['ApiDB::ProcessType',  ''],
-     ['ApiDB::EntityType',  ''],
-     ['ApiDB::AttributeUnit',  ''],
+    [['__SCHEMA__::Study',''],
+     ['__SCHEMA__::EntityAttributes',  ''],
+     ['__SCHEMA__::ProcessAttributes',  ''],
+     ['__SCHEMA__::ProcessType',  ''],
+     ['__SCHEMA__::EntityType',  ''],
+     ['__SCHEMA__::AttributeUnit',  ''],
      ['SRes::OntologyTerm',  ''],
-     ['ApiDB::ProcessType',  ''],
+     ['__SCHEMA__::ProcessType',  ''],
     ];
 
 my $howToRestart = ""; 
@@ -86,6 +94,11 @@ my $argsDeclaration =
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+   stringArg({name           => 'schema',
+            descr          => 'GUS::Model schema for entity tables',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
 
 ];
 
@@ -118,6 +131,8 @@ sub new {
 		     argsDeclaration   => $argsDeclaration,
 		     documentation     => $documentation
 		    });
+  $self->{_require_tables} = \@REQUIRE_TABLES;
+  $self->{_undo_tables} = \@UNDO_TABLES;
   return $self;
 }
 
@@ -127,11 +142,18 @@ $| = 1;
 sub run {
   my $self  = shift;
 
+  ## ParameterizedSchema
+  $self->requireModelObjects();
+  $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+  $SCHEMA = $self->getArg('schema');
+  ## 
+
   chdir $self->getArg('logDir');
+
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   
-  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from apidb.study where external_database_release_id = $extDbRlsId");
+  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
@@ -160,7 +182,7 @@ sub run {
     $self->log("Loaded $attributeCount attributes for study id $studyId");
   }
 
-  return "Loaded attributes for $studiesCount studies"; 
+  return 0;
 }
 
 
@@ -177,11 +199,14 @@ sub statsForPlots {
   print $rCommandsFh $self->rCommandsForStats();
 
 
+  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
+  system("cp $rCommandsFileName $numericValsFileName $outputStatsFileName $ENV{HOME}/debug/");
   my $numberSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
   if($numberSysResult) {
     $self->error("Error Running singularity for numericFile");
   }
 
+  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
   my $dateSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
   if($dateSysResult) {
     $self->error("Error Running singularity for datesFile");
@@ -259,8 +284,8 @@ subsetFxn = function(x, output){
    data.max = max(v);
    data.mean = mean(v);
    data.median = median(v);
+   data.binWidth = plot.data::findBinWidth(v);
    if(data.min != data.max) {
-     data.binWidth = plot.data::findBinWidth(v);
      if(isDate) {
        stats = as.Date(stats::fivenum(as.numeric(v)), origin = "1970-01-01");
        data.lower_quartile = stats[2];
@@ -296,7 +321,7 @@ sub queryForEntityTypeIds {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select t.name, t.entity_type_id, ot.source_id
-from apidb.entitytype t, sres.ontologyterm ot
+from $SCHEMA.entitytype t, sres.ontologyterm ot
 where t.type_id = ot.ontology_term_id (+)
 and study_id = $studyId";
 
@@ -361,7 +386,7 @@ sub loadAttributeTerms {
       $self->error("Bad attribute stable ID: $attributeStableId")
         unless $attributeStableId =~ m{^[.A-Za-z]([.A-Za-z][A-Za-z_.0-9]*)?$};
 
-      my $attribute = GUS::Model::ApiDB::Attribute->new({entity_type_id => $etId,
+      my $attribute = $self->getGusModelClass('Attribute')->new({entity_type_id => $etId,
                                                          entity_type_stable_id => $entityTypeIds->{$etId},
                                                          stable_id => $attributeStableId,
                                                          %$annProps,
@@ -406,12 +431,14 @@ sub valProps {
     $dataShape = 'ordinal';
   }
   elsif($isDate || ($isNumber && $valueCount > $VALUE_COUNT_CUTOFF)) {
+    ## TODO if min or max is set, ignore $VALUE_COUNT_CUTOFF 
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
     $dataShape = 'binary';
   }
   else {
+    ## TODO do not set if min or max is set
     $dataShape = 'categorical'; 
   }
 
@@ -458,9 +485,9 @@ sub addUnitsToOntologyTerms {
 
   my $sql = "select * from (
 select  att.source_id, unit.ontology_term_id, unit.name, 2 as priority
-from apidb.study pg
-   , apidb.entitytype vt
-   , apidb.attributeunit au
+from $SCHEMA.study pg
+   , $SCHEMA.entitytype vt
+   , $SCHEMA.attributeunit au
    , sres.ontologyterm att
    , sres.ontologyterm unit
 where pg.study_id = ?
@@ -505,7 +532,7 @@ sub loadAttributeValues {
   my ($self, $studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh) = @_;
 
   my $timestamp = int (gettimeofday * 1000);
-  my $fifoName = "apidb_attributevalue_${timestamp}.dat";
+  my $fifoName = "${SCHEMA}_attributevalue_${timestamp}.dat";
 
   my $fields = $self->fields($maxAttrLength);
 
@@ -627,7 +654,7 @@ sub typedValueForAttribute {
     $numberValue = $valueNoCommas;
     $counts->{_IS_NUMBER_COUNT}++;
     
-    my $precision = length(($value =~ /\.(.\d+)/)[0]) || 0;
+    my $precision = length(($value =~ /\.(\d+)/)[0]) || 0;
     $counts->{_PRECISION} ||= 0;
     $counts->{_PRECISION} = max($counts->{_PRECISION}, $precision);#if $counts->{_PRECISION};
   }
@@ -689,8 +716,8 @@ select va.entity_attributes_id
      , va.entity_type_id
      , null as process_type_id
      , va.atts
-from apidb.entityattributes va
-   , apidb.entitytype vt
+from $SCHEMA.entityattributes va
+   , $SCHEMA.entitytype vt
 where va.atts is not null
 and vt.entity_type_id = va.entity_type_id
 and vt.study_id = ?
@@ -704,9 +731,9 @@ select va.entity_attributes_id
      , va.entity_type_id
      , ea.process_type_id
      , ea.atts
-from apidb.processattributes ea
-   , apidb.entityattributes va
-   , apidb.entitytype vt
+from $SCHEMA.processattributes ea
+   , $SCHEMA.entityattributes va
+   , $SCHEMA.entitytype vt
 where ea.atts is not null
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
@@ -796,7 +823,7 @@ sub makeFifo {
                                                  _quiet => 1,
                                                  _infile_name => $fifoName,
                                                  _reenable_disabled_constraints => 1,
-                                                 _table_name => "ApiDB.AttributeValue",
+                                                 _table_name => "$SCHEMA.AttributeValue",
                                                  _fields => $fields,
                                                  _rows => 100000
                                                 });
@@ -829,13 +856,5 @@ sub error {
   $self->SUPER::error($msg);
 }
 
-
-sub undoTables {
-  my ($self) = @_;
-  return (
-    'ApiDB.Attribute',
-    'ApiDB.AttributeValue',
-      );
-}
 
 1;
