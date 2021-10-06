@@ -9,6 +9,7 @@ use Getopt::Long;
 use XML::Writer;
 use IO::File;
 use HTML::Entities;
+use XML::LibXML;
 
 my ($output, $gusConfigFile, $debug, $verbose, $organismAbbrev);
 
@@ -21,6 +22,23 @@ my ($output, $gusConfigFile, $debug, $verbose, $organismAbbrev);
 if (!$output || !$organismAbbrev) {
   die ' USAGE: makeNCBILinkoutsFiles.pl -output <output> -organismAbbrev <organismAbbrev>'
 }
+
+my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
+<?xml version="1.0"?>
+<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" 
+"https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd" 
+[
+  <!ENTITY contig.url "http://cryptodb.org/cryptodb/showRecord.do?name=ContigRecordClasses.ContigRecordClass&amp;id=">
+  <!ENTITY gene.url "http://cryptodb.org/cryptodb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&amp;id=">
+]>
+<LinkSet/>
+__END_XML__
+
+open(OUT, "> $output") or die "Cannot open $output for writing: $!";
+
+print OUT "$doc";
+
+close OUT;
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
@@ -52,18 +70,16 @@ while (my ($source_id, $primary_identifier) = $sth->fetchrow_array()) {
     $protein{$linkId}->{ProviderId} = 5941;
     $protein{$linkId}->{Database} = 'Protein';
     $protein{$linkId}->{ObjId} = $primary_identifier;
-    $protein{$linkId}->{Base} = '&contig.url;';
+    $protein{$linkId}->{Base} = '&gene.url;';
     $protein{$linkId}->{Rule} = $source_id;
     $protein{$linkId}->{SubjectType} = 'DNA/protein sequence';
 
 }
 
-  my $output = IO::File->new("> ".$output);
+  my $output = IO::File->new(">> ".$output);
   my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
-  $writer->xmlDecl('UTF-8');
-  $writer->doctype("LinkSet");
   $writer->startTag('LinkSet');
-    for my $k (keys(%protein)){
+    for my $k (sort {$a <=> $b} keys(%protein)){
       $writer->startTag('Link');
       $writer->startTag('LinkId');
       $writer->characters($k);
