@@ -200,7 +200,6 @@ sub statsForPlots {
 
 
   printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
-  system("cp $rCommandsFileName $numericValsFileName $outputStatsFileName $ENV{HOME}/debug/");
   my $numberSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
   if($numberSysResult) {
     $self->error("Error Running singularity for numericFile");
@@ -285,6 +284,7 @@ subsetFxn = function(x, output){
    data.mean = mean(v);
    data.median = median(v);
    data.binWidth = plot.data::findBinWidth(v);
+  
    if(data.min != data.max) {
      if(isDate) {
        stats = as.Date(stats::fivenum(as.numeric(v)), origin = "1970-01-01");
@@ -298,11 +298,10 @@ subsetFxn = function(x, output){
      }
    }
    else {
-     data.binWidth = "";
      data.lower_quartile = "";
      data.upper_quartile = "";
-     if(is.null(data.binWidth) && isDate) { data.binWidth = 'day' }
    }
+   if(is.null(data.binWidth)) { data.binWidth = "" }
    data.output = c(x, as.character(data.min), as.character(data.max), as.character(data.binWidth), as.character(data.mean), as.character(data.median), as.character(data.lower_quartile), as.character(data.upper_quartile));
    write(data.output, file=outputFileName, append=T, ncolumns=16, sep="\t")
 };
@@ -444,7 +443,7 @@ sub valProps {
 
   my $orderedValues;
   if($dataShape ne 'continuous') {
-    my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { $a cmp $b} } keys(%{$cs{_VALUES}});
+    my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { lc($a) cmp lc($b)} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
 
@@ -611,7 +610,8 @@ sub annPropsAndValues {
   unless($ontologyTerm) {
     $self->error("No ontology term found for:  $ontologySourceId");
   }
-  my $isMultiValued = scalar(@$valueArray) > 1;
+  my $isMultiValued = (scalar(@$valueArray) > 1);
+  if($isMultiValued){ printf STDERR ("DEBUG: %s IS_MULTI_VALUED\n", $ontologySourceId) }
   my @result;
 
   VALUE:
