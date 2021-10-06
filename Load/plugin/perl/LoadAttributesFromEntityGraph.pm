@@ -611,7 +611,6 @@ sub annPropsAndValues {
     $self->error("No ontology term found for:  $ontologySourceId");
   }
   my $isMultiValued = (scalar(@$valueArray) > 1);
-  if($isMultiValued){ printf STDERR ("DEBUG: %s IS_MULTI_VALUED\n", $ontologySourceId) }
   my @result;
 
   VALUE:
