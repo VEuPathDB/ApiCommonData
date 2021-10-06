@@ -1,26 +1,19 @@
 package ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph;
 
-@ISA = qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
+use warnings;
 use GUS::PluginMgr::Plugin;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 use Data::Dumper;
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
-my $tablesAffected =
-    [ ['ApiDB::Attribute', ''],
-      ['ApiDB::AttributeValue', '']
-    ];
+my $tablesAffected = [];
 
-my $tablesDependedOn =
-    [['ApiDB::Study',''],
-     ['ApiDB::AttributeValue',  ''],
-     ['ApiDB::EntityType',  ''],
-     ['ApiDB::EntityAttributes',  ''],
-     ['ApiDB::ProcessAttributes',  ''],
-    ];
+my $tablesDependedOn = [];
 
 my $howToRestart = ""; 
 my $failureCases = "";
@@ -43,9 +36,17 @@ my $argsDeclaration =
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+   stringArg({name           => 'schema',
+            descr          => 'GUS::Model schema for entity tables',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
 
 ];
 
+my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my @UNDO_TABLES;
+my @REQUIRE_TABLES;
 
 # ----------------------------------------------------------------------
 
@@ -59,7 +60,8 @@ sub new {
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
                       documentation     => $documentation});
-
+  $self->{_require_tables} = \@REQUIRE_TABLES;
+  $self->{_undo_tables} = \@UNDO_TABLES;
   return $self;
 }
 
@@ -70,7 +72,9 @@ sub run {
   my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
-  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from apidb.study where external_database_release_id = $extDbRlsId");
+  $SCHEMA = $self->getArg('schema');
+
+  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, internal_abbrev from ${SCHEMA}.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
@@ -113,7 +117,7 @@ sub makeWideTableColumnString {
             then 'e' 
             else 'p' 
        end as table_type
-from APIDB.ATTRIBUTE
+from ${SCHEMA}.ATTRIBUTE
 where entity_type_id = $entityTypeId";
   my $dbh = $self->getDbHandle();
   my $sh = $dbh->prepare($specSql);
@@ -153,7 +157,6 @@ where entity_type_id = $entityTypeId";
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
-  my $schema = "APIDB";
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
@@ -162,17 +165,17 @@ sub createWideTable {
   my $processColumns = join("\n,", @$processColumnStrings);
 
   my $entitySql = "select ea.stable_id, eaa.*
-                   from apidb.entityattributes ea,
+                   from $SCHEMA.entityattributes ea,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
                    where ea.entity_type_id = $entityTypeId";
 
 
   my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
-                                                from apidb.processattributes pa,
+                                                from ${SCHEMA}.processattributes pa,
                                                      (select entity_attributes_id
                                                            , stable_id 
-                                                      from apidb.entityattributes 
+                                                      from ${SCHEMA}.entityattributes 
                                                       where entity_type_id = $entityTypeId) ea
                                                 where ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
@@ -193,19 +196,19 @@ sub createWideTable {
     $sql = $processSql;
   }
   else {
-    $sql = "select stable_id from apidb.entityattributes where entity_type_id = $entityTypeId";
+    $sql = "select stable_id from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId";
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("CREATE TABLE $schema.$tableName as $sql");
-  $dbh->do("GRANT SELECT ON $schema.$tableName TO gus_r");
+  $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
+  $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
   # Check for stable_id (entities with no attributes will have none)
-  my $fields =  $self->sqlAsDictionary( Sql => "SELECT column_name, DATA_LENGTH FROM all_tab_columns WHERE owner='$schema'
+  my $fields =  $self->sqlAsDictionary( Sql => "SELECT column_name, DATA_LENGTH FROM all_tab_columns WHERE owner='$SCHEMA'
 AND table_name='$tableName'");
   if($fields->{STABLE_ID}){
-    $self->log("Creating index on $schema.$tableName STABLE_ID");
-    $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $schema.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
+    $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
+    $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
 }
 
@@ -215,7 +218,7 @@ sub createAncestorsTable {
 
   my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
 
-  my $tableName = "ApiDB.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
+  my $tableName = "${SCHEMA}.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   my $fieldSuffix = "_stable_id";
 
   $self->log("Creating TABLE: $tableName");
@@ -237,11 +240,11 @@ sub populateAncestorsTable {
         , p.out_entity_id
         , o.entity_type_id out_type_id
         , o.stable_id out_stable_id
-  from apidb.processattributes p
-     , apidb.entityattributes i
-     , apidb.entityattributes o
-     , apidb.entitytype et
-     , apidb.study s
+  from ${SCHEMA}.processattributes p
+     , ${SCHEMA}.entityattributes i
+     , ${SCHEMA}.entityattributes o
+     , ${SCHEMA}.entitytype et
+     , ${SCHEMA}.study s
   where p.in_entity_id = i.entity_attributes_id
   and p.out_entity_id = o.entity_attributes_id
   and i.entity_type_id = et.entity_type_id
@@ -254,7 +257,7 @@ sub populateAncestorsTable {
   connect by prior in_entity_id = out_entity_id
   union
   select stable_id, null, null
-  from apidb.entityattributes where entity_type_id = $entityTypeId
+  from ${SCHEMA}.entityattributes where entity_type_id = $entityTypeId
 ) order by stable_id";
 
   my $dbh = $self->getDbHandle();
@@ -286,7 +289,7 @@ sub populateAncestorsTable {
       %entities = ();
     }
 
-    $entities{$parentTypeId} = $parentId;    
+    $entities{$parentTypeId} = $parentId if ($parentId);    
     $prevId = $entityId;
 
     if(++$count % 1000 == 0) {
@@ -312,7 +315,7 @@ sub createEmptyAncestorsTable {
   my $stableIdField = $entityTypeIds->{$entityTypeId} . $fieldSuffix;
 
   my $sql = "select entity_type_id
-from apidb.entitytypegraph
+from ${SCHEMA}.entitytypegraph
 start with entity_type_id = ?
 connect by prior parent_id = entity_type_id";
 
@@ -355,18 +358,18 @@ PRIMARY KEY ($stableIdField)
 sub entityTypeIdsFromStudyId {
   my ($self, $studyId) = @_;
 
-  return $self->sqlAsDictionary( Sql => "select t.entity_type_id, t.internal_abbrev from apidb.entitytype t where t.study_id = $studyId" );
+  return $self->sqlAsDictionary( Sql => "select t.entity_type_id, t.internal_abbrev from ${SCHEMA}.entitytype t where t.study_id = $studyId" );
 }
 
 sub createAttributeGraphTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId) = @_;
 
-  my $tableName = "ApiDB.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
+  my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   $self->log("Creating TABLE:  $tableName");
 
 
-  # apidb.attribute stable_id could be from sres.ontologyterm, or not
+  # ${SCHEMA}.attribute stable_id could be from sres.ontologyterm, or not
   # if yes, it could also be another term's parent
   # (but not a multifilter - term_type for attributes that have values is default) -- TODO term_type and is_hidden are DEPRECATED, rewrite this comment
   # hence this is only using atg for the parent-child relationship
@@ -374,10 +377,10 @@ sub createAttributeGraphTable {
 
   my $sql = "CREATE TABLE $tableName as
   WITH att AS
-  (SELECT a.*, t.source_id as unit_stable_id FROM apidb.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
+  (SELECT a.*, t.source_id as unit_stable_id FROM ${SCHEMA}.attribute a, sres.ontologyterm t WHERE a.unit_ontology_term_id = t.ONTOLOGY_TERM_ID (+) and entity_type_id = $entityTypeId)
    , atg AS
   (SELECT atg.*
-   FROM apidb.attributegraph atg
+   FROM ${SCHEMA}.attributegraph atg
    WHERE study_id = $studyId
     START WITH stable_id IN (SELECT DISTINCT stable_id FROM att)
     CONNECT BY prior parent_ontology_term_id = ontology_term_id AND parent_stable_id != 'Thing'
@@ -489,7 +492,7 @@ SQL
 sub createTallTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
-  my $tableName = "ApiDB.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
+  my $tableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
 
   $self->log("Creating TABLE: $tableName");
 
@@ -501,7 +504,7 @@ SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , string_value
      , number_value
      , date_value
-FROM apidb.attributevalue av, apidb.entityattributes ea
+FROM ${SCHEMA}.attributevalue av, ${SCHEMA}.entityattributes ea
 WHERE av.entity_type_id = $entityTypeId
 and av.entity_attributes_id = ea.entity_attributes_id
 CREATETABLE
@@ -524,20 +527,20 @@ sub dropTables {
   my ($self, $dbh, $extDbRlsSpec) = @_;
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
   
-  my $sql1 = "select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, apidb.study s, apidb.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id";
+  my $sql1 = "select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s, ${SCHEMA}.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id";
   $self->log("Looking for tables belonging to $extDbRlsSpec :\n$sql1");
   my $sh = $dbh->prepare($sql1);
   $sh->execute();
 
   while(my ($entityTypeAbbrev, $studyAbbrev) = $sh->fetchrow_array()) {
     # Some tables do not exist, get a list and drop them
-    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
     $self->log("Finding tables to drop with SQL: $sql");
     my $sh2 = $dbh->prepare($sql);
     $sh2->execute();
     while(my ($table_name) = $sh2->fetchrow_array()){
-      $self->log("dropping table apidb.${table_name}");
-      $dbh->do("drop table apidb.${table_name}") or die $dbh->errstr;
+      $self->log("dropping table ${SCHEMA}.${table_name}");
+      $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
     }
     $sh2->finish();
   }
@@ -545,8 +548,10 @@ sub dropTables {
 }
 
 sub _DEPRECATED_undoPreprocess {
-    my ($self, $dbh, $rowAlgInvocationList) = @_;
+  my ($self, $dbh, $rowAlgInvocationList) = @_;
+  my $schemas = $self->preprocessUndoGetSchemas($dbh, $rowAlgInvocationList);
 
+  foreach my $schema( @$schemas ){
     my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
 
     my $sh = $dbh->prepare("select p.string_value
@@ -562,32 +567,28 @@ and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
       die "Failed to extract dbName and dbVersion from ExtDBRlsSpec found: $extDbRlsSpec"
         unless $dbName && $dbVersion;
       
-      my $sh2 = $dbh->prepare("select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, apidb.study s, apidb.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id");
+      my $sh2 = $dbh->prepare("select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${schema}.study s, ${schema}.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id");
         
       $sh2->execute();
 
       while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
 
         # Some tables do not exist, get a list and drop them
-        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='APIDB' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
         $self->log("Finding tables to drop with SQL: $sql");
         my $sh3 = $dbh->prepare($sql);
         $sh3->execute();
         while(my ($table_name) = $sh3->fetchrow_array()){
-          $self->log("dropping table apidb.${table_name}");
-          $dbh->do("drop table apidb.${table_name}") or die $dbh->errstr;
+          $self->log("dropping table ${schema}.${table_name}");
+          $dbh->do("drop table ${schema}.${table_name}") or die $dbh->errstr;
         }
         $sh3->finish();
-
-       #$self->log("dropping tables apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}, apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev} and apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}");
-
-       #$dbh->do("drop table apidb.attributevalue_${studyAbbrev}_${entityTypeAbbrev}") or die $dbh->errstr;
-       #$dbh->do("drop table apidb.ancestors_${studyAbbrev}_${entityTypeAbbrev}") or die $self->dbh->errstr;
-       #$dbh->do("drop table apidb.attributegraph_${studyAbbrev}_${entityTypeAbbrev}") or die $dbh->errstr;
       }
       $sh2->finish();
     }
     $sh->finish();
+  }
+  $self->SUPER::undoPreprocess($dbh, $rowAlgInvocationList);
 }
 
 

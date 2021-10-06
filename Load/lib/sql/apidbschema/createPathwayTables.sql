@@ -68,7 +68,7 @@ CREATE TABLE ApiDB.PathwayReactionXRef (
 
 CREATE INDEX apidb.prxr_revix0 ON apidb.PathwayReactionXRef (associated_reaction_id, pathway_reaction_xref_id) TABLESPACE indx;
 CREATE INDEX apidb.prxr_revix1 ON apidb.PathwayReactionXRef (pathway_reaction_id, pathway_reaction_xref_id) TABLESPACE indx;
-
+CREATE INDEX APIDB.PATHWAYREACTIONXREF_revix1 on APIDB.PATHWAYREACTIONXREF (EXTERNAL_DATABASE_RELEASE_ID, PATHWAY_REACTION_XREF_ID) TABLESPACE indx
 
 CREATE SEQUENCE ApiDB.PathwayReaction_SQ;
 CREATE SEQUENCE ApiDB.PathwayReactionRel_SQ;

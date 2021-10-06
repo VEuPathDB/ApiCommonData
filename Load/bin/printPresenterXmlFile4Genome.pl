@@ -120,7 +120,7 @@ sub printDescription {
   print "    <description><![CDATA[\n";
   print "                    $plainText of ";
   &printOrganismFullName($organismFullName) if ($organismFullName);
-  print "\n\n                  ]]><\/description>\n";
+  print "<br><br>\n\n                  ]]><\/description>\n";
 }
 
 sub printPubMedId {
