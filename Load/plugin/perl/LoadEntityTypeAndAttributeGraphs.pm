@@ -1,11 +1,10 @@
 package ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs;
 
-@ISA = qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
+use warnings;
 use GUS::PluginMgr::Plugin;
-
-use GUS::Model::ApiDB::AttributeGraph;
-use GUS::Model::ApiDB::EntityTypeGraph;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
 
@@ -13,20 +12,20 @@ my $purposeBrief = 'Read ontology and study tables and insert tables which store
 my $purpose = $purposeBrief;
 
 my $tablesAffected =
-    [ ['ApiDB::AttributeGraph', ''],
-      ['ApiDB::EntityTypeGraph', '']
+    [ ['__SCHEMA__::AttributeGraph', ''],
+      ['__SCHEMA__::EntityTypeGraph', '']
     ];
 
 # TODO
 my $tablesDependedOn =
-    [['ApiDB::Study',''],
-     ['ApiDB::EntityAttributes',  ''],
-     ['ApiDB::ProcessAttributes',  ''],
-     ['ApiDB::ProcessType',  ''],
-     ['ApiDB::EntityType',  ''],
-     ['ApiDB::AttributeUnit',  ''],
+    [['__SCHEMA__::Study',''],
+     ['__SCHEMA__::EntityAttributes',  ''],
+     ['__SCHEMA__::ProcessAttributes',  ''],
+     ['__SCHEMA__::ProcessType',  ''],
+     ['__SCHEMA__::EntityType',  ''],
+     ['__SCHEMA__::AttributeUnit',  ''],
      ['SRes::OntologyTerm',  ''],
-     ['ApiDB::ProcessType',  ''],
+     ['__SCHEMA__::ProcessType',  ''],
     ];
 
 my $howToRestart = ""; 
@@ -63,9 +62,23 @@ my $argsDeclaration =
 	     reqd            => 1,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+   stringArg({name           => 'schema',
+            descr          => 'GUS::Model schema for entity tables',
+            reqd           => 1,
+            constraintFunc => undef,
+            isList         => 0, }),
 
 ];
 
+my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my @UNDO_TABLES = qw(
+  AttributeGraph
+  EntityTypeGraph
+);
+my @REQUIRE_TABLES = qw(
+  AttributeGraph
+  EntityTypeGraph
+);
 
 sub new {
   my ($class) = @_;
@@ -78,6 +91,8 @@ sub new {
 		     argsDeclaration   => $argsDeclaration,
 		     documentation     => $documentation
 		    });
+  $self->{_require_tables} = \@REQUIRE_TABLES;
+  $self->{_undo_tables} = \@UNDO_TABLES;
   return $self;
 }
 
@@ -87,11 +102,17 @@ $| = 1;
 sub run {
   my $self  = shift;
 
+  ## ParameterizedSchema
+  $self->requireModelObjects();
+  $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+  $SCHEMA = $self->getArg('schema');
+  ## 
+
   chdir $self->getArg('logDir');
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   
-  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from apidb.study where external_database_release_id = $extDbRlsId");
+  my $studies = $self->sqlAsDictionary( Sql  => "select study_id, max_attr_length from $SCHEMA.study where external_database_release_id = $extDbRlsId");
 
   $self->error("Expected one study row.  Found ". scalar keys %{$studies}) unless(scalar keys %$studies == 1);
 
@@ -107,7 +128,7 @@ sub run {
     $entityTypeGraphCount += $self->constructAndSubmitEntityTypeGraphsForStudy($studyId);
   }
 
-  return "Loaded $attributeGraphCount rows into ApiDB.AttributeGraph and $entityTypeGraphCount rows into ApiDB.EntityTypeGraph";
+  return "Loaded $attributeGraphCount rows into $SCHEMA.AttributeGraph and $entityTypeGraphCount rows into $SCHEMA.EntityTypeGraph";
 }
 
 
@@ -115,7 +136,7 @@ sub addNonOntologicalLeaves {
   my ($self, $terms, $studyId) = @_;
 
   my $sql = "select distinct a.stable_id as source_id, a.parent_ontology_term_id, pt.source_id as parent_source_id, a.display_name
-from apidb.attribute a, apidb.entitytype et, sres.ontologyterm pt
+from $SCHEMA.attribute a, $SCHEMA.entitytype et, sres.ontologyterm pt
 where a.entity_type_id = et.entity_type_id
 and a.parent_ontology_term_id = pt.ontology_term_id
 and et.study_id = ?
@@ -149,7 +170,7 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
   foreach my $sourceId (keys %$ontologyTerms) {
     my $ontologyTerm = $ontologyTerms->{$sourceId};
     
-    my $attributeGraph = GUS::Model::ApiDB::AttributeGraph->new({study_id => $studyId,
+    my $attributeGraph = $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
                                                                  ontology_term_id => $ontologyTerm->{ONTOLOGY_TERM_ID},
                                                                  stable_id => $sourceId,
                                                                  parent_stable_id => $ontologyTerm->{PARENT_SOURCE_ID},
@@ -199,12 +220,12 @@ sub constructAndSubmitEntityTypeGraphsForStudy {
                   , os.plural as display_name_plural
 from (
 select distinct s.study_id, iot.source_id as parent_stable_id, it.ENTITY_TYPE_ID as parent_id, ot.entity_type_id out_entity_type_id
-from apidb.processattributes p
-   , apidb.entityattributes i
-   , apidb.entityattributes o
-   , apidb.entitytype it
-   , apidb.study s
-   , apidb.entitytype ot
+from $SCHEMA.processattributes p
+   , $SCHEMA.entityattributes i
+   , $SCHEMA.entityattributes o
+   , $SCHEMA.entitytype it
+   , $SCHEMA.study s
+   , $SCHEMA.entitytype ot
    , sres.ontologyterm iot
 where s.study_id = $studyId 
 and it.STUDY_ID = s.study_id
@@ -214,8 +235,8 @@ and ot.entity_type_id = o.entity_type_id
 and p.in_entity_id = i.ENTITY_ATTRIBUTES_ID
 and p.OUT_ENTITY_ID = o.ENTITY_ATTRIBUTES_ID 
 and it.type_id = iot.ontology_term_id (+)
-) et, apidb.entitytype t
-   , apidb.study s
+) et, $SCHEMA.entitytype t
+   , $SCHEMA.study s
    , sres.ontologyterm ot
    , (select * from sres.ontologysynonym where external_database_release_id = $extDbRlsId) os
 where s.study_id = $studyId 
@@ -234,7 +255,7 @@ where s.study_id = $studyId
   while(my $row= $sh->fetchrow_hashref()) {
     $row->{'study_id'} = $studyId;
 
-    my $etg = GUS::Model::ApiDB::EntityTypeGraph->new($row);
+    my $etg = $self->getGusModelClass('EntityTypeGraph')->new($row);
 
     $etg->submit();
     $ct++
@@ -243,12 +264,5 @@ where s.study_id = $studyId
   return $ct;
 }
 
-sub undoTables {
-  my ($self) = @_;
-  return (
-    'ApiDB.AttributeGraph',
-    'ApiDB.EntityTypeGraph',
-      );
-}
 
 1;

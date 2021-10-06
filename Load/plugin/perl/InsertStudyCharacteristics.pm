@@ -1,16 +1,13 @@
 package ApiCommonData::Load::Plugin::InsertStudyCharacteristics;
 
-@ISA = qw(GUS::PluginMgr::Plugin);
-use GUS::PluginMgr::Plugin;
+@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
-
-use CBIL::ISA::Investigation;
-use CBIL::ISA::InvestigationSimple;
+use warnings;
+use GUS::PluginMgr::Plugin;
+use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
 use File::Basename;
 
-use GUS::Model::Study::Study;
-use GUS::Model::Study::StudyCharacteristic;
 use GUS::Model::SRes::OntologyTerm;
 use ApiCommonData::Load::OwlReader;
 use Text::CSV_XS;
@@ -19,6 +16,16 @@ use Config::Std;
 use Digest::SHA qw/sha1_hex/;
 
 use Data::Dumper;
+
+
+my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
+my @UNDO_TABLES = qw(
+  StudyCharacteristic
+);
+my @REQUIRE_TABLES = qw(
+  Study
+  StudyCharacteristic
+);
 
 my $argsDeclaration =
   [
@@ -42,6 +49,11 @@ my $argsDeclaration =
    stringArg({name           => 'datasetName',
             descr          => 'name of the study',
             reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
+   stringArg({name           => 'schema',
+            descr          => 'GUS::Model schema for entity tables',
+            reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -80,7 +92,8 @@ sub new {
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
                       documentation     => $documentation});
-
+  $self->{_require_tables} = \@REQUIRE_TABLES;
+  $self->{_undo_tables} = \@UNDO_TABLES;
   return $self;
 }
 
@@ -88,6 +101,13 @@ sub new {
 
 sub run {
   my ($self) = @_;
+
+  ## ParameterizedSchema
+  $self->requireModelObjects();
+  $self->resetUndoTables(); # for when logRowsInserted() is called after loading
+  $SCHEMA = $self->getArg('schema');
+  ## 
+
   my $file = $self->getArg('file');
   unless ( -e $file ){ $self->log("$file not found, nothing to do"); return 0 }
   #my $ontology = $self->getArg('ontology');
@@ -101,28 +121,12 @@ sub run {
 
   # fetch all 
   
-  my %name2study;
-  
-  my $sql = <<SQL;
-SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
-  FROM study.study s1
-  LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
-  LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
-  WHERE s1.STUDY_ID IN (SELECT s1.study_id FROM study.study s1
-  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
-  WHERE s0.STUDY_ID!=s1.STUDY_ID)
-union
-SELECT ed.name NAME, s1.study_id study_id, s1.external_database_release_id
-  FROM study.study s1
-  LEFT JOIN sres.EXTERNALDATABASERELEASE edr ON s1.EXTERNAL_DATABASE_RELEASE_ID=edr.EXTERNAL_DATABASE_RELEASE_ID
-  LEFT JOIN sres.EXTERNALDATABASE ed ON edr.EXTERNAL_DATABASE_ID=ed.EXTERNAL_DATABASE_ID
-  WHERE s1.STUDY_ID NOT IN (SELECT s1.study_id FROM study.study s1
-  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
-  WHERE s0.STUDY_ID!=s1.STUDY_ID)
-  AND s1.STUDY_ID NOT IN (SELECT s0.study_id FROM study.study s1
-  LEFT JOIN study.study s0 ON s1.INVESTIGATION_ID=s0.STUDY_ID
-  WHERE s0.STUDY_ID!=s1.STUDY_ID)
-SQL
+  my $sql = "
+SELECT e2.name, s.STUDY_ID 
+FROM $SCHEMA.STUDY s 
+LEFT JOIN sres.EXTERNALDATABASERELEASE e ON s.EXTERNAL_DATABASE_RELEASE_ID =e.EXTERNAL_DATABASE_RELEASE_ID 
+LEFT JOIN sres.EXTERNALDATABASE e2 ON e.EXTERNAL_DATABASE_ID =e2.EXTERNAL_DATABASE_ID 
+ORDER BY e2.modification_date desc";
 
   my $dbh = $self->getQueryHandle();
   
@@ -135,30 +139,10 @@ SQL
     return -1; # fail
   }
   
-# We would have created some values here, but this is done elsewhere now
-#  $sql = <<SQL;
-#  SELECT pan.TYPE_ID TYPE_ID,count(1) COUNT
-#  FROM study.studylink sl
-#  LEFT JOIN study.PROTOCOLAPPNODE pan ON sl.PROTOCOL_APP_NODE_ID=pan.PROTOCOL_APP_NODE_ID
-#  WHERE sl.study_id=?
-#  GROUP BY pan.TYPE_ID
-#SQL
-#  
-#  $results = $self->selectHashRef($dbh,$sql,[$studyId]);
-
-# Gather up the row IDs to clean up later
-# $sql ='SELECT STUDY_CHARACTERISTIC_ID from STUDY.STUDYCHARACTERISTIC WHERE STUDY_ID=?';
-  
-# $results = $self->selectHashRef($dbh,$sql,[$studyId]);
-
-# printf STDERR ("Fetching studyId=%d\n", $studyId);
-
-## Update a study - remove old rows, reuse row alg invocation id
-  
   my @oldCharacteristics;
-  my $study = GUS::Model::Study::Study->new({study_id => $studyId});
+  my $study = $self->getGusModelClass('Study')->new({study_id => $studyId});
   if($study->retrieveFromDB()){
-    @oldCharacteristics = $study->getChildren('GUS::Model::Study::StudyCharacteristic',1);
+    @oldCharacteristics = $study->getChildren($self->getGusModelClass('StudyCharacteristic'),1);
     foreach my $sch (@oldCharacteristics){
       my $id = $sch->getStudyCharacteristicId();
       my $invoId = $sch->getRowAlgInvocationId();
@@ -170,9 +154,9 @@ SQL
   # may replace this with fetching from DB #
   my $owl = ApiCommonData::Load::OwlReader->new($owlFile);
   my $it = $owl->execute('classifications');
-  my %valueTerms;    # Study.StudyCharacteristic.VALUE_ID
-  my %validValues;    # Study.StudyCharacteristic.VALUE_ID
-  my %variableTerms; # Study.StudyCharacteristic.QUALIFIER_ID
+  my %valueTerms;    # Study.StudyCharacteristic.VALUE_ONTOLOGY_TERM_ID
+  my %validValues;    # Study.StudyCharacteristic.VALUE
+  my %variableTerms; # Study.StudyCharacteristic.attribute_ID
   my %variableLabels;
   my %valueLabels;
   while (my $row = $it->next) {
@@ -204,23 +188,9 @@ SQL
     }
     
   }
-  # print Dumper \%valueTerms;
-  # print Dumper \%variableTerms;
-  ########################################################################################
-  # 'type' attribute is not currently loaded into SRes.OntologySynonym,so  we must use the OWL file
-  # If we do load it, then we can switch to using GUS::Model
-  # 
-  # my $edObj = GUS::Model::SRes::ExternalDatabase->new({name => $ontology});
-  # unless($edObj->retrieveFromDB()){ die "$ontology has not been loaded" }
-  # my $edrObj = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_id => $edObj->getExternalDatabaseId()});
-  # 
-  # my @terms = GUS::Model::SRes::OntologySynonym->new({external_database_release_id => $edrObj->getExternalDatabaseReleaseId()});
-  # 
-  ########################################################################################
-  
   
   my @derived;
-  my %qualifierIds;
+  my %attributeIds;
   my %valueIds;
   my @rows;
   my @decodedRows;
@@ -228,37 +198,37 @@ SQL
   while( my ($k, $values) = each %{$cfg}){
     ###
     $k = uc($k);
-    my $qualifierSourceId = $variableTerms{$k}; 
-    unless($qualifierSourceId){
+    my $attributeSourceId = $variableTerms{$k}; 
+    unless($attributeSourceId){
       printf STDERR ("INVALID classification: %s\n", $k);
       $help_msg = 1;
       next;
     }
-    my $ot = GUS::Model::SRes::OntologyTerm->new({source_id => $qualifierSourceId});
+    my $ot = GUS::Model::SRes::OntologyTerm->new({source_id => $attributeSourceId});
     if($ot->retrieveFromDB){
       printf STDERR ("Ready: %s %s\n", $ot->getName, $ot->getSourceId);
-      $qualifierIds{$qualifierSourceId} = $ot->getId();
+      $attributeIds{$attributeSourceId} = $ot->getId();
     }
     else{
-      printf STDERR ("%s (%s) not found\n", $k, $qualifierSourceId);
+      printf STDERR ("%s (%s) not found\n", $k, $attributeSourceId);
     }
     ###
     foreach my $v ( @$values ){
       $valueLabels{uc($v)} ||= $v;
       $v = uc($v);
-      if($validValues{$qualifierSourceId}){
-        my $valueSourceId = $validValues{$qualifierSourceId}->{$v}; 
+      if($validValues{$attributeSourceId}){
+        my $valueSourceId = $validValues{$attributeSourceId}->{$v}; 
         unless($valueSourceId){
           printf STDERR ("\t\tINVALID value for %s(%s) %s\nValid values: %s\n",
-            $k,$qualifierSourceId, $v, join(",",sort keys %{$validValues{$qualifierSourceId}}));
+            $k,$attributeSourceId, $v, join(",",sort keys %{$validValues{$attributeSourceId}}));
           next;
         }
         my $ov = GUS::Model::SRes::OntologyTerm->new({source_id => $valueSourceId});
         if($ov->retrieveFromDB){
           printf STDERR ("\tReady: %s %s\n", $ov->getName, $ov->getSourceId);
           $valueIds{$valueSourceId} = $ov->getId();
-          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId}, $valueIds{$valueSourceId},$valueLabels{$v}]);
-          push(@decodedRows, [$datasetName, $qualifierSourceId, $variableLabels{$qualifierSourceId}, $valueSourceId,$valueLabels{$v}]);
+          push(@rows, [$studyId,$attributeIds{$attributeSourceId}, $valueIds{$valueSourceId},$valueLabels{$v}]);
+          push(@decodedRows, [$datasetName, $attributeSourceId, $variableLabels{$attributeSourceId}, $valueSourceId,$valueLabels{$v}]);
         }
         else{
           printf STDERR ("\t\t%s (%s) not found, time to reload classifications ontology\n", $v, $valueSourceId);
@@ -270,84 +240,24 @@ SQL
         if($v =~ /^.*\s+HTTP/i){
           my ($linkname,$url) = ($valueLabels{$v} =~ /^(.*)\s+(http.*)$/);
           my $link = sprintf("<a target='_blank' href='%s'>%s</a>", $url, $linkname);
-          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$link]);
-          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
+          push(@rows, [$studyId,$attributeIds{$attributeSourceId},"",$link]);
+          push(@decodedRows, [$datasetName,$attributeSourceId, $variableLabels{$attributeSourceId}, "",$valueLabels{$v}]);
         }
         else {
-          push(@rows, [$studyId,$qualifierIds{$qualifierSourceId},"",$valueLabels{$v}]);
-          push(@decodedRows, [$datasetName,$qualifierSourceId, $variableLabels{$qualifierSourceId}, "",$valueLabels{$v}]);
+          push(@rows, [$studyId,$attributeIds{$attributeSourceId},"",$valueLabels{$v}]);
+          push(@decodedRows, [$datasetName,$attributeSourceId, $variableLabels{$attributeSourceId}, "",$valueLabels{$v}]);
           printf ("\tReady: %s (free text)\n", $valueLabels{$v});
         }
       }
     }
   }
   
-  # my @cols = qw/STUDY_ID QUALIFIER_ID VALUE_ID VALUE/;
-  # printf("%s\n", join("\t", @cols ));
-  # printf("%s\n", join("\t", @{$_})) for @rows;
-  
-  my $prefix = "APIDBTUNING.D" . substr(sha1_hex($datasetName),0,10);
- # printf STDERR ("%s\t%s\n",$datasetName,$prefix);
- # 
- # 
- # ### count all types
- # $sql = "SELECT PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanRecord GROUP BY PAN_TYPE_SOURCE_ID";
- # # $sql = "select ot.source_id SOURCE_ID, count(1) COUNT from study.studylink sl left join study.protocolappnode pan on sl.protocol_app_node_id=pan.protocol_app_node_id left join sres.ontologyterm ot on pan.type_id=ot.ontology_term_id where sl.study_id=$study_id group by ot.source_id";
- # my $materialTypeCounts = $self->selectHashRef($dbh,$sql);
- # # printf STDERR "Material types:\n" . Dumper $materialTypeCounts;
- # 
- # 
- # ### number of subtypes to subtract
- # $sql = "SELECT  INPUT_PAN_TYPE_SOURCE_ID, COUNT(1) COUNT FROM ${prefix}PanIO where INPUT_PAN_TYPE_SOURCE_ID=OUTPUT_PAN_TYPE_SOURCE_ID GROUP BY INPUT_PAN_TYPE_SOURCE_ID";
- # my $subTypeCounts = $self->selectHashRef($dbh,$sql);
- # # printf STDERR "Sub types:\n" . Dumper $subTypeCounts;
- # 
- # ### make count corrections
- # foreach my $sourceId (keys %$subTypeCounts){
- #   $materialTypeCounts->{$sourceId}->{COUNT} -= $subTypeCounts->{$sourceId}->{COUNT};
- # }
- # 
-# my %counterSourceIds = (
-#   EUPATH_0000327 => 'EUPATH_0000327', # entomology collections
-#   OMIABIS_0001011 => 'EUPATH_0000096', # participants
-#   EUPATH_0000774 => 'EUPATH_0000738', # observations
-#   EUPATH_0000775 => 'EUPATH_0000609', # samples
-#   EUPATH_0000773 => 'PCO_0000024', # households
-# );
-# my %subCounterSourceIds = (EUPATH_0000776 => 'PCO_0000024');
-# # EUPATH_0000776 household observations
-# 
-# foreach my $derivedSourceId (keys %counterSourceIds){
-#   unless($counterSourceIds{$derivedSourceId}){
-#     printf STDERR ("Derived: no match for %s\n", $derivedSourceId);
-#     next;
-#   }
-#   my $count = $materialTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-#   $count ||= $subTypeCounts->{$counterSourceIds{$derivedSourceId}}->{COUNT};
-#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-# }
-# foreach my $derivedSourceId (keys %subCounterSourceIds){
-#   next unless $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}};
-#   my $count = $subTypeCounts->{$subCounterSourceIds{$derivedSourceId}}->{COUNT};
-#   next unless $count;
-#   push(@rows, [$studyId,$qualifierIds{$derivedSourceId},"",$count]);
-#   push(@decodedRows, [$datasetName,$derivedSourceId, $variableLabels{$derivedSourceId}, "",$count]);
-# }
-
-  foreach my $iri (qw/OBI_0001169/){
-    my $range = $self->getRange($prefix,$iri);
-    if($range){
-      push(@rows, [$studyId, $qualifierIds{$iri}, "", $range]);
-    }
-  }
-  
   if($commit){
     my $rownum = 0;
     foreach my $row (@rows){
-      unless($row->[1]){ # qualifier_id cannot be null
+      unless($row->[1]){ # attribute_id cannot be null
         if(defined($decodedRows[$rownum]) && ref($decodedRows[$rownum])){
-          printf STDERR ("ERROR in row: %s\nQualifier ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
+          printf STDERR ("ERROR in row: %s\nattribute ID not found\nreload ontology\n", join(",",@{$decodedRows[$rownum]}));
         }
         else{
           printf STDERR ("ERROR in row %d: %s\n", $rownum, Dumper($row)); 
@@ -358,8 +268,8 @@ SQL
       
       my %data = (
         #row_user_id => $userId, row_alg_invocation_id => $algInvocationId,
-         study_id => $row->[0], qualifier_id => $row->[1], value_id => $row->[2], value => $row->[3]);
-      my $sc = GUS::Model::Study::StudyCharacteristic->new(\%data);
+         study_id => $row->[0], attribute_id => $row->[1], value_ontology_term_id => $row->[2], value => $row->[3]);
+      my $sc = $self->getGusModelClass('StudyCharacteristic')->new(\%data);
       # $sc->retrieveFromDB();
       # $sc->setValue($row->[3]);
       $sc->submit;
@@ -373,11 +283,11 @@ SQL
     }
   }
   else {
-    printf("%s\n", join("\t", qw/study qualifierId label valueId value/));
+    printf("%s\n", join("\t", qw/study attributeId label valueId value/));
     foreach my $row (@decodedRows){
       printf("%s\n", join("\t", @$row));
     }
-    printf("\n%s\n", join("\t", qw/study_id qualifier_id value_id value/));
+    printf("\n%s\n", join("\t", qw/study_id attribute_id value_ontology_term_id value/));
     foreach my $row (@rows){
       printf("%s\n", join("\t", @$row));
     }
@@ -461,27 +371,13 @@ sub readConfigFromCsv {
   return \%data;
 }
 
-sub undoTables {
-  my ($self) = @_;
-
-  return (
-    'Study.StudyCharacteristic',
-     );
-}
-sub getRange {
-  my ($self,$prefix,$iri) = @_;
-  my $sql = sprintf("SELECT MIN,MAX FROM %sMETADATASUMMARY WHERE PROPERTY_SOURCE_ID='%s'",$prefix,$iri);
-  print STDERR "DEBUG: $sql\n";
-  my $dbh = $self->getQueryHandle();
-  my $sth = $dbh->prepare($sql);
-  $sth->execute();
-  my $result = $sth->fetchrow_hashref();
-  if($result){
-  print STDERR "DEBUG: " . Dumper($result);
-    return sprintf("%s - %s", $result->{MIN}, $result->{MAX});
-  }
-  return "";
-} 
+# sub undoTables {
+#   my ($self) = @_;
+# 
+#   return (
+#     'Study.StudyCharacteristic',
+#      );
+# }
 
 1;
 
