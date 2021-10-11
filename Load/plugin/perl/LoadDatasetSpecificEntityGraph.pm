@@ -83,6 +83,9 @@ sub run {
   $self->dropTables($dbh, $extDbRlsSpec);
 
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
+  $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
+  $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
+  $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
 
   my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
@@ -200,7 +203,7 @@ sub createWideTable {
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
+  $dbh->do("CREATE TABLE /*+ NO_PARALLEL */ $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
   # Check for stable_id (entities with no attributes will have none)
