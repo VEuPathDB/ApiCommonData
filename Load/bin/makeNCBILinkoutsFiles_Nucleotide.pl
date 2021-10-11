@@ -36,6 +36,8 @@ __END_XML__
 
 open(OUT, "> $output") or die "Cannot open $output for writing: $!";
 
+$doc =~ s/<LinkSet\/>//g;
+
 print OUT "$doc";
 
 close OUT;
@@ -76,9 +78,9 @@ while (my ($source_id) = $sth->fetchrow_array()) {
 
 }
 
-  my $output = IO::File->new(">> ".$output);
-  my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
-  $writer->startTag('LinkSet');
+my $outputIO = IO::File->new(">> ".$output);
+my $writer = XML::Writer->new(OUTPUT => $outputIO, DATA_MODE => "true", DATA_INDENT =>2);
+$writer->startTag('LinkSet');
     for my $k (sort {$a <=> $b} keys(%nucleotide)){
       $writer->startTag('Link');
       $writer->startTag('LinkId');
@@ -111,12 +113,22 @@ while (my ($source_id) = $sth->fetchrow_array()) {
       $writer->endTag('Link');
 	}
 
-	$writer->endTag('LinkSet');
-
-    $writer->end();
-    $output->close();
-
+$writer->endTag('LinkSet');
+$writer->end();
+$outputIO->close();
 $dbh->disconnect;
+
+rename($output, $output . '.bak');
+open(IN, '<' . $output . '.bak') or die $!;
+open(OUT, '>' . $output) or die $!;
+while(<IN>)
+{
+    $_ =~ s/&amp;/&/g;
+    print OUT $_;
+ }
+close(IN);
+close(OUT);
+unlink($output . '.bak'); 
 
 sub getNucleotideQuery {
     my $prefix = shift;

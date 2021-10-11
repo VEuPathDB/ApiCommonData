@@ -30,12 +30,14 @@ my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
 [
   <!ENTITY contig.url "http://cryptodb.org/cryptodb/showRecord.do?name=ContigRecordClasses.ContigRecordClass&amp;id=">
   <!ENTITY gene.url "http://cryptodb.org/cryptodb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&amp;id=">
-]>
-<LinkSet/>
+]
+><LinkSet/>
 __END_XML__
+
 
 open(OUT, "> $output") or die "Cannot open $output for writing: $!";
 
+$doc =~ s/<LinkSet\/>//g;
 print OUT "$doc";
 
 close OUT;
@@ -76,9 +78,9 @@ while (my ($source_id, $primary_identifier) = $sth->fetchrow_array()) {
 
 }
 
-  my $output = IO::File->new(">> ".$output);
-  my $writer = XML::Writer->new(OUTPUT => $output, DATA_MODE => "true", DATA_INDENT =>2);
-  $writer->startTag('LinkSet');
+my $outputIO = IO::File->new(">> ".$output);
+my $writer = XML::Writer->new(OUTPUT => $outputIO, DATA_MODE => "true", DATA_INDENT =>2);
+$writer->startTag('LinkSet');
     for my $k (sort {$a <=> $b} keys(%protein)){
       $writer->startTag('Link');
       $writer->startTag('LinkId');
@@ -111,25 +113,22 @@ while (my ($source_id, $primary_identifier) = $sth->fetchrow_array()) {
       $writer->endTag('Link');
 	}
 
-	$writer->endTag('LinkSet');
-
-    $writer->end();
-    $output->close();
-
+$writer->endTag('LinkSet');
+$writer->end();
+$outputIO->close();
 $dbh->disconnect;
 
-
-sub getNucleotideIds {
-  my $sql = "";
-  my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
-  $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
-
-  my @ids;
-  while (my ($id) = $sth->fetchrow_array()) {
-    push (@ids, $id);
-  }
-  return @ids;
+rename($output, $output . '.bak');
+open(IN, '<' . $output . '.bak') or die $!;
+open(OUT, '>' . $output) or die $!;
+while(<IN>)
+{
+    $_ =~ s/&amp;/&/g;
+    print OUT $_;
 }
+close(IN);
+close(OUT);
+unlink($output . '.bak'); 
 
 sub getProteinQuery {
     my $org_Abbrev = shift;
