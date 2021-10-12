@@ -132,6 +132,6 @@ unlink($output . '.bak');
 
 sub getNucleotideQuery {
     my $prefix = shift;
-    my $sql = "select SOURCE_ID from ApidbTuning.${prefix}_genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
+    my $sql = "select SOURCE_ID from ApidbTuning.${prefix}genomicseqattributes where is_top_level =1 ORDER by SOURCE_ID";
     return $sql;
 }
