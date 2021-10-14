@@ -797,7 +797,17 @@ and tn.name_class = 'scientific name'
   }
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
 }
-
+# FOR EMERGENCY USE
+sub not_undoTables {
+  return qw/
+  EDA.ProcessAttributes
+  EDA.EntityAttributes
+  EDA.AttributeUnit
+  EDA.ProcessTypeComponent
+  EDA.EntityType
+  EDA.Study
+  /;
+}
 
 1;
 
