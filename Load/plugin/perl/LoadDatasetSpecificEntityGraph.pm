@@ -530,14 +530,17 @@ sub dropTables {
   my ($self, $dbh, $extDbRlsSpec) = @_;
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
   
-  my $sql1 = "select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s, ${SCHEMA}.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id";
+  my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
+ where d.external_database_id = r.external_database_id
+and d.name = '$dbName' and r.version = '$dbVersion' 
+and r.external_database_release_id = s.external_database_release_id";
   $self->log("Looking for tables belonging to $extDbRlsSpec :\n$sql1");
   my $sh = $dbh->prepare($sql1);
   $sh->execute();
 
-  while(my ($entityTypeAbbrev, $studyAbbrev) = $sh->fetchrow_array()) {
+  while(my ($studyAbbrev) = $sh->fetchrow_array()) {
     # Some tables do not exist, get a list and drop them
-    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s_%s')",uc(${studyAbbrev}),uc(${entityTypeAbbrev}));
+    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
     $self->log("Finding tables to drop with SQL: $sql");
     my $sh2 = $dbh->prepare($sql);
     $sh2->execute();
@@ -549,51 +552,6 @@ sub dropTables {
   }
   $sh->finish();
 }
-
-sub _DEPRECATED_undoPreprocess {
-  my ($self, $dbh, $rowAlgInvocationList) = @_;
-  my $schemas = $self->preprocessUndoGetSchemas($dbh, $rowAlgInvocationList);
-
-  foreach my $schema( @$schemas ){
-    my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
-
-    my $sh = $dbh->prepare("select p.string_value
-from core.algorithmparam p, core.algorithmparamkey k
-where p.row_alg_invocation_id in ($rowAlgInvocations)
-and p.ALGORITHM_PARAM_KEY_ID = k.ALGORITHM_PARAM_KEY_ID
-and k.ALGORITHM_PARAM_KEY = 'extDbRlsSpec'");
-
-    $sh->execute();
-
-    while(my ($extDbRlsSpec) = $sh->fetchrow_array()) {
-      my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
-      die "Failed to extract dbName and dbVersion from ExtDBRlsSpec found: $extDbRlsSpec"
-        unless $dbName && $dbVersion;
-      
-      my $sh2 = $dbh->prepare("select distinct t.internal_abbrev, s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${schema}.study s, ${schema}.entitytype t where d.external_database_id = r.external_database_id and d.name = '$dbName' and r.version = '$dbVersion' and r.external_database_release_id = s.external_database_release_id and s.study_id = t.study_id");
-        
-      $sh2->execute();
-
-      while(my ($entityTypeAbbrev, $studyAbbrev) = $sh2->fetchrow_array()) {
-
-        # Some tables do not exist, get a list and drop them
-        my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
-        $self->log("Finding tables to drop with SQL: $sql");
-        my $sh3 = $dbh->prepare($sql);
-        $sh3->execute();
-        while(my ($table_name) = $sh3->fetchrow_array()){
-          $self->log("dropping table ${schema}.${table_name}");
-          $dbh->do("drop table ${schema}.${table_name}") or die $dbh->errstr;
-        }
-        $sh3->finish();
-      }
-      $sh2->finish();
-    }
-    $sh->finish();
-  }
-  $self->SUPER::undoPreprocess($dbh, $rowAlgInvocationList);
-}
-
 
 sub undoTables {}
 
