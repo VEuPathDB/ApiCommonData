@@ -118,18 +118,21 @@ $writer->end();
 $outputIO->close();
 $dbh->disconnect;
 
-rename($output, $output . '.bak');
-open(IN, '<' . $output . '.bak') or die $!;
-open(OUT, '>' . $output) or die $!;
-while(<IN>)
-{
-    $_ =~ s/&amp;/&/g;
-    print OUT $_;
+if ($linkId){
+	rename($output, $output . '.bak');
+	open(IN, '<' . $output . '.bak') or die $!;
+	open(OUT, '>' . $output) or die $!;
+	while(<IN>)
+	{
+    	$_ =~ s/&amp;/&/g;
+    	print OUT $_;
+	}	
+	close(IN);
+	close(OUT);
+	unlink($output . '.bak'); 
+}else {
+	unlink($output);
 }
-close(IN);
-close(OUT);
-unlink($output . '.bak'); 
-
 sub getProteinQuery {
     my $org_Abbrev = shift;
     my $sql = "
