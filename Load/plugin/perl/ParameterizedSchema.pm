@@ -33,22 +33,23 @@ sub undoTables {
 
 sub preprocessUndoGetSchemas {
   my($self, $dbh, $rowAlgInvocationList) = @_;
-  my $rowAlgInvocations = join(',', @{$rowAlgInvocationList});
   my $pluginName = ref($self);
-  my $sql  = "SELECT p.STRING_VALUE
-FROM core.ALGORITHMPARAMKEY k
-LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
-LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
-WHERE a.EXECUTABLE = ? 
-AND p.ROW_ALG_INVOCATION_ID in (?)
-AND k.ALGORITHM_PARAM_KEY = 'schema'";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($pluginName,$rowAlgInvocations);
   my %schemaNames;
-  while(my ($name) = $sh->fetchrow_array){
-    $schemaNames{ $name } = 1;
+  foreach my $rowAlgInvId (@$rowAlgInvocationList){
+    my $sql  = "SELECT p.STRING_VALUE
+  FROM core.ALGORITHMPARAMKEY k
+  LEFT JOIN core.ALGORITHMIMPLEMENTATION a ON k.ALGORITHM_IMPLEMENTATION_ID = a.ALGORITHM_IMPLEMENTATION_ID 
+  LEFT JOIN core.ALGORITHMPARAM p ON k.ALGORITHM_PARAM_KEY_ID = p.ALGORITHM_PARAM_KEY_ID 
+  WHERE a.EXECUTABLE = ? 
+  AND p.ROW_ALG_INVOCATION_ID = ?
+  AND k.ALGORITHM_PARAM_KEY = 'schema'";
+    my $sh = $dbh->prepare($sql);
+    $sh->execute($pluginName,$rowAlgInvId);
+    while(my ($name) = $sh->fetchrow_array){
+      $schemaNames{ $name } = 1;
+    }
+    $sh->finish();
   }
-  $sh->finish();
   my @schemas = keys %schemaNames;
   return \@schemas;
 }
