@@ -30,9 +30,9 @@ my ($descripString, $outputFile);
 	    "outputFile=s" => \$outputFile,
 	    );
 
-die "USAGE: writeDownloadFileDescripWithDescripString --desscripString --outputFile\n" if (!$descripString || !$outputFile);
-
+die "USAGE: writeDownloadFileDescripWithDescripString --desscripString --outputFile\n" if (!$outputFile);
+if($descripString){
   open(F,">$outputFile");
   print F "$descripString\n";
   close F;
-
+}
