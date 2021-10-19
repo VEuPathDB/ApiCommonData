@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eupath/protein_array.owl">
-        <owl:versionInfo>2021-05-25</owl:versionInfo>
+        <owl:versionInfo>2021-10-19</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -175,7 +175,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000018"/>
         <obo:IAO_0000115>Hemoglobin value (g/dL)</obo:IAO_0000115>
         <obo:ICEMR_temp>hemoglobin (g/dL)</obo:ICEMR_temp>
-        <rdfs:label>Hemoglobin (g/dL)</rdfs:label>
+        <rdfs:label>Hemoglobin</rdfs:label>
     </owl:Class>
     
 
@@ -186,7 +186,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
         <obo:IAO_0000115>blood smear reading as positive or negative at enrollment</obo:IAO_0000115>
         <obo:ICEMR_temp>Microscopy result</obo:ICEMR_temp>
-        <rdfs:label>Asexual parasites present, microscopy</rdfs:label>
+        <rdfs:label>Plasmodium asexual stages, by microscopy</rdfs:label>
     </owl:Class>
     
 
@@ -227,18 +227,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000097"/>
         <obo:IAO_0000115>Temperature in °C</obo:IAO_0000115>
         <obo:ICEMR_temp>temperature</obo:ICEMR_temp>
-        <rdfs:label>Temperature (C)</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000113 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000113">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
-        <obo:IAO_0000115>Age of participant in years</obo:IAO_0000115>
-        <obo:ICEMR_temp>Age</obo:ICEMR_temp>
-        <rdfs:label>Age at visit (years)</rdfs:label>
+        <rdfs:label>Temperature</rdfs:label>
     </owl:Class>
     
 
@@ -280,7 +269,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000097"/>
         <obo:IAO_0000115>Duration of history of subjective fever in days</obo:IAO_0000115>
         <obo:ICEMR_temp>fever duration</obo:ICEMR_temp>
-        <rdfs:label>Fever duration (days)</rdfs:label>
+        <rdfs:label>Fever duration</rdfs:label>
     </owl:Class>
     
 
@@ -332,7 +321,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
         <obo:IAO_0000115>Gametocytes present</obo:IAO_0000115>
         <obo:ICEMR_temp>gametocytes</obo:ICEMR_temp>
-        <rdfs:label>Gametocytes</rdfs:label>
+        <rdfs:label>Plasmodium gametocytes</rdfs:label>
     </owl:Class>
     
 
@@ -401,24 +390,13 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000526 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000526">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
-        <obo:IAO_0000115>Gametocyte density(/uL) based on microscopy</obo:IAO_0000115>
-        <obo:ICEMR_temp>gametocyte density (/uL) by microscope</obo:ICEMR_temp>
-        <rdfs:label>Gametocyte density (per uL blood), microscope</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000527 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000527">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
         <obo:IAO_0000115>Gametocyte density(/uL) based on RT-PCR</obo:IAO_0000115>
         <obo:ICEMR_temp>gametocyte density (/uL) by RT-PCR</obo:ICEMR_temp>
-        <rdfs:label>Gametocyte density (per uL blood), RT-PCR</rdfs:label>
+        <rdfs:label>Plasmodium gametocytes, by RT-PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -438,7 +416,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
         <obo:IAO_0000115>Method used to detect gametocytes</obo:IAO_0000115>
         <obo:ICEMR_temp>gametocytes detection method</obo:ICEMR_temp>
-        <rdfs:label>Gametocytes detection method</rdfs:label>
+        <rdfs:label>Plasmodium gametocytes detection method</rdfs:label>
     </owl:Class>
     
 
@@ -514,7 +492,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
         <obo:IAO_0000115>Results of PCR for detection of asexual parasites</obo:IAO_0000115>
         <obo:ICEMR_temp>Parasite density (/uL) by PCR</obo:ICEMR_temp>
-        <rdfs:label>Parasite density (per uL blood), PCR</rdfs:label>
+        <rdfs:label>Plasmodium, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -525,7 +503,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
         <obo:IAO_0000115>Parasite density(/uL) based on microscopy</obo:IAO_0000115>
         <obo:ICEMR_temp>Parasite density (/uL) by microscope</obo:ICEMR_temp>
-        <rdfs:label>Parasite density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label>Plasmodium, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -556,7 +534,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
         <obo:IAO_0000115>Gene used for PCR target to detect asexual parasites</obo:IAO_0000115>
         <obo:ICEMR_temp>PCR result</obo:ICEMR_temp>
-        <rdfs:label>PCR result</rdfs:label>
+        <rdfs:label>Plasmodium asexual stages, by PCR</rdfs:label>
     </owl:Class>
     
 
@@ -618,7 +596,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000546">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
-        <rdfs:label xml:lang="en">P. falciparum gametocyte density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium falciparum gametocytes, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -627,7 +605,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000547">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
-        <rdfs:label xml:lang="en">P. vivax gametocyte density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium vivax gametocytes, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -636,7 +614,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000548">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
-        <rdfs:label xml:lang="en">P. vivax gametocyte density (per uL blood), RT-PCR</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium vivax gametocytes, by RT-PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -645,7 +623,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000549">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
-        <rdfs:label xml:lang="en">P. vivax asexual stage density (per uL blood), PCR</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium vivax asexual stages, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -654,7 +632,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000550">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
-        <rdfs:label xml:lang="en">P. falciparum asexual stage density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium falciparum asexual stages, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -663,7 +641,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000551">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
-        <rdfs:label xml:lang="en">P. vivax asexual stage density (per uL blood), microscopy</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium vivax asexual stages, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -672,7 +650,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000552">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
-        <rdfs:label xml:lang="en">P. falciparum asexual stage density (per uL blood), PCR</rdfs:label>
+        <rdfs:label xml:lang="en">Plasmodium falciparum asexual stages, by PCR result</rdfs:label>
     </owl:Class>
     
 
@@ -739,6 +717,18 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000538"/>
         <obo:IAO_0000115>Weekly blood smear results during observation period.  Each position represents a week,  1 - Positive smear, 2 - Negative smear, 9 - Not done</obo:IAO_0000115>
         <rdfs:label xml:lang="en">Blood smear summary</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0023018 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0023018">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000528"/>
+        <obo:EUPATH_0001006>EUPATH_0000526</obo:EUPATH_0001006>
+        <obo:IAO_0000115>Gametocyte density(/uL) based on microscopy</obo:IAO_0000115>
+        <obo:ICEMR_temp>gametocyte density (/uL) by microscope</obo:ICEMR_temp>
+        <rdfs:label>Plasmodium gametocytes, by microscopy result</rdfs:label>
     </owl:Class>
     
 
@@ -848,6 +838,18 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <obo:EUPATH_0001006>EUPATH_0000113</obo:EUPATH_0001006>
+        <obo:IAO_0000115>Age of participant in years</obo:IAO_0000115>
+        <obo:ICEMR_temp>Age</obo:ICEMR_temp>
+        <rdfs:label>Age</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/OBI_0001616 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001616">
@@ -875,7 +877,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
         <obo:IAO_0000115>GPS coordinates of sample colleciton - latitude in decimal degrees (DD)</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS longitude</obo:ICEMR_temp>
-        <rdfs:label>Latitude (degrees)</rdfs:label>
+        <rdfs:label>Latitude</rdfs:label>
     </owl:Class>
     
 
@@ -886,7 +888,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000542"/>
         <obo:IAO_0000115>GPS coordinates of sample colleciton - longitude in decimal degrees (DD)</obo:IAO_0000115>
         <obo:ICEMR_temp>GPS latitude</obo:ICEMR_temp>
-        <rdfs:label>Longitude (degrees)</rdfs:label>
+        <rdfs:label>Longitude</rdfs:label>
     </owl:Class>
     
 
@@ -978,7 +980,7 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000014"/>
         <obo:IAO_0000115>pregnancy status</obo:IAO_0000115>
         <obo:ICEMR_temp>pregnancy status</obo:ICEMR_temp>
-        <rdfs:label>Pregnancy status</rdfs:label>
+        <rdfs:label>Pregnant</rdfs:label>
     </owl:Class>
     
 
