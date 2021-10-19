@@ -1,0 +1,16 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+select ?var ?cat
+where {
+  ?_entity a owl:Class .
+  filter exists {
+    ?_entity obo:EUPATH_0001011 ?rpt .
+  }
+  ?_entity obo:EUPATH_0000755 ?_var
+  ?_entity obo:EUPATH_0001002 ?_cat
+  BIND(str(?_var) as ?var)
+  BIND(str(?_cat) as ?cat)
+}
+
+
