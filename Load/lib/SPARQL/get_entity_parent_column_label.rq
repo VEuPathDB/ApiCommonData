@@ -23,6 +23,6 @@ WHERE {
 	BIND (IF(BOUND(?parent_entity), ?parent_entity, "Thing") AS ?parent) .
 	BIND (str(?slabel) AS ?label) .
 	BIND (str(?scolumn) AS ?column) .
-	BIND (str(?_repeated) AS ?repeated) .
+	BIND (IF(BOUND(?_repeated), str(?_repeated), "no") AS ?repeated) .
 }
 
