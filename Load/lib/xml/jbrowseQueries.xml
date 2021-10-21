@@ -1,0 +1,55 @@
+<staticQueries>
+
+<!--
+Each query must return fields which corespond to GFF3 spec (order does not matter)
+
+source - (required) name of the program that generated this feature, or the data source (database or project name)
+feature - (required) feature type name, e.g. Gene, Variation, Similarity
+startm - (required) Start position* of the feature, with sequence numbering starting at 1.
+end - (required) End position* of the feature, with sequence numbering starting at 1.
+score - A floating point value.
+strand - (required) defined as + (forward) or - (reverse).
+frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
+atts - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
+feature_id - (required) Unique ID for the Feature
+parent_id - Unique ID of the parent feature
+tstarts - comma sep list of subfeature starts
+blocksizes - comma sep list of subfeature lengths
+-->
+  <query name="EST">
+<![CDATA[
+ SELECT blat.blat_alignment_id feature_id,
+       'similarity' feature, 
+       'VEuPathDB' source, 
+       blat.score || '' score, 
+       blat.target_start startm, 
+       blat.target_end end, 
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       blat.tstarts TSTARTS,
+       blat.blocksizes BLOCKSIZES,
+       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+       'Accession=' || est.accession atts
+FROM   
+       dots.BlatAlignment blat, 
+       dots.Est est, 
+       dots.ExternalNASequence estseq,
+       sres.OntologyTerm ot
+WHERE  
+       blat.query_na_sequence_id = est.na_sequence_id
+        and (blat.target_end - blat.target_start ) < 5000
+        and blat.is_best_alignment = 1
+        and estseq.na_sequence_id = est.na_sequence_id
+        and ot.ontology_term_id = estseq.sequence_ontology_id
+        and ot.name = 'EST'
+        and blat.target_na_sequence_id = $srcfeature_id
+]]>
+  </query>
+
+
+  <query name="DUMMY">
+<![CDATA[
+DUMMY]]>
+  </query>
+
+
+</staticQueries>
