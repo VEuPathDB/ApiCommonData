@@ -47,12 +47,12 @@ foreach my $o (@$organisms) {
   my $projectDir = "$outputDir/$project";
   my $releaseDir = "$projectDir/release-CURRENT";
   my $organismDir = "$releaseDir/$nameForFilenames";
-  my $gffDir = "$organismDir/jbrowse";
+  my $outputDir = "$organismDir/jbrowse";
 
   mkdir $projectDir unless(-d $projectDir);
   mkdir $releaseDir unless(-d $releaseDir);
   mkdir $organismDir unless(-d $organismDir);
-  mkdir $gffDir unless(-d $gffDir);
+  mkdir $outputDir unless(-d $outputDir);
 
   foreach my $trackName (@tracks) {
     next if($trackName =~ /^\s*#/);
@@ -62,10 +62,10 @@ foreach my $o (@$organisms) {
 
     die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
 
-    my $fullFileName = "$gffDir/${trackName}.${fileSuffix}";
+    my $fullFileName = "$outputDir/${trackName}.${fileSuffix}";
     print "FILE=$fullFileName\n";
 
-    my $gff;
+    my $outFh;
 
     my $featureSqlRaw = $xml->{track}->{$trackName}->{sql};
 
@@ -91,7 +91,7 @@ foreach my $o (@$organisms) {
       next;
     }
 
-    open($gff, "|sort -T $gffDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
+    open($outFh, "|sort -T $outputDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
 
     my $featureCountTotal;
     foreach my $s (@$sequences) {
@@ -100,18 +100,21 @@ foreach my $o (@$organisms) {
 
       foreach my $qp (@$queryParams) {
         my $featureSql = &makeSql($featureSqlRaw, $seqId, $qp);
-        my $featureCount = &addFeatures($dbh, $featureSql, $seqName, $gff);
+        my $featureCount = &addFeatures($dbh, $featureSql, $seqName, $outFh);
 
         $featureCountTotal += $featureCount;
       }
 
 
     }
-    close $gff;
+    close $outFh;
 
     if($featureCountTotal > 0) {
-      system("bgzip $fullFileName");
-      system("tabix -p gff ${fullFileName}.gz");
+      if($fileSuffix eq 'gff') {
+        system("bgzip $fullFileName");
+        system("tabix -p gff ${fullFileName}.gz");
+      }
+      # TODO what about bw files??
     }
     else {
       print "WARN: unlinnk $fullFileName\n";
@@ -125,7 +128,7 @@ foreach my $o (@$organisms) {
 $dbh->disconnect();
 
 sub addFeatures {
-  my ($dbh, $featureSql, $seqName, $gff) = @_;
+  my ($dbh, $featureSql, $seqName, $fh) = @_;
 
   my $sh = $dbh->prepare($featureSql);
   $sh->execute();
@@ -140,7 +143,7 @@ sub addFeatures {
     $hash->{atts} .= ";ID=$featureId";
     $hash->{atts} .= ";Parent=$parentId" if($parentId);
 
-    print $gff join("\t", ($seqName, 
+    print $fh join("\t", ($seqName, 
                            $hash->{source}, 
                            $hash->{feature}, 
                            $hash->{startm}, 
@@ -161,7 +164,7 @@ sub addFeatures {
 
         my $subAtts = "ID=" . $featureId . "_$counter;Parent=$featureId";
         
-        print $gff join("\t", ($seqName, 
+        print $fh join("\t", ($seqName, 
                                $hash->{source}, 
                                "subfeature", 
                                $start,
