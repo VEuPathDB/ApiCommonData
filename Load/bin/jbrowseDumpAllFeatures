@@ -12,7 +12,7 @@ use XML::Simple;
 use GUS::Supported::GusConfig;
 use Data::Dumper;
 
-my ($outputDir, $orgFilter) = @ARGV;
+my ($outputDir, $orgFilter, $replaceExisting) = @ARGV;
 
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
@@ -22,19 +22,21 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
                         $gusconfig->getDatabasePassword(),
      )
     || die "Cannot connect to database:  " . $DBI::errstr;
+
 $dbh->{LongTruncOk} = 0;
 $dbh->{LongReadLen} = 10000000;
 
-
 my $gbrowseXmlFile =  $ENV{GUS_HOME} . "/lib/xml/jbrowseQueries.xml";
-my $xml = XMLin($gbrowseXmlFile);
+my $xml = XMLin($gbrowseXmlFile, ForceArray => ['trackConfigurations', 'properties' ] );
 
-chomp(my @tracks = <DATA>);
+my @tracks = keys %{$xml->{track}};
 
 my $organisms = &getOrganismInfo($dbh);
 
+print "ORGFILTER=$orgFilter\n";
+
 foreach my $o (@$organisms) {
-  next if($orgFilter && $o->{abbrev} eq $orgFilter);
+  next if($orgFilter && $o->{abbrev} ne $orgFilter);
 
   my $genomicSequences = &getGenomicSequences($dbh, $o);
   my $proteinSequences = &getProteinSequences($dbh, $o);
@@ -45,30 +47,27 @@ foreach my $o (@$organisms) {
   my $projectDir = "$outputDir/$project";
   my $releaseDir = "$projectDir/release-CURRENT";
   my $organismDir = "$releaseDir/$nameForFilenames";
-  my $gffDir = "$organismDir/gff";
+  my $gffDir = "$organismDir/jbrowse";
 
   mkdir $projectDir unless(-d $projectDir);
   mkdir $releaseDir unless(-d $releaseDir);
   mkdir $organismDir unless(-d $organismDir);
   mkdir $gffDir unless(-d $gffDir);
 
-  foreach my $track (@tracks) {
-    my ($trackType, $fileType, $trackName) = split(',', $track);
-    next if /^\s*#/;
-    die "track must provide trackType, fileType, and trackName:  found $track" unless($trackType && $fileType && $trackName);
+  foreach my $trackName (@tracks) {
+    next if($trackName =~ /^\s*#/);
 
-    #TODO:  how to get the query parmas??
-    my $queryParams = &makeQueryParams($track, $dbh);
+    my $trackType = $xml->{track}->{$trackName}->{type};
+    my $fileSuffix = $xml->{track}->{$trackName}->{fileSuffix};
 
-    # TODO: name by query params??  loop over query params list??
-    my $fullFileName = "$gffDir/${trackName}.${fileType}";
+    die "track must provide trackType, fileSuffix, and trackName" unless($trackType && $fileSuffix && $trackName);
+
+    my $fullFileName = "$gffDir/${trackName}.${fileSuffix}";
+    print "FILE=$fullFileName\n";
+
     my $gff;
 
-    open($gff, "|sort -T $gffDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
-
-    my $bulkSubFeature = "$trackName:bulksubfeatures";
-    my $featureSqlRaw = $xml->{query}->{$trackName}->{content};
-    my $bulkSubFeatureSqlRaw = $xml->{query}->{$bulkSubFeature}->{content};
+    my $featureSqlRaw = $xml->{track}->{$trackName}->{sql};
 
     my $sequences;
     if($trackType eq 'genomic') {
@@ -81,23 +80,43 @@ foreach my $o (@$organisms) {
       die "trackType can only be genomic or protein";
     }
 
+    my $queryParams = &makeQueryParams($dbh, $trackName, $xml);
+
+    my @existingFiles = glob "${fullFileName}*";
+    if($replaceExisting) {
+      unlink @existingFiles;
+    }
+    else {
+      print STDERR "SKIPPING Existing file: $fullFileName\n";
+      next;
+    }
+
+    open($gff, "|sort -T $gffDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
+
+    my $featureCountTotal;
     foreach my $s (@$sequences) {
       my $seqName = $s->{seqname};
       my $seqId = $s->{seqid};
 
-      my $featureSql = &makeSql($featureSqlRaw, $seqId, $queryParams);
+      foreach my $qp (@$queryParams) {
+        my $featureSql = &makeSql($featureSqlRaw, $seqId, $qp);
+        my $featureCount = &addFeatures($dbh, $featureSql, $seqName, $gff);
 
-      my $bulkSubFeatureSql = &makeSql($bulkSubFeatureSqlRaw, $seqId, $queryParams);
-
-      &addFeatures($dbh, $featureSql, $seqName, $gff);
-      if($bulkSubFeatureSql) {
-        &addFeatures($dbh, $bulkSubFeatureSql, $seqName, $gff);
+        $featureCountTotal += $featureCount;
       }
+
+
     }
     close $gff;
 
-    system("bgzip $fullFileName");
-    system("tabix -p gff ${fullFileName}.gz");
+    if($featureCountTotal > 0) {
+      system("bgzip $fullFileName");
+      system("tabix -p gff ${fullFileName}.gz");
+    }
+    else {
+      print "WARN: unlinnk $fullFileName\n";
+      unlink $fullFileName;
+    }
   }
   exit;
 }
@@ -110,6 +129,8 @@ sub addFeatures {
 
   my $sh = $dbh->prepare($featureSql);
   $sh->execute();
+
+  my $featureCount;
 
 #    Pf3D7_13_v3VEuPathDBexon624510626292.+.ID=exon_PF3D7_1314600.1-E1;Parent=PF3D7_1314600.1;gene_id=PF3D7_1314600
   while(my $hash = $sh->fetchrow_hashref("NAME_lc")) {
@@ -135,9 +156,9 @@ sub addFeatures {
       my $counter = 0;
       
       foreach my $start (@tstarts) {
-        #TODO check start/end coords
+        #TODO check end coords for possible 1 off error
+        my $end = $start + $blocksizes[$counter] - 1;
 
-        my $end = $start + $blocksizes[$counter];
         my $subAtts = "ID=" . $featureId . "_$counter;Parent=$featureId";
         
         print $gff join("\t", ($seqName, 
@@ -153,12 +174,33 @@ sub addFeatures {
         $counter = $counter + 1;
       }
     }
+
+    $featureCount++;
   }
+  return $featureCount;
 }
 
 sub makeQueryParams {
-  # TODO
-  return [];
+  my ($dbh, $trackName, $xml) = @_;
+
+  my @rv;
+  if(my $trackConfigurations = $xml->{track}->{$trackName}->{trackConfigurations}) {
+
+    foreach my $tc (@$trackConfigurations) {
+      foreach my $property (@{$tc->{properties}}) {
+        my %hash;
+        foreach my $prop (keys %{$property->{prop}}) {
+          my $value = $property->{prop}->{$prop}->{content};
+          $hash{$prop} = $value;
+        }
+        push @rv, \%hash;
+      }
+    }
+
+    return \@rv;
+  }
+
+  return [{INTERNAL => "INTERNAL"}];
 }
 
 sub getOrganismInfo {
@@ -230,66 +272,12 @@ sub makeSql {
   $sql =~ s/\$dlm/;/g;
   $sql =~ s/\$srcfeature_id/$seqId/g;
 
-  foreach my $p (@$queryParams) {
-    next if($p =~ /select/i);
-    my ($key, $value) = split(/=/, $p);
+  foreach my $key (keys %$queryParams) {
+    my $value = $queryParams->{$key};
     $sql =~ s/\$\$${key}\$\$/${value}/g;
   }
 
   return $sql
 }
 
-
-__DATA__
-genomic,gff,EST
-alignment:GenericEndFeature
-#alignment:ORFlength
-alignment:sequence
-alignment:TransposableElements
-Centromere:overview
-ChIP:ChIPchip_peaksjbrowse
-ChIP:ChIPchip_smoothedjbrowse
-ChIP:ChIPSeqPeaksjbrowse
-cnv:ArrayJBrowse
-domain:ExportPred
-domain:interpro
-domain:MassSpecPeptide
-domain:MassSpecPeptidePhospho
-domain:SignalP
-domain:spliceSites
-domain:TMHMM
-domain:tRNA
-domain:tssJBrowse
-domain:UnifiedMassSpecPeptides
-domain:UnifiedPostTraslationalMod
-feature:BindingSite
-#gene:annotation
-#gene:annotation2
-#gene:syntenyJBrowseScaled
-get_2d_struc_jbrowse
-gff:apolloTranscript
-gff:basic
-gff:processedTranscript
-#gsnap:unifiedintronjunction
-#gsnap:unifiedintronjunctionAnnotatedOnly
-#gsnap:unifiedintronjunctionHCOnly
-#gsnap:unifiedintronjunctionLCOnly
-Haplotype:Block
-hydropathy_jbrowse
-lowcomplexity:dust
-lowcomplexity:seg
-match:IsolatePopset
-MicroArrayProbes:expressionD
-MicroArrayProbes:expressionProbes
-Microsatellite:sts
-piggyBac:TransposableElement
-# proteinAlignment:BLAT
-ReferenceSequence
-#ReferenceSequenceAa
-repeat:RepeatElements
-scaffold:genome
-SNP:DiversityJbrowse
-SNP:Genotyping
-SNP:Population
-TandemRepeat:TRF
 

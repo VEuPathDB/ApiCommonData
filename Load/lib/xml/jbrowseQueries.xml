@@ -1,4 +1,4 @@
-<staticQueries>
+<tracks>
 
 <!--
 Each query must return fields which corespond to GFF3 spec (order does not matter)
@@ -16,40 +16,158 @@ parent_id - Unique ID of the parent feature
 tstarts - comma sep list of subfeature starts
 blocksizes - comma sep list of subfeature lengths
 -->
-  <query name="EST">
-<![CDATA[
- SELECT blat.blat_alignment_id feature_id,
-       'similarity' feature, 
-       'VEuPathDB' source, 
-       blat.score || '' score, 
-       blat.target_start startm, 
-       blat.target_end end, 
-       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       blat.tstarts TSTARTS,
-       blat.blocksizes BLOCKSIZES,
-       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
-       'Accession=' || est.accession atts
-FROM   
-       dots.BlatAlignment blat, 
-       dots.Est est, 
-       dots.ExternalNASequence estseq,
-       sres.OntologyTerm ot
-WHERE  
-       blat.query_na_sequence_id = est.na_sequence_id
-        and (blat.target_end - blat.target_start ) < 5000
-        and blat.is_best_alignment = 1
-        and estseq.na_sequence_id = est.na_sequence_id
-        and ot.ontology_term_id = estseq.sequence_ontology_id
-        and ot.name = 'EST'
-        and blat.target_na_sequence_id = $srcfeature_id
-]]>
-  </query>
+  <track name="EST" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+               SELECT blat.blat_alignment_id feature_id,
+                      'alignment' feature, 
+                      'VEuPathDB' source, 
+                      blat.score || '' score, 
+                      blat.target_start startm, 
+                      blat.target_end end, 
+                      decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+                      blat.tstarts TSTARTS,
+                      blat.blocksizes BLOCKSIZES,
+                      'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
+                      'Accession=' || est.accession atts
+               FROM   
+                      dots.BlatAlignment blat, 
+                      dots.Est est, 
+                      dots.ExternalNASequence estseq,
+                      sres.OntologyTerm ot
+               WHERE  
+                      blat.query_na_sequence_id = est.na_sequence_id
+                       and (blat.target_end - blat.target_start ) < 5000
+                       and blat.is_best_alignment = 1
+                       and estseq.na_sequence_id = est.na_sequence_id
+                       and ot.ontology_term_id = estseq.sequence_ontology_id
+                       and ot.name = 'EST'
+                       and blat.target_na_sequence_id = $srcfeature_id
+      ]]>
+    </sql>
+  </track>
+
+  <track name="GenericEndFeature" type="genomic" fileSuffix="gff">
 
 
-  <query name="DUMMY">
-<![CDATA[
-DUMMY]]>
-  </query>
+    <!-- TODO:  Add track configurations -->
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">tgonME49_Vinayak_FosmidEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="type">fosmid</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(for|rev).ab1)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">true</prop>
+     </properties>
+   </trackConfigurations>
 
 
-</staticQueries>
+   <sql>
+     <![CDATA[
+              with align as (
+              SELECT to_char(blat.blat_alignment_id) feature_id
+                   , etn.$$sourceIdField$$ as name
+                   , regexp_substr(etn.$$sourceIdField$$, '$$sourceIdJoiningRegex$$') group_id
+                   , blat.score
+                   , blat.target_start startm
+                   , blat.target_end end
+                   , blat.percent_identity
+              FROM dots.BlatAlignment blat
+                 , dots.ExternalNASequence etn
+                 , sres.EXTERNALDATABASE ed
+                 , sres.EXTERNALDATABASERELEASE edr
+              WHERE blat.query_na_sequence_id = etn.na_sequence_id
+               AND blat.target_na_sequence_id = $srcfeature_id
+               AND blat.is_best_alignment = 1
+               AND (blat.target_end - blat.target_start ) < $$spanLengthCutoff$$
+               AND ('true' = '$$includeMultipleSpans$$' OR blat.number_of_spans =1)
+               AND ed.external_database_id=edr.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND ed.name = '$$edName$$'
+              )
+              select group_id as feature_id
+                   , 'alignment' feature
+                   , 'VEuPathDB' source
+                   , null score
+                   , min(startm) startm
+                   , max(end) end
+                   , '.' strand
+                   , 'alignLength=' || ( max(end) - min(startm) ) atts
+                   , '' parent_id
+              from align
+              group by group_id
+              UNION
+              select feature_id
+                   , 'generic_end' feature
+                   , 'VEuPathDB' source
+                   , score
+                   , startm
+                   , end 
+                   , '.' strand
+                   , 'pct=' || percent_identity atts
+                   , group_id parent_id
+              from align
+     ]]>
+   </sql>
+  </track>
+
+<!-- 
+####DONE ####
+EST
+GenericEndFeature
+
+### TODO Genomic ####
+alignment:sequence
+alignment:TransposableElements
+Centromere:overview
+ChIP:ChIPchip_peaksjbrowse
+ChIP:ChIPchip_smoothedjbrowse
+ChIP:ChIPSeqPeaksjbrowse
+cnv:ArrayJBrowse
+domain:spliceSites
+domain:tRNA
+domain:tssJBrowse
+domain:UnifiedMassSpecPeptides
+feature:BindingSite
+#gene:annotation
+#gene:annotation2
+#gene:syntenyJBrowseScaled
+gff:apolloTranscript
+gff:basic
+gff:processedTranscript
+#gsnap:unifiedintronjunction
+#gsnap:unifiedintronjunctionAnnotatedOnly
+#gsnap:unifiedintronjunctionHCOnly
+#gsnap:unifiedintronjunctionLCOnly
+Haplotype:Block
+lowcomplexity:dust
+match:IsolatePopset
+MicroArrayProbes:expressionD
+MicroArrayProbes:expressionProbes
+Microsatellite:sts
+piggyBac:TransposableElement
+# proteinAlignment:BLAT
+ReferenceSequence
+repeat:RepeatElements
+scaffold:genome
+SNP:DiversityJbrowse
+SNP:Genotyping
+SNP:Population
+TandemRepeat:TRF
+
+### TODO Protein ####
+domain:ExportPred
+domain:interpro
+domain:MassSpecPeptide
+domain:MassSpecPeptidePhospho
+domain:SignalP
+domain:TMHMM
+domain:UnifiedPostTraslationalMod
+get_2d_struc_jbrowse
+hydropathy_jbrowse
+lowcomplexity:seg
+ReferenceSequenceAa
+-->
+
+</tracks>
