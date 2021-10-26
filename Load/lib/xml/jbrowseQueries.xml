@@ -48,18 +48,77 @@ blocksizes - comma sep list of subfeature lengths
   </track>
 
   <track name="GenericEndFeature" type="genomic" fileSuffix="gff">
-
-
-    <!-- TODO:  Add track configurations -->
    <trackConfigurations>
      <properties>
        <prop name="edName">tgonME49_Vinayak_FosmidEnds_clonedInsertEnds_RSRC</prop>
-       <prop name="type">fosmid</prop>
        <prop name="sourceIdField">source_id</prop>
        <prop name="sourceIdJoiningRegex">(.*)[^(for|rev).ab1)]</prop>
        <prop name="spanLengthCutoff">5000</prop>
        <prop name="includeMultipleSpans">true</prop>
      </properties>
+     <properties>
+       <prop name="edName">tgonME49_Sanger_BAC_ends_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(q|p)1c)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">true</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_TIGR_Cosmid_ends_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^T(V|H)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">true</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_Lorenzi_CosmidEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">secondary_identifier</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^_forward|_reverse]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">true</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tcruCLBrenerEsmeraldo-like_CHORI105_BACEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+     </properties>
+     <properties>
+       <prop name="edName">lmajFriedlin_sanger_CosmidEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(X)(Y)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+     </properties>
+     <properties>
+       <prop name="edName">lmajFriedlin_sanger_FV1Ends_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(x1-4)(y1-4)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+     </properties>
+     <properties>
+       <prop name="edName">lmajFriedlin_sanger_PACEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+    </properties>
+     <properties>
+       <prop name="edName">lmajFriedlin_sanger_BACEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+    </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_Genbank_BACEnds_clonedInsertEnds_RSRC</prop>
+       <prop name="sourceIdField">source_id</prop>
+       <prop name="sourceIdJoiningRegex">(.*)[^(d_T7\.(1-2)|L)(d_SP6\.1|R)]</prop>
+       <prop name="spanLengthCutoff">5000</prop>
+       <prop name="includeMultipleSpans">false</prop>
+    </properties>
    </trackConfigurations>
 
 
@@ -73,6 +132,7 @@ blocksizes - comma sep list of subfeature lengths
                    , blat.target_start startm
                    , blat.target_end end
                    , blat.percent_identity
+                   , ed.name as dataset
               FROM dots.BlatAlignment blat
                  , dots.ExternalNASequence etn
                  , sres.EXTERNALDATABASE ed
@@ -93,10 +153,11 @@ blocksizes - comma sep list of subfeature lengths
                    , min(startm) startm
                    , max(end) end
                    , '.' strand
-                   , 'alignLength=' || ( max(end) - min(startm) ) atts
+                   , 'dataset=' || align.dataset  || '$dlm' ||
+                     'alignLength=' || ( max(end) - min(startm) ) atts
                    , '' parent_id
               from align
-              group by group_id
+              group by dataset, group_id
               UNION
               select feature_id
                    , 'generic_end' feature

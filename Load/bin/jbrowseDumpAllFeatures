@@ -4,6 +4,8 @@ use strict;
 
 use lib $ENV{GUS_HOME} . "/lib/perl";
 
+use Getopt::Long;
+
 use JSON;
 use DBI;
 use DBD::Oracle;
@@ -12,7 +14,17 @@ use XML::Simple;
 use GUS::Supported::GusConfig;
 use Data::Dumper;
 
-my ($outputDir, $orgFilter, $replaceExisting) = @ARGV;
+my ($help, $outputDir, $orgFilter, $replaceExisting);
+
+&GetOptions('help|h' => \$help,
+            'output_directory=s' => \$outputDir,
+            'organism_abbrev_filter=s' => \$orgFilter,
+            'replace_existing' => \$replaceExisting
+    );
+
+if($help || ! -d $outputDir) {
+  die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+}
 
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
@@ -117,11 +129,10 @@ foreach my $o (@$organisms) {
       # TODO what about bw files??
     }
     else {
-      print "WARN: unlinnk $fullFileName\n";
+      print "WARN: unlink $fullFileName\n";
       unlink $fullFileName;
     }
   }
-  exit;
 }
 
 
