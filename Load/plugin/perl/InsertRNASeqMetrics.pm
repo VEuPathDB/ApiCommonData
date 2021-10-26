@@ -10,6 +10,7 @@ use GUS::Model::Study::Characteristic;
 use GUS::Model::SRes::OntologyTerm;
 use GUS::Model::Study::ProtocolAppNode;
 
+use File::Basename;
 use Data::Dumper;
 
 my $argsDeclaration = [
@@ -155,12 +156,13 @@ sub run {
     my @mappingStatsFiles = glob $self->getArg('rnaseqExperimentDirectory') .  "/analyze*/master/mainresult/mappingStats.txt";
 
     #if no files, check dir structure for EBI RNAseq
-    @mappingStatsFiles = scalar @mappingStatsFiles == 0 ? glob $self->getArg('rnaseqExperimentDirectory') . "/*RR*/mappingStats.txt" : @mappingStatsFiles;
+    @mappingStatsFiles = scalar @mappingStatsFiles == 0 ? glob $self->getArg('rnaseqExperimentDirectory') . "/*/mappingStats.txt" : @mappingStatsFiles;
+
+    $self->error("No mapping stats file found for this dataset\n") unless scalar @mappingStatsFiles > 0;
 
     foreach my $mappingStats (@mappingStatsFiles) {
       my ($internalSampleName) = $mappingStats =~ /analyze_(.+)\/master\/mainresult/;
-      ($internalSampleName) = defined $internalSampleName ? $internalSampleName : $mappingStats =~ /([D|E|S]RR.+)\//;
-
+      ($internalSampleName) = defined $internalSampleName ? $internalSampleName : (split "/", dirname($mappingStats))[-1];
 
       my $protocolAppNodeName;
       if(my ($combinedInternalName) = $internalSampleName =~ /(.+)_combined/) {
