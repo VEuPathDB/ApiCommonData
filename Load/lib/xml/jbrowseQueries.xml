@@ -158,7 +158,7 @@ blocksizes - comma sep list of subfeature lengths
                    , '' parent_id
               from align
               group by dataset, group_id
-              UNION
+              UNION ALL
               select feature_id
                    , 'generic_end' feature
                    , 'VEuPathDB' source
