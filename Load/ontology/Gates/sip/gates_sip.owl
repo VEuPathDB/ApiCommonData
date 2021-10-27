@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/gates/gates_sip.owl#"
      xml:base="http://purl.obolibrary.org/obo/gates/gates_sip.owl"
-     xmlns:obo="http://purl.obolibrary.org/obo/"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:obo="http://purl.obolibrary.org/obo/">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_sip.owl"/>
     
 
@@ -74,6 +74,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001005">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">termType</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001006 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -1137,26 +1145,6 @@
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assessed daily for infants admitted to the NICU</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0026002 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0026002">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::kebele</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::kebele</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::kebele</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A kebele, or ward, is the smallest administrative unit of Ethiopia. Consists of &gt;500 families, generally 3,500-4,000 people</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subdistrict</rdfs:label>
     </owl:Class>
     
 
@@ -3442,7 +3430,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Town or woreda, which is the 3rd-level administrative division in Ethiopia. Further subdivided into wards (kebele, here labeled as &quot;Subdistrict&quot;).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Town or district</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Woreda (town or district) in Ethiopia</rdfs:label>
     </owl:Class>
     
 
@@ -13324,6 +13312,48 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0038721 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038721">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::azone</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::azone</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::zonee</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NCIT_C43428</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A zone is the 2nd-level administrative division in Ethiopia. Further subdivided into districts (woreda).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone in Ethiopia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0038722 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0038722">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::kebele</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::kebele</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::kebele</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0026002</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A kebele, or ward, is the smallest administrative unit of Ethiopia. Consists of &gt;500 families, generally 3,500-4,000 people</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Kebele (subdistrict) in Ethiopia</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0041001 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0041001">
@@ -13781,26 +13811,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/NCIT_C43428 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C43428">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a::azone</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b::azone</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long::zonee</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03a</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form03b</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">form05_long</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SIP</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A zone is the 2nd-level administrative division in Ethiopia. Further subdivided into districts (woreda).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zone</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/NCIT_C81257 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCIT_C81257">
@@ -14114,9 +14124,6 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001014">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scale</rdfs:label>
     </rdf:Description>
@@ -14136,5 +14143,5 @@
 
 
 
-<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
 
