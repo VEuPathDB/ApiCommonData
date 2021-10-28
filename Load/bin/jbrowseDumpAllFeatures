@@ -95,12 +95,15 @@ foreach my $o (@$organisms) {
     my $queryParams = &makeQueryParams($dbh, $trackName, $xml);
 
     my @existingFiles = glob "${fullFileName}*";
-    if($replaceExisting) {
-      unlink @existingFiles;
-    }
-    else {
-      print STDERR "SKIPPING Existing file: $fullFileName\n";
-      next;
+    if (scalar @existingFiles) {
+      if($replaceExisting) {
+	print "unlinking existing file(s): " . join(", ", @existingFiles) . "\n";
+	unlink @existingFiles;
+      }
+      else {
+	print STDERR "SKIPPING Existing file: $fullFileName\n";
+	next;
+      }
     }
 
     open($outFh, "|sort -T $outputDir -k1,1 -k4,4n >$fullFileName") or die "Cannot open file $fullFileName For writing: $!";
