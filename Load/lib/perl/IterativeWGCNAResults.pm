@@ -68,7 +68,7 @@ sub munge {
 	    my %hash;
 	    
 	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
-		$hash{$proteinCodingGenes} = 1;
+				$hash{$proteinCodingGenes} = 1;
 	    }
 	    
 	    $stmt->finish();
@@ -78,34 +78,34 @@ sub munge {
 	    
 	    my %inputs;
 	    while (my $line = <IN>){
-		$line =~ s/\n//g;
-		if ($. == 1){
-		    my @all = split("\t",$line);
-		    foreach(@all[1 .. $#all]){
-			$inputs{$_} = 1;
-		    }
-		}
-	}
+				$line =~ s/\n//g;
+				if ($. == 1){
+					my @all = split("\t",$line);
+					foreach(@all[1 .. $#all]){
+						$inputs{$_} = 1;
+					}
+				}
+			}
 	    close IN;
 	    
 	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 	    while (my $line = <IN>){
-		if ($. == 1){
-		    my @all = split/\t/,$line;
-		    $all[0] = 'Gene';
-		    my $new_line = join("\t",@all);
-		    print OUT $new_line;
-		    
-		    foreach(@all[1 .. $#all]){
-			@all = grep {s/^\s+|\s+$//g; $_ } @all;
-			$inputs{$_} = 1;
-		    }
-		}else{
-		    my @all = split/\t/,$line;
-		    if ($hash{$all[0]}){
-			print OUT $line;
-		    }
-		}
+				if ($. == 1){
+						my @all = split/\t/,$line;
+						$all[0] = 'Gene';
+						my $new_line = join("\t",@all);
+						print OUT $new_line;
+						
+						foreach(@all[1 .. $#all]){
+							@all = grep {s/^\s+|\s+$//g; $_ } @all;
+							$inputs{$_} = 1;
+						}
+				}else{
+						my @all = split/\t/,$line;
+						if ($hash{$all[0]}){
+							print OUT $line;
+						}
+				}
 	    }
 	    close IN;
 	    close OUT;
@@ -131,14 +131,14 @@ sub munge {
 	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 	    my %MMHash;
 	    while (my $line = <MM>) {
-		if ($. == 1){
-		    next;
-		}else{
-		    chomp($line);
-		    $line =~ s/\r//g;
-		    my @all = split/\t/,$line;
-		    push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
-		}
+				if ($. == 1){
+						next;
+				}else{
+						chomp($line);
+						$line =~ s/\r//g;
+						my @all = split/\t/,$line;
+						push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
+				}
 	    }
 	    close MM;
 	    
@@ -147,18 +147,18 @@ sub munge {
 	    my @allKeys = keys %MMHash;
 	    my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
 	    for my $i(@ModuleNames){
-		push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ProteinCoding";
-		push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ProteinCoding" ;
-		open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st_ProteinCoding" . "\.txt") or die $!;
-		print MMOUT "geneID\tcorrelation_coefficient\n";
-		for my $ii(@{$MMHash{$i}}){
-		    print MMOUT $ii;
-		}
-		close MMOUT;
+				push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ProteinCoding";
+				push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ProteinCoding" ;
+				open(MMOUT, ">$outputDirModuleMembership/$i" . "_1st_ProteinCoding" . "\.txt") or die $!;
+				print MMOUT "geneID\tcorrelation_coefficient\n";
+				for my $ii(@{$MMHash{$i}}){
+						print MMOUT $ii;
+				}
+				close MMOUT;
 	    }
 	    my %inputProtocolAppNodesHash;
 	    foreach(@modules) {
-		push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
+				push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
 	    }
 	    
 	    $self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
@@ -186,77 +186,80 @@ sub munge {
 
 	#-- Version2: first strand processing  (only remove pseudogenes in the input tpm file)-------------#
 	if($genetype eq 'exclude pseudogene'){
-	    my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
-	    my $sql = "SELECT source_id 
-                   FROM apidbtuning.geneAttributes  
-                   WHERE organism = '$organism' AND gene_type != 'pseudogene'";
-	    my $stmt = $dbh->prepare($sql);
-	    $stmt->execute();
-	    my %hash;
+		print "Excluding pseudogenes"
+		my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
+		my $sql = "SELECT source_id 
+									FROM apidbtuning.geneAttributes  
+									WHERE organism = '$organism' AND gene_type != 'pseudogene'";
+		my $stmt = $dbh->prepare($sql);
+		$stmt->execute();
+		my %hash;
+		
+		while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+			$hash{$proteinCodingGenes} = 1;
+		}
 	    
-	    while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
-		$hash{$proteinCodingGenes} = 1;
-	    }
-	    
-	    $stmt->finish();
-	    #-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
-	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	    open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
-	    
-	    my %inputs;
-	    while (my $line = <IN>){
-		$line =~ s/\n//g;
+		$stmt->finish();
+		#-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
+		open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+		open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
+		
+		my %inputs;
+		while (my $line = <IN>){
+			$line =~ s/\n//g;
+			if ($. == 1){
+					my @all = split("\t",$line);
+					foreach(@all[1 .. $#all]){
+						$inputs{$_} = 1;
+					}
+			}
+		}
+	close IN;
+	
+	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+	while (my $line = <IN>){
 		if ($. == 1){
-		    my @all = split("\t",$line);
-		    foreach(@all[1 .. $#all]){
-			$inputs{$_} = 1;
-		    }
+			my @all = split/\t/,$line;
+			$all[0] = 'Gene';
+			my $new_line = join("\t",@all);
+			print OUT $new_line;
+			
+			foreach(@all[1 .. $#all]){
+				@all = grep {s/^\s+|\s+$//g; $_ } @all;
+				$inputs{$_} = 1;
+			}
+		}else{
+			my @all = split/\t/,$line;
+			#-- Filter on lowly expressed genes --#
+			print @all
+			if ($hash{$all[0]}){
+				print OUT $line;
+			}
 		}
 	}
-	    close IN;
+	close IN;
+	close OUT;
 	    
-	    open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-	    while (my $line = <IN>){
-		if ($. == 1){
-		    my @all = split/\t/,$line;
-		    $all[0] = 'Gene';
-		    my $new_line = join("\t",@all);
-		    print OUT $new_line;
-		    
-		    foreach(@all[1 .. $#all]){
-			@all = grep {s/^\s+|\s+$//g; $_ } @all;
-			$inputs{$_} = 1;
-		    }
-		}else{
-		    my @all = split/\t/,$line;
-		    if ($hash{$all[0]}){
-			print OUT $line;
-		    }
-		}
-	    }
-	    close IN;
-	    close OUT;
-	    
-	    #-------------- run IterativeWGCNA docker image -----#
-	    my $commForPermission = "chmod g+w $outputFile";
-	    system($commForPermission);
-	    my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
+	#-------------- run IterativeWGCNA docker image -----#
+	my $commForPermission = "chmod g+w $outputFile";
+	system($commForPermission);
+	my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
 
-	    my $inputFileForWGCNA = "$mainDirectory/$outputFile";
-	    my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
-	    #my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
-	    
-	    my $results  =  system($command);
-	    
-	    #-------------- parse Module Membership -----#
-	    my $commgw = "mkdir $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading";
-	    system($commgw);
-	    
-	    my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
-	    
-	    open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
-	    my %MMHash;
-	    while (my $line = <MM>) {
+	my $inputFileForWGCNA = "$mainDirectory/$outputFile";
+	my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
+	#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
+	
+	my $results  =  system($command);
+	
+	#-------------- parse Module Membership -----#
+	my $commgw = "mkdir $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading";
+	system($commgw);
+	
+	my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
+	
+	open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
+	my %MMHash;
+	while (my $line = <MM>) {
 		if ($. == 1){
 		    next;
 		}else{
