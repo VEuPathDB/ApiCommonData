@@ -438,15 +438,18 @@ sub loadNodes {
 
       $charValue =~ s/\r//;
 
-      unless( grep(/^$charValue$/, @{$charsForLoader->{$charQualifierSourceId}}) ) {
         # keep only unique values, no duplicates
-        push @{$charsForLoader->{$charQualifierSourceId}}, $charValue;
-      }
+      $charsForLoader->{$charQualifierSourceId}->{$charValue}=1;
 
       if(length $charValue > $self->{_max_attr_value}) {
         $self->{_max_attr_value} = length $charValue;
       }
 
+    }
+    # Convert hashref to arrayref
+    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoader){
+      my @charValues = keys %$charValuesHashref;
+      $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
     $self->addGeohash($charsForLoader);
@@ -497,7 +500,7 @@ sub addGeohash {
     my $geohashSourceId = $geohashSourceIds[$n - 1];
     $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
     $hash->{$geohashSourceId} = [$subvalue];
-  }            
+  }           
 }
 
 
@@ -783,9 +786,9 @@ and tn.name_class = 'scientific name'
         $ontologyTermToNames->{$os}->{$ota} = $ontologyTermName;
       }
       elsif($count > 1) {
-        push @multipleCounts, $accessionOrName;
+        push (@multipleCounts, "$accessionOrName ($ota)");
       } else {
-        push @missingTerms, $accessionOrName;
+        push (@missingTerms, "$accessionOrName ($ota)");
       }
     }
   }
