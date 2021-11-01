@@ -186,7 +186,7 @@ sub munge {
 
 	#-- Version2: first strand processing  (only remove pseudogenes in the input tpm file)-------------#
 	if($genetype eq 'exclude pseudogene'){
-		print "Excluding pseudogenes"
+		print "Excluding pseudogenes";
 		my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
 		my $sql = "SELECT source_id 
 									FROM apidbtuning.geneAttributes  
@@ -230,11 +230,16 @@ sub munge {
 			}
 		}else{
 			my @all = split/\t/,$line;
-			#-- Filter on lowly expressed genes --#
-			print @all
-			if ($hash{$all[0]}){
+			#-- Filter based on total expression --#
+                        my $mytotal = 0;
+                        foreach(@all[1 .. $#all]){
+                          $mytotal += $_;
+                        }
+                        if ($mytotal > 20) {
+			  if ($hash{$all[0]}){
 				print OUT $line;
-			}
+			  }
+                        }
 		}
 	}
 	close IN;
