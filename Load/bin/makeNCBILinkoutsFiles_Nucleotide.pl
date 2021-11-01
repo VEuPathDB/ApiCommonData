@@ -28,8 +28,7 @@ my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
 <!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" 
 "https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd" 
 [
-  <!ENTITY contig.url "http://cryptodb.org/cryptodb/showRecord.do?name=ContigRecordClasses.ContigRecordClass&amp;id=">
-  <!ENTITY gene.url "http://cryptodb.org/cryptodb/showRecord.do?name=GeneRecordClasses.GeneRecordClass&amp;id=">
+  <!ENTITY contig.url "https://cryptodb.org/cryptodb/showRecord.do?name=ContigRecordClasses.ContigRecordClass">
 ]>
 <LinkSet/>
 __END_XML__
@@ -72,10 +71,8 @@ while (my ($source_id) = $sth->fetchrow_array()) {
     $nucleotide{$linkId}->{ProviderId} = 5941;
     $nucleotide{$linkId}->{Database} = 'Nucleotide';
     $nucleotide{$linkId}->{Query} = $source_id;
-    $nucleotide{$linkId}->{Base} = '&contig.url;';
+    $nucleotide{$linkId}->{Base} = '&amp;id=&contig.url;';
     $nucleotide{$linkId}->{Rule} = '&lo.pacc;';
-    $nucleotide{$linkId}->{SubjectType} = 'DNA/protein sequence';
-
 }
 
 my $outputIO = IO::File->new(">> ".$output);
@@ -106,9 +103,6 @@ $writer->startTag('LinkSet');
       $writer->startTag('Rule');
       $writer->characters($nucleotide{$k}->{Rule});
       $writer->endTag('Rule');
-      $writer->startTag('SubjectType');
-      $writer->characters($nucleotide{$k}->{SubjectType});
-      $writer->endTag('SubjectType');
       $writer->endTag('ObjectUrl');
       $writer->endTag('Link');
 	}
