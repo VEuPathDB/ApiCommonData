@@ -259,13 +259,20 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "pfal7G8-2019"
        ) {
       $projectName = "PlasmoDB";
-    } elsif ( $organismAbbrev eq "mbalATCC30984") {
+    } elsif ( $organismAbbrev eq "mbalATCC30984"
+	|| $organismAbbrev eq "nfowTy"
+		) {
       $projectName = "AmoebaDB";
+    } elsif ( $organismAbbrev eq "bdiv1802A"
+		) {
+      $projectName = "PiroplasmaDB";
     } elsif ( $organismAbbrev eq "ncanLiverpool2019"
 	|| $organismAbbrev eq "etenHoughton2021"
 	    ) {
       $projectName = "ToxoDB";
-    } elsif ( $organismAbbrev eq "treeQM6a2017") {
+    } elsif ( $organismAbbrev eq "treeQM6a2017"
+	|| $organismAbbrev eq "ctroMYA3404-2020"
+		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
 	    || $organismAbbrev eq "tbruLister427_2018"
