@@ -28,7 +28,7 @@ my $doc = XML::LibXML->load_xml(string => <<__END_XML__);
 <!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" 
 "https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd" 
 [
-  <!ENTITY contig.url "https://cryptodb.org/cryptodb/showRecord.do?name=ContigRecordClasses.ContigRecordClass">
+  <!ENTITY contig.url "https://cryptodb.org/cryptodb/app/record/genomic-sequence/">
 ]>
 <LinkSet/>
 __END_XML__
