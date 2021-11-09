@@ -22,6 +22,7 @@ sub queryForOntologyTerms {
                   , os.is_preferred
                   , os.definition                    --this is also in the annotation_properties json
                   , json_value(os.annotation_properties, '\$.displayType[0]') as display_type
+                  , json_query(os.annotation_properties, '\$.scope') as scope -- gives json array
                   , json_value(os.annotation_properties, '\$.displayOrder[0]') as display_order
                   , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min
                   , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max
@@ -44,27 +45,6 @@ and p.SOURCE_ID = 'subClassOf'
 and s.ontology_term_id = os.ontology_term_id (+)
 and r.EXTERNAL_DATABASE_RELEASE_ID = os.EXTERNAL_DATABASE_RELEASE_ID (+)    
 and r.external_database_release_id = ?
-union
-select s.name
-     , s.source_id
-     , s.ontology_term_id
-     , o.name parent_name
-     , o.source_id parent_source_id
-     , o.ontology_term_id parent_ontology_term_id
-     , s.name as display_name
-     , null
-     , s.definition
-     , 'hidden' as display_type
-     , null , null , null, null, null, null, null, null, null, null
-from sres.ontologyrelationship r
-   , sres.ontologyterm o
-   , sres.ontologyterm s
-   , sres.ontologyterm p
-where o.source_id = 'EUPATH_0043202' -- GEOHASH_CODE
-and o.ontology_term_id = r.OBJECT_TERM_ID
-and r.subject_term_id = s.ontology_term_id
-and r.predicate_term_id = p.ontology_term_id
-and p.SOURCE_ID = 'subClassOf'
 ";
 
 
