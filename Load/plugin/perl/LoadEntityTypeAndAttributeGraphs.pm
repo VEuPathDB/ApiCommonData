@@ -178,6 +178,7 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
                                                                  display_name => $ontologyTerm->{DISPLAY_NAME}, 
                                                                  display_type => $ontologyTerm->{DISPLAY_TYPE}, 
+                                                                 scope => $ontologyTerm->{SCOPE}, 
                                                                  display_range_min => $ontologyTerm->{DISPLAY_RANGE_MIN},
                                                                  display_range_max => $ontologyTerm->{DISPLAY_RANGE_MAX},
                                                                  bin_width_override => $ontologyTerm->{BIN_WIDTH_OVERRIDE},
