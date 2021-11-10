@@ -551,6 +551,7 @@ CREATE TABLE &1.AttributeGraph (
   display_order                number(3),
   definition                   varchar2(4000),
   display_type                    varchar2(20),
+  scope                    varchar2(32),
   display_range_min            varchar2(16),
   display_range_max            varchar2(16),
   is_merge_key                 number(1),

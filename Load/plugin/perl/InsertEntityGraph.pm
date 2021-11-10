@@ -452,7 +452,7 @@ sub loadNodes {
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
 
-    $self->addGeohash($charsForLoader);
+    $self->addGeohash($charsForLoader,$ontologyTermToIdentifiers);
 
     my $atts = encode_json($charsForLoader);
     $entity->setAtts($atts) unless($atts eq '{}');
@@ -475,7 +475,7 @@ sub loadNodes {
 }
 
 sub addGeohash {
-  my ($self, $hash) = @_;
+  my ($self, $hash, $ontologyTermToIdentifiers) = @_;
 
   my $geohashLength = 7;
 
@@ -498,6 +498,7 @@ sub addGeohash {
   for my $n (1 .. $geohashLength) {
     my $subvalue = substr($geohash, 0, $n);         
     my $geohashSourceId = $geohashSourceIds[$n - 1];
+    next unless $ontologyTermToIdentifiers->{QUALIFIER}->{$geohashSourceId};
     $self->error("Could not determine geohashSourceId for geohash=$geohash and length=$n") unless $geohashSourceId;
     $hash->{$geohashSourceId} = [$subvalue];
   }           
