@@ -323,13 +323,13 @@ sub mergeScript {
       $firstFile = 0;
       push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ALLTAB, $fileName));
       if( $fileInfo->{merge_key} ){
-        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
+        push(@scriptLines, sprintf('%s$%s = as.character(%s$"%s")', $ALLTAB, $TMK, $ALLTAB, $fileInfo->{merge_key}));
       }
     }
     else {
       push(@scriptLines, sprintf('%s <- fread("%s", header=T, sep="\t")', $ENTITYTAB, $fileName));
       if( $fileInfo->{merge_key} ){
-        push(@scriptLines, sprintf('%s$%s = %s$"%s"', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
+        push(@scriptLines, sprintf('%s$%s = as.character(%s$"%s")', $ENTITYTAB, $TMK, $ENTITYTAB, $fileInfo->{merge_key}));
         if($allMergedCols{$TMK}) { push(@mergeCols, $TMK) }
       }
       foreach my $idCol ( @{ $fileInfo->{id_cols} } ){
