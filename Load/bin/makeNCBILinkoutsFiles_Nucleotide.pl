@@ -71,7 +71,7 @@ while (my ($source_id) = $sth->fetchrow_array()) {
     $nucleotide{$linkId}->{ProviderId} = 5941;
     $nucleotide{$linkId}->{Database} = 'Nucleotide';
     $nucleotide{$linkId}->{Query} = $source_id;
-    $nucleotide{$linkId}->{Base} = '&amp;id=&contig.url;';
+    $nucleotide{$linkId}->{Base} = '&base.url;';
     $nucleotide{$linkId}->{Rule} = '&lo.pacc;';
 }
 

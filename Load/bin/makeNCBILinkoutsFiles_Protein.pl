@@ -71,7 +71,7 @@ while (my ($source_id, $primary_identifier) = $sth->fetchrow_array()) {
     $protein{$linkId}->{ProviderId} = 5941;
     $protein{$linkId}->{Database} = 'Protein';
     $protein{$linkId}->{ObjId} = $primary_identifier;
-    $protein{$linkId}->{Base} = '&amp;id=&gene.url;';
+    $protein{$linkId}->{Base} = '&base.url;';
     $protein{$linkId}->{Rule} = $source_id;
 
 }
