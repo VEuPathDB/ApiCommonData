@@ -328,12 +328,18 @@ sub addEntityTypeForNode {
   my $isaClassName = ref($node);
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
 
-  my $materialType = $node->getMaterialType();
+  my $materialOrAssayType;
+  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay') {
+    $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
+  }
+  else {
+    $materialOrAssayType = $node->getMaterialType();
+  }
 
   $self->userError("Node of value " . $node->getValue . " missing material type - unable to set typeId")
-    unless $materialType;
+    unless $materialOrAssayType;
 
-  my $mtKey = join("_", $materialType->getTerm, $isaType);
+  my $mtKey = join("_", $materialOrAssayType->getTerm, $isaType);
 
   if($self->{_ENTITY_TYPE_IDS}->{$mtKey}) {
     return $self->{_ENTITY_TYPE_IDS}->{$mtKey};
@@ -343,7 +349,7 @@ sub addEntityTypeForNode {
   $entityType->setStudyId($gusStudyId);
   $entityType->setIsaType($isaType);
 
-  my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialType, 0);
+  my $gusOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $materialOrAssayType, 0);
   $entityType->setTypeId($gusOntologyTerm->getId());
   $entityType->setName($gusOntologyTerm->getName());
 
