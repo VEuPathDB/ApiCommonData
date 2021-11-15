@@ -329,7 +329,7 @@ sub addEntityTypeForNode {
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
 
   my $materialOrAssayType;
-  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay') {
+  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay' and $node->getStudyAssay()) {
     $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
   }
   else {
