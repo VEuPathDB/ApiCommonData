@@ -64,7 +64,7 @@ ANAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.36111
 BNAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.0
 EOF
 
-my $getAddMoreDataStr = 'require ApiCommonData::Load::MBioResultsDir; ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => "lineage_abundance.tsv", wgsTaxa => "lineage_abundance.tsv", level4ECs => "level4ec.tsv", pathwayAbundances => "pathway_abundance.tsv", pathwayCoverages => "pathway_coverage.tsv"}, {amplicon => "Amplicon sequencing assay", wgs => "Whole genome sequencing assay"})->toGetAddMoreData';
+my $getAddMoreDataStr = 'require ApiCommonData::Load::MBioResultsDir; ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => "lineage_abundance.tsv", wgsTaxa => "lineage_abundance.tsv", level4ECs => "level4ec.tsv", pathwayAbundances => "pathway_abundance.tsv", pathwayCoverages => "pathway_coverage.tsv", eukdetectCpms => "eukdetect.lineage_abundance.tsv" }, {amplicon => "Amplicon sequencing assay", wgs => "Whole genome sequencing assay" })->toGetAddMoreData';
 
 my $getAddMoreData = eval $getAddMoreDataStr;
 diag $@ if $@;

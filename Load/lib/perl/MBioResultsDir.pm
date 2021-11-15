@@ -11,7 +11,6 @@ sub new {
   my ($class, $dir, $fileExtensions, $nodeTypes) = @_;
   die "node type for amplicon?" unless $nodeTypes->{amplicon};
   die "node type for wgs?" unless $nodeTypes->{wgs};
-  die "node type for eukdetect?" unless $nodeTypes->{eukdetect};
   return bless {
     dir => $dir,
     fileExtensions => $fileExtensions,
@@ -22,7 +21,7 @@ sub new {
 #<dataset>.<node name>.<file extension>
 sub mbioResultTablePath {
   my ($self, $datasetName, $nodeName, $suffix) = @_;
-  return $self->{dir} . "/" . join(".", $datasetName, $nodeName, $self->{fileExtensions}{$suffix});
+  return $self->{dir} . "/" . join(".", $datasetName, $nodeName, $self->{fileExtensions}{$suffix}//die "What's the file extension for $suffix?");
 }
 
 sub ampliconTaxa {
@@ -39,8 +38,6 @@ sub eukdetectCpms {
   say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? Trying path: $path";
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->eukdetectCpms($path);
-}
-
 }
 
 sub wgsTaxa {
@@ -77,6 +74,7 @@ sub mbioResultTablesForNodeName {
       $self->wgsTaxa($datasetName, $nodeName),
       $self->level4ECs($datasetName, $nodeName),
       $self->pathways($datasetName, $nodeName),
+      $self->eukdetectCpms($datasetName, $nodeName),
       )
     : ();
   return [grep {$_} @mbioResultTables];
