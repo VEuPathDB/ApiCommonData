@@ -231,6 +231,7 @@ sub munge {
 			}
 		}else{
 			my @all = split/\t/,$line;
+                        print $line;
 
 			#-- Floor the values to some pre-defiend threshold --#
 			my $hard_floor = 20;
@@ -239,6 +240,8 @@ sub munge {
 					$_ = 20;
 				}
 			}
+                        $line = join("\t",@all);
+                        print $line;
 
 			if ($hash{$all[0]}){
 			  print OUT $line;
