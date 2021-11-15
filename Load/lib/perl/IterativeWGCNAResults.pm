@@ -188,15 +188,21 @@ sub munge {
 	if($genetype eq 'exclude pseudogene'){
 		print "Excluding pseudogenes";
 		my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
-		my $sql = "SELECT source_id 
-									FROM apidbtuning.geneAttributes  
-									WHERE organism = '$organism' AND gene_type != 'pseudogene'";
-		my $stmt = $dbh->prepare($sql);
+		my $sql = "SELECT ga.source_id,
+       ta.length
+FROM apidbtuning.geneAttributes ga,
+  apidbtuning.transcriptAttributes ta
+WHERE ga.organism = '$organism'
+AND ga.gene_type != 'pseudogene'
+AND ga.gene_id = ta.gene_id";
+                my $stmt = $dbh->prepare($sql);
 		$stmt->execute();
 		my %hash;
+                my %hash_length;
 		
-		while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
+		while(my ($proteinCodingGenes, $transcript_length) = $stmt->fetchrow_array() ) {
 			$hash{$proteinCodingGenes} = 1;
+                        $hash_length{$proteinCodingGenes} = $transcript_length;
 		}
 	    
 		$stmt->finish();
@@ -234,10 +240,13 @@ sub munge {
                         print $line;
 
 			#-- Floor the values to some pre-defiend threshold --#
-			my $hard_floor = 20;
+			my $avg_unique_reads = 17357950;
+                        #-- Set floor to be 10 reads for now --#
+                        my $reads_threshold = 10;
+                        my $hard_floor = $reads_threshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
 			foreach(@all[1 .. $#all]){
-				if ($_ < 20) {
-					$_ = 20;
+				if ($_ < $hard_floor) {
+					$_ = $hard_floor;
 				}
 			}
                         $line = join("\t",@all);
