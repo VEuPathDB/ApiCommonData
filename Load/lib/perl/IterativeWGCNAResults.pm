@@ -22,6 +22,7 @@ sub getInputSuffixME              { $_[0]->{inputSuffixME} }
 sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
+sub getReadsThreshold              { $_[0]->{readsThreshold} }
 
 
 #-------------------------------------------------------------------------------
@@ -57,6 +58,7 @@ sub munge {
 	my $inputFile = $self->getInputFile();
 	my $organism = $self->getOrganism();
 	my $genetype = $self->getGeneType();
+	my $readsThreshold = $self->getReadsThreshold();
 	#--Version1: first strand processing  (only keep protein-coding gene in the input tpm file)-------------#
 	if($genetype eq 'protein coding'){
 	    my $outputFile = "Preprocessed_proteincoding_" . $inputFile;
@@ -189,20 +191,20 @@ sub munge {
 		print "Excluding pseudogenes";
 		my $outputFile = "Preprocessed_excludePseudogene_" . $inputFile;
 		my $sql = "SELECT ga.source_id,
-       ta.length
-FROM apidbtuning.geneAttributes ga,
-  apidbtuning.transcriptAttributes ta
-WHERE ga.organism = '$organism'
-AND ga.gene_type != 'pseudogene'
-AND ga.gene_id = ta.gene_id";
-                my $stmt = $dbh->prepare($sql);
+								ta.length
+							FROM apidbtuning.geneAttributes ga,
+								apidbtuning.transcriptAttributes ta
+							WHERE ga.organism = '$organism'
+							AND ga.gene_type != 'pseudogene'
+							AND ga.gene_id = ta.gene_id";
+		my $stmt = $dbh->prepare($sql);
 		$stmt->execute();
 		my %hash;
-                my %hash_length;
+		my %hash_length;
 		
 		while(my ($proteinCodingGenes, $transcript_length) = $stmt->fetchrow_array() ) {
 			$hash{$proteinCodingGenes} = 1;
-                        $hash_length{$proteinCodingGenes} = $transcript_length;
+			$hash_length{$proteinCodingGenes} = $transcript_length;
 		}
 	    
 		$stmt->finish();
@@ -242,15 +244,15 @@ AND ga.gene_id = ta.gene_id";
 			#-- Floor the values to some pre-defiend threshold --#
 			my $avg_unique_reads = 17357950;
                         #-- Set floor to be 10 reads for now --#
-                        my $reads_threshold = 10;
-                        my $hard_floor = $reads_threshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
+			# my $reads_threshold = 10;
+			my $hard_floor = $readsThreshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
 			foreach(@all[1 .. $#all]){
 				if ($_ < $hard_floor) {
 					$_ = $hard_floor;
 				}
 			}
-                        $line = join("\t",@all);
-                        print $line;
+			$line = join("\t",@all);
+			print $line;
 
 			if ($hash{$all[0]}){
 			  print OUT $line;
