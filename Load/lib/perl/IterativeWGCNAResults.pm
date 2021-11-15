@@ -230,12 +230,15 @@ sub munge {
 			}
 		}else{
 			my @all = split/\t/,$line;
-			#-- Filter based on total expression --#
-                        my $mytotal = 0;
+
+			#-- Keep genes if at least 3 samples have expression above threshold --#
+                        my $totalExpressors = 0;
                         foreach(@all[1 .. $#all]){
-                          $mytotal += $_;
+                         if ($_ > 20) {
+                           $totalExpressors += 1;
+                         }
                         }
-                        if ($mytotal > 20) {
+                        if ($totalExpressors > 2) {
 			  if ($hash{$all[0]}){
 				print OUT $line;
 			  }
