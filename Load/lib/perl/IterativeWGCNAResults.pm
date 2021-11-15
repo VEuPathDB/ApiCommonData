@@ -209,6 +209,7 @@ sub munge {
 			$line =~ s/\n//g;
 			if ($. == 1){
 					my @all = split("\t",$line);
+					print @all;
 					foreach(@all[1 .. $#all]){
 						$inputs{$_} = 1;
 					}
@@ -231,18 +232,17 @@ sub munge {
 		}else{
 			my @all = split/\t/,$line;
 
-			#-- Keep genes if at least 3 samples have expression above threshold --#
-                        my $totalExpressors = 0;
-                        foreach(@all[1 .. $#all]){
-                         if ($_ > 20) {
-                           $totalExpressors += 1;
-                         }
-                        }
-                        if ($totalExpressors > 2) {
-			  if ($hash{$all[0]}){
-				print OUT $line;
-			  }
-                        }
+			#-- Floor the values to some pre-defiend threshold --#
+			my $hard_floor = 20;
+			foreach(@all[1 .. $#all]){
+				if ($_ < 20) {
+					$_ = 20;
+				}
+			}
+
+			if ($hash{$all[0]}){
+			  print OUT $line;
+			}
 		}
 	}
 	close IN;
