@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://purl.obolibrary.org/obo/microbiome.owl#"
      xml:base="http://purl.obolibrary.org/obo/microbiome.owl"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:obo="http://purl.obolibrary.org/obo/">
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl"/>
     
 
@@ -829,7 +829,6 @@
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">StLouisNICU.txt::Method of delivery (newborn)</obo:IAO_0000115>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Source</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Baby&apos;s delivery mode</rdfs:label>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Delivery Mode</rdfs:label>
     </owl:Class>
     
@@ -2899,7 +2898,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:ISA_2>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Postmenstrual age at sample collection (days)</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Postmenstrual age at sample collection</rdfs:label>
     </owl:Class>
     
 
@@ -4241,6 +4240,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009190 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009190">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000612"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age at discharge</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Age at discharge</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009191 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009191">
@@ -5281,7 +5290,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009264">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009267"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plant detected</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plant taxon detected by sequence match</rdfs:label>
     </owl:Class>
     
 
@@ -5290,7 +5299,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009265">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009267"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animal detected</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Animal taxon detected by sequence match</rdfs:label>
     </owl:Class>
     
 
@@ -5299,7 +5308,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009266">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009267"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Protist detected</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Protist taxon detected by sequence match</rdfs:label>
     </owl:Class>
     
 
@@ -5308,7 +5317,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009267">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0200000"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taxon detected</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Taxon detected by sequence match</rdfs:label>
     </owl:Class>
     
 
@@ -5317,7 +5326,16 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009268">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009267"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fungus detected</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fungal taxon detected by sequence match</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009269 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009269">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0200000"/>
+        <rdfs:label xml:lang="en">Normalized number of taxon-specific sequence matches</rdfs:label>
     </owl:Class>
     
 
@@ -7292,9 +7310,19 @@
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Replicate</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- http://www.ebi.ac.uk/efo/EFO_0004344 -->
+
+    <owl:Class rdf:about="http://www.ebi.ac.uk/efo/EFO_0004344">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000649"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birthweight</obo:EUPATH_0000755>
+        <rdfs:label xml:lang="en">Birth weight</rdfs:label>
+    </owl:Class>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 4.2.4) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
 
