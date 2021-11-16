@@ -277,6 +277,9 @@ if( file.info(fileName)\$size == 0 ){
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 isDate = 0;
+if(!is.character(t\$V2)) {
+  t\$V2 = as.character(t\$V2);
+}
 if(is.character(t\$V3)) {
   t\$V3 = as.Date(t\$V3);
   isDate = 1;
