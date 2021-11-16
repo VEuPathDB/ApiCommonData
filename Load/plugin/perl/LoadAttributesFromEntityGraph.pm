@@ -268,25 +268,25 @@ sub truncateSummaryStat {
 }
 
 sub rCommandsForStats {
-  my $R_script = <<RSCRIPT;
+  my $R_script = <<'RSCRIPT';
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
-if( file.info(fileName)\$size == 0 ){
+if( file.info(fileName)$size == 0 ){
   quit('no')
 }
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 isDate = 0;
-if(!is.character(t\$V2)) {
-  t\$V2 = as.character(t\$V2);
+if(!is.character(t$V2)) {
+  t$V2 = as.character(t$V2);
 }
-if(is.character(t\$V3)) {
-  t\$V3 = as.Date(t\$V3);
+if(is.character(t$V3)) {
+  t$V3 = as.Date(t$V3);
   isDate = 1;
 }
 u = unique(t[,1:2]);
 subsetFxn = function(x, output){
-   v = subset(t, V1==x[1] & V2==x[2])\$V3
+   v = subset(t, V1==x[1] & V2==x[2])$V3
    data.min = min(v);
    data.max = max(v);
    data.mean = mean(v);
