@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/microbiome.owl">
-        <owl:versionInfo>2021-11-16</owl:versionInfo>
+        <owl:versionInfo>2021-11-17</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -1517,6 +1517,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000678 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000678">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Feeding</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000724 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
@@ -2779,7 +2789,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009090">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Virus detected</rdfs:label>
     </owl:Class>
     
@@ -3003,7 +3013,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009104">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bacteria detected</rdfs:label>
     </owl:Class>
     
@@ -3058,7 +3068,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009108">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fungus detected</rdfs:label>
     </owl:Class>
     
@@ -4056,6 +4066,7 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009177">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009171"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt::Nectrotizing Enterocolitis (NEC)</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NecrotizingEnterocolitis</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ResistomeAmplicon.txt::necrotizing_enterocolitis_status</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ResistomeWgs.txt::necrotizing_enterocolitis_status</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt</obo:EUPATH_0001001>
@@ -4602,6 +4613,16 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009214 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009214">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0001005>multifilter</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Bacterial culture</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009215 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009215">
@@ -5062,6 +5083,28 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009242 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009242">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009214"/>
+        <obo:EUPATH_0000755>BloodInfection</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Bacterial culture in blood</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009243 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009243">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009214"/>
+        <obo:EUPATH_0000755>UrineInfection</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Bacterial culture in urine</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0009244 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009244">
@@ -5347,6 +5390,50 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009270 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009270">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009214"/>
+        <obo:EUPATH_0000755>TrachealInfection</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Bacterial culture in tracheal</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009271 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009271">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009214"/>
+        <obo:EUPATH_0000755>OtherInfection</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Bacterial culture, other</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009272 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009272">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0036493"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MaternalAntimicrobials</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Maternal antibiotics administered</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0009273 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0009273">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000678"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EnteralFeeds_2mo</obo:EUPATH_0000755>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <rdfs:label xml:lang="en">Oral diet at 2 months of age</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010016 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010016">
@@ -5424,7 +5511,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011730 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011730">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000678"/>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breastfeeding</rdfs:label>
     </owl:Class>
@@ -5434,7 +5521,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011732 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011732">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000738"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000678"/>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diet</rdfs:label>
     </owl:Class>
