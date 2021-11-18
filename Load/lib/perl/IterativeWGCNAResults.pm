@@ -211,17 +211,10 @@ sub munge {
 	    
 		$stmt->finish();
 		#--- Calculate average unique reads for this dataset ---#
-		my $sqlUniqueReads = "select avg(avg_unique_reads)
+		my ($avg_unique_reads) = $dbh->selectrow_array("select avg(avg_unique_reads)
 													from apidbtuning.rnaseqstats
 													where dataset_name = '$datasetName'
-													group by dataset_name";
-		my $stmtUniqueReads = $dbh->prepare($sqlUniqueReads)
-		$stmtUniqueReads->execute();
-
-    my $avg_unique_reads
-		while(my ($value) = $stmtUniqueReads->fetchrow_array() ) {
-			$avg_unique_reads = $value;
-		}
+													group by dataset_name");
 
 		print "Dataset avg unique reads";
 		print $avg_unique_reads;
