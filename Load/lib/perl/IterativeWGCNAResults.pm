@@ -23,6 +23,7 @@ sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
 sub getReadsThreshold              { $_[0]->{readsThreshold} }
+sub getDatasetName            { $_[0]->{datasetName} }
 
 
 #-------------------------------------------------------------------------------
@@ -59,6 +60,7 @@ sub munge {
 	my $organism = $self->getOrganism();
 	my $genetype = $self->getGeneType();
 	my $readsThreshold = $self->getReadsThreshold();
+	my $datasetName = $self->getDatasetName();
 	#--Version1: first strand processing  (only keep protein-coding gene in the input tpm file)-------------#
 	if($genetype eq 'protein coding'){
 	    my $outputFile = "Preprocessed_proteincoding_" . $inputFile;
@@ -208,6 +210,22 @@ sub munge {
 		}
 	    
 		$stmt->finish();
+		#--- Calculate average unique reads for this dataset ---#
+		my $sqlUniqueReads = "select avg(avg_unique_reads)
+													from apidbtuning.rnaseqstats
+													where dataset_name = '$datasetName'
+													group by dataset_name";
+		my $stmtUniqueReads = $dbh->prepare($sqlUniqueReads)
+		$stmtUniqueReads->execute();
+
+    my $avg_unique_reads
+		while(my ($value) = $stmtUniqueReads->fetchrow_array() ) {
+			$avg_unique_reads = $value;
+		}
+
+		print "Dataset avg unique reads";
+		print $avg_unique_reads;
+
 		#-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
 		open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 		open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
@@ -225,9 +243,11 @@ sub munge {
 		}
 	close IN;
 	
+	#-- Write lines to wgcna input file and apply floor expression value --#
 	open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 	while (my $line = <IN>){
 		if ($. == 1){
+			#-- Heading --#
 			my @all = split/\t/,$line;
 			$all[0] = 'Gene';
 			my $new_line = join("\t",@all);
@@ -238,19 +258,18 @@ sub munge {
 				$inputs{$_} = 1;
 			}
 		}else{
+			#-- Each line describes one gene --#
 			my @all = split/\t/,$line;
-                        print $line;
+			print $line;
 
-			#-- Floor the values to some pre-defiend threshold --#
-			my $avg_unique_reads = 17357950;
-                        #-- Set floor to be 10 reads for now --#
-			# my $reads_threshold = 10;
+			#-- Calculate and apply the floor based on the pre-defiend readsThreshold --#
 			my $hard_floor = $readsThreshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
 			foreach(@all[1 .. $#all]){
 				if ($_ < $hard_floor) {
 					$_ = $hard_floor;
 				}
 			}
+
 			$line = join("\t",@all);
 			print $line;
 
