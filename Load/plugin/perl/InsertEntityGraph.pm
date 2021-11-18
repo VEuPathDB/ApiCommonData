@@ -315,7 +315,7 @@ sub loadStudy {
 
   $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
 
-  if(($self->{_max_attr_value}//0) > $gusStudy->getMaxAttrLength()) {
+  if(! $gusStudy->getMaxAttrLength() || ($self->{_max_attr_value} //0) > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
     $gusStudy->submit();
   }
