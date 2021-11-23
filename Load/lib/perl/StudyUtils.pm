@@ -2,10 +2,17 @@ package ApiCommonData::Load::StudyUtils;
 
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(queryForOntologyTerms getSchemaFromRowAlgInvocationId);
+@EXPORT = qw(
+queryForOntologyTerms
+getSchemaFromRowAlgInvocationId
+getTermsByAnnotationPropertyValue
+);
 
 use strict;
 use warnings;
+
+use JSON;
+use Data::Dumper;
 
 sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId) = @_;
@@ -80,6 +87,37 @@ printf STDERR ("SCHEMA = $schema\n");
   return $schema;
 }
 
+sub getTermsAnnotationProperties {
+  my ($dbh, $extDbRlsId) = @_;
 
+  my $sql = "SELECT o2.source_id,o.ANNOTATION_PROPERTIES
+FROM sres.ONTOLOGYSYNONYM o
+LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
+and o.ANNOTATION_PROPERTIES IS NOT NULL";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+  my %attsHash;
+  while(my $hash = $sh->fetchrow_hashref()) {
+    $attsHash{$hash->{SOURCE_ID}} = from_json($hash->{ANNOTATION_PROPERTIES});
+  }
+  return \%attsHash;
+}
+
+sub getTermsByAnnotationPropertyValue {
+  my($dbh, $rowAlgInvocationId, $property, $match) = @_;
+  my $attsHash = getTermsAnnotationProperties($dbh,$rowAlgInvocationId);
+  my %terms;
+  while( my ($sourceId, $atts) = each %$attsHash){
+    next unless $atts->{$property};
+    foreach my $value (@{$atts->{$property}}){
+      if($value eq $match){
+        $terms{$sourceId} = 1;
+      }
+    }
+  }
+  return \%terms;
+}
 
 1;

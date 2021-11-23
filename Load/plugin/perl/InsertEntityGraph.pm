@@ -315,7 +315,7 @@ sub loadStudy {
 
   $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
 
-  if($self->{_max_attr_value} > $gusStudy->getMaxAttrLength()) {
+  if(! $gusStudy->getMaxAttrLength() || ($self->{_max_attr_value} //0) > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
     $gusStudy->submit();
   }
@@ -329,7 +329,7 @@ sub addEntityTypeForNode {
   my($isaType) = $isaClassName =~ /\:\:(\w+)$/;
 
   my $materialOrAssayType;
-  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay') {
+  if(blessed($node) eq 'CBIL::ISA::StudyAssayEntity::Assay' and $node->getStudyAssay()) {
     $materialOrAssayType = $node->getStudyAssay()->getAssayMeasurementType(); 
   }
   else {
@@ -447,7 +447,7 @@ sub loadNodes {
         # keep only unique values, no duplicates
       $charsForLoader->{$charQualifierSourceId}->{$charValue}=1;
 
-      if(length $charValue > $self->{_max_attr_value}) {
+      if( length $charValue > ($self->{_max_attr_value}//0)) {
         $self->{_max_attr_value} = length $charValue;
       }
 

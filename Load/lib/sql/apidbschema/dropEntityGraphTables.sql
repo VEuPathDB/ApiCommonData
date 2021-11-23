@@ -1,5 +1,13 @@
 set CONCAT OFF;
 
+DROP TABLE &1.StudyCharacteristic;
+DROP SEQUENCE &1.StudyCharacteristic_sq;
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'studycharacteristic'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = '&1');
+
 DROP TABLE &1.AttributeGraph;
 DROP SEQUENCE &1.AttributeGraph_sq;
 DELETE FROM core.TableInfo

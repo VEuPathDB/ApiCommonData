@@ -18,7 +18,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsByAnnotationPropertyValue);
 
 use JSON;
 
@@ -32,6 +32,8 @@ my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
+
+my $TERMS_FORCED_TO_STRING = {};
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
@@ -159,6 +161,8 @@ sub run {
 
   $self->getQueryHandle()->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getQueryHandle()->errstr;
 
+  my $dbh = $self->getQueryHandle();
+  my $ontologyExtDbRlsSpec = $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec'));
 
   my $studiesCount;
   while(my ($studyId, $maxAttrLength) = each (%$studies)) {
@@ -166,8 +170,9 @@ sub run {
 
     my $entityTypeIds = $self->queryForEntityTypeIds($studyId);
 
-    my $ontologyTerms = &queryForOntologyTerms($self->getQueryHandle(), $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
+    $TERMS_FORCED_TO_STRING = &getTermsByAnnotationPropertyValue($dbh, $ontologyExtDbRlsSpec,'forceStringType','yes') ;
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -263,22 +268,25 @@ sub truncateSummaryStat {
 }
 
 sub rCommandsForStats {
-  my $R_script = <<RSCRIPT;
+  my $R_script = <<'RSCRIPT';
 args = commandArgs(trailingOnly = TRUE);
 fileName = args[1];
-if( file.info(fileName)\$size == 0 ){
+if( file.info(fileName)$size == 0 ){
   quit('no')
 }
 outputFileName = args[2];
 t = read.table(fileName, header=FALSE);
 isDate = 0;
-if(is.character(t\$V3)) {
-  t\$V3 = as.Date(t\$V3);
+if(!is.character(t$V2)) {
+  t$V2 = as.character(t$V2);
+}
+if(is.character(t$V3)) {
+  t$V3 = as.Date(t$V3);
   isDate = 1;
 }
 u = unique(t[,1:2]);
 subsetFxn = function(x, output){
-   v = subset(t, V1==x[1] & V2==x[2])\$V3
+   v = subset(t, V1==x[1] & V2==x[2])$V3
    data.min = min(v);
    data.max = max(v);
    data.mean = mean(v);
@@ -578,7 +586,7 @@ sub loadAttributes {
 ######
 
         my $cs = $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} // {};
-        my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($cs, $value);
+        my ($updatedCs, $stringValue, $numberValue, $dateValue) = $self->typedValueForAttribute($attributeStableId, $cs, $value);
         $typeCountsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId} = $updatedCs;
 
         if($dateValue) {
@@ -642,7 +650,7 @@ sub annPropsAndValues {
 }
 
 sub typedValueForAttribute {
-  my ($self, $counts, $value, $dateValsFh, $numericValsFh) = @_;
+  my ($self, $attributeStableId, $counts, $value) = @_;
 
   my ($stringValue, $numberValue, $dateValue); 
 
@@ -652,6 +660,16 @@ sub typedValueForAttribute {
   $valueNoCommas =~ tr/,//d;
 
   $counts->{_VALUES}->{$value}++;
+
+  #####################################################
+  ## Abort if annotation property forceStringType = yes
+  ## which is loaded into SRes.OntologySynonym.Annotation_Properties
+  ## by the step _updateOntologySynonym_owlAttributes
+  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
+    $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
+    return $counts, $stringValue, $numberValue, $dateValue;
+  }
+  #####################################################
 
   if(looks_like_number($valueNoCommas) && lc($valueNoCommas) ne "nan" && lc($valueNoCommas) ne "inf") {
     # looks_like_number() considers these numbers: nan=not a number, inf=infinity 

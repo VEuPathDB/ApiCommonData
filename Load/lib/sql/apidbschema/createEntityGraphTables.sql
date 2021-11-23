@@ -79,8 +79,10 @@ CREATE SEQUENCE &1.EntityType_sq;
 GRANT SELECT ON &1.EntityType_sq TO gus_w;
 GRANT SELECT ON &1.EntityType_sq TO gus_r;
 
-CREATE INDEX &1.entitytype_ix_1 ON &1.entitytype (study_id, entity_type_id) TABLESPACE indx;
-CREATE INDEX &1.entitytype_ix_2 ON &1.entitytype (type_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_1 ON &1.entitytype (study_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_2 ON &1.entitytype (type_id, entity_type_id) TABLESPACE indx;
+CREATE UNIQUE INDEX &1.entitytype_ix_3 ON &1.entitytype (study_id, internal_abbrev) TABLESPACE indx;
+
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
