@@ -45,7 +45,7 @@ subtest 'abundances cpms' => sub {
 sub testAlphaDiversity {
   my ($label, $t) = @_;
   subtest $label => sub {
-    is($t->([]), 0, "diversity of no population is zero");
+    is($t->([]), undef, "diversity of no population is undefined");
     ok($t->([1,2,3]) > 0, "diversity of two or more taxa is positive");
     ok($t->([1,2,3,4]) == $t->([10,20,30,40]), "diversity uses relative values");
     ok($t->([1,2,3,4]) > $t->([1,2,3]), "additional taxa -> more diversity");
