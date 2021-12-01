@@ -70,10 +70,10 @@ sub munge {
 										WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
 				my $stmt = $dbh->prepare($sql);
 				$stmt->execute();
-				my %hash;
+				my %proteinCodingGenesHash;
 				
 				while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
-					$hash{$proteinCodingGenes} = 1;
+					$proteinCodingGenesHash{$proteinCodingGenes} = 1;
 				}
 				
 				$stmt->finish();
@@ -82,75 +82,97 @@ sub munge {
 				open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
 				
 				my %inputs;
-				while (my $line = <IN>){
-					$line =~ s/\n//g;
-					if ($. == 1){
-						my @all = split("\t",$line);
-						foreach(@all[1 .. $#all]){
-							$inputs{$_} = 1;
-						}
-					}
+				my $header = <IN>;
+				chomp $header;  # removes new line chars
+				my @headers = split("\t",$header)  # returns array
+				foreach my $headerValue (@headers[1 .. $#headers]) {
+					$inputs{$headerValue} = 1;
 				}
-				close IN;
+				# could also print OUT join(....)
+				# make first one gene
+				$headers[0] = 'Gene';
+				print OUT join("\t",@headers);
+
+				# while (my $line = <IN>){
+				# 	$line =~ s/\n//g; # chomp $line
+				# 	if ($. == 1){
+				# 		my @all = split("\t",$line);
+				# 		foreach(@all[1 .. $#all]){
+				# 			$inputs{$_} = 1;
+				# 		}
+				# 	}
+				# }
+				# close IN;
 				
-				open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+				# open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+				# now we're reading the second line because we already read the first. Perl-special :)
 				while (my $line = <IN>){
-					if ($. == 1){
-							my @all = split/\t/,$line;
-							$all[0] = 'Gene';
-							my $new_line = join("\t",@all);
-							print OUT $new_line;
+					# Whenever we parse file, 1. give me line. 2. call chomp which removes all eols.
+					# camel case for vars
+					# if ($. == 1){
+					# 		my @all = split/\t/,$line;
+					# 		$all[0] = 'Gene';
+					# 		# my $newLine = join("\t",@all); # maybe redundant?
+					# 		print OUT join("\t",@all);
 							
-							foreach(@all[1 .. $#all]){
-								@all = grep {s/^\s+|\s+$//g; $_ } @all;
-								$inputs{$_} = 1;
-							}
-					}else{
-							my @all = split/\t/,$line;
-							if ($hash{$all[0]}){
-								print OUT $line;
-							}
+					# 		@all = map {s/^\s+|\s+$//g; $_ } @all;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
+					# 		# only need to do header things once. Read through file only once. Can possibly exclude 84-89. Can hopefully be replaced by chomp!
+					# 		foreach(@all[1 .. $#all]){
+					# 			$inputs{$_} = 1;
+					# 		}
+					# }else{
+					my @all = split/\t/,$line;
+					if ($proteinCodingGenesHash{$all[0]}){
+						print OUT $line;
 					}
+					# }
 				}
 				close IN;
 				close OUT;
 
-				my $commForPermission = "chmod g+w $outputFile";
-				system($commForPermission);
+				# my $commForPermission = "chmod g+w $outputFile"; 
+				# system($commForPermission);
 				#-------------- run IterativeWGCNA docker image -----#
-				my $comm = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs";
-				system($comm);
+				# my $comm = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs";
+				# system($comm);
+				# use perl's make dir
+				# perl wants double quotes to understand $var. single quotes are literal
+				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs"); # dont need chmod
 				my $outputDir = $mainDirectory . "/FirstStrandProteinCodingOutputs";
 
 				my $inputFileForWGCNA = "$mainDirectory/$outputFile";
 				my $command = "singularity run  docker://jbrestel/iterative-wgcna -i $inputFileForWGCNA  -o  $outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25";
 				#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
-				
-				my $results  =  system($command);
+				# note - check to see if we have a veupathdb wgcna docker. if yes, can swap out the jbrestel version
+
+				# perl continues to run regardless of exit from system command. Have to handle errors
+				my $results  =  system($command);  # will return exit status
 				
 				#-------------- parse Module Membership -----#
+				# remove all chmods, replace with perl mkdir
 				my $commgw = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading";
 				system($commgw);
 				my $outputDirModuleMembership = "$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading/";
 				
 				open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
 				my %MMHash;
+				# Can we do all this while reading the file?
+				# Would want to print to each file. Would need hash with file name, module. 
+				# could end by looping over and closing all.
+				# In general, don't read into memory if we don't have to!
+				<MM>; # removing header
 				while (my $line = <MM>) {
-					if ($. == 1){
-							next;
-					}else{
-							chomp($line);
-							$line =~ s/\r//g;
-							my @all = split/\t/,$line;
-							push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n";
-					}
+					chomp($line);
+					# $line =~ s/\r//g; # consider command line tools for converting from mac to unix 
+					my @all = split/\t/,$line;
+					push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n"; # also can just exclude Unclassified things
 				}
 				close MM;
 				
 				my @files;
 				my @modules;
 				my @allKeys = keys %MMHash;
-				my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; 
+				my @ModuleNames = grep { $_ ne 'UNCLASSIFIED' } @allKeys; # removes unclassifieds
 				for my $i(@ModuleNames){
 					push @modules,$i . " " . $self->getInputSuffixMM() . " " . "ProteinCoding";
 					push @files,"$i" . "_1st" . "\.txt" . " " . $self->getInputSuffixMM() . " " . "ProteinCoding" ;
@@ -166,24 +188,27 @@ sub munge {
 					push @{$inputProtocolAppNodesHash{$_}}, map { $_ . " " . $self->getInputSuffixMM() } sort keys %inputs;
 				}
 				
+				# Sets things for config file. What my instance of this object did (parameters)
 				$self->setInputProtocolAppNodesHash(\%inputProtocolAppNodesHash);
 				$self->setNames(\@modules);                                                                                           
 				$self->setFileNames(\@files);
 				$self->setProtocolName("WGCNA");
 				$self->setSourceIdType("gene");
-				$self->createConfigFile();
+				$self->createConfigFile(); # writes the config row
 				
 				#-------------- parse Module Eigengene -----#
 				#-- copy module_egene file to one upper dir and the run doTranscription --#
-				my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
-													mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand_ProteinCoding.txt ";
-				my $CPresults  =  system($CPcommand);
+				# my $CPcommand = "cp  $outputDir/merged-0.25-eigengenes.txt  . ; 
+				# 									mv merged-0.25-eigengenes.txt merged-0.25-eigengenes_1stStrand_ProteinCoding.txt "; # rename while copying!
+				# my $CPresults  =  system($CPcommand);
 				
+				# Also something like sourceIdType. Default is "gene". In this case should probably be "eigengene" so that the plugin knows.
 				my $egenes = CBIL::TranscriptExpression::DataMunger::NoSampleConfigurationProfiles->new(
-			{mainDirectory => "$mainDirectory", inputFile => "merged-0.25-eigengenes_1stStrand_ProteinCoding.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
+			{mainDirectory => "$mainDirectory", inputFile => "$outputDir/merged-0.25-eigengenes.txt",makePercentiles => 0,doNotLoad => 0, profileSetName => "$profileSetName"}
 			);
 				$egenes ->setTechnologyType("RNASeq");
-				$egenes->setProtocolName("WGCNAME");
+				$egenes->setProtocolName("WGCNAModuleEigengenes"); # Will be consumed by the loader (insertAnalysisResults plugin). Also need to change it in the plugin
+				$egenes->createConfigFile(); # writes the config row
 				
 				$egenes ->munge();
 				
