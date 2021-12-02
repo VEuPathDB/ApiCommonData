@@ -451,7 +451,7 @@ sub loadNodes {
 
       if (ref $charValue eq 'HASH'){
         #MBio children
-        $charsForLoader->{$charQualifierSourceId} = $charValue;
+        $charsForLoader->{$charQualifierSourceId} = [$charValue];
         for my $v (values %$charValue){
            
           $self->updateMaxAttrValue(ref $v eq 'ARRAY' ? $v->[1] : ref $v ? die "Unexpected ref: " . ref $v :  $v);

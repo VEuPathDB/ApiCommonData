@@ -22,7 +22,7 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
       my $unitType = $self->{unitType};
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", "function_${unitType}_species", undef, undef); 
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", undef, undef, undef); 
     },
   },
   wgsPathways => {
@@ -73,17 +73,17 @@ sub entitiesForSampleFunctions {
       $key .= ", $species";
       $displayName .= ", $species";
     }
-    $key =~ s{[^A-Za-z_.0-9]+}{_}g;
+    $key =~ s{[^A-Za-z_0-9]+}{_}g;
     if(length $key > 255) {
       die "Key unexpectedly long: $key";
     }
     if($abundance){
       my $n = $species ? $detailedAbundanceName : $summaryAbundanceName;
-      $result{$n}{$key} = [$displayName, $abundance];
+      $result{$n}{$key} = [$displayName, $abundance] if $n;
     }
     if($coverage && $summaryCoverageName && $detailedCoverageName){
       my $n = $species ? $detailedCoverageName : $summaryCoverageName;
-      $result{$n}{$key} = [$displayName, $coverage];
+      $result{$n}{$key} = [$displayName, $coverage] if $n;
     }
   }
   return \%result;
@@ -130,7 +130,7 @@ sub entitiesForSampleAggregatedAbundance {
         my ($x, $y) = split(";", $key, 2);
         $key = $x .";...".substr($y, (length $y) - (255 - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
       }
-      $key =~ s{[^A-Za-z_.0-9]+}{_}g;
+      $key =~ s{[^A-Za-z_0-9]+}{_}g;
       $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
     }
   }
