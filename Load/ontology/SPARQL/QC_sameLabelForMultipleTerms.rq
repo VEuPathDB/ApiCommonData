@@ -8,6 +8,7 @@ SELECT ?label
   (COUNT(DISTINCT ?sid) AS ?sid_count)
   (GROUP_CONCAT(DISTINCT ?sid;separator="|") AS ?SIDs)
   (GROUP_CONCAT(DISTINCT ?termType;separator="|") AS ?termTypes)
+  (COUNT(DISTINCT ?parent_label) AS ?parent_count)
   (GROUP_CONCAT(DISTINCT ?parent_label;separator="|") AS ?Parent_labels)
 WHERE {
   ?entity a owl:Class .
@@ -17,14 +18,16 @@ WHERE {
 	?parent_entity rdfs:label ?plabel .
   }
   OPTIONAL {
-	?entity obo:EUPATH_0001005 ?termType .
+	?entity obo:EUPATH_0001005 ?tType .
   }
+  BIND (IF(bound(?tType), ?tType, "") AS ?termType) .
   BIND (str(?org_label) AS ?label) .
   BIND (str(?plabel) AS ?parent_label) .
   BIND(COALESCE(
 	IF(CONTAINS(STR(?entity), "/obo/"), STRAFTER(STR(?entity), "/obo/"), ?c), 
 	IF(CONTAINS(STR(?entity), "/efo/"), STRAFTER(STR(?entity), "/efo/"), ?c),
- 	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid)
+ 	REPLACE(STRAFTER(STR(?entity), "/ontology/"), "/", "_")) AS ?sid) 
+  FILTER(str(?termType) != "value")
 }
 GROUP BY ?label
 HAVING (?sid_count > 1)

@@ -392,6 +392,12 @@ sub addAttributeUnit {
   $attributeValue->submit(undef, 1);
 }
 
+sub updateMaxAttrValue {
+  my ($self, $charValue) = @_;
+  if( length $charValue > ($self->{_max_attr_value}//0)) {
+    $self->{_max_attr_value} = length $charValue;
+  }
+}
 
 sub loadNodes {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap) = @_;
@@ -403,6 +409,7 @@ sub loadNodes {
 
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
+    my $charsForLoaderUniqueValues = {};
 
     if($nodeToIdMap->{$node->getValue()}) {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
@@ -442,18 +449,25 @@ sub loadNodes {
         $charValue = $characteristic->getTerm();
       }
 
-      $charValue =~ s/\r//;
+      if (ref $charValue eq 'HASH'){
+        #MBio children
+        $charsForLoader->{$charQualifierSourceId} = [$charValue];
+        for my $v (values %$charValue){
+           
+          $self->updateMaxAttrValue(ref $v eq 'ARRAY' ? $v->[1] : ref $v ? die "Unexpected ref: " . ref $v :  $v);
+        }
+      } else {
+        die "Unexpected ref type? " . ref $charValue if ref $charValue;
+        $charValue =~ s/\r//;
+        $self->updateMaxAttrValue($charValue);
+        $charsForLoaderUniqueValues->{$charQualifierSourceId}->{$charValue}=1;
 
-        # keep only unique values, no duplicates
-      $charsForLoader->{$charQualifierSourceId}->{$charValue}=1;
-
-      if( length $charValue > ($self->{_max_attr_value}//0)) {
-        $self->{_max_attr_value} = length $charValue;
       }
-
+      
     }
     # Convert hashref to arrayref
-    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoader){
+    # makes sure there is no duplicates
+    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoaderUniqueValues){
       my @charValues = keys %$charValuesHashref;
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
@@ -701,9 +715,7 @@ sub getProcessAttributesHash {
         }
       }
       
-      if(length $ppValue > $self->{_max_attr_value}) {
-        $self->{_max_attr_value} = length $ppValue;
-      }
+      $self->updateMaxAttrValue($ppValue);
     }
   }
   return \%rv;

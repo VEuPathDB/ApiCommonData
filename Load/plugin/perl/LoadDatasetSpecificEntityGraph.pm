@@ -102,7 +102,9 @@ sub run {
       $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
       $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
-      $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+      if ($self->countWideTableColumns($entityTypeId) <= 1000){
+        $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+      }
     }
   }
 
@@ -155,7 +157,11 @@ where entity_type_id = $entityTypeId";
 
   return \@entityColumnStrings, \@processColumnStrings;
 }
-
+sub countWideTableColumns {
+  my ($self, $entityTypeId) = @_;
+  my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
+  return 0 + @{$entityColumnStrings} +  @{$processColumnStrings};
+}
 
 sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
