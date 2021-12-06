@@ -5,6 +5,9 @@ use warnings;
 use base qw/ApiCommonData::Load::MBioResultsTable/;
 use List::Util qw/sum/;
 
+# needs to make a column for a wide table
+my $MAX_PROPERTY_NAME_LENGTH = 110;
+
 $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
   ampliconTaxa => {
     entitiesForSample => sub {
@@ -74,7 +77,7 @@ sub entitiesForSampleFunctions {
       $displayName .= ", $species";
     }
     $key =~ s{[^A-Za-z_0-9]+}{_}g;
-    if(length $key > 255) {
+    if(length $key > $MAX_PROPERTY_NAME_LENGTH) {
       die "Key unexpectedly long: $key";
     }
     if($abundance){
@@ -126,11 +129,14 @@ sub entitiesForSampleAggregatedAbundance {
       } else {
         ($displayName = $key) =~ s{.*;}{};
       }
-      if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > 255){
+      if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > $MAX_PROPERTY_NAME_LENGTH){
         my ($x, $y) = split(";", $key, 2);
-        $key = $x .";...".substr($y, (length $y) - (255 - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
+        $key = $x .";...".substr($y, (length $y) - ($MAX_PROPERTY_NAME_LENGTH - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
       }
       $key =~ s{[^A-Za-z_0-9]+}{_}g;
+      if (length $key > $MAX_PROPERTY_NAME_LENGTH){
+        die "Key unexpectedly long: $key";
+      }
       $result{$levelNames->[$taxonLevel]}{$key} = [$displayName, $value];
     }
   }
