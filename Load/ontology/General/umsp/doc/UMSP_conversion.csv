@@ -48,16 +48,13 @@ http://purl.obolibrary.org/obo/EUPATH_0010084,MUAC,muac,3,umsp,,Participant,http
 http://purl.obolibrary.org/obo/EUPATH_0040017,Alcohol use,alcoholuse,,umsp,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,Alcohol use,"1 - Yes
 0 - No
 9 - Missing",variable,,,,UMSP Surveillance,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0040012,Disability,disability,,umsp,,Participant,http://purl.obolibrary.org/obo/EUPATH_0042161,Medical history,Any form of disability present,"0 - No
-1 - Yes
-9 - Missing",variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/EUPATH_0040016,Tobacco use,tobaccouse,,umsp,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,Tobacco use,"1 - Yes
 0 - No
 9 - Missing",variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/PATO_0000047,Sex,sex,,umsp,,Participant,http://purl.obolibrary.org/obo/EUPATH_0010981,Demographics,Sex of patient,"0 - Male
 1 - Female
 9 - Missing",variable,,,,UMSP Surveillance,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0040018,Malaria suspected,malariasuspected,1,umsp,,Participant,http://purl.obolibrary.org/obo/OGMS_0000073,Diagnosis,Whether malaria was suspected = any malaria test result OR clinical diagnosis of malaria without test result,"0 - No
+http://purl.obolibrary.org/obo/EUPATH_0040018,Malaria suspected,malariasuspected,1,umsp,Whether any kind of malaria test was performed or the participant was given a clinical diagnosis of malaria without a test result,Participant,http://purl.obolibrary.org/obo/OGMS_0000073,Diagnosis,Whether malaria was suspected = any malaria test result OR clinical diagnosis of malaria without test result,"0 - No
 1 - Yes",variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/EUPATH_0000090,Malaria diagnosis,clinicalmalaria,2,umsp,,Participant,http://purl.obolibrary.org/obo/OGMS_0000073,Diagnosis,Whether given a clinical diagnosis of malaria,"0 - No
 1 - Yes",variable,,,,UMSP Surveillance,,,,,,,,,
@@ -110,7 +107,6 @@ http://purl.obolibrary.org/obo/EUPATH_0040011,Palliative care referal,paliativec
 0 - No
 9 - Missing",variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,,,Sample,http://www.w3.org/2002/07/owl#Thing,,,,category,,,,UMSP Surveillance,,,,,everywhere,,,,
-http://purl.obolibrary.org/obo/EUPATH_0040023,Malaria test performed,notestifsuspected,,umsp,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,,,variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/EUPATH_0040010,Plasmodium test type,malariatestdone,,umsp,,Sample,http://purl.obolibrary.org/obo/EUPATH_0021130,Blood eukaryote testing,Type of malaria test done,"1 - Microscopy
 2 - RDT
 3 - Not Done
@@ -125,4 +121,12 @@ http://purl.obolibrary.org/obo/EUPATH_0033244,"Plasmodium, by multiple methods",
 2 - Missing
 9 - Not applicable",variable,,,,UMSP Surveillance,,,,,,,,,
 http://purl.obolibrary.org/obo/OGMS_0000056,Laboratory test,,,,,Sample,http://purl.obolibrary.org/obo/EUPATH_0000609,Sample,,,category,,,,UMSP Surveillance,,,,,,,,,
-http://purl.obolibrary.org/obo/EUPATH_0042161,Medical history,,,,,Participant,http://purl.obolibrary.org/obo/OGMS_0000015,Clinical history,,,multifilter,,,,UMSP Surveillance,,,,,,,,,
+http://purl.obolibrary.org/obo/OBI_0001620,Latitude,latitude,1,UMSP site coordinates,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,Latitude,,variable,,,,UMSP Surveillance,,degrees,http://purl.obolibrary.org/obo/UO_0000185,,variableTree,,,,
+http://purl.obolibrary.org/obo/OBI_0001621,Longitude,longitude,2,UMSP site coordinates,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,Longitude,,variable,,,,UMSP Surveillance,,degrees,http://purl.obolibrary.org/obo/UO_0000185,,variableTree,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043203,GEOHASH 1,,3,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043204,GEOHASH 2,,4,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043205,GEOHASH 3,,5,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043206,GEOHASH 4,,6,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043207,GEOHASH 5,,7,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043208,GEOHASH 6,,8,,,Household,http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,,"variable,derived",,,,UMSP Surveillance,,,,,everywhere,,,,
+http://purl.obolibrary.org/obo/EUPATH_0043212,Geolocation,,9,,,Household,http://purl.obolibrary.org/obo/GAZ_00000448,Geographic location,,,category,,,,UMSP Surveillance,,,,,,,,,
