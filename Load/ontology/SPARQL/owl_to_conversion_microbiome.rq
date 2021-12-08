@@ -6,14 +6,17 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 
 SELECT distinct ?IRI 
   (GROUP_CONCAT(DISTINCT ?slabel;separator=" | ") AS ?label)
-  (GROUP_CONCAT(DISTINCT ?dOrder;separator=" | ") AS ?displayOrder)
   (GROUP_CONCAT(DISTINCT ?var;separator=" | ") AS ?variable)
+  (GROUP_CONCAT(DISTINCT ?dFile;separator=" | ") AS ?dataFile)
   (GROUP_CONCAT(DISTINCT ?def;separator=" | ") AS ?definition)
   (GROUP_CONCAT(DISTINCT ?cValues;separator=" | ") AS ?codebookValues)
-  (GROUP_CONCAT(DISTINCT ?pLabel;separator=" | ") AS ?parentLabel)
   (GROUP_CONCAT(DISTINCT ?pIRI;separator=" | ") AS ?parentIRI)
+  (GROUP_CONCAT(DISTINCT ?pLabel;separator=" | ") AS ?parentLabel)
   (GROUP_CONCAT(DISTINCT ?tType;separator=" | ") AS ?termType)
   (GROUP_CONCAT(DISTINCT ?rep;separator=" | ") AS ?replaces)
+  (GROUP_CONCAT(DISTINCT ?cate;separator=" | ") AS ?category)
+  (GROUP_CONCAT(DISTINCT ?isa_t;separator=" | ") AS ?ISA_Type)
+  (GROUP_CONCAT(DISTINCT ?isa_p;separator=" | ") AS ?ISA_Parent)
 WHERE {
 	?IRI a owl:Class .
 	?IRI rdfs:label ?tlabel .
@@ -21,11 +24,14 @@ WHERE {
      	OPTIONAL {
         	?IRI obo:EUPATH_0000755 ?var .
     	} 
-    	OPTIONAL {
-        	?IRI obo:EUPATH_0001004 ?cValues .
-    	}
+     	OPTIONAL {
+        	?IRI obo:EUPATH_0001001 ?dFile .
+    	} 
     	OPTIONAL {
         	?IRI obo:IAO_0000115 ?def .
+    	}
+   	OPTIONAL {
+        	?IRI obo:EUPATH_0001004 ?cValues .
     	}
 	OPTIONAL {
 		?IRI rdfs:subClassOf ?pIRI .
@@ -39,6 +45,15 @@ WHERE {
     	}
         OPTIONAL {
             ?IRI obo:EUPATH_0001006 ?rep .
+        }
+        OPTIONAL {
+            ?IRI obo:EUPATH_0001002 ?cate .
+        }
+        OPTIONAL {
+            ?IRI obo:ISA_1 ?isa_t .
+        }
+        OPTIONAL {
+            ?IRI obo:ISA_2 ?isa_p .
         }
 }
 GROUP BY ?IRI

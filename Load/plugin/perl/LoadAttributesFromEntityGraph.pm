@@ -623,11 +623,11 @@ sub annPropsAndValues {
   unless($ontologyTerm) {
     $self->error("No ontology term found for:  $ontologySourceId");
   }
-  my $isMultiValued = (scalar(@$valueArray) > 1);
+  my $isMultiValued = (scalar(@{$valueArray//[]}) > 1);
   my @result;
 
   VALUE:
-  for my $value (@{$valueArray}){
+  for my $value (@{$valueArray//[]}){
     if (ref $value eq 'HASH'){
       # MBio results
       for my $k (keys %{$value}){
@@ -640,7 +640,7 @@ sub annPropsAndValues {
            $displayName = $ontologyTerm->{DISPLAY_NAME}. ": $k";
            $subvalue = $o;
         }
-        push @result, ["$ontologySourceId.$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
+        push @result, ["${ontologySourceId}_$k", annPropsFromParentOntologyTerm($displayName, $ontologyTerm, $processTypeId, $isMultiValued), $subvalue];
       }
     } else {
       push @result, [$ontologySourceId, annPropsFromOntologyTerm($ontologyTerm, $processTypeId, $isMultiValued), $value];

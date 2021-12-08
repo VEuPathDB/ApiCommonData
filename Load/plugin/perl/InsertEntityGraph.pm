@@ -392,6 +392,12 @@ sub addAttributeUnit {
   $attributeValue->submit(undef, 1);
 }
 
+sub updateMaxAttrValue {
+  my ($self, $charValue) = @_;
+  if( length $charValue > ($self->{_max_attr_value}//0)) {
+    $self->{_max_attr_value} = length $charValue;
+  }
+}
 
 sub loadNodes {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap) = @_;
@@ -403,6 +409,7 @@ sub loadNodes {
 
   foreach my $node (@$nodes) {
     my $charsForLoader = {};
+    my $charsForLoaderUniqueValues = {};
 
     if($nodeToIdMap->{$node->getValue()}) {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
@@ -442,18 +449,25 @@ sub loadNodes {
         $charValue = $characteristic->getTerm();
       }
 
-      $charValue =~ s/\r//;
+      if (ref $charValue eq 'HASH'){
+        #MBio children
+        $charsForLoader->{$charQualifierSourceId} = [$charValue];
+        for my $v (values %$charValue){
+           
+          $self->updateMaxAttrValue(ref $v eq 'ARRAY' ? $v->[1] : ref $v ? die "Unexpected ref: " . ref $v :  $v);
+        }
+      } else {
+        die "Unexpected ref type? " . ref $charValue if ref $charValue;
+        $charValue =~ s/\r//;
+        $self->updateMaxAttrValue($charValue);
+        $charsForLoaderUniqueValues->{$charQualifierSourceId}->{$charValue}=1;
 
-        # keep only unique values, no duplicates
-      $charsForLoader->{$charQualifierSourceId}->{$charValue}=1;
-
-      if( length $charValue > ($self->{_max_attr_value}//0)) {
-        $self->{_max_attr_value} = length $charValue;
       }
-
+      
     }
     # Convert hashref to arrayref
-    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoader){
+    # makes sure there is no duplicates
+    while(my ($charQualifierSourceId,$charValuesHashref) = each %$charsForLoaderUniqueValues){
       my @charValues = keys %$charValuesHashref;
       $charsForLoader->{$charQualifierSourceId} = \@charValues;
     }
@@ -490,7 +504,9 @@ sub addGeohash {
 
   return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
 
-  my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}, $hash->{$longitudeSourceId}, $geohashLength);
+  printf STDERR ("DEBUG: lat and long vars found\n");
+
+  my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
   my @geohashSourceIds = ('EUPATH_0043203', # GEOHASH 1
                           'EUPATH_0043204', # GEOHASH 2
@@ -512,34 +528,29 @@ sub addGeohash {
 
 
 sub encodeGeohash {
-  my ($self, $lat, $lng, $bits) = @_;
-  my $minLat = -90;
-  my $maxLat = 90;
-  my $minLng = -180;
-  my $maxLng = 180;
-  my $result = 0;
-  for (my $i = 0; $i < $bits; ++$i){
-    if ($i % 2 == 0) {                 # even bit: bisect longitude
-      my $midpoint = ($minLng + $maxLng) / 2;
-      if ($lng < $midpoint) {
-        $result <<= 1;                 # push a zero bit
-        $maxLng = $midpoint;            # shrink range downwards
-      } else {
-        $result = $result << 1 | 1;     # push a one bit
-        $minLng = $midpoint;            # shrink range upwards
-      }
-    } else {                          # odd bit: bisect latitude
-      my $midpoint = ($minLat + $maxLat) / 2;
-      if ($lat < $midpoint) {
-        $result <<= 1;                 # push a zero bit
-        $maxLat = $midpoint;            # shrink range downwards
-      } else {
-        $result = $result << 1 | 1;     # push a one bit
-        $minLat = $midpoint;            # shrink range upwards
-      }
-    }
+  my($self, $latitude, $longitude, $precision ) = @_;
+  my @Geo32 = qw/0 1 2 3 4 5 6 7 8 9 b c d e f g h j k m n p q r s t u v w x y z/;
+  my @coord = ($latitude, $longitude);
+  my @range = ([-90, 90], [-180, 180]);
+  my($which,$value) = (1, '');
+  while (length($value) < $precision * 5) {
+      my $tot = 0;
+      $tot += $_ for @{$range[$which]};
+      my $mid = $tot / 2;
+      $value .= my $upper = $coord[$which] <= $mid ? 0 : 1;
+      $range[$which][$upper ? 0 : 1] = $mid;
+      $which = $which ? 0 : 1;
   }
-  return $result;
+  my $enc;
+  my $start = 0;
+  my @valArr = split('', $value);
+  my $end = $#valArr;
+  while($start < $end){
+    my @n = @valArr[$start..$start+4];
+      $enc .= $Geo32[ord pack 'B8', '000' . join '', @n]; # binary to decimal, very specific to the task
+    $start += 5;
+  }
+  return $enc
 }
 
 
@@ -701,9 +712,7 @@ sub getProcessAttributesHash {
         }
       }
       
-      if(length $ppValue > $self->{_max_attr_value}) {
-        $self->{_max_attr_value} = length $ppValue;
-      }
+      $self->updateMaxAttrValue($ppValue);
     }
   }
   return \%rv;
