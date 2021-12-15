@@ -22,8 +22,12 @@ my ($help, $outputDir, $orgFilter, $replaceExisting);
             'replace_existing' => \$replaceExisting
     );
 
-if($help || ! -d $outputDir) {
+if($help || ! $outputDir) {
   die "usage:  jbrowseDumpAllFeatures --output_directory <DIR> [--organism_abbrev_filter=s] [--replace_existing]\n";
+}
+
+if(! -d $outputDir) {
+  die "directory not found: $outputDir";
 }
 
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
