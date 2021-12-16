@@ -379,7 +379,7 @@ sub addAttributeUnit {
   $self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}->{$unitOntologyTermId} = 1;
   
 
-  if(keys %{$self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}} > 1) {
+  if(scalar keys %{$self->{_attribute_units}->{$entityTypeId}->{$attrOntologyTermId}} > 1) {
     $self->error("Multiple Units found for EntityTypeId=$entityTypeId and AttributeOntologyTermId=$attrOntologyTermId");
   }
 
@@ -784,6 +784,7 @@ and tn.name_class = 'scientific name'
 
   my @multipleCounts;
   my @missingTerms;
+
   foreach my $os (keys %$iOntologyTermAccessionsHash) {
 
     foreach my $ota (keys %{$iOntologyTermAccessionsHash->{$os}}) {
