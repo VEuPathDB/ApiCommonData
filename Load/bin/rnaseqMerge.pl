@@ -70,6 +70,8 @@ sub convertBigwig {
     if (scalar @$fileList > 1){ 
     my $cmd = "bigWigMerge $fileNames $outDir/out.bedGraph";
     &runCmd($cmd);
+
+	&sortBedGraph ("$outDir\/out\.bedGraph");
     my $convertCmd = "bedGraphToBigWig $outDir/out.bedGraph $chromSize $outDir/$experimentName\_$pattern\_merged.bw";
     &runCmd($convertCmd);
     unlink "$outDir/out.bedGraph";
@@ -79,6 +81,15 @@ sub convertBigwig {
     my $cpCmd = "cp $fileNames $outDir/$experimentName\_$pattern\_merged.bw";
     &runCmd($cpCmd);   
     } 
+}
+
+
+sub sortBedGraph {
+	my $bedFile = shift;
+	my $cmd = "mv $bedFile ${bedFile}.tmp; LC_COLLATE=C sort -k1,1 -k2,2n ${bedFile}.tmp > $bedFile; rm ${bedFile}.tmp"; 
+	&runCmd($cmd);
+
+	return $bedFile;
 }
 
 sub usage {
