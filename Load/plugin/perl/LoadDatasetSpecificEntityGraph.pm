@@ -167,6 +167,7 @@ sub createWideTable {
   my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
 
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
+  $self->log("Creating TABLE:  $tableName");
 
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
