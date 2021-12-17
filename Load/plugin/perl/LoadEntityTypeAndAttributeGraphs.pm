@@ -193,8 +193,12 @@ sub constructAndSubmitAttributeGraphsForOntologyTerms {
                                                                 });
     $attributeGraph->submit();
     $attributeGraphCount++;
+    if ($attributeGraphCount % 1000 == 0){
+      $self->undefPointerCache();
+    }
   }
 
+  $self->undefPointerCache();
   return $attributeGraphCount;
 }
 
