@@ -123,7 +123,7 @@ CREATE TABLE &1.ProcessType (
  row_group_id                 NUMBER(3) NOT NULL,
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (type_id) REFERENCES sres.ontologyterm,
  PRIMARY KEY (process_type_id)
 );
 
@@ -337,8 +337,8 @@ CREATE TABLE &1.AttributeUnit (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
- FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
- FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (attr_ontology_term_id) REFERENCES sres.ontologyterm,
+FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
  PRIMARY KEY (attribute_unit_id)
 );
 
@@ -422,71 +422,6 @@ WHERE 'processtypecomponent' NOT IN (SELECT lower(name) FROM core.TableInfo
 
 -----------------------------------------------------------
 
-CREATE TABLE &1.AttributeValue (
- attribute_value_id           NUMBER(12) NOT NULL,
- entity_attributes_id         NUMBER(12) NOT NULL,
- entity_type_id               NUMBER(12) NOT NULL,
- incoming_process_type_id        NUMBER(12),
- attribute_stable_id                VARCHAR(255)  NOT NULL, 
- string_value                 VARCHAR(1000),
- number_value                 NUMBER,
- date_value                   DATE, 
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL,
- FOREIGN KEY (entity_attributes_id) REFERENCES &1.EntityAttributes,
- FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
- FOREIGN KEY (incoming_process_type_id) REFERENCES &1.ProcessType,
- PRIMARY KEY (attribute_value_id)
-);
-
-GRANT INSERT, SELECT, UPDATE, DELETE ON &1.AttributeValue TO gus_w;
-GRANT SELECT ON &1.AttributeValue TO gus_r;
-
-CREATE SEQUENCE &1.AttributeValue_sq;
-GRANT SELECT ON &1.AttributeValue_sq TO gus_w;
-GRANT SELECT ON &1.AttributeValue_sq TO gus_r;
-
-CREATE INDEX &1.attributevalue_ix_1
-  ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id,
-                        entity_attributes_id)
-  TABLESPACE indx;
-
-CREATE INDEX &1.attributevalue_ix_2
-  ON &1.attributevalue 
-     (number_value, date_value, attribute_stable_id, entity_type_id, string_value)
-  TABLESPACE indx;
-
-CREATE INDEX &1.attributevalue_ix_3
-  ON &1.attributevalue 
-     (attribute_stable_id, string_value, entity_type_id, number_value, date_value)
-  TABLESPACE indx;
-
-INSERT INTO core.TableInfo
-    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
-     is_view, view_on_table_id, superclass_table_id, is_updatable, 
-     modification_date, user_read, user_write, group_read, group_write, 
-     other_read, other_write, row_user_id, row_group_id, row_project_id, 
-     row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'AttributeValue',
-       'Standard', 'attribute_value_id',
-       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
-       p.project_id, 0
-FROM dual,
-     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('&1')) d
-WHERE 'attributevalue' NOT IN (SELECT lower(name) FROM core.TableInfo
-                                    WHERE database_id = d.database_id);
-
------------------------------------------------------------
 
 CREATE TABLE &1.Attribute (
   attribute_id                  NUMBER(12) NOT NULL,
@@ -525,9 +460,9 @@ CREATE TABLE &1.Attribute (
   row_alg_invocation_id        NUMBER(12) NOT NULL,
   FOREIGN KEY (entity_type_id) REFERENCES &1.EntityType,
   FOREIGN KEY (process_type_id) REFERENCES &1.ProcessType,
-  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (unit_ontology_term_id) REFERENCES sres.ontologyterm,
   PRIMARY KEY (attribute_id),
   CONSTRAINT ensure_ov_json CHECK (ordered_values is json)   
 );
@@ -595,8 +530,8 @@ CREATE TABLE &1.AttributeGraph (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
-  FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (parent_ontology_term_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (attribute_graph_id),
   CONSTRAINT ensure_ordv_json CHECK (ordinal_values is json)   
@@ -645,8 +580,8 @@ CREATE TABLE &1.StudyCharacteristic (
   row_group_id                 NUMBER(3) NOT NULL,
   row_project_id               NUMBER(4) NOT NULL,
   row_alg_invocation_id        NUMBER(12) NOT NULL,
-  FOREIGN KEY (value_ontology_term_id) REFERENCES sres.ontologyterm,
-  FOREIGN KEY (attribute_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (value_ontology_term_id) REFERENCES sres.ontologyterm,
+ FOREIGN KEY (attribute_id) REFERENCES sres.ontologyterm,
   FOREIGN KEY (study_id) REFERENCES &1.study,
   PRIMARY KEY (study_characteristic_id)
 );
