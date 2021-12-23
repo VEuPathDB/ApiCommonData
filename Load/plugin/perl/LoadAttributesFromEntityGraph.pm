@@ -201,10 +201,9 @@ sub run {
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
     my ($numericValsFh, $numericValsFileName) = tempfile( DIR => $tempDirectory);
 
+
     my ($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId) = $self->loadAttributeValues($studyId, $ontologyTerms, $maxAttrLength, $dateValsFh, $numericValsFh);
-
     my $statsForPlotsByAttributeStableIdAndEntityTypeId = $self->statsForPlots($dateValsFileName, $numericValsFileName, $tempDirectory);
-
     my $attributeCount = $self->loadAttributeTerms($annPropsByAttributeStableIdAndEntityTypeId, $typeCountsByAttributeStableIdAndEntityTypeId, $statsForPlotsByAttributeStableIdAndEntityTypeId, $entityTypeIds);
 
     $self->log("Loaded $attributeCount attributes for study id $studyId");
@@ -615,8 +614,10 @@ sub loadAttributes {
 
   my $clobCount = 0;
 
-  while(my ($entityAttributesId, $entityTypeId, $processTypeId, $lobLocator) = $sh->fetchrow_array()) {
+
+  while(my ($entityAttributesId, $entityTypeId, $entityTypeOntologyTermId, $processTypeId, $processTypeOntologyTermId, $lobLocator) = $sh->fetchrow_array()) {
     my $json = encode('UTF-8', $self->readClob($lobLocator));
+
 
     my $attsHash = decode_json($json);
 
@@ -629,7 +630,7 @@ sub loadAttributes {
 #######
         if($annProps->{is_multi_valued} && !($annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId}{is_multi_valued})){
           $annPropsByAttributeStableIdAndEntityTypeId->{$attributeStableId}{$entityTypeId}{is_multi_valued} = 1;
-          printf STDERR ("DEBUG: IS_MULTI_VALUED UPDATED!!! %s\n", $attributeStableId);
+#          printf STDERR ("DEBUG: IS_MULTI_VALUED UPDATED!!! %s\n", $attributeStableId);
         }
 ######
 
@@ -646,16 +647,17 @@ sub loadAttributes {
         else {}
 
         my @a = ($entityAttributesId,
-                 $entityTypeId,
-                 $processTypeId,
+                 $entityTypeOntologyTermId,
+                 $processTypeOntologyTermId,
                  $attributeStableId,
                  $stringValue,
                  $numberValue,
                  $dateValue,
+                 $ontologyTerms->{$attributeStableId}->{UNIT_ONTOLOGY_TERM_ID}
               );
-      
+
         print $fh join($END_OF_COLUMN_DELIMITER, map {$_ // ""} @a) . $END_OF_RECORD_DELIMITER;
-        
+
       }
       $self->undefPointerCache();
     }
@@ -783,8 +785,10 @@ sub readClob {
 sub loadAttributesFromEntity {
   loadAttributes(@_, "
 select va.entity_attributes_id
-     , va.entity_type_id
+     , vt.entity_type_id
+     , vt.type_id as entity_type_ontology_term_id
      , null as process_type_id
+     , null as process_type_ontology_term_id
      , va.atts
 from $SCHEMA.entityattributes va
    , $SCHEMA.entitytype vt
@@ -798,15 +802,19 @@ and vt.study_id = ?
 sub loadAttributesFromIncomingProcess {
   loadAttributes(@_, "
 select va.entity_attributes_id
-     , va.entity_type_id
-     , ea.process_type_id
+     , vt.entity_type_id
+     , vt.type_id as entity_type_ontology_term_id
+     , et.process_type_id
+     , et.type_id as process_type_ontology_term_id
      , ea.atts
 from $SCHEMA.processattributes ea
    , $SCHEMA.entityattributes va
    , $SCHEMA.entitytype vt
+   , $SCHEMA.processtype et
 where ea.atts is not null
 and vt.entity_type_id = va.entity_type_id
 and va.entity_attributes_id = ea.out_entity_id
+and ea.process_type_id = et.process_type_id
 and vt.study_id = ?
 ");
 }
@@ -845,20 +853,22 @@ sub fields {
 
 
   my $attributeList = ["entity_attributes_id",
-                       "entity_type_id",
-                       "incoming_process_type_id",
+                       "entity_type_ontology_term_id",
+                       "process_type_ontology_term_id",
                        "attribute_stable_id",
                        "string_value",
                        "number_value",
                        "date_value",
+                       "unit_ontology_term_id",
                        "attribute_value_id",
       ];
 
   push @$attributeList, keys %$datatypeMap;
 
   $datatypeMap->{'entity_attributes_id'} = " CHAR(12)";
-  $datatypeMap->{'entity_type_id'} = "  CHAR(12)";
-  $datatypeMap->{'incoming_process_type_id'} = "  CHAR(12)";
+  $datatypeMap->{'entity_type_ontology_term_id'} = "  CHAR(12)";
+  $datatypeMap->{'process_type_ontology_term_id'} = "  CHAR(12)";
+  $datatypeMap->{'unit_ontology_term_id'} = "  CHAR(10)";
   $datatypeMap->{'attribute_stable_id'} = "  CHAR(255)";
   $datatypeMap->{'string_value'} = "  CHAR($maxAttrLength)";
   $datatypeMap->{'number_value'} = "  CHAR($maxAttrLength)";
