@@ -20,22 +20,22 @@ blocksizes - comma sep list of subfeature lengths
     <sql>
       <![CDATA[
                SELECT blat.blat_alignment_id feature_id,
-                      'alignment' feature, 
-                      'VEuPathDB' source, 
-                      blat.score || '' score, 
-                      blat.target_start startm, 
-                      blat.target_end end, 
-                      decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand, 
+                      'alignment' feature,
+                      'VEuPathDB' source,
+                      blat.score || '' score,
+                      blat.target_start startm,
+                      blat.target_end end,
+                      decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
                       blat.tstarts TSTARTS,
                       blat.blocksizes BLOCKSIZES,
                       'PercentIdentity=' || blat.percent_identity  || '$dlm' ||
                       'Accession=' || est.accession atts
-               FROM   
-                      dots.BlatAlignment blat, 
-                      dots.Est est, 
+               FROM
+                      dots.BlatAlignment blat,
+                      dots.Est est,
                       dots.ExternalNASequence estseq,
                       sres.OntologyTerm ot
-               WHERE  
+               WHERE
                       blat.query_na_sequence_id = est.na_sequence_id
                        and (blat.target_end - blat.target_start ) < 5000
                        and blat.is_best_alignment = 1
@@ -153,7 +153,7 @@ blocksizes - comma sep list of subfeature lengths
                    , min(startm) startm
                    , max(end) end
                    , '.' strand
-                   , 'dataset=' || align.dataset  || '$dlm' ||
+                   , 'dataset_name=' || align.dataset  || '$dlm' ||
                      'alignLength=' || ( max(end) - min(startm) ) atts
                    , '' parent_id
               from align
@@ -164,7 +164,7 @@ blocksizes - comma sep list of subfeature lengths
                    , 'VEuPathDB' source
                    , score
                    , startm
-                   , end 
+                   , end
                    , '.' strand
                    , 'pct=' || percent_identity atts
                    , group_id parent_id
@@ -173,34 +173,1063 @@ blocksizes - comma sep list of subfeature lengths
    </sql>
   </track>
 
-<!-- 
+  <track name="alignmentSequence" type="genomic" fileSuffix="gff">
+   <!-- cryptodb,tritrypdb,toxodb,unidb -->
+
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">tgonME49_bld7.3Transcripts_transcript_sequences_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">ldonLV9_maxicircle_gene_model_transcript_sequences_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">lbraMHOMBR75M2904_2019_maxicircle_gene_model_transcript_sequences_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_bld7.3Transcripts_transcript_sequences_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+SELECT blat.blat_alignment_id feature_id,
+       'alignment' type,
+       'VEuPathDB' source,
+       'alignment' feature,
+       enas.source_id  name,
+       blat.score || '' score,
+       etn.na_sequence_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+', 1, '-', '.') strand,
+       blat.tstarts,
+       blat.blocksizes,
+       ' ' atts
+FROM   dots.BlatAlignment blat, core.TableInfo ti,
+       dots.ExternalNASequence enas, dots.NASequence etn,
+       SRes.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+WHERE  blat.query_na_sequence_id = enas.na_sequence_id
+  AND  blat.query_table_id = ti.table_id
+  AND  ti.name='ExternalNASequence'
+  AND  blat.target_na_sequence_id = etn.na_sequence_id
+  AND  blat.is_best_alignment = 1
+  AND  etn.na_sequence_id = $srcfeature_id
+  AND  enas.external_database_release_id = edr.external_database_release_id
+  AND  edr.external_database_id = ed.external_database_id
+  AND  ed.name = '$$edName$$'
+     ]]>
+   </sql>
+  </track>
+
+  <track name="alignmentTransposableElements" type="genomic" fileSuffix="gff">
+   <!-- TrichDB,UniDB -->
+   <trackConfigurations>
+     <properties>
+       <prop name="edName"></prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+   <sql>
+     <![CDATA[
+select l.na_feature_id as feature_id
+     , 'alignment' as type
+     , 'VEuPathDB' as source
+     , f.source_id as name
+     , l.na_sequence_id as parent_id
+     , l.start_min as startm
+     , l.end_max as end
+     ,'alignLength=' || (l.end_max - l.start_min + 1) || '$dlm' ||
+      'sequence_id=' || l.sequence_source_id || '$dlm' ||
+      'te_name=' || f.name || '$dlm' ||
+      'dataset=' || ed.name atts
+from apidb.FeatureLocation l, dots.TransposableElement f,
+     sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+where l.na_feature_id = f.na_feature_id
+  and f.na_sequence_id = $srcfeature_id
+  and f.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="CentromereOverview" type="genomic" fileSuffix="gff">
+     <!-- PlasmoDB,ToxoDB,TriTrypDB,UniDB -->
+    <sql>
+      <![CDATA[
+SELECT fl.na_sequence_id feature_id,
+       'centromere overview' feature,
+       'VEuPathDB' source,
+       fl.start_min startm,
+       fl.end_max end,
+       null strand
+FROM apidb.FeatureLocation fl, sres.OntologyTerm ot
+WHERE fl.na_sequence_id = $srcfeature_id
+  AND ot.ontology_term_id = fl.sequence_ontology_id
+  AND ot.name = 'centromere'
+      ]]>
+    </sql>
+  </track>
+  <track name="cnvArrayJBrowse" type="genomic" fileSuffix="gff">
+    <!-- TriTrypDB,UniDB -->
+   <trackConfigurations>
+     <properties>
+       <prop name="sample"></prop>
+       <prop name="dummy"></prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+       select ri.reporter_intensity_id as feature_id
+            , 'cnv' as feature
+            , 'ArrayJBrowse' as source
+            , ri.value as score
+            , pan.name as parent_id
+            , rl.reporter_start startm
+            , rl.reporter_end end
+       from results.ReporterIntensity ri
+          , platform.ReporterLocation rl
+          , study.ProtocolAppNode pan
+       where ri.protocol_app_node_id = pan.protocol_app_node_id
+         and ri.reporter_id = rl.reporter_id
+         and pan.name = '$$sample$$'
+         and rl.na_sequence_id = $srcfeature_id
+      ]]>
+    </sql>
+  </track>
+
+  <track name="domainSpliceSites" type="genomic" fileSuffix="gff">
+     <!-- TriTrypDB,FungiDB,UniDB -->
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">lmajFriedlin_sbri_myler_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_George_Cross_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_Tschudi_Transcriptome_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">%</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">%</prop>
+       <prop name="featType">Splice Site</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">lmajFriedlin_sbri_myler_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_George_Cross_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_Tschudi_Transcriptome_PolyA_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">%</prop>
+       <prop name="featType">Splice Site</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+     <properties>
+       <prop name="edName">%</prop>
+       <prop name="featType">Poly A</prop>
+       <prop name="minCntPerMill">0</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+SELECT distinct ssf.segment_start as  feature_id, 'domain' feature,
+       'VEuPathDB' as source,
+       ssf.segment_start as startm, ssf.segment_start as end,
+       decode (ssf.strand,'+','1','-','0',null) strand,
+       ssf.segment_start || '(' || count(pan.name)  || ')' AS name,
+       'sample_name='
+         || listagg( replace(pan.name, ' [feature_loc] (SpliceSites)') , ',') within group (order by pan.name)
+         || '$dlm' || 'count_per_mill='
+         || listagg(ssf.count_per_million, ',') within group (order by pan.name)
+         || '$dlm' || 'is_unique='
+         || listagg(ssf.is_unique, ',') within group (order by pan.name)
+         || '$dlm' || 'avg_mismatches='
+         || listagg(ssf.avg_mismatches, ',') within group (order by ssf.avg_mismatches)
+         || '$dlm' || 'type='
+         || ssf.type atts
+ FROM
+   study.Study i, study.Study s, study.StudyLink sl,
+   study.ProtocolAppNode pan, apidb.SpliceSiteFeature ssf
+ WHERE ssf.na_sequence_id = $srcfeature_id
+   AND ssf.type = '$$featType$$'
+   AND pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
+   AND pan.protocol_app_node_id = sl.protocol_app_node_id
+   and sl.study_id = s.study_id
+   and s.name like '%[feature_loc]'
+   and s.investigation_id = i.study_id
+   and i.name like  '$$edName$$'
+   and ssf.count_per_million > $$minCntPerMill$$
+  GROUP BY  ssf.segment_start, ssf.strand, ssf.type
+  order by  ssf.segment_start
+      ]]>
+    </sql>
+  </track>
+
+  <track name="domainTRNA" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+SELECT distinct loc.feature_location_id feature_id,
+       'domain' feature,
+       'tRNA' source,
+       rnaf.source_id name,
+       loc.na_sequence_id parent_id,
+       loc.start_min as startm,
+       loc.end_max as end,
+       decode (loc.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM
+   apidb.FeatureLocation loc, dots.RnaFeature rnaf
+WHERE  loc.na_sequence_id = $srcfeature_id
+  AND  loc.feature_type = 'RNAFeature'
+  AND  rnaf.na_feature_id = loc.na_feature_id
+      ]]>
+    </sql>
+  </track>
+
+  <track name="domainTssJBrowse" type="genomic" fileSuffix="gff">
+   <!-- FungiDB,UniDB -->
+
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Splice Site</prop>
+       <prop name="source">sibthorp_splice_sites2</prop>
+       <prop name="minCntPerMill">1</prop>
+       <prop name="strand">+</prop>
+     </properties>
+     <properties>
+       <prop name="edName">anidFGSCA4_Sibthorp_TSS_raw_data_rnaSeqSplicedLeaderAndPolyASites_RSRC</prop>
+       <prop name="featType">Splice Site</prop>
+       <prop name="source">sibthorp_splice_sites2</prop>
+       <prop name="minCntPerMill">1</prop>
+       <prop name="strand">-</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+SELECT distinct ssf.segment_start as  feature_id,
+       'domain' feature,
+       '$$source$$' as source,
+       sum(ssf.count_per_million) as score,
+       ssf.na_sequence_id  || ssf.strand parent_id,
+       ssf.segment_start as startm,
+       ssf.segment_start as end,
+       decode(ssf.strand, '+',1,'-', -1, '.') as strand
+ FROM
+   study.Study i, study.Study s, study.StudyLink sl,
+   study.ProtocolAppNode pan, apidb.SpliceSiteFeature ssf
+ WHERE ssf.na_sequence_id =  $srcfeature_id
+   AND ssf.type = '$$featType$$'
+   AND pan.protocol_app_NODE_ID = ssf.protocol_app_node_id
+   AND pan.protocol_app_node_id = sl.protocol_app_node_id
+   and sl.study_id = s.study_id
+   and s.name like '%[feature_loc]'
+   and s.investigation_id = i.study_id
+   and i.name like  '$$edName$$'
+   and ssf.count_per_million > $$minCntPerMill$$
+   and ssf.strand = '$$strand$$'
+  GROUP BY  ssf.segment_start, ssf.strand, ssf.na_sequence_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="domainUnifiedMassSpecPeptides" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+
+  select msf.aa_feature_id || '' as feature_id,
+         'domain' feature,
+          'UnifiedMassSpecPeptides' source,
+         fl.na_sequence_id as parent_id,
+         fl.start_min as startm,
+         fl.end_max as end,
+         decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+         pan.name||'_'||msf.aa_sequence_id||'_'||aaloc.start_min||'_'||aaloc.end_max  as name,
+         'Count=' || msf.spectrum_count || '$dlm' ||
+         'dataset_name=' || d.name || '$dlm' ||
+         'PepSeq=' || dbms_lob.SUBSTR(aaseq.SEQUENCE, aaloc.end_max - aaloc.start_min + 1, aaloc.start_min)
+             Atts
+  from dots.MassSpecFeature msf, sres.ExternalDatabase d,
+       sres.ExternalDatabaseRelease r, apidb.MassSpecSummary mss,
+       study.ProtocolAppNode pan, dots.AaSequence aaseq, dots.AaLocation aaloc,
+       (select na_feature_id, max(na_sequence_id) as na_sequence_id,
+               max(is_reversed) as is_reversed,
+               min(start_min) as start_min, max(end_max) as end_max
+        from apidb.FeatureLocation
+        group by na_feature_id) fl
+  where msf.na_feature_id = fl.na_feature_id
+    and msf.external_database_release_id = r.external_database_release_id
+    and r.external_database_id = d.external_database_id
+    and fl.na_sequence_id = $srcfeature_id
+    and msf.mass_spec_summary_id = mss.mass_spec_summary_id
+    and mss.protocol_app_node_id = pan.protocol_app_node_id
+    and msf.aa_sequence_id = aaseq.aa_sequence_id
+    and msf.aa_feature_id = aaloc.aa_feature_id
+UNION
+  --domain:UnifiedMassSpecPeptides:bulksubfeatures
+  select msf.aa_feature_id || fl.start_min || fl.end_max as feature_id,
+         'Peptide' feature,
+         'UnifiedMassSpecPeptides' source,
+         msf.aa_feature_id as parent_id,
+         fl.start_min as startm,
+         fl.end_max as end,
+         decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+         null as name,
+         'dataset_name=' || ed.name atts
+  from dots.MassSpecFeature msf, apidb.FeatureLocation fl,
+       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+  where msf.na_feature_id = fl.na_feature_id
+    and fl.na_sequence_id = $srcfeature_id
+    and msf.external_database_release_id = edr.external_database_release_id
+    and edr.external_database_id = ed.external_database_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="featureBindingSite" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+SELECT
+       fl.na_feature_id feature_id,
+       'BindingSite' feature,
+       'VEuPathDB' source,
+       bs.name name,
+       '.' score,
+       fl.na_sequence_id parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Name=' || bs.name || '$dlm' ||
+         'Sequence=' ||
+         case when fl.is_reversed =0 then substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)
+           else APIDB.REVERSE_COMPLEMENT_CLOB(substr(s.sequence, fl.start_min, fl.end_max - fl.start_min + 1)) end
+          || '$dlm' ||
+         'Score=' || to_char(exp(bs.primary_score), '9.99EEEE')
+         as atts
+FROM
+       dots.BindingSiteFeature bs,
+       apidb.FeatureLocation fl,
+       dots.NaSequence s,
+       sres.ExternalDatabase d,
+       sres.ExternalDatabaseRelease rel
+WHERE
+       fl.na_sequence_id = s.na_sequence_id and
+       bs.na_feature_id = fl.na_feature_id and
+       rel.external_database_release_id = bs.external_database_release_id and
+       d.external_database_id  = rel.external_database_id and
+       d.name like '%_genomeFeature_Llinas_TransFactorBindingSites%' and
+       fl.feature_type = 'BindingSiteFeature' and
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY
+       fl.start_min
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gffBasic" type="genomic" fileSuffix="gff">
+
+    <!-- PlasmoDB,ToxoDB,CryptoDB,FungiDB,UniDB -->
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">cposC735deltSOWgp_Kirkland_TE_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">cimmRS_Kirkland_TE_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonGT1_CrisprScreen_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_Adams_PiggyBac_Mutants_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_IT-UTRs-DAFT_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_HB3-UTRs-DAFT_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_3D7-UTRs-DAFT_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_Chabbert_TSS_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">cposC735deltSOWgp_Kirkland_TE_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">cimmRS_Kirkland_TE_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonGT1_CrisprScreen_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_Adams_PiggyBac_Mutants_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">pfal3D7_Chabbert_TSS_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+SELECT g3.gff3_feature_id feature_id,
+       'gff' feature,
+       'VEuPathDB' source,
+       g3.id_attr name,
+       nvl(to_char(score),'.') score,
+       g3.na_sequence_id parent_id,
+       g3.mapping_start startm,
+       g3.mapping_end end,
+       decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       replace( g3.attr, ';', '$dlm') atts
+FROM apidb.Gff3 g3, sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed
+WHERE g3.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND g3.na_sequence_id = $srcfeature_id
+  AND  ed.name = '$$edName$$'
+     ]]>
+   </sql>
+  </track>
+
+  <track name="gffProcessedTranscript" type="genomic" fileSuffix="gff">
+
+    <!-- PlasmoDB,ToxoDB,CryptoDB,UniDB -->
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">tgonME49_noseq_chromosomes_name_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_me49.denovo.craig_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_unionized_cds_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_predictions_utr_scores_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_predictions_utr_lengths_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_craig_UTR_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_craig_denovo_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_noseq_chromosomes_name_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_me49.denovo.craig_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_unionized_cds_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_predictions_utr_scores_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_predictions_utr_lengths_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_craig_UTR_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_craig_denovo_GFF_topLevel_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+SELECT g3.id_attr feature_id,
+       'gff' feature,
+       'VEuPathDB' source,
+       g3.id_attr name,
+       '1' phase,
+       g3.score || '' score,
+       g3.na_sequence_id || ' ' parent_id,
+       g3.mapping_start startm,
+       g3.mapping_end end,
+       decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
+      replace( g3.attr, ';', '$dlm') atts
+FROM   apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed, sres.ontologyterm so
+WHERE g3.external_database_release_id = edr.external_database_release_id
+  AND g3.sequence_ontology_id = so.ontology_term_id
+  AND SO.name in ('mRNA', 'transcript')
+  AND edr.external_database_id = ed.external_database_id
+  AND g3.na_sequence_id = $srcfeature_id
+  AND ed.name = '$$edName$$'
+UNION ALL
+ -- gff:processedTranscript:bulksubfeatures
+SELECT g3.id_attr feature_id,
+       so.name feature,
+       'VEuPathDB' source,
+       g3.id_attr name,
+       '1' phase,
+       nvl(to_char(score), '.') score,
+       g3.parent_attr parent_id,
+       g3.mapping_start startm,
+       g3.mapping_end end,
+       decode (g3.is_reversed, 0, '+1', 1, '-1', '.') strand,
+      replace( g3.attr, ';', '$dlm') atts
+FROM   apidb.gff3 g3, sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed, sres.ontologyterm so
+WHERE g3.external_database_release_id = edr.external_database_release_id
+  AND g3.sequence_ontology_id = so.ontology_term_id
+  AND (so.name = 'CDS'
+       OR so.name = 'UTR')
+  AND edr.external_database_id = ed.external_database_id
+  AND g3.na_sequence_id = $srcfeature_id
+  AND ed.name = '$$edName$$'
+     ]]>
+   </sql>
+  </track>
+
+  <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+ -- Haplotype:Block
+  SELECT cef.na_feature_id || '' feature_id,
+         'Haplotype block' feature,
+         'VEuPathDB' source,
+         cef.source_id name,
+         cef.na_sequence_id parent_id,
+         '.' score,
+         nl.start_min startm,
+         nl.end_max end,
+         'Boundary=' || 'Liberal'  || '$dlm' ||'Name=' || cef.name  || '$dlm'
+         || 'SequenceId=' || ens.source_id  || '$dlm' || 'start_max='
+         || nl.start_max || '$dlm' ||'end_min=' || nl.end_min || '$dlm'
+         || 'start_min=' || nl.start_min || '$dlm' || 'end_max=' || nl.end_max
+         as atts
+  FROM dots.ChromosomeElementFeature cef, Dots.NaLocation nl, dots.ExternalNASequence ens
+  WHERE cef.na_sequence_id = $srcfeature_id
+    AND cef.na_feature_id = nl.na_feature_id
+    AND ens.na_sequence_id = cef.na_sequence_id
+UNION ALL
+  -- Haplotype:Block:bulksubfeatures
+  SELECT cef.source_id feature_id,
+        'Haplotype_Inner' feature,
+         'VEuPathDB' source,
+        cef.name name,
+        cef.na_feature_id parent_id,
+        '.' score,
+        nl.start_max startm,
+        nl.end_min end,
+        'Boundary=' || 'Conservative' || '$dlm' || 'Name=' || cef.name
+        || '$dlm' || 'SequenceId=' || ens.source_id
+        as atts
+  FROM dots.ChromosomeElementFeature cef, Dots.NaLocation nl,
+       dots.ExternalNaSequence ens
+  WHERE cef.na_sequence_id = $srcfeature_id
+    AND cef.na_feature_id = nl.na_feature_id
+    AND ens.na_sequence_id = cef.na_sequence_id
+      ]]>
+    </sql>
+  </track>
+
+  <track name="lowcomplexityDust" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+SELECT
+       lc.na_feature_id feature_id,
+       'lowcomplexity' feature,
+       'dust' source,
+       lc.name name,
+       '.' score,
+       lc.na_sequence_id parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM
+       apidb.FeatureLocation fl, dots.LowComplexityNAFeature lc
+WHERE
+       fl.feature_type = 'LowComplexityNAFeature' and
+       fl.na_sequence_id = $srcfeature_id and
+       fl.na_feature_id = lc.na_feature_id
+ORDER BY
+       fl.start_min
+      ]]>
+    </sql>
+  </track>
+
+  <track name="matchIsolatePopset" type="genomic" fileSuffix="gff">
+    <sql>
+      <![CDATA[
+SELECT distinct sim.similarity_id feature_id,
+       'match:IsolatePopset' feature,
+       'VEuPathDB' source,
+       extq.source_id name,
+       sim.score,
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue,
+       extt.na_sequence_id parent_id,
+       sim.min_subject_start startm,
+       sim.max_subject_end end,
+       decode (sim.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||'$dlm'||
+       'MatchLen=' || sim.total_match_length || '$dlm' ||
+       'Note=' || pan.description atts
+FROM
+       dots.Similarity sim,
+       dots.ExternalNASequence extt, dots.NASequence extq,
+       sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
+       results.segmentResult sr, study.protocolAppNode pan
+WHERE
+       extq.external_database_release_id = edr.external_database_release_id and
+       ed.external_database_id = edr.external_database_id and
+       (   ed.name in ('C. parvum isolate data', 'Toxoplasma isolates From David Sibley','Toxoplasma isolates From Genbank')
+        or ed.name like '%_isolates_genbank_RSRC') and
+       sim.query_id = extq.na_sequence_id and
+       sim.subject_id = extt.na_sequence_id and
+       sim.pvalue_mant is not null and
+       sim.pvalue_exp is not null and
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) < 1e-20 and
+       extt.na_sequence_id = $srcfeature_id and
+       extq.source_id = pan.source_id and
+       pan.protocol_app_node_id = sr.protocol_app_node_id
+ORDER BY
+       sim.min_subject_start asc,
+       sim.max_subject_end asc,
+       pvalue asc
+      ]]>
+    </sql>
+  </track>
+
+  <track name="MicroArrayProbesExpressionD" type="genomic" fileSuffix="gff">
+   -- PlasmoDB,ToxoDB,TriTrypDB,UniDB
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">tcruCLBrenerEsmeraldo-like_microarrayPlatform_GPL8132_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">linfJPCM5_microarrayPlatform_GPL6855_Papadoupou_Amastigote_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_microarrayPlatform_A-MEXP-1512_JCVI_19K_v3_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_microarrayPlatform_A-MEXP-1112_JCVI_37K_v2_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_NuclearCoding_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Resequencing_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_IbIntron_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_ExonIb_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Antisense_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_ChIP_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_estSNPs_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Markers_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_BLASTX-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_TBLASTN-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_EST-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tcruCLBrenerEsmeraldo-like_microarrayPlatform_GPL8132_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">linfJPCM5_microarrayPlatform_GPL6855_Papadoupou_Amastigote_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_microarrayPlatform_A-MEXP-1512_JCVI_19K_v3_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tbruTREU927_microarrayPlatform_A-MEXP-1112_JCVI_37K_v2_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+select fl.na_feature_id as feature_id,
+       'MicroArrayProbes' feature,
+       'VEuPathDB' source,
+       fl.na_sequence_id parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'SourceId='   || fl.feature_source_id || '$dlm'
+        || 'dataset_name=' || ed.name
+        as atts
+from apidb.FeatureLocation fl, sres.ExternalDatabase ed,
+     sres.ExternalDatabaseRelease edr
+where edr.external_database_id = ed.external_database_id
+  and edr.external_database_release_id = fl.external_database_release_id
+  and fl.feature_type = 'ArrayElementFeature'
+  and ed.name = '$$edName$$'
+  and fl.na_sequence_id = $srcfeature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="MicroArrayProbesExpressionProbes" type="genomic" fileSuffix="gff">
+   -- PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB
+
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_NuclearCoding_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Resequencing_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_IbIntron_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_ExonIb_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Antisense_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_ChIP_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_estSNPs_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_Markers_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_BLASTX-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_TBLASTN-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+     <properties>
+       <prop name="edName">tgonME49_microarrayPlatform_Affy-Amit_EST-TranscriptDiscovery_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+select rl.reporter_location_id as feature_id,
+       'MicroArrayProbes' feature,
+       'VEuPathDB' source,
+       rl.na_sequence_id parent_id,
+       rl.reporter_start startm,
+       rl.reporter_end end,
+       decode (rl.on_reverse_strand, 0, '+1', 1, '-1', '.') strand,
+       'SourceId='   || r.source_id || '$dlm' || 'dataset_name=' || ed.name
+        AS atts
+from platform.Reporter r, platform.ReporterLocation rl, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+where edr.external_database_id = ed.external_database_id
+  and edr.external_database_release_id=r.external_database_release_id
+  and r.reporter_id = rl.reporter_id
+  and ed.name = '$$edName$$'
+  and rl.na_sequence_id = $srcfeature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="MicrosatelliteSts" type="genomic" fileSuffix="gff">
+   -- PlasmoDB,UniDB
+
+   <sql>
+     <![CDATA[
+ select S.na_feature_id as feature_id,
+        'Microsatellite:sts' feature,
+        'VEuPathDB' source,
+        s.source_id name,
+        s.na_sequence_id parent_id,
+        l.start_min startm,
+        l.end_max end,
+        decode (l.is_reversed, 0, '+1', 1, '-1', '.') strand,
+               'Name=' || s.name  || '$dlm' || 'SequenceId=' || nas.source_id atts
+ from dots.Sts s, sres.OntologyTerm ot,
+      apidb.FeatureLocation l, dots.NaSequence nas
+ where s.na_sequence_id = $srcfeature_id
+   and s.na_feature_id = l.na_feature_id
+   and nas.na_sequence_id = s.na_sequence_id
+   and s.sequence_ontology_id = ot.ontology_term_id
+   and ot.name = 'microsatellite'
+     ]]>
+   </sql>
+  </track>
+
+  <track name="piggyBacTransposableElement" type="genomic" fileSuffix="gff">
+  -- PlasmoDB,UniDB
+
+   <sql>
+     <![CDATA[
+select blat.blat_alignment_id feature_id,
+       'piggyBac:TransposableElement' feature,
+       'VEuPathDB' source,
+       nas.source_id name,
+       blat.score,
+       blat.target_na_sequence_id parent_id,
+       blat.target_start startm,
+       blat.target_end end,
+       decode (blat.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'dataset_name=' || ed.name atts
+from dots.NaSequence nas, sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed, dots.BlatAlignment blat
+where blat.query_na_sequence_id = nas.na_sequence_id
+  and edr.external_database_release_id = nas.external_database_release_id
+  and ed.external_database_id = edr.external_database_id
+  and ed.name like '%PiggyBac_Clones%'
+  and blat.target_na_sequence_id = $srcfeature_id
+order by blat.target_start
+     ]]>
+   </sql>
+  </track>
+
+  <track name="repeatRepeatElements" type="genomic" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+select rpt.na_feature_id feature_id,
+       'repeat' feature,
+       'VEuPathDB' source,
+       rpt.parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       rpt.source_id name,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,
+       'Family=' || rpt.rpt_family || '$dlm'
+       || 'dataset_name=' || d.name atts
+from dots.Repeats rpt, apidb.FeatureLocation fl,
+     sres.ExternalDatabase d, sres.ExternalDatabaseRelease rel
+where fl.na_sequence_id = $srcfeature_id
+  and rpt.na_feature_id = fl.na_feature_id
+  and rel.external_database_release_id = rpt.external_database_release_id
+  and d.external_database_id  = rel.external_database_id
+order by fl.start_min
+     ]]>
+   </sql>
+  </track>
+
+  <track name="scaffoldGenome" type="genomic" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+  select sgf.na_feature_id as feature_id,
+         'scaffold gap' feature,
+         'VEuPathDB' source,
+         'gap' as name,
+         sgf.na_sequence_id as parent_id,
+         nal.start_min as startm,
+         nal.end_max as end,
+         '0' strand,
+         'Length=' || (nal.end_max-nal.start_min+1) || '$dlm' ||
+         'Type=' ||  'gap'  || '$dlm' ||
+         'Note=' ||  ''  atts
+  from dots.ScaffoldGapFeature sgf, dots.NaLocation nal
+  where nal.na_feature_id = sgf.na_feature_id
+    and sgf.na_sequence_id = $srcfeature_id
+UNION
+  select p.agp_piece_id as feature_id,
+         'scaffold' feature,
+         'VEuPathDB' source,
+         p.piece_id name,
+         gsa.na_sequence_id as parent_id,
+         p.start_min as startm,
+         p.end_max as end,
+         decode(p.is_reversed, '0', '+1', '1', '-1', '0') strand,
+          'Length=' || (p.end_max - p.start_min + 1) || '$dlm' ||
+          'Type=scaffold' ||'$dlm' ||
+          'Note=' || p.piece_id atts
+  from dots.NaSequence gsa, apidb.AgpPiece p
+  where gsa.source_id = p.source_id
+    and not p.piece_id is null
+    and gsa.na_sequence_id = $srcfeature_id
+UNION
+  -- scaffold:genome:bulksubfeatures
+  select sg.na_feature_id as feature_id,
+         'gap' feature,
+         'VEuPathDB' source,
+         sg.source_id name,
+         sg.na_feature_id parent_id,
+         fl.start_min as startm,
+         fl.end_max as end,
+         '0' as strand,
+         'Type=sgap' as atts
+  from dots.ScaffoldGapFeature sg, dots.NaLocation fl
+  where fl.na_feature_id = sg.na_feature_id
+    and sg.na_sequence_id = $srcfeature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="SNPDiversityJbrowse" type="genomic" fileSuffix="gff">
+   -- PlasmoDB,ToxoDB,UniDB
+
+   <trackConfigurations>
+     <properties>
+       <prop name="edName">pfal3D7_Jeffares_GFF_RSRC</prop>
+       <prop name="dummy">1</prop>
+     </properties>
+   </trackConfigurations>
+
+   <sql>
+     <![CDATA[
+select
+       gff3.gff3_feature_id        as feature_id,
+       'SNP_sub'                   as feature,
+       'VEuPathDB'                 as source,
+       gff3.score                  as score,
+       gff3.na_sequence_id         as parent_id,
+       gff3.mapping_start          as startm,
+       gff3.mapping_end            as end,
+       decode(gff3.is_reversed, 0, '+1', 1, '-1', '.') as strand,
+       'dataset_name=' || ed.name  as atts
+from apidb.Gff3, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+where ed.name = '$$edName$$'
+  and edr.external_database_id = ed.external_database_id
+  and gff3.external_database_release_id = edr.external_database_release_id
+  and gff3.na_sequence_id = $srcfeature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="TandemRepeatTRF" type="genomic" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+ SELECT
+       fl.na_feature_id feature_id,
+       'TandemRepeat' feature,
+       'VEuPathDB' source,
+       tr.name name,
+       '.' score,
+       fl.na_sequence_id parent_id,
+       fl.start_min startm,
+       fl.end_max end,
+       decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand
+FROM
+       dots.NaFeature tr,
+       apidb.FeatureLocation fl
+WHERE
+       tr.na_feature_id = fl.na_feature_id and
+       fl.feature_type = 'TandemRepeatFeature' and
+       fl.na_sequence_id = $srcfeature_id
+ORDER BY
+       fl.start_min
+     ]]>
+   </sql>
+  </track>
+
+<!--
 ####DONE ####
 EST
 GenericEndFeature
-
-### TODO Genomic ####
 alignment:sequence
 alignment:TransposableElements
 Centromere:overview
-ChIP:ChIPchip_peaksjbrowse
-ChIP:ChIPchip_smoothedjbrowse
-ChIP:ChIPSeqPeaksjbrowse
 cnv:ArrayJBrowse
 domain:spliceSites
 domain:tRNA
 domain:tssJBrowse
 domain:UnifiedMassSpecPeptides
 feature:BindingSite
-#gene:annotation
-#gene:annotation2
-#gene:syntenyJBrowseScaled
-gff:apolloTranscript
 gff:basic
 gff:processedTranscript
-#gsnap:unifiedintronjunction
-#gsnap:unifiedintronjunctionAnnotatedOnly
-#gsnap:unifiedintronjunctionHCOnly
-#gsnap:unifiedintronjunctionLCOnly
 Haplotype:Block
 lowcomplexity:dust
 match:IsolatePopset
@@ -208,14 +1237,31 @@ MicroArrayProbes:expressionD
 MicroArrayProbes:expressionProbes
 Microsatellite:sts
 piggyBac:TransposableElement
-# proteinAlignment:BLAT
-ReferenceSequence
 repeat:RepeatElements
 scaffold:genome
 SNP:DiversityJbrowse
-SNP:Genotyping
-SNP:Population
 TandemRepeat:TRF
+
+### TODO Genomic ####
+ChIP:ChIPchip_peaksjbrowse ? can't find calls to it (though it has params). also, how can pan ID be a param?
+ChIP:ChIPchip_smoothedjbrowse
+ChIP:ChIPSeqPeaksjbrowse
+#gene:annotation
+#gene:annotation2
+#gene:syntenyJBrowseScaled
+gff:apolloTranscript - references (only) apidbTuning.ApolloUpdate
+
+# these gsnap queries use tuning tables. Also, they all have "new" versions (e.g. gsnap:unifiedintronjunctionNew)
+#gsnap:unifiedintronjunction
+#gsnap:unifiedintronjunctionAnnotatedOnly
+#gsnap:unifiedintronjunctionHCOnly
+#gsnap:unifiedintronjunctionLCOnly
+
+# proteinAlignment:BLAT
+ReferenceSequence - can't find this in genomeQueries.xml
+
+SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
+SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
 
 ### TODO Protein ####
 domain:ExportPred
