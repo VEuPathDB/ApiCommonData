@@ -6,6 +6,8 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Plugin::ParameterizedSchema;
 
+
+
 use Data::Dumper;
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
@@ -87,7 +89,6 @@ sub run {
   $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
-
   my @tables;
 
   my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
@@ -97,7 +98,9 @@ sub run {
     my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId);
 
     foreach my $entityTypeId (keys %$entityTypeIds) {
-      my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
+      my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId}->{internal_abbrev};
+      my $entityTypeOntologyTermId = $entityTypeIds->{$entityTypeId}->{type_id};
+      my $internalEntityTypeOntologyTermIds = $entityTypeIds->{$entityTypeId}->{internal_entity_type_ids};
 
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
@@ -105,6 +108,11 @@ sub run {
       my $ancestorsTableName = $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
       my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
       my $wideTableName;
+
+      $self->createTallTable($entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeOntologyTermIds, $studyAbbrev);
+      $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
+      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
+
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
         $wideTableName = $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       }
@@ -179,14 +187,16 @@ sub createWideTable {
   my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
+
+  # TODO: use internal entity type _ids here
   my $entitySql = "select ea.stable_id, eaa.*
                    from $SCHEMA.entityattributes ea,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
                    where ea.entity_type_id = $entityTypeId";
 
-
-  my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
+  # TODO: use internal entity type _ids here
+  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
                                                 from ${SCHEMA}.processattributes pa,
                                                      (select entity_attributes_id
                                                            , stable_id 
@@ -236,7 +246,7 @@ AND table_name='$tableName'");
 sub createAncestorsTable {
   my ($self, $studyId, $entityTypeId, $entityTypeIds, $studyAbbrev) = @_;
 
-  my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId};
+  my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId}->{internal_abbrev};;
 
   my $tableName = "${SCHEMA}.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   my $fieldSuffix = "_stable_id";
@@ -251,7 +261,7 @@ sub createAncestorsTable {
 sub populateAncestorsTable {
   my ($self, $tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeAbbrevs) = @_;
 
-  my $stableIdField = $entityTypeAbbrevs->{$entityTypeId} . $fieldSuffix;
+  my $stableIdField = $entityTypeAbbrevs->{$entityTypeId}->{internal_abbrev} . $fieldSuffix;
 
   my $sql = "select * from (
   with f as 
@@ -287,7 +297,7 @@ sub populateAncestorsTable {
 
   my $hasFields = scalar @$ancestorEntityTypeIds > 0;
 
-  my @fields = map { $entityTypeAbbrevs->{$_} . $fieldSuffix } @$ancestorEntityTypeIds;
+  my @fields = map { $entityTypeAbbrevs->{$_}->{internal_abbrev} . $fieldSuffix } @$ancestorEntityTypeIds;
 
   my $fieldsString = $hasFields ? "$stableIdField, " . join(",",  @fields) : $stableIdField;
 
@@ -333,7 +343,7 @@ sub insertAncestorRow {
 sub createEmptyAncestorsTable {
   my ($self, $tableName, $entityTypeId, $fieldSuffix, $entityTypeIds) = @_;
 
-  my $stableIdField = $entityTypeIds->{$entityTypeId} . $fieldSuffix;
+  my $stableIdField = $entityTypeIds->{$entityTypeId}->{internal_abbrev} . $fieldSuffix;
 
   my $sql = "select entity_type_id
 from ${SCHEMA}.entitytypegraph
@@ -346,7 +356,7 @@ connect by prior parent_id = entity_type_id";
   
   my (@fields, @ancestorEntityTypeIds);  
   while(my ($id) = $sh->fetchrow_array()) {
-    my $entityTypeAbbrev = $entityTypeIds->{$id};
+    my $entityTypeAbbrev = $entityTypeIds->{$id}->{internal_abbrev};
     $self->error("Could not determine entityType abbrev for entit_Type_id=$id") unless($id);
     push @fields, $entityTypeAbbrev unless($id == $entityTypeId);
     push @ancestorEntityTypeIds, $id unless($id == $entityTypeId);
@@ -379,7 +389,21 @@ PRIMARY KEY ($stableIdField)
 sub entityTypeIdsFromStudyId {
   my ($self, $studyId) = @_;
 
-  return $self->sqlAsDictionary( Sql => "select t.entity_type_id, t.internal_abbrev from ${SCHEMA}.entitytype t where t.study_id = $studyId" );
+  my $sql = "select t.entity_type_id, t.internal_abbrev, t.type_id, t.entity_type_id from ${SCHEMA}.entitytype t where t.study_id = $studyId";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my $rv = {};
+  while(my ($entityTypeId, $internalAbbrev, $typeId, $internalEntityTypeIds) = $sh->fetchrow_array()) {
+    $rv->{$entityTypeId}->{internal_abbrev} = $internalAbbrev;
+    $rv->{$entityTypeId}->{type_id} = $typeId;
+    $rv->{$entityTypeId}->{internal_entity_type_ids} = $entityTypeId;
+  }
+  $sh->finish();
+
+  return $rv;
 }
 
 sub createAttributeGraphTable {
@@ -517,7 +541,7 @@ SQL
 
 
 sub createTallTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev) = @_;
+  my ($self, $entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeIds, $studyAbbrev) = @_;
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
 
@@ -531,9 +555,17 @@ SELECT ea.stable_id as ${entityTypeAbbrev}_stable_id
      , string_value
      , number_value
      , date_value
-FROM ${SCHEMA}.attributevalue av, ${SCHEMA}.entityattributes ea
-WHERE av.entity_type_id = $entityTypeId
+FROM ${SCHEMA}.attributevalue av
+   , ${SCHEMA}.entityattributes ea
+   , (SELECT att.stable_id, et.type_id et_type_id, att.unit_ontology_term_id unit_id
+      FROM ${SCHEMA}.attribute att, ${SCHEMA}.entitytype et
+      WHERE att.entity_type_id = et.entity_type_id 
+      AND att.entity_type_id = $entityTypeId) atts
+WHERE ea.entity_type_id in ($internalEntityTypeIds)
 and av.entity_attributes_id = ea.entity_attributes_id
+and av.attribute_stable_id = atts.stable_id
+and av.entity_type_ontology_term_id = atts.et_type_id
+and nvl(av.unit_ontology_term_id, -1) = nvl(atts.unit_id, -1)
 CREATETABLE
 
   my $dbh = $self->getDbHandle();
@@ -579,11 +611,24 @@ and r.external_database_release_id = s.external_database_release_id";
   $sh->execute();
 
   while(my ($studyAbbrev) = $sh->fetchrow_array()) {
+
     my $s = uc $studyAbbrev;
     # collection tables have foreign keys - drop them first
     $self->dropTablesLike("COLLECTIONATTRIBUTE_${s}");
     $self->dropTablesLike("COLLECTION_${s}");
     $self->dropTablesLike("(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_${s}");
+
+    # Some tables do not exist, get a list and drop them
+    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER=upper('$SCHEMA') AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
+    $self->log("Finding tables to drop with SQL: $sql");
+    my $sh2 = $dbh->prepare($sql);
+    $sh2->execute();
+    while(my ($table_name) = $sh2->fetchrow_array()){
+      $self->log("dropping table ${SCHEMA}.${table_name}");
+      $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
+    }
+    $sh2->finish();
+
   }
   $sh->finish();
 }
