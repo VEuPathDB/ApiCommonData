@@ -266,6 +266,9 @@ sub getGeneticCodeFromOrganismAbbrev {
     } elsif ( $organismAbbrev eq "bdiv1802A"
 		) {
       $projectName = "PiroplasmaDB";
+    } elsif ( $organismAbbrev eq "cvelCCMP2878"
+		) {
+      $projectName = "CryptoDB";
     } elsif ( $organismAbbrev eq "ncanLiverpool2019"
 	|| $organismAbbrev eq "etenHoughton2021"
 	    ) {
