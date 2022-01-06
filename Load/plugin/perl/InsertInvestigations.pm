@@ -493,7 +493,7 @@ sub loadNodes {
       $gusInvestigationLink->setParent($pan);
     }
 
-    if($node->getMaterialType) {
+    if($node->hasAttribute("MaterialType") && $node->getMaterialType()) {
       my $gusOntologyTerm = $self->getOntologyTermGusObj($node->getMaterialType, 0);
       my $ontologyTermId = $gusOntologyTerm->getId();
       $pan->setTypeId($ontologyTermId); # CANNOT Set Parent because OntologyTerm Table has type and subtype.  Both have fk to Sres.ontologyterm
