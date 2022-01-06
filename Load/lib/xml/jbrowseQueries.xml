@@ -1215,6 +1215,150 @@ ORDER BY
    </sql>
   </track>
 
+  <track name="domainExportPred" type="protein" fileSuffix="gff">
+   <!-- PlasmoDB,UniDB -->
+
+   <sql>
+     <![CDATA[
+SELECT DISTINCT df.aa_feature_id feature_id,
+       'domain' type,
+       'ExportPred' source,
+       df.aa_feature_id name,
+       '.' score,
+       df.parent_id parent_id,
+       min(aal.start_min) startm,
+       max(aal.end_max) end,
+       '.' strand,
+       'DomainName=' || df.name || '$dlm' ||
+       'ID=' || df.aa_feature_id atts
+FROM   dots.domainfeature df,
+       dots.aasequence aas,
+       dots.aalocation aal
+WHERE  df.algorithm_name = 'exportpred' and
+       df.aa_sequence_id = $srcfeature_id and
+       aas.aa_sequence_id = $srcfeature_id and
+       df.aa_feature_id = aal.aa_feature_id
+GROUP BY df.aa_feature_id, df.parent_id, df.name
+     ]]>
+   </sql>
+  </track>
+
+  <track name="domainInterpro" type="protein" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+SELECT ir.interpro_primary_id || '_' || ir.interpro_start_min || '_' || ir.interpro_end_min feature_id,
+       'domain:interpro' feature,
+       'VEuPathDB' source,
+       ir.interpro_primary_id name,
+       ir.interpro_e_value score,
+       null parent_id,
+       ir.interpro_start_min startm,
+       ir.interpro_end_min end,
+       'Note=' || ir.interpro_secondary_id || ' ' || ir.interpro_desc || '$dlm' ||
+       'Db=' || ir.interpro_db_name || '$dlm' ||
+       'InterproId=' || ir.interpro_family_id || '$dlm' ||
+       'Evalue=' || ir.interpro_e_value || '$dlm' ||
+       'Pi=' || ir.interpro_primary_id atts
+FROM dots.TranslatedAASequence pa,
+     (
+      SELECT
+          ta.source_id as protein_source_id
+        , xd1.name AS interpro_db_name
+        , dr.primary_identifier AS interpro_primary_id
+        , dr.secondary_identifier AS interpro_secondary_id
+        , substr(dr.remark, 1, 400) AS interpro_desc
+        , al.start_min AS interpro_start_min
+        , al.end_min AS interpro_end_min
+        , CASE
+            WHEN df.e_value = 0
+            THEN '0'
+            ELSE TO_CHAR(df.e_value, '9.9EEEE')
+          END AS interpro_e_value
+        , df2.source_id AS interpro_family_id
+      FROM
+          dots.TranslatedAASequence ta
+        , dots.AaLocation al
+        , sres.ExternalDatabaseRelease xdr1
+        , sres.ExternalDatabase xd1
+        , sres.ExternalDatabaseRelease xdr3
+        , sres.ExternalDatabase xd3
+        , sres.DbRef dr
+        , dots.DbRefAaFeature draf
+        , dots.DomainFeature df
+        , dots.DomainFeature df2
+      WHERE xd3.name
+              IN ('InterproscanData_RSRC', 'INTERPRO', 'Prints', 'HAMAP', 'SFLD',
+                  'TIGRFAM', 'SUPERFAMILY', 'Pfam', 'PIRSF', 'PROSITE patterns',
+                  'Superfamily', 'PRINTS', 'InterProScan', 'PFAM', 'SMART',
+                  'CDD', 'PANTHER')
+        AND ta.aa_sequence_id = df.aa_sequence_id
+        AND df.aa_feature_id = draf.aa_feature_id
+        AND df.aa_feature_id = al.aa_feature_id
+        AND draf.db_ref_id = dr.db_ref_id
+        AND dr.external_database_release_id = xdr1.external_database_release_id
+        AND xdr1.external_database_id = xd1.external_database_id
+        AND df.external_database_release_id = xdr3.external_database_release_id
+        AND xdr3.external_database_id = xd3.external_database_id
+        AND df.parent_id = df2.aa_feature_id (+)
+        AND dr.primary_identifier is not null
+     ) ir
+WHERE pa.aa_sequence_id = $srcfeature_id
+  AND ir.protein_source_id = pa.source_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="domainSignalP" type="protein" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+SELECT
+       spf.aa_feature_id feature_id,
+       'domain:SignalP' feature,
+       'VEuPathDB' source,
+       spf.aa_feature_id name,
+       '.' score,
+       spf.parent_id parent_id,
+       1 startm,
+       aal.end_max end,
+       '.' strand,
+       'Algorithm=' || spf.algorithm_name as  atts
+FROM
+       dots.SignalPeptideFeature spf,
+       dots.AaLocation aal
+WHERE
+       spf.aa_sequence_id = $srcfeature_id and
+       aal.aa_feature_id = spf.aa_feature_id
+     ]]>
+   </sql>
+  </track>
+
+  <track name="domainTMHMM" type="protein" fileSuffix="gff">
+
+   <sql>
+     <![CDATA[
+SELECT
+      tmf.aa_feature_id || '_' ||aal.start_min feature_id,
+       'domain:TMHMM' feature,
+       'VEuPathDB' source,
+       tmf.aa_feature_id name,
+       '.' score,
+       tmf.parent_id parent_id,
+       aal.start_min startm,
+       aal.end_max end,
+       '.' strand,
+       'Topology=' || tmf.topology atts
+FROM
+       dots.TransmembraneAaFeature tmf,
+       dots.AaLocation aal
+WHERE
+       tmf.aa_sequence_id = $srcfeature_id and
+       tmf.aa_feature_id = aal.aa_feature_id
+     ]]>
+   </sql>
+  </track>
+
 <!--
 ####DONE ####
 EST
@@ -1241,6 +1385,10 @@ repeat:RepeatElements
 scaffold:genome
 SNP:DiversityJbrowse
 TandemRepeat:TRF
+domain:ExportPred
+domain:interpro
+domain:SignalP
+domain:TMHMM
 
 ### TODO Genomic ####
 ChIP:ChIPchip_peaksjbrowse ? can't find calls to it (though it has params). also, how can pan ID be a param?
@@ -1264,13 +1412,9 @@ SNP:Genotyping - uses (only) apidbTuning.SnpChipAttributes
 SNP:Population - uses tuning tables SnpAttributes, GeneAttributes
 
 ### TODO Protein ####
-domain:ExportPred
-domain:interpro
-domain:MassSpecPeptide
-domain:MassSpecPeptidePhospho
-domain:SignalP
-domain:TMHMM
-domain:UnifiedPostTraslationalMod
+domain:MassSpecPeptide - references apidbTuning.MsPeptideSummary
+domain:MassSpecPeptidePhospho - references apidbTuning.MsPeptideSummary, apidbTuning.MsModifiedPeptideSummary
+domain:UnifiedPostTraslationalMod - uses MSModifiedPeptideSummary. also, why not "traNslation"?
 get_2d_struc_jbrowse
 hydropathy_jbrowse
 lowcomplexity:seg
