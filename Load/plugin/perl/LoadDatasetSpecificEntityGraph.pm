@@ -95,23 +95,27 @@ sub run {
   foreach my $studyId (keys %$studies) {
     my $studyAbbrev = $studies->{$studyId};
     $self->log("Loading Study: $studyAbbrev");
-    my $entityTypeIds = $self->entityTypeIdsFromStudyId($studyId);
+    my ($entityTypeInfo, $entityTypeIdMap) = $self->setEntityTypeInfoFromStudyId($studyId);
 
-    foreach my $entityTypeId (keys %$entityTypeIds) {
-      my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId}->{internal_abbrev};
-      my $entityTypeOntologyTermId = $entityTypeIds->{$entityTypeId}->{type_id};
-      my $internalEntityTypeOntologyTermIds = $entityTypeIds->{$entityTypeId}->{internal_entity_type_ids};
+    foreach my $entityTypeId (keys %$entityTypeInfo) {
+      my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
+
 
       my $tallTableName = $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       my $ancestorsTableName = $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
       my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
       my $wideTableName;
 
-      $self->createTallTable($entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeOntologyTermIds, $studyAbbrev);
-      $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
+#      $self->createTallTable($entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeOntologyTermIds, $studyAbbrev);
+#      $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
+#      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
+
+
+#      $self->createTallTable($entityTypeId, $studyAbbrev);
+      $self->createAncestorsTable($studyId, $entityTypeId, $studyAbbrev);
+      $self->createAttributeGraphTable($entityTypeId, $studyAbbrev, $studyId);
 
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
         $wideTableName = $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
@@ -182,26 +186,26 @@ sub createWideTable {
   my $tableName = "ATTRIBUTES_${studyAbbrev}_${entityTypeAbbrev}";
   $self->log("Creating TABLE:  $tableName");
 
+  my $internalEntityTypeIds = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
+
   my ($entityColumnStrings, $processColumnStrings) = $self->makeWideTableColumnString($entityTypeId);
 
   my $entityColumns = join("\n,", map { sprintf(qq/"%s"/, $_) } @$entityColumnStrings);
   my $processColumns = join("\n,", @$processColumnStrings);
 
 
-  # TODO: use internal entity type _ids here
   my $entitySql = "select ea.stable_id, eaa.*
                    from $SCHEMA.entityattributes ea,
                         json_table(atts, '\$'
                          columns ( $entityColumns )) eaa
-                   where ea.entity_type_id = $entityTypeId";
+                   where ea.entity_type_id in ($internalEntityTypeIds)";
 
-  # TODO: use internal entity type _ids here
   my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
                                                 from ${SCHEMA}.processattributes pa,
                                                      (select entity_attributes_id
                                                            , stable_id 
                                                       from ${SCHEMA}.entityattributes 
-                                                      where entity_type_id = $entityTypeId) ea
+                                                      where entity_type_id in ($internalEntityTypeIds)) ea
                                                 where ea.entity_attributes_id = pa.out_entity_id (+)
                                                )
                     select pa.stable_id, paa.*
@@ -244,24 +248,36 @@ AND table_name='$tableName'");
 
 
 sub createAncestorsTable {
-  my ($self, $studyId, $entityTypeId, $entityTypeIds, $studyAbbrev) = @_;
+  my ($self, $studyId, $entityTypeId, $studyAbbrev) = @_;
 
-  my $entityTypeAbbrev = $entityTypeIds->{$entityTypeId}->{internal_abbrev};;
+  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
   my $tableName = "${SCHEMA}.Ancestors_${studyAbbrev}_${entityTypeAbbrev}";
   my $fieldSuffix = "_stable_id";
 
   $self->log("Creating TABLE: $tableName");
 
-  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
-  $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
-  return $tableName;
+
+  # my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
+  # $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
+  # return $tableName;
+
+  my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix);
+
+  my $internalEntityTypeIdsString = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
+  
+  my @internalEntityTypeIds = split(',', $internalEntityTypeIdsString);
+  foreach my $internalEntityTypeId (@internalEntityTypeIds) {
+    $self->populateAncestorsTable($tableName, $internalEntityTypeId, $fieldSuffix, $ancestorEntityTypeIds);
+  }
+    
+
 }
 
 sub populateAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeAbbrevs) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds) = @_;
 
-  my $stableIdField = $entityTypeAbbrevs->{$entityTypeId}->{internal_abbrev} . $fieldSuffix;
+  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
   my $sql = "select * from (
   with f as 
@@ -280,7 +296,7 @@ sub populateAncestorsTable {
   and p.out_entity_id = o.entity_attributes_id
   and i.entity_type_id = et.entity_type_id
   and et.study_id = s.study_id
-  and s.study_id = $studyId
+  and s.study_id in (select study_id from ${SCHEMA}.entitytype where entity_type_id = $entityTypeId)
   )
   select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
   from f
@@ -297,7 +313,7 @@ sub populateAncestorsTable {
 
   my $hasFields = scalar @$ancestorEntityTypeIds > 0;
 
-  my @fields = map { $entityTypeAbbrevs->{$_}->{internal_abbrev} . $fieldSuffix } @$ancestorEntityTypeIds;
+  my @fields = map { $self->getEntityTypeInfo($_, "internal_abbrev") . $fieldSuffix } @$ancestorEntityTypeIds;
 
   my $fieldsString = $hasFields ? "$stableIdField, " . join(",",  @fields) : $stableIdField;
 
@@ -320,7 +336,12 @@ sub populateAncestorsTable {
       %entities = ();
     }
 
-    $entities{$parentTypeId} = $parentId if ($parentId);    
+    if ($parentId) {
+      # for mega study, the query above will return the internal entity type which needs to be mapped
+      # for the standard study, use the identity mapping
+      my $mappedParentTypeId = $self->mapEntityTypeId($parentTypeId); 
+      $entities{$mappedParentTypeId} = $parentId;
+    }
     $prevId = $entityId;
 
     if(++$count % 1000 == 0) {
@@ -341,9 +362,9 @@ sub insertAncestorRow {
 }
 
 sub createEmptyAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $fieldSuffix, $entityTypeIds) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix) = @_;
 
-  my $stableIdField = $entityTypeIds->{$entityTypeId}->{internal_abbrev} . $fieldSuffix;
+  my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
   my $sql = "select entity_type_id
 from ${SCHEMA}.entitytypegraph
@@ -356,8 +377,7 @@ connect by prior parent_id = entity_type_id";
   
   my (@fields, @ancestorEntityTypeIds);  
   while(my ($id) = $sh->fetchrow_array()) {
-    my $entityTypeAbbrev = $entityTypeIds->{$id}->{internal_abbrev};
-    $self->error("Could not determine entityType abbrev for entit_Type_id=$id") unless($id);
+    my $entityTypeAbbrev = $self->getEntityTypeInfo($id, "internal_abbrev");
     push @fields, $entityTypeAbbrev unless($id == $entityTypeId);
     push @ancestorEntityTypeIds, $id unless($id == $entityTypeId);
   }
@@ -386,7 +406,7 @@ PRIMARY KEY ($stableIdField)
 
 
 
-sub entityTypeIdsFromStudyId {
+sub setEntityTypeInfoFromStudyId {
   my ($self, $studyId) = @_;
 
   my $sql = "select t.entity_type_id, t.internal_abbrev, t.type_id, t.entity_type_id from ${SCHEMA}.entitytype t where t.study_id = $studyId";
@@ -395,24 +415,69 @@ sub entityTypeIdsFromStudyId {
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  my $rv = {};
+  my $entityTypeInfo = {};
+  my $entityTypeIdMap = {};
   while(my ($entityTypeId, $internalAbbrev, $typeId, $internalEntityTypeIds) = $sh->fetchrow_array()) {
-    $rv->{$entityTypeId}->{internal_abbrev} = $internalAbbrev;
-    $rv->{$entityTypeId}->{type_id} = $typeId;
-    $rv->{$entityTypeId}->{internal_entity_type_ids} = $entityTypeId;
+    $entityTypeInfo->{$entityTypeId}->{internal_abbrev} = $internalAbbrev;
+    $entityTypeInfo->{$entityTypeId}->{type_id} = $typeId;
+    $entityTypeInfo->{$entityTypeId}->{internal_entity_type_ids} = $entityTypeId;
+
+    $entityTypeIdMap->{$entityTypeId} = $entityTypeId; # ONLY identity mapping for standard /  non mega study
   }
   $sh->finish();
 
-  return $rv;
+  $self->{_entity_type_info} = $entityTypeInfo;
+  $self->{_entity_type_id_map} = $entityTypeIdMap;
+
+  return $entityTypeInfo, $entityTypeIdMap
 }
 
+sub mapEntityTypeId {
+  my ($self, $entityTypeId) = @_;
+
+  my $mappedId = $self->{_entity_type_id_map}->{$entityTypeId};
+
+  unless($mappedId) {
+    $self->error("Could not map entityTypeId: $entityTypeId");
+  }
+
+  return $mappedId
+}
+
+sub getEntityTypeInfo {
+  my ($self, $entityTypeId, $key) = @_;
+
+  my @allowedKeys = ("internal_abbrev", "type_id", "internal_entity_type_id");
+
+  unless(grep(/$key/, @allowedKeys)) {
+    $self->error("Invalid hash key:  $key");
+  }
+
+  my $et = $self->{_entity_type_info}->{$entityTypeId};
+
+  unless($et) {
+    $self->error("no entity type info for entity type id:  $entityTypeId");
+  }
+
+  my $value = $et->{$key};
+
+  unless(defined $value) {
+    $self->error("no value for entity type id [$entityTypeId] and key [$key]");
+  }
+
+  return $value;
+}
+
+
+
 sub createAttributeGraphTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId) = @_;
+  my ($self, $entityTypeId, $studyAbbrev, $studyId) = @_;
+
+  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
 
   my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${entityTypeAbbrev}";
 
   $self->log("Creating TABLE:  $tableName");
-
 
   # ${SCHEMA}.attribute stable_id could be from sres.ontologyterm, or not
   # if yes, it could also be another term's parent
@@ -541,7 +606,11 @@ SQL
 
 
 sub createTallTable {
-  my ($self, $entityTypeId, $entityTypeAbbrev, $entityTypeOntologyTermId, $internalEntityTypeIds, $studyAbbrev) = @_;
+  my ($self, $entityTypeId, $studyAbbrev) = @_;
+
+  my $entityTypeAbbrev = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev");
+  my $entityTypeOntologyTermId = $self->getEntityTypeInfo($entityTypeId, "type_id");
+  my $internalEntityTypeIds = $self->getEntityTypeInfo($entityTypeId, "internal_entity_type_ids");
 
   my $tableName = "${SCHEMA}.AttributeValue_${studyAbbrev}_${entityTypeAbbrev}";
 
