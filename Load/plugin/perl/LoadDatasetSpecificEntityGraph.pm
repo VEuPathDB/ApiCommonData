@@ -384,6 +384,7 @@ sub createAttributeGraphTable {
   # (but not a multifilter - term_type for attributes that have values is default) -- TODO term_type and is_hidden are DEPRECATED, rewrite this comment
   # hence this is only using atg for the parent-child relationship
   # and only adding atg entries which aren't already in
+  # careful: att.ontology_term_id doesn't have to exist
 
   my $sql = "CREATE TABLE $tableName as
   WITH att AS
@@ -467,7 +468,7 @@ SELECT -- distinct
      , att.unit
      , att.precision
 FROM atg, att
-where atg.ontology_term_id = att.ontology_term_id
+where atg.stable_id = att.stable_id
 ";
 
 
