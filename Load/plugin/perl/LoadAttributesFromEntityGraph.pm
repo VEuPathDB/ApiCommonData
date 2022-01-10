@@ -26,8 +26,6 @@ use Data::Dumper;
 
 my $SCHEMA = '__SCHEMA__'; # must be replaced with real schema name
 
-my $VALUE_COUNT_CUTOFF = 10;
-
 my $END_OF_RECORD_DELIMITER = "#EOR#\n";
 my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
@@ -437,8 +435,7 @@ sub valProps {
   if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
     $dataShape = 'ordinal';
   }
-  elsif($isDate || ($isNumber && $valueCount > $VALUE_COUNT_CUTOFF)) {
-    ## TODO if min or max is set, ignore $VALUE_COUNT_CUTOFF 
+  elsif($isDate || $isNumber ){
     $dataShape = 'continuous';
   }
   elsif($valueCount == 2) {
