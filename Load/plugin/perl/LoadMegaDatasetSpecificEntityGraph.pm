@@ -5,6 +5,8 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph;;
 use GUS::PluginMgr::Plugin;
 
+use ApiCommonData::Load::StudyUtils qw(parseMegaStudyConfig);
+
 use Data::Dumper;
 use YAML::Tiny;
 use strict;
@@ -72,18 +74,7 @@ sub getMegaStudyConfig {
 
   my $megaStudyStableId = $studies[0];
 
-  my $yaml = YAML::Tiny->read($megaStudyYaml);
-  unless($yaml) {
-    $self->error("Error parsing yaml file for mega study:  $megaStudyYaml");
-  }
-
-  foreach my $doc (@$yaml) {
-    if($doc->{stable_id} eq $megaStudyStableId) {
-      return $doc;
-    }
-  }
-
-  $self->error("no configuration for $megaStudyStableId found in yaml file:  $megaStudyYaml");
+  return ApiCommonData::Load::StudyUtils::parseMegaStudyConfig($megaStudyYaml, $megaStudyStableId);
 }
 
 
