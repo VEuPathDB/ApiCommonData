@@ -268,14 +268,14 @@ sub createAncestorsTable {
   
   my @internalEntityTypeIds = split(',', $internalEntityTypeIdsString);
   foreach my $internalEntityTypeId (@internalEntityTypeIds) {
-    $self->populateAncestorsTable($tableName, $internalEntityTypeId, $fieldSuffix, $ancestorEntityTypeIds);
+    $self->populateAncestorsTable($tableName, $internalEntityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId);
   }
     
 
 }
 
 sub populateAncestorsTable {
-  my ($self, $tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds) = @_;
+  my ($self, $tableName, $entityTypeId, $fieldSuffix, $ancestorEntityTypeIds, $studyId) = @_;
 
   my $stableIdField = $self->getEntityTypeInfo($entityTypeId, "internal_abbrev") . $fieldSuffix;
 
@@ -296,7 +296,10 @@ sub populateAncestorsTable {
   and p.out_entity_id = o.entity_attributes_id
   and i.entity_type_id = et.entity_type_id
   and et.study_id = s.study_id
-  and s.study_id in (select study_id from ${SCHEMA}.entitytype where entity_type_id = $entityTypeId)
+  and s.study_id in (select $studyId from dual 
+                     union 
+                     select study_id from ${SCHEMA}.entitytype where entity_type_id = $entityTypeId
+                    )
   )
   select connect_by_root out_stable_id stable_id,  in_stable_id, in_type_id
   from f
