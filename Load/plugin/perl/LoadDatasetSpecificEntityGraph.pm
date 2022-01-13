@@ -405,7 +405,7 @@ SELECT --  distinct
      , atg.definition
      , atg.ordinal_values as vocabulary
      , atg.display_type
-     , atg.scope
+     , atg.hidden
      , atg.display_order
      , atg.display_range_min
      , atg.display_range_max
@@ -444,7 +444,7 @@ SELECT -- distinct
          ELSE atg.ordinal_values
        END as vocabulary
      , atg.display_type display_type
-     , atg.scope
+     , atg.hidden
      , atg.display_order
      , atg.display_range_min
      , atg.display_range_max
