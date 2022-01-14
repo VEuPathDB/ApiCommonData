@@ -124,7 +124,7 @@ sub run {
     $self->addToEntityTypes($entityTypes, $studyId);
   }
 
-  $self->loadEntityTypes($gusStudy, $entityTypes);
+  $self->loadEntityTypesAndAttributeUnits($gusStudy, $entityTypes);
 
   $self->logRowsInserted() if($self->getArg('commit'));
 
@@ -132,7 +132,7 @@ sub run {
 
 }
 
-sub loadEntityTypes {
+sub loadEntityTypesAndAttributeUnits {
   my ($self, $gusStudy, $entityTypes) = @_;
 
   foreach my $typeId (keys %$entityTypes) {
@@ -140,9 +140,18 @@ sub loadEntityTypes {
     my $internalAbbrev = $entityTypes->{$typeId}->{internal_abbrev};
 
     my $gusEntityType = $self->getGusModelClass('EntityType')->new({type_id => $typeId, name => $name, internal_abbrev => $internalAbbrev});
-
     $gusEntityType->setParent($gusStudy);
     $gusEntityType->submit();
+
+    foreach my $attOntologyTermId (keys %{$entityTypes->{$typeId}->{units}}) {
+      my $unitId = $entityTypes->{$typeId}->{units}->{$attOntologyTermId};
+
+      my $gusAttributeUnit = $self->getGusModelClass('AttributeUnit')->new({ATTR_ONTOLOGY_TERM_ID => $attOntologyTermId, UNIT_ONTOLOGY_TERM_ID => $unitId});
+      $gusAttributeUnit->setParent($gusEntityType);
+      $gusAttributeUnit->submit();
+    }
+
+
 
     $self->undefPointerCache();
   }
@@ -162,7 +171,6 @@ sub addToEntityTypes {
   my $sh = $dbh->prepare($sql);
   $sh->execute($studyId);
 
-
   while(my ($parentStableId, $name, $typeId, $internalAbbrev) = $sh->fetchrow_array()) {
 
     # if we've seen this entity type before check the parent is the same. 
@@ -178,8 +186,36 @@ sub addToEntityTypes {
     $entityTypes->{$typeId}->{name} = $name;
     $entityTypes->{$typeId}->{internal_abbrev} = $internalAbbrev;
   }
+
+  $self->addUnitsToEntityTypes($entityTypes, $studyId);
+
   return $entityTypes;
 }
+
+sub addUnitsToEntityTypes {
+  my ($self, $entityTypes, $studyId) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select et.type_id, au.ATTR_ONTOLOGY_TERM_ID, au.unit_ontology_term_id
+             from ${SCHEMA}.attributeunit au
+                , ${SCHEMA}.entitytype et
+             where et.study_id = ?
+             and et.entity_type_id = au.entity_type_id (+)";
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($studyId);
+
+  while(my ($typeId, $attOntologyTermId, $attUnitId) = $sh->fetchrow_array()) {
+    next unless($attOntologyTermId);
+
+    # if there are multiple, this will take one by random
+    # TODO:  Maybe add a mechanism to pick a base unit where there are conflicts
+    $entityTypes->{$typeId}->{units}->{$attOntologyTermId} = $attUnitId;
+  }
+
+}
+
 
 sub connectSubStudyToEntityGraph {
   my ($self, $studyId, $gusEntityAttribute, $gusProcessType) = @_;
