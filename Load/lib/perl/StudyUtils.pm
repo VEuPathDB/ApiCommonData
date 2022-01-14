@@ -29,7 +29,7 @@ sub queryForOntologyTerms {
                   , os.is_preferred
                   , os.definition                    --this is also in the annotation_properties json
                   , json_value(os.annotation_properties, '\$.displayType[0]') as display_type
-                  , json_query(os.annotation_properties, '\$.scope') as scope -- gives json array
+                  , json_query(os.annotation_properties, '\$.hidden') as hidden -- gives json array
                   , json_value(os.annotation_properties, '\$.displayOrder[0]') as display_order
                   , json_value(annotation_properties, '\$.defaultDisplayRangeMin[0]') as display_range_min
                   , json_value(annotation_properties, '\$.defaultDisplayRangeMax[0]') as display_range_max
