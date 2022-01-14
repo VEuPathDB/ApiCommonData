@@ -15,6 +15,7 @@ use warnings;
 
 use JSON;
 use YAML::Tiny;
+
 use Data::Dumper;
 
 sub queryForOntologyTerms {
@@ -143,7 +144,7 @@ sub getTermsByAnnotationPropertyValue {
 
 
 sub parseMegaStudyConfig {
-  my ($self, $yamlFile, $studyStableId) = @_;
+  my ($yamlFile, $studyStableId) = @_;
 
   my $yaml = YAML::Tiny->read($yamlFile);
 

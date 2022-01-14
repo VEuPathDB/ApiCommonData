@@ -1,8 +1,9 @@
 package ApiCommonData::Load::Plugin::InsertMegaEntityGraph;
 
-@ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::InsertEntityGraph);
+use base qw(ApiCommonData::Load::Plugin::InsertEntityGraph);
+
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Plugin::ParameterizedSchema;
+
 use strict;
 use warnings;
 
@@ -102,11 +103,10 @@ sub run {
   $self->requireModelObjects();
   $self->resetUndoTables(); # for when logRowsInserted() is called after loading
 
-  my $studyConfig = $self->getMegaStudyConfig();
-
   my $gusStudy = $self->loadStudy();
   my $gusEntityType = $self->loadEntityType($gusStudy);
   my $gusProcessType = $self->loadProcessType();
+  $gusProcessType->submit();
 
   my $subStudies = $self->getSubStudies();
 
@@ -115,9 +115,10 @@ sub run {
   foreach my $studyId (keys %$subStudies) {
     my $studyStableId = $subStudies->{$studyId};
     my $attsJson = $self->makeStudyAttributes($studyId);
-    
+
     my $gusEntityAttribute = $self->getGusModelClass('EntityAttributes')->new({stable_id => $studyStableId, atts => $attsJson});
     $gusEntityAttribute->setParent($gusEntityType);
+    $gusEntityAttribute->submit();
 
     $self->connectSubStudyToEntityGraph($studyId, $gusEntityAttribute, $gusProcessType);
     $self->addToEntityTypes($entityTypes, $studyId);
@@ -135,10 +136,10 @@ sub loadEntityTypes {
   my ($self, $gusStudy, $entityTypes) = @_;
 
   foreach my $typeId (keys %$entityTypes) {
-    my $name = $entityTypes->{name};
-    my $internalAbbrev = $entityTypes->{internal_abbrev};
+    my $name = $entityTypes->{$typeId}->{name};
+    my $internalAbbrev = $entityTypes->{$typeId}->{internal_abbrev};
 
-    my $gusEntityType = $self->getGusModelClass('EnitytType')->new({type_id => $typeId, name => $name, internal_abbrev => $internalAbbrev});
+    my $gusEntityType = $self->getGusModelClass('EntityType')->new({type_id => $typeId, name => $name, internal_abbrev => $internalAbbrev});
 
     $gusEntityType->setParent($gusStudy);
     $gusEntityType->submit();
@@ -153,8 +154,8 @@ sub addToEntityTypes {
   my $dbh = $self->getQueryHandle();
 
   my $sql = "select etg.PARENT_STABLE_ID, et.name, et.type_id, et.internal_abbrev
-             from eda.entitytypegraph etg
-                , eda.entitytype et
+             from ${SCHEMA}.entitytypegraph etg
+                , ${SCHEMA}.entitytype et
              where etg.study_id = ?
              and etg.entity_type_id = et.entity_type_id";
 
@@ -189,8 +190,8 @@ sub connectSubStudyToEntityGraph {
   my $processTypeId = $gusProcessType->getId();
 
   my $sql = "select ea.entity_attributes_id
-             from eda.entitytypegraph etg
-                , eda.entityattributes ea
+             from ${SCHEMA}.entitytypegraph etg
+                , ${SCHEMA}.entityattributes ea
              where etg.study_id = ?
              and etg.parent_stable_id is null
              and etg.entity_type_id = ea.entity_type_id";
@@ -213,7 +214,7 @@ sub makeStudyAttributes {
   my ($self, $studyId) = @_;
 
   my $sql = "select ot.source_id, sc.value
-from eda.studycharacteristic sc
+from ${SCHEMA}.studycharacteristic sc
    , sres.ontologyterm ot
 where sc.attribute_id = ot.ontology_term_id
 and study_id = ?
@@ -241,7 +242,7 @@ sub getSubStudies {
   my $megaStudyYaml = $self->getArg('megaStudyYaml');
   my $megaStudyConfig = ApiCommonData::Load::StudyUtils::parseMegaStudyConfig($megaStudyYaml, $megaStudyStableId);
 
-  my $subquery = "select s.study_id, s.stable_id from eda.study s where s.study_id is null";
+  my $subquery = "select s.study_id, s.stable_id from ${SCHEMA}.study s where s.study_id is null";
 
   if(my $project = $megaStudyConfig->{project}) {
     $subquery = $subquery . "\nUNION\nselect s.study_id, s.stable_id from ${SCHEMA}.study s, core.projectinfo p where s.row_project_id = p.project_id and p.name = '$project'";
@@ -309,20 +310,6 @@ sub loadStudy {
 
   return $gusStudy;
 }
-
-
-sub getMegaStudyConfig {
-  my ($self) = @_;
-
-  my $megaStudyYaml = $self->getArg('megaStudyYaml');
-
-  my $studyStableId = $self->getArg('studyStableId');
-
-  return unless($megaStudyYaml); # nothing to see here
-
-  return ApiCommonData::Load::StudyUtils::parseMegaStudyConfig($megaStudyYaml, $studyStableId);
-}
-
 
 
 1;
