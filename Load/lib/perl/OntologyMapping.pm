@@ -171,8 +171,6 @@ sub getTermsFromOwl{
       parent=> 'ENTITY',
       function => \@funcs
     };
-    $terms{$sid}{unit} = $row->{unitLabel}->literal_value if $row->{unitLabel};
-    $terms{$sid}{unitSourceId} = basename $row->{unitIRI}->literal_value if $row->{unitIRI};
   }
   my @sorted;
   if($sortByIRI){

@@ -100,6 +100,4 @@ EOF
 write_file("$dir/gems.owl", $gemsOwl);
 my ($ontologySourcesGemsOwl, $ontologyMappingGemsOwl) = ApiCommonData::Load::OntologyMapping->fromOwl("$dir/gems.owl")->asSourcesAndMapping;
 diag explain $ontologyMappingGemsOwl->{f5_ht1};
-ok($ontologyMappingGemsOwl->{f5_ht1}{characteristicQualifier}{unit}, "unit label");
-ok($ontologyMappingGemsOwl->{f5_ht1}{characteristicQualifier}{unitSourceId}, "unit IRI");
 done_testing;
