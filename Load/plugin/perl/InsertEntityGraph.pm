@@ -71,8 +71,8 @@ my $argsDeclaration =
 
 
    booleanArg({name => 'skipDatasetLookup',
-          descr => 'do not require existing nodes for datasets listed in isa files',
-          reqd => 1,
+          descr => 'UNUSED (was: do not require existing nodes for datasets listed in isa filesi)',
+          reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
@@ -110,16 +110,9 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
-
-
-   stringArg({name           => 'evalToGetGetAddMoreData',
-            descr          => 'Add more data to InvestigationSimple Reader',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
   ];
 
-my $documentation = { purpose          => "",
+our $documentation = { purpose          => "",
                       purposeBrief     => "",
                       notes            => "",
                       tablesAffected   => "",
@@ -137,7 +130,7 @@ our @UNDO_TABLES =qw(
   Study
 ); ## undo is not run on ProcessType
 
-my @REQUIRE_TABLES = qw(
+our @REQUIRE_TABLES = qw(
   Study
   EntityAttributes
   EntityType
@@ -187,13 +180,8 @@ sub run {
   }
   $self->userError("No investigation files") unless @investigationFiles;
 
-  my $getAddMoreData;
-  my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
-  if($evalToGetGetAddMoreData){
-    $getAddMoreData = eval $evalToGetGetAddMoreData;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
-  }
+  my $schema = $self->getArg('schema');
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;
@@ -209,11 +197,24 @@ sub run {
       if ($ontologyMappingOverrideFile && ! -f $ontologyMappingOverrideFile){ ## prepend path
         $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
       }
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, undef);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
+    $self->loadInvestigation($investigation, $extDbRlsId, $schema);
+    $investigationCount++;
+  }
+  $self->logRowsInserted() if($self->getArg('commit'));
+
+  $self->log("Processed $investigationCount Investigations.");
+}
+
+# called by the run methods
+# here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
+sub loadInvestigation {
+  my ($self, $investigation, $extDbRlsId, $schema) = @_;
+  do {
     my %errors;
     $investigation->setOnError(sub {
       my ($error) = @_;
@@ -236,28 +237,23 @@ sub run {
         my $description = $study->getDescription();
 
         my $nodes = $study->getNodes();
-        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols());
+        my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols(), $schema);
         my $edges = $study->getEdges();
 
         my $iOntologyTermAccessions = $investigation->getOntologyAccessionsHash();
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap)
+        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap, $extDbRlsId)
          unless %errors;
       }
     }
 
-    $investigationCount++;
     my $errorCount = scalar keys %errors;
     if($errorCount) {
       $self->error(join("\n","FOUND $errorCount DIFFERENT ERRORS!", keys %errors));
     }
-  }
-
-  $self->logRowsInserted() if($self->getArg('commit'));
-
-  $self->log("Processed $investigationCount Investigations.");
+  };
 }
 
 sub countLines {
@@ -271,9 +267,9 @@ sub countLines {
 
 
 sub protocolsCheckProcessTypesAndSetIds {
-  my ($self, $protocols) = @_;
+  my ($self, $protocols, $schema) = @_;
 
-  my $sql = sprintf("select name, process_type_id from %s.processtype", $self->getArg('schema'));
+  my $sql = "select name, process_type_id from $schema.processtype";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
@@ -299,10 +295,8 @@ sub protocolsCheckProcessTypesAndSetIds {
 
 sub loadStudy {
   my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
-    $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap) = @_;
-
-  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+    $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap,
+    $extDbRlsId) = @_;
 
   my $internalAbbrev = $identifier;
   $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
