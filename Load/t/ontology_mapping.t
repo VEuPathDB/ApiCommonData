@@ -99,5 +99,28 @@ $owlTail
 EOF
 write_file("$dir/gems.owl", $gemsOwl);
 my ($ontologySourcesGemsOwl, $ontologyMappingGemsOwl) = ApiCommonData::Load::OntologyMapping->fromOwl("$dir/gems.owl")->asSourcesAndMapping;
-diag explain $ontologyMappingGemsOwl->{f5_ht1};
+ok($ontologyMappingGemsOwl->{f5_ht1}, "Has a term");
+
+my $microbiomeHumanOnlyOwl = <<EOF;
+$owlHead
+    <!-- http://purl.obolibrary.org/obo/ARO_3004306 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARO_3004306">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0009104"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EcoCF.txt::methicillin resistant Staphylococcus aureus (MRSA)</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt::Methicillin-resistant Staphylococcus aureus (MRSA) screen</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EcoCF.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NICUNEC.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">characteristicQualifier</obo:ISA_1>
+        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:ISA_2>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methicillin resistant Staphylococcus aureus</rdfs:label>
+    </owl:Class>
+$owlTail
+EOF
+write_file("$dir/microbiome_human_only.owl", $microbiomeHumanOnlyOwl);
+my ($ontologySourcesMicrobiomeHumanOnlyOwl, $ontologyMappingMicrobiomeHumanOnlyOwl) = ApiCommonData::Load::OntologyMapping->fromOwl("$dir/microbiome_human_only.owl")->asSourcesAndMapping("NICUNEC.txt");
+ok ($ontologyMappingMicrobiomeHumanOnlyOwl->{lc "Methicillin-resistant Staphylococcus aureus (MRSA) screen"}, "key with stripped prefix");
+
 done_testing;

@@ -12,7 +12,7 @@ use Data::Dumper;
 sub asHash { return $_[0]->{_ontology_mapping} }
 
 sub asSourcesAndMapping {
-  my ($self) = @_;
+  my ($self, $maybeNamesPrefix) = @_;
   my $omHash = $self->asHash;
   my %ontologyMapping;
   my %ontologySources;
@@ -21,7 +21,6 @@ sub asSourcesAndMapping {
   foreach my $os (@{$omHash->{ontologySource}//[]}) {
     $ontologySources{lc($os)} = 1;
   }
-
 
   foreach my $ot (@{$omHash->{ontologyTerm}}) {
     my $sourceId = $ot->{source_id};
@@ -37,7 +36,16 @@ sub asSourcesAndMapping {
     else {
       die "Cannot read names from ontologyTerm $sourceId\n"
     }
+    NAME:
     foreach my $name (@names) {
+      my ($nameSplit, $prefix) = reverse split("::", $name);
+      if ($prefix and $maybeNamesPrefix){
+         if (lc $prefix ne lc $maybeNamesPrefix){
+            next NAME;
+         } else {
+           $name = $nameSplit;
+         }
+      }
       $ontologyMapping{lc($name)}->{$ot->{type}} = $ot;
     }
 
