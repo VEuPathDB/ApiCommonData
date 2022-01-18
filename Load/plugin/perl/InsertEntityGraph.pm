@@ -210,7 +210,8 @@ sub run {
   $self->log("Processed $investigationCount Investigations.");
 }
 
-
+# called by the run methods
+# here and also in ApiCommonData::Load::Plugin::MBioInsertEntityGraph
 sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
   do {
