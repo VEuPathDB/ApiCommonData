@@ -71,8 +71,8 @@ my $argsDeclaration =
 
 
    booleanArg({name => 'skipDatasetLookup',
-          descr => 'do not require existing nodes for datasets listed in isa files',
-          reqd => 1,
+          descr => 'UNUSED (was: do not require existing nodes for datasets listed in isa filesi)',
+          reqd => 0,
           constraintFunc => undef,
           isList => 0,
          }),
@@ -110,16 +110,9 @@ my $argsDeclaration =
             reqd           => 0,
             constraintFunc => undef,
             isList         => 0, }),
-
-
-   stringArg({name           => 'evalToGetGetAddMoreData',
-            descr          => 'Add more data to InvestigationSimple Reader',
-            reqd           => 0,
-            constraintFunc => undef,
-            isList         => 0, }),
   ];
 
-my $documentation = { purpose          => "",
+our $documentation = { purpose          => "",
                       purposeBrief     => "",
                       notes            => "",
                       tablesAffected   => "",
@@ -137,7 +130,7 @@ our @UNDO_TABLES =qw(
   Study
 ); ## undo is not run on ProcessType
 
-my @REQUIRE_TABLES = qw(
+our @REQUIRE_TABLES = qw(
   Study
   EntityAttributes
   EntityType
@@ -187,13 +180,6 @@ sub run {
   }
   $self->userError("No investigation files") unless @investigationFiles;
 
-  my $getAddMoreData;
-  my $evalToGetGetAddMoreData = $self->getArg('evalToGetGetAddMoreData');
-  if($evalToGetGetAddMoreData){
-    $getAddMoreData = eval $evalToGetGetAddMoreData;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: $@") if $@;
-    $self->error("string eval of $evalToGetGetAddMoreData failed: should return a function") unless ref $getAddMoreData eq 'CODE';
-  }
   my $investigationCount;
   foreach my $investigationFile (@investigationFiles) {
     my $dirname = dirname $investigationFile;
@@ -209,11 +195,23 @@ sub run {
       if ($ontologyMappingOverrideFile && ! -f $ontologyMappingOverrideFile){ ## prepend path
         $ontologyMappingOverrideFile = join("/", $metaDataRoot, $ontologyMappingOverrideFile);
       }
-      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+      $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, undef);
     }
     else {
       $investigation = CBIL::ISA::Investigation->new($investigationBaseName, $dirname, "\t");
     }
+    $self->loadInvestigation($investigation);
+    $investigationCount++;
+  }
+  $self->logRowsInserted() if($self->getArg('commit'));
+
+  $self->log("Processed $investigationCount Investigations.");
+}
+
+
+sub loadInvestigation {
+  my ($self, $investigation) = @_;
+  do {
     my %errors;
     $investigation->setOnError(sub {
       my ($error) = @_;
@@ -248,16 +246,11 @@ sub run {
       }
     }
 
-    $investigationCount++;
     my $errorCount = scalar keys %errors;
     if($errorCount) {
       $self->error(join("\n","FOUND $errorCount DIFFERENT ERRORS!", keys %errors));
     }
-  }
-
-  $self->logRowsInserted() if($self->getArg('commit'));
-
-  $self->log("Processed $investigationCount Investigations.");
+  };
 }
 
 sub countLines {
