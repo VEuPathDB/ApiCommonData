@@ -9,6 +9,7 @@ use List::Util qw/uniq/;
 
 use File::Temp qw/tempdir/;
 use File::Slurp qw/write_file/;
+use ApiCommonData::Load::MBioResultsDir;
 
 
 use CBIL::ISA::StudyAssayEntity::Source;
@@ -64,11 +65,7 @@ ANAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.36111
 BNAEROFRUCAT-PWY: homolactic fermentation|unclassified	0.35111	0.0
 EOF
 
-my $getAddMoreDataStr = 'require ApiCommonData::Load::MBioResultsDir; ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => "lineage_abundance.tsv", wgsTaxa => "lineage_abundance.tsv", level4ECs => "level4ec.tsv", pathwayAbundances => "pathway_abundance.tsv", pathwayCoverages => "pathway_coverage.tsv", eukdetectCpms => "eukdetect.lineage_abundance.tsv" }, {amplicon => "Amplicon sequencing assay", wgs => "Whole genome sequencing assay" })->toGetAddMoreData';
-
-my $getAddMoreData = eval $getAddMoreDataStr;
-diag $@ if $@;
-ok $getAddMoreData;
+my $getAddMoreData =ApiCommonData::Load::MBioResultsDir->new($dir, {ampliconTaxa => "lineage_abundance.tsv", wgsTaxa => "lineage_abundance.tsv", level4ECs => "level4ec.tsv", pathwayAbundances => "pathway_abundance.tsv", pathwayCoverages => "pathway_coverage.tsv", eukdetectCpms => "eukdetect.lineage_abundance.tsv" })->toGetAddMoreData;
 
 # this is the SimpleXml parse of one study in i_Investigation.xml
 my $studyXml = {
@@ -81,7 +78,7 @@ my $studyXml = {
     },
     $name16sv3v5 => {
       'isaObject' => 'Assay',
-      'suffix' => '16sv3v5',
+      'suffix' => $name16sv3v5,
       'type' => 'Amplicon sequencing assay'
     },
     'Sample' => {
@@ -93,7 +90,7 @@ my $studyXml = {
     },
     'wgs' => {
       'isaObject' => 'Assay',
-      'suffix' => 'WGS',
+      'suffix' => 'wgs',
       'type' => 'Whole genome sequencing assay'
     }
   }
@@ -116,7 +113,7 @@ sub okAmpliconKeys {
   };
 };
 
-okAmpliconKeys("s1 (16sv3v5)");
+okAmpliconKeys("s1 ($name16sv3v5)");
 okAmpliconKeys("s1 (16sv1v3)");
 okAmpliconKeys("s2 (16sv1v3)");
 sub okWgsKeys {
@@ -124,10 +121,10 @@ sub okWgsKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC function_level4EC_species pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species alpha_diversity_shannon alpha_diversity_inverse_simpson/;
+    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species alpha_diversity_shannon alpha_diversity_inverse_simpson/;
   };
 }
-okWgsKeys("s1 (WGS)");
+okWgsKeys("s1 (wgs)");
 
 
 done_testing;
