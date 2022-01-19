@@ -1,7 +1,8 @@
-variable	variable	values	mappedTerm
-country	country	0	Kenya
-country	country	1	Nigeria
-redcap_event_name	redcap_event_name	2_BASELINE_ARM_1	Baseline
+variable	variable	values	mappedTerm	valueOrder
+redcap_event_name	redcap_event_name	1_SCREENING_AND_CO_ARM_1	Screening	1
+redcap_event_name	redcap_event_name	2_BASELINE_ARM_1	Baseline	2
+redcap_event_name	redcap_event_name	3_FOLLOW_UP_ARM_1	ANC Follow-up	3
+redcap_event_name	redcap_event_name	4_PHASE_II_ARM_1	PNC survey	4
 baseline_women_date	baseline_women_date	2001	2001	1
 baseline_women_date	baseline_women_date	2009	2009	2
 baseline_women_date	baseline_women_date	2016	2016	3
@@ -335,7 +336,6 @@ childvisit_weight	childvisit_weight	NA	:::UNDEF:::
 childvisit_height	childvisit_height	NA	:::UNDEF:::
 country	country	0	Kenya
 country	country	1	Nigeria
-redcap_event_name	redcap_event_name	3_FOLLOW_UP_ARM_1	ANC Follow-up
 anc_survey_date	anc_survey_date	2016	2016	1
 anc_survey_date	anc_survey_date	2017	2017	2
 anc_survey_date	anc_survey_date	2018	2018	3
@@ -396,10 +396,32 @@ chose_method_g4	chose_method_g4	0	No
 chose_method_g4	chose_method_g4	1	Yes
 chose_method_g4	chose_method_g4	NA	:::UNDEF:::
 g4_desired_method	g4_desired_method	NA	:::UNDEF:::
+g4_desired_method	g4_desired_method	1	Injectable
+g4_desired_method	g4_desired_method	2	Implants
+g4_desired_method	g4_desired_method	3	Withdrawal
+g4_desired_method	g4_desired_method	4	Condoms
+g4_desired_method	g4_desired_method	5	Pill/Oral contraceptives
+g4_desired_method	g4_desired_method	6	IUD
+g4_desired_method	g4_desired_method	7	Emergency contraception
+g4_desired_method	g4_desired_method	8	Sterilization
+g4_desired_method	g4_desired_method	9	Standard days or rhythm method
+g4_desired_method	g4_desired_method	10	Other
+g4_desired_method	g4_desired_method	11	LAM
 chose_method_g5	chose_method_g5	0	No
 chose_method_g5	chose_method_g5	1	Yes
 chose_method_g5	chose_method_g5	NA	:::UNDEF:::
 g5_desired_method	g5_desired_method	NA	:::UNDEF:::
+g5_desired_method	g5_desired_method	1	Injectable
+g5_desired_method	g5_desired_method	2	Implants
+g5_desired_method	g5_desired_method	3	Withdrawal
+g5_desired_method	g5_desired_method	4	Condoms
+g5_desired_method	g5_desired_method	5	Pill/Oral contraceptives
+g5_desired_method	g5_desired_method	6	IUD
+g5_desired_method	g5_desired_method	7	Emergency contraception
+g5_desired_method	g5_desired_method	8	Sterilization
+g5_desired_method	g5_desired_method	9	Standard days or rhythm method
+g5_desired_method	g5_desired_method	10	Other
+g5_desired_method	g5_desired_method	11	LAM
 lam_chosen	lam_chosen	FALSE	No
 lam_chosen	lam_chosen	NA	:::UNDEF:::
 lam_chosen	lam_chosen	TRUE	Yes
@@ -422,7 +444,8 @@ still_birth_date	still_birth_date	NA	:::UNDEF:::
 miscarriage_ga	miscarriage_ga	NA	:::UNDEF:::
 miscarriage_date	miscarriage_date	2016	2016	1
 miscarriage_date	miscarriage_date	 2017	2017	2
-miscarriage_date	miscarriage_date	 NA	:::UNDEF:::
+miscarriage_date	miscarriage_date	 na	:::UNDEF:::
+miscarriage_date	miscarriage_date	NA	:::UNDEF:::
 know_due_date	know_due_date	1	Yes
 know_due_date	know_due_date	2	No
 know_due_date	know_due_date	3	Not sure
@@ -935,11 +958,15 @@ alternative_to_decision_maker	alternative_to_decision_maker	NA	:::UNDEF:::
 prepared_birth_kit	prepared_birth_kit	1	Yes
 prepared_birth_kit	prepared_birth_kit	2	No
 prepared_birth_kit	prepared_birth_kit	NA	:::UNDEF:::
-where_baby_was_born	where_baby_was_born	1	Home
-where_baby_was_born	where_baby_was_born	2	At a health facility
-where_baby_was_born	where_baby_was_born	3	In transit
-where_baby_was_born	where_baby_was_born	4	Other
+where_baby_was_born	where_baby_was_born	1	Home	1
+where_baby_was_born	where_baby_was_born	2	Facility	2
+where_baby_was_born	where_baby_was_born	3	Transit/other	3
+where_baby_was_born	where_baby_was_born	4	Transit/other	3
 where_baby_was_born	where_baby_was_born	NA	:::UNDEF:::
+pnc_born	pnc_born	1	Facility
+pnc_born	pnc_born	2	Home
+pnc_born	pnc_born	3	Transit/other
+pnc_born	pnc_born	NA	:::UNDEF:::
 anc_influence_delivery	anc_influence_delivery	1	Yes
 anc_influence_delivery	anc_influence_delivery	2	No
 anc_influence_delivery	anc_influence_delivery	3	Not sure
@@ -1076,9 +1103,6 @@ meeting_missed	meeting_missed	0	No
 meeting_missed	meeting_missed	1	Yes
 meeting_sys	meeting_sys	NA	:::UNDEF:::
 meeting_dias	meeting_dias	NA	:::UNDEF:::
-country	country	0	Kenya
-country	country	1	Nigeria
-redcap_event_name	redcap_event_name	4_PHASE_II_ARM_1	PNC survey
 pnc_attend_total	pnc_attend_total	0	0
 pnc_attend_total	pnc_attend_total	1	1
 pnc_attend_total	pnc_attend_total	2	2
@@ -1118,12 +1142,8 @@ pnc_q1	pnc_q1	2017	2017	2
 pnc_q1	pnc_q1	2018	2018	3
 pnc_q1	pnc_q1	NA	:::UNDEF:::
 pnc_q1age	pnc_q1age	NA	:::UNDEF:::
-pnc_born	pnc_born	1	Facility
-pnc_born	pnc_born	2	Home
-pnc_born	pnc_born	3	Transit/Other
-pnc_born	pnc_born	NA	:::UNDEF:::
-pnc_same_fac	pnc_same_fac	1
-pnc_same_fac	pnc_same_fac	2
+pnc_same_fac	pnc_same_fac	1	Yes
+pnc_same_fac	pnc_same_fac	2	No
 pnc_same_fac	pnc_same_fac	NA	:::UNDEF:::
 pnc_q2	pnc_q2	1	Yes
 pnc_q2	pnc_q2	2	No
@@ -1287,29 +1307,29 @@ pnc_q16e___3	pnc_q16e___3	0	Unchecked
 pnc_q16e___3	pnc_q16e___3	1	Checked
 pnc_q16e___4	pnc_q16e___4	0	Unchecked
 pnc_q16e___4	pnc_q16e___4	1	Checked
-pnc_q17a	pnc_q17a	1	Not at all true
-pnc_q17a	pnc_q17a	2	Slightly true
-pnc_q17a	pnc_q17a	3	Somewhat true
-pnc_q17a	pnc_q17a	4	Mostly true
-pnc_q17a	pnc_q17a	5	Completely true
+pnc_q17a	pnc_q17a	1	Not at all true	5
+pnc_q17a	pnc_q17a	2	Slightly true	4
+pnc_q17a	pnc_q17a	3	Somewhat true	3
+pnc_q17a	pnc_q17a	4	Mostly true	2
+pnc_q17a	pnc_q17a	5	Completely true	1
 pnc_q17a	pnc_q17a	NA	:::UNDEF:::
-pnc_q17b	pnc_q17b	1	Not at all true
-pnc_q17b	pnc_q17b	2	Slightly true
-pnc_q17b	pnc_q17b	3	Somewhat true
-pnc_q17b	pnc_q17b	4	Mostly true
-pnc_q17b	pnc_q17b	5	Completely true
+pnc_q17b	pnc_q17b	1	Not at all true	5
+pnc_q17b	pnc_q17b	2	Slightly true	4
+pnc_q17b	pnc_q17b	3	Somewhat true	3
+pnc_q17b	pnc_q17b	4	Mostly true	2
+pnc_q17b	pnc_q17b	5	Completely true	1
 pnc_q17b	pnc_q17b	NA	:::UNDEF:::
-pnc_q17c	pnc_q17c	1	Not at all true
-pnc_q17c	pnc_q17c	2	Slightly true
-pnc_q17c	pnc_q17c	3	Somewhat true
-pnc_q17c	pnc_q17c	4	Mostly true
-pnc_q17c	pnc_q17c	5	Completely true
+pnc_q17c	pnc_q17c	1	Not at all true	5
+pnc_q17c	pnc_q17c	2	Slightly true	4
+pnc_q17c	pnc_q17c	3	Somewhat true	3
+pnc_q17c	pnc_q17c	4	Mostly true	2
+pnc_q17c	pnc_q17c	5	Completely true	1
 pnc_q17c	pnc_q17c	NA	:::UNDEF:::
-pnc_q17d	pnc_q17d	1	Not at all true
-pnc_q17d	pnc_q17d	2	Slightly true
-pnc_q17d	pnc_q17d	3	Somewhat true
-pnc_q17d	pnc_q17d	4	Mostly true
-pnc_q17d	pnc_q17d	5	Completely true
+pnc_q17d	pnc_q17d	1	Not at all true	5
+pnc_q17d	pnc_q17d	2	Slightly true	4
+pnc_q17d	pnc_q17d	3	Somewhat true	3
+pnc_q17d	pnc_q17d	4	Mostly true	2
+pnc_q17d	pnc_q17d	5	Completely true	1
 pnc_q17d	pnc_q17d	NA	:::UNDEF:::
 pnc_q18a	pnc_q18a	1	Yes
 pnc_q18a	pnc_q18a	2	No
@@ -1342,41 +1362,41 @@ pnc_q19iii	pnc_q19iii	1	Yes, soap/detergent present
 pnc_q19iii	pnc_q19iii	2	Yes, ash/mud/sand present
 pnc_q19iii	pnc_q19iii	3	No, nothing present
 pnc_q19iii	pnc_q19iii	NA	:::UNDEF:::
-pnc_q20a	pnc_q20a	1	Not at all true
-pnc_q20a	pnc_q20a	2	Slightly true
-pnc_q20a	pnc_q20a	3	Somewhat true
-pnc_q20a	pnc_q20a	4	Mostly true
-pnc_q20a	pnc_q20a	5	Completely true
+pnc_q20a	pnc_q20a	1	Not at all true	5
+pnc_q20a	pnc_q20a	2	Slightly true	4
+pnc_q20a	pnc_q20a	3	Somewhat true	3
+pnc_q20a	pnc_q20a	4	Mostly true	2
+pnc_q20a	pnc_q20a	5	Completely true	1
 pnc_q20a	pnc_q20a	NA	:::UNDEF:::
-pnc_q20b	pnc_q20b	1	Not at all true
-pnc_q20b	pnc_q20b	2	Slightly true
-pnc_q20b	pnc_q20b	3	Somewhat true
-pnc_q20b	pnc_q20b	4	Mostly true
-pnc_q20b	pnc_q20b	5	Completely true
+pnc_q20b	pnc_q20b	1	Not at all true	5
+pnc_q20b	pnc_q20b	2	Slightly true	4
+pnc_q20b	pnc_q20b	3	Somewhat true	3
+pnc_q20b	pnc_q20b	4	Mostly true	2
+pnc_q20b	pnc_q20b	5	Completely true	1
 pnc_q20b	pnc_q20b	NA	:::UNDEF:::
-pnc_q20c	pnc_q20c	1	Not at all true
-pnc_q20c	pnc_q20c	2	Slightly true
-pnc_q20c	pnc_q20c	3	Somewhat true
-pnc_q20c	pnc_q20c	4	Mostly true
-pnc_q20c	pnc_q20c	5	Completely true
+pnc_q20c	pnc_q20c	1	Not at all true	5
+pnc_q20c	pnc_q20c	2	Slightly true	4
+pnc_q20c	pnc_q20c	3	Somewhat true	3
+pnc_q20c	pnc_q20c	4	Mostly true	2
+pnc_q20c	pnc_q20c	5	Completely true	1
 pnc_q20c	pnc_q20c	NA	:::UNDEF:::
-pnc_q20d	pnc_q20d	1	Not at all true
-pnc_q20d	pnc_q20d	2	Slightly true
-pnc_q20d	pnc_q20d	3	Somewhat true
-pnc_q20d	pnc_q20d	4	Mostly true
-pnc_q20d	pnc_q20d	5	Completely true
+pnc_q20d	pnc_q20d	1	Not at all true	5
+pnc_q20d	pnc_q20d	2	Slightly true	4
+pnc_q20d	pnc_q20d	3	Somewhat true	3
+pnc_q20d	pnc_q20d	4	Mostly true	2
+pnc_q20d	pnc_q20d	5	Completely true	1
 pnc_q20d	pnc_q20d	NA	:::UNDEF:::
-pnc_q20e	pnc_q20e	1	Not at all true
-pnc_q20e	pnc_q20e	2	Slightly true
-pnc_q20e	pnc_q20e	3	Somewhat true
-pnc_q20e	pnc_q20e	4	Mostly true
-pnc_q20e	pnc_q20e	5	Completely true
+pnc_q20e	pnc_q20e	1	Not at all true	5
+pnc_q20e	pnc_q20e	2	Slightly true	4
+pnc_q20e	pnc_q20e	3	Somewhat true	3
+pnc_q20e	pnc_q20e	4	Mostly true	2
+pnc_q20e	pnc_q20e	5	Completely true	1
 pnc_q20e	pnc_q20e	NA	:::UNDEF:::
-pnc_q20f	pnc_q20f	1	Not at all true
-pnc_q20f	pnc_q20f	2	Slightly true
-pnc_q20f	pnc_q20f	3	Somewhat true
-pnc_q20f	pnc_q20f	4	Mostly true
-pnc_q20f	pnc_q20f	5	Completely true
+pnc_q20f	pnc_q20f	1	Not at all true	5
+pnc_q20f	pnc_q20f	2	Slightly true	4
+pnc_q20f	pnc_q20f	3	Somewhat true	3
+pnc_q20f	pnc_q20f	4	Mostly true	2
+pnc_q20f	pnc_q20f	5	Completely true	1
 pnc_q20f	pnc_q20f	NA	:::UNDEF:::
 pnc_q21	pnc_q21	1	Yes
 pnc_q21	pnc_q21	2	No
@@ -1514,7 +1534,29 @@ pnc_q30	pnc_q30	3	Joint decision
 pnc_q30	pnc_q30	4	Other
 pnc_q30	pnc_q30	NA	:::UNDEF:::
 pnc_q31a	pnc_q31a	NA	:::UNDEF:::
+pnc_q31a	pnc_q31a	0	0	0
+pnc_q31a	pnc_q31a	1	1	1
+pnc_q31a	pnc_q31a	2	2	2
+pnc_q31a	pnc_q31a	3	3	3
+pnc_q31a	pnc_q31a	4	4	4
+pnc_q31a	pnc_q31a	5	5	5
+pnc_q31a	pnc_q31a	6	6	6
+pnc_q31a	pnc_q31a	7	7	7
+pnc_q31a	pnc_q31a	8	8	8
+pnc_q31a	pnc_q31a	9	9	9
+pnc_q31a	pnc_q31a	10	10	10
 pnc_q31b	pnc_q31b	NA	:::UNDEF:::
+pnc_q31b	pnc_q31b	0	0	0
+pnc_q31b	pnc_q31b	1	1	1
+pnc_q31b	pnc_q31b	2	2	2
+pnc_q31b	pnc_q31b	3	3	3
+pnc_q31b	pnc_q31b	4	4	4
+pnc_q31b	pnc_q31b	5	5	5
+pnc_q31b	pnc_q31b	6	6	6
+pnc_q31b	pnc_q31b	7	7	7
+pnc_q31b	pnc_q31b	8	8	8
+pnc_q31b	pnc_q31b	9	9	9
+pnc_q31b	pnc_q31b	10	10	10
 pnc_q31c	pnc_q31c	NA	:::UNDEF:::
 pnc_q31d	pnc_q31d	NA	:::UNDEF:::
 pnc_q31e	pnc_q31e	NA	:::UNDEF:::
@@ -1524,29 +1566,29 @@ pnc_q31h	pnc_q31h	NA	:::UNDEF:::
 pnc_q31i	pnc_q31i	NA	:::UNDEF:::
 pnc_q31j	pnc_q31j	NA	:::UNDEF:::
 pnc_q31k	pnc_q31k	NA	:::UNDEF:::
-pnc_q32a	pnc_q32a	1	Not at all true
-pnc_q32a	pnc_q32a	2	Slightly true
-pnc_q32a	pnc_q32a	3	Somewhat true
-pnc_q32a	pnc_q32a	4	Mostly true
-pnc_q32a	pnc_q32a	5	Completely true
+pnc_q32a	pnc_q32a	1	Not at all true	5
+pnc_q32a	pnc_q32a	2	Slightly true	4
+pnc_q32a	pnc_q32a	3	Somewhat true	3
+pnc_q32a	pnc_q32a	4	Mostly true	2
+pnc_q32a	pnc_q32a	5	Completely true	1
 pnc_q32a	pnc_q32a	NA	:::UNDEF:::
-pnc_q32b	pnc_q32b	1	Not at all true
-pnc_q32b	pnc_q32b	2	Slightly true
-pnc_q32b	pnc_q32b	3	Somewhat true
-pnc_q32b	pnc_q32b	4	Mostly true
-pnc_q32b	pnc_q32b	5	Completely true
+pnc_q32b	pnc_q32b	1	Not at all true	5
+pnc_q32b	pnc_q32b	2	Slightly true	4
+pnc_q32b	pnc_q32b	3	Somewhat true	3
+pnc_q32b	pnc_q32b	4	Mostly true	2
+pnc_q32b	pnc_q32b	5	Completely true	1
 pnc_q32b	pnc_q32b	NA	:::UNDEF:::
-pnc_q32c	pnc_q32c	1	Not at all true
-pnc_q32c	pnc_q32c	2	Slightly true
-pnc_q32c	pnc_q32c	3	Somewhat true
-pnc_q32c	pnc_q32c	4	Mostly true
-pnc_q32c	pnc_q32c	5	Completely true
+pnc_q32c	pnc_q32c	1	Not at all true	5
+pnc_q32c	pnc_q32c	2	Slightly true	4
+pnc_q32c	pnc_q32c	3	Somewhat true	3
+pnc_q32c	pnc_q32c	4	Mostly true	2
+pnc_q32c	pnc_q32c	5	Completely true	1
 pnc_q32c	pnc_q32c	NA	:::UNDEF:::
-pnc_q32d	pnc_q32d	1	Not at all true
-pnc_q32d	pnc_q32d	2	Slightly true
-pnc_q32d	pnc_q32d	3	Somewhat true
-pnc_q32d	pnc_q32d	4	Mostly true
-pnc_q32d	pnc_q32d	5	Completely true
+pnc_q32d	pnc_q32d	1	Not at all true	5
+pnc_q32d	pnc_q32d	2	Slightly true	4
+pnc_q32d	pnc_q32d	3	Somewhat true	3
+pnc_q32d	pnc_q32d	4	Mostly true	2
+pnc_q32d	pnc_q32d	5	Completely true	1
 pnc_q32d	pnc_q32d	NA	:::UNDEF:::
 pnc_q33a	pnc_q33a	1	None
 pnc_q33a	pnc_q33a	2	A little
@@ -1584,120 +1626,120 @@ pnc_q33f	pnc_q33f	3	Some
 pnc_q33f	pnc_q33f	4	Quite a bit
 pnc_q33f	pnc_q33f	5	A lot
 pnc_q33f	pnc_q33f	NA	:::UNDEF:::
-pnc_q34a	pnc_q34a	1	Not at all true
-pnc_q34a	pnc_q34a	2	Slightly true
-pnc_q34a	pnc_q34a	3	Somewhat true
-pnc_q34a	pnc_q34a	4	Mostly true
-pnc_q34a	pnc_q34a	5	Completely true
+pnc_q34a	pnc_q34a	1	Not at all true	5
+pnc_q34a	pnc_q34a	2	Slightly true	4
+pnc_q34a	pnc_q34a	3	Somewhat true	3
+pnc_q34a	pnc_q34a	4	Mostly true	2
+pnc_q34a	pnc_q34a	5	Completely true	1
 pnc_q34a	pnc_q34a	NA	:::UNDEF:::
-pnc_q34b	pnc_q34b	1	Not at all true
-pnc_q34b	pnc_q34b	2	Slightly true
-pnc_q34b	pnc_q34b	3	Somewhat true
-pnc_q34b	pnc_q34b	4	Mostly true
-pnc_q34b	pnc_q34b	5	Completely true
+pnc_q34b	pnc_q34b	1	Not at all true	5
+pnc_q34b	pnc_q34b	2	Slightly true	4
+pnc_q34b	pnc_q34b	3	Somewhat true	3
+pnc_q34b	pnc_q34b	4	Mostly true	2
+pnc_q34b	pnc_q34b	5	Completely true	1
 pnc_q34b	pnc_q34b	NA	:::UNDEF:::
-pnc_q34c	pnc_q34c	1	Not at all true
-pnc_q34c	pnc_q34c	2	Slightly true
-pnc_q34c	pnc_q34c	3	Somewhat true
-pnc_q34c	pnc_q34c	4	Mostly true
-pnc_q34c	pnc_q34c	5	Completely true
+pnc_q34c	pnc_q34c	1	Not at all true	5
+pnc_q34c	pnc_q34c	2	Slightly true	4
+pnc_q34c	pnc_q34c	3	Somewhat true	3
+pnc_q34c	pnc_q34c	4	Mostly true	2
+pnc_q34c	pnc_q34c	5	Completely true	1
 pnc_q34c	pnc_q34c	NA	:::UNDEF:::
-pnc_q35a	pnc_q35a	1	Not at all true
-pnc_q35a	pnc_q35a	2	Slightly true
-pnc_q35a	pnc_q35a	3	Somewhat true
-pnc_q35a	pnc_q35a	4	Mostly true
-pnc_q35a	pnc_q35a	5	Completely true
+pnc_q35a	pnc_q35a	1	Not at all true	5
+pnc_q35a	pnc_q35a	2	Slightly true	4
+pnc_q35a	pnc_q35a	3	Somewhat true	3
+pnc_q35a	pnc_q35a	4	Mostly true	2
+pnc_q35a	pnc_q35a	5	Completely true	1
 pnc_q35a	pnc_q35a	NA	:::UNDEF:::
-pnc_q35b	pnc_q35b	1	Not at all true
-pnc_q35b	pnc_q35b	2	Slightly true
-pnc_q35b	pnc_q35b	3	Somewhat true
-pnc_q35b	pnc_q35b	4	Mostly true
-pnc_q35b	pnc_q35b	5	Completely true
+pnc_q35b	pnc_q35b	1	Not at all true	5
+pnc_q35b	pnc_q35b	2	Slightly true	4
+pnc_q35b	pnc_q35b	3	Somewhat true	3
+pnc_q35b	pnc_q35b	4	Mostly true	2
+pnc_q35b	pnc_q35b	5	Completely true	1
 pnc_q35b	pnc_q35b	NA	:::UNDEF:::
-pnc_q35c	pnc_q35c	1	Not at all true
-pnc_q35c	pnc_q35c	2	Slightly true
-pnc_q35c	pnc_q35c	3	Somewhat true
-pnc_q35c	pnc_q35c	4	Mostly true
-pnc_q35c	pnc_q35c	5	Completely true
+pnc_q35c	pnc_q35c	1	Not at all true	5
+pnc_q35c	pnc_q35c	2	Slightly true	4
+pnc_q35c	pnc_q35c	3	Somewhat true	3
+pnc_q35c	pnc_q35c	4	Mostly true	2
+pnc_q35c	pnc_q35c	5	Completely true	1
 pnc_q35c	pnc_q35c	NA	:::UNDEF:::
-pnc_q35d	pnc_q35d	1	Not at all true
-pnc_q35d	pnc_q35d	2	Slightly true
-pnc_q35d	pnc_q35d	3	Somewhat true
-pnc_q35d	pnc_q35d	4	Mostly true
-pnc_q35d	pnc_q35d	5	Completely true
+pnc_q35d	pnc_q35d	1	Not at all true	5
+pnc_q35d	pnc_q35d	2	Slightly true	4
+pnc_q35d	pnc_q35d	3	Somewhat true	3
+pnc_q35d	pnc_q35d	4	Mostly true	2
+pnc_q35d	pnc_q35d	5	Completely true	1
 pnc_q35d	pnc_q35d	NA	:::UNDEF:::
-pnc_q35e	pnc_q35e	1	Not at all true
-pnc_q35e	pnc_q35e	2	Slightly true
-pnc_q35e	pnc_q35e	3	Somewhat true
-pnc_q35e	pnc_q35e	4	Mostly true
-pnc_q35e	pnc_q35e	5	Completely true
+pnc_q35e	pnc_q35e	1	Not at all true	5
+pnc_q35e	pnc_q35e	2	Slightly true	4
+pnc_q35e	pnc_q35e	3	Somewhat true	3
+pnc_q35e	pnc_q35e	4	Mostly true	2
+pnc_q35e	pnc_q35e	5	Completely true	1
 pnc_q35e	pnc_q35e	NA	:::UNDEF:::
-pnc_q35f	pnc_q35f	1	Not at all true
-pnc_q35f	pnc_q35f	2	Slightly true
-pnc_q35f	pnc_q35f	3	Somewhat true
-pnc_q35f	pnc_q35f	4	Mostly true
-pnc_q35f	pnc_q35f	5	Completely true
+pnc_q35f	pnc_q35f	1	Not at all true	5
+pnc_q35f	pnc_q35f	2	Slightly true	4
+pnc_q35f	pnc_q35f	3	Somewhat true	3
+pnc_q35f	pnc_q35f	4	Mostly true	2
+pnc_q35f	pnc_q35f	5	Completely true	1
 pnc_q35f	pnc_q35f	NA	:::UNDEF:::
-pnc_q35g	pnc_q35g	1	Not at all true
-pnc_q35g	pnc_q35g	2	Slightly true
-pnc_q35g	pnc_q35g	3	Somewhat true
-pnc_q35g	pnc_q35g	4	Mostly true
-pnc_q35g	pnc_q35g	5	Completely true
+pnc_q35g	pnc_q35g	1	Not at all true	5
+pnc_q35g	pnc_q35g	2	Slightly true	4
+pnc_q35g	pnc_q35g	3	Somewhat true	3
+pnc_q35g	pnc_q35g	4	Mostly true	2
+pnc_q35g	pnc_q35g	5	Completely true	1
 pnc_q35g	pnc_q35g	NA	:::UNDEF:::
-pnc_q35h	pnc_q35h	1	Not at all true
-pnc_q35h	pnc_q35h	2	Slightly true
-pnc_q35h	pnc_q35h	3	Somewhat true
-pnc_q35h	pnc_q35h	4	Mostly true
-pnc_q35h	pnc_q35h	5	Completely true
+pnc_q35h	pnc_q35h	1	Not at all true	5
+pnc_q35h	pnc_q35h	2	Slightly true	4
+pnc_q35h	pnc_q35h	3	Somewhat true	3
+pnc_q35h	pnc_q35h	4	Mostly true	2
+pnc_q35h	pnc_q35h	5	Completely true	1
 pnc_q35h	pnc_q35h	NA	:::UNDEF:::
 pnc_q36	pnc_q36	1	Individual care
 pnc_q36	pnc_q36	2	Group care
 pnc_q36	pnc_q36	3	Unsure/doesn't matter which one/no preference
 pnc_q36	pnc_q36	NA	:::UNDEF:::
-pnc_q37a	pnc_q37a	1	Not at all true
-pnc_q37a	pnc_q37a	3	Somewhat true
-pnc_q37a	pnc_q37a	4	Mostly true
-pnc_q37a	pnc_q37a	5	Completely true
+pnc_q37a	pnc_q37a	1	Not at all true	4
+pnc_q37a	pnc_q37a	3	Somewhat true	3
+pnc_q37a	pnc_q37a	4	Mostly true	2
+pnc_q37a	pnc_q37a	5	Completely true	1
 pnc_q37a	pnc_q37a	NA	:::UNDEF:::
-pnc_q37b	pnc_q37b	1	Not at all true
-pnc_q37b	pnc_q37b	3	Somewhat true
-pnc_q37b	pnc_q37b	4	Mostly true
-pnc_q37b	pnc_q37b	5	Completely true
+pnc_q37b	pnc_q37b	1	Not at all true	4
+pnc_q37b	pnc_q37b	3	Somewhat true	3
+pnc_q37b	pnc_q37b	4	Mostly true	2
+pnc_q37b	pnc_q37b	5	Completely true	1
 pnc_q37b	pnc_q37b	NA	:::UNDEF:::
-pnc_q37c	pnc_q37c	1	Not at all true
-pnc_q37c	pnc_q37c	3	Somewhat true
-pnc_q37c	pnc_q37c	4	Mostly true
-pnc_q37c	pnc_q37c	5	Completely true
+pnc_q37c	pnc_q37c	1	Not at all true	4
+pnc_q37c	pnc_q37c	3	Somewhat true	3
+pnc_q37c	pnc_q37c	4	Mostly true	2
+pnc_q37c	pnc_q37c	5	Completely true	1
 pnc_q37c	pnc_q37c	NA	:::UNDEF:::
-pnc_q37d	pnc_q37d	1	Not at all true
-pnc_q37d	pnc_q37d	2	Slightly true
-pnc_q37d	pnc_q37d	3	Somewhat true
-pnc_q37d	pnc_q37d	4	Mostly true
-pnc_q37d	pnc_q37d	5	Completely true
+pnc_q37d	pnc_q37d	1	Not at all true	5
+pnc_q37d	pnc_q37d	2	Slightly true	4
+pnc_q37d	pnc_q37d	3	Somewhat true	3
+pnc_q37d	pnc_q37d	4	Mostly true	2
+pnc_q37d	pnc_q37d	5	Completely true	1
 pnc_q37d	pnc_q37d	NA	:::UNDEF:::
-pnc_q37e	pnc_q37e	1	Not at all true
-pnc_q37e	pnc_q37e	2	Slightly true
-pnc_q37e	pnc_q37e	3	Somewhat true
-pnc_q37e	pnc_q37e	4	Mostly true
-pnc_q37e	pnc_q37e	5	Completely true
+pnc_q37e	pnc_q37e	1	Not at all true	5
+pnc_q37e	pnc_q37e	2	Slightly true	4
+pnc_q37e	pnc_q37e	3	Somewhat true	3
+pnc_q37e	pnc_q37e	4	Mostly true	2
+pnc_q37e	pnc_q37e	5	Completely true	1
 pnc_q37e	pnc_q37e	NA	:::UNDEF:::
-pnc_q37f	pnc_q37f	1	Not at all true
-pnc_q37f	pnc_q37f	2	Slightly true
-pnc_q37f	pnc_q37f	3	Somewhat true
-pnc_q37f	pnc_q37f	4	Mostly true
-pnc_q37f	pnc_q37f	5	Completely true
+pnc_q37f	pnc_q37f	1	Not at all true	5
+pnc_q37f	pnc_q37f	2	Slightly true	4
+pnc_q37f	pnc_q37f	3	Somewhat true	3
+pnc_q37f	pnc_q37f	4	Mostly true	2
+pnc_q37f	pnc_q37f	5	Completely true	1
 pnc_q37f	pnc_q37f	NA	:::UNDEF:::
-pnc_q37g	pnc_q37g	1	Not at all true
-pnc_q37g	pnc_q37g	2	Slightly true
-pnc_q37g	pnc_q37g	3	Somewhat true
-pnc_q37g	pnc_q37g	4	Mostly true
-pnc_q37g	pnc_q37g	5	Completely true
+pnc_q37g	pnc_q37g	1	Not at all true	5
+pnc_q37g	pnc_q37g	2	Slightly true	4
+pnc_q37g	pnc_q37g	3	Somewhat true	3
+pnc_q37g	pnc_q37g	4	Mostly true	2
+pnc_q37g	pnc_q37g	5	Completely true	1
 pnc_q37g	pnc_q37g	NA	:::UNDEF:::
-pnc_q37h	pnc_q37h	1	Not at all true
-pnc_q37h	pnc_q37h	2	Slightly true
-pnc_q37h	pnc_q37h	3	Somewhat true
-pnc_q37h	pnc_q37h	4	Mostly true
-pnc_q37h	pnc_q37h	5	Completely true
+pnc_q37h	pnc_q37h	1	Not at all true	5
+pnc_q37h	pnc_q37h	2	Slightly true	4
+pnc_q37h	pnc_q37h	3	Somewhat true	3
+pnc_q37h	pnc_q37h	4	Mostly true	2
+pnc_q37h	pnc_q37h	5	Completely true	1
 pnc_q37h	pnc_q37h	NA	:::UNDEF:::
 pnc_q38a	pnc_q38a	1	Yes
 pnc_q38a	pnc_q38a	2	No
@@ -1718,12 +1760,12 @@ pnc_q40	pnc_q40	NA	:::UNDEF:::
 pnc_q41	pnc_q41	1	Yes, has a name
 pnc_q41	pnc_q41	2	No, does not have a name
 pnc_q41	pnc_q41	NA	:::UNDEF:::
-pnc_q42	pnc_q42	1	Never
-pnc_q42	pnc_q42	2	Rarely/not very often
-pnc_q42	pnc_q42	3	Sometimes/occasionally
-pnc_q42	pnc_q42	4	Regularly/on a monthly basis
-pnc_q42	pnc_q42	5	Regularly/on a weekly basis
-pnc_q42	pnc_q42	6	More frequently/almost daily
+pnc_q42	pnc_q42	1	Never	6
+pnc_q42	pnc_q42	2	Rarely/not very often	5
+pnc_q42	pnc_q42	3	Sometimes/occasionally	4
+pnc_q42	pnc_q42	4	Regularly/on a monthly basis	3
+pnc_q42	pnc_q42	5	Regularly/on a weekly basis	2
+pnc_q42	pnc_q42	6	More frequently/almost daily	1
 pnc_q42	pnc_q42	NA	:::UNDEF:::
 pnc_q43___1	pnc_q43___1	0	Unchecked
 pnc_q43___1	pnc_q43___1	1	Checked
@@ -1842,7 +1884,7 @@ pnc_q50b	pnc_q50b	1	Yes
 pnc_q50b	pnc_q50b	2	No
 pnc_q50b	pnc_q50b	3	Not sure/don't know
 pnc_q50b	pnc_q50b	NA	:::UNDEF:::
-pnc_q50c	pnc_q50c	NA	 :::UNDEF:::
+pnc_q50c	pnc_q50c	NA	:::UNDEF:::
 pnc_q51	pnc_q51	1	Yes
 pnc_q51	pnc_q51	2	No
 pnc_q51	pnc_q51	NA	:::UNDEF:::
@@ -1957,8 +1999,7 @@ pnc_q57i_b	pnc_q57i_b	1	Yes
 pnc_q57i_b	pnc_q57i_b	2	No
 pnc_q57i_b	pnc_q57i_b	NA	:::UNDEF:::
 pnc_q57i_bi	pnc_q57i_bi	1	Yes, we discussed family planning generally
-pnc_q57i_bi	pnc_q57i_bi	2	Yes, we discussed the specific family planning
-method	method
+pnc_q57i_bi	pnc_q57i_bi	2	Yes, we discussed the specific family planning method
 pnc_q57i_bi	pnc_q57i_bi	3	No, we did not discuss beforehand
 pnc_q57i_bi	pnc_q57i_bi	NA	:::UNDEF:::
 pnc_q58_lam_months	pnc_q58_lam_months	FALSE
@@ -2541,12 +2582,15 @@ pnc_q65months_pill	pnc_q65months_pill	TRUE
 pnc_q66months_pill	pnc_q66months_pill	NA	:::UNDEF:::
 pnc_q66months_pill	pnc_q66months_pill	TRUE
 pnc_q67_pill___1	pnc_q67_pill___1	0	Unchecked
+pnc_q67_pill___1	pnc_q67_pill___1	1	Checked
 pnc_q67_pill___2	pnc_q67_pill___2	0	Unchecked
 pnc_q67_pill___2	pnc_q67_pill___2	1	Checked
 pnc_q67_pill___3	pnc_q67_pill___3	0	Unchecked
 pnc_q67_pill___3	pnc_q67_pill___3	1	Checked
 pnc_q67_pill___4	pnc_q67_pill___4	0	Unchecked
+pnc_q67_pill___4	pnc_q67_pill___4	1	Checked
 pnc_q67_pill___5	pnc_q67_pill___5	0	Unchecked
+pnc_q67_pill___5	pnc_q67_pill___5	1	Checked
 pnc_q67_pill___6	pnc_q67_pill___6	0	Unchecked
 pnc_q67_pill___6	pnc_q67_pill___6	1	Checked
 pnc_q67_pill___7	pnc_q67_pill___7	0	Unchecked
@@ -2554,11 +2598,15 @@ pnc_q67_pill___7	pnc_q67_pill___7	1	Checked
 pnc_q67_pill___8	pnc_q67_pill___8	0	Unchecked
 pnc_q67_pill___8	pnc_q67_pill___8	1	Checked
 pnc_q67_pill___9	pnc_q67_pill___9	0	Unchecked
+pnc_q67_pill___9	pnc_q67_pill___9	1	Checked
 pnc_q67_pill___10	pnc_q67_pill___10	0	Unchecked
 pnc_q67_pill___10	pnc_q67_pill___10	1	Checked
 pnc_q67_pill___11	pnc_q67_pill___11	0	Unchecked
+pnc_q67_pill___11	pnc_q67_pill___11	1	Checked
 pnc_q67_pill___12	pnc_q67_pill___12	0	Unchecked
+pnc_q67_pill___12	pnc_q67_pill___12	1	Checked
 pnc_q67_pill___13	pnc_q67_pill___13	0	Unchecked
+pnc_q67_pill___13	pnc_q67_pill___13	1	Checked
 pnc_q67_pill___14	pnc_q67_pill___14	0	Unchecked
 pnc_q67_pill___14	pnc_q67_pill___14	1	Checked
 pnc_q68_pill	pnc_q68_pill	NA	:::UNDEF:::
@@ -2795,6 +2843,8 @@ pnc_q69_othr___11	pnc_q69_othr___11	0	Unchecked
 pnc_q69_othr___12	pnc_q69_othr___12	0	Unchecked
 pnc_q69_othr___13	pnc_q69_othr___13	0	Unchecked
 pnc_q71a	pnc_q71a	NA	:::UNDEF:::
+pnc_q71a	pnc_q71a	0	0	1
+pnc_q71a	pnc_q71a	1	1	2
 pnc_q71b	pnc_q71b	NA	:::UNDEF:::
 pnc_q71c	pnc_q71c	NA	:::UNDEF:::
 pnc_q71d	pnc_q71d	NA	:::UNDEF:::
@@ -2818,8 +2868,19 @@ pnc_q71u	pnc_q71u	NA	:::UNDEF:::
 pnc_survey_complete	pnc_survey_complete	1	Unverified
 pnc_survey_complete	pnc_survey_complete	2	Complete
 ses_q1	ses_q1	NA	:::UNDEF:::
-ses_q2	ses_q2	1	In own dwelling
-ses_q2	ses_q2	2	In own yard/plot
+ses_q1	ses_q1	1	Piped water	1
+ses_q1	ses_q1	2	Dug well	2
+ses_q1	ses_q1	3	Water from spring	3
+ses_q1	ses_q1	4	Rainwater	4
+ses_q1	ses_q1	5	Tanker truck	5
+ses_q1	ses_q1	6	Cart with small tank	6
+ses_q1	ses_q1	7	Surface water	7
+ses_q1	ses_q1	8	Irrigation channel	8
+ses_q1	ses_q1	9	Bottled water	9
+ses_q1	ses_q1	10	Sachet water	10
+ses_q1	ses_q1	11	Other	11
+ses_q2	ses_q2	1	In own dwelling	
+ses_q2	ses_q2	2	In own yard/plot	
 ses_q2	ses_q2	3	Elsewhere
 ses_q2	ses_q2	NA	:::UNDEF:::
 ses_q3	ses_q3	1	Flush or pour toilet
@@ -2877,9 +2938,9 @@ ses_q7	ses_q7	2	Rudimentary floor
 ses_q7	ses_q7	3	Finished floor
 ses_q7	ses_q7	NA	:::UNDEF:::
 ses_q7a	ses_q7a	NA	:::UNDEF:::
-ses_q7a	ses_q7a	TRUE
+ses_q7a	ses_q7a	TRUE	Earth/sand
 ses_q7b	ses_q7b	NA	:::UNDEF:::
-ses_q7b	ses_q7b	TRUE
+ses_q7b	ses_q7b	TRUE	Wood planks
 ses_q7c	ses_q7c	1	Parquet or polished wood
 ses_q7c	ses_q7c	3	Ceramic tiles
 ses_q7c	ses_q7c	4	Cement
@@ -2986,10 +3047,7 @@ penta_dose	penta_dose	3	3
 penta_dose	penta_dose	4	4
 penta_dose	penta_dose	5	5
 penta_dose	penta_dose	NA	:::UNDEF:::
-country	country	0	Kenya
-country	country	1	Nigeria
 record_id	record_id	>20 categories
-redcap_event_name	redcap_event_name	1_SCREENING_AND_CO_ARM_1
 screening_data_time	screening_data_time	2001	2001	1
 screening_data_time	screening_data_time	2008	2008	2
 screening_data_time	screening_data_time	2009	2009	3
@@ -3047,14 +3105,18 @@ group_visit_date	group_visit_date	2016	2016	1
 group_visit_date	group_visit_date	2017	2017	2
 group_visit_date	group_visit_date	NA	:::UNDEF:::
 intervention_cohort_ga	intervention_cohort_ga	NA	:::UNDEF:::
-visit	visit	1	Visit 1	1
-visit	visit	2	Visit 2	2
-visit	visit	3	Visit 3	3
-visit	visit	4	Visit 4	4
-visit	visit	5	Visit 5	5
-visit	visit	6	Visit 6	6
-visit	visit	7	Visit 7	7
-visit	visit	8	Visit 8	8
+visit	visit	1	ANC Visit 1	1
+visit	visit	2	ANC Visit 2	2
+visit	visit	3	ANC Visit 3	3
+visit	visit	4	ANC Visit 4	4
+visit	visit	5	ANC Visit 5	5
+visit	visit	6	ANC Visit 6	6
+visit	visit	7	ANC Visit 7	7
+visit	visit	8	ANC Visit 8	8
+pncvisit	pncvisit	1	PNC Visit 1	1
+pncvisit	pncvisit	2	PNC Visit 2	2
+pncvisit	pncvisit	3	PNC Visit 3	3
+pncvisit	pncvisit	4	PNC Visit 4	4
 visit_date	visit_date	2012	2012	1
 visit_date	visit_date	2015	2015	2
 visit_date	visit_date	2016	2016	3
