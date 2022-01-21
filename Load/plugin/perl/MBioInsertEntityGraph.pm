@@ -8,6 +8,7 @@ use strict;
 use warnings;
 use ApiCommonData::Load::MBioResultsDir;
 use CBIL::ISA::InvestigationSimple;
+use File::Basename;
 
 my $argsDeclaration =
   [
@@ -79,6 +80,7 @@ sub run {
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
   my $investigationFile = $self->getArg('investigationFile');
+  my $namesPrefixForOwl = basename $self->getArg('sampleDetailsFile');
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
   my $ontologyMappingOverrideFile = undef;
   my $valueMappingFile = undef;
@@ -91,7 +93,7 @@ sub run {
   $self->error("string eval of $mbioResultsFileExtensions failed: should return a hash") unless ref $fileExtensions eq 'HASH';
   my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions)->toGetAddMoreData;
    
-  my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData);
+  my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl);
   ApiCommonData::Load::Plugin::InsertEntityGraph::loadInvestigation($self,$investigation, $extDbRlsId, $schema); 
 
   $self->logRowsInserted() if($self->getArg('commit'));
