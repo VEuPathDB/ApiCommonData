@@ -48,6 +48,8 @@ my $stmt = $dbh->prepare($sql);
 my $coverage = $dbh->selectrow_arrayref($stmt);
 $stmt->finish();
 
+die "Average coverage could not be retrieved for sample $sampleName\n" unless $coverage;
+
 if (scalar @{$coverage} >1) {
     die "More than one coverage metric was returned for sample $sampleName\n";
 }
@@ -57,7 +59,7 @@ if ($averageCoverage < 6) {
     &runCmd("touch $outputSkipIfFile");
     print STDERR "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nSamples with less than 6x coverage will produce nonsensical data in the CNV workflow and may cause the workflow to fail.\n\nThe CNV sample graph will not be run for sample $sampleName.\n";
 } else {
-    print "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nThis sample will be run in the CNV workflow.\n";
+    print STDOUT "The average mapping coverage for sample $sampleName is $averageCoverage.\n\nThis sample will be run in the CNV workflow.\n";
 }
 
 exit;
