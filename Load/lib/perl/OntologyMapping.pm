@@ -127,6 +127,7 @@ sub getTermsFromOwl{
   my %terms;
   while (my $row = $it->next) {
     my $sid = $row->{iri}->as_hash()->{literal};
+    my $parent = $row->{parent}->as_hash()->{literal};
   	my $names = $row->{vars}->as_hash()->{literal};
   	#my $name = "";
   	if(ref($names) eq 'ARRAY'){
@@ -176,7 +177,7 @@ sub getTermsFromOwl{
       source_id => $sid,
       name =>  $names,
       type => 'characteristicQualifier',
-      parent=> 'ENTITY',
+      parent => $parent,
       function => \@funcs
     };
   }
@@ -192,8 +193,12 @@ sub getTermsFromOwl{
 
 sub getMaterialTypesFromOwl {
   my ($owl) = @_;
+  my %materialTypes = (
+    'dna sequencing assay' => "OBI_0000626",
+    'host' => "OBI_0000725",
+    'sample from organism' => "OBI_0000671",
+  );
   my $it = $owl->execute('top_level_entities');
-  my %materialTypes;
   while (my $row = $it->next) {
   	my $iri = $row->{entity}->as_hash()->{iri};
   	my $sid = basename($iri); 	
@@ -216,6 +221,10 @@ sub getProtocols {
     enrollment => 'OBI_0600004', # household-participant edge
     observationprotocol => 'BFO_0000015', # participant-observation edge
     'specimen collection' => 'OBI_0000659', # observation-sample edge
+    'dna extraction' => 'OBI_0000257',
+    'dna sequencing' => 'OBI_0000626',
+    'data collection' => 'OBI_0600013',
+    'data transformation' => 'OBI_0200000',
   );
   my @sorted;
   foreach my $prot ( sort keys %protocols ){

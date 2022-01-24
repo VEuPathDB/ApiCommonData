@@ -3,11 +3,13 @@ PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX ebi: <http://www.ebi.ac.uk/efo/>
 PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
-SELECT distinct ?entity ?iri ?vars
+SELECT distinct ?entity ?iri ?parent ?vars
 WHERE { 
 	?_entity a owl:Class .
   ?_entity obo:EUPATH_0000755 ?column. 
+  ?_entity obo:ISA_2 ?_parent. 
 	BIND (str(?_entity) AS ?entity) .
+	BIND (str(?_parent) AS ?parent) .
 	BIND (str(?column) AS ?vars) .
   BIND(
     replace(
