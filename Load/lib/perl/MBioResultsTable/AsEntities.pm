@@ -131,6 +131,7 @@ sub entitiesForSampleAggregatedAbundance {
       }
       if ((length $key) + (length $levelNames->[$taxonLevel]) + 1 > $MAX_PROPERTY_NAME_LENGTH){
         my ($x, $y) = split(";", $key, 2);
+        die $key if not $y;
         $key = $x .";...".substr($y, (length $y) - ($MAX_PROPERTY_NAME_LENGTH - 1 - (length $levelNames->[$taxonLevel]) - (length $x) - 4), length $y);
       }
       $key =~ s{[^A-Za-z_0-9]+}{_}g;

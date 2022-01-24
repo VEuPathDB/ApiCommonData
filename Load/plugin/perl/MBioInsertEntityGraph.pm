@@ -21,6 +21,14 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   fileArg({name           => 'sampleDetailsFile',
+            descr          => 'sample details file path',
+            reqd           => 1,
+        mustExist      => 1,
+        format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'ontology mapping, xml or owl',
             reqd           => 1,

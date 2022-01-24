@@ -26,7 +26,7 @@ sub mbioResultTablePath {
 sub ampliconTaxa {
   my ($self, $datasetName, $suffix) = @_;
   my $path = $self->mbioResultTablePath($datasetName, $suffix, 'ampliconTaxa');
-  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa? -f $path = " . (-f $path ? 1 : 0);
+  say STDERR "MBioResultsDir: Does $datasetName have ampliconTaxa for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->ampliconTaxa($path);
 }
@@ -34,7 +34,7 @@ sub ampliconTaxa {
 sub eukdetectCpms {
   my ($self, $datasetName, $suffix) = @_;
   my $path = $self->mbioResultTablePath($datasetName, $suffix, 'eukdetectCpms');
-  say STDERR "MBioResultsDir: Does $datasetName have eukdetectCpms? -f $path = " . (-f $path ? 1 : 0);
+  say STDERR "MBioResultsDir: Does $datasetName have eukdetectCpms for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->eukdetectCpms($path);
 }
@@ -42,7 +42,7 @@ sub eukdetectCpms {
 sub wgsTaxa {
   my ($self, $datasetName, $suffix) = @_;
   my $path = $self->mbioResultTablePath($datasetName, $suffix, 'wgsTaxa');
-  say STDERR "MBioResultsDir: Does $datasetName have wgsTaxa? -f $path = " . (-f $path ? 1 : 0);
+  say STDERR "MBioResultsDir: Does $datasetName have wgsTaxa for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsTaxa($path);
 }
@@ -50,7 +50,7 @@ sub wgsTaxa {
 sub level4ECs {
   my ($self, $datasetName, $suffix) = @_;
   my $path = $self->mbioResultTablePath($datasetName, $suffix, 'level4ECs');
-  say STDERR "MBioResultsDir: Does $datasetName have level4ECs? -f $path = " . (-f $path ? 1 : 0);
+  say STDERR "MBioResultsDir: Does $datasetName have level4ECs for $suffix? -f $path = " . (-f $path ? 1 : 0);
   return unless -f $path;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsFunctions('level4EC', $path);
 }

@@ -216,8 +216,10 @@ sub loadInvestigation {
   my ($self, $investigation, $extDbRlsId, $schema) = @_;
   do {
     my %errors;
+    my $c = $investigation->{_on_error};
     $investigation->setOnError(sub {
       my ($error) = @_;
+      $c->(@_) if $c;
       $self->log("Error found when parsing:\n$error") unless $errors{$error}++;
     });
 
