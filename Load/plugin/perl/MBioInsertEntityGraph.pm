@@ -21,6 +21,14 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   fileArg({name           => 'sampleDetailsFile',
+            descr          => 'sample details file path',
+            reqd           => 1,
+        mustExist      => 1,
+        format         => '',
+            constraintFunc => undef,
+            isList         => 0, }),
+
    fileArg({name           => 'ontologyMappingFile',
             descr          => 'ontology mapping, xml or owl',
             reqd           => 1,
@@ -54,6 +62,12 @@ my $argsDeclaration =
             reqd           => 1,
             constraintFunc => undef,
             isList         => 0, }),
+
+   booleanArg({name           => 'dieOnError',
+            descr          => 'die on error if yes',
+            reqd           => 0,
+            constraintFunc => undef,
+            isList         => 0, }),
   ];
 
 sub new {
@@ -84,6 +98,8 @@ sub run {
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
   my $ontologyMappingOverrideFile = undef;
   my $valueMappingFile = undef;
+  my $onError = $self->getArg('dieOnError') ? sub {die @_}: undef;
+  my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
   my $schema = $self->getArg('schema');
   my $mbioResultsDir = $self->getArg('mbioResultsDir');
@@ -93,7 +109,7 @@ sub run {
   $self->error("string eval of $mbioResultsFileExtensions failed: should return a hash") unless ref $fileExtensions eq 'HASH';
   my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions)->toGetAddMoreData;
    
-  my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, undef, undef, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl);
+  my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, $onError, $isReporterMode, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl);
   ApiCommonData::Load::Plugin::InsertEntityGraph::loadInvestigation($self,$investigation, $extDbRlsId, $schema); 
 
   $self->logRowsInserted() if($self->getArg('commit'));
