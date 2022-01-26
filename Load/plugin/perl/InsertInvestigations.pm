@@ -1155,6 +1155,7 @@ sub writeConfigFile {
   open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
 
   print CONFIG "LOAD DATA
+CHARACTERSET UTF8
 INFILE '$dataFile'
 APPEND
 INTO TABLE Study.Characteristic
