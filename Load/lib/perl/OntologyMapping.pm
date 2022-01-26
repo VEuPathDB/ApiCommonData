@@ -103,11 +103,13 @@ sub ontologyMappingFromOwl {
     $funcToAdd = readFunctionsFile($functionsFile);
   }
   my $vars = getTermsFromOwl($owl, $funcToAdd, $sortByIRI);
+  my $edaTerms = getEdaLabels($owl);
   my $materials = getMaterialTypesFromOwl($owl);
   my $protocols = getProtocols();
   my @terms;
   push(@terms, $_) for @$materials;
   push(@terms, $_) for @$protocols;
+  push(@terms, $_) for @$edaTerms;
   push(@terms, $_) for @$vars;
   # Mirror the XMLIn parse
   return {
@@ -121,7 +123,32 @@ sub getOwl {
   return ApiCommonData::Load::OwlReader->new($path);
 }
 
-sub getTermsFromOwl{
+sub getEdaLabels {
+  my ($owl, $sortByIRI) = @_;
+  my $it = $owl->execute('get_eda_labels');
+  my %terms;
+  while (my $row = $it->next) {
+    my $sid = $row->{iri}->as_hash()->{literal};
+    my $label = $row->{label}->as_hash()->{literal};
+    $terms{$sid} = { 
+      source_id => $sid,
+      name => [$label],
+      type => 'characteristicQualifier',
+      parent => 'Data analysis',
+      function => []
+    };
+  }
+  my @sorted;
+  if($sortByIRI){
+    @sorted = sort { $a->{source_id} cmp $b->{source_id} } values %terms;
+  }
+  else {
+    @sorted = sort { $a->{name}->[0] cmp $b->{name}->[0] } values %terms;
+  }
+  return \@sorted;
+}
+
+sub getTermsFromOwl {
   my ($owl,$funcToAdd,$sortByIRI) = @_;
   my $it = $owl->execute('get_column_sourceID');
   my %terms;
