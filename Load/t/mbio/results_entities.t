@@ -36,8 +36,8 @@ subtest 'abundances cpms' => sub {
   is_deeply(\@k1, \@k2, "keys stay equal if all vars are scaled");
 
   is(
-    $x1->{abundance_cpms_c}{Archaea_}[1] * 10.0,
-    $x2->{abundance_cpms_c}{Archaea_}[1] * 1.0,
+    $x1->{"relative abundance of class data"}{Archaea_}[1] * 10.0,
+    $x2->{"relative abundance of class data"}{Archaea_}[1] * 1.0,
     "stays equal if all vars are scaled");
 
 };
