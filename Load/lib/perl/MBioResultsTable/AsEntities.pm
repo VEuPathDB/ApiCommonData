@@ -25,13 +25,14 @@ $ApiCommonData::Load::MBioResultsTable::AsEntities::dataTypeInfo = {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
       my $unitType = $self->{unitType};
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "function_${unitType}", undef, undef, undef); 
+      die "Go get an ontology term for this unit: $unitType" unless $unitType =~ /4.*ec.*/i;
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails}, "4th level ec metagenome abundance data", undef, undef, undef); 
     },
   },
   wgsPathways => {
     entitiesForSample => sub {
       my ($self, $sample) = @_;
-      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"pathway_abundance", "pathway_abundance_species", "pathway_coverage", "pathway_coverage_species");
+      return entitiesForSampleFunctions($self->{data}{$sample}, $self->{rowDetails},"metagenome enzyme pathway abundance data", undef, "metagenome enzyme pathway coverage data", undef);
     }
   },
   eukdetectCpms => {
@@ -52,8 +53,8 @@ sub entitiesForSampleTaxa {
   return {} unless @values;
   return {
     %{entitiesForSampleRelativeAbundances($data)},
-    alpha_diversity_shannon => alphaDiversityShannon(\@values),
-    alpha_diversity_inverse_simpson => alphaDiversityInverseSimpson(\@values),
+    "shannon-indexed alpha diversity data" => alphaDiversityShannon(\@values),
+    "inverse simpson-indexed alpha diversity data" => alphaDiversityInverseSimpson(\@values),
   };
 }
 
@@ -84,23 +85,31 @@ sub entitiesForSampleFunctions {
       my $n = $species ? $detailedAbundanceName : $summaryAbundanceName;
       $result{$n}{$key} = [$displayName, $abundance] if $n;
     }
-    if($coverage && $summaryCoverageName && $detailedCoverageName){
+    if($coverage){
       my $n = $species ? $detailedCoverageName : $summaryCoverageName;
       $result{$n}{$key} = [$displayName, $coverage] if $n;
     }
   }
   return \%result;
 }
+my $levelNamesTxt = <<EOF;
+relative abundance of kingdom data
+relative abundance of phylum data
+relative abundance of class data
+relative abundance of order data
+relative abundance of family data
+relative abundance of genus data
+relative abundance of species data
+EOF
+my $levelNames = [grep {$_} split("\n", $levelNamesTxt)];
 
 sub entitiesForSampleAbundanceCpms {
   my ($data) = @_;
-  my $levelNames = [map {"abundance_cpms_${_}"} qw/k p c o f g s/];
   return entitiesForSampleAggregatedAbundance($data, $levelNames, 1);
 }
 
 sub entitiesForSampleRelativeAbundances {
   my ($data) = @_;
-  my $levelNames = [map {"relative_abundance_${_}"} qw/k p c o f g s/];
   my $totalCount = sum values %{$data};
   return entitiesForSampleAggregatedAbundance($data, $levelNames, $totalCount);
 }
