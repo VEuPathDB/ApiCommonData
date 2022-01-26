@@ -97,6 +97,18 @@ my $studyXml = {
 };
 my $addMoreData = $getAddMoreData->($studyXml);
 
+my $ampliconTxt = <<EOF;
+inverse simpson-indexed alpha diversity data
+shannon-indexed alpha diversity data
+relative abundance of class data
+relative abundance of family data
+relative abundance of genus data
+relative abundance of kingdom data
+relative abundance of order data
+relative abundance of phylum data
+relative abundance of species data
+EOF
+my @ampliconTerms = grep {$_} split("\n", $ampliconTxt);
 
 my $s1source = bless {_value => "s1 (Source)"}, 'CBIL::ISA::StudyAssayEntity::Source';
 is_deeply($addMoreData->($s1source), {}, 's1 Source');
@@ -109,19 +121,36 @@ sub okAmpliconKeys {
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw /relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s alpha_diversity_shannon alpha_diversity_inverse_simpson/; 
+    ok($result->{$_}, "Result has key: $_") for @ampliconTerms;
   };
 };
 
 okAmpliconKeys("s1 ($name16sv3v5)");
 okAmpliconKeys("s1 (16sv1v3)");
 okAmpliconKeys("s2 (16sv1v3)");
+
+my $wgsTxt = <<EOF;
+4th level ec metagenome abundance data
+inverse simpson-indexed alpha diversity data
+metagenome enzyme pathway abundance data
+metagenome enzyme pathway coverage data
+relative abundance of class data
+relative abundance of family data
+relative abundance of genus data
+relative abundance of kingdom data
+relative abundance of order data
+relative abundance of phylum data
+relative abundance of species data
+shannon-indexed alpha diversity data
+EOF
+
+my @wgsTerms =  grep {$_} split("\n", $wgsTxt);
 sub okWgsKeys {
   my ($name) = @_;
   my $in =  bless {_value => $name}, 'CBIL::ISA::StudyAssayEntity::Assay';
   my $result = $addMoreData->($in);
   subtest $name => sub {
-    ok($result->{$_}, "Result has key: $_") for qw/relative_abundance_c relative_abundance_f relative_abundance_g relative_abundance_k relative_abundance_o relative_abundance_p relative_abundance_s function_level4EC pathway_abundance pathway_abundance_species pathway_coverage pathway_coverage_species alpha_diversity_shannon alpha_diversity_inverse_simpson/;
+    ok($result->{$_}, "Result has key: $_") for @wgsTerms;
   };
 }
 okWgsKeys("s1 (wgs)");

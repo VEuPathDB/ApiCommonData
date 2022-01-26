@@ -63,7 +63,7 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   booleanArg({name           => 'dieOnError',
+   booleanArg({name           => 'dieOnFirstError',
             descr          => 'die on error if yes',
             reqd           => 0,
             constraintFunc => undef,
@@ -98,7 +98,7 @@ sub run {
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
   my $ontologyMappingOverrideFile = undef;
   my $valueMappingFile = undef;
-  my $onError = $self->getArg('dieOnError') ? sub {die @_}: undef;
+  my $onError = $self->getArg('dieOnFirstError') ? sub {die @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
   my $schema = $self->getArg('schema');
