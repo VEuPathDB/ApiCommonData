@@ -105,6 +105,7 @@ sub run {
     #  Don't forget to delete the new column before writing output
 
     my %mergeInfo; # populate with id_cols, merge_key for each file
+    my ($outputFileBasename,$ver) = $self->getOutputFileBasename($datasetName);
     while( my ($entityTypeId, $meta) = each %$entityTypeIds) {
       my $entityTypeAbbrev = $meta->{ABBREV};
       my $entityNameForFile = $meta->{PLURAL};
@@ -116,16 +117,16 @@ sub run {
          unless(-d $outputDir){
            mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
          }
-         $outputFile = sprintf("%s/%s_%s.txt", $outputDir, $datasetName, $entityNameForFile);
+         $outputFile = sprintf("%s/%s_%s_%s.txt", $outputDir, $outputFileBasename, $entityNameForFile, $ver);
       }
       else{
-        $outputFile = sprintf("%s_%s.txt", $datasetName, $entityNameForFile);
+        $outputFile = sprintf("%s_%s_%s.txt", $outputFileBasename, $entityNameForFile, $ver);
       }
       $self->log("Making download file $outputFile for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
       $mergeInfo{$outputFile} =  $self->createDownloadFile($entityTypeId, $entityTypeAbbrev, \%entityNames, $studyAbbrev,$outputFile);
     }
     #
-    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $datasetName);
+    my $allMergedFile = sprintf("%s%s_%s.txt", $outputDir ? "$outputDir/" : "", $outputFileBasename, $ver);
     $self->log("Making all data merged file $allMergedFile ");
     my $tempScript = "merge_script.R";
     if($outputDir){$tempScript = join("/", $outputDir,$tempScript)}
@@ -141,15 +142,15 @@ sub run {
 
     ## ontology file
 
-    my $outputFile = "ontologyMetadata.txt"; 
+    my $outputFile = "OntologyMetadata.txt"; 
     if($outputDir){ 
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
        }
-       $outputFile = sprintf("%s/%s_ontologyMetadata.txt", $outputDir, $datasetName);
+       $outputFile = sprintf("%s/%s_OntologyMetadata_%s.txt", $outputDir, $outputFileBasename, $ver);
     }
     else{
-      $outputFile = sprintf("%s_ontologyMetadata.txt", $datasetName);
+      $outputFile = sprintf("%s_OntologyMetadata_%s.txt", $outputFileBasename, $ver);
     }
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
@@ -370,6 +371,33 @@ MOVEIDCOLS
 }
 
 
+sub getOutputFileBasename {
+  my($self,$datasetName) = @_;
+  my $dbh = $self->getQueryHandle();
+  my $sql = <<SQLEND;
+SELECT name, ROW_NUMBER() OVER (ORDER BY build_number) AS version_number
+FROM (
+SELECT dp.short_display_name as name, dh.build_number                                                 
+   FROM  ApidbTuning.DatasetHistory dh,  ApidbTuning.DatasetPresenter dp                        
+   WHERE  dh.dataset_presenter_id = dp.dataset_presenter_id
+   AND dp.name=?
+   ORDER by dh.build_number
+  ) ORDER BY version_number desc
+SQLEND
+
+# select x.short_display_name, y.value from APIDBTUNING.DATASETPRESENTER x
+# LEFT JOIN APIDBTUNING.DATASETPROPERTY y ON  x.dataset_presenter_id=y.dataset_presenter_id
+# where x.name = ? and y.property = 'version'
+ 
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($datasetName);
+  my ($displayName,$ver) = @{$sh->fetchrow_arrayref()}; # first row = highest version num
+  $displayName =~ tr/ /_/;
+  $displayName =~ s/\.//g;
+  $ver = sprintf("v%03d", $ver);
+
+  return (join("_", $datasetName, "PREFIX", $displayName), $ver);
+}
 
 
 
