@@ -1,0 +1,23 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
+PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
+
+SELECT distinct ?entity ?iri ?label ?category
+WHERE { 
+  ?_entity a owl:Class .
+  ?_entity rdfs:label ?_label . 
+  ?_entity obo:EUPATH_0001002 ?_category . 
+  FILTER regex(?_category, "EDA") . 
+  BIND (str(?_entity) AS ?entity) .
+  BIND (str(?_category) AS ?category) .
+  BIND (str(?_label) AS ?label) .
+  BIND(
+    replace(
+      replace(
+        replace($entity, str(obo:), ""),
+        str(ebi:), ""),
+      str(sno:), "SNOMEDCT_")
+    as $iri) .
+}
