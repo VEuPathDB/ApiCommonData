@@ -121,24 +121,19 @@ our $documentation = { purpose          => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-our @UNDO_TABLES =qw(
-  ProcessAttributes
-  EntityAttributes
-  AttributeUnit
-  ProcessTypeComponent
-  EntityType
-  Study
-); ## undo is not run on ProcessType
 
 our @REQUIRE_TABLES = qw(
   Study
-  EntityAttributes
   EntityType
+  EntityAttributes
   AttributeUnit
   ProcessAttributes
   ProcessType
   ProcessTypeComponent
 );
+
+# JohnB/Jay: undo is not run on ProcessType
+our @UNDO_TABLES = grep {$_ ne 'ProcessType' } reverse @REQUIRE_TABLES;
 
 # ----------------------------------------------------------------------
 
@@ -812,17 +807,6 @@ and tn.name_class = 'scientific name'
     $self->userError($msg);
   }
   return $ontologyTermToIdentifiers, $ontologyTermToNames;
-}
-# FOR EMERGENCY USE
-sub not_undoTables {
-  return qw/
-  EDA.ProcessAttributes
-  EDA.EntityAttributes
-  EDA.AttributeUnit
-  EDA.ProcessTypeComponent
-  EDA.EntityType
-  EDA.Study
-  /;
 }
 
 1;
