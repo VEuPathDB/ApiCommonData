@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Getopt::Long;
+use Getopt::Long qw/:config no_ignore_case/;
 use Text::CSV_XS;
 
 unless (0 < @ARGV){
@@ -19,7 +19,7 @@ unless (0 < @ARGV){
 
 my ($values,$exact,$tab,$identifiers,$delim);
 
-GetOptions('v|values!' => \$values, 'e|exact' => \$exact, 't|tab', \$tab, 'I|identifiers!' => \$identifiers);
+GetOptions('v|values!' => \$values, 'e|exact' => \$exact, 't|tab', \$tab, 'I|identifiers=s' => \$identifiers);
 
 $exact = 1 if $values;
 
@@ -86,7 +86,7 @@ foreach my $filename (@files){
     printf STDERR ("-----\nNon-empty\t%d\n", $nonempty);
     if($identifiers){
       printf STDERR ("%d identifiers\n", scalar @ids);
-      printf STDERR ("%s\n", join("\n", @ids)) if (20 > @ids);
+      printf ("%s\n", join("\n", @ids)) if ($identifiers > @ids);
     }
   }
   elsif(!defined($colNum)){
