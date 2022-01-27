@@ -47,6 +47,11 @@ my $argsDeclaration =
 	     reqd            => 0,
 	     constraintFunc  => undef,
 	     isList          => 0 }),
+ stringArg({ name            => 'fileBasename',
+	     descr           => 'basename for output files',
+	     reqd            => 0,
+	     constraintFunc  => undef,
+	     isList          => 0 }),
  stringArg({name           => 'schema',
        descr          => 'GUS::Model schema for entity tables',
        reqd           => 1,
@@ -83,6 +88,7 @@ sub run {
   my ($datasetName,$ver) = split(/\|/, $extDbRlsSpec);
   $datasetName =~ s/\|.*//;
   my $outputDir = $self->getArg('outputDir');
+  my $fileBasename = sprintf("%s_PREFIX_%s", $datasetName, $self->getArg('fileBasename') || $datasetName);
 
   my $ontologySpec = $self->getArg('ontologyExtDbRlsSpec'); # for entity labels
   my $ontologyId = $self->getExtDbRlsId($ontologySpec);
@@ -116,16 +122,16 @@ sub run {
          unless(-d $outputDir){
            mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
          }
-         $outputFile = sprintf("%s/%s_%s.txt", $outputDir, $datasetName, $entityNameForFile);
+         $outputFile = sprintf("%s/%s_%s.txt", $outputDir, $fileBasename, $entityNameForFile);
       }
       else{
-        $outputFile = sprintf("%s_%s.txt", $datasetName, $entityNameForFile);
+        $outputFile = sprintf("%s_%s.txt", $fileBasename, $entityNameForFile);
       }
       $self->log("Making download file $outputFile for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
       $mergeInfo{$outputFile} =  $self->createDownloadFile($entityTypeId, $entityTypeAbbrev, \%entityNames, $studyAbbrev,$outputFile);
     }
     #
-    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $datasetName);
+    my $allMergedFile = sprintf("%s%s.txt", $outputDir ? "$outputDir/" : "", $fileBasename);
     $self->log("Making all data merged file $allMergedFile ");
     my $tempScript = "merge_script.R";
     if($outputDir){$tempScript = join("/", $outputDir,$tempScript)}
@@ -141,15 +147,15 @@ sub run {
 
     ## ontology file
 
-    my $outputFile = "ontologyMetadata.txt"; 
+    my $outputFile = "OntologyMetadata.txt"; 
     if($outputDir){ 
        unless(-d $outputDir){
          mkdir($outputDir) or die "Cannot create output directory $outputDir: $!\n";
        }
-       $outputFile = sprintf("%s/%s_ontologyMetadata.txt", $outputDir, $datasetName);
+       $outputFile = sprintf("%s/%s_OntologyMetadata.txt", $outputDir, $fileBasename);
     }
     else{
-      $outputFile = sprintf("%s_ontologyMetadata.txt", $datasetName);
+      $outputFile = sprintf("%s_OntologyMetadata.txt", $fileBasename);
     }
     $self->log("Making ontology file $outputFile");
     $self->makeOntologyFile($outputFile, $studyAbbrev, $ontologyId);
