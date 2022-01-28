@@ -557,6 +557,7 @@ CREATE TABLE &1.AttributeGraph (
   display_range_min            varchar2(16),
   display_range_max            varchar2(16),
   is_merge_key                 number(1),
+  impute_zero                  number(1),
   is_repeated                  number(1),
   bin_width_override           varchar2(16),
   -- is_hidden                    number(1),

@@ -18,7 +18,6 @@ sub queryForOntologyTerms {
   my ($dbh, $extDbRlsId) = @_;
 
 
-  # TODO: update the source_id for geohash terms
   my $sql = "select s.name
                   , s.source_id
                   , s.ontology_term_id
@@ -38,6 +37,7 @@ sub queryForOntologyTerms {
                   , case when lower(json_value(annotation_properties, '\$.is_featured[0]')) = 'yes' then 1 else 0 end as is_featured
                   , case when lower(json_value(annotation_properties, '\$.repeated[0]')) = 'yes' then 1 else 0 end as is_repeated
                   , case when lower(json_value(annotation_properties, '\$.mergeKey[0]')) = 'yes' then 1 else 0 end as is_merge_key
+                  , case when lower(json_value(annotation_properties, '\$.impute_zero[0]')) = 'yes' then 1 else 0 end as impute_zero
                   , json_query(os.annotation_properties, '\$.variable') as provider_label -- gives json array
                   , os.ordinal_values as ordinal_values --gives json array
 from sres.ontologyrelationship r

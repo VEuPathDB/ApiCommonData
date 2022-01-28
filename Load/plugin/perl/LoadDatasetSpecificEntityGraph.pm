@@ -420,6 +420,7 @@ SELECT --  distinct
      , atg.is_temporal
      , atg.is_featured
      , atg.is_merge_key
+     , atg.impute_zero
      , atg.is_repeated
      , 0 as has_values
      , null as data_type
@@ -459,6 +460,7 @@ SELECT -- distinct
      , atg.is_temporal
      , atg.is_featured
      , atg.is_merge_key
+     , atg.impute_zero
      , atg.is_repeated
      , 1 as has_values
      , att.data_type
