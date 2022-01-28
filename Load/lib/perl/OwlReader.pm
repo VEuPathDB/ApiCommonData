@@ -7,6 +7,7 @@ use Digest::MD5;
 use RDF::Trine;
 use RDF::Query;
 use File::Basename;
+use JSON qw/to_json/;
 use Env qw/PROJECT_HOME SPARQLPATH/;
 use Data::Dumper;
 
@@ -237,6 +238,33 @@ sub getVariable {
     $seen{$sid} = join(",", sort @$vars);
   }
 	return \%seen;
+}
+
+sub getAnnotationProperties {
+  my ($self) = @_;
+  my %props;
+  my $it = $self->execute('get_entity_attributes');
+  while (my $row = $it->next) {
+    my $termId = $row->{sid}->as_hash->{literal};
+    my $attribName = $row->{ label }->as_hash->{literal};
+    my $attribValue = $row->{ value }->as_hash->{literal};
+    next unless ($attribValue ne "");
+    $props{$termId} ||= {};
+    $props{$termId}->{$attribName} ||= [];
+    push(@{$props{$termId}->{$attribName}},$attribValue);
+  }
+  return \%props;
+}
+
+sub getAnnotationPropertiesJSON {
+  my ($self) = @_;
+  my $props = $self->getAnnotationProperties();
+  while(my ($termId,$termprops) = each %$props){
+    my $json = to_json($termprops);
+    next if $json eq '{}';
+    $props->{$termId} = $json;
+  }
+  return $props;
 }
 
 sub getSourceIdFromIRI {
