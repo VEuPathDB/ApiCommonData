@@ -5,12 +5,14 @@ PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
 
 SELECT * {
   {
-    SELECT distinct ?entity ?iri ?vars ?parent 
+    SELECT distinct ?entity ?iri ?vars ?omType ?parent 
     WHERE { 
     	?_entity a owl:Class .
       ?_entity obo:EUPATH_0000755 ?column. 
-      ?_entity obo:ISA_2 ?_parent. 
+      ?_entity obo:ISA_1 ?_omType.
+      ?_entity obo:ISA_2 ?_parent.
     	BIND (str(?_entity) AS ?entity) .
+    	BIND (str(?_omType) AS ?omType) .
     	BIND (str(?_parent) AS ?parent) .
     	BIND (str(?column) AS ?vars) .
       BIND(

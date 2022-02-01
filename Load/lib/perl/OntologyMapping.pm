@@ -155,6 +155,7 @@ sub getTermsFromOwl {
   while (my $row = $it->next) {
     my $sid = $row->{iri}->as_hash()->{literal};
     my $parent = $row->{parent} ? $row->{parent}->as_hash()->{literal} : 'ENTITY';
+    my $omType = $row->{omType} ? $row->{omType}->as_hash()->{literal} : 'characteristicQualifier';
   	my $names = $row->{vars}->as_hash()->{literal};
   	#my $name = "";
   	if(ref($names) eq 'ARRAY'){
@@ -203,7 +204,7 @@ sub getTermsFromOwl {
     $terms{$sid} = { 
       source_id => $sid,
       name =>  $names,
-      type => 'characteristicQualifier',
+      type => $omType,
       parent => $parent,
       function => \@funcs
     };
