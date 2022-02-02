@@ -347,6 +347,7 @@ sub addEntityTypeForNode {
   my $entityTypeInternalAbbrev = $entityType->getName();
   $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
   $entityTypeInternalAbbrev =~ s/\W//g;
+  $entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
 
   $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
