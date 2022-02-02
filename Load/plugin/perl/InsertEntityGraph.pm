@@ -295,10 +295,10 @@ sub loadStudy {
     $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap,
     $extDbRlsId) = @_;
 
-  my $internalAbbrev = $identifier;
-  $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+  my $studyInternalAbbrev = $identifier;
+  $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
 
-  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
+  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
@@ -344,11 +344,11 @@ sub addEntityTypeForNode {
   $entityType->setTypeId($gusOntologyTerm->getId());
   $entityType->setName($gusOntologyTerm->getName());
 
-  my $internalAbbrev = $entityType->getName();
-  $internalAbbrev =~ s/([\w']+)/\u$1/g;
-  $internalAbbrev =~ s/\s//g;
+  my $entityTypeInternalAbbrev = $entityType->getName();
+  $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
+  $entityTypeInternalAbbrev =~ s/\W//g;
 
-  $entityType->setInternalAbbrev($internalAbbrev);
+  $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
   $entityType->submit(undef, 1);
 
