@@ -181,7 +181,7 @@ sub createWideTable {
                    where ea.entity_type_id = $entityTypeId";
 
 
-  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
+  my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
                                                 from ${SCHEMA}.processattributes pa,
                                                      (select entity_attributes_id
                                                            , stable_id 
