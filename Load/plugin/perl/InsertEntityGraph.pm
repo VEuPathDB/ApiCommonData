@@ -418,27 +418,32 @@ sub loadNodes {
     my $characteristics = $node->getCharacteristics() // [];
     foreach my $characteristic (@$characteristics) {
 
-      my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
-      my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+      my ($charQualifierSourceId, $charValue);
 
-      if($characteristic->getUnit()) {
-        my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
-        $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
-       }
+      if ($characteristic->getQualifier =~ m{ncbitaxon}i){
+          # taxon id Wojtek: I think we don't want that
+          # $charQualifierSourceId = $ontologyTermToIdentifiers->{QUALIFIER}->{$characteristic->getQualifier};
+          # stable id
+          $charQualifierSourceId = $characteristic->getQualifier;
+          $charValue = $characteristic->getTerm();
+      } else { # usual case
 
-      my ($charValue);
-
-      my $termSourceRef = $characteristic->getTermSourceRef();
-      if($termSourceRef && (lc($termSourceRef) eq 'ncbitaxon')) {
-        my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-        $charValue = $value;
-      }
-      elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-        my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-        $charValue = $valueOntologyTerm->getName();
-      }
-      else {
-        $charValue = $characteristic->getTerm();
+        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
+  
+        $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+  
+        if($characteristic->getUnit()) {
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
+          $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+        }
+  
+        if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
+          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+          $charValue = $valueOntologyTerm->getName();
+        }
+        else {
+          $charValue = $characteristic->getTerm();
+        }
       }
 
       if (ref $charValue eq 'HASH'){
