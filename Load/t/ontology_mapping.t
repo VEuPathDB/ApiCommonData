@@ -117,10 +117,25 @@ $owlHead
         <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:ISA_2>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methicillin resistant Staphylococcus aureus</rdfs:label>
     </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000747">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000609"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ciara_V1V3.txt::ExtractionDate</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ciara_V1V3.txt</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describes when the DNA was extracted</obo:IAO_0000115>
+        <obo:ISA_1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">protocolParameter</obo:ISA_1>
+        <obo:ISA_2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DNA extraction</obo:ISA_2>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DNA extraction date</rdfs:label>
+    </owl:Class>
 $owlTail
 EOF
 write_file("$dir/microbiome_human_only.owl", $microbiomeHumanOnlyOwl);
 my ($ontologySourcesMicrobiomeHumanOnlyOwl, $ontologyMappingMicrobiomeHumanOnlyOwl) = ApiCommonData::Load::OntologyMapping->fromOwl("$dir/microbiome_human_only.owl")->asSourcesAndMapping("NICUNEC.txt");
 ok ($ontologyMappingMicrobiomeHumanOnlyOwl->{lc "Methicillin-resistant Staphylococcus aureus (MRSA) screen"}, "key with stripped prefix");
+
+my ($ontologySourcesMicrobiomeHumanOnlyOwlCiara, $ontologyMappingMicrobiomeHumanOnlyOwlCiara) = ApiCommonData::Load::OntologyMapping->fromOwl("$dir/microbiome_human_only.owl")->asSourcesAndMapping("Ciara_V1V3.txt");
+ok($ontologyMappingMicrobiomeHumanOnlyOwlCiara->{lc "ExtractionDate"}{protocolParameter} , "omType comes from ISA_1 if present");
 
 done_testing;

@@ -181,7 +181,7 @@ sub createWideTable {
                    where ea.entity_type_id = $entityTypeId";
 
 
-  my $processSql = "with process_attributes as (select ea.stable_id, nv.(pa.atts, '{}') as atts
+  my $processSql = "with process_attributes as (select ea.stable_id, nvl(pa.atts, '{}') as atts
                                                 from ${SCHEMA}.processattributes pa,
                                                      (select entity_attributes_id
                                                            , stable_id 
@@ -194,10 +194,13 @@ sub createWideTable {
                          json_table(atts, '\$'
                           columns ( $processColumns)) paa";
 
+  my @drops;
 
   my $sql;
   if(scalar @$entityColumnStrings > 0 && scalar @$processColumnStrings > 0) {
-    $sql = "select e.*, p.* from ($entitySql) e, ($processSql) p where e.stable_id = p.stable_id";
+    $processSql =~ s{select pa.stable_id}{select pa.stable_id as stable_id_pa};
+    $sql = "select e.*, p.* from ($entitySql) e, ($processSql) p where e.stable_id = p.stable_id_pa";
+    push @drops, "drop column stable_id_pa";
   }
   elsif(scalar @$entityColumnStrings > 0) {
     $sql = $entitySql;
@@ -211,6 +214,7 @@ sub createWideTable {
 
   my $dbh = $self->getDbHandle();
   $dbh->do("CREATE TABLE /*+ NO_PARALLEL */ $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
+  $dbh->do("ALTER TABLE $SCHEMA.$tableName $_") for @drops;
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
   # Check for stable_id (entities with no attributes will have none)

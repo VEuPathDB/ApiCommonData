@@ -295,10 +295,10 @@ sub loadStudy {
     $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap,
     $extDbRlsId) = @_;
 
-  my $internalAbbrev = $identifier;
-  $internalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
+  my $studyInternalAbbrev = $identifier;
+  $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
 
-  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $internalAbbrev});
+  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
   $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
 
   $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
@@ -344,11 +344,12 @@ sub addEntityTypeForNode {
   $entityType->setTypeId($gusOntologyTerm->getId());
   $entityType->setName($gusOntologyTerm->getName());
 
-  my $internalAbbrev = $entityType->getName();
-  $internalAbbrev =~ s/([\w']+)/\u$1/g;
-  $internalAbbrev =~ s/\s//g;
+  my $entityTypeInternalAbbrev = $entityType->getName();
+  $entityTypeInternalAbbrev =~ s/([\w']+)/\u$1/g;
+  $entityTypeInternalAbbrev =~ s/\W//g;
+  $entityTypeInternalAbbrev = "entity_$entityTypeInternalAbbrev" if $entityTypeInternalAbbrev =~ m {^\d+};
 
-  $entityType->setInternalAbbrev($internalAbbrev);
+  $entityType->setInternalAbbrev($entityTypeInternalAbbrev);
 
   $entityType->submit(undef, 1);
 
@@ -417,27 +418,32 @@ sub loadNodes {
     my $characteristics = $node->getCharacteristics() // [];
     foreach my $characteristic (@$characteristics) {
 
-      my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
-      my $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+      my ($charQualifierSourceId, $charValue);
 
-      if($characteristic->getUnit()) {
-        my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
-        $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
-       }
+      if ($characteristic->getQualifier =~ m{ncbitaxon}i){
+          # taxon id Wojtek: I think we don't want that
+          # $charQualifierSourceId = $ontologyTermToIdentifiers->{QUALIFIER}->{$characteristic->getQualifier};
+          # stable id
+          $charQualifierSourceId = $characteristic->getQualifier;
+          $charValue = $characteristic->getTerm();
+      } else { # usual case
 
-      my ($charValue);
-
-      my $termSourceRef = $characteristic->getTermSourceRef();
-      if($termSourceRef && (lc($termSourceRef) eq 'ncbitaxon')) {
-        my $value = $ontologyTermToNames->{$characteristic->getTermSourceRef()}->{$characteristic->getTermAccessionNumber()};
-        $charValue = $value;
-      }
-      elsif($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) {
-        my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
-        $charValue = $valueOntologyTerm->getName();
-      }
-      else {
-        $charValue = $characteristic->getTerm();
+        my $charQualifierOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 1);
+  
+        $charQualifierSourceId = $charQualifierOntologyTerm->getSourceId();
+  
+        if($characteristic->getUnit()) {
+          my $unitOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic->getUnit(), 0);
+          $self->addAttributeUnit($entityTypeId, $charQualifierOntologyTerm->getId(), $unitOntologyTerm->getId());
+        }
+  
+        if($characteristic->getTermAccessionNumber() && $characteristic->getTermSourceRef()) { #value is ontology term
+          my $valueOntologyTerm = $self->getOntologyTermGusObj($ontologyTermToIdentifiers, $characteristic, 0);
+          $charValue = $valueOntologyTerm->getName();
+        }
+        else {
+          $charValue = $characteristic->getTerm();
+        }
       }
 
       if (ref $charValue eq 'HASH'){

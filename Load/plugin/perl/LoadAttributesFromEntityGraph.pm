@@ -1,5 +1,8 @@
 package ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph;
-
+# Load attributes into EDA.attribute and EDA.attributevalue
+# Warning! Only one instance of this plugin should run at a time
+# because values for attribute_value_id are written as SEQUENCE(MAX,1)
+#
 @ISA = qw(GUS::PluginMgr::Plugin ApiCommonData::Load::Plugin::ParameterizedSchema);
 use strict;
 use warnings;

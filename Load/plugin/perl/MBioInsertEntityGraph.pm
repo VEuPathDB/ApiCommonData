@@ -9,6 +9,7 @@ use warnings;
 use ApiCommonData::Load::MBioResultsDir;
 use CBIL::ISA::InvestigationSimple;
 use File::Basename;
+use Carp;
 
 my $argsDeclaration =
   [
@@ -98,7 +99,7 @@ sub run {
   my $ontologyMappingFile = $self->getArg('ontologyMappingFile');
   my $ontologyMappingOverrideFile = undef;
   my $valueMappingFile = undef;
-  my $onError = $self->getArg('dieOnFirstError') ? sub {die @_}: undef;
+  my $onError = $self->getArg('dieOnFirstError') ? sub {confess @_}: undef;
   my $isReporterMode = undef;
   my $dateObfuscationFile = undef;
   my $schema = $self->getArg('schema');

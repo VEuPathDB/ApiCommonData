@@ -1,12 +1,12 @@
 use strict;
 use warnings;
 package ApiCommonData::Load::OwlReader;
-## TODO
-## move to another package tree where it belongs (???)
 use Digest::MD5;
 use RDF::Trine;
 use RDF::Query;
-use File::Basename;
+use File::Temp qw/tempfile/;
+use File::Copy qw/move/;
+use File::Basename qw/basename dirname/;
 use JSON qw/to_json/;
 use Env qw/PROJECT_HOME SPARQLPATH/;
 use Data::Dumper;
@@ -60,21 +60,44 @@ sub loadOwl {
 		unlink($dbfile);
 		$self->writeMD5($owlFile);
 	}
-	my $model = RDF::Trine::Model->new(
-	    RDF::Trine::Store::DBI->new(
-	        $name,
-	        "dbi:SQLite:dbname=$dbfile",
-	        '',  # no username
-	        '',  # no password
-	    ),
-	);
-	unless( $exists ) { ## assumes existing dbfile is loaded
-		my $parser = RDF::Trine::Parser->new('rdfxml');
-		$parser->parse_file_into_model(undef, $owlFile, $model);
+	if ( not $exists ) {
+            store_model_in_dbfile($owlFile, $name, $dbfile);
 	}
-	$self->{config}->{model} = $model;
+	$self->{config}->{model} = read_model_from_dbfile($name, $dbfile);
 }
-	
+
+sub store_model_in_dbfile {
+  my ($owlFile, $name, $dbfile) = @_;
+  # create dbfile atomically
+  # otherwise another process might start reading from an incomplete file
+  my ($fh, $tempFilePath) = tempfile( "tmpfileXXXXX", DIR => dirname($dbfile));
+  my $model = RDF::Trine::Model->new(
+      RDF::Trine::Store::DBI->new(
+  	$name,
+  	"dbi:SQLite:dbname=$tempFilePath",
+  	'',  # no username
+  	'',  # no password
+      ),
+  );
+  my $parser = RDF::Trine::Parser->new('rdfxml');
+  $parser->parse_file_into_model(undef, $owlFile, $model);
+  move("$tempFilePath", "$dbfile");
+
+
+}
+
+sub read_model_from_dbfile {
+  my ($name, $dbfile) = @_;
+  return RDF::Trine::Model->new(
+      RDF::Trine::Store::DBI->new(
+  	$name,
+  	"dbi:SQLite:dbname=$dbfile",
+  	'',  # no username
+  	'',  # no password
+      ),
+  );
+
+}	
 
 
 sub getLabelsAndParentsHashes {

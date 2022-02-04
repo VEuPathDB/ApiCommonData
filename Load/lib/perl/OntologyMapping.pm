@@ -155,6 +155,7 @@ sub getTermsFromOwl {
   while (my $row = $it->next) {
     my $sid = $row->{iri}->as_hash()->{literal};
     my $parent = $row->{parent} ? $row->{parent}->as_hash()->{literal} : 'ENTITY';
+    my $omType = $row->{omType} ? $row->{omType}->as_hash()->{literal} : 'characteristicQualifier';
   	my $names = $row->{vars}->as_hash()->{literal};
   	#my $name = "";
   	if(ref($names) eq 'ARRAY'){
@@ -203,7 +204,7 @@ sub getTermsFromOwl {
     $terms{$sid} = { 
       source_id => $sid,
       name =>  $names,
-      type => 'characteristicQualifier',
+      type => $omType,
       parent => $parent,
       function => \@funcs
     };
@@ -217,13 +218,21 @@ sub getTermsFromOwl {
   }
   return \@sorted;
 }
-
 sub getMaterialTypesFromOwl {
   my ($owl) = @_;
   my %materialTypes = (
     'dna sequencing assay' => "OBI_0000626",
     'host' => "OBI_0000725",
+    'dna extract' => "OBI_0001051",
     'sample from organism' => "OBI_0000671",
+    'participant' => "EUPATH_0000096",
+    'whole metagenome sequencing assay' => "OBI_0002623",
+    '16s rrna sequencing assay targeting v1-v2 region' => "EUPATH_0000808",
+    '16s rrna sequencing assay targeting v1-v3 region' => "EUPATH_0000809",
+    '16s rrna sequencing assay targeting v2 region' => "EUPATH_0000810",
+    '16s rrna sequencing assay targeting v3-v4 region' => "EUPATH_0000811",
+    '16s rrna sequencing assay targeting v3-v5 region' => "EUPATH_0000812",
+    '16s rrna sequencing assay targeting v4 region' => "EUPATH_0000813",
   );
   my $it = $owl->execute('top_level_entities');
   while (my $row = $it->next) {
