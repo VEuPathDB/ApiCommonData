@@ -365,7 +365,9 @@ create table RESULTS.REPORTERINTENSITY
   );
 
 create index results.rptrintsty_revix0
-  on results.ReporterIntensity (protocol_app_node_id, reporter_intensity_id) tablespace indx;
+  on results.ReporterIntensity
+       (protocol_app_node_id, reporter_id, value, reporter_intensity_id)
+  tablespace indx;
 
 create sequence RESULTS.REPORTERINTENSITY_SQ;
 
