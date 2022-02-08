@@ -435,9 +435,13 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
+  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
     $dataShape = 'ordinal';
   }
+# DEPRECATED - never infer shape = ordinal
+# elsif($cs{_IS_ORDINAL_COUNT} && $cs{_COUNT} == $cs{_IS_ORDINAL_COUNT}) {
+#   $dataShape = 'ordinal';
+# }
   elsif($isDate || $isNumber ){
     $dataShape = 'continuous';
   }
