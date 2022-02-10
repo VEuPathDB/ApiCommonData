@@ -141,9 +141,9 @@ sub run {
     print FH ($code);
     close(FH);
     printf STDERR "Running $tempScript\n";
-    if(system("nice -n40 Rscript $tempScript")){
-      $self->error("$tempScript failed");
-    }
+  # if(system("nice -n40 Rscript $tempScript")){
+  #   $self->error("$tempScript failed");
+  # }
 
     ## ontology file
 
@@ -180,8 +180,10 @@ sub createDownloadFile {
   # get an iri dictionary, the column header in the format "display_name [SOURCE_ID]"
   my $sql = <<SQL_GETLABELS;
 SELECT STABLE_ID, DISPLAY_NAME || ' [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 UNION
 SELECT STABLE_ID, DISPLAY_NAME || ' (' || UNIT || ') [' || STABLE_ID || ']' as LABEL FROM $attrTableName WHERE DATA_TYPE IS NOT NULL and UNIT IS NOT NULL
+and (HIDDEN is NULL or json_value(HIDDEN,'\$[0]') NOT IN ('everywhere','download'))
 SQL_GETLABELS
   my $attrNames = $self->sqlAsDictionary( Sql => $sql );
   my @orderedIRIs = sort { $attrNames->{$a} cmp $attrNames->{$b} } keys %$attrNames;
@@ -267,7 +269,7 @@ sub makeOntologyFile {
     my $category = $entityType->{LABEL};
     my $tableName = "${SCHEMA}.AttributeGraph_${studyAbbrev}_${type}";
     my $sql =  <<ONTOSQL;
-WITH synrep AS 
+WITH replacesIRI AS
 (SELECT o2.SOURCE_ID STABLE_ID, json_value(o.ANNOTATION_PROPERTIES,'\$.replaces[0]') REPLACES FROM sres.ONTOLOGYSYNONYM o
 LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID=o2.ONTOLOGY_TERM_ID
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId
@@ -279,10 +281,11 @@ WHERE o3.EXTERNAL_DATABASE_RELEASE_ID=$ontologyId)
 SELECT ag.stable_id, ag.display_name, ag.data_type, parent.label,
 '$category' category, ag.definition, ag.range_min, ag.range_max,
 ag.mean, ag.median, ag.upper_quartile, ag.lower_quartile,
-ag.distinct_values_count, ag.vocabulary, ag.provider_label, synrep.replaces
+ag.distinct_values_count, ag.vocabulary, ag.provider_label, replacesIRI.replaces
 FROM $tableName ag
-left join synrep ON ag.STABLE_ID = synrep.stable_id
+left join replacesIRI ON ag.STABLE_ID = replacesIRI.stable_id
 LEFT JOIN parent ON ag.parent_stable_id=parent.stable_id
+WHERE (ag.HIDDEN IS NULL OR json_value(ag.hidden,'\$[0]') NOT IN ('everywhere','download'))
 ONTOSQL
 ## print STDERR "Get ontology metadata:\n$sql\n";
     my $dbh = $self->getQueryHandle();
