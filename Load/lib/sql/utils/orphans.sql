@@ -9,7 +9,8 @@
 -- these orphaned tuning tables. They can be recognized because their names end
 -- in four digits but no synonym points at them.
 --
--- this script must be run as the apidbTuning user
+-- NOTE THAT THIS SCRIPT MUST BE RUN AS THE APIDBTUNING USER
+-- (or whichever schema is to be purged)
 
 set pagesize 50000 linesize 100
 
