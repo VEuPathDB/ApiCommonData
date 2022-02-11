@@ -59,6 +59,12 @@ if (!$extDbRlsId) {
   $extDbRlsId = getExtDbRlsIdFormOrgAbbrev ($orgAbbrev);
 }
 
+my $geneNames = getGeneName ($dbh, $extDbRlsId);
+my $geneSynonyms = getSynonym ($dbh, $extDbRlsId, $orgAbbrev);
+my $products = getProductName ($dbh, $extDbRlsId);
+my $ecNumbers = getEcNumber ($dbh, $extDbRlsId);
+my $gos = getGoAssociations ($dbh, $extDbRlsId);
+my $dbxrefs = getDbxref ($dbh, $extDbRlsId);
 
 open(GFF, "> $outputFile") or die "Cannot open file $outputFile For writing: $!";
 
@@ -153,10 +159,9 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
 
     if($feature->primary_tag eq 'gene') {
-#      $feature->add_tag_value("description", $geneAnnotations->{$geneSourceId}->{gene_product});
       ## add locus_tag
       $feature->add_tag_value("locus_tag", $feature->get_tag_values("ID")) if ($feature->get_tag_values("ID"));
-     }
+    }
 
     if($feature->primary_tag eq 'transcript') {
 
@@ -253,6 +258,7 @@ close GFF;
 
 1;
 
+
 ## TODO
 ## 1. add product to CDS and mRNA
 ## 2. add gene name and gene synonym to gene
@@ -261,6 +267,77 @@ close GFF;
 ## 5. add DbxRef
 
 ############
+
+sub getGeneName {
+  my ($dbh, $extDbRlsId) = @_;
+  my %gNames;
+  my $sql = "
+            select gf.SOURCE_ID, gfn.NAME, gfn.IS_PREFERRED from ApiDB.GeneFeatureName gfn, dots.genefeature gf
+where gf.NA_FEATURE_ID=gfn.NA_FEATURE_ID and gfn.EXTERNAL_DATABASE_RELEASE_ID=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $name, $isPrefer) = $stmt->fetchrow_array()) {
+    push (@{$gNames{$sourceId}}, $name);
+  }
+  $stmt->finish();
+
+  return \%gNames;
+}
+
+sub getSynonym {
+  my ($dbh, $extDbRlsId, $orgAbbrev) = @_;
+  my %gSynonyms;
+
+  my $synonymExtDbName = $orgAbbrev . "_dbxref_%_synonym_RSRC";
+  my $sql2 = "
+              select name from sres.externaldatabase where name like '$synonymExtDbName'
+             ";
+  my $stmt2 = $dbh->prepare($sql2);
+  $stmt2->execute();
+  my $synonymExtDbRlsId;
+  while (my ($extDbName) = $stmt2->fetchrow_array()) {
+    print STDERR "\$extDbName = extDbName\n";
+    $synonymExtDbRlsId = getExtDbRlsIdFromExtDbName ($extDbName);
+  }
+  $stmt2->finish();
+
+  return \%gSynonyms if (!$synonymExtDbRlsId);
+
+  my $sql = "
+            select gf.source_id, d.primary_identifier from dots.genefeature gf, sres.dbref d, dots.dbrefnafeature dnf
+where gf.na_feature_id = dnf.na_feature_id and dnf.db_ref_id = d.db_ref_id and d.external_database_release_id=$synonymExtDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $synonym) = $stmt->fetchrow_array()) {
+    push (@{$gSynonyms{$sourceId}}, $synonym) if ($sourceId && $synonym);
+  }
+  $stmt->finish();
+  return \%gSynonyms;
+}
+
+sub getProductName {
+}
+
+sub getEcNumber {
+  my ($dbh, $extDbRlsId, $orgAbbrev) = @_;
+  my %gEcs;
+#  my $sql = "
+#           ";
+#  my $stmt = $dbh->prepare($sql);
+#  $stmt->execute();
+#  while (my ($sourceId, $ec) = $stmt->fetchrow_array()) {
+#  }
+#  $stmt->finish();
+  return \%gEcs;
+}
+
+sub getGoAssociations {
+}
+
+sub getDbxref {
+}
 
 sub getTransposableElement {
   my ($dbh, $extDbRlsId) = @_;
@@ -349,6 +426,23 @@ sub getBioTypeAndUpdatePrimaryTag {
 
     $bioType = "protein_coding" if ($bioType eq "coding_gene");
     $bioType =~ s/\_gene$/\_encoding/i;
+
+    ## add extra qualifiers
+    my ($gid) = $$feat->get_tag_values("ID");
+    if ($geneNames->{$gid}) {
+      my $gn = $geneNames->{$gid}[0];
+      foreach my $i (1..$#{$geneNames->{$gid}}) {
+	$gn = $gn . "," . $geneNames->{$gid}[$i];
+      }
+      $$feat->add_tag_value("gene", $gn);
+    }
+    if ($geneSynonyms->{$gid}) {
+      my $gs = $geneSynonyms->{$gid}[0];
+      foreach my $j (1..$#{$geneSynonyms->{$gid}}) {
+	$gs = $gs . "," . $geneSynonyms->{$gid}[$j];
+      }
+      $$feat->add_tag_value("synonym", $gs);
+    }
 
   } elsif ($$feat->primary_tag =~ /RNA$/ || $$feat->primary_tag =~ /transcript$/i) {
     $bioType = $transcriptAnnotations->{$id}->{so_term_name};
