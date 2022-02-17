@@ -275,6 +275,7 @@ sub getGeneticCodeFromOrganismAbbrev {
       $projectName = "ToxoDB";
     } elsif ( $organismAbbrev eq "treeQM6a2017"
 	|| $organismAbbrev eq "ctroMYA3404-2020"
+	|| $organismAbbrev eq "rlauRL4"
 		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
