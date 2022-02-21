@@ -23,11 +23,12 @@ bc-3 mothers all visits database final::visittype	bc-3 mothers all visits databa
 bc-3 mothers all visits database final::visittype	bc-3 mothers all visits database final::visittype	6	Postpartum 1-week
 bc-3 mothers all visits database final::visittype	bc-3 mothers all visits database final::visittype	7	Postpartum 6-week
 bc-3 mothers all visits database final::visittype	bc-3 mothers all visits database final::visittype	8	Postpartum non-routine
-bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	0	No malaria
-bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	1	Uncomplicated (Artemether-Lumefantrine)
-bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	2	Complicated malaria (quinine or artesunate)
-bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	3	Artemether-Lumefantrine treatment failure
-bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	4	Quinine/artesunate treatment failure (quinine+clindamycin)
+BC-3 children individual level database FINAL::visittype	BC-3 children individual level database FINAL::visittype	Delivery visit	Delivery visit
+bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	0	No malaria	1
+bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	1	Uncomplicated treated with artemether-lumefantrine (AL)	2
+bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	2	Complicated malaria treated with quinine or artesunate	3
+bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	3	Artemether-lumefantrine (AL) treatment failure	4
+bc-3 mothers all visits database final::mstatus	bc-3 mothers all visits database final::mstatus	4	Quinine/artesunate treatment failure (quinine+clindamycin)	5
 bc-3 mothers all visits database final::febrile	bc-3 mothers all visits database final::febrile	0	No
 bc-3 mothers all visits database final::febrile	bc-3 mothers all visits database final::febrile	1	Yes
 bc-3 mothers all visits database final::sdelig	bc-3 mothers all visits database final::sdelig	0	Not enrolled
@@ -51,7 +52,7 @@ bc-3 mothers delivery database final_long::aborty	bc-3 mothers delivery database
 bc-3 mothers delivery database final_long::lod	bc-3 mothers delivery database final_long::lod	1	Masafu
 bc-3 mothers delivery database final_long::lod	bc-3 mothers delivery database final_long::lod	2	TDH
 bc-3 mothers delivery database final_long::lod	bc-3 mothers delivery database final_long::lod	3	Home
-bc-3 mothers delivery database final_long::lod	bc-3 mothers delivery database final_long::lod	4	Other
+bc-3 mothers delivery database final_long::lod	bc-3 mothers delivery database final_long::lod	4	:::UNDEF:::
 bc-3 mothers delivery database final_long::mod	bc-3 mothers delivery database final_long::mod	1	Vaginal
 bc-3 mothers delivery database final_long::mod	bc-3 mothers delivery database final_long::mod	2	Cesarean
 bc-3 mothers delivery database final_long::dampm	bc-3 mothers delivery database final_long::dampm	0	AM
@@ -84,8 +85,8 @@ bc-3 mothers delivery database final_long::preterm	bc-3 mothers delivery databas
 bc-3 mothers delivery database final_long::preterm	bc-3 mothers delivery database final_long::preterm	1	Yes
 bc-3 mothers delivery database final_long::compositebo	bc-3 mothers delivery database final_long::compositebo	0	No
 bc-3 mothers delivery database final_long::compositebo	bc-3 mothers delivery database final_long::compositebo	1	Yes
-bc-3 mothers expanded database final::txarm	bc-3 mothers expanded database final::txarm	0	SP
-bc-3 mothers expanded database final::txarm	bc-3 mothers expanded database final::txarm	1	DP
+bc-3 mothers expanded database final::txarm	bc-3 mothers expanded database final::txarm	0	Sulphadoxine-pyrimethamine (SP)
+bc-3 mothers expanded database final::txarm	bc-3 mothers expanded database final::txarm	1	Dihydroartemisinin-piperaquine (DP)
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	0	Non-routine visit
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	1	Routine visit
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	2	Enrollment
@@ -95,6 +96,7 @@ bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database f
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	6	Postpartum 1-week
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	7	Postpartum 6-week
 bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	8	Postpartum non-routine
+bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	NA	:::UNDEF:::
 bc-3 mothers expanded database final::bsdich	bc-3 mothers expanded database final::bsdich	0	Negative
 bc-3 mothers expanded database final::bsdich	bc-3 mothers expanded database final::bsdich	1	Positive
 bc-3 mothers expanded database final::vom1	bc-3 mothers expanded database final::vom1	0	No
@@ -127,7 +129,7 @@ bc-3 mothers expanded database final::qpcrcat	bc-3 mothers expanded database fin
 bc-3 mothers expanded database final::qpcrdich	bc-3 mothers expanded database final::qpcrdich	0	Negative (<0.001)
 bc-3 mothers expanded database final::qpcrdich	bc-3 mothers expanded database final::qpcrdich	1	Positive (>=0.001)
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	.	:::UNDEF:::
-bc3_household_survey_data::swater	bc3_household_survey_data::swater	-9	Skipped
+bc3_household_survey_data::swater	bc3_household_survey_data::swater	-9	:::UNDEF:::
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	10	Borehole
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	11	Pipe into dwelling
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	12	Piped into yard/compound
@@ -144,9 +146,9 @@ bc3_household_survey_data::swater	bc3_household_survey_data::swater	45	Dam
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	51	Rainwater
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	61	Water truck
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	71	Bottled water
-bc3_household_survey_data::swater	bc3_household_survey_data::swater	96	Other
+bc3_household_survey_data::swater	bc3_household_survey_data::swater	96	:::UNDEF:::
 bc3_household_survey_data::swater	bc3_household_survey_data::swater	99	Refused to answer
-bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	-9	Skipped
+bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	-9	:::UNDEF:::
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	1	Flush toilet
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	2	Vip latrine
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	3	Covered pit latrine no slab
@@ -155,74 +157,74 @@ bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	5	Uncovere
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	6	Uncovered pit latrine w/slab
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	7	Composting  toilet
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	8	No facility/bush/field
-bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	96	Other
+bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	96	:::UNDEF:::
 bc3_household_survey_data::tfaclty	bc3_household_survey_data::tfaclty	99	Refused to answer
-bc3_household_survey_data::electric	bc3_household_survey_data::electric	-9	Skipped
+bc3_household_survey_data::electric	bc3_household_survey_data::electric	-9	:::UNDEF:::
 bc3_household_survey_data::electric	bc3_household_survey_data::electric	1	Yes
 bc3_household_survey_data::electric	bc3_household_survey_data::electric	2	No
 bc3_household_survey_data::electric	bc3_household_survey_data::electric	8	Don't know
 bc3_household_survey_data::electric	bc3_household_survey_data::electric	9	Refused
-bc3_household_survey_data::radio	bc3_household_survey_data::radio	-9	Skipped
+bc3_household_survey_data::radio	bc3_household_survey_data::radio	-9	:::UNDEF:::
 bc3_household_survey_data::radio	bc3_household_survey_data::radio	1	Yes
 bc3_household_survey_data::radio	bc3_household_survey_data::radio	2	No
 bc3_household_survey_data::radio	bc3_household_survey_data::radio	8	Don't know
 bc3_household_survey_data::radio	bc3_household_survey_data::radio	9	Refused
-bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	-9	Skipped
+bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	-9	:::UNDEF:::
 bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	1	Yes
 bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	2	No
 bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	8	Don't know
 bc3_household_survey_data::cassette	bc3_household_survey_data::cassette	9	Refused
-bc3_household_survey_data::tv	bc3_household_survey_data::tv	-9	Skipped
+bc3_household_survey_data::tv	bc3_household_survey_data::tv	-9	:::UNDEF:::
 bc3_household_survey_data::tv	bc3_household_survey_data::tv	1	Yes
 bc3_household_survey_data::tv	bc3_household_survey_data::tv	2	No
 bc3_household_survey_data::tv	bc3_household_survey_data::tv	8	Don't know
 bc3_household_survey_data::tv	bc3_household_survey_data::tv	9	Refused
-bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	-9	Skipped
+bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	-9	:::UNDEF:::
 bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	1	Yes
 bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	2	No
 bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	8	Don't know
 bc3_household_survey_data::mobile	bc3_household_survey_data::mobile	9	Refused
-bc3_household_survey_data::phone	bc3_household_survey_data::phone	-9	Skipped
+bc3_household_survey_data::phone	bc3_household_survey_data::phone	-9	:::UNDEF:::
 bc3_household_survey_data::phone	bc3_household_survey_data::phone	1	Yes
 bc3_household_survey_data::phone	bc3_household_survey_data::phone	2	No
 bc3_household_survey_data::phone	bc3_household_survey_data::phone	8	Don't know
 bc3_household_survey_data::phone	bc3_household_survey_data::phone	9	Refused
-bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	-9	Skipped
+bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	-9	:::UNDEF:::
 bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	1	Yes
 bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	2	No
 bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	8	Don't know
 bc3_household_survey_data::fridge	bc3_household_survey_data::fridge	9	Refused
-bc3_household_survey_data::htable	bc3_household_survey_data::htable	-9	Skipped
+bc3_household_survey_data::htable	bc3_household_survey_data::htable	-9	:::UNDEF:::
 bc3_household_survey_data::htable	bc3_household_survey_data::htable	1	Yes
 bc3_household_survey_data::htable	bc3_household_survey_data::htable	2	No
 bc3_household_survey_data::htable	bc3_household_survey_data::htable	8	Don't know
 bc3_household_survey_data::htable	bc3_household_survey_data::htable	9	Refused
-bc3_household_survey_data::chair	bc3_household_survey_data::chair	-9	Skipped
+bc3_household_survey_data::chair	bc3_household_survey_data::chair	-9	:::UNDEF:::
 bc3_household_survey_data::chair	bc3_household_survey_data::chair	1	Yes
 bc3_household_survey_data::chair	bc3_household_survey_data::chair	2	No
 bc3_household_survey_data::chair	bc3_household_survey_data::chair	8	Don't know
 bc3_household_survey_data::chair	bc3_household_survey_data::chair	9	Refused
-bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	-9	Skipped
+bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	-9	:::UNDEF:::
 bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	1	Yes
 bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	2	No
 bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	8	Don't know
 bc3_household_survey_data::sofa	bc3_household_survey_data::sofa	9	Refused
-bc3_household_survey_data::bed	bc3_household_survey_data::bed	-9	Skipped
+bc3_household_survey_data::bed	bc3_household_survey_data::bed	-9	:::UNDEF:::
 bc3_household_survey_data::bed	bc3_household_survey_data::bed	1	Yes
 bc3_household_survey_data::bed	bc3_household_survey_data::bed	2	No
 bc3_household_survey_data::bed	bc3_household_survey_data::bed	8	Don't know
 bc3_household_survey_data::bed	bc3_household_survey_data::bed	9	Refused
-bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	-9	Skipped
+bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	-9	:::UNDEF:::
 bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	1	Yes
 bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	2	No
 bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	8	Don't know
 bc3_household_survey_data::cupboard	bc3_household_survey_data::cupboard	9	Refused
-bc3_household_survey_data::clock	bc3_household_survey_data::clock	-9	Skipped
+bc3_household_survey_data::clock	bc3_household_survey_data::clock	-9	:::UNDEF:::
 bc3_household_survey_data::clock	bc3_household_survey_data::clock	1	Yes
 bc3_household_survey_data::clock	bc3_household_survey_data::clock	2	No
 bc3_household_survey_data::clock	bc3_household_survey_data::clock	8	Don't know
 bc3_household_survey_data::clock	bc3_household_survey_data::clock	9	Refused
-bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	-9	Skipped
+bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	-9	:::UNDEF:::
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	1	Electricity
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	2	LPG/natural gas
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	3	Biogas
@@ -234,7 +236,7 @@ bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	8	Animal
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	95	No food cooked in household
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	96	Other
 bc3_household_survey_data::fueltype	bc3_household_survey_data::fueltype	99	Refused to answer
-bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	-9	Skipped
+bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	-9	:::UNDEF:::
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	1	Electricity
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	2	Solar
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	3	Gas
@@ -246,7 +248,7 @@ bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	8	Candles
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	9	Torch/battery powered lamp
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	96	:::UNDEF:::
 bc3_household_survey_data::senergy	bc3_household_survey_data::senergy	99	Refused to answer
-bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	-9	Skipped
+bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	-9	:::UNDEF:::
 bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	11	Earth or sand
 bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	12	Earth and dung
 bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	31	Parquet or polished wood
@@ -257,7 +259,7 @@ bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	36	Stones
 bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	96	:::UNDEF:::
 bc3_household_survey_data::othermmf	bc3_household_survey_data::othermmf	.	:::UNDEF:::
 bc3_household_survey_data::mmfloor	bc3_household_survey_data::mmfloor	.	:::UNDEF:::
-bc3_household_survey_data::mmroof	bc3_household_survey_data::mmroof	-9	Skipped
+bc3_household_survey_data::mmroof	bc3_household_survey_data::mmroof	-9	:::UNDEF:::
 bc3_household_survey_data::othermmr	bc3_household_survey_data::othermmr	.	:::UNDEF:::
 bc3_household_survey_data::mmroof	bc3_household_survey_data::mmroof	.	:::UNDEF:::
 bc3_household_survey_data::mmroof	bc3_household_survey_data::mmroof	11	Thatched
@@ -275,7 +277,7 @@ bc3_household_survey_data::hhspaces	bc3_household_survey_data::hhspaces	-9	:::UN
 bc3_household_survey_data::hhrooms	bc3_household_survey_data::hhrooms	-9	:::UNDEF:::
 bc3_household_survey_data::othermme	bc3_household_survey_data::othermme	.	:::UNDEF:::
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	.	:::UNDEF:::
-bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	-9	Skipped
+bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	-9	:::UNDEF:::
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	11	Thatched/straw
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	21	Mud and poles
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	22	Un-burnt bricks
@@ -288,47 +290,47 @@ bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	33	Timbe
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	34	Burnt bricks with plaster/cement
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	35	Iron sheets
 bc3_household_survey_data::mmewalls	bc3_household_survey_data::mmewalls	96	:::UNDEF:::
-bc3_household_survey_data::watch	bc3_household_survey_data::watch	-9	Skipped
+bc3_household_survey_data::watch	bc3_household_survey_data::watch	-9	:::UNDEF:::
 bc3_household_survey_data::watch	bc3_household_survey_data::watch	1	Yes
 bc3_household_survey_data::watch	bc3_household_survey_data::watch	2	No
 bc3_household_survey_data::watch	bc3_household_survey_data::watch	8	Don't know
 bc3_household_survey_data::watch	bc3_household_survey_data::watch	9	Refused
-bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	-9	Skipped
+bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	-9	:::UNDEF:::
 bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	1	Yes
 bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	2	No
 bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	8	Don't know
 bc3_household_survey_data::bicycle	bc3_household_survey_data::bicycle	9	Refused
-bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	-9	Skipped
+bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	-9	:::UNDEF:::
 bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	1	Yes
 bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	2	No
 bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	8	Don't know
 bc3_household_survey_data::scooter	bc3_household_survey_data::scooter	9	Refused
-bc3_household_survey_data::cart	bc3_household_survey_data::cart	-9	Skipped
+bc3_household_survey_data::cart	bc3_household_survey_data::cart	-9	:::UNDEF:::
 bc3_household_survey_data::cart	bc3_household_survey_data::cart	1	Yes
 bc3_household_survey_data::cart	bc3_household_survey_data::cart	2	No
 bc3_household_survey_data::cart	bc3_household_survey_data::cart	8	Don't know
 bc3_household_survey_data::cart	bc3_household_survey_data::cart	9	Refused
-bc3_household_survey_data::car	bc3_household_survey_data::car	-9	Skipped
+bc3_household_survey_data::car	bc3_household_survey_data::car	-9	:::UNDEF:::
 bc3_household_survey_data::car	bc3_household_survey_data::car	1	Yes
 bc3_household_survey_data::car	bc3_household_survey_data::car	2	No
 bc3_household_survey_data::car	bc3_household_survey_data::car	8	Don't know
 bc3_household_survey_data::car	bc3_household_survey_data::car	9	Refused
-bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	-9	Skipped
+bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	-9	:::UNDEF:::
 bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	1	Yes
 bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	2	No
 bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	8	Don't know
 bc3_household_survey_data::mboat	bc3_household_survey_data::mboat	9	Refused
-bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	-9	Skipped
+bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	-9	:::UNDEF:::
 bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	1	Yes
 bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	2	No
 bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	8	Don't know
 bc3_household_survey_data::nomboat	bc3_household_survey_data::nomboat	9	Refused
-bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	-9	Skipped
+bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	-9	:::UNDEF:::
 bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	1	Yes
 bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	2	No
 bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	8	Don't know
 bc3_household_survey_data::bankacco	bc3_household_survey_data::bankacco	9	Refused
-bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	-9	Skipped	8
+bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	-9	:::UNDEF:::	
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	1	Never	1
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	2	Seldom	2
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	3	Sometimes	3
@@ -336,7 +338,7 @@ bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	4	Often	4
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	5	Always	5
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	8	Don't know	6
 bc3_household_survey_data::hhpsf	bc3_household_survey_data::hhpsf	9	Refused to answer	7
-bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	-9	Skipped
+bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	-9	:::UNDEF:::
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	1	Car/motorcycle
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	2	Public transport (bus, taxi)
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	3	Animal/animal cart
@@ -346,93 +348,93 @@ bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	6	Other
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	7	Boat
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	8	Don't know
 bc3_household_survey_data::mthfcty	bc3_household_survey_data::mthfcty	9	Refused to answer
-bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	-9	Skipped
+bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	-9	:::UNDEF:::
 bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	1	Yes
 bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	2	No
 bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	8	Don't know
 bc3_household_survey_data::pspray	bc3_household_survey_data::pspray	9	Refused
-bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	-9	Skipped
+bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	-9	:::UNDEF:::
 bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	1	Yes
 bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	2	No
 bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	8	Don't know
 bc3_household_survey_data::gpspray	bc3_household_survey_data::gpspray	9	Refused
-bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	-9	Skipped
+bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	-9	:::UNDEF:::
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	1	Government worker/program
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	2	Private company
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	3	NGO
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	6	Other
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	8	Don't know
 bc3_household_survey_data::wspray	bc3_household_survey_data::wspray	9	Refused to answer
-bc3_household_survey_data::msga	bc3_household_survey_data::msga	-9	Skipped
+bc3_household_survey_data::msga	bc3_household_survey_data::msga	-9	:::UNDEF:::
 bc3_household_survey_data::msga	bc3_household_survey_data::msga	1	Yes
 bc3_household_survey_data::msga	bc3_household_survey_data::msga	2	No
 bc3_household_survey_data::msga	bc3_household_survey_data::msga	98	Refused to answer
-bc3_household_survey_data::msgb	bc3_household_survey_data::msgb	-9	Skipped
+bc3_household_survey_data::msgb	bc3_household_survey_data::msgb	-9	:::UNDEF:::
 bc3_household_survey_data::msgb	bc3_household_survey_data::msgb	1	Yes
 bc3_household_survey_data::msgb	bc3_household_survey_data::msgb	2	No
 bc3_household_survey_data::msgb	bc3_household_survey_data::msgb	98	Refused to answer
-bc3_household_survey_data::msgc	bc3_household_survey_data::msgc	-9	Skipped
+bc3_household_survey_data::msgc	bc3_household_survey_data::msgc	-9	:::UNDEF:::
 bc3_household_survey_data::msgc	bc3_household_survey_data::msgc	1	Yes
 bc3_household_survey_data::msgc	bc3_household_survey_data::msgc	2	No
 bc3_household_survey_data::msgc	bc3_household_survey_data::msgc	98	Refused to answer
-bc3_household_survey_data::msgd	bc3_household_survey_data::msgd	-9	Skipped
+bc3_household_survey_data::msgd	bc3_household_survey_data::msgd	-9	:::UNDEF:::
 bc3_household_survey_data::msgd	bc3_household_survey_data::msgd	1	Yes
 bc3_household_survey_data::msgd	bc3_household_survey_data::msgd	2	No
 bc3_household_survey_data::msgd	bc3_household_survey_data::msgd	98	Refused to answer
-bc3_household_survey_data::msge	bc3_household_survey_data::msge	-9	Skipped
+bc3_household_survey_data::msge	bc3_household_survey_data::msge	-9	:::UNDEF:::
 bc3_household_survey_data::msge	bc3_household_survey_data::msge	1	Yes
 bc3_household_survey_data::msge	bc3_household_survey_data::msge	2	No
 bc3_household_survey_data::msge	bc3_household_survey_data::msge	98	Refused to answer
-bc3_household_survey_data::msgf	bc3_household_survey_data::msgf	-9	Skipped
+bc3_household_survey_data::msgf	bc3_household_survey_data::msgf	-9	:::UNDEF:::
 bc3_household_survey_data::msgf	bc3_household_survey_data::msgf	1	Yes
 bc3_household_survey_data::msgf	bc3_household_survey_data::msgf	2	No
 bc3_household_survey_data::msgf	bc3_household_survey_data::msgf	98	Refused to answer
-bc3_household_survey_data::msgg	bc3_household_survey_data::msgg	-9	Skipped
+bc3_household_survey_data::msgg	bc3_household_survey_data::msgg	-9	:::UNDEF:::
 bc3_household_survey_data::msgg	bc3_household_survey_data::msgg	1	Yes
 bc3_household_survey_data::msgg	bc3_household_survey_data::msgg	2	No
 bc3_household_survey_data::msgg	bc3_household_survey_data::msgg	98	Refused to answer
-bc3_household_survey_data::msgh	bc3_household_survey_data::msgh	-9	Skipped
+bc3_household_survey_data::msgh	bc3_household_survey_data::msgh	-9	:::UNDEF:::
 bc3_household_survey_data::msgh	bc3_household_survey_data::msgh	1	Yes
 bc3_household_survey_data::msgh	bc3_household_survey_data::msgh	2	No
 bc3_household_survey_data::msgh	bc3_household_survey_data::msgh	98	Refused to answer
-bc3_household_survey_data::msgi	bc3_household_survey_data::msgi	-9	Skipped
+bc3_household_survey_data::msgi	bc3_household_survey_data::msgi	-9	:::UNDEF:::
 bc3_household_survey_data::msgi	bc3_household_survey_data::msgi	1	Yes
 bc3_household_survey_data::msgi	bc3_household_survey_data::msgi	2	No
 bc3_household_survey_data::msgi	bc3_household_survey_data::msgi	98	Refused to answer
-bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	-9	Skipped
+bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	-9	:::UNDEF:::
 bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	1	Yes
 bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	2	No
 bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	8	Don't know
 bc3_household_survey_data::ahwker	bc3_household_survey_data::ahwker	9	Refused
-bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	-9	Skipped
+bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	-9	:::UNDEF:::
 bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	1	Yes
 bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	2	No
 bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	8	Don't know
 bc3_household_survey_data::amchwker	bc3_household_survey_data::amchwker	9	Refused
-bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	-9	Skipped
-bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	1	Completely Covered
-bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	2	Partially Covered
-bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	3	Open
-bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	-9	Skipped
-bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	1	Yes
-bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	2	Partially
-bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	3	No
-bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	-9	Skipped
+bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	-9	:::UNDEF:::
+bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	1	Completely covered	1
+bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	2	Partially covered	2
+bc3_household_survey_data::eavescov	bc3_household_survey_data::eavescov	3	Open	3
+bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	-9	:::UNDEF:::
+bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	1	Yes	1
+bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	2	Partially	2
+bc3_household_survey_data::eavesopn	bc3_household_survey_data::eavesopn	3	No	3
+bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	-9	:::UNDEF:::
 bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	1	Yes
 bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	2	No
 bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	8	Don't know
 bc3_household_survey_data::airbrick	bc3_household_survey_data::airbrick	9	Refused
-bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	-9	Skipped
-bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	1	Completely Covered
-bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	2	Partially Covered
-bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	3	Open
-bc3_household_survey_data::airbropn	bc3_household_survey_data::airbropn	-9	Skipped
+bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	-9	:::UNDEF:::
+bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	1	Completely covered	1
+bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	2	Partially covered	2
+bc3_household_survey_data::airbrcov	bc3_household_survey_data::airbrcov	3	Open	3
+bc3_household_survey_data::airbropn	bc3_household_survey_data::airbropn	-9	:::UNDEF:::
 bc3_household_survey_data::airbropn	bc3_household_survey_data::airbropn	1	Yes
 bc3_household_survey_data::airbropn	bc3_household_survey_data::airbropn	2	Partially
 bc3_household_survey_data::airbropn	bc3_household_survey_data::airbropn	3	No
-bc3_household_survey_data::airbrnum	bc3_household_survey_data::airbrnum	-9	Skipped
+bc3_household_survey_data::airbrnum	bc3_household_survey_data::airbrnum	-9	:::UNDEF:::
 bc3_household_survey_data::airbrnum	bc3_household_survey_data::airbrnum	3	6+
-bc3_household_survey_data::sleep	bc3_household_survey_data::sleep	-9	Skipped
+bc3_household_survey_data::sleep	bc3_household_survey_data::sleep	-9	:::UNDEF:::
 bc3_household_survey_data::sleep	bc3_household_survey_data::sleep	1	Directly on the ground
 bc3_household_survey_data::sleep	bc3_household_survey_data::sleep	2	On a mattress/mat on the ground
 bc3_household_survey_data::sleep	bc3_household_survey_data::sleep	3	On a bed/platform raised off the ground
@@ -860,6 +862,7 @@ bc-3 mothers all visits database final::tempgrade	bc-3 mothers all visits databa
 bc-3 mothers all visits database final::tempgrade	bc-3 mothers all visits database final::tempgrade	2	Moderate	3
 bc-3 mothers all visits database final::tempgrade	bc-3 mothers all visits database final::tempgrade	3	Severe	4
 bc-3 mothers all visits database final::tempgrade	bc-3 mothers all visits database final::tempgrade	NA	:::UNDEF:::
+bc-3 mothers all visits database final::tempgrade	bc-3 mothers all visits database final::tempgrade	12	:::UNDEF:::
 bc-3 mothers all visits database final::feverdur	bc-3 mothers all visits database final::feverdur	NA	:::UNDEF:::
 bc-3 mothers all visits database final::chillgrade	bc-3 mothers all visits database final::chillgrade	0	Absent	1
 bc-3 mothers all visits database final::chillgrade	bc-3 mothers all visits database final::chillgrade	1	Mild	2
@@ -1074,10 +1077,10 @@ bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Dabani hospital	Dabani hospital
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Health centre	Health center
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	KENYA	Kenya
-bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lumino H/C	Lumino health center
+bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lumino H/C	Lumino health center III
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lumino HC III	Lumino health center III
-bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lunyo HC	Lumino health center
-bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lunyo HCIII	Lumino health center III
+bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lunyo HC	Lunyo health center III
+bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Lunyo HCIII	Lunyo health center III
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Namayingo	Namayingo
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	Nambweke HC III	Nambweke health center III
 bc-3 mothers delivery database final_long::othlod	bc-3 mothers delivery database final_long::othlod	On the road	On the way
@@ -1272,7 +1275,6 @@ bc-3 mothers delivery database final_long::sga	bc-3 mothers delivery database fi
 bc-3 mothers delivery database final_long::compositebo	bc-3 mothers delivery database final_long::compositebo	NA	:::UNDEF:::
 bc-3 mothers expanded database final::studydrugdate	bc-3 mothers expanded database final::studydrugdate	NA	:::UNDEF:::
 bc-3 mothers expanded database final::withdrawaldate	bc-3 mothers expanded database final::withdrawaldate	NA	:::UNDEF:::
-bc-3 mothers expanded database final::visittype	bc-3 mothers expanded database final::visittype	NA	:::UNDEF:::
 bc-3 mothers expanded database final::gestwks	bc-3 mothers expanded database final::gestwks	NA	:::UNDEF:::
 bc-3 mothers expanded database final::itn	bc-3 mothers expanded database final::itn	NA	:::UNDEF:::
 bc-3 mothers expanded database final::weight	bc-3 mothers expanded database final::weight	NA	:::UNDEF:::
@@ -2047,9 +2049,10 @@ bc-3 children individual level database final::withdrawalreason	bc-3 children in
 bc-3 children individual level database final::withdrawalreason	bc-3 children individual level database final::withdrawalreason	3	Participant death
 bc-3 children individual level database final::withdrawalreason	bc-3 children individual level database final::withdrawalreason	4	Withdrawal of informed consent
 bc-3 children individual level database final::withdrawalreason	bc-3 children individual level database final::withdrawalreason	9	:::UNDEF:::
+BC-3 mothers delivery database FINAL_long::visittype	BC-3 mothers delivery database FINAL_long::visittype	delivery visit	Delivery visit
 bc-3 childs all visit database final::visittype	bc-3 childs all visit database final::visittype	0	Non-routine visit
 bc-3 childs all visit database final::visittype	bc-3 childs all visit database final::visittype	1	Routine visit
-bc-3 childs all visit database final::visittype	bc-3 childs all visit database final::visittype	2	
+bc-3 childs all visit database final::visittype	bc-3 childs all visit database final::visittype	2	Delivery visit
 bc-3 childs all visit database final::wksage	bc-3 childs all visit database final::wksage	NA	:::UNDEF:::
 bc-3 childs all visit database final::itn	bc-3 childs all visit database final::itn	0	No
 bc-3 childs all visit database final::itn	bc-3 childs all visit database final::itn	1	Yes
@@ -2140,7 +2143,7 @@ bc-3 childs all visit database final::resprate	bc-3 childs all visit database fi
 bc-3 childs all visit database final::temp	bc-3 childs all visit database final::temp	NA	:::UNDEF:::
 bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	0	Absent	1
 bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	1	Mild	2
-bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	12		
+bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	12	:::UNDEF:::	
 bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	2	Moderate	3
 bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	3	Severe	4
 bc-3 childs all visit database final::tempgrade	bc-3 childs all visit database final::tempgrade	4	Life threatening	5
@@ -2351,11 +2354,11 @@ bc-3 childs all visit database final::species	bc-3 childs all visit database fin
 bc-3 childs all visit database final::species	bc-3 childs all visit database final::species	2	Plasmodium ovale
 bc-3 childs all visit database final::species	bc-3 childs all visit database final::species	4	
 bc-3 childs all visit database final::species	bc-3 childs all visit database final::species	NA	:::UNDEF:::
-bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	0	No malaria
-bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	1	Uncomplicated malaria treated with AL
-bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	2	Complicated malaria treated with quinine
-bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	3	AL treatment failure
-bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	4	Quinine/artesunate treatment failure
+bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	0	No malaria	1
+bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	1	Uncomplicated malaria treated with artemether-lumefantrine (AL)	2
+bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	2	Complicated malaria treated with quinine	3
+bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	3	Artemether-lumefantrine (AL) treatment failure	4
+bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	4	Quinine/artesunate treatment failure	5
 bc-3 childs all visit database final::mstatus	bc-3 childs all visit database final::mstatus	NA	:::UNDEF:::
 bc-3 childs all visit database final::convul	bc-3 childs all visit database final::convul	1	Yes
 bc-3 childs all visit database final::convul	bc-3 childs all visit database final::convul	NA	:::UNDEF:::
