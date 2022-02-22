@@ -67,6 +67,8 @@ print "    <caveat><\/caveat>\n";
 print "    <acknowledgement><\/acknowledgement>\n";
 print "    <releasePolicy><\/releasePolicy>\n";
 
+$genomeVersion = revertDate ($genomeVersion);
+
 $annotationSource = $genomeSource if (!$annotationSource);
 $annotationVersion = $genomeVersion if (!$annotationVersion);
 
@@ -82,6 +84,36 @@ print "  </datasetPresenter>\n";
 print printContactInformation($primaryContactId) if ($ifPrintContactIdFile =~ /^y/i);
 
 ##################### subroutine ###################
+sub revertDate {
+  my ($ver) = @_;
+  my $after;
+
+my %mons = qw(01 Jan
+              02 Feb
+              03 Mar
+              04 Apr
+              05 May
+              06 Jun
+              07 Jul
+              08 Aug
+              09 Sep
+              10 Oct
+              11 Nov
+              12 Dec
+);
+
+  if ($ver =~ /(\d\d\d\d)\-(\d\d)\-(\d\d)/) {
+    my $y = $1;
+    my $m = $2;
+    my $d = $3;
+    $after = $mons{$m} . " " . $d . ", " . $y;
+  } else {
+    print STDERR "ERROR: genomeVersion isn't configured\n";
+  }
+
+  return $after;
+}
+
 sub printAnnotatedGenome {
   my ($temp) = @_;
 
