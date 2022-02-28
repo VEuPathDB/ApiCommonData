@@ -12,7 +12,7 @@ CREATE TABLE apidb.Organism (
  is_reference_strain          NUMBER(1) NOT NULL,
  is_annotated_genome          NUMBER(1) NOT NULL,
  is_family_representative     NUMBER(1) NOT NULL,
- family_representative_abbrev VARCHAR2(20) NOT NULL,
+ family_representative_abbrev VARCHAR2(30) NOT NULL,
  family_ncbi_taxon_ids        VARCHAR2(200),
  family_name_for_files        VARCHAR2(200),
  has_temporary_ncbi_taxon_id  NUMBER(1) NOT NULL,
