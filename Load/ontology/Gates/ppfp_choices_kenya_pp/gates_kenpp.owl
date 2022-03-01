@@ -110,6 +110,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001013 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001013">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hidden</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0001015 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001015">
@@ -408,10 +416,31 @@
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study arm</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1= intervention, 2=control</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study arm</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0020217 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0020217">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0::int_0_q12</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q10</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How did you get to this facility today?</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Ambulance, 1=Minibus/Matatu, 2=Own car, 3=Walked, 5=Motorcycle, 6=Special Hire Taxi, 9=Rented/Borrowed Car, 10=Tuk tuk, 77=Other</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How did you get to this facility today?</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transit to health facility</rdfs:label>
     </owl:Class>
     
 
@@ -1397,7 +1426,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Describe the additional strategies</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Additional strategies specified</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Additional strategies to trace participant specified</rdfs:label>
     </owl:Class>
     
 
@@ -2091,7 +2120,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051252 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051252">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010036"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::elig_time</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -2714,7 +2743,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes, 88=Don&apos;t know/Don&apos;t remember, 99=Refused to answer</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Current method received immediately after delivery</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Was current method received immediately after delivery</rdfs:label>
     </owl:Class>
     
 
@@ -3455,7 +3484,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Don�t know yet</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Don&apos;t know yet</rdfs:label>
     </owl:Class>
     
 
@@ -3901,7 +3930,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Was this at the same facility where you gave birth?</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FP method obtained at birth facility</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Was FP method obtained at birth facility</rdfs:label>
     </owl:Class>
     
 
@@ -7477,14 +7506,11 @@
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051608">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051831"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2::int_2_q8___13</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q8___10</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2</obo:EUPATH_0001001>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nausea</rdfs:label>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nausea vomiting</rdfs:label>
     </owl:Class>
     
 
@@ -8259,6 +8285,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Interview 3 asked about other FP methods.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other FP method question number</rdfs:label>
     </owl:Class>
     
@@ -8364,7 +8391,7 @@
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other health care provider for immunization visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Health care provider for immunization visit other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8379,7 +8406,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other health care provider for visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Health care provider for visit other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8394,7 +8421,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other healthcare provider for ANC specified</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Healthcare provider for ANC other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8440,7 +8467,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other location of health care visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location of health care visit other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8455,7 +8482,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other location of immunization visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Location of immunization visit other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8474,7 +8501,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other medical condition during pregnancy</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medical condition during pregnancy other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8490,7 +8517,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001015 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001015>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other medical condition listed</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medical condition listed other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8565,7 +8592,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other payment source for antenatal care, delivery and postnatal care specified</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Payment source for antenatal care, delivery and postnatal care other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8786,7 +8813,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other reason for health care visit</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reason for health care visit other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8875,7 +8902,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other reason not consented</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reason not consented other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8890,7 +8917,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other reason off the study specified</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reason off the study other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8920,7 +8947,7 @@
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other religion specify</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other religion specified</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Religion other specified</rdfs:label>
     </owl:Class>
     
 
@@ -8992,7 +9019,9 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051708">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051831"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2::int_2_q8___2</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q8___19</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
@@ -9022,20 +9051,6 @@
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051394"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::int_1_q24___2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pain at the insertion site</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0051711 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051711">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051831"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2::int_2_q8___2</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
@@ -9505,7 +9520,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051742 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051742">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q4a</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -9523,7 +9538,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051743 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051743">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q4b_preg_months</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -11097,7 +11112,7 @@ explain how to use the method?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051845 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051845">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042002"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q4b</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -11116,30 +11131,17 @@ explain how to use the method?</obo:EUPATH_0001003>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051846">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0::int_0_q54</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q4</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0</obo:EUPATH_0001001>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">During any of those visits, were you told by your provider that you have any medical conditions?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">During this pregnancy, were you told by a healthcare provider that you have any medical conditions?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">During this pregnancy, were you told by a healthcare provider that you have any medical conditions?</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Told about medical conditions during pregnancy</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0051847 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051847">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0042004"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q4</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">During any of those visits, were you told by your provider that you have any medical conditions?</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=No, 1=Yes, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">During this pregnancy, were you told by a healthcare provider that you have any medical conditions?</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Told about medical conditions during pregnancy</rdfs:label>
     </owl:Class>
     
@@ -11855,22 +11857,8 @@ birth?</obo:EUPATH_0001003>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051892">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0047006"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::int_1_q20</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1- Hospital, 2- Clinic, 3- Pharmacy, 4- Community health worker, 6- Infant welfare visits, 7- infant immunization visits, 8- postnatal care check, 77- Other</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Where receive FP method</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0051893 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051893">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0047006"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2::int_2_q19a</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview2</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Where did you get this method?</obo:EUPATH_0001003>
@@ -11883,6 +11871,7 @@ birth?</obo:EUPATH_0001003>
 8 Postnatal care check (Maangalizi ya malezi ya baada ya kujifungua)
 77 Other (Nyingine)
 88 Don&apos;t know/Don&apos;t remember (Sijui/Sikumbuki) 99 Refused to answer (Alikataa kujibu)</obo:EUPATH_0001004>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1- Hospital, 2- Clinic, 3- Pharmacy, 4- Community health worker, 6- Infant welfare visits, 7- infant immunization visits, 8- postnatal care check, 77- Other</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
@@ -12165,7 +12154,7 @@ birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Disagree, 1=Agree, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could convince your husband/partner that you should use an FP method.</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could convince your husband/partner that you should use an FP method</rdfs:label>
     </owl:Class>
     
 
@@ -12198,7 +12187,7 @@ birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Disagree, 1=Agree, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could start a conversation with your husband/partner about family planning.</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could start a conversation with your husband/partner about family planning</rdfs:label>
     </owl:Class>
     
 
@@ -12231,7 +12220,7 @@ birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Disagree, 1=Agree, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if none of your friends or neighbors use one.</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if none of your friends or neighbors use one</rdfs:label>
     </owl:Class>
     
 
@@ -12297,7 +12286,7 @@ birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Disagree, 1=Agree, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if your husband/partner doesn&apos;t want you to.</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if your husband/partner doesn&apos;t want you to</rdfs:label>
     </owl:Class>
     
 
@@ -12330,7 +12319,7 @@ birth?</obo:EUPATH_0001003>
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Disagree, 1=Agree, 88=Don&apos;t know/Don&apos;t remember</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if your religious leader did not think you should use one.</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">You could use an FP method even if your religious leader did not think you should use one</rdfs:label>
     </owl:Class>
     
 
@@ -12926,7 +12915,7 @@ birth?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051963 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051963">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000096"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0047006"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Agreement with statements about FP</rdfs:label>
     </owl:Class>
@@ -13092,27 +13081,23 @@ birth?</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051975">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010032"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0::int_0_q12</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0::pp_del_q13hours</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0::pp_del_q13mins</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q10</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q11_hours</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1::pre_int_q11_minutes</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview0</obo:EUPATH_0001001>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview1</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How did you get to this facility today?</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How long did it take you to get to this health facility today (hours)</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How long did it take you to get to this health facility today (mins)</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How long did it take you to get to this health facility today? (hours)</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How long did it take you to get to this health facility today? (minutes)</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0=Ambulance, 1=Minibus/Matatu, 2=Own car, 3=Walked, 5=Motorcycle, 6=Special Hire Taxi, 9=Rented/Borrowed Car, 10=Tuk tuk, 77=Other</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">minutes</obo:EUPATH_0001008>
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000031</obo:EUPATH_0001009>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How did you get to this facility today?</obo:IAO_0000115>
+        <obo:EUPATH_0001015 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001015>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transit time to health facility</rdfs:label>
     </owl:Class>
     
@@ -13128,6 +13113,20 @@ birth?</obo:EUPATH_0001003>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Can you tell me what you mean when you say you use Breastfeeding/LAM? Please tell me how LAM must be performed to prevent pregnancy.</obo:IAO_0000115>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Please tell me how breastfeeding must be performed to prevent pregnancy.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">How to use breastfeeding to prevent pregnancy</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0051977 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051977">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051831"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3::int_3_q8___10</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">interview3</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PPFP Choices KenyaPP</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nausea vomiting</rdfs:label>
     </owl:Class>
     
 
@@ -13257,6 +13256,7 @@ birth?</obo:EUPATH_0001003>
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/PCO_0000024">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
+        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</rdfs:label>
     </owl:Class>
     
@@ -13293,9 +13293,6 @@ birth?</obo:EUPATH_0001003>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001006">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">replaces</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001013">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hidden</rdfs:label>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001014">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scale</rdfs:label>
