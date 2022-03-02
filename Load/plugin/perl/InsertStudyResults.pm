@@ -282,6 +282,9 @@ sub addResults {
   elsif ($protocolName eq "compoundMassSpec") {
     $tableString = "ApiDB::CompoundMassSpecResult"; 
   }
+  elsif ($protocolName =~ /gene_list/) {
+    $tableString = "ApiDB::NAFeatureList";
+  }      
   else {
 # TODO check what protocol this is for, and die in the else clause
     $tableString = "Results::NAFeatureExpression";
