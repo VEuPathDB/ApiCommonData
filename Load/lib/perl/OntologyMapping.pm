@@ -3,11 +3,12 @@ package ApiCommonData::Load::OntologyMapping;
 use strict;
 use warnings;
 
-use ApiCommonData::Load::OwlReader;
 use File::Basename qw/basename dirname/;
 use Env qw/PROJECT_HOME/;
 use XML::Simple;
 use Data::Dumper;
+
+my $OWLREADER = qq/ApiCommonData::Load::OwlReader/;
 
 sub asHash { return $_[0]->{_ontology_mapping} }
 
@@ -120,7 +121,11 @@ sub ontologyMappingFromOwl {
   
 sub getOwl {
   my ($path) = @_;
-  return ApiCommonData::Load::OwlReader->new($path);
+  my $owl = {};
+  eval "require $OWLREADER";
+  eval "\$owl = $OWLREADER->new(\$path)";
+  #return ApiCommonData::Load::OwlReader->new($path);
+  return $owl;
 }
 
 sub getEdaLabels {
