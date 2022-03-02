@@ -49,10 +49,10 @@ my @tracks = keys %{$xml->{track}};
 
 my $organisms = &getOrganismInfo($dbh);
 
+print "starting dump at " . `date` . "\n";
 foreach my $o (@$organisms) {
   next if($orgFilter && $o->{abbrev} ne $orgFilter);
 
-#  print "organism " . $o->{abbrev} . "\n";
   my ($sequenceCount, $printedSequenceCount);
   my $genomicSequences = &getGenomicSequences($dbh, $o);
   my $proteinSequences = &getProteinSequences($dbh, $o);
