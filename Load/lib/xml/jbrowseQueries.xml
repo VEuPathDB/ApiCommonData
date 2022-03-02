@@ -274,6 +274,7 @@ WHERE fl.na_sequence_id = $srcfeature_id
       ]]>
     </sql>
   </track>
+
   <track name="cnvArrayJBrowse" type="genomic" fileSuffix="gff">
     <!-- TriTrypDB,UniDB -->
    <trackConfigurations>
@@ -589,10 +590,11 @@ SELECT distinct ssf.segment_start as  feature_id,
    </sql>
   </track>
 
+<!-- very slow - comment out for test run
   <track name="domainUnifiedMassSpecPeptides" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
-  select --+ NO_PARALLEL
+  select /*+ NO_PARALLEL */
          msf.aa_feature_id || '' as feature_id,
          'domain' feature,
           'UnifiedMassSpecPeptides' source,
@@ -622,7 +624,7 @@ SELECT distinct ssf.segment_start as  feature_id,
     and msf.aa_sequence_id = aaseq.aa_sequence_id
     and msf.aa_feature_id = aaloc.aa_feature_id
 UNION
-  --domain:UnifiedMassSpecPeptides:bulksubfeatures
+  /* domain:UnifiedMassSpecPeptides:bulksubfeatures */
   select msf.aa_feature_id || fl.start_min || fl.end_max as feature_id,
          'Peptide' feature,
          'UnifiedMassSpecPeptides' source,
@@ -641,6 +643,7 @@ UNION
      ]]>
    </sql>
   </track>
+-->
 
   <track name="featureBindingSite" type="genomic" fileSuffix="gff">
     <sql>
@@ -762,9 +765,10 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
    </sql>
   </track>
 
+<!-- 
   <track name="gffProcessedTranscript" type="genomic" fileSuffix="gff">
 
-    <!-- PlasmoDB,ToxoDB,CryptoDB,UniDB -->
+    <! - - PlasmoDB,ToxoDB,CryptoDB,UniDB >
    <trackConfigurations>
      <properties>
        <prop name="edName">tgonME49_noseq_chromosomes_name_GFF_topLevel_RSRC</prop>
@@ -846,7 +850,7 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
   AND g3.na_sequence_id = $srcfeature_id
   AND ed.name = '$$edName$$'
 UNION ALL
- -- gff:processedTranscript:bulksubfeatures
+ /* gff:processedTranscript:bulksubfeatures */
 SELECT g3.id_attr feature_id,
        so.name feature,
        'VEuPathDB' source,
@@ -870,6 +874,7 @@ WHERE g3.external_database_release_id = edr.external_database_release_id
      ]]>
    </sql>
   </track>
+ -->
 
   <track name="HaplotypeBlock" type="genomic" fileSuffix="gff">
     <sql>
@@ -1085,8 +1090,9 @@ where edr.external_database_id = ed.external_database_id
    </sql>
   </track>
 
+<!--
   <track name="MicroArrayProbesExpressionProbes" type="genomic" fileSuffix="gff">
-   -- PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB
+   - - PlasmoDB,ToxoDB,TriTrypDB,VectorBase,UniDB
 
    <trackConfigurations>
      <properties>
@@ -1155,6 +1161,7 @@ where edr.external_database_id = ed.external_database_id
      ]]>
    </sql>
   </track>
+-->
 
   <track name="MicrosatelliteSts" type="genomic" fileSuffix="gff">
    -- PlasmoDB,UniDB
@@ -1237,20 +1244,20 @@ order by fl.start_min
 
    <sql>
      <![CDATA[
-  select sgf.na_feature_id as feature_id,
+  select fl.na_feature_id as feature_id,
          'scaffold gap' feature,
          'VEuPathDB' source,
          'gap' as name,
-         sgf.na_sequence_id as parent_id,
-         nal.start_min as startm,
-         nal.end_max as end,
+         fl.na_sequence_id as parent_id,
+         fl.start_min as startm,
+         fl.end_max as end,
          '0' strand,
-         'Length=' || (nal.end_max-nal.start_min+1) || '$dlm' ||
+         'Length=' || (fl.end_max - fl.start_min + 1) || '$dlm' ||
          'Type=' ||  'gap'  || '$dlm' ||
          'Note=' ||  ''  atts
-  from dots.ScaffoldGapFeature sgf, dots.NaLocation nal
-  where nal.na_feature_id = sgf.na_feature_id
-    and sgf.na_sequence_id = $srcfeature_id
+  from apidb.FeatureLocation fl
+  where fl.feature_type = 'ScaffoldGapFeature'
+    and fl.na_sequence_id = $srcfeature_id
 UNION
   select p.agp_piece_id as feature_id,
          'scaffold' feature,
@@ -1269,18 +1276,18 @@ UNION
     and gsa.na_sequence_id = $srcfeature_id
 UNION
   -- scaffold:genome:bulksubfeatures
-  select sg.na_feature_id as feature_id,
+  select fl.na_feature_id as feature_id,
          'gap' feature,
          'VEuPathDB' source,
-         sg.source_id name,
-         sg.na_feature_id parent_id,
+         fl.feature_source_id name,
+         fl.na_feature_id parent_id,
          fl.start_min as startm,
          fl.end_max as end,
          '0' as strand,
          'Type=sgap' as atts
-  from dots.ScaffoldGapFeature sg, dots.NaLocation fl
-  where fl.na_feature_id = sg.na_feature_id
-    and sg.na_sequence_id = $srcfeature_id
+  from apidb.FeatureLocation fl
+  where fl.feature_type = 'ScaffoldGapFeature'
+    and fl.na_sequence_id = $srcfeature_id
      ]]>
    </sql>
   </track>
@@ -1556,8 +1563,9 @@ order by aal.start_min
    </sql>
   </track>
 
+<!-- 
   <track name="ChIPChIPchip_peaksjbrowse" type="genomic" fileSuffix="gff">
-   <!-- FungiDB,PlasmoDB,ToxoDB,TriTrypDB,UniDB -->
+   <! - - FungiDB,PlasmoDB,ToxoDB,TriTrypDB,UniDB - ->
 
    <trackConfigurations>
      <properties>
@@ -2045,6 +2053,7 @@ order by aal.start_min
      ]]>
    </sql>
   </track>
+-->
 
   <track name="MassSpecPeptide" type="protein" fileSuffix="gff">
 
