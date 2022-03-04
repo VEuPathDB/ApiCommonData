@@ -8,6 +8,7 @@ use ApiCommonData::Load::AnalysisConfigRepeatFinder qw(displayAndBaseName);
 use File::Basename;
 use CBIL::TranscriptExpression::SplitBamUniqueNonUnique qw(splitBamUniqueNonUnique);
 use Data::Dumper;
+use Cwd;
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
 # Use sum_score / max_sum_core as normalization ratio and update coverage file 
@@ -136,8 +137,10 @@ sub merge_normalized_coverage {
         if(!-e "$dir/final") {
             &runCmd("mkdir $dir/final");
         }
-        
-        my @bedFiles = glob "$inputDir/$k/normalized/*.bed";
+        my $cwd = getcwd;
+        chdir "$inputDir/$k/normalized/";
+        my @bedFiles = glob "*.bed";
+        chdir "$cwd";
      	foreach my $bedFile (@bedFiles) {
      	    my $baseBed = basename $bedFile;
      	    my $bwFile = $baseBed;
