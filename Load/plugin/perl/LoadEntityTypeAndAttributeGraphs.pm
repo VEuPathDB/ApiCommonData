@@ -152,6 +152,7 @@ and a.ontology_term_id is null";
   while(my $hash = $sh->fetchrow_hashref()) {
     my $sourceId = $hash->{SOURCE_ID};
     my $parentSourceId = $hash->{PARENT_SOURCE_ID};
+    my $displayName = $hash->{DISPLAY_NAME};
     my $parentOntologyTerm =  $ontologyTerms->{$parentSourceId};
     $self->error("Parent $parentSourceId of nonontological leaf $sourceId not found ")
       unless $parentOntologyTerm;
@@ -160,7 +161,7 @@ and a.ontology_term_id is null";
       $self->log("WARNING: Stable Id $sourceId found in BOTH ontology AND nonontological leaf; using parent relation from the latter");
       next NONONTOLOGICAL_LEAF;
     }
-    my $attributeGraph = $self->createAttributeGraphForNonontologicalLeaf($studyId, $sourceId, $parentOntologyTerm);
+    my $attributeGraph = $self->createAttributeGraphForNonontologicalLeaf($studyId, $sourceId, $displayName, $parentOntologyTerm);
     
     $attributeGraph->submit();
     $attributeGraphCount++;
@@ -175,14 +176,14 @@ and a.ontology_term_id is null";
 }
 
 sub createAttributeGraph {
-  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $parentOntologyTermId, $ontologyTerm) = @_;
+  my ($self, $studyId, $stableId, $ontologyTermId, $parentStableId, $parentOntologyTermId, $displayName, $ontologyTerm) = @_;
   return $self->getGusModelClass('AttributeGraph')->new({study_id => $studyId,
                                                                  stable_id => $stableId,
                                                                  ontology_term_id => $ontologyTermId,
                                                                  parent_stable_id => $parentStableId,
                                                                  parent_ontology_term_id => $parentOntologyTermId,
                                                                  provider_label => $ontologyTerm->{PROVIDER_LABEL},
-                                                                 display_name => $ontologyTerm->{DISPLAY_NAME}, 
+                                                                 display_name => $displayName,
                                                                  display_type => $ontologyTerm->{DISPLAY_TYPE}, 
                                                                  hidden => $ontologyTerm->{HIDDEN}, 
                                                                  display_range_min => $ontologyTerm->{DISPLAY_RANGE_MIN},
@@ -200,11 +201,11 @@ sub createAttributeGraph {
 }
 sub createAttributeGraphForTerm {
   my ($self, $studyId, $sourceId, $ontologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID}, $ontologyTerm);
+  return $self->createAttributeGraph($studyId, $sourceId, $ontologyTerm->{ONTOLOGY_TERM_ID}, $ontologyTerm->{PARENT_SOURCE_ID}, $ontologyTerm->{PARENT_ONTOLOGY_TERM_ID}, $ontologyTerm->{DISPLAY_NAME}, $ontologyTerm);
 }
 sub createAttributeGraphForNonontologicalLeaf {
-  my ($self, $studyId, $sourceId, $parentOntologyTerm) = @_;
-  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentOntologyTerm->{SOURCE_ID}, $parentOntologyTerm->{ONTOLOGY_TERM_ID}, $parentOntologyTerm);
+  my ($self, $studyId, $sourceId, $displayName, $parentOntologyTerm) = @_;
+  return $self->createAttributeGraph($studyId, $sourceId, undef, $parentOntologyTerm->{SOURCE_ID}, $parentOntologyTerm->{ONTOLOGY_TERM_ID}, $displayName, $parentOntologyTerm);
 }
 sub constructAndSubmitAttributeGraphsForOntologyTerms {
   my ($self, $studyId, $ontologyTerms) = @_;
