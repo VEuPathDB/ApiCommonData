@@ -685,6 +685,7 @@ sub undoTables {
     'ApiDB.CompoundPeaksChebi',
     'ApiDB.CompoundPeaks',
     'ApiDB.LopitResults',
+    'ApiDB.NAFeatureList',
     'Study.ProtocolAppNode',
     'Study.ProtocolAppParam',
     'Study.ProtocolApp',
