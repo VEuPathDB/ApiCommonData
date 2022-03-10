@@ -111,6 +111,7 @@ sub run {
   my $getAddMoreData = ApiCommonData::Load::MBioResultsDir->new($mbioResultsDir, $fileExtensions)->toGetAddMoreData;
    
   my $investigation = CBIL::ISA::InvestigationSimple->new($investigationFile, $ontologyMappingFile, $ontologyMappingOverrideFile, $valueMappingFile, $onError, $isReporterMode, $dateObfuscationFile, $getAddMoreData, $namesPrefixForOwl);
+  $investigation->setRowLimit(999999999); # Wojtek: work around a bug - entities must fit in batches and I don't know how to do that
   ApiCommonData::Load::Plugin::InsertEntityGraph::loadInvestigation($self,$investigation, $extDbRlsId, $schema); 
 
   $self->logRowsInserted() if($self->getArg('commit'));

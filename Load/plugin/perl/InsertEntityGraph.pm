@@ -226,12 +226,12 @@ sub loadInvestigation {
     my $nodeToIdMap = {};
     
     foreach my $study (@$studies) {
+      my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
+      $gusStudy->submit; 
+
       while($study->hasMoreData()) {
         $investigation->parseStudy($study);
         $investigation->dealWithAllOntologies();
-
-        my $identifier = $study->getIdentifier();
-        my $description = $study->getDescription();
 
         my $nodes = $study->getNodes();
         my $protocols = $self->protocolsCheckProcessTypesAndSetIds($study->getProtocols(), $schema);
@@ -241,9 +241,10 @@ sub loadInvestigation {
 
         my ($ontologyTermToIdentifiers, $ontologyTermToNames) = $self->checkOntologyTermsAndFetchIds($iOntologyTermAccessions);
 
-        $self->loadStudy($ontologyTermToIdentifiers, $ontologyTermToNames, $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap, $extDbRlsId)
+        $self->loadBatchOfStudyData($ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudy->getId, $nodes, $protocols, $edges, $nodeToIdMap)
          unless %errors;
       }
+      $self->ifNeededUpdateStudyMaxAttrLength($gusStudy);
     }
 
     my $errorCount = scalar keys %errors;
@@ -290,26 +291,30 @@ sub protocolsCheckProcessTypesAndSetIds {
   return $protocols;
 }
 
-sub loadStudy {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames,
-    $identifier, $description, $nodes, $protocols, $edges, $nodeToIdMap,
-    $extDbRlsId) = @_;
-
+sub createGusStudy {
+  my ($self, $extDbRlsId, $study) = @_;
+  my $identifier = $study->getIdentifier();
+  my $description = $study->getDescription();
   my $studyInternalAbbrev = $identifier;
   $studyInternalAbbrev =~ s/-/_/g; #clean name/id for use in oracle table name
-
-  my $gusStudy = $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
-  $gusStudy->submit() unless ($gusStudy->retrieveFromDB());
-
-  $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap);
-  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
-
-  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
-
+  return $self->getGusModelClass('Study')->new({stable_id => $identifier, external_database_release_id => $extDbRlsId, internal_abbrev => $studyInternalAbbrev});
+}
+sub ifNeededUpdateStudyMaxAttrLength {
+  my ($self, $gusStudy) = @_;
   if(! $gusStudy->getMaxAttrLength() || ($self->{_max_attr_value} //0) > $gusStudy->getMaxAttrLength()) {
     $gusStudy->setMaxAttrLength($self->{_max_attr_value});
     $gusStudy->submit();
   }
+}
+
+sub loadBatchOfStudyData {
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $gusStudyId,
+   $nodes, $protocols, $edges, $nodeToIdMap) = @_;
+
+  $self->loadNodes($ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap);
+  my $processTypeNamesToIdMap = $self->loadProcessTypes($ontologyTermToIdentifiers, $protocols);
+  $self->loadProcesses($ontologyTermToIdentifiers, $edges, $nodeToIdMap, $processTypeNamesToIdMap);
+
 }
 
 
@@ -392,9 +397,7 @@ sub updateMaxAttrValue {
 }
 
 sub loadNodes {
-  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudy, $nodeToIdMap) = @_;
-
-  my $gusStudyId = $gusStudy->getId();
+  my ($self, $ontologyTermToIdentifiers, $ontologyTermToNames, $nodes, $gusStudyId, $nodeToIdMap) = @_;
 
   my $nodeCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
@@ -405,6 +408,8 @@ sub loadNodes {
 
     if($nodeToIdMap->{$node->getValue()}) {
       if($node->hasAttribute("Characteristic") && scalar @{$node->getCharacteristics()} > 0) {
+        # Wojtek: this can happen if parsing study in batches, and a new batch contains a previously seen node
+        #         I worked around it in MBioInsertEntityGraph with a $investigation->setRowLimit(999999999); 
         $self->userError("Cannot append Characteristics to Existing Node". $node->getValue());
       }
       next;
