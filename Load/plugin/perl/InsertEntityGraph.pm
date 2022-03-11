@@ -217,6 +217,7 @@ sub loadInvestigation {
       $c->(@_) if $c;
       $self->log("Error found when parsing:\n$error") unless $errors{$error}++;
     });
+    $investigation->setOnLog(sub { $self->log(@_);});
 
     $investigation->parseInvestigation();
 
@@ -505,8 +506,6 @@ sub addGeohash {
   my $longitudeSourceId = "OBI_0001621";
 
   return unless($hash->{$latitudeSourceId} && $hash->{$longitudeSourceId});
-
-  printf STDERR ("DEBUG: lat and long vars found\n");
 
   my $geohash = $self->encodeGeohash($hash->{$latitudeSourceId}->[0], $hash->{$longitudeSourceId}->[0], $geohashLength);
 
