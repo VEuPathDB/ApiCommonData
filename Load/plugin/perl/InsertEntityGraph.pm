@@ -490,11 +490,13 @@ sub loadNodes {
 
     if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
+      $self->log("Loaded $nodeCount nodes");
       $self->getDb()->manageTransaction(0, 'begin');
     }
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
+  $self->log("Loaded $nodeCount nodes");
 }
 
 sub addGeohash {
@@ -724,7 +726,7 @@ sub getProcessAttributesHash {
 sub loadProcesses {
   my ($self, $ontologyTermToIdentifiers, $processes, $nodeNameToIdMap, $processTypeNamesToIdMap) = @_;
 
-  my $processCount;
+  my $processCount = 0;
   $self->getDb()->manageTransaction(0, 'begin');
 
   foreach my $process (@$processes) {
@@ -752,6 +754,7 @@ sub loadProcesses {
 
         if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
+          $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
       }
@@ -759,6 +762,7 @@ sub loadProcesses {
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
+  $self->log("Loaded $processCount processes");
 }
 
 sub checkOntologyTermsAndFetchIds {
