@@ -36,6 +36,16 @@ my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min
 
 my $TERMS_FORCED_TO_STRING = {};
 
+my $FORCED_PRECISION = {
+    ### for studies with lat/long: GEOHASH i => i
+    EUPATH_0043203 => 1, 
+    EUPATH_0043204 => 2, 
+    EUPATH_0043205 => 3, 
+    EUPATH_0043206 => 4, 
+    EUPATH_0043207 => 5, 
+    EUPATH_0043208 => 6,
+  };
+
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
 
@@ -477,6 +487,9 @@ sub valProps {
 #  }
   else {
     $dataType = 'string';
+  }
+  if(defined ( $FORCED_PRECISION->{$attributeStableId} )){
+    $precision = $FORCED_PRECISION->{$attributeStableId};
   }
   return {
     data_type => $dataType,
