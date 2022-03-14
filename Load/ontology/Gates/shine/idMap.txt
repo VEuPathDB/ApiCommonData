@@ -1,6 +1,7 @@
 file	category	id
 SHINE_Baseline_Household_Data	household	{{h}}+hh_id
 SHINE_Baseline_Household_Data	HouseholdObservation	{{ho}}+hh_id+studyTimepoint
+SHINE_Baseline_Household_Data	community	{{c}}+clusterid
 SHINE_ECD_Data	observation	{{o}}+hh_id+birthorder+studyTimepoint
 SHINE_ECD_Data	participant	{{p}}+hh_id+birthorder
 SHINE_ECD_Data	household	{{h}}+hh_id
@@ -54,6 +55,10 @@ SHINE_Study_level_factors_m6Split	participant	{{p}}+hh_id+birthorder
 SHINE_Baseline_Household_Data	participant	{{p}}+hh_id+{{na}}
 SHINE_Baseline_Household_Data	observation	{{p}}+hh_id+{{na}}+studyTimepoint
 SHINE_Baseline_Household_Data	hhobs	{{ho}}+hh_id+studyTimepoint
+SHINE_Baseline_Household_Data	community	{{c}}+clusterid
+SHINE_Month12_Intervention_Uptake	community	{{c}}+clusterid
 SHINE_Month12_Intervention_Uptake	hhobs	{{ho}}+hh_id+studyTimepoint
-SHINE_Randomized_Study_Arms_Data	community	{{c}}+hh_id
-SHINE_Study_level_factors_Split community {{c}}+hh_id
+SHINE_Randomized_Study_Arms_Data	community	{{c}}+clusterid
+SHINE_Randomized_Study_Arms_Data	house	{{h}}+hh_id
+SHINE_Study_level_factors_Split	community	{{c}}+clusterid
+SHINE_Study_level_factors_Split	house	{{h}}+hh_id
