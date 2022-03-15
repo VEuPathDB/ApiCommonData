@@ -418,15 +418,17 @@ WHERE fl.na_sequence_id = $srcfeature_id
             , 'cnv' as feature
             , 'ArrayJBrowse' as source
             , ri.value as score
-            , pan.name as parent_id
+            , '$$sample$$' as parent_id
             , rl.reporter_start startm
             , rl.reporter_end end
        from results.ReporterIntensity ri
           , platform.ReporterLocation rl
-          , study.ProtocolAppNode pan
-       where ri.protocol_app_node_id = pan.protocol_app_node_id
+       where ri.protocol_app_node_id
+             = (select protocol_app_node_id
+                from study.ProtocolAppNode
+                where name = '$$sample$$'
+               )
          and ri.reporter_id = rl.reporter_id
-         and pan.name = '$$sample$$'
          and rl.na_sequence_id = $srcfeature_id
       ]]>
     </sql>
