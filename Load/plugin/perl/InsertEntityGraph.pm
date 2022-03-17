@@ -228,7 +228,9 @@ sub loadInvestigation {
     
     foreach my $study (@$studies) {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
-      $gusStudy->submit; 
+      unless($gusStudy->retrieveFromDB()){
+        $gusStudy->submit; 
+      }
 
       while($study->hasMoreData()) {
         $investigation->parseStudy($study);
