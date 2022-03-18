@@ -78,15 +78,17 @@ sub run {
 
   $self->error("Expected one study row.  Found ". scalar keys %$studies) unless(scalar keys %$studies == 1);
 
+
+  $self->dropTables($extDbRlsSpec);
+
   my $dbh = $self->getDbHandle();
-
-  $self->dropTables($dbh, $extDbRlsSpec);
-
   $dbh->do("alter session set nls_date_format = 'yyyy-mm-dd hh24:mi:ss'") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel query") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel dml") or die $self->getDbHandle()->errstr;
   $dbh->do("alter session disable parallel ddl") or die $self->getDbHandle()->errstr;
 
+
+  my @tables;
 
   my ($attributeCount, $attributeValueCount, $entityTypeGraphCount);
   foreach my $studyId (keys %$studies) {
@@ -99,16 +101,19 @@ sub run {
 
       $self->log("Making Tables for Entity Type $entityTypeAbbrev (ID $entityTypeId)");
 
-      $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
-      $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
-      $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
+      my $tallTableName = $self->createTallTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+      my $ancestorsTableName = $self->createAncestorsTable($studyId, $entityTypeId, $entityTypeIds, $studyAbbrev);
+      my $attributeGraphTableName = $self->createAttributeGraphTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev, $studyId);
+      my $wideTableName;
       if ($self->countWideTableColumns($entityTypeId) <= 1000){
-        $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
+        $wideTableName = $self->createWideTable($entityTypeId, $entityTypeAbbrev, $studyAbbrev);
       }
+      my ($collectionTableName, $collectionAttributesTableName) = $self->maybeCreateCollectionsForMBioNodes($attributeGraphTableName);
+      push @tables, $tallTableName, $ancestorsTableName, $wideTableName, $collectionTableName, $collectionAttributesTableName; 
     }
   }
-
-  return("made some tall tables and some wide tables");
+  my $numTablesMade = grep {$_} @tables;
+  return("Created $numTablesMade tables");
 }
 
 
@@ -224,6 +229,7 @@ AND table_name='$tableName'");
     $self->log("Creating index on $SCHEMA.$tableName STABLE_ID");
     $dbh->do("CREATE INDEX ATTRIBUTES_${entityTypeId}_IX ON $SCHEMA.$tableName (STABLE_ID) TABLESPACE INDX") or die $dbh->errstr;
   }
+  return $tableName;
 }
 
 
@@ -239,6 +245,7 @@ sub createAncestorsTable {
 
   my $ancestorEntityTypeIds = $self->createEmptyAncestorsTable($tableName, $entityTypeId, $fieldSuffix, $entityTypeIds);
   $self->populateAncestorsTable($tableName, $entityTypeId, $ancestorEntityTypeIds, $studyId, $fieldSuffix, $entityTypeIds);
+  return $tableName;
 }
 
 sub populateAncestorsTable {
@@ -354,7 +361,7 @@ PRIMARY KEY ($stableIdField)
 )";
 
 
-  $dbh->do($createTableSql) or die $self->getDbHandle()->errstr;
+  $dbh->do($createTableSql) or die $dbh->errstr;
 
   # create a pair of indexes for each field
   foreach my $field (@fields) {
@@ -502,9 +509,10 @@ SQL
 SQL
   }
 
-  $dbh->do("alter table $tableName add primary key (stable_id)") or die $dbh->errstr;
+  $dbh->do("ALTER TABLE $tableName add primary key (stable_id)") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+  return $tableName;
 }
 
 
@@ -540,10 +548,26 @@ CREATETABLE
   $dbh->do("CREATE INDEX attrval_${entityTypeId}_4_ix ON $tableName (attribute_stable_id, number_value, ${entityTypeAbbrev}_stable_id) TABLESPACE indx") or die $dbh->errstr;
 
   $dbh->do("GRANT SELECT ON $tableName TO gus_r");
+  return $tableName;
+}
+
+sub dropTablesLike {
+  my ($self, $pattern) = @_;
+  my $dbh = $self->getDbHandle();
+  my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '%s')", $pattern);
+  $self->log("Finding tables to drop with SQL: $sql");
+  my $sth = $dbh->prepare($sql);
+  $sth->execute();
+  while(my ($table_name) = $sth->fetchrow_array()){
+    $self->log("dropping table ${SCHEMA}.${table_name}");
+    $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
+  }
+  $sth->finish();
 }
 
 sub dropTables {
-  my ($self, $dbh, $extDbRlsSpec) = @_;
+  my ($self, $extDbRlsSpec) = @_;
+  my $dbh = $self->getDbHandle();
   my ($dbName, $dbVersion) = $extDbRlsSpec =~ /(.+)\|(.+)/;
   
   my $sql1 = "select distinct s.internal_abbrev from sres.externaldatabase d, sres.externaldatabaserelease r, ${SCHEMA}.study s
@@ -555,18 +579,94 @@ and r.external_database_release_id = s.external_database_release_id";
   $sh->execute();
 
   while(my ($studyAbbrev) = $sh->fetchrow_array()) {
-    # Some tables do not exist, get a list and drop them
-    my $sql = sprintf("SELECT table_name FROM all_tables WHERE OWNER='$SCHEMA' AND REGEXP_LIKE(table_name, '(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_%s')",uc(${studyAbbrev}));
-    $self->log("Finding tables to drop with SQL: $sql");
-    my $sh2 = $dbh->prepare($sql);
-    $sh2->execute();
-    while(my ($table_name) = $sh2->fetchrow_array()){
-      $self->log("dropping table ${SCHEMA}.${table_name}");
-      $dbh->do("drop table ${SCHEMA}.${table_name}") or die $dbh->errstr;
-    }
-    $sh2->finish();
+    my $s = uc $studyAbbrev;
+    # collection tables have foreign keys - drop them first
+    $self->dropTablesLike("COLLECTIONATTRIBUTE_${s}");
+    $self->dropTablesLike("COLLECTION_${s}");
+    $self->dropTablesLike("(ATTRIBUTES|ATTRIBUTEVALUE|ANCESTORS|ATTRIBUTEGRAPH)_${s}");
   }
   $sh->finish();
+}
+
+sub maybeCreateCollectionsForMBioNodes {
+
+  my ($self, $attributeGraphTableName) = @_;
+  my $dbh = $self->getDbHandle();
+
+
+  my ($collectionTableName, $collectionAttributesTableName) = collectionTableNames($attributeGraphTableName);
+
+  my $sth;
+
+  my $fromWhereSql = <<"EOF";
+FROM   $attributeGraphTableName child, $attributeGraphTableName parent
+WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
+                             'EUPATH_0009249', 'EUPATH_0009251',
+                             'EUPATH_0009252', 'EUPATH_0009253',
+                             'EUPATH_0009254', 'EUPATH_0009255',
+                             'EUPATH_0009256', 'EUPATH_0009257' )
+and child.parent_stable_id = parent.stable_id
+EOF
+
+  $sth = $dbh->prepare("select 1 $fromWhereSql fetch next 1 row only");
+  $sth->execute();
+  return unless $sth->fetchrow_arrayref();
+
+  
+  $self->log("Creating TABLE: $collectionTableName");
+  my $getCollectionsSql = <<"EOF";
+SELECT parent.stable_id       as stable_id,
+       parent.display_name    as display_name,
+       Count(*)               AS num_members,
+       Min(child.display_range_min) AS display_range_min,
+       Max(child.display_range_max) AS display_range_max,
+       Min(child.range_min)         AS range_min,
+       Max(child.range_max)         AS range_max,
+       child.impute_zero,
+       child.data_type,
+       child.data_shape,
+       child.unit,
+       child.precision
+$fromWhereSql
+GROUP BY  parent.stable_id,
+          parent.display_name,
+          child.impute_zero,
+          child.data_type,
+          child.data_shape,
+          child.unit,
+          child.precision
+EOF
+
+  $dbh->do("CREATE TABLE $collectionTableName as ($getCollectionsSql)") or die $dbh->errstr;
+  $dbh->do("CREATE UNIQUE INDEX ${collectionTableName}_uix on $collectionTableName (stable_id)")
+    or die "unit, data_type, etc. should be consistent across children - ". $dbh->errstr;
+  
+  (my $collectionPkName = $collectionTableName) =~ s{${SCHEMA}\.(.*)}{$1_pk};
+  $dbh->do("ALTER TABLE $collectionTableName add constraint $collectionPkName primary key (stable_id)") or die $dbh->errstr;
+
+  $dbh->do("GRANT SELECT ON $collectionTableName TO gus_r");
+
+  $self->log("Creating TABLE: $collectionAttributesTableName");
+
+  my $getCollectionMembersSql = "SELECT child.stable_id as attribute_stable_id, parent.stable_id as collection_stable_id $fromWhereSql ";
+  $dbh->do("CREATE TABLE $collectionAttributesTableName as ($getCollectionMembersSql)")  or die $dbh->errstr;
+  $dbh->do("CREATE UNIQUE INDEX ${collectionAttributesTableName}_uix on $collectionAttributesTableName (attribute_stable_id)")  or die $dbh->errstr;
+
+  (my $collectionAttributesAfkName = $collectionAttributesTableName) =~ s{${SCHEMA}\.(.*)}{$1_afk};
+  $dbh->do("ALTER TABLE $collectionAttributesTableName add constraint $collectionAttributesAfkName foreign key (attribute_stable_id) references $attributeGraphTableName (stable_id)") or die $dbh->errstr;
+
+  (my $collectionAttributesCfkName = $collectionAttributesTableName) =~ s{${SCHEMA}\.(.*)}{$1_cfk};
+  $dbh->do("ALTER TABLE $collectionAttributesTableName add constraint $collectionAttributesCfkName foreign key (collection_stable_id) references $collectionTableName (stable_id)") or die $dbh->errstr;
+  $dbh->do("GRANT SELECT ON $collectionAttributesTableName TO gus_r");
+  return $collectionTableName, $collectionAttributesTableName;
+}
+
+sub collectionTableNames {
+  my ($attributeGraphTableName) = @_;
+  die $attributeGraphTableName unless $attributeGraphTableName =~ m{ATTRIBUTEGRAPH}i;
+  (my $collectionTableName = $attributeGraphTableName) =~ s{ATTRIBUTEGRAPH}{COLLECTION}i;
+  (my $collectionAttributesTableName = $attributeGraphTableName) =~ s{ATTRIBUTEGRAPH}{COLLECTIONATTRIBUTE}i;
+  return $collectionTableName, $collectionAttributesTableName;
 }
 
 sub undoTables {}
