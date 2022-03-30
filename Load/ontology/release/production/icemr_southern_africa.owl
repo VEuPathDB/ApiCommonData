@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/icemr/icemr_southern_africa.owl">
-        <owl:versionInfo>2021-11-09</owl:versionInfo>
+        <owl:versionInfo>2022-03-21</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -104,6 +104,14 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001011 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001011">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">repeated</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/EUPATH_0001012 -->
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001012">
@@ -147,6 +155,25 @@
     
 
 
+    <!-- http://purl.obolibrary.org/obo/CMO_0000026 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CMO_0000026">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">chld_hemo_results</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hemo_results</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Document hemoglobin result:</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0000047</obo:EUPATH_0001006>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g/dL</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000208</obo:EUPATH_0001009>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemoglobin</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://purl.obolibrary.org/obo/ENVO_00000009 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/ENVO_00000009">
@@ -157,24 +184,6 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable,derived</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Country</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000047 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000047">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">chld_hemo_results</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hemo_results</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Document hemoglobin result:</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">g/dL</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000208</obo:EUPATH_0001009>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemoglobin</rdfs:label>
     </owl:Class>
     
 
@@ -228,24 +237,6 @@ parasites/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
         <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">everywhere</obo:EUPATH_0001013>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000110 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000110">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000083"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">chld_temp_results</obo:EUPATH_0000755>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temp_results</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measure and record participant’s temperature: ©</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000027</obo:EUPATH_0001009>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Temperature</rdfs:label>
     </owl:Class>
     
 
@@ -444,23 +435,11 @@ parasites/ 500 WBC</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011795 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011795">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood test</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011995 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011995">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
@@ -479,6 +458,7 @@ parasites/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:EUPATH_0001016 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001016>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household data collection date</rdfs:label>
     </owl:Class>
@@ -610,6 +590,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Has your family always lived at this location?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does the family always reside at this location</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Always stay at location</rdfs:label>
     </owl:Class>
@@ -631,6 +612,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">years</obo:EUPATH_0001008>
         <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000036</obo:EUPATH_0001009>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">If the family does not always reside at this location, the number of years they have lived there.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Time resided at current location</rdfs:label>
     </owl:Class>
@@ -648,6 +630,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does your family regularly move to another location during the year?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Does the family regularly move to another location during the year</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Move regularly</rdfs:label>
     </owl:Class>
@@ -665,6 +648,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What month does your family usually leave this location?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What month does the family usually leave the current location</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Normal month to move out</rdfs:label>
     </owl:Class>
@@ -682,6 +666,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What month does your family usually return to this location?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What month does the family normally return to the current location</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Normal month to return</rdfs:label>
     </owl:Class>
@@ -699,6 +684,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is the reason for moving</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Farming</rdfs:label>
     </owl:Class>
     
@@ -715,6 +701,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is the reason for moving</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fishing</rdfs:label>
     </owl:Class>
     
@@ -731,6 +718,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is the reason for moving</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Work on tea plantation</rdfs:label>
     </owl:Class>
     
@@ -747,6 +735,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is the reason for moving</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other work</rdfs:label>
     </owl:Class>
     
@@ -790,6 +779,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Have visitors stayed at least one night in your home during the past 4 weeks?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visitor stayed in household at least one night in the past 4 weeks</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visitor in last 4 weeks</rdfs:label>
     </owl:Class>
@@ -2366,6 +2356,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What is the reason for moving</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">value</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Other</rdfs:label>
     </owl:Class>
     
@@ -2399,7 +2390,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether there are bednets in the house</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bednets</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Has bednet</rdfs:label>
     </owl:Class>
     
 
@@ -3276,6 +3267,7 @@ gametocytes/ 500 WBC</obo:EUPATH_0001003>
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024182">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
@@ -4454,7 +4446,7 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0024317 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024317">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num_wbc_ex1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -4483,7 +4475,7 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0024319 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024319">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num_wbc_ex2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -4500,7 +4492,7 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/EUPATH_0024320 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0024320">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">num_wbc_ex3</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
@@ -4552,20 +4544,6 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0035127 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0035127">
-        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
-        <obo:EUPATH_0001013 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">everywhere</obo:EUPATH_0001013>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0042002 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0042002">
@@ -4581,7 +4559,8 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/GAZ_00000448 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/GAZ_00000448">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0035127"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PCO_0000024"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Household</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
@@ -4613,7 +4592,7 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age_months</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">age_years</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
@@ -4637,6 +4616,38 @@ Are malaria parasites present?</obo:EUPATH_0001003>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood microbiology test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003040 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003040">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0011795</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003073 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003073">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000083"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">chld_temp_results</obo:EUPATH_0000755>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temp_results</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hhmembers_CS_for_upload</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical examination</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measure and record participant’s temperature: ©</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0000110</obo:EUPATH_0001006>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000027</obo:EUPATH_0001009>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Southern Africa ICEMR Cross-sectional</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Temperature</rdfs:label>
     </owl:Class>
     
 
@@ -4771,9 +4782,6 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001004">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">codebookValues</rdfs:label>
     </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001011">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">repeated</rdfs:label>
-    </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001014">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scale</rdfs:label>
     </rdf:Description>
@@ -4788,6 +4796,9 @@ Are malaria parasites present?</obo:EUPATH_0001003>
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001019">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">defaultBinWidth</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
     </rdf:Description>
 </rdf:RDF>
 
