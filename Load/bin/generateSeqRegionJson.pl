@@ -257,6 +257,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "pfalNF166"
 	|| $organismAbbrev eq "pfalNF54"
 	|| $organismAbbrev eq "pfal7G8-2019"
+	|| $organismAbbrev eq "htarSISKIN1"
        ) {
       $projectName = "PlasmoDB";
     } elsif ( $organismAbbrev eq "mbalATCC30984"
@@ -276,6 +277,7 @@ sub getGeneticCodeFromOrganismAbbrev {
     } elsif ( $organismAbbrev eq "treeQM6a2017"
 	|| $organismAbbrev eq "ctroMYA3404-2020"
 	|| $organismAbbrev eq "rlauRL4"
+	|| $organismAbbrev eq "hvasRaceXXXIII"
 		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
