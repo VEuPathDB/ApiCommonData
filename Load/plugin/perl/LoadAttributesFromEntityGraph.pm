@@ -21,7 +21,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsByAnnotationPropertyValue);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal);
 
 use JSON;
 
@@ -34,7 +34,7 @@ my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
 
-my $TERMS_FORCED_TO_STRING = {};
+my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
 my $FORCED_PRECISION = {
     ### for studies with lat/long: GEOHASH i => i
@@ -183,7 +183,7 @@ sub run {
 
     my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    $TERMS_FORCED_TO_STRING = &getTermsByAnnotationPropertyValue($dbh, $ontologyExtDbRlsSpec,'forceStringType','yes') ;
+    $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -445,7 +445,7 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
     $dataShape = 'ordinal';
   }
 # DEPRECATED - never infer shape = ordinal
@@ -682,7 +682,7 @@ sub typedValueForAttribute {
   ## Abort if annotation property forceStringType = yes
   ## which is loaded into SRes.OntologySynonym.Annotation_Properties
   ## by the step _updateOntologySynonym_owlAttributes
-  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
     $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
     return $counts, $stringValue, $numberValue, $dateValue;
   }
