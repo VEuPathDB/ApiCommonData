@@ -6,6 +6,7 @@ use Exporter;
 queryForOntologyTerms
 getSchemaFromRowAlgInvocationId
 getTermsByAnnotationPropertyValue
+getTermsWithDataShapeOrdinal
 );
 
 use strict;
@@ -105,9 +106,27 @@ and o.ANNOTATION_PROPERTIES IS NOT NULL";
   return \%attsHash;
 }
 
+sub getTermsWithDataShapeOrdinal {
+  my($dbh, $extDbRlsId, $property, $match) = @_;
+  my $sql = "SELECT o2.source_id,'1'
+FROM sres.ONTOLOGYSYNONYM o
+LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
+WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
+and json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
+OR (o.ORDINAL_VALUES IS NOT NULL
+AND json_value(o.ORDINAL_VALUES, '\$.size()') > 1)
+";
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($extDbRlsId);
+  my %attsHash;
+  while(my $row = $sh->fetchrow_arrayref()) {
+    $attsHash{$row->[0]} = 1;
+  }
+  return \%attsHash;
+}
 sub getTermsByAnnotationPropertyValue {
-  my($dbh, $rowAlgInvocationId, $property, $match) = @_;
-  my $attsHash = getTermsAnnotationProperties($dbh,$rowAlgInvocationId);
+  my($dbh, $extDbRlsId, $property, $match) = @_;
+  my $attsHash = getTermsAnnotationProperties($dbh,$extDbRlsId);
   my %terms;
   while( my ($sourceId, $atts) = each %$attsHash){
     next unless $atts->{$property};
