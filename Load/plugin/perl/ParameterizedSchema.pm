@@ -22,7 +22,6 @@ sub requireModelObjects {
   $schema ||= $self->getArg('schema');
   foreach my $table (@{ $self->{_require_tables}}){
     eval "require GUS::Model::${schema}::${table}";
-    printf STDERR ("DEBUG OK require $schema $table\n");
   }
 }
 
