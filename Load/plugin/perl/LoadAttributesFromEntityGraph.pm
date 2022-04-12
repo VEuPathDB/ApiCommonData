@@ -36,6 +36,8 @@ my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min
 
 my $TERMS_WITH_DATASHAPE_ORDINAL = {};
 
+my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
+
 my $FORCED_PRECISION = {
     ### for studies with lat/long: GEOHASH i => i
     EUPATH_0043203 => 1, 
@@ -464,7 +466,7 @@ sub valProps {
   }
 
   my $orderedValues;
-  if($dataShape ne 'continuous') {
+  if($dataShape ne 'continuous' || $valueCount <= $ALLOW_VOCABULARY_COUNT) {
     my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { lc($a) cmp lc($b)} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
