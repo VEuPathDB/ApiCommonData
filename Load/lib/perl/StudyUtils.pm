@@ -112,9 +112,9 @@ sub getTermsWithDataShapeOrdinal {
 FROM sres.ONTOLOGYSYNONYM o
 LEFT JOIN sres.ONTOLOGYTERM o2 ON o.ONTOLOGY_TERM_ID =o2.ONTOLOGY_TERM_ID 
 WHERE o.EXTERNAL_DATABASE_RELEASE_ID = ? 
-and json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
+and (json_value(o.ANNOTATION_PROPERTIES, '\$.forceStringType[0]') = 'yes' 
 OR (o.ORDINAL_VALUES IS NOT NULL
-AND json_value(o.ORDINAL_VALUES, '\$.size()') > 1)
+AND json_value(o.ORDINAL_VALUES, '\$.size()') > 1))
 ";
   my $sh = $dbh->prepare($sql);
   $sh->execute($extDbRlsId);
