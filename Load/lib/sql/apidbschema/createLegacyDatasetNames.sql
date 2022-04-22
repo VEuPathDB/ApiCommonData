@@ -1,7 +1,9 @@
 CREATE TABLE ApiDB.LegacyDataset (
   legacy_dataset_id   NUMBER(10) NOT NULL,
-  dataset_name        VARCHAR2(200) NOT NULL,
+  dataset_presenter_id          VARCHAR2(15) NOT NULL,
+  dataset_presenter_name        VARCHAR2(200) NOT NULL,
   project_name        VARCHAR2(40) NOT NULL,
+  external_database_release_id NUMBER(10) NOT NULL,  
   MODIFICATION_DATE     DATE,
   USER_READ             NUMBER(1),
   USER_WRITE            NUMBER(1),
@@ -13,6 +15,7 @@ CREATE TABLE ApiDB.LegacyDataset (
   ROW_GROUP_ID          NUMBER(3),
   ROW_PROJECT_ID        NUMBER(4),
   ROW_ALG_INVOCATION_ID NUMBER(12),
+  FOREIGN KEY (EXTERNAL_DATABASE_RELEASE_ID) REFERENCES sres.ExternalDatabaseRelease (EXTERNAL_DATABASE_RELEASE_ID),
   PRIMARY KEY (legacy_dataset_id)
 );
 
