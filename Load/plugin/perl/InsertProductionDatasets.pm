@@ -5,7 +5,7 @@ use JSON;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-use GUS::Model::ApiDB::LegacyDataset;
+use GUS::Model::ApiDB::ProductionDataset;
 
 # ----------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ my $argsDeclaration =
 my $documentation = { purpose          => "",
                       purposeBrief     => "",
                       notes            => "Make sure to enter the projectName argument how it appears on the project homepage:  TriTrypDB or VectorBase, for example.",
-                      tablesAffected   => "ApiDB.LegacyDatasets",
+                      tablesAffected   => "ApiDB.ProductionDatasets",
                       tablesDependedOn => "",
                       howToRestart     => "",
                       failureCases     => "" };
@@ -74,7 +74,7 @@ sub run {
 	foreach my $reference (@references){
 	    my $datasetName = $reference->{'dataset_name'};
 	    if ($datasetName ne undef) {
-		my $row = GUS::Model::ApiDB::LegacyDataset->new({dataset_name => $datasetName,
+		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_name => $datasetName,
                                                               project_name => $projectName,
                                                external_database_release_id => $extDbRlsId,
 								});
@@ -95,7 +95,7 @@ sub run {
 sub undoTables {
     my ($self) = @_;
 
-  return ('ApiDB.LegacyDataset'
+  return ('ApiDB.ProductionDataset'
       );
 }
 
