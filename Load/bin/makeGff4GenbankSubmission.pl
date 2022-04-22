@@ -138,10 +138,21 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
   foreach my $feature (@$features) {
     $feature->source_tag("VEuPathDB");
-    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "SEQUENCE_IS_PIECE") {
+
+    # remove unneeded tags
+    foreach my $extraTag ("NA_FEATURE_ID"
+			  , "NA_SEQUENCE_ID"
+			  , "PARENT_NA_FEATURE_ID"
+			  , "AA_FEATURE_ID"
+			  , "AA_SEQUENCE_ID"
+			  , "GENE_NA_FEATURE_ID"
+			  , "EBI_BIOTYPE"
+			  , "GENE_EBI_BIOTYPE"
+			  , "SEQUENCE_IS_PIECE") {
       $feature->remove_tag($extraTag) if($feature->has_tag($extraTag));
     }
 
+    # lowercase tag names and seperate Parent info
     foreach($feature->get_all_tags()) {
       if($_ eq 'ID') { }
       elsif($_ eq 'PARENT') {
@@ -159,13 +170,19 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
     }
 
+    # change protein_coding_gene, *RNA_gene to gene
+    if ($feature->primary_tag eq 'protein_coding_gene'
+       || $feature->primary_tag =~ /RNA_gene$/ ) {
+      $feature->primary_tag('gene');
+    }
+
 
     if($feature->primary_tag eq 'gene') {
       ## add locus_tag
       $feature->add_tag_value("locus_tag", $feature->get_tag_values("ID")) if ($feature->get_tag_values("ID"));
     }
 
-    if($feature->primary_tag eq 'transcript') {
+    if($feature->primary_tag eq 'transcript' || $feature->primary_tag =~ /RNA$/) {
 
 
       my ($transcriptId) = $feature->get_tag_values("ID");
