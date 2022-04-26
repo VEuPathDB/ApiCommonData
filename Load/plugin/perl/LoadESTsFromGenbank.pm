@@ -26,6 +26,7 @@ use GUS::Model::SRes::Contact;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
+## TODO Parameterize $API_KEY
 my $API_KEY = '615dc38c346e6d6ad0f5754cebd39c8c7f09';
 my $BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 
@@ -589,8 +590,6 @@ sub getGenbankESTAccessionsbyTaxId {
     if( $end >= $totalIds ){ $end = $#ids }
     last if( $start >= $totalIds );
     usleep(333333);
-    ## DEBUG
-    last;
   }
   if($mindate){ printf STDERR ("INFO: mindate=$mindate, maxdate=$maxdate ($mindelta)\n") }
   return $accessions;
