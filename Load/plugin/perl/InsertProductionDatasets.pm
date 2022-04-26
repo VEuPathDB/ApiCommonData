@@ -5,7 +5,7 @@ use JSON;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
-use GUS::Model::ApiDB::ProductionDataset;
+use GUS::Model::ApiDB::LegacyDataset;
 
 # ----------------------------------------------------------------------
 
@@ -34,13 +34,12 @@ my $argsDeclaration =
 my $documentation = { purpose          => "",
                       purposeBrief     => "",
                       notes            => "Make sure to enter the projectName argument how it appears on the project homepage:  TriTrypDB or VectorBase, for example.",
-                      tablesAffected   => "ApiDB.ProductionDatasets",
+                      tablesAffected   => "ApiDB.LegacyDataset",
                       tablesDependedOn => "",
                       howToRestart     => "",
                       failureCases     => "" };
 
 # ----------------------------------------------------------------------
-
 sub new {
     my ($class) = @_;
     my $self = {};
@@ -73,9 +72,13 @@ sub run {
 	my @references = (@{ $record->{tables}->{Version}});
 	foreach my $reference (@references){
 	    my $datasetName = $reference->{'dataset_name'};
+            my $projectId = $reference->{'project_id'};
+            my $datasetId = $reference->{'dataset_id'};
+
 	    if ($datasetName ne undef) {
-		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_name => $datasetName,
-                                                              project_name => $projectName,
+		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_presenter_name => $datasetName,
+                                                              project_name => $projectId,
+                                                              dataset_presenter_id => datasetId,
                                                external_database_release_id => $extDbRlsId,
 								});
 		$row->submit();
@@ -95,7 +98,7 @@ sub run {
 sub undoTables {
     my ($self) = @_;
 
-  return ('ApiDB.ProductionDataset'
+  return ('ApiDB.LegacyDataset'
       );
 }
 
