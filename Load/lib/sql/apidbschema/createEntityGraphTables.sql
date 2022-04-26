@@ -448,7 +448,15 @@ CREATE SEQUENCE &1.AttributeValue_sq;
 GRANT SELECT ON &1.AttributeValue_sq TO gus_w;
 GRANT SELECT ON &1.AttributeValue_sq TO gus_r;
 
-CREATE INDEX &1.attributevalue_ix_1 ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id, entity_attributes_id) TABLESPACE indx;
+CREATE INDEX &1.attributevalue_ix_1
+  ON &1.attributevalue (entity_type_id, incoming_process_type_id, attribute_stable_id,
+                        entity_attributes_id)
+  TABLESPACE indx;
+
+CREATE INDEX &1.attributevalue_ix_2
+  ON &1.attributevalue 
+     (number_value, date_value, attribute_stable_id, entity_type_id, string_value)
+  TABLESPACE indx;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

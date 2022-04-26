@@ -21,7 +21,7 @@ use File::Temp qw/ tempfile tempdir tmpnam /;
 
 use Time::HiRes qw(gettimeofday);
 
-use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsByAnnotationPropertyValue);
+use ApiCommonData::Load::StudyUtils qw(queryForOntologyTerms getTermsWithDataShapeOrdinal);
 
 use JSON;
 
@@ -34,7 +34,19 @@ my $END_OF_COLUMN_DELIMITER = "#EOC#\t";
 
 my $RANGE_FIELD_WIDTH = 16; # truncate numbers to fit Attribute table: Range_min, Range_max, Bin_width (varchar2(16))
 
-my $TERMS_FORCED_TO_STRING = {};
+my $TERMS_WITH_DATASHAPE_ORDINAL = {};
+
+my $ALLOW_VOCABULARY_COUNT = 10; # if the number of distinct values is less, generate vocabulary/ordered_values/ordinal_values
+
+my $FORCED_PRECISION = {
+    ### for studies with lat/long: GEOHASH i => i
+    EUPATH_0043203 => 1, 
+    EUPATH_0043204 => 2, 
+    EUPATH_0043205 => 3, 
+    EUPATH_0043206 => 4, 
+    EUPATH_0043207 => 5, 
+    EUPATH_0043208 => 6,
+  };
 
 my $purposeBrief = 'Read Study tables and insert tall table for attribute values and attribute table';
 my $purpose = $purposeBrief;
@@ -173,7 +185,7 @@ sub run {
 
     my $ontologyTerms = &queryForOntologyTerms($dbh, $ontologyExtDbRlsSpec);
     $self->addUnitsToOntologyTerms($studyId, $ontologyTerms, $self->getExtDbRlsId($self->getArg('ontologyExtDbRlsSpec')));
-    $TERMS_FORCED_TO_STRING = &getTermsByAnnotationPropertyValue($dbh, $ontologyExtDbRlsSpec,'forceStringType','yes') ;
+    $TERMS_WITH_DATASHAPE_ORDINAL = &getTermsWithDataShapeOrdinal($dbh, $ontologyExtDbRlsSpec) ;
 
     my $tempDirectory = tempdir( CLEANUP => 1 );
     my ($dateValsFh, $dateValsFileName) = tempfile( DIR => $tempDirectory);
@@ -435,7 +447,7 @@ sub valProps {
 
 #  my $isMultiValued = $cs{_IS_MULTI_VALUED};
 
-  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
     $dataShape = 'ordinal';
   }
 # DEPRECATED - never infer shape = ordinal
@@ -454,7 +466,7 @@ sub valProps {
   }
 
   my $orderedValues;
-  if($dataShape ne 'continuous') {
+  if($dataShape ne 'continuous' || $valueCount <= $ALLOW_VOCABULARY_COUNT) {
     my @values = sort { if(looks_like_number($a) && looks_like_number($b)){ $a <=> $b } else { lc($a) cmp lc($b)} } keys(%{$cs{_VALUES}});
     $orderedValues = encode_json(\@values);
   }
@@ -477,6 +489,9 @@ sub valProps {
 #  }
   else {
     $dataType = 'string';
+  }
+  if(defined ( $FORCED_PRECISION->{$attributeStableId} )){
+    $precision = $FORCED_PRECISION->{$attributeStableId};
   }
   return {
     data_type => $dataType,
@@ -669,7 +684,7 @@ sub typedValueForAttribute {
   ## Abort if annotation property forceStringType = yes
   ## which is loaded into SRes.OntologySynonym.Annotation_Properties
   ## by the step _updateOntologySynonym_owlAttributes
-  if($TERMS_FORCED_TO_STRING->{$attributeStableId}){
+  if($TERMS_WITH_DATASHAPE_ORDINAL->{$attributeStableId}){
     $stringValue = $value; # unless(defined($dateValue) || defined($numberValue));
     return $counts, $stringValue, $numberValue, $dateValue;
   }

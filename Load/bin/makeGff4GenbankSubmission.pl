@@ -13,7 +13,6 @@ use GUS::Community::GeneModelLocations;
 
 use Bio::Tools::GFF;
 
-
 my ($help, $gusConfigFile, $extDbRlsId, $outputFile, $orgAbbrev, $outputFileDir, $ifSeparateParents);
 &GetOptions('help|h' => \$help,
             'gusConfigFile=s' => \$gusConfigFile,
@@ -61,7 +60,10 @@ if (!$extDbRlsId) {
 
 my $geneNames = getGeneName ($dbh, $extDbRlsId);
 my $geneSynonyms = getSynonym ($dbh, $extDbRlsId, $orgAbbrev);
-my $products = getProductName ($dbh, $extDbRlsId);
+my $geneProducts = getGeneProductName ($dbh, $extDbRlsId);
+my $transcriptProducts = getTranscriptProductName ($dbh, $extDbRlsId);
+my $transcriptProductPrefer = getTranscriptProductNameExtra ($dbh, $extDbRlsId);
+my $transId2GeneId = getGeneIdFromTranscriptId ($dbh, $extDbRlsId);
 my $ecNumbers = getEcNumber ($dbh, $extDbRlsId);
 my $gos = getGoAssociations ($dbh, $extDbRlsId);
 my $dbxrefs = getDbxref ($dbh, $extDbRlsId);
@@ -136,10 +138,21 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
   foreach my $feature (@$features) {
     $feature->source_tag("VEuPathDB");
-    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "SEQUENCE_IS_PIECE") {
+
+    # remove unneeded tags
+    foreach my $extraTag ("NA_FEATURE_ID"
+			  , "NA_SEQUENCE_ID"
+			  , "PARENT_NA_FEATURE_ID"
+			  , "AA_FEATURE_ID"
+			  , "AA_SEQUENCE_ID"
+			  , "GENE_NA_FEATURE_ID"
+			  , "EBI_BIOTYPE"
+			  , "GENE_EBI_BIOTYPE"
+			  , "SEQUENCE_IS_PIECE") {
       $feature->remove_tag($extraTag) if($feature->has_tag($extraTag));
     }
 
+    # lowercase tag names and seperate Parent info
     foreach($feature->get_all_tags()) {
       if($_ eq 'ID') { }
       elsif($_ eq 'PARENT') {
@@ -157,13 +170,19 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
     }
 
+    # change protein_coding_gene, *RNA_gene to gene
+    if ($feature->primary_tag eq 'protein_coding_gene'
+       || $feature->primary_tag =~ /RNA_gene$/ ) {
+      $feature->primary_tag('gene');
+    }
+
 
     if($feature->primary_tag eq 'gene') {
       ## add locus_tag
       $feature->add_tag_value("locus_tag", $feature->get_tag_values("ID")) if ($feature->get_tag_values("ID"));
     }
 
-    if($feature->primary_tag eq 'transcript') {
+    if($feature->primary_tag eq 'transcript' || $feature->primary_tag =~ /RNA$/) {
 
 
       my ($transcriptId) = $feature->get_tag_values("ID");
@@ -188,6 +207,14 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
       my ($translated_id) = $feature->get_tag_values('protein_source_id') if ($feature->has_tag('protein_source_id'));
       $feature->remove_tag ('protein_source_id') if ($feature->has_tag('protein_source_id'));
       $feature->add_tag_value("protein_id", $translated_id) if($translated_id);
+
+      ## add product
+      my ($tTId) = $feature->get_tag_values("Parent");
+      my $tGId = $transId2GeneId->{$tTId};
+      my $prod = $geneProducts->{$tGId}[0];
+
+      ## TODO need to deal with product in transcript tables
+      $feature->add_tag_value("product", $prod) if ($prod);
     }
 
     my $bioType = getBioTypeAndUpdatePrimaryTag(\$feature, $geneSourceId);
@@ -268,6 +295,23 @@ close GFF;
 
 ############
 
+sub getGeneIdFromTranscriptId {
+  my ($dbh, $extDbRlsId) = @_;
+  my %t2gs;
+  my $sql = "
+            select gf.source_id, t.source_id from dots.genefeature gf, dots.transcript t
+            where gf.na_feature_id = t.parent_id and t.external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($gid, $tid) = $stmt->fetchrow_array()) {
+    $t2gs{$tid} = $gid if($gid && $tid);
+  }
+  $stmt->finish();
+
+  return \%t2gs;
+}
+
 sub getGeneName {
   my ($dbh, $extDbRlsId) = @_;
   my %gNames;
@@ -317,7 +361,52 @@ where gf.na_feature_id = dnf.na_feature_id and dnf.db_ref_id = d.db_ref_id and d
   return \%gSynonyms;
 }
 
-sub getProductName {
+sub getGeneProductName {
+  my ($dbh, $extDbRlsId) = @_;
+  my %products;
+  my $sql = "
+            select source_id, product from dots.genefeature where external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $product, $isPrefer) = $stmt->fetchrow_array()) {
+    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
+  }
+  $stmt->finish();
+  return \%products;
+}
+
+sub getTranscriptProductName {
+  my ($dbh, $extDbRlsId) = @_;
+  my %products;
+  my $sql = "
+            select source_id, product from dots.transcript where external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $product) = $stmt->fetchrow_array()) {
+    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
+  }
+
+  $stmt->finish();
+  return \%products;
+}
+
+sub getTranscriptProductNameExtra {
+  my ($dbh, $extDbRlsId) = @_;
+  my %products;
+  my $sql = "
+            select t.source_id, tp.product from dots.transcript t, APIDB.transcriptproduct tp
+            where t.na_feature_id=tp.na_feature_id and t.external_database_release_id=$extDbRlsId
+           ";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($sourceId, $product) = $stmt->fetchrow_array()) {
+    push (@{$products{$sourceId}}, $product) if ($sourceId && $product);
+  }
+
+  $stmt->finish();
+  return \%products;
 }
 
 sub getEcNumber {

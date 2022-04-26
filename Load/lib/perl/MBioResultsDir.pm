@@ -59,7 +59,7 @@ sub pathways {
   my ($self, $datasetName, $suffix) = @_;
   my $pathA = $self->mbioResultTablePath($datasetName, $suffix, 'pathwayAbundances');
   my $pathC = $self->mbioResultTablePath($datasetName, $suffix, 'pathwayCoverages');
-  say STDERR "MBioResultsDir: Does $datasetName have pathways? Trying paths: $pathA $pathC";
+  say STDERR "MBioResultsDir: Does $datasetName have pathways? Trying paths: $pathA $pathC = " . (-f $pathA && -f $pathC ? 1 : 0 ) ;
   return unless -f $pathA && -f $pathC;
   return ApiCommonData::Load::MBioResultsTable::AsEntities->wgsPathways($pathA, $pathC);
 }

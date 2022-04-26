@@ -252,6 +252,8 @@ foreach my $abbrev (sort keys %isAnnotated) {
 
 $dbh->disconnect();
 
+print STDERR "Done all files\n";
+
 ###########
 sub getNcbiTaxonId {
   my ($abbrev) = @_;
