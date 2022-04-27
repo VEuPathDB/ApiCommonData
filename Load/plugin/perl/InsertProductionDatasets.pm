@@ -65,7 +65,7 @@ sub run {
  
     my $projectName = $self->getArg('projectName');
     my $ua = LWP::UserAgent->new;
-    my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/AllDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
+    my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/SitemapDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
     my $data = decode_json($request->content);
     my $rowCount = 0;
     foreach my $record (@{ $data->{records}}){
