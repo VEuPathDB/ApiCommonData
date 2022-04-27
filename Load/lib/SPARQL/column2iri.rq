@@ -1,0 +1,48 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX ebi: <http://www.ebi.ac.uk/efo/>
+PREFIX sno: <http://purl.bioontology.org/ontology/SNOMEDCT/>
+
+select * {
+  {
+    SELECT distinct ?col ?sid ?category
+      WHERE { 
+        ?entity a owl:Class .
+        ?entity obo:EUPATH_0000755 ?column . 
+        ?entity obo:EUPATH_0001002 ?scategory . 
+          BIND (str(?entity) AS ?uri) .
+          BIND(
+            REPLACE(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), ""),
+            str(sno:), "SNOMEDCT_")
+             AS ?sid) .
+          BIND (str(?column) AS ?col) .
+	        BIND (str(?scategory) AS ?category) .
+      }
+  }
+    UNION
+  {
+    SELECT distinct ?col ?sid ?category
+      WHERE { 
+        ?entity a owl:Class .
+        ?entity obo:EUPATH_0000755 ?column . 
+        filter not exists { 
+          ?entity obo:EUPATH_0001002 ?scategory . 
+        }
+          BIND (str(?entity) AS ?uri) .
+          BIND(
+            REPLACE(
+            REPLACE(
+            REPLACE(?uri, str(obo:), ""),
+            str(ebi:), ""),
+            str(sno:), "SNOMEDCT_")
+             AS ?sid) .
+          BIND (str(?column) AS ?col) .
+	        BIND ("" AS ?category) .
+      }
+  }
+}
+  
