@@ -56,24 +56,37 @@ sub new {
 # ======================================================================
 
 sub run {
-  my ($self) = @_;
+ my ($self) = @_;
 
  my $extDbRlsSpec = $self->getArg('extDbRlsSpec');
  
  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
  
  my $fileName = $self->getArg('legacyDatasetFile');
- #my $study = GUS::Model::Study::Study->new({name => $studyName, 
- #                                           external_database_release_id => $extDbRlsId,
- #                                          }); 
-
- unless($study->retrieveFromDB()) {
-   $study->submit();
-   return("Loaded 1 Study.Study with name $studyName.")
+ 
+ my $rowCount = 0;
+ open(my $data, '<', $fileName) || die "Could not open file $fileName: $!";
+ while (my $line = <$data>) {
+   my $rowCount++;
+   chomp $line;
+   my @values = split ("\t", $line);
+   my $id = $values[0];
+   my $name = $values[1];
+   my $projectName = $values[2];
+   my $row = GUS::Model::ApiDB::LegacyDataset->new({dataset_presenter_id => $id,
+                                                     dataset_presenter_name => $name,
+                                                     project_name => $projectName,
+                                                     external_database_release_id => $extDbRlsId,
+                                                     });
+   $row->submit();
  }
-
- return("Study.Study with name $studyName and extDbRlsSpec $extDbRlsSpec already exists. Nothing was loaded");
+ print "$rowCount rows added.\n"
 }
+
+
+ 
+
+
 
 sub undoTables {
   my ($self) = @_;
