@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_pcs.owl">
-        <owl:versionInfo>2022-03-29</owl:versionInfo>
+        <owl:versionInfo>2022-04-26</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -116,6 +116,14 @@
 
     <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001012">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">is_featured</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0001020 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
     </owl:AnnotationProperty>
     
 
@@ -259,22 +267,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0025072 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0025072">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/GAZ_00000448"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">newclinicid</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinicdata_to_share</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinics where women attending their prenatal care visit. 26 clinics were randomized and participated in the trial. The 26 clinics are included on the data release. New clinics IDs were constructed for the data release. Each clinic was assigned a random number. The clusters were rank ordered according to the random number and assigned a new identification number based on their rank. The new ID consists of a 2-digit number.</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Values 01-26</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Health center</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0027005 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0027005">
@@ -286,7 +278,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. Yes; 2. No; 3. Unknown</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether the participant was screened for anemia during the first prenatal visit</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether the participant was screened for anemia during the first prenatal visit. Even though blood was used hemoglobin measurements, no blood samples were stored as part of this study.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemoglobin measurement performed</rdfs:label>
     </owl:Class>
     
@@ -453,7 +445,7 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. Yes; 2. No; 3. Unknown</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In Kinshasa, Alere Determine Syphilis TP tests were used, which are point-of-care rapid syphilis tests. In Lusaka, SD Bioline Syphilis 3.0 tests were used, which are rapid immunochromatographic tests. Both tests identify the presence of antibodies to Treponema pallidum</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In Kinshasa, Alere Determine Syphilis TP tests were used, which are point-of-care rapid syphilis tests. In Lusaka, SD Bioline Syphilis 3.0 tests were used, which are rapid immunochromatographic tests. Both tests identify the presence of antibodies to Treponema pallidum. Even though blood was used for the rapid tests, no blood samples were stored as part of this study.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treponema pallidum, by rapid test</rdfs:label>
     </owl:Class>
     
@@ -568,22 +560,6 @@
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Number of first antenatal care (ANC) visits performed during the study period divided by the number of health providers who were qualified to perform rapid tests and administer injections (nurses, doctors, midwives) at the clinic</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">First ANC visits per provider count</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0051007 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051007">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study_month</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Month and year in which the study was conducted.</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Values 01-28</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Observation month and year</rdfs:label>
     </owl:Class>
     
 
@@ -834,24 +810,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0051022 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051022">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">What treatment, if any, was given and when to a participant who was positive for syphilis</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Syphilis treatment</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051023 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051023">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syph02_26_e2_c2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
@@ -886,7 +848,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051025 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051025">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syph03_03_e3_c3</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
@@ -904,7 +866,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0051026 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051026">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051022"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syph03_06_e3_c3</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
@@ -923,7 +885,7 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051027">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000090"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_treatedafter</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
@@ -960,8 +922,46 @@
         <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. Yes; 2. No; 3. Unknown</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether the participant was screened for proteinuria during the first prenatal visit</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether the participant was screened for proteinuria during the first prenatal visit. Even though urine was used for the proteinuria measurement, no urine samples were stored as part of this study.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Proteinuria measurement performed</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0051030 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051030">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0051003"/>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">newclinicid</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">clinicdata_to_share</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Community</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinics where women attending their prenatal care visit. 26 clinics were randomized and participated in the trial. The 26 clinics are included on the data release. New clinics IDs were constructed for the data release. Each clinic was assigned a random number. The clusters were rank ordered according to the random number and assigned a new identification number based on their rank. The new ID consists of a 2-digit number.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Values 01-26</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0025072</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
+        <obo:EUPATH_0001020 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Yes</obo:EUPATH_0001020>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Health center ID</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0051031 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0051031">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study_period</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Data collection of baseline period (month-day-year) categorized as study_period =1. Zambia: from 04-13-2015 to 01-10-2016 and DRC:  from 04-01-2015  to 01-13-2016. Data collection of intervention period (year/month/day) categorized as  study_period =2. Zambia: 02-08-2016 to  07-14-2017 and DRC: 02-01-2016 to 07-14 -2017</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. Baseline; 2. Intervention</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OBI_0001508</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
+        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participants were enrolled in both the baseline and intervention periods. The baseline data collection period ranged from 2015-04-13 to 2016-01-10 in Zambia and from 2015-04-01 to 2016-01-13 in the DRC. The intervention data collection period ranged from 2016-02-08 to 2017-07-14 in Zambia and from 2016-02-01 to 2017-07-14 in the DRC.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study period</rdfs:label>
     </owl:Class>
     
 
@@ -982,15 +982,16 @@
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001508">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study_period</obo:EUPATH_0000755>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">study_month</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">syphilis_to_share</obo:EUPATH_0001001>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Data collection of baseline period (month-day-year) categorized as study_period =1. Zambia: from 04-13-2015 to 01-10-2016 and DRC:  from 04-01-2015  to 01-13-2016. Data collection of intervention period (year/month/day) categorized as  study_period =2. Zambia: 02-08-2016 to  07-14-2017 and DRC: 02-01-2016 to 07-14 -2017</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. Baseline; 2. Intervention</obo:EUPATH_0001004>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Month and year in which the study was conducted.</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Values 01-28</obo:EUPATH_0001004>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0051007</obo:EUPATH_0001006>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Preventing Congenital Syphilis</obo:EUPATH_0001010>
-        <obo:EUPATH_0001012 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001012>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participants were enrolled in both the baseline and intervention periods. The baseline data collection period ranged from 2015-04-13 to 2016-01-10 in Zambia and from 2015-04-01 to 2016-01-13 in the DRC. The intervention data collection period ranged from 2016-02-08 to 2017-07-14 in Zambia and from 2016-02-01 to 2017-07-14 in the DRC.</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Data was collected from April 2015 to July 2017. Each timepoint represents one month of data collection.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Study timepoint</rdfs:label>
     </owl:Class>
     
@@ -1188,9 +1189,6 @@
     </rdf:Description>
     <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001019">
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">defaultBinWidth</rdfs:label>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/EUPATH_0001020">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">forceStringType</rdfs:label>
     </rdf:Description>
 </rdf:RDF>
 
