@@ -458,6 +458,11 @@ CREATE INDEX &1.attributevalue_ix_2
      (number_value, date_value, attribute_stable_id, entity_type_id, string_value)
   TABLESPACE indx;
 
+CREATE INDEX &1.attributevalue_ix_3
+  ON &1.attributevalue 
+     (attribute_stable_id, string_value, entity_type_id, number_value, date_value)
+  TABLESPACE indx;
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
