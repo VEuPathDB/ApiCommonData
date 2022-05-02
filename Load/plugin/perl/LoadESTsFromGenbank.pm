@@ -127,6 +127,7 @@ sub run {
   my($self,) = @_;
   my $dbh = $self->getQueryHandle();
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
+  die("ncbiTaxonId must be a number") unless( $ncbiTaxonId =~ /^[0-9]+$/);
   printf STDERR ("Auditing NCBI Taxon ID (%d)\n", $ncbiTaxonId);
   $self->{sequence_ontology_id} = $self->getSequenceOntologyId();
   $self->{ext_db_rls_id} = $self->getExtDbRlsId($self->getArg('extDbRlsSpec'));
