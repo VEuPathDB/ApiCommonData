@@ -447,7 +447,7 @@ sub loadFromGenbank {
   my $start = 0;
   my $end = $start + $FetchBatchSize - 1;
   if($end > $totalIds){ $end = $#ids } 
-  printf STDERR ("DEBUG: loading %d IDs from Genbank: %s\n", $totalIds, join(",", @ids));
+  printf STDERR ("Loading %d IDs from Genbank\n", $totalIds);
   while( $start < $#ids ){
     my @batch = @ids[ $start .. $end ];
     my $gbseqs = $self->getGenbank(\@batch);
@@ -460,13 +460,15 @@ sub loadFromGenbank {
       my $est = GUS::Model::DoTS::EST->new($data->{est});
       if($est->retrieveFromDB()){
         printf STDERR ("EST was already loaded: %s\n", $est->getAccession);
+        $self->undefPointerCache();
+        next;
       }
       my $taxon = GUS::Model::SRes::Taxon->new($data->{taxon});
       unless($taxon->retrieveFromDB()){
         die sprintf("Taxon not loaded for ncbi_tax_id = %d\n", $data->{taxon}->{ncbi_tax_id});
       }
       else { 
-        printf STDERR ("DEBUG Taxon found %d for ncbi_tax_id %d\n", $taxon->getId(), $taxon->getNcbiTaxId());
+        #printf STDERR ("Taxon found %d for ncbi_tax_id %d\n", $taxon->getId(), $taxon->getNcbiTaxId());
       }
 
       my $seq = GUS::Model::DoTS::ExternalNASequence->new($data->{sequence});
@@ -505,6 +507,7 @@ sub loadFromGenbank {
       $est->submit();
       printf STDERR ("DEBUG EST Inserted %d\n", $est->getId());
     }
+    $self->undefPointerCache();
 
     last if( $end == $#ids );
     $start += $FetchBatchSize;
@@ -677,6 +680,10 @@ sub parseEstResult {
       possibly_reversed => 0,
       putative_full_length_read => 0,
       trace_poor_quality => 0,
+    },
+    sequence_check => {
+      source_id => $accession,
+      subclass_view => 'ExternalNASequence',
     },
     sequence => {
       sequence_version => $version || 1,
