@@ -448,6 +448,7 @@ sub loadFromGenbank {
   my $end = $start + $FetchBatchSize - 1;
   if($end > $totalIds){ $end = $#ids } 
   printf STDERR ("Loading %d IDs from Genbank\n", $totalIds);
+  my %outcomes;
   while( $start < $#ids ){
     my @batch = @ids[ $start .. $end ];
     my $gbseqs = $self->getGenbank(\@batch);
@@ -457,11 +458,14 @@ sub loadFromGenbank {
     ## however EST is the index to use for maintaining integrity --
     ## If this plugin resumes without cleaning up, we can skip it.
     ## EST object is finally loaded at the end of this loop. 
-      my $est = GUS::Model::DoTS::EST->new($data->{est});
+      my $est = GUS::Model::DoTS::EST->new({accession => $data->{est}->{accession}});
       if($est->retrieveFromDB()){
-        printf STDERR ("EST was already loaded: %s\n", $est->getAccession);
-        $self->undefPointerCache();
-        next;
+        #printf STDERR ("EST was already loaded: %s\n", $est->getAccession);
+        #$self->undefPointerCache();
+        #next;
+      }
+      else {
+        $est = GUS::Model::DoTS::EST->new($data->{est});
       }
       my $taxon = GUS::Model::SRes::Taxon->new($data->{taxon});
       unless($taxon->retrieveFromDB()){
@@ -471,13 +475,28 @@ sub loadFromGenbank {
         #printf STDERR ("Taxon found %d for ncbi_tax_id %d\n", $taxon->getId(), $taxon->getNcbiTaxId());
       }
 
-      my $seq = GUS::Model::DoTS::ExternalNASequence->new($data->{sequence});
+      my $seq = GUS::Model::DoTS::ExternalNASequence->new({source_id => $data->{sequence}->{source_id}});
+      if($seq->retrieveFromDB()){
+        # check version
+        if($seq->getSequenceVersion eq $data->{sequence}->{sequence_version}){
+          # printf STDERR ("EST already loaded: %s.%d\n", $seq->getSourceId,$data->{sequence}->{sequence_version});
+          $self->undefPointerCache();
+          $outcomes{skipped}{ $data->{est}->{accession} } = 1;
+          next;
+        }
+        else {
+          # printf STDERR ("EST will be updated: %s.%d\n", $seq->getSourceId,$data->{sequence}->{sequence_version});
+          $outcomes{updated}{ $data->{est}->{accession} } = 1;
+        }
+      }
+      $seq->setLength($data->{length});
+      $seq->setSequenceVersion($data->{sequence_version});
       $seq->setExternalDatabaseReleaseId($self->{ext_db_rls_id});
       $seq->setSequenceOntologyId($self->{sequence_ontology_id});
       # do not check (memory buffer issue), just assume it is new
       #unless($seq->retrieveFromDB()){
-        $seq->setSequence($data->{nucleotide_seq});
-        $seq->submit();
+      $seq->setSequence($data->{nucleotide_seq});
+      $seq->submit();
         #printf STDERR ("DEBUG ExternalNASequence: Inserted %d\n", $seq->getId());
       #}
       $est->setParent($seq);
@@ -516,6 +535,8 @@ sub loadFromGenbank {
     last if( $start >= $totalIds );
     usleep(333333);
   }
+  printf STDERR ("%d ESTs skipped (already loaded)\n", scalar keys $outcomes{skipped}) if $outcomes{skipped};
+  printf STDERR ("%d ESTs updated\n", scalar keys $outcomes{updated}) if $outcomes{updated};
   return;
 } 
 
