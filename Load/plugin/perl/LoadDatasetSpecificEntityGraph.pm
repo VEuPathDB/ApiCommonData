@@ -608,11 +608,8 @@ WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
 and child.parent_stable_id = parent.stable_id
 EOF
 
-  $sth = $dbh->prepare("select 1 $fromWhereSql fetch next 2 rows only");
+  $sth = $dbh->prepare("select 1 $fromWhereSql fetch next 1 row only");
   $sth->execute();
-
-  # only create a collection if there are at least two children
-  return unless $sth->fetchrow_arrayref();
   return unless $sth->fetchrow_arrayref();
 
   
