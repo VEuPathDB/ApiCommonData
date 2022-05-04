@@ -63,7 +63,7 @@ sub entitiesForSampleFunctions {
   my %result;
   for my $row (keys %{$data}){
     my $key = $rowDetails->{$row}{name};
-    my $displayName = $rowDetails->{$row}{description} // $key;
+    my $displayName = $rowDetails->{$row}{description} ? join(": ", $key, $rowDetails->{$row}{description}) : $key;
     my $species = $rowDetails->{$row}{species};
     my ($abundance, $coverage);
     my $x = $data->{$row};
