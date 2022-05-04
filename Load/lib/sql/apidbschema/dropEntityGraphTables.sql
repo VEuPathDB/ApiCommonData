@@ -120,7 +120,10 @@ BEGIN
       FROM
         all_tables
       WHERE
-        owner = '&1' and table_name like 'ATTRIBUTEVALUE_%' or table_name like 'ANCESTORS_%' or table_name like 'ATTRIBUTEGRAPH_%'
+        owner = '&1'
+        and (table_name like 'ATTRIBUTEVALUE_%'
+             or table_name like 'ANCESTORS_%'
+             or table_name like 'ATTRIBUTEGRAPH_%')
     )
   LOOP
    DBMS_OUTPUT.put_line (' dropping table:  &1.'||rec.table_name);
