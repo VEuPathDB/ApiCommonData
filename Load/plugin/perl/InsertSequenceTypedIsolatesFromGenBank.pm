@@ -394,7 +394,7 @@ sub undoTables {
             'Study.Characteristic',
             'Study.ProtocolAppNode',
             'Study.Study',
-            'SRes.OntologyTerm',
+            #'SRes.OntologyTerm',
          );
 
 }
