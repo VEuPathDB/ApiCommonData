@@ -76,9 +76,9 @@ sub run {
             my $datasetId = $reference->{'dataset_id'};
 
 	    if ($datasetName ne undef) {
-		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_presenter_name => $datasetName,
+		my $row = GUS::Model::ApiDB::LegacyDataset->new({dataset_presenter_name => $datasetName,
                                                               project_name => $projectId,
-                                                              dataset_presenter_id => datasetId,
+                                                              dataset_presenter_id => $datasetId,
                                                external_database_release_id => $extDbRlsId,
 								});
 		$row->submit();
