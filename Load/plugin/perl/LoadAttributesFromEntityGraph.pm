@@ -854,7 +854,7 @@ sub makeFifo {
   my $login       = $database->getLogin();
   my $password    = $database->getPassword();
   my $dbiDsn      = $database->getDSN();
-  my ($dbi, $type, $db) = split(':', $dbiDsn);
+  my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,
