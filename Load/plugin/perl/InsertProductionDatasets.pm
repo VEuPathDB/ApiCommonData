@@ -78,7 +78,7 @@ sub run {
 	    if ($datasetName ne undef) {
 		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_presenter_name => $datasetName,
                                                               project_name => $projectId,
-                                                              dataset_presenter_id => datasetId,
+                                                              dataset_presenter_id => $datasetId,
                                                external_database_release_id => $extDbRlsId,
 								});
 		$row->submit();
