@@ -52,9 +52,7 @@ sub entitiesForSampleTaxa {
   my @values = values %${data};
   return {} unless @values;
   return {
-    %{entitiesForSampleRelativeAbundances($data)},
-    "shannon-indexed alpha diversity data" => alphaDiversityShannon(\@values),
-    "inverse simpson-indexed alpha diversity data" => alphaDiversityInverseSimpson(\@values),
+    %{entitiesForSampleRelativeAbundances($data)}
   };
 }
 
@@ -151,30 +149,5 @@ sub entitiesForSampleAggregatedAbundance {
     }
   }
   return \%result;
-}
-sub alphaDiversityShannon {
-  my ($values) = @_;
-  my $totalCount = sum @{$values};
-  return unless $totalCount;
-
-  my $result = 0;
-  for my $value (@{$values}){
-    my $p = $value / $totalCount;
-    $result += $p * log($p);
-  }
-  return -$result;
-}
-
-sub alphaDiversityInverseSimpson {
-  my ($values) = @_;
-  my $totalCount = sum @{$values};
-  return unless $totalCount;
-
-  my $result = 0;
-  for my $value (@{$values}){
-    my $p = $value / $totalCount;
-    $result += $p * $p;
-  }
-  return 1 / $result;
 }
 1;
