@@ -31,6 +31,22 @@ GRANT SELECT ON &1.Study_sq TO gus_r;
 
 CREATE INDEX &1.study_ix_1 ON &1.study (external_database_release_id, stable_id, internal_abbrev, study_id) TABLESPACE indx;
 
+ DECLARE ddl_stmt VARCHAR2(200);
+ BEGIN
+    IF upper('&1') = 'EDA_UD'
+      THEN
+        ddl_stmt := 'ALTER TABLE &1.study ADD (user_dataset_id NUMBER(20))';
+        EXECUTE IMMEDIATE ddl_stmt;
+
+        ddl_stmt := 'ALTER TABLE &1.study '
+                       || 'ADD (CONSTRAINT edastd_fk FOREIGN KEY (user_dataset_id) '
+                       || 'REFERENCES apidbUserDatasets.InstalledUserDataset)';
+        EXECUTE IMMEDIATE ddl_stmt;
+    END IF;  
+ END;
+/
+
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
