@@ -604,7 +604,8 @@ WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
                              'EUPATH_0009249',
                              'EUPATH_0009252', 'EUPATH_0009253',
                              'EUPATH_0009254', 'EUPATH_0009255',
-                             'EUPATH_0009256', 'EUPATH_0009257' )
+                             'EUPATH_0009256', 'EUPATH_0009257',
+                             'EUPATH_0009269')
 and child.parent_stable_id = parent.stable_id
 EOF
 

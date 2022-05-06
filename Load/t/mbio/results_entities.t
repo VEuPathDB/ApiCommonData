@@ -5,6 +5,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 
 use ApiCommonData::Load::MBioResultsTable::AsEntities;
 use Test::More;
+use YAML;
 
 my $t = 'ApiCommonData::Load::MBioResultsTable::AsEntities';
 
@@ -21,24 +22,16 @@ subtest 'relative abundances' => sub {
 };
 
 subtest 'abundances cpms' => sub {
-  my $t = \&ApiCommonData::Load::MBioResultsTable::AsEntities::entitiesForSampleAbundanceCpms;
+  my $t = \&ApiCommonData::Load::MBioResultsTable::AsEntities::entitiesForSampleGroupedAbundancesEukCpms;
   is_deeply($t->({}), {}, "null case");
 
-  my $x1 = $t->({Bacteria => 95, Archaea => 5});
+  my $bla = "Eukaryota;;Bigyra;Opalinata;Blastocystidae;Blastocystis";
+  my $myc = "Fungi;Ascomycota;Dothideomycetes;Capnodiales;Mycosphaerellaceae;Mycosphaerella;Mycosphaerella populi";
+  my $x1 = $t->({$bla => 0.1337, $myc => 0.005});
   ok(keys %$x1 > 0, "return something");
-  my @k1 = sort keys %$x1;
 
-  my $x2 = $t->({Bacteria => 950, Archaea => 50});
-
-
-  my @k2 = sort keys %$x2;
-
-  is_deeply(\@k1, \@k2, "keys stay equal if all vars are scaled");
-
-  is(
-    $x1->{"relative abundance of class data"}{Archaea_}[1] * 10.0,
-    $x2->{"relative abundance of class data"}{Archaea_}[1] * 1.0,
-    "stays equal if all vars are scaled");
+  my $txt = Dump $x1;
+  like($txt, qr/$_/, "has: $_") for qw/fungal Mycosphaerella protist Blastocystis 1337/;
 
 };
 
