@@ -490,7 +490,7 @@ sub loadFromGenbank {
         }
       }
       $seq->setLength($data->{length});
-      $seq->setSequenceVersion($data->{sequence_version});
+      $seq->setSequenceVersion($data->{sequence}->{sequence_version});
       $seq->setExternalDatabaseReleaseId($self->{ext_db_rls_id});
       $seq->setSequenceOntologyId($self->{sequence_ontology_id});
       # do not check (memory buffer issue), just assume it is new
