@@ -596,8 +596,7 @@ SELECT distinct ssf.segment_start as  feature_id,
   <track name="domainUnifiedMassSpecPeptides" type="genomic" fileSuffix="gff">
     <sql>
       <![CDATA[
-  select /*+ NO_PARALLEL */
-         msf.aa_feature_id || '' as feature_id,
+  select msf.aa_feature_id || '' as feature_id,
          'domain' feature,
           'UnifiedMassSpecPeptides' source,
          fl.na_sequence_id as parent_id,
