@@ -218,7 +218,7 @@ sub createWideTable {
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("CREATE TABLE /*+ NO_PARALLEL */ $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
+  $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
   $dbh->do("ALTER TABLE $SCHEMA.$tableName $_") for @drops;
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
