@@ -503,13 +503,13 @@ sub loadNodes {
 
     if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
-      $self->log("Loaded $nodeCount nodes");
+      #$self->log("Loaded $nodeCount nodes");
       $self->getDb()->manageTransaction(0, 'begin');
     }
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
-  $self->log("Loaded $nodeCount nodes");
+  #$self->log("Loaded $nodeCount nodes");
 }
 
 sub addGeohash {
