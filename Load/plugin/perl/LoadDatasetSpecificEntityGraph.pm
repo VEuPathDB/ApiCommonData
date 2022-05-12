@@ -218,7 +218,7 @@ sub createWideTable {
   }
 
   my $dbh = $self->getDbHandle();
-  $dbh->do("CREATE TABLE /*+ NO_PARALLEL */ $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
+  $dbh->do("CREATE TABLE $SCHEMA.$tableName as $sql") or die $self->getDbHandle()->errstr;
   $dbh->do("ALTER TABLE $SCHEMA.$tableName $_") for @drops;
   $dbh->do("GRANT SELECT ON $SCHEMA.$tableName TO gus_r") or die $self->getDbHandle()->errstr;
 
@@ -601,10 +601,11 @@ sub maybeCreateCollectionsForMBioNodes {
   my $fromWhereSql = <<"EOF";
 FROM   $attributeGraphTableName child, $attributeGraphTableName parent
 WHERE  child.parent_stable_id IN ( 'EUPATH_0009247', 'EUPATH_0009248',
-                             'EUPATH_0009249', 'EUPATH_0009251',
+                             'EUPATH_0009249',
                              'EUPATH_0009252', 'EUPATH_0009253',
                              'EUPATH_0009254', 'EUPATH_0009255',
-                             'EUPATH_0009256', 'EUPATH_0009257' )
+                             'EUPATH_0009256', 'EUPATH_0009257',
+                             'EUPATH_0009269')
 and child.parent_stable_id = parent.stable_id
 EOF
 
