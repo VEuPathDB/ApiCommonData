@@ -475,6 +475,8 @@ sub loadFromGenbank {
         #printf STDERR ("Taxon found %d for ncbi_tax_id %d\n", $taxon->getId(), $taxon->getNcbiTaxId());
       }
 
+#TODO fetch all Accession.version from ExternalNASequence 
+# use cached hash instead of retrieveFromDB
       my $seq = GUS::Model::DoTS::ExternalNASequence->new({source_id => $data->{sequence}->{source_id}});
       if($seq->retrieveFromDB()){
         # check version
