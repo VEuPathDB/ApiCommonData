@@ -767,7 +767,7 @@ sub loadProcesses {
 
         if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
-          $self->log("Loaded $processCount processes");
+          # $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
       }
