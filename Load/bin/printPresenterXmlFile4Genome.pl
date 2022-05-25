@@ -108,6 +108,7 @@ my %mons = qw(01 Jan
     my $d = $3;
     $after = $mons{$m} . " " . $d . ", " . $y;
   } else {
+    $after = $ver;
     print STDERR "ERROR: genomeVersion isn't configured\n";
   }
 
