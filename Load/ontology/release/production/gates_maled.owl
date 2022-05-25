@@ -8,7 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/gates/gates_maled.owl">
-        <owl:versionInfo>2022-02-23</owl:versionInfo>
+        <owl:versionInfo>2022-05-18</owl:versionInfo>
     </owl:Ontology>
     
 
@@ -454,27 +454,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000110 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000110">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000083"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull::saftemp</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temperature (oC) as measured by fieldworker, 0-99.9 C, original SAF data</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;10 unique values</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C</obo:EUPATH_0001008>
-        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000027</obo:EUPATH_0001009>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The participant&apos;s temperature (originally reported in Celsius). The field worker measured the participant&apos;s temperature during the surveillance visit if the mother reported that the participant had a fever yesterday. If their temperature was above 39C, the participant was referred to the nearest health center for assessment and treatment. Surveillance was conducted twice weekly for up to 3 years of age.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Temperature</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000144 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000144">
@@ -486,6 +465,23 @@
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Whether the household had any of the following items. Socioeconomic status was assessed every 6 months from 6-24 months and again at 60 months of age, with optional assessments from 30-60 months.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Assets</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0000152 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000152">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::ncflastdate</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">date of last contact with MAL-ED study. Source=PIDs. ..</obo:EUPATH_0001003>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable,derived</obo:EUPATH_0001005>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of last contact for participants lost to follow-up.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Last date observed</rdfs:label>
     </owl:Class>
     
 
@@ -587,25 +583,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000582 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000582">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011880"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull::safabt</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=penicillin; 2=cephalosporins; 3=sulfonamides; 4=macrolides; 5=tetracyclines; 6=fluoroquinolones; 7=unknown; 8=metronidazole; 9=other, original SAF data</obo:EUPATH_0001003>
-        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;10 unique values</obo:EUPATH_0001004>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of antibiotic used by the participant, as reported by the mother. Surveillance was conducted twice weekly for up to 3 years of age.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotics, caregiver report</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000596 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000596">
@@ -635,7 +612,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000647 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000647">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::agpval1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -766,7 +743,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000687 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000687">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_iar::iarconc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_iar</obo:EUPATH_0001001>
@@ -787,7 +764,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0000688 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000688">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::bllconc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -880,19 +857,6 @@
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
         <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Indicates whether length or height was used for &apos;Stature.&apos; Anthropometry was assessed on a monthly basis up to and including 36m of age, and subsequently every 3 months up to and including 60m of age.</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recumbent length or height used for stature</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0000724 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0000724">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool microbiology test</rdfs:label>
     </owl:Class>
     
 
@@ -8435,8 +8399,8 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific stool sample. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unique pathogen count</rdfs:label>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific stool sample. Calculated for &quot;Analysis stool, monthly&quot; samples and all &quot;Per protocol diarrheal stool collection&quot; samples protocol-compliant diarrhea stool samples (including &quot;Analysis stool, diarrhea&quot; samples and also diarrhea stool samples collected after 14 study-defined diarrhea days), and requires complete testing. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen count, analysis monthly and per protocol diarrheal stools</rdfs:label>
     </owl:Class>
     
 
@@ -8511,8 +8475,8 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific diarrheal stool sample. Complete testing of stool samples is required to calculate this variable. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unique pathogen count, diarrheal stools</rdfs:label>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific per protocol diarrheal stool sample. Complete testing of stool samples is required to calculate this variable. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen count, per protocol diarrheal stools</rdfs:label>
     </owl:Class>
     
 
@@ -8530,8 +8494,8 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific monthly stool sample. Complete testing of stool samples is required to calculate this variable. Work up for detection of enteric pathogens was performed on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unique pathogen count, monthly stools</rdfs:label>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific analysis monthly stool sample. Complete testing of stool samples is required to calculate this variable. Work up for detection of enteric pathogens was performed on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen count, analysis monthly stools</rdfs:label>
     </owl:Class>
     
 
@@ -8549,8 +8513,8 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species (excluding Norovirus) identified in this specific stool sample. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unique pathogen (excluding NRV) count</rdfs:label>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species (excluding Norovirus) identified in this specific stool sample. Calculated for &quot;Analysis stool, monthly&quot; samples and all &quot;Per protocol diarrheal stool collection&quot; samples protocol-compliant diarrhea stool samples (including &quot;Analysis stool, diarrhea&quot; samples and also diarrhea stool samples collected after 14 study-defined diarrhea days), and requires complete testing. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen (excluding NRV) count, analysis monthly and per protocol diarrheal stools</rdfs:label>
     </owl:Class>
     
 
@@ -8644,7 +8608,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of all pathogen species except for Norovirus identified in this specific stool sample. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species (except for Norovirus) identified in this specific stool sample. Calculated for 1st monthly stool samples and 1st diarrheal stool samples, and requires complete testing. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen (excluding NRV) count</rdfs:label>
     </owl:Class>
     
@@ -9224,7 +9188,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0010985 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0010985">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -11368,23 +11332,6 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011146 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011146">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010035"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
-        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::ncflastdate</obo:EUPATH_0000755>
-        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
-        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">date of last contact with MAL-ED study. Source=PIDs. ..</obo:EUPATH_0001003>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable,derived</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Date of last contact for participants lost to follow-up.</obo:IAO_0000115>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Last contact date</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011147 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011147">
@@ -11427,7 +11374,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011154 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011154">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">17</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::adjfar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11448,7 +11395,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011155 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011155">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">24</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::adjrar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11469,7 +11416,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011156 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011156">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::tfrconc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11490,7 +11437,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011157 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011157">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::tfrcat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11508,7 +11455,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011158 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011158">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">26</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::adjzinc_mml</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11529,7 +11476,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011161 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011161">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::anemia</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11548,7 +11495,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011166 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011166">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">27</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::zinc_mml</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11569,7 +11516,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011172 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011172">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::hb_adj</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11590,7 +11537,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011173 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011173">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::highagp</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11609,7 +11556,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011174 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011174">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::highbll</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11628,7 +11575,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011175 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011175">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_iar::iarcat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_iar</obo:EUPATH_0001001>
@@ -11647,7 +11594,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011178 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011178">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowadjfar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11666,7 +11613,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011179 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011179">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowadjrar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11685,7 +11632,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011180 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011180">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowadjzinc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11704,7 +11651,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011190 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011190">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::sevanemia</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -11777,7 +11724,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011198 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011198">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_lac_mmols_per_l</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11797,7 +11744,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011199 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011199">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_lac_perexc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11815,7 +11762,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011202 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011202">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">14</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_man_mmols_per_l</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11835,7 +11782,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011203 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011203">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">15</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_man_exc_mg</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11945,7 +11892,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011215 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011215">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">18</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::d_lac_mg</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11965,7 +11912,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011216 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011216">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::d_man_mg</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -11985,7 +11932,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011217 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011217">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">22</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::datasheet</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12246,7 +12193,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011283 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011283">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">23</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::lab</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12264,7 +12211,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011284 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011284">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::lac_bin</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12282,7 +12229,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011285 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011285">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">16</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::lacexc_100</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12300,7 +12247,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011286 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011286">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_lmr</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12381,7 +12328,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011296 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011296">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::man_bin</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12399,7 +12346,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011297 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011297">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">17</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::manexc_100</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12524,7 +12471,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011331 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011331">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::no_lact_peak</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12542,7 +12489,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011332 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011332">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">21</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::no_mann_peak</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12804,7 +12751,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011404 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011404">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::zcontin_bc_lac</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12825,7 +12772,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011405 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011405">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::zcontin_bc_man</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -12952,7 +12899,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011439 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011439">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::zcontin_bc_lmr</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -13149,7 +13096,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011472 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011472">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -13175,7 +13122,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011475 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011475">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_lac_exc_mg</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -13195,7 +13142,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011476 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011476">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::lmr_bin</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -13213,7 +13160,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011477 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011477">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011797"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003043"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz::a_man_perexc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lmz</obo:EUPATH_0001001>
@@ -13269,7 +13216,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011480 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011480">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -15507,36 +15454,10 @@
     
 
 
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011795 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011795">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood test</rdfs:label>
-    </owl:Class>
-    
-
-
-    <!-- http://purl.obolibrary.org/obo/EUPATH_0011797 -->
-
-    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011797">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
-        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
-        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
-        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
-        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine test</rdfs:label>
-    </owl:Class>
-    
-
-
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011800 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011800">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">6</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -15913,7 +15834,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011849 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011849">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">18</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::farval1</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -15934,7 +15855,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011850 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011850">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">19</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::farval2</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16426,7 +16347,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011871 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011871">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">20</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::farvalmean</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16447,7 +16368,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011872 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011872">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowfar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16466,7 +16387,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011873 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011873">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowrar</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16485,7 +16406,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011874 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011874">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">12</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::lowzinc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16504,7 +16425,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011875 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011875">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">25</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::rarconc</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16525,7 +16446,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011876 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011876">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
@@ -16583,7 +16504,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011890 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011890">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">22</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::adjtfr</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -16604,7 +16525,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011891 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011891">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011795"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003040"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">13</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood::adjtfrcat</obo:EUPATH_0000755>
         <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mn_blood</obo:EUPATH_0001001>
@@ -17478,7 +17399,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011959 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011959">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
@@ -17574,7 +17495,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0011967 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011967">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
@@ -18022,6 +17943,26 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aggregated stool data</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/EUPATH_0011999 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0011999">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0011880"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull::safabt</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Participant</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1=penicillin; 2=cephalosporins; 3=sulfonamides; 4=macrolides; 5=tetracyclines; 6=fluoroquinolones; 7=unknown; 8=metronidazole; 9=other, original SAF data</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;10 unique values</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0000582</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Type of antibiotic used by the participant, as reported by the mother. Surveillance was conducted twice weekly for up to 3 years of age.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotics, caregiver report</rdfs:label>
     </owl:Class>
     
 
@@ -19464,7 +19405,7 @@
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
-        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of all pathogen species identified in this specific stool sample. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sum of unique pathogen species identified in this specific stool sample. Calculated for 1st monthly stool samples and 1st diarrheal stool samples, and requires complete testing. Whenever a participant produced at least 3 loose stools in a single day, diarrheal stool samples were collected before the end of the episode. Work up for detection of enteric pathogens was performed on diarrheal stool samples collected until 24 months of age (with a possible extension to 36 months of age) and on first monthly asymptomatic stool samples collected at 1-12, 15, 18, 21, and 24 months of age (with the option to test additional monthly stool samples to 36 months of age).</obo:IAO_0000115>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathogen count</rdfs:label>
     </owl:Class>
     
@@ -19567,7 +19508,7 @@
     <!-- http://purl.obolibrary.org/obo/EUPATH_0030117 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/EUPATH_0030117">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000724"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0003039"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
         <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
         <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifilter</obo:EUPATH_0001005>
@@ -19749,7 +19690,7 @@
     <!-- http://purl.obolibrary.org/obo/OBI_0001169 -->
 
     <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0001169">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0000310"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/EUPATH_0010981"/>
         <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8sites_diet5y::agedays</obo:EUPATH_0000755>
         <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bf2::agedays</obo:EUPATH_0000755>
@@ -19851,6 +19792,70 @@
         <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0011877</obo:EUPATH_0001006>
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool sample</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003039 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003039">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0000724</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stool microbiology test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003040 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003040">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0011795</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blood test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003043 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003043">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000056"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4</obo:EUPATH_0000274>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sample</obo:EUPATH_0001002>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">category</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0011797</obo:EUPATH_0001006>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urine test</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_0003073 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0003073">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OGMS_0000083"/>
+        <obo:EUPATH_0000274 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1</obo:EUPATH_0000274>
+        <obo:EUPATH_0000755 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull::saftemp</obo:EUPATH_0000755>
+        <obo:EUPATH_0001001 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">illnessfull</obo:EUPATH_0001001>
+        <obo:EUPATH_0001002 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Physical examination</obo:EUPATH_0001002>
+        <obo:EUPATH_0001003 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">temperature (oC) as measured by fieldworker, 0-99.9 C, original SAF data</obo:EUPATH_0001003>
+        <obo:EUPATH_0001004 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&gt;10 unique values</obo:EUPATH_0001004>
+        <obo:EUPATH_0001005 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">variable</obo:EUPATH_0001005>
+        <obo:EUPATH_0001006 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">EUPATH_0000110</obo:EUPATH_0001006>
+        <obo:EUPATH_0001008 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C</obo:EUPATH_0001008>
+        <obo:EUPATH_0001009 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://purl.obolibrary.org/obo/UO_0000027</obo:EUPATH_0001009>
+        <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
+        <obo:EUPATH_0001011 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</obo:EUPATH_0001011>
+        <obo:IAO_0000115 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The participant&apos;s temperature (originally reported in Celsius). The field worker measured the participant&apos;s temperature during the surveillance visit if the mother reported that the participant had a fever yesterday. If their temperature was above 39C, the participant was referred to the nearest health center for assessment and treatment. Surveillance was conducted twice weekly for up to 3 years of age.</obo:IAO_0000115>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Temperature</rdfs:label>
     </owl:Class>
     
 
@@ -20047,6 +20052,23 @@
         <obo:EUPATH_0001010 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MAL-ED 0-60m Cohort</obo:EUPATH_0001010>
         <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Birth date</rdfs:label>
     </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ISA_1">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ISA_Type</rdfs:label>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/ISA_2">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ISA_Parent</rdfs:label>
+    </rdf:Description>
 </rdf:RDF>
 
 

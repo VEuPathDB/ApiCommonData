@@ -60,6 +60,11 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+ integerArg({  name           => 'userDatasetId',
+	       descr          => 'For use with Schema=EDA_UD; this is the user_dataset_id',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
 
 
    booleanArg({name => 'isSimpleConfiguration',
@@ -228,6 +233,12 @@ sub loadInvestigation {
     
     foreach my $study (@$studies) {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
+
+      # add the user_dataset_id if we are in that mode
+      if(uc($schema) eq 'EDA_UD' && $self->getArg("userDatasetId")) {
+        $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
+      }
+
       unless($gusStudy->retrieveFromDB()){
         $gusStudy->submit; 
       }
@@ -492,13 +503,13 @@ sub loadNodes {
 
     if(++$nodeCount % 1000 == 0) {
       $self->getDb()->manageTransaction(0, 'commit');
-      $self->log("Loaded $nodeCount nodes");
+      #$self->log("Loaded $nodeCount nodes");
       $self->getDb()->manageTransaction(0, 'begin');
     }
   }
 
   $self->getDb()->manageTransaction(0, 'commit');
-  $self->log("Loaded $nodeCount nodes");
+  #$self->log("Loaded $nodeCount nodes");
 }
 
 sub addGeohash {
@@ -756,7 +767,7 @@ sub loadProcesses {
 
         if(++$processCount % 1000 == 0) {
           $self->getDb()->manageTransaction(0, 'commit');
-          $self->log("Loaded $processCount processes");
+          # $self->log("Loaded $processCount processes");
           $self->getDb()->manageTransaction(0, 'begin');
         }
       }

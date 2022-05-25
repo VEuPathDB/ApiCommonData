@@ -1,0 +1,484 @@
+﻿"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+record_id,prevalence_form,,text,"Record ID (do not use)",,,,,,,,,,,,,
+invname,prevalence_form,"<h4 style=""text-align:center;font-weight:bold;"">ICEMR Cambodia 2017</h4>
+<h4 style=""text-align:center;color:blue;font-weight:bold;"">ទំរង់កត់ត្រាការអង្កេតជំងឺគ្រុនចាញ់ / PREVALENCE FORM</h4>",text,"នាមខ្លួននិងនាមត្រកូលអ្នកអង្កេតការសិក្សារឺអ្នកសំភាស?
+What is the investigator name?",,,,,,,,y,,,,,
+visdat,prevalence_form,,text,"កាលបរិច្ឆេទការអង្កេតការសិក្សារឺការសំភាស?
+What is the visit date?",,,date_dmy,,,,,y,,,,," @TODAY @READONLY"
+subjid,prevalence_form,,text,"លេខកូដអ្នកជ្រើសរើសចូលរួមក្នុងការសិក្សា?
+What is the subject identifier?
+<span style=""font-weight: lighter; font-style:italic;"">[Refer to available list. Do NOT attribute the same identifier to another household once you've allocated it]</span>",,,numeric_nested_id_4d2d,,,y,,y,,,,,
+subjname,prevalence_form,,text,"មោះរបស់អ្្នកជ្រើសរើសចូលរួមក្នុងការសិក្សា?
+What is the name of the subject?",,,,,,y,,y,,,,,
+prev_dummy_text_1,prevalence_form,,descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">We are going to ask you questions related to malaria exposure. We are interested in the place you live and the measures you take to protect yourself from being bitten by mosquitoes.
+
+We will also ask questions about past and ongoing medical treatments, and take a small blood sample to look for the presence of malaria parasites.</div>",,,,,,,,,,,,,
+prev_dummy_text_2,prevalence_form,"ការធ្វើដំណើរចេញក្រៅភូមិ / Trips outside the village",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">Here we are interested by knowing where the subject has been to during his trip(s) away from the village over the last month. For each trip outside of the village, we would like to know about the place where the subject has been and for how long he stayed there.
+
+These questions are <b>not</b> related to the place where the subject usually work, as these will be asked later in the questionnaire.</div>",,,,,,,,,,,,,
+scleft1,prevalence_form,,radio,"តើអ្នកមានចាកចេញពីភូមិទេកាលពីខែមុនហើយអ្នកមានដេកយប់នៅទីនោះទេ?
+Has the subject left the village in the last month and spent at least a night away?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,,,RH,,,,
+dummy_text_3,prevalence_form,,descriptive,"<h4 style=""text-align:justify;"">Please enter some details about the places the subject has been to when he left the village. You can enter up to 5 different places in the fields below. Leave the remaining fields blank.
+
+More specific questions will be asked later in this form about going away from the village for work reasons.</h4>",,,,,,,"[scleft1] = '1'",,,,,,
+scleft1_place_01,prevalence_form,,text,"ឈ្មោះកន្លែងទី១ដែលអ្នកបានទៅ?
+(Location 1) What is the name of this place?",,,,,,,"[scleft1] = '1'",,,,,,
+scleft1_province_01,prevalence_form,,text,"ខេត្តរឺប្រទេសរបស់កន្លែងទី១នេះ?
+(Location 1) In which province or country is this place?",,,,,,,"[scleft1] = '1'",,RH,,,,
+scleft1_dur_01,prevalence_form,,radio,"តើអ្នកនៅទីកន្លែងទី១នោះយូរប៉ុន្មានដែរ?
+(Location 1) How long did the subject stay at this place?","1, ១យប់ (One night) | 2, ២ទៅ៣ថ្ងែ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣ អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, មួយខែ (1 month)",,,,,,"[scleft1] = '1'",,LV,,,,
+scleft1_place_02,prevalence_form,,text,"ឈ្មោះកន្លែងទី២ដែលអ្នកបានទៅ?
+(Location 2) What is the name of this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,,,,,
+scleft1_province_02,prevalence_form,,text,"ខេត្តរឺប្រទេសរបស់កន្លែងទី២នេ?
+(Location 2) In which province or country is this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,RH,,,,
+scleft1_dur_02,prevalence_form,,radio,"តើអ្នកនៅទីកន្លែងទី២នោះយូរប៉ុន្មានដែរ?
+(Location 2) How long did the subject stay at this place?","1, ១យប់ (One night) | 2, ២ទៅ៣ថ្ងែ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣ អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, មួយខែ (1 month)","Leave blank if not needed",,,,,"[scleft1] = '1'",,LV,,,,
+scleft1_place_03,prevalence_form,,text,"ឈ្មោះកន្លែងទី៣ដែលអ្នកបានទៅ?
+(Location 3) What is the name of this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,,,,,
+scleft1_province_03,prevalence_form,,text,"ខេត្តរឺប្រទេសរបស់កន្លែងទី៣នេះ?
+(Location 3) In which province or country is this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,RH,,,,
+scleft1_dur_03,prevalence_form,,radio,"តើអ្នកនៅទីកន្លែងទី៣នោះយូរប៉ុន្មានដែរ?
+(Location 3) How long did the subject stay at this place?","1, ១យប់ (One night) | 2, ២ទៅ៣ថ្ងែ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣ អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, មួយខែ (1 month)","Leave blank if not needed",,,,,"[scleft1] = '1'",,LV,,,,
+scleft1_place_04,prevalence_form,,text,"ឈ្មោះកន្លែងទី៤ដែលអ្នកបានទៅ?​
+(Location 4) What is the name of this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,,,,,
+scleft1_province_04,prevalence_form,,text,"ខេត្តរឺប្រទេសរបស់កន្លែងទី៤នេះ?​
+(Location 4) In which province or country is this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,RH,,,,
+scleft1_dur_04,prevalence_form,,radio,"តើអ្នកនៅទីកន្លែងទី៤នោះយូរប៉ុន្មានដែរ?
+(Location 4) How long did the subject stay at this place?","1, ១យប់ (One night) | 2, ២ទៅ៣ថ្ងែ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣ អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, មួយខែ (1 month)","Leave blank if not needed",,,,,"[scleft1] = '1'",,LV,,,,
+scleft1_place_05,prevalence_form,,text,"ឈ្មោះកន្លែងទី៥ដែលអ្នកបានទៅ?​
+(Location 5) What is the name of this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,,,,,
+scleft1_province_05,prevalence_form,,text,"ខេត្តរឺប្រទេសរបស់កន្លែងទី៥នេះ?
+(Location 5) In which province or country is this place?",,"Leave blank if not needed",,,,,"[scleft1] = '1'",,RH,,,,
+scleft1_dur_05,prevalence_form,,radio,"តើអ្នកនៅទីកន្លែងទី៥នោះយូរប៉ុន្មានដែរ?
+(Location 5) How long did the subject stay at this place?","1, ១យប់ (One night) | 2, ២ទៅ៣ថ្ងែ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣ អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, មួយខែ (1 month)","Leave blank if not needed",,,,,"[scleft1] = '1'",,LV,,,,
+prev_dummy_text_4,prevalence_form,"កន្លែងធ្វើការងារ / Work places",descriptive,"<div class=""blue"" style=""text-align:justify;color:blue;background-color:#E2EAFA;"">We are now going to ask you questions about the places where you have been for work in the last two months.
+
+For each place where you have visited, we will ask some details about how often you have been there and the protection measures you took to prevent malaria.</div>",,,,,,,,,,,,,
+scwork_places,prevalence_form,,checkbox,"តើអ្នកមានទៅនិងធ្វើការនៅទីកន្លែងដូចដែលបានរៀបរាប់ខាងក្រោមនេះទេកាលពី២ខែមុន?
+Did the subject go and work in any of these places in the last 2 months?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ព្រៃនៅក្បែរៗភូមិ (Nearby Forest) | 2, ព្រៃជ្រៅ (Deep Forest) | 3, ចំការកៅស៊ូ (Rubber plantation) | 4, ចំការចន្ទ័ទី (Cashew nut plantation) | 5, ចំការដំឡូង (Cassava field) | 6, ស្រែ (Rice field) | 99, កន្លែងណាមួយផ្សេងទៀត (Other) | 7, មិនបានទៅណាទេ (None)",,,,,,,,LV,,,,
+scwork_forest1_freq,prevalence_form,"ទីកន្លែងធ្វើការនៅព្រៃក្បែរៗភូមិ / Work places: nearby forest",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the nearby forest?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(1)] = '1'",,LV,,,,
+scwork_forest1_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the nearby forest?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(1)] = '1'",,LV,,,,
+scwork_forest1_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the nearby forest?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(1)] = '1'",,RH,,,,
+scwork_forest1_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the nearby forest?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(1)] = '1' and [scwork_forest1_night] = '1'",,LV,,,,
+scwork_forest1_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(1)] = '1' and [scwork_forest1_night] = '1' and [scwork_forest1_protect(99)] = '1'",,RH,,,,
+scwork_forest1_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the nearby forest?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(1)] = '1'",,RH,,,,
+scwork_forest1_with,prevalence_form,,checkbox,"ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the nearby forest with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(1)] = '1' and [scwork_forest1_alone] = '0'",,LV,,,,
+scwork_forest1_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(1)] = '1' and [scwork_forest1_alone] = '0' and [scwork_forest1_with(99)] = '1'",,RH,,,,
+scwork_forest1_invillage,prevalence_form,,radio,"តើព្រៃនៅក្បែរភូមិនេះនៅក្នុងភូមិ?
+Is the nearby forest in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(1)] = '1'",,RH,,,,
+scwork_forest1_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the nearby forest (min)?",,"Result in minutes",mesures,0,360,,"[scwork_places(1)] = '1' and [scwork_forest1_invillage] = '0'",,RH,,,,
+scwork_forest1_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(1)] = '1' and [scwork_forest1_invillage] = '0'",,RH,,,,
+scwork_forest2_freq,prevalence_form,"ទីកន្លែងធ្វើការនៅព្រៃជ្រៅ / Work places: deep forest",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the deep forest?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(2)] = '1'",,LV,,,,
+scwork_forest2_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the deep forest?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(2)] = '1'",,LV,,,,
+scwork_forest2_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the deep forest?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(2)] = '1'",,RH,,,,
+scwork_forest2_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the deep forest?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(2)] = '1' and [scwork_forest2_night] = '1'",,LV,,,,
+scwork_forest2_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(2)] = '1' and [scwork_forest2_night] = '1' and [scwork_forest2_protect(99)] = '1'",,RH,,,,
+scwork_forest2_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the deep forest?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(2)] = '1'",,RH,,,,
+scwork_forest2_with,prevalence_form,,checkbox,"​ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the deep forest with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(2)] = '1' and [scwork_forest2_alone] = '0'",,LV,,,,
+scwork_forest2_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(2)] = '1' and [scwork_forest2_alone] = '0' and [scwork_forest2_with(99)] = '1'",,RH,,,,
+scwork_forest2_invillage,prevalence_form,,radio,"តើព្រៃជ្រៅនេះនៅក្នុងភូមិ?
+Is the deep forest in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(2)] = '1'",,RH,,,,
+scwork_forest2_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the deep forest (min)?",,"Result in minutes",mesures,0,360,,"[scwork_places(2)] = '1' and [scwork_forest2_invillage] = '0'",,RH,,,,
+scwork_forest2_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(2)] = '1' and [scwork_forest2_invillage] = '0'",,RH,,,,
+scwork_rubber_freq,prevalence_form,"កន្លែងធ្វើការនៅចំការកៅស៊ូ / Work places: rubber plantation",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the rubber plantation?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(3)] = '1'",,LV,,,,
+scwork_rubber_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the rubber plantation?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(3)] = '1'",,LV,,,,
+scwork_rubber_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the rubber plantation?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(3)] = '1'",,RH,,,,
+scwork_rubber_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the rubber plantation?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(3)] = '1' and [scwork_rubber_night] = '1'",,LV,,,,
+scwork_rubber_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(3)] = '1' and [scwork_rubber_night] = '1' and [scwork_rubber_protect(99)] = '1'",,RH,,,,
+scwork_rubber_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the rubber plantation?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(3)] = '1'",,RH,,,,
+scwork_rubber_with,prevalence_form,,checkbox,"ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the rubber plantation with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(3)] = '1' and [scwork_rubber_alone] = '0'",,LV,,,,
+scwork_rubber_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(3)] = '1' and [scwork_rubber_alone] = '0' and [scwork_rubber_with(99)] = '1'",,RH,,,,
+scwork_rubber_invillage,prevalence_form,,radio,"តើចំការកៅស៊ូនេះនៅក្នុងភូមិ?
+Is the rubber plantation in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(3)] = '1'",,RH,,,,
+scwork_rubber_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the rubber plantation (min)?",,"Result in minutes",mesures,0,360,,"[scwork_places(3)] = '1' and [scwork_rubber_invillage] = '0'",,RH,,,,
+scwork_rubber_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(3)] = '1' and [scwork_rubber_invillage] = '0'",,RH,,,,
+scwork_cashew_freq,prevalence_form,"ទៅធ្វើការនៅចំការចន្ទ័ទី / Work places: cashew nut field",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the cashew nut field?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(4)] = '1'",,LV,,,,
+scwork_cashew_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the cashew nut field?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(4)] = '1'",,LV,,,,
+scwork_cashew_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the cashew nut field?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(4)] = '1'",,RH,,,,
+scwork_cashew_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the cashew nut field?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(4)] = '1' and [scwork_cashew_night] = '1'",,LV,,,,
+scwork_cashew_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(4)] = '1' and [scwork_cashew_night] = '1' and [scwork_cashew_protect(99)] = '1'",,RH,,,,
+scwork_cashew_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the cashew nut field?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(4)] = '1'",,RH,,,,
+scwork_cashew_with,prevalence_form,,checkbox,"ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the cashew nut field with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(4)] = '1' and [scwork_cashew_alone] = '0'",,LV,,,,
+scwork_cashew_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(4)] = '1' and [scwork_cashew_alone] = '0' and [scwork_cashew_with(99)] = '1'",,RH,,,,
+scwork_cashew_invillage,prevalence_form,,radio,"តើចំការចន័្ទទីនេះនៅក្នុងភូមិ?
+Is the cashew nut field in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(4)] = '1'",,RH,,,,
+scwork_cashew_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the cashew nut field (min)?",,"Result in minutes",integer,0,360,,"[scwork_places(4)] = '1' and [scwork_cashew_invillage] = '0'",,RH,,,,
+scwork_cashew_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(4)] = '1' and [scwork_cashew_invillage] = '0'",,RH,,,,
+scwork_cassava_freq,prevalence_form,"ទីកន្លែងធ្វើការនៅចំការដំឡួង / Work places: cassava field",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the cassava field?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(5)] = '1'",,LV,,,,
+scwork_cassava_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the cassava field?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(5)] = '1'",,LV,,,,
+scwork_cassava_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the cassava field?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(5)] = '1'",,RH,,,,
+scwork_cassava_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the cassava field?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(5)] = '1' and [scwork_cassava_night] = '1'",,LV,,,,
+scwork_cassava_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(5)] = '1' and [scwork_cassava_night] = '1' and [scwork_cassava_protect(99)] = '1'",,RH,,,,
+scwork_cassava_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the cassava field?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(5)] = '1'",,RH,,,,
+scwork_cassava_with,prevalence_form,,checkbox,"ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the cassava field with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(5)] = '1' and [scwork_cassava_alone] = '0'",,LV,,,,
+scwork_cassava_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(5)] = '1' and [scwork_cassava_alone] = '0' and [scwork_cassava_with(99)] = '1'",,RH,,,,
+scwork_cassava_invillage,prevalence_form,,radio,"តើចំការដំឡូងនេះនៅក្នុងភូមិ? 
+Is the cassava field in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(5)] = '1'",,RH,,,,
+scwork_cassava_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the cassava field (min)?",,"Result in minutes",integer,0,360,,"[scwork_places(5)] = '1' and [scwork_cassava_invillage] = '0'",,RH,,,,
+scwork_cassava_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(5)] = '1' and [scwork_cassava_invillage] = '0'",,RH,,,,
+scwork_rice_freq,prevalence_form,"ទីកន្លែងធ្វើការនៅស្រែ / Work places: rice field",radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit the rice field?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(6)] = '1'",,LV,,,,
+scwork_rice_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went to the rice field?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(6)] = '1'",,LV,,,,
+scwork_rice_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night in the rice field?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(6)] = '1'",,RH,,,,
+scwork_rice_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night in the rice field?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellent) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(6)] = '1' and [scwork_rice_night] = '1'",,LV,,,,
+scwork_rice_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(6)] = '1' and [scwork_rice_night] = '1' and [scwork_rice_protect(99)] = '1'",,RH,,,,
+scwork_rice_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go alone in the rice field?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(6)] = '1'",,RH,,,,
+scwork_rice_with,prevalence_form,,checkbox,"ប្រសិនបើមិនទៅម្នាក់ឯងដូច្នេះតើអ្នកទៅជាមួយអ្នកណា?
+If NO, who did the subject go to the rice field with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(6)] = '1' and [scwork_rice_alone] = '0'",,LV,,,,
+scwork_rice_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(6)] = '1' and [scwork_rice_alone] = '0' and [scwork_rice_with(99)] = '1'",,RH,,,,
+scwork_rice_invillage,prevalence_form,,radio,"តើវាលស្រែនេះនៅក្នុងភូមិ?  
+Is the rice field in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(6)] = '1'",,RH,,,,
+scwork_rice_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach the rice field (min)?",,"Result in minutes",integer,0,360,,"[scwork_places(6)] = '1' and [scwork_rice_invillage] = '0'",,RH,,,,
+scwork_rice_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(6)] = '1' and [scwork_rice_invillage] = '0'",,RH,,,,
+scwork_other_oth,prevalence_form,"ទីកន្លែងធ្វើការណាមួយផ្សេងទៀត / Work places: other",text,"តើទីកន្លែងនោះជាប្រភេទទីកន្លែងយ៉ាងដូចម្តេច?
+What is that place?",,,,,,,"[scwork_places(99)] = '1'",,,,,,
+scwork_other_freq,prevalence_form,,radio,"តើអ្នកទៅទីនោះប៉ុន្មានដងដែរ?
+How often did the subject visit this place?","1, រៀងរាល់ថ្ងៃ (Daily) | 2, ២ទៅ៣ដងក្នុង១អាទិត្យ (Several times a week) | 3, ១ដងក្នុង១អាទិត្យ (Once a week) | 4, ២ទៅ៣ដង​ក្នុង១ខែ (Several times a month) | 5, ១​ដងក្នុង១ខែ (Once a month) | 6, ១ដង (Once)",,,,,,"[scwork_places(99)] = '1'",,LV,,,,
+scwork_other_dur,prevalence_form,,radio,"ជាមធ្យមតើអ្នកស្នាក់នៅទីនោះយូរប៉ុន្មានដែរ?
+What was the average time the subject spent each time he went there?","1, ១ថ្ងែ (One day) | 2, ២ទៅ៣ថ្ងៃ (តិចជាង១អាទិត្យ) (Several days (less than a week)) | 3, ២ទៅ៣អាទិត្យ (តិចជាង១ខែ) (Several weeks (less than a month)) | 4, ១ខែ (1 month) | 5, ២ខែរឺច្រើនជាង (2 months or more)",,,,,,"[scwork_places(99)] = '1'",,LV,,,,
+scwork_other_night,prevalence_form,,radio,"តើអ្នកមានដេកយប់នៅទីនោះទេ?
+Did the subject stay the night there?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scwork_places(99)] = '1'",,RH,,,,
+scwork_other_protect,prevalence_form,,checkbox,"តើអ្នកមានការពារមិនអោយមូសខាំទេពេលដែលអ្នកដេកយប់នៅទីនោះ?
+Did the subject use any of the following malaria protection when staying the night there?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","1, ដេកក្នុងមុង (Bed net) | 2, ដេកក្នុងអង្រឹង (Hammock) | 3, ប្រើថ្នាំបាញ់មូស (Repellant) | 99, វិធីការពារផ្សេងទៀត (Other) | 4, មិនមានប្រើប្រាស់អ្វីដើម្បីការពារមូសនោះទេ (None)",,,,,,"[scwork_places(99)] = '1' and [scwork_other_night] = '1'",,LV,,,,
+scwork_other_protect_oth,prevalence_form,,text,"សូមបញ្ជាក់វិធីការពារផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[scwork_places(99)] = '1' and [scwork_other_night] = '1' and [scwork_other_protect(99)] = '1'",,RH,,,,
+scwork_other_alone,prevalence_form,,radio,"តើអ្នកទៅទីនោះតែម្នាក់ឯង?
+Did the subject go there alone?","1, ទៅតែម្នាក់ឯង (Yes) | 0, មិនទៅម្នាក់ឯងទេ (No)",,,,,,"[scwork_places(99)] = '1'",,RH,,,,
+scwork_other_with,prevalence_form,,checkbox,"If NO, who did the subject go there with?","1, ទៅជាមួយញាតិមិត្តជិតដិត (ប្រពន្ធនិងកូន) (Close relatives (wife and children)) | 2, ទៅជាមួយញាតិមិត្ត (មិត្តភ័ក្តិ) (Relatives (friends)) | 3, ទៅជាមួយមិត្តរួមការងារ (Coworkers) | 99, ទៅជាមួយអ្នកផ្សេងទៀត (Other)",,,,,,"[scwork_places(99)] = '1' and [scwork_other_alone] = '0'",,LV,,,,
+scwork_other_with_oth,prevalence_form,,text,"សូមបញ្ជាក់ប្រសិនបើអ្នកទៅជាមួយអ្នកផ្សេងទៀត
+If ""Other"", specify",,,,,,,"[scwork_places(99)] = '1' and [scwork_other_alone] = '0' and [scwork_other_with(99)] = '1'",,RH,,,,
+scwork_other_invillage,prevalence_form,,radio,"តើទីកន្លែងនេះនៅក្នុងភូមិ?
+Is this place in the village area?","1, នៅក្នុងភូមិ (Yes) | 0, មិននៅក្នុងភូមិទេ (No)",,,,,,"[scwork_places(99)] = '1'",,RH,,,,
+scwork_other_dist,prevalence_form,,text,"ប្រសិនបើមិននៅក្នុងភូមិដូច្នេះតើអ្នកចំណាយពេលប៉ុន្មានដើម្បីធ្វើដំណើរទៅដល់ទីនោះ?
+If NO, how long does it take for the subject to reach this place (min)?",,"Result in minutes",integer,0,360,,"[scwork_places(99)] = '1' and [scwork_other_invillage] = '0'",,RH,,,,
+scwork_other_distu,prevalence_form,,radio,"ហើយតាមរយះពេលខាងលើនេះតើអ្នកធ្វើដំណើរតាមមធ្យោបាយអ្វី?
+If NO, what is the transportation method used for the above duration?","1, ជិះម៉ូតូ (Motorbike / motor vehicle) | 2, ដើរថ្មើជើង (Walking)",,,,,,"[scwork_places(99)] = '1' and [scwork_other_invillage] = '0'",,RH,,,,
+scin_outdoors,prevalence_form,"ការប្រើប្រាស់មុង / Bed nets usage",radio,"តើអ្នកដេកក្នុងផ្ទះរឺក្រៅផ្ទះកាលពីយប់ម៉ិញ?
+Did the subject sleep indoors (in the household) or outdoors last night?","1, Indoors | 2, Outdoors",,,,,,,,RH,,,,
+scin_time,prevalence_form,,dropdown,"តើម៉ោងប៉ុន្មានដែលអ្នកបានមកដល់ផ្ទះកាលពីយប់ម៉ិញ?
+At what time did the subject go into the house last night?","16, 4:00pm | 17, 5:00pm | 18, 6:00pm | 19, 7:00pm | 20, 8:00pm | 21, 9:00pm | 22, 10:00pm | 23, 11:00pm | 00, 12:00am | 01, 1:00am | 02, 2:00am",,autocomplete,,,,"[scin_outdoors] = '1'",,RH,,,,
+scsleep_time,prevalence_form,,dropdown,"តើម៉ោងប៉ុន្មានដែលអ្នកចូលដេកកាលពីយប់ម៉ិញ?
+At what time did the subject go to bed last night?","16, 4:00pm | 17, 5:00pm | 18, 6:00pm | 19, 7:00pm | 20, 8:00pm | 21, 9:00pm | 22, 10:00pm | 23, 11:00pm | 00, 12:00am | 01, 1:00am | 02, 2:00am",,autocomplete,,,,"[scin_outdoors] = '1'",,RH,,,,
+scsleep_repellent,prevalence_form,,radio,"ជាធម្មតាតើអ្នកមានប្រើថ្នាំបាញ់មូសទេពេលដែលអ្នកចូលដេក?
+Does the subject usually spray repellent when he goes to sleep?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,,,RH,,,,
+scsleeplast_net,prevalence_form,,radio,"តើអ្នកមានដេកក្នុងមុងទេកាលពីយប់ម៉ិញ?
+Did the subject sleep under a mosquito net last night?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,,,RH,,,,
+scsleep_net_treat,prevalence_form,,radio,"ប្រសិនបើមានតើមុងនោះមានប្រើថ្នាំការពារមូសទេ?
+If YES, was it a treated net?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[scsleeplast_net] = '1'",,RH,,,,
+scsleep_net_age,prevalence_form,,radio,"ប្រសិនបើដេកក្នុងមុងនោះតើអ្នកបានដេកក្នុងមុងនេះយូរប៉ុន្មានមកហើយ?
+If YES, for how long has the subject been sleeping under <ur>this</u> mosquito net?","1, ​តិចជាង៦ខែ (For the last 6 months or less) | 2, ១ឆ្នាំមកហើយ (For the last year) | 3, ២ឆ្នាំរឺច្រើនជាង២ឆ្នាំមកហើយ (For the last 2 years or more)",,,,,,"[scsleeplast_net] = '1'",,LV,,,,
+scsleep_hammock,prevalence_form,,radio,"ប្រសិនបើមិនបានដេកក្នុងមុងតើអ្នកដេកក្នុងអង្រឹងកាលពីយប់ម៉ិញ?
+If NO, did the subject sleep in a hammock last night?","1, ដេកក្នុងអង្រឹង (Yes) | 0, មិនដេកក្នុងអង្រឹងទេ (No)",,,,,,"[scsleeplast_net] = '0'",,RH,,,,
+scsleep_open,prevalence_form,,radio,"ប្រសិនបើមិនបានដេកក្នុងអង្រឹងដូច្នេះអ្នកដេកដោយមិនមានការការពារមិនអោយមូសខាំទេកាលពីយប់ម៉ិញ?
+If NO, did the subject sleep without any mosquito protection last night?","1, មិនមានការការពារ (Yes) | 0, មានការការពារ (No)",,,,,,"[scsleeplast_net] = '0' and [scsleep_hammock] = '0'",,RH,,,,
+scsleep_net,prevalence_form,,radio,"តើអ្នកមានដេកក្នុងមុងញឹកញាប់ទេ?
+How often does the subject sleep under a mosquito net?","1, ជួនកាលដេកជួនកាលអត់ (On and off) | 2, ជារៀងរាល់យប់ (Every night) | 0, ​មិនដែលដេកក្នុងមុងទេ (Never)",,,,,,,,LV,,,,
+cmantimal,prevalence_form,"គ្រុនចាញ់ដែលបានប្រើសំរាប់ការព្យបាលជំងឺគ្រុនចាញ់ក្នុងពេលថ្មីៗនេះ / Recent use of antimalarial medications",radio,"តើអ្នកមានប្រើថ្នាំគ្រុនចាញ់ទេកាលពី២ខែមុន?
+Were any antimalarial medications taken by the subject in the last two months?","1, មានប្រើ (Yes) | 0, មិនមានប្រើទេ (No) | 98, មិនដឹង (Don't know)",,,,,,,,RH,,,,
+cmantimal_name,prevalence_form,,checkbox,"ប្រសិនបើអ្នកមានប្រើតើថ្នាំខាងក្រោមនេះណាខ្លះដែលអ្នកបានប្រើ?
+[ចំលើយអាចមានច្រើនជាង១]
+If YES, what were the medications?
+<span style=""font-weight: lighter; font-style:italic;"">[Multiple answers possible]</span>","01, Artesunate-Mefloquine | 02, Dihydroartemisinin-Piperaquine | 03, Artesunate injection | 04, Quinine injection | 05, Amodiaquine | 06, Artemether injection | 07, Doxycycline | 08, Mefloquine injection | 09, Primaquine | 10, Quinine tablet | 11, Tetracycline | 98, មិនដឹង (Don't know) | 99, ថ្នាំណាមួយផ្សេងទៀត (Other)",,,,,,"[cmantimal] = '1'",,LV,,,,
+cmantimal_name_oth,prevalence_form,,text,"សូមបញ្ជាក់ថ្នាំណាមួយផ្សេងទៀតប្រសិនបើមាន
+If ""Other"", specify",,,,,,,"[cmantimal_name(99)] = '1'",,RH,,,,
+cmantimal_01_stdat,prevalence_form,,text,"តើអ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Artesunate-Mefloquine""?",,,,,,,"[cmantimal_name(01)] = '1'",,RH,,,,
+cmantimal_02_stdat,prevalence_form,,text,"តើអ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Dihydroartemisinin-Piperaquine""?",,,,,,,"[cmantimal_name(02)] = '1'",,RH,,,,
+cmantimal_03_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Artesunate injection""?",,,,,,,"[cmantimal_name(03)] = '1'",,RH,,,,
+cmantimal_04_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Quinine injection""?",,,,,,,"[cmantimal_name(04)] = '1'",,RH,,,,
+cmantimal_05_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Amodiaquine""?",,,,,,,"[cmantimal_name(05)] = '1'",,RH,,,,
+cmantimal_06_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Arthemeter injection""?",,,,,,,"[cmantimal_name(06)] = '1'",,RH,,,,
+cmantimal_07_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Doxycycline""?",,,,,,,"[cmantimal_name(07)] = '1'",,RH,,,,
+cmantimal_08_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Mefloquine injection""?",,,,,,,"[cmantimal_name(08)] = '1'",,RH,,,,
+cmantimal_09_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Primaquine""?",,,,,,,"[cmantimal_name(09)] = '1'",,RH,,,,
+cmantimal_10_stdat,prevalence_form,,text,"អ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Quinine tablet""?",,,,,,,"[cmantimal_name(10)] = '1'",,RH,,,,
+cmantimal_11_stdat,prevalence_form,,text,"តើអ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""Tetracycline""?",,,,,,,"[cmantimal_name(11)] = '1'",,RH,,,,
+cmantimal_98_stdat,prevalence_form,,text,"​តើអ្នកប្រើថ្នាំគ្រុនចាញ់ដែលអ្នកមិនស្គាល់នេះនៅពេលណាដែរ?
+What was the start date of the unknown medication?",,,,,,,"[cmantimal_name(98)] = '1'",,RH,,,,
+cmantimal_99_stdat,prevalence_form,,text,"តើអ្នកប្រើថ្នាំគ្រុនចាញ់នេះនៅពេលណាដែរ?
+What was the start date of the medication ""[cmantimal_name_oth]""?",,,,,,,"[cmantimal_name(99)] = '1'",,RH,,,,
+cmyn,prevalence_form,,radio,"តើអ្នកមានព្យាបាលជាមួយថ្នាំអ្វី ផ្សេងទៀតដែលមិនមែនជាថ្នាំគ្រុនចាញ់ទេកាលពី២ខែមុន?
+Were any other medications taken?","1, មានប្រើ (Yes) | 0, មិនមានប្រើទេ (No)",,,,,,,,RH,,,,
+cmtrt,prevalence_form,,text,"ប្រសិនបើមានប្រើនោះតើអ្នកប្រើរយះពេលប៉ុន្មានដែរ?
+If YES, what was the term(s) for the medication taken?",,,,,,,"[cmyn] = '1'",,RH,,,,
+sick_recent,prevalence_form,"ប្រវត្តិស្ថានភាពសុខភាពរបស់អ្នកជំងឺក្នុងពេលថ្មីៗនេះ / Recent medical history",radio,"កាលពី១ខែមុនតើអ្នកមានស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់ទេ?
+Has the subject sought treatment for any illness in the last month?","1, Yes | 0, No",,,,,,,,RH,,,,
+sick_recent_location,prevalence_form,,radio,"ប្រសិនបើអ្នកមានស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់ អញ្ចឹងតើអ្នកបានទៅស្វែងរកការព្យាបាលនោះនៅទីណា?
+If YES, where did the subject go?","1, ពេទ្យស្ម័គ្រចិត្តព្យាបាលជំងឺគ្រុនចាញ់តាមភូមិ (VMW) | 2, មណ្ឌលសុខភាព (Health Center) | 3, ប៉ុស្តសុខភាព (Health post) | 4, កន្លែងលក់ថ្នាំតាមភូមិ (Local Pharmacy) | 5, ពេទ្យឯកជន (Private Clinic) | 6, មនី្ទរពេទ្យ (Hospital) | 99, កន្លែងព្យាបាលណាមួយផ្សេងទៀត (Other)",,,,,,"[sick_recent] = '1'",,LV,,,,
+sick_recent_location_oth,prevalence_form,,text,"សូមបញ្ជាក់កន្លែងព្យាបាលណាមួយផ្សេងទៀតនោះ
+If ""Other"", specify",,,,,,,"[sick_recent] = '1' and [sick_recent_location] = '99'",,RH,,,,
+sick_recent_dist,prevalence_form,,text,"ប្រសិនបើអ្នកមានស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់អញ្ចឹងតើអ្នកចំណាយពេលវេលាប៉ុន្មាន(ជានាទី)ដើម្បីធ្វើដំណើរពីផ្ទះរបស់អ្នកទៅដល់ទីនោះ?(សំនួរនេះនឹងសួរតែក្នុងករណីដែលទីកន្លែងព្យាបាលដែលអ្នកទៅនោះខុសពីទីកន្លែងព្យាបាលក្នុងសំនួរទី១)
+If YES, how long did it take for the subject to reach there from his household (min)?",,"Result in minutes",integer,0,380,,"[sick_recent] = '1'",,RH,,,,
+sick_recent_distu,prevalence_form,,radio,"ប្រសិនបើអ្នកមានស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់អញ្ចឹងតើអ្នកទៅទីនោះដោយរបៀបណា? (សំនួរនេះនឹងសួរតែក្នុងករណីដែលទីកន្លែងព្យាបាលដែលអ្នកទៅនោះខុសពីទីកន្លែងព្យាបាលក្នុងសំនួរទី១)
+If YES, what transportation method did the subject use?","1, ម៉ូតូ (Motorbike) | 2, ឡាន (Car) | 3, ដើរថ្មើរជីង (Foot) | 99, តាមមធ្យោបាយណាមួយផ្សេងទៀត (Other)",,,,,,"[sick_recent] = '1'",,LV,,,,
+sick_recent_distu_other,prevalence_form,,text,"សូមបញ្ជាក់មធ្យោបាយណាមួយផ្សេងទៀតនោះ 
+If ""Other"", specify",,,,,,,"[sick_recent] = '1' and [sick_recent_distu] = '99'",,RH,,,,
+sick_recent_usual_1,prevalence_form,,radio,"ប្រសិនបើអ្នកស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់នៅទីនោះអញ្ចឹងតើអ្នកនិងសមាជិកគ្រួសាររបស់អ្នកទៅទីនោះជាញឹកញាប់នៅពេលដែលអ្នកនិងសមាជិកគ្រួសាររបស់អ្នកឈឺ?
+If YES, does the subject (or his/her family) usually go there when they are feeling sick?","1, មាន (Yes) | 0, មិនមាន (No)",,,,,,"[sick_recent] = '1'",,RH,,,,
+sick_recent_usual_2,prevalence_form,,radio,"ប្រសិនបើអ្នកមិនស្វែងរកការព្យាបាលជំងឺគ្រុនចាញ់នៅទីនោះអញ្ចឹងតើអ្នកនិងសមាជិកគ្រួសាររបស់អ្នកទៅទីណាវិញនៅពេលដែលអ្នកនិងសមាជិកគ្រួសាររបស់អ្នកឈឺ?
+If NO, where does the subject (or his family) usually go when they are feeling sick?","1, ពេទ្យស្ម័គ្រចិត្តព្យាបាលជំងឺគ្រុនចាញ់តាមភូមិ (VMW) | 2, មណ្ឌលសុខភាព (Health Center) | 3, ប៉ុស្តសុខភាព (Health post) | 4, កន្លែងលក់ថ្នាំតាមភូមិ (Local Pharmacy) | 5, ពេទ្យឯកជន (Private Clinic) | 6, មនី្ទរពេទ្យ (Hospital) | 99, កន្លែងព្យាបាលណាមួយផ្សេងទៀត (Other)",,,,,,"[sick_recent] = '1' and [sick_recent_usual_1] = '0'",,LV,,,,
+sick_recent_usual_2_oth,prevalence_form,,text,"សូមបញ្ជាក់កន្លែងព្យាបាលណាមួយផ្សេងទៀតនោះ
+If ""Other"", specify",,,,,,,"[sick_recent] = '1' and [sick_recent_usual_1] = '0' and [sick_recent_usual_2] = '99'",,RH,,,,
+sick_today,prevalence_form,"ព៌តមានទាក់ទងទៅនឹងរោគសញ្ញាជំងឺរបស់អ្នកជំងឺ / Clinical informations",radio,"តើអ្នកមានឈឺទេថ្ងៃនេះ?
+Is the subject sick today?","1, មានឈឺ (Yes) | 0, មិនមានឈឺទេ (No)",,,,,,,,RH,,,,
+fever_today,prevalence_form,,radio,"តើអ្នកមានក្តៅខ្លួនទេថ្ងៃនេះ?
+Does the subject have a fever today?","1, មានក្តៅខ្លួន (Yes) | 0, មិនមានក្តៅខ្លួនទេ (No)",,,,,,,,RH,,,,
+fever_last2days,prevalence_form,,radio,"តើអ្នកមានក្តៅខ្លួនទេកាលពី២ថ្ងៃមុន?
+Has the subject had a fever in the last two days?","1, មានក្តៅខ្លួន  (Yes) | 0, មិនមានក្តៅខ្លួនទេ (No)",,,,,,,,RH,,,,
+temp,prevalence_form,,text,"សីតុណ្ហភាពរបស់អ្នកដែលជ្រើសរើសចូលរួមក្នុងការសិក្សានេះ?
+What is the subject axillary temperature (°C)?",,,mesures,30,45,,,,RH,,,,
+rdtres,prevalence_form,,radio,"លទ្ធផលតេស្តរហ័ស
+RDT result
+<span style=""font-weight: lighter; font-style:italic;"">[Only in case of <u>fever</u> or <u>history of fever</u>]</span>","1, Positive P. falciparum | 2, Positive P. vivax | 3, Positive P. falciparum + P. vivax | 0, Negative",,,,,,"[sick_today] = '1' or [fever_today] = '1' or [fever_last2days] = '1' or [temp] >= 37.5",,LV,,,,
+hb,prevalence_form,,text,"អេម៉ូគ្លូប៊ីនរបស់អ្នកដែលជ្រើសរើសចូលរួមក្នុងការសិក្សានេះ
+What is the subject's haemoglobin level (g/dL)?
+<span style=""font-weight: lighter; font-style:italic;"">[Use the Masimo Rad-57 or HemoCue device]</span>",,,mesures,0,20,,,,RH,,,,
+referral,prevalence_form,,radio,"តើអ្នកមានធ្លាប់ត្រូវបានគេបញ្ជូនទៅគ្លីនិកណាមួយទេ?
+Has the subject been referred to the clinic?","1, ធ្លាប់ត្រូវបានបញ្ជូន (Yes) | 0, មិនធ្លាប់ត្រូវបានបញ្ជូនទេ (No)",,,,,,,,RH,,,,
+referral_location,prevalence_form,,text,"ប្រសិនបើធ្លាប់បានបញ្ជូនតើគ្លីនិកនោះឈ្មោះអ្វីដែរ?
+If YES, what is the name of the referral facility?",,,,,,,"[referral] = '1'",,RH,,,,
+inv_comments,prevalence_form,,notes,"Interviewer comments or observations",,,,,,,,,RH,,,,
+prev_dummy_text_5,prevalence_form,,descriptive,"<h4 style=""text-align:center;"">Please thank the participant. 
+
+ត្រូវចាំថាត្រូវប្តូរទម្រង់បែបបទកត់ត្រាទិន្នន័យនេះទៅជា ""Unverified""ហើយបន្ទាប់មកធ្វើការរក្សា ទុកទិន្នន័យដោយប្រើប៊ូតុង ""Save Record"" ខាងក្រោម
+Remember to change the form status to ""<b>Unverified</b>"" and then save the data by using the ""<b>Save Record</b>"" button below</h4>",,,,,,,,,,,,,
+mb_px_lm_n_asexual,malaria_serology,"<h3 style=""text-align:center;font-weight:bold;"">Light Microscopy Results</h3>
+<h4 style=""text-align:center;font-weight:bold;"">This section is READ-ONLY and will contain placeholders to import results of the LM reads</h4>",text,"LM Result: Number of asexual stages of parasite on slide",,,number,0,,,,,,,,," @READONLY"
+mb_px_lm_n_sexual,malaria_serology,,text,"LM Result: Number of sexual stages of parasite on slide",,,number,0,,,,,,,,," @READONLY"
+mb_px_lm_n_wbc,malaria_serology,,text,"LM Result: Number of white blood cells on slide",,,number,0,,,,,,,,," @READONLY"
+mb_px_lm_parasitaemia_asexual,malaria_serology,,calc,"LM Result: Parasitaemia derived as per WHO's formula N_asexual * 8000 / N_wbc (asexual stages)","[mb_px_lm_n_asexual] * 8000 / [mb_px_lm_n_wbc]",,,,,,,,,,,," @READONLY"
+mb_px_lm_parasitaemia_sexual,malaria_serology,,calc,"LM Result: Parasitaemia derived as per WHO's formula N_sexual * 8000 / N_wbc (sexual stages)","[mb_px_lm_n_sexual] * 8000 / [mb_px_lm_n_wbc]",,,,,,,,,,,," @READONLY"
+mb_pf_lm_res,malaria_serology,,radio,"LM Result: <i>P. falciparum</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_pv_lm_res,malaria_serology,,radio,"LM Result: <i>P. vivax</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_pm_lm_res,malaria_serology,,radio,"LM Result: <i>P. malariae</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_po_lm_res,malaria_serology,,radio,"LM Result: <i>P. ovale</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_qpcr_assay_plate,malaria_serology,"<h3 style=""text-align:center;font-weight:bold;"">qPCR Results</h3>
+<h4 style=""text-align:center;font-weight:bold;"">This section is READ-ONLY and will contain placeholders to import results of the qPCR assay</h4>",text,"qPCR assay Plate ID",,,,,,,,,,,,," @READONLY"
+mb_qpcr_assay_well,malaria_serology,,text,"qPCR assay Well (within Plate)",,,,,,,,,,,,," @READONLY"
+mb_pf_qpcr_res,malaria_serology,,radio,"qPCR Result : <i>P. falciparum</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_pv_qpcr_res,malaria_serology,,radio,"qPCR Result : <i>P. vivax</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_pm_qpcr_res,malaria_serology,,radio,"qPCR Result : <i>P. malariae</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_po_qpcr_res,malaria_serology,,radio,"qPCR Result : <i>P. ovale</i> detection","1, Positive | 0, Negative",,,,,,,,RH,,,," @READONLY"
+mb_sero_assay_plate,malaria_serology,"<h3 style=""text-align:center;font-weight:bold;"">IgG Measurements</h3>
+<h4 style=""text-align:center;font-weight:bold;"">This section is READ-ONLY and will contain placeholders to import results of the serological assay</h4>",text,"Serological assay Plate ID",,,,,,,,,,,,," @READONLY"
+mb_sero_assay_well,malaria_serology,,text,"Serological assay Well (within Plate)",,,,,,,,,,,,," @READONLY"
+mb_l01_plasmodb_id,malaria_serology,,text,"L01: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l01_internal_id,malaria_serology,,text,"L01: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l01_annotation,malaria_serology,,text,"L01: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l01_construct,malaria_serology,,text,"L01: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l01_ig_type,malaria_serology,,text,"L01: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l01_measurement_platform,malaria_serology,,text,"L01: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l01_measurement_type,malaria_serology,,text,"L01: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l01_measurement_value,malaria_serology,,text,"L01: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l02_plasmodb_id,malaria_serology,,text,"L02: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l02_internal_id,malaria_serology,,text,"L02: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l02_annotation,malaria_serology,,text,"L02: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l02_construct,malaria_serology,,text,"L02: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l02_ig_type,malaria_serology,,text,"L02: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l02_measurement_platform,malaria_serology,,text,"L02: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l02_measurement_type,malaria_serology,,text,"L02: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l02_measurement_value,malaria_serology,,text,"L02: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l07_plasmodb_id,malaria_serology,,text,"L07: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l07_internal_id,malaria_serology,,text,"L07: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l07_annotation,malaria_serology,,text,"L07: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l07_construct,malaria_serology,,text,"L07: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l07_ig_type,malaria_serology,,text,"L07: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l07_measurement_platform,malaria_serology,,text,"L07: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l07_measurement_type,malaria_serology,,text,"L07: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l07_measurement_value,malaria_serology,,text,"L07: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l12_plasmodb_id,malaria_serology,,text,"L12: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l12_internal_id,malaria_serology,,text,"L12: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l12_annotation,malaria_serology,,text,"L12: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l12_construct,malaria_serology,,text,"L12: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l12_ig_type,malaria_serology,,text,"L12: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l12_measurement_platform,malaria_serology,,text,"L12: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l12_measurement_type,malaria_serology,,text,"L12: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l12_measurement_value,malaria_serology,,text,"L12: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l18_plasmodb_id,malaria_serology,,text,"L18: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l18_internal_id,malaria_serology,,text,"L18: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l18_annotation,malaria_serology,,text,"L18: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l18_construct,malaria_serology,,text,"L18: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l18_ig_type,malaria_serology,,text,"L18: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l18_measurement_platform,malaria_serology,,text,"L18: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l18_measurement_type,malaria_serology,,text,"L18: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l18_measurement_value,malaria_serology,,text,"L18: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l19_plasmodb_id,malaria_serology,,text,"L19: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l19_internal_id,malaria_serology,,text,"L19: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l19_annotation,malaria_serology,,text,"L19: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l19_construct,malaria_serology,,text,"L19: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l19_ig_type,malaria_serology,,text,"L19: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l19_measurement_platform,malaria_serology,,text,"L19: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l19_measurement_type,malaria_serology,,text,"L19: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l19_measurement_value,malaria_serology,,text,"L19: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l23_plasmodb_id,malaria_serology,,text,"L23: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l23_internal_id,malaria_serology,,text,"L23: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l23_annotation,malaria_serology,,text,"L23: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l23_construct,malaria_serology,,text,"L23: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l23_ig_type,malaria_serology,,text,"L23: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l23_measurement_platform,malaria_serology,,text,"L23: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l23_measurement_type,malaria_serology,,text,"L23: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l23_measurement_value,malaria_serology,,text,"L23: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l24_plasmodb_id,malaria_serology,,text,"L24: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l24_internal_id,malaria_serology,,text,"L24: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l24_annotation,malaria_serology,,text,"L24: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l24_construct,malaria_serology,,text,"L24: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l24_ig_type,malaria_serology,,text,"L24: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l24_measurement_platform,malaria_serology,,text,"L24: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l24_measurement_type,malaria_serology,,text,"L24: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l24_measurement_value,malaria_serology,,text,"L24: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l28_plasmodb_id,malaria_serology,,text,"L28: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l28_internal_id,malaria_serology,,text,"L28: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l28_annotation,malaria_serology,,text,"L28: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l28_construct,malaria_serology,,text,"L28: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l28_ig_type,malaria_serology,,text,"L28: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l28_measurement_platform,malaria_serology,,text,"L28: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l28_measurement_type,malaria_serology,,text,"L28: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l28_measurement_value,malaria_serology,,text,"L28: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l30_plasmodb_id,malaria_serology,,text,"L30: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l30_internal_id,malaria_serology,,text,"L30: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l30_annotation,malaria_serology,,text,"L30: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l30_construct,malaria_serology,,text,"L30: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l30_ig_type,malaria_serology,,text,"L30: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l30_measurement_platform,malaria_serology,,text,"L30: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l30_measurement_type,malaria_serology,,text,"L30: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l30_measurement_value,malaria_serology,,text,"L30: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l31_plasmodb_id,malaria_serology,,text,"L31: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l31_internal_id,malaria_serology,,text,"L31: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l31_annotation,malaria_serology,,text,"L31: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l31_construct,malaria_serology,,text,"L31: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l31_ig_type,malaria_serology,,text,"L31: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l31_measurement_platform,malaria_serology,,text,"L31: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l31_measurement_type,malaria_serology,,text,"L31: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l31_measurement_value,malaria_serology,,text,"L31: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l32_plasmodb_id,malaria_serology,,text,"L32: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l32_internal_id,malaria_serology,,text,"L32: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l32_annotation,malaria_serology,,text,"L32: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l32_construct,malaria_serology,,text,"L32: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l32_ig_type,malaria_serology,,text,"L32: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l32_measurement_platform,malaria_serology,,text,"L32: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l32_measurement_type,malaria_serology,,text,"L32: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l32_measurement_value,malaria_serology,,text,"L32: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l34_plasmodb_id,malaria_serology,,text,"L34: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l34_internal_id,malaria_serology,,text,"L34: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l34_annotation,malaria_serology,,text,"L34: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l34_construct,malaria_serology,,text,"L34: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l34_ig_type,malaria_serology,,text,"L34: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l34_measurement_platform,malaria_serology,,text,"L34: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l34_measurement_type,malaria_serology,,text,"L34: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l34_measurement_value,malaria_serology,,text,"L34: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l36_plasmodb_id,malaria_serology,,text,"L36: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l36_internal_id,malaria_serology,,text,"L36: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l36_annotation,malaria_serology,,text,"L36: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l36_construct,malaria_serology,,text,"L36: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l36_ig_type,malaria_serology,,text,"L36: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l36_measurement_platform,malaria_serology,,text,"L36: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l36_measurement_type,malaria_serology,,text,"L36: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l36_measurement_value,malaria_serology,,text,"L36: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l54_plasmodb_id,malaria_serology,,text,"L54: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l54_internal_id,malaria_serology,,text,"L54: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l54_annotation,malaria_serology,,text,"L54: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l54_construct,malaria_serology,,text,"L54: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l54_ig_type,malaria_serology,,text,"L54: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l54_measurement_platform,malaria_serology,,text,"L54: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l54_measurement_type,malaria_serology,,text,"L54: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l54_measurement_value,malaria_serology,,text,"L54: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_l55_plasmodb_id,malaria_serology,,text,"L55: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_l55_internal_id,malaria_serology,,text,"L55: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_l55_annotation,malaria_serology,,text,"L55: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_l55_construct,malaria_serology,,text,"L55: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_l55_ig_type,malaria_serology,,text,"L55: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_l55_measurement_platform,malaria_serology,,text,"L55: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_l55_measurement_type,malaria_serology,,text,"L55: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_l55_measurement_value,malaria_serology,,text,"L55: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_f2_plasmodb_id,malaria_serology,,text,"F2: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_f2_internal_id,malaria_serology,,text,"F2: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_f2_annotation,malaria_serology,,text,"F2: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_f2_construct,malaria_serology,,text,"F2: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_f2_ig_type,malaria_serology,,text,"F2: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_f2_measurement_platform,malaria_serology,,text,"F2: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_f2_measurement_type,malaria_serology,,text,"F2: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_f2_measurement_value,malaria_serology,,text,"F2: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"
+mb_pvebp_plasmodb_id,malaria_serology,,text,"PvEBP: Corresponding PlasmoDB ID",,,,,,,,,,,,," @READONLY"
+mb_pvebp_internal_id,malaria_serology,,text,"PvEBP: Other known internal protein IDs",,,,,,,,,,,,," @READONLY"
+mb_pvebp_annotation,malaria_serology,,text,"PvEBP: Gene annotation",,,,,,,,,,,,," @READONLY"
+mb_pvebp_construct,malaria_serology,,text,"PvEBP: Construct region (aa)",,,,,,,,,,,,," @READONLY"
+mb_pvebp_ig_type,malaria_serology,,text,"PvEBP: Type of immunoglobulin",,,,,,,,,,,,," @READONLY"
+mb_pvebp_measurement_platform,malaria_serology,,text,"PvEBP: Immunoglobulin measurement platform",,,,,,,,,,,,," @READONLY"
+mb_pvebp_measurement_type,malaria_serology,,text,"PvEBP: Immunoglobulin measdurement type (RAU or MFI)",,,,,,,,,,,,," @READONLY"
+mb_pvebp_measurement_value,malaria_serology,,text,"PvEBP: Immuglobulin measurement value",,,number,,,,,,,,,," @READONLY"

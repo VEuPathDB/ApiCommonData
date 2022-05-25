@@ -65,7 +65,7 @@ sub run {
  
     my $projectName = $self->getArg('projectName');
     my $ua = LWP::UserAgent->new;
-    my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/AllDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
+    my $request = $ua->get("https://$projectName.org/a/service/record-types/dataset/searches/SitemapDatasets/reports/standard?reportConfig=%7B%22attributes%22%3A%5B%22primary_key%22%5D%2C%22tables%22%3A%5B%22Version%22%5D%7D%22", Accept => "application/json" );
     my $data = decode_json($request->content);
     my $rowCount = 0;
     foreach my $record (@{ $data->{records}}){
@@ -76,9 +76,9 @@ sub run {
             my $datasetId = $reference->{'dataset_id'};
 
 	    if ($datasetName ne undef) {
-		my $row = GUS::Model::ApiDB::ProductionDataset->new({dataset_presenter_name => $datasetName,
+		my $row = GUS::Model::ApiDB::LegacyDataset->new({dataset_presenter_name => $datasetName,
                                                               project_name => $projectId,
-                                                              dataset_presenter_id => datasetId,
+                                                              dataset_presenter_id => $datasetId,
                                                external_database_release_id => $extDbRlsId,
 								});
 		$row->submit();

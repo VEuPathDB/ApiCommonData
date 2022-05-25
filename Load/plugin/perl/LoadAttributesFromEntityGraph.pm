@@ -115,6 +115,15 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
+   booleanArg({name => 'runRLocally',
+          descr => 'if true, will assume Rscript and plot.data are installed locally.  otherwise will call singularity',
+          reqd => 1,
+          constraintFunc => undef,
+          isList => 0,
+         }),
+
+
+
 ];
 
 sub getActiveForkedProcesses {
@@ -216,17 +225,21 @@ sub statsForPlots {
 
   print $rCommandsFh $self->rCommandsForStats();
 
-
-  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
-  my $numberSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
-  if($numberSysResult) {
-    $self->error("Error Running singularity for numericFile");
+  my $singularity =  "singularity exec docker://veupathdb/rserve";
+  if($self->getArg("runRLocally")) {
+    $singularity = "";
   }
 
-  printf STDERR ("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
-  my $dateSysResult = system("singularity exec docker://veupathdb/rserve Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
+  printf STDERR ("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName\n");
+  my $numberSysResult = system("$singularity Rscript $rCommandsFileName $numericValsFileName $outputStatsFileName");
+  if($numberSysResult) {
+    $self->error("Error Running Rscript for numericFile");
+  }
+
+  printf STDERR ("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName\n");
+  my $dateSysResult = system("$singularity Rscript $rCommandsFileName $dateValsFileName $outputStatsFileName");
   if($dateSysResult) {
-    $self->error("Error Running singularity for datesFile");
+    $self->error("Error Running Rscript for datesFile");
   }
 
   my $rv = {};
@@ -854,7 +867,7 @@ sub makeFifo {
   my $login       = $database->getLogin();
   my $password    = $database->getPassword();
   my $dbiDsn      = $database->getDSN();
-  my ($dbi, $type, $db) = split(':', $dbiDsn);
+  my ($dbi, $type, $db) = split(':', $dbiDsn, 3);
 
   my $sqlldr = ApiCommonData::Load::Sqlldr->new({_login => $login,
                                                  _password => $password,

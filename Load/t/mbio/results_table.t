@@ -217,7 +217,7 @@ subtest "entities does not die" => sub {
 
   $out = Dump $pathwaysTable->entitiesForSample("s1");
   like($out, qr/${_}111/, "pathways: $_")
-    for ("25", "27", "29", "31");
+    for ("25", "31");
 };
   
 done_testing;

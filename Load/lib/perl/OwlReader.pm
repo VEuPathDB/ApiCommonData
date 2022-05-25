@@ -117,11 +117,13 @@ sub getLabelsAndParentsHashes {
 		my $col = $row->{column} ? $row->{column}->as_hash()->{literal} : "";
 		my $label = $row->{label} ? $row->{label}->as_hash()->{literal} : "";
 		my $order = $row->{order} ? $row->{order}->as_hash()->{literal} : 99;
+		my $category = $row->{category} ? $row->{category}->as_hash()->{literal} : "";
 		my $repeated = $row->{repeated} ? $row->{repeated}->as_hash()->{literal} : "";
     if($repeated){ $repeated =~ s/^"|"$//g }
 		$propertyOrder->{$sourceid} = $order;
 		$propertyNames->{$sourceid} ||= $label; ## do not overwrite first label, use label that appears first in the OWL
     $otherAttrs->{$sourceid}->{repeated} = $repeated;
+    $otherAttrs->{$sourceid}->{category} = lc($category);
 	}
 	foreach my $parentid (keys %$propertySubclasses){
 		$propertyOrder->{$parentid} ||= 99;
