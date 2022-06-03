@@ -130,7 +130,7 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
 
   foreach my $feature (@$features) {
     $feature->source_tag("EuPathDB");
-    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "SEQUENCE_IS_PIECE") {
+    foreach my $extraTag ("NA_FEATURE_ID", "NA_SEQUENCE_ID", "PARENT_NA_FEATURE_ID", "AA_FEATURE_ID", "AA_SEQUENCE_ID", "GENE_NA_FEATURE_ID", "EBI_BIOTYPE", "GENE_EBI_BIOTYPE", "SEQUENCE_IS_PIECE") {
       $feature->remove_tag($extraTag) if($feature->has_tag($extraTag));
     }
 
@@ -149,6 +149,12 @@ foreach my $geneSourceId (@{$geneModelLocations->getAllGeneIds()}) {
         $feature->add_tag_value(lc($_), $feature->remove_tag($_));
       }
 
+    }
+
+    # change protein_coding_gene, *RNA_gene to gene
+    if ($feature->primary_tag eq 'protein_coding_gene'
+	|| $feature->primary_tag =~ /RNA_gene$/ ) {
+      $feature->primary_tag('gene');
     }
 
 
@@ -302,8 +308,10 @@ sub getBioTypeAndUpdatePrimaryTag {
   if ($$feat->primary_tag eq "transcript") {
     my ($parentID) = $$feat->get_tag_values('Parent');
     my $transcriptType = $geneAnnotations->{$parentID}->{so_term_name};
-    if ($transcriptType eq "coding_gene" || $transcriptType eq "protein_coding" || $transcriptType eq "pseudogene") {
+    if ($transcriptType eq "coding_gene" || $transcriptType eq "protein_coding") {
       $transcriptType = "mRNA";
+    } elsif ($transcriptType eq "pseudogene") {
+      $transcriptType = "pseudogenic_transcript";
     } else {
       $transcriptType =~ s/\_gene$//;
       $transcriptType =~ s/\_encoding$//;

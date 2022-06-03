@@ -246,6 +246,10 @@ create index dots.nafeat_subso_ix on dots.NaFeatureImp
   (subclass_view, sequence_ontology_id, na_feature_id)
   tablespace INDX;
 
+create index dots.nafeat_scseqfeat_ix on dots.NaFeatureImp
+  (subclass_view, na_sequence_id, na_feature_id)
+  tablespace INDX;
+
 
 -- indexes for orthomcl keyword and pfam searches -- only needed in OrthoMCL instance
 -- CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)

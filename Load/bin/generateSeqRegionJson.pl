@@ -278,6 +278,7 @@ sub getGeneticCodeFromOrganismAbbrev {
 	|| $organismAbbrev eq "ctroMYA3404-2020"
 	|| $organismAbbrev eq "rlauRL4"
 	|| $organismAbbrev eq "hvasRaceXXXIII"
+	|| $organismAbbrev eq "rirrC2"
 		) {
       $projectName = "FungiDB";
     } elsif ( $organismAbbrev eq "tbruTREU927"
