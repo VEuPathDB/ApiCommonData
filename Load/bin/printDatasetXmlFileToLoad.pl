@@ -115,6 +115,13 @@ while (<EXL>) {
 }
 close;
 
+## check if gca number already loaded before
+my $gcaNumber = $excelInfo{$organismAbbrev}{"INSDC accession"};
+my $cmd = "grep $gcaNumber \$PROJECT_HOME\/ApiCommonPresenters\/Model\/lib\/xml\/datasetPresenters\/\*.xml";
+my $out = `$cmd`;
+die "ERROR ...... GCA number, $gcaNumber for $organismAbbrev found at:\n$out\n" if ($out);
+
+
 ## add some constant value
 $excelInfo{$organismAbbrev}{"publicOrganismAbbrev"} = $excelInfo{$organismAbbrev}{"organismAbbrev"};
 $excelInfo{$organismAbbrev}{'projectName'} = $projectName;
