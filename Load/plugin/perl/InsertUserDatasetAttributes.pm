@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertStudyDataset;
+package ApiCommonData::Load::Plugin::InsertUserDatasetAttributes;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -123,14 +123,14 @@ sub run {
 
   my $datasetStableId = "EDAUD_${userDatasetId}";
 
-  my $studyDataset = GUS::Model::ApidbUserDatasets::DatasetAttributes->new({user_dataset_id => $userDatasetId,
+  my $datasetAttributes = GUS::Model::ApidbUserDatasets::DatasetAttributes->new({user_dataset_id => $userDatasetId,
                                                                             study_stable_id => $studyStableIds[0],
                                                                             dataset_stable_id => $datasetStableId,
                                                                             name => $metadata->{name},
                                                                             description => $metadata->{description},
                                                                            });
 
-  $studyDataset->submit();
+  $datasetAttributes->submit();
 
 
   
