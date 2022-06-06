@@ -11,7 +11,7 @@ GRANT GUS_R TO ApidbUserDatasets;
 GRANT GUS_W TO ApidbUserDatasets;
 GRANT CREATE VIEW TO ApidbUserDatasets;
 GRANT CREATE MATERIALIZED VIEW TO ApidbUserDatasets;
-GRANT CREATE TABLE TO ApidbUserDatasets;
+GRANT CREATE ANY TABLE TO ApidbUserDatasets;
 GRANT CREATE SYNONYM TO ApidbUserDatasets;
 GRANT CREATE SESSION TO ApidbUserDatasets;
 GRANT CREATE ANY INDEX TO ApidbUserDatasets;
