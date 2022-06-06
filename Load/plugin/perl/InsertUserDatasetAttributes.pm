@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertStudyDataset;
+package ApiCommonData::Load::Plugin::InsertUserDatasetAttributes;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -6,7 +6,8 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
-use GUS::Model::EDA_UD::StudyDataset;
+
+use GUS::Model::ApidbUserDatasets::DatasetAttributes;
 
 use JSON;
 
@@ -18,7 +19,7 @@ my $argsDeclaration  =
 
 
  integerArg({  name           => 'userDatasetId',
-	       descr          => 'For use with Schema=EDA_UD; this is the user_dataset_id',
+	       descr          => 'For use with Schema=ApidbUserDatasets; this is the user_dataset_id',
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
@@ -105,9 +106,9 @@ sub run {
 
   my $userDatasetId = $self->getArg("userDatasetId");
 
-  my @studyStableIds = $self->sqlAsArray(Sql => "select stable_id from eda_ud.study where USER_DATASET_ID = $userDatasetId");
+  my @studyStableIds = $self->sqlAsArray(Sql => "select stable_id from ApidbUserDatasets.study where USER_DATASET_ID = $userDatasetId");
   unless(scalar(@studyStableIds) == 1) {
-    $self->error("User Dataset $userDatasetId must return exactly one row in EDA_UD.Study");
+    $self->error("User Dataset $userDatasetId must return exactly one row in ApidbUserDatasets.Study");
   }
 
   my $metadataFile = $self->getArg('metadataFile');
@@ -122,17 +123,18 @@ sub run {
 
   my $datasetStableId = "EDAUD_${userDatasetId}";
 
-  my $studyDataset = GUS::Model::EDA_UD::StudyDataset->new({user_dataset_id => $userDatasetId,
-                                                            study_stable_id => $studyStableIds[0],
-                                                            dataset_stable_id => $datasetStableId,
-                                                            name => $metadata->{name},
-                                                            description => $metadata->{description},
-                                                           });
+  my $datasetAttributes = GUS::Model::ApidbUserDatasets::DatasetAttributes->new({user_dataset_id => $userDatasetId,
+                                                                            study_stable_id => $studyStableIds[0],
+                                                                            dataset_stable_id => $datasetStableId,
+                                                                            name => $metadata->{name},
+                                                                            description => $metadata->{description},
+                                                                           });
 
-  $studyDataset->submit();
+  $datasetAttributes->submit();
+
 
   
-  return("Inserted 1 row into EDA_UD.StudyDataset");
+  return("Inserted 1 row into ApidbUserDatasets.DatasetAttributes");
 }
 
 
