@@ -7,12 +7,16 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use DBI;
 use DBD::Oracle;
 use CBIL::Util::PropertySet;
+use CBIL::Util::Utils;
+
 
 my ($organismFullName,
+    $gcaNumber,
      $help);
 
 &GetOptions(
             'organismFullName=s' => \$organismFullName,
+            'gcaNumber=s' => \$gcaNumber,
 	    'help|h' => \$help,
 	    );
 &usage() if($help);
@@ -98,6 +102,15 @@ my $check2Error = `$check2`;
               : print "  $check2\n  orthomclAbbrev '$orthomclAbbrev' is OK\n\n";
 
 
+## check if GCA_ number is Unique
+my $cmd = "grep $gcaNumber \$PROJECT_HOME\/ApiCommonPresenters\/Model\/lib\/xml\/datasetPresenters\/\*.xml";
+my $out = `$cmd`;
+print "GCA number, $gcaNumber found at:\n$out\n" if ($out);
+
+#my $failed = $? >> 8;
+#print "$failed\n" if ($failed);
+
+##############
 sub usage {
   die
 "
@@ -105,6 +118,7 @@ Usage: generateOrganismAbbrevAndOthers --organismFullName 'Aspergillus versicolo
 
 where
   --organismFullName: organism full name
+  --gcaNumber: optional, GCA_ number, check to make sure it is unique
 
 
 SOP for organismAbbrev:
