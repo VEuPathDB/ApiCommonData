@@ -266,6 +266,8 @@ CREATE TABLE &1.EntityTypeGraph (
  display_name_plural          VARCHAR2(200),
  description                  VARCHAR2(4000),
  internal_abbrev              VARCHAR2(50) NOT NULL,
+ has_attribute_collections    NUMBER(1),
+ is_many_to_one_with_parent   NUMBER(1),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
