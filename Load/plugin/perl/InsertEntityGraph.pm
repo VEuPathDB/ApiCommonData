@@ -61,7 +61,7 @@ my $argsDeclaration =
             isList         => 0, }),
 
  integerArg({  name           => 'userDatasetId',
-	       descr          => 'For use with Schema=EDA_UD; this is the user_dataset_id',
+	       descr          => 'For use with Schema=ApidbUserDatasets; this is the user_dataset_id',
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
@@ -235,7 +235,7 @@ sub loadInvestigation {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
 
       # add the user_dataset_id if we are in that mode
-      if(uc($schema) eq 'EDA_UD' && $self->getArg("userDatasetId")) {
+      if(uc($schema) eq 'ApidbUserDatasets' && $self->getArg("userDatasetId")) {
         $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
       }
 

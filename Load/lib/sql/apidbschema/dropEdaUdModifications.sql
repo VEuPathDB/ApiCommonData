@@ -1,12 +1,12 @@
 set CONCAT OFF;
 
-DROP TABLE EDA_UD.StudyDataset;
-DROP SEQUENCE EDA_UD.StudyDataset_sq;
+DROP TABLE ApidbUserDatasets.StudyDataset;
+DROP SEQUENCE ApidbUserDatasets.StudyDataset_sq;
 DELETE FROM core.TableInfo
-WHERE lower(name) =  'studydataset'
+WHERE lower(name) =  'datasetattributes'
   AND database_id IN (SELECT database_id
                       FROM core.DatabaseInfo
-                      WHERE lower(name) = 'eda_ud');
+                      WHERE lower(name) = 'apidbuserdatasets');
 
 
 exit;

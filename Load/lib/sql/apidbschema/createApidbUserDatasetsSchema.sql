@@ -18,6 +18,10 @@ GRANT CREATE ANY INDEX TO ApidbUserDatasets;
 GRANT CREATE TRIGGER TO ApidbUserDatasets;
 GRANT CREATE ANY TRIGGER TO ApidbUserDatasets;
 
+
+GRANT REFERENCES on sres.ontologyterm to ApidbUserDatasets;
+GRANT REFERENCES on sres.ExternalDatabaseRelease to ApidbUserDatasets;
+
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
     group_read, group_write, other_read, other_write, row_user_id,

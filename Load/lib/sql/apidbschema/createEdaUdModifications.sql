@@ -1,17 +1,17 @@
 set CONCAT OFF;
 
-ALTER TABLE EDA_UD.study 
+ALTER TABLE ApidbUserDatasets.study 
 ADD (user_dataset_id NUMBER(20));
 
-ALTER TABLE EDA_UD.study 
+ALTER TABLE ApidbUserDatasets.study 
 ADD (CONSTRAINT edastd_fk FOREIGN KEY (user_dataset_id) 
 REFERENCES apidbUserDatasets.InstalledUserDataset);
 
 
-CREATE TABLE EDA_UD.StudyDataset (
- study_dataset_id NUMBER(12) NOT NULL,
+CREATE TABLE ApidbUserDatasets.DatasetAttributes (
+ dataset_id NUMBER(12) NOT NULL,
  user_dataset_id  NUMBER(20) NOT NULL,
- study_stable_id varchar2(200) NOT NULL,
+ study_stable_id varchar2(200),
  dataset_stable_id varchar2(200) NOT NULL,
  name              varchar2(100),
  description              varchar2(4000),
@@ -27,15 +27,15 @@ CREATE TABLE EDA_UD.StudyDataset (
  row_project_id               NUMBER(4) NOT NULL,
  row_alg_invocation_id        NUMBER(12) NOT NULL,
  FOREIGN KEY (user_dataset_id) REFERENCES apidbUserDatasets.InstalledUserDataset,
- PRIMARY KEY (study_dataset_id)
+ PRIMARY KEY (dataset_id)
 );
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON EDA_UD.StudyDataset TO gus_w;
-GRANT SELECT ON EDA_UD.StudyDataset TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApidbUserDatasets.DatasetAttributes TO gus_w;
+GRANT SELECT ON ApidbUserDatasets.DatasetAttributes TO gus_r;
 
-CREATE SEQUENCE EDA_UD.StudyDataset_sq;
-GRANT SELECT ON EDA_UD.StudyDataset_sq TO gus_w;
-GRANT SELECT ON EDA_UD.StudyDataset_sq TO gus_r;
+CREATE SEQUENCE ApidbUserDatasets.DatasetAttributes_sq;
+GRANT SELECT ON ApidbUserDatasets.DatasetAttributes_sq TO gus_w;
+GRANT SELECT ON ApidbUserDatasets.DatasetAttributes_sq TO gus_r;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -43,14 +43,14 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'StudyDataset',
-       'Standard', 'study_dataset_id',
+SELECT core.tableinfo_sq.nextval, 'DatasetAttributes',
+       'Standard', 'dataset_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('eda_ud')) d
-WHERE 'studydataset' NOT IN (SELECT lower(name) FROM core.TableInfo
+     (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = lower('apidbuserdatasets')) d
+WHERE 'datasetattributes' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 -----------------------------------------------------------
