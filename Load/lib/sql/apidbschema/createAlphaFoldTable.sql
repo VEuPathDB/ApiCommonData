@@ -5,6 +5,7 @@ CREATE TABLE ApiDB.AlphaFold (
   LAST_RESIDUE_INDEX            NUMBER(10),
   SOURCE_ID                     VARCHAR2(20)  NOT NULL,
   ALPHAFOLD_VERSION             NUMBER(5)     NOT NULL,
+  EXTERNAL_DATABASE_RELEASE_ID   NUMBER(10)   NOT NULL,
   MODIFICATION_DATE             DATE,
   USER_READ                     NUMBER(1),
   USER_WRITE                    NUMBER(1),
@@ -16,7 +17,8 @@ CREATE TABLE ApiDB.AlphaFold (
   ROW_GROUP_ID                  NUMBER(4),
   ROW_PROJECT_ID                NUMBER(4),
   ROW_ALG_INVOCATION_ID         NUMBER(12),
-  PRIMARY KEY (ALPHAFOLD_ID)
+  PRIMARY KEY (ALPHAFOLD_ID),
+  FOREIGN KEY (EXTERNAL_DATABASE_RELEASE_ID) REFERENCES sres.ExternalDatabaseRelease (EXTERNAL_DATABASE_RELEASE_ID)
 );
 
 CREATE INDEX apidb.af_ix0 on ApiDB.AlphaFold(uniprot_id, alphafold_id) TABLESPACE indx;
