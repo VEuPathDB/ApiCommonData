@@ -1,10 +1,8 @@
 package conversionFileUpdater;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +26,11 @@ import com.opencsv.CSVWriter;
  */
 
 public class OWLconverionUpdater {
+	static final String COLNAME_IRI = "IRI";
+	static final String COLNAME_LABEL = "label";	
+	static final String COLNAME_NEW_IRI = "new IRI";
+	static final String COLNAME_PARENT_IRI = "parentIRI";
+	static final String COLNAME_PARENT_LABEL = "parentLabel";
 	
 	public static void main(String[] args) throws IOException {
 		OWLconversionUpdaterOptions bean = new OWLconversionUpdaterOptions();
@@ -47,21 +50,29 @@ public class OWLconverionUpdater {
 		
 		String messageFilename = bean.getMessageFilename();
 		
-		String fileDir = "ApiCommonData";
+		//String fileDir = "ApiCommonData";
+		
+		boolean overwrite = bean.getOverwrite().equalsIgnoreCase("true") ? true : false;
 		
 		ArrayList<String> message = new ArrayList<String>();
 		
-		// get replace column name and values
-		if (inputFilename.contains(fileDir))	message.add("Replace file: \n  " + inputFilename.substring(inputFilename.indexOf(fileDir)) + "\n----------------\n\n");	
-		else									message.add("Replace file: \n  " + inputFilename + "\n----------------\n\n");
-		
-		ArrayList <String[]> replaceFile = readCSVFile(inputFilename);
+		// Read replace file to get replace column name and values
+		message.add("Replace file: \n  " + inputFilename + "\n----------------\n\n");
+				
+		ArrayList <String[]> replaceFile = readCSVFile(inputFilename, true);
+
+		System.out.println("read replace file " + inputFilename);
 		
 		String[] replaceHeaders = replaceFile.get(0);
 		
+		// replace term and its annotations based on the IRI
 		Hashtable<String, Hashtable<String,String>> replaceObjects 
 			= new Hashtable<String, Hashtable<String,String>>();
-
+		//replaceObjects key, term IRI, value, column name/value 
+		
+		// replace parent term IRI or label based on the parent term IRI
+		Hashtable<String,String> replaceParents 
+			= new Hashtable<String,String>();
 		
 		for(int i = 1; i < replaceFile.size(); i ++ ) {
 			String[] row = replaceFile.get(i);
@@ -72,15 +83,31 @@ public class OWLconverionUpdater {
 			
 			for(int j = 1; j < row.length; j ++) {
 				String name = replaceHeaders[j];
-				String value = row[j];
-				
-				if (name.equalsIgnoreCase("new IRI"))	name = "IRI";
-				
-				colVals.put(name, value);
-			}
+				String value = row[j].trim();
+							
+				if (name.equalsIgnoreCase(COLNAME_NEW_IRI))	{
+					name = COLNAME_IRI;
 			
+					if (value.length() > 0)		replaceParents.put(iri, value); // replace parent term IRI
+				}
+				
+				if (!name.startsWith("#"))	colVals.put(name, value);
+			}
+	
 			replaceObjects.put(iri, colVals);
 		}
+		
+		/** print the replace information
+		System.out.println("--- replace objects information --- ");
+		for (String objectKey : replaceObjects.keySet()) {
+			System.out.println("key: " + objectKey);
+			Hashtable<String,String> replaceObject = replaceObjects.get(objectKey);
+			for (String key: replaceObject.keySet()) {
+			    System.out.println("  colName " + key + " -> " + replaceObject.get(key));
+			} 	  						
+		}		
+		System.out.println("END ---"); 
+		**/ 	  						
 		
 		// find names of conversion files
 		ArrayList <String> conversionFilenames = new ArrayList <String>();
@@ -96,24 +123,28 @@ public class OWLconverionUpdater {
 			// read conversion file
 			String filename = conversionFilenames.get(counter);
 			
-			if (filename.contains(fileDir))	message.add("Conversion file: \n  " + filename.substring(filename.indexOf(fileDir)) + "\n"); 
-			else							message.add("Conversion file: \n  " + filename + "\n"); 
+			System.out.println("conversion file - " + filename);
+			
+			message.add("Conversion file: \n  " + filename + "\n"); 
 	          
-			ArrayList <String[]> conversionFile = readCSVFile(filename);
+			ArrayList <String[]> conversionFile = readCSVFile(filename, false);
 	          
 			// get column position may need to be updated in the conversion File, and new column need to add
 
 	        // header of conversion file
 	        String[] headers = conversionFile.get(0);
 	        
-      	  	// Find IRI column in the conversion file
+      	  	// Find IRI and Parent IRI column in the conversion file
       	  	int iriPos = -1;
+      	  	int parentIriPos = -1;
       	  	
   	  		for (int n = 0; n < headers.length; n++) {
-  	  			if (headers[n].equalsIgnoreCase("IRI")) {
+  	  			if (headers[n].equalsIgnoreCase(COLNAME_IRI)) {
   	  				iriPos = n;
-  	  				break;
   	  			} 
+  	  			if (headers[n].equalsIgnoreCase(COLNAME_PARENT_IRI)) {
+  	  				parentIriPos = n;
+  	  			} 		
   	  		}
   	  		
   	  		if (iriPos < 0) {
@@ -122,12 +153,15 @@ public class OWLconverionUpdater {
   	  		else {	        
   	  			Hashtable<String, Integer> updateColumn = new Hashtable<String, Integer>();
 	        
+  	  			// check whether the replace file contains the column header that are not in the conversion file
   	  			ArrayList <String> newColHeaders = new ArrayList <String>();
 	          
   	  			for (int m = 1; m < replaceHeaders.length; m ++) {
   	  				boolean newCol = true;
       	  		
   	  				String cname = replaceHeaders[m];
+  	  				
+  	  				if (cname.startsWith("#"))	break;
    
   	  				for (int n = 0; n < headers.length; n++) {
   	  					if (cname.equalsIgnoreCase(headers[n])) {
@@ -138,7 +172,7 @@ public class OWLconverionUpdater {
   	  				}
       	  		
   	  				if (newCol) {
-  	  					if (cname.equalsIgnoreCase("new IRI"))	updateColumn.put("IRI", new Integer(iriPos));
+  	  					if (cname.equalsIgnoreCase(COLNAME_NEW_IRI))	updateColumn.put(COLNAME_IRI, new Integer(iriPos));
   	  					else newColHeaders.add(cname);
   	  				}  	  			
   	  			}
@@ -164,77 +198,95 @@ public class OWLconverionUpdater {
   	  				
   	  				String[] row = conversionFile.get(l);				
   	  				String iri = row[iriPos];
-				
-  	  				if (replaceObjects.containsKey(iri)) {
+  	  				String parentIri = row[parentIriPos];
+  	  				
+  	  				if (replaceObjects.containsKey(iri) || replaceParents.containsKey(parentIri)) {
   	  					int rowNum = l + 1;
   	  					
-
-  	  					Hashtable<String,String> replaceObject = replaceObjects.get(iri);			
-					
-  	  					for(String colName : updateColumn.keySet()) {	
-  	  						if (replaceObject.get(colName).length() > 0) {						
-  	  							int pos = updateColumn.get(colName).intValue();
-  	  							String old_str = row[pos];
-  	  							String new_str = replaceObject.get(colName);
+  	  					// update term annotations based on term IRI
+  	  					if (replaceObjects.containsKey(iri)) {
+  	  						Hashtable<String,String> replaceObject = replaceObjects.get(iri);
+   	  						
+  	  						for(String colName : updateColumn.keySet()) {	
+  	  							if (replaceObject.get(colName).length() > 0) {
+  	  								int pos = updateColumn.get(colName).intValue();
+  	  								String old_str = row[pos];
+  	  								String new_str = replaceObject.get(colName);
   	  							
-  	  							if (! old_str.equals(new_str)) {  	  							
-  	  								row[pos] = replaceObject.get(colName);
+  	  								if (! old_str.equals(new_str)) {  	  							
+  	  									row[pos] = replaceObject.get(colName);
   	  								
-  	  								if (!rowUpdate)	{
-  	  									message.add("\n  row " + rowNum + ": " + iri);
-  	  									rowUpdate = true;
-  	  								}  	  								
+  	  									if (!rowUpdate)	{
+  	  										message.add("\n  row " + rowNum + ": " + iri);
+  	  										rowUpdate = true;
+  	  									}  	  								
   	  								
-  	  								if (old_str.length() > 0) message.add("\n   - " + colName + ": '" + old_str + "' replaced by '"+ new_str + "'");
-  	  								else message.add("\n   - " + colName + ": add '" + new_str + "'");
+  	  									if (old_str.length() > 0) message.add("\n   - " + colName + ": '" + old_str + "' replaced by '"+ new_str + "'");
+  	  									else message.add("\n   - " + colName + ": add '" + new_str + "'");
  	  								
-  	  								update = true;
-  	  							}
-							//System.out.println("   " + colName + ", replace: " + conversionFile.get(l)[pos]);
-							//System.out.println("     with: " + replaceObject.get(colName));						
-  	  						}	
-  	  					}
-					
-  	  					conversionFile.set(l,row);
-					
-  	  					if (newColumnHeaders != null) {
-  	  						String[] newVals = new String[newColumnHeaders.length];
-						
-  	  						for (int k = 0; k < newColumnHeaders.length; k ++) {							
-  	  							newVals[k] = replaceObject.get(newColumnHeaders[k]);
-  	  							if (newVals[k].length() > 0) {   	  								
-  	  								if (!rowUpdate)	{
-  	  									message.add("\n  row " + rowNum + ": " + iri);
-  	  									rowUpdate = true;
+  	  									update = true;
   	  								}
+  	  								//System.out.println("   " + colName + ", replace: " + conversionFile.get(l)[pos]);
+  	  								//System.out.println("     with: " + replaceObject.get(colName));						
+  	  							}	
+  	  						}
+  	  						
+										
+  	  						// add new columns if any
+  	  						if (newColumnHeaders != null) {
+  	  							String[] newVals = new String[newColumnHeaders.length];
+						
+  	  							for (int k = 0; k < newColumnHeaders.length; k ++) {
+  	  								newVals[k] = replaceObject.get(newColumnHeaders[k]);
+  	  								if (newVals[k].length() > 0) {   	  								
+  	  									if (!rowUpdate)	{
+  	  										message.add("\n  row " + rowNum + ": " + iri);
+  	  										rowUpdate = true;
+  	  									}
 
-  	  								message.add("\n   - " + newColumnHeaders[k] + ": add '" + newVals[k] + "'");
+  	  									message.add("\n   - " + newColumnHeaders[k] + ": add '" + newVals[k] + "'");
   	  								
-  	  								update = true;;
-  	  							}  	  							
-  	  						}
-  	  						newColumn.add(newVals);
-  	  					}
-  	  				} else {				
-  	  					if (newColumnHeaders != null) {
-  	  						String[] newVals = new String[newColumnHeaders.length];
+  	  									update = true;
+  	  								}  	  							
+  	  							}
+  	  							newColumn.add(newVals);
+  	  						} 
+  	  					} else {				
+  	  						if (newColumnHeaders != null) {
+  	  							String[] newVals = new String[newColumnHeaders.length];
 					
-  	  						for (int k = 0; k < newColumnHeaders.length; k ++) {
-  	  							newVals[k] = "";
-  	  						}
+  	  							for (int k = 0; k < newColumnHeaders.length; k ++) {
+  	  								newVals[k] = "";
+  	  							}
 					
-  	  						newColumn.add(newVals);				
+  	  							newColumn.add(newVals);				
+  	  						}
   	  					}
+  	  					
+	    	  			// update parent terms, IRI
+	  	  	  			if (replaceParents.containsKey(parentIri)) {
+	    	  				row[parentIriPos] = replaceParents.get(parentIri);
+	    	  					  	    	  					
+	    	  				if (!rowUpdate)	{
+	    	  					message.add("\n  row " + rowNum + ": " + iri);
+	    	  					rowUpdate = true;
+	    	  				}
+	    	  					
+	  						message.add("\n   - " + COLNAME_PARENT_IRI + ": '" + parentIri + "' replaced by '" + row[parentIriPos] + "'");
+				
+	  						update = true;
+	    	  			}
+	    	  				
+	    	  			conversionFile.set(l,row);
   	  				}
   	  			}	
 	  		
   	  			if (update) {
-  	  				String outFilename = filename.substring(0, filename.length()-4) + "_temp.csv";
-  	  					  		
+  	  				String outFilename = overwrite ? filename : filename.substring(0, filename.length()-4) + "_temp.csv";
+  	  				  	  					  		
   	  				writeCSVfile(outFilename, conversionFile, newColumn);
 	  			
-  	  				if (outFilename.contains(fileDir))	message.add("\n\nwrite updated file to: \n  " + outFilename.substring(outFilename.indexOf(fileDir)) + "\n---------------\n\n"); 
-  	  				else								message.add("\n\nwrite updated file to: \n  " + outFilename + "\n---------------\n\n"); 
+  	  				message.add("\n\nwrite updated file to: \n  " + outFilename + "\n---------------\n\n"); 
 
   	  			} else {
   	  				message.add("  - not find any term need to be updated\n----------------\n\n");
@@ -316,44 +368,9 @@ public class OWLconverionUpdater {
 		}
 	}
 	
-	public static ArrayList <String[]> readTabFile (String inputFile) {
-		System.out.println("Input is a tab-delimited file");
-
-		ArrayList <String[]> matrix = new ArrayList <String[]> ();
-		
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(inputFile));
-			String line = null;
-
-			while( (line = br.readLine()) != null)
-			{
-				// comment line start with ##, will be ignored
-				if (!(line.trim().startsWith("##") || line.trim().length()==0)) {
-					String[] items = line.split("\t");
-					for (int i = 0; i<items.length; i++)	items[i] = cleanString(items[i]);
-					matrix.add(items);
-				}
-			}
-			System.out.println("Successfully read input text file: " + inputFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if ( br != null ) br.close();
-			}
-			catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		return matrix;
-	}	
-
+	
 	@SuppressWarnings("resource")
-	public static ArrayList <String[]> readCSVFile (String inputFile) {
+	public static ArrayList <String[]> readCSVFile (String inputFile, boolean ignoreComment) {
 		//System.out.println("Read file: " + inputFile +"\n");
 
 		ArrayList <String[]> matrix = new ArrayList <String[]> ();
@@ -362,9 +379,12 @@ public class OWLconverionUpdater {
             	CSVReader csvReader = new CSVReader(Files.newBufferedReader(Paths.get(inputFile), StandardCharsets.UTF_8));
 
             	String[] row;
-            	while ((row = csvReader.readNext()) != null) {  
+            	
+            	while ((row = csvReader.readNext()) != null) { 
             		for (int i = 0; i<row.length; i++)	row[i] = cleanString(row[i]);
-            		matrix.add(row);
+            		
+            		// ignore the line starts with '#', which is comment line 
+            		if(!(ignoreComment && row[0].startsWith("#"))) 	matrix.add(row);
             	}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

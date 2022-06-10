@@ -12,19 +12,24 @@ import org.kohsuke.args4j.Option;
 public class OWLconversionUpdaterOptions {
     @Option(name="-path", 
     		usage ="Directory that contains the files for updating", 
-    		required = false)
-    private String path = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/";
+    		required = true)
+    private String path = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/Gates/shine/";
 
     @Option(name="-input", 
     		usage ="filename including full path that contains the term ID with associated updating information", 
-    		required = false)
-    private String input = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/conversionUpdate/replace_EDA.csv";
+    		required = true)
+    private String input = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/conversionUpdate/replace_test.csv";
     
     @Option(name="-messageFilename", 
     		usage ="filename including full path used to write the message regarding conversion file updates", 
-    		required = false)
-    private String messageFilename = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/conversionUpdate/message.txt";    
+    		required = true)
+    private String messageFilename = "/Users/jiezheng/Documents/VEuPathDB-git/ApiCommonData/Load/ontology/conversionUpdate/message_ageGroup.txt";    
 
+    @Option(name="-overwrite", 
+    		usage ="whether overwrite the existing conversion file", 
+    		required = false)
+    private String overwrite = "false";
+    
     public String getPath () {
     	return this.path;
     }
@@ -36,4 +41,8 @@ public class OWLconversionUpdaterOptions {
     public String getMessageFilename () {
     	return this.messageFilename;
     }
+
+    public String getOverwrite () {
+    	return this.overwrite;
+    }   
 }
