@@ -29,10 +29,9 @@ java -jar file_path/conversionFileUpdater.jar \
 	specify whether overwrite the existing conversion file, when use 'true', it will overwrite the conversion file, otherwise, the updated conversion file will be written in the conversion_temp file
 
 Example Command, run under ApiCommonData/Load/ontology directory:
-
 java -jar script/conversionUpdate/conversionFileUpdater.jar \
-  -path Gates/shine/ \
-  -input script/conversionUpdate/replace_EDA.csv \
-  -messageFilename script/conversionUpdate/message-eda.txt \
-  -overwrite false
+  -path General/ \
+  -input script/conversionUpdate/replace_IRI.csv \
+  -messageFilename script/conversionUpdate/message.txt \
+  -overwrite true
 
