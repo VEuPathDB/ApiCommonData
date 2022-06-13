@@ -1,15 +1,14 @@
 package ApiCommonData::Load::Plugin::InsertAlphaFold;
+use lib "$ENV{GUS_HOME}/lib/perl";
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::Util;
 use GUS::Model::ApiDB::AlphaFold;
-#use GUS::Model::ApiDB::PhenotypeResult;
-#use GUS::Model::ApiDB::NaFeaturePhenotypeModel;
-#use GUS::Model::SRes::OntologyTerm;
 use Data::Dumper;
 use File::Temp qw/ tempfile /;
+use POSIX qw/strftime/;
 
 sub getArgsDeclaration {
     my $argsDeclaration  =
@@ -99,8 +98,42 @@ sub run {
    
     my $extDbSpec = $self->getArg('extDbSpec');
     my $extDbRlsId = $self->getExtDbRlsId($extDbSpec) or die "Couldn't find source db: $extDbSpec\n"; 
-    print STDERR Dumper $extDbRlsId;
 
+    my ($ctrlFh, $ctrlFile) = tempfile(SUFFIX => '.dat');
+
+    my $inputFile = $self->getArg('inputFile');
+
+    $self->loadAlphaFold($inputFile, $ctrlFile, $extDbRlsId);
+
+}
+
+sub loadAlphaFold {
+    my ($self, $inputFile, $ctrlFile, $extDbRlsId) = @_;
+
+    my $ctrlFile = "$ctrlFile.ctrl";
+    my $logFile = "$ctrlFile.log";
+
+    $self->writeConfigFile($ctrlFile, $inputFile, $extDbRlsId);
+
+    my $login = $self->getConfig->getDatabaseLogin();
+    my $password = $self->getConfig->getDatabasePassword();
+    my $dbiDsn = $self->getConfig->getDbiDsn();
+    my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+    if($self->getArg('commit')) {
+        my $exitstatus = system("sqlldr $login/$password\@$db control=$ctrlFile log=$logFile rows=1000");
+        if ($exitstatus != 0){
+            die "ERROR: sqlldr returned exit status $exitstatus";
+        }
+
+        open(LOG, $logFile) or die "Cannot open log file $logFile: $!";
+        while (<LOG>) {
+            $self->log($_);
+        }
+        close LOG;
+        unlink $logFile;
+    }
+    unlink $ctrlFile;
 }
 
 sub writeConfigFile {                                                                                                                                                                                      
@@ -130,7 +163,7 @@ REENABLE DISABLED_CONSTRAINTS
 FIELDS TERMINATED BY ','
 TRAILING NULLCOLS
 (
-alphafold_id,
+alphafold_id SEQUENCE(MAX,1),
 uniprot_id,
 first_residue_index,
 last_residue_index,
@@ -152,12 +185,22 @@ row_alg_invocation_id constant $algInvocationId
   close CONFIG;
 }
 
+sub getConfig {
+    my ($self) = @_;
+
+    if(!$self->{config}) {
+        my $gusConfigFile = $self->getArg('gusconfigfile');
+        $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
+    }
+    $self->{config}
+}
+
 
 
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB.NaFeaturePhenotypeModel','ApiDB.PhenotypeResult','ApiDB.PhenotypeModel');
+  return ('ApiDB.AlphaFold');
 }
 
 1;
