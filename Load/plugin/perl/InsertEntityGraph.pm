@@ -235,7 +235,7 @@ sub loadInvestigation {
       my $gusStudy = $self->createGusStudy($extDbRlsId, $study);
 
       # add the user_dataset_id if we are in that mode
-      if(uc($schema) eq 'ApidbUserDatasets' && $self->getArg("userDatasetId")) {
+      if(uc($schema) eq 'APIDBUSERDATASETS' && $self->getArg("userDatasetId")) {
         $gusStudy->setUserDatasetId($self->getArg("userDatasetId"));
       }
 
