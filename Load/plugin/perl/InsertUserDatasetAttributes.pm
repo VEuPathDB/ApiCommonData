@@ -112,6 +112,9 @@ sub run {
 
   my $metadataJsonString = $self->getArg('metadataJsonString');
 
+  #strip off any surrounding single quotes
+  $metadataJsonString  =~ s/^'?([^']*)'?$/$1/;
+
   my $metadata = decode_json($metadataJsonString);
 
   my $datasetStableId = "EDAUD_${userDatasetId}";
