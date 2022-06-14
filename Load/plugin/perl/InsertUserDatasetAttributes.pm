@@ -110,7 +110,7 @@ sub run {
     $self->error("User Dataset $userDatasetId must return exactly one row in ApidbUserDatasets.Study");
   }
 
-  my $metadataJsonString = $self->getArg('metadataString');
+  my $metadataJsonString = $self->getArg('metadataJsonString');
 
   my $metadata = decode_json($metadataJsonString);
 
