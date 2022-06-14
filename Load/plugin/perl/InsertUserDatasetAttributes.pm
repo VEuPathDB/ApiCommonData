@@ -24,11 +24,10 @@ my $argsDeclaration  =
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
-   fileArg({name           => 'metadataFile',
-            descr          => 'json file which has the metadata for this study',
+
+   stringArg({name           => 'metadataJsonString',
+            descr          => 'meta data for this study as json string',
             reqd           => 1,
-            mustExist      => 1,
-            format         => '',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -111,15 +110,9 @@ sub run {
     $self->error("User Dataset $userDatasetId must return exactly one row in ApidbUserDatasets.Study");
   }
 
-  my $metadataFile = $self->getArg('metadataFile');
+  my $metadataJsonString = $self->getArg('metadataString');
 
-  my $json = do {
-   open(META, $metadataFile) or $self->error("Can't open \"$metadataFile\" for reading: $!");
-   local $/;
-   <META>
-  };
-
-  my $metadata = decode_json($json);
+  my $metadata = decode_json($metadataJsonString);
 
   my $datasetStableId = "EDAUD_${userDatasetId}";
 
