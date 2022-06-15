@@ -8,6 +8,7 @@ use DBI;
 use DBD::Oracle;
 use CBIL::Util::PropertySet;
 use CBIL::Util::Utils;
+use ApiCommonData::Load::NCBIToolsUtils;
 
 
 my ($organismFullName,
@@ -49,6 +50,7 @@ print "organismNameForFiles = $organismNameForFiles\n";
 print "strainAbbrev         = $strainAbbrev\n";
 print "orthomclAbbrev       = $orthomclAbbrev\n";
 
+q{
 ## based on organismFullName, retrieve ncbiTaxId from db
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 my @properties = ();
@@ -84,7 +86,21 @@ $stmtSpe->execute();
 my ($speciesNcbiTaxonId) = $stmtSpe->fetchrow_array();
 print "speciesNcbiTaxonId   = $speciesNcbiTaxonId\n";
 $stmtSpe->finish();
+};
 
+
+## based on organismFullName, retrieve ncbiTaxId from taxonomy at NCBI
+my $xmlTaxonomy = ApiCommonData::Load::NCBIToolsUtils::eFetch4ResultPage($organismFullName);
+my $ncbiTaxId = ApiCommonData::Load::NCBIToolsUtils::getTaxonId($xmlTaxonomy);
+my $speciesNcbiTaxonId;
+if ($ncbiTaxId) {
+  $speciesNcbiTaxonId = ApiCommonData::Load::NCBIToolsUtils::getSpeciesTaxonId($xmlTaxonomy);
+} else {
+  $xmlTaxonomy = ApiCommonData::Load::NCBIToolsUtils::eFetch4ResultPage("$genus $species");
+  $speciesNcbiTaxonId = ApiCommonData::Load::NCBIToolsUtils::getTaxonId($xmlTaxonomy);
+}
+print "ncbiTaxId            = $ncbiTaxId\n";
+print "speciesNcbiTaxonId   = $speciesNcbiTaxonId\n";
 
 ## check if orthomclAbbrev already been used by other organism
 #my $orthomclAbbrev = "afub";
