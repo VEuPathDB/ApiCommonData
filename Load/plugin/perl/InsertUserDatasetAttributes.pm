@@ -24,6 +24,7 @@ my $argsDeclaration  =
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
+
    fileArg({name           => 'metadataFile',
             descr          => 'json file which has the metadata for this study',
             reqd           => 1,
@@ -118,6 +119,7 @@ sub run {
    local $/;
    <META>
   };
+
 
   my $metadata = decode_json($json);
 
