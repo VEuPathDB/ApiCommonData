@@ -158,9 +158,10 @@ sub undoPreprocess {
                                     )
                                 )";
 
+
+    $dbh->do($deleteProtocolAppsSql); # need to delete protocol apps first
     $dbh->do($deleteStudyInputsSql);
     $dbh->do($deleteStudyOutputsSql);
-    $dbh->do($deleteProtocolAppsSql);
 
 }
 
