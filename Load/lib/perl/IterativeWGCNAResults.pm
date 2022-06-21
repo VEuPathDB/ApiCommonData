@@ -13,8 +13,8 @@ use DBD::Oracle;
 
 use GUS::Supported::GusConfig;
 
-sub getStrandness        { $_[0]->{strandness} }
-sub getGeneType        { $_[0]->{genetype} }
+sub getStrandness        { $_[0]->{strand} }
+sub getGeneType        { $_[0]->{genetype} } #### Marking for removal - we want to do both or just one always.
 sub getPower        { $_[0]->{softThresholdPower} }
 sub getOrganism        { $_[0]->{organism} }
 sub getInputSuffixMM              { $_[0]->{inputSuffixMM} }
@@ -23,7 +23,7 @@ sub getInputFile              { $_[0]->{inputFile} }
 sub getprofileSetName              { $_[0]->{profileSetName} }
 sub getTechnologyType              { $_[0]->{technologyType} }
 sub getReadsThreshold              { $_[0]->{readsThreshold} }
-sub getDatasetName            { $_[0]->{datasetName} }
+sub getDatasetName            { $_[0]->{datasetName} } #### Marking for removal. Need to get this info from elsewhere
 
 
 #-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ sub new {
 sub munge {
 	my ($self) = @_;
 	#------------- database configuration -----------#
-	my $strandness = $self->getStrandness();
+	my $strand = $self->getStrandness();
 	my $mainDirectory = $self->getMainDirectory();
 	my $technologyType = $self->getTechnologyType();
 	my $profileSetName = $self->getprofileSetName();
@@ -55,33 +55,37 @@ sub munge {
 		or die "Can't connect to the tracking database: $DBI::errstr\n";
 	
 	#--first strand processing ------------------------------------------#
-	if($strandness eq 'firststrand'){
+	if($strand eq 'firststrand'){
+		#-- extract inputs --#
 		my $power = $self->getPower();
 		my $inputFile = $self->getInputFile();
 		my $organism = $self->getOrganism();
 		my $genetype = $self->getGeneType();
 		my $readsThreshold = $self->getReadsThreshold();
 		my $datasetName = $self->getDatasetName();
+
 		#--Version1: first strand processing  (only keep protein-coding gene in the input tpm file)-------------#
-		if($genetype eq 'protein coding'){
-				my $outputFile = "Preprocessed_proteincoding_" . $inputFile;
+		if($genetype eq 'protein coding'){ #### Marking for removal
+				my $outputFile = "Preprocessed_proteincoding_" . $inputFile; # Will be the wgcna input file
 				my $sql = "SELECT source_id 
 										FROM apidbtuning.geneAttributes  
 										WHERE organism = '$organism' AND gene_type = 'protein coding gene'";
 				my $stmt = $dbh->prepare($sql);
 				$stmt->execute();
+
+				# Create gene hash
 				my %proteinCodingGenesHash;
-				
 				while(my ($proteinCodingGenes) = $stmt->fetchrow_array() ) {
 					$proteinCodingGenesHash{$proteinCodingGenes} = 1;
 				}
 				
 				$stmt->finish();
+
 				#-------------- add 1st column header & only keep PROTEIN CODING GENES -----#
 				open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 				open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
 				
-				my %inputs;
+				my %inputs; #### what are inputs here? header of input file?
 				my $header = <IN>;
 				chomp $header;  # removes new line chars
 				my @headers = split("\t",$header)  # returns array
@@ -93,6 +97,7 @@ sub munge {
 				$headers[0] = 'Gene';
 				print OUT join("\t",@headers);
 
+				#### Marked for deletion by code review. Going to be handled in the next block instead
 				# while (my $line = <IN>){
 				# 	$line =~ s/\n//g; # chomp $line
 				# 	if ($. == 1){
@@ -106,38 +111,41 @@ sub munge {
 				
 				# open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 				# now we're reading the second line because we already read the first. Perl-special :)
+				#-- Parse file and create input file for wgcna (called outputFile) --#
 				while (my $line = <IN>){
 					# Whenever we parse file, 1. give me line. 2. call chomp which removes all eols.
-					# camel case for vars
-					# if ($. == 1){
-					# 		my @all = split/\t/,$line;
-					# 		$all[0] = 'Gene';
-					# 		# my $newLine = join("\t",@all); # maybe redundant?
-					# 		print OUT join("\t",@all);
+					chomp $line;
+					if ($. == 1){
+							my @all = split/\t/,$line;
+							$all[0] = 'Gene';
+							print OUT join("\t",@all);
 							
-					# 		@all = map {s/^\s+|\s+$//g; $_ } @all;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
-					# 		# only need to do header things once. Read through file only once. Can possibly exclude 84-89. Can hopefully be replaced by chomp!
-					# 		foreach(@all[1 .. $#all]){
-					# 			$inputs{$_} = 1;
-					# 		}
-					# }else{
-					my @all = split/\t/,$line;
-					if ($proteinCodingGenesHash{$all[0]}){
-						print OUT $line;
+							@all = map {s/^\s+|\s+$//g; $_ } @all;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
+							# only need to do header things once. Read through file only once. Can possibly exclude 84-89. Can hopefully be replaced by chomp!
+							foreach(@all[1 .. $#all]){
+								$inputs{$_} = 1;
+							}
+					}else{
+						my @all = split/\t/,$line;
+						if ($proteinCodingGenesHash{$all[0]}){
+							print OUT $line;
+						}
 					}
-					# }
 				}
 				close IN;
 				close OUT;
+				#--- Finished creating first output file -- will become the input to wgcna --#
 
+				#### Marking for deletion
 				# my $commForPermission = "chmod g+w $outputFile"; 
 				# system($commForPermission);
-				#-------------- run IterativeWGCNA docker image -----#
 				# my $comm = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs";
 				# system($comm);
 				# use perl's make dir
 				# perl wants double quotes to understand $var. single quotes are literal
-				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs"); # dont need chmod
+
+				#-------------- run IterativeWGCNA docker image -----#
+				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs");
 				my $outputDir = $mainDirectory . "/FirstStrandProteinCodingOutputs";
 
 				my $inputFileForWGCNA = "$mainDirectory/$outputFile";
@@ -149,9 +157,9 @@ sub munge {
 				my $results  =  system($command);  # will return exit status
 				
 				#-------------- parse Module Membership -----#
-				# remove all chmods, replace with perl mkdir
-				my $commgw = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading";
-				system($commgw);
+				# my $commgw = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading";
+				# system($commgw); #### Marking this and above line for deletion. Replaced with below line
+				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading")
 				my $outputDirModuleMembership = "$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading/";
 				
 				open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
@@ -163,7 +171,8 @@ sub munge {
 				<MM>; # removing header
 				while (my $line = <MM>) {
 					chomp($line);
-					# $line =~ s/\r//g; # consider command line tools for converting from mac to unix 
+					print $line;
+					# $line =~ s/\r//g; # consider command line tools for converting from mac to unix #### Marked for removal
 					my @all = split/\t/,$line;
 					push @{$MMHash{$all[1]}}, "$all[0]\t$all[2]\n"; # also can just exclude Unclassified things
 				}
@@ -212,7 +221,7 @@ sub munge {
 				
 				$egenes ->munge();
 				
-		}
+		} # End protein coding geneType
 
 		#-- Version2: first strand processing  (only remove pseudogenes in the input tpm file)-------------#
 		if($genetype eq 'exclude pseudogene'){
@@ -375,7 +384,7 @@ sub munge {
 
 
 	#--second strand processing ------------------------------------------#
-	if($strandness eq 'secondstrand'){
+	if($strand eq 'secondstrand'){
 		my $power = $self->getPower();
 		my $inputFile = $self->getInputFile();
 		my $organism = $self->getOrganism();
