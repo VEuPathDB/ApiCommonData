@@ -85,64 +85,47 @@ sub munge {
 				open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
 				open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
 				
-				my %inputs; #### what are inputs here? header of input file?
-				my $header = <IN>;
-				chomp $header;  # removes new line chars
-				my @headers = split("\t",$header)  # returns array
-				foreach my $headerValue (@headers[1 .. $#headers]) {
-					$inputs{$headerValue} = 1;
-				}
-				# could also print OUT join(....)
-				# make first one gene
-				$headers[0] = 'Gene';
-				print OUT join("\t",@headers);
+				my %inputs; #### what are inputs here? header of input file? I think it's going to be wgcna inputs
+				#### Marking for removal thanks to later while loop
+				# my $header = <IN>;
 
-				#### Marked for deletion by code review. Going to be handled in the next block instead
-				# while (my $line = <IN>){
-				# 	$line =~ s/\n//g; # chomp $line
-				# 	if ($. == 1){
-				# 		my @all = split("\t",$line);
-				# 		foreach(@all[1 .. $#all]){
-				# 			$inputs{$_} = 1;
-				# 		}
-				# 	}
+				# # Clean and split headers read from file
+				# chomp $header;
+				# my @headers = split("\t",$header);  # array of headers
+				# foreach my $headerValue (@headers[1 .. $#headers]) {
+				# 	$inputs{$headerValue} = 1;
 				# }
-				# close IN;
+				# # The first header should be 'Gene'
+				# $headers[0] = 'Gene';
+				# print OUT join("\t",@headers);
+
 				
-				# open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-				# now we're reading the second line because we already read the first. Perl-special :)
 				#-- Parse file and create input file for wgcna (called outputFile) --#
+
 				while (my $line = <IN>){
-					# Whenever we parse file, 1. give me line. 2. call chomp which removes all eols.
 					chomp $line;
 					if ($. == 1){
-							my @all = split/\t/,$line;
-							$all[0] = 'Gene';
-							print OUT join("\t",@all);
-							
-							@all = map {s/^\s+|\s+$//g; $_ } @all;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
-							# only need to do header things once. Read through file only once. Can possibly exclude 84-89. Can hopefully be replaced by chomp!
-							foreach(@all[1 .. $#all]){
-								$inputs{$_} = 1;
-							}
+						# Handle headers
+						my @headers = split("\t",$line);
+						$headers[0] = 'Gene';
+						print OUT join("\t",@headers);
+						
+						@headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
+						# Above can hopefully be replaced by chomp!
+						foreach(@headers[1 .. $#headers]){
+							$inputs{$_} = 1;
+						}
 					}else{
-						my @all = split/\t/,$line;
-						if ($proteinCodingGenesHash{$all[0]}){
+						my @geneLine = split("\t",$line);
+						if ($proteinCodingGenesHash{$geneLine[0]}){
 							print OUT $line;
 						}
 					}
 				}
 				close IN;
 				close OUT;
-				#--- Finished creating first output file -- will become the input to wgcna --#
+				#--- Finished creating first output file. This output file will become the input to wgcna --#
 
-				#### Marking for deletion
-				# my $commForPermission = "chmod g+w $outputFile"; 
-				# system($commForPermission);
-				# my $comm = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs";
-				# system($comm);
-				# use perl's make dir
-				# perl wants double quotes to understand $var. single quotes are literal
 
 				#-------------- run IterativeWGCNA docker image -----#
 				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs");
@@ -153,12 +136,9 @@ sub munge {
 				#my $command = "singularity run --bind $mainDirectory:/home/docker   docker://jbrestel/iterative-wgcna -i /home/docker$outputFile  -o  /home/docker/$outputDir  -v  --wgcnaParameters maxBlockSize=3000,networkType=signed,power=$power,minModuleSize=10,reassignThreshold=0,minKMEtoStay=0.8,minCoreKME=0.8  --finalMergeCutHeight 0.25"; 
 				# note - check to see if we have a veupathdb wgcna docker. if yes, can swap out the jbrestel version
 
-				# perl continues to run regardless of exit from system command. Have to handle errors
 				my $results  =  system($command);  # will return exit status
 				
 				#-------------- parse Module Membership -----#
-				# my $commgw = "mkdir $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading";
-				# system($commgw); #### Marking this and above line for deletion. Replaced with below line
 				mkdir("$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading")
 				my $outputDirModuleMembership = "$mainDirectory/FirstStrandProteinCodingOutputs/FirstStrandMMResultsForLoading/";
 				
@@ -236,12 +216,22 @@ sub munge {
 								AND ga.gene_id = ta.gene_id";
 			my $stmt = $dbh->prepare($sql);
 			$stmt->execute();
-			my %hash;
-			my %hash_length;
+			#### Marking for removal
+			# my %hash;
+			# my %hash_length;
 			
+			# while(my ($proteinCodingGenes, $transcript_length) = $stmt->fetchrow_array() ) {
+			# 	$hash{$proteinCodingGenes} = 1;
+			# 	$hash_length{$proteinCodingGenes} = $transcript_length;
+			# }
+
+			# Create gene hash
+			#### Ann rename protein coding vars
+			my %genesHash;
+			my %geneLengthsHash;
 			while(my ($proteinCodingGenes, $transcript_length) = $stmt->fetchrow_array() ) {
-				$hash{$proteinCodingGenes} = 1;
-				$hash_length{$proteinCodingGenes} = $transcript_length;
+				$genesHash{$proteinCodingGenes} = 1;
+				$geneLengthsHash{$proteinCodingGenes} = $transcript_length;
 			}
 				
 			$stmt->finish();
@@ -257,59 +247,88 @@ sub munge {
 			open(OUT,">$mainDirectory/$outputFile") or die "Couldn't open file $mainDirectory/$outputFile for writing, $!";
 			
 			my %inputs;
+			#-- Parse file and create input file for wgcna (called outputFile) --#
+
 			while (my $line = <IN>){
-				$line =~ s/\n//g;
+				chomp $line;
 				if ($. == 1){
-						my @all = split("\t",$line);
-						print @all;
-						foreach(@all[1 .. $#all]){
-							$inputs{$_} = 1;
-						}
-				}
-			}
-			close IN;
-		
-			#-- Write lines to wgcna input file and apply floor expression value --#
-			open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
-			while (my $line = <IN>){
-				if ($. == 1){
-					#-- Heading --#
-					my @all = split/\t/,$line;
-					$all[0] = 'Gene';
-					my $new_line = join("\t",@all);
-					print OUT $new_line;
+					# Handle headers
+					my @headers = split("\t",$line);
+					$headers[0] = 'Gene';
+					print OUT join("\t",@headers);
 					
-					foreach(@all[1 .. $#all]){
-						@all = grep {s/^\s+|\s+$//g; $_ } @all;
+					# Above can hopefully be replaced by chomp!
+					foreach(@headers[1 .. $#headers]){
+						# Should the below come before printing?
+						@headers = map {s/^\s+|\s+$//g; $_ } @headers;  # clean white space. Likely want to do a map not grep. Map returns each element of @all.
 						$inputs{$_} = 1;
 					}
 				}else{
 					#-- Each line describes one gene --#
-					my @all = split/\t/,$line;
-					print $line;
+					my @geneLine = split("\t",$line);
+					print @geneLine;
 
 					#-- Calculate and apply the floor based on the pre-defiend readsThreshold --#
-					my $hard_floor = $readsThreshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
-					foreach(@all[1 .. $#all]){
+					my $hard_floor = $readsThreshold * 1000000 * $hash_length{$geneLine[0]} / $avg_unique_reads;
+					foreach(@geneLine[1 .. $#geneLine]){
 						if ($_ < $hard_floor) {
 							$_ = $hard_floor;
 						}
 					}
 
-					$line = join("\t",@all);
+					$line = join("\t",@geneLine);
 					print $line;
 
-					if ($hash{$all[0]}){
+					if ($genesHash{$geneLine[0]}){
 						print OUT $line;
 					}
+
+					
 				}
 			}
 			close IN;
 			close OUT;
+		
+			#-- Write lines to wgcna input file and apply floor expression value --#
+			# open(IN, "<", $inputFile) or die "Couldn't open file $inputFile for reading, $!";
+			# while (my $line = <IN>){
+			# 	if ($. == 1){
+			# 		# #-- Heading --#
+			# 		# my @all = split/\t/,$line;
+			# 		# $all[0] = 'Gene';
+			# 		# my $new_line = join("\t",@all);
+			# 		# print OUT $new_line;
+					
+			# 		# foreach(@all[1 .. $#all]){
+			# 		# 	@all = grep {s/^\s+|\s+$//g; $_ } @all;
+			# 		# 	$inputs{$_} = 1;
+			# 		# }
+			# 	}else{
+			# 		#-- Each line describes one gene --#
+			# 		my @all = split/\t/,$line;
+			# 		print $line;
+
+			# 		#-- Calculate and apply the floor based on the pre-defiend readsThreshold --#
+			# 		my $hard_floor = $readsThreshold * 1000000 * $hash_length{$all[0]} / $avg_unique_reads;
+			# 		foreach(@all[1 .. $#all]){
+			# 			if ($_ < $hard_floor) {
+			# 				$_ = $hard_floor;
+			# 			}
+			# 		}
+
+			# 		$line = join("\t",@all);
+			# 		print $line;
+
+			# 		if ($hash{$all[0]}){
+			# 			print OUT $line;
+			# 		}
+			# 	}
+			# }
+			# close IN;
+			# close OUT;
 				
 			#-------------- run IterativeWGCNA docker image -----#
-			my $commForPermission = "chmod g+w $outputFile";
-			system($commForPermission);
+			mkdir("$mainDirectory/FirstStrandExcludePseudogeneOutputs");
 			my $outputDir = $mainDirectory . "/FirstStrandExcludePseudogeneOutputs";
 
 			my $inputFileForWGCNA = "$mainDirectory/$outputFile";
@@ -319,9 +338,7 @@ sub munge {
 			my $results  =  system($command);
 			
 			#-------------- parse Module Membership -----#
-			my $commgw = "mkdir $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading; chmod g+w $mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading";
-			system($commgw);
-			
+			mkdir("$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading")
 			my $outputDirModuleMembership = "$mainDirectory/FirstStrandExcludePseudogeneOutputs/FirstStrandMMResultsForLoading/";
 			
 			open(MM, "<", "$outputDir/merged-0.25-membership.txt") or die "Couldn't open $outputDir/merged-0.25-membership.txt for reading";
@@ -379,11 +396,12 @@ sub munge {
 			$egenes ->munge();
 				
 		}
-	}
+	} # End first strant processing
 
 
 
 	#--second strand processing ------------------------------------------#
+	#### Marking for removal
 	if($strand eq 'secondstrand'){
 		my $power = $self->getPower();
 		my $inputFile = $self->getInputFile();
@@ -649,7 +667,7 @@ sub munge {
 	    
 		}
 	}  
-}
+} # End second strand processing
 
 
 
